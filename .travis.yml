@@ -1,0 +1,6 @@
+language: java
+script: mvn clean package
+jdk:
+  - openjdk7
+  - oraclejdk7
+  - openjdk6
