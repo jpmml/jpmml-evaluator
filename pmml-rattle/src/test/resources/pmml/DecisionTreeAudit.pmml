@@ -1,0 +1,285 @@
+<?xml version="1.0"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
+ <Header copyright="Copyright (c) 2013 Vfed" description="RPart Decision Tree Model">
+  <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.3"/>
+  <Timestamp>2013-09-16 10:36:15</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="9">
+  <DataField name="Adjusted" optype="categorical" dataType="string">
+   <Value value="0"/>
+   <Value value="1"/>
+  </DataField>
+  <DataField name="Employment" optype="categorical" dataType="string">
+   <Value value="Consultant"/>
+   <Value value="Private"/>
+   <Value value="PSFederal"/>
+   <Value value="PSLocal"/>
+   <Value value="PSState"/>
+   <Value value="SelfEmp"/>
+   <Value value="Volunteer"/>
+  </DataField>
+  <DataField name="Education" optype="categorical" dataType="string">
+   <Value value="Associate"/>
+   <Value value="Bachelor"/>
+   <Value value="College"/>
+   <Value value="Doctorate"/>
+   <Value value="HSgrad"/>
+   <Value value="Master"/>
+   <Value value="Preschool"/>
+   <Value value="Professional"/>
+   <Value value="Vocational"/>
+   <Value value="Yr10"/>
+   <Value value="Yr11"/>
+   <Value value="Yr12"/>
+   <Value value="Yr1t4"/>
+   <Value value="Yr5t6"/>
+   <Value value="Yr7t8"/>
+   <Value value="Yr9"/>
+  </DataField>
+  <DataField name="Marital" optype="categorical" dataType="string">
+   <Value value="Absent"/>
+   <Value value="Divorced"/>
+   <Value value="Married"/>
+   <Value value="Married-spouse-absent"/>
+   <Value value="Unmarried"/>
+   <Value value="Widowed"/>
+  </DataField>
+  <DataField name="Occupation" optype="categorical" dataType="string">
+   <Value value="Cleaner"/>
+   <Value value="Clerical"/>
+   <Value value="Executive"/>
+   <Value value="Farming"/>
+   <Value value="Home"/>
+   <Value value="Machinist"/>
+   <Value value="Military"/>
+   <Value value="Professional"/>
+   <Value value="Protective"/>
+   <Value value="Repair"/>
+   <Value value="Sales"/>
+   <Value value="Service"/>
+   <Value value="Support"/>
+   <Value value="Transport"/>
+  </DataField>
+  <DataField name="Income" optype="continuous" dataType="double"/>
+  <DataField name="Gender" optype="categorical" dataType="string">
+   <Value value="Female"/>
+   <Value value="Male"/>
+  </DataField>
+  <DataField name="Deductions" optype="continuous" dataType="double"/>
+  <DataField name="Hours" optype="continuous" dataType="double"/>
+ </DataDictionary>
+ <TreeModel modelName="RPart_Model" functionName="classification" algorithmName="rpart" splitCharacteristic="binarySplit" missingValueStrategy="defaultChild">
+  <MiningSchema>
+   <MiningField name="Adjusted" usageType="predicted"/>
+   <MiningField name="Employment" usageType="active"/>
+   <MiningField name="Education" usageType="active"/>
+   <MiningField name="Marital" usageType="active"/>
+   <MiningField name="Occupation" usageType="active"/>
+   <MiningField name="Income" usageType="active"/>
+   <MiningField name="Gender" usageType="active"/>
+   <MiningField name="Deductions" usageType="active"/>
+   <MiningField name="Hours" usageType="active"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="Predicted_Adjusted" optype="categorical" dataType="string" feature="predictedValue"/>
+   <OutputField name="Probability_0" optype="continuous" dataType="double" feature="probability" value="0"/>
+   <OutputField name="Probability_1" optype="continuous" dataType="double" feature="probability" value="1"/>
+   <!-- Custom OutputField element -->
+   <OutputField name="Node_Id" optype="categorical" dataType="string" feature="entityId"/>
+  </Output>
+  <Node id="1" score="0" recordCount="1859" defaultChild="2">
+   <True/>
+   <ScoreDistribution value="0" recordCount="1424" confidence="0.766003227541689"/>
+   <ScoreDistribution value="1" recordCount="435" confidence="0.233996772458311"/>
+   <Node id="2" score="0" recordCount="1001">
+    <CompoundPredicate booleanOperator="surrogate">
+     <SimpleSetPredicate field="Marital" booleanOperator="isIn">
+      <Array n="5" type="string">&quot;Absent&quot; &quot;Divorced&quot; &quot;Married-spouse-absent&quot; &quot;Unmarried&quot; &quot;Widowed&quot;</Array>
+     </SimpleSetPredicate>
+     <SimplePredicate field="Income" operator="greaterOrEqual" value="61251.765"/>
+     <SimpleSetPredicate field="Gender" booleanOperator="isIn">
+      <Array n="1" type="string">&quot;Female&quot;</Array>
+     </SimpleSetPredicate>
+     <SimpleSetPredicate field="Occupation" booleanOperator="isIn">
+      <Array n="9" type="string">&quot;Cleaner&quot; &quot;Clerical&quot; &quot;Farming&quot; &quot;Home&quot; &quot;Military&quot; &quot;Professional&quot; &quot;Sales&quot; &quot;Service&quot; &quot;Support&quot;</Array>
+     </SimpleSetPredicate>
+     <SimplePredicate field="Hours" operator="lessThan" value="43.5"/>
+     <SimpleSetPredicate field="Employment" booleanOperator="isIn">
+      <Array n="4" type="string">&quot;Private&quot; &quot;PSFederal&quot; &quot;PSLocal&quot; &quot;PSState&quot;</Array>
+     </SimpleSetPredicate>
+    </CompoundPredicate>
+    <ScoreDistribution value="0" recordCount="943" confidence="0.942057942057942"/>
+    <ScoreDistribution value="1" recordCount="58" confidence="0.0579420579420579"/>
+   </Node>
+   <Node id="3" score="0" recordCount="858" defaultChild="6">
+    <CompoundPredicate booleanOperator="surrogate">
+     <SimpleSetPredicate field="Marital" booleanOperator="isIn">
+      <Array n="1" type="string">&quot;Married&quot;</Array>
+     </SimpleSetPredicate>
+     <SimplePredicate field="Income" operator="lessThan" value="61251.765"/>
+     <SimpleSetPredicate field="Gender" booleanOperator="isIn">
+      <Array n="1" type="string">&quot;Male&quot;</Array>
+     </SimpleSetPredicate>
+     <SimpleSetPredicate field="Occupation" booleanOperator="isIn">
+      <Array n="5" type="string">&quot;Executive&quot; &quot;Machinist&quot; &quot;Protective&quot; &quot;Repair&quot; &quot;Transport&quot;</Array>
+     </SimpleSetPredicate>
+     <SimplePredicate field="Hours" operator="greaterOrEqual" value="43.5"/>
+     <SimpleSetPredicate field="Employment" booleanOperator="isIn">
+      <Array n="3" type="string">&quot;Consultant&quot; &quot;SelfEmp&quot; &quot;Volunteer&quot;</Array>
+     </SimpleSetPredicate>
+    </CompoundPredicate>
+    <ScoreDistribution value="0" recordCount="481" confidence="0.560606060606061"/>
+    <ScoreDistribution value="1" recordCount="377" confidence="0.439393939393939"/>
+    <Node id="6" score="0" recordCount="390" defaultChild="12">
+     <CompoundPredicate booleanOperator="surrogate">
+      <SimpleSetPredicate field="Occupation" booleanOperator="isIn">
+       <Array n="6" type="string">&quot;Cleaner&quot; &quot;Farming&quot; &quot;Machinist&quot; &quot;Repair&quot; &quot;Service&quot; &quot;Transport&quot;</Array>
+      </SimpleSetPredicate>
+      <SimpleSetPredicate field="Education" booleanOperator="isIn">
+       <Array n="9" type="string">&quot;HSgrad&quot; &quot;Preschool&quot; &quot;Yr10&quot; &quot;Yr11&quot; &quot;Yr12&quot; &quot;Yr1t4&quot; &quot;Yr5t6&quot; &quot;Yr7t8&quot; &quot;Yr9&quot;</Array>
+      </SimpleSetPredicate>
+      <SimplePredicate field="Hours" operator="lessThan" value="41.5"/>
+      <SimplePredicate field="Income" operator="lessThan" value="19647.02"/>
+      <SimpleSetPredicate field="Employment" booleanOperator="isIn">
+       <Array n="2" type="string">&quot;Consultant&quot; &quot;Volunteer&quot;</Array>
+      </SimpleSetPredicate>
+     </CompoundPredicate>
+     <ScoreDistribution value="0" recordCount="300" confidence="0.769230769230769"/>
+     <ScoreDistribution value="1" recordCount="90" confidence="0.230769230769231"/>
+     <Node id="12" score="0" recordCount="383">
+      <SimplePredicate field="Deductions" operator="lessThan" value="1708"/>
+      <ScoreDistribution value="0" recordCount="300" confidence="0.783289817232376"/>
+      <ScoreDistribution value="1" recordCount="83" confidence="0.216710182767624"/>
+     </Node>
+     <Node id="13" score="1" recordCount="7">
+      <SimplePredicate field="Deductions" operator="greaterOrEqual" value="1708"/>
+      <ScoreDistribution value="0" recordCount="0" confidence="0"/>
+      <ScoreDistribution value="1" recordCount="7" confidence="1"/>
+     </Node>
+    </Node>
+    <Node id="7" score="1" recordCount="468" defaultChild="14">
+     <CompoundPredicate booleanOperator="surrogate">
+      <SimpleSetPredicate field="Occupation" booleanOperator="isIn">
+       <Array n="6" type="string">&quot;Clerical&quot; &quot;Executive&quot; &quot;Professional&quot; &quot;Protective&quot; &quot;Sales&quot; &quot;Support&quot;</Array>
+      </SimpleSetPredicate>
+      <SimpleSetPredicate field="Education" booleanOperator="isIn">
+       <Array n="7" type="string">&quot;Associate&quot; &quot;Bachelor&quot; &quot;College&quot; &quot;Doctorate&quot; &quot;Master&quot; &quot;Professional&quot; &quot;Vocational&quot;</Array>
+      </SimpleSetPredicate>
+      <SimplePredicate field="Hours" operator="greaterOrEqual" value="41.5"/>
+      <SimplePredicate field="Income" operator="greaterOrEqual" value="19647.02"/>
+      <SimpleSetPredicate field="Employment" booleanOperator="isIn">
+       <Array n="5" type="string">&quot;Private&quot; &quot;PSFederal&quot; &quot;PSLocal&quot; &quot;PSState&quot; &quot;SelfEmp&quot;</Array>
+      </SimpleSetPredicate>
+     </CompoundPredicate>
+     <ScoreDistribution value="0" recordCount="181" confidence="0.386752136752137"/>
+     <ScoreDistribution value="1" recordCount="287" confidence="0.613247863247863"/>
+     <Node id="14" score="0" recordCount="221" defaultChild="28">
+      <CompoundPredicate booleanOperator="surrogate">
+       <SimpleSetPredicate field="Education" booleanOperator="isIn">
+        <Array n="10" type="string">&quot;College&quot; &quot;HSgrad&quot; &quot;Vocational&quot; &quot;Yr10&quot; &quot;Yr11&quot; &quot;Yr12&quot; &quot;Yr1t4&quot; &quot;Yr5t6&quot; &quot;Yr7t8&quot; &quot;Yr9&quot;</Array>
+       </SimpleSetPredicate>
+       <SimpleSetPredicate field="Occupation" booleanOperator="isIn">
+        <Array n="4" type="string">&quot;Clerical&quot; &quot;Protective&quot; &quot;Sales&quot; &quot;Support&quot;</Array>
+       </SimpleSetPredicate>
+       <SimpleSetPredicate field="Employment" booleanOperator="isIn">
+        <Array n="3" type="string">&quot;Consultant&quot; &quot;PSFederal&quot; &quot;SelfEmp&quot;</Array>
+       </SimpleSetPredicate>
+       <SimplePredicate field="Hours" operator="lessThan" value="39.5"/>
+       <SimplePredicate field="Income" operator="greaterOrEqual" value="74885.37"/>
+       <SimpleSetPredicate field="Gender" booleanOperator="isIn">
+        <Array n="1" type="string">&quot;Female&quot;</Array>
+       </SimpleSetPredicate>
+      </CompoundPredicate>
+      <ScoreDistribution value="0" recordCount="119" confidence="0.538461538461538"/>
+      <ScoreDistribution value="1" recordCount="102" confidence="0.461538461538462"/>
+      <Node id="28" score="0" recordCount="212" defaultChild="56">
+       <SimplePredicate field="Deductions" operator="lessThan" value="1299.833"/>
+       <ScoreDistribution value="0" recordCount="119" confidence="0.561320754716981"/>
+       <ScoreDistribution value="1" recordCount="93" confidence="0.438679245283019"/>
+       <Node id="56" score="0" recordCount="157" defaultChild="112">
+        <CompoundPredicate booleanOperator="surrogate">
+         <SimpleSetPredicate field="Employment" booleanOperator="isIn">
+          <Array n="2" type="string">&quot;Consultant&quot; &quot;Private&quot;</Array>
+         </SimpleSetPredicate>
+         <SimplePredicate field="Income" operator="greaterOrEqual" value="3958.445"/>
+         <SimpleSetPredicate field="Education" booleanOperator="isIn">
+          <Array n="9" type="string">&quot;College&quot; &quot;HSgrad&quot; &quot;Vocational&quot; &quot;Yr10&quot; &quot;Yr11&quot; &quot;Yr12&quot; &quot;Yr1t4&quot; &quot;Yr7t8&quot; &quot;Yr9&quot;</Array>
+         </SimpleSetPredicate>
+         <SimplePredicate field="Hours" operator="lessThan" value="61"/>
+        </CompoundPredicate>
+        <ScoreDistribution value="0" recordCount="99" confidence="0.630573248407643"/>
+        <ScoreDistribution value="1" recordCount="58" confidence="0.369426751592357"/>
+        <Node id="112" score="0" recordCount="126">
+         <CompoundPredicate booleanOperator="surrogate">
+          <SimplePredicate field="Income" operator="lessThan" value="60990.6"/>
+          <SimpleSetPredicate field="Gender" booleanOperator="isIn">
+           <Array n="1" type="string">&quot;Male&quot;</Array>
+          </SimpleSetPredicate>
+          <SimpleSetPredicate field="Education" booleanOperator="isIn">
+           <Array n="8" type="string">&quot;College&quot; &quot;HSgrad&quot; &quot;Vocational&quot; &quot;Yr10&quot; &quot;Yr11&quot; &quot;Yr1t4&quot; &quot;Yr7t8&quot; &quot;Yr9&quot;</Array>
+          </SimpleSetPredicate>
+         </CompoundPredicate>
+         <ScoreDistribution value="0" recordCount="87" confidence="0.69047619047619"/>
+         <ScoreDistribution value="1" recordCount="39" confidence="0.309523809523809"/>
+        </Node>
+        <Node id="113" score="1" recordCount="31">
+         <CompoundPredicate booleanOperator="surrogate">
+          <SimplePredicate field="Income" operator="greaterOrEqual" value="60990.6"/>
+          <SimpleSetPredicate field="Gender" booleanOperator="isIn">
+           <Array n="1" type="string">&quot;Female&quot;</Array>
+          </SimpleSetPredicate>
+          <SimpleSetPredicate field="Education" booleanOperator="isIn">
+           <Array n="1" type="string">&quot;Yr12&quot;</Array>
+          </SimpleSetPredicate>
+         </CompoundPredicate>
+         <ScoreDistribution value="0" recordCount="12" confidence="0.387096774193548"/>
+         <ScoreDistribution value="1" recordCount="19" confidence="0.612903225806452"/>
+        </Node>
+       </Node>
+       <Node id="57" score="1" recordCount="55">
+        <CompoundPredicate booleanOperator="surrogate">
+         <SimpleSetPredicate field="Employment" booleanOperator="isIn">
+          <Array n="4" type="string">&quot;PSFederal&quot; &quot;PSLocal&quot; &quot;PSState&quot; &quot;SelfEmp&quot;</Array>
+         </SimpleSetPredicate>
+         <SimplePredicate field="Income" operator="lessThan" value="3958.445"/>
+         <SimpleSetPredicate field="Education" booleanOperator="isIn">
+          <Array n="1" type="string">&quot;Yr5t6&quot;</Array>
+         </SimpleSetPredicate>
+         <SimplePredicate field="Hours" operator="greaterOrEqual" value="61"/>
+        </CompoundPredicate>
+        <ScoreDistribution value="0" recordCount="20" confidence="0.363636363636364"/>
+        <ScoreDistribution value="1" recordCount="35" confidence="0.636363636363636"/>
+       </Node>
+      </Node>
+      <Node id="29" score="1" recordCount="9">
+       <SimplePredicate field="Deductions" operator="greaterOrEqual" value="1299.833"/>
+       <ScoreDistribution value="0" recordCount="0" confidence="0"/>
+       <ScoreDistribution value="1" recordCount="9" confidence="1"/>
+      </Node>
+     </Node>
+     <Node id="15" score="1" recordCount="247">
+      <CompoundPredicate booleanOperator="surrogate">
+       <SimpleSetPredicate field="Education" booleanOperator="isIn">
+        <Array n="5" type="string">&quot;Associate&quot; &quot;Bachelor&quot; &quot;Doctorate&quot; &quot;Master&quot; &quot;Professional&quot;</Array>
+       </SimpleSetPredicate>
+       <SimpleSetPredicate field="Occupation" booleanOperator="isIn">
+        <Array n="2" type="string">&quot;Executive&quot; &quot;Professional&quot;</Array>
+       </SimpleSetPredicate>
+       <SimpleSetPredicate field="Employment" booleanOperator="isIn">
+        <Array n="3" type="string">&quot;Private&quot; &quot;PSLocal&quot; &quot;PSState&quot;</Array>
+       </SimpleSetPredicate>
+       <SimplePredicate field="Hours" operator="greaterOrEqual" value="39.5"/>
+       <SimplePredicate field="Income" operator="lessThan" value="74885.37"/>
+       <SimpleSetPredicate field="Gender" booleanOperator="isIn">
+        <Array n="1" type="string">&quot;Male&quot;</Array>
+       </SimpleSetPredicate>
+      </CompoundPredicate>
+      <ScoreDistribution value="0" recordCount="62" confidence="0.251012145748988"/>
+      <ScoreDistribution value="1" recordCount="185" confidence="0.748987854251012"/>
+     </Node>
+    </Node>
+   </Node>
+  </Node>
+ </TreeModel>
+</PMML>

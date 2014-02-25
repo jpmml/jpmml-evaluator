@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<process version="5.3.013">
+  <context>
+    <input/>
+    <output/>
+    <macros/>
+  </context>
+  <operator activated="true" class="process" compatibility="5.3.013" expanded="true" name="Process">
+    <parameter key="logverbosity" value="init"/>
+    <parameter key="random_seed" value="2001"/>
+    <parameter key="send_mail" value="never"/>
+    <parameter key="notification_email" value=""/>
+    <parameter key="process_duration_for_mail" value="30"/>
+    <parameter key="encoding" value="SYSTEM"/>
+    <process expanded="true">
+      <operator activated="true" class="read_csv" compatibility="5.3.013" expanded="true" height="60" name="Read CSV (3)" width="90" x="45" y="120">
+        <parameter key="csv_file" value="P:\jpmml\jpmml\pmml-rapidminer\src\test\resources\csv\Ozone.csv"/>
+        <parameter key="column_separators" value=","/>
+        <parameter key="trim_lines" value="false"/>
+        <parameter key="use_quotes" value="true"/>
+        <parameter key="quotes_character" value="&quot;"/>
+        <parameter key="escape_character" value="\"/>
+        <parameter key="skip_comments" value="false"/>
+        <parameter key="comment_characters" value="#"/>
+        <parameter key="parse_numbers" value="true"/>
+        <parameter key="decimal_character" value="."/>
+        <parameter key="grouped_digits" value="false"/>
+        <parameter key="grouping_character" value=","/>
+        <parameter key="date_format" value=""/>
+        <parameter key="first_row_as_names" value="false"/>
+        <list key="annotations">
+          <parameter key="0" value="Name"/>
+        </list>
+        <parameter key="time_zone" value="SYSTEM"/>
+        <parameter key="locale" value="English (United States)"/>
+        <parameter key="encoding" value="windows-1252"/>
+        <list key="data_set_meta_data_information">
+          <parameter key="0" value="O3.true.integer.attribute"/>
+          <parameter key="1" value="vh.false.integer.attribute"/>
+          <parameter key="2" value="wind.false.integer.attribute"/>
+          <parameter key="3" value="humidity.false.integer.attribute"/>
+          <parameter key="4" value="temp.true.integer.attribute"/>
+          <parameter key="5" value="ibh.true.integer.attribute"/>
+          <parameter key="6" value="dpg.false.integer.attribute"/>
+          <parameter key="7" value="ibt.true.integer.attribute"/>
+          <parameter key="8" value="vis.false.integer.attribute"/>
+          <parameter key="9" value="doy.false.integer.attribute"/>
+        </list>
+        <parameter key="read_not_matching_values_as_missings" value="true"/>
+        <parameter key="datamanagement" value="double_array"/>
+      </operator>
+      <operator activated="true" class="set_role" compatibility="5.3.013" expanded="true" height="76" name="Set Role (3)" width="90" x="179" y="120">
+        <parameter key="attribute_name" value="O3"/>
+        <parameter key="target_role" value="label"/>
+        <list key="set_additional_roles"/>
+      </operator>
+      <operator activated="true" class="linear_regression" compatibility="5.3.013" expanded="true" height="94" name="Linear Regression (2)" width="90" x="313" y="30">
+        <parameter key="feature_selection" value="M5 prime"/>
+        <parameter key="alpha" value="0.05"/>
+        <parameter key="max_iterations" value="10"/>
+        <parameter key="forward_alpha" value="0.05"/>
+        <parameter key="backward_alpha" value="0.05"/>
+        <parameter key="eliminate_colinear_features" value="true"/>
+        <parameter key="min_tolerance" value="0.05"/>
+        <parameter key="use_bias" value="true"/>
+        <parameter key="ridge" value="1.0E-8"/>
+      </operator>
+      <operator activated="true" class="select_attributes" compatibility="5.3.013" expanded="true" height="76" name="Select Attributes (3)" width="90" x="313" y="165">
+        <parameter key="attribute_filter_type" value="single"/>
+        <parameter key="attribute" value="O3"/>
+        <parameter key="attributes" value="Petal.Length|Petal.Width|Sepal.Length|Sepal.Width"/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="real"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="true"/>
+        <parameter key="include_special_attributes" value="true"/>
+      </operator>
+      <operator activated="true" class="apply_model" compatibility="5.3.013" expanded="true" height="76" name="Apply Model (3)" width="90" x="447" y="120">
+        <list key="application_parameters"/>
+        <parameter key="create_view" value="false"/>
+      </operator>
+      <operator activated="true" class="select_attributes" compatibility="5.3.013" expanded="true" height="76" name="Select Attributes (5)" width="90" x="581" y="75">
+        <parameter key="attribute_filter_type" value="subset"/>
+        <parameter key="attribute" value=""/>
+        <parameter key="attributes" value="prediction(O3)|"/>
+        <parameter key="use_except_expression" value="false"/>
+        <parameter key="value_type" value="attribute_value"/>
+        <parameter key="use_value_type_exception" value="false"/>
+        <parameter key="except_value_type" value="time"/>
+        <parameter key="block_type" value="attribute_block"/>
+        <parameter key="use_block_type_exception" value="false"/>
+        <parameter key="except_block_type" value="value_matrix_row_start"/>
+        <parameter key="invert_selection" value="false"/>
+        <parameter key="include_special_attributes" value="false"/>
+      </operator>
+      <operator activated="true" class="generate_copy" compatibility="5.3.013" expanded="true" height="76" name="Generate Copy (2)" width="90" x="715" y="75">
+        <parameter key="attribute_name" value="prediction(O3)"/>
+        <parameter key="new_name" value="O3"/>
+      </operator>
+      <operator activated="true" class="write_csv" compatibility="5.3.013" expanded="true" height="76" name="Write CSV (3)" width="90" x="849" y="75">
+        <parameter key="csv_file" value="P:\jpmml\jpmml\pmml-rapidminer\src\test\resources\csv\RegressionOzone.csv"/>
+        <parameter key="column_separator" value=","/>
+        <parameter key="write_attribute_names" value="true"/>
+        <parameter key="quote_nominal_values" value="false"/>
+        <parameter key="format_date_attributes" value="false"/>
+        <parameter key="append_to_file" value="false"/>
+        <parameter key="encoding" value="SYSTEM"/>
+      </operator>
+      <operator activated="true" class="pmml:write_pmml" compatibility="5.3.000" expanded="true" height="60" name="Write PMML (3)" width="90" x="581" y="165">
+        <parameter key="file" value="P:\jpmml\jpmml\pmml-rapidminer\src\test\resources\pmml\RegressionOzone.pmml"/>
+        <parameter key="version" value="4.0"/>
+      </operator>
+      <connect from_op="Read CSV (3)" from_port="output" to_op="Set Role (3)" to_port="example set input"/>
+      <connect from_op="Set Role (3)" from_port="example set output" to_op="Linear Regression (2)" to_port="training set"/>
+      <connect from_op="Set Role (3)" from_port="original" to_op="Select Attributes (3)" to_port="example set input"/>
+      <connect from_op="Linear Regression (2)" from_port="model" to_op="Apply Model (3)" to_port="model"/>
+      <connect from_op="Select Attributes (3)" from_port="example set output" to_op="Apply Model (3)" to_port="unlabelled data"/>
+      <connect from_op="Apply Model (3)" from_port="labelled data" to_op="Select Attributes (5)" to_port="example set input"/>
+      <connect from_op="Apply Model (3)" from_port="model" to_op="Write PMML (3)" to_port="model"/>
+      <connect from_op="Select Attributes (5)" from_port="example set output" to_op="Generate Copy (2)" to_port="example set input"/>
+      <connect from_op="Generate Copy (2)" from_port="example set output" to_op="Write CSV (3)" to_port="input"/>
+      <portSpacing port="source_input 1" spacing="0"/>
+      <portSpacing port="sink_result 1" spacing="0"/>
+    </process>
+  </operator>
+</process>

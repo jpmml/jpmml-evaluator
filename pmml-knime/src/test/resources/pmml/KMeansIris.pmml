@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1">
+  <Header copyright="Vfed">
+    <Application name="KNIME" version="2.8.0"/>
+  </Header>
+  <DataDictionary numberOfFields="5">
+    <DataField name="Sepal.Length" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="4.3" rightMargin="7.9"/>
+    </DataField>
+    <DataField name="Sepal.Width" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="2.0" rightMargin="4.4"/>
+    </DataField>
+    <DataField name="Petal.Length" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="1.0" rightMargin="6.9"/>
+    </DataField>
+    <DataField name="Petal.Width" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="0.1" rightMargin="2.5"/>
+    </DataField>
+    <DataField name="Species" optype="categorical" dataType="string">
+      <Value value="setosa"/>
+      <Value value="versicolor"/>
+      <Value value="virginica"/>
+    </DataField>
+  </DataDictionary>
+  <ClusteringModel modelName="k-means" functionName="clustering" modelClass="centerBased" numberOfClusters="3">
+    <MiningSchema>
+      <MiningField name="Sepal.Length" invalidValueTreatment="asIs"/>
+      <MiningField name="Sepal.Width" invalidValueTreatment="asIs"/>
+      <MiningField name="Petal.Length" invalidValueTreatment="asIs"/>
+      <MiningField name="Petal.Width" invalidValueTreatment="asIs"/>
+    </MiningSchema>
+    <!-- Custom Output element -->
+    <Output>
+      <OutputField name="Cluster" optype="categorical" dataType="string" feature="predictedDisplayValue"/>
+    </Output>
+    <ComparisonMeasure kind="distance">
+      <squaredEuclidean/>
+    </ComparisonMeasure>
+    <ClusteringField field="Sepal.Length" compareFunction="absDiff"/>
+    <ClusteringField field="Sepal.Width" compareFunction="absDiff"/>
+    <ClusteringField field="Petal.Length" compareFunction="absDiff"/>
+    <ClusteringField field="Petal.Width" compareFunction="absDiff"/>
+    <Cluster name="cluster_0" size="39">
+      <Array n="4" type="real">6.853846153846153 3.0769230769230766 5.715384615384615 2.053846153846153</Array>
+    </Cluster>
+    <Cluster name="cluster_1" size="61">
+      <Array n="4" type="real">5.88360655737705 2.740983606557377 4.388524590163935 1.4344262295081966</Array>
+    </Cluster>
+    <Cluster name="cluster_2" size="50">
+      <Array n="4" type="real">5.005999999999999 3.428000000000001 1.4620000000000002 0.2459999999999999</Array>
+    </Cluster>
+  </ClusteringModel>
+</PMML>

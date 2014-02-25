@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+    <Header copyright="Copyright (c) 2013 KNIME.com AG, Zurich, Switzerland"/>
+    <DataDictionary numberOfFields="6">
+        <DataField name="input" optype="continuous" dataType="double"/>
+        <DataField name="output" optype="categorical" dataType="string">
+            <Value value="low"/>
+            <Value value="medium"/>
+            <Value value="high"/>
+        </DataField>
+    </DataDictionary>
+    <NearestNeighborModel modelName="KNN" functionName="classification" numberOfNeighbors="2" categoricalScoringMethod="majorityVote">
+        <MiningSchema>
+            <MiningField name="input"/>
+            <MiningField name="output" usageType="predicted"/>
+        </MiningSchema>
+        <TrainingInstances isTransformed="false" recordCount="5" fieldCount="2">
+            <InstanceFields>
+                <InstanceField field="input" column="in"/>
+                <InstanceField field="output" column="out"/>
+            </InstanceFields>
+            <InlineTable>
+                <row>
+                    <in>1</in>
+                    <out>low</out>
+                </row>
+                <row>
+                    <in>2</in>
+                    <out>medium</out>
+                </row>
+                <row>
+                    <in>3</in>
+                    <out>medium</out>
+                </row>
+                <row>
+                    <in>4</in>
+                    <out>high</out>
+                </row>
+                <row>
+                    <in>5</in>
+                    <out>high</out>
+                </row>
+            </InlineTable>
+        </TrainingInstances>
+        <ComparisonMeasure kind="distance">
+            <squaredEuclidean/>
+        </ComparisonMeasure>
+        <KNNInputs>
+            <KNNInput field="input" compareFunction="absDiff"/>
+        </KNNInputs>
+    </NearestNeighborModel>
+</PMML>

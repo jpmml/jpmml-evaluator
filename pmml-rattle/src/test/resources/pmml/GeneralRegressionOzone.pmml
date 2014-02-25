@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
+ <Header copyright="Copyright (c) 2013 Vfed" description="Generalized Linear Regression Model">
+  <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.3"/>
+  <Timestamp>2013-09-16 10:58:37</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="4">
+  <DataField name="O3" optype="continuous" dataType="double"/>
+  <DataField name="temp" optype="continuous" dataType="double"/>
+  <DataField name="ibh" optype="continuous" dataType="double"/>
+  <DataField name="ibt" optype="continuous" dataType="double"/>
+ </DataDictionary>
+ <GeneralRegressionModel modelName="General_Regression_Model" modelType="generalizedLinear" functionName="regression" algorithmName="glm" distribution="normal" linkFunction="identity">
+  <MiningSchema>
+   <MiningField name="O3" usageType="predicted"/>
+   <MiningField name="temp" usageType="active"/>
+   <MiningField name="ibh" usageType="active"/>
+   <MiningField name="ibt" usageType="active"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="Predicted_O3" feature="predictedValue"/>
+  </Output>
+  <ParameterList>
+   <Parameter name="p0" label="(Intercept)"/>
+   <Parameter name="p1" label="temp"/>
+   <Parameter name="p2" label="ibh"/>
+   <Parameter name="p3" label="ibt"/>
+   <Parameter name="p4" label="temp:ibh"/>
+   <Parameter name="p5" label="temp:ibt"/>
+   <Parameter name="p6" label="ibh:ibt"/>
+   <Parameter name="p7" label="temp:ibh:ibt"/>
+  </ParameterList>
+  <FactorList/>
+  <CovariateList>
+   <Predictor name="temp"/>
+   <Predictor name="ibh"/>
+   <Predictor name="ibt"/>
+  </CovariateList>
+  <PPMatrix>
+   <PPCell value="1" predictorName="temp" parameterName="p1"/>
+   <PPCell value="1" predictorName="ibh" parameterName="p2"/>
+   <PPCell value="1" predictorName="ibt" parameterName="p3"/>
+   <PPCell value="1" predictorName="temp" parameterName="p4"/>
+   <PPCell value="1" predictorName="ibh" parameterName="p4"/>
+   <PPCell value="1" predictorName="temp" parameterName="p5"/>
+   <PPCell value="1" predictorName="ibt" parameterName="p5"/>
+   <PPCell value="1" predictorName="ibh" parameterName="p6"/>
+   <PPCell value="1" predictorName="ibt" parameterName="p6"/>
+   <PPCell value="1" predictorName="temp" parameterName="p7"/>
+   <PPCell value="1" predictorName="ibh" parameterName="p7"/>
+   <PPCell value="1" predictorName="ibt" parameterName="p7"/>
+  </PPMatrix>
+  <ParamMatrix>
+   <PCell parameterName="p0" df="1" beta="0.134527233143683"/>
+   <PCell parameterName="p1" df="1" beta="0.266502023146842"/>
+   <PCell parameterName="p2" df="1" beta="0.000797305224210236"/>
+   <PCell parameterName="p3" df="1" beta="-0.0801009112817608"/>
+   <PCell parameterName="p4" df="1" beta="-5.33106897699767e-05"/>
+   <PCell parameterName="p5" df="1" beta="0.00103874529298235"/>
+   <PCell parameterName="p6" df="1" beta="1.53132524539178e-06"/>
+   <PCell parameterName="p7" df="1" beta="1.01217599409579e-07"/>
+  </ParamMatrix>
+ </GeneralRegressionModel>
+</PMML>

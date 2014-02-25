@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
+ <Header copyright="Copyright (c) 2013 Vfed" description="KMeans cluster model">
+  <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.3"/>
+  <Timestamp>2013-09-16 10:38:36</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="4">
+  <DataField name="Sepal.Length" optype="continuous" dataType="double"/>
+  <DataField name="Sepal.Width" optype="continuous" dataType="double"/>
+  <DataField name="Petal.Length" optype="continuous" dataType="double"/>
+  <DataField name="Petal.Width" optype="continuous" dataType="double"/>
+ </DataDictionary>
+ <ClusteringModel modelName="KMeans_Model" functionName="clustering" algorithmName="KMeans: Hartigan and Wong" modelClass="centerBased" numberOfClusters="3">
+  <MiningSchema>
+   <MiningField name="Sepal.Length" usageType="active"/>
+   <MiningField name="Sepal.Width" usageType="active"/>
+   <MiningField name="Petal.Length" usageType="active"/>
+   <MiningField name="Petal.Width" usageType="active"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="predictedValue" feature="predictedValue"/>
+   <OutputField name="clusterAffinity_1" feature="clusterAffinity" value="1"/>
+   <OutputField name="clusterAffinity_2" feature="clusterAffinity" value="2"/>
+   <OutputField name="clusterAffinity_3" feature="clusterAffinity" value="3"/>
+   <!-- Custom OutputField element -->
+   <OutputField name="Cluster" feature="predictedValue"/>
+  </Output>
+  <ComparisonMeasure kind="distance">
+   <squaredEuclidean/>
+  </ComparisonMeasure>
+  <ClusteringField field="Sepal.Length" compareFunction="absDiff"/>
+  <ClusteringField field="Sepal.Width" compareFunction="absDiff"/>
+  <ClusteringField field="Petal.Length" compareFunction="absDiff"/>
+  <ClusteringField field="Petal.Width" compareFunction="absDiff"/>
+  <Cluster name="1" size="62" id="1">
+   <Array n="4" type="real">5.90161290322581 2.74838709677419 4.39354838709678 1.43387096774194</Array>
+  </Cluster>
+  <Cluster name="2" size="38" id="2">
+   <Array n="4" type="real">6.85 3.07368421052632 5.74210526315789 2.07105263157895</Array>
+  </Cluster>
+  <Cluster name="3" size="50" id="3">
+   <Array n="4" type="real">5.006 3.428 1.462 0.246</Array>
+  </Cluster>
+ </ClusteringModel>
+</PMML>

@@ -1,0 +1,414 @@
+<?xml version="1.0"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
+ <Header copyright="Copyright (c) 2013 Vfed" description="NaiveBayes Model">
+  <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.3"/>
+  <Timestamp>2013-09-17 00:20:30</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="9">
+  <DataField name="Adjusted" optype="categorical" dataType="string">
+   <Value value="0"/>
+   <Value value="1"/>
+  </DataField>
+  <DataField name="Employment" optype="categorical" dataType="string">
+   <Value value="Consultant"/>
+   <Value value="Private"/>
+   <Value value="PSFederal"/>
+   <Value value="PSLocal"/>
+   <Value value="PSState"/>
+   <Value value="SelfEmp"/>
+   <Value value="Volunteer"/>
+  </DataField>
+  <DataField name="Education" optype="categorical" dataType="string">
+   <Value value="Associate"/>
+   <Value value="Bachelor"/>
+   <Value value="College"/>
+   <Value value="Doctorate"/>
+   <Value value="HSgrad"/>
+   <Value value="Master"/>
+   <Value value="Preschool"/>
+   <Value value="Professional"/>
+   <Value value="Vocational"/>
+   <Value value="Yr10"/>
+   <Value value="Yr11"/>
+   <Value value="Yr12"/>
+   <Value value="Yr1t4"/>
+   <Value value="Yr5t6"/>
+   <Value value="Yr7t8"/>
+   <Value value="Yr9"/>
+  </DataField>
+  <DataField name="Marital" optype="categorical" dataType="string">
+   <Value value="Absent"/>
+   <Value value="Divorced"/>
+   <Value value="Married"/>
+   <Value value="Married-spouse-absent"/>
+   <Value value="Unmarried"/>
+   <Value value="Widowed"/>
+  </DataField>
+  <DataField name="Occupation" optype="categorical" dataType="string">
+   <Value value="Cleaner"/>
+   <Value value="Clerical"/>
+   <Value value="Executive"/>
+   <Value value="Farming"/>
+   <Value value="Home"/>
+   <Value value="Machinist"/>
+   <Value value="Military"/>
+   <Value value="Professional"/>
+   <Value value="Protective"/>
+   <Value value="Repair"/>
+   <Value value="Sales"/>
+   <Value value="Service"/>
+   <Value value="Support"/>
+   <Value value="Transport"/>
+  </DataField>
+  <DataField name="Income" optype="continuous" dataType="double"/>
+  <DataField name="Gender" optype="categorical" dataType="string">
+   <Value value="Female"/>
+   <Value value="Male"/>
+  </DataField>
+  <DataField name="Deductions" optype="continuous" dataType="double"/>
+  <DataField name="Hours" optype="continuous" dataType="double"/>
+ </DataDictionary>
+ <NaiveBayesModel modelName="naiveBayes_Model" functionName="classification" threshold="0.001">
+  <MiningSchema>
+   <MiningField name="Adjusted" usageType="predicted"/>
+   <MiningField name="Employment" usageType="active"/>
+   <MiningField name="Education" usageType="active"/>
+   <MiningField name="Marital" usageType="active"/>
+   <MiningField name="Occupation" usageType="active"/>
+   <MiningField name="Income" usageType="active"/>
+   <MiningField name="Gender" usageType="active"/>
+   <MiningField name="Deductions" usageType="active"/>
+   <MiningField name="Hours" usageType="active"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="Predicted_Adjusted" feature="predictedValue"/>
+   <OutputField name="Probability_0" optype="continuous" dataType="double" feature="probability" value="0"/>
+   <OutputField name="Probability_1" optype="continuous" dataType="double" feature="probability" value="1"/>
+  </Output>
+  <BayesInputs>
+   <BayesInput fieldName="Employment">
+    <PairCounts value="Consultant">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="107"/>
+      <TargetValueCount value="1" count="40"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Private">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="1091"/>
+      <TargetValueCount value="1" count="291"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="PSFederal">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="50"/>
+      <TargetValueCount value="1" count="19"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="PSLocal">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="85"/>
+      <TargetValueCount value="1" count="30"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="PSState">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="48"/>
+      <TargetValueCount value="1" count="23"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="SelfEmp">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="42"/>
+      <TargetValueCount value="1" count="32"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Volunteer">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="1"/>
+      <TargetValueCount value="1" count="0"/>
+     </TargetValueCounts>
+    </PairCounts>
+   </BayesInput>
+   <BayesInput fieldName="Education">
+    <PairCounts value="Associate">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="45"/>
+      <TargetValueCount value="1" count="19"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Bachelor">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="185"/>
+      <TargetValueCount value="1" count="137"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="College">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="336"/>
+      <TargetValueCount value="1" count="76"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Doctorate">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="8"/>
+      <TargetValueCount value="1" count="15"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="HSgrad">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="530"/>
+      <TargetValueCount value="1" count="94"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Master">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="38"/>
+      <TargetValueCount value="1" count="55"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Preschool">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="6"/>
+      <TargetValueCount value="1" count="0"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Professional">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="6"/>
+      <TargetValueCount value="1" count="16"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Vocational">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="65"/>
+      <TargetValueCount value="1" count="14"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Yr10">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="50"/>
+      <TargetValueCount value="1" count="4"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Yr11">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="62"/>
+      <TargetValueCount value="1" count="3"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Yr12">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="14"/>
+      <TargetValueCount value="1" count="1"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Yr1t4">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="5"/>
+      <TargetValueCount value="1" count="0"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Yr5t6">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="19"/>
+      <TargetValueCount value="1" count="0"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Yr7t8">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="32"/>
+      <TargetValueCount value="1" count="0"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Yr9">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="23"/>
+      <TargetValueCount value="1" count="1"/>
+     </TargetValueCounts>
+    </PairCounts>
+   </BayesInput>
+   <BayesInput fieldName="Marital">
+    <PairCounts value="Absent">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="592"/>
+      <TargetValueCount value="1" count="27"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Divorced">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="233"/>
+      <TargetValueCount value="1" count="20"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Married">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="481"/>
+      <TargetValueCount value="1" count="377"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Married-spouse-absent">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="19"/>
+      <TargetValueCount value="1" count="2"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Unmarried">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="57"/>
+      <TargetValueCount value="1" count="5"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Widowed">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="42"/>
+      <TargetValueCount value="1" count="4"/>
+     </TargetValueCounts>
+    </PairCounts>
+   </BayesInput>
+   <BayesInput fieldName="Occupation">
+    <PairCounts value="Cleaner">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="85"/>
+      <TargetValueCount value="1" count="5"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Clerical">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="191"/>
+      <TargetValueCount value="1" count="31"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Executive">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="152"/>
+      <TargetValueCount value="1" count="134"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Farming">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="51"/>
+      <TargetValueCount value="1" count="6"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Home">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="5"/>
+      <TargetValueCount value="1" count="0"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Machinist">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="119"/>
+      <TargetValueCount value="1" count="18"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Military">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="1"/>
+      <TargetValueCount value="1" count="0"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Professional">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="138"/>
+      <TargetValueCount value="1" count="99"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Protective">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="25"/>
+      <TargetValueCount value="1" count="14"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Repair">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="176"/>
+      <TargetValueCount value="1" count="46"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Sales">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="158"/>
+      <TargetValueCount value="1" count="46"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Service">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="196"/>
+      <TargetValueCount value="1" count="7"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Support">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="35"/>
+      <TargetValueCount value="1" count="14"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Transport">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="92"/>
+      <TargetValueCount value="1" count="15"/>
+     </TargetValueCounts>
+    </PairCounts>
+   </BayesInput>
+   <Extension>
+    <BayesInput fieldName="Income">
+     <TargetValueStats>
+      <TargetValueStat value="0">
+       <GaussianDistribution mean="92125.2992696629" variance="4851894029.06708"/>
+      </TargetValueStat>
+      <TargetValueStat value="1">
+       <GaussianDistribution mean="58325.8782528736" variance="3974151993.22936"/>
+      </TargetValueStat>
+     </TargetValueStats>
+    </BayesInput>
+   </Extension>
+   <BayesInput fieldName="Gender">
+    <PairCounts value="Female">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="515"/>
+      <TargetValueCount value="1" count="62"/>
+     </TargetValueCounts>
+    </PairCounts>
+    <PairCounts value="Male">
+     <TargetValueCounts>
+      <TargetValueCount value="0" count="909"/>
+      <TargetValueCount value="1" count="373"/>
+     </TargetValueCounts>
+    </PairCounts>
+   </BayesInput>
+   <Extension>
+    <BayesInput fieldName="Deductions">
+     <TargetValueStats>
+      <TargetValueStat value="0">
+       <GaussianDistribution mean="33.1156367041199" variance="41751.1077244011"/>
+      </TargetValueStat>
+      <TargetValueStat value="1">
+       <GaussianDistribution mean="182.4" variance="333598.111520737"/>
+      </TargetValueStat>
+     </TargetValueStats>
+    </BayesInput>
+   </Extension>
+   <Extension>
+    <BayesInput fieldName="Hours">
+     <TargetValueStats>
+      <TargetValueStat value="0">
+       <GaussianDistribution mean="39.2654494382022" variance="132.338482159072"/>
+      </TargetValueStat>
+      <TargetValueStat value="1">
+       <GaussianDistribution mean="45.1103448275862" variance="115.075353567456"/>
+      </TargetValueStat>
+     </TargetValueStats>
+    </BayesInput>
+   </Extension>
+  </BayesInputs>
+  <BayesOutput fieldName="Adjusted">
+   <TargetValueCounts>
+    <TargetValueCount value="0" count="1424"/>
+    <TargetValueCount value="1" count="435"/>
+   </TargetValueCounts>
+  </BayesOutput>
+ </NaiveBayesModel>
+</PMML>

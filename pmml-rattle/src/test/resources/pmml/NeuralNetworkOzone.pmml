@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
+ <Header copyright="Copyright (c) 2013 Vfed" description="Neural Network PMML Model">
+  <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.3"/>
+  <Timestamp>2013-09-16 11:33:16</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="4">
+  <DataField name="O3" optype="continuous" dataType="double"/>
+  <DataField name="temp" optype="continuous" dataType="double"/>
+  <DataField name="ibh" optype="continuous" dataType="double"/>
+  <DataField name="ibt" optype="continuous" dataType="double"/>
+ </DataDictionary>
+ <NeuralNetwork modelName="NeuralNet_model" functionName="regression" numberOfLayers="2" activationFunction="logistic">
+  <MiningSchema>
+   <MiningField name="O3" usageType="predicted"/>
+   <MiningField name="temp" usageType="active"/>
+   <MiningField name="ibh" usageType="active"/>
+   <MiningField name="ibt" usageType="active"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="Predicted_O3" feature="predictedValue"/>
+  </Output>
+  <NeuralInputs numberOfInputs="3">
+   <NeuralInput id="1">
+    <DerivedField name="derivedNI_temp" optype="continuous" dataType="double">
+     <FieldRef field="temp"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="2">
+    <DerivedField name="derivedNI_ibh" optype="continuous" dataType="double">
+     <FieldRef field="ibh"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="3">
+    <DerivedField name="derivedNI_ibt" optype="continuous" dataType="double">
+     <FieldRef field="ibt"/>
+    </DerivedField>
+   </NeuralInput>
+  </NeuralInputs>
+  <NeuralLayer numberOfNeurons="4">
+   <Neuron id="4" bias="-0.00103902627918775">
+    <Con from="1" weight="-0.00940502021578975"/>
+    <Con from="2" weight="-0.207246309992967"/>
+    <Con from="3" weight="-0.0548178327611635"/>
+   </Neuron>
+   <Neuron id="5" bias="-90.7366491588721">
+    <Con from="1" weight="11.5708363149332"/>
+    <Con from="2" weight="0.139828324791701"/>
+    <Con from="3" weight="-3.16711586973786"/>
+   </Neuron>
+   <Neuron id="6" bias="-5.88688784171985">
+    <Con from="1" weight="0.0584720967627122"/>
+    <Con from="2" weight="-0.000167951358374246"/>
+    <Con from="3" weight="0.00810061029532884"/>
+   </Neuron>
+   <Neuron id="7" bias="0.00292187633574636">
+    <Con from="1" weight="3.10578604755096"/>
+    <Con from="2" weight="-0.234850269730269"/>
+    <Con from="3" weight="4.22485991929499"/>
+   </Neuron>
+  </NeuralLayer>
+  <NeuralLayer numberOfNeurons="1" activationFunction="identity">
+   <Neuron id="8" bias="-2.21833655565993">
+    <Con from="4" weight="0.00265182868199704"/>
+    <Con from="5" weight="5.9142339373141"/>
+    <Con from="6" weight="25.3460982010386"/>
+    <Con from="7" weight="2.14056332993904"/>
+   </Neuron>
+  </NeuralLayer>
+  <NeuralOutputs numberOfOutputs="1">
+   <NeuralOutput outputNeuron="8">
+    <DerivedField name="derivedNO_O3" optype="continuous" dataType="double">
+     <FieldRef field="O3"/>
+    </DerivedField>
+   </NeuralOutput>
+  </NeuralOutputs>
+ </NeuralNetwork>
+</PMML>

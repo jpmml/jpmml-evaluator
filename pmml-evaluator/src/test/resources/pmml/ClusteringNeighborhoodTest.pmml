@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+    <Header copyright="Copyright (c) 2011, DMG.org"/>
+    <DataDictionary numberOfFields="2">
+        <DataField name="marital status" optype="categorical" dataType="string">
+            <Value value="s"/>
+            <Value value="d"/>
+            <Value value="m"/>
+        </DataField>
+        <DataField name="dependents" optype="continuous" dataType="integer"/>
+    </DataDictionary>
+    <NearestNeighborModel modelName="KNN" functionName="clustering" numberOfNeighbors="3" instanceIdVariable="ID">
+        <MiningSchema>
+            <MiningField name="marital status"/>
+            <MiningField name="dependents"/>
+        </MiningSchema>
+        <Output>
+            <OutputField name="neighbor1" optype="categorical" dataType="string" feature="entityId" rank="1"/>
+            <OutputField name="neighbor2" optype="categorical" dataType="string" feature="entityId" rank="2"/>
+            <OutputField name="neighbor3" optype="categorical" dataType="string" feature="entityId" rank="3"/>
+        </Output>
+        <LocalTransformations>
+            <DerivedField name="single" optype="continuous" dataType="double">
+                <NormDiscrete field="marital status" value="s"/>
+            </DerivedField>
+            <DerivedField name="divorced" optype="continuous" dataType="double">
+                <NormDiscrete field="marital status" value="d"/>
+            </DerivedField>
+            <DerivedField name="married" optype="continuous" dataType="double">
+                <NormDiscrete field="marital status" value="m"/>
+            </DerivedField>
+            <DerivedField name="has dependents" optype="continuous" dataType="double">
+                <Apply function="if">
+                    <Apply function="greaterThan">
+                        <FieldRef field="dependents"/>
+                        <Constant dataType="integer">0</Constant>
+                    </Apply>
+                    <Constant dataType="double">1</Constant>
+                    <Constant dataType="double">0</Constant>
+                </Apply>
+            </DerivedField>
+        </LocalTransformations>
+        <TrainingInstances isTransformed="false" recordCount="5" fieldCount="3">
+            <InstanceFields>
+                <InstanceField field="ID" column="ID"/>
+                <InstanceField field="marital status" column="ms"/>
+                <InstanceField field="dependents" column="deps"/>
+            </InstanceFields>
+            <InlineTable>
+                <row>
+                    <ID>1</ID>
+                    <ms>s</ms>
+                    <deps>0</deps>
+                </row>
+                <row>
+                    <ID>2</ID>
+                    <ms>s</ms>
+                    <deps>2</deps>
+                </row>
+                <row>
+                    <ID>3</ID>
+                    <ms>d</ms>
+                    <deps>0</deps>
+                </row>
+                <row>
+                    <ID>4</ID>
+                    <ms>m</ms>
+                    <deps>0</deps>
+                </row>
+                <row>
+                    <ID>5</ID>
+                    <ms>m</ms>
+                    <deps>2</deps>
+                </row>
+            </InlineTable>
+        </TrainingInstances>
+        <ComparisonMeasure kind="similarity">
+            <simpleMatching/>
+        </ComparisonMeasure>
+        <KNNInputs>
+            <KNNInput field="single"/>
+            <KNNInput field="divorced"/>
+            <KNNInput field="married"/>
+            <KNNInput field="has dependents"/>
+        </KNNInputs>
+    </NearestNeighborModel>
+</PMML>

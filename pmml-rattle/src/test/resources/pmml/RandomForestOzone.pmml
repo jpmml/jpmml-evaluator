@@ -1,0 +1,3455 @@
+<?xml version="1.0"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
+ <Header copyright="Copyright (c) 2013 Vfed" description="Random Forest Tree Model">
+  <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.3"/>
+  <Timestamp>2013-09-16 10:58:38</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="4">
+  <DataField name="O3" optype="continuous" dataType="double"/>
+  <DataField name="temp" optype="continuous" dataType="double"/>
+  <DataField name="ibh" optype="continuous" dataType="double"/>
+  <DataField name="ibt" optype="continuous" dataType="double"/>
+ </DataDictionary>
+ <MiningModel modelName="randomForest_Model" functionName="regression">
+  <MiningSchema>
+   <MiningField name="O3" usageType="predicted" invalidValueTreatment="asIs"/>
+   <MiningField name="temp" usageType="active" invalidValueTreatment="asIs"/>
+   <MiningField name="ibh" usageType="active" invalidValueTreatment="asIs"/>
+   <MiningField name="ibt" usageType="active" invalidValueTreatment="asIs"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="Predicted_O3" feature="predictedValue"/>
+  </Output>
+  <Segmentation multipleModelMethod="average">
+   <Segment id="1">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="regression" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="O3" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="temp" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibh" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibt" usageType="active" invalidValueTreatment="asIs"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2">
+       <SimplePredicate field="temp" operator="lessOrEqual" value="67.5"/>
+       <Node id="4">
+        <SimplePredicate field="ibh" operator="lessOrEqual" value="3588.5"/>
+        <Node id="8">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="64.5"/>
+         <Node id="16">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="47.5"/>
+          <Node id="30" score="3">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="32.5"/>
+          </Node>
+          <Node id="31">
+           <SimplePredicate field="temp" operator="greaterThan" value="32.5"/>
+           <Node id="44" score="6.2">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="46.5"/>
+           </Node>
+           <Node id="45" score="3">
+            <SimplePredicate field="temp" operator="greaterThan" value="46.5"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="17">
+          <SimplePredicate field="temp" operator="greaterThan" value="47.5"/>
+          <Node id="32">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="204.5"/>
+           <Node id="46">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="184"/>
+            <Node id="62">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="181"/>
+             <Node id="82" score="8.2">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="51.5"/>
+             </Node>
+             <Node id="83">
+              <SimplePredicate field="temp" operator="greaterThan" value="51.5"/>
+              <Node id="98">
+               <SimplePredicate field="ibh" operator="lessOrEqual" value="2342"/>
+               <Node id="108" score="11.6666666666667">
+                <SimplePredicate field="ibh" operator="lessOrEqual" value="1475.5"/>
+               </Node>
+               <Node id="109" score="14.3333333333333">
+                <SimplePredicate field="ibh" operator="greaterThan" value="1475.5"/>
+               </Node>
+              </Node>
+              <Node id="99">
+               <SimplePredicate field="ibh" operator="greaterThan" value="2342"/>
+               <Node id="110" score="6.5">
+                <SimplePredicate field="ibh" operator="lessOrEqual" value="2840.5"/>
+               </Node>
+               <Node id="111" score="10.2222222222222">
+                <SimplePredicate field="ibh" operator="greaterThan" value="2840.5"/>
+               </Node>
+              </Node>
+             </Node>
+            </Node>
+            <Node id="63" score="4">
+             <SimplePredicate field="ibt" operator="greaterThan" value="181"/>
+            </Node>
+           </Node>
+           <Node id="47" score="13.3333333333333">
+            <SimplePredicate field="ibt" operator="greaterThan" value="184"/>
+           </Node>
+          </Node>
+          <Node id="33">
+           <SimplePredicate field="ibt" operator="greaterThan" value="204.5"/>
+           <Node id="48" score="5.28571428571429">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="59.5"/>
+           </Node>
+           <Node id="49" score="7.75">
+            <SimplePredicate field="temp" operator="greaterThan" value="59.5"/>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="9">
+         <SimplePredicate field="temp" operator="greaterThan" value="64.5"/>
+         <Node id="18" score="22">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="427.5"/>
+         </Node>
+         <Node id="19">
+          <SimplePredicate field="ibh" operator="greaterThan" value="427.5"/>
+          <Node id="34" score="8">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="147.5"/>
+          </Node>
+          <Node id="35">
+           <SimplePredicate field="ibt" operator="greaterThan" value="147.5"/>
+           <Node id="50" score="9">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="494.5"/>
+           </Node>
+           <Node id="51">
+            <SimplePredicate field="ibh" operator="greaterThan" value="494.5"/>
+            <Node id="64">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="226.5"/>
+             <Node id="84">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="208"/>
+              <Node id="100" score="12">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="155.5"/>
+              </Node>
+              <Node id="101" score="15">
+               <SimplePredicate field="ibt" operator="greaterThan" value="155.5"/>
+              </Node>
+             </Node>
+             <Node id="85" score="6">
+              <SimplePredicate field="ibt" operator="greaterThan" value="208"/>
+             </Node>
+            </Node>
+            <Node id="65" score="20">
+             <SimplePredicate field="ibt" operator="greaterThan" value="226.5"/>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="ibh" operator="greaterThan" value="3588.5"/>
+        <Node id="10">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="54.5"/>
+         <Node id="20" score="9">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="3685.5"/>
+         </Node>
+         <Node id="21">
+          <SimplePredicate field="ibh" operator="greaterThan" value="3685.5"/>
+          <Node id="36">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="43.5"/>
+           <Node id="52">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="31.5"/>
+            <Node id="66" score="3.44444444444444">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="39.5"/>
+            </Node>
+            <Node id="67" score="4.6">
+             <SimplePredicate field="temp" operator="greaterThan" value="39.5"/>
+            </Node>
+           </Node>
+           <Node id="53">
+            <SimplePredicate field="ibt" operator="greaterThan" value="31.5"/>
+            <Node id="68" score="2.33333333333333">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="47.5"/>
+            </Node>
+            <Node id="69" score="3">
+             <SimplePredicate field="ibt" operator="greaterThan" value="47.5"/>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="37">
+           <SimplePredicate field="temp" operator="greaterThan" value="43.5"/>
+           <Node id="54">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="84"/>
+            <Node id="70" score="4.125">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="48.5"/>
+            </Node>
+            <Node id="71" score="6.25">
+             <SimplePredicate field="temp" operator="greaterThan" value="48.5"/>
+            </Node>
+           </Node>
+           <Node id="55">
+            <SimplePredicate field="ibt" operator="greaterThan" value="84"/>
+            <Node id="72">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="53.5"/>
+             <Node id="86" score="4">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="51.5"/>
+             </Node>
+             <Node id="87" score="3.1">
+              <SimplePredicate field="temp" operator="greaterThan" value="51.5"/>
+             </Node>
+            </Node>
+            <Node id="73">
+             <SimplePredicate field="temp" operator="greaterThan" value="53.5"/>
+             <Node id="88" score="4">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="112.5"/>
+             </Node>
+             <Node id="89" score="4.77777777777778">
+              <SimplePredicate field="ibt" operator="greaterThan" value="112.5"/>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="11">
+         <SimplePredicate field="temp" operator="greaterThan" value="54.5"/>
+         <Node id="22" score="5.28571428571429">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="97"/>
+         </Node>
+         <Node id="23">
+          <SimplePredicate field="ibt" operator="greaterThan" value="97"/>
+          <Node id="38">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="165"/>
+           <Node id="56" score="5.5">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="56.5"/>
+           </Node>
+           <Node id="57">
+            <SimplePredicate field="temp" operator="greaterThan" value="56.5"/>
+            <Node id="74" score="11">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="59.5"/>
+            </Node>
+            <Node id="75">
+             <SimplePredicate field="temp" operator="greaterThan" value="59.5"/>
+             <Node id="90" score="5.6">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="124.5"/>
+             </Node>
+             <Node id="91">
+              <SimplePredicate field="ibt" operator="greaterThan" value="124.5"/>
+              <Node id="102" score="5">
+               <SimplePredicate field="ibh" operator="lessOrEqual" value="3746"/>
+              </Node>
+              <Node id="103" score="9.46153846153846">
+               <SimplePredicate field="ibh" operator="greaterThan" value="3746"/>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="39" score="5.33333333333333">
+           <SimplePredicate field="ibt" operator="greaterThan" value="165"/>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="temp" operator="greaterThan" value="67.5"/>
+       <Node id="6">
+        <SimplePredicate field="ibt" operator="lessOrEqual" value="226.5"/>
+        <Node id="12">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="2980"/>
+         <Node id="24" score="13.6">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="164.5"/>
+         </Node>
+         <Node id="25">
+          <SimplePredicate field="ibt" operator="greaterThan" value="164.5"/>
+          <Node id="40">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="225.5"/>
+           <Node id="58">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="74.5"/>
+            <Node id="76" score="20">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="559"/>
+            </Node>
+            <Node id="77">
+             <SimplePredicate field="ibh" operator="greaterThan" value="559"/>
+             <Node id="92">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="202"/>
+              <Node id="104" score="17.1111111111111">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="183.5"/>
+              </Node>
+              <Node id="105" score="14">
+               <SimplePredicate field="ibt" operator="greaterThan" value="183.5"/>
+              </Node>
+             </Node>
+             <Node id="93" score="18.1">
+              <SimplePredicate field="ibt" operator="greaterThan" value="202"/>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="59">
+            <SimplePredicate field="temp" operator="greaterThan" value="74.5"/>
+            <Node id="78" score="24">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="204"/>
+            </Node>
+            <Node id="79">
+             <SimplePredicate field="ibt" operator="greaterThan" value="204"/>
+             <Node id="94" score="21">
+              <SimplePredicate field="ibh" operator="lessOrEqual" value="1211.5"/>
+             </Node>
+             <Node id="95" score="17.7">
+              <SimplePredicate field="ibh" operator="greaterThan" value="1211.5"/>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="41" score="10">
+           <SimplePredicate field="ibt" operator="greaterThan" value="225.5"/>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="13">
+         <SimplePredicate field="ibh" operator="greaterThan" value="2980"/>
+         <Node id="26" score="5">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="176"/>
+         </Node>
+         <Node id="27" score="13.4">
+          <SimplePredicate field="ibt" operator="greaterThan" value="176"/>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="7">
+        <SimplePredicate field="ibt" operator="greaterThan" value="226.5"/>
+        <Node id="14" score="12.25">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="385"/>
+        </Node>
+        <Node id="15">
+         <SimplePredicate field="ibh" operator="greaterThan" value="385"/>
+         <Node id="28" score="30.875">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="568.5"/>
+         </Node>
+         <Node id="29">
+          <SimplePredicate field="ibh" operator="greaterThan" value="568.5"/>
+          <Node id="42" score="18.5">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="637.5"/>
+          </Node>
+          <Node id="43">
+           <SimplePredicate field="ibh" operator="greaterThan" value="637.5"/>
+           <Node id="60">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="2233.5"/>
+            <Node id="80">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="88.5"/>
+             <Node id="96">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="267"/>
+              <Node id="106" score="23.625">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="241"/>
+              </Node>
+              <Node id="107" score="26.2666666666667">
+               <SimplePredicate field="ibt" operator="greaterThan" value="241"/>
+              </Node>
+             </Node>
+             <Node id="97" score="22">
+              <SimplePredicate field="ibt" operator="greaterThan" value="267"/>
+             </Node>
+            </Node>
+            <Node id="81" score="29.75">
+             <SimplePredicate field="temp" operator="greaterThan" value="88.5"/>
+            </Node>
+           </Node>
+           <Node id="61" score="17">
+            <SimplePredicate field="ibh" operator="greaterThan" value="2233.5"/>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="2">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="regression" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="O3" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="temp" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibh" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibt" usageType="active" invalidValueTreatment="asIs"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2">
+       <SimplePredicate field="temp" operator="lessOrEqual" value="65.5"/>
+       <Node id="4">
+        <SimplePredicate field="ibh" operator="lessOrEqual" value="2030.5"/>
+        <Node id="8">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="1495.5"/>
+         <Node id="16">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="204.5"/>
+          <Node id="28">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="184"/>
+           <Node id="42">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="180.5"/>
+            <Node id="56">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="156"/>
+             <Node id="74">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="137"/>
+              <Node id="90" score="7">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="128.5"/>
+              </Node>
+              <Node id="91" score="12.25">
+               <SimplePredicate field="ibt" operator="greaterThan" value="128.5"/>
+              </Node>
+             </Node>
+             <Node id="75" score="6.14285714285714">
+              <SimplePredicate field="ibt" operator="greaterThan" value="137"/>
+             </Node>
+            </Node>
+            <Node id="57" score="11">
+             <SimplePredicate field="ibt" operator="greaterThan" value="156"/>
+            </Node>
+           </Node>
+           <Node id="43" score="4.66666666666667">
+            <SimplePredicate field="ibt" operator="greaterThan" value="180.5"/>
+           </Node>
+          </Node>
+          <Node id="29" score="14.8888888888889">
+           <SimplePredicate field="ibt" operator="greaterThan" value="184"/>
+          </Node>
+         </Node>
+         <Node id="17">
+          <SimplePredicate field="ibt" operator="greaterThan" value="204.5"/>
+          <Node id="30" score="4">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="58.5"/>
+          </Node>
+          <Node id="31" score="8">
+           <SimplePredicate field="temp" operator="greaterThan" value="58.5"/>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="9" score="12.7777777777778">
+         <SimplePredicate field="ibh" operator="greaterThan" value="1495.5"/>
+        </Node>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="ibh" operator="greaterThan" value="2030.5"/>
+        <Node id="10">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="55.5"/>
+         <Node id="18" score="2.5">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="39.5"/>
+         </Node>
+         <Node id="19">
+          <SimplePredicate field="temp" operator="greaterThan" value="39.5"/>
+          <Node id="32">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="102.5"/>
+           <Node id="44">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="48.5"/>
+            <Node id="58">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="58.5"/>
+             <Node id="76">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="52.5"/>
+              <Node id="92">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="43"/>
+               <Node id="102" score="3.85714285714286">
+                <SimplePredicate field="temp" operator="lessOrEqual" value="44"/>
+               </Node>
+               <Node id="103" score="6.6">
+                <SimplePredicate field="temp" operator="greaterThan" value="44"/>
+               </Node>
+              </Node>
+              <Node id="93" score="2">
+               <SimplePredicate field="ibt" operator="greaterThan" value="43"/>
+              </Node>
+             </Node>
+             <Node id="77" score="7.5">
+              <SimplePredicate field="ibt" operator="greaterThan" value="52.5"/>
+             </Node>
+            </Node>
+            <Node id="59">
+             <SimplePredicate field="ibt" operator="greaterThan" value="58.5"/>
+             <Node id="78" score="1">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="60.5"/>
+             </Node>
+             <Node id="79">
+              <SimplePredicate field="ibt" operator="greaterThan" value="60.5"/>
+              <Node id="94" score="3.2">
+               <SimplePredicate field="ibh" operator="lessOrEqual" value="4399.5"/>
+              </Node>
+              <Node id="95" score="5.42857142857143">
+               <SimplePredicate field="ibh" operator="greaterThan" value="4399.5"/>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="45">
+            <SimplePredicate field="temp" operator="greaterThan" value="48.5"/>
+            <Node id="60">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="54.5"/>
+             <Node id="80" score="8">
+              <SimplePredicate field="ibh" operator="lessOrEqual" value="3677.5"/>
+             </Node>
+             <Node id="81">
+              <SimplePredicate field="ibh" operator="greaterThan" value="3677.5"/>
+              <Node id="96">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="79.5"/>
+               <Node id="104" score="5.6">
+                <SimplePredicate field="temp" operator="lessOrEqual" value="50.5"/>
+               </Node>
+               <Node id="105" score="6.85714285714286">
+                <SimplePredicate field="temp" operator="greaterThan" value="50.5"/>
+               </Node>
+              </Node>
+              <Node id="97" score="4.2">
+               <SimplePredicate field="ibt" operator="greaterThan" value="79.5"/>
+              </Node>
+             </Node>
+            </Node>
+            <Node id="61" score="8.5">
+             <SimplePredicate field="temp" operator="greaterThan" value="54.5"/>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="33">
+           <SimplePredicate field="ibt" operator="greaterThan" value="102.5"/>
+           <Node id="46" score="2.44444444444444">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="110"/>
+           </Node>
+           <Node id="47">
+            <SimplePredicate field="ibt" operator="greaterThan" value="110"/>
+            <Node id="62" score="5.42857142857143">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="122"/>
+            </Node>
+            <Node id="63">
+             <SimplePredicate field="ibt" operator="greaterThan" value="122"/>
+             <Node id="82" score="4.4">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="51"/>
+             </Node>
+             <Node id="83" score="3.5">
+              <SimplePredicate field="temp" operator="greaterThan" value="51"/>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="11">
+         <SimplePredicate field="temp" operator="greaterThan" value="55.5"/>
+         <Node id="20">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="165.5"/>
+          <Node id="34" score="6.1">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="111"/>
+          </Node>
+          <Node id="35">
+           <SimplePredicate field="ibt" operator="greaterThan" value="111"/>
+           <Node id="48">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="62.5"/>
+            <Node id="64" score="6.5">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="2894.5"/>
+            </Node>
+            <Node id="65" score="9.8">
+             <SimplePredicate field="ibh" operator="greaterThan" value="2894.5"/>
+            </Node>
+           </Node>
+           <Node id="49" score="7">
+            <SimplePredicate field="temp" operator="greaterThan" value="62.5"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="21" score="5.71428571428571">
+          <SimplePredicate field="ibt" operator="greaterThan" value="165.5"/>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="temp" operator="greaterThan" value="65.5"/>
+       <Node id="6">
+        <SimplePredicate field="ibt" operator="lessOrEqual" value="223"/>
+        <Node id="12">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="2980"/>
+         <Node id="22" score="20.8">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="67.5"/>
+         </Node>
+         <Node id="23">
+          <SimplePredicate field="temp" operator="greaterThan" value="67.5"/>
+          <Node id="36">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="197"/>
+           <Node id="50" score="12.25">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="1987.5"/>
+           </Node>
+           <Node id="51" score="15.1428571428571">
+            <SimplePredicate field="ibh" operator="greaterThan" value="1987.5"/>
+           </Node>
+          </Node>
+          <Node id="37">
+           <SimplePredicate field="ibt" operator="greaterThan" value="197"/>
+           <Node id="52">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="1134.5"/>
+            <Node id="66" score="19">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="68.5"/>
+            </Node>
+            <Node id="67" score="14.1">
+             <SimplePredicate field="temp" operator="greaterThan" value="68.5"/>
+            </Node>
+           </Node>
+           <Node id="53">
+            <SimplePredicate field="ibh" operator="greaterThan" value="1134.5"/>
+            <Node id="68" score="22">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="77"/>
+            </Node>
+            <Node id="69">
+             <SimplePredicate field="temp" operator="greaterThan" value="77"/>
+             <Node id="84" score="21">
+              <SimplePredicate field="ibh" operator="lessOrEqual" value="1211.5"/>
+             </Node>
+             <Node id="85">
+              <SimplePredicate field="ibh" operator="greaterThan" value="1211.5"/>
+              <Node id="98" score="18.5">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="212"/>
+              </Node>
+              <Node id="99" score="15.3333333333333">
+               <SimplePredicate field="ibt" operator="greaterThan" value="212"/>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="13">
+         <SimplePredicate field="ibh" operator="greaterThan" value="2980"/>
+         <Node id="24">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="71.5"/>
+          <Node id="38" score="9.4">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="68"/>
+          </Node>
+          <Node id="39" score="5.85714285714286">
+           <SimplePredicate field="temp" operator="greaterThan" value="68"/>
+          </Node>
+         </Node>
+         <Node id="25" score="15">
+          <SimplePredicate field="temp" operator="greaterThan" value="71.5"/>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="7">
+        <SimplePredicate field="ibt" operator="greaterThan" value="223"/>
+        <Node id="14" score="16.875">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="73.5"/>
+        </Node>
+        <Node id="15">
+         <SimplePredicate field="temp" operator="greaterThan" value="73.5"/>
+         <Node id="26">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="1390.5"/>
+          <Node id="40" score="28.3333333333333">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="75.5"/>
+          </Node>
+          <Node id="41">
+           <SimplePredicate field="temp" operator="greaterThan" value="75.5"/>
+           <Node id="54">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="86.5"/>
+            <Node id="70">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="609.5"/>
+             <Node id="86" score="26.2222222222222">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="311.5"/>
+             </Node>
+             <Node id="87" score="18">
+              <SimplePredicate field="ibt" operator="greaterThan" value="311.5"/>
+             </Node>
+            </Node>
+            <Node id="71">
+             <SimplePredicate field="ibh" operator="greaterThan" value="609.5"/>
+             <Node id="88">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="259.5"/>
+              <Node id="100" score="29">
+               <SimplePredicate field="temp" operator="lessOrEqual" value="76.5"/>
+              </Node>
+              <Node id="101">
+               <SimplePredicate field="temp" operator="greaterThan" value="76.5"/>
+               <Node id="106" score="19.3333333333333">
+                <SimplePredicate field="ibt" operator="lessOrEqual" value="234"/>
+               </Node>
+               <Node id="107">
+                <SimplePredicate field="ibt" operator="greaterThan" value="234"/>
+                <Node id="108" score="24.8571428571429">
+                 <SimplePredicate field="temp" operator="lessOrEqual" value="82"/>
+                </Node>
+                <Node id="109" score="22">
+                 <SimplePredicate field="temp" operator="greaterThan" value="82"/>
+                </Node>
+               </Node>
+              </Node>
+             </Node>
+             <Node id="89" score="17.8">
+              <SimplePredicate field="ibt" operator="greaterThan" value="259.5"/>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="55">
+            <SimplePredicate field="temp" operator="greaterThan" value="86.5"/>
+            <Node id="72" score="24.1428571428571">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="293"/>
+            </Node>
+            <Node id="73" score="29.3333333333333">
+             <SimplePredicate field="ibt" operator="greaterThan" value="293"/>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="27" score="19.2">
+          <SimplePredicate field="ibh" operator="greaterThan" value="1390.5"/>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="3">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="regression" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="O3" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="temp" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibh" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibt" usageType="active" invalidValueTreatment="asIs"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2">
+       <SimplePredicate field="temp" operator="lessOrEqual" value="65.5"/>
+       <Node id="4">
+        <SimplePredicate field="temp" operator="lessOrEqual" value="55.5"/>
+        <Node id="8">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="2892"/>
+         <Node id="16">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="729.5"/>
+          <Node id="30" score="9.33333333333333">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="147"/>
+          </Node>
+          <Node id="31">
+           <SimplePredicate field="ibt" operator="greaterThan" value="147"/>
+           <Node id="50">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="217.5"/>
+            <Node id="72" score="6">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="252"/>
+            </Node>
+            <Node id="73" score="4.16666666666667">
+             <SimplePredicate field="ibh" operator="greaterThan" value="252"/>
+            </Node>
+           </Node>
+           <Node id="51" score="2">
+            <SimplePredicate field="ibt" operator="greaterThan" value="217.5"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="17">
+          <SimplePredicate field="ibh" operator="greaterThan" value="729.5"/>
+          <Node id="32" score="15">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="1329.5"/>
+          </Node>
+          <Node id="33">
+           <SimplePredicate field="ibh" operator="greaterThan" value="1329.5"/>
+           <Node id="52" score="3">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="41"/>
+           </Node>
+           <Node id="53">
+            <SimplePredicate field="temp" operator="greaterThan" value="41"/>
+            <Node id="74" score="14">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="43"/>
+            </Node>
+            <Node id="75">
+             <SimplePredicate field="temp" operator="greaterThan" value="43"/>
+             <Node id="88" score="3">
+              <SimplePredicate field="ibh" operator="lessOrEqual" value="2119"/>
+             </Node>
+             <Node id="89">
+              <SimplePredicate field="ibh" operator="greaterThan" value="2119"/>
+              <Node id="104" score="5">
+               <SimplePredicate field="temp" operator="lessOrEqual" value="44.5"/>
+              </Node>
+              <Node id="105" score="8.11111111111111">
+               <SimplePredicate field="temp" operator="greaterThan" value="44.5"/>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="9">
+         <SimplePredicate field="ibh" operator="greaterThan" value="2892"/>
+         <Node id="18">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="39.5"/>
+          <Node id="34">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="30.5"/>
+           <Node id="54" score="3">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="2.5"/>
+           </Node>
+           <Node id="55" score="3.6">
+            <SimplePredicate field="ibt" operator="greaterThan" value="2.5"/>
+           </Node>
+          </Node>
+          <Node id="35" score="2">
+           <SimplePredicate field="ibt" operator="greaterThan" value="30.5"/>
+          </Node>
+         </Node>
+         <Node id="19">
+          <SimplePredicate field="temp" operator="greaterThan" value="39.5"/>
+          <Node id="36">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="87"/>
+           <Node id="56">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="54"/>
+            <Node id="76">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="55.5"/>
+             <Node id="90" score="3">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="44"/>
+             </Node>
+             <Node id="91">
+              <SimplePredicate field="temp" operator="greaterThan" value="44"/>
+              <Node id="106" score="6">
+               <SimplePredicate field="temp" operator="lessOrEqual" value="46"/>
+              </Node>
+              <Node id="107" score="4">
+               <SimplePredicate field="temp" operator="greaterThan" value="46"/>
+              </Node>
+             </Node>
+            </Node>
+            <Node id="77">
+             <SimplePredicate field="ibt" operator="greaterThan" value="55.5"/>
+             <Node id="92" score="8.6">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="40.5"/>
+             </Node>
+             <Node id="93">
+              <SimplePredicate field="temp" operator="greaterThan" value="40.5"/>
+              <Node id="108" score="6.33333333333333">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="71"/>
+              </Node>
+              <Node id="109" score="4.33333333333333">
+               <SimplePredicate field="ibt" operator="greaterThan" value="71"/>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="57" score="9">
+            <SimplePredicate field="temp" operator="greaterThan" value="54"/>
+           </Node>
+          </Node>
+          <Node id="37">
+           <SimplePredicate field="ibt" operator="greaterThan" value="87"/>
+           <Node id="58" score="5">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="50"/>
+           </Node>
+           <Node id="59">
+            <SimplePredicate field="temp" operator="greaterThan" value="50"/>
+            <Node id="78" score="4">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="100.5"/>
+            </Node>
+            <Node id="79">
+             <SimplePredicate field="ibt" operator="greaterThan" value="100.5"/>
+             <Node id="94" score="2.5">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="114.5"/>
+             </Node>
+             <Node id="95">
+              <SimplePredicate field="ibt" operator="greaterThan" value="114.5"/>
+              <Node id="110" score="5">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="123"/>
+              </Node>
+              <Node id="111" score="3.11111111111111">
+               <SimplePredicate field="ibt" operator="greaterThan" value="123"/>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="temp" operator="greaterThan" value="55.5"/>
+        <Node id="10">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="1696"/>
+         <Node id="20">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="204.5"/>
+          <Node id="38" score="9">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="157"/>
+          </Node>
+          <Node id="39">
+           <SimplePredicate field="ibt" operator="greaterThan" value="157"/>
+           <Node id="60" score="11.6">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="411"/>
+           </Node>
+           <Node id="61" score="14.1111111111111">
+            <SimplePredicate field="ibh" operator="greaterThan" value="411"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="21">
+          <SimplePredicate field="ibt" operator="greaterThan" value="204.5"/>
+          <Node id="40" score="4">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="58.5"/>
+          </Node>
+          <Node id="41" score="8.7">
+           <SimplePredicate field="temp" operator="greaterThan" value="58.5"/>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="11">
+         <SimplePredicate field="ibh" operator="greaterThan" value="1696"/>
+         <Node id="22">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="172.5"/>
+          <Node id="42" score="5.83333333333333">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="96.5"/>
+          </Node>
+          <Node id="43">
+           <SimplePredicate field="ibt" operator="greaterThan" value="96.5"/>
+           <Node id="62">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="150"/>
+            <Node id="80" score="8.5">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="58.5"/>
+            </Node>
+            <Node id="81">
+             <SimplePredicate field="temp" operator="greaterThan" value="58.5"/>
+             <Node id="96" score="11.8">
+              <SimplePredicate field="ibh" operator="lessOrEqual" value="3629.5"/>
+             </Node>
+             <Node id="97" score="9.8">
+              <SimplePredicate field="ibh" operator="greaterThan" value="3629.5"/>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="63" score="8.25">
+            <SimplePredicate field="ibt" operator="greaterThan" value="150"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="23" score="6">
+          <SimplePredicate field="ibt" operator="greaterThan" value="172.5"/>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="temp" operator="greaterThan" value="65.5"/>
+       <Node id="6">
+        <SimplePredicate field="ibh" operator="lessOrEqual" value="2785"/>
+        <Node id="12">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="488.5"/>
+         <Node id="24">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="81"/>
+          <Node id="44" score="6.5">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="348.5"/>
+          </Node>
+          <Node id="45">
+           <SimplePredicate field="ibh" operator="greaterThan" value="348.5"/>
+           <Node id="64" score="16.1428571428571">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="424.5"/>
+           </Node>
+           <Node id="65" score="10">
+            <SimplePredicate field="ibh" operator="greaterThan" value="424.5"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="25" score="24">
+          <SimplePredicate field="temp" operator="greaterThan" value="81"/>
+         </Node>
+        </Node>
+        <Node id="13">
+         <SimplePredicate field="ibh" operator="greaterThan" value="488.5"/>
+         <Node id="26">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="86.5"/>
+          <Node id="46">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="214.5"/>
+           <Node id="66">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="212"/>
+            <Node id="82">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="1166"/>
+             <Node id="98" score="21">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="183"/>
+             </Node>
+             <Node id="99" score="15.6363636363636">
+              <SimplePredicate field="ibt" operator="greaterThan" value="183"/>
+             </Node>
+            </Node>
+            <Node id="83">
+             <SimplePredicate field="ibh" operator="greaterThan" value="1166"/>
+             <Node id="100" score="23.2">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="69.5"/>
+             </Node>
+             <Node id="101" score="19.0714285714286">
+              <SimplePredicate field="temp" operator="greaterThan" value="69.5"/>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="67" score="13">
+            <SimplePredicate field="ibt" operator="greaterThan" value="212"/>
+           </Node>
+          </Node>
+          <Node id="47">
+           <SimplePredicate field="ibt" operator="greaterThan" value="214.5"/>
+           <Node id="68">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="264.5"/>
+            <Node id="84">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="2112.5"/>
+             <Node id="102" score="22.2857142857143">
+              <SimplePredicate field="ibh" operator="lessOrEqual" value="1036"/>
+             </Node>
+             <Node id="103" score="26.9230769230769">
+              <SimplePredicate field="ibh" operator="greaterThan" value="1036"/>
+             </Node>
+            </Node>
+            <Node id="85" score="18.1428571428571">
+             <SimplePredicate field="ibh" operator="greaterThan" value="2112.5"/>
+            </Node>
+           </Node>
+           <Node id="69">
+            <SimplePredicate field="ibt" operator="greaterThan" value="264.5"/>
+            <Node id="86" score="15.6666666666667">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="747.5"/>
+            </Node>
+            <Node id="87" score="20.4">
+             <SimplePredicate field="ibh" operator="greaterThan" value="747.5"/>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="27" score="30.5714285714286">
+          <SimplePredicate field="temp" operator="greaterThan" value="86.5"/>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="7">
+        <SimplePredicate field="ibh" operator="greaterThan" value="2785"/>
+        <Node id="14">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="3556"/>
+         <Node id="28">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="3133"/>
+          <Node id="48">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="79.5"/>
+           <Node id="70" score="9.66666666666667">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="2926"/>
+           </Node>
+           <Node id="71" score="12.875">
+            <SimplePredicate field="ibh" operator="greaterThan" value="2926"/>
+           </Node>
+          </Node>
+          <Node id="49" score="17">
+           <SimplePredicate field="temp" operator="greaterThan" value="79.5"/>
+          </Node>
+         </Node>
+         <Node id="29" score="17.6666666666667">
+          <SimplePredicate field="ibh" operator="greaterThan" value="3133"/>
+         </Node>
+        </Node>
+        <Node id="15" score="7.375">
+         <SimplePredicate field="ibh" operator="greaterThan" value="3556"/>
+        </Node>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="4">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="regression" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="O3" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="temp" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibh" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibt" usageType="active" invalidValueTreatment="asIs"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2">
+       <SimplePredicate field="temp" operator="lessOrEqual" value="64.5"/>
+       <Node id="4">
+        <SimplePredicate field="ibt" operator="lessOrEqual" value="117"/>
+        <Node id="8">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="37.5"/>
+         <Node id="16">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="35.5"/>
+          <Node id="30" score="3">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="31"/>
+          </Node>
+          <Node id="31" score="4">
+           <SimplePredicate field="temp" operator="greaterThan" value="31"/>
+          </Node>
+         </Node>
+         <Node id="17" score="2">
+          <SimplePredicate field="temp" operator="greaterThan" value="35.5"/>
+         </Node>
+        </Node>
+        <Node id="9">
+         <SimplePredicate field="temp" operator="greaterThan" value="37.5"/>
+         <Node id="18">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="3669"/>
+          <Node id="32" score="5.66666666666667">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="89"/>
+          </Node>
+          <Node id="33">
+           <SimplePredicate field="ibt" operator="greaterThan" value="89"/>
+           <Node id="48" score="7">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="47"/>
+           </Node>
+           <Node id="49" score="8.33333333333333">
+            <SimplePredicate field="temp" operator="greaterThan" value="47"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="19">
+          <SimplePredicate field="ibh" operator="greaterThan" value="3669"/>
+          <Node id="34">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="58"/>
+           <Node id="50">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="102.5"/>
+            <Node id="70">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="54.5"/>
+             <Node id="80">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="53.5"/>
+              <Node id="86" score="4.11111111111111">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="41.5"/>
+              </Node>
+              <Node id="87" score="2.25">
+               <SimplePredicate field="ibt" operator="greaterThan" value="41.5"/>
+              </Node>
+             </Node>
+             <Node id="81">
+              <SimplePredicate field="ibt" operator="greaterThan" value="53.5"/>
+              <Node id="88" score="9">
+               <SimplePredicate field="temp" operator="lessOrEqual" value="40.5"/>
+              </Node>
+              <Node id="89">
+               <SimplePredicate field="temp" operator="greaterThan" value="40.5"/>
+               <Node id="92">
+                <SimplePredicate field="ibt" operator="lessOrEqual" value="80"/>
+                <Node id="98" score="3">
+                 <SimplePredicate field="ibh" operator="lessOrEqual" value="4399.5"/>
+                </Node>
+                <Node id="99">
+                 <SimplePredicate field="ibh" operator="greaterThan" value="4399.5"/>
+                 <Node id="102">
+                  <SimplePredicate field="ibt" operator="lessOrEqual" value="74.5"/>
+                  <Node id="106">
+                   <SimplePredicate field="ibt" operator="lessOrEqual" value="72"/>
+                   <Node id="110" score="6.5">
+                    <SimplePredicate field="temp" operator="lessOrEqual" value="48.5"/>
+                   </Node>
+                   <Node id="111" score="5.5">
+                    <SimplePredicate field="temp" operator="greaterThan" value="48.5"/>
+                   </Node>
+                  </Node>
+                  <Node id="107" score="3">
+                   <SimplePredicate field="ibt" operator="greaterThan" value="72"/>
+                  </Node>
+                 </Node>
+                 <Node id="103" score="6.4">
+                  <SimplePredicate field="ibt" operator="greaterThan" value="74.5"/>
+                 </Node>
+                </Node>
+               </Node>
+               <Node id="93" score="4.125">
+                <SimplePredicate field="ibt" operator="greaterThan" value="80"/>
+               </Node>
+              </Node>
+             </Node>
+            </Node>
+            <Node id="71" score="6.71428571428571">
+             <SimplePredicate field="temp" operator="greaterThan" value="54.5"/>
+            </Node>
+           </Node>
+           <Node id="51">
+            <SimplePredicate field="ibt" operator="greaterThan" value="102.5"/>
+            <Node id="72">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="110.5"/>
+             <Node id="82" score="3">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="107"/>
+             </Node>
+             <Node id="83" score="2.5">
+              <SimplePredicate field="ibt" operator="greaterThan" value="107"/>
+             </Node>
+            </Node>
+            <Node id="73" score="4.5">
+             <SimplePredicate field="ibt" operator="greaterThan" value="110.5"/>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="35">
+           <SimplePredicate field="temp" operator="greaterThan" value="58"/>
+           <Node id="52" score="10.25">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="59.5"/>
+           </Node>
+           <Node id="53" score="5.1">
+            <SimplePredicate field="temp" operator="greaterThan" value="59.5"/>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="ibt" operator="greaterThan" value="117"/>
+        <Node id="10">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="55.5"/>
+         <Node id="20">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="181.5"/>
+          <Node id="36">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="1427"/>
+           <Node id="54" score="7.2">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="52"/>
+           </Node>
+           <Node id="55" score="12.3333333333333">
+            <SimplePredicate field="temp" operator="greaterThan" value="52"/>
+           </Node>
+          </Node>
+          <Node id="37">
+           <SimplePredicate field="ibh" operator="greaterThan" value="1427"/>
+           <Node id="56" score="8.66666666666667">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="47"/>
+           </Node>
+           <Node id="57" score="4.7">
+            <SimplePredicate field="temp" operator="greaterThan" value="47"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="21" score="3.33333333333333">
+          <SimplePredicate field="ibt" operator="greaterThan" value="181.5"/>
+         </Node>
+        </Node>
+        <Node id="11">
+         <SimplePredicate field="temp" operator="greaterThan" value="55.5"/>
+         <Node id="22">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="181"/>
+          <Node id="38">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="158.5"/>
+           <Node id="58">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="3889"/>
+            <Node id="74" score="11.125">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="63.5"/>
+            </Node>
+            <Node id="75" score="9.33333333333333">
+             <SimplePredicate field="temp" operator="greaterThan" value="63.5"/>
+            </Node>
+           </Node>
+           <Node id="59" score="8.66666666666667">
+            <SimplePredicate field="ibh" operator="greaterThan" value="3889"/>
+           </Node>
+          </Node>
+          <Node id="39" score="13.5555555555556">
+           <SimplePredicate field="ibt" operator="greaterThan" value="158.5"/>
+          </Node>
+         </Node>
+         <Node id="23">
+          <SimplePredicate field="ibt" operator="greaterThan" value="181"/>
+          <Node id="40" score="5.5">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="187"/>
+          </Node>
+          <Node id="41">
+           <SimplePredicate field="ibt" operator="greaterThan" value="187"/>
+           <Node id="60" score="12.3333333333333">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="204.5"/>
+           </Node>
+           <Node id="61" score="7.7">
+            <SimplePredicate field="ibt" operator="greaterThan" value="204.5"/>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="temp" operator="greaterThan" value="64.5"/>
+       <Node id="6">
+        <SimplePredicate field="temp" operator="lessOrEqual" value="79.5"/>
+        <Node id="12">
+         <SimplePredicate field="ibt" operator="lessOrEqual" value="167"/>
+         <Node id="24" score="15.6666666666667">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="1714"/>
+         </Node>
+         <Node id="25">
+          <SimplePredicate field="ibh" operator="greaterThan" value="1714"/>
+          <Node id="42" score="5">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="128.5"/>
+          </Node>
+          <Node id="43">
+           <SimplePredicate field="ibt" operator="greaterThan" value="128.5"/>
+           <Node id="62">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="3487"/>
+            <Node id="76" score="9.5">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="2942.5"/>
+            </Node>
+            <Node id="77" score="12">
+             <SimplePredicate field="ibh" operator="greaterThan" value="2942.5"/>
+            </Node>
+           </Node>
+           <Node id="63" score="7.66666666666667">
+            <SimplePredicate field="ibh" operator="greaterThan" value="3487"/>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="13">
+         <SimplePredicate field="ibt" operator="greaterThan" value="167"/>
+         <Node id="26" score="6.66666666666667">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="348.5"/>
+         </Node>
+         <Node id="27">
+          <SimplePredicate field="ibh" operator="greaterThan" value="348.5"/>
+          <Node id="44">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="227"/>
+           <Node id="64" score="11.2">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="65.5"/>
+           </Node>
+           <Node id="65">
+            <SimplePredicate field="temp" operator="greaterThan" value="65.5"/>
+            <Node id="78">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="3311.5"/>
+             <Node id="84">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="224.5"/>
+              <Node id="90">
+               <SimplePredicate field="ibh" operator="lessOrEqual" value="980.5"/>
+               <Node id="94" score="19.75">
+                <SimplePredicate field="ibh" operator="lessOrEqual" value="624.5"/>
+               </Node>
+               <Node id="95" score="11.8571428571429">
+                <SimplePredicate field="ibh" operator="greaterThan" value="624.5"/>
+               </Node>
+              </Node>
+              <Node id="91">
+               <SimplePredicate field="ibh" operator="greaterThan" value="980.5"/>
+               <Node id="96">
+                <SimplePredicate field="temp" operator="lessOrEqual" value="78.5"/>
+                <Node id="100">
+                 <SimplePredicate field="ibt" operator="lessOrEqual" value="208.5"/>
+                 <Node id="104" score="20">
+                  <SimplePredicate field="ibt" operator="lessOrEqual" value="177.5"/>
+                 </Node>
+                 <Node id="105">
+                  <SimplePredicate field="ibt" operator="greaterThan" value="177.5"/>
+                  <Node id="108" score="15.5714285714286">
+                   <SimplePredicate field="ibt" operator="lessOrEqual" value="200"/>
+                  </Node>
+                  <Node id="109" score="18.6">
+                   <SimplePredicate field="ibt" operator="greaterThan" value="200"/>
+                  </Node>
+                 </Node>
+                </Node>
+                <Node id="101" score="20.5">
+                 <SimplePredicate field="ibt" operator="greaterThan" value="208.5"/>
+                </Node>
+               </Node>
+               <Node id="97" score="15.5555555555556">
+                <SimplePredicate field="temp" operator="greaterThan" value="78.5"/>
+               </Node>
+              </Node>
+             </Node>
+             <Node id="85" score="10">
+              <SimplePredicate field="ibt" operator="greaterThan" value="224.5"/>
+             </Node>
+            </Node>
+            <Node id="79" score="11">
+             <SimplePredicate field="ibh" operator="greaterThan" value="3311.5"/>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="45">
+           <SimplePredicate field="ibt" operator="greaterThan" value="227"/>
+           <Node id="66" score="18">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="788.5"/>
+           </Node>
+           <Node id="67" score="23.1666666666667">
+            <SimplePredicate field="ibh" operator="greaterThan" value="788.5"/>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="7">
+        <SimplePredicate field="temp" operator="greaterThan" value="79.5"/>
+        <Node id="14">
+         <SimplePredicate field="ibt" operator="lessOrEqual" value="323.5"/>
+         <Node id="28" score="29.3333333333333">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="80.5"/>
+         </Node>
+         <Node id="29">
+          <SimplePredicate field="temp" operator="greaterThan" value="80.5"/>
+          <Node id="46">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="85"/>
+           <Node id="68" score="24.5">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="261.5"/>
+           </Node>
+           <Node id="69" score="18">
+            <SimplePredicate field="ibt" operator="greaterThan" value="261.5"/>
+           </Node>
+          </Node>
+          <Node id="47" score="27">
+           <SimplePredicate field="temp" operator="greaterThan" value="85"/>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="15" score="38">
+         <SimplePredicate field="ibt" operator="greaterThan" value="323.5"/>
+        </Node>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="5">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="regression" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="O3" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="temp" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibh" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibt" usageType="active" invalidValueTreatment="asIs"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2">
+       <SimplePredicate field="temp" operator="lessOrEqual" value="67.5"/>
+       <Node id="4">
+        <SimplePredicate field="ibh" operator="lessOrEqual" value="3573.5"/>
+        <Node id="8">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="52.5"/>
+         <Node id="16">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="183.5"/>
+          <Node id="28" score="4.28571428571429">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="614.5"/>
+          </Node>
+          <Node id="29">
+           <SimplePredicate field="ibh" operator="greaterThan" value="614.5"/>
+           <Node id="44">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="165.5"/>
+            <Node id="60">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="143.5"/>
+             <Node id="78">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="131"/>
+              <Node id="90" score="6.6">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="124"/>
+              </Node>
+              <Node id="91" score="8">
+               <SimplePredicate field="ibt" operator="greaterThan" value="124"/>
+              </Node>
+             </Node>
+             <Node id="79" score="11">
+              <SimplePredicate field="ibt" operator="greaterThan" value="131"/>
+             </Node>
+            </Node>
+            <Node id="61" score="5.66666666666667">
+             <SimplePredicate field="ibt" operator="greaterThan" value="143.5"/>
+            </Node>
+           </Node>
+           <Node id="45" score="13">
+            <SimplePredicate field="ibt" operator="greaterThan" value="165.5"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="17" score="10.5">
+          <SimplePredicate field="ibt" operator="greaterThan" value="183.5"/>
+         </Node>
+        </Node>
+        <Node id="9">
+         <SimplePredicate field="temp" operator="greaterThan" value="52.5"/>
+         <Node id="18" score="17.8333333333333">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="53.5"/>
+         </Node>
+         <Node id="19">
+          <SimplePredicate field="temp" operator="greaterThan" value="53.5"/>
+          <Node id="30">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="208"/>
+           <Node id="46">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="65.5"/>
+            <Node id="62">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="182.5"/>
+             <Node id="80">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="181.5"/>
+              <Node id="92">
+               <SimplePredicate field="ibh" operator="lessOrEqual" value="2206"/>
+               <Node id="104" score="12.5714285714286">
+                <SimplePredicate field="temp" operator="lessOrEqual" value="63.5"/>
+               </Node>
+               <Node id="105" score="5">
+                <SimplePredicate field="temp" operator="greaterThan" value="63.5"/>
+               </Node>
+              </Node>
+              <Node id="93">
+               <SimplePredicate field="ibh" operator="greaterThan" value="2206"/>
+               <Node id="106" score="6.2">
+                <SimplePredicate field="ibh" operator="lessOrEqual" value="2752"/>
+               </Node>
+               <Node id="107" score="11.4285714285714">
+                <SimplePredicate field="ibh" operator="greaterThan" value="2752"/>
+               </Node>
+              </Node>
+             </Node>
+             <Node id="81" score="4.5">
+              <SimplePredicate field="ibt" operator="greaterThan" value="181.5"/>
+             </Node>
+            </Node>
+            <Node id="63" score="12.9">
+             <SimplePredicate field="ibt" operator="greaterThan" value="182.5"/>
+            </Node>
+           </Node>
+           <Node id="47">
+            <SimplePredicate field="temp" operator="greaterThan" value="65.5"/>
+            <Node id="64" score="10.6666666666667">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="155.5"/>
+            </Node>
+            <Node id="65" score="16.6666666666667">
+             <SimplePredicate field="ibt" operator="greaterThan" value="155.5"/>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="31">
+           <SimplePredicate field="ibt" operator="greaterThan" value="208"/>
+           <Node id="48" score="4.4">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="59.5"/>
+           </Node>
+           <Node id="49" score="9.4">
+            <SimplePredicate field="temp" operator="greaterThan" value="59.5"/>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="ibh" operator="greaterThan" value="3573.5"/>
+        <Node id="10">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="54.5"/>
+         <Node id="20" score="8">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="3669"/>
+         </Node>
+         <Node id="21">
+          <SimplePredicate field="ibh" operator="greaterThan" value="3669"/>
+          <Node id="32">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="54.5"/>
+           <Node id="50">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="41.5"/>
+            <Node id="66">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="38"/>
+             <Node id="82">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="31"/>
+              <Node id="94">
+               <SimplePredicate field="temp" operator="lessOrEqual" value="46"/>
+               <Node id="108" score="3.9375">
+                <SimplePredicate field="temp" operator="lessOrEqual" value="43"/>
+               </Node>
+               <Node id="109" score="6">
+                <SimplePredicate field="temp" operator="greaterThan" value="43"/>
+               </Node>
+              </Node>
+              <Node id="95" score="3">
+               <SimplePredicate field="temp" operator="greaterThan" value="46"/>
+              </Node>
+             </Node>
+             <Node id="83" score="2.33333333333333">
+              <SimplePredicate field="ibt" operator="greaterThan" value="31"/>
+             </Node>
+            </Node>
+            <Node id="67" score="6">
+             <SimplePredicate field="ibt" operator="greaterThan" value="38"/>
+            </Node>
+           </Node>
+           <Node id="51" score="2">
+            <SimplePredicate field="ibt" operator="greaterThan" value="41.5"/>
+           </Node>
+          </Node>
+          <Node id="33">
+           <SimplePredicate field="ibt" operator="greaterThan" value="54.5"/>
+           <Node id="52">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="87.5"/>
+            <Node id="68" score="11">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="40.5"/>
+            </Node>
+            <Node id="69">
+             <SimplePredicate field="temp" operator="greaterThan" value="40.5"/>
+             <Node id="84">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="50.5"/>
+              <Node id="96" score="5.875">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="72"/>
+              </Node>
+              <Node id="97" score="3.5">
+               <SimplePredicate field="ibt" operator="greaterThan" value="72"/>
+              </Node>
+             </Node>
+             <Node id="85" score="7.16666666666667">
+              <SimplePredicate field="temp" operator="greaterThan" value="50.5"/>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="53">
+            <SimplePredicate field="ibt" operator="greaterThan" value="87.5"/>
+            <Node id="70" score="3.25">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="53.5"/>
+            </Node>
+            <Node id="71" score="3.85714285714286">
+             <SimplePredicate field="temp" operator="greaterThan" value="53.5"/>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="11">
+         <SimplePredicate field="temp" operator="greaterThan" value="54.5"/>
+         <Node id="22">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="165"/>
+          <Node id="34">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="154"/>
+           <Node id="54">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="57.5"/>
+            <Node id="72" score="7.125">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="102.5"/>
+            </Node>
+            <Node id="73" score="2.75">
+             <SimplePredicate field="ibt" operator="greaterThan" value="102.5"/>
+            </Node>
+           </Node>
+           <Node id="55">
+            <SimplePredicate field="temp" operator="greaterThan" value="57.5"/>
+            <Node id="74" score="4">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="71"/>
+            </Node>
+            <Node id="75">
+             <SimplePredicate field="ibt" operator="greaterThan" value="71"/>
+             <Node id="86">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="59.5"/>
+              <Node id="98" score="8.57142857142857">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="109"/>
+              </Node>
+              <Node id="99" score="6.8">
+               <SimplePredicate field="ibt" operator="greaterThan" value="109"/>
+              </Node>
+             </Node>
+             <Node id="87">
+              <SimplePredicate field="temp" operator="greaterThan" value="59.5"/>
+              <Node id="100" score="5.9">
+               <SimplePredicate field="temp" operator="lessOrEqual" value="66"/>
+              </Node>
+              <Node id="101" score="9">
+               <SimplePredicate field="temp" operator="greaterThan" value="66"/>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="35" score="11">
+           <SimplePredicate field="ibt" operator="greaterThan" value="154"/>
+          </Node>
+         </Node>
+         <Node id="23" score="4.66666666666667">
+          <SimplePredicate field="ibt" operator="greaterThan" value="165"/>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="temp" operator="greaterThan" value="67.5"/>
+       <Node id="6">
+        <SimplePredicate field="ibh" operator="lessOrEqual" value="2782"/>
+        <Node id="12">
+         <SimplePredicate field="ibt" operator="lessOrEqual" value="226"/>
+         <Node id="24">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="211.5"/>
+          <Node id="36" score="16.25">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="1115"/>
+          </Node>
+          <Node id="37">
+           <SimplePredicate field="ibh" operator="greaterThan" value="1115"/>
+           <Node id="56" score="23.3333333333333">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="69.5"/>
+           </Node>
+           <Node id="57" score="19.4444444444444">
+            <SimplePredicate field="temp" operator="greaterThan" value="69.5"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="25">
+          <SimplePredicate field="ibt" operator="greaterThan" value="211.5"/>
+          <Node id="38" score="15.3333333333333">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="2334"/>
+          </Node>
+          <Node id="39" score="19">
+           <SimplePredicate field="ibh" operator="greaterThan" value="2334"/>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="13">
+         <SimplePredicate field="ibt" operator="greaterThan" value="226"/>
+         <Node id="26">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="73.5"/>
+          <Node id="40" score="6.5">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="414.5"/>
+          </Node>
+          <Node id="41" score="20.8888888888889">
+           <SimplePredicate field="ibh" operator="greaterThan" value="414.5"/>
+          </Node>
+         </Node>
+         <Node id="27">
+          <SimplePredicate field="temp" operator="greaterThan" value="73.5"/>
+          <Node id="42">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="304.5"/>
+           <Node id="58">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="294"/>
+            <Node id="76">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="262"/>
+             <Node id="88">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="259"/>
+              <Node id="102" score="29">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="229"/>
+              </Node>
+              <Node id="103">
+               <SimplePredicate field="ibt" operator="greaterThan" value="229"/>
+               <Node id="110" score="23.6666666666667">
+                <SimplePredicate field="ibh" operator="lessOrEqual" value="2156.5"/>
+               </Node>
+               <Node id="111" score="17">
+                <SimplePredicate field="ibh" operator="greaterThan" value="2156.5"/>
+               </Node>
+              </Node>
+             </Node>
+             <Node id="89" score="30">
+              <SimplePredicate field="ibt" operator="greaterThan" value="259"/>
+             </Node>
+            </Node>
+            <Node id="77" score="18.5714285714286">
+             <SimplePredicate field="ibt" operator="greaterThan" value="262"/>
+            </Node>
+           </Node>
+           <Node id="59" score="31">
+            <SimplePredicate field="ibt" operator="greaterThan" value="294"/>
+           </Node>
+          </Node>
+          <Node id="43" score="19.5">
+           <SimplePredicate field="ibt" operator="greaterThan" value="304.5"/>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="7">
+        <SimplePredicate field="ibh" operator="greaterThan" value="2782"/>
+        <Node id="14" score="14.4444444444444">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="4397.5"/>
+        </Node>
+        <Node id="15" score="6.28571428571429">
+         <SimplePredicate field="ibh" operator="greaterThan" value="4397.5"/>
+        </Node>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="6">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="regression" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="O3" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="temp" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibh" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibt" usageType="active" invalidValueTreatment="asIs"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2">
+       <SimplePredicate field="temp" operator="lessOrEqual" value="65.5"/>
+       <Node id="4">
+        <SimplePredicate field="ibh" operator="lessOrEqual" value="3472.5"/>
+        <Node id="8">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="59.5"/>
+         <Node id="16">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="180.5"/>
+          <Node id="28">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="1973"/>
+           <Node id="44">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="165"/>
+            <Node id="66" score="5">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="516"/>
+            </Node>
+            <Node id="67">
+             <SimplePredicate field="ibh" operator="greaterThan" value="516"/>
+             <Node id="90" score="7.33333333333333">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="40.5"/>
+             </Node>
+             <Node id="91">
+              <SimplePredicate field="temp" operator="greaterThan" value="40.5"/>
+              <Node id="106" score="14">
+               <SimplePredicate field="temp" operator="lessOrEqual" value="45.5"/>
+              </Node>
+              <Node id="107" score="9.27272727272727">
+               <SimplePredicate field="temp" operator="greaterThan" value="45.5"/>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="45" score="12.1428571428571">
+            <SimplePredicate field="ibt" operator="greaterThan" value="165"/>
+           </Node>
+          </Node>
+          <Node id="29">
+           <SimplePredicate field="ibh" operator="greaterThan" value="1973"/>
+           <Node id="46">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="2748.5"/>
+            <Node id="68" score="3">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="2339"/>
+            </Node>
+            <Node id="69">
+             <SimplePredicate field="ibh" operator="greaterThan" value="2339"/>
+             <Node id="92" score="3">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="42"/>
+             </Node>
+             <Node id="93">
+              <SimplePredicate field="temp" operator="greaterThan" value="42"/>
+              <Node id="108" score="7">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="106"/>
+              </Node>
+              <Node id="109" score="6">
+               <SimplePredicate field="ibt" operator="greaterThan" value="106"/>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="47" score="10.25">
+            <SimplePredicate field="ibh" operator="greaterThan" value="2748.5"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="17">
+          <SimplePredicate field="ibt" operator="greaterThan" value="180.5"/>
+          <Node id="30" score="4.55555555555556">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="58.5"/>
+          </Node>
+          <Node id="31" score="7.33333333333333">
+           <SimplePredicate field="temp" operator="greaterThan" value="58.5"/>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="9">
+         <SimplePredicate field="temp" operator="greaterThan" value="59.5"/>
+         <Node id="18">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="182.5"/>
+          <Node id="32">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="172.5"/>
+           <Node id="48">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="64"/>
+            <Node id="70" score="9.66666666666667">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="1471"/>
+            </Node>
+            <Node id="71">
+             <SimplePredicate field="ibh" operator="greaterThan" value="1471"/>
+             <Node id="94" score="14">
+              <SimplePredicate field="ibh" operator="lessOrEqual" value="1769.5"/>
+             </Node>
+             <Node id="95" score="11.4">
+              <SimplePredicate field="ibh" operator="greaterThan" value="1769.5"/>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="49" score="5">
+            <SimplePredicate field="temp" operator="greaterThan" value="64"/>
+           </Node>
+          </Node>
+          <Node id="33" score="5.66666666666667">
+           <SimplePredicate field="ibt" operator="greaterThan" value="172.5"/>
+          </Node>
+         </Node>
+         <Node id="19">
+          <SimplePredicate field="ibt" operator="greaterThan" value="182.5"/>
+          <Node id="34">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="243"/>
+           <Node id="50">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="223.5"/>
+            <Node id="72" score="16.1111111111111">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="199.5"/>
+            </Node>
+            <Node id="73" score="10.5">
+             <SimplePredicate field="ibt" operator="greaterThan" value="199.5"/>
+            </Node>
+           </Node>
+           <Node id="51" score="20">
+            <SimplePredicate field="ibt" operator="greaterThan" value="223.5"/>
+           </Node>
+          </Node>
+          <Node id="35" score="10">
+           <SimplePredicate field="ibt" operator="greaterThan" value="243"/>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="ibh" operator="greaterThan" value="3472.5"/>
+        <Node id="10">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="58.5"/>
+         <Node id="20" score="7.16666666666667">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="3669"/>
+         </Node>
+         <Node id="21">
+          <SimplePredicate field="ibh" operator="greaterThan" value="3669"/>
+          <Node id="36">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="44"/>
+           <Node id="52">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="55.5"/>
+            <Node id="74">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="36.5"/>
+             <Node id="96">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="15.5"/>
+              <Node id="110" score="3.23076923076923">
+               <SimplePredicate field="temp" operator="lessOrEqual" value="41.5"/>
+              </Node>
+              <Node id="111" score="2">
+               <SimplePredicate field="temp" operator="greaterThan" value="41.5"/>
+              </Node>
+             </Node>
+             <Node id="97" score="4.71428571428571">
+              <SimplePredicate field="ibt" operator="greaterThan" value="15.5"/>
+             </Node>
+            </Node>
+            <Node id="75" score="2.33333333333333">
+             <SimplePredicate field="ibt" operator="greaterThan" value="36.5"/>
+            </Node>
+           </Node>
+           <Node id="53" score="5">
+            <SimplePredicate field="ibt" operator="greaterThan" value="55.5"/>
+           </Node>
+          </Node>
+          <Node id="37">
+           <SimplePredicate field="temp" operator="greaterThan" value="44"/>
+           <Node id="54">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="101"/>
+            <Node id="76">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="54"/>
+             <Node id="98" score="4.14285714285714">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="49"/>
+             </Node>
+             <Node id="99" score="5.1">
+              <SimplePredicate field="temp" operator="greaterThan" value="49"/>
+             </Node>
+            </Node>
+            <Node id="77" score="6.375">
+             <SimplePredicate field="temp" operator="greaterThan" value="54"/>
+            </Node>
+           </Node>
+           <Node id="55">
+            <SimplePredicate field="ibt" operator="greaterThan" value="101"/>
+            <Node id="78" score="2.875">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="110.5"/>
+            </Node>
+            <Node id="79">
+             <SimplePredicate field="ibt" operator="greaterThan" value="110.5"/>
+             <Node id="100" score="4.4">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="133.5"/>
+             </Node>
+             <Node id="101" score="3">
+              <SimplePredicate field="ibt" operator="greaterThan" value="133.5"/>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="11">
+         <SimplePredicate field="temp" operator="greaterThan" value="58.5"/>
+         <Node id="22">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="165"/>
+          <Node id="38">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="154"/>
+           <Node id="56">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="4514"/>
+            <Node id="80" score="8">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="64.5"/>
+            </Node>
+            <Node id="81" score="5">
+             <SimplePredicate field="temp" operator="greaterThan" value="64.5"/>
+            </Node>
+           </Node>
+           <Node id="57" score="5.4">
+            <SimplePredicate field="ibh" operator="greaterThan" value="4514"/>
+           </Node>
+          </Node>
+          <Node id="39" score="11">
+           <SimplePredicate field="ibt" operator="greaterThan" value="154"/>
+          </Node>
+         </Node>
+         <Node id="23" score="4.5">
+          <SimplePredicate field="ibt" operator="greaterThan" value="165"/>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="temp" operator="greaterThan" value="65.5"/>
+       <Node id="6">
+        <SimplePredicate field="ibt" operator="lessOrEqual" value="227"/>
+        <Node id="12">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="4043"/>
+         <Node id="24" score="11">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="160.5"/>
+         </Node>
+         <Node id="25">
+          <SimplePredicate field="ibt" operator="greaterThan" value="160.5"/>
+          <Node id="40">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="980.5"/>
+           <Node id="58" score="18">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="424.5"/>
+           </Node>
+           <Node id="59" score="12.125">
+            <SimplePredicate field="ibh" operator="greaterThan" value="424.5"/>
+           </Node>
+          </Node>
+          <Node id="41">
+           <SimplePredicate field="ibh" operator="greaterThan" value="980.5"/>
+           <Node id="60">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="2171.5"/>
+            <Node id="82" score="17.4">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="1423.5"/>
+            </Node>
+            <Node id="83" score="22.1">
+             <SimplePredicate field="ibh" operator="greaterThan" value="1423.5"/>
+            </Node>
+           </Node>
+           <Node id="61">
+            <SimplePredicate field="ibh" operator="greaterThan" value="2171.5"/>
+            <Node id="84">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="3618"/>
+             <Node id="102" score="16.4">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="76.5"/>
+             </Node>
+             <Node id="103" score="13">
+              <SimplePredicate field="temp" operator="greaterThan" value="76.5"/>
+             </Node>
+            </Node>
+            <Node id="85" score="23">
+             <SimplePredicate field="ibh" operator="greaterThan" value="3618"/>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="13" score="6.8">
+         <SimplePredicate field="ibh" operator="greaterThan" value="4043"/>
+        </Node>
+       </Node>
+       <Node id="7">
+        <SimplePredicate field="ibt" operator="greaterThan" value="227"/>
+        <Node id="14" score="11.2857142857143">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="385"/>
+        </Node>
+        <Node id="15">
+         <SimplePredicate field="ibh" operator="greaterThan" value="385"/>
+         <Node id="26" score="19">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="73.5"/>
+         </Node>
+         <Node id="27">
+          <SimplePredicate field="temp" operator="greaterThan" value="73.5"/>
+          <Node id="42">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="82"/>
+           <Node id="62">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="260.5"/>
+            <Node id="86" score="29">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="229"/>
+            </Node>
+            <Node id="87">
+             <SimplePredicate field="ibt" operator="greaterThan" value="229"/>
+             <Node id="104" score="23.2">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="242"/>
+             </Node>
+             <Node id="105" score="27.1428571428571">
+              <SimplePredicate field="ibt" operator="greaterThan" value="242"/>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="63" score="30.75">
+            <SimplePredicate field="ibt" operator="greaterThan" value="260.5"/>
+           </Node>
+          </Node>
+          <Node id="43">
+           <SimplePredicate field="temp" operator="greaterThan" value="82"/>
+           <Node id="64">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="847.5"/>
+            <Node id="88" score="17.2857142857143">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="91"/>
+            </Node>
+            <Node id="89" score="25.5">
+             <SimplePredicate field="temp" operator="greaterThan" value="91"/>
+            </Node>
+           </Node>
+           <Node id="65" score="25.9">
+            <SimplePredicate field="ibh" operator="greaterThan" value="847.5"/>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="7">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="regression" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="O3" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="temp" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibh" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibt" usageType="active" invalidValueTreatment="asIs"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2">
+       <SimplePredicate field="temp" operator="lessOrEqual" value="66.5"/>
+       <Node id="4">
+        <SimplePredicate field="ibh" operator="lessOrEqual" value="3588.5"/>
+        <Node id="8">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="58.5"/>
+         <Node id="16">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="203"/>
+          <Node id="30">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="184"/>
+           <Node id="46" score="3">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="32.5"/>
+           </Node>
+           <Node id="47">
+            <SimplePredicate field="temp" operator="greaterThan" value="32.5"/>
+            <Node id="66">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="1392.5"/>
+             <Node id="82">
+              <SimplePredicate field="ibh" operator="lessOrEqual" value="1310"/>
+              <Node id="98" score="9.5">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="169.5"/>
+              </Node>
+              <Node id="99" score="5">
+               <SimplePredicate field="ibt" operator="greaterThan" value="169.5"/>
+              </Node>
+             </Node>
+             <Node id="83" score="14.5">
+              <SimplePredicate field="ibh" operator="greaterThan" value="1310"/>
+             </Node>
+            </Node>
+            <Node id="67">
+             <SimplePredicate field="ibh" operator="greaterThan" value="1392.5"/>
+             <Node id="84">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="161"/>
+              <Node id="100" score="5.88888888888889">
+               <SimplePredicate field="ibh" operator="lessOrEqual" value="2748.5"/>
+              </Node>
+              <Node id="101" score="8.28571428571429">
+               <SimplePredicate field="ibh" operator="greaterThan" value="2748.5"/>
+              </Node>
+             </Node>
+             <Node id="85" score="13">
+              <SimplePredicate field="ibt" operator="greaterThan" value="161"/>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="31" score="17.2">
+           <SimplePredicate field="ibt" operator="greaterThan" value="184"/>
+          </Node>
+         </Node>
+         <Node id="17" score="3.85714285714286">
+          <SimplePredicate field="ibt" operator="greaterThan" value="203"/>
+         </Node>
+        </Node>
+        <Node id="9">
+         <SimplePredicate field="temp" operator="greaterThan" value="58.5"/>
+         <Node id="18">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="208"/>
+          <Node id="32">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="182.5"/>
+           <Node id="48">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="180"/>
+            <Node id="68">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="176.5"/>
+             <Node id="86">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="64"/>
+              <Node id="102" score="10.875">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="158.5"/>
+              </Node>
+              <Node id="103" score="13.1428571428571">
+               <SimplePredicate field="ibt" operator="greaterThan" value="158.5"/>
+              </Node>
+             </Node>
+             <Node id="87" score="8.4">
+              <SimplePredicate field="temp" operator="greaterThan" value="64"/>
+             </Node>
+            </Node>
+            <Node id="69" score="18">
+             <SimplePredicate field="ibt" operator="greaterThan" value="176.5"/>
+            </Node>
+           </Node>
+           <Node id="49" score="4.5">
+            <SimplePredicate field="ibt" operator="greaterThan" value="180"/>
+           </Node>
+          </Node>
+          <Node id="33">
+           <SimplePredicate field="ibt" operator="greaterThan" value="182.5"/>
+           <Node id="50" score="13">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="993.5"/>
+           </Node>
+           <Node id="51" score="16">
+            <SimplePredicate field="ibh" operator="greaterThan" value="993.5"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="19" score="8.7">
+          <SimplePredicate field="ibt" operator="greaterThan" value="208"/>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="ibh" operator="greaterThan" value="3588.5"/>
+        <Node id="10">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="57"/>
+         <Node id="20" score="9">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="3677.5"/>
+         </Node>
+         <Node id="21">
+          <SimplePredicate field="ibh" operator="greaterThan" value="3677.5"/>
+          <Node id="34">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="54.5"/>
+           <Node id="52">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="53.5"/>
+            <Node id="70">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="42.5"/>
+             <Node id="88">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="39"/>
+              <Node id="104" score="3.73684210526316">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="34"/>
+              </Node>
+              <Node id="105" score="2">
+               <SimplePredicate field="ibt" operator="greaterThan" value="34"/>
+              </Node>
+             </Node>
+             <Node id="89" score="7">
+              <SimplePredicate field="ibt" operator="greaterThan" value="39"/>
+             </Node>
+            </Node>
+            <Node id="71" score="2.28571428571429">
+             <SimplePredicate field="ibt" operator="greaterThan" value="42.5"/>
+            </Node>
+           </Node>
+           <Node id="53">
+            <SimplePredicate field="ibt" operator="greaterThan" value="53.5"/>
+            <Node id="72">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="87"/>
+             <Node id="90" score="3.66666666666667">
+              <SimplePredicate field="ibh" operator="lessOrEqual" value="4399.5"/>
+             </Node>
+             <Node id="91">
+              <SimplePredicate field="ibh" operator="greaterThan" value="4399.5"/>
+              <Node id="106" score="6.27272727272727">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="80"/>
+              </Node>
+              <Node id="107" score="11">
+               <SimplePredicate field="ibt" operator="greaterThan" value="80"/>
+              </Node>
+             </Node>
+            </Node>
+            <Node id="73">
+             <SimplePredicate field="ibt" operator="greaterThan" value="87"/>
+             <Node id="92" score="5">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="50"/>
+             </Node>
+             <Node id="93">
+              <SimplePredicate field="temp" operator="greaterThan" value="50"/>
+              <Node id="108" score="4">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="100"/>
+              </Node>
+              <Node id="109" score="3">
+               <SimplePredicate field="ibt" operator="greaterThan" value="100"/>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="35" score="6">
+           <SimplePredicate field="temp" operator="greaterThan" value="54.5"/>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="11">
+         <SimplePredicate field="temp" operator="greaterThan" value="57"/>
+         <Node id="22">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="144.5"/>
+          <Node id="36">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="59.5"/>
+           <Node id="54" score="4">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="71"/>
+           </Node>
+           <Node id="55">
+            <SimplePredicate field="ibt" operator="greaterThan" value="71"/>
+            <Node id="74" score="7">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="4319"/>
+            </Node>
+            <Node id="75" score="11.4">
+             <SimplePredicate field="ibh" operator="greaterThan" value="4319"/>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="37">
+           <SimplePredicate field="temp" operator="greaterThan" value="59.5"/>
+           <Node id="56" score="5.66666666666667">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="61.5"/>
+           </Node>
+           <Node id="57" score="10">
+            <SimplePredicate field="temp" operator="greaterThan" value="61.5"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="23" score="6.33333333333333">
+          <SimplePredicate field="ibt" operator="greaterThan" value="144.5"/>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="temp" operator="greaterThan" value="66.5"/>
+       <Node id="6">
+        <SimplePredicate field="temp" operator="lessOrEqual" value="79.5"/>
+        <Node id="12">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="2785"/>
+         <Node id="24">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="490"/>
+          <Node id="38" score="6">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="344"/>
+          </Node>
+          <Node id="39" score="13.375">
+           <SimplePredicate field="ibh" operator="greaterThan" value="344"/>
+          </Node>
+         </Node>
+         <Node id="25">
+          <SimplePredicate field="ibh" operator="greaterThan" value="490"/>
+          <Node id="40">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="216"/>
+           <Node id="58" score="14.3333333333333">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="813"/>
+           </Node>
+           <Node id="59">
+            <SimplePredicate field="ibh" operator="greaterThan" value="813"/>
+            <Node id="76" score="22">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="68"/>
+            </Node>
+            <Node id="77">
+             <SimplePredicate field="temp" operator="greaterThan" value="68"/>
+             <Node id="94" score="15.8571428571429">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="70.5"/>
+             </Node>
+             <Node id="95">
+              <SimplePredicate field="temp" operator="greaterThan" value="70.5"/>
+              <Node id="110" score="20.6666666666667">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="202"/>
+              </Node>
+              <Node id="111" score="17.4444444444444">
+               <SimplePredicate field="ibt" operator="greaterThan" value="202"/>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="41">
+           <SimplePredicate field="ibt" operator="greaterThan" value="216"/>
+           <Node id="60">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="75.5"/>
+            <Node id="78" score="18.1666666666667">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="235"/>
+            </Node>
+            <Node id="79" score="22.2222222222222">
+             <SimplePredicate field="ibt" operator="greaterThan" value="235"/>
+            </Node>
+           </Node>
+           <Node id="61" score="24.6666666666667">
+            <SimplePredicate field="temp" operator="greaterThan" value="75.5"/>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="13">
+         <SimplePredicate field="ibh" operator="greaterThan" value="2785"/>
+         <Node id="26">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="4043"/>
+          <Node id="42">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="3733"/>
+           <Node id="62">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="3530"/>
+            <Node id="80" score="5">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="143.5"/>
+            </Node>
+            <Node id="81">
+             <SimplePredicate field="ibt" operator="greaterThan" value="143.5"/>
+             <Node id="96" score="18.4">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="71"/>
+             </Node>
+             <Node id="97" score="12.8333333333333">
+              <SimplePredicate field="temp" operator="greaterThan" value="71"/>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="63" score="8">
+            <SimplePredicate field="ibh" operator="greaterThan" value="3530"/>
+           </Node>
+          </Node>
+          <Node id="43" score="23">
+           <SimplePredicate field="ibh" operator="greaterThan" value="3733"/>
+          </Node>
+         </Node>
+         <Node id="27" score="8.375">
+          <SimplePredicate field="ibh" operator="greaterThan" value="4043"/>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="7">
+        <SimplePredicate field="temp" operator="greaterThan" value="79.5"/>
+        <Node id="14">
+         <SimplePredicate field="ibt" operator="lessOrEqual" value="295.5"/>
+         <Node id="28" score="18.5">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="232.5"/>
+         </Node>
+         <Node id="29">
+          <SimplePredicate field="ibt" operator="greaterThan" value="232.5"/>
+          <Node id="44">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="263"/>
+           <Node id="64" score="24.1666666666667">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="253.5"/>
+           </Node>
+           <Node id="65" score="26.6666666666667">
+            <SimplePredicate field="ibt" operator="greaterThan" value="253.5"/>
+           </Node>
+          </Node>
+          <Node id="45" score="22.875">
+           <SimplePredicate field="ibt" operator="greaterThan" value="263"/>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="15" score="32.8571428571429">
+         <SimplePredicate field="ibt" operator="greaterThan" value="295.5"/>
+        </Node>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="8">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="regression" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="O3" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="temp" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibh" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibt" usageType="active" invalidValueTreatment="asIs"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2">
+       <SimplePredicate field="temp" operator="lessOrEqual" value="64.5"/>
+       <Node id="4">
+        <SimplePredicate field="ibh" operator="lessOrEqual" value="3613"/>
+        <Node id="8">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="52.5"/>
+         <Node id="16" score="4.42857142857143">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="508"/>
+         </Node>
+         <Node id="17">
+          <SimplePredicate field="ibh" operator="greaterThan" value="508"/>
+          <Node id="30" score="6.125">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="44.5"/>
+          </Node>
+          <Node id="31">
+           <SimplePredicate field="temp" operator="greaterThan" value="44.5"/>
+           <Node id="50">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="165.5"/>
+            <Node id="76">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="154.5"/>
+             <Node id="92" score="7.71428571428571">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="49.5"/>
+             </Node>
+             <Node id="93" score="9.57142857142857">
+              <SimplePredicate field="temp" operator="greaterThan" value="49.5"/>
+             </Node>
+            </Node>
+            <Node id="77" score="5.5">
+             <SimplePredicate field="ibt" operator="greaterThan" value="154.5"/>
+            </Node>
+           </Node>
+           <Node id="51" score="13">
+            <SimplePredicate field="ibt" operator="greaterThan" value="165.5"/>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="9">
+         <SimplePredicate field="temp" operator="greaterThan" value="52.5"/>
+         <Node id="18">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="204.5"/>
+          <Node id="32" score="17.5">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="54"/>
+          </Node>
+          <Node id="33">
+           <SimplePredicate field="temp" operator="greaterThan" value="54"/>
+           <Node id="52" score="12.3">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="521"/>
+           </Node>
+           <Node id="53">
+            <SimplePredicate field="ibh" operator="greaterThan" value="521"/>
+            <Node id="78" score="5">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="56"/>
+            </Node>
+            <Node id="79">
+             <SimplePredicate field="temp" operator="greaterThan" value="56"/>
+             <Node id="94" score="11.8571428571429">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="136.5"/>
+             </Node>
+             <Node id="95">
+              <SimplePredicate field="ibt" operator="greaterThan" value="136.5"/>
+              <Node id="106" score="6">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="143"/>
+              </Node>
+              <Node id="107" score="10.2727272727273">
+               <SimplePredicate field="ibt" operator="greaterThan" value="143"/>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="19" score="6.33333333333333">
+          <SimplePredicate field="ibt" operator="greaterThan" value="204.5"/>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="ibh" operator="greaterThan" value="3613"/>
+        <Node id="10">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="58.5"/>
+         <Node id="20">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="101"/>
+          <Node id="34">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="55.5"/>
+           <Node id="54">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="43"/>
+            <Node id="80" score="3.88888888888889">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="31"/>
+            </Node>
+            <Node id="81">
+             <SimplePredicate field="ibt" operator="greaterThan" value="31"/>
+             <Node id="96" score="2">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="50.5"/>
+             </Node>
+             <Node id="97" score="3">
+              <SimplePredicate field="ibt" operator="greaterThan" value="50.5"/>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="55" score="5.4">
+            <SimplePredicate field="temp" operator="greaterThan" value="43"/>
+           </Node>
+          </Node>
+          <Node id="35">
+           <SimplePredicate field="ibt" operator="greaterThan" value="55.5"/>
+           <Node id="56" score="3.5">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="4399.5"/>
+           </Node>
+           <Node id="57">
+            <SimplePredicate field="ibh" operator="greaterThan" value="4399.5"/>
+            <Node id="82">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="57"/>
+             <Node id="98" score="8.33333333333333">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="40.5"/>
+             </Node>
+             <Node id="99">
+              <SimplePredicate field="temp" operator="greaterThan" value="40.5"/>
+              <Node id="108" score="6.44444444444444">
+               <SimplePredicate field="temp" operator="lessOrEqual" value="51.5"/>
+              </Node>
+              <Node id="109" score="5.33333333333333">
+               <SimplePredicate field="temp" operator="greaterThan" value="51.5"/>
+              </Node>
+             </Node>
+            </Node>
+            <Node id="83" score="10">
+             <SimplePredicate field="temp" operator="greaterThan" value="57"/>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="21">
+          <SimplePredicate field="ibt" operator="greaterThan" value="101"/>
+          <Node id="36">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="110.5"/>
+           <Node id="58" score="3">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="107.5"/>
+           </Node>
+           <Node id="59" score="2.75">
+            <SimplePredicate field="ibt" operator="greaterThan" value="107.5"/>
+           </Node>
+          </Node>
+          <Node id="37">
+           <SimplePredicate field="ibt" operator="greaterThan" value="110.5"/>
+           <Node id="60" score="4.11111111111111">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="135.5"/>
+           </Node>
+           <Node id="61" score="3">
+            <SimplePredicate field="ibt" operator="greaterThan" value="135.5"/>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="11">
+         <SimplePredicate field="temp" operator="greaterThan" value="58.5"/>
+         <Node id="22" score="12">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="59.5"/>
+         </Node>
+         <Node id="23">
+          <SimplePredicate field="temp" operator="greaterThan" value="59.5"/>
+          <Node id="38" score="9.5">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="4030"/>
+          </Node>
+          <Node id="39" score="6.2">
+           <SimplePredicate field="ibh" operator="greaterThan" value="4030"/>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="temp" operator="greaterThan" value="64.5"/>
+       <Node id="6">
+        <SimplePredicate field="ibt" operator="lessOrEqual" value="226.5"/>
+        <Node id="12">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="4043"/>
+         <Node id="24">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="160.5"/>
+          <Node id="40" score="5">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="147.5"/>
+          </Node>
+          <Node id="41">
+           <SimplePredicate field="ibt" operator="greaterThan" value="147.5"/>
+           <Node id="62" score="15.5">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="66.5"/>
+           </Node>
+           <Node id="63" score="11.1111111111111">
+            <SimplePredicate field="temp" operator="greaterThan" value="66.5"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="25">
+          <SimplePredicate field="ibt" operator="greaterThan" value="160.5"/>
+          <Node id="42">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="69.5"/>
+           <Node id="64" score="13.3333333333333">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="65.5"/>
+           </Node>
+           <Node id="65">
+            <SimplePredicate field="temp" operator="greaterThan" value="65.5"/>
+            <Node id="84" score="17">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="193.5"/>
+            </Node>
+            <Node id="85">
+             <SimplePredicate field="ibt" operator="greaterThan" value="193.5"/>
+             <Node id="100" score="21.1">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="215"/>
+             </Node>
+             <Node id="101" score="14">
+              <SimplePredicate field="ibt" operator="greaterThan" value="215"/>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="43">
+           <SimplePredicate field="temp" operator="greaterThan" value="69.5"/>
+           <Node id="66" score="13.2857142857143">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="1134.5"/>
+           </Node>
+           <Node id="67">
+            <SimplePredicate field="ibh" operator="greaterThan" value="1134.5"/>
+            <Node id="86">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="2767"/>
+             <Node id="102">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="219.5"/>
+              <Node id="110" score="17.1428571428571">
+               <SimplePredicate field="temp" operator="lessOrEqual" value="75.5"/>
+              </Node>
+              <Node id="111" score="20.1666666666667">
+               <SimplePredicate field="temp" operator="greaterThan" value="75.5"/>
+              </Node>
+             </Node>
+             <Node id="103" score="14">
+              <SimplePredicate field="ibt" operator="greaterThan" value="219.5"/>
+             </Node>
+            </Node>
+            <Node id="87" score="14.3333333333333">
+             <SimplePredicate field="ibh" operator="greaterThan" value="2767"/>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="13" score="7.4">
+         <SimplePredicate field="ibh" operator="greaterThan" value="4043"/>
+        </Node>
+       </Node>
+       <Node id="7">
+        <SimplePredicate field="ibt" operator="greaterThan" value="226.5"/>
+        <Node id="14">
+         <SimplePredicate field="ibt" operator="lessOrEqual" value="294"/>
+         <Node id="26">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="773.5"/>
+          <Node id="44" score="15.6">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="467"/>
+          </Node>
+          <Node id="45">
+           <SimplePredicate field="ibh" operator="greaterThan" value="467"/>
+           <Node id="68" score="28">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="501.5"/>
+           </Node>
+           <Node id="69">
+            <SimplePredicate field="ibh" operator="greaterThan" value="501.5"/>
+            <Node id="88" score="20.8">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="259"/>
+            </Node>
+            <Node id="89" score="17.3333333333333">
+             <SimplePredicate field="ibt" operator="greaterThan" value="259"/>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="27">
+          <SimplePredicate field="ibh" operator="greaterThan" value="773.5"/>
+          <Node id="46">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="262"/>
+           <Node id="70">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="260.5"/>
+            <Node id="90">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="2233.5"/>
+             <Node id="104" score="29">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="229"/>
+             </Node>
+             <Node id="105" score="24.4705882352941">
+              <SimplePredicate field="ibt" operator="greaterThan" value="229"/>
+             </Node>
+            </Node>
+            <Node id="91" score="17">
+             <SimplePredicate field="ibh" operator="greaterThan" value="2233.5"/>
+            </Node>
+           </Node>
+           <Node id="71" score="31.3333333333333">
+            <SimplePredicate field="ibt" operator="greaterThan" value="260.5"/>
+           </Node>
+          </Node>
+          <Node id="47">
+           <SimplePredicate field="ibt" operator="greaterThan" value="262"/>
+           <Node id="72" score="28.3333333333333">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="83.5"/>
+           </Node>
+           <Node id="73" score="18.875">
+            <SimplePredicate field="temp" operator="greaterThan" value="83.5"/>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="15">
+         <SimplePredicate field="ibt" operator="greaterThan" value="294"/>
+         <Node id="28" score="18">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="365"/>
+         </Node>
+         <Node id="29">
+          <SimplePredicate field="ibh" operator="greaterThan" value="365"/>
+          <Node id="48" score="27">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="85.5"/>
+          </Node>
+          <Node id="49">
+           <SimplePredicate field="temp" operator="greaterThan" value="85.5"/>
+           <Node id="74" score="27">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="450.5"/>
+           </Node>
+           <Node id="75" score="33.8571428571429">
+            <SimplePredicate field="ibh" operator="greaterThan" value="450.5"/>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="9">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="regression" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="O3" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="temp" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibh" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibt" usageType="active" invalidValueTreatment="asIs"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2">
+       <SimplePredicate field="temp" operator="lessOrEqual" value="67.5"/>
+       <Node id="4">
+        <SimplePredicate field="ibt" operator="lessOrEqual" value="149"/>
+        <Node id="8">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="4030"/>
+         <Node id="16">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="56"/>
+          <Node id="28">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="1415.5"/>
+           <Node id="46">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="146.5"/>
+            <Node id="70" score="7.6">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="132.5"/>
+            </Node>
+            <Node id="71" score="13">
+             <SimplePredicate field="ibt" operator="greaterThan" value="132.5"/>
+            </Node>
+           </Node>
+           <Node id="47" score="3">
+            <SimplePredicate field="ibt" operator="greaterThan" value="146.5"/>
+           </Node>
+          </Node>
+          <Node id="29">
+           <SimplePredicate field="ibh" operator="greaterThan" value="1415.5"/>
+           <Node id="48" score="3.85714285714286">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="44.5"/>
+           </Node>
+           <Node id="49">
+            <SimplePredicate field="temp" operator="greaterThan" value="44.5"/>
+            <Node id="72" score="5.42857142857143">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="2704.5"/>
+            </Node>
+            <Node id="73" score="7.6">
+             <SimplePredicate field="ibh" operator="greaterThan" value="2704.5"/>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="17">
+          <SimplePredicate field="temp" operator="greaterThan" value="56"/>
+          <Node id="30">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="64.5"/>
+           <Node id="50">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="143"/>
+            <Node id="74" score="10.6666666666667">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="129.5"/>
+            </Node>
+            <Node id="75" score="9.16666666666667">
+             <SimplePredicate field="ibt" operator="greaterThan" value="129.5"/>
+            </Node>
+           </Node>
+           <Node id="51" score="12">
+            <SimplePredicate field="ibt" operator="greaterThan" value="143"/>
+           </Node>
+          </Node>
+          <Node id="31" score="5">
+           <SimplePredicate field="temp" operator="greaterThan" value="64.5"/>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="9">
+         <SimplePredicate field="ibh" operator="greaterThan" value="4030"/>
+         <Node id="18">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="44"/>
+          <Node id="32">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="55.5"/>
+           <Node id="52" score="3.875">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="35.5"/>
+           </Node>
+           <Node id="53">
+            <SimplePredicate field="temp" operator="greaterThan" value="35.5"/>
+            <Node id="76" score="3.33333333333333">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="11"/>
+            </Node>
+            <Node id="77">
+             <SimplePredicate field="ibt" operator="greaterThan" value="11"/>
+             <Node id="98" score="1.9">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="47.5"/>
+             </Node>
+             <Node id="99" score="3">
+              <SimplePredicate field="ibt" operator="greaterThan" value="47.5"/>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="33" score="6.66666666666667">
+           <SimplePredicate field="ibt" operator="greaterThan" value="55.5"/>
+          </Node>
+         </Node>
+         <Node id="19">
+          <SimplePredicate field="temp" operator="greaterThan" value="44"/>
+          <Node id="34">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="87.5"/>
+           <Node id="54">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="82"/>
+            <Node id="78" score="5.5">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="47.5"/>
+            </Node>
+            <Node id="79">
+             <SimplePredicate field="temp" operator="greaterThan" value="47.5"/>
+             <Node id="100" score="9">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="48.5"/>
+             </Node>
+             <Node id="101" score="6.2">
+              <SimplePredicate field="temp" operator="greaterThan" value="48.5"/>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="55" score="10">
+            <SimplePredicate field="ibt" operator="greaterThan" value="82"/>
+           </Node>
+          </Node>
+          <Node id="35">
+           <SimplePredicate field="ibt" operator="greaterThan" value="87.5"/>
+           <Node id="56">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="58.5"/>
+            <Node id="80" score="3.5">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="53.5"/>
+            </Node>
+            <Node id="81">
+             <SimplePredicate field="temp" operator="greaterThan" value="53.5"/>
+             <Node id="102" score="4.18181818181818">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="112.5"/>
+             </Node>
+             <Node id="103" score="5">
+              <SimplePredicate field="ibt" operator="greaterThan" value="112.5"/>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="57">
+            <SimplePredicate field="temp" operator="greaterThan" value="58.5"/>
+            <Node id="82" score="12">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="60"/>
+            </Node>
+            <Node id="83">
+             <SimplePredicate field="temp" operator="greaterThan" value="60"/>
+             <Node id="104" score="12">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="103"/>
+             </Node>
+             <Node id="105" score="5">
+              <SimplePredicate field="ibt" operator="greaterThan" value="103"/>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="ibt" operator="greaterThan" value="149"/>
+        <Node id="10" score="5.88888888888889">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="312.5"/>
+        </Node>
+        <Node id="11">
+         <SimplePredicate field="ibh" operator="greaterThan" value="312.5"/>
+         <Node id="20">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="64.5"/>
+          <Node id="36">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="184"/>
+           <Node id="58">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="180.5"/>
+            <Node id="84">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="165"/>
+             <Node id="106" score="9.66666666666667">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="160.5"/>
+             </Node>
+             <Node id="107" score="4.5">
+              <SimplePredicate field="ibt" operator="greaterThan" value="160.5"/>
+             </Node>
+            </Node>
+            <Node id="85">
+             <SimplePredicate field="ibt" operator="greaterThan" value="165"/>
+             <Node id="108" score="12.5454545454545">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="62.5"/>
+             </Node>
+             <Node id="109" score="10">
+              <SimplePredicate field="temp" operator="greaterThan" value="62.5"/>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="59" score="4.8">
+            <SimplePredicate field="ibt" operator="greaterThan" value="180.5"/>
+           </Node>
+          </Node>
+          <Node id="37">
+           <SimplePredicate field="ibt" operator="greaterThan" value="184"/>
+           <Node id="60" score="19">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="53.5"/>
+           </Node>
+           <Node id="61">
+            <SimplePredicate field="temp" operator="greaterThan" value="53.5"/>
+            <Node id="86" score="12.8571428571429">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="201.5"/>
+            </Node>
+            <Node id="87" score="8">
+             <SimplePredicate field="ibt" operator="greaterThan" value="201.5"/>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="21">
+          <SimplePredicate field="temp" operator="greaterThan" value="64.5"/>
+          <Node id="38" score="11">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="704.5"/>
+          </Node>
+          <Node id="39" score="15.9">
+           <SimplePredicate field="ibh" operator="greaterThan" value="704.5"/>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="temp" operator="greaterThan" value="67.5"/>
+       <Node id="6">
+        <SimplePredicate field="ibt" operator="lessOrEqual" value="224"/>
+        <Node id="12">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="3459"/>
+         <Node id="22" score="10.25">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="164.5"/>
+         </Node>
+         <Node id="23">
+          <SimplePredicate field="ibt" operator="greaterThan" value="164.5"/>
+          <Node id="40">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="71"/>
+           <Node id="62" score="15.3333333333333">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="488.5"/>
+           </Node>
+           <Node id="63" score="18.7">
+            <SimplePredicate field="ibh" operator="greaterThan" value="488.5"/>
+           </Node>
+          </Node>
+          <Node id="41">
+           <SimplePredicate field="temp" operator="greaterThan" value="71"/>
+           <Node id="64">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="206"/>
+            <Node id="88" score="12.5">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="75.5"/>
+            </Node>
+            <Node id="89" score="16">
+             <SimplePredicate field="temp" operator="greaterThan" value="75.5"/>
+            </Node>
+           </Node>
+           <Node id="65">
+            <SimplePredicate field="ibt" operator="greaterThan" value="206"/>
+            <Node id="90" score="17.875">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="77"/>
+            </Node>
+            <Node id="91" score="15.1428571428571">
+             <SimplePredicate field="temp" operator="greaterThan" value="77"/>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="13" score="7.8">
+         <SimplePredicate field="ibh" operator="greaterThan" value="3459"/>
+        </Node>
+       </Node>
+       <Node id="7">
+        <SimplePredicate field="ibt" operator="greaterThan" value="224"/>
+        <Node id="14">
+         <SimplePredicate field="ibt" operator="lessOrEqual" value="294"/>
+         <Node id="24">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="865.5"/>
+          <Node id="42">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="815"/>
+           <Node id="66" score="16.3333333333333">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="446"/>
+           </Node>
+           <Node id="67">
+            <SimplePredicate field="ibh" operator="greaterThan" value="446"/>
+            <Node id="92" score="28">
+             <SimplePredicate field="ibh" operator="lessOrEqual" value="582"/>
+            </Node>
+            <Node id="93" score="24.1">
+             <SimplePredicate field="ibh" operator="greaterThan" value="582"/>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="43" score="14.6">
+           <SimplePredicate field="ibh" operator="greaterThan" value="815"/>
+          </Node>
+         </Node>
+         <Node id="25">
+          <SimplePredicate field="ibh" operator="greaterThan" value="865.5"/>
+          <Node id="44" score="32">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="882"/>
+          </Node>
+          <Node id="45">
+           <SimplePredicate field="ibh" operator="greaterThan" value="882"/>
+           <Node id="68">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="82"/>
+            <Node id="94">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="258.5"/>
+             <Node id="110" score="26.3333333333333">
+              <SimplePredicate field="ibh" operator="lessOrEqual" value="941"/>
+             </Node>
+             <Node id="111" score="22.7">
+              <SimplePredicate field="ibh" operator="greaterThan" value="941"/>
+             </Node>
+            </Node>
+            <Node id="95" score="30.5">
+             <SimplePredicate field="ibt" operator="greaterThan" value="258.5"/>
+            </Node>
+           </Node>
+           <Node id="69">
+            <SimplePredicate field="temp" operator="greaterThan" value="82"/>
+            <Node id="96" score="22.7142857142857">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="268"/>
+            </Node>
+            <Node id="97" score="19">
+             <SimplePredicate field="ibt" operator="greaterThan" value="268"/>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="15">
+         <SimplePredicate field="ibt" operator="greaterThan" value="294"/>
+         <Node id="26" score="31.8333333333333">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="573.5"/>
+         </Node>
+         <Node id="27" score="26.375">
+          <SimplePredicate field="ibh" operator="greaterThan" value="573.5"/>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="10">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="regression" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="O3" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="temp" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibh" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="ibt" usageType="active" invalidValueTreatment="asIs"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2">
+       <SimplePredicate field="temp" operator="lessOrEqual" value="68"/>
+       <Node id="4">
+        <SimplePredicate field="ibh" operator="lessOrEqual" value="3573.5"/>
+        <Node id="8">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="58.5"/>
+         <Node id="16">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="207.5"/>
+          <Node id="28">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="183.5"/>
+           <Node id="46">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="156.5"/>
+            <Node id="62">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="48.5"/>
+             <Node id="76">
+              <SimplePredicate field="ibh" operator="lessOrEqual" value="2735.5"/>
+              <Node id="90" score="6.375">
+               <SimplePredicate field="temp" operator="lessOrEqual" value="43"/>
+              </Node>
+              <Node id="91" score="3.875">
+               <SimplePredicate field="temp" operator="greaterThan" value="43"/>
+              </Node>
+             </Node>
+             <Node id="77" score="8.71428571428571">
+              <SimplePredicate field="ibh" operator="greaterThan" value="2735.5"/>
+             </Node>
+            </Node>
+            <Node id="63">
+             <SimplePredicate field="temp" operator="greaterThan" value="48.5"/>
+             <Node id="78" score="9.75">
+              <SimplePredicate field="ibh" operator="lessOrEqual" value="1015"/>
+             </Node>
+             <Node id="79">
+              <SimplePredicate field="ibh" operator="greaterThan" value="1015"/>
+              <Node id="92" score="8.5">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="136.5"/>
+              </Node>
+              <Node id="93" score="5.5">
+               <SimplePredicate field="ibt" operator="greaterThan" value="136.5"/>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="47" score="9.5">
+            <SimplePredicate field="ibt" operator="greaterThan" value="156.5"/>
+           </Node>
+          </Node>
+          <Node id="29" score="15.6">
+           <SimplePredicate field="ibt" operator="greaterThan" value="183.5"/>
+          </Node>
+         </Node>
+         <Node id="17" score="3.42857142857143">
+          <SimplePredicate field="ibt" operator="greaterThan" value="207.5"/>
+         </Node>
+        </Node>
+        <Node id="9">
+         <SimplePredicate field="temp" operator="greaterThan" value="58.5"/>
+         <Node id="18" score="22">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="416"/>
+         </Node>
+         <Node id="19">
+          <SimplePredicate field="ibh" operator="greaterThan" value="416"/>
+          <Node id="30">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="159"/>
+           <Node id="48" score="7.875">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="1691"/>
+           </Node>
+           <Node id="49">
+            <SimplePredicate field="ibh" operator="greaterThan" value="1691"/>
+            <Node id="64" score="12.125">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="151.5"/>
+            </Node>
+            <Node id="65" score="9.8">
+             <SimplePredicate field="ibt" operator="greaterThan" value="151.5"/>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="31">
+           <SimplePredicate field="ibt" operator="greaterThan" value="159"/>
+           <Node id="50" score="18">
+            <SimplePredicate field="ibt" operator="lessOrEqual" value="165.5"/>
+           </Node>
+           <Node id="51">
+            <SimplePredicate field="ibt" operator="greaterThan" value="165.5"/>
+            <Node id="66">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="205"/>
+             <Node id="80" score="16">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="61.5"/>
+             </Node>
+             <Node id="81">
+              <SimplePredicate field="temp" operator="greaterThan" value="61.5"/>
+              <Node id="94">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="190"/>
+               <Node id="102" score="9.5">
+                <SimplePredicate field="ibh" operator="lessOrEqual" value="2906.5"/>
+               </Node>
+               <Node id="103" score="18">
+                <SimplePredicate field="ibh" operator="greaterThan" value="2906.5"/>
+               </Node>
+              </Node>
+              <Node id="95" score="14.8333333333333">
+               <SimplePredicate field="ibt" operator="greaterThan" value="190"/>
+              </Node>
+             </Node>
+            </Node>
+            <Node id="67" score="9.33333333333333">
+             <SimplePredicate field="ibt" operator="greaterThan" value="205"/>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="ibh" operator="greaterThan" value="3573.5"/>
+        <Node id="10">
+         <SimplePredicate field="temp" operator="lessOrEqual" value="43.5"/>
+         <Node id="20">
+          <SimplePredicate field="ibt" operator="lessOrEqual" value="32"/>
+          <Node id="32" score="3.25">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="5"/>
+          </Node>
+          <Node id="33" score="4.14285714285714">
+           <SimplePredicate field="ibt" operator="greaterThan" value="5"/>
+          </Node>
+         </Node>
+         <Node id="21">
+          <SimplePredicate field="ibt" operator="greaterThan" value="32"/>
+          <Node id="34">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="57.5"/>
+           <Node id="52" score="2.7">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="38"/>
+           </Node>
+           <Node id="53" score="2">
+            <SimplePredicate field="temp" operator="greaterThan" value="38"/>
+           </Node>
+          </Node>
+          <Node id="35" score="4">
+           <SimplePredicate field="ibt" operator="greaterThan" value="57.5"/>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="11">
+         <SimplePredicate field="temp" operator="greaterThan" value="43.5"/>
+         <Node id="22">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="4668.5"/>
+          <Node id="36" score="5.83333333333333">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="3647.5"/>
+          </Node>
+          <Node id="37" score="8.1">
+           <SimplePredicate field="ibh" operator="greaterThan" value="3647.5"/>
+          </Node>
+         </Node>
+         <Node id="23">
+          <SimplePredicate field="ibh" operator="greaterThan" value="4668.5"/>
+          <Node id="38" score="6.625">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="45"/>
+          </Node>
+          <Node id="39">
+           <SimplePredicate field="ibt" operator="greaterThan" value="45"/>
+           <Node id="54">
+            <SimplePredicate field="temp" operator="lessOrEqual" value="54.5"/>
+            <Node id="68" score="2.8">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="63"/>
+            </Node>
+            <Node id="69">
+             <SimplePredicate field="ibt" operator="greaterThan" value="63"/>
+             <Node id="82" score="5.66666666666667">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="71"/>
+             </Node>
+             <Node id="83">
+              <SimplePredicate field="ibt" operator="greaterThan" value="71"/>
+              <Node id="96" score="6">
+               <SimplePredicate field="temp" operator="lessOrEqual" value="47"/>
+              </Node>
+              <Node id="97">
+               <SimplePredicate field="temp" operator="greaterThan" value="47"/>
+               <Node id="104" score="3.33333333333333">
+                <SimplePredicate field="temp" operator="lessOrEqual" value="52.5"/>
+               </Node>
+               <Node id="105">
+                <SimplePredicate field="temp" operator="greaterThan" value="52.5"/>
+                <Node id="108" score="4">
+                 <SimplePredicate field="ibt" operator="lessOrEqual" value="115.5"/>
+                </Node>
+                <Node id="109" score="4.25">
+                 <SimplePredicate field="ibt" operator="greaterThan" value="115.5"/>
+                </Node>
+               </Node>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="55">
+            <SimplePredicate field="temp" operator="greaterThan" value="54.5"/>
+            <Node id="70" score="7.4">
+             <SimplePredicate field="temp" operator="lessOrEqual" value="58.5"/>
+            </Node>
+            <Node id="71">
+             <SimplePredicate field="temp" operator="greaterThan" value="58.5"/>
+             <Node id="84">
+              <SimplePredicate field="ibt" operator="lessOrEqual" value="180.5"/>
+              <Node id="98" score="4.8">
+               <SimplePredicate field="temp" operator="lessOrEqual" value="65"/>
+              </Node>
+              <Node id="99" score="4">
+               <SimplePredicate field="temp" operator="greaterThan" value="65"/>
+              </Node>
+             </Node>
+             <Node id="85" score="7">
+              <SimplePredicate field="ibt" operator="greaterThan" value="180.5"/>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="temp" operator="greaterThan" value="68"/>
+       <Node id="6">
+        <SimplePredicate field="temp" operator="lessOrEqual" value="79.5"/>
+        <Node id="12" score="6.66666666666667">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="357"/>
+        </Node>
+        <Node id="13">
+         <SimplePredicate field="ibh" operator="greaterThan" value="357"/>
+         <Node id="24">
+          <SimplePredicate field="ibh" operator="lessOrEqual" value="2854"/>
+          <Node id="40">
+           <SimplePredicate field="temp" operator="lessOrEqual" value="77.5"/>
+           <Node id="56" score="14.3333333333333">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="480.5"/>
+           </Node>
+           <Node id="57">
+            <SimplePredicate field="ibh" operator="greaterThan" value="480.5"/>
+            <Node id="72" score="17.3333333333333">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="208.5"/>
+            </Node>
+            <Node id="73">
+             <SimplePredicate field="ibt" operator="greaterThan" value="208.5"/>
+             <Node id="86" score="28">
+              <SimplePredicate field="ibh" operator="lessOrEqual" value="501.5"/>
+             </Node>
+             <Node id="87">
+              <SimplePredicate field="ibh" operator="greaterThan" value="501.5"/>
+              <Node id="100" score="22.8888888888889">
+               <SimplePredicate field="ibt" operator="lessOrEqual" value="217.5"/>
+              </Node>
+              <Node id="101">
+               <SimplePredicate field="ibt" operator="greaterThan" value="217.5"/>
+               <Node id="106" score="18.1428571428571">
+                <SimplePredicate field="ibt" operator="lessOrEqual" value="238.5"/>
+               </Node>
+               <Node id="107" score="22.2857142857143">
+                <SimplePredicate field="ibt" operator="greaterThan" value="238.5"/>
+               </Node>
+              </Node>
+             </Node>
+            </Node>
+           </Node>
+          </Node>
+          <Node id="41" score="14.7">
+           <SimplePredicate field="temp" operator="greaterThan" value="77.5"/>
+          </Node>
+         </Node>
+         <Node id="25" score="13.3333333333333">
+          <SimplePredicate field="ibh" operator="greaterThan" value="2854"/>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="7">
+        <SimplePredicate field="temp" operator="greaterThan" value="79.5"/>
+        <Node id="14" score="30.5">
+         <SimplePredicate field="ibh" operator="lessOrEqual" value="568.5"/>
+        </Node>
+        <Node id="15">
+         <SimplePredicate field="ibh" operator="greaterThan" value="568.5"/>
+         <Node id="26">
+          <SimplePredicate field="temp" operator="lessOrEqual" value="85.5"/>
+          <Node id="42">
+           <SimplePredicate field="ibt" operator="lessOrEqual" value="261.5"/>
+           <Node id="58">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="1759.5"/>
+            <Node id="74" score="19">
+             <SimplePredicate field="ibt" operator="lessOrEqual" value="231.5"/>
+            </Node>
+            <Node id="75">
+             <SimplePredicate field="ibt" operator="greaterThan" value="231.5"/>
+             <Node id="88" score="25.2222222222222">
+              <SimplePredicate field="temp" operator="lessOrEqual" value="82.5"/>
+             </Node>
+             <Node id="89" score="22.3333333333333">
+              <SimplePredicate field="temp" operator="greaterThan" value="82.5"/>
+             </Node>
+            </Node>
+           </Node>
+           <Node id="59" score="17.3333333333333">
+            <SimplePredicate field="ibh" operator="greaterThan" value="1759.5"/>
+           </Node>
+          </Node>
+          <Node id="43" score="14.625">
+           <SimplePredicate field="ibt" operator="greaterThan" value="261.5"/>
+          </Node>
+         </Node>
+         <Node id="27">
+          <SimplePredicate field="temp" operator="greaterThan" value="85.5"/>
+          <Node id="44" score="13">
+           <SimplePredicate field="ibh" operator="lessOrEqual" value="600"/>
+          </Node>
+          <Node id="45">
+           <SimplePredicate field="ibh" operator="greaterThan" value="600"/>
+           <Node id="60" score="28.3333333333333">
+            <SimplePredicate field="ibh" operator="lessOrEqual" value="883.5"/>
+           </Node>
+           <Node id="61" score="24.4285714285714">
+            <SimplePredicate field="ibh" operator="greaterThan" value="883.5"/>
+           </Node>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+  </Segmentation>
+ </MiningModel>
+</PMML>

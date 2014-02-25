@@ -1,0 +1,890 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1">
+  <Header copyright="Vfed">
+    <Application name="KNIME" version="2.8.0"/>
+  </Header>
+  <DataDictionary numberOfFields="5">
+    <DataField name="Sepal.Length" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="4.3" rightMargin="7.9"/>
+    </DataField>
+    <DataField name="Sepal.Width" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="2.0" rightMargin="4.4"/>
+    </DataField>
+    <DataField name="Petal.Length" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="1.0" rightMargin="6.9"/>
+    </DataField>
+    <DataField name="Petal.Width" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="0.1" rightMargin="2.5"/>
+    </DataField>
+    <DataField name="Species" optype="categorical" dataType="string">
+      <Value value="setosa"/>
+      <Value value="versicolor"/>
+      <Value value="virginica"/>
+    </DataField>
+  </DataDictionary>
+  <SupportVectorMachineModel modelName="SVM" functionName="classification" algorithmName="Sequential Minimal Optimization (SMO)" svmRepresentation="SupportVectors">
+    <MiningSchema>
+      <MiningField name="Sepal.Length" invalidValueTreatment="asIs"/>
+      <MiningField name="Sepal.Width" invalidValueTreatment="asIs"/>
+      <MiningField name="Petal.Length" invalidValueTreatment="asIs"/>
+      <MiningField name="Petal.Width" invalidValueTreatment="asIs"/>
+      <MiningField name="Species" invalidValueTreatment="asIs" usageType="predicted"/>
+    </MiningSchema>
+    <Targets>
+      <Target field="Species" optype="categorical">
+        <TargetValue value="setosa"/>
+        <TargetValue value="versicolor"/>
+        <TargetValue value="virginica"/>
+      </Target>
+    </Targets>
+    <PolynomialKernelType coef0="1.0" degree="1.0" gamma="1.0"/>
+    <VectorDictionary numberOfVectors="97">
+      <VectorFields numberOfFields="4">
+        <FieldRef field="Sepal.Length"/>
+        <FieldRef field="Sepal.Width"/>
+        <FieldRef field="Petal.Length"/>
+        <FieldRef field="Petal.Width"/>
+      </VectorFields>
+      <VectorInstance id="setosa_Row23">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.1 3.3 1.7 0.5</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row41">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.5 2.3 1.3 0.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row98">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.1 2.5 3.0 1.1</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row1">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.9 3.0 1.4 0.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row3">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.6 3.1 1.5 0.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row8">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.4 2.9 1.4 0.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row9">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.9 3.1 1.5 0.1</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row12">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.8 3.0 1.4 0.1</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row13">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.3 3.0 1.1 0.1</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row25">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.0 3.0 1.6 0.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row29">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.7 3.2 1.6 0.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row30">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.8 3.1 1.6 0.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row34">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.9 3.1 1.5 0.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row38">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.4 3.0 1.3 0.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row42">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.4 3.2 1.3 0.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row45">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.8 3.0 1.4 0.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="setosa_Row47">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.6 3.2 1.4 0.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row50">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>7.0 3.2 4.7 1.4</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row51">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.4 3.2 4.5 1.5</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row52">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.9 3.1 4.9 1.5</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row53">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.5 2.3 4.0 1.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row54">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.5 2.8 4.6 1.5</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row55">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.7 2.8 4.5 1.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row56">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.3 3.3 4.7 1.6</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row57">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.9 2.4 3.3 1.0</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row58">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.6 2.9 4.6 1.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row59">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.2 2.7 3.9 1.4</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row61">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.9 3.0 4.2 1.5</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row63">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.1 2.9 4.7 1.4</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row64">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.6 2.9 3.6 1.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row65">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.7 3.1 4.4 1.4</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row66">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.6 3.0 4.5 1.5</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row67">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.8 2.7 4.1 1.0</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row69">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.6 2.5 3.9 1.1</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row70">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.9 3.2 4.8 1.8</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row71">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.1 2.8 4.0 1.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row72">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.3 2.5 4.9 1.5</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row73">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.1 2.8 4.7 1.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row74">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.4 2.9 4.3 1.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row75">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.6 3.0 4.4 1.4</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row76">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.8 2.8 4.8 1.4</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row77">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.7 3.0 5.0 1.7</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row78">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.0 2.9 4.5 1.5</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row79">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.7 2.6 3.5 1.0</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row80">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.5 2.4 3.8 1.1</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row81">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.5 2.4 3.7 1.0</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row82">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.8 2.7 3.9 1.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row83">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.0 2.7 5.1 1.6</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row84">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.4 3.0 4.5 1.5</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row85">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.0 3.4 4.5 1.6</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row86">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.7 3.1 4.7 1.5</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row88">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.6 3.0 4.1 1.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row89">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.5 2.5 4.0 1.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row90">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.5 2.6 4.4 1.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row91">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.1 3.0 4.6 1.4</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row92">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.8 2.6 4.0 1.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row93">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.0 2.3 3.3 1.0</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row94">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.6 2.7 4.2 1.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row95">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.7 3.0 4.2 1.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row96">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.7 2.9 4.2 1.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row97">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.2 2.9 4.3 1.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row99">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.7 2.8 4.1 1.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row101">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.8 2.7 5.1 1.9</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row102">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>7.1 3.0 5.9 2.1</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row103">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.3 2.9 5.6 1.8</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row104">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.5 3.0 5.8 2.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row105">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>7.6 3.0 6.6 2.1</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row106">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>4.9 2.5 4.5 1.7</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row107">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>7.3 2.9 6.3 1.8</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row108">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.7 2.5 5.8 1.8</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row111">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.4 2.7 5.3 1.9</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row112">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.8 3.0 5.5 2.1</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row113">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.7 2.5 5.0 2.0</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row116">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.5 3.0 5.5 1.8</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row118">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>7.7 2.6 6.9 2.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row119">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.0 2.2 5.0 1.5</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row121">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.6 2.8 4.9 2.0</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row122">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>7.7 2.8 6.7 2.0</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row123">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.3 2.7 4.9 1.8</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row125">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>7.2 3.2 6.0 1.8</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row126">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.2 2.8 4.8 1.8</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row127">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.1 3.0 4.9 1.8</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row128">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.4 2.8 5.6 2.1</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row129">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>7.2 3.0 5.8 1.6</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row130">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>7.4 2.8 6.1 1.9</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row132">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.4 2.8 5.6 2.2</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row133">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.3 2.8 5.1 1.5</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row134">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.1 2.6 5.6 1.4</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row135">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>7.7 3.0 6.1 2.3</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row137">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.4 3.1 5.5 1.8</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row138">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.0 3.0 4.8 1.8</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row142">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.8 2.7 5.1 1.9</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row146">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.3 2.5 5.0 1.9</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row147">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.5 3.0 5.2 2.0</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row149">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>5.9 3.0 5.1 1.8</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="versicolor_Row68">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.2 2.2 4.5 1.5</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+      <VectorInstance id="virginica_Row110">
+        <REAL-SparseArray n="4">
+          <Indices>1 2 3 4</Indices>
+          <REAL-Entries>6.5 3.2 5.1 2.0</REAL-Entries>
+        </REAL-SparseArray>
+      </VectorInstance>
+    </VectorDictionary>
+    <SupportVectorMachine targetCategory="setosa">
+      <SupportVectors numberOfAttributes="4" numberOfSupportVectors="3">
+        <SupportVector vectorId="setosa_Row23"/>
+        <SupportVector vectorId="setosa_Row41"/>
+        <SupportVector vectorId="versicolor_Row98"/>
+      </SupportVectors>
+      <Coefficients numberOfCoefficients="3" absoluteValue="-1.4542992276218847">
+        <Coefficient value="-0.670424981155004"/>
+        <Coefficient value="-0.07730910882399081"/>
+        <Coefficient value="0.7477340899790095"/>
+      </Coefficients>
+    </SupportVectorMachine>
+    <SupportVectorMachine targetCategory="versicolor">
+      <SupportVectors numberOfAttributes="4" numberOfSupportVectors="94">
+        <SupportVector vectorId="setosa_Row1"/>
+        <SupportVector vectorId="setosa_Row3"/>
+        <SupportVector vectorId="setosa_Row8"/>
+        <SupportVector vectorId="setosa_Row9"/>
+        <SupportVector vectorId="setosa_Row12"/>
+        <SupportVector vectorId="setosa_Row13"/>
+        <SupportVector vectorId="setosa_Row25"/>
+        <SupportVector vectorId="setosa_Row29"/>
+        <SupportVector vectorId="setosa_Row30"/>
+        <SupportVector vectorId="setosa_Row34"/>
+        <SupportVector vectorId="setosa_Row38"/>
+        <SupportVector vectorId="setosa_Row41"/>
+        <SupportVector vectorId="setosa_Row42"/>
+        <SupportVector vectorId="setosa_Row45"/>
+        <SupportVector vectorId="setosa_Row47"/>
+        <SupportVector vectorId="versicolor_Row50"/>
+        <SupportVector vectorId="versicolor_Row51"/>
+        <SupportVector vectorId="versicolor_Row52"/>
+        <SupportVector vectorId="versicolor_Row53"/>
+        <SupportVector vectorId="versicolor_Row54"/>
+        <SupportVector vectorId="versicolor_Row55"/>
+        <SupportVector vectorId="versicolor_Row56"/>
+        <SupportVector vectorId="versicolor_Row57"/>
+        <SupportVector vectorId="versicolor_Row58"/>
+        <SupportVector vectorId="versicolor_Row59"/>
+        <SupportVector vectorId="versicolor_Row61"/>
+        <SupportVector vectorId="versicolor_Row63"/>
+        <SupportVector vectorId="versicolor_Row64"/>
+        <SupportVector vectorId="versicolor_Row65"/>
+        <SupportVector vectorId="versicolor_Row66"/>
+        <SupportVector vectorId="versicolor_Row67"/>
+        <SupportVector vectorId="versicolor_Row69"/>
+        <SupportVector vectorId="versicolor_Row70"/>
+        <SupportVector vectorId="versicolor_Row71"/>
+        <SupportVector vectorId="versicolor_Row72"/>
+        <SupportVector vectorId="versicolor_Row73"/>
+        <SupportVector vectorId="versicolor_Row74"/>
+        <SupportVector vectorId="versicolor_Row75"/>
+        <SupportVector vectorId="versicolor_Row76"/>
+        <SupportVector vectorId="versicolor_Row77"/>
+        <SupportVector vectorId="versicolor_Row78"/>
+        <SupportVector vectorId="versicolor_Row79"/>
+        <SupportVector vectorId="versicolor_Row80"/>
+        <SupportVector vectorId="versicolor_Row81"/>
+        <SupportVector vectorId="versicolor_Row82"/>
+        <SupportVector vectorId="versicolor_Row83"/>
+        <SupportVector vectorId="versicolor_Row84"/>
+        <SupportVector vectorId="versicolor_Row85"/>
+        <SupportVector vectorId="versicolor_Row86"/>
+        <SupportVector vectorId="versicolor_Row88"/>
+        <SupportVector vectorId="versicolor_Row89"/>
+        <SupportVector vectorId="versicolor_Row90"/>
+        <SupportVector vectorId="versicolor_Row91"/>
+        <SupportVector vectorId="versicolor_Row92"/>
+        <SupportVector vectorId="versicolor_Row93"/>
+        <SupportVector vectorId="versicolor_Row94"/>
+        <SupportVector vectorId="versicolor_Row95"/>
+        <SupportVector vectorId="versicolor_Row96"/>
+        <SupportVector vectorId="versicolor_Row97"/>
+        <SupportVector vectorId="versicolor_Row98"/>
+        <SupportVector vectorId="versicolor_Row99"/>
+        <SupportVector vectorId="virginica_Row101"/>
+        <SupportVector vectorId="virginica_Row102"/>
+        <SupportVector vectorId="virginica_Row103"/>
+        <SupportVector vectorId="virginica_Row104"/>
+        <SupportVector vectorId="virginica_Row105"/>
+        <SupportVector vectorId="virginica_Row106"/>
+        <SupportVector vectorId="virginica_Row107"/>
+        <SupportVector vectorId="virginica_Row108"/>
+        <SupportVector vectorId="virginica_Row111"/>
+        <SupportVector vectorId="virginica_Row112"/>
+        <SupportVector vectorId="virginica_Row113"/>
+        <SupportVector vectorId="virginica_Row116"/>
+        <SupportVector vectorId="virginica_Row118"/>
+        <SupportVector vectorId="virginica_Row119"/>
+        <SupportVector vectorId="virginica_Row121"/>
+        <SupportVector vectorId="virginica_Row122"/>
+        <SupportVector vectorId="virginica_Row123"/>
+        <SupportVector vectorId="virginica_Row125"/>
+        <SupportVector vectorId="virginica_Row126"/>
+        <SupportVector vectorId="virginica_Row127"/>
+        <SupportVector vectorId="virginica_Row128"/>
+        <SupportVector vectorId="virginica_Row129"/>
+        <SupportVector vectorId="virginica_Row130"/>
+        <SupportVector vectorId="virginica_Row132"/>
+        <SupportVector vectorId="virginica_Row133"/>
+        <SupportVector vectorId="virginica_Row134"/>
+        <SupportVector vectorId="virginica_Row135"/>
+        <SupportVector vectorId="virginica_Row137"/>
+        <SupportVector vectorId="virginica_Row138"/>
+        <SupportVector vectorId="virginica_Row142"/>
+        <SupportVector vectorId="virginica_Row146"/>
+        <SupportVector vectorId="virginica_Row147"/>
+        <SupportVector vectorId="virginica_Row149"/>
+      </SupportVectors>
+      <Coefficients numberOfCoefficients="94" absoluteValue="-5.645023845635874">
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="0.9999999999999999"/>
+        <Coefficient value="0.015664992444832517"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-0.9999999999999999"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-0.9999999999999999"/>
+        <Coefficient value="-0.9999999999999999"/>
+        <Coefficient value="-0.9999999999999999"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-0.9999999999999999"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="0.9999999999999999"/>
+        <Coefficient value="0.9999999999999999"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="0.9999999999999999"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="0.9999999999999999"/>
+        <Coefficient value="0.9999999999999999"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="0.9999999999999999"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="0.6073678257406983"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="0.3769671818144688"/>
+        <Coefficient value="1.0"/>
+      </Coefficients>
+    </SupportVectorMachine>
+    <SupportVectorMachine targetCategory="virginica">
+      <SupportVectors numberOfAttributes="4" numberOfSupportVectors="23">
+        <SupportVector vectorId="versicolor_Row52"/>
+        <SupportVector vectorId="versicolor_Row56"/>
+        <SupportVector vectorId="versicolor_Row63"/>
+        <SupportVector vectorId="versicolor_Row66"/>
+        <SupportVector vectorId="versicolor_Row68"/>
+        <SupportVector vectorId="versicolor_Row70"/>
+        <SupportVector vectorId="versicolor_Row72"/>
+        <SupportVector vectorId="versicolor_Row76"/>
+        <SupportVector vectorId="versicolor_Row77"/>
+        <SupportVector vectorId="versicolor_Row83"/>
+        <SupportVector vectorId="versicolor_Row84"/>
+        <SupportVector vectorId="virginica_Row106"/>
+        <SupportVector vectorId="virginica_Row110"/>
+        <SupportVector vectorId="virginica_Row119"/>
+        <SupportVector vectorId="virginica_Row123"/>
+        <SupportVector vectorId="virginica_Row126"/>
+        <SupportVector vectorId="virginica_Row127"/>
+        <SupportVector vectorId="virginica_Row129"/>
+        <SupportVector vectorId="virginica_Row133"/>
+        <SupportVector vectorId="virginica_Row138"/>
+        <SupportVector vectorId="virginica_Row146"/>
+        <SupportVector vectorId="virginica_Row147"/>
+        <SupportVector vectorId="virginica_Row149"/>
+      </SupportVectors>
+      <Coefficients numberOfCoefficients="23" absoluteValue="6.777096025021155">
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="0.9999999999999999"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="0.24685073946149066"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-0.44426947027112335"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-0.6590105825893275"/>
+        <Coefficient value="-0.14357068660103975"/>
+        <Coefficient value="-1.0"/>
+      </Coefficients>
+    </SupportVectorMachine>
+  </SupportVectorMachineModel>
+</PMML>

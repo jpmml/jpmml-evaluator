@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1">
+  <Header copyright="Vfed">
+    <Application name="KNIME" version="2.8.0"/>
+  </Header>
+  <DataDictionary numberOfFields="5">
+    <DataField dataType="double" name="Sepal.Length" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="4.3" rightMargin="7.9"/>
+    </DataField>
+    <DataField dataType="double" name="Sepal.Width" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="2.0" rightMargin="4.4"/>
+    </DataField>
+    <DataField dataType="double" name="Petal.Length" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="1.0" rightMargin="6.9"/>
+    </DataField>
+    <DataField dataType="double" name="Petal.Width" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="0.1" rightMargin="2.5"/>
+    </DataField>
+    <DataField dataType="string" name="Species" optype="categorical">
+      <Value value="setosa"/>
+      <Value value="versicolor"/>
+      <Value value="virginica"/>
+    </DataField>
+  </DataDictionary>
+  <GeneralRegressionModel modelType="multinomialLogistic" functionName="classification" algorithmName="LogisticRegression" modelName="KNIME Logistic Regression">
+    <MiningSchema>
+      <MiningField name="Sepal.Length" invalidValueTreatment="asIs"/>
+      <MiningField name="Sepal.Width" invalidValueTreatment="asIs"/>
+      <MiningField name="Petal.Length" invalidValueTreatment="asIs"/>
+      <MiningField name="Petal.Width" invalidValueTreatment="asIs"/>
+      <MiningField name="Species" invalidValueTreatment="asIs" usageType="predicted"/>
+    </MiningSchema>
+    <ParameterList>
+      <Parameter name="p0" label="Intercept"/>
+      <Parameter name="p1" label="Sepal.Length"/>
+      <Parameter name="p2" label="Sepal.Width"/>
+      <Parameter name="p3" label="Petal.Length"/>
+      <Parameter name="p4" label="Petal.Width"/>
+    </ParameterList>
+    <FactorList/>
+    <CovariateList>
+      <Predictor name="Sepal.Length"/>
+      <Predictor name="Sepal.Width"/>
+      <Predictor name="Petal.Length"/>
+      <Predictor name="Petal.Width"/>
+    </CovariateList>
+    <PPMatrix>
+      <PPCell value="1" predictorName="Sepal.Length" parameterName="p1"/>
+      <PPCell value="1" predictorName="Sepal.Width" parameterName="p2"/>
+      <PPCell value="1" predictorName="Petal.Length" parameterName="p3"/>
+      <PPCell value="1" predictorName="Petal.Width" parameterName="p4"/>
+    </PPMatrix>
+    <ParamMatrix>
+      <PCell targetCategory="setosa" parameterName="p0" beta="28.77480856881644" df="1"/>
+      <PCell targetCategory="versicolor" parameterName="p0" beta="42.63780381303272" df="1"/>
+      <PCell targetCategory="setosa" parameterName="p1" beta="15.888071323539156" df="1"/>
+      <PCell targetCategory="versicolor" parameterName="p1" beta="2.4652201951863106" df="1"/>
+      <PCell targetCategory="setosa" parameterName="p2" beta="14.945506980488513" df="1"/>
+      <PCell targetCategory="versicolor" parameterName="p2" beta="6.680887014080658" df="1"/>
+      <PCell targetCategory="setosa" parameterName="p3" beta="-33.4064397521925" df="1"/>
+      <PCell targetCategory="versicolor" parameterName="p3" beta="-9.429385153927967" df="1"/>
+      <PCell targetCategory="setosa" parameterName="p4" beta="-45.138847859319235" df="1"/>
+      <PCell targetCategory="versicolor" parameterName="p4" beta="-18.286136887855747" df="1"/>
+    </ParamMatrix>
+  </GeneralRegressionModel>
+</PMML>

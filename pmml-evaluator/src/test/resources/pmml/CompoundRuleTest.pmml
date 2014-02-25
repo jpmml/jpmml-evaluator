@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+    <Header copyright="MyCopyright">
+        <Application name="MyApplication" version="1.0"/>
+    </Header>
+    <DataDictionary numberOfFields="7">
+        <DataField name="BP" displayName="BP" optype="categorical" dataType="string">
+            <Value value="HIGH" property="valid"/>
+            <Value value="LOW" property="valid"/>
+            <Value value="NORMAL" property="valid"/>
+        </DataField>
+        <DataField name="K" displayName="K" optype="continuous" dataType="double">
+            <Interval closure="closedClosed" leftMargin="0.020152" rightMargin="0.079925"/>
+        </DataField>
+        <DataField name="Age" displayName="Age" optype="continuous" dataType="integer">
+            <Interval closure="closedClosed" leftMargin="15.0" rightMargin="74.0"/>
+        </DataField>
+        <DataField name="Na" displayName="Na" optype="continuous" dataType="double">
+            <Interval closure="closedClosed" leftMargin="0.500517" rightMargin="0.899774"/>
+        </DataField>
+        <DataField name="Cholesterol" displayName="Cholesterol" optype="categorical" dataType="string">
+            <Value value="HIGH" property="valid"/>
+            <Value value="NORMAL" property="valid"/>
+        </DataField>
+        <DataField name="$C-Drug" displayName="$C-Drug" optype="categorical" dataType="string">
+            <Value value="drugA" property="valid"/>
+            <Value value="drugB" property="valid"/>
+            <Value value="drugC" property="valid"/>
+            <Value value="drugX" property="valid"/>
+            <Value value="drugY" property="valid"/>
+        </DataField>
+        <DataField name="$CC-Drug" displayName="$CC-Drug" optype="continuous" dataType="double">
+            <Interval closure="closedClosed" leftMargin="0.0" rightMargin="1.0"/>
+        </DataField>
+    </DataDictionary>
+    <RuleSetModel modelName="Drug" functionName="classification" algorithmName="RuleSet">
+        <MiningSchema>
+            <MiningField name="BP" usageType="active"/>
+            <MiningField name="K" usageType="active"/>
+            <MiningField name="Age" usageType="active"/>
+            <MiningField name="Na" usageType="active"/>
+            <MiningField name="Cholesterol" usageType="active"/>
+            <MiningField name="$C-Drug" usageType="predicted"/>
+            <MiningField name="$CC-Drug" usageType="supplementary"/>
+        </MiningSchema>
+        <RuleSet recordCount="1000.0" nbCorrect="149.0" defaultScore="drugY" defaultConfidence="0.0">
+            <RuleSelectionMethod criterion="weightedSum"/>
+            <RuleSelectionMethod criterion="weightedMax"/>
+            <RuleSelectionMethod criterion="firstHit"/>
+            <CompoundRule>
+                <SimplePredicate field="BP" operator="equal" value="HIGH"/>
+                <CompoundRule>
+                    <SimplePredicate field="Age" operator="lessOrEqual" value="50"/>
+                    <SimpleRule id="RULE1" score="drugB" recordCount="79.0" nbCorrect="76.0" confidence="0.9" weight="0.9">
+                        <CompoundPredicate booleanOperator="and">
+                            <SimplePredicate field="K" operator="greaterThan" value="0.045804001"/>
+                            <SimplePredicate field="Na" operator="lessOrEqual" value="0.77240998"/>
+                        </CompoundPredicate>
+                        <ScoreDistribution value="drugA" recordCount="2.0"/>
+                        <ScoreDistribution value="drugB" recordCount="76.0"/>
+                        <ScoreDistribution value="drugC" recordCount="1.0"/>
+                        <ScoreDistribution value="drugX" recordCount="0.0"/>
+                        <ScoreDistribution value="drugY" recordCount="0.0"/>
+                    </SimpleRule>
+                    <SimpleRule id="RULE2" score="drugA" recordCount="278.0" nbCorrect="168.0" confidence="0.6" weight="0.6">
+                        <SimplePredicate field="K" operator="greaterThan" value="0.057789002"/>
+                        <ScoreDistribution value="drugA" recordCount="168.0"/>
+                        <ScoreDistribution value="drugB" recordCount="40.0"/>
+                        <ScoreDistribution value="drugC" recordCount="12.0"/>
+                        <ScoreDistribution value="drugX" recordCount="14.0"/>
+                        <ScoreDistribution value="drugY" recordCount="24.0"/>
+                    </SimpleRule>
+                </CompoundRule>
+                <SimpleRule id="RULE3" score="drugA" recordCount="100.0" nbCorrect="50.0" confidence="0.36" weight="0.36">
+                    <SimplePredicate field="Na" operator="greaterThan" value="0.21"/>
+                    <ScoreDistribution value="drugA" recordCount="50.0"/>
+                    <ScoreDistribution value="drugB" recordCount="10.0"/>
+                    <ScoreDistribution value="drugC" recordCount="12.0"/>
+                    <ScoreDistribution value="drugX" recordCount="7.0"/>
+                    <ScoreDistribution value="drugY" recordCount="11.0"/>
+                </SimpleRule>
+            </CompoundRule>
+        </RuleSet>
+    </RuleSetModel>
+</PMML>

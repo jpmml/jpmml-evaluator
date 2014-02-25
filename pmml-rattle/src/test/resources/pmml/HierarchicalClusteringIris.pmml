@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
+ <Header copyright="Copyright (c) 2013 Vfed" description="Hierarchical cluster model">
+  <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.3"/>
+  <Timestamp>2013-09-16 10:38:36</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="4">
+  <DataField name="Sepal.Length" optype="continuous" dataType="double"/>
+  <DataField name="Sepal.Width" optype="continuous" dataType="double"/>
+  <DataField name="Petal.Length" optype="continuous" dataType="double"/>
+  <DataField name="Petal.Width" optype="continuous" dataType="double"/>
+ </DataDictionary>
+ <ClusteringModel modelName="HClust_Model" functionName="clustering" algorithmName="HClust" modelClass="centerBased" numberOfClusters="10">
+  <MiningSchema>
+   <MiningField name="Sepal.Length" usageType="active"/>
+   <MiningField name="Sepal.Width" usageType="active"/>
+   <MiningField name="Petal.Length" usageType="active"/>
+   <MiningField name="Petal.Width" usageType="active"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="predictedValue" feature="predictedValue"/>
+   <!-- Custom OutputField element -->
+   <OutputField name="predictedValue" feature="predictedValue"/>
+  </Output>
+  <ComparisonMeasure kind="distance">
+   <squaredEuclidean/>
+  </ComparisonMeasure>
+  <ClusteringField field="Sepal.Length"/>
+  <ClusteringField field="Sepal.Width"/>
+  <ClusteringField field="Petal.Length"/>
+  <ClusteringField field="Petal.Width"/>
+  <Cluster name="1">
+   <Array n="4" type="real">4.81034482758621 3.21724137931034 1.39310344827586 0.203448275862069</Array>
+  </Cluster>
+  <Cluster name="2">
+   <Array n="4" type="real">5.27619047619048 3.71904761904762 1.55714285714286 0.304761904761905</Array>
+  </Cluster>
+  <Cluster name="3">
+   <Array n="4" type="real">6.40952380952381 2.9047619047619 4.60952380952381 1.43809523809524</Array>
+  </Cluster>
+  <Cluster name="4">
+   <Array n="4" type="real">5.65217391304348 2.7 4.05652173913044 1.24347826086957</Array>
+  </Cluster>
+  <Cluster name="5">
+   <Array n="4" type="real">5 2.3 3.275 1.025</Array>
+  </Cluster>
+  <Cluster name="6">
+   <Array n="4" type="real">6.02941176470588 2.76470588235294 5.02941176470588 1.81176470588235</Array>
+  </Cluster>
+  <Cluster name="7">
+   <Array n="4" type="real">6.56818181818182 3.08636363636364 5.53636363636364 2.16363636363636</Array>
+  </Cluster>
+  <Cluster name="8">
+   <Array n="4" type="real">7.24 2.98 6.02 1.84</Array>
+  </Cluster>
+  <Cluster name="9">
+   <Array n="4" type="real">7.64285714285714 3.22857142857143 6.5 2.2</Array>
+  </Cluster>
+  <Cluster name="10">
+   <Array n="4" type="real">4.9 2.5 4.5 1.7</Array>
+  </Cluster>
+ </ClusteringModel>
+</PMML>

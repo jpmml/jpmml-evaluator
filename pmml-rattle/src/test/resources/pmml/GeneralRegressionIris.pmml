@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
+ <Header copyright="Copyright (c) 2013 Vfed" description="Generalized Linear Regression Model">
+  <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.3"/>
+  <Timestamp>2013-09-16 10:35:51</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="5">
+  <DataField name="versicolor" optype="categorical" dataType="string">
+   <Value value="0"/>
+   <Value value="1"/>
+  </DataField>
+  <DataField name="Sepal.Length" optype="continuous" dataType="double"/>
+  <DataField name="Sepal.Width" optype="continuous" dataType="double"/>
+  <DataField name="Petal.Length" optype="continuous" dataType="double"/>
+  <DataField name="Petal.Width" optype="continuous" dataType="double"/>
+ </DataDictionary>
+ <GeneralRegressionModel modelName="General_Regression_Model" modelType="generalizedLinear" functionName="classification" algorithmName="glm" distribution="binomial" linkFunction="logit">
+  <MiningSchema>
+   <MiningField name="versicolor" usageType="predicted"/>
+   <MiningField name="Sepal.Length" usageType="active"/>
+   <MiningField name="Sepal.Width" usageType="active"/>
+   <MiningField name="Petal.Length" usageType="active"/>
+   <MiningField name="Petal.Width" usageType="active"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="Probability_1" targetField="versicolor" feature="probability" value="1"/>
+   <OutputField name="Predicted_versicolor" feature="predictedValue"/>
+  </Output>
+  <ParameterList>
+   <Parameter name="p0" label="(Intercept)"/>
+   <Parameter name="p1" label="Sepal.Length"/>
+   <Parameter name="p2" label="Sepal.Width"/>
+   <Parameter name="p3" label="Petal.Length"/>
+   <Parameter name="p4" label="Petal.Width"/>
+  </ParameterList>
+  <FactorList/>
+  <CovariateList>
+   <Predictor name="Sepal.Length"/>
+   <Predictor name="Sepal.Width"/>
+   <Predictor name="Petal.Length"/>
+   <Predictor name="Petal.Width"/>
+  </CovariateList>
+  <PPMatrix>
+   <PPCell value="1" predictorName="Sepal.Length" parameterName="p1"/>
+   <PPCell value="1" predictorName="Sepal.Width" parameterName="p2"/>
+   <PPCell value="1" predictorName="Petal.Length" parameterName="p3"/>
+   <PPCell value="1" predictorName="Petal.Width" parameterName="p4"/>
+  </PPMatrix>
+  <ParamMatrix>
+   <PCell targetCategory="1" parameterName="p0" df="1" beta="7.37848655335252"/>
+   <PCell targetCategory="1" parameterName="p1" df="1" beta="-0.245356708026873"/>
+   <PCell targetCategory="1" parameterName="p2" df="1" beta="-2.79656809436688"/>
+   <PCell targetCategory="1" parameterName="p3" df="1" beta="1.3136433131914"/>
+   <PCell targetCategory="1" parameterName="p4" df="1" beta="-2.7783439101903"/>
+  </ParamMatrix>
+ </GeneralRegressionModel>
+</PMML>

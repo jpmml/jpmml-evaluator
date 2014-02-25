@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_1">
+    <Header copyright="DMG.org"/>
+    <DataDictionary numberOfFields="5">
+        <DataField name="salCat" optype="categorical" dataType="string">
+            <Value value="Low"/>
+            <Value value="High"/>
+        </DataField>
+        <DataField name="gender" optype="categorical" dataType="string"/>
+        <DataField name="educ" optype="continuous" dataType="double"/>
+        <DataField name="jobcat" optype="categorical" dataType="string"/>
+        <DataField name="salbegin" optype="continuous" dataType="double"/>
+    </DataDictionary>
+    <GeneralRegressionModel targetVariableName="salCat" modelType="multinomialLogistic" modelName="contrastLogistic" functionName="classification" targetReferenceCategory="High">
+        <MiningSchema>
+            <MiningField name="salCat" usageType="predicted"/>
+            <MiningField name="gender" usageType="active" missingValueTreatment="asIs"/>
+            <MiningField name="educ" usageType="active" missingValueTreatment="asIs"/>
+            <MiningField name="jobcat" usageType="active" missingValueTreatment="asIs"/>
+            <MiningField name="salbegin" usageType="active" missingValueTreatment="asIs"/>
+        </MiningSchema>
+        <Output>
+            <OutputField name="Probability_Low" feature="probability" value="Low"/>
+            <OutputField name="Probability_High" feature="probability" value="High"/>
+        </Output>
+        <ParameterList>
+            <Parameter name="P0000001" label="Constant"/>
+            <Parameter name="P0000002" label="gender(1)"/>
+            <Parameter name="P0000003" label="educ"/>
+            <Parameter name="P0000004" label="jobcat(1)"/>
+            <Parameter name="P0000005" label="jobcat(2)"/>
+            <Parameter name="P0000006" label="gender(1) by jobcat(1)"/>
+            <Parameter name="P0000007" label="gender(1) by jobcat(2)"/>
+            <Parameter name="P0000008" label="educ by gender(1) by salbegin"/>
+        </ParameterList>
+        <FactorList>
+            <Predictor name="gender" contrastMatrixType="Simple">
+                <Categories>
+                    <Category value="f"/>
+                    <Category value="m"/>
+                </Categories>
+                <Matrix nbRows="2" nbCols="1">
+                    <Array n="1" type="real">.5</Array>
+                    <Array n="1" type="real">-.5</Array>
+                </Matrix>
+            </Predictor>
+            <Predictor name="jobcat" contrastMatrixType="Helmert">
+                <Categories>
+                    <Category value="1"/>
+                    <Category value="2"/>
+                    <Category value="3"/>
+                </Categories>
+                <Matrix nbRows="3" nbCols="2">
+                    <Array n="2" type="real">.666666666667 0</Array>
+                    <Array n="2" type="real">-.333333333333 .5</Array>
+                    <Array n="2" type="real">-.333333333333 -.5</Array>
+                </Matrix>
+            </Predictor>
+        </FactorList>
+        <CovariateList>
+            <Predictor name="educ"/>
+            <Predictor name="salbegin"/>
+        </CovariateList>
+        <PPMatrix>
+            <PPCell value="f" predictorName="gender" parameterName="P0000002"/>
+            <PPCell value="1" predictorName="educ" parameterName="P0000003"/>
+            <PPCell value="1" predictorName="jobcat" parameterName="P0000004"/>
+            <PPCell value="2" predictorName="jobcat" parameterName="P0000005"/>
+            <PPCell value="f" predictorName="gender" parameterName="P0000006"/>
+            <PPCell value="1" predictorName="jobcat" parameterName="P0000006"/>
+            <PPCell value="f" predictorName="gender" parameterName="P0000007"/>
+            <PPCell value="2" predictorName="jobcat" parameterName="P0000007"/>
+            <PPCell value="1" predictorName="educ" parameterName="P0000008"/>
+            <PPCell value="f" predictorName="gender" parameterName="P0000008"/>
+            <PPCell value="1" predictorName="salbegin" parameterName="P0000008"/>
+        </PPMatrix>
+        <ParamMatrix>
+            <PCell targetCategory="Low" parameterName="P0000001" beta="17.0599111512836" df="1"/>
+            <PCell targetCategory="Low" parameterName="P0000002" beta="-2.79578119817189" df="1"/>
+            <PCell targetCategory="Low" parameterName="P0000003" beta="-0.625739483585618" df="1"/>
+            <PCell targetCategory="Low" parameterName="P0000004" beta="-5.76523337984277" df="1"/>
+            <PCell targetCategory="Low" parameterName="P0000005" beta="17.743574615114" df="1"/>
+            <PCell targetCategory="Low" parameterName="P0000006" beta="0.421913613872923" df="1"/>
+            <PCell targetCategory="Low" parameterName="P0000007" beta="0.0" df="0"/>
+            <PCell targetCategory="Low" parameterName="P0000008" beta="1.1136356754678E-5" df="1"/>
+        </ParamMatrix>
+    </GeneralRegressionModel>
+</PMML>

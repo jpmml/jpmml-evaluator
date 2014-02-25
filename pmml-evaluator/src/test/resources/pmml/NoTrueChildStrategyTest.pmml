@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+    <Header copyright="www.dmg.org"/>
+    <DataDictionary numberOfFields="2">
+        <DataField name="probability" optype="continuous" dataType="double"/>
+        <DataField name="score" optype="continuous" dataType="double"/>
+    </DataDictionary>
+    <TreeModel functionName="classification">
+        <MiningSchema>
+            <MiningField name="probability"/>
+            <MiningField name="score" usageType="predicted"/>
+        </MiningSchema>
+        <Node id="N1" score="0">
+            <True/>
+            <Node id="T1" score="1">
+                <SimplePredicate field="probability" operator="greaterThan" value="0.33"/>
+            </Node>
+        </Node>
+    </TreeModel>
+</PMML>

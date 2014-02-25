@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
+ <Header copyright="Copyright (c) 2013 Vfed" description="Multinomial Logistic Model">
+  <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.3"/>
+  <Timestamp>2013-09-16 10:33:36</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="5">
+  <DataField name="Species" optype="categorical" dataType="string">
+   <Value value="setosa"/>
+   <Value value="versicolor"/>
+   <Value value="virginica"/>
+  </DataField>
+  <DataField name="Sepal.Length" optype="continuous" dataType="double"/>
+  <DataField name="Sepal.Width" optype="continuous" dataType="double"/>
+  <DataField name="Petal.Length" optype="continuous" dataType="double"/>
+  <DataField name="Petal.Width" optype="continuous" dataType="double"/>
+ </DataDictionary>
+ <RegressionModel modelName="multinom_Model" functionName="classification" algorithmName="multinom" normalizationMethod="softmax">
+  <MiningSchema>
+   <MiningField name="Species" usageType="predicted"/>
+   <MiningField name="Sepal.Length" usageType="active"/>
+   <MiningField name="Sepal.Width" usageType="active"/>
+   <MiningField name="Petal.Length" usageType="active"/>
+   <MiningField name="Petal.Width" usageType="active"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="Predicted_Species" feature="predictedValue"/>
+   <OutputField name="Probability_setosa" optype="continuous" dataType="double" feature="probability" value="setosa"/>
+   <OutputField name="Probability_versicolor" optype="continuous" dataType="double" feature="probability" value="versicolor"/>
+   <OutputField name="Probability_virginica" optype="continuous" dataType="double" feature="probability" value="virginica"/>
+  </Output>
+  <RegressionTable intercept="18.6903742570084" targetCategory="versicolor">
+   <NumericPredictor name="Sepal.Length" exponent="1" coefficient="-5.4584240070066"/>
+   <NumericPredictor name="Sepal.Width" exponent="1" coefficient="-8.70740085056537"/>
+   <NumericPredictor name="Petal.Length" exponent="1" coefficient="14.2447701274546"/>
+   <NumericPredictor name="Petal.Width" exponent="1" coefficient="-3.09768387037777"/>
+  </RegressionTable>
+  <RegressionTable intercept="-23.836276029112" targetCategory="virginica">
+   <NumericPredictor name="Sepal.Length" exponent="1" coefficient="-7.92363397246724"/>
+   <NumericPredictor name="Sepal.Width" exponent="1" coefficient="-15.3707689334102"/>
+   <NumericPredictor name="Petal.Length" exponent="1" coefficient="23.6597792429927"/>
+   <NumericPredictor name="Petal.Width" exponent="1" coefficient="15.1353005479779"/>
+  </RegressionTable>
+  <RegressionTable intercept="0.0" targetCategory="setosa"/>
+ </RegressionModel>
+</PMML>

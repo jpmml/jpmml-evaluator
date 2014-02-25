@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+    <Header copyright="DMG.org"/>
+    <DataDictionary>
+        <DataField name="result" optype="continuous" dataType="double"/>
+    </DataDictionary>
+    <TransformationDictionary>
+        <DefineFunction name="AMPM" optype="categorical" dataType="string">
+            <ParameterField name="TimeVal" optype="continuous" dataType="integer"/>
+            <Discretize field="TimeVal">
+                <DiscretizeBin binValue="AM">
+                    <Interval closure="closedClosed" leftMargin="0.0" rightMargin="43199.0"/>
+                </DiscretizeBin>
+                <DiscretizeBin binValue="PM">
+                    <Interval closure="closedOpen" leftMargin="43200.0" rightMargin="86400.0"/>
+                </DiscretizeBin>
+            </Discretize>
+        </DefineFunction>
+        <DefineFunction name="STATEGROUP" optype="categorical" dataType="string">
+            <ParameterField name="#1" optype="categorical" dataType="string"/>
+            <MapValues outputColumn="Region">
+                <FieldColumnPair field="#1" column="State"/>
+                <InlineTable>
+                    <row>
+                        <State>CA</State>
+                        <Region>West</Region>
+                    </row>
+                    <row>
+                        <State>OR</State>
+                        <Region>West</Region>
+                    </row>
+                    <row>
+                        <State>NC</State>
+                        <Region>East</Region>
+                    </row>
+                </InlineTable>
+            </MapValues>
+        </DefineFunction>
+        <DerivedField name="Shift" optype="categorical" dataType="string">
+            <Apply function="AMPM">
+                <FieldRef field="StartTime"/>
+            </Apply>
+        </DerivedField>
+        <DerivedField name="Group" optype="categorical" dataType="string">
+            <Apply function="STATEGROUP">
+                <FieldRef field="State"/>
+            </Apply>
+        </DerivedField>
+    </TransformationDictionary>
+</PMML>

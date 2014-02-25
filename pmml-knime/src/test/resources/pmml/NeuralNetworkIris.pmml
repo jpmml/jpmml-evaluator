@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1">
+  <Header copyright="Vfed">
+    <Application name="KNIME" version="2.8.0"/>
+  </Header>
+  <DataDictionary numberOfFields="5">
+    <DataField name="Sepal.Length" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="4.3" rightMargin="7.9"/>
+    </DataField>
+    <DataField name="Sepal.Width" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="2.0" rightMargin="4.4"/>
+    </DataField>
+    <DataField name="Petal.Length" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="1.0" rightMargin="6.9"/>
+    </DataField>
+    <DataField name="Petal.Width" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="0.1" rightMargin="2.5"/>
+    </DataField>
+    <DataField name="Species" optype="categorical" dataType="string">
+      <Value value="setosa"/>
+      <Value value="versicolor"/>
+      <Value value="virginica"/>
+    </DataField>
+  </DataDictionary>
+  <NeuralNetwork functionName="classification" algorithmName="RProp" activationFunction="logistic" normalizationMethod="none" width="0.0" numberOfLayers="2">
+    <MiningSchema>
+      <MiningField name="Sepal.Length" invalidValueTreatment="asIs"/>
+      <MiningField name="Sepal.Width" invalidValueTreatment="asIs"/>
+      <MiningField name="Petal.Length" invalidValueTreatment="asIs"/>
+      <MiningField name="Petal.Width" invalidValueTreatment="asIs"/>
+      <MiningField name="Species" invalidValueTreatment="asIs" usageType="predicted"/>
+    </MiningSchema>
+    <NeuralInputs numberOfInputs="4">
+      <NeuralInput id="0,0">
+        <DerivedField optype="continuous" dataType="double">
+          <FieldRef field="Sepal.Length"/>
+        </DerivedField>
+      </NeuralInput>
+      <NeuralInput id="0,1">
+        <DerivedField optype="continuous" dataType="double">
+          <FieldRef field="Sepal.Width"/>
+        </DerivedField>
+      </NeuralInput>
+      <NeuralInput id="0,2">
+        <DerivedField optype="continuous" dataType="double">
+          <FieldRef field="Petal.Length"/>
+        </DerivedField>
+      </NeuralInput>
+      <NeuralInput id="0,3">
+        <DerivedField optype="continuous" dataType="double">
+          <FieldRef field="Petal.Width"/>
+        </DerivedField>
+      </NeuralInput>
+    </NeuralInputs>
+    <NeuralLayer>
+      <Neuron id="1,0" bias="0.7715733418441982">
+        <Con from="0,0" weight="0.2640202917593758"/>
+        <Con from="0,1" weight="1.2718227186014235"/>
+        <Con from="0,2" weight="-1.5110823075673014"/>
+        <Con from="0,3" weight="-2.245953845775953"/>
+      </Neuron>
+      <Neuron id="1,1" bias="-0.5641420845788674">
+        <Con from="0,0" weight="-0.22143468966727642"/>
+        <Con from="0,1" weight="-1.0602391982960284"/>
+        <Con from="0,2" weight="0.9867821862891837"/>
+        <Con from="0,3" weight="1.4978337201777865"/>
+      </Neuron>
+      <Neuron id="1,2" bias="0.3754434044996642">
+        <Con from="0,0" weight="0.31732547937178596"/>
+        <Con from="0,1" weight="0.34084114941486177"/>
+        <Con from="0,2" weight="-0.6937645620346957"/>
+        <Con from="0,3" weight="-0.9885622302514913"/>
+      </Neuron>
+      <Neuron id="1,3" bias="1.9939359486870245">
+        <Con from="0,0" weight="-0.32372138765546454"/>
+        <Con from="0,1" weight="1.7027850391720483"/>
+        <Con from="0,2" weight="-0.5268970192944046"/>
+        <Con from="0,3" weight="-4.8506390858172335"/>
+      </Neuron>
+      <Neuron id="1,4" bias="0.7527776629575391">
+        <Con from="0,0" weight="-0.29924548840184273"/>
+        <Con from="0,1" weight="1.4628052334752704"/>
+        <Con from="0,2" weight="-0.4721043451578046"/>
+        <Con from="0,3" weight="-0.6149438319773171"/>
+      </Neuron>
+    </NeuralLayer>
+    <NeuralLayer>
+      <Neuron id="2,0" bias="-1.311700545095932">
+        <Con from="1,0" weight="13.95079686262957"/>
+        <Con from="1,1" weight="-79.27614723400036"/>
+        <Con from="1,2" weight="1.996904904674643"/>
+        <Con from="1,3" weight="33.33394766648924"/>
+        <Con from="1,4" weight="4.480388034389784"/>
+      </Neuron>
+      <Neuron id="2,1" bias="-0.2148183440617853">
+        <Con from="1,0" weight="471.04342496759995"/>
+        <Con from="1,1" weight="-24.057811140016593"/>
+        <Con from="1,2" weight="133.01887684547617"/>
+        <Con from="1,3" weight="-597.8872152589853"/>
+        <Con from="1,4" weight="2.6591004827573896"/>
+      </Neuron>
+      <Neuron id="2,2" bias="0.17050740502104983">
+        <Con from="1,0" weight="-5330.473459725245"/>
+        <Con from="1,1" weight="19.266971517955604"/>
+        <Con from="1,2" weight="-47.44372072332396"/>
+        <Con from="1,3" weight="1791.1791984334948"/>
+        <Con from="1,4" weight="36.9768951565941"/>
+      </Neuron>
+    </NeuralLayer>
+    <NeuralOutputs numberOfOutputs="3">
+      <NeuralOutput outputNeuron="2,0">
+        <DerivedField optype="categorical" dataType="string">
+          <NormDiscrete field="Species" value="setosa"/>
+        </DerivedField>
+      </NeuralOutput>
+      <NeuralOutput outputNeuron="2,1">
+        <DerivedField optype="categorical" dataType="string">
+          <NormDiscrete field="Species" value="versicolor"/>
+        </DerivedField>
+      </NeuralOutput>
+      <NeuralOutput outputNeuron="2,2">
+        <DerivedField optype="categorical" dataType="string">
+          <NormDiscrete field="Species" value="virginica"/>
+        </DerivedField>
+      </NeuralOutput>
+    </NeuralOutputs>
+  </NeuralNetwork>
+</PMML>

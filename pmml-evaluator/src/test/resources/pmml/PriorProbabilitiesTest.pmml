@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+    <Header copyright="DMG.org"/>
+    <DataDictionary>
+        <DataField name="response" optype="categorical" dataType="string"/>
+    </DataDictionary>
+    <RegressionModel functionName="regression" targetFieldName="response">
+        <MiningSchema>
+            <MiningField name="response" usageType="predicted"/>
+        </MiningSchema>
+        <Output>
+            <OutputField name="P_responseYes" optype="continuous" dataType="double" targetField="response" feature="probability" value="YES"/>
+            <OutputField name="P_responseNo" optype="continuous" dataType="double" targetField="response" feature="probability" value="NO"/>
+            <OutputField name="I_response" optype="categorical" dataType="string" targetField="response" feature="predictedValue"/>
+            <OutputField name="U_response" optype="categorical" dataType="string" targetField="response" feature="predictedDisplayValue"/>
+        </Output>
+        <Targets>
+            <Target field="response" optype="categorical">
+                <TargetValue value="YES" displayValue="Yes" priorProbability="0.02"/>
+                <TargetValue value="NO" displayValue="No" priorProbability="0.98"/>
+            </Target>
+        </Targets>
+        <RegressionTable intercept="0.0" targetCategory="response"/>
+    </RegressionModel>
+</PMML>

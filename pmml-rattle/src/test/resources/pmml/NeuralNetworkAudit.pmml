@@ -1,0 +1,749 @@
+<?xml version="1.0"?>
+<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
+ <Header copyright="Copyright (c) 2013 Vfed" description="Neural Network PMML Model">
+  <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.3"/>
+  <Timestamp>2013-09-16 11:37:12</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="9">
+  <DataField name="Adjusted" optype="categorical" dataType="string">
+   <Value value="0"/>
+   <Value value="1"/>
+  </DataField>
+  <DataField name="Employment" optype="categorical" dataType="string">
+   <Value value="Consultant"/>
+   <Value value="Private"/>
+   <Value value="PSFederal"/>
+   <Value value="PSLocal"/>
+   <Value value="PSState"/>
+   <Value value="SelfEmp"/>
+   <Value value="Volunteer"/>
+  </DataField>
+  <DataField name="Education" optype="categorical" dataType="string">
+   <Value value="Associate"/>
+   <Value value="Bachelor"/>
+   <Value value="College"/>
+   <Value value="Doctorate"/>
+   <Value value="HSgrad"/>
+   <Value value="Master"/>
+   <Value value="Preschool"/>
+   <Value value="Professional"/>
+   <Value value="Vocational"/>
+   <Value value="Yr10"/>
+   <Value value="Yr11"/>
+   <Value value="Yr12"/>
+   <Value value="Yr1t4"/>
+   <Value value="Yr5t6"/>
+   <Value value="Yr7t8"/>
+   <Value value="Yr9"/>
+  </DataField>
+  <DataField name="Marital" optype="categorical" dataType="string">
+   <Value value="Absent"/>
+   <Value value="Divorced"/>
+   <Value value="Married"/>
+   <Value value="Married-spouse-absent"/>
+   <Value value="Unmarried"/>
+   <Value value="Widowed"/>
+  </DataField>
+  <DataField name="Occupation" optype="categorical" dataType="string">
+   <Value value="Cleaner"/>
+   <Value value="Clerical"/>
+   <Value value="Executive"/>
+   <Value value="Farming"/>
+   <Value value="Home"/>
+   <Value value="Machinist"/>
+   <Value value="Military"/>
+   <Value value="Professional"/>
+   <Value value="Protective"/>
+   <Value value="Repair"/>
+   <Value value="Sales"/>
+   <Value value="Service"/>
+   <Value value="Support"/>
+   <Value value="Transport"/>
+  </DataField>
+  <DataField name="Income" optype="continuous" dataType="double"/>
+  <DataField name="Gender" optype="categorical" dataType="string">
+   <Value value="Female"/>
+   <Value value="Male"/>
+  </DataField>
+  <DataField name="Deductions" optype="continuous" dataType="double"/>
+  <DataField name="Hours" optype="continuous" dataType="double"/>
+ </DataDictionary>
+ <NeuralNetwork modelName="NeuralNet_model" functionName="classification" numberOfLayers="3" activationFunction="logistic">
+  <MiningSchema>
+   <MiningField name="Adjusted" usageType="predicted"/>
+   <MiningField name="Employment" usageType="active"/>
+   <MiningField name="Education" usageType="active"/>
+   <MiningField name="Marital" usageType="active"/>
+   <MiningField name="Occupation" usageType="active"/>
+   <MiningField name="Income" usageType="active"/>
+   <MiningField name="Gender" usageType="active"/>
+   <MiningField name="Deductions" usageType="active"/>
+   <MiningField name="Hours" usageType="active"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="Predicted_Adjusted" feature="predictedValue"/>
+   <OutputField name="Probability_0" optype="continuous" dataType="double" feature="probability" value="0"/>
+   <OutputField name="Probability_1" optype="continuous" dataType="double" feature="probability" value="1"/>
+   <!-- Custom OutputField element -->
+   <OutputField name="Entity_Id" optype="categorical" dataType="string" feature="entityId"/>
+  </Output>
+  <NeuralInputs numberOfInputs="43">
+   <NeuralInput id="1">
+    <DerivedField name="derivedNI_EmploymentPrivate" optype="continuous" dataType="double">
+     <NormDiscrete field="Employment" value="Private"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="2">
+    <DerivedField name="derivedNI_EmploymentPSFederal" optype="continuous" dataType="double">
+     <NormDiscrete field="Employment" value="PSFederal"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="3">
+    <DerivedField name="derivedNI_EmploymentPSLocal" optype="continuous" dataType="double">
+     <NormDiscrete field="Employment" value="PSLocal"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="4">
+    <DerivedField name="derivedNI_EmploymentPSState" optype="continuous" dataType="double">
+     <NormDiscrete field="Employment" value="PSState"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="5">
+    <DerivedField name="derivedNI_EmploymentSelfEmp" optype="continuous" dataType="double">
+     <NormDiscrete field="Employment" value="SelfEmp"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="6">
+    <DerivedField name="derivedNI_EmploymentVolunteer" optype="continuous" dataType="double">
+     <NormDiscrete field="Employment" value="Volunteer"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="7">
+    <DerivedField name="derivedNI_EducationBachelor" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="Bachelor"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="8">
+    <DerivedField name="derivedNI_EducationCollege" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="College"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="9">
+    <DerivedField name="derivedNI_EducationDoctorate" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="Doctorate"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="10">
+    <DerivedField name="derivedNI_EducationHSgrad" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="HSgrad"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="11">
+    <DerivedField name="derivedNI_EducationMaster" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="Master"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="12">
+    <DerivedField name="derivedNI_EducationPreschool" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="Preschool"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="13">
+    <DerivedField name="derivedNI_EducationProfessional" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="Professional"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="14">
+    <DerivedField name="derivedNI_EducationVocational" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="Vocational"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="15">
+    <DerivedField name="derivedNI_EducationYr10" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="Yr10"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="16">
+    <DerivedField name="derivedNI_EducationYr11" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="Yr11"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="17">
+    <DerivedField name="derivedNI_EducationYr12" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="Yr12"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="18">
+    <DerivedField name="derivedNI_EducationYr1t4" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="Yr1t4"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="19">
+    <DerivedField name="derivedNI_EducationYr5t6" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="Yr5t6"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="20">
+    <DerivedField name="derivedNI_EducationYr7t8" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="Yr7t8"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="21">
+    <DerivedField name="derivedNI_EducationYr9" optype="continuous" dataType="double">
+     <NormDiscrete field="Education" value="Yr9"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="22">
+    <DerivedField name="derivedNI_MaritalDivorced" optype="continuous" dataType="double">
+     <NormDiscrete field="Marital" value="Divorced"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="23">
+    <DerivedField name="derivedNI_MaritalMarried" optype="continuous" dataType="double">
+     <NormDiscrete field="Marital" value="Married"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="24">
+    <DerivedField name="derivedNI_MaritalMarried-spouse-absent" optype="continuous" dataType="double">
+     <NormDiscrete field="Marital" value="Married-spouse-absent"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="25">
+    <DerivedField name="derivedNI_MaritalUnmarried" optype="continuous" dataType="double">
+     <NormDiscrete field="Marital" value="Unmarried"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="26">
+    <DerivedField name="derivedNI_MaritalWidowed" optype="continuous" dataType="double">
+     <NormDiscrete field="Marital" value="Widowed"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="27">
+    <DerivedField name="derivedNI_OccupationClerical" optype="continuous" dataType="double">
+     <NormDiscrete field="Occupation" value="Clerical"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="28">
+    <DerivedField name="derivedNI_OccupationExecutive" optype="continuous" dataType="double">
+     <NormDiscrete field="Occupation" value="Executive"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="29">
+    <DerivedField name="derivedNI_OccupationFarming" optype="continuous" dataType="double">
+     <NormDiscrete field="Occupation" value="Farming"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="30">
+    <DerivedField name="derivedNI_OccupationHome" optype="continuous" dataType="double">
+     <NormDiscrete field="Occupation" value="Home"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="31">
+    <DerivedField name="derivedNI_OccupationMachinist" optype="continuous" dataType="double">
+     <NormDiscrete field="Occupation" value="Machinist"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="32">
+    <DerivedField name="derivedNI_OccupationMilitary" optype="continuous" dataType="double">
+     <NormDiscrete field="Occupation" value="Military"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="33">
+    <DerivedField name="derivedNI_OccupationProfessional" optype="continuous" dataType="double">
+     <NormDiscrete field="Occupation" value="Professional"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="34">
+    <DerivedField name="derivedNI_OccupationProtective" optype="continuous" dataType="double">
+     <NormDiscrete field="Occupation" value="Protective"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="35">
+    <DerivedField name="derivedNI_OccupationRepair" optype="continuous" dataType="double">
+     <NormDiscrete field="Occupation" value="Repair"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="36">
+    <DerivedField name="derivedNI_OccupationSales" optype="continuous" dataType="double">
+     <NormDiscrete field="Occupation" value="Sales"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="37">
+    <DerivedField name="derivedNI_OccupationService" optype="continuous" dataType="double">
+     <NormDiscrete field="Occupation" value="Service"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="38">
+    <DerivedField name="derivedNI_OccupationSupport" optype="continuous" dataType="double">
+     <NormDiscrete field="Occupation" value="Support"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="39">
+    <DerivedField name="derivedNI_OccupationTransport" optype="continuous" dataType="double">
+     <NormDiscrete field="Occupation" value="Transport"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="40">
+    <DerivedField name="derivedNI_Income" optype="continuous" dataType="double">
+     <FieldRef field="Income"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="41">
+    <DerivedField name="derivedNI_GenderMale" optype="continuous" dataType="double">
+     <NormDiscrete field="Gender" value="Male"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="42">
+    <DerivedField name="derivedNI_Deductions" optype="continuous" dataType="double">
+     <FieldRef field="Deductions"/>
+    </DerivedField>
+   </NeuralInput>
+   <NeuralInput id="43">
+    <DerivedField name="derivedNI_Hours" optype="continuous" dataType="double">
+     <FieldRef field="Hours"/>
+    </DerivedField>
+   </NeuralInput>
+  </NeuralInputs>
+  <NeuralLayer numberOfNeurons="9">
+   <Neuron id="44" bias="-0.000208043889460792">
+    <Con from="1" weight="-0.00311836703260308"/>
+    <Con from="2" weight="-1.12292818756082e-06"/>
+    <Con from="3" weight="0.000243277478689438"/>
+    <Con from="4" weight="-0.000461939026356258"/>
+    <Con from="5" weight="0.000522319390953245"/>
+    <Con from="6" weight="0.000479643254482007"/>
+    <Con from="7" weight="-0.00159260094861192"/>
+    <Con from="8" weight="-0.00129831771046721"/>
+    <Con from="9" weight="-0.00013540301178769"/>
+    <Con from="10" weight="0.00237644205471124"/>
+    <Con from="11" weight="0.000232693956020301"/>
+    <Con from="12" weight="-5.31011147255841e-05"/>
+    <Con from="13" weight="-0.000415374135466104"/>
+    <Con from="14" weight="-0.000486412055751528"/>
+    <Con from="15" weight="0.000260015835131459"/>
+    <Con from="16" weight="-0.000299654044338312"/>
+    <Con from="17" weight="0.000496958236029083"/>
+    <Con from="18" weight="2.68997059429915e-05"/>
+    <Con from="19" weight="0.000379658117766152"/>
+    <Con from="20" weight="0.000351551415663095"/>
+    <Con from="21" weight="-0.00025216289171704"/>
+    <Con from="22" weight="-0.000221299737238783"/>
+    <Con from="23" weight="0.000855086460795723"/>
+    <Con from="24" weight="0.000119480209755082"/>
+    <Con from="25" weight="-0.000286208657690836"/>
+    <Con from="26" weight="0.000343592596571737"/>
+    <Con from="27" weight="-0.000446829414694301"/>
+    <Con from="28" weight="-0.00156373999931372"/>
+    <Con from="29" weight="3.84012989381506e-05"/>
+    <Con from="30" weight="-0.000116319766120286"/>
+    <Con from="31" weight="-0.00016612699960594"/>
+    <Con from="32" weight="-0.000384482661457269"/>
+    <Con from="33" weight="0.000124914022704756"/>
+    <Con from="34" weight="0.000540978956909623"/>
+    <Con from="35" weight="-4.27234404872467e-05"/>
+    <Con from="36" weight="0.00102065982701086"/>
+    <Con from="37" weight="-0.000198421619267202"/>
+    <Con from="38" weight="-0.000431920043558833"/>
+    <Con from="39" weight="-0.000155177261232068"/>
+    <Con from="40" weight="0.336119277072172"/>
+    <Con from="41" weight="-0.000120158492511887"/>
+    <Con from="42" weight="-0.0118620324094885"/>
+    <Con from="43" weight="0.0215717944822297"/>
+   </Neuron>
+   <Neuron id="45" bias="0.000138262617189329">
+    <Con from="1" weight="0.000355559136466188"/>
+    <Con from="2" weight="0.000483503380393543"/>
+    <Con from="3" weight="-0.000163591383352393"/>
+    <Con from="4" weight="-0.00051169748501272"/>
+    <Con from="5" weight="-0.000297575233703131"/>
+    <Con from="6" weight="-0.000531553858574474"/>
+    <Con from="7" weight="0.000107077240649388"/>
+    <Con from="8" weight="-2.32208459810924e-05"/>
+    <Con from="9" weight="0.000300671370907317"/>
+    <Con from="10" weight="0.000429694997603808"/>
+    <Con from="11" weight="0.000307244853895469"/>
+    <Con from="12" weight="-0.00026333288586742"/>
+    <Con from="13" weight="0.000113840520831316"/>
+    <Con from="14" weight="-0.000571094182232458"/>
+    <Con from="15" weight="0.000375933353349967"/>
+    <Con from="16" weight="-0.000266677061015309"/>
+    <Con from="17" weight="0.000400555718967092"/>
+    <Con from="18" weight="0.000355747934911198"/>
+    <Con from="19" weight="0.000453053230479623"/>
+    <Con from="20" weight="-0.000348066093126708"/>
+    <Con from="21" weight="-0.000359221634262087"/>
+    <Con from="22" weight="-0.000235977961235686"/>
+    <Con from="23" weight="-0.000236646540535491"/>
+    <Con from="24" weight="-0.000209905922691594"/>
+    <Con from="25" weight="0.000529978616619764"/>
+    <Con from="26" weight="-8.35625555716776e-05"/>
+    <Con from="27" weight="0.000515816119464409"/>
+    <Con from="28" weight="-5.91092534723713e-05"/>
+    <Con from="29" weight="-0.000419712852784314"/>
+    <Con from="30" weight="0.000536880098551714"/>
+    <Con from="31" weight="0.000180927169371954"/>
+    <Con from="32" weight="-0.00054899546103372"/>
+    <Con from="33" weight="-0.000176837044315979"/>
+    <Con from="34" weight="-7.18598802998991e-05"/>
+    <Con from="35" weight="0.000562192137538592"/>
+    <Con from="36" weight="-0.000138639138902399"/>
+    <Con from="37" weight="0.000370877400780199"/>
+    <Con from="38" weight="9.88182587301481e-05"/>
+    <Con from="39" weight="-0.000370765213517783"/>
+    <Con from="40" weight="0.0174801987863252"/>
+    <Con from="41" weight="0.000208921015774607"/>
+    <Con from="42" weight="-0.00718644906179092"/>
+    <Con from="43" weight="0.000475524396519111"/>
+   </Neuron>
+   <Neuron id="46" bias="0.000201015787977634">
+    <Con from="1" weight="0.000126343896544667"/>
+    <Con from="2" weight="-0.000516964529755194"/>
+    <Con from="3" weight="0.000331646739002414"/>
+    <Con from="4" weight="-0.000164195464348243"/>
+    <Con from="5" weight="0.000327522537463776"/>
+    <Con from="6" weight="0.000334693416214777"/>
+    <Con from="7" weight="-0.000407765281327417"/>
+    <Con from="8" weight="-0.000285475456089461"/>
+    <Con from="9" weight="0.000481733408854888"/>
+    <Con from="10" weight="-0.000551195128652073"/>
+    <Con from="11" weight="0.000248732416593564"/>
+    <Con from="12" weight="0.00023379573217582"/>
+    <Con from="13" weight="-2.0473888612883e-05"/>
+    <Con from="14" weight="-0.000459460011875525"/>
+    <Con from="15" weight="0.00019040592845374"/>
+    <Con from="16" weight="-7.34726515238546e-05"/>
+    <Con from="17" weight="0.000265839710699291"/>
+    <Con from="18" weight="0.000436826349364504"/>
+    <Con from="19" weight="-2.93679669244238e-05"/>
+    <Con from="20" weight="8.67047707464656e-06"/>
+    <Con from="21" weight="-1.02155340525712e-05"/>
+    <Con from="22" weight="-0.00027034232813028"/>
+    <Con from="23" weight="-0.000454621607754333"/>
+    <Con from="24" weight="-0.00035148025236121"/>
+    <Con from="25" weight="0.000351921511178681"/>
+    <Con from="26" weight="0.000171519247139676"/>
+    <Con from="27" weight="0.000342938901069933"/>
+    <Con from="28" weight="0.000197587598667355"/>
+    <Con from="29" weight="0.000552442973347844"/>
+    <Con from="30" weight="0.000115810297513309"/>
+    <Con from="31" weight="-0.000195381694205353"/>
+    <Con from="32" weight="-1.35740579203722e-05"/>
+    <Con from="33" weight="0.000536869755551792"/>
+    <Con from="34" weight="0.000525236066251233"/>
+    <Con from="35" weight="0.000457516430126062"/>
+    <Con from="36" weight="-0.00011068089469603"/>
+    <Con from="37" weight="0.000249814015643476"/>
+    <Con from="38" weight="-0.00029061315696242"/>
+    <Con from="39" weight="-0.000110551394767078"/>
+    <Con from="40" weight="-0.0190568457346777"/>
+    <Con from="41" weight="-0.000280502740254896"/>
+    <Con from="42" weight="-0.00132509307674623"/>
+    <Con from="43" weight="0.000791978325000556"/>
+   </Neuron>
+   <Neuron id="47" bias="10.74440216387">
+    <Con from="1" weight="-7.53963439468683"/>
+    <Con from="2" weight="5.77760287916929"/>
+    <Con from="3" weight="10.0607323086518"/>
+    <Con from="4" weight="15.9168970463864"/>
+    <Con from="5" weight="13.2925654080182"/>
+    <Con from="6" weight="-0.147482144752235"/>
+    <Con from="7" weight="5.91769768115463"/>
+    <Con from="8" weight="1.54180493118068"/>
+    <Con from="9" weight="-2.5942813578089"/>
+    <Con from="10" weight="-2.68916380016023"/>
+    <Con from="11" weight="5.83327812336223"/>
+    <Con from="12" weight="-0.143171239052984"/>
+    <Con from="13" weight="-2.67663694539211"/>
+    <Con from="14" weight="12.3262114055324"/>
+    <Con from="15" weight="-1.93566002797705"/>
+    <Con from="16" weight="3.69248985979018"/>
+    <Con from="17" weight="-1.28680334324524"/>
+    <Con from="18" weight="0.134522879687212"/>
+    <Con from="19" weight="0.746581800680083"/>
+    <Con from="20" weight="3.28388589845693"/>
+    <Con from="21" weight="0.958597701868842"/>
+    <Con from="22" weight="3.37199219630711"/>
+    <Con from="23" weight="-19.5441992998041"/>
+    <Con from="24" weight="3.00667953638603"/>
+    <Con from="25" weight="0.379647933084591"/>
+    <Con from="26" weight="-2.4367424702345"/>
+    <Con from="27" weight="-0.11526880758773"/>
+    <Con from="28" weight="-0.860900227899387"/>
+    <Con from="29" weight="0.864597747356666"/>
+    <Con from="30" weight="0.697556251327583"/>
+    <Con from="31" weight="4.64675812302255"/>
+    <Con from="32" weight="0.0337998851041665"/>
+    <Con from="33" weight="-7.49168818787686"/>
+    <Con from="34" weight="-15.2498738704976"/>
+    <Con from="35" weight="-11.6633742832105"/>
+    <Con from="36" weight="-4.06772002393296"/>
+    <Con from="37" weight="12.9256004111993"/>
+    <Con from="38" weight="8.5225483679023"/>
+    <Con from="39" weight="15.4154469824526"/>
+    <Con from="40" weight="0.000161856786273807"/>
+    <Con from="41" weight="7.95109464238799"/>
+    <Con from="42" weight="-0.536379383585034"/>
+    <Con from="43" weight="-0.852322830212779"/>
+   </Neuron>
+   <Neuron id="48" bias="4.8498666700983">
+    <Con from="1" weight="0.0899515344265602"/>
+    <Con from="2" weight="-0.497407211207691"/>
+    <Con from="3" weight="-0.519327668381538"/>
+    <Con from="4" weight="-2.83858929279596"/>
+    <Con from="5" weight="-0.135630033489231"/>
+    <Con from="6" weight="5.13964831822449"/>
+    <Con from="7" weight="-0.530344038822191"/>
+    <Con from="8" weight="1.67467002004345"/>
+    <Con from="9" weight="-1.91135809685533"/>
+    <Con from="10" weight="2.25282798604534"/>
+    <Con from="11" weight="-0.900217717919199"/>
+    <Con from="12" weight="5.87842485845898"/>
+    <Con from="13" weight="-2.24755979941699"/>
+    <Con from="14" weight="1.98634083626232"/>
+    <Con from="15" weight="2.41013611991294"/>
+    <Con from="16" weight="2.41189844459339"/>
+    <Con from="17" weight="3.50817356118769"/>
+    <Con from="18" weight="6.63325226162343"/>
+    <Con from="19" weight="8.35628016966609"/>
+    <Con from="20" weight="10.35638322558"/>
+    <Con from="21" weight="8.89873149679858"/>
+    <Con from="22" weight="-1.38267131011535"/>
+    <Con from="23" weight="-4.09051797732525"/>
+    <Con from="24" weight="-0.968622424087741"/>
+    <Con from="25" weight="-1.89855929256522"/>
+    <Con from="26" weight="-1.19469187424504"/>
+    <Con from="27" weight="-1.47951656419923"/>
+    <Con from="28" weight="-1.83168181137741"/>
+    <Con from="29" weight="0.171432925628222"/>
+    <Con from="30" weight="1.46125368760173"/>
+    <Con from="31" weight="-0.854354920818979"/>
+    <Con from="32" weight="0.310234951311471"/>
+    <Con from="33" weight="-1.79280337313579"/>
+    <Con from="34" weight="-1.40209696125307"/>
+    <Con from="35" weight="-0.63009149949237"/>
+    <Con from="36" weight="-0.992107728215114"/>
+    <Con from="37" weight="-0.114741275984393"/>
+    <Con from="38" weight="-2.30607352617729"/>
+    <Con from="39" weight="-0.463172477495091"/>
+    <Con from="40" weight="-1.08168084310619e-05"/>
+    <Con from="41" weight="-1.08970502474027"/>
+    <Con from="42" weight="-0.441830502360793"/>
+    <Con from="43" weight="-0.0282707753402562"/>
+   </Neuron>
+   <Neuron id="49" bias="0.000403360301136614">
+    <Con from="1" weight="0.000182453250383318"/>
+    <Con from="2" weight="0.000471165231592039"/>
+    <Con from="3" weight="-3.22699894718709e-05"/>
+    <Con from="4" weight="-6.41648862536388e-05"/>
+    <Con from="5" weight="0.00037907624862117"/>
+    <Con from="6" weight="-0.000416117740014963"/>
+    <Con from="7" weight="0.000344548330526531"/>
+    <Con from="8" weight="0.000225522076046107"/>
+    <Con from="9" weight="0.000560056824615024"/>
+    <Con from="10" weight="-4.54708885145052e-06"/>
+    <Con from="11" weight="0.000471361711533969"/>
+    <Con from="12" weight="-0.000214234153572565"/>
+    <Con from="13" weight="0.000241702614657434"/>
+    <Con from="14" weight="0.000446160384587377"/>
+    <Con from="15" weight="0.000295501421045385"/>
+    <Con from="16" weight="0.000428397860428251"/>
+    <Con from="17" weight="-0.000311509187127343"/>
+    <Con from="18" weight="0.000381658242200874"/>
+    <Con from="19" weight="0.000546488859967365"/>
+    <Con from="20" weight="5.75469114618073e-05"/>
+    <Con from="21" weight="0.000496059528082593"/>
+    <Con from="22" weight="-0.000481338030980317"/>
+    <Con from="23" weight="-0.000125890009770662"/>
+    <Con from="24" weight="-0.000160056606351677"/>
+    <Con from="25" weight="-5.20889690459265e-05"/>
+    <Con from="26" weight="0.000524458633493514"/>
+    <Con from="27" weight="0.0002991228966654"/>
+    <Con from="28" weight="-2.9700190443897e-05"/>
+    <Con from="29" weight="-0.000460749243560859"/>
+    <Con from="30" weight="-0.000221406769266321"/>
+    <Con from="31" weight="-0.000278903598635699"/>
+    <Con from="32" weight="0.000375642935936255"/>
+    <Con from="33" weight="0.000361140172736079"/>
+    <Con from="34" weight="-0.00022419433927013"/>
+    <Con from="35" weight="1.60416653208746e-05"/>
+    <Con from="36" weight="-0.000415814649001525"/>
+    <Con from="37" weight="-0.000562543226755991"/>
+    <Con from="38" weight="-0.00057104896754199"/>
+    <Con from="39" weight="-0.000510360507727298"/>
+    <Con from="40" weight="0.00403402073963631"/>
+    <Con from="41" weight="-0.000451526707950334"/>
+    <Con from="42" weight="0.000308567072966008"/>
+    <Con from="43" weight="0.000439066591710203"/>
+   </Neuron>
+   <Neuron id="50" bias="-0.000215068597171279">
+    <Con from="1" weight="-0.000169235448876531"/>
+    <Con from="2" weight="0.000230106475094754"/>
+    <Con from="3" weight="0.000247821020681691"/>
+    <Con from="4" weight="0.000118731796940824"/>
+    <Con from="5" weight="-0.00055962313429431"/>
+    <Con from="6" weight="-0.000384847912574309"/>
+    <Con from="7" weight="0.000174364674478406"/>
+    <Con from="8" weight="0.000494091524055157"/>
+    <Con from="9" weight="-0.000288305024654933"/>
+    <Con from="10" weight="-9.12270754362636e-05"/>
+    <Con from="11" weight="0.000318245432185097"/>
+    <Con from="12" weight="-0.000261603877270289"/>
+    <Con from="13" weight="-0.000556325672288562"/>
+    <Con from="14" weight="-0.000205958017194743"/>
+    <Con from="15" weight="-0.000294821773850926"/>
+    <Con from="16" weight="0.000148140892611303"/>
+    <Con from="17" weight="-0.000345632834864665"/>
+    <Con from="18" weight="0.00028421551076084"/>
+    <Con from="19" weight="0.000103353070181158"/>
+    <Con from="20" weight="-3.20014147509361e-06"/>
+    <Con from="21" weight="3.99202292957528e-06"/>
+    <Con from="22" weight="0.000270078723760698"/>
+    <Con from="23" weight="-0.000393170585564832"/>
+    <Con from="24" weight="-9.70681658703173e-05"/>
+    <Con from="25" weight="0.000167247133036095"/>
+    <Con from="26" weight="-0.000457105507766458"/>
+    <Con from="27" weight="-0.000562789710137169"/>
+    <Con from="28" weight="-0.000455914399132562"/>
+    <Con from="29" weight="-0.00054423780147501"/>
+    <Con from="30" weight="2.04428195366622e-05"/>
+    <Con from="31" weight="-4.90389176147869e-05"/>
+    <Con from="32" weight="-0.000544499518170101"/>
+    <Con from="33" weight="-0.000497925303380616"/>
+    <Con from="34" weight="7.662850169584e-05"/>
+    <Con from="35" weight="-0.000284096867118724"/>
+    <Con from="36" weight="-0.000203156013098834"/>
+    <Con from="37" weight="0.000158640028560785"/>
+    <Con from="38" weight="-0.000535975381408797"/>
+    <Con from="39" weight="0.000354989179764363"/>
+    <Con from="40" weight="-0.0144267620555207"/>
+    <Con from="41" weight="-0.000170568424673945"/>
+    <Con from="42" weight="-0.000353742488108377"/>
+    <Con from="43" weight="-0.0015009261524354"/>
+   </Neuron>
+   <Neuron id="51" bias="-0.0321669952308788">
+    <Con from="1" weight="-0.013765411237013"/>
+    <Con from="2" weight="0.0246076654997367"/>
+    <Con from="3" weight="0.0170652394221105"/>
+    <Con from="4" weight="-0.0224119469339663"/>
+    <Con from="5" weight="-0.00603911338449029"/>
+    <Con from="6" weight="-9.70447449237964e-05"/>
+    <Con from="7" weight="0.0570167145132904"/>
+    <Con from="8" weight="0.0377196994184576"/>
+    <Con from="9" weight="0.00734385241331939"/>
+    <Con from="10" weight="-0.119396740200409"/>
+    <Con from="11" weight="-0.0290790209021897"/>
+    <Con from="12" weight="5.71342742871265e-05"/>
+    <Con from="13" weight="0.016051723505059"/>
+    <Con from="14" weight="0.0397817476370456"/>
+    <Con from="15" weight="-0.00155327070126472"/>
+    <Con from="16" weight="-0.00300084909398571"/>
+    <Con from="17" weight="-0.000130506628841136"/>
+    <Con from="18" weight="-0.0201947970235589"/>
+    <Con from="19" weight="-0.000907269062574548"/>
+    <Con from="20" weight="-0.00427622986739651"/>
+    <Con from="21" weight="-0.00811920941900979"/>
+    <Con from="22" weight="-0.0251315347774313"/>
+    <Con from="23" weight="0.0894151307238857"/>
+    <Con from="24" weight="8.02791047933851e-05"/>
+    <Con from="25" weight="-0.00257042278840504"/>
+    <Con from="26" weight="-0.00731819524594093"/>
+    <Con from="27" weight="-0.0134063033229872"/>
+    <Con from="28" weight="0.0439226289465677"/>
+    <Con from="29" weight="-0.0855102610524044"/>
+    <Con from="30" weight="0.00056861364167246"/>
+    <Con from="31" weight="-0.0090108009578908"/>
+    <Con from="32" weight="0.000173779723307147"/>
+    <Con from="33" weight="0.00303627242519506"/>
+    <Con from="34" weight="0.0217089685616882"/>
+    <Con from="35" weight="-0.0588801193256108"/>
+    <Con from="36" weight="0.0880498412852211"/>
+    <Con from="37" weight="-0.0130744840119947"/>
+    <Con from="38" weight="-0.00367389250541492"/>
+    <Con from="39" weight="-0.00614198020090524"/>
+    <Con from="40" weight="-0.0514142481243701"/>
+    <Con from="41" weight="0.0224829494001921"/>
+    <Con from="42" weight="0.945374954602591"/>
+    <Con from="43" weight="0.392545212843338"/>
+   </Neuron>
+   <Neuron id="52" bias="-0.189510867221493">
+    <Con from="1" weight="-0.909122873201318"/>
+    <Con from="2" weight="1.80567892872916"/>
+    <Con from="3" weight="0.409201177433218"/>
+    <Con from="4" weight="-1.07638323549557"/>
+    <Con from="5" weight="-0.719959096309066"/>
+    <Con from="6" weight="-1.76401091891799e-05"/>
+    <Con from="7" weight="-1.30254440797178"/>
+    <Con from="8" weight="1.8013974939031"/>
+    <Con from="9" weight="-0.053309798723345"/>
+    <Con from="10" weight="0.0444175937081911"/>
+    <Con from="11" weight="-1.42443272014851"/>
+    <Con from="12" weight="0.0052003107924007"/>
+    <Con from="13" weight="-0.0712540413668311"/>
+    <Con from="14" weight="0.605724567752042"/>
+    <Con from="15" weight="0.0483284049911491"/>
+    <Con from="16" weight="0.162035617260305"/>
+    <Con from="17" weight="-0.00279087625742156"/>
+    <Con from="18" weight="-0.0299900031869678"/>
+    <Con from="19" weight="0.0451366486750805"/>
+    <Con from="20" weight="0.0771482877694867"/>
+    <Con from="21" weight="0.0918504499597358"/>
+    <Con from="22" weight="0.0778692723337962"/>
+    <Con from="23" weight="-0.681396709006372"/>
+    <Con from="24" weight="0.0380605748780354"/>
+    <Con from="25" weight="-0.0154518489385693"/>
+    <Con from="26" weight="0.0924363665727553"/>
+    <Con from="27" weight="0.34458039610657"/>
+    <Con from="28" weight="1.623884956196"/>
+    <Con from="29" weight="0.00102966284022132"/>
+    <Con from="30" weight="0.000518044973814488"/>
+    <Con from="31" weight="-0.0305030204492456"/>
+    <Con from="32" weight="-0.000519744669444979"/>
+    <Con from="33" weight="-1.62163730221339"/>
+    <Con from="34" weight="0.089596427431864"/>
+    <Con from="35" weight="0.1582528249417"/>
+    <Con from="36" weight="-1.22070064132295"/>
+    <Con from="37" weight="0.229905544748958"/>
+    <Con from="38" weight="-0.0276415887781202"/>
+    <Con from="39" weight="0.257308336764722"/>
+    <Con from="40" weight="-0.00444587363470355"/>
+    <Con from="41" weight="-0.23802652979504"/>
+    <Con from="42" weight="0.0337415831976285"/>
+    <Con from="43" weight="0.248049592768984"/>
+   </Neuron>
+  </NeuralLayer>
+  <NeuralLayer numberOfNeurons="1">
+   <Neuron id="53" bias="0.155959358576506">
+    <Con from="44" weight="0.231689245496512"/>
+    <Con from="45" weight="0.188040065603603"/>
+    <Con from="46" weight="-0.0334342534869668"/>
+    <Con from="47" weight="-3.14440305246084"/>
+    <Con from="48" weight="-4.8523051584991"/>
+    <Con from="49" weight="0.187197283425228"/>
+    <Con from="50" weight="-0.0247935936652943"/>
+    <Con from="51" weight="1.0205171527488"/>
+    <Con from="52" weight="0.83053990632198"/>
+   </Neuron>
+  </NeuralLayer>
+  <NeuralLayer numberOfNeurons="2" activationFunction="threshold" threshold="0.5">
+   <Neuron id="54" bias="1.0">
+    <Con from="53" weight="-1.0"/>
+   </Neuron>
+   <Neuron id="55" bias="0.0">
+    <Con from="53" weight="1.0"/>
+   </Neuron>
+  </NeuralLayer>
+  <NeuralOutputs numberOfOutputs="2">
+   <NeuralOutput outputNeuron="54">
+    <DerivedField name="derivedNO_Adjusted" optype="continuous" dataType="double">
+     <NormDiscrete field="Adjusted" value="0"/>
+    </DerivedField>
+   </NeuralOutput>
+   <NeuralOutput outputNeuron="55">
+    <DerivedField name="derivedNO_Adjusted" optype="continuous" dataType="double">
+     <NormDiscrete field="Adjusted" value="1"/>
+    </DerivedField>
+   </NeuralOutput>
+  </NeuralOutputs>
+ </NeuralNetwork>
+</PMML>

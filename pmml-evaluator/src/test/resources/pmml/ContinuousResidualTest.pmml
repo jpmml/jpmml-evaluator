@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+    <Header copyright="DMG.org"/>
+    <DataDictionary>
+        <DataField name="amount" optype="continuous" dataType="double"/>
+    </DataDictionary>
+    <RegressionModel functionName="regression" targetFieldName="amount">
+        <MiningSchema>
+            <MiningField name="amount" usageType="predicted"/>
+        </MiningSchema>
+        <Output>
+            <OutputField name="Residual" optype="continuous" dataType="double" feature="residual"/>
+        </Output>
+        <RegressionTable intercept="0.0"/>
+    </RegressionModel>
+</PMML>
