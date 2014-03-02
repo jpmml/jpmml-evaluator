@@ -810,6 +810,26 @@ public class FunctionUtil {
 	}
 
 	static {
+		putFunction("concat", new Function(){
+
+			@Override
+			public FieldValue evaluate(List<FieldValue> values){
+				checkVariableArguments(values, 2);
+
+				StringBuilder sb = new StringBuilder();
+
+				for(FieldValue value : values){
+					String string = (String)TypeUtil.cast(DataType.STRING, value.getValue());
+
+					sb.append(string);
+				}
+
+				return FieldValueUtil.create(sb.toString());
+			}
+		});
+	}
+
+	static {
 		putFunction("formatNumber", new Function(){
 
 			@Override

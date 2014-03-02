@@ -229,6 +229,13 @@ public class FunctionUtilTest {
 	}
 
 	@Test
+	public void evaluateConcatenationFunction(){
+		assertEquals("2-2000", evaluate("concat", "2", "-", "2000"));
+
+		assertEquals("2-2000", evaluate("concat", 2, "-", 2000));
+	}
+
+	@Test
 	public void evaluateFormatFunctions(){
 		assertEquals("  2", evaluate("formatNumber", 2, "%3d"));
 
