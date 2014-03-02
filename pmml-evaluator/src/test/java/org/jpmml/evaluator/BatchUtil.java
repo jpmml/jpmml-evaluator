@@ -44,7 +44,7 @@ public class BatchUtil {
 	public boolean evaluate(Batch batch) throws Exception {
 		InputStream is = batch.getModel();
 
-		Source source = SchemaUtil.createImportSource(new InputSource(is));
+		Source source = ImportFilter.apply(new InputSource(is));
 
 		PMML pmml = JAXBUtil.unmarshalPMML(source);
 

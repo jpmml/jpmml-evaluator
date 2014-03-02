@@ -39,7 +39,7 @@ public class PMMLTest {
 		InputStream is = clazz.getResourceAsStream("/pmml/" + clazz.getSimpleName() + ".pmml");
 
 		try {
-			Source source = SchemaUtil.createImportSource(new InputSource(is));
+			Source source = ImportFilter.apply(new InputSource(is));
 
 			return JAXBUtil.unmarshalPMML(source);
 		} finally {
