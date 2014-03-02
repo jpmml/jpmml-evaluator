@@ -170,14 +170,23 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateApply(Apply apply, EvaluationContext context){
+		String mapMissingTo = apply.getMapMissingTo();
+
 		List<FieldValue> values = Lists.newArrayList();
 
 		List<Expression> arguments = apply.getExpressions();
 		for(Expression argument : arguments){
 			FieldValue value = evaluate(argument, context);
 
+			// "If a mapMissingTo value is specified and any of the input values of the function are missing, then the function is not applied at all and the mapMissingTo value is returned instead"
+			if(value == null && mapMissingTo != null){
+				return FieldValueUtil.create(mapMissingTo);
+			}
+
 			values.add(value);
 		}
+
+		String defaultValue = apply.getDefaultValue();
 
 		FieldValue result;
 
@@ -193,14 +202,15 @@ public class ExpressionUtil {
 					// Re-throw the given InvalidResultException instance
 					throw ire;
 				case AS_MISSING:
-					return FieldValueUtil.create(apply.getMapMissingTo());
+					return FieldValueUtil.create(defaultValue);
 				default:
 					throw new UnsupportedFeatureException(apply, invalidValueTreatmentMethod);
 			}
 		}
 
-		if(result == null){
-			return FieldValueUtil.create(apply.getMapMissingTo());
+		// "If a defaultValue value is specified and the function produced a missing value, then the defaultValue is returned"
+		if(result == null && defaultValue != null){
+			return FieldValueUtil.create(defaultValue);
 		}
 
 		return result;

@@ -30,9 +30,9 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateConstant(){
-		Constant stringThree = new Constant("3");
-		stringThree.setDataType(DataType.STRING);
-		assertEquals("3", evaluate(stringThree, null));
+		Constant constant = new Constant("3");
+		constant.setDataType(DataType.STRING);
+		assertEquals("3", evaluate(constant, null));
 
 		Constant integerThree = new Constant("3");
 		integerThree.setDataType(DataType.INTEGER);
@@ -47,23 +47,23 @@ public class ExpressionUtilTest {
 	public void evaluateFieldRef(){
 		FieldName name = new FieldName("x");
 
-		FieldRef expression = new FieldRef(name);
-		assertEquals("3", evaluate(expression, createContext(name, "3")));
+		FieldRef fieldRef = new FieldRef(name);
+		assertEquals("3", evaluate(fieldRef, createContext(name, "3")));
 
-		assertEquals(null, evaluate(expression, createContext(name, null)));
-		expression.setMapMissingTo("Missing");
-		assertEquals("Missing", evaluate(expression, createContext(name, null)));
+		assertEquals(null, evaluate(fieldRef, createContext(name, null)));
+		fieldRef.setMapMissingTo("Missing");
+		assertEquals("Missing", evaluate(fieldRef, createContext(name, null)));
 	}
 
 	@Test
 	public void evaluateNormContinuous(){
 		FieldName name = new FieldName("x");
 
-		NormContinuous expression = new NormContinuous(name);
+		NormContinuous normContinuous = new NormContinuous(name);
 
-		expression.setMapMissingTo(5d);
+		normContinuous.setMapMissingTo(5d);
 
-		assertEquals(5d, evaluate(expression, createContext(name, null)));
+		assertEquals(5d, evaluate(normContinuous, createContext(name, null)));
 	}
 
 	@Test
@@ -94,31 +94,60 @@ public class ExpressionUtilTest {
 	public void evaluateDiscretize(){
 		FieldName name = new FieldName("x");
 
-		Discretize expression = new Discretize(name);
+		Discretize discretize = new Discretize(name);
 
-		assertEquals(null, evaluate(expression, createContext()));
-		expression.setMapMissingTo("Missing");
-		assertEquals("Missing", evaluate(expression, createContext()));
+		assertEquals(null, evaluate(discretize, createContext()));
+		discretize.setMapMissingTo("Missing");
+		assertEquals("Missing", evaluate(discretize, createContext()));
 
-		assertEquals(null, evaluate(expression, createContext(name, 3)));
-		expression.setDefaultValue("Default");
-		assertEquals("Default", evaluate(expression, createContext(name, 3)));
+		assertEquals(null, evaluate(discretize, createContext(name, 3)));
+		discretize.setDefaultValue("Default");
+		assertEquals("Default", evaluate(discretize, createContext(name, 3)));
 	}
 
 	@Test
 	public void evaluateMapValues(){
 		FieldName name = new FieldName("x");
 
-		MapValues expression = new MapValues(null);
-		(expression.getFieldColumnPairs()).add(new FieldColumnPair(name, null));
+		MapValues mapValues = new MapValues(null);
+		mapValues.withFieldColumnPairs(new FieldColumnPair(name, null));
 
-		assertEquals(null, evaluate(expression, createContext()));
-		expression.setMapMissingTo("Missing");
-		assertEquals("Missing", evaluate(expression, createContext()));
+		assertEquals(null, evaluate(mapValues, createContext()));
+		mapValues.setMapMissingTo("Missing");
+		assertEquals("Missing", evaluate(mapValues, createContext()));
 
-		assertEquals(null, evaluate(expression, createContext(name, "3")));
-		expression.setDefaultValue("Default");
-		assertEquals("Default", evaluate(expression, createContext(name, "3")));
+		assertEquals(null, evaluate(mapValues, createContext(name, "3")));
+		mapValues.setDefaultValue("Default");
+		assertEquals("Default", evaluate(mapValues, createContext(name, "3")));
+	}
+
+
+	@Test
+	public void evaluateApply(){
+		FieldName name = new FieldName("x");
+
+		Apply apply = new Apply("/");
+		apply.withExpressions(new FieldRef(name), new Constant("0"));
+
+		assertEquals(null, evaluate(apply, createContext(name, null)));
+		apply.setDefaultValue("1");
+		assertEquals("1", evaluate(apply, createContext(name, null)));
+		apply.setMapMissingTo("missing");
+		assertEquals("missing", evaluate(apply, createContext(name, null)));
+
+		apply.setInvalidValueTreatment(InvalidValueTreatmentMethodType.RETURN_INVALID);
+
+		try {
+			evaluate(apply, createContext(name, 1));
+
+			Assert.fail();
+		} catch(InvalidResultException ire){
+			// Ignored
+		}
+
+		apply.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+
+		assertEquals("1", evaluate(apply, createContext(name, 1)));
 	}
 
 	@Test
