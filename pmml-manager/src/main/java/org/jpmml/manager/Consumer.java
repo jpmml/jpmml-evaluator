@@ -41,15 +41,11 @@ public interface Consumer extends Serializable {
 
 	/**
 	 * Gets the definition of a field from the {@link DataDictionary}.
-	 *
-	 * @see PMMLManager#getDataField(FieldName)
 	 */
 	DataField getDataField(FieldName name);
 
 	/**
 	 * Gets the independent (ie. input) fields of a {@link Model} from its {@link MiningSchema}.
-	 *
-	 * @see ModelManager#getActiveFields()
 	 */
 	List<FieldName> getActiveFields();
 
@@ -57,45 +53,31 @@ public interface Consumer extends Serializable {
 	 * Gets the grouping fields of a {@link Model} from its {@link MiningSchema}.
 	 *
 	 * A model should have no more than 1 grouping field.
-	 *
-	 * @see ModelManager#getGroupFields()
 	 */
 	List<FieldName> getGroupFields();
+
+	/**
+	 * Gets the dependent (ie. output) field(s) of a {@link Model} from its {@link MiningSchema}.
+	 */
+	List<FieldName> getPredictedFields();
 
 	/**
 	 * Convenience method for retrieving the sole predicted field.
 	 *
 	 * @return The sole predicted field, or <code>null</code> if it does not exist
 	 *
-	 * @throws InvalidFeatureException If the number of predicted fields is not exactly one
-	 *
-	 * @see ModelManager#getTargetField()
+	 * @throws InvalidFeatureException If the number of predicted fields is not exactly one.
 	 */
 	FieldName getTargetField();
-
-	/**
-	 * Gets the dependent (ie. output) field(s) of a {@link Model} from its {@link MiningSchema}.
-	 *
-	 * @see ModelManager#getPredictedFields()
-	 */
-	List<FieldName> getPredictedFields();
 
 	/**
 	 * Gets the definition of a field from the {@link MiningSchema}.
 	 *
 	 * @see #getActiveFields()
+	 * @see #getGroupFields()
 	 * @see #getPredictedFields()
-	 *
-	 * @see ModelManager#getMiningField(FieldName)
 	 */
 	MiningField getMiningField(FieldName name);
-
-	/**
-	 * Gets the output fields of a {@link Model} from its {@link Output}.
-	 *
-	 * @see ModelManager#getOutputFields()
-	 */
-	List<FieldName> getOutputFields();
 
 	/**
 	 * Gets the definition of a field from the {@link Output}
@@ -103,4 +85,9 @@ public interface Consumer extends Serializable {
 	 * @see #getOutputFields()
 	 */
 	OutputField getOutputField(FieldName name);
+
+	/**
+	 * Gets the output fields of a {@link Model} from its {@link Output}.
+	 */
+	List<FieldName> getOutputFields();
 }

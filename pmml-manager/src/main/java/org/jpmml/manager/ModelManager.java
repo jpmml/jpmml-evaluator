@@ -72,6 +72,11 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	@Override
+	public List<FieldName> getPredictedFields(){
+		return getMiningFields(FieldUsageType.PREDICTED);
+	}
+
+	@Override
 	public FieldName getTargetField(){
 		List<FieldName> predictedFields = getPredictedFields();
 
@@ -88,11 +93,6 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	@Override
-	public List<FieldName> getPredictedFields(){
-		return getMiningFields(FieldUsageType.PREDICTED);
-	}
-
-	@Override
 	public MiningField getMiningField(FieldName name){
 		MiningSchema miningSchema = getMiningSchema();
 
@@ -101,7 +101,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return find(miningFields, name);
 	}
 
-	public List<FieldName> getMiningFields(FieldUsageType fieldUsageType){
+	private List<FieldName> getMiningFields(FieldUsageType fieldUsageType){
 		List<FieldName> result = Lists.newArrayList();
 
 		MiningSchema miningSchema = getMiningSchema();
