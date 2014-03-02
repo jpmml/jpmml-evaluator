@@ -116,25 +116,25 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Map<FieldName, InstanceClassificationMap> result = Maps.newLinkedHashMap();
 
-		List<FieldName> predictedFields = getPredictedFields();
-		for(FieldName predictedField : predictedFields){
-			DataField dataField = getDataField(predictedField);
+		List<FieldName> targetFields = getTargetFields();
+		for(FieldName targetField : targetFields){
+			DataField dataField = getDataField(targetField);
 
 			Object value;
 
 			OpType opType = dataField.getOptype();
 			switch(opType){
 				case CONTINUOUS:
-					value = calculateContinuousTarget(predictedField, nearestInstanceResults, table);
+					value = calculateContinuousTarget(targetField, nearestInstanceResults, table);
 					break;
 				case CATEGORICAL:
-					value = calculateCategoricalTarget(predictedField, nearestInstanceResults, table);
+					value = calculateCategoricalTarget(targetField, nearestInstanceResults, table);
 					break;
 				default:
 					throw new UnsupportedFeatureException(dataField, opType);
 			}
 
-			result.put(predictedField, createMeasureMap(value, instanceResults, function));
+			result.put(targetField, createMeasureMap(value, instanceResults, function));
 		}
 
 		return result;

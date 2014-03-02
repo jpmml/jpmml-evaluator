@@ -57,16 +57,18 @@ public interface Consumer extends Serializable {
 	List<FieldName> getGroupFields();
 
 	/**
-	 * Gets the dependent (ie. output) field(s) of a {@link Model} from its {@link MiningSchema}.
+	 * Gets the dependent (ie. target in supervised training) field(s) of a {@link Model} from its {@link MiningSchema}.
 	 */
-	List<FieldName> getPredictedFields();
+	List<FieldName> getTargetFields();
 
 	/**
-	 * Convenience method for retrieving the sole predicted field.
+	 * Convenience method for retrieving the sole target field.
 	 *
-	 * @return The sole predicted field, or <code>null</code> if it does not exist
+	 * @return The sole target field, or <code>null</code> if it does not exist
 	 *
-	 * @throws InvalidFeatureException If the number of predicted fields is not exactly one.
+	 * @throws InvalidFeatureException If the number of target fields is not exactly one.
+	 *
+	 * @see #getTargetFields()
 	 */
 	FieldName getTargetField();
 
@@ -75,7 +77,7 @@ public interface Consumer extends Serializable {
 	 *
 	 * @see #getActiveFields()
 	 * @see #getGroupFields()
-	 * @see #getPredictedFields()
+	 * @see #getTargetFields()
 	 */
 	MiningField getMiningField(FieldName name);
 

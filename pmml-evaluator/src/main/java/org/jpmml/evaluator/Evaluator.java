@@ -95,7 +95,7 @@ public interface Evaluator extends Consumer {
 	/**
 	 * @param arguments Map of {@link #getActiveFields() active field} values.
 	 *
-	 * @return Map of {@link #getPredictedFields() predicted field} and {@link #getOutputFields() output field} values.
+	 * @return Map of {@link #getTargetFields() target field} and {@link #getOutputFields() output field} values.
 	 * Simple values are represented using the Java equivalents of PMML data types (eg. String, Integer, Float, Double etc.).
 	 * Complex values are represented as instances of {@link Computable} that return simple values.
 	 * A missing result is represented by <code>null</code>.

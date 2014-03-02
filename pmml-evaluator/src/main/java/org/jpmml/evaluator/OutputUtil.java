@@ -35,9 +35,9 @@ public class OutputUtil {
 	/**
 	 * Evaluates the {@link Output} element.
 	 *
-	 * @param predictions Map of {@link Evaluator#getPredictedFields() predicted field} values.
+	 * @param predictions Map of {@link Evaluator#getTargetFields() target field} values.
 	 *
-	 * @return Map of {@link Evaluator#getPredictedFields() predicted field} values together with {@link Evaluator#getOutputFields() output field} values.
+	 * @return Map of {@link Evaluator#getTargetFields() target field} values together with {@link Evaluator#getOutputFields() output field} values.
 	 */
 	static
 	public Map<FieldName, Object> evaluate(Map<FieldName, ?> predictions, ModelEvaluationContext context){

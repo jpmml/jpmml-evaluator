@@ -61,7 +61,8 @@ public class BatchUtil {
 
 		List<FieldName> activeFields = evaluator.getActiveFields();
 		List<FieldName> groupFields = evaluator.getGroupFields();
-		List<FieldName> predictedFields = evaluator.getPredictedFields();
+		List<FieldName> targetFields = evaluator.getTargetFields();
+
 		List<FieldName> outputFields = evaluator.getOutputFields();
 
 		List<FieldName> inputFields = Lists.newArrayList();
@@ -119,20 +120,20 @@ public class BatchUtil {
 
 				Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-				for(FieldName predictedField : predictedFields){
-					String outputCell = outputRow.get(predictedField);
+				for(FieldName targetField : targetFields){
+					String outputCell = outputRow.get(targetField);
 
-					Object predictedValue = EvaluatorUtil.decode(result.get(predictedField));
+					Object targetValue = EvaluatorUtil.decode(result.get(targetField));
 
-					success &= acceptable(outputCell, predictedValue);
+					success &= acceptable(outputCell, targetValue);
 				}
 
 				for(FieldName outputField : outputFields){
 					String outputCell = outputRow.get(outputField);
 
-					Object computedValue = result.get(outputField);
+					Object outputValue = result.get(outputField);
 
-					success &= (outputCell != null ? acceptable(outputCell, computedValue) : acceptable(computedValue));
+					success &= (outputCell != null ? acceptable(outputCell, outputValue) : acceptable(outputValue));
 				}
 			}
 

@@ -63,33 +63,33 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	@Override
 	public List<FieldName> getActiveFields(){
-		return getMiningFields(FieldUsageType.ACTIVE);
+		return getMiningFields(EnumSet.of(FieldUsageType.ACTIVE));
 	}
 
 	@Override
 	public List<FieldName> getGroupFields(){
-		return getMiningFields(FieldUsageType.GROUP);
+		return getMiningFields(EnumSet.of(FieldUsageType.GROUP));
 	}
 
 	@Override
-	public List<FieldName> getPredictedFields(){
-		return getMiningFields(FieldUsageType.PREDICTED);
+	public List<FieldName> getTargetFields(){
+		return getMiningFields(EnumSet.of(FieldUsageType.PREDICTED, FieldUsageType.TARGET));
 	}
 
 	@Override
 	public FieldName getTargetField(){
-		List<FieldName> predictedFields = getPredictedFields();
+		List<FieldName> targetFields = getTargetFields();
 
-		// "The definition of predicted fields in the MiningSchema is not required"
-		if(predictedFields.size() < 1){
+		// "The definition of target fields in the MiningSchema is not required"
+		if(targetFields.size() < 1){
 			return null;
 		} else
 
-		if(predictedFields.size() > 1){
-			throw new InvalidFeatureException("Too many predicted fields", getMiningSchema());
+		if(targetFields.size() > 1){
+			throw new InvalidFeatureException("Too many target fields", getMiningSchema());
 		}
 
-		return predictedFields.get(0);
+		return targetFields.get(0);
 	}
 
 	@Override
@@ -101,15 +101,16 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return find(miningFields, name);
 	}
 
-	private List<FieldName> getMiningFields(FieldUsageType fieldUsageType){
+	private List<FieldName> getMiningFields(EnumSet<FieldUsageType> fieldUsageTypes){
 		List<FieldName> result = Lists.newArrayList();
 
 		MiningSchema miningSchema = getMiningSchema();
 
 		List<MiningField> miningFields = miningSchema.getMiningFields();
 		for(MiningField miningField : miningFields){
+			FieldUsageType fieldUsageType = miningField.getUsageType();
 
-			if((miningField.getUsageType()).equals(fieldUsageType)){
+			if(fieldUsageTypes.contains(fieldUsageType)){
 				result.add(miningField.getName());
 			}
 		}

@@ -31,13 +31,14 @@ public interface Batch {
 	 * Model input in CSV data format.
 	 *
 	 * @see Evaluator#getActiveFields()
+	 * @see Evaluator#getGroupFields()
 	 */
 	InputStream getInput();
 
 	/**
 	 * Model output in CSV data format.
 	 *
-	 * @see Evaluator#getPredictedFields()
+	 * @see Evaluator#getTargetFields()
 	 * @see Evaluator#getOutputFields()
 	 */
 	InputStream getOutput();
