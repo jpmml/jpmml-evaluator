@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.*;
+import java.util.regex.*;
 
 import org.jpmml.manager.*;
 
@@ -825,6 +826,44 @@ public class FunctionUtil {
 				}
 
 				return FieldValueUtil.create(sb.toString());
+			}
+		});
+	}
+
+	static {
+		putFunction("replace", new Function(){
+
+			@Override
+			public FieldValue evaluate(List<FieldValue> values){
+				checkArguments(values, 3);
+
+				String input = (values.get(0)).asString();
+				String pattern = (values.get(1)).asString();
+				String replacement = (values.get(2)).asString();
+
+				Matcher matcher = Pattern.compile(pattern).matcher(input);
+
+				String result = matcher.replaceAll(replacement);
+
+				return FieldValueUtil.create(result);
+			}
+		});
+
+		putFunction("matches", new Function(){
+
+			@Override
+			public FieldValue evaluate(List<FieldValue> values){
+				checkArguments(values, 2);
+
+				String input = (values.get(0)).asString();
+				String pattern = (values.get(1)).asString();
+
+				Matcher matcher = Pattern.compile(pattern).matcher(input);
+
+				// "the string is considered to match the pattern if any substring matches the pattern"
+				Boolean result = Boolean.valueOf(matcher.find());
+
+				return FieldValueUtil.create(result);
 			}
 		});
 	}

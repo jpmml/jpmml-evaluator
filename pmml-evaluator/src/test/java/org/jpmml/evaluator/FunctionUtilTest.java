@@ -236,6 +236,31 @@ public class FunctionUtilTest {
 	}
 
 	@Test
+	public void evaluateRegularExpressionFunctions(){
+		assertEquals("c", evaluate("replace", "BBBB", "B+", "c"));
+		assertEquals("cccc", evaluate("replace", "BBBB", "B+?", "c"));
+
+		// See http://www.w3.org/TR/xquery-operators/#func-replace
+		assertEquals("a*cada*", evaluate("replace", "abracadabra", "bra", "*"));
+		assertEquals("*", evaluate("replace", "abracadabra", "a.*a", "*"));
+		assertEquals("*c*bra", evaluate("replace", "abracadabra", "a.*?a", "*"));
+		assertEquals("brcdbr", evaluate("replace", "abracadabra", "a", ""));
+		assertEquals("abbraccaddabbra", evaluate("replace", "abracadabra", "a(.)", "a$1$1"));
+
+		String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+		for(int i = 0; i < monthNames.length; i++){
+			Boolean matches = Boolean.valueOf(i == 0 || i == 1 || i == 4);
+
+			assertEquals(matches, evaluate("matches", monthNames[i], "ar?y"));
+		}
+
+		// See http://www.w3.org/TR/xquery-operators/#func-matches
+		assertEquals(Boolean.TRUE, evaluate("matches", "abracadabra", "bra"));
+		assertEquals(Boolean.TRUE, evaluate("matches", "abracadabra", "^a.*a$"));
+		assertEquals(Boolean.FALSE, evaluate("matches", "abracadabra", "^bra"));
+	}
+
+	@Test
 	public void evaluateFormatFunctions(){
 		assertEquals("  2", evaluate("formatNumber", 2, "%3d"));
 
