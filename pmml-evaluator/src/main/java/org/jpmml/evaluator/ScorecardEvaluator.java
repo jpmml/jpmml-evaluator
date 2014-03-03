@@ -65,7 +65,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
 		Scorecard scorecard = getModel();
 
-		double value = 0;
+		double score = scorecard.getInitialScore();
 
 		boolean useReasonCodes = scorecard.isUseReasonCodes();
 
@@ -124,7 +124,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 					throw new InvalidFeatureException(attribute);
 				}
 
-				value += partialScore.doubleValue();
+				score += partialScore.doubleValue();
 
 				String reasonCode = attribute.getReasonCode();
 				if(reasonCode == null){
@@ -165,7 +165,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			}
 		}
 
-		Map<FieldName, ? extends Number> result = TargetUtil.evaluateRegression(value, context);
+		Map<FieldName, ? extends Number> result = TargetUtil.evaluateRegression(score, context);
 
 		if(useReasonCodes){
 			Map.Entry<FieldName, ? extends Number> resultEntry = Iterables.getOnlyElement(result.entrySet());
