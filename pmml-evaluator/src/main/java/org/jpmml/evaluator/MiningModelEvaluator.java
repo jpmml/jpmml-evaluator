@@ -209,7 +209,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 
 	private Map<FieldName, ?> dispatchSingleResult(Segmentation segmentation, List<SegmentResult> results){
 
-		if(results.size() < 1 || results.size() > 1){
+		if(results.size() != 1){
 			throw new MissingResultException(segmentation);
 		}
 

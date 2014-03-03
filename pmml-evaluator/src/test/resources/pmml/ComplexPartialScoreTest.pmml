@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
+    <Header copyright="www.dmg.org" description="Sample scorecard">
+        <Timestamp>2010-11-10T08:17:10.8</Timestamp>
+    </Header>
+    <DataDictionary>
+        <DataField name="department" optype="categorical" dataType="string"/>
+        <DataField name="age" optype="continuous" dataType="integer"/>
+        <DataField name="income" optype="continuous" dataType="double"/>
+        <DataField name="overallScore" optype="continuous" dataType="double"/>
+    </DataDictionary>
+    <Scorecard modelName="SampleScorecard" functionName="regression" initialScore="0.0" useReasonCodes="true" reasonCodeAlgorithm="pointsBelow" baselineMethod="other">
+        <MiningSchema>
+            <MiningField name="department" usageType="active" invalidValueTreatment="asMissing"/>
+            <MiningField name="age" usageType="active" invalidValueTreatment="asMissing"/>
+            <MiningField name="income" usageType="active" invalidValueTreatment="asMissing"/>
+            <MiningField name="overallScore" usageType="target"/>
+        </MiningSchema>
+        <Output>
+            <OutputField name="Final Score" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="Reason Code 1" optype="categorical" dataType="string" feature="reasonCode" rank="1"/>
+            <OutputField name="Reason Code 2" optype="categorical" dataType="string" feature="reasonCode" rank="2"/>
+            <OutputField name="Reason Code 3" optype="categorical" dataType="string" feature="reasonCode" rank="3"/>
+        </Output>
+        <Characteristics>
+            <Characteristic name="departmentScore" reasonCode="RC1" baselineScore="19.0">
+                <Attribute partialScore="-9.0">
+                    <SimplePredicate field="department" operator="isMissing"/>
+                </Attribute>
+                <Attribute partialScore="19.0">
+                    <SimplePredicate field="department" operator="equal" value="marketing"/>
+                </Attribute>
+                <Attribute partialScore="3.0">
+                    <SimplePredicate field="department" operator="equal" value="engineering"/>
+                </Attribute>
+                <Attribute partialScore="6.0">
+                    <SimplePredicate field="department" operator="equal" value="business"/>
+                </Attribute>
+                <Attribute partialScore="0.0">
+                    <True/>
+                </Attribute>
+            </Characteristic>
+            <Characteristic name="ageScore" reasonCode="RC2" baselineScore="18.0">
+                <Attribute partialScore="-1.0">
+                    <SimplePredicate field="age" operator="isMissing"/>
+                </Attribute>
+                <Attribute partialScore="-3.0">
+                    <SimplePredicate field="age" operator="lessOrEqual" value="18"/>
+                </Attribute>
+                <Attribute partialScore="0.0">
+                    <CompoundPredicate booleanOperator="and">
+                        <SimplePredicate field="age" operator="greaterThan" value="18"/>
+                        <SimplePredicate field="age" operator="lessOrEqual" value="29"/>
+                    </CompoundPredicate>
+                </Attribute>
+                <Attribute partialScore="12.0">
+                    <CompoundPredicate booleanOperator="and">
+                        <SimplePredicate field="age" operator="greaterThan" value="29"/>
+                        <SimplePredicate field="age" operator="lessOrEqual" value="39"/>
+                    </CompoundPredicate>
+                </Attribute>
+                <Attribute partialScore="18.0">
+                    <SimplePredicate field="age" operator="greaterThan" value="39"/>
+                </Attribute>
+            </Characteristic>
+            <Characteristic name="incomeScore" reasonCode="RC3" baselineScore="10.0">
+                <Attribute partialScore="3.0">
+                    <SimplePredicate field="income" operator="isMissing"/>
+                </Attribute>
+                <Attribute>
+                    <SimplePredicate field="income" operator="lessOrEqual" value="1000"/>
+                    <ComplexPartialScore>
+                        <Apply function="+">
+                            <Apply function="*">
+                                <Constant>0.03</Constant>
+                                <FieldRef field="income"/>
+                            </Apply>
+                            <Constant>11</Constant>
+                        </Apply>
+                    </ComplexPartialScore>
+                </Attribute>
+                <Attribute partialScore="5.0">
+                    <CompoundPredicate booleanOperator="and">
+                        <SimplePredicate field="income" operator="greaterThan" value="1000"/>
+                        <SimplePredicate field="income" operator="lessOrEqual" value="1500"/>
+                    </CompoundPredicate>
+                </Attribute>
+                <Attribute>
+                    <SimplePredicate field="income" operator="greaterThan" value="1500"/>
+                    <ComplexPartialScore>
+                        <Apply function="-">
+                            <Apply function="*">
+                                <Constant>0.01</Constant>
+                                <FieldRef field="income"/>
+                            </Apply>
+                            <Constant>18</Constant>
+                        </Apply>
+                    </ComplexPartialScore>
+                </Attribute>
+            </Characteristic>
+        </Characteristics>
+    </Scorecard>
+</PMML>

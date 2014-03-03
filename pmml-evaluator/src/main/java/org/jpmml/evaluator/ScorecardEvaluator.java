@@ -85,6 +85,8 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 				}
 			}
 
+			boolean hasTrueAttribute = false;
+
 			List<Attribute> attributes = characteristic.getAttributes();
 			for(Attribute attribute : attributes){
 				Predicate predicate = attribute.getPredicate();
@@ -97,7 +99,27 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 					continue;
 				}
 
-				Double partialScore = attribute.getPartialScore();
+				Double partialScore = null;
+
+				ComplexPartialScore complexPartialScore = attribute.getComplexPartialScore();
+				if(complexPartialScore != null){
+					Expression expression = complexPartialScore.getExpression();
+					if(expression == null){
+						throw new InvalidFeatureException(complexPartialScore);
+					}
+
+					FieldValue computedValue = ExpressionUtil.evaluate(expression, context);
+					if(computedValue == null){
+						throw new MissingResultException(expression);
+					}
+
+					partialScore = (computedValue.asNumber()).doubleValue();
+				} else
+
+				{
+					partialScore = attribute.getPartialScore();
+				} // End if
+
 				if(partialScore == null){
 					throw new InvalidFeatureException(attribute);
 				}
@@ -107,7 +129,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 				String reasonCode = attribute.getReasonCode();
 				if(reasonCode == null){
 					reasonCode = characteristic.getReasonCode();
-				}
+				} // End if
 
 				if(useReasonCodes){
 
@@ -132,7 +154,14 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 					reasonCodePoints.increment(reasonCode, difference);
 				}
 
+				hasTrueAttribute = true;
+
 				break;
+			}
+
+			// "If not even a single Attribute evaluates to "true" for a given Characteristic, the scorecard as a whole returns an invalid value"
+			if(!hasTrueAttribute){
+				throw new InvalidResultException(characteristic);
 			}
 		}
 
