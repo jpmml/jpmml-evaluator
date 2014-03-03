@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
-    <Header copyright="Copyright (c) 2009, DMG.org"/>
-    <DataDictionary numberOfFields="5">
+<PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
+    <Header copyright="Copyright (c) 2013, DMG.org"/>
+    <DataDictionary numberOfFields="6">
+        <DataField name="age of individual" optype="continuous" dataType="double"/>
         <DataField name="gender" optype="categorical" dataType="string">
             <Value value="female"/>
             <Value value="male"/>
@@ -28,13 +29,33 @@
     </DataDictionary>
     <NaiveBayesModel modelName="NaiveBayes Insurance" threshold="0.001" functionName="classification">
         <MiningSchema>
+            <MiningField name="age of individual"/>
             <MiningField name="gender"/>
             <MiningField name="no of claims"/>
             <MiningField name="domicile"/>
             <MiningField name="age of car"/>
-            <MiningField name="amount of claims" usageType="predicted"/>
+            <MiningField name="amount of claims" usageType="target"/>
         </MiningSchema>
         <BayesInputs>
+            <BayesInput fieldName="age of individual">
+                <TargetValueStats>
+                    <TargetValueStat value="100">
+                        <GaussianDistribution mean="32.006" variance="0.352"/>
+                    </TargetValueStat>
+                    <TargetValueStat value="500">
+                        <GaussianDistribution mean="24.936" variance="0.516"/>
+                    </TargetValueStat>
+                    <TargetValueStat value="1000">
+                        <GaussianDistribution mean="24.588" variance="0.635"/>
+                    </TargetValueStat>
+                    <TargetValueStat value="5000">
+                        <GaussianDistribution mean="24.428" variance="0.379"/>
+                    </TargetValueStat>
+                    <TargetValueStat value="10000">
+                        <GaussianDistribution mean="24.77" variance="0.314"/>
+                    </TargetValueStat>
+                </TargetValueStats>
+            </BayesInput>
             <BayesInput fieldName="gender">
                 <PairCounts value="male">
                     <TargetValueCounts>

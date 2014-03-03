@@ -36,11 +36,11 @@ generateDecisionTreeIris = function(){
 }
 
 generateNaiveBayesIris = function(){
-	naiveBayes = naiveBayes(irisFormula, irisData) 
+	naiveBayes = naiveBayes(irisFormula, irisData, threshold = 0) 
 	saveXML(pmml(naiveBayes, predictedField = "Species"), "pmml/NaiveBayesIris.pmml")
 
-	classes = predict(naiveBayes, newdata = irisData, type = "class")
-	probabilities = predict(naiveBayes, newdata = irisData, type = "raw")
+	classes = predict(naiveBayes, newdata = irisData, threshold = 0, type = "class")
+	probabilities = predict(naiveBayes, newdata = irisData, threshold = 0, type = "raw")
 	writeIris(classes, probabilities, "csv/NaiveBayesIris.csv")
 }
 
@@ -155,11 +155,11 @@ generateGeneralRegressionAudit = function(){
 }
 
 generateNaiveBayesAudit = function(){
-	naiveBayes = naiveBayes(auditFormula, auditData) 
+	naiveBayes = naiveBayes(auditFormula, auditData, threshold = 0) 
 	saveXML(pmml(naiveBayes, predictedField = "Adjusted"), "pmml/NaiveBayesAudit.pmml")
 
-	classes = predict(naiveBayes, newdata = auditData, type = "class")
-	probabilities = predict(naiveBayes, newdata = auditData, type = "raw")
+	classes = predict(naiveBayes, newdata = auditData, threshold = 0, type = "class")
+	probabilities = predict(naiveBayes, newdata = auditData, threshold = 0, type = "raw")
 	writeAudit(classes, probabilities, "csv/NaiveBayesAudit.csv")
 }
 

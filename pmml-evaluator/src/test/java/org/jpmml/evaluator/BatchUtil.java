@@ -130,6 +130,9 @@ public class BatchUtil {
 
 				for(FieldName outputField : outputFields){
 					String outputCell = outputRow.get(outputField);
+					if("NA".equals(outputCell) || "N/A".equals(outputCell)){
+						continue;
+					}
 
 					Object outputValue = result.get(outputField);
 

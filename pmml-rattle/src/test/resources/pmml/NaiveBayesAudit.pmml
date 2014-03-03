@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
- <Header copyright="Copyright (c) 2013 Vfed" description="NaiveBayes Model">
+ <Header copyright="Copyright (c) 2014 Vfed" description="NaiveBayes Model">
   <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
-  <Application name="Rattle/PMML" version="1.3"/>
-  <Timestamp>2013-09-17 00:20:30</Timestamp>
+  <Application name="Rattle/PMML" version="1.4"/>
+  <Timestamp>2014-03-03 15:42:42</Timestamp>
  </Header>
  <DataDictionary numberOfFields="9">
   <DataField name="Adjusted" optype="categorical" dataType="string">
@@ -69,7 +69,7 @@
   <DataField name="Deductions" optype="continuous" dataType="double"/>
   <DataField name="Hours" optype="continuous" dataType="double"/>
  </DataDictionary>
- <NaiveBayesModel modelName="naiveBayes_Model" functionName="classification" threshold="0.001">
+ <NaiveBayesModel modelName="naiveBayes_Model" functionName="classification" threshold="0">
   <MiningSchema>
    <MiningField name="Adjusted" usageType="predicted"/>
    <MiningField name="Employment" usageType="active"/>

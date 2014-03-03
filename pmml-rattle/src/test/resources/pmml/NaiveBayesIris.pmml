@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
- <Header copyright="Copyright (c) 2013 Vfed" description="NaiveBayes Model">
+ <Header copyright="Copyright (c) 2014 Vfed" description="NaiveBayes Model">
   <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
-  <Application name="Rattle/PMML" version="1.3"/>
-  <Timestamp>2013-09-16 23:47:41</Timestamp>
+  <Application name="Rattle/PMML" version="1.4"/>
+  <Timestamp>2014-03-03 14:23:34</Timestamp>
  </Header>
  <DataDictionary numberOfFields="6">
   <DataField name="Species" optype="categorical" dataType="string">
@@ -19,7 +19,7 @@
    <Value value="pseudoValue"/>
   </DataField>
  </DataDictionary>
- <NaiveBayesModel modelName="naiveBayes_Model" functionName="classification" threshold="0.001">
+ <NaiveBayesModel modelName="naiveBayes_Model" functionName="classification" threshold="0">
   <MiningSchema>
    <MiningField name="Species" usageType="predicted"/>
    <MiningField name="Sepal.Length" usageType="active"/>

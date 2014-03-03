@@ -80,6 +80,8 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 
+		double threshold = naiveBayesModel.getThreshold();
+
 		// Probability calculations use logarithmic scale for greater numerical stability
 		DefaultClassificationMap<String> result = new DefaultClassificationMap<String>();
 
@@ -98,7 +100,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			TargetValueStats targetValueStats = getTargetValueStats(bayesInput);
 			if(targetValueStats != null){
-				calculateContinuousProbabilities(value, targetValueStats, result);
+				calculateContinuousProbabilities(value, targetValueStats, threshold, result);
 
 				continue;
 			}
@@ -124,7 +126,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			TargetValueCounts targetValueCounts = getTargetValueCounts(bayesInput, value);
 			if(targetValueCounts != null){
-				calculateDiscreteProbabilities(counts, targetValueCounts, naiveBayesModel.getThreshold(), result);
+				calculateDiscreteProbabilities(counts, targetValueCounts, threshold, result);
 			}
 		}
 
@@ -145,7 +147,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		return TargetUtil.evaluateClassification(result, context);
 	}
 
-	private void calculateContinuousProbabilities(FieldValue value, TargetValueStats targetValueStats, Map<String, Double> probabilities){
+	private void calculateContinuousProbabilities(FieldValue value, TargetValueStats targetValueStats, double threshold, Map<String, Double> probabilities){
 		double x = (value.asNumber()).doubleValue();
 
 		for(TargetValueStat targetValueStat : targetValueStats){
@@ -161,7 +163,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			double mean = gaussianDistribution.getMean();
 			double variance = gaussianDistribution.getVariance();
 
-			double probability = Math.exp(-Math.pow(x - mean, 2) / (2d * variance)) / Math.sqrt(2d * Math.PI * variance);
+			double probability = Math.max(Math.exp(-Math.pow(x - mean, 2) / (2d * variance)) / Math.sqrt(2d * Math.PI * variance), threshold);
 
 			updateSum(targetValue, Math.log(probability), probabilities);
 		}
@@ -174,12 +176,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			Double count = counts.get(targetValue);
 
-			double probability = (targetValueCount.getCount() / count);
-
-			// Replace zero probability with the default (usually very small) probability
-			if(VerificationUtil.isZero(probability, Precision.EPSILON)){
-				probability = threshold;
-			}
+			double probability = Math.max(targetValueCount.getCount() / count, threshold);
 
 			updateSum(targetValue, Math.log(probability), probabilities);
 		}
