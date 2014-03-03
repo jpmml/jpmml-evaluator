@@ -85,18 +85,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 
 		List<SegmentResult> segmentResults = evaluateSegmentation(context);
 
+		Map<FieldName, ? extends Number> predictions = getRegressionResult(segmentResults);
+		if(predictions != null){
+			return TargetUtil.evaluateRegression(predictions, context);
+		}
+
 		Segmentation segmentation = miningModel.getSegmentation();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
-		switch(multipleModelMethod){
-			case SELECT_FIRST:
-			case MODEL_CHAIN:
-				return dispatchSingleResult(segmentation, segmentResults);
-			case SELECT_ALL:
-				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
-			default:
-				break;
-		}
 
 		double sum = 0d;
 
@@ -135,23 +131,53 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		return TargetUtil.evaluateRegression(result, context);
 	}
 
-	private Map<FieldName, ?> evaluateClassification(ModelEvaluationContext context){
+	@SuppressWarnings (
+		value = {"fallthrough", "rawtypes", "unchecked"}
+	)
+	private Map<FieldName, ? extends Number> getRegressionResult(List<SegmentResult> segmentResults){
 		MiningModel miningModel = getModel();
-
-		List<SegmentResult> segmentResults = evaluateSegmentation(context);
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
-			case SELECT_FIRST:
-			case MODEL_CHAIN:
-				return dispatchSingleResult(segmentation, segmentResults);
 			case SELECT_ALL:
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+			case SELECT_FIRST:
+				if(segmentResults.size() > 0){
+					return (Map)dispatchFirst(segmentResults);
+				}
+				// Falls through
+			case MODEL_CHAIN:
+				if(segmentResults.size() > 0){
+					return (Map)dispatchLast(segmentResults);
+				}
+				// Falls through
+			case SUM:
+			case AVERAGE:
+			case WEIGHTED_AVERAGE:
+				if(segmentResults.size() == 0){
+					return Collections.singletonMap(getTargetField(), null);
+				}
+				break;
 			default:
 				break;
 		}
+
+		return null;
+	}
+
+	private Map<FieldName, ?> evaluateClassification(ModelEvaluationContext context){
+		MiningModel miningModel = getModel();
+
+		List<SegmentResult> segmentResults = evaluateSegmentation(context);
+
+		Map<FieldName, ? extends ClassificationMap<?>> predictions = getClassificationResult(segmentResults);
+		if(predictions != null){
+			return TargetUtil.evaluateClassification(predictions, context);
+		}
+
+		Segmentation segmentation = miningModel.getSegmentation();
 
 		DefaultClassificationMap<Object> result = new DefaultClassificationMap<Object>();
 		result.putAll(countVotes(segmentation, segmentResults));
@@ -162,23 +188,52 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		return TargetUtil.evaluateClassification(result, context);
 	}
 
-	private Map<FieldName, ?> evaluateClustering(ModelEvaluationContext context){
+	@SuppressWarnings (
+		value = {"fallthrough", "rawtypes", "unchecked"}
+	)
+	private Map<FieldName, ? extends ClassificationMap<?>> getClassificationResult(List<SegmentResult> segmentResults){
 		MiningModel miningModel = getModel();
-
-		List<SegmentResult> segmentResults = evaluateSegmentation(context);
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
-			case SELECT_FIRST:
-			case MODEL_CHAIN:
-				return dispatchSingleResult(segmentation, segmentResults);
 			case SELECT_ALL:
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+			case SELECT_FIRST:
+				if(segmentResults.size() > 0){
+					return (Map)dispatchFirst(segmentResults);
+				}
+				// Falls through
+			case MODEL_CHAIN:
+				if(segmentResults.size() > 0){
+					return (Map)dispatchLast(segmentResults);
+				}
+				// Falls through
+			case MAJORITY_VOTE:
+			case WEIGHTED_MAJORITY_VOTE:
+				if(segmentResults.size() == 0){
+					return Collections.singletonMap(getTargetField(), null);
+				}
+				break;
 			default:
 				break;
 		}
+
+		return null;
+	}
+
+	private Map<FieldName, ?> evaluateClustering(ModelEvaluationContext context){
+		MiningModel miningModel = getModel();
+
+		List<SegmentResult> segmentResults = evaluateSegmentation(context);
+
+		Map<FieldName, ?> predictions = getClusteringResult(segmentResults);
+		if(predictions != null){
+			return predictions;
+		}
+
+		Segmentation segmentation = miningModel.getSegmentation();
 
 		ClassificationMap<Object> result = new ClassificationMap<Object>(ClassificationMap.Type.VOTE);
 		result.putAll(countVotes(segmentation, segmentResults));
@@ -186,6 +241,44 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		return Collections.singletonMap(getTargetField(), result);
 	}
 
+	@SuppressWarnings (
+		value = {"fallthrough"}
+	)
+	private Map<FieldName, ?> getClusteringResult(List<SegmentResult> segmentResults){
+		MiningModel miningModel = getModel();
+
+		Segmentation segmentation = miningModel.getSegmentation();
+
+		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+		switch(multipleModelMethod){
+			case SELECT_ALL:
+				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+			case SELECT_FIRST:
+				if(segmentResults.size() > 0){
+					return dispatchFirst(segmentResults);
+				}
+				// Falls through
+			case MODEL_CHAIN:
+				if(segmentResults.size() > 0){
+					return dispatchLast(segmentResults);
+				}
+				// Falls through
+			case MAJORITY_VOTE:
+			case WEIGHTED_MAJORITY_VOTE:
+				if(segmentResults.size() == 0){
+					return Collections.singletonMap(getTargetField(), null);
+				}
+				break;
+			default:
+				break;
+		}
+
+		return null;
+	}
+
+	@SuppressWarnings (
+		value = {"fallthrough"}
+	)
 	private Map<FieldName, ?> evaluateAny(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
@@ -195,11 +288,18 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
-			case SELECT_FIRST:
-			case MODEL_CHAIN:
-				return dispatchSingleResult(segmentation, segmentResults);
 			case SELECT_ALL:
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+			case SELECT_FIRST:
+				if(segmentResults.size() > 0){
+					return dispatchFirst(segmentResults);
+				}
+				// Falls through
+			case MODEL_CHAIN:
+				if(segmentResults.size() > 0){
+					return dispatchLast(segmentResults);
+				}
+				return Collections.singletonMap(getTargetField(), null);
 			default:
 				break;
 		}
@@ -207,44 +307,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 	}
 
-	private Map<FieldName, ?> dispatchSingleResult(Segmentation segmentation, List<SegmentResult> results){
-
-		if(results.size() != 1){
-			throw new MissingResultException(segmentation);
-		}
-
-		SegmentResult result = results.get(0);
-
-		return result.getResult();
-	}
-
-	static
-	private Map<Object, Double> countVotes(Segmentation segmentation, List<SegmentResult> segmentResults){
-		VoteCounter<Object> counter = new VoteCounter<Object>();
-
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
-
-		for(SegmentResult segmentResult : segmentResults){
-			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
-
-			switch(multipleModelMethod){
-				case MAJORITY_VOTE:
-					counter.increment(targetValue);
-					break;
-				case WEIGHTED_MAJORITY_VOTE:
-					counter.increment(targetValue, segmentResult.getWeight());
-					break;
-				default:
-					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
-			}
-		}
-
-		return counter;
-	}
-
-	@SuppressWarnings (
-		value = "fallthrough"
-	)
 	private List<SegmentResult> evaluateSegmentation(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
@@ -314,9 +376,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 			switch(multipleModelMethod){
 				case SELECT_FIRST:
 					return Collections.singletonList(new SegmentResult(segment, targetField, result));
-				case MODEL_CHAIN:
-					results.clear();
-					// Falls through
 				default:
 					results.add(new SegmentResult(segment, targetField, result));
 					break;
@@ -335,6 +394,44 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		}
 
 		return results;
+	}
+
+	static
+	private Map<FieldName, ?> dispatchFirst(List<SegmentResult> results){
+		SegmentResult result = results.get(0);
+
+		return result.getResult();
+	}
+
+	static
+	private Map<FieldName, ?> dispatchLast(List<SegmentResult> results){
+		SegmentResult result = results.get(results.size() - 1);
+
+		return result.getResult();
+	}
+
+	static
+	private Map<Object, Double> countVotes(Segmentation segmentation, List<SegmentResult> segmentResults){
+		VoteCounter<Object> counter = new VoteCounter<Object>();
+
+		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+
+		for(SegmentResult segmentResult : segmentResults){
+			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
+
+			switch(multipleModelMethod){
+				case MAJORITY_VOTE:
+					counter.increment(targetValue);
+					break;
+				case WEIGHTED_MAJORITY_VOTE:
+					counter.increment(targetValue, segmentResult.getWeight());
+					break;
+				default:
+					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+			}
+		}
+
+		return counter;
 	}
 
 	static

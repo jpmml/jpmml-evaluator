@@ -44,7 +44,7 @@ public class TargetUtil {
 	 * Evaluates the {@link Targets} element for {@link MiningFunctionType#REGRESSION regression} models.
 	 */
 	static
-	public Map<FieldName, ? extends Number> evaluateRegression(Map<FieldName, Double> predictions, ModelEvaluationContext context){
+	public Map<FieldName, ? extends Number> evaluateRegression(Map<FieldName, ? extends Number> predictions, ModelEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
 		Targets targets = modelManager.getOrCreateTargets();
@@ -54,8 +54,8 @@ public class TargetUtil {
 
 		Map<FieldName, Number> result = Maps.newLinkedHashMap();
 
-		Collection<Map.Entry<FieldName, Double>> entries = predictions.entrySet();
-		for(Map.Entry<FieldName, Double> entry : entries){
+		Collection<? extends Map.Entry<FieldName, ? extends Number>> entries = predictions.entrySet();
+		for(Map.Entry<FieldName, ? extends Number> entry : entries){
 			FieldName key = entry.getKey();
 			Number value = entry.getValue();
 
@@ -120,7 +120,7 @@ public class TargetUtil {
 	}
 
 	static
-	public Number process(Target target, Double value){
+	public Number process(Target target, Number value){
 		double result = value.doubleValue();
 
 		Double min = target.getMin();
