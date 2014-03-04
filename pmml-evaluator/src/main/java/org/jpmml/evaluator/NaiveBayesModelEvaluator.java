@@ -89,7 +89,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		List<BayesInput> bayesInputs = getValue(NaiveBayesModelEvaluator.bayesInputCache);
 		for(BayesInput bayesInput : bayesInputs){
-			FieldName name = FieldName.create(bayesInput.getFieldName());
+			FieldName name = bayesInput.getFieldName();
 
 			FieldValue value = ExpressionUtil.evaluate(name, context);
 
@@ -201,7 +201,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		List<BayesInput> bayesInputs = CacheUtil.getValue(naiveBayesModel, NaiveBayesModelEvaluator.bayesInputCache);
 		for(BayesInput bayesInput : bayesInputs){
-			FieldName name = FieldName.create(bayesInput.getFieldName());
+			FieldName name = bayesInput.getFieldName();
 
 			Map<String, Double> counts = Maps.newLinkedHashMap();
 
