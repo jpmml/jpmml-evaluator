@@ -78,7 +78,12 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			value = normalizeRegressionResult(regressionModel, value);
 		}
 
-		return TargetUtil.evaluateRegression(value, context);
+		FieldName targetField = regressionModel.getTargetFieldName();
+		if(targetField == null){
+			targetField = getTargetField();
+		}
+
+		return TargetUtil.evaluateRegression(Collections.singletonMap(targetField, value), context);
 	}
 
 	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
@@ -109,7 +114,10 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			result.put(category, value);
 		}
 
-		FieldName targetField = getTargetField();
+		FieldName targetField = regressionModel.getTargetFieldName();
+		if(targetField == null){
+			targetField = getTargetField();
+		}
 
 		DataField dataField = getDataField(targetField);
 
@@ -126,7 +134,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			entry.setValue(normalizeClassificationResult(regressionModel, entry.getValue(), sumExp));
 		}
 
-		return TargetUtil.evaluateClassification(result, context);
+		return TargetUtil.evaluateClassification(Collections.singletonMap(targetField, result), context);
 	}
 
 	static

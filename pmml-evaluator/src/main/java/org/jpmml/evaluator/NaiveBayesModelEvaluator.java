@@ -144,7 +144,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		result.normalizeValues();
 
-		return TargetUtil.evaluateClassification(result, context);
+		return TargetUtil.evaluateClassification(Collections.singletonMap(bayesOutput.getFieldName(), result), context);
 	}
 
 	private void calculateContinuousProbabilities(FieldValue value, TargetValueStats targetValueStats, double threshold, Map<String, Double> probabilities){

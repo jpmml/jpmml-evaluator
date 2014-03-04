@@ -35,9 +35,7 @@ public class TargetUtil {
 	public Map<FieldName, ? extends Number> evaluateRegression(Double value, ModelEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
-		FieldName targetField = modelManager.getTargetField();
-
-		return evaluateRegression(Collections.singletonMap(targetField, value), context);
+		return evaluateRegression(Collections.singletonMap(modelManager.getTargetField(), value), context);
 	}
 
 	/**
@@ -81,9 +79,7 @@ public class TargetUtil {
 	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ClassificationMap<?> value, ModelEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
-		FieldName targetField = modelManager.getTargetField();
-
-		return evaluateClassification(Collections.singletonMap(targetField, value), context);
+		return evaluateClassification(Collections.singletonMap(modelManager.getTargetField(), value), context);
 	}
 
 	/**
