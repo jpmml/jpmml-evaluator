@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2014 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -20,27 +20,34 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
+import org.jpmml.manager.*;
+
 import org.dmg.pmml.*;
 
-import org.junit.*;
+import com.google.common.collect.*;
 
-import static org.junit.Assert.*;
+public class MiningModelEvaluationContext extends ModelEvaluationContext {
 
-public class ContinuousResidualTest extends RegressionModelEvaluatorTest {
+	private Map<String, SegmentResultMap> results = Maps.newLinkedHashMap();
 
-	@Test
-	public void evaluate() throws Exception {
-		RegressionModelEvaluator evaluator = createEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments(evaluator.getTargetField(), 3.0d);
+	public MiningModelEvaluationContext(ModelManager<MiningModel> modelManager, ModelEvaluationContext parent){
+		super(modelManager, parent);
+	}
 
-		ModelEvaluationContext context = evaluator.createContext(null);
-		context.declareAll(arguments);
+	@Override
+	@SuppressWarnings (
+		value = {"unchecked"}
+	)
+	public ModelManager<MiningModel> getModelManager(){
+		return (ModelManager<MiningModel>)super.getModelManager();
+	}
 
-		Map<FieldName, ?> prediction = Collections.singletonMap(evaluator.getTargetField(), 1.0d);
+	SegmentResultMap getResult(String id){
+		return this.results.get(id);
+	}
 
-		Map<FieldName, ?> result = OutputUtil.evaluate(prediction, context);
-
-		assertEquals(2.0, result.get(new FieldName("Residual")));
+	void putResult(String id, SegmentResultMap result){
+		this.results.put(id, result);
 	}
 }

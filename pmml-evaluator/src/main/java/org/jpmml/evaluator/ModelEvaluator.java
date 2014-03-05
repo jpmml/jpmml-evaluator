@@ -50,9 +50,13 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
 	}
 
+	public ModelEvaluationContext createContext(ModelEvaluationContext parent){
+		return new ModelEvaluationContext(this, parent);
+	}
+
 	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
-		ModelEvaluationContext context = new ModelEvaluationContext(this);
+		ModelEvaluationContext context = createContext(null);
 		context.declareAll(arguments);
 
 		return evaluate(context);

@@ -52,6 +52,21 @@ public class OutputUtil {
 
 		List<OutputField> outputFields = output.getOutputFields();
 		for(OutputField outputField : outputFields){
+			Map<FieldName, ?> segmentPredictions = predictions;
+
+			String segmentId = outputField.getSegmentId();
+			if(segmentId != null){
+				MiningModelEvaluationContext miningModelContext = (MiningModelEvaluationContext)context;
+
+				segmentPredictions = miningModelContext.getResult(segmentId);
+			} // End if
+
+			if(segmentPredictions == null){
+				result.put(outputField.getName(), null);
+
+				continue;
+			}
+
 			FieldName targetField = outputField.getTargetField();
 			if(targetField == null){
 				targetField = modelManager.getTargetField();
@@ -70,7 +85,7 @@ public class OutputUtil {
 			switch(resultFeature){
 				case ENTITY_ID:
 					{
-						if(checkSegmentEntityId(predictions, outputField)){
+						if(checkSegmentEntityId(segmentPredictions, outputField)){
 							break;
 						}
 					}
@@ -86,12 +101,12 @@ public class OutputUtil {
 				case REASON_CODE:
 				case RULE_VALUE:
 					{
-						if(!predictions.containsKey(targetField)){
+						if(!segmentPredictions.containsKey(targetField)){
 							throw new MissingFieldException(targetField, outputField);
 						}
 
 						// Prediction results could be either simple or complex values
-						value = predictions.get(targetField);
+						value = segmentPredictions.get(targetField);
 					}
 					break;
 				default:
@@ -115,6 +130,10 @@ public class OutputUtil {
 				case TRANSFORMED_VALUE:
 				case DECISION:
 					{
+						if(segmentId != null){
+							throw new UnsupportedFeatureException(outputField);
+						}
+
 						Expression expression = outputField.getExpression();
 						if(expression == null){
 							throw new InvalidFeatureException(outputField);
@@ -153,8 +172,8 @@ public class OutputUtil {
 				case ENTITY_ID:
 					{
 						// "Result feature entityId returns the id of the winning segment"
-						if(checkSegmentEntityId(predictions, outputField)){
-							SegmentResultMap segmentResult = (SegmentResultMap)predictions;
+						if(checkSegmentEntityId(segmentPredictions, outputField)){
+							SegmentResultMap segmentResult = (SegmentResultMap)segmentPredictions;
 
 							value = segmentResult.getEntityId();
 

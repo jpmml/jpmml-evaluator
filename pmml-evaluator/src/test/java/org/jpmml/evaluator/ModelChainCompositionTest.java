@@ -34,6 +34,7 @@ public class ModelChainCompositionTest extends ModelChainTest {
 
 		assertEquals(0.3, result.get(new FieldName("Setosa Pollen Index")));
 		assertEquals("2.1", result.get(new FieldName("Segment Id")));
+		assertEquals("2", result.get(new FieldName("Class Node")));
 	}
 
 	@Test
@@ -42,6 +43,7 @@ public class ModelChainCompositionTest extends ModelChainTest {
 
 		assertEquals(0.2, result.get(new FieldName("Versicolor Pollen Index")));
 		assertEquals("2.2", result.get(new FieldName("Segment Id")));
+		assertEquals("4", result.get(new FieldName("Class Node")));
 	}
 
 	@Test
@@ -50,5 +52,6 @@ public class ModelChainCompositionTest extends ModelChainTest {
 
 		assertEquals(0.1, result.get(new FieldName("Virginica Pollen Index")));
 		assertEquals("2.3", result.get(new FieldName("Segment Id")));
+		assertEquals("5", result.get(new FieldName("Class Node")));
 	}
 }

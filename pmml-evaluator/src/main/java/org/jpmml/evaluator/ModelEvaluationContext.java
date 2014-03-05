@@ -31,10 +31,6 @@ public class ModelEvaluationContext extends EvaluationContext {
 	private ModelEvaluationContext parent = null;
 
 
-	public ModelEvaluationContext(ModelManager<?> modelManager){
-		this(modelManager, null);
-	}
-
 	public ModelEvaluationContext(ModelManager<?> modelManager, ModelEvaluationContext parent){
 		setModelManager(modelManager);
 		setParent(parent);

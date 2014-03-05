@@ -22,6 +22,9 @@
             <MiningField name="Class" usageType="predicted"/>
             <MiningField name="PollenIndex" usageType="predicted"/>
         </MiningSchema>
+        <Output>
+            <OutputField name="Class Node" targetField="Class" feature="entityId" segmentId="1"/>
+        </Output>
         <Segmentation multipleModelMethod="modelChain">
             <Segment id="1">
                 <True/>
@@ -34,29 +37,29 @@
                     <Output>
                         <OutputField name="PredictedClass" optype="categorical" dataType="string" feature="predictedValue"/>
                     </Output>
-                    <Node score="Iris-setosa" recordCount="150.0">
+                    <Node id="1" score="Iris-setosa" recordCount="150.0">
                         <True/>
                         <ScoreDistribution value="Iris-setosa" recordCount="50.0"/>
                         <ScoreDistribution value="Iris-versicolor" recordCount="50.0"/>
                         <ScoreDistribution value="Iris-virginica" recordCount="50.0"/>
-                        <Node score="Iris-setosa" recordCount="50.0">
+                        <Node id="2" score="Iris-setosa" recordCount="50.0">
                             <SimplePredicate field="petal_length" operator="lessThan" value="2.45"/>
                             <ScoreDistribution value="Iris-setosa" recordCount="50.0"/>
                             <ScoreDistribution value="Iris-versicolor" recordCount="0.0"/>
                             <ScoreDistribution value="Iris-virginica" recordCount="0.0"/>
                         </Node>
-                        <Node score="Iris-versicolor" recordCount="100.0">
+                        <Node id="3" score="Iris-versicolor" recordCount="100.0">
                             <SimplePredicate field="petal_length" operator="greaterThan" value="2.45"/>
                             <ScoreDistribution value="Iris-setosa" recordCount="0.0"/>
                             <ScoreDistribution value="Iris-versicolor" recordCount="50.0"/>
                             <ScoreDistribution value="Iris-virginica" recordCount="50.0"/>
-                            <Node score="Iris-versicolor" recordCount="54.0">
+                            <Node id="4" score="Iris-versicolor" recordCount="54.0">
                                 <SimplePredicate field="petal_width" operator="lessThan" value="1.75"/>
                                 <ScoreDistribution value="Iris-setosa" recordCount="0.0"/>
                                 <ScoreDistribution value="Iris-versicolor" recordCount="49.0"/>
                                 <ScoreDistribution value="Iris-virginica" recordCount="5.0"/>
                             </Node>
-                            <Node score="Iris-virginica" recordCount="46.0">
+                            <Node id="5" score="Iris-virginica" recordCount="46.0">
                                 <SimplePredicate field="petal_width" operator="greaterThan" value="1.75"/>
                                 <ScoreDistribution value="Iris-setosa" recordCount="0.0"/>
                                 <ScoreDistribution value="Iris-versicolor" recordCount="1.0"/>
