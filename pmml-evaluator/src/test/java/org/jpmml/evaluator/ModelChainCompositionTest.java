@@ -33,6 +33,7 @@ public class ModelChainCompositionTest extends ModelChainTest {
 		Map<FieldName, ?> result = evaluateExample(1.4, 0.2);
 
 		assertEquals(0.3, result.get(new FieldName("Setosa Pollen Index")));
+		assertEquals("2.1", result.get(new FieldName("Segment Id")));
 	}
 
 	@Test
@@ -40,6 +41,7 @@ public class ModelChainCompositionTest extends ModelChainTest {
 		Map<FieldName, ?> result = evaluateExample(4.7, 1.4);
 
 		assertEquals(0.2, result.get(new FieldName("Versicolor Pollen Index")));
+		assertEquals("2.2", result.get(new FieldName("Segment Id")));
 	}
 
 	@Test
@@ -47,5 +49,6 @@ public class ModelChainCompositionTest extends ModelChainTest {
 		Map<FieldName, ?> result = evaluateExample(6, 2.5);
 
 		assertEquals(0.1, result.get(new FieldName("Virginica Pollen Index")));
+		assertEquals("2.3", result.get(new FieldName("Segment Id")));
 	}
 }

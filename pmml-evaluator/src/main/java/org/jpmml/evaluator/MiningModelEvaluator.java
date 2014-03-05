@@ -24,9 +24,10 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.cache.*;
 import com.google.common.collect.*;
 
-public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
+public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 
 	public MiningModelEvaluator(PMML pmml){
 		this(pmml, find(pmml.getModels(), MiningModel.class));
@@ -45,6 +46,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		}
 
 		return "Ensemble model";
+	}
+
+	@Override
+	public BiMap<String, Segment> getEntityRegistry(){
+		return getValue(MiningModelEvaluator.entityCache);
 	}
 
 	@Override
@@ -83,11 +89,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> segmentResults = evaluateSegmentation(context);
+		List<SegmentResultMap> segmentResults = evaluateSegmentation(context);
 
-		Map<FieldName, ? extends Number> predictions = getRegressionResult(segmentResults);
+		Map<FieldName, ?> predictions = getRegressionResult(segmentResults);
 		if(predictions != null){
-			return TargetUtil.evaluateRegression(predictions, context);
+			return predictions;
 		}
 
 		Segmentation segmentation = miningModel.getSegmentation();
@@ -96,8 +102,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 
 		double sum = 0d;
 
-		for(SegmentResult segmentResult : segmentResults){
-			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
+		for(SegmentResultMap segmentResult : segmentResults){
+			Object targetValue = segmentResult.getResult();
 
 			Number number = (Number)TypeUtil.parseOrCast(DataType.DOUBLE, targetValue);
 
@@ -132,9 +138,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	}
 
 	@SuppressWarnings (
-		value = {"fallthrough", "rawtypes", "unchecked"}
+		value = {"fallthrough"}
 	)
-	private Map<FieldName, ? extends Number> getRegressionResult(List<SegmentResult> segmentResults){
+	private Map<FieldName, ?> getRegressionResult(List<SegmentResultMap> segmentResults){
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.getSegmentation();
@@ -145,12 +151,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 			case SELECT_FIRST:
 				if(segmentResults.size() > 0){
-					return (Map)dispatchFirst(segmentResults);
+					return getFirst(segmentResults);
 				}
 				// Falls through
 			case MODEL_CHAIN:
 				if(segmentResults.size() > 0){
-					return (Map)dispatchLast(segmentResults);
+					return getLast(segmentResults);
 				}
 				// Falls through
 			case SUM:
@@ -170,11 +176,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	private Map<FieldName, ?> evaluateClassification(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> segmentResults = evaluateSegmentation(context);
+		List<SegmentResultMap> segmentResults = evaluateSegmentation(context);
 
-		Map<FieldName, ? extends ClassificationMap<?>> predictions = getClassificationResult(segmentResults);
+		Map<FieldName, ?> predictions = getClassificationResult(segmentResults);
 		if(predictions != null){
-			return TargetUtil.evaluateClassification(predictions, context);
+			return predictions;
 		}
 
 		Segmentation segmentation = miningModel.getSegmentation();
@@ -189,9 +195,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	}
 
 	@SuppressWarnings (
-		value = {"fallthrough", "rawtypes", "unchecked"}
+		value = {"fallthrough"}
 	)
-	private Map<FieldName, ? extends ClassificationMap<?>> getClassificationResult(List<SegmentResult> segmentResults){
+	private Map<FieldName, ?> getClassificationResult(List<SegmentResultMap> segmentResults){
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.getSegmentation();
@@ -202,12 +208,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 			case SELECT_FIRST:
 				if(segmentResults.size() > 0){
-					return (Map)dispatchFirst(segmentResults);
+					return getFirst(segmentResults);
 				}
 				// Falls through
 			case MODEL_CHAIN:
 				if(segmentResults.size() > 0){
-					return (Map)dispatchLast(segmentResults);
+					return getLast(segmentResults);
 				}
 				// Falls through
 			case MAJORITY_VOTE:
@@ -226,7 +232,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	private Map<FieldName, ?> evaluateClustering(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> segmentResults = evaluateSegmentation(context);
+		List<SegmentResultMap> segmentResults = evaluateSegmentation(context);
 
 		Map<FieldName, ?> predictions = getClusteringResult(segmentResults);
 		if(predictions != null){
@@ -244,7 +250,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	@SuppressWarnings (
 		value = {"fallthrough"}
 	)
-	private Map<FieldName, ?> getClusteringResult(List<SegmentResult> segmentResults){
+	private Map<FieldName, ?> getClusteringResult(List<SegmentResultMap> segmentResults){
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.getSegmentation();
@@ -255,12 +261,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 			case SELECT_FIRST:
 				if(segmentResults.size() > 0){
-					return dispatchFirst(segmentResults);
+					return getFirst(segmentResults);
 				}
 				// Falls through
 			case MODEL_CHAIN:
 				if(segmentResults.size() > 0){
-					return dispatchLast(segmentResults);
+					return getLast(segmentResults);
 				}
 				// Falls through
 			case MAJORITY_VOTE:
@@ -282,7 +288,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	private Map<FieldName, ?> evaluateAny(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> segmentResults = evaluateSegmentation(context);
+		List<SegmentResultMap> segmentResults = evaluateSegmentation(context);
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
@@ -292,12 +298,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 			case SELECT_FIRST:
 				if(segmentResults.size() > 0){
-					return dispatchFirst(segmentResults);
+					return getFirst(segmentResults);
 				}
 				// Falls through
 			case MODEL_CHAIN:
 				if(segmentResults.size() > 0){
-					return dispatchLast(segmentResults);
+					return getLast(segmentResults);
 				}
 				return Collections.singletonMap(getTargetField(), null);
 			default:
@@ -307,10 +313,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 	}
 
-	private List<SegmentResult> evaluateSegmentation(ModelEvaluationContext context){
+	private List<SegmentResultMap> evaluateSegmentation(ModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> results = Lists.newArrayList();
+		List<SegmentResultMap> results = Lists.newArrayList();
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
@@ -373,11 +379,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 				context.addWarning(warning);
 			}
 
+			SegmentResultMap segmentResult = new SegmentResultMap(segment, targetField);
+			segmentResult.putAll(result);
+
 			switch(multipleModelMethod){
 				case SELECT_FIRST:
-					return Collections.singletonList(new SegmentResult(segment, targetField, result));
+					return Collections.singletonList(segmentResult);
 				default:
-					results.add(new SegmentResult(segment, targetField, result));
+					results.add(segmentResult);
 					break;
 			}
 		}
@@ -397,27 +406,23 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 	}
 
 	static
-	private Map<FieldName, ?> dispatchFirst(List<SegmentResult> results){
-		SegmentResult result = results.get(0);
-
-		return result.getResult();
+	private <E> E getFirst(List<E> list){
+		return list.get(0);
 	}
 
 	static
-	private Map<FieldName, ?> dispatchLast(List<SegmentResult> results){
-		SegmentResult result = results.get(results.size() - 1);
-
-		return result.getResult();
+	private <E> E getLast(List<E> list){
+		return list.get(list.size() - 1);
 	}
 
 	static
-	private Map<Object, Double> countVotes(Segmentation segmentation, List<SegmentResult> segmentResults){
+	private Map<Object, Double> countVotes(Segmentation segmentation, List<SegmentResultMap> segmentResults){
 		VoteCounter<Object> counter = new VoteCounter<Object>();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
-		for(SegmentResult segmentResult : segmentResults){
-			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
+		for(SegmentResultMap segmentResult : segmentResults){
+			Object targetValue = segmentResult.getResult();
 
 			switch(multipleModelMethod){
 				case MAJORITY_VOTE:
@@ -456,58 +461,21 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> {
 		return result;
 	}
 
+	private static final LoadingCache<MiningModel, BiMap<String, Segment>> entityCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<MiningModel, BiMap<String, Segment>>(){
+
+			@Override
+			public BiMap<String, Segment> load(MiningModel miningModel){
+				BiMap<String, Segment> result = HashBiMap.create();
+
+				Segmentation segmentation = miningModel.getSegmentation();
+
+				EntityUtil.putAll(segmentation.getSegments(), result);
+
+				return result;
+			}
+		});
+
 	private static final ModelEvaluatorFactory evaluatorFactory = ModelEvaluatorFactory.getInstance();
-
-	static
-	private class SegmentResult {
-
-		private Segment segment = null;
-
-		private FieldName targetField = null;
-
-		private Map<FieldName, ?> result = null;
-
-
-		public SegmentResult(Segment segment, FieldName targetField, Map<FieldName, ?> result){
-			setSegment(segment);
-			setTargetField(targetField);
-			setResult(result);
-		}
-
-		public double getWeight(){
-			Segment segment = getSegment();
-
-			return segment.getWeight();
-		}
-
-		public Object getTargetValue(){
-			Map<FieldName, ?> result = getResult();
-
-			return result.get(getTargetField());
-		}
-
-		public Segment getSegment(){
-			return this.segment;
-		}
-
-		private void setSegment(Segment segment){
-			this.segment = segment;
-		}
-
-		public FieldName getTargetField(){
-			return this.targetField;
-		}
-
-		private void setTargetField(FieldName targetField){
-			this.targetField = targetField;
-		}
-
-		public Map<FieldName, ?> getResult(){
-			return this.result;
-		}
-
-		private void setResult(Map<FieldName, ?> result){
-			this.result = result;
-		}
-	}
 }

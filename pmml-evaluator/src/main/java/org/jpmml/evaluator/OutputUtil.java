@@ -39,6 +39,9 @@ public class OutputUtil {
 	 *
 	 * @return Map of {@link Evaluator#getTargetFields() target field} values together with {@link Evaluator#getOutputFields() output field} values.
 	 */
+	@SuppressWarnings (
+		value = {"fallthrough"}
+	)
 	static
 	public Map<FieldName, Object> evaluate(Map<FieldName, ?> predictions, ModelEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
@@ -65,11 +68,17 @@ public class OutputUtil {
 
 			// Load the mining result
 			switch(resultFeature){
+				case ENTITY_ID:
+					{
+						if(checkSegmentEntityId(predictions, outputField)){
+							break;
+						}
+					}
+					// Falls through
 				case PREDICTED_VALUE:
 				case PREDICTED_DISPLAY_VALUE:
 				case PROBABILITY:
 				case RESIDUAL:
-				case ENTITY_ID:
 				case CLUSTER_ID:
 				case AFFINITY:
 				case ENTITY_AFFINITY:
@@ -143,6 +152,15 @@ public class OutputUtil {
 					break;
 				case ENTITY_ID:
 					{
+						// "Result feature entityId returns the id of the winning segment"
+						if(checkSegmentEntityId(predictions, outputField)){
+							SegmentResultMap segmentResult = (SegmentResultMap)predictions;
+
+							value = segmentResult.getEntityId();
+
+							break;
+						}
+
 						value = getEntityId(value, outputField);
 					}
 					break;
@@ -188,6 +206,17 @@ public class OutputUtil {
 		}
 
 		return result;
+	}
+
+	static
+	private boolean checkSegmentEntityId(Map<FieldName, ?> predictions, OutputField outputField){
+		FieldName targetField = outputField.getTargetField();
+
+		if(targetField == null){
+			return (predictions instanceof SegmentResultMap);
+		}
+
+		return false;
 	}
 
 	static
