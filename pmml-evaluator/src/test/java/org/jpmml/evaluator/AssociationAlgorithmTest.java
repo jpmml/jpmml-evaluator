@@ -47,5 +47,19 @@ public class AssociationAlgorithmTest extends AssociationModelEvaluatorTest {
 		assertEquals(recommendations, result.get(new FieldName("Recommendation")));
 		assertEquals(exclusiveRecommendations, result.get(new FieldName("Exclusive_Recommendation")));
 		assertEquals(ruleAssociations, result.get(new FieldName("Rule_Association")));
+
+		assertEquals(getFirst(recommendations), result.get(new FieldName("Top Recommendation")));
+		assertEquals(getFirst(exclusiveRecommendations), result.get(new FieldName("Top Exclusive_Recommendation")));
+		assertEquals(getFirst(ruleAssociations), result.get(new FieldName("Top Rule_Association")));
+	}
+
+	static
+	private <E> E getFirst(List<E> list){
+
+		if(list.size() > 0){
+			return list.get(0);
+		}
+
+		return null;
 	}
 }

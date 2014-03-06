@@ -98,8 +98,16 @@ public class OutputUtil {
 				case AFFINITY:
 				case ENTITY_AFFINITY:
 				case CLUSTER_AFFINITY:
-				case REASON_CODE:
 				case RULE_VALUE:
+				case REASON_CODE:
+				case ANTECEDENT:
+				case CONSEQUENT:
+				case RULE:
+				case RULE_ID:
+				case CONFIDENCE:
+				case SUPPORT:
+				case LIFT:
+				case LEVERAGE:
 					{
 						if(!segmentPredictions.containsKey(targetField)){
 							throw new MissingFieldException(targetField, outputField);
@@ -199,14 +207,54 @@ public class OutputUtil {
 						value = getClusterAffinity(value);
 					}
 					break;
+				case RULE_VALUE:
+					{
+						value = getRuleValue(value, outputField);
+					}
+					break;
 				case REASON_CODE:
 					{
 						value = getReasonCode(value, outputField);
 					}
 					break;
-				case RULE_VALUE:
+				case ANTECEDENT:
 					{
-						value = getRuleValue(value, outputField);
+						value = getRuleValue(value, outputField, RuleFeatureType.ANTECEDENT);
+					}
+					break;
+				case CONSEQUENT:
+					{
+						value = getRuleValue(value, outputField, RuleFeatureType.CONSEQUENT);
+					}
+					break;
+				case RULE:
+					{
+						value = getRuleValue(value, outputField, RuleFeatureType.RULE);
+					}
+					break;
+				case RULE_ID:
+					{
+						value = getRuleValue(value, outputField, RuleFeatureType.RULE_ID);
+					}
+					break;
+				case CONFIDENCE:
+					{
+						value = getRuleValue(value, outputField, RuleFeatureType.CONFIDENCE);
+					}
+					break;
+				case SUPPORT:
+					{
+						value = getRuleValue(value, outputField, RuleFeatureType.SUPPORT);
+					}
+					break;
+				case LIFT:
+					{
+						value = getRuleValue(value, outputField, RuleFeatureType.LIFT);
+					}
+					break;
+				case LEVERAGE:
+					{
+						value = getRuleValue(value, outputField, RuleFeatureType.LEVERAGE);
 					}
 					break;
 				case WARNING:
@@ -347,6 +395,90 @@ public class OutputUtil {
 	}
 
 	static
+	public Object getRuleValue(Object object, OutputField outputField, RuleFeatureType ruleFeature){
+		HasRuleValues hasRuleValues = asResultFeature(HasRuleValues.class, object);
+
+		List<AssociationRule> associationRules = hasRuleValues.getRuleValues(outputField.getAlgorithm());
+		sortRules(associationRules, outputField);
+
+		String isMultiValued = outputField.getIsMultiValued();
+		if(!("0").equals(isMultiValued)){
+			throw new UnsupportedFeatureException(outputField);
+		}
+
+		int rank = outputField.getRank();
+		if(rank <= 0){
+			throw new InvalidFeatureException(outputField);
+		}
+
+		AssociationRule associationRule = getElement(associationRules, rank);
+		if(associationRule != null){
+			return getRuleFeature(hasRuleValues, associationRule, outputField, ruleFeature);
+		}
+
+		return null;
+	}
+
+	static
+	public Object getRuleValue(Object object, OutputField outputField){
+		HasRuleValues hasRuleValues = asResultFeature(HasRuleValues.class, object);
+
+		List<AssociationRule> associationRules = hasRuleValues.getRuleValues(outputField.getAlgorithm());
+		sortRules(associationRules, outputField);
+
+		String isMultiValued = outputField.getIsMultiValued();
+
+		// Return a single result
+		if(("0").equals(isMultiValued)){
+			int rank = outputField.getRank();
+			if(rank <= 0){
+				throw new InvalidFeatureException(outputField);
+			}
+
+			AssociationRule associationRule = getElement(associationRules, rank);
+			if(associationRule != null){
+				return getRuleFeature(hasRuleValues, associationRule, outputField);
+			}
+
+			return null;
+		} else
+
+		// Return multiple results
+		if(("1").equals(isMultiValued)){
+			int size;
+
+			int rank = outputField.getRank();
+			if(rank < 0){
+				throw new InvalidFeatureException(outputField);
+			} else
+
+			// "a zero value indicates that all output values are to be returned"
+			if(rank == 0){
+				size = associationRules.size();
+			} else
+
+			// "a positive value indicates the number of output values to be returned"
+			{
+				size = Math.min(rank, associationRules.size());
+			}
+
+			associationRules = associationRules.subList(0, size);
+
+			List<Object> result = Lists.newArrayList();
+
+			for(AssociationRule associationRule : associationRules){
+				result.add(getRuleFeature(hasRuleValues, associationRule, outputField));
+			}
+
+			return result;
+		} else
+
+		{
+			throw new InvalidFeatureException(outputField);
+		}
+	}
+
+	static
 	public String getReasonCode(Object object, final OutputField outputField){
 		HasReasonCodeRanking hasReasonCodeRanking = asResultFeature(HasReasonCodeRanking.class, object);
 
@@ -359,11 +491,7 @@ public class OutputUtil {
 	}
 
 	static
-	public Object getRuleValue(Object object, final OutputField outputField){
-		HasRuleValues hasRuleValues = asResultFeature(HasRuleValues.class, object);
-
-		List<AssociationRule> associationRules = hasRuleValues.getRuleValues(outputField.getAlgorithm());
-
+	private void sortRules(List<AssociationRule> associationRules, final OutputField outputField){
 		Comparator<AssociationRule> comparator = new Comparator<AssociationRule>(){
 
 			private OutputField.RankBasis rankBasis = outputField.getRankBasis();
@@ -406,68 +534,15 @@ public class OutputUtil {
 			}
 		};
 		Collections.sort(associationRules, comparator);
-
-		String isMultiValued = outputField.getIsMultiValued();
-
-		// Return a single result
-		if("0".equals(isMultiValued)){
-
-			int rank = outputField.getRank();
-			if(rank <= 0){
-				throw new InvalidFeatureException(outputField);
-			}
-
-			int index = (rank - 1);
-
-			if(index < associationRules.size()){
-				AssociationRule associationRule = associationRules.get(index);
-
-				return getRuleFeature(hasRuleValues, associationRule, outputField);
-			} else
-
-			{
-				return null;
-			}
-		} else
-
-		// Return multiple results
-		if("1".equals(isMultiValued)){
-			int size;
-
-			int rank = outputField.getRank();
-			if(rank < 0){
-				throw new InvalidFeatureException(outputField);
-			} else
-
-			// "a zero value indicates that all output values are to be returned"
-			if(rank == 0){
-				size = associationRules.size();
-			} else
-
-			// "a positive value indicates the number of output values to be returned"
-			{
-				size = Math.min(rank, associationRules.size());
-			}
-
-			associationRules = associationRules.subList(0, size);
-
-			List<Object> result = Lists.newArrayList();
-
-			for(AssociationRule associationRule : associationRules){
-				result.add(getRuleFeature(hasRuleValues, associationRule, outputField));
-			}
-
-			return result;
-		} else
-
-		{
-			throw new InvalidFeatureException(outputField);
-		}
 	}
 
 	static
 	private Object getRuleFeature(HasRuleValues hasRuleValues, AssociationRule associationRule, OutputField outputField){
-		RuleFeatureType ruleFeature = outputField.getRuleFeature();
+		return getRuleFeature(hasRuleValues, associationRule, outputField, outputField.getRuleFeature());
+	}
+
+	static
+	private Object getRuleFeature(HasRuleValues hasRuleValues, AssociationRule associationRule, PMMLObject element, RuleFeatureType ruleFeature){
 
 		switch(ruleFeature){
 			case ANTECEDENT:
@@ -512,7 +587,7 @@ public class OutputUtil {
 			case AFFINITY:
 				return associationRule.getAffinity();
 			default:
-				throw new UnsupportedFeatureException(outputField, ruleFeature);
+				throw new UnsupportedFeatureException(element, ruleFeature);
 		}
 	}
 
