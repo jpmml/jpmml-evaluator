@@ -33,7 +33,7 @@ Java Evaluator API for Predictive Model Markup Language (PMML).
 
 # Installation #
 
-JPMML library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/). Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for release announcements.
+JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/). Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for release announcements.
 
 The current version is **1.1.0** (6 March, 2014).
 
@@ -41,7 +41,7 @@ The current version is **1.1.0** (6 March, 2014).
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>${jpmml.version}</version>
+	<version>1.1.0</version>
 </dependency>
 ```
 
@@ -136,6 +136,6 @@ if(targetValue instanceof HasEntityId){
 
 JPMML-Evaluator is dual-licensed under the [GNU Affero General Public License (AGPL) version 3.0] (http://www.gnu.org/licenses/agpl-3.0.html) and a commercial license.
 
-# Contact and Support #
+# Additional information #
 
-Get in touch: [info@openscoring.io] (mailto:info@openscoring.io)
+Please contact [info@openscoring.io] (mailto:info@openscoring.io)
