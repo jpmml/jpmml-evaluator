@@ -132,6 +132,23 @@ if(targetValue instanceof HasEntityId){
 }
 ```
 
+# Example applications #
+
+Module `pmml-evaluator-example` exemplifies the use of JPMML-Evaluator library.
+
+This module can be built using [Apache Maven] (http://maven.apache.org/):
+```
+mvn clean install
+```
+
+The resulting uber-JAR file `target/example-1.1-SNAPSHOT.jar` contains the following command-line applications:
+* `org.jpmml.evaluator.CsvEvaluationExample` [(source)] (https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/CsvEvaluationExample.java). Evaluates a PMML model using data records from a CSV file.
+
+For example, evaluating `model.pmml` using data records from `input.tsv`:
+```
+java -cp target/example-1.1-SNAPSHOT.jar org.jpmml.evaluator.CsvEvaluationExample --model model.pmml --input input.tsv --output output.tsv
+```
+
 # License #
 
 JPMML-Evaluator is dual-licensed under the [GNU Affero General Public License (AGPL) version 3.0] (http://www.gnu.org/licenses/agpl-3.0.html) and a commercial license.

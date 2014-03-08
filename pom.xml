@@ -38,6 +38,7 @@
 
 	<modules>
 		<module>pmml-evaluator</module>
+		<module>pmml-evaluator-example</module>
 		<module>pmml-knime</module>
 		<module>pmml-manager</module>
 		<module>pmml-rapidminer</module>
