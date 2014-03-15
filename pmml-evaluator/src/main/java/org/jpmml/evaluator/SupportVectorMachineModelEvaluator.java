@@ -108,6 +108,11 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			throw new InvalidFeatureException(supportVectorMachineModel);
 		}
 
+		String alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
+		if(alternateBinaryTargetCategory != null){
+			throw new UnsupportedFeatureException(supportVectorMachineModel);
+		}
+
 		ClassificationMap<String> result;
 
 		SvmClassificationMethodType svmClassificationMethod = getClassificationMethod();

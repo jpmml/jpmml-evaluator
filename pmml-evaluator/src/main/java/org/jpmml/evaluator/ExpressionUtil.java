@@ -136,9 +136,17 @@ public class ExpressionUtil {
 			return FieldValueUtil.create(normDiscrete.getMapMissingTo());
 		}
 
-		boolean equals = value.equalsString(normDiscrete.getValue());
+		NormDiscrete.Method method = normDiscrete.getMethod();
+		switch(method){
+			case INDICATOR:
+				{
+					boolean equals = value.equalsString(normDiscrete.getValue());
 
-		return FieldValueUtil.create(equals ? 1d : 0d);
+					return FieldValueUtil.create(equals ? 1d : 0d);
+				}
+			default:
+				throw new UnsupportedFeatureException(normDiscrete, method);
+		}
 	}
 
 	static

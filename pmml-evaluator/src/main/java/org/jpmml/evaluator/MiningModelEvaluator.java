@@ -329,6 +329,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
+		LocalTransformations localTransformations = segmentation.getLocalTransformations();
+		if(localTransformations != null){
+			throw new UnsupportedFeatureException(localTransformations);
+		}
+
 		BiMap<Segment, String> inverseEntities = (getEntityRegistry()).inverse();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();

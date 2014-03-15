@@ -505,10 +505,10 @@ public class OutputUtil {
 
 				switch(this.rankBasis){
 					case CONFIDENCE:
-						order = (left.getConfidence()).compareTo(right.getConfidence());
+						order = Double.compare(left.getConfidence(), right.getConfidence());
 						break;
 					case SUPPORT:
-						order = (left.getSupport()).compareTo(right.getSupport());
+						order = Double.compare(left.getSupport(), right.getSupport());
 						break;
 					case LIFT:
 						order = (left.getLift()).compareTo(right.getLift());

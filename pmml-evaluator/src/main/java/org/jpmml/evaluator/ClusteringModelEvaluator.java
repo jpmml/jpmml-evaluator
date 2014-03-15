@@ -87,6 +87,11 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 				throw new UnsupportedFeatureException(clusteringModel, modelClass);
 		}
 
+		CenterFields centerFields = clusteringModel.getCenterFields();
+		if(centerFields != null){
+			throw new UnsupportedFeatureException(centerFields);
+		}
+
 		List<FieldValue> values = Lists.newArrayList();
 
 		List<ClusteringField> clusteringFields = getCenterClusteringFields();
