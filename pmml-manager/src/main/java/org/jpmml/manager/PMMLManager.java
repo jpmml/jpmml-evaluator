@@ -121,20 +121,11 @@ public class PMMLManager implements Serializable {
 	public Model getModel(String modelName){
 		List<Model> models = getModels();
 
-		if(modelName != null){
+		for(Model model : models){
 
-			for(Model model : models){
-
-				if(modelName.equals(model.getModelName())){
-					return model;
-				}
+			if(modelName == null || (modelName).equals(model.getModelName())){
+				return model;
 			}
-
-			return null;
-		} // End if
-
-		if(models.size() > 0){
-			return models.get(0);
 		}
 
 		return null;
@@ -154,7 +145,7 @@ public class PMMLManager implements Serializable {
 
 		for(Object object : objects){
 
-			if(object.getClass().equals(clazz)){
+			if((object.getClass()).equals(clazz)){
 				return (E)object;
 			}
 		}
@@ -171,7 +162,7 @@ public class PMMLManager implements Serializable {
 
 		for(Object object : objects){
 
-			if(object.getClass().equals(clazz)){
+			if((object.getClass()).equals(clazz)){
 				result.add((E)object);
 			}
 		}
