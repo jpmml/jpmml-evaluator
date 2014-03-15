@@ -51,9 +51,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	private void setModel(M model){
-		checkNotNull(model);
-
-		this.model = model;
+		this.model = checkNotNull(model);
 	}
 
 	@Override
@@ -119,7 +117,10 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	public DerivedField getLocalDerivedField(FieldName name){
-		LocalTransformations localTransformations = getOrCreateLocalTransformations();
+		LocalTransformations localTransformations = getLocalTransformations();
+		if(localTransformations == null){
+			return null;
+		}
 
 		List<DerivedField> derivedFields = localTransformations.getDerivedFields();
 
@@ -137,7 +138,10 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	@Override
 	public OutputField getOutputField(FieldName name){
-		Output output = getOrCreateOutput();
+		Output output = getOutput();
+		if(output == null){
+			return null;
+		}
 
 		List<OutputField> outputFields = output.getOutputFields();
 
@@ -146,9 +150,12 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	@Override
 	public List<FieldName> getOutputFields(){
-		List<FieldName> result = Lists.newArrayList();
+		Output output = getOutput();
+		if(output == null){
+			return Collections.emptyList();
+		}
 
-		Output output = getOrCreateOutput();
+		List<FieldName> result = Lists.newArrayList();
 
 		List<OutputField> outputFields = output.getOutputFields();
 		for(OutputField outputField : outputFields){
@@ -159,7 +166,10 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	public Target getTarget(FieldName name){
-		Targets targets = getOrCreateTargets();
+		Targets targets = getTargets();
+		if(targets == null){
+			return null;
+		}
 
 		for(Target target : targets){
 
@@ -174,45 +184,24 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	public MiningSchema getMiningSchema(){
 		M model = getModel();
 
-		return model.getMiningSchema();
+		return checkNotNull(model.getMiningSchema());
 	}
 
-	public LocalTransformations getOrCreateLocalTransformations(){
+	public LocalTransformations getLocalTransformations(){
 		M model = getModel();
 
-		LocalTransformations localTransformations = model.getLocalTransformations();
-		if(localTransformations == null){
-			localTransformations = new LocalTransformations();
-
-			model.setLocalTransformations(localTransformations);
-		}
-
-		return localTransformations;
+		return model.getLocalTransformations();
 	}
 
-	public Output getOrCreateOutput(){
+	public Output getOutput(){
 		M model = getModel();
 
-		Output output = model.getOutput();
-		if(output == null){
-			output = new Output();
-
-			model.setOutput(output);
-		}
-
-		return output;
+		return model.getOutput();
 	}
 
-	public Targets getOrCreateTargets(){
+	public Targets getTargets(){
 		M model = getModel();
 
-		Targets targets = model.getTargets();
-		if(targets == null){
-			targets = new Targets();
-
-			model.setTargets(targets);
-		}
-
-		return targets;
+		return model.getTargets();
 	}
 }

@@ -43,10 +43,13 @@ public class OutputUtil {
 		value = {"fallthrough"}
 	)
 	static
-	public Map<FieldName, Object> evaluate(Map<FieldName, ?> predictions, ModelEvaluationContext context){
+	public Map<FieldName, ?> evaluate(Map<FieldName, ?> predictions, ModelEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
-		Output output = modelManager.getOrCreateOutput();
+		Output output = modelManager.getOutput();
+		if(output == null){
+			return predictions;
+		}
 
 		Map<FieldName, Object> result = Maps.newLinkedHashMap(predictions);
 

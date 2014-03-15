@@ -36,13 +36,6 @@ import com.google.common.collect.*;
 
 import static com.google.common.base.Preconditions.*;
 
-/**
- * Naming conventions for getter methods:
- * <ul>
- * <li><code>getXXX()</code> - Required schema elements. For example {@link #getDataDictionary()}
- * <li><code>getOrCreateXXX()</code> - Optional schema elements. When <code>null</code> then a new element instance is created. For example {@link #getOrCreateTransformationDictionary()}
- * </ul>
- */
 public class PMMLManager implements Serializable {
 
 	private PMML pmml = null;
@@ -61,7 +54,10 @@ public class PMMLManager implements Serializable {
 	}
 
 	public DerivedField getDerivedField(FieldName name){
-		TransformationDictionary transformationDictionary = getOrCreateTransformationDictionary();
+		TransformationDictionary transformationDictionary = getTransformationDictionary();
+		if(transformationDictionary == null){
+			return null;
+		}
 
 		List<DerivedField> derivedFields = transformationDictionary.getDerivedFields();
 
@@ -69,7 +65,10 @@ public class PMMLManager implements Serializable {
 	}
 
 	public DefineFunction getFunction(String name){
-		TransformationDictionary transformationDictionary = getOrCreateTransformationDictionary();
+		TransformationDictionary transformationDictionary = getTransformationDictionary();
+		if(transformationDictionary == null){
+			return null;
+		}
 
 		List<DefineFunction> defineFunctions = transformationDictionary.getDefineFunctions();
 		for(DefineFunction defineFunction : defineFunctions){
@@ -87,34 +86,25 @@ public class PMMLManager implements Serializable {
 	}
 
 	private void setPMML(PMML pmml){
-		checkNotNull(pmml);
-
-		this.pmml = pmml;
+		this.pmml = checkNotNull(pmml);
 	}
 
 	public Header getHeader(){
 		PMML pmml = getPMML();
 
-		return pmml.getHeader();
+		return checkNotNull(pmml.getHeader());
 	}
 
 	public DataDictionary getDataDictionary(){
 		PMML pmml = getPMML();
 
-		return pmml.getDataDictionary();
+		return checkNotNull(pmml.getDataDictionary());
 	}
 
-	public TransformationDictionary getOrCreateTransformationDictionary(){
+	public TransformationDictionary getTransformationDictionary(){
 		PMML pmml = getPMML();
 
-		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
-		if(transformationDictionary == null){
-			transformationDictionary = new TransformationDictionary();
-
-			pmml.setTransformationDictionary(transformationDictionary);
-		}
-
-		return transformationDictionary;
+		return pmml.getTransformationDictionary();
 	}
 
 	public List<Model> getModels(){

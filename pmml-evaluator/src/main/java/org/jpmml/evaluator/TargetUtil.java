@@ -45,8 +45,8 @@ public class TargetUtil {
 	public Map<FieldName, ? extends Number> evaluateRegression(Map<FieldName, ? extends Number> predictions, ModelEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
-		Targets targets = modelManager.getOrCreateTargets();
-		if(Iterables.isEmpty(targets)){
+		Targets targets = modelManager.getTargets();
+		if(targets == null || Iterables.isEmpty(targets)){
 			return predictions;
 		}
 
@@ -89,8 +89,8 @@ public class TargetUtil {
 	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(Map<FieldName, ? extends ClassificationMap<?>> predictions, ModelEvaluationContext context){
 		ModelManager<?> modelManager = context.getModelManager();
 
-		Targets targets = modelManager.getOrCreateTargets();
-		if(Iterables.isEmpty(targets)){
+		Targets targets = modelManager.getTargets();
+		if(targets == null || Iterables.isEmpty(targets)){
 			return predictions;
 		}
 
