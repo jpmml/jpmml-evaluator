@@ -5,27 +5,27 @@ Java Evaluator API for Predictive Model Markup Language (PMML).
 
 # Features #
 
-* Full support for [DataDictionary] (http://www.dmg.org/v4-1/DataDictionary.html) and [MiningSchema] (http://www.dmg.org/v4-1/MiningSchema.html) elements:
+* Full support for [DataDictionary] (http://www.dmg.org/v4-2/DataDictionary.html) and [MiningSchema] (http://www.dmg.org/v4-2/MiningSchema.html) elements:
   * Complete data type system.
   * Complete operational type system. For example, continuous integers, categorical integers and ordinal integers are handled differently in equality check and comparison operations.
   * Detection and treatment of outlier, missing and invalid values.
-* Full support for [transformations] (http://www.dmg.org/v4-1/Transformations.html) and [functions] (http://www.dmg.org/v4-1/Functions.html):
+* Full support for [transformations] (http://www.dmg.org/v4-2/Transformations.html) and [functions] (http://www.dmg.org/v4-2/Functions.html):
   * Built-in functions.
   * User defined functions (PMML, Java).
-* Full support for [Targets] (http://www.dmg.org/v4-1/Targets.html) and [Output] (http://www.dmg.org/v4-1/Output.html) elements.
+* Full support for [Targets] (http://www.dmg.org/v4-2/Targets.html) and [Output] (http://www.dmg.org/v4-2/Output.html) elements.
 * Fully supported model elements:
-  * [Association rules] (http://www.dmg.org/v4-1/AssociationRules.html)
-  * [Cluster model] (http://www.dmg.org/v4-1/ClusteringModel.html)
-  * [General regression] (http://www.dmg.org/v4-1/GeneralRegression.html)
-  * [Naive Bayes] (http://www.dmg.org/v4-1/NaiveBayes.html)
-  * [k-Nearest neighbors] (http://www.dmg.org/v4-1/KNN.html)
-  * [Neural network] (http://www.dmg.org/v4-1/NeuralNetwork.html)
-  * [Regression] (http://www.dmg.org/v4-1/Regression.html)
-  * [Rule set] (http://www.dmg.org/v4-1/RuleSet.html)
-  * [Scorecard] (http://www.dmg.org/v4-1/Scorecard.html)
-  * [Support Vector Machine] (http://www.dmg.org/v4-1/SupportVectorMachine.html)
-  * [Tree model] (http://www.dmg.org/v4-1/TreeModel.html)
-  * [Ensemble model] (http://www.dmg.org/v4-1/MultipleModels.html)
+  * [Association rules] (http://www.dmg.org/v4-2/AssociationRules.html)
+  * [Cluster model] (http://www.dmg.org/v4-2/ClusteringModel.html)
+  * [General regression] (http://www.dmg.org/v4-2/GeneralRegression.html)
+  * [Naive Bayes] (http://www.dmg.org/v4-2/NaiveBayes.html)
+  * [k-Nearest neighbors] (http://www.dmg.org/v4-2/KNN.html)
+  * [Neural network] (http://www.dmg.org/v4-2/NeuralNetwork.html)
+  * [Regression] (http://www.dmg.org/v4-2/Regression.html)
+  * [Rule set] (http://www.dmg.org/v4-2/RuleSet.html)
+  * [Scorecard] (http://www.dmg.org/v4-2/Scorecard.html)
+  * [Support Vector Machine] (http://www.dmg.org/v4-2/SupportVectorMachine.html)
+  * [Tree model] (http://www.dmg.org/v4-2/TreeModel.html)
+  * [Ensemble model] (http://www.dmg.org/v4-2/MultipleModels.html)
 * Fully interoperable with popular open source software:
   * [R] (http://www.r-project.org/) and [Rattle] (http://rattle.togaware.com/)
   * [KNIME] (http://www.knime.org/)
