@@ -20,12 +20,12 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.*;
 
-public class FunctionEvaluationContext extends EvaluationContext {
+public class DefineFunctionEvaluationContext extends EvaluationContext {
 
 	private EvaluationContext parent = null;
 
 
-	public FunctionEvaluationContext(EvaluationContext parent){
+	public DefineFunctionEvaluationContext(EvaluationContext parent){
 		setParent(parent);
 	}
 

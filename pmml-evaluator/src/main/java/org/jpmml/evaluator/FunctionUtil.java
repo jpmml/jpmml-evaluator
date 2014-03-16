@@ -68,7 +68,7 @@ public class FunctionUtil {
 			throw new EvaluationException();
 		}
 
-		FunctionEvaluationContext functionContext = new FunctionEvaluationContext(context);
+		DefineFunctionEvaluationContext functionContext = new DefineFunctionEvaluationContext(context);
 
 		for(int i = 0; i < parameterFields.size(); i++){
 			ParameterField parameterField = parameterFields.get(i);
