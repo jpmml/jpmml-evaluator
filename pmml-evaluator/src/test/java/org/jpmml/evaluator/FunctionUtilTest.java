@@ -24,7 +24,7 @@ import org.dmg.pmml.*;
 
 import org.junit.*;
 
-import com.google.common.base.*;
+import com.google.common.base.Function;
 import com.google.common.collect.*;
 
 import org.joda.time.*;

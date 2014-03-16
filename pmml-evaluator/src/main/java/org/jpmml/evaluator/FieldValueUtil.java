@@ -22,7 +22,7 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-import com.google.common.base.*;
+import com.google.common.base.Function;
 import com.google.common.collect.*;
 
 public class FieldValueUtil {

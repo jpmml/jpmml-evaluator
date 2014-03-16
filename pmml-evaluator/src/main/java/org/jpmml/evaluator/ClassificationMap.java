@@ -21,7 +21,7 @@ package org.jpmml.evaluator;
 import java.util.*;
 
 import com.google.common.annotations.*;
-import com.google.common.base.*;
+import com.google.common.base.Function;
 import com.google.common.collect.*;
 
 @Beta

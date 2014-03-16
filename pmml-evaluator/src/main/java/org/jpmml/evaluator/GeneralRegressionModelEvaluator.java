@@ -24,7 +24,7 @@ import org.jpmml.manager.*;
 
 import org.dmg.pmml.*;
 
-import com.google.common.base.*;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.cache.*;
 import com.google.common.collect.*;
