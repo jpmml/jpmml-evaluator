@@ -196,20 +196,27 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
-		DefaultClassificationMap<Object> result = new DefaultClassificationMap<Object>();
+		ClassificationMap<Object> result;
 
 		switch(multipleModelMethod){
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
-				result.putAll(countVotes(segmentation, segmentResults));
+				{
+					result = new DefaultClassificationMap<Object>();
+					result.putAll(countVotes(segmentation, segmentResults));
 
-				// Convert from votes to probabilities
-				result.normalizeValues();
+					// Convert from votes to probabilities
+					result.normalizeValues();
+				}
 				break;
 			case MAX:
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
-				result.putAll(aggregateProbabilities(segmentation, segmentResults));
+				{
+					// The aggregation operation implicitly converts from probabilities to votes
+					result = new ClassificationMap<Object>(ClassificationMap.Type.VOTE);
+					result.putAll(aggregateProbabilities(segmentation, segmentResults));
+				}
 				break;
 			default:
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
