@@ -25,6 +25,15 @@ public class ProbabilityAggregator<K> extends LinkedHashMap<K, Double> {
 	public ProbabilityAggregator(){
 	}
 
+	public void max(K key, Double value){
+		Double max = get(key);
+		if(max == null || (max).compareTo(value) < 0){
+			max = value;
+		}
+
+		put(key, max);
+	}
+
 	public void add(K key, Double value){
 		Double sum = get(key);
 		if(sum == null){

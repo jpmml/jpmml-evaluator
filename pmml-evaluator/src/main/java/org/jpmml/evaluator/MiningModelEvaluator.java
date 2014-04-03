@@ -206,6 +206,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				// Convert from votes to probabilities
 				result.normalizeValues();
 				break;
+			case MAX:
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
 				result.putAll(aggregateProbabilities(segmentation, segmentResults));
@@ -498,6 +499,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				Double probability = entry.getValue();
 
 				switch(multipleModelMethod){
+					case MAX:
+						aggregator.max(targetCategory, probability);
+						break;
 					case AVERAGE:
 						aggregator.add(targetCategory, probability);
 						break;
@@ -510,7 +514,16 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			}
 		}
 
-		aggregator.divide((double)segmentResults.size());
+		switch(multipleModelMethod){
+			case MAX:
+				break;
+			case AVERAGE:
+			case WEIGHTED_AVERAGE:
+				aggregator.divide((double)segmentResults.size());
+				break;
+			default:
+				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+		}
 
 		return aggregator;
 	}
