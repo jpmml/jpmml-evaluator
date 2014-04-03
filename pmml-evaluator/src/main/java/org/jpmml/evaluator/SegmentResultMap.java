@@ -36,7 +36,7 @@ class SegmentResultMap extends LinkedHashMap<FieldName, Object> implements Compu
 
 	@Override
 	public Object getResult(){
-		Object targetValue = get(getTargetField());
+		Object targetValue = getTargetValue();
 
 		return EvaluatorUtil.decode(targetValue);
 	}
@@ -68,5 +68,9 @@ class SegmentResultMap extends LinkedHashMap<FieldName, Object> implements Compu
 
 	private void setTargetField(FieldName targetField){
 		this.targetField = targetField;
+	}
+
+	public Object getTargetValue(){
+		return get(getTargetField());
 	}
 }

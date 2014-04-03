@@ -194,11 +194,25 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		DefaultClassificationMap<Object> result = new DefaultClassificationMap<Object>();
-		result.putAll(countVotes(segmentation, segmentResults));
+		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
-		// Convert from votes to probabilities
-		result.normalizeValues();
+		DefaultClassificationMap<Object> result = new DefaultClassificationMap<Object>();
+
+		switch(multipleModelMethod){
+			case MAJORITY_VOTE:
+			case WEIGHTED_MAJORITY_VOTE:
+				result.putAll(countVotes(segmentation, segmentResults));
+
+				// Convert from votes to probabilities
+				result.normalizeValues();
+				break;
+			case AVERAGE:
+			case WEIGHTED_AVERAGE:
+				result.putAll(aggregateProbabilities(segmentation, segmentResults));
+				break;
+			default:
+				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+		}
 
 		return TargetUtil.evaluateClassification(result, context);
 	}
@@ -442,14 +456,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		for(SegmentResultMap segmentResult : segmentResults){
-			Object targetValue = segmentResult.getResult();
+			Object targetCategory = segmentResult.getResult();
 
 			switch(multipleModelMethod){
 				case MAJORITY_VOTE:
-					counter.increment(targetValue);
+					counter.increment(targetCategory);
 					break;
 				case WEIGHTED_MAJORITY_VOTE:
-					counter.increment(targetValue, segmentResult.getWeight());
+					counter.increment(targetCategory, segmentResult.getWeight());
 					break;
 				default:
 					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
@@ -457,6 +471,48 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 
 		return counter;
+	}
+
+	static
+	private Map<Object, Double> aggregateProbabilities(Segmentation segmentation, List<SegmentResultMap> segmentResults){
+		ProbabilityAggregator<Object> aggregator = new ProbabilityAggregator<Object>();
+
+		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+
+		for(SegmentResultMap segmentResult : segmentResults){
+			Object targetValue = segmentResult.getTargetValue();
+
+			if(!(targetValue instanceof ClassificationMap)){
+				throw new TypeCheckException(ClassificationMap.class, targetValue);
+			}
+
+			ClassificationMap<?> values = (ClassificationMap<?>)targetValue;
+
+			if(!(ClassificationMap.Type.PROBABILITY).equals(values.getType())){
+				throw new EvaluationException();
+			}
+
+			Collection<? extends Map.Entry<?, Double>> entries = values.entrySet();
+			for(Map.Entry<?, Double> entry : entries){
+				Object targetCategory = entry.getKey();
+				Double probability = entry.getValue();
+
+				switch(multipleModelMethod){
+					case AVERAGE:
+						aggregator.add(targetCategory, probability);
+						break;
+					case WEIGHTED_AVERAGE:
+						aggregator.add(targetCategory, segmentResult.getWeight() * probability);
+						break;
+					default:
+						throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+				}
+			}
+		}
+
+		aggregator.divide((double)segmentResults.size());
+
+		return aggregator;
 	}
 
 	static
