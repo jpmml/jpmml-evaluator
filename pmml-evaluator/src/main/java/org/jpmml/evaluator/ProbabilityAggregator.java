@@ -20,9 +20,9 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
-public class ProbabilityAggregator<K> extends LinkedHashMap<K, Double> {
+class ProbabilityAggregator<K> extends LinkedHashMap<K, Double> {
 
-	public ProbabilityAggregator(){
+	ProbabilityAggregator(){
 	}
 
 	public void max(K key, Double value){
@@ -36,11 +36,8 @@ public class ProbabilityAggregator<K> extends LinkedHashMap<K, Double> {
 
 	public void add(K key, Double value){
 		Double sum = get(key);
-		if(sum == null){
-			sum = 0d;
-		}
 
-		put(key, (sum + value));
+		put(key, sum != null ? (sum + value) : value);
 	}
 
 	public void divide(Double value){

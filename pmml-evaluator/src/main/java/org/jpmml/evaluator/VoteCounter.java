@@ -31,9 +31,9 @@ import java.util.*;
 
 import com.google.common.collect.*;
 
-public class VoteCounter<K> extends LinkedHashMap<K, Double> {
+class VoteCounter<K> extends LinkedHashMap<K, Double> {
 
-	public VoteCounter(){
+	VoteCounter(){
 	}
 
 	public Set<K> getWinners(){
@@ -58,10 +58,7 @@ public class VoteCounter<K> extends LinkedHashMap<K, Double> {
 
 	public void increment(K key, Double value){
 		Double sum = get(key);
-		if(sum == null){
-			sum = 0d;
-		}
 
-		put(key, (sum + value));
+		put(key, sum != null ? (sum + value) : value);
 	}
 }
