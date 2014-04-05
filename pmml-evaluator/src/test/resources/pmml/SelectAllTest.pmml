@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+    <DataDictionary numberOfFields="5">
+        <DataField name="species" optype="categorical" dataType="string">
+            <Value value="setosa"/>
+            <Value value="versicolor"/>
+            <Value value="virginica"/>
+        </DataField>
+        <DataField name="sepal_length" optype="continuous" dataType="double"/>
+        <DataField name="sepal_width" optype="continuous" dataType="double"/>
+        <DataField name="petal_length" optype="continuous" dataType="double"/>
+        <DataField name="petal_width" optype="continuous" dataType="double"/>
+    </DataDictionary>
+    <MiningModel modelName="randomForest" functionName="classification">
+        <MiningSchema>
+            <MiningField name="species" usageType="predicted" invalidValueTreatment="asIs"/>
+            <MiningField name="sepal_length" usageType="active" invalidValueTreatment="asIs"/>
+            <MiningField name="sepal_width" usageType="active" invalidValueTreatment="asIs"/>
+            <MiningField name="petal_length" usageType="active" invalidValueTreatment="asIs"/>
+            <MiningField name="petal_width" usageType="active" invalidValueTreatment="asIs"/>
+        </MiningSchema>
+        <Segmentation multipleModelMethod="selectAll">
+            <Segment id="1">
+                <True/>
+                <TreeModel functionName="classification" splitCharacteristic="binarySplit">
+                    <MiningSchema>
+                        <MiningField name="species" usageType="predicted" invalidValueTreatment="asIs"/>
+                        <MiningField name="sepal_length" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="sepal_width" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="petal_length" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="petal_width" usageType="active" invalidValueTreatment="asIs"/>
+                    </MiningSchema>
+                    <Node id="1">
+                        <True/>
+                        <Node id="2" score="setosa">
+                            <SimplePredicate field="petal_width" operator="lessOrEqual" value="0.7"/>
+                        </Node>
+                        <Node id="3" score="versicolor">
+                            <SimplePredicate field="petal_width" operator="greaterThan" value="0.7"/>
+                        </Node>
+                    </Node>
+                </TreeModel>
+            </Segment>
+            <Segment id="2">
+                <True/>
+                <TreeModel functionName="classification" splitCharacteristic="binarySplit">
+                    <MiningSchema>
+                        <MiningField name="species" usageType="predicted" invalidValueTreatment="asIs"/>
+                        <MiningField name="sepal_length" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="sepal_width" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="petal_length" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="petal_width" usageType="active" invalidValueTreatment="asIs"/>
+                    </MiningSchema>
+                    <Node id="1">
+                        <True/>
+                        <Node id="2" score="setosa">
+                            <SimplePredicate field="sepal_length" operator="lessOrEqual" value="5.55"/>
+                        </Node>
+                        <Node id="3" score="virginica">
+                            <SimplePredicate field="sepal_length" operator="greaterThan" value="5.55"/>
+                        </Node>
+                    </Node>
+                </TreeModel>
+            </Segment>
+            <Segment id="3">
+                <True/>
+                <TreeModel functionName="classification" splitCharacteristic="binarySplit">
+                    <MiningSchema>
+                        <MiningField name="species" usageType="predicted" invalidValueTreatment="asIs"/>
+                        <MiningField name="sepal_length" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="sepal_width" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="petal_length" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="petal_width" usageType="active" invalidValueTreatment="asIs"/>
+                    </MiningSchema>
+                    <Node id="1">
+                        <True/>
+                        <Node id="2" score="setosa">
+                            <SimplePredicate field="petal_length" operator="lessOrEqual" value="2.35"/>
+                        </Node>
+                        <Node id="3" score="virginica">
+                            <SimplePredicate field="petal_length" operator="greaterThan" value="2.35"/>
+                        </Node>
+                    </Node>
+                </TreeModel>
+            </Segment>
+            <Segment id="4">
+                <True/>
+                <TreeModel functionName="classification" splitCharacteristic="binarySplit">
+                    <MiningSchema>
+                        <MiningField name="species" usageType="predicted" invalidValueTreatment="asIs"/>
+                        <MiningField name="sepal_length" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="sepal_width" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="petal_length" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="petal_width" usageType="active" invalidValueTreatment="asIs"/>
+                    </MiningSchema>
+                    <Node id="1">
+                        <True/>
+                        <Node id="2" score="setosa">
+                            <SimplePredicate field="petal_length" operator="lessOrEqual" value="2.6"/>
+                        </Node>
+                        <Node id="3" score="versicolor">
+                            <SimplePredicate field="petal_length" operator="greaterThan" value="2.6"/>
+                        </Node>
+                    </Node>
+                </TreeModel>
+            </Segment>
+            <Segment id="5">
+                <True/>
+                <TreeModel functionName="classification" splitCharacteristic="binarySplit">
+                    <MiningSchema>
+                        <MiningField name="species" usageType="predicted" invalidValueTreatment="asIs"/>
+                        <MiningField name="sepal_length" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="sepal_width" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="petal_length" usageType="active" invalidValueTreatment="asIs"/>
+                        <MiningField name="petal_width" usageType="active" invalidValueTreatment="asIs"/>
+                    </MiningSchema>
+                    <Node id="1">
+                        <True/>
+                        <Node id="2" score="versicolor">
+                            <SimplePredicate field="petal_width" operator="lessOrEqual" value="1.75"/>
+                        </Node>
+                        <Node id="3" score="virginica">
+                            <SimplePredicate field="petal_width" operator="greaterThan" value="1.75"/>
+                        </Node>
+                    </Node>
+                </TreeModel>
+            </Segment>
+        </Segmentation>
+    </MiningModel>
+</PMML>

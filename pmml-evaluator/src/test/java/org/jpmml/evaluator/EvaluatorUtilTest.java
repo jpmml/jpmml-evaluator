@@ -41,6 +41,9 @@ public class EvaluatorUtilTest {
 		};
 
 		assertEquals("value", EvaluatorUtil.decode(value));
+
+		assertEquals(Arrays.asList("value"), EvaluatorUtil.decode(Arrays.asList(value)));
+		assertEquals(Arrays.asList("value", "value"), EvaluatorUtil.decode(Arrays.asList(value, value)));
 	}
 
 	@Test

@@ -157,7 +157,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case SELECT_ALL:
-				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+				return selectAll(segmentResults);
 			case SELECT_FIRST:
 				if(segmentResults.size() > 0){
 					return getFirst(segmentResults);
@@ -236,7 +236,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case SELECT_ALL:
-				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+				return selectAll(segmentResults);
 			case SELECT_FIRST:
 				if(segmentResults.size() > 0){
 					return getFirst(segmentResults);
@@ -289,7 +289,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case SELECT_ALL:
-				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+				return selectAll(segmentResults);
 			case SELECT_FIRST:
 				if(segmentResults.size() > 0){
 					return getFirst(segmentResults);
@@ -326,7 +326,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case SELECT_ALL:
-				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+				return selectAll(segmentResults);
 			case SELECT_FIRST:
 				if(segmentResults.size() > 0){
 					return getFirst(segmentResults);
@@ -445,6 +445,30 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 
 		return results;
+	}
+
+	private Map<FieldName, ?> selectAll(List<SegmentResultMap> segmentResults){
+		ListMultimap<FieldName, Object> result = ArrayListMultimap.create();
+
+		Set<FieldName> keys = null;
+
+		for(SegmentResultMap segmentResult : segmentResults){
+
+			if(keys == null){
+				keys = Sets.newLinkedHashSet(segmentResult.keySet());
+			} // End if
+
+			// Ensure that all List values in the ListMultimap contain the same number of elements
+			if(!(keys).equals(segmentResult.keySet())){
+				throw new EvaluationException();
+			}
+
+			for(FieldName key : keys){
+				result.put(key, segmentResult.get(key));
+			}
+		}
+
+		return result.asMap();
 	}
 
 	static

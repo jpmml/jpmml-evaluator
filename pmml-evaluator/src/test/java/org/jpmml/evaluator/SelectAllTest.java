@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2014 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -22,14 +22,30 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-abstract
-public class ModelChainTest extends MiningModelEvaluatorTest {
+import org.junit.*;
 
-	public Map<FieldName, ?> evaluateExample(double petalLength, double petalWidth) throws Exception {
+import static org.junit.Assert.*;
+
+public class SelectAllTest extends MiningModelEvaluatorTest {
+
+	@Test
+	public void evaluate() throws Exception {
 		MiningModelEvaluator evaluator = createEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("petal_length", petalLength, "petal_width", petalWidth, "temperature", 0d, "cloudiness", 0d);
+		Map<FieldName, ?> arguments = createArguments("sepal_length", 5.1d, "sepal_width", 3.5d, "petal_length", 1.4d, "petal_width", 0.2d);
 
-		return evaluator.evaluate(arguments);
+		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+
+		assertEquals(1, result.size());
+
+		Collection<?> species = (Collection<?>)result.get(new FieldName("species"));
+
+		assertEquals(5, species.size());
+
+		for(Object value : species){
+			assertTrue((value instanceof Computable) & (value instanceof HasEntityId) & (value instanceof HasProbability));
+		}
+
+		assertEquals(Arrays.asList("setosa", "setosa", "setosa", "setosa", "versicolor"), EvaluatorUtil.decode(species));
 	}
 }
