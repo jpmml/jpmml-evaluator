@@ -25,6 +25,10 @@ import org.jpmml.evaluator.*;
 abstract
 public class StringFunction extends AbstractFunction {
 
+	public StringFunction(String name){
+		super(name);
+	}
+
 	abstract
 	public String evaluate(String value);
 

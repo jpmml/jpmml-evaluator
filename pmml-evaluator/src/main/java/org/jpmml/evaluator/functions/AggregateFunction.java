@@ -30,6 +30,10 @@ import org.dmg.pmml.*;
 abstract
 public class AggregateFunction extends AbstractFunction {
 
+	public AggregateFunction(String name){
+		super(name);
+	}
+
 	abstract
 	public StorelessUnivariateStatistic createStatistic();
 

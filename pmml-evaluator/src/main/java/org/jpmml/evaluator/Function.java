@@ -22,5 +22,7 @@ import java.util.*;
 
 public interface Function {
 
+	String getName();
+
 	FieldValue evaluate(List<FieldValue> values);
 }

@@ -25,6 +25,10 @@ import org.jpmml.evaluator.*;
 abstract
 public class UnaryBooleanFunction extends AbstractFunction {
 
+	public UnaryBooleanFunction(String name){
+		super(name);
+	}
+
 	abstract
 	public Boolean evaluate(Boolean value);
 

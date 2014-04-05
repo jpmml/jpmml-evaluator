@@ -28,6 +28,10 @@ import org.dmg.pmml.*;
 abstract
 public class MathFunction extends AbstractFunction {
 
+	public MathFunction(String name){
+		super(name);
+	}
+
 	abstract
 	public Double evaluate(Number value);
 

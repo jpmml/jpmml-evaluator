@@ -25,6 +25,10 @@ import org.jpmml.evaluator.*;
 abstract
 public class BinaryBooleanFunction extends AbstractFunction {
 
+	public BinaryBooleanFunction(String name){
+		super(name);
+	}
+
 	abstract
 	public Boolean evaluate(Boolean left, Boolean right);
 

@@ -25,6 +25,10 @@ import org.jpmml.evaluator.*;
 abstract
 public class ComparisonFunction extends AbstractFunction {
 
+	public ComparisonFunction(String name){
+		super(name);
+	}
+
 	abstract
 	public Boolean evaluate(int order);
 

@@ -25,8 +25,26 @@ import org.jpmml.evaluator.FieldValue;
 
 import org.dmg.pmml.*;
 
+import static com.google.common.base.Preconditions.*;
+
 abstract
 public class AbstractFunction implements Function {
+
+	private String name = null;
+
+
+	public AbstractFunction(String name){
+		setName(name);
+	}
+
+	@Override
+	public String getName(){
+		return this.name;
+	}
+
+	private void setName(String name){
+		this.name = checkNotNull(name);
+	}
 
 	static
 	protected void checkArguments(List<FieldValue> values, int size){

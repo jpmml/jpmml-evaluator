@@ -44,6 +44,11 @@ public class FunctionRegistry {
 	}
 
 	static
+	public void putFunction(Function function){
+		putFunction(function.getName(), function);
+	}
+
+	static
 	public void putFunction(String name, Function function){
 		FunctionRegistry.functions.put(name, function);
 	}
@@ -51,7 +56,7 @@ public class FunctionRegistry {
 	private static final Map<String, Function> functions = Maps.newLinkedHashMap();
 
 	static {
-		putFunction("+", new ArithmeticFunction(){
+		putFunction(new ArithmeticFunction("+"){
 
 			@Override
 			public Double evaluate(Number left, Number right){
@@ -59,7 +64,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("-", new ArithmeticFunction(){
+		putFunction(new ArithmeticFunction("-"){
 
 			@Override
 			public Double evaluate(Number left, Number right){
@@ -67,7 +72,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("*", new ArithmeticFunction(){
+		putFunction(new ArithmeticFunction("*"){
 
 			@Override
 			public Double evaluate(Number left, Number right){
@@ -75,7 +80,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("/", new ArithmeticFunction(){
+		putFunction(new ArithmeticFunction("/"){
 
 			@Override
 			public Number evaluate(Number left, Number right){
@@ -90,7 +95,7 @@ public class FunctionRegistry {
 	}
 
 	static {
-		putFunction("min", new AggregateFunction(){
+		putFunction(new AggregateFunction("min"){
 
 			@Override
 			public Min createStatistic(){
@@ -98,7 +103,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("max", new AggregateFunction(){
+		putFunction(new AggregateFunction("max"){
 
 			@Override
 			public Max createStatistic(){
@@ -106,7 +111,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("avg", new AggregateFunction(){
+		putFunction(new AggregateFunction("avg"){
 
 			@Override
 			public Mean createStatistic(){
@@ -119,7 +124,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("sum", new AggregateFunction(){
+		putFunction(new AggregateFunction("sum"){
 
 			@Override
 			public Sum createStatistic(){
@@ -127,7 +132,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("product", new AggregateFunction(){
+		putFunction(new AggregateFunction("product"){
 
 			@Override
 			public Product createStatistic(){
@@ -137,7 +142,7 @@ public class FunctionRegistry {
 	}
 
 	static {
-		putFunction("log10", new FpMathFunction(){
+		putFunction(new FpMathFunction("log10"){
 
 			@Override
 			public Double evaluate(Number value){
@@ -145,7 +150,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("ln", new FpMathFunction(){
+		putFunction(new FpMathFunction("ln"){
 
 			@Override
 			public Double evaluate(Number value){
@@ -153,7 +158,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("exp", new FpMathFunction(){
+		putFunction(new FpMathFunction("exp"){
 
 			@Override
 			public Double evaluate(Number value){
@@ -161,7 +166,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("sqrt", new FpMathFunction(){
+		putFunction(new FpMathFunction("sqrt"){
 
 			@Override
 			public Double evaluate(Number value){
@@ -169,7 +174,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("abs", new MathFunction(){
+		putFunction(new MathFunction("abs"){
 
 			@Override
 			public Double evaluate(Number value){
@@ -177,7 +182,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("pow", new AbstractFunction(){
+		putFunction(new AbstractFunction("pow"){
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
@@ -194,7 +199,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("threshold", new AbstractFunction(){
+		putFunction(new AbstractFunction("threshold"){
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
@@ -211,7 +216,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("floor", new MathFunction(){
+		putFunction(new MathFunction("floor"){
 
 			@Override
 			public Double evaluate(Number number){
@@ -219,7 +224,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("ceil", new MathFunction(){
+		putFunction(new MathFunction("ceil"){
 
 			@Override
 			public Double evaluate(Number number){
@@ -227,7 +232,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("round", new MathFunction(){
+		putFunction(new MathFunction("round"){
 
 			@Override
 			public Double evaluate(Number number){
@@ -237,7 +242,7 @@ public class FunctionRegistry {
 	}
 
 	static {
-		putFunction("isMissing", new ValueFunction(){
+		putFunction(new ValueFunction("isMissing"){
 
 			@Override
 			public Boolean evaluate(FieldValue value){
@@ -245,7 +250,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("isNotMissing", new ValueFunction(){
+		putFunction(new ValueFunction("isNotMissing"){
 
 			@Override
 			public Boolean evaluate(FieldValue value){
@@ -255,7 +260,7 @@ public class FunctionRegistry {
 	}
 
 	static {
-		putFunction("equal", new EqualityFunction(){
+		putFunction(new EqualityFunction("equal"){
 
 			@Override
 			public Boolean evaluate(boolean equals){
@@ -263,7 +268,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("notEqual", new EqualityFunction(){
+		putFunction(new EqualityFunction("notEqual"){
 
 			@Override
 			public Boolean evaluate(boolean equals){
@@ -274,7 +279,7 @@ public class FunctionRegistry {
 	}
 
 	static {
-		putFunction("lessThan", new ComparisonFunction(){
+		putFunction(new ComparisonFunction("lessThan"){
 
 			@Override
 			public Boolean evaluate(int order){
@@ -282,7 +287,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("lessOrEqual", new ComparisonFunction(){
+		putFunction(new ComparisonFunction("lessOrEqual"){
 
 			@Override
 			public Boolean evaluate(int order){
@@ -290,7 +295,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("greaterThan", new ComparisonFunction(){
+		putFunction(new ComparisonFunction("greaterThan"){
 
 			@Override
 			public Boolean evaluate(int order){
@@ -298,7 +303,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("greaterOrEqual", new ComparisonFunction(){
+		putFunction(new ComparisonFunction("greaterOrEqual"){
 
 			@Override
 			public Boolean evaluate(int order){
@@ -308,7 +313,7 @@ public class FunctionRegistry {
 	}
 
 	static {
-		putFunction("and", new BinaryBooleanFunction(){
+		putFunction(new BinaryBooleanFunction("and"){
 
 			@Override
 			public Boolean evaluate(Boolean left, Boolean right){
@@ -316,7 +321,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("or", new BinaryBooleanFunction(){
+		putFunction(new BinaryBooleanFunction("or"){
 
 			@Override
 			public Boolean evaluate(Boolean left, Boolean right){
@@ -326,7 +331,7 @@ public class FunctionRegistry {
 	}
 
 	static {
-		putFunction("not", new UnaryBooleanFunction(){
+		putFunction(new UnaryBooleanFunction("not"){
 
 			@Override
 			public Boolean evaluate(Boolean value){
@@ -336,7 +341,7 @@ public class FunctionRegistry {
 	}
 
 	static {
-		putFunction("isIn", new ValueListFunction(){
+		putFunction(new ValueListFunction("isIn"){
 
 			@Override
 			public Boolean evaluate(FieldValue value, List<FieldValue> values){
@@ -344,7 +349,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("isNotIn", new ValueListFunction(){
+		putFunction(new ValueListFunction("isNotIn"){
 
 			@Override
 			public Boolean evaluate(FieldValue value, List<FieldValue> values){
@@ -354,7 +359,7 @@ public class FunctionRegistry {
 	}
 
 	static {
-		putFunction("if", new AbstractFunction(){
+		putFunction(new AbstractFunction("if"){
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
@@ -394,7 +399,7 @@ public class FunctionRegistry {
 	}
 
 	static {
-		putFunction("uppercase", new StringFunction(){
+		putFunction(new StringFunction("uppercase"){
 
 			@Override
 			public String evaluate(String value){
@@ -402,7 +407,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("lowercase", new StringFunction(){
+		putFunction(new StringFunction("lowercase"){
 
 			@Override
 			public String evaluate(String value){
@@ -410,7 +415,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("substring", new AbstractFunction(){
+		putFunction(new AbstractFunction("substring"){
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
@@ -432,7 +437,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("trimBlanks", new StringFunction(){
+		putFunction(new StringFunction("trimBlanks"){
 
 			@Override
 			public String evaluate(String value){
@@ -442,7 +447,7 @@ public class FunctionRegistry {
 	}
 
 	static {
-		putFunction("concat", new AbstractFunction(){
+		putFunction(new AbstractFunction("concat"){
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
@@ -462,7 +467,7 @@ public class FunctionRegistry {
 	}
 
 	static {
-		putFunction("replace", new AbstractFunction(){
+		putFunction(new AbstractFunction("replace"){
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
@@ -480,7 +485,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("matches", new AbstractFunction(){
+		putFunction(new AbstractFunction("matches"){
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
@@ -500,7 +505,7 @@ public class FunctionRegistry {
 	}
 
 	static {
-		putFunction("formatNumber", new AbstractFunction(){
+		putFunction(new AbstractFunction("formatNumber"){
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
@@ -523,7 +528,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("formatDatetime", new AbstractFunction(){
+		putFunction(new AbstractFunction("formatDatetime"){
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
@@ -567,7 +572,7 @@ public class FunctionRegistry {
 	}
 
 	static {
-		putFunction("dateDaysSinceYear", new AbstractFunction(){
+		putFunction(new AbstractFunction("dateDaysSinceYear"){
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
@@ -583,7 +588,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("dateSecondsSinceMidnight", new AbstractFunction(){
+		putFunction(new AbstractFunction("dateSecondsSinceMidnight"){
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){
@@ -599,7 +604,7 @@ public class FunctionRegistry {
 			}
 		});
 
-		putFunction("dateSecondsSinceYear", new AbstractFunction(){
+		putFunction(new AbstractFunction("dateSecondsSinceYear"){
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> values){

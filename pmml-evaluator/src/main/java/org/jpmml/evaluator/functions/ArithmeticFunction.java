@@ -28,6 +28,10 @@ import org.dmg.pmml.*;
 abstract
 public class ArithmeticFunction extends AbstractFunction {
 
+	public ArithmeticFunction(String name){
+		super(name);
+	}
+
 	abstract
 	public Number evaluate(Number left, Number right);
 

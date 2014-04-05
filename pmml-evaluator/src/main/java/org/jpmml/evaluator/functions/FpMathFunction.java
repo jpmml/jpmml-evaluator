@@ -23,6 +23,10 @@ import org.dmg.pmml.*;
 abstract
 public class FpMathFunction extends MathFunction {
 
+	public FpMathFunction(String name){
+		super(name);
+	}
+
 	@Override
 	public DataType getResultType(DataType dataType){
 		return integerToDouble(dataType);

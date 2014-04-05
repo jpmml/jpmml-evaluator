@@ -25,6 +25,10 @@ import org.jpmml.evaluator.*;
 abstract
 public class ValueListFunction extends AbstractFunction {
 
+	public ValueListFunction(String name){
+		super(name);
+	}
+
 	abstract
 	public Boolean evaluate(FieldValue value, List<FieldValue> values);
 

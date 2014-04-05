@@ -25,6 +25,10 @@ import org.jpmml.evaluator.*;
 abstract
 public class EqualityFunction extends AbstractFunction {
 
+	public EqualityFunction(String name){
+		super(name);
+	}
+
 	abstract
 	public Boolean evaluate(boolean equals);
 
