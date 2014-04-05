@@ -22,7 +22,7 @@ import java.util.*;
 
 import org.dmg.pmml.*;
 
-class SegmentResultMap extends LinkedHashMap<FieldName, Object> implements Computable, HasEntityId {
+class SegmentResultMap extends LinkedHashMap<FieldName, Object> {
 
 	private Segment segment = null;
 
@@ -34,15 +34,7 @@ class SegmentResultMap extends LinkedHashMap<FieldName, Object> implements Compu
 		setTargetField(targetField);
 	}
 
-	@Override
-	public Object getResult(){
-		Object targetValue = getTargetValue();
-
-		return EvaluatorUtil.decode(targetValue);
-	}
-
-	@Override
-	public String getEntityId(){
+	public String getId(){
 		Segment segment = getSegment();
 
 		return segment.getId();

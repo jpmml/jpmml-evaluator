@@ -112,7 +112,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		double sum = 0d;
 
 		for(SegmentResultMap segmentResult : segmentResults){
-			Object targetValue = segmentResult.getResult();
+			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
 
 			Number number = (Number)TypeUtil.parseOrCast(DataType.DOUBLE, targetValue);
 
@@ -464,7 +464,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		for(SegmentResultMap segmentResult : segmentResults){
-			Object targetCategory = segmentResult.getResult();
+			Object targetCategory = EvaluatorUtil.decode(segmentResult.getTargetValue());
 
 			switch(multipleModelMethod){
 				case MAJORITY_VOTE:
