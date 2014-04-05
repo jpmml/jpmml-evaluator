@@ -37,10 +37,7 @@ public class ArithmeticFunction extends AbstractFunction {
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> values){
-
-		if(values.size() != 2){
-			throw new EvaluationException();
-		}
+		checkArguments(values, 2, true);
 
 		FieldValue left = values.get(0);
 		FieldValue right = values.get(1);

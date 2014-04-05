@@ -365,12 +365,12 @@ public class FunctionRegistry {
 			public FieldValue evaluate(List<FieldValue> values){
 
 				if((values.size() < 2 || values.size() > 3)){
-					throw new EvaluationException();
+					throw new FunctionException(getName(), "Expected 2 or 3 arguments, but got " + values.size() + " arguments");
 				}
 
 				FieldValue flag = values.get(0);
 				if(flag == null){
-					throw new EvaluationException();
+					throw new FunctionException(getName(), "Missing arguments");
 				} // End if
 
 				if(flag.asBoolean()){
@@ -378,7 +378,7 @@ public class FunctionRegistry {
 
 					// "The THEN part is required"
 					if(trueValue == null){
-						throw new EvaluationException();
+						throw new FunctionException(getName(), "Missing arguments");
 					}
 
 					return trueValue;
@@ -428,7 +428,7 @@ public class FunctionRegistry {
 
 				// "The first character of a string is located at position 1 (not position 0)"
 				if(position <= 0 || length < 0){
-					throw new EvaluationException();
+					throw new FunctionException(getName(), "Invalid arguments");
 				}
 
 				String result = string.substring(position - 1, (position + length) - 1);

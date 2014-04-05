@@ -55,7 +55,7 @@ public class FunctionUtil {
 		} // End if
 
 		if(parameterFields.size() != values.size()){
-			throw new EvaluationException();
+			throw new FunctionException(defineFunction.getName(), "Expected " + parameterFields.size() + " arguments, but got " + values.size() + " arguments");
 		}
 
 		DefineFunctionEvaluationContext functionContext = new DefineFunctionEvaluationContext(context);

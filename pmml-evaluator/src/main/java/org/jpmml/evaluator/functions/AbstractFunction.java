@@ -37,6 +37,36 @@ public class AbstractFunction implements Function {
 		setName(name);
 	}
 
+	protected void checkArguments(List<FieldValue> values, int size){
+		checkArguments(values, size, false);
+	}
+
+	protected void checkArguments(List<FieldValue> values, int size, boolean allowNulls){
+
+		if(values.size() != size){
+			throw new FunctionException(getName(), "Expected " + size + " arguments, but got " + values.size() + " arguments");
+		} // End if
+
+		if(!allowNulls && values.contains(null)){
+			throw new FunctionException(getName(), "Missing arguments");
+		}
+	}
+
+	protected void checkVariableArguments(List<FieldValue> values, int size){
+		checkVariableArguments(values, size, false);
+	}
+
+	protected void checkVariableArguments(List<FieldValue> values, int size, boolean allowNulls){
+
+		if(values.size() < size){
+			throw new FunctionException(getName(), "Expected " + size + " or more arguments, but got " + values.size() + " arguments");
+		} // End if
+
+		if(!allowNulls && values.contains(null)){
+			throw new FunctionException(getName(), "Missing arguments");
+		}
+	}
+
 	@Override
 	public String getName(){
 		return this.name;
@@ -44,32 +74,6 @@ public class AbstractFunction implements Function {
 
 	private void setName(String name){
 		this.name = checkNotNull(name);
-	}
-
-	static
-	protected void checkArguments(List<FieldValue> values, int size){
-		checkArguments(values, size, false);
-	}
-
-	static
-	protected void checkArguments(List<FieldValue> values, int size, boolean allowNulls){
-		boolean success = (values.size() == size) && (allowNulls ? true : !values.contains(null));
-		if(!success){
-			throw new EvaluationException();
-		}
-	}
-
-	static
-	protected void checkVariableArguments(List<FieldValue> values, int size){
-		checkVariableArguments(values, size, false);
-	}
-
-	static
-	protected void checkVariableArguments(List<FieldValue> values, int size, boolean allowNulls){
-		boolean success = (values.size() >= size) && (allowNulls ? true : !values.contains(null));
-		if(!success){
-			throw new EvaluationException();
-		}
 	}
 
 	static

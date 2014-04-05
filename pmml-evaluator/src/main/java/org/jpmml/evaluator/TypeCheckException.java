@@ -40,7 +40,7 @@ public class TypeCheckException extends EvaluationException {
 
 	static
 	private String formatMessage(DataType expected, DataType actual, Object value){
-		String message = "Expected: " + expected + ", actual: " + (actual != null ? actual : "null");
+		String message = "Expected " + expected + ", but got " + (actual != null ? actual : "null");
 
 		if(value != null){
 			message += (" (" + String.valueOf(value) + ")");
@@ -51,7 +51,7 @@ public class TypeCheckException extends EvaluationException {
 
 	static
 	private String formatMessage(Class<?> expected, Class<?> actual, Object value){
-		String message = "Expected: " + expected.getName() + ", actual: " + (actual != null ? actual.getName() : "null");
+		String message = "Expected " + expected.getName() + ", but got " + (actual != null ? actual.getName() : "null");
 
 		if(value != null){
 			message += (" (" + String.valueOf(value) + ")");
