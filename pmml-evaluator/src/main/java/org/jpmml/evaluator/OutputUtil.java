@@ -64,12 +64,14 @@ public class OutputUtil {
 				segmentPredictions = miningModelContext.getResult(segmentId);
 			} // End if
 
+			// "If there is no Segment matching segmentId or if the predicate of the matching Segment evaluated to false, then the result delivered by this OutputField is missing."
 			if(segmentPredictions == null){
 				result.put(outputField.getName(), null);
 
 				continue;
 			}
 
+			// "Attribute targetField is required in case the model has multiple target fields."
 			FieldName targetField = outputField.getTargetField();
 			if(targetField == null){
 				targetField = modelManager.getTargetField();
