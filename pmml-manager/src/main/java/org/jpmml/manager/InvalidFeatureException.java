@@ -34,12 +34,10 @@ import org.dmg.pmml.*;
  */
 public class InvalidFeatureException extends PMMLException {
 
-	@Deprecated
 	public InvalidFeatureException(){
 		super();
 	}
 
-	@Deprecated
 	public InvalidFeatureException(String message){
 		super(message);
 	}

@@ -34,12 +34,10 @@ import org.dmg.pmml.*;
  */
 public class UnsupportedFeatureException extends PMMLException {
 
-	@Deprecated
 	public UnsupportedFeatureException(){
 		super();
 	}
 
-	@Deprecated
 	public UnsupportedFeatureException(String message){
 		super(message);
 	}

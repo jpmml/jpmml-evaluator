@@ -25,7 +25,6 @@ import org.dmg.pmml.*;
  */
 public class MissingFieldException extends EvaluationException {
 
-	@Deprecated
 	public MissingFieldException(FieldName name){
 		super(name.getValue());
 	}

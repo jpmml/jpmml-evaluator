@@ -25,7 +25,6 @@ import org.dmg.pmml.*;
  */
 public class DuplicateFieldException extends EvaluationException {
 
-	@Deprecated
 	public DuplicateFieldException(FieldName name){
 		super(name.getValue());
 	}

@@ -22,7 +22,6 @@ import org.dmg.pmml.*;
 
 public class FunctionException extends EvaluationException {
 
-	@Deprecated
 	public FunctionException(String name, String message){
 		super(formatMessage(name, message));
 	}
