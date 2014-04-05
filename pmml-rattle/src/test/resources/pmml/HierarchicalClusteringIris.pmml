@@ -21,7 +21,7 @@
   <Output>
    <OutputField name="predictedValue" feature="predictedValue"/>
    <!-- Custom OutputField element -->
-   <OutputField name="predictedValue" feature="predictedValue"/>
+   <OutputField name="Cluster" feature="predictedValue"/>
   </Output>
   <ComparisonMeasure kind="distance">
    <squaredEuclidean/>

@@ -62,37 +62,34 @@ public class EvaluationContext {
 		return null;
 	}
 
-	public boolean declare(FieldName name, Object value){
+	public void declare(FieldName name, Object value){
 
 		if(value instanceof FieldValue){
-			return declare(name, (FieldValue)value);
+			declare(name, (FieldValue)value);
+
+			return;
 		}
 
-		return declare(name, createFieldValue(name, value));
+		declare(name, createFieldValue(name, value));
 	}
 
-	/**
-	 * @return <code>true</code> If the field was already declared, <code>false</code> otherwise.
-	 */
-	public boolean declare(FieldName name, FieldValue value){
+	public void declare(FieldName name, FieldValue value){
 		Map<FieldName, FieldValue> fields = getFields();
 
-		boolean duplicate = fields.containsKey(name);
-
-		fields.put(name, value);
-
-		return duplicate;
-	}
-
-	public boolean declareAll(Map<FieldName, ?> fields){
-		boolean result = false;
-
-		Collection<? extends Map.Entry<FieldName, ?>> entries = fields.entrySet();
-		for(Map.Entry<FieldName, ?> entry : entries){
-			result |= declare(entry.getKey(), entry.getValue());
+		boolean declared = fields.containsKey(name);
+		if(declared){
+			throw new DuplicateFieldException(name);
 		}
 
-		return result;
+		fields.put(name, value);
+	}
+
+	public void declareAll(Map<FieldName, ?> fields){
+		Collection<? extends Map.Entry<FieldName, ?>> entries = fields.entrySet();
+
+		for(Map.Entry<FieldName, ?> entry : entries){
+			declare(entry.getKey(), entry.getValue());
+		}
 	}
 
 	public FieldValue createFieldValue(FieldName name, Object value){
