@@ -34,16 +34,16 @@ public class FunctionUtil {
 		String name = apply.getFunction();
 
 		Function function = FunctionRegistry.getFunction(name);
-		if(function == null){
-			DefineFunction defineFunction = context.resolveFunction(name);
-			if(defineFunction == null){
-				throw new UnsupportedFeatureException(apply);
-			}
+		if(function != null){
+			return function.evaluate(values);
+		}
 
+		DefineFunction defineFunction = context.resolveFunction(name);
+		if(defineFunction != null){
 			return evaluate(defineFunction, values, context);
 		}
 
-		return function.evaluate(values);
+		throw new UnsupportedFeatureException(apply);
 	}
 
 	static
