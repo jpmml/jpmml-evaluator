@@ -40,7 +40,12 @@ public class FunctionRegistry {
 
 	static
 	public Function getFunction(String name){
-		return FunctionRegistry.functions.get(name);
+		Function function = FunctionRegistry.functions.get(name);
+		if(function == null){
+			function = loadJavaFunction(name);
+		}
+
+		return function;
 	}
 
 	static
@@ -51,6 +56,31 @@ public class FunctionRegistry {
 	static
 	public void putFunction(String name, Function function){
 		FunctionRegistry.functions.put(name, function);
+	}
+
+	static
+	private Function loadJavaFunction(String name){
+		Class<?> clazz;
+
+		try {
+			clazz = Class.forName(name);
+		} catch(ClassNotFoundException cnfe){
+			return null;
+		}
+
+		if(!(Function.class).isAssignableFrom(clazz)){
+			return null;
+		}
+
+		Function function;
+
+		try {
+			function = (Function)clazz.newInstance();
+		} catch(Exception e){
+			throw new EvaluationException();
+		}
+
+		return function;
 	}
 
 	private static final Map<String, Function> functions = Maps.newLinkedHashMap();

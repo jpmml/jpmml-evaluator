@@ -20,6 +20,8 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
+import org.jpmml.evaluator.functions.*;
+
 import org.dmg.pmml.*;
 
 import org.junit.*;
@@ -276,6 +278,29 @@ public class FunctionUtilTest {
 		assertEquals(19410, evaluate("dateSecondsSinceMidnight", new LocalDateTime(1960, 1, 1, 5, 23, 30)));
 
 		assertEquals(185403, evaluate("dateSecondsSinceYear", new LocalDateTime(1960, 1, 3, 3, 30, 3), 1960));
+	}
+
+	@Test
+	public void evaluateEchoFunction(){
+		String function = EchoFunction.class.getName();
+
+		try {
+			evaluate(function);
+
+			Assert.fail();
+		} catch(FunctionException fe){
+			// Ignored
+		}
+
+		assertEquals("Hello World!", evaluate(function, "Hello World!"));
+
+		try {
+			evaluate(function, "Hello World!", "Hello World!");
+
+			Assert.fail();
+		} catch(FunctionException fe){
+			// Ignored
+		}
 	}
 
 	static
