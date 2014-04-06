@@ -63,7 +63,12 @@ public class FunctionRegistry {
 		Class<?> clazz;
 
 		try {
-			clazz = Class.forName(name);
+			ClassLoader classLoader = (Thread.currentThread()).getContextClassLoader();
+			if(classLoader == null){
+				classLoader = (FunctionRegistry.class).getClassLoader();
+			}
+
+			clazz = classLoader.loadClass(name);
 		} catch(ClassNotFoundException cnfe){
 			return null;
 		}
