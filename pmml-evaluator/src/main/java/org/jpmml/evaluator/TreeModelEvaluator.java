@@ -54,27 +54,47 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			throw new InvalidResultException(treeModel);
 		}
 
-		Node node;
+		Map<FieldName, ?> predictions;
 
 		MiningFunctionType miningFunction = treeModel.getFunctionName();
 		switch(miningFunction){
 			case REGRESSION:
+				predictions = evaluateRegression(context);
+				break;
 			case CLASSIFICATION:
-				node = evaluateTree(context);
+				predictions = evaluateClassification(context);
 				break;
 			default:
 				throw new UnsupportedFeatureException(treeModel, miningFunction);
 		}
 
-		NodeClassificationMap values = null;
+		return OutputUtil.evaluate(predictions, context);
+	}
 
+	private Map<FieldName, ? extends Number> evaluateRegression(ModelEvaluationContext context){
+		Double result = null;
+
+		Node node = evaluateTree(context);
 		if(node != null){
-			values = createNodeClassificationMap(node);
+			String score = ensureScore(node);
+
+			result = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, score);
 		}
 
-		Map<FieldName, ? extends ClassificationMap<?>> predictions = TargetUtil.evaluateClassification(values, context);
+		return TargetUtil.evaluateRegression(result, context);
+	}
 
-		return OutputUtil.evaluate(predictions, context);
+	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
+		NodeClassificationMap result = null;
+
+		Node node = evaluateTree(context);
+		if(node != null){
+			ensureScore(node);
+
+			result = createNodeClassificationMap(node);
+		}
+
+		return TargetUtil.evaluateClassification(result, context);
 	}
 
 	private Node evaluateTree(ModelEvaluationContext context){
@@ -185,6 +205,18 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 
 		return PredicateUtil.evaluate(predicate, context);
+	}
+
+	static
+	private String ensureScore(Node node){
+		String score = node.getScore();
+
+		// "It is not possible that the scoring process ends in a Node which does not have a score attribute."
+		if(score == null){
+			throw new InvalidFeatureException(node);
+		}
+
+		return score;
 	}
 
 	static
