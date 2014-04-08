@@ -33,10 +33,10 @@ public class ValueFunction extends AbstractFunction {
 	public Boolean evaluate(FieldValue value);
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> values){
-		checkArguments(values, 1, true);
+	public FieldValue evaluate(List<FieldValue> arguments){
+		checkArguments(arguments, 1, true);
 
-		FieldValue value = values.get(0);
+		FieldValue value = arguments.get(0);
 
 		Boolean result = evaluate(value);
 

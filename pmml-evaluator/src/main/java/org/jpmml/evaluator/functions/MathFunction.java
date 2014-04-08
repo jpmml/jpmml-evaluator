@@ -40,10 +40,10 @@ public class MathFunction extends AbstractFunction {
 	}
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> values){
-		checkArguments(values, 1);
+	public FieldValue evaluate(List<FieldValue> arguments){
+		checkArguments(arguments, 1);
 
-		FieldValue value = values.get(0);
+		FieldValue value = arguments.get(0);
 
 		Number result = cast(getResultType(value.getDataType()), evaluate(value.asNumber()));
 

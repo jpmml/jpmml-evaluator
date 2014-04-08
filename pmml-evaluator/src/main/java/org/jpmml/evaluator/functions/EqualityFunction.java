@@ -33,11 +33,11 @@ public class EqualityFunction extends AbstractFunction {
 	public Boolean evaluate(boolean equals);
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> values){
-		checkArguments(values, 2);
+	public FieldValue evaluate(List<FieldValue> arguments){
+		checkArguments(arguments, 2);
 
-		FieldValue left = values.get(0);
-		FieldValue right = values.get(1);
+		FieldValue left = arguments.get(0);
+		FieldValue right = arguments.get(1);
 
 		Boolean result = evaluate((left).equalsValue(right));
 

@@ -52,21 +52,21 @@ public class PercentileFunction extends AbstractFunction {
 	}
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> values){
-		checkArguments(values, 2);
+	public FieldValue evaluate(List<FieldValue> arguments){
+		checkArguments(arguments, 2);
 
-		Object data = (values.get(0)).getValue();
+		Object values = (arguments.get(0)).getValue();
 
-		if(!(data instanceof Collection)){
-			throw new TypeCheckException(Collection.class, data);
+		if(!(values instanceof Collection)){
+			throw new TypeCheckException(Collection.class, values);
 		}
 
-		Integer percentile = (values.get(1)).asInteger();
+		Integer percentile = (arguments.get(1)).asInteger();
 		if(percentile < 1 || percentile > 100){
 			throw new FunctionException(getName(), "Invalid arguments");
 		}
 
-		Double result = evaluate((Collection<?>)data, percentile.intValue());
+		Double result = evaluate((Collection<?>)values, percentile.intValue());
 
 		return FieldValueUtil.create(result);
 	}

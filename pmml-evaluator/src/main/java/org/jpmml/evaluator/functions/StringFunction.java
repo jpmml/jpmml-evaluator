@@ -33,10 +33,10 @@ public class StringFunction extends AbstractFunction {
 	public String evaluate(String value);
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> values){
-		checkArguments(values, 1);
+	public FieldValue evaluate(List<FieldValue> arguments){
+		checkArguments(arguments, 1);
 
-		FieldValue value = values.get(0);
+		FieldValue value = arguments.get(0);
 
 		String result = evaluate(value.asString());
 

@@ -24,5 +24,5 @@ public interface Function {
 
 	String getName();
 
-	FieldValue evaluate(List<FieldValue> values);
+	FieldValue evaluate(List<FieldValue> arguments);
 }

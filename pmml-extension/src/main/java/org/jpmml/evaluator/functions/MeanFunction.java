@@ -48,16 +48,16 @@ public class MeanFunction extends AbstractFunction {
 	}
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> values){
-		checkArguments(values, 1);
+	public FieldValue evaluate(List<FieldValue> arguments){
+		checkArguments(arguments, 1);
 
-		Object data = (values.get(0)).getValue();
+		Object values = (arguments.get(0)).getValue();
 
-		if(!(data instanceof Collection)){
-			throw new TypeCheckException(Collection.class, data);
+		if(!(values instanceof Collection)){
+			throw new TypeCheckException(Collection.class, values);
 		}
 
-		Double result = evaluate((Collection<?>)data);
+		Double result = evaluate((Collection<?>)values);
 
 		return FieldValueUtil.create(result);
 	}

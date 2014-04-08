@@ -37,32 +37,32 @@ public class AbstractFunction implements Function {
 		setName(name);
 	}
 
-	protected void checkArguments(List<FieldValue> values, int size){
-		checkArguments(values, size, false);
+	protected void checkArguments(List<FieldValue> arguments, int size){
+		checkArguments(arguments, size, false);
 	}
 
-	protected void checkArguments(List<FieldValue> values, int size, boolean allowNulls){
+	protected void checkArguments(List<FieldValue> arguments, int size, boolean allowNulls){
 
-		if(values.size() != size){
-			throw new FunctionException(getName(), "Expected " + size + " arguments, but got " + values.size() + " arguments");
+		if(arguments.size() != size){
+			throw new FunctionException(getName(), "Expected " + size + " arguments, but got " + arguments.size() + " arguments");
 		} // End if
 
-		if(!allowNulls && values.contains(null)){
+		if(!allowNulls && arguments.contains(null)){
 			throw new FunctionException(getName(), "Missing arguments");
 		}
 	}
 
-	protected void checkVariableArguments(List<FieldValue> values, int size){
-		checkVariableArguments(values, size, false);
+	protected void checkVariableArguments(List<FieldValue> arguments, int size){
+		checkVariableArguments(arguments, size, false);
 	}
 
-	protected void checkVariableArguments(List<FieldValue> values, int size, boolean allowNulls){
+	protected void checkVariableArguments(List<FieldValue> arguments, int size, boolean allowNulls){
 
-		if(values.size() < size){
-			throw new FunctionException(getName(), "Expected " + size + " or more arguments, but got " + values.size() + " arguments");
+		if(arguments.size() < size){
+			throw new FunctionException(getName(), "Expected " + size + " or more arguments, but got " + arguments.size() + " arguments");
 		} // End if
 
-		if(!allowNulls && values.contains(null)){
+		if(!allowNulls && arguments.contains(null)){
 			throw new FunctionException(getName(), "Missing arguments");
 		}
 	}

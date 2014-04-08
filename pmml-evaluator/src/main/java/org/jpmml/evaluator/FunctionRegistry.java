@@ -29,6 +29,7 @@ import org.apache.commons.math3.stat.descriptive.summary.*;
 
 import org.dmg.pmml.*;
 
+import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import org.joda.time.*;
@@ -220,11 +221,11 @@ public class FunctionRegistry {
 		putFunction(new AbstractFunction("pow"){
 
 			@Override
-			public FieldValue evaluate(List<FieldValue> values){
-				checkArguments(values, 2);
+			public FieldValue evaluate(List<FieldValue> arguments){
+				checkArguments(arguments, 2);
 
-				FieldValue left = values.get(0);
-				FieldValue right = values.get(1);
+				FieldValue left = arguments.get(0);
+				FieldValue right = arguments.get(1);
 
 				DataType dataType = TypeUtil.getResultDataType(left.getDataType(), right.getDataType());
 
@@ -237,11 +238,11 @@ public class FunctionRegistry {
 		putFunction(new AbstractFunction("threshold"){
 
 			@Override
-			public FieldValue evaluate(List<FieldValue> values){
-				checkArguments(values, 2);
+			public FieldValue evaluate(List<FieldValue> arguments){
+				checkArguments(arguments, 2);
 
-				FieldValue left = values.get(0);
-				FieldValue right = values.get(1);
+				FieldValue left = arguments.get(0);
+				FieldValue right = arguments.get(1);
 
 				DataType dataType = TypeUtil.getResultDataType(left.getDataType(), right.getDataType());
 
@@ -397,19 +398,19 @@ public class FunctionRegistry {
 		putFunction(new AbstractFunction("if"){
 
 			@Override
-			public FieldValue evaluate(List<FieldValue> values){
+			public FieldValue evaluate(List<FieldValue> arguments){
 
-				if((values.size() < 2 || values.size() > 3)){
-					throw new FunctionException(getName(), "Expected 2 or 3 arguments, but got " + values.size() + " arguments");
+				if((arguments.size() < 2 || arguments.size() > 3)){
+					throw new FunctionException(getName(), "Expected 2 or 3 arguments, but got " + arguments.size() + " arguments");
 				}
 
-				FieldValue flag = values.get(0);
+				FieldValue flag = arguments.get(0);
 				if(flag == null){
 					throw new FunctionException(getName(), "Missing arguments");
 				} // End if
 
 				if(flag.asBoolean()){
-					FieldValue trueValue = values.get(1);
+					FieldValue trueValue = arguments.get(1);
 
 					// "The THEN part is required"
 					if(trueValue == null){
@@ -420,7 +421,7 @@ public class FunctionRegistry {
 				} else
 
 				{
-					FieldValue falseValue = (values.size() > 2 ? values.get(2) : null);
+					FieldValue falseValue = (arguments.size() > 2 ? arguments.get(2) : null);
 
 					// "The ELSE part is optional. If the ELSE part is absent then a missing value is returned"
 					if(falseValue == null){
@@ -453,13 +454,13 @@ public class FunctionRegistry {
 		putFunction(new AbstractFunction("substring"){
 
 			@Override
-			public FieldValue evaluate(List<FieldValue> values){
-				checkArguments(values, 3);
+			public FieldValue evaluate(List<FieldValue> arguments){
+				checkArguments(arguments, 3);
 
-				String string = (values.get(0)).asString();
+				String string = (arguments.get(0)).asString();
 
-				int position = (values.get(1)).asInteger();
-				int length = (values.get(2)).asInteger();
+				int position = (arguments.get(1)).asInteger();
+				int length = (arguments.get(2)).asInteger();
 
 				// "The first character of a string is located at position 1 (not position 0)"
 				if(position <= 0 || length < 0){
@@ -485,11 +486,12 @@ public class FunctionRegistry {
 		putFunction(new AbstractFunction("concat"){
 
 			@Override
-			public FieldValue evaluate(List<FieldValue> values){
-				checkVariableArguments(values, 2);
+			public FieldValue evaluate(List<FieldValue> arguments){
+				checkVariableArguments(arguments, 2);
 
 				StringBuilder sb = new StringBuilder();
 
+				Iterable<FieldValue> values = Iterables.filter(arguments, Predicates.notNull());
 				for(FieldValue value : values){
 					String string = (String)TypeUtil.cast(DataType.STRING, value.getValue());
 
@@ -505,12 +507,12 @@ public class FunctionRegistry {
 		putFunction(new AbstractFunction("replace"){
 
 			@Override
-			public FieldValue evaluate(List<FieldValue> values){
-				checkArguments(values, 3);
+			public FieldValue evaluate(List<FieldValue> arguments){
+				checkArguments(arguments, 3);
 
-				String input = (values.get(0)).asString();
-				String pattern = (values.get(1)).asString();
-				String replacement = (values.get(2)).asString();
+				String input = (arguments.get(0)).asString();
+				String pattern = (arguments.get(1)).asString();
+				String replacement = (arguments.get(2)).asString();
 
 				Matcher matcher = Pattern.compile(pattern).matcher(input);
 
@@ -523,11 +525,11 @@ public class FunctionRegistry {
 		putFunction(new AbstractFunction("matches"){
 
 			@Override
-			public FieldValue evaluate(List<FieldValue> values){
-				checkArguments(values, 2);
+			public FieldValue evaluate(List<FieldValue> arguments){
+				checkArguments(arguments, 2);
 
-				String input = (values.get(0)).asString();
-				String pattern = (values.get(1)).asString();
+				String input = (arguments.get(0)).asString();
+				String pattern = (arguments.get(1)).asString();
 
 				Matcher matcher = Pattern.compile(pattern).matcher(input);
 
@@ -543,11 +545,11 @@ public class FunctionRegistry {
 		putFunction(new AbstractFunction("formatNumber"){
 
 			@Override
-			public FieldValue evaluate(List<FieldValue> values){
-				checkArguments(values, 2);
+			public FieldValue evaluate(List<FieldValue> arguments){
+				checkArguments(arguments, 2);
 
-				FieldValue value = values.get(0);
-				FieldValue pattern = values.get(1);
+				FieldValue value = arguments.get(0);
+				FieldValue pattern = arguments.get(1);
 
 				String result;
 
@@ -566,11 +568,11 @@ public class FunctionRegistry {
 		putFunction(new AbstractFunction("formatDatetime"){
 
 			@Override
-			public FieldValue evaluate(List<FieldValue> values){
-				checkArguments(values, 2);
+			public FieldValue evaluate(List<FieldValue> arguments){
+				checkArguments(arguments, 2);
 
-				FieldValue value = values.get(0);
-				FieldValue pattern = values.get(1);
+				FieldValue value = arguments.get(0);
+				FieldValue pattern = arguments.get(1);
 
 				String result;
 
@@ -610,12 +612,12 @@ public class FunctionRegistry {
 		putFunction(new AbstractFunction("dateDaysSinceYear"){
 
 			@Override
-			public FieldValue evaluate(List<FieldValue> values){
-				checkArguments(values, 2);
+			public FieldValue evaluate(List<FieldValue> arguments){
+				checkArguments(arguments, 2);
 
-				LocalDate instant = (values.get(0)).asLocalDate();
+				LocalDate instant = (arguments.get(0)).asLocalDate();
 
-				int year = (values.get(1)).asInteger();
+				int year = (arguments.get(1)).asInteger();
 
 				DaysSinceDate period = new DaysSinceDate(year, instant);
 
@@ -626,10 +628,10 @@ public class FunctionRegistry {
 		putFunction(new AbstractFunction("dateSecondsSinceMidnight"){
 
 			@Override
-			public FieldValue evaluate(List<FieldValue> values){
-				checkArguments(values, 1);
+			public FieldValue evaluate(List<FieldValue> arguments){
+				checkArguments(arguments, 1);
 
-				LocalTime instant = (values.get(0)).asLocalTime();
+				LocalTime instant = (arguments.get(0)).asLocalTime();
 
 				Seconds seconds = Seconds.seconds(instant.getHourOfDay() * 60 * 60 + instant.getMinuteOfHour() * 60 + instant.getSecondOfMinute());
 
@@ -642,12 +644,12 @@ public class FunctionRegistry {
 		putFunction(new AbstractFunction("dateSecondsSinceYear"){
 
 			@Override
-			public FieldValue evaluate(List<FieldValue> values){
-				checkArguments(values, 2);
+			public FieldValue evaluate(List<FieldValue> arguments){
+				checkArguments(arguments, 2);
 
-				LocalDateTime instant = (values.get(0)).asLocalDateTime();
+				LocalDateTime instant = (arguments.get(0)).asLocalDateTime();
 
-				int year = (values.get(1)).asInteger();
+				int year = (arguments.get(1)).asInteger();
 
 				SecondsSinceDate period = new SecondsSinceDate(year, instant);
 

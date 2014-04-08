@@ -49,28 +49,28 @@ public class StandardDeviationFunction extends AbstractFunction {
 	}
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> values){
+	public FieldValue evaluate(List<FieldValue> arguments){
 
-		if(values.size() < 1 || values.size() > 2){
-			throw new FunctionException(getName(), "Expected 1 or 2 arguments, but got " + values.size() + " arguments");
+		if(arguments.size() < 1 || arguments.size() > 2){
+			throw new FunctionException(getName(), "Expected 1 or 2 arguments, but got " + arguments.size() + " arguments");
 		} // End if
 
-		if(values.contains(null)){
+		if(arguments.contains(null)){
 			throw new FunctionException(getName(), "Missing arguments");
 		}
 
-		Object data = (values.get(0)).getValue();
+		Object values = (arguments.get(0)).getValue();
 
-		if(!(data instanceof Collection)){
-			throw new TypeCheckException(Collection.class, data);
+		if(!(values instanceof Collection)){
+			throw new TypeCheckException(Collection.class, values);
 		}
 
 		Boolean biasCorrected = Boolean.FALSE;
-		if(values.size() > 1){
-			biasCorrected = (values.get(1)).asBoolean();
+		if(arguments.size() > 1){
+			biasCorrected = (arguments.get(1)).asBoolean();
 		}
 
-		Double result = evaluate((Collection<?>)data, biasCorrected);
+		Double result = evaluate((Collection<?>)values, biasCorrected);
 
 		return FieldValueUtil.create(result);
 	}

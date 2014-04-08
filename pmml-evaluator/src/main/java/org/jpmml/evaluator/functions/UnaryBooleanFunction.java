@@ -33,10 +33,10 @@ public class UnaryBooleanFunction extends AbstractFunction {
 	public Boolean evaluate(Boolean value);
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> values){
-		checkArguments(values, 1);
+	public FieldValue evaluate(List<FieldValue> arguments){
+		checkArguments(arguments, 1);
 
-		FieldValue value = values.get(0);
+		FieldValue value = arguments.get(0);
 
 		Boolean result = evaluate(value.asBoolean());
 

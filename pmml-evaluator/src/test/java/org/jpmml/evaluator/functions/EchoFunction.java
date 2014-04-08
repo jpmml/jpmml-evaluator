@@ -29,9 +29,9 @@ public class EchoFunction extends AbstractFunction {
 	}
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> values){
-		checkArguments(values, 1);
+	public FieldValue evaluate(List<FieldValue> arguments){
+		checkArguments(arguments, 1);
 
-		return values.get(0);
+		return arguments.get(0);
 	}
 }

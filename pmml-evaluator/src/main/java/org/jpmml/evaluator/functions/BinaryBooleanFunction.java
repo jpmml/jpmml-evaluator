@@ -33,13 +33,13 @@ public class BinaryBooleanFunction extends AbstractFunction {
 	public Boolean evaluate(Boolean left, Boolean right);
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> values){
-		checkVariableArguments(values, 2);
+	public FieldValue evaluate(List<FieldValue> arguments){
+		checkVariableArguments(arguments, 2);
 
-		Boolean result = (values.get(0)).asBoolean();
+		Boolean result = (arguments.get(0)).asBoolean();
 
-		for(int i = 1; i < values.size(); i++){
-			result = evaluate(result, (values.get(i)).asBoolean());
+		for(int i = 1; i < arguments.size(); i++){
+			result = evaluate(result, (arguments.get(i)).asBoolean());
 		}
 
 		return FieldValueUtil.create(result);

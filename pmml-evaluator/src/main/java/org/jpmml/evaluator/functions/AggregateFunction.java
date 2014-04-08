@@ -23,6 +23,9 @@ import java.util.*;
 import org.jpmml.evaluator.*;
 import org.jpmml.evaluator.FieldValue;
 
+import com.google.common.base.*;
+import com.google.common.collect.*;
+
 import org.apache.commons.math3.stat.descriptive.*;
 
 import org.dmg.pmml.*;
@@ -42,18 +45,14 @@ public class AggregateFunction extends AbstractFunction {
 	}
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> values){
+	public FieldValue evaluate(List<FieldValue> arguments){
 		StorelessUnivariateStatistic statistic = createStatistic();
 
 		DataType dataType = null;
 
+		// "Missing values in the input to an aggregate function are simply ignored"
+		Iterable<FieldValue> values = Iterables.filter(arguments, Predicates.notNull());
 		for(FieldValue value : values){
-
-			// "Missing values in the input to an aggregate function are simply ignored"
-			if(value == null){
-				continue;
-			}
-
 			statistic.increment((value.asNumber()).doubleValue());
 
 			if(dataType != null){
