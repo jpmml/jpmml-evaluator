@@ -39,6 +39,7 @@
 	<modules>
 		<module>pmml-evaluator</module>
 		<module>pmml-evaluator-example</module>
+		<module>pmml-extension</module>
 		<module>pmml-knime</module>
 		<module>pmml-manager</module>
 		<module>pmml-rapidminer</module>
@@ -80,6 +81,18 @@
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>16.0.1</version>
+			</dependency>
+
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>2.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-math3</artifactId>
+				<version>3.2</version>
 			</dependency>
 
 			<dependency>

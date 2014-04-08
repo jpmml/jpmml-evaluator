@@ -9,11 +9,10 @@
 	</parent>
 
 	<groupId>org.jpmml</groupId>
-	<artifactId>pmml-evaluator</artifactId>
-	<packaging>jar</packaging>
+	<artifactId>pmml-extension</artifactId>
 
-	<name>JPMML evaluator</name>
-	<description>JPMML class model evaluator</description>
+	<name>JPMML extension</name>
+	<description>JPMML class model evaluator extensions</description>
 
 	<licenses>
 		<license>
@@ -26,17 +25,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-manager</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
+			<artifactId>pmml-evaluator</artifactId>
 		</dependency>
 
 		<dependency>
@@ -52,17 +41,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.14.1</version>
