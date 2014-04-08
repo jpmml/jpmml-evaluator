@@ -43,18 +43,19 @@ public class StandardDeviationFunctionTest {
 
 	static
 	private Number evaluate(List<Double> values){
-		return evaluate(FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, values)).asNumber();
-	}
-
-	static
-	private Number evaluate(List<Double> values, Boolean flag){
-		return evaluate(FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, values), FieldValueUtil.create(flag)).asNumber();
-	}
-
-	static
-	private FieldValue evaluate(FieldValue... values){
 		Function standardDeviation = new StandardDeviationFunction();
 
-		return standardDeviation.evaluate(Arrays.asList(values));
+		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, values));
+
+		return (standardDeviation.evaluate(arguments)).asNumber();
+	}
+
+	static
+	private Number evaluate(List<Double> values, boolean flag){
+		Function standardDeviation = new StandardDeviationFunction();
+
+		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, values), FieldValueUtil.create(flag));
+
+		return (standardDeviation.evaluate(arguments)).asNumber();
 	}
 }

@@ -23,7 +23,10 @@ import java.util.*;
 import org.jpmml.evaluator.*;
 import org.jpmml.evaluator.FieldValue;
 
-import org.apache.commons.math3.stat.descriptive.moment.*;
+import com.google.common.collect.*;
+import com.google.common.primitives.*;
+
+import org.apache.commons.math3.stat.descriptive.rank.*;
 
 import org.dmg.pmml.*;
 
@@ -32,32 +35,25 @@ import org.dmg.pmml.*;
  * <pre>
  *   &lt;DefineFunction name="..." dataType="double"&gt;
  *     &lt;ParameterField name="values" dataType="collection of numbers"/&gt;
- *     &lt;ParameterField name="biasCorrected" dataType="boolean"/&gt; &lt;!-- Optional; defaults to false --&gt;
+ *     &lt;ParameterField name="percentile" dataType="integer"/&gt; &lt;-- 0 &lt; percentile &lt;= 100 --&gt;
  *   &lt;/DefineFunction&gt;
  * </pre>
  *
- * @see StandardDeviation
+ * @see Percentile
  */
-public class StandardDeviationFunction extends AbstractFunction {
+public class PercentileFunction extends AbstractFunction {
 
-	public StandardDeviationFunction(){
-		this(StandardDeviationFunction.class.getName());
+	public PercentileFunction(){
+		this(PercentileFunction.class.getName());
 	}
 
-	public StandardDeviationFunction(String name){
+	public PercentileFunction(String name){
 		super(name);
 	}
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> values){
-
-		if(values.size() < 1 || values.size() > 2){
-			throw new FunctionException(getName(), "Expected 1 or 2 arguments, but got " + values.size() + " arguments");
-		} // End if
-
-		if(values.contains(null)){
-			throw new FunctionException(getName(), "Missing arguments");
-		}
+		checkArguments(values, 2);
 
 		Object data = (values.get(0)).getValue();
 
@@ -65,27 +61,34 @@ public class StandardDeviationFunction extends AbstractFunction {
 			throw new TypeCheckException(Collection.class, data);
 		}
 
-		Boolean biasCorrected = Boolean.FALSE;
-		if(values.size() > 1){
-			biasCorrected = (values.get(1)).asBoolean();
+		Integer percentile = (values.get(1)).asInteger();
+		if(percentile < 1 || percentile > 100){
+			throw new FunctionException(getName(), "Invalid arguments");
 		}
 
-		Double result = evaluate((Collection<?>)data, biasCorrected);
+		Double result = evaluate((Collection<?>)data, percentile.intValue());
 
 		return FieldValueUtil.create(result);
 	}
 
 	static
-	private Double evaluate(Collection<?> values, boolean biasCorrected){
-		StandardDeviation statistic = new StandardDeviation();
-		statistic.setBiasCorrected(biasCorrected);
+	private Double evaluate(Collection<?> values, int quantile){
+		List<Double> doubleValues = Lists.newArrayList();
 
 		for(Object value : values){
 			Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
 
-			statistic.increment(doubleValue);
+			doubleValues.add(doubleValue);
 		}
 
-		return statistic.getResult();
+		double[] data = Doubles.toArray(doubleValues);
+
+		// The data must be (at least partially) ordered
+		Arrays.sort(data);
+
+		Percentile percentile = new Percentile();
+		percentile.setData(data);
+
+		return percentile.evaluate(quantile);
 	}
 }
