@@ -26,9 +26,9 @@ import javax.xml.transform.*;
 import org.jpmml.manager.*;
 import org.jpmml.model.*;
 
-import org.dmg.pmml.*;
-
 import com.google.common.collect.*;
+
+import org.dmg.pmml.*;
 
 import org.xml.sax.*;
 
@@ -42,6 +42,11 @@ public class BatchUtil {
 	 */
 	static
 	public boolean evaluate(Batch batch) throws Exception {
+		return evaluate(batch, BatchUtil.precision, BatchUtil.zeroThreshold);
+	}
+
+	static
+	public boolean evaluate(Batch batch, double precision, double zeroThreshold) throws Exception {
 		InputStream is = batch.getModel();
 
 		Source source = ImportFilter.apply(new InputSource(is));
@@ -125,7 +130,7 @@ public class BatchUtil {
 
 					Object targetValue = EvaluatorUtil.decode(result.get(targetField));
 
-					success &= acceptable(outputCell, targetValue);
+					success &= acceptable(outputCell, targetValue, precision, zeroThreshold);
 				}
 
 				for(FieldName outputField : outputFields){
@@ -136,7 +141,7 @@ public class BatchUtil {
 
 					Object outputValue = result.get(outputField);
 
-					success &= (outputCell != null ? acceptable(outputCell, outputValue) : acceptable(outputValue));
+					success &= (outputCell != null ? acceptable(outputCell, outputValue, precision, zeroThreshold) : acceptable(outputValue));
 				}
 			}
 
@@ -150,8 +155,8 @@ public class BatchUtil {
 	}
 
 	static
-	private boolean acceptable(String expected, Object actual){
-		return VerificationUtil.acceptable(TypeUtil.parse(TypeUtil.getDataType(actual), expected), actual, BatchUtil.precision, BatchUtil.zeroThreshold);
+	private boolean acceptable(String expected, Object actual, double precision, double zeroThreshold){
+		return VerificationUtil.acceptable(TypeUtil.parse(TypeUtil.getDataType(actual), expected), actual, precision, zeroThreshold);
 	}
 
 	// One part per million parts
