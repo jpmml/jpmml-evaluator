@@ -113,7 +113,7 @@ public class EvaluatorUtil {
 	}
 
 	static
-	public <K> List<Map<K, Object>> groupRows(K groupKey, List<Map<K, Object>> table){
+	public <K> List<Map<K, Object>> groupRows(K groupKey, List<? extends Map<K, ?>> table){
 		Map<Object, ListMultimap<K, Object>> groupedRows = Maps.newLinkedHashMap();
 
 		for(int i = 0; i < table.size(); i++){

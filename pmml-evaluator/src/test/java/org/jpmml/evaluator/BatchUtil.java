@@ -70,37 +70,39 @@ public class BatchUtil {
 
 		Evaluator evaluator = (Evaluator)modelManager;
 
-		List<Map<FieldName, Object>> table = Lists.newArrayList();
-
 		List<FieldName> activeFields = evaluator.getActiveFields();
 		List<FieldName> groupFields = evaluator.getGroupFields();
 
 		List<FieldName> argumentFields = Lists.newArrayList(Iterables.concat(activeFields, groupFields));
 
-		for(int i = 0; i < input.size(); i++){
-			Map<FieldName, String> inputRow = input.get(i);
-
-			Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
-
-			for(FieldName argumentField : argumentFields){
-				String inputCell = inputRow.get(argumentField);
-
-				Object inputValue = evaluator.prepare(argumentField, inputCell);
-
-				arguments.put(argumentField, inputValue);
-			}
-
-			table.add(arguments);
-		}
+		List<? extends Map<FieldName, ?>> tableInput = input;
 
 		if(groupFields.size() == 1){
 			FieldName groupField = groupFields.get(0);
 
-			table = EvaluatorUtil.groupRows(groupField, table);
+			tableInput = EvaluatorUtil.groupRows(groupField, input);
 		} else
 
 		if(groupFields.size() > 1){
 			throw new EvaluationException();
+		}
+
+		List<Map<FieldName, FieldValue>> table = Lists.newArrayList();
+
+		for(int i = 0; i < tableInput.size(); i++){
+			Map<FieldName, ?> inputRow = tableInput.get(i);
+
+			Map<FieldName, FieldValue> arguments = Maps.newLinkedHashMap();
+
+			for(FieldName argumentField : argumentFields){
+				Object inputCell = inputRow.get(argumentField);
+
+				FieldValue value = EvaluatorUtil.prepare(evaluator, argumentField, inputCell);
+
+				arguments.put(argumentField, value);
+			}
+
+			table.add(arguments);
 		}
 
 		List<FieldName> targetFields = evaluator.getTargetFields();

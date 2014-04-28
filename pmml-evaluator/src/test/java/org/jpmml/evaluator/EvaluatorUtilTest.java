@@ -20,11 +20,11 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
+import com.google.common.collect.*;
+
 import org.dmg.pmml.*;
 
 import org.junit.*;
-
-import com.google.common.collect.*;
 
 import static org.junit.Assert.*;
 
@@ -44,6 +44,25 @@ public class EvaluatorUtilTest {
 
 		assertEquals(Arrays.asList("value"), EvaluatorUtil.decode(Arrays.asList(value)));
 		assertEquals(Arrays.asList("value", "value"), EvaluatorUtil.decode(Arrays.asList(value, value)));
+	}
+
+	@Test
+	public void prepare() throws Exception {
+		PMML pmml = PMMLTest.loadPMML(AssociationAlgorithmTest.class);
+
+		Evaluator evaluator = new AssociationModelEvaluator(pmml);
+
+		FieldValue simple = EvaluatorUtil.prepare(evaluator, new FieldName("item"), "Cracker");
+
+		assertEquals("Cracker", simple.getValue());
+		assertEquals(DataType.STRING, simple.getDataType());
+		assertEquals(OpType.CATEGORICAL, simple.getOpType());
+
+		FieldValue collection = EvaluatorUtil.prepare(evaluator, new FieldName("item"), Arrays.asList("Cracker", "Water", "Coke"));
+
+		assertEquals(Arrays.asList("Cracker", "Water", "Coke"), collection.getValue());
+		assertEquals(DataType.STRING, collection.getDataType());
+		assertEquals(OpType.CATEGORICAL, collection.getOpType());
 	}
 
 	@Test
