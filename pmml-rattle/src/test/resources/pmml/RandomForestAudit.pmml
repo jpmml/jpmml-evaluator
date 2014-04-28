@@ -3,7 +3,7 @@
  <Header copyright="Copyright (c) 2014 Vfed" description="Random Forest Tree Model">
   <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-04-28 17:41:12</Timestamp>
+  <Timestamp>2014-04-28 19:33:01</Timestamp>
  </Header>
  <DataDictionary numberOfFields="9">
   <DataField name="Adjusted" optype="categorical" dataType="string">

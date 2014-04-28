@@ -8,7 +8,7 @@ numericIrisData = irisData[, c("Sepal.Length", "Sepal.Width", "Petal.Length", "P
 
 writeIris = function(clusters, file){
 	result = data.frame(clusters)
-	names(result) = c("Cluster")
+	names(result) = c("predictedValue")
 
 	writeCsv(result, file)
 }
@@ -27,7 +27,7 @@ generateKMeansIris = function(){
 
 	kmeans = kmeans(numericIrisData, 3)
 	saveXML(pmml(kmeans), "pmml/KMeansIris.pmml")
-
+	
 	clusters = predict(kmeans, numericIrisData)
 	writeIris(clusters, "csv/KMeansIris.csv")
 }

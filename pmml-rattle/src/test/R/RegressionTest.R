@@ -8,8 +8,8 @@ ozoneFormula = formula(O3 ~ temp + ibh + ibt)
 ozoneGlmFormula = formula(O3 ~ temp * ibh * ibt)
 
 writeOzone = function(values, file){
-	result = data.frame(values)
-	names(result) = c("O3")
+	result = data.frame(values, values)
+	names(result) = c("O3", "Predicted_O3")
 
 	writeCsv(result, file)
 }

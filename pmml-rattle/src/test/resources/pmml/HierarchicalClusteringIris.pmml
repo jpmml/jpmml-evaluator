@@ -3,7 +3,7 @@
  <Header copyright="Copyright (c) 2014 Vfed" description="Hierarchical cluster model">
   <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-04-28 17:16:23</Timestamp>
+  <Timestamp>2014-04-28 19:28:14</Timestamp>
  </Header>
  <DataDictionary numberOfFields="4">
   <DataField name="Sepal.Length" optype="continuous" dataType="double"/>

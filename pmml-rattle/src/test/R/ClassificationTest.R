@@ -13,13 +13,13 @@ writeIris = function(classes, probabilities, file){
 	result = NULL
 
 	if(is.null(probabilities)){
-		result = data.frame(classes)
-		names(result) = c("Species")
+		result = data.frame(classes, classes)
+		names(result) = c("Species", "Predicted_Species")
 	} else
 
 	{
-		result = data.frame(classes, probabilities)
-		names(result) = c("Species", "Probability_setosa", "Probability_versicolor", "Probability_virginica")
+		result = data.frame(classes, classes, probabilities)
+		names(result) = c("Species", "Predicted_Species", "Probability_setosa", "Probability_versicolor", "Probability_virginica")
 	}
 
 	writeCsv(result, file)
@@ -96,8 +96,8 @@ versicolorData = cbind(irisData[, 1:4], versicolor)
 versicolorFormula = formula(versicolor ~ .)
 
 writeVersicolor = function(classes, probabilities, file){
-	result = data.frame(classes, probabilities)
-	names(result) = c("versicolor", "Probability_1")
+	result = data.frame(classes, classes, probabilities)
+	names(result) = c("versicolor", "Predicted_versicolor", "Probability_1")
 
 	writeCsv(result, file)
 }
@@ -125,13 +125,13 @@ writeAudit = function(classes, probabilities, file){
 	result = NULL
 
 	if(is.null(probabilities)){
-		result = data.frame(classes)
-		names(result) = c("Adjusted")
+		result = data.frame(classes, classes)
+		names(result) = c("Adjusted", "Predicted_Adjusted")
 	} else
 
 	{
-		result = data.frame(classes, probabilities)
-		names(result) = c("Adjusted", "Probability_0", "Probability_1")
+		result = data.frame(classes, classes, probabilities)
+		names(result) = c("Adjusted", "Predicted_Adjusted", "Probability_0", "Probability_1")
 	}
 
 	writeCsv(result, file)
@@ -166,7 +166,7 @@ generateNaiveBayesAudit = function(){
 }
 
 generateNeuralNetworkAudit = function(){
-	set.seed(42)
+	set.seed(41)
 
 	nnet = nnet(auditFormula, auditData, size = 9, decay = 1e-3, maxit = 10000)
 	saveXML(pmml(nnet), "pmml/NeuralNetworkAudit.pmml")

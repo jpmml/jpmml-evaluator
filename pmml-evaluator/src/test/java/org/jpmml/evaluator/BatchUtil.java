@@ -142,11 +142,14 @@ public class BatchUtil {
 
 				Map<FieldName, ?> arguments = table.get(i);
 
-				Map<FieldName, ?> result = Maps.newLinkedHashMap(evaluator.evaluate(arguments));
+				Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-				// Only deal with changed fields, not added/removed fields
-				(outputRow.keySet()).retainAll(resultFields);
-				(result.keySet()).retainAll(outputRow.keySet());
+				// Delete the synthetic target field
+				if(targetFields.size() == 0){
+					result = Maps.newLinkedHashMap(result);
+
+					result.remove(evaluator.getTargetField());
+				}
 
 				MapDifference<FieldName, Object> difference = Maps.<FieldName, Object>difference(outputRow, result, equivalence);
 				if(!difference.areEqual()){
