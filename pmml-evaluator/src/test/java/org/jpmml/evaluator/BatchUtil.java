@@ -26,6 +26,7 @@ import javax.xml.transform.*;
 import org.jpmml.manager.*;
 import org.jpmml.model.*;
 
+import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import org.dmg.pmml.*;
@@ -47,6 +48,13 @@ public class BatchUtil {
 
 	static
 	public boolean evaluate(Batch batch, double precision, double zeroThreshold) throws Exception {
+		List<MapDifference<FieldName, ?>> differences = difference(batch, precision, zeroThreshold);
+
+		return Iterables.isEmpty(differences);
+	}
+
+	static
+	public List<MapDifference<FieldName, ?>> difference(Batch batch, final double precision, final double zeroThreshold) throws Exception {
 		InputStream is = batch.getModel();
 
 		Source source = ImportFilter.apply(new InputSource(is));
@@ -66,25 +74,20 @@ public class BatchUtil {
 
 		List<FieldName> activeFields = evaluator.getActiveFields();
 		List<FieldName> groupFields = evaluator.getGroupFields();
-		List<FieldName> targetFields = evaluator.getTargetFields();
 
-		List<FieldName> outputFields = evaluator.getOutputFields();
-
-		List<FieldName> inputFields = Lists.newArrayList();
-		inputFields.addAll(activeFields);
-		inputFields.addAll(groupFields);
+		List<FieldName> argumentFields = Lists.newArrayList(Iterables.concat(activeFields, groupFields));
 
 		for(int i = 0; i < input.size(); i++){
 			Map<FieldName, String> inputRow = input.get(i);
 
 			Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
 
-			for(FieldName inputField : inputFields){
-				String inputCell = inputRow.get(inputField);
+			for(FieldName argumentField : argumentFields){
+				String inputCell = inputRow.get(argumentField);
 
-				Object inputValue = evaluator.prepare(inputField, inputCell);
+				Object inputValue = evaluator.prepare(argumentField, inputCell);
 
-				arguments.put(inputField, inputValue);
+				arguments.put(argumentField, inputValue);
 			}
 
 			table.add(arguments);
@@ -98,65 +101,69 @@ public class BatchUtil {
 
 		if(groupFields.size() > 1){
 			throw new EvaluationException();
-		} // End if
+		}
 
-		if(output.isEmpty()){
+		List<FieldName> targetFields = evaluator.getTargetFields();
+		List<FieldName> outputFields = evaluator.getOutputFields();
 
-			for(int i = 0; i < table.size(); i++){
-				Map<FieldName, ?> arguments = table.get(i);
+		List<FieldName> resultFields = Lists.newArrayList(Iterables.concat(targetFields, outputFields));
 
-				evaluator.evaluate(arguments);
+		Equivalence<Object> equivalence = new Equivalence<Object>(){
+
+			@Override
+			public boolean doEquivalent(Object expected, Object actual){
+				actual = EvaluatorUtil.decode(actual);
+
+				if("NA".equals(expected) || "N/A".equals(expected)){
+					return true;
+				}
+
+				return VerificationUtil.acceptable(TypeUtil.parseOrCast(TypeUtil.getDataType(actual), expected), actual, precision, zeroThreshold);
 			}
 
-			return true;
-		} else
+			@Override
+			public int doHash(Object object){
+				return object.hashCode();
+			}
+		};
 
-		{
+		if(output.size() > 0){
+
 			if(table.size() != output.size()){
 				throw new EvaluationException();
 			}
 
-			boolean success = true;
+			List<MapDifference<FieldName, ?>> differences = Lists.newArrayList();
 
 			for(int i = 0; i < output.size(); i++){
 				Map<FieldName, String> outputRow = output.get(i);
 
 				Map<FieldName, ?> arguments = table.get(i);
 
-				Map<FieldName, ?> result = evaluator.evaluate(arguments);
+				Map<FieldName, ?> result = Maps.newLinkedHashMap(evaluator.evaluate(arguments));
 
-				for(FieldName targetField : targetFields){
-					String outputCell = outputRow.get(targetField);
+				// Only deal with changed fields, not added/removed fields
+				(outputRow.keySet()).retainAll(resultFields);
+				(result.keySet()).retainAll(outputRow.keySet());
 
-					Object targetValue = EvaluatorUtil.decode(result.get(targetField));
-
-					success &= acceptable(outputCell, targetValue, precision, zeroThreshold);
-				}
-
-				for(FieldName outputField : outputFields){
-					String outputCell = outputRow.get(outputField);
-					if("NA".equals(outputCell) || "N/A".equals(outputCell)){
-						continue;
-					}
-
-					Object outputValue = result.get(outputField);
-
-					success &= (outputCell != null ? acceptable(outputCell, outputValue, precision, zeroThreshold) : acceptable(outputValue));
+				MapDifference<FieldName, Object> difference = Maps.<FieldName, Object>difference(outputRow, result, equivalence);
+				if(!difference.areEqual()){
+					differences.add(difference);
 				}
 			}
 
-			return success;
+			return differences;
+		} else
+
+		{
+			for(int i = 0; i < table.size(); i++){
+				Map<FieldName, ?> arguments = table.get(i);
+
+				evaluator.evaluate(arguments);
+			}
+
+			return Collections.emptyList();
 		}
-	}
-
-	static
-	private boolean acceptable(Object actual){
-		return (actual != null);
-	}
-
-	static
-	private boolean acceptable(String expected, Object actual, double precision, double zeroThreshold){
-		return VerificationUtil.acceptable(TypeUtil.parse(TypeUtil.getDataType(actual), expected), actual, precision, zeroThreshold);
 	}
 
 	// One part per million parts
