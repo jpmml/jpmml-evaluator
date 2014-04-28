@@ -3,7 +3,7 @@
  <Header copyright="Copyright (c) 2014 Vfed" description="NaiveBayes Model">
   <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-03-03 14:23:34</Timestamp>
+  <Timestamp>2014-04-28 17:41:05</Timestamp>
  </Header>
  <DataDictionary numberOfFields="6">
   <DataField name="Species" optype="categorical" dataType="string">

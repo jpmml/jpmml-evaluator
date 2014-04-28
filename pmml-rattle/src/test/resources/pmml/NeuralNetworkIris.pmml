@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
- <Header copyright="Copyright (c) 2013 Vfed" description="Neural Network PMML Model">
+ <Header copyright="Copyright (c) 2014 Vfed" description="Neural Network PMML Model">
   <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
-  <Application name="Rattle/PMML" version="1.3"/>
-  <Timestamp>2013-09-16 11:35:32</Timestamp>
+  <Application name="Rattle/PMML" version="1.4"/>
+  <Timestamp>2014-04-28 17:41:06</Timestamp>
  </Header>
  <DataDictionary numberOfFields="5">
   <DataField name="Species" optype="categorical" dataType="string">
@@ -29,8 +29,6 @@
    <OutputField name="Probability_setosa" optype="continuous" dataType="double" feature="probability" value="setosa"/>
    <OutputField name="Probability_versicolor" optype="continuous" dataType="double" feature="probability" value="versicolor"/>
    <OutputField name="Probability_virginica" optype="continuous" dataType="double" feature="probability" value="virginica"/>
-   <!-- Custom OutputField element -->
-   <OutputField name="Entity_Id" optype="categorical" dataType="string" feature="entityId"/>
   </Output>
   <NeuralInputs numberOfInputs="4">
    <NeuralInput id="1">
@@ -55,58 +53,58 @@
    </NeuralInput>
   </NeuralInputs>
   <NeuralLayer numberOfNeurons="5">
-   <Neuron id="5" bias="0.110231952951953">
-    <Con from="1" weight="-0.0601548979473931"/>
-    <Con from="2" weight="-0.15923781047243"/>
-    <Con from="3" weight="0.228446952207315"/>
-    <Con from="4" weight="0.433535145998956"/>
+   <Neuron id="5" bias="-2.49482733866479">
+    <Con from="1" weight="-3.81206334662198"/>
+    <Con from="2" weight="-13.037941249663"/>
+    <Con from="3" weight="22.9904140425803"/>
+    <Con from="4" weight="11.3368764313573"/>
    </Neuron>
-   <Neuron id="6" bias="-8.65921256784478">
-    <Con from="1" weight="-39.5621987798544"/>
-    <Con from="2" weight="-28.6386609848259"/>
-    <Con from="3" weight="-10.9510391930044"/>
-    <Con from="4" weight="-0.995116919611773"/>
+   <Neuron id="6" bias="-27.7017993139514">
+    <Con from="1" weight="22.2325239788093"/>
+    <Con from="2" weight="38.9296576183869"/>
+    <Con from="3" weight="-69.9307834401239"/>
+    <Con from="4" weight="84.2380389869616"/>
    </Neuron>
-   <Neuron id="7" bias="8.75723361477088">
-    <Con from="1" weight="5.26750258503405"/>
-    <Con from="2" weight="32.0667065168616"/>
-    <Con from="3" weight="-68.6970926643088"/>
-    <Con from="4" weight="-37.9530721762683"/>
+   <Neuron id="7" bias="2.04527723340199">
+    <Con from="1" weight="4.37677915968635"/>
+    <Con from="2" weight="11.0829860910075"/>
+    <Con from="3" weight="-15.5439772629228"/>
+    <Con from="4" weight="-6.42400475858802"/>
    </Neuron>
-   <Neuron id="8" bias="-5.43987307317041">
-    <Con from="1" weight="-27.6429240543072"/>
-    <Con from="2" weight="-28.0891390264621"/>
-    <Con from="3" weight="13.6945654148948"/>
-    <Con from="4" weight="6.76494354195898"/>
+   <Neuron id="8" bias="1.96931568539177">
+    <Con from="1" weight="6.47631909381421"/>
+    <Con from="2" weight="3.90699477544692"/>
+    <Con from="3" weight="-0.186905181733931"/>
+    <Con from="4" weight="-0.74685654418449"/>
    </Neuron>
-   <Neuron id="9" bias="5.80179350204676">
-    <Con from="1" weight="-10.5461307056445"/>
-    <Con from="2" weight="8.16550441151119"/>
-    <Con from="3" weight="-70.3916395494701"/>
-    <Con from="4" weight="-40.8112634082117"/>
+   <Neuron id="9" bias="403.191994436217">
+    <Con from="1" weight="64.6242866677979"/>
+    <Con from="2" weight="74.8921764031754"/>
+    <Con from="3" weight="-159.835042441076"/>
+    <Con from="4" weight="-142.540845849213"/>
    </Neuron>
   </NeuralLayer>
   <NeuralLayer numberOfNeurons="3" activationFunction="identity" normalizationMethod="softmax">
-   <Neuron id="10" bias="-12.6334630673911">
-    <Con from="5" weight="-109.125776037633"/>
-    <Con from="6" weight="73.6499588460061"/>
-    <Con from="7" weight="119.389733711221"/>
-    <Con from="8" weight="-58.8562718637115"/>
-    <Con from="9" weight="46.9956867502835"/>
+   <Neuron id="10" bias="4.07568102553335">
+    <Con from="5" weight="-32.3177251224428"/>
+    <Con from="6" weight="-13.9063005688168"/>
+    <Con from="7" weight="14.8952377801536"/>
+    <Con from="8" weight="-1.42935555177692"/>
+    <Con from="9" weight="37.1607059281498"/>
    </Neuron>
-   <Neuron id="11" bias="92.1293318636342">
-    <Con from="5" weight="-58.789782375863"/>
-    <Con from="6" weight="-71.6321358024494"/>
-    <Con from="7" weight="-97.3529172450188"/>
-    <Con from="8" weight="116.827592668623"/>
-    <Con from="9" weight="-15.1499205722129"/>
+   <Neuron id="11" bias="-5.66246384611058">
+    <Con from="5" weight="23.8415027489604"/>
+    <Con from="6" weight="-1.14733627158001"/>
+    <Con from="7" weight="-4.67597893808071"/>
+    <Con from="8" weight="-4.008437969559"/>
+    <Con from="9" weight="42.2335569514385"/>
    </Neuron>
-   <Neuron id="12" bias="-79.112626139916">
-    <Con from="5" weight="167.675998212245"/>
-    <Con from="6" weight="-1.57188244486325"/>
-    <Con from="7" weight="-22.6435487773874"/>
-    <Con from="8" weight="-57.1047455404037"/>
-    <Con from="9" weight="-32.0114216349617"/>
+   <Neuron id="12" bias="1.63287907836709">
+    <Con from="5" weight="8.73510079429136"/>
+    <Con from="6" weight="16.037397945636"/>
+    <Con from="7" weight="-11.1565907517032"/>
+    <Con from="8" weight="6.28436221661403"/>
+    <Con from="9" weight="-80.3989577631249"/>
    </Neuron>
   </NeuralLayer>
   <NeuralOutputs numberOfOutputs="3">

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
- <Header copyright="Copyright (c) 2013 Vfed" description="Linear Regression Model">
+ <Header copyright="Copyright (c) 2014 Vfed" description="Linear Regression Model">
   <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
-  <Application name="Rattle/PMML" version="1.3"/>
-  <Timestamp>2013-09-16 10:58:41</Timestamp>
+  <Application name="Rattle/PMML" version="1.4"/>
+  <Timestamp>2014-04-28 17:49:17</Timestamp>
  </Header>
  <DataDictionary numberOfFields="4">
   <DataField name="O3" optype="continuous" dataType="double"/>
@@ -11,7 +11,7 @@
   <DataField name="ibh" optype="continuous" dataType="double"/>
   <DataField name="ibt" optype="continuous" dataType="double"/>
  </DataDictionary>
- <RegressionModel modelName="Linear_Regression_Model" functionName="regression" algorithmName="least squares" targetFieldName="O3">
+ <RegressionModel modelName="Linear_Regression_Model" functionName="regression" algorithmName="least squares">
   <MiningSchema>
    <MiningField name="O3" usageType="predicted"/>
    <MiningField name="temp" usageType="active"/>

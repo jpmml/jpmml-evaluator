@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
- <Header copyright="Copyright (c) 2013 Vfed" description="KMeans cluster model">
+ <Header copyright="Copyright (c) 2014 Vfed" description="KMeans cluster model">
   <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
-  <Application name="Rattle/PMML" version="1.3"/>
-  <Timestamp>2013-09-16 10:38:36</Timestamp>
+  <Application name="Rattle/PMML" version="1.4"/>
+  <Timestamp>2014-04-28 17:16:23</Timestamp>
  </Header>
  <DataDictionary numberOfFields="4">
   <DataField name="Sepal.Length" optype="continuous" dataType="double"/>
@@ -13,18 +13,16 @@
  </DataDictionary>
  <ClusteringModel modelName="KMeans_Model" functionName="clustering" algorithmName="KMeans: Hartigan and Wong" modelClass="centerBased" numberOfClusters="3">
   <MiningSchema>
-   <MiningField name="Sepal.Length" usageType="active"/>
-   <MiningField name="Sepal.Width" usageType="active"/>
-   <MiningField name="Petal.Length" usageType="active"/>
-   <MiningField name="Petal.Width" usageType="active"/>
+   <MiningField name="Sepal.Length"/>
+   <MiningField name="Sepal.Width"/>
+   <MiningField name="Petal.Length"/>
+   <MiningField name="Petal.Width"/>
   </MiningSchema>
   <Output>
    <OutputField name="predictedValue" feature="predictedValue"/>
    <OutputField name="clusterAffinity_1" feature="clusterAffinity" value="1"/>
    <OutputField name="clusterAffinity_2" feature="clusterAffinity" value="2"/>
    <OutputField name="clusterAffinity_3" feature="clusterAffinity" value="3"/>
-   <!-- Custom OutputField element -->
-   <OutputField name="Cluster" feature="predictedValue"/>
   </Output>
   <ComparisonMeasure kind="distance">
    <squaredEuclidean/>

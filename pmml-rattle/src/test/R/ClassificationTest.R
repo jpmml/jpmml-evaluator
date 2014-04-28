@@ -2,7 +2,6 @@ library("e1071")
 library("kernlab")
 library("nnet")
 library("pmml")
-library("pmmlTransformations")
 library("randomForest")
 library("rpart")
 
@@ -45,6 +44,8 @@ generateNaiveBayesIris = function(){
 }
 
 generateNeuralNetworkIris = function(){
+	set.seed(42)
+
 	nnet = nnet(irisFormula, irisData, size = 5)
 	saveXML(pmml(nnet), "pmml/NeuralNetworkIris.pmml")
 
@@ -54,14 +55,13 @@ generateNeuralNetworkIris = function(){
 }
 
 generateRandomForestIris = function(){
-	irisBox = WrapData(irisData)
-	irisBox = ZScoreXform(irisBox)
+	set.seed(42)
 
-	randomForest = randomForest(irisXformFormula, irisBox$data, ntree = 13, mtry = 4, nodesize = 10)
-	saveXML(pmml(randomForest, transforms = irisBox), "pmml/RandomForestIris.pmml")
+	randomForest = randomForest(irisFormula, irisData, ntree = 7)
+	saveXML(pmml(randomForest), "pmml/RandomForestIris.pmml")
 
-	classes = predict(randomForest, newdata = irisBox$data, type = "class")
-	probabilities = predict(randomForest, newdata = irisBox$data, type = "prob")
+	classes = predict(randomForest, newdata = irisData, type = "class")
+	probabilities = predict(randomForest, newdata = irisData, type = "prob")
 	writeIris(classes, probabilities, "csv/RandomForestIris.csv")
 }
 
@@ -75,6 +75,8 @@ generateRegressionIris = function(){
 }
 
 generateSupportVectorMachineIris = function(){
+	set.seed(42)
+
 	ksvm = ksvm(irisFormula, irisData)
 	saveXML(pmml(ksvm, dataset = irisData), "pmml/SupportVectorMachineIris.pmml")
 
@@ -164,6 +166,8 @@ generateNaiveBayesAudit = function(){
 }
 
 generateNeuralNetworkAudit = function(){
+	set.seed(42)
+
 	nnet = nnet(auditFormula, auditData, size = 9, decay = 1e-3, maxit = 10000)
 	saveXML(pmml(nnet), "pmml/NeuralNetworkAudit.pmml")
 
@@ -172,6 +176,8 @@ generateNeuralNetworkAudit = function(){
 }
 
 generateRandomForestAudit = function(){
+	set.seed(42)
+
 	randomForest = randomForest(auditFormula, auditData, ntree = 15, mtry = 8, nodesize = 10)
 	saveXML(pmml(randomForest), "pmml/RandomForestAudit.pmml")
 	
@@ -181,6 +187,8 @@ generateRandomForestAudit = function(){
 }
 
 generateSupportVectorMachineAudit = function(){
+	set.seed(42)
+
 	ksvm = ksvm(auditFormula, auditData)
 	saveXML(pmml(ksvm, dataset = auditData), "pmml/SupportVectorMachineAudit.pmml")
 

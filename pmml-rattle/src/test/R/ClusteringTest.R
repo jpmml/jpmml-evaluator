@@ -23,9 +23,11 @@ generateHierarchicalClusteringIris = function(){
 }
 
 generateKMeansIris = function(){
+	set.seed(42)
+
 	kmeans = kmeans(numericIrisData, 3)
 	saveXML(pmml(kmeans), "pmml/KMeansIris.pmml")
-	
+
 	clusters = predict(kmeans, numericIrisData)
 	writeIris(clusters, "csv/KMeansIris.csv")
 }

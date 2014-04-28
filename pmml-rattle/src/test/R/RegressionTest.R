@@ -22,6 +22,8 @@ generateGeneralRegressionOzone = function(){
 }
 
 generateNeuralNetworkOzone = function(){
+	set.seed(42)
+
 	nnet = nnet(ozoneFormula, ozoneData, size = 4, decay = 1e-3, maxit = 10000, linout = TRUE)
 	saveXML(pmml(nnet), "pmml/NeuralNetworkOzone.pmml")
 
@@ -29,6 +31,8 @@ generateNeuralNetworkOzone = function(){
 }
 
 generateRandomForestOzone = function(){
+	set.seed(42)
+
 	randomForest = randomForest(ozoneFormula, ozoneData, ntree = 10, mtry = 3, nodesize = 10)
 	saveXML(pmml(randomForest), "pmml/RandomForestOzone.pmml")
 
@@ -43,6 +47,8 @@ generateRegressionOzone = function(){
 }
 
 generateSupportVectorMachineOzone = function(){
+	set.seed(42)
+
 	ksvm = ksvm(ozoneFormula, ozoneData)
 	saveXML(pmml(ksvm, dataset = ozoneData), "pmml/SupportVectorMachineOzone.pmml")
 
