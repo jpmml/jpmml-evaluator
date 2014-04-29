@@ -202,7 +202,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 				{
-					result = new DefaultClassificationMap<Object>();
+					result = new ProbabilityClassificationMap<Object>();
 					result.putAll(countVotes(segmentation, segmentResults));
 
 					// Convert from votes to probabilities

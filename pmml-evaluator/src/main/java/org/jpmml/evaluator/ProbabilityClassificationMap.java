@@ -21,9 +21,9 @@ package org.jpmml.evaluator;
 import com.google.common.annotations.*;
 
 @Beta
-public class DefaultClassificationMap<K> extends ClassificationMap<K> implements HasProbability {
+public class ProbabilityClassificationMap<K> extends ClassificationMap<K> implements HasProbability {
 
-	protected DefaultClassificationMap(){
+	protected ProbabilityClassificationMap(){
 		super(Type.PROBABILITY);
 	}
 

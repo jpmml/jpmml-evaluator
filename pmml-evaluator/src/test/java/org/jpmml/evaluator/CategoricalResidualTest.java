@@ -38,7 +38,7 @@ public class CategoricalResidualTest extends RegressionModelEvaluatorTest {
 		ModelEvaluationContext context = evaluator.createContext(null);
 		context.declareAll(arguments);
 
-		DefaultClassificationMap<String> response = new DefaultClassificationMap<String>();
+		ProbabilityClassificationMap<String> response = new ProbabilityClassificationMap<String>();
 		response.put("Y", 0.8d);
 		response.put("N", 0.2d);
 

@@ -83,7 +83,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		double threshold = naiveBayesModel.getThreshold();
 
 		// Probability calculations use logarithmic scale for greater numerical stability
-		DefaultClassificationMap<String> result = new DefaultClassificationMap<String>();
+		ProbabilityClassificationMap<String> result = new ProbabilityClassificationMap<String>();
 
 		Map<FieldName, Map<String, Double>> countsMap = getCountsMap();
 

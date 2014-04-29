@@ -179,8 +179,8 @@ public class TargetUtil {
 	}
 
 	static
-	private DefaultClassificationMap<String> getPriorProbabilities(Target target){
-		DefaultClassificationMap<String> result = new DefaultClassificationMap<String>();
+	private ProbabilityClassificationMap<String> getPriorProbabilities(Target target){
+		ProbabilityClassificationMap<String> result = new ProbabilityClassificationMap<String>();
 
 		List<TargetValue> values = target.getTargetValues();
 		for(TargetValue value : values){

@@ -94,7 +94,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			throw new InvalidFeatureException(regressionModel);
 		}
 
-		DefaultClassificationMap<String> result = new DefaultClassificationMap<String>();
+		ProbabilityClassificationMap<String> result = new ProbabilityClassificationMap<String>();
 
 		double sumExp = 0d;
 
