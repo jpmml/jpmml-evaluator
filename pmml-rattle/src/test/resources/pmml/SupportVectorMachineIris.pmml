@@ -3,7 +3,7 @@
  <Header copyright="Copyright (c) 2014 Vfed" description="Support Vector Machine PMML Model">
   <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-04-28 19:32:56</Timestamp>
+  <Timestamp>2014-04-29 11:47:51</Timestamp>
  </Header>
  <DataDictionary numberOfFields="5">
   <DataField name="Species" optype="categorical" dataType="string">
@@ -26,11 +26,9 @@
   </MiningSchema>
   <Output>
    <OutputField name="Predicted_Species" feature="predictedValue"/>
-   <!--
    <OutputField name="Probability_setosa" optype="continuous" dataType="double" feature="probability" value="setosa"/>
    <OutputField name="Probability_versicolor" optype="continuous" dataType="double" feature="probability" value="versicolor"/>
    <OutputField name="Probability_virginica" optype="continuous" dataType="double" feature="probability" value="virginica"/>
-   -->
   </Output>
   <LocalTransformations>
    <DerivedField name="derived_Sepal.Length" optype="continuous" dataType="double">

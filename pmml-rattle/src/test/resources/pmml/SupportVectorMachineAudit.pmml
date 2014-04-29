@@ -3,7 +3,7 @@
  <Header copyright="Copyright (c) 2014 Vfed" description="Support Vector Machine PMML Model">
   <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-04-28 19:33:20</Timestamp>
+  <Timestamp>2014-04-29 11:52:20</Timestamp>
  </Header>
  <DataDictionary numberOfFields="9">
   <DataField name="Adjusted" optype="categorical" dataType="string">
@@ -83,10 +83,8 @@
   </MiningSchema>
   <Output>
    <OutputField name="Predicted_Adjusted" feature="predictedValue"/>
-   <!--
    <OutputField name="Probability_0" optype="continuous" dataType="double" feature="probability" value="0"/>
    <OutputField name="Probability_1" optype="continuous" dataType="double" feature="probability" value="1"/>
-   -->
   </Output>
   <LocalTransformations>
    <DerivedField name="derived_EmploymentConsultant" optype="continuous" dataType="double">

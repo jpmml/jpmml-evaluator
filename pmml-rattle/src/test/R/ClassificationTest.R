@@ -7,7 +7,6 @@ library("rpart")
 
 irisData = readCsv("csv/Iris.csv")
 irisFormula = formula(Species ~ .)
-irisXformFormula = formula(Species ~ derived_Sepal.Length + derived_Sepal.Width + derived_Petal.Length + derived_Petal.Width)
 
 writeIris = function(classes, probabilities, file){
 	result = NULL
@@ -80,7 +79,9 @@ generateSupportVectorMachineIris = function(){
 	ksvm = ksvm(irisFormula, irisData)
 	saveXML(pmml(ksvm, dataset = irisData), "pmml/SupportVectorMachineIris.pmml")
 
-	writeIris(predict(ksvm, newdata = irisData), NULL, "csv/SupportVectorMachineIris.csv")
+	classes = predict(ksvm, newdata = irisData, type = "response")
+	votes = predict(ksvm, newdata = irisData, type = "votes")
+	writeIris(classes, t(votes / 3), "csv/SupportVectorMachineIris.csv")
 }
 
 generateDecisionTreeIris()
@@ -192,7 +193,9 @@ generateSupportVectorMachineAudit = function(){
 	ksvm = ksvm(auditFormula, auditData)
 	saveXML(pmml(ksvm, dataset = auditData), "pmml/SupportVectorMachineAudit.pmml")
 
-	writeAudit(predict(ksvm, newdata = auditData), NULL, "csv/SupportVectorMachineAudit.csv")
+	classes = predict(ksvm, newdata = auditData, type = "response")
+	votes = predict(ksvm, newdata = auditData, type = "votes")
+	writeAudit(classes, t(votes), "csv/SupportVectorMachineAudit.csv")
 }
 
 generateDecisionTreeAudit()

@@ -117,13 +117,19 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 		return Lists.transform(winners, function);
 	}
 
-	void normalizeValues(){
-		double sum = 0;
+	double sumValues(){
+		double result = 0;
 
 		Collection<Double> values = values();
 		for(Double value : values){
-			sum += value.doubleValue();
+			result += value.doubleValue();
 		}
+
+		return result;
+	}
+
+	void normalizeValues(){
+		double sum = sumValues();
 
 		Collection<Map.Entry<K, Double>> entries = entrySet();
 		for(Map.Entry<K, Double> entry : entries){

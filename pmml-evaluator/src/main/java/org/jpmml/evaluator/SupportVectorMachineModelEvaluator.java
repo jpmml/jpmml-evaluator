@@ -121,7 +121,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				result = new ClassificationMap<String>(ClassificationMap.Type.DISTANCE);
 				break;
 			case ONE_AGAINST_ONE:
-				result = new ClassificationMap<String>(ClassificationMap.Type.VOTE);
+				result = new VoteClassificationMap<String>();
 				break;
 			default:
 				throw new UnsupportedFeatureException(supportVectorMachineModel, svmClassificationMethod);
