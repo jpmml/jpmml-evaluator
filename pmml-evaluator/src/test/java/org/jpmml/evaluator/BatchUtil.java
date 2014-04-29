@@ -18,20 +18,12 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.*;
 import java.util.*;
-
-import javax.xml.transform.*;
-
-import org.jpmml.manager.*;
-import org.jpmml.model.*;
 
 import com.google.common.base.*;
 import com.google.common.collect.*;
 
 import org.dmg.pmml.*;
-
-import org.xml.sax.*;
 
 public class BatchUtil {
 
@@ -55,20 +47,10 @@ public class BatchUtil {
 
 	static
 	public List<MapDifference<FieldName, ?>> difference(Batch batch, final double precision, final double zeroThreshold) throws Exception {
-		InputStream is = batch.getModel();
-
-		Source source = ImportFilter.apply(new InputSource(is));
-
-		PMML pmml = JAXBUtil.unmarshalPMML(source);
-
-		PMMLManager pmmlManager = new PMMLManager(pmml);
-
-		ModelManager<?> modelManager = pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
-
 		List<Map<FieldName, String>> input = CsvUtil.load(batch.getInput());
 		List<Map<FieldName, String>> output = CsvUtil.load(batch.getOutput());
 
-		Evaluator evaluator = (Evaluator)modelManager;
+		Evaluator evaluator = PMMLUtil.createModelEvaluator(batch.getModel());
 
 		List<FieldName> activeFields = evaluator.getActiveFields();
 		List<FieldName> groupFields = evaluator.getGroupFields();

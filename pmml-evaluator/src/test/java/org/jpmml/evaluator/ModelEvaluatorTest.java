@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import org.jpmml.manager.*;
+import java.io.*;
 
 abstract
 public class ModelEvaluatorTest extends PMMLManagerTest {
@@ -29,9 +29,13 @@ public class ModelEvaluatorTest extends PMMLManagerTest {
 
 	static
 	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz) throws Exception {
-		PMMLManager manager = createPMMLManager(clazz);
+		InputStream is = getInputStream(clazz);
 
-		return (ModelEvaluator<?>)manager.getModelManager(null, ModelEvaluatorFactory.getInstance());
+		try {
+			return PMMLUtil.createModelEvaluator(is);
+		} finally {
+			is.close();
+		}
 	}
 
 	static
