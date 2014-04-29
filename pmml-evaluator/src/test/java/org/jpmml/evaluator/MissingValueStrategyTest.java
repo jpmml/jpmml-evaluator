@@ -26,7 +26,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class MissingValueStrategyTest extends TreeModelEvaluatorTest {
+public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void nullPrediction() throws Exception {
@@ -39,9 +39,9 @@ public class MissingValueStrategyTest extends TreeModelEvaluatorTest {
 	}
 
 	private String getNodeId(MissingValueStrategyType missingValueStrategy) throws Exception {
-		TreeModelEvaluator evaluator = createEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		TreeModel treeModel = evaluator.getModel();
+		TreeModel treeModel = (TreeModel)evaluator.getModel();
 		treeModel.setMissingValueStrategy(missingValueStrategy);
 
 		Map<FieldName, ?> arguments = createArguments("outlook", "sunny", "temperature", null, "humidity", null);

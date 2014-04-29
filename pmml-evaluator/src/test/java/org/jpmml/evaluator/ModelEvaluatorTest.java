@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2014 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,16 +18,31 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.*;
+import org.jpmml.manager.*;
 
 abstract
-public class MiningModelEvaluatorTest extends PMMLTest {
+public class ModelEvaluatorTest extends PMMLManagerTest {
 
-	public MiningModelEvaluator createEvaluator() throws Exception {
-		PMML pmml = loadPMML(getClass());
+	public ModelEvaluator<?> createModelEvaluator() throws Exception {
+		return createModelEvaluator(getClass());
+	}
 
-		MiningModelEvaluator evaluator = new MiningModelEvaluator(pmml);
+	static
+	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz) throws Exception {
+		PMMLManager manager = createPMMLManager(clazz);
 
-		return evaluator;
+		return (ModelEvaluator<?>)manager.getModelManager(null, ModelEvaluatorFactory.getInstance());
+	}
+
+	static
+	public String getEntityId(Object object){
+
+		if(object instanceof HasEntityId){
+			HasEntityId hasEntityId = (HasEntityId)object;
+
+			return hasEntityId.getEntityId();
+		}
+
+		return null;
 	}
 }

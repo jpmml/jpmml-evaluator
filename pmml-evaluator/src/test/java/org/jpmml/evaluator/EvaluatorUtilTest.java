@@ -48,9 +48,7 @@ public class EvaluatorUtilTest {
 
 	@Test
 	public void prepare() throws Exception {
-		PMML pmml = PMMLTest.loadPMML(AssociationAlgorithmTest.class);
-
-		Evaluator evaluator = new AssociationModelEvaluator(pmml);
+		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(AssociationAlgorithmTest.class);
 
 		FieldValue simple = EvaluatorUtil.prepare(evaluator, new FieldName("item"), "Cracker");
 

@@ -35,7 +35,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class NoTrueChildStrategyTest extends TreeModelEvaluatorTest {
+public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void returnNullPrediction() throws Exception {
@@ -50,9 +50,9 @@ public class NoTrueChildStrategyTest extends TreeModelEvaluatorTest {
 	}
 
 	private String getNodeId(NoTrueChildStrategyType noTrueChildStrategy, Double value) throws Exception {
-		TreeModelEvaluator evaluator = createEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		TreeModel treeModel = evaluator.getModel();
+		TreeModel treeModel = (TreeModel)evaluator.getModel();
 		treeModel.setNoTrueChildStrategy(noTrueChildStrategy);
 
 		Map<FieldName, ?> arguments = createArguments("probability", value);

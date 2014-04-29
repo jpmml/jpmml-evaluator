@@ -35,13 +35,13 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class MixedNeighborhoodTest extends NearestNeighborModelEvaluatorTest {
+public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		NearestNeighborModelEvaluator evaluator = createEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		NearestNeighborModel nearestNeighborModel = evaluator.getModel();
+		NearestNeighborModel nearestNeighborModel = (NearestNeighborModel)evaluator.getModel();
 
 		// XXX
 		nearestNeighborModel.setNumberOfNeighbors(1);

@@ -26,7 +26,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class ComplexPartialScoreTest extends ScorecardEvaluatorTest {
+public class ComplexPartialScoreTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
@@ -39,7 +39,7 @@ public class ComplexPartialScoreTest extends ScorecardEvaluatorTest {
 	}
 
 	private Double evaluateScore(Double income) throws Exception {
-		ScorecardEvaluator evaluator = createEvaluator();
+		Evaluator evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("department", null, "age", null, "income", income);
 

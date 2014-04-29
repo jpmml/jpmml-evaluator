@@ -18,18 +18,76 @@
  */
 package org.jpmml.evaluator;
 
+import java.io.*;
+import java.util.*;
+
+import javax.xml.transform.*;
+
 import org.jpmml.manager.*;
+import org.jpmml.model.*;
+
+import com.google.common.collect.*;
 
 import org.dmg.pmml.*;
 
-abstract
-public class PMMLManagerTest extends PMMLTest {
+import org.xml.sax.*;
 
-	public PMMLManager createManager() throws Exception {
-		PMML pmml = loadPMML(getClass());
+abstract
+public class PMMLManagerTest {
+
+	public PMMLManager createPMMLManager() throws Exception {
+		return createPMMLManager(getClass());
+	}
+
+	static
+	public PMMLManager createPMMLManager(Class<? extends PMMLManagerTest> clazz) throws Exception {
+		PMML pmml = loadPMML(clazz);
 
 		PMMLManager manager = new PMMLManager(pmml);
 
 		return manager;
+	}
+
+	static
+	public PMML loadPMML(Class<? extends PMMLManagerTest> clazz) throws Exception {
+		InputStream is = clazz.getResourceAsStream("/pmml/" + clazz.getSimpleName() + ".pmml");
+
+		try {
+			Source source = ImportFilter.apply(new InputSource(is));
+
+			return JAXBUtil.unmarshalPMML(source);
+		} finally {
+			is.close();
+		}
+	}
+
+	static
+	public Map<FieldName, ?> createArguments(Object... objects){
+		Map<FieldName, Object> result = Maps.newLinkedHashMap();
+
+		if(objects.length % 2 != 0){
+			throw new IllegalArgumentException();
+		}
+
+		for(int i = 0; i < objects.length / 2; i++){
+			Object key = objects[i * 2];
+			Object value = objects[i * 2 + 1];
+
+			result.put(toFieldName(key), value);
+		}
+
+		return result;
+	}
+
+	static
+	private FieldName toFieldName(Object object){
+
+		if(object instanceof String){
+			String string = (String)object;
+
+			return FieldName.create(string);
+		}
+
+		return (FieldName)object;
 	}
 }

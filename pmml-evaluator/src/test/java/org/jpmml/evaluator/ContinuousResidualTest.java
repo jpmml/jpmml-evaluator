@@ -26,11 +26,11 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class ContinuousResidualTest extends RegressionModelEvaluatorTest {
+public class ContinuousResidualTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		RegressionModelEvaluator evaluator = createEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments(evaluator.getTargetField(), 3.0d);
 

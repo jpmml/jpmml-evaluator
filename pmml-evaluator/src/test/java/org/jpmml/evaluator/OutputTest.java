@@ -26,15 +26,15 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class OutputTest extends RegressionModelEvaluatorTest {
+public class OutputTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		RegressionModelEvaluator regressionModelEvaluator = createEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> predictions = createArguments("result", 8d);
 
-		ModelEvaluationContext context = regressionModelEvaluator.createContext(null);
+		ModelEvaluationContext context = evaluator.createContext(null);
 
 		Map<FieldName, ?> result = OutputUtil.evaluate(predictions, context);
 

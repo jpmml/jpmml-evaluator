@@ -35,11 +35,11 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class TieBreakTest extends NearestNeighborModelEvaluatorTest {
+public class TieBreakTest extends ModelEvaluatorTest {
 
 	@Test
 	public void firstLevel() throws Exception {
-		NearestNeighborModelEvaluator evaluator = createEvaluator();
+		Evaluator evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("input", 1.5d);
 
@@ -52,7 +52,7 @@ public class TieBreakTest extends NearestNeighborModelEvaluatorTest {
 
 	@Test
 	public void secondLevel() throws Exception {
-		NearestNeighborModelEvaluator evaluator = createEvaluator();
+		Evaluator evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("input", 3.5d);
 

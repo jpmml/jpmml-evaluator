@@ -35,11 +35,11 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class TargetValueCountsTest extends NaiveBayesModelEvaluatorTest {
+public class TargetValueCountsTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		NaiveBayesModelEvaluator evaluator = createEvaluator();
+		NaiveBayesModelEvaluator evaluator = (NaiveBayesModelEvaluator)createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("age of individual", 24, "gender", "male", "no of claims", "2", "domicile", null, "age of car", 1d);
 

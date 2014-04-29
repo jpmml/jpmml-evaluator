@@ -26,11 +26,11 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class SelectAllTest extends MiningModelEvaluatorTest {
+public class SelectAllTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		MiningModelEvaluator evaluator = createEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("sepal_length", 5.1d, "sepal_width", 3.5d, "petal_length", 1.4d, "petal_width", 0.2d);
 

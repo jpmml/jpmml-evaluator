@@ -26,11 +26,11 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class PriorProbabilitiesTest extends RegressionModelEvaluatorTest {
+public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		RegressionModelEvaluator evaluator = createEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		ModelEvaluationContext context = evaluator.createContext(null);
 

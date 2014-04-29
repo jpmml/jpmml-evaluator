@@ -35,11 +35,11 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class VectorInstanceTest extends SupportVectorMachineModelEvaluatorTest {
+public class VectorInstanceTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		SupportVectorMachineModelEvaluator evaluator = createEvaluator();
+		Evaluator evaluator = createModelEvaluator();
 
 		assertTrue(VerificationUtil.acceptable(-0.3995764, evaluate(evaluator, 0.0d, 0.0d)));
 		assertTrue(VerificationUtil.acceptable(0.3995764, evaluate(evaluator, 0.0d, 1.0d)));

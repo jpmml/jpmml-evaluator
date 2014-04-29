@@ -32,7 +32,7 @@ public class DefineFunctionTest extends PMMLManagerTest {
 
 	@Test
 	public void evaluateAmPm() throws Exception {
-		PMMLManager pmmlManager = createManager();
+		PMMLManager pmmlManager = createPMMLManager();
 
 		PMMLEvaluationContext context = new PMMLEvaluationContext(pmmlManager);
 
@@ -45,7 +45,7 @@ public class DefineFunctionTest extends PMMLManagerTest {
 
 	@Test
 	public void evaluateStategroup() throws Exception {
-		PMMLManager pmmlManager = createManager();
+		PMMLManager pmmlManager = createPMMLManager();
 
 		PMMLEvaluationContext context = new PMMLEvaluationContext(pmmlManager);
 

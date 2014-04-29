@@ -26,11 +26,11 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class ContrastMatrixTest extends GeneralRegressionModelEvaluatorTest {
+public class ContrastMatrixTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		GeneralRegressionModelEvaluator evaluator = createEvaluator();
+		Evaluator evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("gender", "f", "educ", 19d, "jobcat", "3", "salbegin", 45000d);
 

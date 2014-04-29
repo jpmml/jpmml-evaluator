@@ -26,7 +26,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class AssociationAlgorithmTest extends AssociationModelEvaluatorTest {
+public class AssociationAlgorithmTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
@@ -38,7 +38,7 @@ public class AssociationAlgorithmTest extends AssociationModelEvaluatorTest {
 	}
 
 	private void evaluate(Collection<String> items, List<String> recommendations, List<String> exclusiveRecommendations, List<String> ruleAssociations) throws Exception {
-		AssociationModelEvaluator evaluator = createEvaluator();
+		Evaluator evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("item", items);
 

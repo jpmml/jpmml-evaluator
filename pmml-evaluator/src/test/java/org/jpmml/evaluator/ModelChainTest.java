@@ -23,10 +23,10 @@ import java.util.*;
 import org.dmg.pmml.*;
 
 abstract
-public class ModelChainTest extends MiningModelEvaluatorTest {
+public class ModelChainTest extends ModelEvaluatorTest {
 
 	public Map<FieldName, ?> evaluateExample(double petalLength, double petalWidth) throws Exception {
-		MiningModelEvaluator evaluator = createEvaluator();
+		Evaluator evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("petal_length", petalLength, "petal_width", petalWidth, "temperature", 0d, "cloudiness", 0d);
 

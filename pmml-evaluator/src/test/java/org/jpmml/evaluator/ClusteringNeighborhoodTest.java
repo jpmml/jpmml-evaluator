@@ -35,11 +35,11 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class ClusteringNeighborhoodTest extends NearestNeighborModelEvaluatorTest {
+public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		NearestNeighborModelEvaluator evaluator = createEvaluator();
+		Evaluator evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("marital status", "d", "dependents", 0);
 

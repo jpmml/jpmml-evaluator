@@ -23,10 +23,10 @@ import java.util.*;
 import org.dmg.pmml.*;
 
 abstract
-public class ReasonCodeTest extends ScorecardEvaluatorTest {
+public class ReasonCodeTest extends ModelEvaluatorTest {
 
 	public Map<FieldName, ?> evaluateExample() throws Exception {
-		ScorecardEvaluator evaluator = createEvaluator();
+		Evaluator evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("department", "engineering", "age", 25, "income", 500d);
 

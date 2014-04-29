@@ -23,12 +23,12 @@ import java.util.*;
 import org.dmg.pmml.*;
 
 abstract
-public class RuleSelectionMethodTest extends RuleSetModelEvaluatorTest {
+public class RuleSelectionMethodTest extends ModelEvaluatorTest {
 
 	public String getRuleId(RuleSelectionMethod.Criterion criterion) throws Exception {
-		RuleSetModelEvaluator evaluator = createEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		RuleSetModel ruleSetModel = evaluator.getModel();
+		RuleSetModel ruleSetModel = (RuleSetModel)evaluator.getModel();
 
 		RuleSet ruleSet = ruleSetModel.getRuleSet();
 

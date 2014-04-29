@@ -26,11 +26,11 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-public class CategoricalResidualTest extends RegressionModelEvaluatorTest {
+public class CategoricalResidualTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		RegressionModelEvaluator evaluator = createEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		// "For some row in the test data the expected value may be Y"
 		Map<FieldName, ?> arguments = createArguments(evaluator.getTargetField(), "Y");
