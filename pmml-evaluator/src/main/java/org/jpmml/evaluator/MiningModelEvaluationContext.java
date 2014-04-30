@@ -27,8 +27,8 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 	private Map<String, SegmentResultMap> results = Maps.newLinkedHashMap();
 
 
-	public MiningModelEvaluationContext(MiningModelEvaluator modelEvaluator, ModelEvaluationContext parent){
-		super(modelEvaluator, parent);
+	public MiningModelEvaluationContext(ModelEvaluationContext parent, MiningModelEvaluator modelEvaluator){
+		super(parent, modelEvaluator);
 	}
 
 	@Override

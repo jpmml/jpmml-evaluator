@@ -55,7 +55,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	@Override
 	public MiningModelEvaluationContext createContext(ModelEvaluationContext parent){
-		return new MiningModelEvaluationContext(this, parent);
+		return new MiningModelEvaluationContext(parent, this);
 	}
 
 	@Override

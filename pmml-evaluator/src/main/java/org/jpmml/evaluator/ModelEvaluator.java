@@ -51,7 +51,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	public ModelEvaluationContext createContext(ModelEvaluationContext parent){
-		return new ModelEvaluationContext(this, parent);
+		return new ModelEvaluationContext(parent, this);
 	}
 
 	@Override

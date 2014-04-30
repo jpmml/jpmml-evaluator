@@ -24,14 +24,14 @@ import org.dmg.pmml.*;
 
 public class ModelEvaluationContext extends EvaluationContext {
 
-	private ModelEvaluator<?> modelEvaluator = null;
-
 	private ModelEvaluationContext parent = null;
 
+	private ModelEvaluator<?> modelEvaluator = null;
 
-	public ModelEvaluationContext(ModelEvaluator<?> modelEvaluator, ModelEvaluationContext parent){
-		setModelEvaluator(modelEvaluator);
+
+	public ModelEvaluationContext(ModelEvaluationContext parent, ModelEvaluator<?> modelEvaluator){
 		setParent(parent);
+		setModelEvaluator(modelEvaluator);
 	}
 
 	@Override
@@ -85,19 +85,19 @@ public class ModelEvaluationContext extends EvaluationContext {
 		return super.createFieldValue(name, value);
 	}
 
-	public ModelEvaluator<?> getModelEvaluator(){
-		return this.modelEvaluator;
-	}
-
-	private void setModelEvaluator(ModelEvaluator<?> modelEvaluator){
-		this.modelEvaluator = modelEvaluator;
-	}
-
 	public ModelEvaluationContext getParent(){
 		return this.parent;
 	}
 
 	private void setParent(ModelEvaluationContext parent){
 		this.parent = parent;
+	}
+
+	public ModelEvaluator<?> getModelEvaluator(){
+		return this.modelEvaluator;
+	}
+
+	private void setModelEvaluator(ModelEvaluator<?> modelEvaluator){
+		this.modelEvaluator = modelEvaluator;
 	}
 }
