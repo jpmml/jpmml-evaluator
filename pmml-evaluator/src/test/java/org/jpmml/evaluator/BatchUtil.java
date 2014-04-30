@@ -31,18 +31,39 @@ public class BatchUtil {
 	}
 
 	/**
-	 * @return <code>true</code> If all evaluations succeeded, <code>false</code> otherwise.
+	 * @see #evaluate(Batch, double, double)
 	 */
 	static
 	public boolean evaluate(Batch batch) throws Exception {
 		return evaluate(batch, BatchUtil.precision, BatchUtil.zeroThreshold);
 	}
 
+	/**
+	 * Evaluates the model using arguments from the specified CSV resource.
+	 *
+	 * @return <code>true</code> If there were no differences between expected and actual results, <code>false</code> otherwise.
+	 */
 	static
 	public boolean evaluate(Batch batch, double precision, double zeroThreshold) throws Exception {
 		List<MapDifference<FieldName, ?>> differences = difference(batch, precision, zeroThreshold);
 
 		return Iterables.isEmpty(differences);
+	}
+
+	/**
+	 * Evaluates the model using empty arguments.
+	 *
+	 * @return The value of the target field.
+	 */
+	static
+	public Object evaluateDefault(Batch batch) throws Exception {
+		Evaluator evaluator = PMMLUtil.createModelEvaluator(batch.getModel());
+
+		Map<FieldName, ?> arguments = Collections.emptyMap();
+
+		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+
+		return result.get(evaluator.getTargetField());
 	}
 
 	static
@@ -54,8 +75,8 @@ public class BatchUtil {
 
 		List<FieldName> activeFields = evaluator.getActiveFields();
 		List<FieldName> groupFields = evaluator.getGroupFields();
-
-		List<FieldName> argumentFields = Lists.newArrayList(Iterables.concat(activeFields, groupFields));
+		List<FieldName> targetFields = evaluator.getTargetFields();
+		List<FieldName> outputFields = evaluator.getOutputFields();
 
 		List<? extends Map<FieldName, ?>> tableInput = input;
 
@@ -70,6 +91,8 @@ public class BatchUtil {
 		}
 
 		List<Map<FieldName, FieldValue>> table = Lists.newArrayList();
+
+		List<FieldName> argumentFields = Lists.newArrayList(Iterables.concat(activeFields, groupFields));
 
 		for(int i = 0; i < tableInput.size(); i++){
 			Map<FieldName, ?> inputRow = tableInput.get(i);
@@ -86,11 +109,6 @@ public class BatchUtil {
 
 			table.add(arguments);
 		}
-
-		List<FieldName> targetFields = evaluator.getTargetFields();
-		List<FieldName> outputFields = evaluator.getOutputFields();
-
-		List<FieldName> resultFields = Lists.newArrayList(Iterables.concat(targetFields, outputFields));
 
 		Equivalence<Object> equivalence = new Equivalence<Object>(){
 

@@ -88,17 +88,18 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		Iterable<PCell> parameterCells = paramMatrixMap.get(null);
 
 		Double result = computeDotProduct(parameterCells, parameterPredictorRows, arguments);
-
-		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
-		switch(modelType){
-			case REGRESSION:
-			case GENERAL_LINEAR:
-				break;
-			case GENERALIZED_LINEAR:
-				result = computeLink(result, context);
-				break;
-			default:
-				throw new UnsupportedFeatureException(generalRegressionModel, modelType);
+		if(result != null){
+			GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
+			switch(modelType){
+				case REGRESSION:
+				case GENERAL_LINEAR:
+					break;
+				case GENERALIZED_LINEAR:
+					result = computeLink(result, context);
+					break;
+				default:
+					throw new UnsupportedFeatureException(generalRegressionModel, modelType);
+			}
 		}
 
 		return TargetUtil.evaluateRegression(result, context);
@@ -226,6 +227,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				}
 
 				value = computeDotProduct(parameterCells, parameterPredictorRow, arguments);
+				if(value == null){
+					throw new MissingResultException(generalRegressionModel);
+				}
 
 				switch(modelType){
 					case GENERALIZED_LINEAR:
@@ -299,26 +303,27 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	private Double computeDotProduct(Iterable<PCell> parameterCells, Map<String, Row> parameterPredictorRows, Map<FieldName, FieldValue> arguments){
-		double sum = 0d;
+		Double sum = null;
 
 		for(PCell parameterCell : parameterCells){
-			Double x;
+			double value;
 
 			Row parameterPredictorRow = parameterPredictorRows.get(parameterCell.getParameterName());
 			if(parameterPredictorRow != null){
-				x = parameterPredictorRow.evaluate(arguments);
+				Double x = parameterPredictorRow.evaluate(arguments);
+				if(x == null){
+					return null;
+				}
+
+				value = (x.doubleValue() * parameterCell.getBeta());
 			} else
 
 			// The row is empty
 			{
-				x = 1d;
-			} // End if
-
-			if(x == null){
-				continue;
+				value = (1d * parameterCell.getBeta());
 			}
 
-			sum += (x.doubleValue() * parameterCell.getBeta());
+			sum = (sum != null ? (sum + value) : value);
 		}
 
 		return sum;

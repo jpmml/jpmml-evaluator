@@ -38,6 +38,14 @@ public class ClassificationTest {
 		Batch batch = new RattleBatch("GeneralRegression", "Iris");
 
 		assertTrue(BatchUtil.evaluate(batch));
+
+		try {
+			BatchUtil.evaluateDefault(batch);
+
+			fail();
+		} catch(MissingResultException mre){
+			// Ignored
+		}
 	}
 
 	@Test
@@ -66,6 +74,14 @@ public class ClassificationTest {
 		Batch batch = new RattleBatch("Regression", "Iris");
 
 		assertTrue(BatchUtil.evaluate(batch));
+
+		try {
+			BatchUtil.evaluateDefault(batch);
+
+			fail();
+		} catch(MissingResultException mre){
+			// Ignored
+		}
 	}
 
 	@Test
@@ -87,6 +103,14 @@ public class ClassificationTest {
 		Batch batch = new RattleBatch("GeneralRegression", "Audit");
 
 		assertTrue(BatchUtil.evaluate(batch));
+
+		try {
+			BatchUtil.evaluateDefault(batch);
+
+			fail();
+		} catch(MissingResultException mre){
+			// Ignored
+		}
 	}
 
 	@Test

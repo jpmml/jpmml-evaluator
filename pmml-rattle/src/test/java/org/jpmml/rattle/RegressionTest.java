@@ -31,6 +31,8 @@ public class RegressionTest {
 		Batch batch = new RattleBatch("GeneralRegression", "Ozone");
 
 		assertTrue(BatchUtil.evaluate(batch));
+
+		assertNull(BatchUtil.evaluateDefault(batch));
 	}
 
 	@Test
@@ -52,6 +54,8 @@ public class RegressionTest {
 		Batch batch = new RattleBatch("Regression", "Ozone");
 
 		assertTrue(BatchUtil.evaluate(batch));
+
+		assertNull(BatchUtil.evaluateDefault(batch));
 	}
 
 	@Test
