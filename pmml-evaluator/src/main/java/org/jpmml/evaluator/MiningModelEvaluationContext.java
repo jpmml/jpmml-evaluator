@@ -20,10 +20,6 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
 import com.google.common.collect.*;
 
 public class MiningModelEvaluationContext extends ModelEvaluationContext {
@@ -31,16 +27,13 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 	private Map<String, SegmentResultMap> results = Maps.newLinkedHashMap();
 
 
-	public MiningModelEvaluationContext(ModelManager<MiningModel> modelManager, ModelEvaluationContext parent){
-		super(modelManager, parent);
+	public MiningModelEvaluationContext(MiningModelEvaluator modelEvaluator, ModelEvaluationContext parent){
+		super(modelEvaluator, parent);
 	}
 
 	@Override
-	@SuppressWarnings (
-		value = {"unchecked"}
-	)
-	public ModelManager<MiningModel> getModelManager(){
-		return (ModelManager<MiningModel>)super.getModelManager();
+	public MiningModelEvaluator getModelEvaluator(){
+		return (MiningModelEvaluator)super.getModelEvaluator();
 	}
 
 	SegmentResultMap getResult(String id){

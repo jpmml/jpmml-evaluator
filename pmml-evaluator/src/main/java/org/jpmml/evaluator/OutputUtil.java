@@ -44,9 +44,9 @@ public class OutputUtil {
 	)
 	static
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> predictions, ModelEvaluationContext context){
-		ModelManager<?> modelManager = context.getModelManager();
+		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
 
-		Output output = modelManager.getOutput();
+		Output output = modelEvaluator.getOutput();
 		if(output == null){
 			return predictions;
 		}
@@ -74,7 +74,7 @@ public class OutputUtil {
 			// "Attribute targetField is required in case the model has multiple target fields."
 			FieldName targetField = outputField.getTargetField();
 			if(targetField == null){
-				targetField = modelManager.getTargetField();
+				targetField = modelEvaluator.getTargetField();
 			}
 
 			Object value = null;
@@ -135,7 +135,7 @@ public class OutputUtil {
 					break;
 				case PREDICTED_DISPLAY_VALUE:
 					{
-						Target target = modelManager.getTarget(targetField);
+						Target target = modelEvaluator.getTarget(targetField);
 
 						value = getPredictedDisplayValue(value, target);
 					}
@@ -167,7 +167,7 @@ public class OutputUtil {
 							throw new MissingFieldException(targetField, outputField);
 						}
 
-						DataField dataField = modelManager.getDataField(targetField);
+						DataField dataField = modelEvaluator.getDataField(targetField);
 
 						OpType opType = dataField.getOptype();
 						switch(opType){

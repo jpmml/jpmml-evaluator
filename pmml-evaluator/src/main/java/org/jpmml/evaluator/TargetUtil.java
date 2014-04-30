@@ -33,9 +33,9 @@ public class TargetUtil {
 
 	static
 	public Map<FieldName, ? extends Number> evaluateRegression(Double value, ModelEvaluationContext context){
-		ModelManager<?> modelManager = context.getModelManager();
+		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
 
-		return evaluateRegression(Collections.singletonMap(modelManager.getTargetField(), value), context);
+		return evaluateRegression(Collections.singletonMap(modelEvaluator.getTargetField(), value), context);
 	}
 
 	/**
@@ -43,9 +43,9 @@ public class TargetUtil {
 	 */
 	static
 	public Map<FieldName, ? extends Number> evaluateRegression(Map<FieldName, ? extends Number> predictions, ModelEvaluationContext context){
-		ModelManager<?> modelManager = context.getModelManager();
+		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
 
-		Targets targets = modelManager.getTargets();
+		Targets targets = modelEvaluator.getTargets();
 		if(targets == null || Iterables.isEmpty(targets)){
 			return predictions;
 		}
@@ -57,7 +57,7 @@ public class TargetUtil {
 			FieldName key = entry.getKey();
 			Number value = entry.getValue();
 
-			Target target = modelManager.getTarget(key);
+			Target target = modelEvaluator.getTarget(key);
 			if(target != null){
 
 				if(value != null){
@@ -77,9 +77,9 @@ public class TargetUtil {
 
 	static
 	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ClassificationMap<?> value, ModelEvaluationContext context){
-		ModelManager<?> modelManager = context.getModelManager();
+		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
 
-		return evaluateClassification(Collections.singletonMap(modelManager.getTargetField(), value), context);
+		return evaluateClassification(Collections.singletonMap(modelEvaluator.getTargetField(), value), context);
 	}
 
 	/**
@@ -87,9 +87,9 @@ public class TargetUtil {
 	 */
 	static
 	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(Map<FieldName, ? extends ClassificationMap<?>> predictions, ModelEvaluationContext context){
-		ModelManager<?> modelManager = context.getModelManager();
+		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
 
-		Targets targets = modelManager.getTargets();
+		Targets targets = modelEvaluator.getTargets();
 		if(targets == null || Iterables.isEmpty(targets)){
 			return predictions;
 		}
@@ -101,7 +101,7 @@ public class TargetUtil {
 			FieldName key = entry.getKey();
 			ClassificationMap<?> value = entry.getValue();
 
-			Target target = modelManager.getTarget(key);
+			Target target = modelEvaluator.getTarget(key);
 			if(target != null){
 
 				if(value == null){

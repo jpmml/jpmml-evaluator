@@ -20,19 +20,17 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
-import org.jpmml.manager.*;
-
 import org.dmg.pmml.*;
 
 public class ModelEvaluationContext extends EvaluationContext {
 
-	private ModelManager<?> modelManager = null;
+	private ModelEvaluator<?> modelEvaluator = null;
 
 	private ModelEvaluationContext parent = null;
 
 
-	public ModelEvaluationContext(ModelManager<?> modelManager, ModelEvaluationContext parent){
-		setModelManager(modelManager);
+	public ModelEvaluationContext(ModelEvaluator<?> modelEvaluator, ModelEvaluationContext parent){
+		setModelEvaluator(modelEvaluator);
 		setParent(parent);
 	}
 
@@ -53,16 +51,16 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 	@Override
 	public DerivedField resolveDerivedField(FieldName name){
-		ModelManager<?> modelManager = getModelManager();
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
-		DerivedField derivedField = modelManager.getLocalDerivedField(name);
+		DerivedField derivedField = modelEvaluator.getLocalDerivedField(name);
 		if(derivedField == null){
 			ModelEvaluationContext parent = getParent();
 			if(parent != null){
 				return parent.resolveDerivedField(name);
 			}
 
-			return modelManager.getDerivedField(name);
+			return modelEvaluator.getDerivedField(name);
 		}
 
 		return derivedField;
@@ -70,16 +68,16 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 	@Override
 	public DefineFunction resolveFunction(String name){
-		ModelManager<?> modelManager = getModelManager();
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
-		return modelManager.getFunction(name);
+		return modelEvaluator.getFunction(name);
 	}
 
 	@Override
 	public FieldValue createFieldValue(FieldName name, Object value){
-		ModelManager<?> modelManager = getModelManager();
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
-		DataField dataField = modelManager.getDataField(name);
+		DataField dataField = modelEvaluator.getDataField(name);
 		if(dataField != null){
 			return FieldValueUtil.create(dataField, value);
 		}
@@ -87,12 +85,12 @@ public class ModelEvaluationContext extends EvaluationContext {
 		return super.createFieldValue(name, value);
 	}
 
-	public ModelManager<?> getModelManager(){
-		return this.modelManager;
+	public ModelEvaluator<?> getModelEvaluator(){
+		return this.modelEvaluator;
 	}
 
-	private void setModelManager(ModelManager<?> modelManager){
-		this.modelManager = modelManager;
+	private void setModelEvaluator(ModelEvaluator<?> modelEvaluator){
+		this.modelEvaluator = modelEvaluator;
 	}
 
 	public ModelEvaluationContext getParent(){

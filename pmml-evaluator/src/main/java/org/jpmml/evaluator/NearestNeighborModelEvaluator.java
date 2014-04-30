@@ -392,7 +392,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			throw new UnsupportedFeatureException(tableLocator);
 		}
 
-		ModelManager<NearestNeighborModel> modelManager = new ModelManager<NearestNeighborModel>(pmml, nearestNeighborModel);
+		NearestNeighborModelEvaluator modelEvaluator = new NearestNeighborModelEvaluator(pmml, nearestNeighborModel);
 
 		String idField = nearestNeighborModel.getInstanceIdVariable();
 
@@ -411,8 +411,8 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				continue;
 			}
 
-			DataField dataField = modelManager.getDataField(name);
-			MiningField miningField = modelManager.getMiningField(name);
+			DataField dataField = modelEvaluator.getDataField(name);
+			MiningField miningField = modelEvaluator.getMiningField(name);
 
 			if(dataField != null && miningField != null){
 				fieldLoaders.add(new DataFieldLoader(name, column, dataField, miningField));
@@ -420,7 +420,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				continue;
 			}
 
-			DerivedField derivedField = modelManager.resolveDerivedField(name);
+			DerivedField derivedField = modelEvaluator.resolveDerivedField(name);
 			if(derivedField != null){
 				fieldLoaders.add(new DerivedFieldLoader(name, column, derivedField));
 
@@ -450,7 +450,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		for(KNNInput knnInput : knnInputs){
 			FieldName name = knnInput.getField();
 
-			DerivedField derivedField = modelManager.resolveDerivedField(name);
+			DerivedField derivedField = modelEvaluator.resolveDerivedField(name);
 			if(derivedField == null){
 				continue;
 			}
@@ -463,7 +463,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 					continue;
 				}
 
-				ModelEvaluationContext context = new ModelEvaluationContext(modelManager, null);
+				ModelEvaluationContext context = new ModelEvaluationContext(modelEvaluator, null);
 				context.declareAll(rowValues);
 
 				result.put(rowKey, name, ExpressionUtil.evaluate(derivedField, context));
