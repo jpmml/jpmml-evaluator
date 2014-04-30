@@ -73,9 +73,9 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		RegressionTable regressionTable = regressionTables.get(0);
 
-		Double value = evaluateRegressionTable(regressionTable, context);
-		if(value != null){
-			value = normalizeRegressionResult(regressionModel, value);
+		Double result = evaluateRegressionTable(regressionTable, context);
+		if(result != null){
+			result = normalizeRegressionResult(regressionModel, result);
 		}
 
 		FieldName targetField = regressionModel.getTargetFieldName();
@@ -83,7 +83,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			targetField = getTargetField();
 		}
 
-		return TargetUtil.evaluateRegression(Collections.singletonMap(targetField, value), context);
+		return TargetUtil.evaluateRegression(Collections.singletonMap(targetField, result), context);
 	}
 
 	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){

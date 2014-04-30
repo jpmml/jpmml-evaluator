@@ -95,9 +95,9 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		double[] input = createInput(context);
 
-		Double value = evaluateSupportVectorMachine(supportVectorMachine, input);
+		Double result = evaluateSupportVectorMachine(supportVectorMachine, input);
 
-		return TargetUtil.evaluateRegression(value, context);
+		return TargetUtil.evaluateRegression(result, context);
 	}
 
 	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
