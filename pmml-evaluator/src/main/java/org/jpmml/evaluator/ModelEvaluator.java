@@ -34,6 +34,7 @@ import org.jpmml.manager.*;
 import org.dmg.pmml.*;
 
 import com.google.common.cache.*;
+import com.google.common.collect.*;
 
 abstract
 public class ModelEvaluator<M extends Model> extends ModelManager<M> implements Evaluator {
@@ -56,8 +57,10 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+		List<FieldName> miningFields = getMiningFields(EnumSet.allOf(FieldUsageType.class));
+
 		ModelEvaluationContext context = createContext(null);
-		context.declareAll(arguments);
+		context.declareAll(arguments, Sets.newLinkedHashSet(miningFields));
 
 		return evaluate(context);
 	}

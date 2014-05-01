@@ -99,7 +99,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return find(miningFields, name);
 	}
 
-	private List<FieldName> getMiningFields(EnumSet<FieldUsageType> fieldUsageTypes){
+	protected List<FieldName> getMiningFields(EnumSet<FieldUsageType> fieldUsageTypes){
 		List<FieldName> result = Lists.newArrayList();
 
 		MiningSchema miningSchema = getMiningSchema();

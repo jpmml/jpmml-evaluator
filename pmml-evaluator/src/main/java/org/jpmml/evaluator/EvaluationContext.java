@@ -20,9 +20,9 @@ package org.jpmml.evaluator;
 
 import java.util.*;
 
-import org.dmg.pmml.*;
-
 import com.google.common.collect.*;
+
+import org.dmg.pmml.*;
 
 abstract
 public class EvaluationContext {
@@ -85,9 +85,18 @@ public class EvaluationContext {
 	}
 
 	public void declareAll(Map<FieldName, ?> fields){
+		declareAll(fields, null);
+	}
+
+	public void declareAll(Map<FieldName, ?> fields, final Set<FieldName> filter){
 		Collection<? extends Map.Entry<FieldName, ?>> entries = fields.entrySet();
 
 		for(Map.Entry<FieldName, ?> entry : entries){
+
+			if(filter != null && !filter.contains(entry.getKey())){
+				continue;
+			}
+
 			declare(entry.getKey(), entry.getValue());
 		}
 	}
