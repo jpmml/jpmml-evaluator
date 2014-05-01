@@ -77,9 +77,9 @@ public class ModelEvaluationContext extends EvaluationContext {
 	public FieldValue createFieldValue(FieldName name, Object value){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
-		DataField dataField = modelEvaluator.getDataField(name);
-		if(dataField != null){
-			return FieldValueUtil.create(dataField, value);
+		MiningField miningField = modelEvaluator.getMiningField(name);
+		if(miningField != null){
+			return EvaluatorUtil.prepare(modelEvaluator, name, value);
 		}
 
 		return super.createFieldValue(name, value);

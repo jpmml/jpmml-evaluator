@@ -68,46 +68,22 @@ public class BatchUtil {
 
 	static
 	public List<MapDifference<FieldName, ?>> difference(Batch batch, final double precision, final double zeroThreshold) throws Exception {
-		List<Map<FieldName, String>> input = CsvUtil.load(batch.getInput());
-		List<Map<FieldName, String>> output = CsvUtil.load(batch.getOutput());
+		List<? extends Map<FieldName, ?>> input = CsvUtil.load(batch.getInput());
+		List<? extends Map<FieldName, String>> output = CsvUtil.load(batch.getOutput());
 
 		Evaluator evaluator = PMMLUtil.createModelEvaluator(batch.getModel());
 
-		List<FieldName> activeFields = evaluator.getActiveFields();
 		List<FieldName> groupFields = evaluator.getGroupFields();
 		List<FieldName> targetFields = evaluator.getTargetFields();
-		List<FieldName> outputFields = evaluator.getOutputFields();
-
-		List<? extends Map<FieldName, ?>> tableInput = input;
 
 		if(groupFields.size() == 1){
 			FieldName groupField = groupFields.get(0);
 
-			tableInput = EvaluatorUtil.groupRows(groupField, input);
+			input = EvaluatorUtil.groupRows(groupField, input);
 		} else
 
 		if(groupFields.size() > 1){
 			throw new EvaluationException();
-		}
-
-		List<Map<FieldName, FieldValue>> table = Lists.newArrayList();
-
-		List<FieldName> argumentFields = Lists.newArrayList(Iterables.concat(activeFields, groupFields));
-
-		for(int i = 0; i < tableInput.size(); i++){
-			Map<FieldName, ?> inputRow = tableInput.get(i);
-
-			Map<FieldName, FieldValue> arguments = Maps.newLinkedHashMap();
-
-			for(FieldName argumentField : argumentFields){
-				Object inputCell = inputRow.get(argumentField);
-
-				FieldValue value = EvaluatorUtil.prepare(evaluator, argumentField, inputCell);
-
-				arguments.put(argumentField, value);
-			}
-
-			table.add(arguments);
 		}
 
 		Equivalence<Object> equivalence = new Equivalence<Object>(){
@@ -131,16 +107,14 @@ public class BatchUtil {
 
 		if(output.size() > 0){
 
-			if(table.size() != output.size()){
+			if(input.size() != output.size()){
 				throw new EvaluationException();
 			}
 
 			List<MapDifference<FieldName, ?>> differences = Lists.newArrayList();
 
-			for(int i = 0; i < output.size(); i++){
-				Map<FieldName, String> outputRow = output.get(i);
-
-				Map<FieldName, ?> arguments = table.get(i);
+			for(int i = 0; i < input.size(); i++){
+				Map<FieldName, ?> arguments = input.get(i);
 
 				Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
@@ -151,7 +125,7 @@ public class BatchUtil {
 					result.remove(evaluator.getTargetField());
 				}
 
-				MapDifference<FieldName, Object> difference = Maps.<FieldName, Object>difference(outputRow, result, equivalence);
+				MapDifference<FieldName, Object> difference = Maps.<FieldName, Object>difference(output.get(i), result, equivalence);
 				if(!difference.areEqual()){
 					differences.add(difference);
 				}
@@ -161,8 +135,8 @@ public class BatchUtil {
 		} else
 
 		{
-			for(int i = 0; i < table.size(); i++){
-				Map<FieldName, ?> arguments = table.get(i);
+			for(int i = 0; i < input.size(); i++){
+				Map<FieldName, ?> arguments = input.get(i);
 
 				evaluator.evaluate(arguments);
 			}
