@@ -149,6 +149,13 @@ For example, evaluating `model.pmml` using data records from `input.tsv`:
 java -cp target/example-1.1-SNAPSHOT.jar org.jpmml.evaluator.CsvEvaluationExample --model model.pmml --input input.tsv --output output.tsv
 ```
 
+# Documentation #
+
+The [Openscoring.io blog] (http://openscoring.io/blog/) contains fully worked out examples about using JPMML-Model and JPMML-Evaluator libraries.
+
+Notable blog posts:
+* [Testing PMML Applications] (http://openscoring.io/blog/2014/05/12/testing_pmml_applications/)
+
 # License #
 
 JPMML-Evaluator is dual-licensed under the [GNU Affero General Public License (AGPL) version 3.0] (http://www.gnu.org/licenses/agpl-3.0.html) and a commercial license.
