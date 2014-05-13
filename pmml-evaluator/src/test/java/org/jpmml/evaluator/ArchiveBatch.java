@@ -39,14 +39,17 @@ public class ArchiveBatch implements Batch {
 		return clazz.getResourceAsStream(path);
 	}
 
+	@Override
 	public InputStream getModel(){
 		return open("/pmml/" + (getName() + getDataset()) + ".pmml");
 	}
 
+	@Override
 	public InputStream getInput(){
 		return open("/csv/" + getDataset() + ".csv");
 	}
 
+	@Override
 	public InputStream getOutput(){
 		return open("/csv/" + (getName() + getDataset()) + ".csv");
 	}
