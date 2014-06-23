@@ -27,7 +27,7 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.List;
 
 public interface HasAffinityRanking extends HasAffinity {
 

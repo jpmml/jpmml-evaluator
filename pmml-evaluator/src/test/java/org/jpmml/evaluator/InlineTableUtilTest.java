@@ -18,13 +18,15 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
 
-import org.junit.*;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Table;
+import com.google.common.collect.TreeBasedTable;
+import org.junit.Test;
 
-import com.google.common.collect.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class InlineTableUtilTest {
 

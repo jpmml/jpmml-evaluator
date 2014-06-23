@@ -27,9 +27,12 @@
  */
 package org.jpmml.evaluator;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
+import org.dmg.pmml.KernelType;
+import org.dmg.pmml.LinearKernelType;
+import org.dmg.pmml.PolynomialKernelType;
+import org.dmg.pmml.RadialBasisKernelType;
+import org.dmg.pmml.SigmoidKernelType;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class KernelTypeUtil {
 

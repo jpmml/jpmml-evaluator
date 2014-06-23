@@ -27,15 +27,17 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
-
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
+import java.util.Collections;
+import java.util.List;
 
 import com.google.common.base.Function;
-import com.google.common.cache.*;
-import com.google.common.collect.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Lists;
+import org.dmg.pmml.Array;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class ArrayUtil {
 

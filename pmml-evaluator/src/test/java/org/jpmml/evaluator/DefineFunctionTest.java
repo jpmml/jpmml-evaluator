@@ -18,15 +18,15 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
-import org.jpmml.manager.*;
+import org.dmg.pmml.Apply;
+import org.dmg.pmml.FieldName;
+import org.jpmml.manager.PMMLManager;
+import org.junit.Test;
 
-import org.dmg.pmml.*;
-
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class DefineFunctionTest extends PMMLManagerTest {
 

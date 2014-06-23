@@ -18,9 +18,14 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.RuleSelectionMethod;
+import org.dmg.pmml.RuleSet;
+import org.dmg.pmml.RuleSetModel;
 
 abstract
 public class RuleSelectionMethodTest extends ModelEvaluatorTest {

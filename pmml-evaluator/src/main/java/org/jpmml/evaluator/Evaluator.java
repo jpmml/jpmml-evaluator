@@ -18,11 +18,14 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Map;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.Model;
+import org.jpmml.manager.Consumer;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.PMMLException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 /**
  * <p>

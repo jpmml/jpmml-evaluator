@@ -27,10 +27,17 @@
  */
 package org.jpmml.manager;
 
-import java.io.*;
-import java.util.*;
+import java.io.Serializable;
+import java.util.List;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.DataDictionary;
+import org.dmg.pmml.DataField;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MiningField;
+import org.dmg.pmml.MiningSchema;
+import org.dmg.pmml.Model;
+import org.dmg.pmml.Output;
+import org.dmg.pmml.OutputField;
 
 public interface Consumer extends Serializable {
 

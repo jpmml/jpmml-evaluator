@@ -18,9 +18,10 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.List;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 
 public class OrdinalValue extends FieldValue {
 

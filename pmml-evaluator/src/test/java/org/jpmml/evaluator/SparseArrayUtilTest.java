@@ -27,13 +27,12 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Arrays;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.IntSparseArray;
+import org.junit.Test;
 
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class SparseArrayUtilTest {
 

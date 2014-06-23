@@ -18,11 +18,10 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.*;
+import com.google.common.annotations.Beta;
+import org.dmg.pmml.Cluster;
 
-import com.google.common.annotations.*;
-
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
 
 @Beta
 public class ClusterClassificationMap extends EntityClassificationMap<Cluster> implements HasDisplayValue, HasClusterId, HasAffinity, HasClusterAffinity {

@@ -27,11 +27,12 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-import com.google.common.annotations.*;
+import com.google.common.annotations.Beta;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
 
 @Beta
 public class InstanceClassificationMap extends ClassificationMap<String> implements HasEntityIdRanking, HasClusterId, HasAffinityRanking, HasClusterAffinity {

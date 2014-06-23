@@ -18,7 +18,8 @@
  */
 package org.jpmml.evaluator;
 
-import com.beust.jcommander.*;
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterException;
 
 abstract
 public class Example {

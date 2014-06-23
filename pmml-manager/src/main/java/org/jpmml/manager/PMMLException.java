@@ -18,11 +18,9 @@
  */
 package org.jpmml.manager;
 
-import org.dmg.pmml.*;
-
-import com.sun.xml.bind.*;
-
-import org.xml.sax.*;
+import com.sun.xml.bind.Locatable;
+import org.dmg.pmml.PMMLObject;
+import org.xml.sax.Locator;
 
 abstract
 public class PMMLException extends RuntimeException {

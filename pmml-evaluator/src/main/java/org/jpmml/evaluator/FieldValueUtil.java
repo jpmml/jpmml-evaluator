@@ -18,12 +18,16 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
-
-import org.dmg.pmml.*;
+import java.util.Collection;
+import java.util.List;
 
 import com.google.common.base.Function;
-import com.google.common.collect.*;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.Field;
+import org.dmg.pmml.OpType;
+import org.dmg.pmml.TypeDefinitionField;
 
 public class FieldValueUtil {
 

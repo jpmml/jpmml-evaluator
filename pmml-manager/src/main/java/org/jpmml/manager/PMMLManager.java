@@ -27,14 +27,24 @@
  */
 package org.jpmml.manager;
 
-import java.io.*;
-import java.util.*;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
 
-import org.dmg.pmml.*;
+import com.google.common.collect.Lists;
+import org.dmg.pmml.DataDictionary;
+import org.dmg.pmml.DataField;
+import org.dmg.pmml.DefineFunction;
+import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.HasName;
+import org.dmg.pmml.Header;
+import org.dmg.pmml.Model;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.PMMLObject;
+import org.dmg.pmml.TransformationDictionary;
 
-import com.google.common.collect.*;
-
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class PMMLManager implements Serializable {
 

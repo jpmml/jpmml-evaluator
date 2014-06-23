@@ -18,7 +18,9 @@
  */
 package org.jpmml.evaluator;
 
-import org.joda.time.*;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.Seconds;
 
 public class SecondsSinceDate implements Comparable<SecondsSinceDate> {
 

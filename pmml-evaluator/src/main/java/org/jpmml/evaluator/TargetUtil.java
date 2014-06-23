@@ -18,13 +18,21 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.collect.*;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.Target;
+import org.dmg.pmml.TargetValue;
+import org.dmg.pmml.Targets;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class TargetUtil {
 

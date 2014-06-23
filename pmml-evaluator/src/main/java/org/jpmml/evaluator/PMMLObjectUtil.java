@@ -29,7 +29,7 @@ package org.jpmml.evaluator;
 
 import java.lang.reflect.Field;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.PMMLObject;
 
 public class PMMLObjectUtil {
 

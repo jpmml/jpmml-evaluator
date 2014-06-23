@@ -18,13 +18,12 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.List;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.collect.*;
+import com.google.common.collect.BiMap;
+import org.dmg.pmml.HasId;
+import org.dmg.pmml.PMMLObject;
+import org.jpmml.manager.InvalidFeatureException;
 
 public class EntityUtil {
 

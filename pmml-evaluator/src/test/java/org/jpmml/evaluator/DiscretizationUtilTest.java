@@ -18,11 +18,11 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.Interval;
+import org.junit.Test;
 
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DiscretizationUtilTest {
 

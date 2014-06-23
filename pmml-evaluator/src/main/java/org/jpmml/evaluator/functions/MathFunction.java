@@ -18,12 +18,11 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.*;
+import java.util.List;
 
-import org.jpmml.evaluator.*;
+import org.dmg.pmml.DataType;
 import org.jpmml.evaluator.FieldValue;
-
-import org.dmg.pmml.*;
+import org.jpmml.evaluator.FieldValueUtil;
 
 abstract
 public class MathFunction extends AbstractFunction {

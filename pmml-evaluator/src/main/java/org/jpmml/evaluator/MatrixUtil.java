@@ -18,14 +18,17 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
-
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.*;
+import com.google.common.collect.Iterables;
+import org.dmg.pmml.Array;
+import org.dmg.pmml.MatCell;
+import org.dmg.pmml.Matrix;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class MatrixUtil {
 

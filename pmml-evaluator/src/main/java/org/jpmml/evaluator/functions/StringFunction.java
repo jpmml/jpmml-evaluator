@@ -18,9 +18,10 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.*;
+import java.util.List;
 
-import org.jpmml.evaluator.*;
+import org.jpmml.evaluator.FieldValue;
+import org.jpmml.evaluator.FieldValueUtil;
 
 abstract
 public class StringFunction extends AbstractFunction {

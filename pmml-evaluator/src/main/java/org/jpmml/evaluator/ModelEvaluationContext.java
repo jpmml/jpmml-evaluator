@@ -18,9 +18,12 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Map;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.DefineFunction;
+import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MiningField;
 
 public class ModelEvaluationContext extends EvaluationContext {
 

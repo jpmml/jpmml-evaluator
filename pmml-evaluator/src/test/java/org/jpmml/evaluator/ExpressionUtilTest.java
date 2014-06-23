@@ -18,13 +18,26 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.Aggregate;
+import org.dmg.pmml.Apply;
+import org.dmg.pmml.Constant;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.Discretize;
+import org.dmg.pmml.Expression;
+import org.dmg.pmml.FieldColumnPair;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.FieldRef;
+import org.dmg.pmml.InvalidValueTreatmentMethodType;
+import org.dmg.pmml.MapValues;
+import org.dmg.pmml.NormContinuous;
+import org.dmg.pmml.NormDiscrete;
+import org.junit.Assert;
+import org.junit.Test;
 
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ExpressionUtilTest {
 

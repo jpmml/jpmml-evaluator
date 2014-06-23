@@ -18,9 +18,9 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Map;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Maps;
 
 public class MiningModelEvaluationContext extends ModelEvaluationContext {
 

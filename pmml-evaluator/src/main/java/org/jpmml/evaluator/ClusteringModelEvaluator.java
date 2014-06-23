@@ -18,14 +18,31 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.BitSet;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.cache.*;
-import com.google.common.collect.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Lists;
+import org.dmg.pmml.Array;
+import org.dmg.pmml.CenterFields;
+import org.dmg.pmml.Cluster;
+import org.dmg.pmml.ClusteringField;
+import org.dmg.pmml.ClusteringModel;
+import org.dmg.pmml.ComparisonMeasure;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.Measure;
+import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MissingValueWeights;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.Target;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> implements HasEntityRegistry<Cluster> {
 

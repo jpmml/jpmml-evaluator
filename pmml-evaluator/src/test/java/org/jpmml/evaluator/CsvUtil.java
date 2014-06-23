@@ -18,12 +18,17 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
-import org.dmg.pmml.*;
-
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.dmg.pmml.FieldName;
 
 public class CsvUtil {
 

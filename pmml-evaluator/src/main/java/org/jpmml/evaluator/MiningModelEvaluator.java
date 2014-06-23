@@ -18,14 +18,37 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.cache.*;
-import com.google.common.collect.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.EmbeddedModel;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.LocalTransformations;
+import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningModel;
+import org.dmg.pmml.Model;
+import org.dmg.pmml.MultipleModelMethodType;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.Predicate;
+import org.dmg.pmml.Segment;
+import org.dmg.pmml.Segmentation;
+import org.dmg.pmml.TreeModel;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 

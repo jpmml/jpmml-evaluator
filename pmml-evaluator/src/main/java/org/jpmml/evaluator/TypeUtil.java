@@ -18,12 +18,16 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.*;
-
-import com.google.common.math.*;
-
-import org.joda.time.*;
-import org.joda.time.format.*;
+import com.google.common.math.DoubleMath;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
+import org.joda.time.Seconds;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeParser;
+import org.joda.time.format.DateTimeParserBucket;
 
 public class TypeUtil {
 

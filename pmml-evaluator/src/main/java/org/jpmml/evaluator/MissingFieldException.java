@@ -18,7 +18,8 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.PMMLObject;
 
 /**
  * Signals that a required field value is missing.

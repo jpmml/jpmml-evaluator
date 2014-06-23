@@ -18,9 +18,17 @@
  */
 package org.jpmml.evaluator;
 
-import org.joda.time.*;
-import org.joda.time.field.*;
-import org.joda.time.format.*;
+import org.joda.time.Chronology;
+import org.joda.time.DateTimeField;
+import org.joda.time.DateTimeFieldType;
+import org.joda.time.DateTimeUtils;
+import org.joda.time.DurationField;
+import org.joda.time.DurationFieldType;
+import org.joda.time.Seconds;
+import org.joda.time.field.FieldUtils;
+import org.joda.time.field.PreciseDurationDateTimeField;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 
 public class SecondsSinceMidnight implements Comparable<SecondsSinceMidnight> {
 

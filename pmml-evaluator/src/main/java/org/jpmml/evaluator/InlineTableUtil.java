@@ -18,14 +18,20 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.dmg.pmml.*;
-
-import com.google.common.cache.*;
-import com.google.common.collect.*;
-
-import org.w3c.dom.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+import com.google.common.collect.Tables;
+import org.dmg.pmml.InlineTable;
+import org.dmg.pmml.Row;
+import org.w3c.dom.Element;
 
 public class InlineTableUtil {
 

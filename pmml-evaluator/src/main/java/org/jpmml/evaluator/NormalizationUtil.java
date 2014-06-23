@@ -27,11 +27,13 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.List;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
+import org.dmg.pmml.LinearNorm;
+import org.dmg.pmml.NormContinuous;
+import org.dmg.pmml.OutlierTreatmentMethodType;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class NormalizationUtil {
 

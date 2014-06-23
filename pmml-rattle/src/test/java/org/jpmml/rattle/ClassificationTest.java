@@ -18,11 +18,13 @@
  */
 package org.jpmml.rattle;
 
-import org.jpmml.evaluator.*;
+import org.jpmml.evaluator.Batch;
+import org.jpmml.evaluator.BatchUtil;
+import org.jpmml.evaluator.MissingResultException;
+import org.junit.Test;
 
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ClassificationTest {
 

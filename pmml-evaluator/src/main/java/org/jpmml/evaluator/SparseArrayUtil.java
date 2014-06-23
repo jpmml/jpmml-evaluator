@@ -27,14 +27,19 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.cache.*;
-import com.google.common.collect.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Maps;
+import org.dmg.pmml.IntSparseArray;
+import org.dmg.pmml.RealSparseArray;
+import org.dmg.pmml.SparseArray;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class SparseArrayUtil {
 

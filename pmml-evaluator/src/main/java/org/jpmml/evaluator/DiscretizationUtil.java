@@ -18,13 +18,18 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.collect.*;
+import com.google.common.collect.Table;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.Discretize;
+import org.dmg.pmml.DiscretizeBin;
+import org.dmg.pmml.InlineTable;
+import org.dmg.pmml.Interval;
+import org.dmg.pmml.MapValues;
+import org.dmg.pmml.TableLocator;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class DiscretizationUtil {
 

@@ -18,13 +18,13 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Arrays;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
+import org.junit.Test;
 
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class FieldValueTest {
 

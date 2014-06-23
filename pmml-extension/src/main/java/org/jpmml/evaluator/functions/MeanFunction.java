@@ -18,14 +18,15 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
 
-import org.jpmml.evaluator.*;
+import org.apache.commons.math3.stat.descriptive.moment.Mean;
+import org.dmg.pmml.DataType;
 import org.jpmml.evaluator.FieldValue;
-
-import org.apache.commons.math3.stat.descriptive.moment.*;
-
-import org.dmg.pmml.*;
+import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.TypeCheckException;
+import org.jpmml.evaluator.TypeUtil;
 
 /**
  * Pseudo-declaration of function:

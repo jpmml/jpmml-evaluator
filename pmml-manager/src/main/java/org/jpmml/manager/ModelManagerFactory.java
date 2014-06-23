@@ -27,7 +27,8 @@
  */
 package org.jpmml.manager;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.Model;
+import org.dmg.pmml.PMML;
 
 abstract
 public class ModelManagerFactory {

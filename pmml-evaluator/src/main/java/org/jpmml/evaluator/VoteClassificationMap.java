@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import com.google.common.annotations.*;
+import com.google.common.annotations.Beta;
 
 @Beta
 public class VoteClassificationMap<K> extends ClassificationMap<K> implements HasProbability {

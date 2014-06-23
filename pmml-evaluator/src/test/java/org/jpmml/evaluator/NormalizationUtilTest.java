@@ -27,11 +27,14 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.LinearNorm;
+import org.dmg.pmml.NormContinuous;
+import org.dmg.pmml.OutlierTreatmentMethodType;
+import org.junit.Before;
+import org.junit.Test;
 
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class NormalizationUtilTest {
 

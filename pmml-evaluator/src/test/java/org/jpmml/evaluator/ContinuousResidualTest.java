@@ -18,13 +18,13 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.FieldName;
+import org.junit.Test;
 
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ContinuousResidualTest extends ModelEvaluatorTest {
 

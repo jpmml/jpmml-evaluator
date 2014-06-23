@@ -27,9 +27,22 @@
  */
 package org.jpmml.evaluator;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
+import org.dmg.pmml.AssociationModel;
+import org.dmg.pmml.ClusteringModel;
+import org.dmg.pmml.GeneralRegressionModel;
+import org.dmg.pmml.MiningModel;
+import org.dmg.pmml.Model;
+import org.dmg.pmml.NaiveBayesModel;
+import org.dmg.pmml.NearestNeighborModel;
+import org.dmg.pmml.NeuralNetwork;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.RegressionModel;
+import org.dmg.pmml.RuleSetModel;
+import org.dmg.pmml.Scorecard;
+import org.dmg.pmml.SupportVectorMachineModel;
+import org.dmg.pmml.TreeModel;
+import org.jpmml.manager.ModelManagerFactory;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class ModelEvaluatorFactory extends ModelManagerFactory {
 

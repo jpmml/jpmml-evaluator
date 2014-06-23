@@ -18,14 +18,12 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.*;
-import java.util.*;
+import java.io.InputStream;
+import java.util.Map;
 
-import org.jpmml.manager.*;
-
-import com.google.common.collect.*;
-
-import org.dmg.pmml.*;
+import com.google.common.collect.Maps;
+import org.dmg.pmml.FieldName;
+import org.jpmml.manager.PMMLManager;
 
 abstract
 public class PMMLManagerTest {

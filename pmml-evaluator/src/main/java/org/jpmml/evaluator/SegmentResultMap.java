@@ -18,9 +18,10 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.LinkedHashMap;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.Segment;
 
 class SegmentResultMap extends LinkedHashMap<FieldName, Object> {
 

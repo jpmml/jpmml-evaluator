@@ -18,11 +18,10 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.RuleSelectionMethod;
+import org.junit.Test;
 
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class SimpleRuleTest extends RuleSelectionMethodTest {
 

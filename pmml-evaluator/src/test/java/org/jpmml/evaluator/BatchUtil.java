@@ -18,12 +18,16 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import com.google.common.base.*;
-import com.google.common.collect.*;
-
-import org.dmg.pmml.*;
+import com.google.common.base.Equivalence;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.Maps;
+import org.dmg.pmml.FieldName;
 
 public class BatchUtil {
 

@@ -18,7 +18,7 @@
  */
 package org.jpmml.rattle;
 
-import org.jpmml.evaluator.*;
+import org.jpmml.evaluator.ArchiveBatch;
 
 public class RattleBatch extends ArchiveBatch {
 

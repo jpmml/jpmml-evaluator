@@ -18,13 +18,28 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.BitSet;
+import java.util.Collections;
+import java.util.List;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
+import org.dmg.pmml.BinarySimilarity;
+import org.dmg.pmml.Chebychev;
+import org.dmg.pmml.CityBlock;
+import org.dmg.pmml.CompareFunctionType;
+import org.dmg.pmml.ComparisonField;
+import org.dmg.pmml.ComparisonMeasure;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.Euclidean;
+import org.dmg.pmml.Jaccard;
+import org.dmg.pmml.Measure;
+import org.dmg.pmml.Minkowski;
+import org.dmg.pmml.OpType;
+import org.dmg.pmml.SimpleMatching;
+import org.dmg.pmml.SquaredEuclidean;
+import org.dmg.pmml.Tanimoto;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class MeasureUtil {
 

@@ -18,7 +18,7 @@
  */
 package org.jpmml.knime;
 
-import org.jpmml.evaluator.*;
+import org.jpmml.evaluator.ArchiveBatch;
 
 public class KnimeBatch extends ArchiveBatch {
 

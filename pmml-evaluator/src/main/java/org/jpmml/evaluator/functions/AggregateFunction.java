@@ -18,17 +18,16 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.*;
+import java.util.List;
 
-import org.jpmml.evaluator.*;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
+import org.dmg.pmml.DataType;
 import org.jpmml.evaluator.FieldValue;
-
-import com.google.common.base.*;
-import com.google.common.collect.*;
-
-import org.apache.commons.math3.stat.descriptive.*;
-
-import org.dmg.pmml.*;
+import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.MissingResultException;
+import org.jpmml.evaluator.TypeUtil;
 
 abstract
 public class AggregateFunction extends AbstractFunction {

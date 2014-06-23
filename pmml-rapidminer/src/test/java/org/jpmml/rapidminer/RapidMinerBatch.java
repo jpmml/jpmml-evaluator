@@ -18,7 +18,7 @@
  */
 package org.jpmml.rapidminer;
 
-import org.jpmml.evaluator.*;
+import org.jpmml.evaluator.ArchiveBatch;
 
 public class RapidMinerBatch extends ArchiveBatch {
 

@@ -18,11 +18,17 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.google.common.collect.*;
-
-import org.dmg.pmml.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.dmg.pmml.DefineFunction;
+import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.FieldName;
 
 abstract
 public class EvaluationContext {

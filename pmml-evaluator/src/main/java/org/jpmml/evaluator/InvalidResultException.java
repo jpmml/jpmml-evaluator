@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.PMMLObject;
 
 /**
  * Signals an invalid result.

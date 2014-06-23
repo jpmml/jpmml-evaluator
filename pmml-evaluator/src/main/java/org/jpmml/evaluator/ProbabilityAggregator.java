@@ -18,7 +18,9 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 class ProbabilityAggregator<K> extends LinkedHashMap<K, Double> {
 

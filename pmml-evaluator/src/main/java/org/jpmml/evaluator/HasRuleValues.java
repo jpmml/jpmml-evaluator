@@ -18,11 +18,14 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.List;
 
-import org.dmg.pmml.*;
-
-import com.google.common.collect.*;
+import com.google.common.collect.BiMap;
+import org.dmg.pmml.AssociationRule;
+import org.dmg.pmml.Item;
+import org.dmg.pmml.Itemset;
+import org.dmg.pmml.OutputField;
+import org.dmg.pmml.ResultFeatureType;
 
 /**
  * @see ResultFeatureType#RULE_VALUE

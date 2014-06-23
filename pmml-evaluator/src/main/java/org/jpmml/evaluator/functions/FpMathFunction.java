@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator.functions;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.DataType;
 
 abstract
 public class FpMathFunction extends MathFunction {

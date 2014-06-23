@@ -18,16 +18,17 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
-import org.jpmml.evaluator.*;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
+import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.Function;
+import org.junit.Test;
 
-import org.dmg.pmml.*;
-
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class PercentileFunctionTest {
 

@@ -18,15 +18,31 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.base.*;
 import com.google.common.base.Function;
-import com.google.common.collect.*;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.dmg.pmml.Aggregate;
+import org.dmg.pmml.Apply;
+import org.dmg.pmml.Constant;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.Discretize;
+import org.dmg.pmml.Expression;
+import org.dmg.pmml.FieldColumnPair;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.FieldRef;
+import org.dmg.pmml.InvalidValueTreatmentMethodType;
+import org.dmg.pmml.MapValues;
+import org.dmg.pmml.NormContinuous;
+import org.dmg.pmml.NormDiscrete;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class ExpressionUtil {
 

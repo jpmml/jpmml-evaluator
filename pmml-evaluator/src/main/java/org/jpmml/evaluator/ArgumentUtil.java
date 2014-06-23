@@ -18,14 +18,21 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
+import com.google.common.collect.Lists;
+import org.dmg.pmml.DataField;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.Interval;
-
-import com.google.common.collect.*;
+import org.dmg.pmml.InvalidValueTreatmentMethodType;
+import org.dmg.pmml.MiningField;
+import org.dmg.pmml.OpType;
+import org.dmg.pmml.OutlierTreatmentMethodType;
+import org.dmg.pmml.TypeDefinitionField;
+import org.dmg.pmml.Value;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class ArgumentUtil {
 

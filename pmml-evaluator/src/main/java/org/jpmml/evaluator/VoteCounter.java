@@ -27,9 +27,13 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
-import com.google.common.collect.*;
+import com.google.common.collect.Sets;
 
 class VoteCounter<K> extends LinkedHashMap<K, Double> {
 

@@ -18,20 +18,22 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
-
-import org.jpmml.evaluator.functions.*;
-
-import org.dmg.pmml.*;
-
-import org.junit.*;
+import java.util.Arrays;
+import java.util.List;
 
 import com.google.common.base.Function;
-import com.google.common.collect.*;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import org.dmg.pmml.Apply;
+import org.dmg.pmml.DataType;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
+import org.jpmml.evaluator.functions.EchoFunction;
+import org.junit.Assert;
+import org.junit.Test;
 
-import org.joda.time.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class FunctionUtilTest {
 

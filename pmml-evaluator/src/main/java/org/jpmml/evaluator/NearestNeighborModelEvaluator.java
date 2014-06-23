@@ -27,16 +27,52 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
-import java.util.concurrent.*;
-
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import com.google.common.base.Function;
-import com.google.common.cache.*;
-import com.google.common.collect.*;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.LinkedHashMultiset;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Table;
+import org.dmg.pmml.CategoricalScoringMethodType;
+import org.dmg.pmml.ComparisonMeasure;
+import org.dmg.pmml.ContinuousScoringMethodType;
+import org.dmg.pmml.DataField;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.InlineTable;
+import org.dmg.pmml.InstanceField;
+import org.dmg.pmml.InstanceFields;
+import org.dmg.pmml.KNNInput;
+import org.dmg.pmml.KNNInputs;
+import org.dmg.pmml.Measure;
+import org.dmg.pmml.MiningField;
+import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.NearestNeighborModel;
+import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.TableLocator;
+import org.dmg.pmml.TrainingInstances;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighborModel> {
 

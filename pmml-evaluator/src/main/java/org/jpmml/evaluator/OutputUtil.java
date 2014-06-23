@@ -18,14 +18,33 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.base.*;
-import com.google.common.collect.*;
+import com.google.common.base.Joiner;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.dmg.pmml.AssociationRule;
+import org.dmg.pmml.DataField;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.Expression;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.Item;
+import org.dmg.pmml.ItemRef;
+import org.dmg.pmml.Itemset;
+import org.dmg.pmml.OpType;
+import org.dmg.pmml.Output;
+import org.dmg.pmml.OutputField;
+import org.dmg.pmml.PMMLObject;
+import org.dmg.pmml.ResultFeatureType;
+import org.dmg.pmml.RuleFeatureType;
+import org.dmg.pmml.Target;
+import org.dmg.pmml.TargetValue;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class OutputUtil {
 

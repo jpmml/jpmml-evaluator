@@ -18,21 +18,37 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
-import java.util.regex.*;
+import java.util.IllegalFormatException;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.jpmml.evaluator.functions.*;
-
-import org.apache.commons.math3.stat.descriptive.moment.*;
-import org.apache.commons.math3.stat.descriptive.rank.*;
-import org.apache.commons.math3.stat.descriptive.summary.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.base.*;
-import com.google.common.collect.*;
-
-import org.joda.time.*;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
+import org.apache.commons.math3.stat.descriptive.moment.Mean;
+import org.apache.commons.math3.stat.descriptive.rank.Max;
+import org.apache.commons.math3.stat.descriptive.rank.Min;
+import org.apache.commons.math3.stat.descriptive.summary.Product;
+import org.apache.commons.math3.stat.descriptive.summary.Sum;
+import org.dmg.pmml.DataType;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
+import org.joda.time.Seconds;
+import org.jpmml.evaluator.functions.AbstractFunction;
+import org.jpmml.evaluator.functions.AggregateFunction;
+import org.jpmml.evaluator.functions.ArithmeticFunction;
+import org.jpmml.evaluator.functions.BinaryBooleanFunction;
+import org.jpmml.evaluator.functions.ComparisonFunction;
+import org.jpmml.evaluator.functions.EqualityFunction;
+import org.jpmml.evaluator.functions.FpMathFunction;
+import org.jpmml.evaluator.functions.MathFunction;
+import org.jpmml.evaluator.functions.StringFunction;
+import org.jpmml.evaluator.functions.UnaryBooleanFunction;
+import org.jpmml.evaluator.functions.ValueFunction;
+import org.jpmml.evaluator.functions.ValueListFunction;
 
 public class FunctionRegistry {
 

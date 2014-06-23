@@ -18,7 +18,8 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 
 public class CategoricalValue extends FieldValue {
 

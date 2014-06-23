@@ -27,14 +27,36 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.cache.*;
-import com.google.common.collect.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
+import org.dmg.pmml.ActivationFunctionType;
+import org.dmg.pmml.Connection;
+import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.Entity;
+import org.dmg.pmml.Expression;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.FieldRef;
+import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.NeuralInput;
+import org.dmg.pmml.NeuralInputs;
+import org.dmg.pmml.NeuralLayer;
+import org.dmg.pmml.NeuralNetwork;
+import org.dmg.pmml.NeuralOutput;
+import org.dmg.pmml.NeuralOutputs;
+import org.dmg.pmml.Neuron;
+import org.dmg.pmml.NnNormalizationMethodType;
+import org.dmg.pmml.NormContinuous;
+import org.dmg.pmml.NormDiscrete;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.PMMLObject;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<Entity> {
 

@@ -18,13 +18,15 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.List;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.Array;
+import org.dmg.pmml.MatCell;
+import org.dmg.pmml.Matrix;
+import org.junit.Assert;
+import org.junit.Test;
 
-import org.junit.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class MatrixUtilTest {
 

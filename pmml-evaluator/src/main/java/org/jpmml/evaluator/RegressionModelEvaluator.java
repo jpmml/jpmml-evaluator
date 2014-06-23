@@ -18,11 +18,25 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
+import org.dmg.pmml.CategoricalPredictor;
+import org.dmg.pmml.DataField;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.FieldRef;
+import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.NumericPredictor;
+import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.PredictorTerm;
+import org.dmg.pmml.RegressionModel;
+import org.dmg.pmml.RegressionNormalizationMethodType;
+import org.dmg.pmml.RegressionTable;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 

@@ -18,9 +18,9 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Map;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.FieldName;
 
 abstract
 public class ReasonCodeTest extends ModelEvaluatorTest {

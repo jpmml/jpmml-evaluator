@@ -18,11 +18,16 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.google.common.annotations.*;
+import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
-import com.google.common.collect.*;
+import com.google.common.collect.Lists;
 
 @Beta
 public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Computable {

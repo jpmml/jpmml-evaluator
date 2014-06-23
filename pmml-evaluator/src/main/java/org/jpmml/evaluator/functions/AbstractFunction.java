@@ -18,14 +18,15 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.*;
+import java.util.List;
 
-import org.jpmml.evaluator.*;
+import org.dmg.pmml.DataType;
+import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.FieldValue;
+import org.jpmml.evaluator.Function;
+import org.jpmml.evaluator.FunctionException;
 
-import org.dmg.pmml.*;
-
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 abstract
 public class AbstractFunction implements Function {

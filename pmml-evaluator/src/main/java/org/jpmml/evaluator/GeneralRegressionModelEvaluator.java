@@ -18,16 +18,46 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
-
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.cache.*;
-import com.google.common.collect.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import org.dmg.pmml.Categories;
+import org.dmg.pmml.Category;
+import org.dmg.pmml.CumulativeLinkFunctionType;
+import org.dmg.pmml.DataField;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.GeneralRegressionModel;
+import org.dmg.pmml.LinkFunctionType;
+import org.dmg.pmml.Matrix;
+import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.OpType;
+import org.dmg.pmml.PCell;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.PPCell;
+import org.dmg.pmml.PPMatrix;
+import org.dmg.pmml.ParamMatrix;
+import org.dmg.pmml.ParameterCell;
+import org.dmg.pmml.Predictor;
+import org.dmg.pmml.PredictorList;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegressionModel> {
 

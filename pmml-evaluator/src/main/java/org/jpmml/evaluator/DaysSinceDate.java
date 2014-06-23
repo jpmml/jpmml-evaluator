@@ -18,7 +18,8 @@
  */
 package org.jpmml.evaluator;
 
-import org.joda.time.*;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 
 public class DaysSinceDate implements Comparable<DaysSinceDate> {
 

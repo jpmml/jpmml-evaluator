@@ -18,13 +18,24 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.collect.*;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ListMultimap;
+import org.dmg.pmml.CompoundRule;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.Predicate;
+import org.dmg.pmml.Rule;
+import org.dmg.pmml.RuleSelectionMethod;
+import org.dmg.pmml.RuleSet;
+import org.dmg.pmml.RuleSetModel;
+import org.dmg.pmml.SimpleRule;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 

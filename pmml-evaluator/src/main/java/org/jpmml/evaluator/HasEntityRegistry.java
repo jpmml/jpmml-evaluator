@@ -18,9 +18,8 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.*;
-
-import com.google.common.collect.*;
+import com.google.common.collect.BiMap;
+import org.dmg.pmml.Entity;
 
 public interface HasEntityRegistry<E extends Entity> {
 

@@ -27,7 +27,7 @@
  */
 package org.jpmml.manager;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.PMMLObject;
 
 /**
  * Signals that the specified PMML content is not supported (but is probably valid).

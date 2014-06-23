@@ -27,9 +27,9 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.List;
 
-import com.google.common.annotations.*;
+import com.google.common.annotations.Beta;
 
 @Beta
 public class ScoreClassificationMap extends ClassificationMap<String> implements HasReasonCodeRanking {

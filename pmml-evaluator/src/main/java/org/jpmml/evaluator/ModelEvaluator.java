@@ -27,14 +27,17 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.cache.*;
-import com.google.common.collect.*;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Sets;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.FieldUsageType;
+import org.dmg.pmml.Model;
+import org.dmg.pmml.PMML;
+import org.jpmml.manager.ModelManager;
 
 abstract
 public class ModelEvaluator<M extends Model> extends ModelManager<M> implements Evaluator {

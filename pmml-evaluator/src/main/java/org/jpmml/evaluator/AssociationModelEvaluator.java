@@ -18,14 +18,31 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.cache.*;
-import com.google.common.collect.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import org.dmg.pmml.AssociationModel;
+import org.dmg.pmml.AssociationRule;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.Item;
+import org.dmg.pmml.ItemRef;
+import org.dmg.pmml.Itemset;
+import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.Target;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> implements HasEntityRegistry<AssociationRule> {
 

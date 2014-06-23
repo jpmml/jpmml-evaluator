@@ -18,12 +18,13 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.*;
+import java.util.List;
 
-import org.jpmml.evaluator.*;
+import org.dmg.pmml.DataType;
 import org.jpmml.evaluator.FieldValue;
-
-import org.dmg.pmml.*;
+import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.InvalidResultException;
+import org.jpmml.evaluator.TypeUtil;
 
 abstract
 public class ArithmeticFunction extends AbstractFunction {

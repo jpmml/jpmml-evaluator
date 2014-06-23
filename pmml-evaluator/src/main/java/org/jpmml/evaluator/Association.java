@@ -18,14 +18,14 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.BitSet;
+import java.util.List;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.annotations.*;
-import com.google.common.collect.*;
+import com.google.common.annotations.Beta;
+import com.google.common.collect.Lists;
+import org.dmg.pmml.AssociationRule;
+import org.dmg.pmml.OutputField;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 @Beta
 abstract

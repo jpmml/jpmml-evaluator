@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.*;
+import java.io.InputStream;
 
 abstract
 public class ModelEvaluatorTest extends PMMLManagerTest {

@@ -27,14 +27,34 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
-
-import com.google.common.cache.*;
-import com.google.common.collect.*;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Maps;
+import org.dmg.pmml.Array;
+import org.dmg.pmml.Coefficient;
+import org.dmg.pmml.Coefficients;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.FieldRef;
+import org.dmg.pmml.KernelType;
+import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.RealSparseArray;
+import org.dmg.pmml.SupportVector;
+import org.dmg.pmml.SupportVectorMachine;
+import org.dmg.pmml.SupportVectorMachineModel;
+import org.dmg.pmml.SupportVectors;
+import org.dmg.pmml.SvmClassificationMethodType;
+import org.dmg.pmml.SvmRepresentationType;
+import org.dmg.pmml.VectorDictionary;
+import org.dmg.pmml.VectorFields;
+import org.dmg.pmml.VectorInstance;
+import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
 

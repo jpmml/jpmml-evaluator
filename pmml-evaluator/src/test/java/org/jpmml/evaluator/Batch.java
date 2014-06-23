@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.*;
+import java.io.InputStream;
 
 public interface Batch {
 

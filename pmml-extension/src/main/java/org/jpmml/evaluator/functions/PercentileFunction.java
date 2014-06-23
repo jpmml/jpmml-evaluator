@@ -18,17 +18,19 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
-import org.jpmml.evaluator.*;
+import com.google.common.collect.Lists;
+import com.google.common.primitives.Doubles;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
+import org.dmg.pmml.DataType;
 import org.jpmml.evaluator.FieldValue;
-
-import com.google.common.collect.*;
-import com.google.common.primitives.*;
-
-import org.apache.commons.math3.stat.descriptive.rank.*;
-
-import org.dmg.pmml.*;
+import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.FunctionException;
+import org.jpmml.evaluator.TypeCheckException;
+import org.jpmml.evaluator.TypeUtil;
 
 /**
  * Pseudo-declaration of function:

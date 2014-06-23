@@ -18,7 +18,8 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.PMMLObject;
 
 /**
  * Signals a duplicate field value declaration.

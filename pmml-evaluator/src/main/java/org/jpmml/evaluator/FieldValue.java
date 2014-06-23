@@ -18,14 +18,16 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.*;
+import java.io.Serializable;
 
-import org.dmg.pmml.*;
-
-import com.google.common.base.*;
+import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-
-import org.joda.time.*;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
 
 abstract
 public class FieldValue implements Serializable {

@@ -27,13 +27,25 @@
  */
 package org.jpmml.manager;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
 
-import org.dmg.pmml.*;
+import com.google.common.collect.Lists;
+import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.FieldUsageType;
+import org.dmg.pmml.LocalTransformations;
+import org.dmg.pmml.MiningField;
+import org.dmg.pmml.MiningSchema;
+import org.dmg.pmml.Model;
+import org.dmg.pmml.Output;
+import org.dmg.pmml.OutputField;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.Target;
+import org.dmg.pmml.Targets;
 
-import com.google.common.collect.*;
-
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ModelManager<M extends Model> extends PMMLManager implements Consumer {
 

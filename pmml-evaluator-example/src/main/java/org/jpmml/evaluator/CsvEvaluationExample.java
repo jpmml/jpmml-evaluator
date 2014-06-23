@@ -18,19 +18,24 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.xml.transform.*;
-
-import org.jpmml.manager.*;
-import org.jpmml.model.*;
-
-import org.dmg.pmml.*;
+import javax.xml.transform.Source;
 
 import com.beust.jcommander.Parameter;
-
-import org.xml.sax.*;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.PMML;
+import org.jpmml.manager.PMMLManager;
+import org.jpmml.model.ImportFilter;
+import org.jpmml.model.JAXBUtil;
+import org.xml.sax.InputSource;
 
 public class CsvEvaluationExample extends Example {
 

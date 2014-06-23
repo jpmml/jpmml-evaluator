@@ -27,9 +27,8 @@
  */
 package org.jpmml.evaluator;
 
-import org.jpmml.manager.*;
-
-import org.dmg.pmml.*;
+import org.dmg.pmml.PMMLObject;
+import org.jpmml.manager.PMMLException;
 
 public class EvaluationException extends PMMLException {
 

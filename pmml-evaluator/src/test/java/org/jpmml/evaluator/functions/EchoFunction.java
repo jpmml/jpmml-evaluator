@@ -18,9 +18,9 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.*;
+import java.util.List;
 
-import org.jpmml.evaluator.*;
+import org.jpmml.evaluator.FieldValue;
 
 public class EchoFunction extends AbstractFunction {
 

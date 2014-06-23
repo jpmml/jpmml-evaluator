@@ -18,7 +18,9 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.*;
+import org.dmg.pmml.DefineFunction;
+import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.FieldName;
 
 public class DefineFunctionEvaluationContext extends EvaluationContext {
 
