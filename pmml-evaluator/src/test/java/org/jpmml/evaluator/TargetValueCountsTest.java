@@ -43,15 +43,15 @@ public class TargetValueCountsTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("age of individual", 24, "gender", "male", "no of claims", "2", "domicile", null, "age of car", 1d);
 
-		Map<FieldName, Map<String, Double>> countsMap = evaluator.getCountsMap();
+		Map<FieldName, Map<String, Double>> fieldCountSums = evaluator.getFieldCountSums();
 
-		Map<String, Double> genderCounts = countsMap.get(new FieldName("gender"));
+		Map<String, Double> countSums = fieldCountSums.get(new FieldName("gender"));
 
-		assertEquals(Double.valueOf(8598d), genderCounts.get("100"));
-		assertEquals(Double.valueOf(2533d), genderCounts.get("500"));
-		assertEquals(Double.valueOf(1522d), genderCounts.get("1000"));
-		assertEquals(Double.valueOf(697d), genderCounts.get("5000"));
-		assertEquals(Double.valueOf(90d), genderCounts.get("10000"));
+		assertEquals(Double.valueOf(8598d), countSums.get("100"));
+		assertEquals(Double.valueOf(2533d), countSums.get("500"));
+		assertEquals(Double.valueOf(1522d), countSums.get("1000"));
+		assertEquals(Double.valueOf(697d), countSums.get("5000"));
+		assertEquals(Double.valueOf(90d), countSums.get("10000"));
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 

@@ -106,7 +106,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		// Probability calculations use logarithmic scale for greater numerical stability
 		ProbabilityClassificationMap<String> result = new ProbabilityClassificationMap<String>();
 
-		Map<FieldName, Map<String, Double>> countsMap = getCountsMap();
+		Map<FieldName, Map<String, Double>> fieldCountSums = getFieldCountSums();
 
 		List<BayesInput> bayesInputs = getValue(NaiveBayesModelEvaluator.bayesInputCache);
 		for(BayesInput bayesInput : bayesInputs){
@@ -143,11 +143,11 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				value = FieldValueUtil.refine(derivedField, value);
 			}
 
-			Map<String, Double> counts = countsMap.get(name);
+			Map<String, Double> countSums = fieldCountSums.get(name);
 
 			TargetValueCounts targetValueCounts = getTargetValueCounts(bayesInput, value);
 			if(targetValueCounts != null){
-				calculateDiscreteProbabilities(counts, targetValueCounts, threshold, result);
+				calculateDiscreteProbabilities(countSums, targetValueCounts, threshold, result);
 			}
 		}
 
@@ -193,14 +193,14 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 	}
 
-	private void calculateDiscreteProbabilities(Map<String, Double> counts, TargetValueCounts targetValueCounts, double threshold, Map<String, Double> probabilities){
+	private void calculateDiscreteProbabilities(Map<String, Double> countSums, TargetValueCounts targetValueCounts, double threshold, Map<String, Double> probabilities){
 
 		for(TargetValueCount targetValueCount : targetValueCounts){
 			String targetValue = targetValueCount.getValue();
 
-			Double count = counts.get(targetValue);
+			Double countSum = countSums.get(targetValue);
 
-			double probability = targetValueCount.getCount() / count;
+			double probability = targetValueCount.getCount() / countSum;
 
 			// The calculated probability can fall below the default probability
 			// However, a count of zero represents a special case, which needs adjustment
@@ -221,12 +221,12 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 	}
 
-	protected Map<FieldName, Map<String, Double>> getCountsMap(){
-		return getValue(NaiveBayesModelEvaluator.countCache);
+	protected Map<FieldName, Map<String, Double>> getFieldCountSums(){
+		return getValue(NaiveBayesModelEvaluator.countSumCache);
 	}
 
 	static
-	private Map<FieldName, Map<String, Double>> calculateCounts(NaiveBayesModel naiveBayesModel){
+	private Map<FieldName, Map<String, Double>> calculateCountSums(NaiveBayesModel naiveBayesModel){
 		Map<FieldName, Map<String, Double>> result = Maps.newLinkedHashMap();
 
 		List<BayesInput> bayesInputs = CacheUtil.getValue(naiveBayesModel, NaiveBayesModelEvaluator.bayesInputCache);
@@ -319,13 +319,13 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			}
 		});
 
-	private static final LoadingCache<NaiveBayesModel, Map<FieldName, Map<String, Double>>> countCache = CacheBuilder.newBuilder()
+	private static final LoadingCache<NaiveBayesModel, Map<FieldName, Map<String, Double>>> countSumCache = CacheBuilder.newBuilder()
 		.weakKeys()
 		.build(new CacheLoader<NaiveBayesModel, Map<FieldName, Map<String, Double>>>(){
 
 			@Override
 			public Map<FieldName, Map<String, Double>> load(NaiveBayesModel naiveBayesModel){
-				return calculateCounts(naiveBayesModel);
+				return calculateCountSums(naiveBayesModel);
 			}
 		});
 }
