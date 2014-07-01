@@ -10,7 +10,7 @@
 
 	<groupId>org.jpmml</groupId>
 	<artifactId>jpmml-evaluator</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.1.5</version>
 	<packaging>pom</packaging>
 
 	<name>JPMML-Evaluator</name>
@@ -50,7 +50,7 @@
 		<connection>scm:git:git@github.com:jpmml/jpmml-evaluator.git</connection>
 		<developerConnection>scm:git:git@github.com:jpmml/jpmml-evaluator.git</developerConnection>
 		<url>git://github.com/jpmml/jpmml-evaluator.git</url>
-		<tag>HEAD</tag>
+		<tag>1.1.5</tag>
 	</scm>
 	<issueManagement>
 		<system>GitHub</system>
@@ -62,19 +62,19 @@
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator</artifactId>
-				<version>1.1-SNAPSHOT</version>
+				<version>1.1.5</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator</artifactId>
 				<type>test-jar</type>
-				<version>1.1-SNAPSHOT</version>
+				<version>1.1.5</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-manager</artifactId>
-				<version>1.1-SNAPSHOT</version>
+				<version>1.1.5</version>
 			</dependency>
 
 			<dependency>
