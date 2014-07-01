@@ -39,6 +39,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.math3.util.Precision;
 import org.dmg.pmml.BayesInput;
 import org.dmg.pmml.BayesInputs;
 import org.dmg.pmml.BayesOutput;
@@ -125,8 +126,6 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				continue;
 			}
 
-			Map<String, Double> counts = countsMap.get(name);
-
 			DerivedField derivedField = bayesInput.getDerivedField();
 			if(derivedField != null){
 				Expression expression = derivedField.getExpression();
@@ -143,6 +142,8 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 				value = FieldValueUtil.refine(derivedField, value);
 			}
+
+			Map<String, Double> counts = countsMap.get(name);
 
 			TargetValueCounts targetValueCounts = getTargetValueCounts(bayesInput, value);
 			if(targetValueCounts != null){
@@ -183,7 +184,10 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			double mean = gaussianDistribution.getMean();
 			double variance = gaussianDistribution.getVariance();
 
-			double probability = Math.max(Math.exp(-Math.pow(x - mean, 2) / (2d * variance)) / Math.sqrt(2d * Math.PI * variance), threshold);
+			double probability = Math.exp(-Math.pow(x - mean, 2) / (2d * variance)) / Math.sqrt(2d * Math.PI * variance);
+
+			// The calculated probability cannot fall below the default probability
+			probability = Math.max(probability, threshold);
 
 			updateSum(targetValue, Math.log(probability), probabilities);
 		}
@@ -196,7 +200,13 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			Double count = counts.get(targetValue);
 
-			double probability = Math.max(targetValueCount.getCount() / count, threshold);
+			double probability = targetValueCount.getCount() / count;
+
+			// The calculated probability can fall below the default probability
+			// However, a count of zero represents a special case, which needs adjustment
+			if(VerificationUtil.isZero(targetValueCount.getCount(), Precision.EPSILON)){
+				probability = threshold;
+			}
 
 			updateSum(targetValue, Math.log(probability), probabilities);
 		}
