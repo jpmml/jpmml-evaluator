@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="http://www.dmg.org/PMML-4_0 pmml-4-0.xsd">
+    <Header copyright="(C) Copyright IBM Corp. 1989, 2012.">
+        <Application name="IBM SPSS Statistics 21.0" version="21.0.0.1"/>
+    </Header>
+    <DataDictionary numberOfFields="1">
+        <DataField name="high_time" displayName="high_time" optype="categorical" dataType="double">
+            <Extension extender="spss.com" name="format" value="5"/>
+            <Extension extender="spss.com" name="width" value="8"/>
+            <Extension extender="spss.com" name="decimals" value="2"/>
+            <Value value="0" displayValue=".00" property="valid"/>
+            <Value value="1" displayValue="1.00" property="valid"/>
+        </DataField>
+    </DataDictionary>
+    <GeneralRegressionModel targetVariableName="high_time" modelType="multinomialLogistic" functionName="classification" algorithmName="x-contrastLogistic">
+        <Extension extender="spss.com" name="numberParameters" value="1"/>
+        <MiningSchema>
+            <MiningField name="high_time" usageType="predicted" missingValueTreatment="asIs"/>
+        </MiningSchema>
+        <ParameterList>
+            <Parameter name="P0000001" label="Constant"/>
+        </ParameterList>
+        <FactorList/>
+        <CovariateList/>
+        <PPMatrix/>
+        <ParamMatrix>
+            <PCell targetCategory="1" parameterName="P0000001" beta="-1.08663609762109" df="1"/>
+        </ParamMatrix>
+    </GeneralRegressionModel>
+</PMML>

@@ -104,11 +104,19 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		Map<FieldName, FieldValue> arguments = getArguments(context);
 
 		Map<String, Map<String, Row>> ppMatrixMap = getPPMatrixMap();
-		if(ppMatrixMap.size() != 1 || !ppMatrixMap.containsKey(null)){
-			throw new InvalidFeatureException(generalRegressionModel.getPPMatrix());
-		}
 
-		Map<String, Row> parameterPredictorRows = ppMatrixMap.get(null);
+		Map<String, Row> parameterPredictorRows;
+
+		if(ppMatrixMap.isEmpty()){
+			parameterPredictorRows = Collections.emptyMap();
+		} else
+
+		{
+			parameterPredictorRows = ppMatrixMap.get(null);
+			if(parameterPredictorRows == null){
+				throw new InvalidFeatureException(generalRegressionModel.getPPMatrix());
+			}
+		}
 
 		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
 		if(paramMatrixMap.size() != 1 || !paramMatrixMap.containsKey(null)){
@@ -213,13 +221,21 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			// Categories from the first category to the second-to-last category
 			if(i < (targetCategories.size() - 1)){
-				Map<String, Row> parameterPredictorRows = ppMatrixMap.get(targetCategory);
-				if(parameterPredictorRows == null){
-					parameterPredictorRows = ppMatrixMap.get(null);
-				} // End if
+				Map<String, Row> parameterPredictorRows;
 
-				if(parameterPredictorRows == null){
-					throw new InvalidFeatureException(generalRegressionModel.getPPMatrix());
+				if(ppMatrixMap.isEmpty()){
+					parameterPredictorRows = Collections.emptyMap();
+				} else
+
+				{
+					parameterPredictorRows = ppMatrixMap.get(targetCategory);
+					if(parameterPredictorRows == null){
+						parameterPredictorRows = ppMatrixMap.get(null);
+					} // End if
+
+					if(parameterPredictorRows == null){
+						throw new InvalidFeatureException(generalRegressionModel.getPPMatrix());
+					}
 				}
 
 				Iterable<PCell> parameterCells;
@@ -469,10 +485,24 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return getValue(GeneralRegressionModelEvaluator.covariateCache);
 	}
 
+	/**
+	 * @return A map of predictor-to-parameter correlation matrices.
+	 * <p>
+	 * A PPMatrix element may encode zero or more matrices.
+	 * Regression models return a singleton map, whereas classification models
+	 * may return a singleton map or a multi-valued map, which overrides the default
+	 * matrix for one or more target categories.
+	 *
+	 * <p>
+	 * The default matrix is mapped to the <code>null</code> key.
+	 */
 	private Map<String, Map<String, Row>> getPPMatrixMap(){
 		return getValue(GeneralRegressionModelEvaluator.ppMatrixCache);
 	}
 
+	/**
+	 * @return A map of parameter matrices.
+	 */
 	private Map<String, List<PCell>> getParamMatrixMap(){
 		return getValue(GeneralRegressionModelEvaluator.paramMatrixCache);
 	}
