@@ -213,12 +213,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			// Categories from the first category to the second-to-last category
 			if(i < (targetCategories.size() - 1)){
-				Map<String, Row> parameterPredictorRow = ppMatrixMap.get(targetCategory);
-				if(parameterPredictorRow == null){
-					parameterPredictorRow = ppMatrixMap.get(null);
+				Map<String, Row> parameterPredictorRows = ppMatrixMap.get(targetCategory);
+				if(parameterPredictorRows == null){
+					parameterPredictorRows = ppMatrixMap.get(null);
 				} // End if
 
-				if(parameterPredictorRow == null){
+				if(parameterPredictorRows == null){
 					throw new InvalidFeatureException(generalRegressionModel.getPPMatrix());
 				}
 
@@ -256,7 +256,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 						throw new UnsupportedFeatureException(generalRegressionModel, modelType);
 				}
 
-				value = computeDotProduct(parameterCells, parameterPredictorRow, arguments);
+				value = computeDotProduct(parameterCells, parameterPredictorRows, arguments);
 				if(value == null){
 					throw new MissingResultException(generalRegressionModel);
 				}
