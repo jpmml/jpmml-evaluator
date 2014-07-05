@@ -1,0 +1,143 @@
+<?xml version="1.0" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.jpmml</groupId>
+		<artifactId>jpmml-evaluator</artifactId>
+		<version>1.1-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.jpmml</groupId>
+	<artifactId>pmml-evaluator-code-coverage</artifactId>
+	<packaging>jar</packaging>
+
+	<name>JPMML evaluator code coverage</name>
+	<description>JPMML class model evaluator code coverage with unit and integration tests</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.jpmml</groupId>
+			<artifactId>pmml-evaluator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jpmml</groupId>
+			<artifactId>pmml-knime</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jpmml</groupId>
+			<artifactId>pmml-rapidminer</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jpmml</groupId>
+			<artifactId>pmml-rattle</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>report</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<taskdef name="report" classname="org.jacoco.ant.ReportTask">
+									<classpath>
+										<fileset dir="${basedir}/target/jacoco-libs">
+											<include name="**/*.jar"/>
+										</fileset>
+									</classpath>
+								</taskdef>
+								<mkdir dir="${basedir}/target/jacoco-report"/>
+								<property
+									name="rootdir"
+									value="${basedir}/.."
+								/>
+								<report>
+									<executionData>
+										<fileset file="${rootdir}/pmml-evaluator/target/jacoco.exec"/>
+										<fileset file="${rootdir}/pmml-knime/target/jacoco.exec"/>
+										<fileset file="${rootdir}/pmml-rapidminer/target/jacoco.exec"/>
+										<fileset file="${rootdir}/pmml-rattle/target/jacoco.exec"/>
+									</executionData>
+									<structure name="PMML class model evaluator code coverage">
+										<classfiles>
+											<fileset dir="${rootdir}/pmml-evaluator/target/classes"/>
+										</classfiles>
+										<sourcefiles>
+											<fileset dir="${rootdir}/pmml-evaluator/src/main/java"/>
+										</sourcefiles>
+									</structure>
+									<html destdir="${basedir}/target/jacoco-report/html"/>
+									<xml destfile="${basedir}/target/jacoco-report/coverage-report.xml"/>
+									<csv destfile="${basedir}/target/jacoco-report/coverage-report.csv"/>
+								</report>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.8</version>
+				<executions>
+					<execution>
+						<id>jacoco-lib</id>
+						<phase>process-test-resources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<inherited>false</inherited>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.jacoco</groupId>
+									<artifactId>org.jacoco.ant</artifactId>
+									<version>0.7.1.201405082137</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.jacoco</groupId>
+									<artifactId>org.jacoco.agent</artifactId>
+									<version>0.7.1.201405082137</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.jacoco</groupId>
+									<artifactId>org.jacoco.core</artifactId>
+									<version>0.7.1.201405082137</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.jacoco</groupId>
+									<artifactId>org.jacoco.report</artifactId>
+									<version>0.7.1.201405082137</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.ow2.asm</groupId>
+									<artifactId>asm-debug-all</artifactId>
+									<version>5.0.1</version>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${basedir}/target/jacoco-libs</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>2.8.1</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
