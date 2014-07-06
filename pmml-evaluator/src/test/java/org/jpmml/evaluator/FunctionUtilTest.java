@@ -312,6 +312,10 @@ public class FunctionUtilTest {
 
 	static
 	private Object evaluate(String function, List<?> values){
+		Apply apply = new Apply(function);
+
+		EvaluationContext context = new LocalEvaluationContext();
+
 		Function<Object, FieldValue> transformer = new Function<Object, FieldValue>(){
 
 			@Override
@@ -320,15 +324,8 @@ public class FunctionUtilTest {
 			}
 		};
 
-		FieldValue result = apply(function, Lists.newArrayList(Iterables.transform(values, transformer)), new LocalEvaluationContext());
+		FieldValue result = FunctionUtil.evaluate(apply, Lists.newArrayList(Iterables.transform(values, transformer)), context);
 
 		return FieldValueUtil.getValue(result);
-	}
-
-	static
-	private FieldValue apply(String function, List<FieldValue> values, EvaluationContext context){
-		Apply apply = new Apply(function);
-
-		return FunctionUtil.evaluate(apply, values, context);
 	}
 }

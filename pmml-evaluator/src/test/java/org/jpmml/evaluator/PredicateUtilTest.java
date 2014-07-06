@@ -45,38 +45,35 @@ public class PredicateUtilTest {
 	public void evaluateSimplePredicate(){
 		FieldName age = new FieldName("age");
 
-		EvaluationContext context = createContext(age, 30);
-		EvaluationContext emptyContext = createContext();
-
 		SimplePredicate simplePredicate = new SimplePredicate(age, SimplePredicate.Operator.IS_MISSING);
-		assertEquals(Boolean.FALSE, evaluate(simplePredicate, context));
-		assertEquals(Boolean.TRUE, evaluate(simplePredicate, emptyContext));
+		assertEquals(Boolean.FALSE, evaluate(simplePredicate, age, 30));
+		assertEquals(Boolean.TRUE, evaluate(simplePredicate));
 
 		simplePredicate.setOperator(SimplePredicate.Operator.IS_NOT_MISSING);
-		assertEquals(Boolean.TRUE, evaluate(simplePredicate, context));
-		assertEquals(Boolean.FALSE, evaluate(simplePredicate, emptyContext));
+		assertEquals(Boolean.TRUE, evaluate(simplePredicate, age, 30));
+		assertEquals(Boolean.FALSE, evaluate(simplePredicate));
 
 		simplePredicate.setValue("30");
 
 		simplePredicate.setOperator(SimplePredicate.Operator.EQUAL);
-		assertEquals(Boolean.TRUE, evaluate(simplePredicate, context));
-		assertEquals(null, evaluate(simplePredicate, emptyContext));
+		assertEquals(Boolean.TRUE, evaluate(simplePredicate, age, 30));
+		assertEquals(null, evaluate(simplePredicate));
 
 		simplePredicate.setOperator(SimplePredicate.Operator.NOT_EQUAL);
-		assertEquals(Boolean.FALSE, evaluate(simplePredicate, context));
-		assertEquals(null, evaluate(simplePredicate, emptyContext));
+		assertEquals(Boolean.FALSE, evaluate(simplePredicate, age, 30));
+		assertEquals(null, evaluate(simplePredicate));
 
 		simplePredicate.setOperator(SimplePredicate.Operator.LESS_THAN);
-		assertEquals(Boolean.FALSE, evaluate(simplePredicate, context));
+		assertEquals(Boolean.FALSE, evaluate(simplePredicate, age, 30));
 
 		simplePredicate.setOperator(SimplePredicate.Operator.LESS_OR_EQUAL);
-		assertEquals(Boolean.TRUE, evaluate(simplePredicate, context));
+		assertEquals(Boolean.TRUE, evaluate(simplePredicate, age, 30));
 
 		simplePredicate.setOperator(SimplePredicate.Operator.GREATER_OR_EQUAL);
-		assertEquals(Boolean.TRUE, evaluate(simplePredicate, context));
+		assertEquals(Boolean.TRUE, evaluate(simplePredicate, age, 30));
 
 		simplePredicate.setOperator(SimplePredicate.Operator.GREATER_THAN);
-		assertEquals(Boolean.FALSE, evaluate(simplePredicate, context));
+		assertEquals(Boolean.FALSE, evaluate(simplePredicate, age, 30));
 	}
 
 	@Test
@@ -94,31 +91,29 @@ public class PredicateUtilTest {
 		CompoundPredicate compoundPredicate = new CompoundPredicate(CompoundPredicate.BooleanOperator.SURROGATE);
 		compoundPredicate.withPredicates(temperaturePredicate, humidityPredicate);
 
-		assertEquals(Boolean.TRUE, evaluate(compoundPredicate, createContext(temperature, 70)));
-		assertEquals(Boolean.FALSE, evaluate(compoundPredicate, createContext(temperature, 40)));
-		assertEquals(Boolean.FALSE, evaluate(compoundPredicate, createContext(temperature, 100)));
+		assertEquals(Boolean.TRUE, evaluate(compoundPredicate, temperature, 70));
+		assertEquals(Boolean.FALSE, evaluate(compoundPredicate, temperature, 40));
+		assertEquals(Boolean.FALSE, evaluate(compoundPredicate,  temperature, 100));
 
-		assertEquals(Boolean.TRUE, evaluate(compoundPredicate, createContext(humidity, 90)));
-		assertEquals(Boolean.FALSE, evaluate(compoundPredicate, createContext(humidity, 70)));
+		assertEquals(Boolean.TRUE, evaluate(compoundPredicate, humidity, 90));
+		assertEquals(Boolean.FALSE, evaluate(compoundPredicate, humidity, 70));
 
-		assertEquals(null, evaluate(compoundPredicate, createContext()));
+		assertEquals(null, evaluate(compoundPredicate));
 	}
 
 	@Test
 	public void evaluateBooleanCompoundPredicate(){
-		EvaluationContext context = createContext();
-
 		CompoundPredicate compoundPredicate = new CompoundPredicate();
 		compoundPredicate.withPredicates(new True(), new False());
 
 		compoundPredicate.setBooleanOperator(CompoundPredicate.BooleanOperator.AND);
-		assertEquals(Boolean.FALSE, evaluate(compoundPredicate, context));
+		assertEquals(Boolean.FALSE, evaluate(compoundPredicate));
 
 		compoundPredicate.setBooleanOperator(CompoundPredicate.BooleanOperator.OR);
-		assertEquals(Boolean.TRUE, evaluate(compoundPredicate, context));
+		assertEquals(Boolean.TRUE, evaluate(compoundPredicate));
 
 		compoundPredicate.setBooleanOperator(CompoundPredicate.BooleanOperator.XOR);
-		assertEquals(Boolean.TRUE, evaluate(compoundPredicate, context));
+		assertEquals(Boolean.TRUE, evaluate(compoundPredicate));
 	}
 
 	@Test
@@ -128,26 +123,26 @@ public class PredicateUtilTest {
 		FieldName fruit = new FieldName("fruit");
 
 		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(array, fruit, SimpleSetPredicate.BooleanOperator.IS_IN);
-		assertEquals(Boolean.TRUE, evaluate(simpleSetPredicate, createContext(fruit, "apple")));
-		assertEquals(Boolean.FALSE, evaluate(simpleSetPredicate, createContext(fruit, "pineapple")));
+		assertEquals(Boolean.TRUE, evaluate(simpleSetPredicate, fruit, "apple"));
+		assertEquals(Boolean.FALSE, evaluate(simpleSetPredicate, fruit, "pineapple"));
 
 		simpleSetPredicate.setBooleanOperator(SimpleSetPredicate.BooleanOperator.IS_NOT_IN);
-		assertEquals(Boolean.FALSE, evaluate(simpleSetPredicate, createContext(fruit, "apple")));
-		assertEquals(Boolean.TRUE, evaluate(simpleSetPredicate, createContext(fruit, "pineapple")));
+		assertEquals(Boolean.FALSE, evaluate(simpleSetPredicate, fruit, "apple"));
+		assertEquals(Boolean.TRUE, evaluate(simpleSetPredicate, fruit, "pineapple"));
 	}
 
 	@Test
 	public void evaluateTrue(){
 		True truePredicate = new True();
 
-		assertEquals(Boolean.TRUE, evaluate(truePredicate, createContext()));
+		assertEquals(Boolean.TRUE, evaluate(truePredicate));
 	}
 
 	@Test
 	public void evaluateFalse(){
 		False falsePredicate = new False();
 
-		assertEquals(Boolean.FALSE, evaluate(falsePredicate, createContext()));
+		assertEquals(Boolean.FALSE, evaluate(falsePredicate));
 	}
 
 	@Test
@@ -190,18 +185,18 @@ public class PredicateUtilTest {
 	}
 
 	static
-	private EvaluationContext createContext(){
+	private Boolean evaluate(Predicate predicate){
 		EvaluationContext context = new LocalEvaluationContext();
 
-		return context;
+		return evaluate(predicate, context);
 	}
 
 	static
-	private EvaluationContext createContext(FieldName field, Object value){
+	private Boolean evaluate(Predicate predicate, FieldName field, Object value){
 		EvaluationContext context = new LocalEvaluationContext();
 		context.declare(field, value);
 
-		return context;
+		return evaluate(predicate, context);
 	}
 
 	static
