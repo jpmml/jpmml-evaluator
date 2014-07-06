@@ -37,6 +37,9 @@ import org.jpmml.manager.UnsupportedFeatureException;
 
 public class NormalizationUtil {
 
+	private NormalizationUtil(){
+	}
+
 	static
 	public FieldValue normalize(NormContinuous normContinuous, FieldValue value){
 		double result = normalize(normContinuous, (value.asNumber()).doubleValue());
