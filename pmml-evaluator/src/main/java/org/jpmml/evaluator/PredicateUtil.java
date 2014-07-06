@@ -77,9 +77,25 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, EvaluationContext context){
+		SimplePredicate.Operator operator = simplePredicate.getOperator();
+		switch(operator){
+			case IS_MISSING:
+			case IS_NOT_MISSING:
+				// "If the operator is isMissing or isNotMissing, the attribute value must not appear"
+				if(simplePredicate.getValue() != null){
+					throw new InvalidFeatureException(simplePredicate);
+				}
+				break;
+			default:
+				// "With all other operators, however, the attribute value is required"
+				if(simplePredicate.getValue() == null){
+					throw new InvalidFeatureException(simplePredicate);
+				}
+				break;
+		}
+
 		FieldValue value = ExpressionUtil.evaluate(simplePredicate.getField(), context);
 
-		SimplePredicate.Operator operator = simplePredicate.getOperator();
 		switch(operator){
 			case IS_MISSING:
 				return Boolean.valueOf(value == null);
@@ -210,18 +226,18 @@ public class PredicateUtil {
 
 			if(right == null || right.booleanValue()){
 				return null;
-			} else {
-				return Boolean.FALSE;
 			}
+
+			return Boolean.FALSE;
 		} else
 
 		if(right == null){
 
 			if(left == null || left.booleanValue()){
 				return null;
-			} else {
-				return Boolean.FALSE;
 			}
+
+			return Boolean.FALSE;
 		} else
 
 		{
