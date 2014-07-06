@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
- <Header copyright="Copyright (c) 2014 Vfed" description="Generalized Linear Regression Model">
-  <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
+<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_2 http://www.dmg.org/v4-2/pmml-4-2.xsd">
+ <Header copyright="Copyright (c) 2014 vfed" description="Generalized Linear Regression Model">
+  <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-04-28 19:33:54</Timestamp>
+  <Timestamp>2014-07-06 23:38:34</Timestamp>
  </Header>
  <DataDictionary numberOfFields="4">
   <DataField name="O3" optype="continuous" dataType="double"/>
@@ -52,14 +52,14 @@
    <PPCell value="1" predictorName="ibt" parameterName="p7"/>
   </PPMatrix>
   <ParamMatrix>
-   <PCell parameterName="p0" df="1" beta="0.134527233143683"/>
-   <PCell parameterName="p1" df="1" beta="0.266502023146842"/>
-   <PCell parameterName="p2" df="1" beta="0.000797305224210236"/>
-   <PCell parameterName="p3" df="1" beta="-0.0801009112817608"/>
-   <PCell parameterName="p4" df="1" beta="-5.33106897699767e-05"/>
-   <PCell parameterName="p5" df="1" beta="0.00103874529298235"/>
-   <PCell parameterName="p6" df="1" beta="1.53132524539178e-06"/>
-   <PCell parameterName="p7" df="1" beta="1.01217599409579e-07"/>
+   <PCell parameterName="p0" df="1" beta="0.134527233143838"/>
+   <PCell parameterName="p1" df="1" beta="0.26650202314684"/>
+   <PCell parameterName="p2" df="1" beta="0.000797305224210195"/>
+   <PCell parameterName="p3" df="1" beta="-0.0801009112817615"/>
+   <PCell parameterName="p4" df="1" beta="-5.33106897699759e-05"/>
+   <PCell parameterName="p5" df="1" beta="0.00103874529298236"/>
+   <PCell parameterName="p6" df="1" beta="1.53132524539188e-06"/>
+   <PCell parameterName="p7" df="1" beta="1.01217599409577e-07"/>
   </ParamMatrix>
  </GeneralRegressionModel>
 </PMML>

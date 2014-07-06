@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
- <Header copyright="Copyright (c) 2014 Vfed" description="Generalized Linear Regression Model">
-  <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
+<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_2 http://www.dmg.org/v4-2/pmml-4-2.xsd">
+ <Header copyright="Copyright (c) 2014 vfed" description="Generalized Linear Regression Model">
+  <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-04-28 19:32:56</Timestamp>
+  <Timestamp>2014-07-06 23:51:06</Timestamp>
  </Header>
  <DataDictionary numberOfFields="5">
   <DataField name="versicolor" optype="categorical" dataType="string">
@@ -48,7 +48,7 @@
    <PPCell value="1" predictorName="Petal.Width" parameterName="p4"/>
   </PPMatrix>
   <ParamMatrix>
-   <PCell targetCategory="1" parameterName="p0" df="1" beta="7.37848655335252"/>
+   <PCell targetCategory="1" parameterName="p0" df="1" beta="7.37848655335254"/>
    <PCell targetCategory="1" parameterName="p1" df="1" beta="-0.245356708026873"/>
    <PCell targetCategory="1" parameterName="p2" df="1" beta="-2.79656809436688"/>
    <PCell targetCategory="1" parameterName="p3" df="1" beta="1.3136433131914"/>

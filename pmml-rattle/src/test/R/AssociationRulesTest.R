@@ -6,7 +6,7 @@ shoppingData = readCsv("csv/Shopping.csv")
 # Remove 2 duplicate rows
 shoppingData = unique(shoppingData)
 
-baskets = split(shoppingData[, "Product"], shoppingData[, "Transaction"])
+baskets = split(shoppingData[, "item"], shoppingData[, "transaction"])
 
 transactions = as(baskets, "transactions")
 

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
- <Header copyright="Copyright (c) 2014 Vfed" description="Generalized Linear Regression Model">
-  <Extension name="user" value="Vfed" extender="Rattle/PMML"/>
+<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_2 http://www.dmg.org/v4-2/pmml-4-2.xsd">
+ <Header copyright="Copyright (c) 2014 vfed" description="Generalized Linear Regression Model">
+  <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-04-28 19:32:57</Timestamp>
+  <Timestamp>2014-07-06 23:51:07</Timestamp>
  </Header>
  <DataDictionary numberOfFields="9">
   <DataField name="Adjusted" optype="categorical" dataType="string">
@@ -82,9 +82,9 @@
    <MiningField name="Hours" usageType="active"/>
   </MiningSchema>
   <Output>
-   <OutputField name="Predicted_Adjusted" feature="predictedValue"/>
    <OutputField name="Probability_0" targetField="Adjusted" feature="probability" value="0"/>
    <OutputField name="Probability_1" targetField="Adjusted" feature="probability" value="1"/>
+   <OutputField name="Predicted_Adjusted" feature="predictedValue"/>
   </Output>
   <ParameterList>
    <Parameter name="p0" label="(Intercept)"/>
@@ -190,50 +190,50 @@
    <PPCell value="1" predictorName="Hours" parameterName="p43"/>
   </PPMatrix>
   <ParamMatrix>
-   <PCell targetCategory="1" parameterName="p0" df="1" beta="-5.40475486934436"/>
-   <PCell targetCategory="1" parameterName="p1" df="1" beta="0.162810188076369"/>
-   <PCell targetCategory="1" parameterName="p2" df="1" beta="0.137442925005081"/>
+   <PCell targetCategory="1" parameterName="p0" df="1" beta="-5.40475486934435"/>
+   <PCell targetCategory="1" parameterName="p1" df="1" beta="0.16281018807637"/>
+   <PCell targetCategory="1" parameterName="p2" df="1" beta="0.137442925005083"/>
    <PCell targetCategory="1" parameterName="p3" df="1" beta="-0.0336841238750315"/>
    <PCell targetCategory="1" parameterName="p4" df="1" beta="0.255790209517916"/>
-   <PCell targetCategory="1" parameterName="p5" df="1" beta="0.171535559623542"/>
-   <PCell targetCategory="1" parameterName="p6" df="1" beta="-17.1465239418258"/>
-   <PCell targetCategory="1" parameterName="p7" df="1" beta="0.165370069133505"/>
-   <PCell targetCategory="1" parameterName="p8" df="1" beta="-0.734946434992092"/>
-   <PCell targetCategory="1" parameterName="p9" df="1" beta="1.52177024774817"/>
+   <PCell targetCategory="1" parameterName="p5" df="1" beta="0.171535559623543"/>
+   <PCell targetCategory="1" parameterName="p6" df="1" beta="-17.1465239418317"/>
+   <PCell targetCategory="1" parameterName="p7" df="1" beta="0.165370069133508"/>
+   <PCell targetCategory="1" parameterName="p8" df="1" beta="-0.734946434992089"/>
+   <PCell targetCategory="1" parameterName="p9" df="1" beta="1.52177024774816"/>
    <PCell targetCategory="1" parameterName="p10" df="1" beta="-1.05762858148175"/>
-   <PCell targetCategory="1" parameterName="p11" df="1" beta="0.790960842746631"/>
-   <PCell targetCategory="1" parameterName="p12" df="1" beta="-15.6477306962951"/>
+   <PCell targetCategory="1" parameterName="p11" df="1" beta="0.790960842746632"/>
+   <PCell targetCategory="1" parameterName="p12" df="1" beta="-15.6477306962957"/>
    <PCell targetCategory="1" parameterName="p13" df="1" beta="1.99806950844467"/>
-   <PCell targetCategory="1" parameterName="p14" df="1" beta="-0.905281328151151"/>
+   <PCell targetCategory="1" parameterName="p14" df="1" beta="-0.905281328151149"/>
    <PCell targetCategory="1" parameterName="p15" df="1" beta="-1.40817445897119"/>
-   <PCell targetCategory="1" parameterName="p16" df="1" beta="-1.42611146517703"/>
-   <PCell targetCategory="1" parameterName="p17" df="1" beta="-1.58273914301609"/>
-   <PCell targetCategory="1" parameterName="p18" df="1" beta="-17.1243486493282"/>
-   <PCell targetCategory="1" parameterName="p19" df="1" beta="-16.6669362438432"/>
-   <PCell targetCategory="1" parameterName="p20" df="1" beta="-16.3482083791626"/>
+   <PCell targetCategory="1" parameterName="p16" df="1" beta="-1.42611146517702"/>
+   <PCell targetCategory="1" parameterName="p17" df="1" beta="-1.5827391430161"/>
+   <PCell targetCategory="1" parameterName="p18" df="1" beta="-17.1243486493294"/>
+   <PCell targetCategory="1" parameterName="p19" df="1" beta="-16.6669362438405"/>
+   <PCell targetCategory="1" parameterName="p20" df="1" beta="-16.3482083791612"/>
    <PCell targetCategory="1" parameterName="p21" df="1" beta="-2.63774611388388"/>
-   <PCell targetCategory="1" parameterName="p22" df="1" beta="0.405709544118046"/>
+   <PCell targetCategory="1" parameterName="p22" df="1" beta="0.40570954411805"/>
    <PCell targetCategory="1" parameterName="p23" df="1" beta="3.00566721391929"/>
-   <PCell targetCategory="1" parameterName="p24" df="1" beta="0.854700660872968"/>
-   <PCell targetCategory="1" parameterName="p25" df="1" beta="0.921467925298329"/>
-   <PCell targetCategory="1" parameterName="p26" df="1" beta="0.889578419521984"/>
+   <PCell targetCategory="1" parameterName="p24" df="1" beta="0.85470066087297"/>
+   <PCell targetCategory="1" parameterName="p25" df="1" beta="0.921467925298333"/>
+   <PCell targetCategory="1" parameterName="p26" df="1" beta="0.889578419521982"/>
    <PCell targetCategory="1" parameterName="p27" df="1" beta="1.25477349997524"/>
    <PCell targetCategory="1" parameterName="p28" df="1" beta="1.78877774869345"/>
-   <PCell targetCategory="1" parameterName="p29" df="1" beta="0.333811091599448"/>
-   <PCell targetCategory="1" parameterName="p30" df="1" beta="-12.3557294715934"/>
-   <PCell targetCategory="1" parameterName="p31" df="1" beta="0.645184810869702"/>
-   <PCell targetCategory="1" parameterName="p32" df="1" beta="-13.0109153098271"/>
-   <PCell targetCategory="1" parameterName="p33" df="1" beta="1.41796622240718"/>
+   <PCell targetCategory="1" parameterName="p29" df="1" beta="0.333811091599449"/>
+   <PCell targetCategory="1" parameterName="p30" df="1" beta="-12.3557294715966"/>
+   <PCell targetCategory="1" parameterName="p31" df="1" beta="0.645184810869703"/>
+   <PCell targetCategory="1" parameterName="p32" df="1" beta="-13.0109153098259"/>
+   <PCell targetCategory="1" parameterName="p33" df="1" beta="1.41796622240719"/>
    <PCell targetCategory="1" parameterName="p34" df="1" beta="1.99946145807149"/>
-   <PCell targetCategory="1" parameterName="p35" df="1" beta="0.755156203538224"/>
+   <PCell targetCategory="1" parameterName="p35" df="1" beta="0.755156203538225"/>
    <PCell targetCategory="1" parameterName="p36" df="1" beta="1.10691724740465"/>
-   <PCell targetCategory="1" parameterName="p37" df="1" beta="-0.162884614778337"/>
+   <PCell targetCategory="1" parameterName="p37" df="1" beta="-0.162884614778333"/>
    <PCell targetCategory="1" parameterName="p38" df="1" beta="1.39630076676115"/>
-   <PCell targetCategory="1" parameterName="p39" df="1" beta="0.385814282486535"/>
+   <PCell targetCategory="1" parameterName="p39" df="1" beta="0.385814282486537"/>
    <PCell targetCategory="1" parameterName="p40" df="1" beta="1.37103951153888e-06"/>
-   <PCell targetCategory="1" parameterName="p41" df="1" beta="0.214898714164645"/>
+   <PCell targetCategory="1" parameterName="p41" df="1" beta="0.214898714164643"/>
    <PCell targetCategory="1" parameterName="p42" df="1" beta="0.00109088551898972"/>
-   <PCell targetCategory="1" parameterName="p43" df="1" beta="0.0272118853086479"/>
+   <PCell targetCategory="1" parameterName="p43" df="1" beta="0.027211885308648"/>
   </ParamMatrix>
  </GeneralRegressionModel>
 </PMML>

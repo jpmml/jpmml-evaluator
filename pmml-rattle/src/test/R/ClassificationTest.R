@@ -167,7 +167,7 @@ generateNaiveBayesAudit = function(){
 }
 
 generateNeuralNetworkAudit = function(){
-	set.seed(41)
+	set.seed(13)
 
 	nnet = nnet(auditFormula, auditData, size = 9, decay = 1e-3, maxit = 10000)
 	saveXML(pmml(nnet), "pmml/NeuralNetworkAudit.pmml")
