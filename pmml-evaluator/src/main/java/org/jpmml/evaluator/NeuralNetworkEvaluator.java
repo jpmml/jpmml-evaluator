@@ -56,6 +56,7 @@ import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
+import org.jpmml.manager.InvalidFeatureException;
 import org.jpmml.manager.UnsupportedFeatureException;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<Entity> {
@@ -103,15 +104,21 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	}
 
 	private Map<FieldName, ? extends Number> evaluateRegression(ModelEvaluationContext context){
-		Map<FieldName, Double> result = Maps.newLinkedHashMap();
+		NeuralNetwork neuralNetwork = getModel();
 
 		Map<String, Double> entityOutputs = evaluateRaw(context);
 
-		List<NeuralOutput> neuralOutputs = getOrCreateNeuralOutputs();
+		Map<FieldName, Double> result = Maps.newLinkedHashMap();
+
+		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
+		if(neuralOutputs == null){
+			throw new InvalidFeatureException(neuralNetwork);
+		}
+
 		for(NeuralOutput neuralOutput : neuralOutputs){
 			String id = neuralOutput.getOutputNeuron();
 
-			Expression expression = getExpression(context, neuralOutput.getDerivedField());
+			Expression expression = getExpression(neuralOutput.getDerivedField(), context);
 			if(expression instanceof FieldRef){
 				FieldRef fieldRef = (FieldRef)expression;
 
@@ -141,17 +148,23 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	}
 
 	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
-		Map<FieldName, NeuronClassificationMap> result = Maps.newLinkedHashMap();
+		NeuralNetwork neuralNetwork = getModel();
 
 		Map<String, Entity> entities = getEntityRegistry();
 
 		Map<String, Double> entityOutputs = evaluateRaw(context);
 
-		List<NeuralOutput> neuralOutputs = getOrCreateNeuralOutputs();
+		Map<FieldName, NeuronClassificationMap> result = Maps.newLinkedHashMap();
+
+		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
+		if(neuralOutputs == null){
+			throw new InvalidFeatureException(neuralNetwork);
+		}
+
 		for(NeuralOutput neuralOutput : neuralOutputs){
 			String id = neuralOutput.getOutputNeuron();
 
-			Expression expression = getExpression(context, neuralOutput.getDerivedField());
+			Expression expression = getExpression(neuralOutput.getDerivedField(), context);
 			if(expression instanceof NormDiscrete){
 				NormDiscrete normDiscrete = (NormDiscrete)expression;
 
@@ -179,7 +192,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return TargetUtil.evaluateClassification(result, context);
 	}
 
-	private Expression getExpression(EvaluationContext context, DerivedField derivedField){
+	private Expression getExpression(DerivedField derivedField, EvaluationContext context){
 		Expression expression = derivedField.getExpression();
 
 		if(expression instanceof FieldRef){
@@ -187,7 +200,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 			derivedField = context.resolveDerivedField(fieldRef.getField());
 			if(derivedField != null){
-				return getExpression(context, derivedField);
+				return getExpression(derivedField, context);
 			}
 
 			return fieldRef;
@@ -210,7 +223,11 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		Map<String, Double> result = Maps.newLinkedHashMap();
 
 		NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
-		for(NeuralInput neuralInput: neuralInputs){
+		if(neuralInputs == null){
+			throw new InvalidFeatureException(neuralNetwork);
+		}
+
+		for(NeuralInput neuralInput : neuralInputs){
 			DerivedField derivedField = neuralInput.getDerivedField();
 
 			FieldValue value = ExpressionUtil.evaluate(derivedField, context);
@@ -310,45 +327,32 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				if(threshold == null){
 					threshold = Double.valueOf(neuralNetwork.getThreshold());
 				}
-				return z > threshold.doubleValue() ? 1.0 : 0.0;
+				return z > threshold.doubleValue() ? 1d : 0d;
 			case LOGISTIC:
-				return 1.0 / (1.0 + Math.exp(-z));
+				return 1d / (1d + Math.exp(-z));
 			case TANH:
-				return (1.0 - Math.exp(-2.0*z)) / (1.0 + Math.exp(-2.0*z));
+				return (1d - Math.exp(-2d * z)) / (1d + Math.exp(-2d * z));
 			case IDENTITY:
 				return z;
 			case EXPONENTIAL:
 				return Math.exp(z);
 			case RECIPROCAL:
-				return 1.0/z;
+				return 1d / z;
 			case SQUARE:
-				return z*z;
+				return z * z;
 			case GAUSS:
-				return Math.exp(-(z*z));
+				return Math.exp(-(z * z));
 			case SINE:
 				return Math.sin(z);
 			case COSINE:
 				return Math.cos(z);
 			case ELLIOTT:
-				return z/(1.0 + Math.abs(z));
+				return z / (1d + Math.abs(z));
 			case ARCTAN:
 				return Math.atan(z);
 			default:
 				throw new UnsupportedFeatureException(locatable, activationFunction);
 		}
-	}
-
-	public List<NeuralOutput> getOrCreateNeuralOutputs(){
-		NeuralNetwork neuralNetwork = getModel();
-
-		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
-		if(neuralOutputs == null){
-			neuralOutputs = new NeuralOutputs();
-
-			neuralNetwork.setNeuralOutputs(neuralOutputs);
-		}
-
-		return neuralOutputs.getNeuralOutputs();
 	}
 
 	private interface Normalizer {
@@ -381,6 +385,10 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				BiMap<String, Entity> result = HashBiMap.create();
 
 				NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
+				if(neuralInputs == null){
+					throw new InvalidFeatureException(neuralNetwork);
+				}
+
 				for(NeuralInput neuralInput : neuralInputs){
 					EntityUtil.put(neuralInput, result);
 				}
