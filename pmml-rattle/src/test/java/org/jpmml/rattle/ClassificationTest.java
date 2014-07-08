@@ -137,6 +137,13 @@ public class ClassificationTest {
 	}
 
 	@Test
+	public void evaluateRegressionAudit() throws Exception {
+		Batch batch = new RattleBatch("Regression", "Audit");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
 	public void evaluateSupportVectorMachineAudit() throws Exception {
 		Batch batch = new RattleBatch("SupportVectorMachine", "Audit");
 

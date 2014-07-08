@@ -149,12 +149,19 @@ generateDecisionTreeAudit = function(){
 
 generateGeneralRegressionAudit = function(){
 	glm = glm(auditFormula, auditData, family = binomial)
-	saveXML(pmml(glm), "pmml/GeneralRegressionAudit.pmml")
+	pmml.glm = pmml.glm(glm)
+	saveXML(pmml.glm, "pmml/GeneralRegressionAudit.pmml")
+
+	pmml.lm = pmml.lm(glm)
+	# Change the normalization method from "softmax" to "logit"
+	xmlAttrs(pmml.lm[3]$RegressionModel)["normalizationMethod"] = "logit"
+	saveXML(pmml.lm, "pmml/RegressionAudit.pmml")
 
 	probabilities = binomialProbabilities(predict(glm, type = "response"))
 	classes = as.character(as.integer(probabilities > 0.5))
 	probabilities = cbind(1 - probabilities, probabilities)
 	writeAudit(classes, probabilities, "csv/GeneralRegressionAudit.csv")
+	writeAudit(classes, probabilities, "csv/RegressionAudit.csv")
 }
 
 generateNaiveBayesAudit = function(){
