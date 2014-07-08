@@ -148,6 +148,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			entry.setValue(normalizeClassificationResult(regressionModel, entry.getValue(), sumExp));
 		}
 
+		result.normalizeValues();
+
 		return TargetUtil.evaluateClassification(Collections.singletonMap(targetField, result), context);
 	}
 
