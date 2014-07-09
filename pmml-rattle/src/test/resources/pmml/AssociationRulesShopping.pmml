@@ -3,7 +3,7 @@
  <Header copyright="Copyright (c) 2014 vfed" description="arules association rules model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-07-06 23:44:55</Timestamp>
+  <Timestamp>2014-07-08 17:05:45</Timestamp>
  </Header>
  <DataDictionary numberOfFields="2">
   <DataField name="transaction" optype="categorical" dataType="string"/>
@@ -14,6 +14,12 @@
    <MiningField name="transaction" usageType="group"/>
    <MiningField name="item" usageType="active"/>
   </MiningSchema>
+  <Output>
+   <OutputField name="ruleId" feature="ruleValue" ruleFeature="ruleId" algorithm="exclusiveRecommendation" rank="1" rankBasis="support"/>
+   <OutputField name="support" feature="ruleValue" ruleFeature="support" algorithm="exclusiveRecommendation" rank="1" rankBasis="support"/>
+   <OutputField name="confidence" feature="ruleValue" ruleFeature="confidence" algorithm="exclusiveRecommendation" rank="1" rankBasis="support"/>
+   <OutputField name="lift" feature="ruleValue" ruleFeature="lift" algorithm="exclusiveRecommendation" rank="1" rankBasis="support"/>
+  </Output>
   <Item id="1" value="beer"/>
   <Item id="2" value="cannedmeat"/>
   <Item id="3" value="cannedveg"/>
