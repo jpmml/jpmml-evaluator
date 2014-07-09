@@ -34,7 +34,7 @@ generateDecisionTreeIris = function(){
 }
 
 generateNaiveBayesIris = function(){
-	naiveBayes = naiveBayes(irisFormula, irisData, threshold = 0) 
+	naiveBayes = naiveBayes(irisFormula, irisData, threshold = 0)
 	saveXML(pmml(naiveBayes, predictedField = "Species"), "pmml/NaiveBayesIris.pmml")
 
 	classes = predict(naiveBayes, newdata = irisData, threshold = 0, type = "class")
@@ -165,11 +165,12 @@ generateGeneralRegressionAudit = function(){
 }
 
 generateNaiveBayesAudit = function(){
-	naiveBayes = naiveBayes(auditFormula, auditData, threshold = 0) 
+	naiveBayes = naiveBayes(auditFormula, auditData, threshold = 0)
 	saveXML(pmml(naiveBayes, predictedField = "Adjusted"), "pmml/NaiveBayesAudit.pmml")
 
 	classes = predict(naiveBayes, newdata = auditData, threshold = 0, type = "class")
 	probabilities = predict(naiveBayes, newdata = auditData, threshold = 0, type = "raw")
+	probabilities[is.nan(probabilities[, 2]), 2] = 0
 	writeAudit(classes, probabilities, "csv/NaiveBayesAudit.csv")
 }
 
@@ -188,7 +189,7 @@ generateRandomForestAudit = function(){
 
 	randomForest = randomForest(auditFormula, auditData, ntree = 15, mtry = 8, nodesize = 10)
 	saveXML(pmml(randomForest), "pmml/RandomForestAudit.pmml")
-	
+
 	classes = predict(randomForest, newdata = auditData, type = "class")
 	probabilities = predict(randomForest, newdata = auditData, type = "prob")
 	writeAudit(classes, probabilities, "csv/RandomForestAudit.csv")

@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.dmg.pmml.FieldName;
@@ -48,12 +49,7 @@ public class CsvUtil {
 				break table;
 			}
 
-			List<FieldName> keys = Lists.newArrayList();
-
 			List<String> headerCells = parseLine(headerLine);
-			for(int i = 0; i < headerCells.size(); i++){
-				keys.add(FieldName.create(headerCells.get(i)));
-			}
 
 			while(true){
 				String bodyLine = reader.readLine();
@@ -66,12 +62,12 @@ public class CsvUtil {
 				List<String> bodyCells = parseLine(bodyLine);
 
 				// Must be of equal length
-				if(bodyCells.size() != headerCells.size()){
+				if(headerCells.size() != bodyCells.size()){
 					throw new RuntimeException();
 				}
 
-				for(int i = 0; i < bodyCells.size(); i++){
-					row.put(keys.get(i), bodyCells.get(i));
+				for(int i = 0; i < headerCells.size(); i++){
+					row.put(FieldName.create(headerCells.get(i)), bodyCells.get(i));
 				}
 
 				table.add(row);
@@ -84,7 +80,22 @@ public class CsvUtil {
 	}
 
 	static
-	private List<String> parseLine(String line){
-		return Arrays.asList(line.split(","));
+	public List<String> parseLine(String line){
+		List<String> cells = Arrays.asList(line.split(","));
+
+		Function<String, String> function = new Function<String, String>(){
+
+			@Override
+			public String apply(String cell){
+
+				if("NA".equals(cell) || "N/A".equals(cell)){
+					return null;
+				}
+
+				return cell;
+			}
+		};
+
+		return Lists.transform(cells, function);
 	}
 }

@@ -96,10 +96,6 @@ public class BatchUtil {
 			public boolean doEquivalent(Object expected, Object actual){
 				actual = EvaluatorUtil.decode(actual);
 
-				if("NA".equals(expected) || "N/A".equals(expected)){
-					return true;
-				}
-
 				return VerificationUtil.acceptable(TypeUtil.parseOrCast(TypeUtil.getDataType(actual), expected), actual, precision, zeroThreshold);
 			}
 
