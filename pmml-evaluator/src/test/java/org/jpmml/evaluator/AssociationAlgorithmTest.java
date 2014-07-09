@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Iterables;
 import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
@@ -50,18 +51,8 @@ public class AssociationAlgorithmTest extends ModelEvaluatorTest {
 		assertEquals(exclusiveRecommendations, result.get(new FieldName("Exclusive_Recommendation")));
 		assertEquals(ruleAssociations, result.get(new FieldName("Rule_Association")));
 
-		assertEquals(getFirst(recommendations), result.get(new FieldName("Top Recommendation")));
-		assertEquals(getFirst(exclusiveRecommendations), result.get(new FieldName("Top Exclusive_Recommendation")));
-		assertEquals(getFirst(ruleAssociations), result.get(new FieldName("Top Rule_Association")));
-	}
-
-	static
-	private <E> E getFirst(List<E> list){
-
-		if(list.size() > 0){
-			return list.get(0);
-		}
-
-		return null;
+		assertEquals(Iterables.getFirst(recommendations, null), result.get(new FieldName("Top Recommendation")));
+		assertEquals(Iterables.getFirst(exclusiveRecommendations, null), result.get(new FieldName("Top Exclusive_Recommendation")));
+		assertEquals(Iterables.getFirst(ruleAssociations, null), result.get(new FieldName("Top Rule_Association")));
 	}
 }
