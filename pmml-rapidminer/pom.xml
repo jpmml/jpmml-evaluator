@@ -12,8 +12,8 @@
 	<artifactId>pmml-rapidminer</artifactId>
 	<packaging>jar</packaging>
 
-	<name>JPMML RapidMiner support</name>
-	<description>JPMML RapidMiner support</description>
+	<name>JPMML RapidMiner integration tests</name>
+	<description>JPMML RapidMiner integration tests</description>
 
 	<licenses>
 		<license>

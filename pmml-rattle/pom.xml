@@ -12,8 +12,8 @@
 	<artifactId>pmml-rattle</artifactId>
 	<packaging>jar</packaging>
 
-	<name>JPMML R/Rattle support</name>
-	<description>JPMML R/Rattle support</description>
+	<name>JPMML R/Rattle integration tests</name>
+	<description>JPMML R/Rattle integration tests</description>
 
 	<licenses>
 		<license>

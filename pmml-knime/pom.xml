@@ -12,8 +12,8 @@
 	<artifactId>pmml-knime</artifactId>
 	<packaging>jar</packaging>
 
-	<name>JPMML KNIME support</name>
-	<description>JPMML KNIME support</description>
+	<name>JPMML KNIME integration tests</name>
+	<description>JPMML KNIME integration tests</description>
 
 	<licenses>
 		<license>

@@ -12,7 +12,7 @@
 	<artifactId>pmml-evaluator-example</artifactId>
 
 	<name>JPMML evaluator example</name>
-	<description>JPMML class model evaluator example applications</description>
+	<description>JPMML class model evaluator example command-line applications</description>
 
 	<licenses>
 		<license>
