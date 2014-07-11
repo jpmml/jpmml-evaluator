@@ -170,7 +170,7 @@ public class TypeUtil {
 			return Seconds.seconds((int)(millis / 1000L));
 		}
 
-		throw new IllegalArgumentException(value);
+		throw new EvaluationException();
 	}
 
 	static
@@ -241,6 +241,8 @@ public class TypeUtil {
 			if((epoch).equals(YEAR_1980)){
 				return DataType.DATE_DAYS_SINCE_1980;
 			}
+
+			throw new EvaluationException();
 		} else
 
 		if(value instanceof SecondsSinceMidnight){
@@ -263,6 +265,8 @@ public class TypeUtil {
 			if((epoch).equals(YEAR_1980)){
 				return DataType.DATE_TIME_SECONDS_SINCE_1980;
 			}
+
+			throw new EvaluationException();
 		}
 
 		throw new EvaluationException();

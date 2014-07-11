@@ -22,6 +22,7 @@ import org.dmg.pmml.DataType;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
+import org.joda.time.Years;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -30,7 +31,7 @@ import static org.junit.Assert.assertTrue;
 public class TypeUtilTest {
 
 	@Test
-	public void parse(){
+	public void parseInteger(){
 		assertEquals(1, TypeUtil.parse(DataType.INTEGER, "1"));
 		assertEquals(1, TypeUtil.parse(DataType.INTEGER, "1.0"));
 		assertEquals(1, TypeUtil.parse(DataType.INTEGER, "1e+0"));
@@ -69,6 +70,17 @@ public class TypeUtilTest {
 
 	@Test
 	public void parseDaysSinceDate(){
+		DaysSinceDate sixties = (DaysSinceDate)TypeUtil.parse(DataType.DATE_DAYS_SINCE_1960, "1960-01-01");
+		DaysSinceDate seventies = (DaysSinceDate)TypeUtil.parse(DataType.DATE_DAYS_SINCE_1970, "1970-01-01");
+		DaysSinceDate eighties = (DaysSinceDate)TypeUtil.parse(DataType.DATE_DAYS_SINCE_1980, "1980-01-01");
+
+		assertEquals(DataType.DATE_DAYS_SINCE_1960, TypeUtil.getDataType(sixties));
+		assertEquals(DataType.DATE_DAYS_SINCE_1970, TypeUtil.getDataType(seventies));
+		assertEquals(DataType.DATE_DAYS_SINCE_1980, TypeUtil.getDataType(eighties));
+
+		assertEquals(DECADE, Years.yearsBetween(sixties.getEpoch(), seventies.getEpoch()));
+		assertEquals(DECADE, Years.yearsBetween(seventies.getEpoch(), eighties.getEpoch()));
+
 		assertEquals(0, countDaysSince1960("1960-01-01"));
 		assertEquals(1, countDaysSince1960("1960-01-02"));
 		assertEquals(31, countDaysSince1960("1960-02-01"));
@@ -80,6 +92,10 @@ public class TypeUtilTest {
 
 	@Test
 	public void parseSecondsSinceMidnight(){
+		SecondsSinceMidnight noon = (SecondsSinceMidnight)TypeUtil.parse(DataType.TIME_SECONDS, "12:00:00");
+
+		assertEquals(DataType.TIME_SECONDS, TypeUtil.getDataType(noon));
+
 		assertEquals(0, countSecondsSinceMidnight("0:00:00"));
 		assertEquals(100, countSecondsSinceMidnight("0:01:40"));
 		assertEquals(200, countSecondsSinceMidnight("0:03:20"));
@@ -93,6 +109,17 @@ public class TypeUtilTest {
 
 	@Test
 	public void parseSecondsSinceDate(){
+		SecondsSinceDate sixties = (SecondsSinceDate)TypeUtil.parse(DataType.DATE_TIME_SECONDS_SINCE_1960, "1960-01-01T00:00:00");
+		SecondsSinceDate seventies = (SecondsSinceDate)TypeUtil.parse(DataType.DATE_TIME_SECONDS_SINCE_1970, "1970-01-01T00:00:00");
+		SecondsSinceDate eighties = (SecondsSinceDate)TypeUtil.parse(DataType.DATE_TIME_SECONDS_SINCE_1980, "1980-01-01T00:00:00");
+
+		assertEquals(DataType.DATE_TIME_SECONDS_SINCE_1960, TypeUtil.getDataType(sixties));
+		assertEquals(DataType.DATE_TIME_SECONDS_SINCE_1970, TypeUtil.getDataType(seventies));
+		assertEquals(DataType.DATE_TIME_SECONDS_SINCE_1980, TypeUtil.getDataType(eighties));
+
+		assertEquals(DECADE, Years.yearsBetween(sixties.getEpoch(), seventies.getEpoch()));
+		assertEquals(DECADE, Years.yearsBetween(seventies.getEpoch(), eighties.getEpoch()));
+
 		assertEquals(0, countSecondsSince1960("1960-01-01T00:00:00"));
 		assertEquals(1, countSecondsSince1960("1960-01-01T00:00:01"));
 		assertEquals(60, countSecondsSince1960("1960-01-01T00:01:00"));
@@ -100,15 +127,6 @@ public class TypeUtilTest {
 		assertEquals(-1, countSecondsSince1960("1959-12-31T23:59:59"));
 
 		assertEquals(185403, countSecondsSince1960("1960-01-03T03:30:03"));
-	}
-
-	@Test
-	public void getDataType(){
-		assertEquals(DataType.STRING, TypeUtil.getDataType("value"));
-
-		assertEquals(DataType.INTEGER, TypeUtil.getDataType(1));
-		assertEquals(DataType.FLOAT, TypeUtil.getDataType(1f));
-		assertEquals(DataType.DOUBLE, TypeUtil.getDataType(1d));
 	}
 
 	@Test
@@ -189,4 +207,6 @@ public class TypeUtilTest {
 	private DataType getResultDataType(Object left, Object right){
 		return TypeUtil.getResultDataType(TypeUtil.getDataType(left), TypeUtil.getDataType(right));
 	}
+
+	private static final Years DECADE = Years.years(10);
 }
