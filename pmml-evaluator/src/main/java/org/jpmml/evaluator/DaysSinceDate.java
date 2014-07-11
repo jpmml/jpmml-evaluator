@@ -33,9 +33,12 @@ public class DaysSinceDate implements Comparable<DaysSinceDate> {
 	}
 
 	public DaysSinceDate(LocalDate epoch, LocalDate date){
-		setEpoch(epoch);
+		this(epoch, Days.daysBetween(epoch, date));
+	}
 
-		setDays(Days.daysBetween(epoch, date));
+	public DaysSinceDate(LocalDate epoch, Days days){
+		setEpoch(epoch);
+		setDays(days);
 	}
 
 	@Override

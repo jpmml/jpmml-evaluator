@@ -34,12 +34,12 @@ public class SecondsSinceDate implements Comparable<SecondsSinceDate> {
 	}
 
 	public SecondsSinceDate(LocalDate epoch, LocalDateTime dateTime){
+		this(epoch, Seconds.secondsBetween(TypeUtil.toMidnight(epoch), dateTime));
+	}
+
+	public SecondsSinceDate(LocalDate epoch, Seconds seconds){
 		setEpoch(epoch);
-
-		// Have to have the same set of fields
-		LocalDateTime epochDateTime = new LocalDateTime(epoch.getYear(), epoch.getMonthOfYear(), epoch.getDayOfMonth(), 0, 0, 0);
-
-		setSeconds(Seconds.secondsBetween(epochDateTime, dateTime));
+		setSeconds(seconds);
 	}
 
 	@Override

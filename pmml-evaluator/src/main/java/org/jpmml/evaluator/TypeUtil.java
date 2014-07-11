@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import com.google.common.math.DoubleMath;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
+import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
@@ -228,21 +229,7 @@ public class TypeUtil {
 		if(value instanceof DaysSinceDate){
 			DaysSinceDate period = (DaysSinceDate)value;
 
-			LocalDate epoch = period.getEpoch();
-
-			if((epoch).equals(YEAR_1960)){
-				return DataType.DATE_DAYS_SINCE_1960;
-			} else
-
-			if((epoch).equals(YEAR_1970)){
-				return DataType.DATE_DAYS_SINCE_1970;
-			} else
-
-			if((epoch).equals(YEAR_1980)){
-				return DataType.DATE_DAYS_SINCE_1980;
-			}
-
-			throw new EvaluationException();
+			return getDaysDataType(period.getEpoch());
 		} else
 
 		if(value instanceof SecondsSinceMidnight){
@@ -252,21 +239,7 @@ public class TypeUtil {
 		if(value instanceof SecondsSinceDate){
 			SecondsSinceDate period = (SecondsSinceDate)value;
 
-			LocalDate epoch = period.getEpoch();
-
-			if((epoch).equals(YEAR_1960)){
-				return DataType.DATE_TIME_SECONDS_SINCE_1960;
-			} else
-
-			if((epoch).equals(YEAR_1970)){
-				return DataType.DATE_TIME_SECONDS_SINCE_1970;
-			} else
-
-			if((epoch).equals(YEAR_1980)){
-				return DataType.DATE_TIME_SECONDS_SINCE_1980;
-			}
-
-			throw new EvaluationException();
+			return getSecondsDataType(period.getEpoch());
 		}
 
 		throw new EvaluationException();
@@ -510,9 +483,13 @@ public class TypeUtil {
 			if((period.getEpoch()).equals(epoch)){
 				return period;
 			}
+
+			Days difference = Days.daysBetween(epoch, period.getEpoch()).plus(period.getDays());
+
+			return new DaysSinceDate(epoch, difference);
 		}
 
-		throw new TypeCheckException(DataType.DATE_DAYS_SINCE_1970, value);
+		throw new TypeCheckException(getDaysDataType(epoch), value);
 	}
 
 	/**
@@ -542,9 +519,13 @@ public class TypeUtil {
 			if((period.getEpoch()).equals(epoch)){
 				return period;
 			}
+
+			Seconds difference = Seconds.secondsBetween(toMidnight(epoch), toMidnight(period.getEpoch())).plus(period.getSeconds());
+
+			return new SecondsSinceDate(epoch, difference);
 		}
 
-		throw new TypeCheckException(DataType.DATE_TIME_SECONDS_SINCE_1970, value);
+		throw new TypeCheckException(getSecondsDataType(epoch), value);
 	}
 
 	static
@@ -565,6 +546,47 @@ public class TypeUtil {
 		} catch(NumberFormatException nfe){
 			return DataType.STRING;
 		}
+	}
+
+	static
+	private DataType getDaysDataType(LocalDate epoch){
+
+		if((YEAR_1960).equals(epoch)){
+			return DataType.DATE_DAYS_SINCE_1960;
+		} else
+
+		if((YEAR_1970).equals(epoch)){
+			return DataType.DATE_DAYS_SINCE_1970;
+		} else
+
+		if((YEAR_1980).equals(epoch)){
+			return DataType.DATE_DAYS_SINCE_1980;
+		}
+
+		throw new EvaluationException();
+	}
+
+	static
+	private DataType getSecondsDataType(LocalDate epoch){
+
+		if((YEAR_1960).equals(epoch)){
+			return DataType.DATE_TIME_SECONDS_SINCE_1960;
+		} else
+
+		if((YEAR_1970).equals(epoch)){
+			return DataType.DATE_TIME_SECONDS_SINCE_1970;
+		} else
+
+		if((YEAR_1980).equals(epoch)){
+			return DataType.DATE_TIME_SECONDS_SINCE_1980;
+		}
+
+		throw new EvaluationException();
+	}
+
+	static
+	LocalDateTime toMidnight(LocalDate date){
+		return new LocalDateTime(date.getYear(), date.getMonthOfYear(), date.getDayOfMonth(), 0, 0, 0);
 	}
 
 	private static final DataType[] inheritanceSequence = {DataType.STRING, DataType.DOUBLE, DataType.FLOAT, DataType.INTEGER};
