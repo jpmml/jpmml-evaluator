@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.jpmml</groupId>
 		<artifactId>jpmml-evaluator</artifactId>
-		<version>1.1-SNAPSHOT</version>
+		<version>1.1.6</version>
 	</parent>
 
 	<groupId>org.jpmml</groupId>
@@ -52,33 +52,30 @@
 								<taskdef name="report" classname="org.jacoco.ant.ReportTask">
 									<classpath>
 										<fileset dir="${basedir}/target/jacoco-libs">
-											<include name="**/*.jar"/>
+											<include name="**/*.jar" />
 										</fileset>
 									</classpath>
 								</taskdef>
-								<mkdir dir="${basedir}/target/jacoco-report"/>
-								<property
-									name="rootdir"
-									value="${basedir}/.."
-								/>
+								<mkdir dir="${basedir}/target/jacoco-report" />
+								<property name="rootdir" value="${basedir}/.." />
 								<report>
 									<executionData>
-										<fileset file="${rootdir}/pmml-evaluator/target/jacoco.exec"/>
-										<fileset file="${rootdir}/pmml-knime/target/jacoco.exec"/>
-										<fileset file="${rootdir}/pmml-rapidminer/target/jacoco.exec"/>
-										<fileset file="${rootdir}/pmml-rattle/target/jacoco.exec"/>
+										<fileset file="${rootdir}/pmml-evaluator/target/jacoco.exec" />
+										<fileset file="${rootdir}/pmml-knime/target/jacoco.exec" />
+										<fileset file="${rootdir}/pmml-rapidminer/target/jacoco.exec" />
+										<fileset file="${rootdir}/pmml-rattle/target/jacoco.exec" />
 									</executionData>
 									<structure name="PMML class model evaluator code coverage">
 										<classfiles>
-											<fileset dir="${rootdir}/pmml-evaluator/target/classes"/>
+											<fileset dir="${rootdir}/pmml-evaluator/target/classes" />
 										</classfiles>
 										<sourcefiles>
-											<fileset dir="${rootdir}/pmml-evaluator/src/main/java"/>
+											<fileset dir="${rootdir}/pmml-evaluator/src/main/java" />
 										</sourcefiles>
 									</structure>
-									<html destdir="${basedir}/target/jacoco-report/html"/>
-									<xml destfile="${basedir}/target/jacoco-report/coverage-report.xml"/>
-									<csv destfile="${basedir}/target/jacoco-report/coverage-report.csv"/>
+									<html destdir="${basedir}/target/jacoco-report/html" />
+									<xml destfile="${basedir}/target/jacoco-report/coverage-report.xml" />
+									<csv destfile="${basedir}/target/jacoco-report/coverage-report.csv" />
 								</report>
 							</target>
 						</configuration>
