@@ -123,6 +123,8 @@ public class PredicateUtilTest {
 		FieldName fruit = new FieldName("fruit");
 
 		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(array, fruit, SimpleSetPredicate.BooleanOperator.IS_IN);
+		assertEquals(null, evaluate(simpleSetPredicate));
+
 		assertEquals(Boolean.TRUE, evaluate(simpleSetPredicate, fruit, "apple"));
 		assertEquals(Boolean.FALSE, evaluate(simpleSetPredicate, fruit, "pineapple"));
 
