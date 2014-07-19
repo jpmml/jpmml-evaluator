@@ -179,8 +179,8 @@ public class CsvEvaluationExample extends Example {
 				}
 
 				String value = bodyRow.get(column);
-				if(value == null || ("").equals(value) || ("NA").equals(value) || ("N/A").equals(value)){
-					continue;
+				if(("").equals(value) || ("NA").equals(value) || ("N/A").equals(value)){
+					value = null;
 				}
 
 				stringRow.put(name, value);
