@@ -26,7 +26,7 @@ import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
 import org.dmg.pmml.DataType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.MissingResultException;
+import org.jpmml.evaluator.InvalidResultException;
 import org.jpmml.evaluator.TypeUtil;
 
 abstract
@@ -64,7 +64,7 @@ public class AggregateFunction extends AbstractFunction {
 		}
 
 		if(statistic.getN() == 0){
-			throw new MissingResultException(null);
+			throw new InvalidResultException(null);
 		}
 
 		Object result = cast(getResultType(dataType), statistic.getResult());
