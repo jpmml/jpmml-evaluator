@@ -21,6 +21,7 @@ package org.jpmml.rattle;
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
 import org.jpmml.evaluator.MissingResultException;
+import org.jpmml.manager.UnsupportedFeatureException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -98,6 +99,14 @@ public class ClassificationTest {
 		Batch batch = new RattleBatch("DecisionTree", "Audit");
 
 		assertTrue(BatchUtil.evaluate(batch));
+
+		try {
+			BatchUtil.evaluateDefault(batch);
+
+			fail();
+		} catch(UnsupportedFeatureException ufe){
+			// Ignored
+		}
 	}
 
 	@Test

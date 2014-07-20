@@ -123,9 +123,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		LinkedList<Node> trail = Lists.newLinkedList();
 
-		NodeResult result = new NodeResult(null);
+		NodeResult result = null;
 
 		Boolean status = evaluateNode(root, context);
+
 		if(status == null){
 			result = handleMissingValue(root, trail, context);
 		} else
@@ -134,14 +135,12 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			result = handleTrue(root, trail, context);
 		} // End if
 
-		if(result == null){
-			throw new MissingResultException(root);
-		}
+		if(result != null){
+			Node node = result.getNode();
 
-		Node node = result.getNode();
-
-		if(node != null || result.isFinal()){
-			return node;
+			if(node != null || result.isFinal()){
+				return node;
+			}
 		}
 
 		NoTrueChildStrategyType noTrueChildStrategy = treeModel.getNoTrueChildStrategy();
@@ -186,6 +185,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 			if(status == null){
 				NodeResult result = handleMissingValue(child, trail, context);
+
 				if(result != null){
 					return result;
 				}
