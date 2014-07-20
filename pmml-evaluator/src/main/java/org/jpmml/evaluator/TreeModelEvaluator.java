@@ -278,7 +278,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		// "It is not possible that the scoring process ends in a Node which does not have a score attribute."
 		if(score == null){
-			throw new MissingResultException(node);
+			throw new InvalidFeatureException(node);
 		}
 
 		return score;
