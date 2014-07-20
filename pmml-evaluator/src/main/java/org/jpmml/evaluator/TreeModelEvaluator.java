@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -28,7 +28,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Lists;
+import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.FieldName;
@@ -90,7 +90,9 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	private Map<FieldName, ? extends Number> evaluateRegression(ModelEvaluationContext context){
 		Double result = null;
 
-		Node node = evaluateTree(context);
+		Trail trail = new Trail();
+
+		Node node = evaluateTree(trail, context);
 		if(node != null){
 			String score = ensureScore(node);
 
@@ -101,19 +103,30 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	}
 
 	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
+		TreeModel treeModel = getModel();
+
 		NodeClassificationMap result = null;
 
-		Node node = evaluateTree(context);
+		Trail trail = new Trail();
+
+		Node node = evaluateTree(trail, context);
 		if(node != null){
 			ensureScore(node);
 
-			result = createNodeClassificationMap(node);
+			double missingValuePenalty = 1d;
+
+			int missingLevels = trail.getMissingLevels();
+			for(int i = 0; i < missingLevels; i++){
+				missingValuePenalty *= treeModel.getMissingValuePenalty();
+			}
+
+			result = createNodeClassificationMap(node, missingValuePenalty);
 		}
 
 		return TargetUtil.evaluateClassification(result, context);
 	}
 
-	private Node evaluateTree(ModelEvaluationContext context){
+	private Node evaluateTree(Trail trail, ModelEvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		Node root = treeModel.getNode();
@@ -121,18 +134,16 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			throw new InvalidFeatureException(treeModel);
 		}
 
-		LinkedList<Node> trail = Lists.newLinkedList();
-
 		NodeResult result = null;
 
-		Boolean status = evaluateNode(root, context);
+		Boolean status = evaluateNode(root, trail, context);
 
 		if(status == null){
 			result = handleMissingValue(root, trail, context);
 		} else
 
 		if(status.booleanValue()){
-			result = handleTrue(root, trail, context);
+			result = handleTrue(root, null, trail, context);
 		} // End if
 
 		if(result != null){
@@ -154,21 +165,35 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 	}
 
-	private Boolean evaluateNode(Node node, EvaluationContext context){
-		Predicate predicate = node.getPredicate();
-		if(predicate == null){
-			throw new InvalidFeatureException(node);
-		}
-
+	private Boolean evaluateNode(Node node, Trail trail, EvaluationContext context){
 		EmbeddedModel embeddedModel = node.getEmbeddedModel();
 		if(embeddedModel != null){
 			throw new UnsupportedFeatureException(embeddedModel);
 		}
 
-		return PredicateUtil.evaluate(predicate, context);
+		Predicate predicate = node.getPredicate();
+		if(predicate == null){
+			throw new InvalidFeatureException(node);
+		} // End if
+
+		// A compound predicate whose boolean operator is "surrogate" represents a special case
+		if(predicate instanceof CompoundPredicate){
+			CompoundPredicate compoundPredicate = (CompoundPredicate)predicate;
+
+			PredicateUtil.CompoundPredicateResult result = PredicateUtil.evaluateCompoundPredicateInternal(compoundPredicate, context);
+			if(result.isAlternative()){
+				trail.addMissingLevel();
+			}
+
+			return result.getResult();
+		} else
+
+		{
+			return PredicateUtil.evaluate(predicate, context);
+		}
 	}
 
-	private NodeResult handleTrue(Node node, LinkedList<Node> trail, EvaluationContext context){
+	private NodeResult handleTrue(Node node, String id, Trail trail, EvaluationContext context){
 		List<Node> children = node.getNodes();
 
 		// A "true" leaf node
@@ -179,7 +204,17 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		trail.add(node);
 
 		for(Node child : children){
-			Boolean status = evaluateNode(child, context);
+
+			if(id != null){
+
+				if(!(id).equals(child.getId())){
+					continue;
+				}
+
+				id = null;
+			}
+
+			Boolean status = evaluateNode(child, trail, context);
 
 			if(status == null){
 				NodeResult result = handleMissingValue(child, trail, context);
@@ -190,15 +225,19 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			} else
 
 			if(status.booleanValue()){
-				return handleTrue(child, trail, context);
+				return handleTrue(child, null, trail, context);
 			}
+		}
+
+		if(id != null){
+			throw new InvalidFeatureException(node);
 		}
 
 		// A branch node with no "true" leaf nodes
 		return new NodeResult(null);
 	}
 
-	private NodeResult handleMissingValue(Node node, LinkedList<Node> trail, EvaluationContext context){
+	private NodeResult handleMissingValue(Node node, Trail trail, EvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		MissingValueStrategyType missingValueStrategy = treeModel.getMissingValueStrategy();
@@ -207,6 +246,15 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 				return new FinalNodeResult(null);
 			case LAST_PREDICTION:
 				return new FinalNodeResult(lastPrediction(node, trail));
+			case DEFAULT_CHILD:
+				String defaultChild = node.getDefaultChild();
+				if(defaultChild == null){
+					throw new InvalidFeatureException(node);
+				}
+
+				trail.addMissingLevel();
+
+				return handleTrue(node, defaultChild, trail, context);
 			case NONE:
 				return null;
 			default:
@@ -215,7 +263,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	}
 
 	static
-	private Node lastPrediction(Node node, LinkedList<Node> trail){
+	private Node lastPrediction(Node node, Trail trail){
 
 		try {
 			return trail.getLast();
@@ -237,7 +285,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	}
 
 	static
-	private NodeClassificationMap createNodeClassificationMap(Node node){
+	private NodeClassificationMap createNodeClassificationMap(Node node, double missingValuePenalty){
 		NodeClassificationMap result = new NodeClassificationMap(node);
 
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
@@ -251,13 +299,45 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		for(ScoreDistribution scoreDistribution : scoreDistributions){
 			Double value = scoreDistribution.getProbability();
 			if(value == null){
-				value = (scoreDistribution.getRecordCount() / sum);
+				value = (scoreDistribution.getRecordCount() / sum) * missingValuePenalty;
 			}
 
 			result.put(scoreDistribution.getValue(), value);
 		}
 
 		return result;
+	}
+
+	static
+	private class Trail extends ArrayList<Node> {
+
+		private int missingLevels = 0;
+
+
+		public Trail(){
+		}
+
+		public Node getLast(){
+			int size = size();
+
+			if(size == 0){
+				throw new NoSuchElementException();
+			}
+
+			return get(size - 1);
+		}
+
+		public void addMissingLevel(){
+			setMissingLevels(getMissingLevels() + 1);
+		}
+
+		public int getMissingLevels(){
+			return this.missingLevels;
+		}
+
+		private void setMissingLevels(int missingLevels){
+			this.missingLevels = missingLevels;
+		}
 	}
 
 	static

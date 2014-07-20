@@ -31,26 +31,69 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void nullPrediction() throws Exception {
-		assertEquals(null, getNodeId(MissingValueStrategyType.NULL_PREDICTION));
+		Map<FieldName, ?> arguments = createArguments("outlook", "sunny", "temperature", null, "humidity", null);
+
+		NodeClassificationMap result = evaluate(MissingValueStrategyType.NULL_PREDICTION, arguments);
+
+		assertEquals(null, getEntityId(result));
 	}
 
 	@Test
 	public void lastPrediction() throws Exception {
-		assertEquals("2", getNodeId(MissingValueStrategyType.LAST_PREDICTION));
+		Map<FieldName, ?> arguments = createArguments("outlook", "sunny", "temperature", null, "humidity", null);
+
+		NodeClassificationMap result = evaluate(MissingValueStrategyType.LAST_PREDICTION, arguments);
+
+		assertEquals("2", getEntityId(result));
+
+		assertEquals(Double.valueOf(0.8d), result.getProbability("will play"));
+		assertEquals(Double.valueOf(0.04d), result.getProbability("may play"));
+		assertEquals(Double.valueOf(0.16d), result.getProbability("no play"));
 	}
 
-	private String getNodeId(MissingValueStrategyType missingValueStrategy) throws Exception {
+	@Test
+	public void defaultChildSingle() throws Exception {
+		Map<FieldName, ?> arguments = createArguments("outlook", null, "temperature", 40d, "humidity", 70d);
+
+		NodeClassificationMap result = evaluate(MissingValueStrategyType.DEFAULT_CHILD, 0.8d, arguments);
+
+		assertEquals("4", getEntityId(result));
+
+		double missingValuePenatly = 0.8d;
+
+		assertEquals(Double.valueOf(0.4d * missingValuePenatly), result.getProbability("will play"));
+		assertEquals(Double.valueOf(0d * missingValuePenatly), result.getProbability("may play"));
+		assertEquals(Double.valueOf(0.6d * missingValuePenatly), result.getProbability("no play"));
+	}
+
+	@Test
+	public void defaultChildMultiple() throws Exception {
+		Map<FieldName, ?> arguments = createArguments("outlook", null, "temperature", null, "humidity", 70d);
+
+		NodeClassificationMap result = evaluate(MissingValueStrategyType.DEFAULT_CHILD, 0.8d, arguments);
+
+		assertEquals("3", getEntityId(result));
+
+		double missingValuePenalty = (0.8d * 0.8d);
+
+		assertEquals(Double.valueOf(0.9d * missingValuePenalty), result.getProbability("will play"));
+		assertEquals(Double.valueOf(0.05d * missingValuePenalty), result.getProbability("may play"));
+		assertEquals(Double.valueOf(0.05d * missingValuePenalty), result.getProbability("no play"));
+	}
+
+	private NodeClassificationMap evaluate(MissingValueStrategyType missingValueStrategy, Map<FieldName, ?> arguments) throws Exception {
+		return evaluate(missingValueStrategy, null, arguments);
+	}
+
+	private NodeClassificationMap evaluate(MissingValueStrategyType missingValueStrategy, Double missingValuePenalty, Map<FieldName, ?> arguments) throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		TreeModel treeModel = (TreeModel)evaluator.getModel();
 		treeModel.setMissingValueStrategy(missingValueStrategy);
-
-		Map<FieldName, ?> arguments = createArguments("outlook", "sunny", "temperature", null, "humidity", null);
+		treeModel.setMissingValuePenalty(missingValuePenalty);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		return getEntityId(result.get(evaluator.getTargetField()));
+		return (NodeClassificationMap)result.get(evaluator.getTargetField());
 	}
-
-
 }

@@ -137,6 +137,13 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateCompoundPredicate(CompoundPredicate compoundPredicate, EvaluationContext context){
+		CompoundPredicateResult result = evaluateCompoundPredicateInternal(compoundPredicate, context);
+
+		return result.getResult();
+	}
+
+	static
+	CompoundPredicateResult evaluateCompoundPredicateInternal(CompoundPredicate compoundPredicate, EvaluationContext context){
 		List<Predicate> predicates = compoundPredicate.getPredicates();
 		if(predicates.size() < 2){
 			throw new InvalidFeatureException(compoundPredicate);
@@ -152,7 +159,7 @@ public class PredicateUtil {
 				break;
 			case SURROGATE:
 				if(result != null){
-					return result;
+					return new CompoundPredicateResult(result, false);
 				}
 				break;
 			default:
@@ -176,7 +183,7 @@ public class PredicateUtil {
 					break;
 				case SURROGATE:
 					if(value != null){
-						return value;
+						return new CompoundPredicateResult(value, true);
 					}
 					break;
 				default:
@@ -184,7 +191,7 @@ public class PredicateUtil {
 			}
 		}
 
-		return result;
+		return new CompoundPredicateResult(result, false);
 	}
 
 	static
@@ -274,6 +281,36 @@ public class PredicateUtil {
 
 		{
 			return Boolean.valueOf(left.booleanValue() ^ right.booleanValue());
+		}
+	}
+
+	static
+	class CompoundPredicateResult {
+
+		private Boolean result = null;
+
+		private boolean alternative = false;
+
+
+		private CompoundPredicateResult(Boolean result, boolean alternative){
+			setResult(result);
+			setAlternative(alternative);
+		}
+
+		public Boolean getResult(){
+			return this.result;
+		}
+
+		private void setResult(Boolean result){
+			this.result = result;
+		}
+
+		public boolean isAlternative(){
+			return this.alternative;
+		}
+
+		private void setAlternative(boolean alternative){
+			this.alternative = alternative;
 		}
 	}
 }

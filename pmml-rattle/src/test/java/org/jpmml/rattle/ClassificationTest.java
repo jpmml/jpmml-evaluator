@@ -21,7 +21,7 @@ package org.jpmml.rattle;
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
 import org.jpmml.evaluator.MissingResultException;
-import org.jpmml.manager.UnsupportedFeatureException;
+import org.jpmml.manager.InvalidFeatureException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -104,7 +104,7 @@ public class ClassificationTest {
 			BatchUtil.evaluateDefault(batch);
 
 			fail();
-		} catch(UnsupportedFeatureException ufe){
+		} catch(InvalidFeatureException ife){
 			// Ignored
 		}
 	}
