@@ -154,20 +154,18 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 	}
 
-	private NodeResult handleMissingValue(Node node, LinkedList<Node> trail, EvaluationContext context){
-		TreeModel treeModel = getModel();
-
-		MissingValueStrategyType missingValueStrategy = treeModel.getMissingValueStrategy();
-		switch(missingValueStrategy){
-			case NULL_PREDICTION:
-				return new FinalNodeResult(null);
-			case LAST_PREDICTION:
-				return new FinalNodeResult(lastPrediction(node, trail));
-			case NONE:
-				return null;
-			default:
-				throw new UnsupportedFeatureException(treeModel, missingValueStrategy);
+	private Boolean evaluateNode(Node node, EvaluationContext context){
+		Predicate predicate = node.getPredicate();
+		if(predicate == null){
+			throw new InvalidFeatureException(node);
 		}
+
+		EmbeddedModel embeddedModel = node.getEmbeddedModel();
+		if(embeddedModel != null){
+			throw new UnsupportedFeatureException(embeddedModel);
+		}
+
+		return PredicateUtil.evaluate(predicate, context);
 	}
 
 	private NodeResult handleTrue(Node node, LinkedList<Node> trail, EvaluationContext context){
@@ -200,6 +198,23 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return new NodeResult(null);
 	}
 
+	private NodeResult handleMissingValue(Node node, LinkedList<Node> trail, EvaluationContext context){
+		TreeModel treeModel = getModel();
+
+		MissingValueStrategyType missingValueStrategy = treeModel.getMissingValueStrategy();
+		switch(missingValueStrategy){
+			case NULL_PREDICTION:
+				return new FinalNodeResult(null);
+			case LAST_PREDICTION:
+				return new FinalNodeResult(lastPrediction(node, trail));
+			case NONE:
+				return null;
+			default:
+				throw new UnsupportedFeatureException(treeModel, missingValueStrategy);
+		}
+	}
+
+	static
 	private Node lastPrediction(Node node, LinkedList<Node> trail){
 
 		try {
@@ -207,20 +222,6 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		} catch(NoSuchElementException nsee){
 			throw new MissingResultException(node);
 		}
-	}
-
-	private Boolean evaluateNode(Node node, EvaluationContext context){
-		Predicate predicate = node.getPredicate();
-		if(predicate == null){
-			throw new InvalidFeatureException(node);
-		}
-
-		EmbeddedModel embeddedModel = node.getEmbeddedModel();
-		if(embeddedModel != null){
-			throw new UnsupportedFeatureException(embeddedModel);
-		}
-
-		return PredicateUtil.evaluate(predicate, context);
 	}
 
 	static
