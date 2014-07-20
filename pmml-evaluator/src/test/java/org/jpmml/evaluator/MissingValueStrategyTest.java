@@ -59,11 +59,15 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 		assertEquals("4", getEntityId(result));
 
+		assertEquals(Double.valueOf(0.4d), result.getProbability("will play"));
+		assertEquals(Double.valueOf(0d), result.getProbability("may play"));
+		assertEquals(Double.valueOf(0.6d), result.getProbability("no play"));
+
 		double missingValuePenatly = 0.8d;
 
-		assertEquals(Double.valueOf(0.4d * missingValuePenatly), result.getProbability("will play"));
-		assertEquals(Double.valueOf(0d * missingValuePenatly), result.getProbability("may play"));
-		assertEquals(Double.valueOf(0.6d * missingValuePenatly), result.getProbability("no play"));
+		assertEquals(Double.valueOf(0.4d * missingValuePenatly), result.getConfidence("will play"));
+		assertEquals(Double.valueOf(0d * missingValuePenatly), result.getConfidence("may play"));
+		assertEquals(Double.valueOf(0.6d * missingValuePenatly), result.getConfidence("no play"));
 	}
 
 	@Test
@@ -74,11 +78,15 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 		assertEquals("3", getEntityId(result));
 
+		assertEquals(Double.valueOf(0.9d), result.getProbability("will play"));
+		assertEquals(Double.valueOf(0.05d), result.getProbability("may play"));
+		assertEquals(Double.valueOf(0.05d), result.getProbability("no play"));
+
 		double missingValuePenalty = (0.8d * 0.8d);
 
-		assertEquals(Double.valueOf(0.9d * missingValuePenalty), result.getProbability("will play"));
-		assertEquals(Double.valueOf(0.05d * missingValuePenalty), result.getProbability("may play"));
-		assertEquals(Double.valueOf(0.05d * missingValuePenalty), result.getProbability("no play"));
+		assertEquals(Double.valueOf(0.9d * missingValuePenalty), result.getConfidence("will play"));
+		assertEquals(Double.valueOf(0.05d * missingValuePenalty), result.getConfidence("may play"));
+		assertEquals(Double.valueOf(0.05d * missingValuePenalty), result.getConfidence("no play"));
 	}
 
 	private NodeClassificationMap evaluate(MissingValueStrategyType missingValueStrategy, Map<FieldName, ?> arguments) throws Exception {

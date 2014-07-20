@@ -18,11 +18,17 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Map;
+
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Maps;
 import org.dmg.pmml.Node;
 
 @Beta
-public class NodeClassificationMap extends EntityClassificationMap<Node> implements HasProbability {
+public class NodeClassificationMap extends EntityClassificationMap<Node> implements HasConfidence, HasProbability {
+
+	private Map<String, Double> confidences = Maps.newLinkedHashMap();
+
 
 	protected NodeClassificationMap(){
 		super(Type.PROBABILITY);
@@ -42,6 +48,15 @@ public class NodeClassificationMap extends EntityClassificationMap<Node> impleme
 		}
 
 		return super.getResult();
+	}
+
+	@Override
+	public Double getConfidence(String value){
+		return this.confidences.get(value);
+	}
+
+	void putConfidence(String value, Double confidence){
+		this.confidences.put(value, confidence);
 	}
 
 	@Override
