@@ -370,6 +370,14 @@ public class TypeUtil {
 
 		if(value instanceof Integer){
 			return (Integer)value;
+		} else
+
+		if((value instanceof Float) || (value instanceof Double)){
+			Number number = (Number)value;
+
+			if(DoubleMath.isMathematicalInteger(number.doubleValue())){
+				return Integer.valueOf(number.intValue());
+			}
 		}
 
 		throw new TypeCheckException(DataType.INTEGER, value);

@@ -58,6 +58,31 @@ public class TypeUtilTest {
 	}
 
 	@Test
+	public void castInteger(){
+		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1f));
+		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1.0f));
+
+		try {
+			TypeUtil.cast(DataType.INTEGER, Math.nextUp(1f));
+
+			fail();
+		} catch(TypeCheckException tce){
+			// Ignored
+		}
+
+		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1d));
+		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1.0d));
+
+		try {
+			TypeUtil.cast(DataType.INTEGER, Math.nextUp(1d));
+
+			fail();
+		} catch(TypeCheckException tce){
+			// Ignored
+		}
+	}
+
+	@Test
 	public void parseDate(){
 		LocalDate date = (LocalDate)TypeUtil.parse(DataType.DATE, DATE);
 
