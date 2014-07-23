@@ -50,6 +50,10 @@ public class CsvUtil {
 					break;
 				} // End if
 
+				if((line.trim()).equals("")){
+					break;
+				} // End if
+
 				if(separator == null){
 					separator = getSeparator(line);
 				}
