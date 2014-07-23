@@ -232,7 +232,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 			FieldValue value = ExpressionUtil.evaluate(derivedField, context);
 			if(value == null){
-				throw new MissingFieldException(derivedField.getName(), derivedField);
+				throw new MissingResultException(derivedField);
 			}
 
 			result.put(neuralInput.getId(), (value.asNumber()).doubleValue());
