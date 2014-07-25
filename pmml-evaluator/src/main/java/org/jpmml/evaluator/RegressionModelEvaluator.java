@@ -80,6 +80,11 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	private Map<FieldName, ? extends Number> evaluateRegression(ModelEvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
+		FieldName targetField = regressionModel.getTargetFieldName();
+		if(targetField == null){
+			targetField = getTargetField();
+		}
+
 		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
 		if(regressionTables.size() != 1){
 			throw new InvalidFeatureException(regressionModel);
@@ -92,19 +97,31 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			result = normalizeRegressionResult(result);
 		}
 
-		FieldName targetField = regressionModel.getTargetFieldName();
-		if(targetField == null){
-			targetField = getTargetField();
-		}
-
 		return TargetUtil.evaluateRegression(Collections.singletonMap(targetField, result), context);
 	}
 
 	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
+		FieldName targetField = regressionModel.getTargetFieldName();
+		if(targetField == null){
+			targetField = getTargetField();
+		}
+
+		DataField dataField = getDataField(targetField);
+
+		OpType opType = dataField.getOptype();
+		switch(opType){
+			case CATEGORICAL:
+				break;
+			default:
+				throw new UnsupportedFeatureException(dataField, opType);
+		}
+
+		List<String> categories = ArgumentUtil.getValidValues(dataField);
+
 		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
-		if(regressionTables.size() < 1){
+		if(categories.size() < 2 || categories.size() != regressionTables.size()){
 			throw new InvalidFeatureException(regressionModel);
 		}
 
@@ -124,14 +141,6 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			result.put(category, value);
 		}
 
-		FieldName targetField = regressionModel.getTargetFieldName();
-		if(targetField == null){
-			targetField = getTargetField();
-		}
-
-		DataField dataField = getDataField(targetField);
-
-		OpType opType = dataField.getOptype();
 		switch(opType){
 			case CATEGORICAL:
 				normalizeClassificationResult(result);
