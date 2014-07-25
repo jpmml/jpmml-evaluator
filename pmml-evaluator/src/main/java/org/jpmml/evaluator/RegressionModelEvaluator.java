@@ -118,18 +118,18 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new UnsupportedFeatureException(dataField, opType);
 		}
 
-		List<String> categories = ArgumentUtil.getValidValues(dataField);
+		List<String> targetCategories = ArgumentUtil.getValidValues(dataField);
 
 		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
-		if(categories.size() < 2 || categories.size() != regressionTables.size()){
+		if(targetCategories.size() < 2 || targetCategories.size() != regressionTables.size()){
 			throw new InvalidFeatureException(regressionModel);
 		}
 
 		ProbabilityClassificationMap<String> result = new ProbabilityClassificationMap<String>();
 
 		for(RegressionTable regressionTable : regressionTables){
-			String category = regressionTable.getTargetCategory();
-			if(category == null){
+			String targetCategory = regressionTable.getTargetCategory();
+			if(targetCategory == null){
 				throw new InvalidFeatureException(regressionTable);
 			}
 
@@ -138,7 +138,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new MissingResultException(regressionTable);
 			}
 
-			result.put(category, value);
+			result.put(targetCategory, value);
 		}
 
 		switch(opType){

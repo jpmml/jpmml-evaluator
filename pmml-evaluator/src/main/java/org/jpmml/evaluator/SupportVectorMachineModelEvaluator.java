@@ -150,24 +150,24 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		double[] input = createInput(context);
 
 		for(SupportVectorMachine supportVectorMachine : supportVectorMachines){
-			String category = supportVectorMachine.getTargetCategory();
-			String alternateCategory = supportVectorMachine.getAlternateTargetCategory();
+			String targetCategory = supportVectorMachine.getTargetCategory();
+			String alternateTargetCategory = supportVectorMachine.getAlternateTargetCategory();
 
 			Double value = evaluateSupportVectorMachine(supportVectorMachine, input);
 
 			switch(svmClassificationMethod){
 				case ONE_AGAINST_ALL:
 					{
-						if(category == null || alternateCategory != null){
+						if(targetCategory == null || alternateTargetCategory != null){
 							throw new InvalidFeatureException(supportVectorMachine);
 						}
 
-						result.put(category, value);
+						result.put(targetCategory, value);
 					}
 					break;
 				case ONE_AGAINST_ONE:
 					{
-						if(category == null || alternateCategory == null){
+						if(targetCategory == null || alternateTargetCategory == null){
 							throw new InvalidFeatureException(supportVectorMachine);
 						}
 
@@ -180,11 +180,11 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 						// "If the numeric prediction is smaller than the threshold, it corresponds to the targetCategory attribute"
 						if((value).compareTo(threshold) < 0){
-							label = category;
+							label = targetCategory;
 						} else
 
 						{
-							label = alternateCategory;
+							label = alternateTargetCategory;
 						}
 
 						Double vote = result.get(label);
@@ -251,12 +251,12 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
 		for(SupportVectorMachine supportVectorMachine : supportVectorMachines){
-			String category = supportVectorMachine.getTargetCategory();
-			String alternateCategory = supportVectorMachine.getAlternateTargetCategory();
+			String targetCategory = supportVectorMachine.getTargetCategory();
+			String alternateTargetCategory = supportVectorMachine.getAlternateTargetCategory();
 
-			if(category != null){
+			if(targetCategory != null){
 
-				if(alternateCategory != null){
+				if(alternateTargetCategory != null){
 					return SvmClassificationMethodType.ONE_AGAINST_ONE;
 				}
 
