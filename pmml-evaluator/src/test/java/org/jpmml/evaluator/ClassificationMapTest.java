@@ -27,8 +27,13 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Arrays;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ClassificationMapTest {
@@ -57,5 +62,19 @@ public class ClassificationMapTest {
 
 		assertTrue(type.compare(1.0, 0.5) < 0);
 		assertTrue(type.compare(0.5, 1.0) > 0);
+	}
+
+	@Test
+	public void subtract(){
+		Map<String, Double> values = Maps.newLinkedHashMap();
+		values.put("loud", 0.2d);
+		values.put("louder", 0.7d);
+		values.put("insane", 1d);
+
+		ClassificationMap.subtract(values, Arrays.asList("loud", "louder", "insane"));
+
+		assertEquals(Double.valueOf(0.2d - 0d), values.get("loud"));
+		assertEquals(Double.valueOf(0.7d - 0.2d), values.get("louder"));
+		assertEquals(Double.valueOf(1d - 0.7d), values.get("insane"));
 	}
 }

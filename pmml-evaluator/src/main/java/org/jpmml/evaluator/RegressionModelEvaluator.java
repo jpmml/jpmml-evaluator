@@ -113,6 +113,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		OpType opType = dataField.getOptype();
 		switch(opType){
 			case CATEGORICAL:
+			case ORDINAL:
 				break;
 			default:
 				throw new UnsupportedFeatureException(dataField, opType);
@@ -143,7 +144,10 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		switch(opType){
 			case CATEGORICAL:
-				normalizeClassificationResult(result);
+				computeCategoricalProbabilities(result);
+				break;
+			case ORDINAL:
+				computeOrdinalProbabilities(result, targetCategories);
 				break;
 			default:
 				throw new UnsupportedFeatureException(dataField, opType);
@@ -234,7 +238,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		}
 	}
 
-	private void normalizeClassificationResult(ClassificationMap<String> values){
+	private void computeCategoricalProbabilities(ClassificationMap<String> values){
 		RegressionModel regressionModel = getModel();
 
 		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
@@ -257,6 +261,28 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		}
 
 		values.normalizeValues();
+	}
+
+	private void computeOrdinalProbabilities(ClassificationMap<String> values, List<String> targetCategories){
+		RegressionModel regressionModel = getModel();
+
+		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
+		switch(regressionNormalizationMethod){
+			case NONE:
+				return;
+			case SIMPLEMAX:
+			case SOFTMAX:
+				throw new UnsupportedFeatureException(regressionModel, regressionNormalizationMethod);
+			default:
+				break;
+		}
+
+		Collection<Map.Entry<String, Double>> entries = values.entrySet();
+		for(Map.Entry<String, Double> entry : entries){
+			entry.setValue(normalizeClassificationResult(entry.getValue()));
+		}
+
+		ClassificationMap.subtract(values, targetCategories);
 	}
 
 	private Double normalizeClassificationResult(Double value){
