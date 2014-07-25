@@ -29,6 +29,6 @@ public class VoteClassificationMap<K> extends ClassificationMap<K> implements Ha
 
 	@Override
 	public Double getProbability(String value){
-		return getFeature(value) / sumValues();
+		return getFeature(value) / sum(this);
 	}
 }

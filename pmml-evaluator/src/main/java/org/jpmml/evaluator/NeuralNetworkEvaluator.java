@@ -240,8 +240,9 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
 		for(NeuralLayer neuralLayer : neuralLayers){
-			List<Neuron> neurons = neuralLayer.getNeurons();
+			Map<String, Double> outputs = Maps.newLinkedHashMap();
 
+			List<Neuron> neurons = neuralLayer.getNeurons();
 			for(Neuron neuron : neurons){
 				double z = neuron.getBias();
 
@@ -254,16 +255,18 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 				double output = activation(z, neuralLayer);
 
-				result.put(neuron.getId(), output);
+				outputs.put(neuron.getId(), output);
 			}
 
-			normalizeNeuronOutputs(neuralLayer, result);
+			normalizeNeuronOutputs(neuralLayer, outputs);
+
+			result.putAll(outputs);
 		}
 
 		return result;
 	}
 
-	private void normalizeNeuronOutputs(NeuralLayer neuralLayer, Map<String, Double> neuronOutputs){
+	private void normalizeNeuronOutputs(NeuralLayer neuralLayer, Map<String, Double> values){
 		NeuralNetwork neuralNetwork = getModel();
 
 		PMMLObject locatable = neuralLayer;
@@ -279,33 +282,13 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			case NONE:
 				break;
 			case SIMPLEMAX:
-				normalizeNeuronOutputs(neuralLayer, SIMPLEMAX_NORMALIZER, neuronOutputs);
+				ClassificationMap.normalize(values);
 				break;
 			case SOFTMAX:
-				normalizeNeuronOutputs(neuralLayer, SOFTMAX_NORMALIZER, neuronOutputs);
+				ClassificationMap.normalizeSoftMax(values);
 				break;
 			default:
 				throw new UnsupportedFeatureException(locatable, normalizationMethod);
-		}
-	}
-
-	private void normalizeNeuronOutputs(NeuralLayer neuralLayer, Normalizer normalizer, Map<String, Double> neuronOutputs){
-		List<Neuron> neurons = neuralLayer.getNeurons();
-
-		double sum = 0;
-
-		for(Neuron neuron : neurons){
-			Double output = neuronOutputs.get(neuron.getId());
-
-			sum += normalizer.apply(output.doubleValue());
-		}
-
-		for(Neuron neuron : neurons){
-			Double output = neuronOutputs.get(neuron.getId());
-
-			Double normalizedOutput = normalizer.apply(output.doubleValue()) / sum;
-
-			neuronOutputs.put(neuron.getId(), normalizedOutput);
 		}
 	}
 
@@ -354,27 +337,6 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				throw new UnsupportedFeatureException(locatable, activationFunction);
 		}
 	}
-
-	private interface Normalizer {
-
-		double apply(double value);
-	}
-
-	private static final Normalizer SIMPLEMAX_NORMALIZER = new Normalizer(){
-
-		@Override
-		public double apply(double value){
-			return value;
-		}
-	};
-
-	private static final Normalizer SOFTMAX_NORMALIZER = new Normalizer(){
-
-		@Override
-		public double apply(double value){
-			return Math.exp(value);
-		}
-	};
 
 	private static final LoadingCache<NeuralNetwork, BiMap<String, Entity>> entityCache = CacheBuilder.newBuilder()
 		.weakKeys()

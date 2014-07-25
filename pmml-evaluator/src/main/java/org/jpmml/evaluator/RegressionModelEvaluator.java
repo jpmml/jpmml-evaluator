@@ -89,7 +89,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		Double result = evaluateRegressionTable(regressionTable, context);
 		if(result != null){
-			result = normalizeRegressionResult(regressionModel, result);
+			result = normalizeRegressionResult(result);
 		}
 
 		FieldName targetField = regressionModel.getTargetFieldName();
@@ -110,8 +110,6 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		ProbabilityClassificationMap<String> result = new ProbabilityClassificationMap<String>();
 
-		double sumExp = 0d;
-
 		for(RegressionTable regressionTable : regressionTables){
 			String category = regressionTable.getTargetCategory();
 			if(category == null){
@@ -122,8 +120,6 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			if(value == null){
 				throw new MissingResultException(regressionTable);
 			}
-
-			sumExp += Math.exp(value.doubleValue());
 
 			result.put(category, value);
 		}
@@ -138,14 +134,10 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		OpType opType = dataField.getOptype();
 		switch(opType){
 			case CATEGORICAL:
+				normalizeClassificationResult(result);
 				break;
 			default:
 				throw new UnsupportedFeatureException(dataField, opType);
-		}
-
-		Collection<Map.Entry<String, Double>> entries = result.entrySet();
-		for(Map.Entry<String, Double> entry : entries){
-			entry.setValue(normalizeClassificationResult(regressionModel, entry.getValue(), sumExp));
 		}
 
 		result.normalizeValues();
@@ -153,7 +145,6 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		return TargetUtil.evaluateClassification(Collections.singletonMap(targetField, result), context);
 	}
 
-	static
 	private Double evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){
 		double result = 0d;
 
@@ -219,10 +210,10 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		return Double.valueOf(result);
 	}
 
-	static
-	private Double normalizeRegressionResult(RegressionModel regressionModel, Double value){
-		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
+	private Double normalizeRegressionResult(Double value){
+		RegressionModel regressionModel = getModel();
 
+		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
 		switch(regressionNormalizationMethod){
 			case NONE:
 				return value;
@@ -236,15 +227,34 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		}
 	}
 
-	static
-	private Double normalizeClassificationResult(RegressionModel regressionModel, Double value, Double sumExp){
-		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
+	private void normalizeClassificationResult(Map<String, Double> values){
+		RegressionModel regressionModel = getModel();
 
+		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
 		switch(regressionNormalizationMethod){
 			case NONE:
-				return value;
+				return;
+			case SIMPLEMAX:
+				ClassificationMap.normalize(values);
+				return;
 			case SOFTMAX:
-				return Math.exp(value) / sumExp;
+				ClassificationMap.normalizeSoftMax(values);
+				return;
+			default:
+				break;
+		}
+
+		Collection<Map.Entry<String, Double>> entries = values.entrySet();
+		for(Map.Entry<String, Double> entry : entries){
+			entry.setValue(normalizeClassificationResult(entry.getValue()));
+		}
+	}
+
+	private Double normalizeClassificationResult(Double value){
+		RegressionModel regressionModel = getModel();
+
+		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
+		switch(regressionNormalizationMethod){
 			case LOGIT:
 				return 1d / (1d + Math.exp(-value));
 			case CLOGLOG:

@@ -122,24 +122,8 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 		return Lists.transform(winners, function);
 	}
 
-	double sumValues(){
-		double result = 0;
-
-		Collection<Double> values = values();
-		for(Double value : values){
-			result += value.doubleValue();
-		}
-
-		return result;
-	}
-
 	void normalizeValues(){
-		double sum = sumValues();
-
-		Collection<Map.Entry<K, Double>> entries = entrySet();
-		for(Map.Entry<K, Double> entry : entries){
-			entry.setValue(entry.getValue() / sum);
-		}
+		normalize(this);
 	}
 
 	public Type getType(){
@@ -148,6 +132,62 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 
 	private void setType(Type type){
 		this.type = type;
+	}
+
+	static
+	public <K> Double sum(Map<K, Double> map){
+		return sum(map, null);
+	}
+
+	static
+	private <K> Double sum(Map<K, Double> map, Function<Double, Double> function){
+		double sum = 0d;
+
+		Collection<Double> values = map.values();
+		for(Double value : values){
+
+			if(function != null){
+				value = function.apply(value);
+			}
+
+			sum += value.doubleValue();
+		}
+
+		return sum;
+	}
+
+	static
+	public <K> void normalize(Map<K, Double> map){
+		normalize(map, null);
+	}
+
+	static
+	public <K> void normalizeSoftMax(Map<K, Double> map){
+		Function<Double, Double> function = new Function<Double, Double>(){
+
+			@Override
+			public Double apply(Double value){
+				return Math.exp(value.doubleValue());
+			}
+		};
+
+		normalize(map, function);
+	}
+
+	static
+	private <K> void normalize(Map<K, Double> map, Function<Double, Double> function){
+		double sum = sum(map, function);
+
+		Collection<Map.Entry<K, Double>> entries = map.entrySet();
+		for(Map.Entry<K, Double> entry : entries){
+			Double value = entry.getValue();
+
+			if(function != null){
+				value = function.apply(value);
+			}
+
+			entry.setValue(value / sum);
+		}
 	}
 
 	static
