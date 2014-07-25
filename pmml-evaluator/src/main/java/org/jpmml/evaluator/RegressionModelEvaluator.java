@@ -261,6 +261,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				return 1d - Math.exp(-Math.exp(value));
 			case LOGLOG:
 				return Math.exp(-Math.exp(-value));
+			case CAUCHIT:
+				return 0.5d + (1d / Math.PI) * Math.atan(value);
 			default:
 				throw new UnsupportedFeatureException(regressionModel, regressionNormalizationMethod);
 		}
