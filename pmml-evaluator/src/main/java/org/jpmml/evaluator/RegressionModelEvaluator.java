@@ -140,8 +140,6 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new UnsupportedFeatureException(dataField, opType);
 		}
 
-		result.normalizeValues();
-
 		return TargetUtil.evaluateClassification(Collections.singletonMap(targetField, result), context);
 	}
 
@@ -227,7 +225,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		}
 	}
 
-	private void normalizeClassificationResult(Map<String, Double> values){
+	private void normalizeClassificationResult(ClassificationMap<String> values){
 		RegressionModel regressionModel = getModel();
 
 		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
@@ -248,6 +246,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		for(Map.Entry<String, Double> entry : entries){
 			entry.setValue(normalizeClassificationResult(entry.getValue()));
 		}
+
+		values.normalizeValues();
 	}
 
 	private Double normalizeClassificationResult(Double value){
