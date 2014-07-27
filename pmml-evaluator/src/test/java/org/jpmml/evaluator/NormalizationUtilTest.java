@@ -1,29 +1,20 @@
 /*
- * Copyright (c) 2011 University of Tartu
- * All rights reserved.
+ * Copyright (c) 2014 Villu Ruusmann
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * This file is part of JPMML-Evaluator
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of its contributors
- *    may be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ * JPMML-Evaluator is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * JPMML-Evaluator is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.jpmml.evaluator;
 
@@ -31,54 +22,70 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LinearNorm;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.OutlierTreatmentMethodType;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class NormalizationUtilTest {
 
-	private NormContinuous norm;
+	@Test
+	public void normalize(){
+		NormContinuous normContinuous = createNormContinuous();
 
-
-	@Before
-	public void setUp(){
-		norm = new NormContinuous(new FieldName("x"));
-		norm.getLinearNorms().add(new LinearNorm(0.01, 0.0));
-		norm.getLinearNorms().add(new LinearNorm(3.07897, 0.5));
-		norm.getLinearNorms().add(new LinearNorm(11.44, 1.0));
+		assertEquals(BEGIN[1], NormalizationUtil.normalize(normContinuous, BEGIN[0]), 1e-8);
+		assertEquals(interpolate(1.212d, BEGIN, MIDPOINT), NormalizationUtil.normalize(normContinuous, 1.212d), 1e-8);
+		assertEquals(MIDPOINT[1], NormalizationUtil.normalize(normContinuous, MIDPOINT[0]), 1e-8);
+		assertEquals(interpolate(6.5d, MIDPOINT, END), NormalizationUtil.normalize(normContinuous, 6.5d), 1e-8);
+		assertEquals(END[1], NormalizationUtil.normalize(normContinuous, END[0]), 1e-8);
 	}
 
 	@Test
-	public void testNormalize(){
-		assertEquals(0.00000, NormalizationUtil.normalize(norm, 0.01), 1e-5);
-		assertEquals(0.19583, NormalizationUtil.normalize(norm, 1.212), 1e-5);
-		assertEquals(0.50000, NormalizationUtil.normalize(norm, 3.07897), 1e-5);
-		assertEquals(0.70458, NormalizationUtil.normalize(norm, 6.5), 1e-5);
-		assertEquals(1.00000, NormalizationUtil.normalize(norm, 11.44), 1e-5);
+	public void normalizeOutliers(){
+		NormContinuous normContinuous = createNormContinuous();
+
+		normContinuous.setOutliers(null);
+		assertEquals(interpolate(-1d, BEGIN, MIDPOINT), NormalizationUtil.normalize(normContinuous, -1d), 1e-8);
+		assertEquals(interpolate(12.2d, MIDPOINT, END), NormalizationUtil.normalize(normContinuous, 12.2d), 1e-8);
+
+		normContinuous.setOutliers(OutlierTreatmentMethodType.AS_MISSING_VALUES);
+		normContinuous.setMapMissingTo(0.5d);
+		assertEquals(0.5d, NormalizationUtil.normalize(normContinuous, -1d), 1e-8);
+		assertEquals(0.5d, NormalizationUtil.normalize(normContinuous, 12.2d), 1e-8);
+
+		normContinuous.setOutliers(OutlierTreatmentMethodType.AS_EXTREME_VALUES);
+		assertEquals(BEGIN[1], NormalizationUtil.normalize(normContinuous, -1d), 1e-8);
+		assertEquals(END[1], NormalizationUtil.normalize(normContinuous, 12.2d), 1e-8);
 	}
 
 	@Test
-	public void testNormalizeOutliers(){
-		norm.setOutliers(null);
-		assertEquals(-0.16455, NormalizationUtil.normalize(norm, -1.0), 1e-5);
-		assertEquals( 1.04544, NormalizationUtil.normalize(norm, 12.2), 1e-5);
+	public void denormalize(){
+		NormContinuous normContinuous = createNormContinuous();
 
-		norm.setOutliers(OutlierTreatmentMethodType.AS_MISSING_VALUES);
-		norm.setMapMissingTo(0.5);
-		assertEquals(0.5, NormalizationUtil.normalize(norm, -1.0), 1e-5);
-		assertEquals(0.5, NormalizationUtil.normalize(norm, 12.2), 1e-5);
-
-		norm.setOutliers(OutlierTreatmentMethodType.AS_EXTREME_VALUES);
-		assertEquals(0.0, NormalizationUtil.normalize(norm, -1.0), 1e-5);
-		assertEquals(1.0, NormalizationUtil.normalize(norm, 12.2), 1e-5);
+		assertEquals(BEGIN[0], NormalizationUtil.denormalize(normContinuous, BEGIN[1]), 1e-8);
+		assertEquals(0.3d, NormalizationUtil.denormalize(normContinuous, interpolate(0.3d, BEGIN, MIDPOINT)), 1e-8);
+		assertEquals(MIDPOINT[0], NormalizationUtil.denormalize(normContinuous, MIDPOINT[1]), 1e-8);
+		assertEquals(7.123d, NormalizationUtil.denormalize(normContinuous, interpolate(7.123d, MIDPOINT, END)), 1e-8);
+		assertEquals(END[0], NormalizationUtil.denormalize(normContinuous, END[1]), 1e-8);
 	}
 
-	@Test
-	public void testDenormalize(){
-		assertEquals(0.010, NormalizationUtil.denormalize(norm, 0.0), 1e-5);
-		assertEquals(0.300, NormalizationUtil.denormalize(norm, 0.047247), 1e-5);
-		assertEquals(7.123, NormalizationUtil.denormalize(norm, 0.741838), 1e-5);
-		assertEquals(11.44, NormalizationUtil.denormalize(norm, 1.0), 1e-5);
+	static
+	private double interpolate(double x, double[] begin, double[] end){
+		return begin[1] + (x - begin[0]) / (end[0] - begin[0]) * (end[1] - begin[1]);
 	}
+
+	static
+	private NormContinuous createNormContinuous(){
+		NormContinuous result = new NormContinuous(new FieldName("x"))
+			.withLinearNorms(
+				new LinearNorm(BEGIN[0], BEGIN[1]),
+				new LinearNorm(MIDPOINT[0], MIDPOINT[1]),
+				new LinearNorm(END[0], END[1])
+			);
+
+		return result;
+	}
+
+	private static final double[] BEGIN = {0.01d, 0d};
+	private static final double[] MIDPOINT = {3.07897d, 0.5d};
+	private static final double[] END = {11.44d, 1.0d};
 }
