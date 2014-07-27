@@ -33,7 +33,7 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 
 		ModelEvaluationContext context = evaluator.createContext(null);
 
-		Map<FieldName, ? extends Number> predictions = TargetUtil.evaluateRegression((Double)null, context);
+		Map<FieldName, ? extends Number> predictions = TargetUtil.evaluateRegressionDefault(context);
 
 		assertEquals(1, predictions.size());
 

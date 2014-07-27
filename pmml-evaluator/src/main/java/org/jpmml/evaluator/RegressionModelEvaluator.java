@@ -93,9 +93,11 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		RegressionTable regressionTable = regressionTables.get(0);
 
 		Double result = evaluateRegressionTable(regressionTable, context);
-		if(result != null){
-			result = normalizeRegressionResult(result);
+		if(result == null){
+			return TargetUtil.evaluateRegressionDefault(context);
 		}
+
+		result = normalizeRegressionResult(result);
 
 		return TargetUtil.evaluateRegression(Collections.singletonMap(targetField, result), context);
 	}
@@ -135,8 +137,10 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			}
 
 			Double value = evaluateRegressionTable(regressionTable, context);
+
+			// "If one or more RegressionTable elements cannot be evaluated, then the predictions are defined by the priorProbability values of the Target element"
 			if(value == null){
-				throw new MissingResultException(regressionTable);
+				return TargetUtil.evaluateClassificationDefault(context);
 			}
 
 			result.put(targetCategory, value);

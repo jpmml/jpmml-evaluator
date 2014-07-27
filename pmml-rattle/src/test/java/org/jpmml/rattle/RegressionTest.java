@@ -22,7 +22,7 @@ import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class RegressionTest {
@@ -31,14 +31,16 @@ public class RegressionTest {
 	public void evaluateGeneralRegressionOzone() throws Exception {
 		Batch batch = new RattleBatch("GeneralRegression", "Ozone");
 
-		assertTrue(BatchUtil.evaluate(batch));
+		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		assertNull(BatchUtil.evaluateDefault(batch));
+		assertTrue(BatchUtil.evaluate(batch));
 	}
 
 	@Test
 	public void evaluateNeuralNetworkOzone() throws Exception {
 		Batch batch = new RattleBatch("NeuralNetwork", "Ozone");
+
+		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
@@ -54,9 +56,9 @@ public class RegressionTest {
 	public void evaluateRegressionOzone() throws Exception {
 		Batch batch = new RattleBatch("Regression", "Ozone");
 
-		assertTrue(BatchUtil.evaluate(batch));
+		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		assertNull(BatchUtil.evaluateDefault(batch));
+		assertTrue(BatchUtil.evaluate(batch));
 	}
 
 	@Test

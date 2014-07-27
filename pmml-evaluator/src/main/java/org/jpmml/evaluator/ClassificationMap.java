@@ -43,7 +43,7 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 	public Object getResult(){
 		Map.Entry<K, Double> entry = getWinner();
 		if(entry == null){
-			throw new MissingResultException(null);
+			throw new EvaluationException();
 		}
 
 		return entry.getKey();

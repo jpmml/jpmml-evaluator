@@ -46,11 +46,11 @@ public class Association implements Computable, HasRuleValues {
 	}
 
 	/**
-	 * @throws MissingResultException Always.
+	 * @throws EvaluationException Always.
 	 */
 	@Override
 	public Object getResult(){
-		throw new MissingResultException(null);
+		throw new EvaluationException();
 	}
 
 	@Override

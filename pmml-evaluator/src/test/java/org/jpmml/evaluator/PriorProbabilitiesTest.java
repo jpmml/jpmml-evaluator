@@ -33,7 +33,7 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		ModelEvaluationContext context = evaluator.createContext(null);
 
-		Map<FieldName, ? extends ClassificationMap<?>> predictions = TargetUtil.evaluateClassification((ClassificationMap<?>)null, context);
+		Map<FieldName, ? extends ClassificationMap<?>> predictions = TargetUtil.evaluateClassificationDefault(context);
 
 		assertEquals(1, predictions.size());
 

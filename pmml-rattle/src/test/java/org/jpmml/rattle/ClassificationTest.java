@@ -20,10 +20,10 @@ package org.jpmml.rattle;
 
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
-import org.jpmml.evaluator.MissingResultException;
 import org.jpmml.manager.InvalidFeatureException;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -33,6 +33,14 @@ public class ClassificationTest {
 	public void evaluateDecisionTreeIris() throws Exception {
 		Batch batch = new RattleBatch("DecisionTree", "Iris");
 
+		try {
+			BatchUtil.evaluateDefault(batch);
+
+			fail();
+		} catch(InvalidFeatureException ife){
+			// Ignored
+		}
+
 		assertTrue(BatchUtil.evaluate(batch));
 	}
 
@@ -40,15 +48,9 @@ public class ClassificationTest {
 	public void evaluateGeneralRegressionIris() throws Exception {
 		Batch batch = new RattleBatch("GeneralRegression", "Iris");
 
+		assertEquals(null, BatchUtil.evaluateDefault(batch));
+
 		assertTrue(BatchUtil.evaluate(batch));
-
-		try {
-			BatchUtil.evaluateDefault(batch);
-
-			fail();
-		} catch(MissingResultException mre){
-			// Ignored
-		}
 	}
 
 	@Test
@@ -61,6 +63,8 @@ public class ClassificationTest {
 	@Test
 	public void evaluateNeuralNetworkIris() throws Exception {
 		Batch batch = new RattleBatch("NeuralNetwork", "Iris");
+
+		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
@@ -76,15 +80,9 @@ public class ClassificationTest {
 	public void evaluateRegressionIris() throws Exception {
 		Batch batch = new RattleBatch("Regression", "Iris");
 
+		assertEquals(null, BatchUtil.evaluateDefault(batch));
+
 		assertTrue(BatchUtil.evaluate(batch));
-
-		try {
-			BatchUtil.evaluateDefault(batch);
-
-			fail();
-		} catch(MissingResultException mre){
-			// Ignored
-		}
 	}
 
 	@Test
@@ -98,8 +96,6 @@ public class ClassificationTest {
 	public void evaluateDecisionTreeAudit() throws Exception {
 		Batch batch = new RattleBatch("DecisionTree", "Audit");
 
-		assertTrue(BatchUtil.evaluate(batch));
-
 		try {
 			BatchUtil.evaluateDefault(batch);
 
@@ -107,21 +103,17 @@ public class ClassificationTest {
 		} catch(InvalidFeatureException ife){
 			// Ignored
 		}
+
+		assertTrue(BatchUtil.evaluate(batch));
 	}
 
 	@Test
 	public void evaluateGeneralRegressionAudit() throws Exception {
 		Batch batch = new RattleBatch("GeneralRegression", "Audit");
 
+		assertEquals(null, BatchUtil.evaluateDefault(batch));
+
 		assertTrue(BatchUtil.evaluate(batch));
-
-		try {
-			BatchUtil.evaluateDefault(batch);
-
-			fail();
-		} catch(MissingResultException mre){
-			// Ignored
-		}
 	}
 
 	@Test
@@ -134,6 +126,8 @@ public class ClassificationTest {
 	@Test
 	public void evaluateNeuralNetworkAudit() throws Exception {
 		Batch batch = new RattleBatch("NeuralNetwork", "Audit");
+
+		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
@@ -148,6 +142,8 @@ public class ClassificationTest {
 	@Test
 	public void evaluateRegressionAudit() throws Exception {
 		Batch batch = new RattleBatch("Regression", "Audit");
+
+		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}

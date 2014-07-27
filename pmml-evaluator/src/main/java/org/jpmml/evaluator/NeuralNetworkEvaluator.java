@@ -107,6 +107,9 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		NeuralNetwork neuralNetwork = getModel();
 
 		Map<String, Double> entityOutputs = evaluateRaw(context);
+		if(entityOutputs == null){
+			return TargetUtil.evaluateRegressionDefault(context);
+		}
 
 		Map<FieldName, Double> result = Maps.newLinkedHashMap();
 
@@ -153,6 +156,9 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		Map<String, Entity> entities = getEntityRegistry();
 
 		Map<String, Double> entityOutputs = evaluateRaw(context);
+		if(entityOutputs == null){
+			return TargetUtil.evaluateClassificationDefault(context);
+		}
 
 		Map<FieldName, NeuronClassificationMap> result = Maps.newLinkedHashMap();
 
@@ -232,7 +238,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 			FieldValue value = ExpressionUtil.evaluate(derivedField, context);
 			if(value == null){
-				throw new MissingResultException(derivedField);
+				return null;
 			}
 
 			result.put(neuralInput.getId(), (value.asNumber()).doubleValue());

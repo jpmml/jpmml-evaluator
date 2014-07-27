@@ -73,6 +73,8 @@ public class OutputUtil {
 		Map<FieldName, Object> result = Maps.newLinkedHashMap(predictions);
 
 		List<OutputField> outputFields = output.getOutputFields();
+
+		outputFields:
 		for(OutputField outputField : outputFields){
 			Map<FieldName, ?> segmentPredictions = predictions;
 
@@ -85,9 +87,7 @@ public class OutputUtil {
 
 			// "If there is no Segment matching segmentId or if the predicate of the matching Segment evaluated to false, then the result delivered by this OutputField is missing."
 			if(segmentPredictions == null){
-				result.put(outputField.getName(), null);
-
-				continue;
+				continue outputFields;
 			}
 
 			// "Attribute targetField is required in case the model has multiple target fields."
@@ -137,8 +137,13 @@ public class OutputUtil {
 							throw new MissingFieldException(targetField, outputField);
 						}
 
-						// Prediction results could be either simple or complex values
+						// A target value could be either simple or complex values
 						value = segmentPredictions.get(targetField);
+
+						// If the target value is missing, then the result delivered by this OutputField is missing
+						if(value == null){
+							continue outputFields;
+						}
 					}
 					break;
 				default:

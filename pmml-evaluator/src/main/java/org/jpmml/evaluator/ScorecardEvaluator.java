@@ -121,7 +121,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 					FieldValue computedValue = ExpressionUtil.evaluate(expression, context);
 					if(computedValue == null){
-						throw new MissingResultException(expression);
+						return TargetUtil.evaluateRegressionDefault(context);
 					}
 
 					partialScore = (computedValue.asNumber()).doubleValue();

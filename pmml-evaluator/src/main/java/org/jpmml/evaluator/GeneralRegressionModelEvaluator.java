@@ -126,18 +126,20 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		Iterable<PCell> parameterCells = paramMatrixMap.get(null);
 
 		Double result = computeDotProduct(parameterCells, parameterPredictorRows, arguments);
-		if(result != null){
-			GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
-			switch(modelType){
-				case REGRESSION:
-				case GENERAL_LINEAR:
-					break;
-				case GENERALIZED_LINEAR:
-					result = computeLink(result, context);
-					break;
-				default:
-					throw new UnsupportedFeatureException(generalRegressionModel, modelType);
-			}
+		if(result == null){
+			return TargetUtil.evaluateRegressionDefault(context);
+		}
+
+		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
+		switch(modelType){
+			case REGRESSION:
+			case GENERAL_LINEAR:
+				break;
+			case GENERALIZED_LINEAR:
+				result = computeLink(result, context);
+				break;
+			default:
+				throw new UnsupportedFeatureException(generalRegressionModel, modelType);
 		}
 
 		return TargetUtil.evaluateRegression(result, context);
@@ -274,7 +276,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 				value = computeDotProduct(parameterCells, parameterPredictorRows, arguments);
 				if(value == null){
-					throw new MissingResultException(generalRegressionModel);
+					return TargetUtil.evaluateClassificationDefault(context);
 				}
 
 				switch(modelType){

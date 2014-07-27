@@ -52,7 +52,7 @@ public class InstanceClassificationMap extends ClassificationMap<String> impleme
 	public Object getResult(){
 
 		if(this.result == null){
-			throw new MissingResultException(null);
+			throw new EvaluationException();
 		}
 
 		return this.result;

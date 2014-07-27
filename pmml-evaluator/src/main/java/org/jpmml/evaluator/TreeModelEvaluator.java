@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -159,7 +158,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			case RETURN_NULL_PREDICTION:
 				return null;
 			case RETURN_LAST_PREDICTION:
-				return lastPrediction(root, trail);
+				return trail.getLast();
 			default:
 				throw new UnsupportedFeatureException(treeModel, noTrueChildStrategy);
 		}
@@ -245,7 +244,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			case NULL_PREDICTION:
 				return new FinalNodeResult(null);
 			case LAST_PREDICTION:
-				return new FinalNodeResult(lastPrediction(node, trail));
+				return new FinalNodeResult(trail.getLast());
 			case DEFAULT_CHILD:
 				String defaultChild = node.getDefaultChild();
 				if(defaultChild == null){
@@ -259,16 +258,6 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 				return null;
 			default:
 				throw new UnsupportedFeatureException(treeModel, missingValueStrategy);
-		}
-	}
-
-	static
-	private Node lastPrediction(Node node, Trail trail){
-
-		try {
-			return trail.getLast();
-		} catch(NoSuchElementException nsee){
-			throw new MissingResultException(node);
 		}
 	}
 
@@ -326,7 +315,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			int size = size();
 
 			if(size == 0){
-				throw new NoSuchElementException();
+				throw new EvaluationException();
 			}
 
 			return get(size - 1);

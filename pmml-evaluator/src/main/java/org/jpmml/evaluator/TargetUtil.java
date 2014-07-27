@@ -46,6 +46,11 @@ public class TargetUtil {
 		return evaluateRegression(Collections.singletonMap(modelEvaluator.getTargetField(), value), context);
 	}
 
+	static
+	public Map<FieldName, ? extends Number> evaluateRegressionDefault(ModelEvaluationContext context){
+		return evaluateRegression((Double)null, context);
+	}
+
 	/**
 	 * Evaluates the {@link Targets} element for {@link MiningFunctionType#REGRESSION regression} models.
 	 */
@@ -88,6 +93,11 @@ public class TargetUtil {
 		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
 
 		return evaluateClassification(Collections.singletonMap(modelEvaluator.getTargetField(), value), context);
+	}
+
+	static
+	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassificationDefault(ModelEvaluationContext context){
+		return evaluateClassification((ClassificationMap<?>)null, context);
 	}
 
 	/**
