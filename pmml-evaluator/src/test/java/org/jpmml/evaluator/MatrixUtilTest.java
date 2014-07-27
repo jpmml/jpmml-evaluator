@@ -21,10 +21,10 @@ package org.jpmml.evaluator;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.MatCell;
 import org.dmg.pmml.Matrix;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class MatrixUtilTest {
 
@@ -51,7 +51,7 @@ public class MatrixUtilTest {
 		try {
 			MatrixUtil.getElementAt(matrix, 0, 0);
 
-			Assert.fail();
+			fail();
 		} catch(IndexOutOfBoundsException ioobe){
 			// Ignored
 		}
@@ -59,7 +59,7 @@ public class MatrixUtilTest {
 		try {
 			MatrixUtil.getElementAt(matrix, 4, 4);
 
-			Assert.fail();
+			fail();
 		} catch(IndexOutOfBoundsException ioobe){
 			// Ignored
 		}
@@ -92,7 +92,7 @@ public class MatrixUtilTest {
 		try {
 			MatrixUtil.getElementAt(matrix, 0, 0);
 
-			Assert.fail();
+			fail();
 		} catch(IndexOutOfBoundsException ioobe){
 			// Ignored
 		}
@@ -100,7 +100,7 @@ public class MatrixUtilTest {
 		try {
 			MatrixUtil.getElementAt(matrix, 4, 4);
 
-			Assert.fail();
+			fail();
 		} catch(IndexOutOfBoundsException ioobe){
 			// Ignored
 		}
@@ -155,7 +155,7 @@ public class MatrixUtilTest {
 		try {
 			MatrixUtil.getElementAt(matrix, 0, 0);
 
-			Assert.fail();
+			fail();
 		} catch(IndexOutOfBoundsException ioobe){
 			// Ignored
 		}

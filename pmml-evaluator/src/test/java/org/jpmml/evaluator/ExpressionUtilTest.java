@@ -34,10 +34,10 @@ import org.dmg.pmml.InvalidValueTreatmentMethodType;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class ExpressionUtilTest {
 
@@ -158,7 +158,7 @@ public class ExpressionUtilTest {
 		try {
 			evaluate(apply, name, 1);
 
-			Assert.fail();
+			fail();
 		} catch(InvalidResultException ire){
 			// Ignored
 		}

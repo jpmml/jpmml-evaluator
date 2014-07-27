@@ -30,10 +30,10 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 import org.jpmml.evaluator.functions.EchoFunction;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class FunctionUtilTest {
 
@@ -67,7 +67,7 @@ public class FunctionUtilTest {
 		try {
 			evaluate("/", 1, 0);
 
-			Assert.fail();
+			fail();
 		} catch(InvalidResultException ire){
 			// Ignored
 		}
@@ -76,7 +76,7 @@ public class FunctionUtilTest {
 			evaluate("/", 1f, 0);
 			evaluate("/", 1d, 0);
 		} catch(InvalidResultException ire){
-			Assert.fail();
+			fail();
 		}
 	}
 
@@ -289,7 +289,7 @@ public class FunctionUtilTest {
 		try {
 			evaluate(function);
 
-			Assert.fail();
+			fail();
 		} catch(FunctionException fe){
 			// Ignored
 		}
@@ -299,7 +299,7 @@ public class FunctionUtilTest {
 		try {
 			evaluate(function, "Hello World!", "Hello World!");
 
-			Assert.fail();
+			fail();
 		} catch(FunctionException fe){
 			// Ignored
 		}
