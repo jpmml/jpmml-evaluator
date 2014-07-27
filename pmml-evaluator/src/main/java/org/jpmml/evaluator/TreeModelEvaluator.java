@@ -265,7 +265,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	private String ensureScore(Node node){
 		String score = node.getScore();
 
-		// "It is not possible that the scoring process ends in a Node which does not have a score attribute."
+		// "It is not possible that the scoring process ends in a Node which does not have a score attribute"
 		if(score == null){
 			throw new InvalidFeatureException(node);
 		}

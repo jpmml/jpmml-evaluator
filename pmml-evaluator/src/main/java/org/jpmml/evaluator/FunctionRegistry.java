@@ -549,7 +549,7 @@ public class FunctionRegistry {
 
 				Matcher matcher = Pattern.compile(pattern).matcher(input);
 
-				// "the string is considered to match the pattern if any substring matches the pattern"
+				// "The string is considered to match the pattern if any substring matches the pattern"
 				Boolean result = Boolean.valueOf(matcher.find());
 
 				return FieldValueUtil.create(result);

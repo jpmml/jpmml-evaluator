@@ -61,12 +61,12 @@ public class VerificationUtil {
 		double zeroBoundary = expected.doubleValue() * (1d - precision); // Pointed towards zero
 		double infinityBoundary = expected.doubleValue() * (1d + precision); // Pointed towards positive or negative infinity
 
-		// positive values
+		// Positive values
 		if(expected.doubleValue() >= 0){
 			return (actual.doubleValue() >= zeroBoundary) && (actual.doubleValue() <= infinityBoundary);
 		} else
 
-		// negative values
+		// Negative values
 		{
 			return (actual.doubleValue() <= zeroBoundary) && (actual.doubleValue() >= infinityBoundary);
 		}

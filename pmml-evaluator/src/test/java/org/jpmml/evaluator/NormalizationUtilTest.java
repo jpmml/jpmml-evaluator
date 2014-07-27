@@ -40,6 +40,7 @@ public class NormalizationUtilTest {
 
 	private NormContinuous norm;
 
+
 	@Before
 	public void setUp(){
 		norm = new NormContinuous(new FieldName("x"));
@@ -59,17 +60,15 @@ public class NormalizationUtilTest {
 
 	@Test
 	public void testNormalizeOutliers(){
-		// as is method
+		norm.setOutliers(null);
 		assertEquals(-0.16455, NormalizationUtil.normalize(norm, -1.0), 1e-5);
 		assertEquals( 1.04544, NormalizationUtil.normalize(norm, 12.2), 1e-5);
 
-		// as missing values method
 		norm.setOutliers(OutlierTreatmentMethodType.AS_MISSING_VALUES);
 		norm.setMapMissingTo(0.5);
 		assertEquals(0.5, NormalizationUtil.normalize(norm, -1.0), 1e-5);
 		assertEquals(0.5, NormalizationUtil.normalize(norm, 12.2), 1e-5);
 
-		// as extreme values method
 		norm.setOutliers(OutlierTreatmentMethodType.AS_EXTREME_VALUES);
 		assertEquals(0.0, NormalizationUtil.normalize(norm, -1.0), 1e-5);
 		assertEquals(1.0, NormalizationUtil.normalize(norm, 12.2), 1e-5);

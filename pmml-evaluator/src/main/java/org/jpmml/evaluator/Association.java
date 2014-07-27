@@ -60,16 +60,16 @@ public class Association implements Computable, HasRuleValues {
 		BitSet flags;
 
 		switch(algorithm){
-			// "a rule is selected if its antecedent itemset is a subset of the input itemset"
+			// "A rule is selected if its antecedent itemset is a subset of the input itemset"
 			case RECOMMENDATION:
 				flags = getAntecedentFlags();
 				break;
-			// "a rule is selected if its antecedent itemset is a subset of the input itemset, and its consequent itemset is not a subset of the input itemset"
+			// "A rule is selected if its antecedent itemset is a subset of the input itemset, and its consequent itemset is not a subset of the input itemset"
 			case EXCLUSIVE_RECOMMENDATION:
 				flags = (BitSet)getAntecedentFlags().clone();
 				flags.andNot(getConsequentFlags());
 				break;
-			// "a rule is selected if its antecedent and consequent itemsets are included in the input itemset"
+			// "A rule is selected if its antecedent and consequent itemsets are included in the input itemset"
 			case RULE_ASSOCIATION:
 				flags = (BitSet)getAntecedentFlags().clone();
 				flags.and(getConsequentFlags());

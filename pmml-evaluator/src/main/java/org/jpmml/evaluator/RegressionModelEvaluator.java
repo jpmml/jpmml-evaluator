@@ -171,7 +171,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 			FieldValue value = ExpressionUtil.evaluate(name, context);
 
-			// "if the input value is missing, then the result evaluates to a missing value"
+			// "If the input value is missing, then the result evaluates to a missing value"
 			if(value == null){
 				context.addWarning("Missing argument \"" + name.getValue() + "\"");
 
@@ -187,7 +187,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 			FieldValue value = ExpressionUtil.evaluate(name, context);
 
-			// "if the input value is missing, then the product is ignored"
+			// "If the input value is missing, then the product is ignored"
 			if(value == null){
 				context.addWarning("Missing argument \"" + name.getValue() + "\"");
 
@@ -211,7 +211,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			for(FieldRef fieldRef : fieldRefs){
 				FieldValue value = ExpressionUtil.evaluateFieldRef(fieldRef, context);
 
-				// "if the input value is missing, then the result evaluates to a missing value"
+				// "If the input value is missing, then the result evaluates to a missing value"
 				if(value == null){
 					return null;
 				}

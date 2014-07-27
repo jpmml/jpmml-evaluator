@@ -255,7 +255,7 @@ public class TypeUtil {
 			return left;
 		}
 
-		// "When the input parameters have multiple dataTypes, the least restrictive dataType will be inherited by default."
+		// "When the input parameters have multiple dataTypes, the least restrictive dataType will be inherited by default"
 		for(int i = 0; i < inheritanceSequence.length; i++){
 			DataType dataType = inheritanceSequence[i];
 

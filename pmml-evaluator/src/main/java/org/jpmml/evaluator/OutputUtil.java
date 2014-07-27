@@ -85,12 +85,12 @@ public class OutputUtil {
 				segmentPredictions = miningModelContext.getResult(segmentId);
 			} // End if
 
-			// "If there is no Segment matching segmentId or if the predicate of the matching Segment evaluated to false, then the result delivered by this OutputField is missing."
+			// "If there is no Segment matching segmentId or if the predicate of the matching Segment evaluated to false, then the result delivered by this OutputField is missing"
 			if(segmentPredictions == null){
 				continue outputFields;
 			}
 
-			// "Attribute targetField is required in case the model has multiple target fields."
+			// "Attribute targetField is required in case the model has multiple target fields"
 			FieldName targetField = outputField.getTargetField();
 			if(targetField == null){
 				targetField = modelEvaluator.getTargetField();
@@ -100,7 +100,7 @@ public class OutputUtil {
 
 			ResultFeatureType resultFeature = outputField.getFeature();
 
-			// "If the attribute feature is not specified then the output value is a copy of the target field value."
+			// "If the attribute feature is not specified then the output value is a copy of the target field value"
 			if(resultFeature == null){
 				resultFeature = ResultFeatureType.PREDICTED_VALUE;
 			}
@@ -481,12 +481,12 @@ public class OutputUtil {
 				throw new InvalidFeatureException(outputField);
 			} else
 
-			// "a zero value indicates that all output values are to be returned"
+			// "A zero value indicates that all output values are to be returned"
 			if(rank == 0){
 				size = associationRules.size();
 			} else
 
-			// "a positive value indicates the number of output values to be returned"
+			// "A positive value indicates the number of output values to be returned"
 			{
 				size = Math.min(rank, associationRules.size());
 			}

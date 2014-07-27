@@ -345,7 +345,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			winners = counter.getWinners();
 
-			// "If multiple categories are tied on the largest number of cases in the training data, then the category with the smallest data value (in lexical order) among the tied categories is the winner."
+			// "If multiple categories are tied on the largest number of cases in the training data, then the category with the smallest data value (in lexical order) among the tied categories is the winner"
 			if(winners.size() > 1){
 				return Collections.min((Collection)winners);
 			}
