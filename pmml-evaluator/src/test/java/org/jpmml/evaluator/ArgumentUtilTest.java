@@ -20,7 +20,6 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
@@ -45,13 +44,9 @@ public class ArgumentUtilTest {
 
 		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE);
 
-		List<Value> fieldValues = dataField.getValues();
-		List<Interval> fieldIntervals = dataField.getIntervals();
-
-		MiningField miningField = new MiningField(name);
-
-		miningField.setLowValue(1d);
-		miningField.setHighValue(3d);
+		MiningField miningField = new MiningField(name)
+			.withLowValue(1d)
+			.withHighValue(3d);
 
 		assertEquals(1d, prepare(dataField, miningField, "1"));
 		assertEquals(1d, prepare(dataField, miningField, 1));
@@ -60,83 +55,66 @@ public class ArgumentUtilTest {
 
 		Value missingValue = createValue("N/A", Property.MISSING);
 
-		fieldValues.add(missingValue);
+		dataField = dataField.withValues(missingValue);
 
 		assertEquals(null, prepare(dataField, miningField, null));
 		assertEquals(null, prepare(dataField, miningField, "N/A"));
 
-		miningField.setMissingValueReplacement("0");
+		miningField = miningField.withMissingValueReplacement("0");
 
 		assertEquals(0d, prepare(dataField, miningField, null));
 		assertEquals(0d, prepare(dataField, miningField, "N/A"));
 
-		fieldValues.clear();
-		fieldIntervals.clear();
+		Interval validInterval = new Interval(Closure.CLOSED_CLOSED)
+			.withLeftMargin(1d)
+			.withRightMargin(3d);
 
-		fieldValues.add(missingValue);
+		dataField = dataField.withIntervals(validInterval);
 
-		Interval validInterval = new Interval(Closure.CLOSED_CLOSED);
-		validInterval.setLeftMargin(1d);
-		validInterval.setRightMargin(3d);
-
-		fieldIntervals.add(validInterval);
-
-		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_IS);
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		miningField = miningField.withOutlierTreatment(OutlierTreatmentMethodType.AS_IS)
+			.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
 
 		assertEquals(-1d, prepare(dataField, miningField, -1d));
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
 
-		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_EXTREME_VALUES);
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		miningField = miningField.withOutlierTreatment(OutlierTreatmentMethodType.AS_EXTREME_VALUES)
+			.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
 
 		assertEquals(1d, prepare(dataField, miningField, -1d));
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(3d, prepare(dataField, miningField, 5d));
 
-		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_IS);
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		miningField = miningField.withOutlierTreatment(OutlierTreatmentMethodType.AS_IS)
+			.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(0d, prepare(dataField, miningField, 5d));
 
-		fieldValues.clear();
-		fieldIntervals.clear();
+		dataField = clear(dataField);
 
-		List<Value> validValues = Lists.newArrayList();
-		validValues.add(createValue("1", Value.Property.VALID));
-		validValues.add(createValue("2", Value.Property.VALID));
-		validValues.add(createValue("3", Value.Property.VALID));
+		dataField = dataField.withValues(missingValue, createValue("1", Value.Property.VALID), createValue("2", Value.Property.VALID), createValue("3", Value.Property.VALID));
 
-		fieldValues.add(missingValue);
-		fieldValues.addAll(validValues);
-
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		miningField = miningField.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
 
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		miningField = miningField.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(0d, prepare(dataField, miningField, 5d));
 
-		fieldValues.clear();
-		fieldIntervals.clear();
+		dataField = clear(dataField);
 
-		List<Value> invalidValues = Lists.newArrayList();
-		invalidValues.add(createValue("1", Value.Property.INVALID));
+		dataField = dataField.withValues(missingValue, createValue("1", Value.Property.INVALID));
 
-		fieldValues.add(missingValue);
-		fieldValues.addAll(invalidValues);
-
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		miningField = miningField.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
 
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		miningField = miningField.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 
 		assertEquals(0d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
@@ -160,9 +138,20 @@ public class ArgumentUtilTest {
 	}
 
 	static
+	private DataField clear(DataField dataField){
+		List<Value> values = dataField.getValues();
+		values.clear();
+
+		List<Interval> intervals = dataField.getIntervals();
+		intervals.clear();
+
+		return dataField;
+	}
+
+	static
 	private Value createValue(String value, Value.Property property){
-		Value result = new Value(value);
-		result.setProperty(property);
+		Value result = new Value(value)
+			.withProperty(property);
 
 		return result;
 	}

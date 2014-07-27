@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.List;
-
 import org.dmg.pmml.Array;
 import org.dmg.pmml.MatCell;
 import org.dmg.pmml.Matrix;
@@ -32,11 +30,9 @@ public class MatrixUtilTest {
 
 	@Test
 	public void diagonalMatrix(){
-		Matrix matrix = new Matrix();
-		matrix.setKind(Matrix.Kind.DIAGONAL);
-
-		List<Array> arrays = matrix.getArrays();
-		arrays.add(new Array("1 2 3", Array.Type.INT));
+		Matrix matrix = new Matrix()
+			.withKind(Matrix.Kind.DIAGONAL)
+			.withArrays(new Array("1 2 3", Array.Type.INT));
 
 		assertEquals(1, MatrixUtil.getElementAt(matrix, 1, 1));
 		assertEquals(2, MatrixUtil.getElementAt(matrix, 2, 2));
@@ -45,7 +41,7 @@ public class MatrixUtilTest {
 		assertEquals(null, MatrixUtil.getElementAt(matrix, 1, 3));
 		assertEquals(null, MatrixUtil.getElementAt(matrix, 3, 1));
 
-		matrix.setOffDiagDefault(0d);
+		matrix = matrix.withOffDiagDefault(0d);
 		assertEquals(0d, MatrixUtil.getElementAt(matrix, 1, 3));
 		assertEquals(0d, MatrixUtil.getElementAt(matrix, 3, 1));
 
@@ -71,13 +67,13 @@ public class MatrixUtilTest {
 
 	@Test
 	public void symmetricMatrix(){
-		Matrix matrix = new Matrix();
-		matrix.setKind(Matrix.Kind.SYMMETRIC);
-
-		List<Array> arrays = matrix.getArrays();
-		arrays.add(new Array("1", Array.Type.INT));
-		arrays.add(new Array("4 2", Array.Type.INT));
-		arrays.add(new Array("6 5 3", Array.Type.INT));
+		Matrix matrix = new Matrix()
+			.withKind(Matrix.Kind.SYMMETRIC)
+			.withArrays(
+				new Array("1", Array.Type.INT),
+				new Array("4 2", Array.Type.INT),
+				new Array("6 5 3", Array.Type.INT)
+			);
 
 		assertEquals(1, MatrixUtil.getElementAt(matrix, 1, 1));
 		assertEquals(2, MatrixUtil.getElementAt(matrix, 2, 2));
@@ -112,31 +108,30 @@ public class MatrixUtilTest {
 
 	@Test
 	public void anyMatrixDense(){
-		Matrix matrix = new Matrix();
-
-		List<Array> arrays = matrix.getArrays();
-		arrays.add(new Array("0 0 0 42 0", Array.Type.REAL));
-		arrays.add(new Array("0 1 0 0 0", Array.Type.REAL));
-		arrays.add(new Array("5 0 0 0 0", Array.Type.REAL));
-		arrays.add(new Array("0 0 0 0 7", Array.Type.REAL));
-		arrays.add(new Array("0 0 9 0 0", Array.Type.REAL));
+		Matrix matrix = new Matrix()
+			.withArrays(
+				new Array("0 0 0 42 0", Array.Type.REAL),
+				new Array("0 1 0 0 0", Array.Type.REAL),
+				new Array("5 0 0 0 0", Array.Type.REAL),
+				new Array("0 0 0 0 7", Array.Type.REAL),
+				new Array("0 0 9 0 0", Array.Type.REAL)
+			);
 
 		anyMatrix(matrix);
 	}
 
 	@Test
 	public void anyMatrixSparse(){
-		Matrix matrix = new Matrix();
-
-		List<MatCell> matCells = matrix.getMatCells();
-		matCells.add(new MatCell("42", 1, 4));
-		matCells.add(new MatCell("1", 2, 2));
-		matCells.add(new MatCell("5", 3, 1));
-		matCells.add(new MatCell("7", 4, 5));
-		matCells.add(new MatCell("9", 5, 3));
-
-		matrix.setDiagDefault(0d);
-		matrix.setOffDiagDefault(0d);
+		Matrix matrix = new Matrix()
+			.withDiagDefault(0d)
+			.withOffDiagDefault(0d)
+			.withMatCells(
+				new MatCell("42", 1, 4),
+				new MatCell("1", 2, 2),
+				new MatCell("5", 3, 1),
+				new MatCell("7", 4, 5),
+				new MatCell("9", 5, 3)
+			);
 
 		anyMatrix(matrix);
 	}

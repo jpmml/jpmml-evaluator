@@ -43,16 +43,15 @@ public class NormalizationUtilTest {
 	public void normalizeOutliers(){
 		NormContinuous normContinuous = createNormContinuous();
 
-		normContinuous.setOutliers(null);
 		assertEquals(interpolate(-1d, BEGIN, MIDPOINT), NormalizationUtil.normalize(normContinuous, -1d), 1e-8);
 		assertEquals(interpolate(12.2d, MIDPOINT, END), NormalizationUtil.normalize(normContinuous, 12.2d), 1e-8);
 
-		normContinuous.setOutliers(OutlierTreatmentMethodType.AS_MISSING_VALUES);
-		normContinuous.setMapMissingTo(0.5d);
+		normContinuous = normContinuous.withOutliers(OutlierTreatmentMethodType.AS_MISSING_VALUES)
+			.withMapMissingTo(0.5d);
 		assertEquals(0.5d, NormalizationUtil.normalize(normContinuous, -1d), 1e-8);
 		assertEquals(0.5d, NormalizationUtil.normalize(normContinuous, 12.2d), 1e-8);
 
-		normContinuous.setOutliers(OutlierTreatmentMethodType.AS_EXTREME_VALUES);
+		normContinuous = normContinuous.withOutliers(OutlierTreatmentMethodType.AS_EXTREME_VALUES);
 		assertEquals(BEGIN[1], NormalizationUtil.normalize(normContinuous, -1d), 1e-8);
 		assertEquals(END[1], NormalizationUtil.normalize(normContinuous, 12.2d), 1e-8);
 	}

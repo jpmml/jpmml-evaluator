@@ -43,16 +43,16 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateConstant(){
-		Constant constant = new Constant("3");
-		constant.setDataType(DataType.STRING);
+		Constant constant = new Constant("3")
+			.withDataType(DataType.STRING);
 		assertEquals("3", evaluate(constant));
 
-		Constant integerThree = new Constant("3");
-		integerThree.setDataType(DataType.INTEGER);
+		Constant integerThree = new Constant("3")
+			.withDataType(DataType.INTEGER);
 		assertEquals(3, evaluate(integerThree));
 
-		Constant floatThree = new Constant("3");
-		floatThree.setDataType(DataType.FLOAT);
+		Constant floatThree = new Constant("3")
+			.withDataType(DataType.FLOAT);
 		assertEquals(3f, evaluate(floatThree));
 	}
 
@@ -64,7 +64,8 @@ public class ExpressionUtilTest {
 		assertEquals("3", evaluate(fieldRef, name, "3"));
 
 		assertEquals(null, evaluate(fieldRef, name, null));
-		fieldRef.setMapMissingTo("Missing");
+
+		fieldRef = fieldRef.withMapMissingTo("Missing");
 		assertEquals("Missing", evaluate(fieldRef, name, null));
 	}
 
@@ -72,9 +73,8 @@ public class ExpressionUtilTest {
 	public void evaluateNormContinuous(){
 		FieldName name = new FieldName("x");
 
-		NormContinuous normContinuous = new NormContinuous(name);
-
-		normContinuous.setMapMissingTo(5d);
+		NormContinuous normContinuous = new NormContinuous(name)
+			.withMapMissingTo(5d);
 
 		assertEquals(5d, evaluate(normContinuous, name, null));
 	}
@@ -90,8 +90,7 @@ public class ExpressionUtilTest {
 		assertEquals(equals, evaluate(stringThree, name, "3"));
 		assertEquals(notEquals, evaluate(stringThree, name, "1"));
 
-		stringThree.setMapMissingTo(5d);
-
+		stringThree = stringThree.withMapMissingTo(5d);
 		assertEquals(5d, evaluate(stringThree, name, null));
 
 		NormDiscrete integerThree = new NormDiscrete(name, "3");
@@ -110,11 +109,13 @@ public class ExpressionUtilTest {
 		Discretize discretize = new Discretize(name);
 
 		assertEquals(null, evaluate(discretize));
-		discretize.setMapMissingTo("Missing");
+
+		discretize = discretize.withMapMissingTo("Missing");
 		assertEquals("Missing", evaluate(discretize));
 
 		assertEquals(null, evaluate(discretize, name, 3));
-		discretize.setDefaultValue("Default");
+
+		discretize = discretize.withDefaultValue("Default");
 		assertEquals("Default", evaluate(discretize, name, 3));
 	}
 
@@ -122,15 +123,17 @@ public class ExpressionUtilTest {
 	public void evaluateMapValues(){
 		FieldName name = new FieldName("x");
 
-		MapValues mapValues = new MapValues(null);
-		mapValues.withFieldColumnPairs(new FieldColumnPair(name, null));
+		MapValues mapValues = new MapValues(null)
+			.withFieldColumnPairs(new FieldColumnPair(name, null));
 
 		assertEquals(null, evaluate(mapValues));
-		mapValues.setMapMissingTo("Missing");
+
+		mapValues = mapValues.withMapMissingTo("Missing");
 		assertEquals("Missing", evaluate(mapValues));
 
 		assertEquals(null, evaluate(mapValues, name, "3"));
-		mapValues.setDefaultValue("Default");
+
+		mapValues = mapValues.withDefaultValue("Default");
 		assertEquals("Default", evaluate(mapValues, name, "3"));
 	}
 
@@ -139,16 +142,18 @@ public class ExpressionUtilTest {
 	public void evaluateApply(){
 		FieldName name = new FieldName("x");
 
-		Apply apply = new Apply("/");
-		apply.withExpressions(new FieldRef(name), new Constant("0"));
+		Apply apply = new Apply("/")
+			.withExpressions(new FieldRef(name), new Constant("0"));
 
 		assertEquals(null, evaluate(apply, name, null));
-		apply.setDefaultValue("1");
-		assertEquals("1", evaluate(apply, name, null));
-		apply.setMapMissingTo("missing");
+
+		apply = apply.withDefaultValue("-1");
+		assertEquals("-1", evaluate(apply, name, null));
+
+		apply = apply.withMapMissingTo("missing");
 		assertEquals("missing", evaluate(apply, name, null));
 
-		apply.setInvalidValueTreatment(InvalidValueTreatmentMethodType.RETURN_INVALID);
+		apply = apply.withInvalidValueTreatment(InvalidValueTreatmentMethodType.RETURN_INVALID);
 
 		try {
 			evaluate(apply, name, 1);
@@ -158,9 +163,8 @@ public class ExpressionUtilTest {
 			// Ignored
 		}
 
-		apply.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
-
-		assertEquals("1", evaluate(apply, name, 1));
+		apply = apply.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		assertEquals("-1", evaluate(apply, name, 1));
 	}
 
 	@Test
@@ -172,10 +176,10 @@ public class ExpressionUtilTest {
 		Aggregate aggregate = new Aggregate(name, Aggregate.Function.COUNT);
 		assertEquals(3, evaluate(aggregate, name, values));
 
-		aggregate.setFunction(Aggregate.Function.MIN);
+		aggregate = aggregate.withFunction(Aggregate.Function.MIN);
 		assertEquals(values.get(0), evaluate(aggregate, name, values));
 
-		aggregate.setFunction(Aggregate.Function.MAX);
+		aggregate = aggregate.withFunction(Aggregate.Function.MAX);
 		assertEquals(values.get(2), evaluate(aggregate, name, values));
 	}
 
