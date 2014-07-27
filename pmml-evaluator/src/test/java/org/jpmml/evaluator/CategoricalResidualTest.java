@@ -24,7 +24,7 @@ import java.util.Map;
 import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 public class CategoricalResidualTest extends ModelEvaluatorTest {
 
@@ -46,7 +46,7 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = OutputUtil.evaluate(prediction, context);
 
-		assertTrue(VerificationUtil.acceptable(0.2d, (Number)result.get(new FieldName("Residual"))));
+		assertEquals(0.2d, (Double)result.get(new FieldName("Residual")), 1.e-8);
 
 		// "For some other row the expected value may be N"
 		arguments = createArguments(evaluator.getTargetField(), "N");
@@ -56,6 +56,6 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 
 		result = OutputUtil.evaluate(prediction, context);
 
-		assertTrue(VerificationUtil.acceptable(-0.8d, (Number)result.get(new FieldName("Residual"))));
+		assertEquals(-0.8d, (Double)result.get(new FieldName("Residual")), 1.e-8);
 	}
 }

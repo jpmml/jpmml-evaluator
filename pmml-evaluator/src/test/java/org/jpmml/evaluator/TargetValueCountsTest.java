@@ -33,7 +33,6 @@ import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class TargetValueCountsTest extends ModelEvaluatorTest {
 
@@ -47,11 +46,11 @@ public class TargetValueCountsTest extends ModelEvaluatorTest {
 
 		Map<String, Double> countSums = fieldCountSums.get(new FieldName("gender"));
 
-		assertEquals(Double.valueOf(8598d), countSums.get("100"));
-		assertEquals(Double.valueOf(2533d), countSums.get("500"));
-		assertEquals(Double.valueOf(1522d), countSums.get("1000"));
-		assertEquals(Double.valueOf(697d), countSums.get("5000"));
-		assertEquals(Double.valueOf(90d), countSums.get("10000"));
+		assertEquals((Double)8598d, countSums.get("100"));
+		assertEquals((Double)2533d, countSums.get("500"));
+		assertEquals((Double)1522d, countSums.get("1000"));
+		assertEquals((Double)697d, countSums.get("5000"));
+		assertEquals((Double)90d, countSums.get("10000"));
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
@@ -65,11 +64,11 @@ public class TargetValueCountsTest extends ModelEvaluatorTest {
 
 		double denominator = (l0 + l1 + l2 + l3 + l4);
 
-		assertTrue(VerificationUtil.acceptable(l0 / denominator, targetValue.get("100")));
-		assertTrue(VerificationUtil.acceptable(l1 / denominator, targetValue.get("500")));
-		assertTrue(VerificationUtil.acceptable(l2 / denominator, targetValue.get("1000")));
-		assertTrue(VerificationUtil.acceptable(l3 / denominator, targetValue.get("5000")));
-		assertTrue(VerificationUtil.acceptable(l4 / denominator, targetValue.get("10000")));
+		assertEquals(l0 / denominator, targetValue.get("100"), 1e-8);
+		assertEquals(l1 / denominator, targetValue.get("500"), 1e-8);
+		assertEquals(l2 / denominator, targetValue.get("1000"), 1e-8);
+		assertEquals(l3 / denominator, targetValue.get("5000"), 1e-8);
+		assertEquals(l4 / denominator, targetValue.get("10000"), 1e-8);
 	}
 
 	static

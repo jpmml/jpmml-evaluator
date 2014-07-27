@@ -31,29 +31,29 @@ public class DiscretizationUtilTest {
 		Double min = Double.valueOf(Integer.MIN_VALUE);
 		Double max = Double.valueOf(Integer.MAX_VALUE);
 
-		Interval negative = createInterval(Interval.Closure.OPEN_OPEN, min, 0.0);
-		assertTrue(DiscretizationUtil.contains(negative, -1.0));
-		assertFalse(DiscretizationUtil.contains(negative, 0.0));
+		Interval negative = createInterval(Interval.Closure.OPEN_OPEN, min, 0d);
+		assertTrue(DiscretizationUtil.contains(negative, -1d));
+		assertFalse(DiscretizationUtil.contains(negative, 0d));
 
-		Interval negativeNull = createInterval(Interval.Closure.OPEN_OPEN, null, 0.0);
-		assertTrue(DiscretizationUtil.contains(negativeNull, -1.0));
-		assertFalse(DiscretizationUtil.contains(negativeNull, 0.0));
+		Interval negativeNull = createInterval(Interval.Closure.OPEN_OPEN, null, 0d);
+		assertTrue(DiscretizationUtil.contains(negativeNull, -1d));
+		assertFalse(DiscretizationUtil.contains(negativeNull, 0d));
 
-		Interval positive = createInterval(Interval.Closure.OPEN_OPEN, 0.0, max);
-		assertFalse(DiscretizationUtil.contains(positive, 0.0));
-		assertTrue(DiscretizationUtil.contains(positive, 1.0));
+		Interval positive = createInterval(Interval.Closure.OPEN_OPEN, 0d, max);
+		assertFalse(DiscretizationUtil.contains(positive, 0d));
+		assertTrue(DiscretizationUtil.contains(positive, 1d));
 
-		Interval positiveNull = createInterval(Interval.Closure.OPEN_OPEN, 0.0, null);
-		assertFalse(DiscretizationUtil.contains(positiveNull, 0.0));
-		assertTrue(DiscretizationUtil.contains(positiveNull, 1.0));
+		Interval positiveNull = createInterval(Interval.Closure.OPEN_OPEN, 0d, null);
+		assertFalse(DiscretizationUtil.contains(positiveNull, 0d));
+		assertTrue(DiscretizationUtil.contains(positiveNull, 1d));
 
-		Interval negativeAndZero = createInterval(Interval.Closure.OPEN_CLOSED, min, 0.0);
-		assertTrue(DiscretizationUtil.contains(negativeAndZero, -1.0));
-		assertTrue(DiscretizationUtil.contains(negativeAndZero, 0.0));
+		Interval negativeAndZero = createInterval(Interval.Closure.OPEN_CLOSED, min, 0d);
+		assertTrue(DiscretizationUtil.contains(negativeAndZero, -1d));
+		assertTrue(DiscretizationUtil.contains(negativeAndZero, 0d));
 
-		Interval zeroAndPositive = createInterval(Interval.Closure.CLOSED_OPEN, 0.0, max);
-		assertTrue(DiscretizationUtil.contains(zeroAndPositive, 0.0));
-		assertTrue(DiscretizationUtil.contains(zeroAndPositive, 1.0));
+		Interval zeroAndPositive = createInterval(Interval.Closure.CLOSED_OPEN, 0d, max);
+		assertTrue(DiscretizationUtil.contains(zeroAndPositive, 0d));
+		assertTrue(DiscretizationUtil.contains(zeroAndPositive, 1d));
 	}
 
 	static

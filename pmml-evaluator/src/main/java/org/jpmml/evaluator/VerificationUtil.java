@@ -28,23 +28,13 @@ public class VerificationUtil {
 
 		if(expected == null){
 			return (actual == null);
-		} else
-
-		{
-			if(expected instanceof Number && actual instanceof Number){
-				return acceptable((Number)expected, (Number)actual, precision, zeroThreshold);
-			}
-
-			return (expected).equals(actual);
 		}
-	}
 
-	/**
-	 * A convenience method for unit testing purposes only
-	 */
-	static
-	boolean acceptable(Number expected, Number actual){
-		return acceptable(expected, actual, 0.0000001, 0.0000001);
+		if(expected instanceof Number && actual instanceof Number){
+			return acceptable((Number)expected, (Number)actual, precision, zeroThreshold);
+		}
+
+		return (expected).equals(actual);
 	}
 
 	/**

@@ -29,12 +29,12 @@ public class ComplexPartialScoreTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		double score = (-9) + (-1);
+		double score = (-9d) + (-1d);
 
-		assertEquals(Double.valueOf(score + 3), evaluateScore(null));
-		assertEquals(Double.valueOf(score + ((0.03f * 1000d) + 11)), evaluateScore(1000d));
-		assertEquals(Double.valueOf(score + 5), evaluateScore(1500d));
-		assertEquals(Double.valueOf(score + ((0.01f * 3000d) - 18)), evaluateScore(3000d));
+		assertEquals((score + 3d), evaluateScore(null), 1e-8);
+		assertEquals((score + ((0.03f * 1000d) + 11d)), evaluateScore(1000d), 1e-8);
+		assertEquals((score + 5d), evaluateScore(1500d), 1e-8);
+		assertEquals((score + ((0.01f * 3000d) - 18d)), evaluateScore(3000d), 1e-8);
 	}
 
 	private Double evaluateScore(Double income) throws Exception {

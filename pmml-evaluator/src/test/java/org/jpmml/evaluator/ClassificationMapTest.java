@@ -42,26 +42,26 @@ public class ClassificationMapTest {
 	public void increasingOrder(){
 		ClassificationMap.Type type = ClassificationMap.Type.SIMILARITY;
 
-		assertTrue(type.compare(0.5, 0.0) > 0);
-		assertTrue(type.compare(0.0, 0.5) < 0);
+		assertTrue(type.compare(0.5d, 0d) > 0);
+		assertTrue(type.compare(0d, 0.5d) < 0);
 
-		assertTrue(type.compare(0.5, 0.5) == 0);
+		assertTrue(type.compare(0.5d, 0.5d) == 0);
 
-		assertTrue(type.compare(1.0, 0.5) > 0);
-		assertTrue(type.compare(0.5, 1.0) < 0);
+		assertTrue(type.compare(1d, 0.5d) > 0);
+		assertTrue(type.compare(0.5d, 1d) < 0);
 	}
 
 	@Test
 	public void decreasingOrder(){
 		ClassificationMap.Type type = ClassificationMap.Type.DISTANCE;
 
-		assertTrue(type.compare(0.5, 0.0) < 0);
-		assertTrue(type.compare(0.0, 0.5) > 0);
+		assertTrue(type.compare(0.5d, 0d) < 0);
+		assertTrue(type.compare(0d, 0.5d) > 0);
 
-		assertTrue(type.compare(0.5, 0.5) == 0);
+		assertTrue(type.compare(0.5d, 0.5d) == 0);
 
-		assertTrue(type.compare(1.0, 0.5) < 0);
-		assertTrue(type.compare(0.5, 1.0) > 0);
+		assertTrue(type.compare(1d, 0.5d) < 0);
+		assertTrue(type.compare(0.5d, 1d) > 0);
 	}
 
 	@Test
@@ -73,8 +73,8 @@ public class ClassificationMapTest {
 
 		ClassificationMap.subtract(values, Arrays.asList("loud", "louder", "insane"));
 
-		assertEquals(Double.valueOf(0.2d - 0d), values.get("loud"));
-		assertEquals(Double.valueOf(0.7d - 0.2d), values.get("louder"));
-		assertEquals(Double.valueOf(1d - 0.7d), values.get("insane"));
+		assertEquals((Double)(0.2d - 0d), values.get("loud"));
+		assertEquals((Double)(0.7d - 0.2d), values.get("louder"));
+		assertEquals((Double)(1d - 0.7d), values.get("insane"));
 	}
 }

@@ -26,10 +26,9 @@ import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.Function;
-import org.jpmml.evaluator.VerificationUtil;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 public class StandardDeviationFunctionTest {
 
@@ -37,10 +36,10 @@ public class StandardDeviationFunctionTest {
 	public void evaluate(){
 		List<Double> values = Arrays.asList(2d, 4d, 4d, 4d, 5d, 5d, 7d, 9d);
 
-		assertTrue(VerificationUtil.acceptable(Math.sqrt(32d / 8d), evaluate(values), 1.0e-8d, 1.0e-8d));
+		assertEquals(Math.sqrt(32d / 8d), (Double)evaluate(values), 1e-8);
 
-		assertTrue(VerificationUtil.acceptable(Math.sqrt(32d / 7d), evaluate(values, true), 1.0e-8d, 1.0e-8d));
-		assertTrue(VerificationUtil.acceptable(Math.sqrt(32d / 8d), evaluate(values, false), 1.0e-8d, 1.0e-8d));
+		assertEquals(Math.sqrt(32d / 7d), (Double)evaluate(values, true), 1e-8);
+		assertEquals(Math.sqrt(32d / 8d), (Double)evaluate(values, false), 1e-8);
 	}
 
 	static

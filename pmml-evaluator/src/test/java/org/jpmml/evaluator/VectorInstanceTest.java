@@ -32,7 +32,7 @@ import java.util.Map;
 import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 public class VectorInstanceTest extends ModelEvaluatorTest {
 
@@ -40,10 +40,10 @@ public class VectorInstanceTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		Evaluator evaluator = createModelEvaluator();
 
-		assertTrue(VerificationUtil.acceptable(-0.3995764, evaluate(evaluator, 0.0d, 0.0d)));
-		assertTrue(VerificationUtil.acceptable(0.3995764, evaluate(evaluator, 0.0d, 1.0d)));
-		assertTrue(VerificationUtil.acceptable(0.3995764, evaluate(evaluator, 1.0d, 0.0d)));
-		assertTrue(VerificationUtil.acceptable(-0.3995764, evaluate(evaluator, 1.0d, 1.0d)));
+		assertEquals(-0.3995764d, evaluate(evaluator, 0d, 0d), 1e-8);
+		assertEquals(0.3995764d, evaluate(evaluator, 0d, 1d), 1e-8);
+		assertEquals(0.3995764d, evaluate(evaluator, 1d, 0d), 1e-8);
+		assertEquals(-0.3995764d, evaluate(evaluator, 1d, 1d), 1e-8);
 	}
 
 	static

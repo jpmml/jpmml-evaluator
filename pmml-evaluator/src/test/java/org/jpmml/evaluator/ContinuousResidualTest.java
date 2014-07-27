@@ -32,15 +32,15 @@ public class ContinuousResidualTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments(evaluator.getTargetField(), 3.0d);
+		Map<FieldName, ?> arguments = createArguments(evaluator.getTargetField(), 3d);
 
 		ModelEvaluationContext context = evaluator.createContext(null);
 		context.declareAll(arguments);
 
-		Map<FieldName, ?> prediction = Collections.singletonMap(evaluator.getTargetField(), 1.0d);
+		Map<FieldName, ?> prediction = Collections.singletonMap(evaluator.getTargetField(), 1d);
 
 		Map<FieldName, ?> result = OutputUtil.evaluate(prediction, context);
 
-		assertEquals(2.0, result.get(new FieldName("Residual")));
+		assertEquals(2d, (Double)result.get(new FieldName("Residual")), 1e-8);
 	}
 }

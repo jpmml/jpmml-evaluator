@@ -23,17 +23,16 @@ import org.dmg.pmml.Target;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class TargetUtilTest {
 
 	@Test
 	public void process(){
 		Target target = new Target(new FieldName("amount"));
-		target.setRescaleFactor(3.14);
+		target.setRescaleFactor(3.14d);
 		target.setRescaleConstant(10d);
 
-		assertTrue(VerificationUtil.acceptable(35.12d, TargetUtil.process(target, 8d)));
+		assertEquals(35.12d, (Double)TargetUtil.process(target, 8d), 1.e-8);
 
 		target.setMin(-10d);
 		target.setMax(10.5d);

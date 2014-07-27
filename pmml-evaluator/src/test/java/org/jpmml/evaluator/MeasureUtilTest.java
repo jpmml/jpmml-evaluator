@@ -54,16 +54,16 @@ public class MeasureUtilTest {
 		ComparisonMeasure comparisonMeasure = new ComparisonMeasure(ComparisonMeasure.Kind.SIMILARITY);
 
 		comparisonMeasure = comparisonMeasure.withMeasure(new SimpleMatching());
-		assertEquals(Double.valueOf(2d / 4d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags));
+		assertEquals((2d / 4d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags), 1e-8);
 
 		comparisonMeasure = comparisonMeasure.withMeasure(new Jaccard());
-		assertEquals(Double.valueOf(1d / 3d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags));
+		assertEquals((1d / 3d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags), 1e-8);
 
 		comparisonMeasure = comparisonMeasure.withMeasure(new Tanimoto());
-		assertEquals(Double.valueOf(2d / (1d + 2 * 2d + 1d)), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags));
+		assertEquals((2d / (1d + 2 * 2d + 1d)), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags), 1e-8);
 
 		comparisonMeasure = comparisonMeasure.withMeasure(new BinarySimilarity(0.5d, 0.5d, 0.5d, 0.5d, 1d, 1d, 1d, 1d));
-		assertEquals(Double.valueOf(2d / 4d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags));
+		assertEquals((2d / 4d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags), 1e-8);
 	}
 
 	static

@@ -23,7 +23,7 @@ import java.util.Map;
 import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 public class ContrastMatrixTest extends ModelEvaluatorTest {
 
@@ -35,11 +35,8 @@ public class ContrastMatrixTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		Number probabilityLow = (Number)result.get(new FieldName("Probability_Low"));
-		Number probabilityHigh = (Number)result.get(new FieldName("Probability_High"));
-
 		// Expected values have been calculated by hand
-		assertTrue(VerificationUtil.acceptable(0.81956470d, probabilityLow));
-		assertTrue(VerificationUtil.acceptable(0.18043530d, probabilityHigh));
+		assertEquals(0.81956470d, (Double)result.get(new FieldName("Probability_Low")), 1.e-8);
+		assertEquals(0.18043530d, (Double)result.get(new FieldName("Probability_High")), 1.e-8);
 	}
 }
