@@ -26,6 +26,8 @@ Java Evaluator API for Predictive Model Markup Language (PMML).
   * [Support Vector Machine] (http://www.dmg.org/v4-2/SupportVectorMachine.html)
   * [Tree model] (http://www.dmg.org/v4-2/TreeModel.html)
   * [Ensemble model] (http://www.dmg.org/v4-2/MultipleModels.html)
+* High performance and high throughput:
+  * Thread safe
 * Fully interoperable with popular open source software:
   * [R] (http://www.r-project.org/) and [Rattle] (http://rattle.togaware.com/)
   * [KNIME] (http://www.knime.org/)
@@ -63,7 +65,7 @@ PMMLManager pmmlManager = new PMMLManager(pmml);
 ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
 ```
 
-Model evaluator classes follow functional programming principles. Model evaluator instances are cheap enough to be created and discarded as needed (ie. not worth the pooling effort).
+Model evaluator classes follow functional programming principles. Model evaluator instances are cheap enough to be created and discarded as needed (eg. not worth the pooling effort).
 
 It is advisable for application code to work against the `org.jpmml.evaluator.Evaluator` interface:
 ```java
