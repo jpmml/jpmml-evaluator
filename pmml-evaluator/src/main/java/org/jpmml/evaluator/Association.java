@@ -75,7 +75,7 @@ public class Association implements Computable, HasRuleValues {
 				flags.and(getConsequentFlags());
 				break;
 			default:
-				throw new UnsupportedFeatureException(null, algorithm);
+				throw new UnsupportedFeatureException();
 		}
 
 		List<AssociationRule> result = Lists.newArrayList();

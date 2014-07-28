@@ -202,7 +202,7 @@ public class OutputUtil {
 								value = getCategoricalResidual(value, expectedValue);
 								break;
 							default:
-								throw new UnsupportedFeatureException(outputField, opType);
+								throw new UnsupportedFeatureException(dataField, opType);
 						}
 					}
 					break;
@@ -343,7 +343,7 @@ public class OutputUtil {
 	}
 
 	static
-	private Double getProbability(Object object, final OutputField outputField){
+	private Double getProbability(Object object, OutputField outputField){
 		HasProbability hasProbability = asResultFeature(HasProbability.class, object);
 
 		return hasProbability.getProbability(outputField.getValue());
@@ -374,7 +374,7 @@ public class OutputUtil {
 	}
 
 	static
-	private String getEntityId(Object object, final OutputField outputField){
+	private String getEntityId(Object object, OutputField outputField){
 		HasEntityId hasEntityId = asResultFeature(HasEntityId.class, object);
 
 		int rank = outputField.getRank();
@@ -399,7 +399,7 @@ public class OutputUtil {
 	}
 
 	static
-	public Double getAffinity(Object object, final OutputField outputField){
+	public Double getAffinity(Object object, OutputField outputField){
 		HasAffinity hasAffinity = asResultFeature(HasAffinity.class, object);
 
 		int rank = outputField.getRank();
@@ -508,7 +508,7 @@ public class OutputUtil {
 	}
 
 	static
-	public String getReasonCode(Object object, final OutputField outputField){
+	public String getReasonCode(Object object, OutputField outputField){
 		HasReasonCodeRanking hasReasonCodeRanking = asResultFeature(HasReasonCodeRanking.class, object);
 
 		int rank = outputField.getRank();

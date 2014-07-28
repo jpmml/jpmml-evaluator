@@ -27,6 +27,8 @@
  */
 package org.jpmml.manager;
 
+import java.lang.reflect.Field;
+
 import org.dmg.pmml.PMMLObject;
 
 /**
@@ -42,11 +44,37 @@ public class UnsupportedFeatureException extends PMMLException {
 		super(message);
 	}
 
-	public UnsupportedFeatureException(PMMLObject element){
-		super((element.getClass()).getName(), element);
+	public UnsupportedFeatureException(String message, PMMLObject context){
+		super(message, context);
 	}
 
-	public UnsupportedFeatureException(PMMLObject element, Enum<?> attribute){
-		super((attribute.getClass()).getName() + "#" + attribute.name(), element);
+	public UnsupportedFeatureException(PMMLObject element){
+		this(formatElement(element.getClass()), element);
+	}
+
+	public UnsupportedFeatureException(PMMLObject element, String attribute){
+		this(element, attribute, null);
+	}
+
+	public UnsupportedFeatureException(PMMLObject element, Enum<?> value){
+		this(element, resolveAttribute(element.getClass(), value), formatValue(value));
+	}
+
+	public UnsupportedFeatureException(PMMLObject element, String attribute, String value){
+		this(formatElement(element.getClass()) + "@" + formatAttribute(element.getClass(), attribute) + (value != null ? ("=" + value) : ""), element);
+	}
+
+	static
+	private String resolveAttribute(Class<?> clazz, Enum<?> value){
+		Field[] fields = clazz.getDeclaredFields();
+
+		for(Field field : fields){
+
+			if((field.getType()).equals(value.getClass())){
+				return field.getName();
+			}
+		}
+
+		throw new RuntimeException();
 	}
 }

@@ -129,8 +129,12 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			DerivedField derivedField = bayesInput.getDerivedField();
 			if(derivedField != null){
 				Expression expression = derivedField.getExpression();
-				if(!(expression instanceof Discretize)){
+				if(expression == null){
 					throw new InvalidFeatureException(derivedField);
+				} // End if
+
+				if(!(expression instanceof Discretize)){
+					throw new UnsupportedFeatureException(expression);
 				}
 
 				Discretize discretize = (Discretize)expression;
@@ -180,8 +184,12 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			String targetValue = targetValueStat.getValue();
 
 			ContinuousDistribution distribution = targetValueStat.getContinuousDistribution();
-			if(!(distribution instanceof GaussianDistribution)){
+			if(distribution == null){
 				throw new InvalidFeatureException(targetValueStat);
+			} // End if
+
+			if(!(distribution instanceof GaussianDistribution)){
+				throw new UnsupportedFeatureException(distribution);
 			}
 
 			GaussianDistribution gaussianDistribution = (GaussianDistribution)distribution;

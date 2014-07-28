@@ -79,17 +79,12 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 		RuleSet ruleSet = ruleSetModel.getRuleSet();
 
 		List<RuleSelectionMethod> ruleSelectionMethods = ruleSet.getRuleSelectionMethods();
-
-		RuleSelectionMethod ruleSelectionMethod;
-
-		// "If more than one method is included, the first method is used as the default method for scoring"
-		if(ruleSelectionMethods.size() > 0){
-			ruleSelectionMethod = ruleSelectionMethods.get(0);
-		} else
-
-		{
+		if(ruleSelectionMethods.size() < 1){
 			throw new InvalidFeatureException(ruleSet);
 		}
+
+		// "If more than one method is included, the first method is used as the default method for scoring"
+		RuleSelectionMethod ruleSelectionMethod = ruleSelectionMethods.get(0);
 
 		// Both the ordering of keys and values is significant
 		ListMultimap<String, SimpleRule> firedRules = LinkedListMultimap.create();

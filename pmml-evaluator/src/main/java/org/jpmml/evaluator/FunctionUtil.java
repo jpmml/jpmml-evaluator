@@ -46,7 +46,7 @@ public class FunctionUtil {
 			return evaluate(defineFunction, values, context);
 		}
 
-		throw new UnsupportedFeatureException(apply);
+		throw new UnsupportedFeatureException(apply, "function", apply.getFunction());
 	}
 
 	static

@@ -42,11 +42,11 @@ public class InvalidFeatureException extends PMMLException {
 		super(message);
 	}
 
-	public InvalidFeatureException(PMMLObject context){
-		super(context);
-	}
-
 	public InvalidFeatureException(String message, PMMLObject context){
 		super(message, context);
+	}
+
+	public InvalidFeatureException(PMMLObject element){
+		super(formatElement(element.getClass()), element);
 	}
 }

@@ -114,13 +114,17 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		{
 			parameterPredictorRows = ppMatrixMap.get(null);
 			if(parameterPredictorRows == null){
-				throw new InvalidFeatureException(generalRegressionModel.getPPMatrix());
+				PPMatrix ppMatrix = generalRegressionModel.getPPMatrix();
+
+				throw new InvalidFeatureException(ppMatrix);
 			}
 		}
 
 		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
 		if(paramMatrixMap.size() != 1 || !paramMatrixMap.containsKey(null)){
-			throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
+			ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
+
+			throw new InvalidFeatureException(paramMatrix);
 		}
 
 		Iterable<PCell> parameterCells = paramMatrixMap.get(null);

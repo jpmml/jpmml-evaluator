@@ -46,14 +46,14 @@ public class ArgumentUtil {
 	public FieldValue prepare(DataField dataField, MiningField miningField, Object value){
 
 		if(dataField == null){
-			throw new InvalidFeatureException(dataField);
+			throw new InvalidFeatureException();
 		}
 
 		outlierTreatment:
 		if(isOutlier(dataField, value)){
 
 			if(miningField == null){
-				throw new InvalidFeatureException(miningField);
+				throw new InvalidFeatureException();
 			}
 
 			OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
@@ -107,7 +107,7 @@ public class ArgumentUtil {
 		if(isInvalid(dataField, value)){
 
 			if(miningField == null){
-				throw new InvalidFeatureException(miningField);
+				throw new InvalidFeatureException();
 			}
 
 			InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
