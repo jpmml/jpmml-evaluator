@@ -68,11 +68,9 @@ public class PredicateUtil {
 
 		if(predicate instanceof False){
 			return evaluateFalse((False)predicate);
-		} else
-
-		{
-			throw new UnsupportedFeatureException(predicate);
 		}
+
+		throw new UnsupportedFeatureException(predicate);
 	}
 
 	static

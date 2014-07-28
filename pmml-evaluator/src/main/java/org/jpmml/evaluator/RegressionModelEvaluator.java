@@ -114,6 +114,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		OpType opType = dataField.getOptype();
 		switch(opType){
+			case CONTINUOUS:
+				throw new InvalidFeatureException(dataField);
 			case CATEGORICAL:
 			case ORDINAL:
 				break;
