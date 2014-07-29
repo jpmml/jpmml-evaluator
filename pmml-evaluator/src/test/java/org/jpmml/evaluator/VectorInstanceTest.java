@@ -40,10 +40,10 @@ public class VectorInstanceTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		Evaluator evaluator = createModelEvaluator();
 
-		assertEquals(-0.3995764d, evaluate(evaluator, 0d, 0d), 1e-8);
-		assertEquals(0.3995764d, evaluate(evaluator, 0d, 1d), 1e-8);
-		assertEquals(0.3995764d, evaluate(evaluator, 1d, 0d), 1e-8);
-		assertEquals(-0.3995764d, evaluate(evaluator, 1d, 1d), 1e-8);
+		assertEquals(0.1004236d, evaluate(evaluator, 0d, 0d), 1e-8);
+		assertEquals(0.8995764d, evaluate(evaluator, 0d, 1d), 1e-8);
+		assertEquals(0.8995764d, evaluate(evaluator, 1d, 0d), 1e-8);
+		assertEquals(0.1004236d, evaluate(evaluator, 1d, 1d), 1e-8);
 	}
 
 	static

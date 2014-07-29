@@ -331,11 +331,6 @@ public class UnsupportedFeatureInspector extends AbstractSimpleVisitor {
 				break;
 		}
 
-		String alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
-		if(alternateBinaryTargetCategory != null){
-			report(new UnsupportedFeatureException(supportVectorMachineModel, "alternateBinaryTargetCategory"));
-		}
-
 		return super.visit(supportVectorMachineModel);
 	}
 

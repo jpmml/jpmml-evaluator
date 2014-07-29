@@ -129,9 +129,6 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		}
 
 		String alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
-		if(alternateBinaryTargetCategory != null){
-			throw new UnsupportedFeatureException(supportVectorMachineModel, "alternateBinaryTargetCategory");
-		}
 
 		ClassificationMap<String> result;
 
@@ -166,6 +163,39 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 					}
 					break;
 				case ONE_AGAINST_ONE:
+					if(alternateBinaryTargetCategory != null){
+
+						if(targetCategory == null || alternateTargetCategory != null){
+							throw new InvalidFeatureException(supportVectorMachine);
+						}
+
+						String label;
+
+						long roundedValue = Math.round(value);
+
+						// "A rounded value of 1 corresponds to the targetCategory attribute of the SupportVectorMachine element"
+						if(roundedValue == 1){
+							label = targetCategory;
+						} else
+
+						// "A rounded value of 0 corresponds to the alternateBinaryTargetCategory attribute of the SupportVectorMachineModel element"
+						if(roundedValue == 0){
+							label = alternateBinaryTargetCategory;
+						} else
+
+						// "The numeric prediction must be between 0 and 1"
+						{
+							throw new EvaluationException("Invalid numeric prediction " + value);
+						}
+
+						Double vote = result.get(label);
+						if(vote == null){
+							vote = 0d;
+						}
+
+						result.put(label, (vote + 1d));
+					} else
+
 					{
 						if(targetCategory == null || alternateTargetCategory == null){
 							throw new InvalidFeatureException(supportVectorMachine);
@@ -250,6 +280,24 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		}
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
+
+		String alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
+		if(alternateBinaryTargetCategory != null){
+
+			if(supportVectorMachines.size() == 1){
+				SupportVectorMachine supportVectorMachine = supportVectorMachines.get(0);
+
+				String targetCategory = supportVectorMachine.getTargetCategory();
+				if(targetCategory != null){
+					return SvmClassificationMethodType.ONE_AGAINST_ONE;
+				}
+
+				throw new InvalidFeatureException(supportVectorMachine);
+			}
+
+			throw new InvalidFeatureException(supportVectorMachineModel);
+		}
+
 		for(SupportVectorMachine supportVectorMachine : supportVectorMachines){
 			String targetCategory = supportVectorMachine.getTargetCategory();
 			String alternateTargetCategory = supportVectorMachine.getAlternateTargetCategory();

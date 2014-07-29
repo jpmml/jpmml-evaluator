@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+<PMML xmlns="http://www.dmg.org/PMML-3_2" version="3.2">
     <Header copyright="DMG.org"/>
     <DataDictionary numberOfFields="3">
         <DataField name="x1" optype="continuous" dataType="double"/>
@@ -9,7 +9,7 @@
             <Value value="yes"/>
         </DataField>
     </DataDictionary>
-    <SupportVectorMachineModel modelName="SVM XOR Model" functionName="regression" algorithmName="supportVectorMachine" svmRepresentation="SupportVectors">
+    <SupportVectorMachineModel modelName="SVM XOR Model" alternateBinaryTargetCategory="no" functionName="classification" algorithmName="supportVectorMachine" svmRepresentation="SupportVectors">
         <MiningSchema>
             <MiningField name="x1"/>
             <MiningField name="x2"/>
@@ -43,7 +43,7 @@
                 </REAL-SparseArray>
             </VectorInstance>
         </VectorDictionary>
-        <SupportVectorMachine>
+        <SupportVectorMachine targetCategory="yes">
             <SupportVectors numberOfSupportVectors="4" numberOfAttributes="2">
                 <SupportVector vectorId="mv0"/>
                 <SupportVector vectorId="mv1"/>
