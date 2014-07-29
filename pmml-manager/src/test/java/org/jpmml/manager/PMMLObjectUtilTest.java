@@ -19,25 +19,41 @@
 package org.jpmml.manager;
 
 import org.dmg.pmml.DataField;
+import org.dmg.pmml.DataType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class PMMLExceptionTest {
+public class PMMLObjectUtilTest {
 
 	@Test
-	public void formatElement(){
-		assertEquals("DataField", PMMLException.formatElement(DataField.class));
+	public void getElementName(){
+		DataField dataField = new DataField();
+
+		assertEquals("DataField", PMMLObjectUtil.getRootElementName(dataField));
 	}
 
 	@Test
-	public void formatAttribute(){
-		assertEquals("isCyclic", PMMLException.formatAttribute(DataField.class, "cyclic"));
+	public void getAttributeName(){
+		DataField dataField = new DataField();
+
+		assertEquals("isCyclic", PMMLObjectUtil.getAttributeName(dataField, "cyclic"));
 	}
 
 	@Test
-	public void formatValue(){
-		assertEquals("0", PMMLException.formatValue(DataField.Cyclic.ZERO));
-		assertEquals("1", PMMLException.formatValue(DataField.Cyclic.ONE));
+	public void getAttributeValue(){
+		DataField dataField = new DataField();
+
+		assertEquals(null, PMMLObjectUtil.getAttributeValue(dataField, "dataType"));
+
+		dataField = dataField.withDataType(DataType.STRING);
+
+		assertEquals(DataType.STRING, PMMLObjectUtil.getAttributeValue(dataField, "dataType"));
+	}
+
+	@Test
+	public void getValue(){
+		assertEquals("0", PMMLObjectUtil.getValue(DataField.Cyclic.ZERO));
+		assertEquals("1", PMMLObjectUtil.getValue(DataField.Cyclic.ONE));
 	}
 }

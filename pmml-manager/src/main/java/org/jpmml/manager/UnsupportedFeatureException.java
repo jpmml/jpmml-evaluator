@@ -49,25 +49,26 @@ public class UnsupportedFeatureException extends PMMLException {
 	}
 
 	public UnsupportedFeatureException(PMMLObject element){
-		this(formatElement(element.getClass()), element);
+		this(PMMLObjectUtil.getRootElementName(element), element);
 	}
 
-	public UnsupportedFeatureException(PMMLObject element, String attribute){
-		this(element, attribute, null);
+	public UnsupportedFeatureException(PMMLObject element, String name){
+		this(element, name, null);
 	}
 
 	public UnsupportedFeatureException(PMMLObject element, Enum<?> value){
-		this(element, resolveAttribute(element.getClass(), value), formatValue(value));
+		this(element, resolveField(element, value), PMMLObjectUtil.getValue(value));
 	}
 
-	public UnsupportedFeatureException(PMMLObject element, String attribute, String value){
-		this(formatElement(element.getClass()) + "@" + formatAttribute(element.getClass(), attribute) + (value != null ? ("=" + value) : ""), element);
+	public UnsupportedFeatureException(PMMLObject element, String name, String value){
+		this(PMMLObjectUtil.getRootElementName(element) + "@" + PMMLObjectUtil.getAttributeName(element, name) + (value != null ? ("=" + value) : ""), element);
 	}
 
 	static
-	private String resolveAttribute(Class<?> clazz, Enum<?> value){
-		Field[] fields = clazz.getDeclaredFields();
+	private String resolveField(PMMLObject element, Enum<?> value){
+		Class<?> clazz = element.getClass();
 
+		Field[] fields = clazz.getDeclaredFields();
 		for(Field field : fields){
 
 			if((field.getType()).equals(value.getClass())){

@@ -18,12 +18,6 @@
  */
 package org.jpmml.manager;
 
-import java.lang.reflect.Field;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlEnumValue;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import com.sun.xml.bind.Locatable;
 import org.dmg.pmml.PMMLObject;
 import org.xml.sax.Locator;
@@ -52,14 +46,6 @@ public class PMMLException extends RuntimeException {
 		super(message);
 
 		setContext(context);
-	}
-
-	public PMMLObject getContext(){
-		return this.context;
-	}
-
-	private void setContext(PMMLObject context){
-		this.context = context;
 	}
 
 	@Override
@@ -91,51 +77,11 @@ public class PMMLException extends RuntimeException {
 		return sb.toString();
 	}
 
-	static
-	public String formatElement(Class<?> clazz){
-		XmlRootElement xmlRootElement = clazz.getAnnotation(XmlRootElement.class);
-		if(xmlRootElement == null){
-			throw new RuntimeException();
-		}
-
-		return xmlRootElement.name();
+	public PMMLObject getContext(){
+		return this.context;
 	}
 
-	static
-	public String formatAttribute(Class<?> clazz, String name){
-		Field field;
-
-		try {
-			field = clazz.getDeclaredField(name);
-		} catch(NoSuchFieldException nsfe){
-			throw new RuntimeException();
-		}
-
-		XmlAttribute xmlAttribute = field.getAnnotation(XmlAttribute.class);
-		if(xmlAttribute == null){
-			throw new RuntimeException();
-		}
-
-		return xmlAttribute.name();
-	}
-
-	static
-	public String formatValue(Enum<?> value){
-		Class<?> clazz = value.getClass();
-
-		Field field;
-
-		try {
-			field = clazz.getField(value.name());
-		} catch(NoSuchFieldException nfse){
-			throw new RuntimeException();
-		}
-
-		XmlEnumValue xmlEnumValue = field.getAnnotation(XmlEnumValue.class);
-		if(xmlEnumValue == null){
-			throw new RuntimeException();
-		}
-
-		return xmlEnumValue.value();
+	private void setContext(PMMLObject context){
+		this.context = context;
 	}
 }

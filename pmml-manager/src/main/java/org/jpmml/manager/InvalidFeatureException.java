@@ -47,6 +47,6 @@ public class InvalidFeatureException extends PMMLException {
 	}
 
 	public InvalidFeatureException(PMMLObject element){
-		super(formatElement(element.getClass()), element);
+		super(PMMLObjectUtil.getRootElementName(element), element);
 	}
 }
