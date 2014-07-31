@@ -39,28 +39,28 @@ The JPMML-Evaluator library is hardwired to perform thorough "sanity" checking. 
 
 Supported model types:
 
-* [Assocation rules] (http://www.dmg.org/v4-2-1/AssociationRules.html).
-* [Cluster model] (http://www.dmg.org/v4-2-1/ClusteringModel.html).
-  * Except for the `CenterFields` element (`ClusteringModel/CenterFields`). This element was removed in PMML schema version 3.2.
+* [Assocation rules] (http://www.dmg.org/v4-2-1/AssociationRules.html) (association).
+* [Cluster model] (http://www.dmg.org/v4-2-1/ClusteringModel.html) (clustering).
+  * Except for the `CenterFields` element. This element was removed in PMML schema version 3.2.
 * [General regression] (http://www.dmg.org/v4-2-1/GeneralRegression.html) (regression, classification).
-  * Except for the `cauchit`, `negbin` and `probit` values of the link function (`GeneralRegressionModel@linkFunction=cauchit|negbin|probit`).
-  * Except for the `probit` value of the cumulative link function (`GeneralRegressionModel@cumulativeLinkFunction=probit`).
+  * Except for the `cauchit`, `negbin` and `probit` values of the `linkFunction` attribute.
+  * Except for the `probit` value of the `cumulativeLinkFunction` attribute.
 * [k-Nearest neighbors (k-NN)] (http://www.dmg.org/v4-2-1/KNN.html) (regression, classification, clustering).
-  * Except for the `median` value of the continuous scoring method (`NearestNeighborModel@continuousScoringMethod=median`).
-* [Naive Bayes] (http://www.dmg.org/v4-2-1/NaiveBayes.html).
-  * Except for the `AnyDistribution`, `PoissonDistribution` and `UniformDistribution` child elements of the `TargetValueStat` element (`NaiveBayesModel/BayesInput/TargetValueStats/TargetValueStat/AnyDistribution|PoissonDistribution|UniformDistribution`).
+  * Except for the `median` value of the `continuousScoringMethod` attribute.
+* [Naive Bayes] (http://www.dmg.org/v4-2-1/NaiveBayes.html) (classification).
+  * Except for the `AnyDistribution`, `PoissonDistribution` and `UniformDistribution` child elements of the `BayesInput/TargetValueStats/TargetValueStat` element.
 * [Neural network] (http://www.dmg.org/v4-2-1/NeuralNetwork.html) (regression, classification).
-  * Except for the `radialBasis` value of the activation function (`NeuralNetwork@activationFunction=radialBasis` and `NeuralLayer@activationFunction=radialBasis`).
+  * Except for the `radialBasis` value of the `activationFunction` attribute.
 * [Regression] (http://www.dmg.org/v4-2-1/Regression.html) (regression, classification).
-  * Except for the `probit` value of the normalization method (`RegressionModel@normalizationMethod=probit`).
-* [Rule set] (http://www.dmg.org/v4-2-1/RuleSet.html).
-* [Scorecard] (http://www.dmg.org/v4-2-1/Scorecard.html).
-* [Tree model] (http://www.dmg.org/v4-2-1/TreeModel.html).
-  * Except for the `aggregateNodes` and `weightedConfidence` values of the missing value strategy (`TreeModel@missingValueStrategy=aggregateNodes|weightedConfidence`).
+  * Except for the `probit` value of the `normalizationMethod` attribute.
+* [Rule set] (http://www.dmg.org/v4-2-1/RuleSet.html) (classification).
+* [Scorecard] (http://www.dmg.org/v4-2-1/Scorecard.html) (regression).
+* [Tree model] (http://www.dmg.org/v4-2-1/TreeModel.html) (classification).
+  * Except for the `aggregateNodes` and `weightedConfidence` values of the `missingValueStrategy` attribute.
 * [Support Vector Machine (SVM)] (http://www.dmg.org/v4-2-1/SupportVectorMachine.html) (regression, classification).
-  * Except for the `Coefficients` value of the SVM model representation (`SupportVectorMachineModel@svmRepresentation=Coefficients`).
+  * Except for the `Coefficients` value of the `svmRepresentation` attribute.
 * [Ensemble model (ensembles of all of the above model types)] (http://www.dmg.org/v4-2-1/MultipleModels.html) (regression, classification, clustering).
-  * Except for the `median` value of the multiple model method (`MiningModel/Segmentation@multipleModelMethod=median`).
+  * Except for the `median` value of the `Segmentation@multipleModelMethod` attribute.
 
 Not yet supported model types:
 
@@ -74,7 +74,7 @@ Not yet supported model types:
 
 * [Model composition] (http://www.dmg.org/v4-2-1/MultipleModels.html). Model composition specifies a mechanism for embedding defeatured regression and decision tree models (represented by the `Regression` and `DecisionTree` elements, respectively) into other models. This mechanism was deprecated in PMML schema version 4.1.
 * The `MiningModel/Segmentation/LocalTransformations` element. This element was deprecated in PMML schema version 4.1. The definitions of `DerivedField` child elements should be simply moved over to the `MiningModel/LocalTransformations` element.
-* The `TableLocator` element. This element specifies a mechanism for incorporating data from external data sources (eg. CSV files, databases). The PMML specification does not yet define its content.
+* The `TableLocator` element. This element specifies a mechanism for incorporating data from external data sources (eg. CSV files, databases). The `TableLocator` element is simply a placeholder as of PMML schema version 4.2. Different PMML producer and consumer software are free to use their own extensions.
 
 # Inspection API #
 
