@@ -1,11 +1,11 @@
 Features
 ========
 
-# Summary #
+# Overview #
 
-The JPMML-Evaluator library is *de facto* the Reference Implementation (RI) of the Predictive Model Markup Language (PMML) for the Java platform.
+The JPMML-Evaluator library is *de facto* the reference implementation of the PMML specification for the Java platform.
 
-The primary objective is to provide full compliance with 4.X versions of the PMML specification (released since 2009). The secondary objective is to provide maximum working compliance with 3.X versions of the PMML specification (released between 2004 and 2007). It means that some PMML features whose scope is limited to 3.X versions (eg. removed or deprecated in 4.X versions) are not supported.
+The primary objective is to provide full compliance with 4.X versions of the PMML specification (released since 2009). The secondary objective is to provide maximum working compliance with 3.X versions of the PMML specification (released between 2004 and 2007). It means that some PMML features whose scope is limited to 3.X versions (eg. removed or deprecated in 4.X versions) may not be supported.
 
 ### General structure ###
 
@@ -13,7 +13,7 @@ The JPMML-Evaluator library is hardwired to perform thorough "sanity" checking. 
 
 ##### Data flow #####
 
-1. Pre-processing of active fields (aka independent variables) according to [DataDictionary] (http://www.dmg.org/v4-2-1/DataDictionary.html) and [MiningSchema] (http://www.dmg.org/v4-2-1/MiningSchema.html) elements.
+1. Pre-processing of active fields (aka independent variables) according to the [DataDictionary] (http://www.dmg.org/v4-2-1/DataDictionary.html) and [MiningSchema] (http://www.dmg.org/v4-2-1/MiningSchema.html) elements.
   * Strict data type system.
     * Except for `dateDaysSince[0]` and `dateTimeSecondsSince[0]` data types.
   * Strict operational type system.
@@ -66,7 +66,7 @@ Not yet supported model types:
 
 * [Baseline model] (http://www.dmg.org/v4-2-1/BaselineModel.html).
 * [Cox regression] (http://www.dmg.org/v4-2-1/GeneralRegression.html).
-* [Sequence model] (http://www.dmg.org/v4-2-1/Sequence.html).
+* [Sequence rules] (http://www.dmg.org/v4-2-1/Sequence.html).
 * [Text model] (http://www.dmg.org/v4-2-1/Text.html).
 * [Time series model] (http://www.dmg.org/v4-2-1/TimeSeriesModel.html).
 
@@ -74,11 +74,11 @@ Not yet supported model types:
 
 * [Model composition] (http://www.dmg.org/v4-2-1/MultipleModels.html). Model composition specifies a mechanism for embedding defeatured regression and decision tree models (represented by the `Regression` and `DecisionTree` elements, respectively) into other models. This mechanism was deprecated in PMML schema version 4.1.
 * The `MiningModel/Segmentation/LocalTransformations` element. This element was deprecated in PMML schema version 4.1. The definitions of `DerivedField` child elements should be simply moved over to the `MiningModel/LocalTransformations` element.
-* [The `TableLocator` element] (http://www.dmg.org/v4-2-1/Taxonomy.html). This element specifies a mechanism for incorporating data from external data sources (eg. CSV files, databases). The PMML specification does not yet define its content.
+* The `TableLocator` element. This element specifies a mechanism for incorporating data from external data sources (eg. CSV files, databases). The PMML specification does not yet define its content.
 
 # Inspection API #
 
-Starting from JPMML-Evaluator version 1.1.7 it is possible to inspect the class model object for unsupported PMML features using a visitor class `org.jpmml.evaluator.UnsupportedFeatureInspector` [(source)] (https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator/src/main/java/org/jpmml/evaluator/UnsupportedFeatureInspector.java). This visitor collects all unsupported features (viz. elements, attributes and enum-type attribute values) as instances of `org.jpmml.manager.UnsupportedFeatureException`.
+Starting from JPMML-Evaluator version 1.1.7, it is possible to inspect the class model object for unsupported PMML features using a visitor class `org.jpmml.evaluator.UnsupportedFeatureInspector` [(source)] (https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator/src/main/java/org/jpmml/evaluator/UnsupportedFeatureInspector.java). This visitor collects all unsupported features (viz. elements, attributes and enum-type attribute values) as instances of `org.jpmml.manager.UnsupportedFeatureException`.
 
 The class model object is safe for evaluation using the JPMML-Evaluator library if the collection of exceptions is empty:
 ```java

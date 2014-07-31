@@ -5,33 +5,38 @@ Java Evaluator API for Predictive Model Markup Language (PMML).
 
 # Features #
 
-* Full support for [DataDictionary] (http://www.dmg.org/v4-2/DataDictionary.html) and [MiningSchema] (http://www.dmg.org/v4-2/MiningSchema.html) elements:
-  * Complete data type system.
-  * Complete operational type system. For example, continuous integers, categorical integers and ordinal integers are handled differently in equality check and comparison operations.
-  * Detection and treatment of outlier, missing and invalid values.
-* Full support for [transformations] (http://www.dmg.org/v4-2/Transformations.html) and [functions] (http://www.dmg.org/v4-2/Functions.html):
-  * Built-in functions.
-  * User defined functions (PMML, Java).
-* Full support for [Targets] (http://www.dmg.org/v4-2/Targets.html) and [Output] (http://www.dmg.org/v4-2/Output.html) elements.
-* Fully supported model elements:
-  * [Association rules] (http://www.dmg.org/v4-2/AssociationRules.html)
-  * [Cluster model] (http://www.dmg.org/v4-2/ClusteringModel.html)
-  * [General regression] (http://www.dmg.org/v4-2/GeneralRegression.html)
-  * [Naive Bayes] (http://www.dmg.org/v4-2/NaiveBayes.html)
-  * [k-Nearest neighbors] (http://www.dmg.org/v4-2/KNN.html)
-  * [Neural network] (http://www.dmg.org/v4-2/NeuralNetwork.html)
-  * [Regression] (http://www.dmg.org/v4-2/Regression.html)
-  * [Rule set] (http://www.dmg.org/v4-2/RuleSet.html)
-  * [Scorecard] (http://www.dmg.org/v4-2/Scorecard.html)
-  * [Support Vector Machine] (http://www.dmg.org/v4-2/SupportVectorMachine.html)
-  * [Tree model] (http://www.dmg.org/v4-2/TreeModel.html)
-  * [Ensemble model] (http://www.dmg.org/v4-2/MultipleModels.html)
-* High performance and high throughput:
-  * Thread safe
-* Fully interoperable with popular open source software:
+JPMML-Evaluator is *de facto* the reference implementation of the PMML specification for the Java platform:
+
+1. Pre-processing of active fields according to the [DataDictionary] (http://www.dmg.org/v4-2-1/DataDictionary.html) and [MiningSchema] (http://www.dmg.org/v4-2-1/MiningSchema.html) elements:
+  * Complete data type system
+  * Complete operational type system.
+  * Treatment of outlier, missing and/or invalid values.
+2. Model evaluation:
+  * [Association rules] (http://www.dmg.org/v4-2-1/AssociationRules.html)
+  * [Cluster model] (http://www.dmg.org/v4-2-1/ClusteringModel.html)
+  * [General regression] (http://www.dmg.org/v4-2-1/GeneralRegression.html)
+  * [Naive Bayes] (http://www.dmg.org/v4-2-1/NaiveBayes.html)
+  * [k-Nearest neighbors] (http://www.dmg.org/v4-2-1/KNN.html)
+  * [Neural network] (http://www.dmg.org/v4-2-1/NeuralNetwork.html)
+  * [Regression] (http://www.dmg.org/v4-2-1/Regression.html)
+  * [Rule set] (http://www.dmg.org/v4-2-1/RuleSet.html)
+  * [Scorecard] (http://www.dmg.org/v4-2-1/Scorecard.html)
+  * [Support Vector Machine] (http://www.dmg.org/v4-2-1/SupportVectorMachine.html)
+  * [Tree model] (http://www.dmg.org/v4-2-1/TreeModel.html)
+  * [Ensemble model] (http://www.dmg.org/v4-2-1/MultipleModels.html)
+3. Post-processing of target fields according to the [Targets] (http://www.dmg.org/v4-2-1/Targets.html) element:
+  * Rescaling and/or casting regression results.
+  * Replacing a missing regression result with the default value.
+  * Replacing a missing classification result with the map of prior probabilities.
+4. Calculation of auxiliary output fields according to the [Output] (http://www.dmg.org/v4-2-1/Output.html) element:
+  * Over 20 different result feature types.
+
+For more information please see the [features.md] (https://github.com/jpmml/jpmml-evaluator/blob/master/features.md) file.
+
+JPMML-Evaluator has been tested with popular open-source PMML producer software:
   * [R] (http://www.r-project.org/) and [Rattle] (http://rattle.togaware.com/)
-  * [KNIME] (http://www.knime.org/)
-  * [RapidMiner] (http://rapid-i.com/content/view/181/190/)
+  * [KNIME] (http://www.knime.com/)
+  * [RapidMiner] (http://rapidminer.com/products/rapidminer-studio/)
 
 # Installation #
 
@@ -136,7 +141,7 @@ if(targetValue instanceof HasEntityId){
 
 # Example applications #
 
-Module `pmml-evaluator-example` exemplifies the use of JPMML-Evaluator library.
+Module `pmml-evaluator-example` exemplifies the use of the JPMML-Evaluator library.
 
 This module can be built using [Apache Maven] (http://maven.apache.org/):
 ```
