@@ -2,6 +2,7 @@ library("faraway")
 library("rattle")
 
 data("iris")
+names(iris) = c("Sepal_Length", "Sepal_Width", "Petal_Length", "Petal_Width", "Species")
 writeCsv(iris, "csv/Iris.csv")
 
 data("audit")

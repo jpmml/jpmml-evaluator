@@ -11,18 +11,18 @@
    <Value value="versicolor"/>
    <Value value="virginica"/>
   </DataField>
-  <DataField name="Sepal.Length" optype="continuous" dataType="double"/>
-  <DataField name="Sepal.Width" optype="continuous" dataType="double"/>
-  <DataField name="Petal.Length" optype="continuous" dataType="double"/>
-  <DataField name="Petal.Width" optype="continuous" dataType="double"/>
+  <DataField name="Sepal_Length" optype="continuous" dataType="double"/>
+  <DataField name="Sepal_Width" optype="continuous" dataType="double"/>
+  <DataField name="Petal_Length" optype="continuous" dataType="double"/>
+  <DataField name="Petal_Width" optype="continuous" dataType="double"/>
  </DataDictionary>
  <SupportVectorMachineModel modelName="SVM_model" functionName="classification" algorithmName="supportVectorMachine" classificationMethod="OneAgainstOne" svmRepresentation="SupportVectors">
   <MiningSchema>
    <MiningField name="Species" usageType="predicted"/>
-   <MiningField name="Sepal.Length" usageType="active"/>
-   <MiningField name="Sepal.Width" usageType="active"/>
-   <MiningField name="Petal.Length" usageType="active"/>
-   <MiningField name="Petal.Width" usageType="active"/>
+   <MiningField name="Sepal_Length" usageType="active"/>
+   <MiningField name="Sepal_Width" usageType="active"/>
+   <MiningField name="Petal_Length" usageType="active"/>
+   <MiningField name="Petal_Width" usageType="active"/>
   </MiningSchema>
   <Output>
    <OutputField name="Predicted_Species" feature="predictedValue"/>
@@ -31,26 +31,26 @@
    <OutputField name="Probability_virginica" optype="continuous" dataType="double" feature="probability" value="virginica"/>
   </Output>
   <LocalTransformations>
-   <DerivedField name="derived_Sepal.Length" optype="continuous" dataType="double">
-    <NormContinuous field="Sepal.Length">
+   <DerivedField name="derived_Sepal_Length" optype="continuous" dataType="double">
+    <NormContinuous field="Sepal_Length">
      <LinearNorm orig="0" norm="-7.05660228803556"/>
      <LinearNorm orig="5.84333333333333" norm="0"/>
     </NormContinuous>
    </DerivedField>
-   <DerivedField name="derived_Sepal.Width" optype="continuous" dataType="double">
-    <NormContinuous field="Sepal.Width">
+   <DerivedField name="derived_Sepal_Width" optype="continuous" dataType="double">
+    <NormContinuous field="Sepal_Width">
      <LinearNorm orig="0" norm="-7.01438362863362"/>
      <LinearNorm orig="3.05733333333333" norm="0"/>
     </NormContinuous>
    </DerivedField>
-   <DerivedField name="derived_Petal.Length" optype="continuous" dataType="double">
-    <NormContinuous field="Petal.Length">
+   <DerivedField name="derived_Petal_Length" optype="continuous" dataType="double">
+    <NormContinuous field="Petal_Length">
      <LinearNorm orig="0" norm="-2.12881876228992"/>
      <LinearNorm orig="3.758" norm="0"/>
     </NormContinuous>
    </DerivedField>
-   <DerivedField name="derived_Petal.Width" optype="continuous" dataType="double">
-    <NormContinuous field="Petal.Width">
+   <DerivedField name="derived_Petal_Width" optype="continuous" dataType="double">
+    <NormContinuous field="Petal_Width">
      <LinearNorm orig="0" norm="-1.57343750141496"/>
      <LinearNorm orig="1.19933333333333" norm="0"/>
     </NormContinuous>
@@ -59,10 +59,10 @@
   <RadialBasisKernelType gamma="0.805657427604913" description="Radial basis kernel type"/>
   <VectorDictionary numberOfVectors="59">
    <VectorFields numberOfFields="4">
-    <FieldRef field="derived_Sepal.Length"/>
-    <FieldRef field="derived_Sepal.Width"/>
-    <FieldRef field="derived_Petal.Length"/>
-    <FieldRef field="derived_Petal.Width"/>
+    <FieldRef field="derived_Sepal_Length"/>
+    <FieldRef field="derived_Sepal_Width"/>
+    <FieldRef field="derived_Petal_Length"/>
+    <FieldRef field="derived_Petal_Width"/>
    </VectorFields>
    <VectorInstance id="1">
     <REAL-SparseArray n="4">

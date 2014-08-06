@@ -11,10 +11,10 @@
    <Value value="versicolor"/>
    <Value value="virginica"/>
   </DataField>
-  <DataField name="Sepal.Length" optype="continuous" dataType="double"/>
-  <DataField name="Sepal.Width" optype="continuous" dataType="double"/>
-  <DataField name="Petal.Length" optype="continuous" dataType="double"/>
-  <DataField name="Petal.Width" optype="continuous" dataType="double"/>
+  <DataField name="Sepal_Length" optype="continuous" dataType="double"/>
+  <DataField name="Sepal_Width" optype="continuous" dataType="double"/>
+  <DataField name="Petal_Length" optype="continuous" dataType="double"/>
+  <DataField name="Petal_Width" optype="continuous" dataType="double"/>
   <DataField name="DiscretePlaceHolder" optype="categorical" dataType="string">
    <Value value="pseudoValue"/>
   </DataField>
@@ -22,10 +22,10 @@
  <NaiveBayesModel modelName="naiveBayes_Model" functionName="classification" threshold="0">
   <MiningSchema>
    <MiningField name="Species" usageType="predicted"/>
-   <MiningField name="Sepal.Length" usageType="active"/>
-   <MiningField name="Sepal.Width" usageType="active"/>
-   <MiningField name="Petal.Length" usageType="active"/>
-   <MiningField name="Petal.Width" usageType="active"/>
+   <MiningField name="Sepal_Length" usageType="active"/>
+   <MiningField name="Sepal_Width" usageType="active"/>
+   <MiningField name="Petal_Length" usageType="active"/>
+   <MiningField name="Petal_Width" usageType="active"/>
    <MiningField name="DiscretePlaceHolder" usageType="active"/>
   </MiningSchema>
   <Output>
@@ -36,7 +36,7 @@
   </Output>
   <BayesInputs>
    <Extension>
-    <BayesInput fieldName="Sepal.Length">
+    <BayesInput fieldName="Sepal_Length">
      <TargetValueStats>
       <TargetValueStat value="setosa">
        <GaussianDistribution mean="5.006" variance="0.124248979591837"/>
@@ -51,7 +51,7 @@
     </BayesInput>
    </Extension>
    <Extension>
-    <BayesInput fieldName="Sepal.Width">
+    <BayesInput fieldName="Sepal_Width">
      <TargetValueStats>
       <TargetValueStat value="setosa">
        <GaussianDistribution mean="3.428" variance="0.143689795918367"/>
@@ -66,7 +66,7 @@
     </BayesInput>
    </Extension>
    <Extension>
-    <BayesInput fieldName="Petal.Length">
+    <BayesInput fieldName="Petal_Length">
      <TargetValueStats>
       <TargetValueStat value="setosa">
        <GaussianDistribution mean="1.462" variance="0.0301591836734694"/>
@@ -81,7 +81,7 @@
     </BayesInput>
    </Extension>
    <Extension>
-    <BayesInput fieldName="Petal.Width">
+    <BayesInput fieldName="Petal_Width">
      <TargetValueStats>
       <TargetValueStat value="setosa">
        <GaussianDistribution mean="0.246" variance="0.0111061224489796"/>

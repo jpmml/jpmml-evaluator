@@ -11,18 +11,18 @@
    <Value value="versicolor"/>
    <Value value="virginica"/>
   </DataField>
-  <DataField name="Sepal.Length" optype="continuous" dataType="double"/>
-  <DataField name="Sepal.Width" optype="continuous" dataType="double"/>
-  <DataField name="Petal.Length" optype="continuous" dataType="double"/>
-  <DataField name="Petal.Width" optype="continuous" dataType="double"/>
+  <DataField name="Sepal_Length" optype="continuous" dataType="double"/>
+  <DataField name="Sepal_Width" optype="continuous" dataType="double"/>
+  <DataField name="Petal_Length" optype="continuous" dataType="double"/>
+  <DataField name="Petal_Width" optype="continuous" dataType="double"/>
  </DataDictionary>
  <NeuralNetwork modelName="NeuralNet_model" functionName="classification" numberOfLayers="2" activationFunction="logistic">
   <MiningSchema>
    <MiningField name="Species" usageType="predicted"/>
-   <MiningField name="Sepal.Length" usageType="active"/>
-   <MiningField name="Sepal.Width" usageType="active"/>
-   <MiningField name="Petal.Length" usageType="active"/>
-   <MiningField name="Petal.Width" usageType="active"/>
+   <MiningField name="Sepal_Length" usageType="active"/>
+   <MiningField name="Sepal_Width" usageType="active"/>
+   <MiningField name="Petal_Length" usageType="active"/>
+   <MiningField name="Petal_Width" usageType="active"/>
   </MiningSchema>
   <Output>
    <OutputField name="Predicted_Species" feature="predictedValue"/>
@@ -32,23 +32,23 @@
   </Output>
   <NeuralInputs numberOfInputs="4">
    <NeuralInput id="1">
-    <DerivedField name="derivedNI_Sepal.Length" optype="continuous" dataType="double">
-     <FieldRef field="Sepal.Length"/>
+    <DerivedField name="derivedNI_Sepal_Length" optype="continuous" dataType="double">
+     <FieldRef field="Sepal_Length"/>
     </DerivedField>
    </NeuralInput>
    <NeuralInput id="2">
-    <DerivedField name="derivedNI_Sepal.Width" optype="continuous" dataType="double">
-     <FieldRef field="Sepal.Width"/>
+    <DerivedField name="derivedNI_Sepal_Width" optype="continuous" dataType="double">
+     <FieldRef field="Sepal_Width"/>
     </DerivedField>
    </NeuralInput>
    <NeuralInput id="3">
-    <DerivedField name="derivedNI_Petal.Length" optype="continuous" dataType="double">
-     <FieldRef field="Petal.Length"/>
+    <DerivedField name="derivedNI_Petal_Length" optype="continuous" dataType="double">
+     <FieldRef field="Petal_Length"/>
     </DerivedField>
    </NeuralInput>
    <NeuralInput id="4">
-    <DerivedField name="derivedNI_Petal.Width" optype="continuous" dataType="double">
-     <FieldRef field="Petal.Width"/>
+    <DerivedField name="derivedNI_Petal_Width" optype="continuous" dataType="double">
+     <FieldRef field="Petal_Width"/>
     </DerivedField>
    </NeuralInput>
   </NeuralInputs>

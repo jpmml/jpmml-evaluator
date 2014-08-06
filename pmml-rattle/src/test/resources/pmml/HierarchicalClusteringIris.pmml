@@ -6,17 +6,17 @@
   <Timestamp>2014-07-06 23:49:29</Timestamp>
  </Header>
  <DataDictionary numberOfFields="4">
-  <DataField name="Sepal.Length" optype="continuous" dataType="double"/>
-  <DataField name="Sepal.Width" optype="continuous" dataType="double"/>
-  <DataField name="Petal.Length" optype="continuous" dataType="double"/>
-  <DataField name="Petal.Width" optype="continuous" dataType="double"/>
+  <DataField name="Sepal_Length" optype="continuous" dataType="double"/>
+  <DataField name="Sepal_Width" optype="continuous" dataType="double"/>
+  <DataField name="Petal_Length" optype="continuous" dataType="double"/>
+  <DataField name="Petal_Width" optype="continuous" dataType="double"/>
  </DataDictionary>
  <ClusteringModel modelName="HClust_Model" functionName="clustering" algorithmName="HClust" modelClass="centerBased" numberOfClusters="10">
   <MiningSchema>
-   <MiningField name="Sepal.Length"/>
-   <MiningField name="Sepal.Width"/>
-   <MiningField name="Petal.Length"/>
-   <MiningField name="Petal.Width"/>
+   <MiningField name="Sepal_Length"/>
+   <MiningField name="Sepal_Width"/>
+   <MiningField name="Petal_Length"/>
+   <MiningField name="Petal_Width"/>
   </MiningSchema>
   <Output>
    <OutputField name="predictedValue" feature="predictedValue"/>
@@ -24,10 +24,10 @@
   <ComparisonMeasure kind="distance">
    <squaredEuclidean/>
   </ComparisonMeasure>
-  <ClusteringField field="Sepal.Length"/>
-  <ClusteringField field="Sepal.Width"/>
-  <ClusteringField field="Petal.Length"/>
-  <ClusteringField field="Petal.Width"/>
+  <ClusteringField field="Sepal_Length"/>
+  <ClusteringField field="Sepal_Width"/>
+  <ClusteringField field="Petal_Length"/>
+  <ClusteringField field="Petal_Width"/>
   <Cluster name="1">
    <Array n="4" type="real">4.81034482758621 3.21724137931034 1.39310344827586 0.203448275862069</Array>
   </Cluster>

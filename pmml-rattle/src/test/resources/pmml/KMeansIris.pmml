@@ -6,17 +6,17 @@
   <Timestamp>2014-07-06 23:49:29</Timestamp>
  </Header>
  <DataDictionary numberOfFields="4">
-  <DataField name="Sepal.Length" optype="continuous" dataType="double"/>
-  <DataField name="Sepal.Width" optype="continuous" dataType="double"/>
-  <DataField name="Petal.Length" optype="continuous" dataType="double"/>
-  <DataField name="Petal.Width" optype="continuous" dataType="double"/>
+  <DataField name="Sepal_Length" optype="continuous" dataType="double"/>
+  <DataField name="Sepal_Width" optype="continuous" dataType="double"/>
+  <DataField name="Petal_Length" optype="continuous" dataType="double"/>
+  <DataField name="Petal_Width" optype="continuous" dataType="double"/>
  </DataDictionary>
  <ClusteringModel modelName="KMeans_Model" functionName="clustering" algorithmName="KMeans: Hartigan and Wong" modelClass="centerBased" numberOfClusters="3">
   <MiningSchema>
-   <MiningField name="Sepal.Length"/>
-   <MiningField name="Sepal.Width"/>
-   <MiningField name="Petal.Length"/>
-   <MiningField name="Petal.Width"/>
+   <MiningField name="Sepal_Length"/>
+   <MiningField name="Sepal_Width"/>
+   <MiningField name="Petal_Length"/>
+   <MiningField name="Petal_Width"/>
   </MiningSchema>
   <Output>
    <OutputField name="predictedValue" feature="predictedValue"/>
@@ -29,10 +29,10 @@
   <ComparisonMeasure kind="distance">
    <squaredEuclidean/>
   </ComparisonMeasure>
-  <ClusteringField field="Sepal.Length" compareFunction="absDiff"/>
-  <ClusteringField field="Sepal.Width" compareFunction="absDiff"/>
-  <ClusteringField field="Petal.Length" compareFunction="absDiff"/>
-  <ClusteringField field="Petal.Width" compareFunction="absDiff"/>
+  <ClusteringField field="Sepal_Length" compareFunction="absDiff"/>
+  <ClusteringField field="Sepal_Width" compareFunction="absDiff"/>
+  <ClusteringField field="Petal_Length" compareFunction="absDiff"/>
+  <ClusteringField field="Petal_Width" compareFunction="absDiff"/>
   <Cluster name="1" size="62" id="1">
    <Array n="4" type="real">5.90161290322581 2.74838709677419 4.39354838709678 1.43387096774194</Array>
   </Cluster>

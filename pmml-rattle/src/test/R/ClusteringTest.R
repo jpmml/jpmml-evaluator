@@ -4,7 +4,7 @@ library("rattle")
 
 irisData = readCsv("csv/Iris.csv")
 
-numericIrisData = irisData[, c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width")]
+numericIrisData = irisData[, c("Sepal_Length", "Sepal_Width", "Petal_Length", "Petal_Width")]
 
 writeIris = function(clusters, file){
 	result = data.frame(clusters)
