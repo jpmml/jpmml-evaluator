@@ -30,7 +30,7 @@ import org.dmg.pmml.RuleSetModel;
 abstract
 public class RuleSelectionMethodTest extends ModelEvaluatorTest {
 
-	public String getRuleId(RuleSelectionMethod.Criterion criterion) throws Exception {
+	public String getRuleId(RuleSelectionMethod.Criterion criterion, Map<FieldName, ?> arguments) throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		RuleSetModel ruleSetModel = (RuleSetModel)evaluator.getModel();
@@ -50,10 +50,20 @@ public class RuleSelectionMethodTest extends ModelEvaluatorTest {
 			it.remove();
 		}
 
-		Map<FieldName, ?> arguments = createArguments("BP", "HIGH", "K", 0.0621d, "Age", 36, "Na", 0.5023);
+		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+
+		RuleClassificationMap classificationMap = (RuleClassificationMap)result.get(evaluator.getTargetField());
+
+		return classificationMap.getEntityId();
+	}
+
+	public String getScore(Map<FieldName, ?> arguments) throws Exception {
+		Evaluator evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		return getEntityId(result.get(evaluator.getTargetField()));
+		RuleClassificationMap classificationMap = (RuleClassificationMap)result.get(evaluator.getTargetField());
+
+		return classificationMap.getResult();
 	}
 }

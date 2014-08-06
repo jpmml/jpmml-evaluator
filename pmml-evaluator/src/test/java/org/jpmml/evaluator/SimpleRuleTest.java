@@ -18,6 +18,9 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Map;
+
+import org.dmg.pmml.FieldName;
 import org.dmg.pmml.RuleSelectionMethod;
 import org.junit.Test;
 
@@ -27,8 +30,17 @@ public class SimpleRuleTest extends RuleSelectionMethodTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		assertEquals("RULE1", getRuleId(RuleSelectionMethod.Criterion.FIRST_HIT));
-		assertEquals("RULE2", getRuleId(RuleSelectionMethod.Criterion.WEIGHTED_SUM));
-		assertEquals("RULE1", getRuleId(RuleSelectionMethod.Criterion.WEIGHTED_MAX));
+		Map<FieldName, ?> arguments = createArguments("BP", "HIGH", "K", 0.0621d, "Age", 36, "Na", 0.5023);
+
+		assertEquals("RULE1", getRuleId(RuleSelectionMethod.Criterion.FIRST_HIT, arguments));
+		assertEquals("RULE2", getRuleId(RuleSelectionMethod.Criterion.WEIGHTED_SUM, arguments));
+		assertEquals("RULE1", getRuleId(RuleSelectionMethod.Criterion.WEIGHTED_MAX, arguments));
+	}
+
+	@Test
+	public void evaluateDefault() throws Exception {
+		Map<FieldName, ?> arguments = createArguments("BP", "LOW");
+
+		assertEquals("drugY", getScore(arguments));
 	}
 }

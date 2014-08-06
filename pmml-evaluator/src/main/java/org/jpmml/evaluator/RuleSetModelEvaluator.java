@@ -96,6 +96,15 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 
 		RuleClassificationMap result = new RuleClassificationMap();
 
+		// Return the default prediction when no rules in the ruleset fire
+		if(firedRules.size() == 0){
+			String score = ruleSet.getDefaultScore();
+
+			result.put(new SimpleRule(score), score, ruleSet.getDefaultConfidence());
+
+			return TargetUtil.evaluateClassification(result, context);
+		}
+
 		RuleSelectionMethod.Criterion criterion = ruleSelectionMethod.getCriterion();
 
 		Set<String> keys = firedRules.keySet();
@@ -180,6 +189,10 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 			for(Rule childRule : childRules){
 				collectFiredRules(firedRules, childRule, context);
 			}
+		} else
+
+		{
+			throw new UnsupportedFeatureException(rule);
 		}
 	}
 }
