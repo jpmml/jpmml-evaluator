@@ -89,6 +89,10 @@
       <MiningField name="Hours" invalidValueTreatment="asIs"/>
       <MiningField name="Adjusted" invalidValueTreatment="asIs" usageType="target"/>
     </MiningSchema>
+    <Output>
+      <OutputField name="P (Adjusted=0)" optype="continuous" dataType="double" feature="probability" value="0"/>
+      <OutputField name="P (Adjusted=1)" optype="continuous" dataType="double" feature="probability" value="1"/>
+    </Output>
     <Node id="0" score="0" recordCount="1859.0">
       <True/>
       <ScoreDistribution value="0" recordCount="1424.0"/>

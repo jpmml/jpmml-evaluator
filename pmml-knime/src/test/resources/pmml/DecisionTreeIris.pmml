@@ -30,6 +30,11 @@
       <MiningField name="Petal_Width" invalidValueTreatment="asIs"/>
       <MiningField name="Species" invalidValueTreatment="asIs" usageType="target"/>
     </MiningSchema>
+    <Output>
+      <OutputField name="P (Species=setosa)" optype="continuous" dataType="double" feature="probability" value="setosa"/>
+      <OutputField name="P (Species=versicolor)" optype="continuous" dataType="double" feature="probability" value="versicolor"/>
+      <OutputField name="P (Species=virginica)" optype="continuous" dataType="double" feature="probability" value="virginica"/>
+    </Output>
     <Node id="0" score="setosa" recordCount="150.0">
       <True/>
       <ScoreDistribution value="setosa" recordCount="50.0"/>
