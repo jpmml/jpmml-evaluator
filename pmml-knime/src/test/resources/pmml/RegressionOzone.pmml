@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1">
-  <Header copyright="Vfed">
-    <Application name="KNIME" version="2.8.0"/>
+<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2">
+  <Header copyright="vfed">
+    <Application name="KNIME" version="2.10.1"/>
   </Header>
   <DataDictionary numberOfFields="4">
     <DataField name="O3" optype="continuous" dataType="integer">
@@ -17,17 +17,17 @@
       <Interval closure="closedClosed" leftMargin="-25.0" rightMargin="332.0"/>
     </DataField>
   </DataDictionary>
-  <RegressionModel functionName="regression" algorithmName="LinearRegression" modelName="KNIME Linear Regression" targetFieldName="O3">
+  <RegressionModel functionName="regression" algorithmName="PolynomialRegression" modelName="KNIME Polynomial Regression" targetFieldName="O3">
     <MiningSchema>
       <MiningField name="temp" invalidValueTreatment="asIs"/>
       <MiningField name="ibh" invalidValueTreatment="asIs"/>
       <MiningField name="ibt" invalidValueTreatment="asIs"/>
-      <MiningField name="O3" invalidValueTreatment="asIs" usageType="predicted"/>
+      <MiningField name="O3" invalidValueTreatment="asIs" usageType="target"/>
     </MiningSchema>
-    <RegressionTable intercept="-7.727982213955437">
-      <NumericPredictor name="temp" coefficient="0.3804408287168912"/>
-      <NumericPredictor name="ibh" coefficient="-0.001186227769643128"/>
-      <NumericPredictor name="ibt" coefficient="-0.005821484614040797"/>
+    <RegressionTable intercept="-7.727982213955432">
+      <NumericPredictor name="temp" coefficient="0.38044082871689255"/>
+      <NumericPredictor name="ibh" coefficient="-0.001186227769643125"/>
+      <NumericPredictor name="ibt" coefficient="-0.0058214846140405285"/>
     </RegressionTable>
   </RegressionModel>
 </PMML>

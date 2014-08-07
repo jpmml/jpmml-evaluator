@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1">
-  <Header copyright="Vfed">
-    <Application name="KNIME" version="2.8.0"/>
+<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2">
+  <Header copyright="vfed">
+    <Application name="KNIME" version="2.10.1"/>
   </Header>
   <DataDictionary numberOfFields="5">
-    <DataField name="Sepal.Length" optype="continuous" dataType="double">
+    <DataField name="Sepal_Length" optype="continuous" dataType="double">
       <Interval closure="closedClosed" leftMargin="4.3" rightMargin="7.9"/>
     </DataField>
-    <DataField name="Sepal.Width" optype="continuous" dataType="double">
+    <DataField name="Sepal_Width" optype="continuous" dataType="double">
       <Interval closure="closedClosed" leftMargin="2.0" rightMargin="4.4"/>
     </DataField>
-    <DataField name="Petal.Length" optype="continuous" dataType="double">
+    <DataField name="Petal_Length" optype="continuous" dataType="double">
       <Interval closure="closedClosed" leftMargin="1.0" rightMargin="6.9"/>
     </DataField>
-    <DataField name="Petal.Width" optype="continuous" dataType="double">
+    <DataField name="Petal_Width" optype="continuous" dataType="double">
       <Interval closure="closedClosed" leftMargin="0.1" rightMargin="2.5"/>
     </DataField>
     <DataField name="Species" optype="categorical" dataType="string">
@@ -24,11 +24,11 @@
   </DataDictionary>
   <SupportVectorMachineModel modelName="SVM" functionName="classification" algorithmName="Sequential Minimal Optimization (SMO)" svmRepresentation="SupportVectors">
     <MiningSchema>
-      <MiningField name="Sepal.Length" invalidValueTreatment="asIs"/>
-      <MiningField name="Sepal.Width" invalidValueTreatment="asIs"/>
-      <MiningField name="Petal.Length" invalidValueTreatment="asIs"/>
-      <MiningField name="Petal.Width" invalidValueTreatment="asIs"/>
-      <MiningField name="Species" invalidValueTreatment="asIs" usageType="predicted"/>
+      <MiningField name="Sepal_Length" invalidValueTreatment="asIs"/>
+      <MiningField name="Sepal_Width" invalidValueTreatment="asIs"/>
+      <MiningField name="Petal_Length" invalidValueTreatment="asIs"/>
+      <MiningField name="Petal_Width" invalidValueTreatment="asIs"/>
+      <MiningField name="Species" invalidValueTreatment="asIs" usageType="target"/>
     </MiningSchema>
     <Targets>
       <Target field="Species" optype="categorical">
@@ -40,10 +40,10 @@
     <PolynomialKernelType coef0="1.0" degree="1.0" gamma="1.0"/>
     <VectorDictionary numberOfVectors="97">
       <VectorFields numberOfFields="4">
-        <FieldRef field="Sepal.Length"/>
-        <FieldRef field="Sepal.Width"/>
-        <FieldRef field="Petal.Length"/>
-        <FieldRef field="Petal.Width"/>
+        <FieldRef field="Sepal_Length"/>
+        <FieldRef field="Sepal_Width"/>
+        <FieldRef field="Petal_Length"/>
+        <FieldRef field="Petal_Width"/>
       </VectorFields>
       <VectorInstance id="setosa_Row23">
         <REAL-SparseArray n="4">

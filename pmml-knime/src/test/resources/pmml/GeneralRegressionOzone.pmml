@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2">
+  <Header copyright="vfed">
+    <Application name="KNIME" version="2.10.1"/>
+  </Header>
+  <DataDictionary numberOfFields="4">
+    <DataField dataType="integer" name="O3" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="1.0" rightMargin="38.0"/>
+    </DataField>
+    <DataField dataType="integer" name="temp" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="25.0" rightMargin="93.0"/>
+    </DataField>
+    <DataField dataType="integer" name="ibh" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="111.0" rightMargin="5000.0"/>
+    </DataField>
+    <DataField dataType="integer" name="ibt" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="-25.0" rightMargin="332.0"/>
+    </DataField>
+  </DataDictionary>
+  <GeneralRegressionModel modelType="generalLinear" functionName="regression" algorithmName="LinearRegression" modelName="KNIME Linear Regression">
+    <MiningSchema>
+      <MiningField name="temp" invalidValueTreatment="asIs"/>
+      <MiningField name="ibh" invalidValueTreatment="asIs"/>
+      <MiningField name="ibt" invalidValueTreatment="asIs"/>
+      <MiningField name="O3" invalidValueTreatment="asIs" usageType="target"/>
+    </MiningSchema>
+    <ParameterList>
+      <Parameter name="p0" label="Intercept"/>
+      <Parameter name="p1" label="temp"/>
+      <Parameter name="p2" label="ibh"/>
+      <Parameter name="p3" label="ibt"/>
+    </ParameterList>
+    <FactorList/>
+    <CovariateList>
+      <Predictor name="temp"/>
+      <Predictor name="ibh"/>
+      <Predictor name="ibt"/>
+    </CovariateList>
+    <PPMatrix>
+      <PPCell value="1" predictorName="temp" parameterName="p1"/>
+      <PPCell value="1" predictorName="ibh" parameterName="p2"/>
+      <PPCell value="1" predictorName="ibt" parameterName="p3"/>
+    </PPMatrix>
+    <ParamMatrix>
+      <PCell parameterName="p0" beta="-7.727982213955363" df="1"/>
+      <PCell parameterName="p1" beta="0.38044082871688767" df="1"/>
+      <PCell parameterName="p2" beta="-0.0011862277696431131" df="1"/>
+      <PCell parameterName="p3" beta="-0.0058214846140396395" df="1"/>
+    </ParamMatrix>
+  </GeneralRegressionModel>
+</PMML>

@@ -48,8 +48,22 @@ public class ClassificationTest {
 	}
 
 	@Test
+	public void evaluateRandomForestIris() throws Exception {
+		Batch batch = new KnimeBatch("RandomForest", "Iris");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
 	public void evaluateSupportVectorMachineIris() throws Exception {
 		Batch batch = new KnimeBatch("SupportVectorMachine", "Iris");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateDecisionTreeAudit() throws Exception {
+		Batch batch = new KnimeBatch("DecisionTree", "Audit");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}

@@ -27,6 +27,13 @@ import static org.junit.Assert.assertTrue;
 public class RegressionTest {
 
 	@Test
+	public void evaluateGeneralRegressionOzone() throws Exception {
+		Batch batch = new KnimeBatch("GeneralRegression", "Ozone");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
 	public void evaluateNeuralNetworkOzone() throws Exception {
 		Batch batch = new KnimeBatch("NeuralNetwork", "Ozone");
 
