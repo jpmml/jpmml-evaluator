@@ -123,11 +123,15 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new UnsupportedFeatureException(dataField, opType);
 		}
 
-		List<String> targetCategories = ArgumentUtil.getValidValues(dataField);
 
 		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
-		if(targetCategories.size() < 2 || targetCategories.size() != regressionTables.size()){
+		if(regressionTables.size() < 1){
 			throw new InvalidFeatureException(regressionModel);
+		}
+
+		List<String> targetCategories = ArgumentUtil.getValidValues(dataField);
+		if(targetCategories.size() > 0 && targetCategories.size() != regressionTables.size()){
+			throw new InvalidFeatureException(dataField);
 		}
 
 		ProbabilityClassificationMap<String> result = new ProbabilityClassificationMap<String>();

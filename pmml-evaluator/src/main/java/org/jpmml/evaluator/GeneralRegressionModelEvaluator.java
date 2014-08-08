@@ -168,7 +168,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		List<String> targetCategories = ArgumentUtil.getValidValues(dataField);
-		if(targetCategories.size() < 2){
+		if(targetCategories.size() > 0 && targetCategories.size() < 2){
 			throw new InvalidFeatureException(dataField);
 		}
 
