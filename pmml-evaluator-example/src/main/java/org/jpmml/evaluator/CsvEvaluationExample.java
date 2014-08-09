@@ -88,7 +88,7 @@ public class CsvEvaluationExample extends Example {
 
 		PMMLManager pmmlManager = new PMMLManager(pmml);
 
-		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
+		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(ModelEvaluatorFactory.getInstance());
 
 		CsvUtil.Table inputTable = CsvUtil.readTable(this.input, this.separator);
 

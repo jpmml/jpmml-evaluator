@@ -36,7 +36,7 @@ import org.jpmml.manager.UnsupportedFeatureException;
  * <pre>
  * PMML pmml = ...;
  * PMMLManager pmmlManager = new PMMLManager(pmml);
- * Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
+ * Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(ModelEvaluatorFactory.getInstance());
  * </pre>
  *
  * Preparing {@link Evaluator#getActiveFields() active fields}:

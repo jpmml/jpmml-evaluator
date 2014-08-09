@@ -58,6 +58,6 @@ public class PMMLUtil {
 	public ModelManager<?> createModelManager(InputStream is, ModelManagerFactory modelManagerFactory) throws Exception {
 		PMMLManager manager = createPMMLManager(is);
 
-		return manager.getModelManager(null, modelManagerFactory);
+		return manager.getModelManager(modelManagerFactory);
 	}
 }

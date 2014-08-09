@@ -141,6 +141,10 @@ public class PMMLManager implements Serializable {
 		return null;
 	}
 
+	public ModelManager<? extends Model> getModelManager(ModelManagerFactory modelManagerFactory){
+		return getModelManager(null, modelManagerFactory);
+	}
+
 	public ModelManager<? extends Model> getModelManager(String modelName, ModelManagerFactory modelManagerFactory){
 		Model model = getModel(modelName);
 

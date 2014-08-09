@@ -67,7 +67,7 @@ PMML pmml = ...;
 
 PMMLManager pmmlManager = new PMMLManager(pmml);
  
-ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)pmmlManager.getModelManager(null, ModelEvaluatorFactory.getInstance());
+ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)pmmlManager.getModelManager(ModelEvaluatorFactory.getInstance());
 ```
 
 Model evaluator classes follow functional programming principles. Model evaluator instances are cheap enough to be created and discarded as needed (eg. not worth the pooling effort).
