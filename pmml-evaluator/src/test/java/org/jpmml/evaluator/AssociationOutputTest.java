@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
@@ -30,25 +31,45 @@ public class AssociationOutputTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		Evaluator evaluator = createModelEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("item", Arrays.asList("Cracker", "Coke"));
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		checkOutput(Arrays.asList("Cracker"), result, "antecedent");
-		checkOutput(Arrays.asList("Water"), result, "consequent");
-		checkOutput("{Cracker}->{Water}", result, "rule");
-		checkOutput("1", result, "ruleId");
+		checkValue(Arrays.asList("Cracker"), result, "antecedent");
+		checkValue(Arrays.asList("Water"), result, "consequent");
 
-		checkOutput(1d, result, "support");
-		checkOutput(1d, result, "confidence");
-		checkOutput(1f, result, "lift");
+		checkValue("{Cracker}->{Water}", result, "rule");
+		checkValue("1", result, "ruleId");
+
+		checkDataType(DataType.STRING, evaluator, "rule");
+		checkDataType(DataType.STRING, evaluator, "ruleId");
+
+		checkValue(1d, result, "support");
+		checkValue(1d, result, "confidence");
+		checkValue(1f, result, "lift");
+
+		checkDataType(DataType.DOUBLE, evaluator, "support");
+		checkDataType(DataType.DOUBLE, evaluator, "confidence");
+		checkDataType(DataType.FLOAT, evaluator, "lift");
 	}
 
 	static
-	private void checkOutput(Object expected, Map<FieldName, ?> result, String name){
-		assertEquals(expected, result.get(new FieldName(name)));
-		assertEquals(expected, result.get(new FieldName("deprecated_" + name)));
+	private void checkValue(Object expected, Map<FieldName, ?> result, String name){
+		FieldName field = new FieldName(name);
+		FieldName deprecatedField = new FieldName("deprecated_" + name);
+
+		assertEquals(expected, result.get(field));
+		assertEquals(expected, result.get(deprecatedField));
+	}
+
+	static
+	private void checkDataType(DataType expected, ModelEvaluator<?> evaluator, String name){
+		FieldName field = new FieldName(name);
+		FieldName deprecatedField = new FieldName("deprecated_" + name);
+
+		assertEquals(expected, OutputUtil.getDataType(evaluator.getOutputField(field), evaluator));
+		assertEquals(expected, OutputUtil.getDataType(evaluator.getOutputField(deprecatedField), evaluator));
 	}
 }

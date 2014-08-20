@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.Collections;
 import java.util.Map;
 
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
@@ -46,7 +47,11 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = OutputUtil.evaluate(prediction, context);
 
-		assertEquals(0.2d, (Double)result.get(new FieldName("Residual")), 1.e-8);
+		FieldName field = new FieldName("Residual");
+
+		assertEquals(0.2d, (Double)result.get(field), 1.e-8);
+
+		assertEquals(DataType.DOUBLE, OutputUtil.getDataType(evaluator.getOutputField(field), evaluator));
 
 		// "For some other row the expected value may be N"
 		arguments = createArguments(evaluator.getTargetField(), "N");
@@ -56,6 +61,6 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 
 		result = OutputUtil.evaluate(prediction, context);
 
-		assertEquals(-0.8d, (Double)result.get(new FieldName("Residual")), 1.e-8);
+		assertEquals(-0.8d, (Double)result.get(field), 1.e-8);
 	}
 }

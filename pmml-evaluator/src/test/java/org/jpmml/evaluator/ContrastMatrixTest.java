@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.Map;
 
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
@@ -29,14 +30,20 @@ public class ContrastMatrixTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		Evaluator evaluator = createModelEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("gender", "f", "educ", 19d, "jobcat", "3", "salbegin", 45000d);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
+		FieldName lowField = new FieldName("Probability_Low");
+		FieldName highField = new FieldName("Probability_High");
+
 		// Expected values have been calculated by hand
-		assertEquals(0.81956470d, (Double)result.get(new FieldName("Probability_Low")), 1.e-8);
-		assertEquals(0.18043530d, (Double)result.get(new FieldName("Probability_High")), 1.e-8);
+		assertEquals(0.81956470d, (Double)result.get(lowField), 1.e-8);
+		assertEquals(0.18043530d, (Double)result.get(highField), 1.e-8);
+
+		assertEquals(DataType.DOUBLE, OutputUtil.getDataType(evaluator.getOutputField(lowField), evaluator));
+		assertEquals(DataType.DOUBLE, OutputUtil.getDataType(evaluator.getOutputField(highField), evaluator));
 	}
 }

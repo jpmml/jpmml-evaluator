@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.Map;
 
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
@@ -44,10 +45,16 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = OutputUtil.evaluate(predictions, context);
 
+		FieldName field = new FieldName("I_response");
+		FieldName displayField = new FieldName("U_response");
+
+		assertEquals("NO", result.get(field));
+		assertEquals("No", result.get(displayField));
+
+		assertEquals(DataType.STRING, OutputUtil.getDataType(evaluator.getOutputField(field), evaluator));
+		assertEquals(DataType.STRING, OutputUtil.getDataType(evaluator.getOutputField(displayField), evaluator));
+
 		assertEquals(0.02d, result.get(new FieldName("P_responseYes")));
 		assertEquals(0.98d, result.get(new FieldName("P_responseNo")));
-
-		assertEquals("NO", result.get(new FieldName("I_response")));
-		assertEquals("No", result.get(new FieldName("U_response")));
 	}
 }

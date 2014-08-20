@@ -98,12 +98,7 @@ public class OutputUtil {
 
 			Object value = null;
 
-			ResultFeatureType resultFeature = outputField.getFeature();
-
-			// "If the attribute feature is not specified then the output value is a copy of the target field value"
-			if(resultFeature == null){
-				resultFeature = ResultFeatureType.PREDICTED_VALUE;
-			}
+			ResultFeatureType resultFeature = getResultFeatureType(outputField);
 
 			// Load the mining result
 			switch(resultFeature){
@@ -122,8 +117,8 @@ public class OutputUtil {
 				case AFFINITY:
 				case ENTITY_AFFINITY:
 				case CLUSTER_AFFINITY:
-				case RULE_VALUE:
 				case REASON_CODE:
+				case RULE_VALUE:
 				case ANTECEDENT:
 				case CONSEQUENT:
 				case RULE:
@@ -236,14 +231,14 @@ public class OutputUtil {
 						value = getClusterAffinity(value);
 					}
 					break;
-				case RULE_VALUE:
-					{
-						value = getRuleValue(value, outputField);
-					}
-					break;
 				case REASON_CODE:
 					{
 						value = getReasonCode(value, outputField);
+					}
+					break;
+				case RULE_VALUE:
+					{
+						value = getRuleValue(value, outputField);
 					}
 					break;
 				case ANTECEDENT:
@@ -302,6 +297,120 @@ public class OutputUtil {
 		}
 
 		return result;
+	}
+
+	static
+	public DataType getDataType(OutputField outputField, ModelEvaluator<?> modelEvaluator){
+		DataType dataType = outputField.getDataType();
+
+		if(dataType != null){
+			return dataType;
+		}
+
+		String segmentId = outputField.getSegmentId();
+		if(segmentId != null){
+			throw new TypeAnalysisException(outputField);
+		}
+
+		ResultFeatureType resultFeature = getResultFeatureType(outputField);
+
+		switch(resultFeature){
+			case PREDICTED_VALUE:
+				{
+					FieldName targetField = outputField.getTargetField();
+					if(targetField == null){
+						targetField = modelEvaluator.getTargetField();
+					}
+
+					DataField dataField = modelEvaluator.getDataField(targetField);
+
+					return dataField.getDataType();
+				}
+			case PREDICTED_DISPLAY_VALUE:
+				{
+					return DataType.STRING; // XXX
+				}
+			case TRANSFORMED_VALUE:
+			case DECISION:
+				{
+					throw new TypeAnalysisException(outputField);
+				}
+			case PROBABILITY:
+			case RESIDUAL:
+			case STANDARD_ERROR:
+				{
+					return DataType.DOUBLE;
+				}
+			case ENTITY_ID:
+			case CLUSTER_ID:
+				{
+					return DataType.STRING;
+				}
+			case AFFINITY:
+			case ENTITY_AFFINITY:
+			case CLUSTER_AFFINITY:
+				{
+					return DataType.DOUBLE;
+				}
+			case REASON_CODE:
+				{
+					return DataType.STRING;
+				}
+			case RULE_VALUE:
+				{
+					return getRuleDataType(outputField);
+				}
+			case ANTECEDENT:
+				{
+					return getRuleDataType(outputField, RuleFeatureType.ANTECEDENT);
+				}
+			case CONSEQUENT:
+				{
+					return getRuleDataType(outputField, RuleFeatureType.CONSEQUENT);
+				}
+			case RULE:
+				{
+					return getRuleDataType(outputField, RuleFeatureType.RULE);
+				}
+			case RULE_ID:
+				{
+					return getRuleDataType(outputField, RuleFeatureType.RULE_ID);
+				}
+			case CONFIDENCE:
+				{
+					return getRuleDataType(outputField, RuleFeatureType.CONFIDENCE);
+				}
+			case SUPPORT:
+				{
+					return getRuleDataType(outputField, RuleFeatureType.SUPPORT);
+				}
+			case LIFT:
+				{
+					return getRuleDataType(outputField, RuleFeatureType.LIFT);
+				}
+			case LEVERAGE:
+				{
+					return getRuleDataType(outputField, RuleFeatureType.LEVERAGE);
+				}
+			case WARNING:
+				{
+					throw new TypeAnalysisException(outputField);
+				}
+			default:
+				throw new UnsupportedFeatureException(outputField, resultFeature);
+		}
+	}
+
+	static
+	private ResultFeatureType getResultFeatureType(OutputField outputField){
+		ResultFeatureType resultFeature = outputField.getFeature();
+
+		// "If the attribute feature is not specified then the output value is a copy of the target field value"
+		if(resultFeature == null){
+			resultFeature = ResultFeatureType.PREDICTED_VALUE;
+		}
+
+		return resultFeature;
 	}
 
 	static
@@ -424,6 +533,18 @@ public class OutputUtil {
 	}
 
 	static
+	public String getReasonCode(Object object, OutputField outputField){
+		HasReasonCodeRanking hasReasonCodeRanking = asResultFeature(HasReasonCodeRanking.class, object);
+
+		int rank = outputField.getRank();
+		if(rank <= 0){
+			throw new InvalidFeatureException(outputField);
+		}
+
+		return getElement(hasReasonCodeRanking.getReasonCodeRanking(), rank);
+	}
+
+	static
 	public Object getRuleValue(Object object, OutputField outputField, RuleFeatureType ruleFeature){
 		HasRuleValues hasRuleValues = asResultFeature(HasRuleValues.class, object);
 
@@ -505,18 +626,6 @@ public class OutputUtil {
 		{
 			throw new InvalidFeatureException(outputField);
 		}
-	}
-
-	static
-	public String getReasonCode(Object object, OutputField outputField){
-		HasReasonCodeRanking hasReasonCodeRanking = asResultFeature(HasReasonCodeRanking.class, object);
-
-		int rank = outputField.getRank();
-		if(rank <= 0){
-			throw new InvalidFeatureException(outputField);
-		}
-
-		return getElement(hasReasonCodeRanking.getReasonCodeRanking(), rank);
 	}
 
 	static
@@ -617,6 +726,38 @@ public class OutputUtil {
 				return associationRule.getAffinity();
 			default:
 				throw new UnsupportedFeatureException(element, ruleFeature);
+		}
+	}
+
+	static
+	private DataType getRuleDataType(OutputField outputField){
+		return getRuleDataType(outputField, outputField.getRuleFeature());
+	}
+
+	static
+	private DataType getRuleDataType(OutputField outputField, RuleFeatureType ruleFeature){
+		String isMultiValued = outputField.getIsMultiValued();
+		if(!("0").equals(isMultiValued)){
+			throw new TypeAnalysisException(outputField);
+		}
+
+		switch(ruleFeature){
+			case ANTECEDENT:
+			case CONSEQUENT:
+				throw new TypeAnalysisException(outputField);
+			case RULE:
+			case RULE_ID:
+				return DataType.STRING;
+			case CONFIDENCE:
+			case SUPPORT:
+				return DataType.DOUBLE;
+			case LIFT:
+			case LEVERAGE:
+				return DataType.FLOAT;
+			case AFFINITY:
+				return DataType.DOUBLE;
+			default:
+				throw new UnsupportedFeatureException(outputField, ruleFeature);
 		}
 	}
 

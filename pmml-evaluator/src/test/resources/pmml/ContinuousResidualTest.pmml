@@ -9,7 +9,7 @@
             <MiningField name="amount" usageType="predicted"/>
         </MiningSchema>
         <Output>
-            <OutputField name="Residual" optype="continuous" dataType="double" feature="residual"/>
+            <OutputField name="Residual" optype="continuous" feature="residual"/>
         </Output>
         <RegressionTable intercept="0.0"/>
     </RegressionModel>

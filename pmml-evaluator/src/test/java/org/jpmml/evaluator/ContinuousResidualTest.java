@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.Collections;
 import java.util.Map;
 
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
@@ -41,6 +42,10 @@ public class ContinuousResidualTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = OutputUtil.evaluate(prediction, context);
 
-		assertEquals(2d, (Double)result.get(new FieldName("Residual")), 1e-8);
+		FieldName field = new FieldName("Residual");
+
+		assertEquals(2d, (Double)result.get(field), 1e-8);
+
+		assertEquals(DataType.DOUBLE, OutputUtil.getDataType(evaluator.getOutputField(field), evaluator));
 	}
 }
