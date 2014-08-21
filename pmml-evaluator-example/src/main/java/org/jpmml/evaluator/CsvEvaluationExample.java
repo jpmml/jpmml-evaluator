@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -66,6 +67,20 @@ public class CsvEvaluationExample extends Example {
 	)
 	private String separator = null;
 
+	@Parameter (
+		names = {"--wait-before"},
+		description = "Pause before starting the work",
+		hidden = true
+	)
+	private boolean waitBefore = false;
+
+	@Parameter (
+		names = {"--wait-after"},
+		description = "Pause after completing the work",
+		hidden = true
+	)
+	private boolean waitAfter = false;
+
 
 	static
 	public void main(String... args) throws Exception {
@@ -74,6 +89,12 @@ public class CsvEvaluationExample extends Example {
 
 	@Override
 	public void execute() throws Exception {
+		CsvUtil.Table inputTable = CsvUtil.readTable(this.input, this.separator);
+
+		if(this.waitBefore){
+			waitForUserInput();
+		}
+
 		PMML pmml;
 
 		InputStream is = new FileInputStream(this.model);
@@ -90,11 +111,13 @@ public class CsvEvaluationExample extends Example {
 
 		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(ModelEvaluatorFactory.getInstance());
 
-		CsvUtil.Table inputTable = CsvUtil.readTable(this.input, this.separator);
-
 		List<Map<FieldName, FieldValue>> argumentsList = prepareAll(evaluator, inputTable);
 
 		List<Map<FieldName, ?>> resultList = evaluateAll(evaluator, argumentsList);
+
+		if(this.waitAfter){
+			waitForUserInput();
+		}
 
 		// Check if the input table and the output table have equal number of rows
 		boolean copyCells = (argumentsList.size() == (inputTable.size() - 1));
@@ -229,5 +252,15 @@ public class CsvEvaluationExample extends Example {
 		}
 
 		return resultList;
+	}
+
+	static
+	private void waitForUserInput(){
+		Console console = System.console();
+		if(console == null){
+			throw new IllegalStateException();
+		}
+
+		console.readLine("Press ENTER to continue");
 	}
 }
