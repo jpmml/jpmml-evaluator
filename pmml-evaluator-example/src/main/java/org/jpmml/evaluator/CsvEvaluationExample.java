@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.xml.transform.Source;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.validators.PositiveInteger;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.jpmml.manager.PMMLManager;
@@ -81,6 +82,14 @@ public class CsvEvaluationExample extends Example {
 	)
 	private boolean waitAfter = false;
 
+	@Parameter (
+		names = "--loop",
+		description = "The number of repetitions",
+		hidden = true,
+		validateWith = PositiveInteger.class
+	)
+	private int loop = 1;
+
 
 	static
 	public void main(String... args) throws Exception {
@@ -111,9 +120,22 @@ public class CsvEvaluationExample extends Example {
 
 		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(ModelEvaluatorFactory.getInstance());
 
-		List<Map<FieldName, FieldValue>> argumentsList = prepareAll(evaluator, inputTable);
+		List<Map<FieldName, FieldValue>> argumentsList;
 
-		List<Map<FieldName, ?>> resultList = evaluateAll(evaluator, argumentsList);
+		List<Map<FieldName, ?>> resultList;
+
+		main:
+		{
+			int i = 0;
+
+			do {
+				argumentsList = prepareAll(evaluator, inputTable);
+
+				resultList = evaluateAll(evaluator, argumentsList);
+
+				i++;
+			} while(i < this.loop);
+		}
 
 		if(this.waitAfter){
 			waitForUserInput();
