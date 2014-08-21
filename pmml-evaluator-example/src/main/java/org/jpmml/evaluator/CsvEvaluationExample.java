@@ -27,11 +27,16 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.transform.Source;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.validators.PositiveInteger;
+import com.codahale.metrics.ConsoleReporter;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.SlidingWindowReservoir;
+import com.codahale.metrics.Timer;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.jpmml.manager.PMMLManager;
@@ -98,6 +103,13 @@ public class CsvEvaluationExample extends Example {
 
 	@Override
 	public void execute() throws Exception {
+		MetricRegistry metricRegistry = new MetricRegistry();
+
+		ConsoleReporter reporter = ConsoleReporter.forRegistry(metricRegistry)
+			.convertRatesTo(TimeUnit.SECONDS)
+			.convertDurationsTo(TimeUnit.MILLISECONDS)
+			.build();
+
 		CsvUtil.Table inputTable = CsvUtil.readTable(this.input, this.separator);
 
 		if(this.waitBefore){
@@ -126,12 +138,22 @@ public class CsvEvaluationExample extends Example {
 
 		main:
 		{
+			Timer timer = new Timer(new SlidingWindowReservoir(this.loop));
+
+			metricRegistry.register("main", timer);
+
 			int i = 0;
 
 			do {
-				argumentsList = prepareAll(evaluator, inputTable);
+				Timer.Context context = timer.time();
 
-				resultList = evaluateAll(evaluator, argumentsList);
+				try {
+					argumentsList = prepareAll(evaluator, inputTable);
+
+					resultList = evaluateAll(evaluator, argumentsList);
+				} finally {
+					context.close();
+				}
 
 				i++;
 			} while(i < this.loop);
@@ -186,6 +208,12 @@ public class CsvEvaluationExample extends Example {
 		}
 
 		CsvUtil.writeTable(outputTable, this.output);
+
+		if(this.loop > 1){
+			reporter.report();
+		}
+
+		reporter.close();
 	}
 
 	static
