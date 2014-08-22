@@ -73,17 +73,17 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	@Override
 	public List<FieldName> getActiveFields(){
-		return getMiningFields(EnumSet.of(FieldUsageType.ACTIVE));
+		return getMiningFields(ModelManager.ACTIVE_SET);
 	}
 
 	@Override
 	public List<FieldName> getGroupFields(){
-		return getMiningFields(EnumSet.of(FieldUsageType.GROUP));
+		return getMiningFields(ModelManager.GROUP_SET);
 	}
 
 	@Override
 	public List<FieldName> getTargetFields(){
-		return getMiningFields(EnumSet.of(FieldUsageType.PREDICTED, FieldUsageType.TARGET));
+		return getMiningFields(ModelManager.TARGET_SET);
 	}
 
 	@Override
@@ -216,4 +216,8 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 		return model.getTargets();
 	}
+
+	private static final EnumSet<FieldUsageType> ACTIVE_SET = EnumSet.of(FieldUsageType.ACTIVE);
+	private static final EnumSet<FieldUsageType> GROUP_SET = EnumSet.of(FieldUsageType.GROUP);
+	private static final EnumSet<FieldUsageType> TARGET_SET = EnumSet.of(FieldUsageType.PREDICTED, FieldUsageType.TARGET);
 }

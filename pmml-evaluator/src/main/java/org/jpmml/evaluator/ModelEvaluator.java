@@ -60,10 +60,10 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
-		List<FieldName> miningFields = getMiningFields(EnumSet.allOf(FieldUsageType.class));
+		List<FieldName> filterFields = getMiningFields(ModelEvaluator.FILTER_SET);
 
 		ModelEvaluationContext context = createContext(null);
-		context.declareAll(arguments, Sets.newLinkedHashSet(miningFields));
+		context.declareAll(arguments, Sets.newLinkedHashSet(filterFields));
 
 		return evaluate(context);
 	}
@@ -73,4 +73,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		return CacheUtil.getValue(model, cache);
 	}
+
+	private static final EnumSet<FieldUsageType> FILTER_SET = EnumSet.of(FieldUsageType.ACTIVE, FieldUsageType.GROUP, FieldUsageType.ORDER);
 }
