@@ -30,7 +30,9 @@ package org.jpmml.evaluator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
+import com.google.common.cache.Cache;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
@@ -72,6 +74,12 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		M model = getModel();
 
 		return CacheUtil.getValue(model, cache);
+	}
+
+	public <V> V getValue(Callable<? extends V> loader, Cache<M, V> cache){
+		M model = getModel();
+
+		return CacheUtil.getValue(model, loader, cache);
 	}
 
 	private static final EnumSet<FieldUsageType> FILTER_SET = EnumSet.of(FieldUsageType.ACTIVE, FieldUsageType.GROUP, FieldUsageType.ORDER);

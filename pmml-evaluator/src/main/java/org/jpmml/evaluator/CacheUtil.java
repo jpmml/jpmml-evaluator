@@ -27,6 +27,10 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+
+import com.google.common.cache.Cache;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import org.dmg.pmml.PMMLObject;
@@ -42,7 +46,27 @@ public class CacheUtil {
 	public <K extends PMMLObject, V> V getValue(K key, LoadingCache<K, V> cache){
 
 		try {
-			return cache.getUnchecked(key);
+			return cache.get(key);
+		} catch(ExecutionException ee){
+			throw new InvalidFeatureException(key);
+		} catch(UncheckedExecutionException uee){
+			Throwable cause = uee.getCause();
+
+			if(cause instanceof PMMLException){
+				throw (PMMLException)cause;
+			}
+
+			throw new InvalidFeatureException(key);
+		}
+	}
+
+	static
+	public <K extends PMMLObject, V> V getValue(K key, Callable<? extends V> loader, Cache<K, V> cache){
+
+		try {
+			return cache.get(key, loader);
+		} catch(ExecutionException ee){
+			throw new InvalidFeatureException(key);
 		} catch(UncheckedExecutionException uee){
 			Throwable cause = uee.getCause();
 

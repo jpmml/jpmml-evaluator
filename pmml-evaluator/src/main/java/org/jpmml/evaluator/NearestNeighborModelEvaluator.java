@@ -35,13 +35,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
 import com.google.common.base.Function;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableSortedSet;
@@ -227,7 +224,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		BitSet flags = MeasureUtil.toBitSet(values);
 
-		Map<Integer, BitSet> flagMap = getValue(NearestNeighborModelEvaluator.instanceFlagCache);
+		Map<Integer, BitSet> flagMap = getInstanceFlags();
 
 		Set<Integer> rowKeys = flagMap.keySet();
 		for(Integer rowKey : rowKeys){
@@ -246,7 +243,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Double adjustment = MeasureUtil.calculateAdjustment(values);
 
-		Map<Integer, List<FieldValue>> valueMap = getValue(NearestNeighborModelEvaluator.instanceValueCache);
+		Map<Integer, List<FieldValue>> valueMap = getInstanceValues();
 
 		Set<Integer> rowKeys = valueMap.keySet();
 		for(Integer rowKey : rowKeys){
@@ -400,35 +397,30 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private Table<Integer, FieldName, FieldValue> getTrainingInstances(){
-		NearestNeighborModel nearestNeighborModel = getModel();
-
-		try {
-			Callable<PMML> callable = new Callable<PMML>(){
-
-				@Override
-				public PMML call(){
-					return getPMML();
-				}
-			};
-
-			NearestNeighborModelEvaluator.pmmlCache.get(nearestNeighborModel, callable);
-		} catch(ExecutionException ee){
-			throw new EvaluationException();
-		}
-
-		return getValue(NearestNeighborModelEvaluator.trainingInstanceCache);
+		return getValue(createTrainingInstanceLoader(this), NearestNeighborModelEvaluator.trainingInstanceCache);
 	}
 
 	static
-	private Table<Integer, FieldName, FieldValue> parseTrainingInstances(PMML pmml, NearestNeighborModel nearestNeighborModel){
+	private Callable<Table<Integer, FieldName, FieldValue>> createTrainingInstanceLoader(final NearestNeighborModelEvaluator modelEvaluator){
+		return new Callable<Table<Integer, FieldName, FieldValue>>(){
+
+			@Override
+			public Table<Integer, FieldName, FieldValue> call(){
+				return parseTrainingInstances(modelEvaluator);
+			}
+		};
+	}
+
+	static
+	private Table<Integer, FieldName, FieldValue> parseTrainingInstances(NearestNeighborModelEvaluator modelEvaluator){
+		NearestNeighborModel nearestNeighborModel = modelEvaluator.getModel();
+
 		TrainingInstances trainingInstances = nearestNeighborModel.getTrainingInstances();
 
 		TableLocator tableLocator = trainingInstances.getTableLocator();
 		if(tableLocator != null){
 			throw new UnsupportedFeatureException(tableLocator);
 		}
-
-		NearestNeighborModelEvaluator modelEvaluator = new NearestNeighborModelEvaluator(pmml, nearestNeighborModel);
 
 		String idField = nearestNeighborModel.getInstanceIdVariable();
 
@@ -504,6 +496,82 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 				result.put(rowKey, name, ExpressionUtil.evaluate(derivedField, context));
 			}
+		}
+
+		return result;
+	}
+
+	private Map<Integer, BitSet> getInstanceFlags(){
+		return getValue(createInstanceFlagLoader(this), NearestNeighborModelEvaluator.instanceFlagCache);
+	}
+
+	static
+	private Callable<Map<Integer, BitSet>> createInstanceFlagLoader(final NearestNeighborModelEvaluator modelEvaluator){
+		return new Callable<Map<Integer, BitSet>>(){
+
+			@Override
+			public Map<Integer, BitSet> call(){
+				return loadInstanceFlags(modelEvaluator);
+			}
+		};
+	}
+
+	static
+	private Map<Integer, BitSet> loadInstanceFlags(NearestNeighborModelEvaluator modelEvaluator){
+		Map<Integer, BitSet> result = Maps.newLinkedHashMap();
+
+		Map<Integer, List<FieldValue>> valueMap = modelEvaluator.getValue(createInstanceValueLoader(modelEvaluator), NearestNeighborModelEvaluator.instanceValueCache);
+
+		Maps.EntryTransformer<Integer, List<FieldValue>, BitSet> transformer = new Maps.EntryTransformer<Integer, List<FieldValue>, BitSet>(){
+
+			@Override
+			public BitSet transformEntry(Integer key, List<FieldValue> value){
+				return MeasureUtil.toBitSet(value);
+			}
+		};
+		result.putAll(Maps.transformEntries(valueMap, transformer));
+
+		return result;
+	}
+
+	private Map<Integer, List<FieldValue>> getInstanceValues(){
+		return getValue(createInstanceValueLoader(this), NearestNeighborModelEvaluator.instanceValueCache);
+	}
+
+	static
+	private Callable<Map<Integer, List<FieldValue>>> createInstanceValueLoader(final NearestNeighborModelEvaluator modelEvaluator){
+		return new Callable<Map<Integer, List<FieldValue>>>(){
+
+			@Override
+			public Map<Integer, List<FieldValue>> call(){
+				return loadInstanceValues(modelEvaluator);
+			}
+		};
+	}
+
+	static
+	private Map<Integer, List<FieldValue>> loadInstanceValues(NearestNeighborModelEvaluator modelEvaluator){
+		NearestNeighborModel nearestNeighborModel = modelEvaluator.getModel();
+
+		Map<Integer, List<FieldValue>> result = Maps.newLinkedHashMap();
+
+		Table<Integer, FieldName, FieldValue> table = modelEvaluator.getValue(createTrainingInstanceLoader(modelEvaluator), NearestNeighborModelEvaluator.trainingInstanceCache);
+
+		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
+
+		Set<Integer> rowKeys = ImmutableSortedSet.copyOf(table.rowKeySet());
+		for(Integer rowKey : rowKeys){
+			List<FieldValue> values = Lists.newArrayList();
+
+			Map<FieldName, FieldValue> rowValues = table.row(rowKey);
+
+			for(KNNInput knnInput : knnInputs){
+				FieldValue value = rowValues.get(knnInput.getField());
+
+				values.add(value);
+			}
+
+			result.put(rowKey, values);
 		}
 
 		return result;
@@ -705,77 +773,15 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 	}
 
-	private static final Cache<NearestNeighborModel, PMML> pmmlCache = CacheBuilder.newBuilder()
+	private static final Cache<NearestNeighborModel, Table<Integer, FieldName, FieldValue>> trainingInstanceCache = CacheBuilder.newBuilder()
 		.weakKeys()
-		.weakValues()
 		.build();
 
-	private static final LoadingCache<NearestNeighborModel, Table<Integer, FieldName, FieldValue>> trainingInstanceCache = CacheBuilder.newBuilder()
+	private static final Cache<NearestNeighborModel, Map<Integer, BitSet>> instanceFlagCache = CacheBuilder.newBuilder()
 		.weakKeys()
-		.build(new CacheLoader<NearestNeighborModel, Table<Integer, FieldName, FieldValue>>(){
+		.build();
 
-			@Override
-			public Table<Integer, FieldName, FieldValue> load(NearestNeighborModel nearestNeighborModel){
-				PMML pmml = NearestNeighborModelEvaluator.pmmlCache.getIfPresent(nearestNeighborModel);
-				if(pmml == null){
-					throw new EvaluationException();
-				}
-
-				return parseTrainingInstances(pmml, nearestNeighborModel);
-			}
-		});
-
-	private static final LoadingCache<NearestNeighborModel, Map<Integer, List<FieldValue>>> instanceValueCache = CacheBuilder.newBuilder()
+	private static final Cache<NearestNeighborModel, Map<Integer, List<FieldValue>>> instanceValueCache = CacheBuilder.newBuilder()
 		.weakKeys()
-		.build(new CacheLoader<NearestNeighborModel, Map<Integer, List<FieldValue>>>(){
-
-			@Override
-			public Map<Integer, List<FieldValue>> load(NearestNeighborModel nearestNeighborModel){
-				Map<Integer, List<FieldValue>> result = Maps.newLinkedHashMap();
-
-				Table<Integer, FieldName, FieldValue> table = CacheUtil.getValue(nearestNeighborModel, NearestNeighborModelEvaluator.trainingInstanceCache);
-
-				KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
-
-				Set<Integer> rowKeys = ImmutableSortedSet.copyOf(table.rowKeySet());
-				for(Integer rowKey : rowKeys){
-					List<FieldValue> values = Lists.newArrayList();
-
-					Map<FieldName, FieldValue> rowValues = table.row(rowKey);
-
-					for(KNNInput knnInput : knnInputs){
-						FieldValue value = rowValues.get(knnInput.getField());
-
-						values.add(value);
-					}
-
-					result.put(rowKey, values);
-				}
-
-				return result;
-			}
-		});
-
-	private static final LoadingCache<NearestNeighborModel, Map<Integer, BitSet>> instanceFlagCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<NearestNeighborModel, Map<Integer, BitSet>>(){
-
-			@Override
-			public Map<Integer, BitSet> load(NearestNeighborModel nearestNeighborModel){
-				Map<Integer, BitSet> result = Maps.newLinkedHashMap();
-
-				Map<Integer, List<FieldValue>> valueMap = CacheUtil.getValue(nearestNeighborModel, NearestNeighborModelEvaluator.instanceValueCache);
-
-				Maps.EntryTransformer<Integer, List<FieldValue>, BitSet> transformer = new Maps.EntryTransformer<Integer, List<FieldValue>, BitSet>(){
-
-					@Override
-					public BitSet transformEntry(Integer key, List<FieldValue> value){
-						return MeasureUtil.toBitSet(value);
-					}
-				};
-				result.putAll(Maps.transformEntries(valueMap, transformer));
-
-				return result;
-			}
-		});
+		.build();
 }
