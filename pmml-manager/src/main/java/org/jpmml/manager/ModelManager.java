@@ -82,6 +82,11 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	@Override
+	public List<FieldName> getOrderFields(){
+		return getMiningFields(ModelManager.ORDER_SET);
+	}
+
+	@Override
 	public List<FieldName> getTargetFields(){
 		return getMiningFields(ModelManager.TARGET_SET);
 	}
@@ -219,5 +224,6 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	private static final EnumSet<FieldUsageType> ACTIVE_SET = EnumSet.of(FieldUsageType.ACTIVE);
 	private static final EnumSet<FieldUsageType> GROUP_SET = EnumSet.of(FieldUsageType.GROUP);
+	private static final EnumSet<FieldUsageType> ORDER_SET = EnumSet.of(FieldUsageType.ORDER);
 	private static final EnumSet<FieldUsageType> TARGET_SET = EnumSet.of(FieldUsageType.PREDICTED, FieldUsageType.TARGET);
 }

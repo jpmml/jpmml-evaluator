@@ -34,7 +34,7 @@ import java.util.concurrent.Callable;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldUsageType;
 import org.dmg.pmml.Model;
@@ -65,7 +65,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		List<FieldName> filterFields = getMiningFields(ModelEvaluator.FILTER_SET);
 
 		ModelEvaluationContext context = createContext(null);
-		context.declareAll(arguments, Sets.newLinkedHashSet(filterFields));
+		context.declareAll(arguments, ImmutableSet.copyOf(filterFields));
 
 		return evaluate(context);
 	}

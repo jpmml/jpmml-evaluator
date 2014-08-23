@@ -57,14 +57,19 @@ public interface Consumer extends Serializable {
 	List<FieldName> getActiveFields();
 
 	/**
-	 * Gets the grouping fields of a {@link Model} from its {@link MiningSchema}.
+	 * Gets the group fields of a {@link Model} from its {@link MiningSchema}.
 	 *
-	 * A model should have no more than 1 grouping field.
+	 * A model should have no more than 1 group field.
 	 */
 	List<FieldName> getGroupFields();
 
 	/**
-	 * Gets the dependent (ie. target in supervised training) field(s) of a {@link Model} from its {@link MiningSchema}.
+	 * Gets the order fields of a {@link Model} from its {@link MiningSchema}.
+	 */
+	List<FieldName> getOrderFields();
+
+	/**
+	 * Gets the dependent (ie. target in supervised training) fields of a {@link Model} from its {@link MiningSchema}.
 	 */
 	List<FieldName> getTargetFields();
 
