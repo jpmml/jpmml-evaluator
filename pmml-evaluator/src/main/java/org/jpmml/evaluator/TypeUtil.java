@@ -353,7 +353,7 @@ public class TypeUtil {
 			return (String)value;
 		} else
 
-		if((value instanceof Double) || (value instanceof Float) || (value instanceof Long) || (value instanceof Integer)){
+		if((value instanceof Double) || (value instanceof Float) || (value instanceof Long) || (value instanceof Integer) || (value instanceof Short) || (value instanceof Byte)){
 			Number number = (Number)value;
 
 			return number.toString();
@@ -374,18 +374,24 @@ public class TypeUtil {
 			return (Integer)value;
 		} else
 
+		if((value instanceof Double) || (value instanceof Float)){
+			Number number = (Number)value;
+
+			if(DoubleMath.isMathematicalInteger(number.doubleValue())){
+				return toInt(number.longValue());
+			}
+		} else
+
 		if(value instanceof Long){
 			Long number = (Long)value;
 
 			return toInt(number.longValue());
 		} else
 
-		if((value instanceof Float) || (value instanceof Double)){
+		if((value instanceof Short) || (value instanceof Byte)){
 			Number number = (Number)value;
 
-			if(DoubleMath.isMathematicalInteger(number.doubleValue())){
-				return toInt(number.longValue());
-			}
+			return Integer.valueOf(number.intValue());
 		}
 
 		throw new TypeCheckException(DataType.INTEGER, value);
@@ -413,7 +419,7 @@ public class TypeUtil {
 			return (Float)value;
 		} else
 
-		if((value instanceof Long) || (value instanceof Integer)){
+		if((value instanceof Long) || (value instanceof Integer) || (value instanceof Short) || (value instanceof Byte)){
 			Number number = (Number)value;
 
 			return Float.valueOf(number.floatValue());
@@ -434,7 +440,7 @@ public class TypeUtil {
 			return (Double)value;
 		} else
 
-		if((value instanceof Float) || (value instanceof Long) || (value instanceof Integer)){
+		if((value instanceof Float) || (value instanceof Long) || (value instanceof Integer) || (value instanceof Short) || (value instanceof Byte)){
 			Number number = (Number)value;
 
 			return Double.valueOf(number.doubleValue());

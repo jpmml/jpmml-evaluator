@@ -78,19 +78,28 @@ public class TypeUtilTest {
 	public void cast(){
 		assertEquals("1", TypeUtil.cast(DataType.STRING, "1"));
 
+		assertEquals("1", TypeUtil.cast(DataType.STRING, (byte)1));
+		assertEquals("1", TypeUtil.cast(DataType.STRING, (short)1));
 		assertEquals("1", TypeUtil.cast(DataType.STRING, 1));
+		assertEquals("1", TypeUtil.cast(DataType.STRING, 1l));
 		assertEquals("1.0", TypeUtil.cast(DataType.STRING, 1f)); // XXX
 		assertEquals("1.0", TypeUtil.cast(DataType.STRING, 1.0f));
 		assertEquals("1.0", TypeUtil.cast(DataType.STRING, 1d)); // XXX
 		assertEquals("1.0", TypeUtil.cast(DataType.STRING, 1.0d));
 
+		assertEquals(1, TypeUtil.cast(DataType.INTEGER, (byte)1));
+		assertEquals(1, TypeUtil.cast(DataType.INTEGER, (short)1));
 		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1));
 		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1l));
 
+		assertEquals(1f, TypeUtil.cast(DataType.FLOAT, (byte)1));
+		assertEquals(1f, TypeUtil.cast(DataType.FLOAT, (short)1));
 		assertEquals(1f, TypeUtil.cast(DataType.FLOAT, 1));
 		assertEquals(1f, TypeUtil.cast(DataType.FLOAT, 1l));
 		assertEquals(1f, TypeUtil.cast(DataType.FLOAT, 1f));
 
+		assertEquals(1d, TypeUtil.cast(DataType.DOUBLE, (byte)1));
+		assertEquals(1d, TypeUtil.cast(DataType.DOUBLE, (short)1));
 		assertEquals(1d, TypeUtil.cast(DataType.DOUBLE, 1));
 		assertEquals(1d, TypeUtil.cast(DataType.DOUBLE, 1l));
 		assertEquals(1d, TypeUtil.cast(DataType.DOUBLE, 1f));
