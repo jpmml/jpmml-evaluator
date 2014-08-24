@@ -376,13 +376,13 @@ public class OutputUtil {
 				{
 					return getRuleDataType(outputField, RuleFeatureType.RULE_ID);
 				}
-			case CONFIDENCE:
-				{
-					return getRuleDataType(outputField, RuleFeatureType.CONFIDENCE);
-				}
 			case SUPPORT:
 				{
 					return getRuleDataType(outputField, RuleFeatureType.SUPPORT);
+				}
+			case CONFIDENCE:
+				{
+					return getRuleDataType(outputField, RuleFeatureType.CONFIDENCE);
 				}
 			case LIFT:
 				{
@@ -643,19 +643,19 @@ public class OutputUtil {
 
 				switch(this.rankBasis){
 					case CONFIDENCE:
-						order = Double.compare(left.getConfidence(), right.getConfidence());
+						order = (getConfidence(left)).compareTo(getConfidence(right));
 						break;
 					case SUPPORT:
-						order = Double.compare(left.getSupport(), right.getSupport());
+						order = (getSupport(left)).compareTo(getSupport(right));
 						break;
 					case LIFT:
-						order = (left.getLift()).compareTo(right.getLift());
+						order = (getLift(left)).compareTo(getLift(right));
 						break;
 					case LEVERAGE:
-						order = (left.getLeverage()).compareTo(right.getLeverage());
+						order = (getLeverage(left)).compareTo(getLeverage(right));
 						break;
 					case AFFINITY:
-						order = (left.getAffinity()).compareTo(right.getAffinity());
+						order = (getAffinity(left)).compareTo(getAffinity(right));
 						break;
 					default:
 						throw new UnsupportedFeatureException(outputField, this.rankBasis);
@@ -669,6 +669,35 @@ public class OutputUtil {
 					default:
 						throw new UnsupportedFeatureException(outputField, this.rankOrder);
 				}
+			}
+
+			private Double getConfidence(AssociationRule rule){
+				return checkRuleFeature(rule, rule.getConfidence());
+			}
+
+			private Double getSupport(AssociationRule rule){
+				return checkRuleFeature(rule, rule.getSupport());
+			}
+
+			private Double getLift(AssociationRule rule){
+				return checkRuleFeature(rule, rule.getLift());
+			}
+
+			private Double getLeverage(AssociationRule rule){
+				return checkRuleFeature(rule, rule.getLeverage());
+			}
+
+			private Double getAffinity(AssociationRule rule){
+				return checkRuleFeature(rule, rule.getAffinity());
+			}
+
+			private <V> V checkRuleFeature(AssociationRule rule, V value){
+
+				if(value == null){
+					throw new InvalidFeatureException(rule);
+				}
+
+				return value;
 			}
 		};
 		Collections.sort(associationRules, comparator);
@@ -748,12 +777,10 @@ public class OutputUtil {
 			case RULE:
 			case RULE_ID:
 				return DataType.STRING;
-			case CONFIDENCE:
 			case SUPPORT:
-				return DataType.DOUBLE;
+			case CONFIDENCE:
 			case LIFT:
 			case LEVERAGE:
-				return DataType.FLOAT;
 			case AFFINITY:
 				return DataType.DOUBLE;
 			default:

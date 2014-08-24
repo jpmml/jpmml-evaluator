@@ -48,11 +48,11 @@ public class AssociationOutputTest extends ModelEvaluatorTest {
 
 		checkValue(1d, result, "support");
 		checkValue(1d, result, "confidence");
-		checkValue(1f, result, "lift");
+		checkValue(1d, result, "lift");
 
 		checkDataType(DataType.DOUBLE, evaluator, "support");
 		checkDataType(DataType.DOUBLE, evaluator, "confidence");
-		checkDataType(DataType.FLOAT, evaluator, "lift");
+		checkDataType(DataType.DOUBLE, evaluator, "lift");
 	}
 
 	static
