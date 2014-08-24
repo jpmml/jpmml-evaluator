@@ -35,6 +35,43 @@ public class TypeUtilTest {
 		assertEquals(1, TypeUtil.parse(DataType.INTEGER, "1"));
 		assertEquals(1, TypeUtil.parse(DataType.INTEGER, "1.0"));
 		assertEquals(1, TypeUtil.parse(DataType.INTEGER, "1e+0"));
+		assertEquals(1, TypeUtil.parse(DataType.INTEGER, "1.0e+0"));
+
+		assertEquals(Integer.MIN_VALUE, TypeUtil.parse(DataType.INTEGER, Integer.toString(Integer.MIN_VALUE)));
+
+		try {
+			TypeUtil.parse(DataType.INTEGER, Long.toString(Integer.MIN_VALUE - 1l));
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
+
+		try {
+			TypeUtil.parse(DataType.INTEGER, Double.toString(Integer.MIN_VALUE - 1d));
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
+
+		assertEquals(Integer.MAX_VALUE, TypeUtil.parse(DataType.INTEGER, Integer.toString(Integer.MAX_VALUE)));
+
+		try {
+			TypeUtil.parse(DataType.INTEGER, Long.toString(Integer.MAX_VALUE + 1l));
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
+
+		try {
+			TypeUtil.parse(DataType.INTEGER, Double.toString(Integer.MAX_VALUE + 1d));
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
 	}
 
 	@Test
@@ -78,6 +115,22 @@ public class TypeUtilTest {
 
 			fail();
 		} catch(TypeCheckException tce){
+			// Ignored
+		}
+
+		try {
+			TypeUtil.cast(DataType.INTEGER, Double.valueOf(Integer.MIN_VALUE - 1d));
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
+
+		try {
+			TypeUtil.cast(DataType.INTEGER, Double.valueOf(Integer.MAX_VALUE + 1d));
+
+			fail();
+		} catch(EvaluationException ee){
 			// Ignored
 		}
 	}

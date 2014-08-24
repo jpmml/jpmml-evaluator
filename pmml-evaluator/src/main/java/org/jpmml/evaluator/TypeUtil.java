@@ -105,14 +105,16 @@ public class TypeUtil {
 	private Integer parseInteger(String value){
 
 		try {
-			return Integer.valueOf(value);
+			long result = Long.parseLong(value);
+
+			return toInt(result);
 		} catch(NumberFormatException nfeInteger){
 
 			try {
-				Double result = parseDouble(value);
+				double result = Double.parseDouble(value);
 
 				if(DoubleMath.isMathematicalInteger(result)){
-					return result.intValue();
+					return toInt((long)result);
 				}
 			} catch(NumberFormatException nfeDouble){
 				// Ignored
@@ -376,11 +378,21 @@ public class TypeUtil {
 			Number number = (Number)value;
 
 			if(DoubleMath.isMathematicalInteger(number.doubleValue())){
-				return Integer.valueOf(number.intValue());
+				return toInt(number.longValue());
 			}
 		}
 
 		throw new TypeCheckException(DataType.INTEGER, value);
+	}
+
+	static
+	private int toInt(long value){
+
+		if(value < Integer.MIN_VALUE || value > Integer.MAX_VALUE){
+			throw new EvaluationException();
+		}
+
+		return (int)value;
 	}
 
 	/**
