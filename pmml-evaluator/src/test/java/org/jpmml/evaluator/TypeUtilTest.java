@@ -85,17 +85,37 @@ public class TypeUtilTest {
 		assertEquals("1.0", TypeUtil.cast(DataType.STRING, 1.0d));
 
 		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1));
+		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1l));
 
 		assertEquals(1f, TypeUtil.cast(DataType.FLOAT, 1));
+		assertEquals(1f, TypeUtil.cast(DataType.FLOAT, 1l));
 		assertEquals(1f, TypeUtil.cast(DataType.FLOAT, 1f));
 
 		assertEquals(1d, TypeUtil.cast(DataType.DOUBLE, 1));
+		assertEquals(1d, TypeUtil.cast(DataType.DOUBLE, 1l));
 		assertEquals(1d, TypeUtil.cast(DataType.DOUBLE, 1f));
 		assertEquals(1d, TypeUtil.cast(DataType.DOUBLE, 1d));
 	}
 
 	@Test
 	public void castInteger(){
+
+		try {
+			TypeUtil.cast(DataType.INTEGER, Long.valueOf(Integer.MIN_VALUE - 1l));
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
+
+		try {
+			TypeUtil.cast(DataType.INTEGER, Long.valueOf(Integer.MAX_VALUE + 1l));
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
+
 		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1f));
 		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1.0f));
 

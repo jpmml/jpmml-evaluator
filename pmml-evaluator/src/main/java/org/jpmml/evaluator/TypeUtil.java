@@ -353,7 +353,7 @@ public class TypeUtil {
 			return (String)value;
 		} else
 
-		if((value instanceof Double) || (value instanceof Float) || (value instanceof Integer)){
+		if((value instanceof Double) || (value instanceof Float) || (value instanceof Long) || (value instanceof Integer)){
 			Number number = (Number)value;
 
 			return number.toString();
@@ -372,6 +372,12 @@ public class TypeUtil {
 
 		if(value instanceof Integer){
 			return (Integer)value;
+		} else
+
+		if(value instanceof Long){
+			Long number = (Long)value;
+
+			return toInt(number.longValue());
 		} else
 
 		if((value instanceof Float) || (value instanceof Double)){
@@ -407,7 +413,7 @@ public class TypeUtil {
 			return (Float)value;
 		} else
 
-		if(value instanceof Integer){
+		if((value instanceof Long) || (value instanceof Integer)){
 			Number number = (Number)value;
 
 			return Float.valueOf(number.floatValue());
@@ -428,7 +434,7 @@ public class TypeUtil {
 			return (Double)value;
 		} else
 
-		if((value instanceof Float) || (value instanceof Integer)){
+		if((value instanceof Float) || (value instanceof Long) || (value instanceof Integer)){
 			Number number = (Number)value;
 
 			return Double.valueOf(number.doubleValue());
