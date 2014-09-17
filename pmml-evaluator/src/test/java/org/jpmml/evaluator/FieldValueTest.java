@@ -29,6 +29,19 @@ import static org.junit.Assert.assertTrue;
 public class FieldValueTest {
 
 	@Test
+	public void compareToString(){
+		FieldValue zero = FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, 0);
+
+		assertTrue(zero.compareToString("-1") > 0);
+		assertTrue(zero.compareToString("-1.5") > 0);
+
+		assertTrue(zero.compareToString("0") == 0);
+
+		assertTrue(zero.compareToString("1") < 0);
+		assertTrue(zero.compareToString("1.5") < 0);
+	}
+
+	@Test
 	public void ordinalString(){
 		OrdinalValue loud = new OrdinalValue(DataType.STRING, "loud");
 		OrdinalValue louder = new OrdinalValue(DataType.STRING, "louder");

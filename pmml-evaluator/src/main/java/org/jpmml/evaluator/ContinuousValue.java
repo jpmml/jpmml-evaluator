@@ -31,4 +31,25 @@ public class ContinuousValue extends FieldValue {
 	public OpType getOpType(){
 		return OpType.CONTINUOUS;
 	}
+
+	@Override
+	public int compareToString(String string){
+
+		try {
+			return super.compareToString(string);
+		} catch(NumberFormatException nfeDefault){
+
+			// Comparing an integer value with a floating-point reference value
+			try {
+				return TypeUtil.compare(DataType.DOUBLE, getValue(), TypeUtil.parse(DataType.DOUBLE, string));
+			} catch(NumberFormatException nfeDouble){
+				throw nfeDefault;
+			}
+		}
+	}
+
+	@Override
+	public int compareToValue(FieldValue value){
+		return super.compareToValue(value);
+	}
 }
