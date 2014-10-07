@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
+    <DataDictionary>
+        <DataField name="flag" optype="categorical" dataType="boolean"/>
+        <DataField name="result" optype="categorical" dataType="string">
+            <Value value="0"/>
+            <Value value="1"/>
+        </DataField>
+    </DataDictionary>
+    <TreeModel functionName="classification" splitCharacteristic="binarySplit">
+        <MiningSchema>
+            <MiningField name="flag"/>
+            <MiningField name="result" usageType="target"/>
+        </MiningSchema>
+        <Output>
+            <OutputField name="output"/>
+            <OutputField name="output_probability" feature="probability"/>
+        </Output>
+        <Node id="1">
+            <True/>
+            <Node id="2" score="0">
+                <SimplePredicate field="flag" operator="equal" value="false"/>
+                <ScoreDistribution value="0" recordCount="100.0"/>
+                <ScoreDistribution value="1" recordCount="0.0"/>
+            </Node>
+            <Node id="3" score="1">
+                <SimplePredicate field="flag" operator="equal" value="true"/>
+                <ScoreDistribution value="0" recordCount="0.0"/>
+                <ScoreDistribution value="1" recordCount="100.0"/>
+            </Node>
+        </Node>
+    </TreeModel>
+</PMML>

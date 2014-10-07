@@ -455,14 +455,26 @@ public class OutputUtil {
 	private Double getProbability(Object object, OutputField outputField){
 		HasProbability hasProbability = asResultFeature(HasProbability.class, object);
 
-		return hasProbability.getProbability(outputField.getValue());
+		String value = getCategoryValue(object, outputField);
+
+		return hasProbability.getProbability(value);
+	}
+
+	static
+	private String getCategoryValue(Object object, OutputField outputField){
+		String value = outputField.getValue();
+
+		// "If the attribute value is not specified then the predicted categorical value should be returned as a result"
+		if(value == null){
+			return TypeUtil.format(getPredictedValue(object));
+		}
+
+		return value;
 	}
 
 	static
 	private Double getContinuousResidual(Object object, FieldValue expectedObject){
-		object = getPredictedValue(object);
-
-		Number value = (Number)object;
+		Number value = (Number)getPredictedValue(object);
 		Number expectedValue = (Number)FieldValueUtil.getValue(expectedObject);
 
 		return Double.valueOf(expectedValue.doubleValue() - value.doubleValue());
@@ -472,9 +484,7 @@ public class OutputUtil {
 	public Double getCategoricalResidual(Object object, FieldValue expectedObject){
 		HasProbability hasProbability = asResultFeature(HasProbability.class, object);
 
-		object = getPredictedValue(object);
-
-		String value = TypeUtil.format(object);
+		String value = TypeUtil.format(getPredictedValue(object));
 		String expectedValue = TypeUtil.format(FieldValueUtil.getValue(expectedObject));
 
 		boolean equals = TypeUtil.equals(DataType.STRING, value, expectedValue);
@@ -522,7 +532,9 @@ public class OutputUtil {
 			return getElement(hasAffinityRanking.getAffinityRanking(), rank);
 		}
 
-		return hasAffinity.getAffinity(outputField.getValue());
+		String value = getCategoryValue(object, outputField);
+
+		return hasAffinity.getAffinity(value);
 	}
 
 	static

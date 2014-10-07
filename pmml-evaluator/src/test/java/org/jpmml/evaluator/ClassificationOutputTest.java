@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2014 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -25,21 +25,17 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class OutputTest extends ModelEvaluatorTest {
+public class ClassificationOutputTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> predictions = createArguments("result", 8d);
+		Map<FieldName, ?> arguments = createArguments("flag", false);
 
-		ModelEvaluationContext context = evaluator.createContext(null);
+		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		Map<FieldName, ?> result = OutputUtil.evaluate(predictions, context);
-
-		assertEquals(8d, result.get(new FieldName("RawResult")));
-		assertEquals(35d, result.get(new FieldName("FinalResult")));
-
-		assertEquals("waive", result.get(new FieldName("BusinessDecision")));
+		assertEquals("0", result.get(new FieldName("output")));
+		assertEquals(1d, result.get(new FieldName("output_probability")));
 	}
 }
