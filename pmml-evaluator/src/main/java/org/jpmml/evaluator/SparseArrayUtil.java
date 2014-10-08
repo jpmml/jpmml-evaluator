@@ -34,6 +34,7 @@ import java.util.SortedMap;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.collect.Maps;
 import org.dmg.pmml.IntSparseArray;
 import org.dmg.pmml.RealSparseArray;
@@ -167,7 +168,7 @@ public class SparseArrayUtil {
 
 			@Override
 			public SortedMap<Integer, ? extends Number> load(SparseArray<?> sparseArray){
-				return parse(sparseArray);
+				return ImmutableSortedMap.copyOf(parse(sparseArray));
 			}
 		});
 }

@@ -27,13 +27,13 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.Array;
 import org.jpmml.manager.InvalidFeatureException;
@@ -212,7 +212,7 @@ public class ArrayUtil {
 			result.add(createToken(sb, enableQuotes));
 		}
 
-		return Collections.unmodifiableList(result);
+		return result;
 	}
 
 	static
@@ -238,7 +238,7 @@ public class ArrayUtil {
 
 			@Override
 			public List<String> load(Array array){
-				return parse(array);
+				return ImmutableList.copyOf(parse(array));
 			}
 		});
 }

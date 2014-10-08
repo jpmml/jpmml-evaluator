@@ -20,7 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
-import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import org.dmg.pmml.HasId;
 import org.dmg.pmml.PMMLObject;
 import org.jpmml.manager.InvalidFeatureException;
@@ -31,17 +31,26 @@ public class EntityUtil {
 	}
 
 	static
-	public <E extends PMMLObject & HasId> void put(E entity, BiMap<String, E> map){
-		String id = entity.getId();
-		if(id == null || map.containsKey(id)){
-			throw new InvalidFeatureException(entity);
-		}
+	public <E extends PMMLObject & HasId> ImmutableBiMap<String, E> buildBiMap(List<E> entities){
+		ImmutableBiMap.Builder<String, E> builder = new ImmutableBiMap.Builder<String, E>();
 
-		map.put(id, entity);
+		builder = putAll(entities, builder);
+
+		return builder.build();
 	}
 
 	static
-	public <E extends PMMLObject & HasId> void putAll(List<E> entities, BiMap<String, E> map){
+	public <E extends PMMLObject & HasId> ImmutableBiMap.Builder<String, E> put(E entity, ImmutableBiMap.Builder<String, E> builder){
+		String id = entity.getId();
+		if(id == null){
+			throw new InvalidFeatureException(entity);
+		}
+
+		return builder.put(id, entity);
+	}
+
+	static
+	public <E extends PMMLObject & HasId> ImmutableBiMap.Builder<String, E> putAll(List<E> entities, ImmutableBiMap.Builder<String, E> builder){
 
 		for(int i = 0, j = 1; i < entities.size(); i++, j++){
 			E entity = entities.get(i);
@@ -53,11 +62,9 @@ public class EntityUtil {
 				id = String.valueOf(j);
 			} // End if
 
-			if(map.containsKey(id)){
-				throw new InvalidFeatureException(entity);
-			}
-
-			map.put(id, entity);
+			builder = builder.put(id, entity);
 		}
+
+		return builder;
 	}
 }

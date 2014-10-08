@@ -32,6 +32,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -901,7 +902,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			@Override
 			public BiMap<FieldName, Predictor> load(GeneralRegressionModel generalRegressionModel){
-				return parsePredictorRegistry(generalRegressionModel.getFactorList());
+				return ImmutableBiMap.copyOf(parsePredictorRegistry(generalRegressionModel.getFactorList()));
 			}
 		});
 
@@ -911,7 +912,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			@Override
 			public BiMap<FieldName, Predictor> load(GeneralRegressionModel generalRegressionModel){
-				return parsePredictorRegistry(generalRegressionModel.getCovariateList());
+				return ImmutableBiMap.copyOf(parsePredictorRegistry(generalRegressionModel.getCovariateList()));
 			}
 		});
 
@@ -921,7 +922,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			@Override
 			public Map<String, Map<String, Row>> load(GeneralRegressionModel generalRegressionModel){
-				return parsePPMatrix(generalRegressionModel);
+				// Cannot use Guava's ImmutableMap, because it is null-hostile
+				return Collections.unmodifiableMap(parsePPMatrix(generalRegressionModel));
 			}
 		});
 
@@ -931,7 +933,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			@Override
 			public Map<String, List<PCell>> load(GeneralRegressionModel generalRegressionModel){
-				return parseParamMatrix(generalRegressionModel);
+				// Cannot use Guava's ImmutableMap, because it is null-hostile
+				return Collections.unmodifiableMap(parseParamMatrix(generalRegressionModel));
 			}
 		});
 

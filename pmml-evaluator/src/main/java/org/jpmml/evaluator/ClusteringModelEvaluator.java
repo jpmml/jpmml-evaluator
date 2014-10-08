@@ -27,7 +27,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.CenterFields;
@@ -247,7 +247,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 					result.add(FieldValueUtil.create(value));
 				}
 
-				return result;
+				return ImmutableList.copyOf(result);
 			}
 		});
 
@@ -269,11 +269,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 			@Override
 			public BiMap<String, Cluster> load(ClusteringModel clusteringModel){
-				BiMap<String, Cluster> result = HashBiMap.create();
-
-				EntityUtil.putAll(clusteringModel.getClusters(), result);
-
-				return result;
+				return EntityUtil.buildBiMap(clusteringModel.getClusters());
 			}
 		});
 }

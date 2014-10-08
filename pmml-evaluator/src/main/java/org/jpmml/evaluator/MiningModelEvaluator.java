@@ -29,7 +29,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -610,13 +609,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			@Override
 			public BiMap<String, Segment> load(MiningModel miningModel){
-				BiMap<String, Segment> result = HashBiMap.create();
-
 				Segmentation segmentation = miningModel.getSegmentation();
 
-				EntityUtil.putAll(segmentation.getSegments(), result);
-
-				return result;
+				return EntityUtil.buildBiMap(segmentation.getSegments());
 			}
 		});
 

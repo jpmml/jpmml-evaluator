@@ -37,6 +37,8 @@ import javax.xml.bind.JAXBException;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.math3.util.Precision;
@@ -328,7 +330,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			@Override
 			public List<BayesInput> load(NaiveBayesModel naiveBayesModel){
-				return parseBayesInputs(naiveBayesModel);
+				return ImmutableList.copyOf(parseBayesInputs(naiveBayesModel));
 			}
 		});
 
@@ -338,7 +340,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			@Override
 			public Map<FieldName, Map<String, Double>> load(NaiveBayesModel naiveBayesModel){
-				return calculateCountSums(naiveBayesModel);
+				return ImmutableMap.copyOf(calculateCountSums(naiveBayesModel));
 			}
 		});
 }

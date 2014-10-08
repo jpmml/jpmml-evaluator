@@ -65,7 +65,7 @@ public class InlineTableUtil {
 			rowKey += 1;
 		}
 
-		return Tables.unmodifiableTable(result);
+		return result;
 	}
 
 	static
@@ -109,7 +109,7 @@ public class InlineTableUtil {
 
 			@Override
 			public Table<Integer, String, String> load(InlineTable inlineTable){
-				return parse(inlineTable);
+				return Tables.unmodifiableTable(parse(inlineTable));
 			}
 		});
 }

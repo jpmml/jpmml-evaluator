@@ -34,6 +34,7 @@ import java.util.Map;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.Coefficient;
@@ -365,6 +366,11 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		List<VectorInstance> vectorInstances = vectorDictionary.getVectorInstances();
 		for(VectorInstance vectorInstance : vectorInstances){
+			String id = vectorInstance.getId();
+			if(id == null){
+				throw new InvalidFeatureException(vectorInstance);
+			}
+
 			Array array = vectorInstance.getArray();
 			RealSparseArray sparseArray = vectorInstance.getREALSparseArray();
 
@@ -387,7 +393,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				throw new InvalidFeatureException(vectorInstance);
 			}
 
-			result.put(vectorInstance.getId(), vector);
+			result.put(id, vector);
 		}
 
 		Integer numberOfVectors = vectorDictionary.getNumberOfVectors();
@@ -404,7 +410,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 			@Override
 			public Map<String, double[]> load(SupportVectorMachineModel supportVectorMachineModel){
-				return parseVectorDictionary(supportVectorMachineModel);
+				return ImmutableMap.copyOf(parseVectorDictionary(supportVectorMachineModel));
 			}
 		});
 }

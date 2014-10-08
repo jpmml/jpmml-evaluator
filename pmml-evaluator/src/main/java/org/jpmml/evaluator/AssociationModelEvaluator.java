@@ -30,6 +30,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.AssociationModel;
@@ -258,11 +259,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 			@Override
 			public BiMap<String, AssociationRule> load(AssociationModel associationModel){
-				BiMap<String, AssociationRule> result = HashBiMap.create();
-
-				EntityUtil.putAll(associationModel.getAssociationRules(), result);
-
-				return result;
+				return EntityUtil.buildBiMap(associationModel.getAssociationRules());
 			}
 		});
 
@@ -272,11 +269,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 			@Override
 			public BiMap<String, Item> load(AssociationModel associationModel){
-				BiMap<String, Item> result = HashBiMap.create();
-
-				EntityUtil.putAll(associationModel.getItems(), result);
-
-				return result;
+				return EntityUtil.buildBiMap(associationModel.getItems());
 			}
 		});
 
@@ -286,11 +279,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 			@Override
 			public BiMap<String, Itemset> load(AssociationModel associationModel){
-				BiMap<String, Itemset> result = HashBiMap.create();
-
-				EntityUtil.putAll(associationModel.getItemsets(), result);
-
-				return result;
+				return EntityUtil.buildBiMap(associationModel.getItemsets());
 			}
 		});
 
@@ -300,7 +289,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 			@Override
 			public BiMap<String, String> load(AssociationModel associationModel){
-				return parseItemValues(associationModel);
+				return ImmutableBiMap.copyOf(parseItemValues(associationModel));
 			}
 		});
 }

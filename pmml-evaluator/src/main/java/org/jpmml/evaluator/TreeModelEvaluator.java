@@ -26,7 +26,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
@@ -379,20 +379,22 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 			@Override
 			public BiMap<String, Node> load(TreeModel treeModel){
-				BiMap<String, Node> result = HashBiMap.create();
+				ImmutableBiMap.Builder<String, Node> builder = new ImmutableBiMap.Builder<String, Node>();
 
-				collectNodes(treeModel.getNode(), result);
+				builder = collectNodes(treeModel.getNode(), builder);
 
-				return result;
+				return builder.build();
 			}
 
-			private void collectNodes(Node node, BiMap<String, Node> result){
-				EntityUtil.put(node, result);
+			private ImmutableBiMap.Builder<String, Node> collectNodes(Node node, ImmutableBiMap.Builder<String, Node> builder){
+				builder = EntityUtil.put(node, builder);
 
 				List<Node> children = node.getNodes();
 				for(Node child : children){
-					collectNodes(child, result);
+					builder = collectNodes(child, builder);
 				}
+
+				return builder;
 			}
 		});
 }

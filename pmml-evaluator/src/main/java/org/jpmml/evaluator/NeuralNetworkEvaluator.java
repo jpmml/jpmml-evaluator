@@ -34,7 +34,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Maps;
 import org.dmg.pmml.ActivationFunctionType;
 import org.dmg.pmml.Connection;
@@ -350,7 +350,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 			@Override
 			public BiMap<String, Entity> load(NeuralNetwork neuralNetwork){
-				BiMap<String, Entity> result = HashBiMap.create();
+				ImmutableBiMap.Builder<String, Entity> builder = new ImmutableBiMap.Builder<String, Entity>();
 
 				NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
 				if(neuralInputs == null){
@@ -358,7 +358,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				}
 
 				for(NeuralInput neuralInput : neuralInputs){
-					EntityUtil.put(neuralInput, result);
+					builder = EntityUtil.put(neuralInput, builder);
 				}
 
 				List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
@@ -366,11 +366,11 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 					List<Neuron> neurons = neuralLayer.getNeurons();
 
 					for(Neuron neuron : neurons){
-						EntityUtil.put(neuron, result);
+						builder = EntityUtil.put(neuron, builder);
 					}
 				}
 
-				return result;
+				return builder.build();
 			}
 		});
 }
