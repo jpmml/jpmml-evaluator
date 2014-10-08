@@ -110,7 +110,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		Map<FieldName, Map<String, Double>> fieldCountSums = getFieldCountSums();
 
-		List<BayesInput> bayesInputs = getValue(NaiveBayesModelEvaluator.bayesInputCache);
+		List<BayesInput> bayesInputs = getBayesInputs();
 		for(BayesInput bayesInput : bayesInputs){
 			FieldName name = bayesInput.getFieldName();
 
@@ -236,12 +236,16 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 	}
 
+	protected List<BayesInput> getBayesInputs(){
+		return getValue(NaiveBayesModelEvaluator.bayesInputCache);
+	}
+
 	protected Map<FieldName, Map<String, Double>> getFieldCountSums(){
-		return getValue(NaiveBayesModelEvaluator.countSumCache);
+		return getValue(NaiveBayesModelEvaluator.fieldCountSumCache);
 	}
 
 	static
-	private Map<FieldName, Map<String, Double>> calculateCountSums(NaiveBayesModel naiveBayesModel){
+	private Map<FieldName, Map<String, Double>> calculateFieldCountSums(NaiveBayesModel naiveBayesModel){
 		Map<FieldName, Map<String, Double>> result = Maps.newLinkedHashMap();
 
 		List<BayesInput> bayesInputs = CacheUtil.getValue(naiveBayesModel, NaiveBayesModelEvaluator.bayesInputCache);
@@ -271,9 +275,19 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		BayesInputs bayesInputs = naiveBayesModel.getBayesInputs();
 
-		// The TargetValueStats element is not part of the PMML standard (as of PMML 4.1).
-		// Therefore, every BayesInput element that deals with TargetValueStats element has to be surrounded by an Extension element.
-		// Once the TargetValueStats element is incorporated into the PMML standard then it will be no longer necessary.
+		// The support for continuous fields using the TargetValueStats element was officially introduced in PMML schema version 4.2.
+		// However, it is possible to encounter this feature in older PMML schema version documents (most notably, produced by R's "pmml" package),
+		// where the offending BayesInput element is surrounded by an Extension element:
+		// <BayesInputs>
+		//   <BayesInput>
+		//     <PairCounts/>
+		//   </BayesInput>
+		//   <Extension>
+		//     <BayesInput>
+		//       <TargetValueStats/>
+		//     </BayesInput>
+		//   </Extension>
+		// </BayesInputs>
 		List<Extension> extensions = bayesInputs.getExtensions();
 		for(Extension extension : extensions){
 			BayesInput bayesInput;
@@ -334,13 +348,13 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			}
 		});
 
-	private static final LoadingCache<NaiveBayesModel, Map<FieldName, Map<String, Double>>> countSumCache = CacheBuilder.newBuilder()
+	private static final LoadingCache<NaiveBayesModel, Map<FieldName, Map<String, Double>>> fieldCountSumCache = CacheBuilder.newBuilder()
 		.weakKeys()
 		.build(new CacheLoader<NaiveBayesModel, Map<FieldName, Map<String, Double>>>(){
 
 			@Override
 			public Map<FieldName, Map<String, Double>> load(NaiveBayesModel naiveBayesModel){
-				return ImmutableMap.copyOf(calculateCountSums(naiveBayesModel));
+				return ImmutableMap.copyOf(calculateFieldCountSums(naiveBayesModel));
 			}
 		});
 }
