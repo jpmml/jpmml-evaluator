@@ -167,7 +167,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new UnsupportedFeatureException(dataField, opType);
 		}
 
-		List<String> targetCategories = ArgumentUtil.getValidValues(dataField);
+		List<String> targetCategories = ArgumentUtil.getTargetCategories(dataField);
 		if(targetCategories.size() > 0 && targetCategories.size() < 2){
 			throw new InvalidFeatureException(dataField);
 		}
@@ -211,6 +211,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		if(targetReferenceCategory != null){
+			targetCategories = Lists.newArrayList(targetCategories);
 
 			// Move the element from any position to the last position
 			if(targetCategories.remove(targetReferenceCategory)){

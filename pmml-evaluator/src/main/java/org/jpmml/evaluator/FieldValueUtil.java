@@ -28,6 +28,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.TypeDefinitionField;
+import org.dmg.pmml.Value;
 
 public class FieldValueUtil {
 
@@ -154,16 +155,16 @@ public class FieldValueUtil {
 
 	static
 	private List<?> getOrdering(TypeDefinitionField field, final DataType dataType){
-		List<String> values = ArgumentUtil.getValidValues(field);
+		List<Value> values = ArgumentUtil.getValidValues(field);
 		if(values.isEmpty()){
 			return null;
 		}
 
-		Function<String, Object> function = new Function<String, Object>(){
+		Function<Value, Object> function = new Function<Value, Object>(){
 
 			@Override
-			public Object apply(String string){
-				return TypeUtil.parse(dataType, string);
+			public Object apply(Value value){
+				return TypeUtil.parse(dataType, value.getValue());
 			}
 		};
 

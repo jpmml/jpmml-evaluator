@@ -129,7 +129,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			throw new InvalidFeatureException(regressionModel);
 		}
 
-		List<String> targetCategories = ArgumentUtil.getValidValues(dataField);
+		List<String> targetCategories = ArgumentUtil.getTargetCategories(dataField);
 		if(targetCategories.size() > 0 && targetCategories.size() != regressionTables.size()){
 			throw new InvalidFeatureException(dataField);
 		}

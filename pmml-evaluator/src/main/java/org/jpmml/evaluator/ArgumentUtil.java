@@ -21,6 +21,11 @@ package org.jpmml.evaluator;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.base.Function;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
@@ -355,20 +360,20 @@ public class ArgumentUtil {
 	}
 
 	static
-	public List<String> getValidValues(TypeDefinitionField field){
+	public List<Value> getValidValues(TypeDefinitionField field){
 		List<Value> fieldValues = field.getValues();
 		if(fieldValues.isEmpty()){
 			return Collections.emptyList();
 		}
 
-		List<String> result = Lists.newArrayList();
+		List<Value> result = Lists.newArrayList();
 
 		for(Value fieldValue : fieldValues){
 			Value.Property property = fieldValue.getProperty();
 
 			switch(property){
 				case VALID:
-					result.add(fieldValue.getValue());
+					result.add(fieldValue);
 					break;
 				default:
 					break;
@@ -377,4 +382,29 @@ public class ArgumentUtil {
 
 		return result;
 	}
+
+	static
+	public List<String> getTargetCategories(TypeDefinitionField field){
+		return CacheUtil.getValue(field, ArgumentUtil.cache);
+	}
+
+	private static final LoadingCache<TypeDefinitionField, List<String>> cache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<TypeDefinitionField, List<String>>(){
+
+			@Override
+			public List<String> load(TypeDefinitionField field){
+				List<Value> values = getValidValues(field);
+
+				Function<Value, String> function = new Function<Value, String>(){
+
+					@Override
+					public String apply(Value value){
+						return value.getValue();
+					}
+				};
+
+				return Lists.newArrayList(Iterables.transform(values, function));
+			}
+		});
 }
