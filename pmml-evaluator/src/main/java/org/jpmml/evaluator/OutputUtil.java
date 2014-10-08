@@ -43,6 +43,7 @@ import org.dmg.pmml.ResultFeatureType;
 import org.dmg.pmml.RuleFeatureType;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
+import org.dmg.pmml.Value;
 import org.jpmml.manager.InvalidFeatureException;
 import org.jpmml.manager.UnsupportedFeatureException;
 
@@ -156,7 +157,9 @@ public class OutputUtil {
 					{
 						Target target = modelEvaluator.getTarget(targetField);
 
-						value = getPredictedDisplayValue(value, target);
+						DataField dataField = modelEvaluator.getDataField(targetField);
+
+						value = getPredictedDisplayValue(value, target, dataField);
 					}
 					break;
 				case TRANSFORMED_VALUE:
@@ -430,7 +433,7 @@ public class OutputUtil {
 	}
 
 	static
-	private Object getPredictedDisplayValue(Object object, Target target){
+	private Object getPredictedDisplayValue(Object object, Target target, DataField dataField){
 
 		if(object instanceof HasDisplayValue){
 			HasDisplayValue hasDisplayValue = asResultFeature(HasDisplayValue.class, object);
@@ -444,10 +447,29 @@ public class OutputUtil {
 			TargetValue targetValue = TargetUtil.getTargetValue(target, object);
 
 			if(targetValue != null){
-				return targetValue.getDisplayValue();
+				String displayValue = targetValue.getDisplayValue();
+
+				if(displayValue != null){
+					return displayValue;
+				}
 			}
 		}
 
+		OpType opType = dataField.getOptype();
+
+		if((OpType.CATEGORICAL).equals(opType) || (OpType.ORDINAL).equals(opType)){
+			Value value = ArgumentUtil.getValidValue(dataField, object);
+
+			if(value != null){
+				String displayValue = value.getDisplayValue();
+
+				if(displayValue != null){
+					return displayValue;
+				}
+			}
+		}
+
+		// "If the display value is not specified explicitly, then the raw predicted value is used by default"
 		return object;
 	}
 

@@ -3,8 +3,8 @@
     <DataDictionary>
         <DataField name="flag" optype="categorical" dataType="boolean"/>
         <DataField name="result" optype="categorical" dataType="string">
-            <Value value="0"/>
-            <Value value="1"/>
+            <Value value="0" displayValue="zero"/>
+            <Value value="1" displayValue="one"/>
         </DataField>
     </DataDictionary>
     <TreeModel functionName="classification" splitCharacteristic="binarySplit">
@@ -13,7 +13,8 @@
             <MiningField name="result" usageType="target"/>
         </MiningSchema>
         <Output>
-            <OutputField name="output"/>
+            <OutputField name="output_predictedValue" feature="predictedValue"/>
+            <OutputField name="output_predictedDisplayValue" feature="predictedDisplayValue"/>
             <OutputField name="output_probability" feature="probability"/>
         </Output>
         <Node id="1">

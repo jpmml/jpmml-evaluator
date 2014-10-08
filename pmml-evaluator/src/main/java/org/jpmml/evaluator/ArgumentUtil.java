@@ -329,6 +329,32 @@ public class ArgumentUtil {
 	}
 
 	static
+	public Value getValidValue(TypeDefinitionField field, Object value){
+		List<Value> fieldValues = field.getValues();
+
+		DataType dataType = field.getDataType();
+
+		for(Value fieldValue : fieldValues){
+			Value.Property property = fieldValue.getProperty();
+
+			switch(property){
+				case VALID:
+					{
+						boolean equals = TypeUtil.equals(dataType, value, TypeUtil.parseOrCast(dataType, fieldValue.getValue()));
+						if(equals){
+							return fieldValue;
+						}
+					}
+					break;
+				default:
+					break;
+			}
+		}
+
+		return null;
+	}
+
+	static
 	public List<String> getValidValues(TypeDefinitionField field){
 		List<Value> fieldValues = field.getValues();
 		if(fieldValues.isEmpty()){
