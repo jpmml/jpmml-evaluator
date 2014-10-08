@@ -40,7 +40,7 @@ public class InlineTableUtil {
 
 	static
 	public Table<Integer, String, String> getContent(InlineTable inlineTable){
-		return CacheUtil.getValue(inlineTable, InlineTableUtil.cache);
+		return CacheUtil.getValue(inlineTable, InlineTableUtil.contentCache);
 	}
 
 	static
@@ -103,7 +103,7 @@ public class InlineTableUtil {
 		return null;
 	}
 
-	private static final LoadingCache<InlineTable, Table<Integer, String, String>> cache = CacheBuilder.newBuilder()
+	private static final LoadingCache<InlineTable, Table<Integer, String, String>> contentCache = CacheBuilder.newBuilder()
 		.weakKeys()
 		.build(new CacheLoader<InlineTable, Table<Integer, String, String>>(){
 

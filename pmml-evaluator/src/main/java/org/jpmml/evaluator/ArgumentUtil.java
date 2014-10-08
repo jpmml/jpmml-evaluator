@@ -385,10 +385,10 @@ public class ArgumentUtil {
 
 	static
 	public List<String> getTargetCategories(TypeDefinitionField field){
-		return CacheUtil.getValue(field, ArgumentUtil.cache);
+		return CacheUtil.getValue(field, ArgumentUtil.targetCategoryCache);
 	}
 
-	private static final LoadingCache<TypeDefinitionField, List<String>> cache = CacheBuilder.newBuilder()
+	private static final LoadingCache<TypeDefinitionField, List<String>> targetCategoryCache = CacheBuilder.newBuilder()
 		.weakKeys()
 		.build(new CacheLoader<TypeDefinitionField, List<String>>(){
 

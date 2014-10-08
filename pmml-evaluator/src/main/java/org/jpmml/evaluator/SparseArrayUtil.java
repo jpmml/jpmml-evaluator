@@ -63,7 +63,7 @@ public class SparseArrayUtil {
 	)
 	static
 	public <E extends Number> SortedMap<Integer, E> getContent(SparseArray<E> sparseArray){
-		return (SortedMap<Integer, E>)CacheUtil.getValue(sparseArray, SparseArrayUtil.cache);
+		return (SortedMap<Integer, E>)CacheUtil.getValue(sparseArray, SparseArrayUtil.contentCache);
 	}
 
 	static
@@ -161,7 +161,7 @@ public class SparseArrayUtil {
 		}
 	}
 
-	private static final LoadingCache<SparseArray<?>, SortedMap<Integer, ? extends Number>> cache = CacheBuilder.newBuilder()
+	private static final LoadingCache<SparseArray<?>, SortedMap<Integer, ? extends Number>> contentCache = CacheBuilder.newBuilder()
 		.weakKeys()
 		.build(new CacheLoader<SparseArray<?>, SortedMap<Integer, ? extends Number>>(){
 
@@ -169,6 +169,5 @@ public class SparseArrayUtil {
 			public SortedMap<Integer, ? extends Number> load(SparseArray<?> sparseArray){
 				return parse(sparseArray);
 			}
-
 		});
 }

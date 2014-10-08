@@ -58,7 +58,7 @@ public class ArrayUtil {
 
 	static
 	public List<String> getContent(Array array){
-		return CacheUtil.getValue(array, ArrayUtil.cache);
+		return CacheUtil.getValue(array, ArrayUtil.contentCache);
 	}
 
 	static
@@ -232,7 +232,7 @@ public class ArrayUtil {
 		return result;
 	}
 
-	private static final LoadingCache<Array, List<String>> cache = CacheBuilder.newBuilder()
+	private static final LoadingCache<Array, List<String>> contentCache = CacheBuilder.newBuilder()
 		.weakKeys()
 		.build(new CacheLoader<Array, List<String>>(){
 
