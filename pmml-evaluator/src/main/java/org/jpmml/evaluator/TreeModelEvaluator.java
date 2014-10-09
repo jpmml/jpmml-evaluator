@@ -145,12 +145,8 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			result = handleTrue(root, null, trail, context);
 		} // End if
 
-		if(result != null){
-			Node node = result.getNode();
-
-			if(node != null || result.isFinal()){
-				return node;
-			}
+		if(result != null && result.isFinal()){
+			return result.getNode();
 		}
 
 		NoTrueChildStrategyType noTrueChildStrategy = treeModel.getNoTrueChildStrategy();
@@ -356,7 +352,9 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		 * @return <code>true</code> if the result should be exempt from any post-processing (eg. "no true child strategy" treatment), <code>false</code> otherwise.
 		 */
 		public boolean isFinal(){
-			return false;
+			Node node = getNode();
+
+			return (node != null);
 		}
 
 		public Node getNode(){
