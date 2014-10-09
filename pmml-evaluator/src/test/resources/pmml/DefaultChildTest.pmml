@@ -1,0 +1,895 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
+    <Header copyright="Copyright (c) 2014 al005su" description="RPart Decision Tree Model">
+        <Extension extender="Rattle/PMML" name="user" value="al005su"/>
+        <Application name="Rattle/PMML" version="1.4"/>
+        <Timestamp>2014-10-07 11:15:15</Timestamp>
+    </Header>
+    <DataDictionary numberOfFields="5">
+        <DataField name="Result" optype="categorical" dataType="string">
+            <Value value="Result1"/>
+            <Value value="Result2"/>
+            <Value value="Result3"/>
+        </DataField>
+        <DataField name="Category" optype="categorical" dataType="string">
+            <Value value="Cat1"/>
+            <Value value="Cat2"/>
+            <Value value="Cat3"/>
+            <Value value="Cat4"/>
+        </DataField>
+        <DataField name="Boolean" optype="categorical" dataType="boolean"/>
+        <DataField name="Integer" optype="continuous" dataType="double">
+            <Interval closure="closedClosed" leftMargin="1.0" rightMargin="100.0"/>
+        </DataField>
+        <DataField name="Double" optype="continuous" dataType="double">
+            <Interval closure="closedClosed" leftMargin="1.09" rightMargin="99.8"/>
+        </DataField>
+    </DataDictionary>
+    <TreeModel modelName="RPart_Model" functionName="classification" algorithmName="rpart" missingValueStrategy="defaultChild" splitCharacteristic="binarySplit">
+        <MiningSchema>
+            <MiningField name="Result" usageType="predicted"/>
+            <MiningField name="Category" usageType="active"/>
+            <MiningField name="Boolean" usageType="active"/>
+            <MiningField name="Integer" usageType="active"/>
+            <MiningField name="Double" usageType="active"/>
+        </MiningSchema>
+        <Output>
+            <OutputField name="Predicted_Result" optype="categorical" dataType="string" feature="predictedValue"/>
+            <OutputField name="Probability_Result1" optype="continuous" dataType="double" feature="probability" value="Result1"/>
+            <OutputField name="Probability_Result2" optype="continuous" dataType="double" feature="probability" value="Result2"/>
+            <OutputField name="Probability_Result3" optype="continuous" dataType="double" feature="probability" value="Result3"/>
+        </Output>
+        <Node id="1" score="Result1" recordCount="898" defaultChild="2">
+            <True/>
+            <ScoreDistribution value="Result1" recordCount="304" confidence="0.338530066815145"/>
+            <ScoreDistribution value="Result2" recordCount="290" confidence="0.32293986636971"/>
+            <ScoreDistribution value="Result3" recordCount="304" confidence="0.338530066815145"/>
+            <Node id="2" score="Result1" recordCount="530" defaultChild="4">
+                <SimplePredicate field="Double" operator="greaterOrEqual" value="47.84"/>
+                <ScoreDistribution value="Result1" recordCount="198" confidence="0.373584905660377"/>
+                <ScoreDistribution value="Result2" recordCount="158" confidence="0.29811320754717"/>
+                <ScoreDistribution value="Result3" recordCount="174" confidence="0.328301886792453"/>
+                <Node id="4" score="Result1" recordCount="13">
+                    <SimplePredicate field="Double" operator="lessThan" value="49.72"/>
+                    <ScoreDistribution value="Result1" recordCount="8" confidence="0.615384615384615"/>
+                    <ScoreDistribution value="Result2" recordCount="0" confidence="0"/>
+                    <ScoreDistribution value="Result3" recordCount="5" confidence="0.384615384615385"/>
+                </Node>
+                <Node id="5" score="Result1" recordCount="517" defaultChild="10">
+                    <SimplePredicate field="Double" operator="greaterOrEqual" value="49.72"/>
+                    <ScoreDistribution value="Result1" recordCount="190" confidence="0.367504835589942"/>
+                    <ScoreDistribution value="Result2" recordCount="158" confidence="0.305609284332689"/>
+                    <ScoreDistribution value="Result3" recordCount="169" confidence="0.326885880077369"/>
+                    <Node id="10" score="Result1" recordCount="42">
+                        <SimplePredicate field="Integer" operator="greaterOrEqual" value="90.5"/>
+                        <ScoreDistribution value="Result1" recordCount="21" confidence="0.5"/>
+                        <ScoreDistribution value="Result2" recordCount="15" confidence="0.357142857142857"/>
+                        <ScoreDistribution value="Result3" recordCount="6" confidence="0.142857142857143"/>
+                    </Node>
+                    <Node id="11" score="Result1" recordCount="475" defaultChild="22">
+                        <SimplePredicate field="Integer" operator="lessThan" value="90.5"/>
+                        <ScoreDistribution value="Result1" recordCount="169" confidence="0.355789473684211"/>
+                        <ScoreDistribution value="Result2" recordCount="143" confidence="0.301052631578947"/>
+                        <ScoreDistribution value="Result3" recordCount="163" confidence="0.343157894736842"/>
+                        <Node id="22" score="Result1" recordCount="25">
+                            <SimplePredicate field="Integer" operator="greaterOrEqual" value="86.5"/>
+                            <ScoreDistribution value="Result1" recordCount="13" confidence="0.52"/>
+                            <ScoreDistribution value="Result2" recordCount="3" confidence="0.12"/>
+                            <ScoreDistribution value="Result3" recordCount="9" confidence="0.36"/>
+                        </Node>
+                        <Node id="23" score="Result1" recordCount="450" defaultChild="46">
+                            <SimplePredicate field="Integer" operator="lessThan" value="86.5"/>
+                            <ScoreDistribution value="Result1" recordCount="156" confidence="0.346666666666667"/>
+                            <ScoreDistribution value="Result2" recordCount="140" confidence="0.311111111111111"/>
+                            <ScoreDistribution value="Result3" recordCount="154" confidence="0.342222222222222"/>
+                            <Node id="46" score="Result1" recordCount="293" defaultChild="92">
+                                <SimplePredicate field="Double" operator="greaterOrEqual" value="72.23"/>
+                                <ScoreDistribution value="Result1" recordCount="100" confidence="0.341296928327645"/>
+                                <ScoreDistribution value="Result2" recordCount="98" confidence="0.334470989761092"/>
+                                <ScoreDistribution value="Result3" recordCount="95" confidence="0.324232081911263"/>
+                                <Node id="92" score="Result1" recordCount="42" defaultChild="184">
+                                    <SimplePredicate field="Double" operator="lessThan" value="77.875"/>
+                                    <ScoreDistribution value="Result1" recordCount="19" confidence="0.452380952380952"/>
+                                    <ScoreDistribution value="Result2" recordCount="18" confidence="0.428571428571429"/>
+                                    <ScoreDistribution value="Result3" recordCount="5" confidence="0.119047619047619"/>
+                                    <Node id="184" score="Result1" recordCount="26">
+                                        <CompoundPredicate booleanOperator="surrogate">
+                                            <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                <Array n="2" type="string">&quot;Cat2&quot; &quot;Cat4&quot;</Array>
+                                            </SimpleSetPredicate>
+                                            <SimplePredicate field="Boolean" operator="lessThan" value="0.5"/>
+                                            <SimplePredicate field="Double" operator="lessThan" value="77.18"/>
+                                        </CompoundPredicate>
+                                        <ScoreDistribution value="Result1" recordCount="15" confidence="0.576923076923077"/>
+                                        <ScoreDistribution value="Result2" recordCount="8" confidence="0.307692307692308"/>
+                                        <ScoreDistribution value="Result3" recordCount="3" confidence="0.115384615384615"/>
+                                    </Node>
+                                    <Node id="185" score="Result2" recordCount="16">
+                                        <CompoundPredicate booleanOperator="surrogate">
+                                            <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                <Array n="2" type="string">&quot;Cat1&quot; &quot;Cat3&quot;</Array>
+                                            </SimpleSetPredicate>
+                                            <SimplePredicate field="Boolean" operator="greaterOrEqual" value="0.5"/>
+                                            <SimplePredicate field="Double" operator="greaterOrEqual" value="77.18"/>
+                                        </CompoundPredicate>
+                                        <ScoreDistribution value="Result1" recordCount="4" confidence="0.25"/>
+                                        <ScoreDistribution value="Result2" recordCount="10" confidence="0.625"/>
+                                        <ScoreDistribution value="Result3" recordCount="2" confidence="0.125"/>
+                                    </Node>
+                                </Node>
+                                <Node id="93" score="Result3" recordCount="251" defaultChild="186">
+                                    <SimplePredicate field="Double" operator="greaterOrEqual" value="77.875"/>
+                                    <ScoreDistribution value="Result1" recordCount="81" confidence="0.322709163346614"/>
+                                    <ScoreDistribution value="Result2" recordCount="80" confidence="0.318725099601594"/>
+                                    <ScoreDistribution value="Result3" recordCount="90" confidence="0.358565737051793"/>
+                                    <Node id="186" score="Result1" recordCount="108" defaultChild="372">
+                                        <SimplePredicate field="Boolean" operator="lessThan" value="0.5"/>
+                                        <ScoreDistribution value="Result1" recordCount="42" confidence="0.388888888888889"/>
+                                        <ScoreDistribution value="Result2" recordCount="28" confidence="0.259259259259259"/>
+                                        <ScoreDistribution value="Result3" recordCount="38" confidence="0.351851851851852"/>
+                                        <Node id="372" score="Result1" recordCount="27">
+                                            <SimplePredicate field="Double" operator="lessThan" value="86.46"/>
+                                            <ScoreDistribution value="Result1" recordCount="15" confidence="0.555555555555556"/>
+                                            <ScoreDistribution value="Result2" recordCount="7" confidence="0.259259259259259"/>
+                                            <ScoreDistribution value="Result3" recordCount="5" confidence="0.185185185185185"/>
+                                        </Node>
+                                        <Node id="373" score="Result3" recordCount="81" defaultChild="746">
+                                            <SimplePredicate field="Double" operator="greaterOrEqual" value="86.46"/>
+                                            <ScoreDistribution value="Result1" recordCount="27" confidence="0.333333333333333"/>
+                                            <ScoreDistribution value="Result2" recordCount="21" confidence="0.259259259259259"/>
+                                            <ScoreDistribution value="Result3" recordCount="33" confidence="0.407407407407407"/>
+                                            <Node id="746" score="Result1" recordCount="64" defaultChild="1492">
+                                                <SimplePredicate field="Integer" operator="greaterOrEqual" value="17.5"/>
+                                                <ScoreDistribution value="Result1" recordCount="24" confidence="0.375"/>
+                                                <ScoreDistribution value="Result2" recordCount="19" confidence="0.296875"/>
+                                                <ScoreDistribution value="Result3" recordCount="21" confidence="0.328125"/>
+                                                <Node id="1492" score="Result1" recordCount="53" defaultChild="2984">
+                                                    <SimplePredicate field="Double" operator="greaterOrEqual" value="92.435"/>
+                                                    <ScoreDistribution value="Result1" recordCount="23" confidence="0.433962264150943"/>
+                                                    <ScoreDistribution value="Result2" recordCount="15" confidence="0.283018867924528"/>
+                                                    <ScoreDistribution value="Result3" recordCount="15" confidence="0.283018867924528"/>
+                                                    <Node id="2984" score="Result1" recordCount="46" defaultChild="5968">
+                                                        <SimplePredicate field="Integer" operator="greaterOrEqual" value="26.5"/>
+                                                        <ScoreDistribution value="Result1" recordCount="22" confidence="0.478260869565217"/>
+                                                        <ScoreDistribution value="Result2" recordCount="11" confidence="0.239130434782609"/>
+                                                        <ScoreDistribution value="Result3" recordCount="13" confidence="0.282608695652174"/>
+                                                        <Node id="5968" score="Result1" recordCount="24">
+                                                            <CompoundPredicate booleanOperator="surrogate">
+                                                                <SimplePredicate field="Double" operator="lessThan" value="97.375"/>
+                                                                <SimplePredicate field="Integer" operator="lessThan" value="51"/>
+                                                            </CompoundPredicate>
+                                                            <ScoreDistribution value="Result1" recordCount="14" confidence="0.583333333333333"/>
+                                                            <ScoreDistribution value="Result2" recordCount="6" confidence="0.25"/>
+                                                            <ScoreDistribution value="Result3" recordCount="4" confidence="0.166666666666667"/>
+                                                        </Node>
+                                                        <Node id="5969" score="Result3" recordCount="22">
+                                                            <CompoundPredicate booleanOperator="surrogate">
+                                                                <SimplePredicate field="Double" operator="greaterOrEqual" value="97.375"/>
+                                                                <SimplePredicate field="Integer" operator="greaterOrEqual" value="51"/>
+                                                            </CompoundPredicate>
+                                                            <ScoreDistribution value="Result1" recordCount="8" confidence="0.363636363636364"/>
+                                                            <ScoreDistribution value="Result2" recordCount="5" confidence="0.227272727272727"/>
+                                                            <ScoreDistribution value="Result3" recordCount="9" confidence="0.409090909090909"/>
+                                                        </Node>
+                                                    </Node>
+                                                    <Node id="2985" score="Result2" recordCount="7">
+                                                        <SimplePredicate field="Integer" operator="lessThan" value="26.5"/>
+                                                        <ScoreDistribution value="Result1" recordCount="1" confidence="0.142857142857143"/>
+                                                        <ScoreDistribution value="Result2" recordCount="4" confidence="0.571428571428571"/>
+                                                        <ScoreDistribution value="Result3" recordCount="2" confidence="0.285714285714286"/>
+                                                    </Node>
+                                                </Node>
+                                                <Node id="1493" score="Result3" recordCount="11">
+                                                    <SimplePredicate field="Double" operator="lessThan" value="92.435"/>
+                                                    <ScoreDistribution value="Result1" recordCount="1" confidence="0.0909090909090909"/>
+                                                    <ScoreDistribution value="Result2" recordCount="4" confidence="0.363636363636364"/>
+                                                    <ScoreDistribution value="Result3" recordCount="6" confidence="0.545454545454545"/>
+                                                </Node>
+                                            </Node>
+                                            <Node id="747" score="Result3" recordCount="17">
+                                                <SimplePredicate field="Integer" operator="lessThan" value="17.5"/>
+                                                <ScoreDistribution value="Result1" recordCount="3" confidence="0.176470588235294"/>
+                                                <ScoreDistribution value="Result2" recordCount="2" confidence="0.117647058823529"/>
+                                                <ScoreDistribution value="Result3" recordCount="12" confidence="0.705882352941177"/>
+                                            </Node>
+                                        </Node>
+                                    </Node>
+                                    <Node id="187" score="Result2" recordCount="143" defaultChild="374">
+                                        <SimplePredicate field="Boolean" operator="greaterOrEqual" value="0.5"/>
+                                        <ScoreDistribution value="Result1" recordCount="39" confidence="0.272727272727273"/>
+                                        <ScoreDistribution value="Result2" recordCount="52" confidence="0.363636363636364"/>
+                                        <ScoreDistribution value="Result3" recordCount="52" confidence="0.363636363636364"/>
+                                        <Node id="374" score="Result2" recordCount="113" defaultChild="748">
+                                            <SimplePredicate field="Integer" operator="lessThan" value="64.5"/>
+                                            <ScoreDistribution value="Result1" recordCount="31" confidence="0.274336283185841"/>
+                                            <ScoreDistribution value="Result2" recordCount="48" confidence="0.424778761061947"/>
+                                            <ScoreDistribution value="Result3" recordCount="34" confidence="0.300884955752212"/>
+                                            <Node id="748" score="Result2" recordCount="106" defaultChild="1496">
+                                                <SimplePredicate field="Integer" operator="greaterOrEqual" value="4.5"/>
+                                                <ScoreDistribution value="Result1" recordCount="31" confidence="0.292452830188679"/>
+                                                <ScoreDistribution value="Result2" recordCount="45" confidence="0.424528301886792"/>
+                                                <ScoreDistribution value="Result3" recordCount="30" confidence="0.283018867924528"/>
+                                                <Node id="1496" score="Result1" recordCount="25" defaultChild="2992">
+                                                    <SimplePredicate field="Double" operator="greaterOrEqual" value="90.195"/>
+                                                    <ScoreDistribution value="Result1" recordCount="10" confidence="0.4"/>
+                                                    <ScoreDistribution value="Result2" recordCount="9" confidence="0.36"/>
+                                                    <ScoreDistribution value="Result3" recordCount="6" confidence="0.24"/>
+                                                    <Node id="2992" score="Result1" recordCount="12">
+                                                        <CompoundPredicate booleanOperator="surrogate">
+                                                            <SimplePredicate field="Integer" operator="greaterOrEqual" value="52"/>
+                                                            <SimplePredicate field="Double" operator="lessThan" value="93.14"/>
+                                                        </CompoundPredicate>
+                                                        <ScoreDistribution value="Result1" recordCount="6" confidence="0.5"/>
+                                                        <ScoreDistribution value="Result2" recordCount="4" confidence="0.333333333333333"/>
+                                                        <ScoreDistribution value="Result3" recordCount="2" confidence="0.166666666666667"/>
+                                                    </Node>
+                                                    <Node id="2993" score="Result2" recordCount="13">
+                                                        <CompoundPredicate booleanOperator="surrogate">
+                                                            <SimplePredicate field="Integer" operator="lessThan" value="52"/>
+                                                            <SimplePredicate field="Double" operator="greaterOrEqual" value="93.14"/>
+                                                        </CompoundPredicate>
+                                                        <ScoreDistribution value="Result1" recordCount="4" confidence="0.307692307692308"/>
+                                                        <ScoreDistribution value="Result2" recordCount="5" confidence="0.384615384615385"/>
+                                                        <ScoreDistribution value="Result3" recordCount="4" confidence="0.307692307692308"/>
+                                                    </Node>
+                                                </Node>
+                                                <Node id="1497" score="Result2" recordCount="81" defaultChild="2994">
+                                                    <SimplePredicate field="Double" operator="lessThan" value="90.195"/>
+                                                    <ScoreDistribution value="Result1" recordCount="21" confidence="0.259259259259259"/>
+                                                    <ScoreDistribution value="Result2" recordCount="36" confidence="0.444444444444444"/>
+                                                    <ScoreDistribution value="Result3" recordCount="24" confidence="0.296296296296296"/>
+                                                    <Node id="2994" score="Result2" recordCount="70" defaultChild="5988">
+                                                        <SimplePredicate field="Integer" operator="lessThan" value="55.5"/>
+                                                        <ScoreDistribution value="Result1" recordCount="21" confidence="0.3"/>
+                                                        <ScoreDistribution value="Result2" recordCount="29" confidence="0.414285714285714"/>
+                                                        <ScoreDistribution value="Result3" recordCount="20" confidence="0.285714285714286"/>
+                                                        <Node id="5988" score="Result2" recordCount="17">
+                                                            <SimplePredicate field="Integer" operator="lessThan" value="21.5"/>
+                                                            <ScoreDistribution value="Result1" recordCount="7" confidence="0.411764705882353"/>
+                                                            <ScoreDistribution value="Result2" recordCount="8" confidence="0.470588235294118"/>
+                                                            <ScoreDistribution value="Result3" recordCount="2" confidence="0.117647058823529"/>
+                                                        </Node>
+                                                        <Node id="5989" score="Result2" recordCount="53" defaultChild="11978">
+                                                            <SimplePredicate field="Integer" operator="greaterOrEqual" value="21.5"/>
+                                                            <ScoreDistribution value="Result1" recordCount="14" confidence="0.264150943396226"/>
+                                                            <ScoreDistribution value="Result2" recordCount="21" confidence="0.39622641509434"/>
+                                                            <ScoreDistribution value="Result3" recordCount="18" confidence="0.339622641509434"/>
+                                                            <Node id="11978" score="Result1" recordCount="24">
+                                                                <CompoundPredicate booleanOperator="surrogate">
+                                                                    <SimplePredicate field="Integer" operator="greaterOrEqual" value="44.5"/>
+                                                                    <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                                        <Array n="2" type="string">&quot;Cat1&quot; &quot;Cat4&quot;</Array>
+                                                                    </SimpleSetPredicate>
+                                                                </CompoundPredicate>
+                                                                <ScoreDistribution value="Result1" recordCount="11" confidence="0.458333333333333"/>
+                                                                <ScoreDistribution value="Result2" recordCount="6" confidence="0.25"/>
+                                                                <ScoreDistribution value="Result3" recordCount="7" confidence="0.291666666666667"/>
+                                                            </Node>
+                                                            <Node id="11979" score="Result2" recordCount="29" defaultChild="23958">
+                                                                <CompoundPredicate booleanOperator="surrogate">
+                                                                    <SimplePredicate field="Integer" operator="lessThan" value="44.5"/>
+                                                                    <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                                        <Array n="2" type="string">&quot;Cat2&quot; &quot;Cat3&quot;</Array>
+                                                                    </SimpleSetPredicate>
+                                                                </CompoundPredicate>
+                                                                <ScoreDistribution value="Result1" recordCount="3" confidence="0.103448275862069"/>
+                                                                <ScoreDistribution value="Result2" recordCount="15" confidence="0.517241379310345"/>
+                                                                <ScoreDistribution value="Result3" recordCount="11" confidence="0.379310344827586"/>
+                                                                <Node id="23958" score="Result2" recordCount="21">
+                                                                    <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                                        <Array n="2" type="string">&quot;Cat2&quot; &quot;Cat3&quot;</Array>
+                                                                    </SimpleSetPredicate>
+                                                                    <ScoreDistribution value="Result1" recordCount="2" confidence="0.0952380952380952"/>
+                                                                    <ScoreDistribution value="Result2" recordCount="13" confidence="0.619047619047619"/>
+                                                                    <ScoreDistribution value="Result3" recordCount="6" confidence="0.285714285714286"/>
+                                                                </Node>
+                                                                <Node id="23959" score="Result3" recordCount="8">
+                                                                    <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                                        <Array n="2" type="string">&quot;Cat1&quot; &quot;Cat4&quot;</Array>
+                                                                    </SimpleSetPredicate>
+                                                                    <ScoreDistribution value="Result1" recordCount="1" confidence="0.125"/>
+                                                                    <ScoreDistribution value="Result2" recordCount="2" confidence="0.25"/>
+                                                                    <ScoreDistribution value="Result3" recordCount="5" confidence="0.625"/>
+                                                                </Node>
+                                                            </Node>
+                                                        </Node>
+                                                    </Node>
+                                                    <Node id="2995" score="Result2" recordCount="11">
+                                                        <SimplePredicate field="Integer" operator="greaterOrEqual" value="55.5"/>
+                                                        <ScoreDistribution value="Result1" recordCount="0" confidence="0"/>
+                                                        <ScoreDistribution value="Result2" recordCount="7" confidence="0.636363636363636"/>
+                                                        <ScoreDistribution value="Result3" recordCount="4" confidence="0.363636363636364"/>
+                                                    </Node>
+                                                </Node>
+                                            </Node>
+                                            <Node id="749" score="Result3" recordCount="7">
+                                                <SimplePredicate field="Integer" operator="lessThan" value="4.5"/>
+                                                <ScoreDistribution value="Result1" recordCount="0" confidence="0"/>
+                                                <ScoreDistribution value="Result2" recordCount="3" confidence="0.428571428571429"/>
+                                                <ScoreDistribution value="Result3" recordCount="4" confidence="0.571428571428571"/>
+                                            </Node>
+                                        </Node>
+                                        <Node id="375" score="Result3" recordCount="30">
+                                            <SimplePredicate field="Integer" operator="greaterOrEqual" value="64.5"/>
+                                            <ScoreDistribution value="Result1" recordCount="8" confidence="0.266666666666667"/>
+                                            <ScoreDistribution value="Result2" recordCount="4" confidence="0.133333333333333"/>
+                                            <ScoreDistribution value="Result3" recordCount="18" confidence="0.6"/>
+                                        </Node>
+                                    </Node>
+                                </Node>
+                            </Node>
+                            <Node id="47" score="Result3" recordCount="157" defaultChild="94">
+                                <SimplePredicate field="Double" operator="lessThan" value="72.23"/>
+                                <ScoreDistribution value="Result1" recordCount="56" confidence="0.356687898089172"/>
+                                <ScoreDistribution value="Result2" recordCount="42" confidence="0.267515923566879"/>
+                                <ScoreDistribution value="Result3" recordCount="59" confidence="0.375796178343949"/>
+                                <Node id="94" score="Result1" recordCount="144" defaultChild="188">
+                                    <SimplePredicate field="Double" operator="lessThan" value="70.075"/>
+                                    <ScoreDistribution value="Result1" recordCount="51" confidence="0.354166666666667"/>
+                                    <ScoreDistribution value="Result2" recordCount="42" confidence="0.291666666666667"/>
+                                    <ScoreDistribution value="Result3" recordCount="51" confidence="0.354166666666667"/>
+                                    <Node id="188" score="Result1" recordCount="10">
+                                        <SimplePredicate field="Double" operator="greaterOrEqual" value="68.505"/>
+                                        <ScoreDistribution value="Result1" recordCount="5" confidence="0.5"/>
+                                        <ScoreDistribution value="Result2" recordCount="5" confidence="0.5"/>
+                                        <ScoreDistribution value="Result3" recordCount="0" confidence="0"/>
+                                    </Node>
+                                    <Node id="189" score="Result3" recordCount="134" defaultChild="378">
+                                        <SimplePredicate field="Double" operator="lessThan" value="68.505"/>
+                                        <ScoreDistribution value="Result1" recordCount="46" confidence="0.343283582089552"/>
+                                        <ScoreDistribution value="Result2" recordCount="37" confidence="0.276119402985075"/>
+                                        <ScoreDistribution value="Result3" recordCount="51" confidence="0.380597014925373"/>
+                                        <Node id="378" score="Result1" recordCount="124" defaultChild="756">
+                                            <SimplePredicate field="Double" operator="lessThan" value="67.43"/>
+                                            <ScoreDistribution value="Result1" recordCount="45" confidence="0.362903225806452"/>
+                                            <ScoreDistribution value="Result2" recordCount="35" confidence="0.282258064516129"/>
+                                            <ScoreDistribution value="Result3" recordCount="44" confidence="0.354838709677419"/>
+                                            <Node id="756" score="Result1" recordCount="73" defaultChild="1512">
+                                                <SimplePredicate field="Double" operator="greaterOrEqual" value="56.29"/>
+                                                <ScoreDistribution value="Result1" recordCount="31" confidence="0.424657534246575"/>
+                                                <ScoreDistribution value="Result2" recordCount="17" confidence="0.232876712328767"/>
+                                                <ScoreDistribution value="Result3" recordCount="25" confidence="0.342465753424658"/>
+                                                <Node id="1512" score="Result1" recordCount="12">
+                                                    <SimplePredicate field="Double" operator="lessThan" value="58.26"/>
+                                                    <ScoreDistribution value="Result1" recordCount="7" confidence="0.583333333333333"/>
+                                                    <ScoreDistribution value="Result2" recordCount="0" confidence="0"/>
+                                                    <ScoreDistribution value="Result3" recordCount="5" confidence="0.416666666666667"/>
+                                                </Node>
+                                                <Node id="1513" score="Result1" recordCount="61" defaultChild="3026">
+                                                    <SimplePredicate field="Double" operator="greaterOrEqual" value="58.26"/>
+                                                    <ScoreDistribution value="Result1" recordCount="24" confidence="0.39344262295082"/>
+                                                    <ScoreDistribution value="Result2" recordCount="17" confidence="0.278688524590164"/>
+                                                    <ScoreDistribution value="Result3" recordCount="20" confidence="0.327868852459016"/>
+                                                    <Node id="3026" score="Result1" recordCount="15">
+                                                        <CompoundPredicate booleanOperator="surrogate">
+                                                            <SimplePredicate field="Integer" operator="greaterOrEqual" value="60.5"/>
+                                                            <SimplePredicate field="Double" operator="greaterOrEqual" value="67.07"/>
+                                                        </CompoundPredicate>
+                                                        <ScoreDistribution value="Result1" recordCount="10" confidence="0.666666666666667"/>
+                                                        <ScoreDistribution value="Result2" recordCount="5" confidence="0.333333333333333"/>
+                                                        <ScoreDistribution value="Result3" recordCount="0" confidence="0"/>
+                                                    </Node>
+                                                    <Node id="3027" score="Result3" recordCount="46" defaultChild="6054">
+                                                        <CompoundPredicate booleanOperator="surrogate">
+                                                            <SimplePredicate field="Integer" operator="lessThan" value="60.5"/>
+                                                            <SimplePredicate field="Double" operator="lessThan" value="67.07"/>
+                                                        </CompoundPredicate>
+                                                        <ScoreDistribution value="Result1" recordCount="14" confidence="0.304347826086956"/>
+                                                        <ScoreDistribution value="Result2" recordCount="12" confidence="0.260869565217391"/>
+                                                        <ScoreDistribution value="Result3" recordCount="20" confidence="0.434782608695652"/>
+                                                        <Node id="6054" score="Result1" recordCount="24" defaultChild="12108">
+                                                            <CompoundPredicate booleanOperator="surrogate">
+                                                                <SimplePredicate field="Integer" operator="lessThan" value="37"/>
+                                                                <SimplePredicate field="Double" operator="lessThan" value="64.255"/>
+                                                            </CompoundPredicate>
+                                                            <ScoreDistribution value="Result1" recordCount="10" confidence="0.416666666666667"/>
+                                                            <ScoreDistribution value="Result2" recordCount="4" confidence="0.166666666666667"/>
+                                                            <ScoreDistribution value="Result3" recordCount="10" confidence="0.416666666666667"/>
+                                                            <Node id="12108" score="Result1" recordCount="8">
+                                                                <SimplePredicate field="Double" operator="greaterOrEqual" value="63.345"/>
+                                                                <ScoreDistribution value="Result1" recordCount="6" confidence="0.75"/>
+                                                                <ScoreDistribution value="Result2" recordCount="0" confidence="0"/>
+                                                                <ScoreDistribution value="Result3" recordCount="2" confidence="0.25"/>
+                                                            </Node>
+                                                            <Node id="12109" score="Result3" recordCount="16">
+                                                                <SimplePredicate field="Double" operator="lessThan" value="63.345"/>
+                                                                <ScoreDistribution value="Result1" recordCount="4" confidence="0.25"/>
+                                                                <ScoreDistribution value="Result2" recordCount="4" confidence="0.25"/>
+                                                                <ScoreDistribution value="Result3" recordCount="8" confidence="0.5"/>
+                                                            </Node>
+                                                        </Node>
+                                                        <Node id="6055" score="Result3" recordCount="22">
+                                                            <CompoundPredicate booleanOperator="surrogate">
+                                                                <SimplePredicate field="Integer" operator="greaterOrEqual" value="37"/>
+                                                                <SimplePredicate field="Double" operator="greaterOrEqual" value="64.255"/>
+                                                            </CompoundPredicate>
+                                                            <ScoreDistribution value="Result1" recordCount="4" confidence="0.181818181818182"/>
+                                                            <ScoreDistribution value="Result2" recordCount="8" confidence="0.363636363636364"/>
+                                                            <ScoreDistribution value="Result3" recordCount="10" confidence="0.454545454545455"/>
+                                                        </Node>
+                                                    </Node>
+                                                </Node>
+                                            </Node>
+                                            <Node id="757" score="Result3" recordCount="51" defaultChild="1514">
+                                                <SimplePredicate field="Double" operator="lessThan" value="56.29"/>
+                                                <ScoreDistribution value="Result1" recordCount="14" confidence="0.274509803921569"/>
+                                                <ScoreDistribution value="Result2" recordCount="18" confidence="0.352941176470588"/>
+                                                <ScoreDistribution value="Result3" recordCount="19" confidence="0.372549019607843"/>
+                                                <Node id="1514" score="Result1" recordCount="30" defaultChild="3028">
+                                                    <CompoundPredicate booleanOperator="surrogate">
+                                                        <SimplePredicate field="Integer" operator="greaterOrEqual" value="34.5"/>
+                                                        <SimplePredicate field="Boolean" operator="greaterOrEqual" value="0.5"/>
+                                                    </CompoundPredicate>
+                                                    <ScoreDistribution value="Result1" recordCount="12" confidence="0.4"/>
+                                                    <ScoreDistribution value="Result2" recordCount="7" confidence="0.233333333333333"/>
+                                                    <ScoreDistribution value="Result3" recordCount="11" confidence="0.366666666666667"/>
+                                                    <Node id="3028" score="Result1" recordCount="15">
+                                                        <CompoundPredicate booleanOperator="surrogate">
+                                                            <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                                <Array n="2" type="string">&quot;Cat1&quot; &quot;Cat3&quot;</Array>
+                                                            </SimpleSetPredicate>
+                                                            <SimplePredicate field="Integer" operator="lessThan" value="52.5"/>
+                                                            <SimplePredicate field="Double" operator="greaterOrEqual" value="50.675"/>
+                                                            <SimplePredicate field="Boolean" operator="greaterOrEqual" value="0.5"/>
+                                                        </CompoundPredicate>
+                                                        <ScoreDistribution value="Result1" recordCount="8" confidence="0.533333333333333"/>
+                                                        <ScoreDistribution value="Result2" recordCount="5" confidence="0.333333333333333"/>
+                                                        <ScoreDistribution value="Result3" recordCount="2" confidence="0.133333333333333"/>
+                                                    </Node>
+                                                    <Node id="3029" score="Result3" recordCount="15">
+                                                        <CompoundPredicate booleanOperator="surrogate">
+                                                            <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                                <Array n="2" type="string">&quot;Cat2&quot; &quot;Cat4&quot;</Array>
+                                                            </SimpleSetPredicate>
+                                                            <SimplePredicate field="Integer" operator="greaterOrEqual" value="52.5"/>
+                                                            <SimplePredicate field="Double" operator="lessThan" value="50.675"/>
+                                                            <SimplePredicate field="Boolean" operator="lessThan" value="0.5"/>
+                                                        </CompoundPredicate>
+                                                        <ScoreDistribution value="Result1" recordCount="4" confidence="0.266666666666667"/>
+                                                        <ScoreDistribution value="Result2" recordCount="2" confidence="0.133333333333333"/>
+                                                        <ScoreDistribution value="Result3" recordCount="9" confidence="0.6"/>
+                                                    </Node>
+                                                </Node>
+                                                <Node id="1515" score="Result2" recordCount="21" defaultChild="3030">
+                                                    <CompoundPredicate booleanOperator="surrogate">
+                                                        <SimplePredicate field="Integer" operator="lessThan" value="34.5"/>
+                                                        <SimplePredicate field="Boolean" operator="lessThan" value="0.5"/>
+                                                    </CompoundPredicate>
+                                                    <ScoreDistribution value="Result1" recordCount="2" confidence="0.0952380952380952"/>
+                                                    <ScoreDistribution value="Result2" recordCount="11" confidence="0.523809523809524"/>
+                                                    <ScoreDistribution value="Result3" recordCount="8" confidence="0.380952380952381"/>
+                                                    <Node id="3030" score="Result2" recordCount="12">
+                                                        <CompoundPredicate booleanOperator="surrogate">
+                                                            <SimplePredicate field="Integer" operator="greaterOrEqual" value="15.5"/>
+                                                            <SimplePredicate field="Double" operator="lessThan" value="54.855"/>
+                                                        </CompoundPredicate>
+                                                        <ScoreDistribution value="Result1" recordCount="0" confidence="0"/>
+                                                        <ScoreDistribution value="Result2" recordCount="8" confidence="0.666666666666667"/>
+                                                        <ScoreDistribution value="Result3" recordCount="4" confidence="0.333333333333333"/>
+                                                    </Node>
+                                                    <Node id="3031" score="Result3" recordCount="9">
+                                                        <CompoundPredicate booleanOperator="surrogate">
+                                                            <SimplePredicate field="Integer" operator="lessThan" value="15.5"/>
+                                                            <SimplePredicate field="Double" operator="greaterOrEqual" value="54.855"/>
+                                                        </CompoundPredicate>
+                                                        <ScoreDistribution value="Result1" recordCount="2" confidence="0.222222222222222"/>
+                                                        <ScoreDistribution value="Result2" recordCount="3" confidence="0.333333333333333"/>
+                                                        <ScoreDistribution value="Result3" recordCount="4" confidence="0.444444444444444"/>
+                                                    </Node>
+                                                </Node>
+                                            </Node>
+                                        </Node>
+                                        <Node id="379" score="Result3" recordCount="10">
+                                            <SimplePredicate field="Double" operator="greaterOrEqual" value="67.43"/>
+                                            <ScoreDistribution value="Result1" recordCount="1" confidence="0.1"/>
+                                            <ScoreDistribution value="Result2" recordCount="2" confidence="0.2"/>
+                                            <ScoreDistribution value="Result3" recordCount="7" confidence="0.7"/>
+                                        </Node>
+                                    </Node>
+                                </Node>
+                                <Node id="95" score="Result3" recordCount="13">
+                                    <SimplePredicate field="Double" operator="greaterOrEqual" value="70.075"/>
+                                    <ScoreDistribution value="Result1" recordCount="5" confidence="0.384615384615385"/>
+                                    <ScoreDistribution value="Result2" recordCount="0" confidence="0"/>
+                                    <ScoreDistribution value="Result3" recordCount="8" confidence="0.615384615384615"/>
+                                </Node>
+                            </Node>
+                        </Node>
+                    </Node>
+                </Node>
+            </Node>
+            <Node id="3" score="Result2" recordCount="368" defaultChild="6">
+                <SimplePredicate field="Double" operator="lessThan" value="47.84"/>
+                <ScoreDistribution value="Result1" recordCount="106" confidence="0.28804347826087"/>
+                <ScoreDistribution value="Result2" recordCount="132" confidence="0.358695652173913"/>
+                <ScoreDistribution value="Result3" recordCount="130" confidence="0.353260869565217"/>
+                <Node id="6" score="Result2" recordCount="344" defaultChild="12">
+                    <SimplePredicate field="Integer" operator="lessThan" value="90.5"/>
+                    <ScoreDistribution value="Result1" recordCount="99" confidence="0.287790697674419"/>
+                    <ScoreDistribution value="Result2" recordCount="129" confidence="0.375"/>
+                    <ScoreDistribution value="Result3" recordCount="116" confidence="0.337209302325581"/>
+                    <Node id="12" score="Result2" recordCount="31" defaultChild="24">
+                        <SimplePredicate field="Integer" operator="greaterOrEqual" value="82.5"/>
+                        <ScoreDistribution value="Result1" recordCount="11" confidence="0.354838709677419"/>
+                        <ScoreDistribution value="Result2" recordCount="16" confidence="0.516129032258065"/>
+                        <ScoreDistribution value="Result3" recordCount="4" confidence="0.129032258064516"/>
+                        <Node id="24" score="Result1" recordCount="15">
+                            <CompoundPredicate booleanOperator="surrogate">
+                                <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                    <Array n="2" type="string">&quot;Cat1&quot; &quot;Cat3&quot;</Array>
+                                </SimpleSetPredicate>
+                                <SimplePredicate field="Double" operator="lessThan" value="14.655"/>
+                                <SimplePredicate field="Integer" operator="greaterOrEqual" value="86.5"/>
+                            </CompoundPredicate>
+                            <ScoreDistribution value="Result1" recordCount="8" confidence="0.533333333333333"/>
+                            <ScoreDistribution value="Result2" recordCount="7" confidence="0.466666666666667"/>
+                            <ScoreDistribution value="Result3" recordCount="0" confidence="0"/>
+                        </Node>
+                        <Node id="25" score="Result2" recordCount="16">
+                            <CompoundPredicate booleanOperator="surrogate">
+                                <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                    <Array n="2" type="string">&quot;Cat2&quot; &quot;Cat4&quot;</Array>
+                                </SimpleSetPredicate>
+                                <SimplePredicate field="Double" operator="greaterOrEqual" value="14.655"/>
+                                <SimplePredicate field="Integer" operator="lessThan" value="86.5"/>
+                            </CompoundPredicate>
+                            <ScoreDistribution value="Result1" recordCount="3" confidence="0.1875"/>
+                            <ScoreDistribution value="Result2" recordCount="9" confidence="0.5625"/>
+                            <ScoreDistribution value="Result3" recordCount="4" confidence="0.25"/>
+                        </Node>
+                    </Node>
+                    <Node id="13" score="Result2" recordCount="313" defaultChild="26">
+                        <SimplePredicate field="Integer" operator="lessThan" value="82.5"/>
+                        <ScoreDistribution value="Result1" recordCount="88" confidence="0.281150159744409"/>
+                        <ScoreDistribution value="Result2" recordCount="113" confidence="0.361022364217252"/>
+                        <ScoreDistribution value="Result3" recordCount="112" confidence="0.357827476038339"/>
+                        <Node id="26" score="Result2" recordCount="306" defaultChild="52">
+                            <SimplePredicate field="Integer" operator="greaterOrEqual" value="2.5"/>
+                            <ScoreDistribution value="Result1" recordCount="88" confidence="0.287581699346405"/>
+                            <ScoreDistribution value="Result2" recordCount="110" confidence="0.359477124183006"/>
+                            <ScoreDistribution value="Result3" recordCount="108" confidence="0.352941176470588"/>
+                            <Node id="52" score="Result1" recordCount="8">
+                                <SimplePredicate field="Integer" operator="lessThan" value="4.5"/>
+                                <ScoreDistribution value="Result1" recordCount="4" confidence="0.5"/>
+                                <ScoreDistribution value="Result2" recordCount="4" confidence="0.5"/>
+                                <ScoreDistribution value="Result3" recordCount="0" confidence="0"/>
+                            </Node>
+                            <Node id="53" score="Result3" recordCount="298" defaultChild="106">
+                                <SimplePredicate field="Integer" operator="greaterOrEqual" value="4.5"/>
+                                <ScoreDistribution value="Result1" recordCount="84" confidence="0.281879194630872"/>
+                                <ScoreDistribution value="Result2" recordCount="106" confidence="0.355704697986577"/>
+                                <ScoreDistribution value="Result3" recordCount="108" confidence="0.36241610738255"/>
+                                <Node id="106" score="Result2" recordCount="278" defaultChild="212">
+                                    <SimplePredicate field="Integer" operator="greaterOrEqual" value="8.5"/>
+                                    <ScoreDistribution value="Result1" recordCount="82" confidence="0.294964028776978"/>
+                                    <ScoreDistribution value="Result2" recordCount="98" confidence="0.352517985611511"/>
+                                    <ScoreDistribution value="Result3" recordCount="98" confidence="0.352517985611511"/>
+                                    <Node id="212" score="Result2" recordCount="271" defaultChild="424">
+                                        <SimplePredicate field="Integer" operator="greaterOrEqual" value="10.5"/>
+                                        <ScoreDistribution value="Result1" recordCount="79" confidence="0.291512915129151"/>
+                                        <ScoreDistribution value="Result2" recordCount="98" confidence="0.361623616236162"/>
+                                        <ScoreDistribution value="Result3" recordCount="94" confidence="0.346863468634686"/>
+                                        <Node id="424" score="Result2" recordCount="260" defaultChild="848">
+                                            <SimplePredicate field="Double" operator="greaterOrEqual" value="2.94"/>
+                                            <ScoreDistribution value="Result1" recordCount="78" confidence="0.3"/>
+                                            <ScoreDistribution value="Result2" recordCount="95" confidence="0.365384615384615"/>
+                                            <ScoreDistribution value="Result3" recordCount="87" confidence="0.334615384615385"/>
+                                            <Node id="848" score="Result2" recordCount="231" defaultChild="1696">
+                                                <SimplePredicate field="Integer" operator="lessThan" value="73.5"/>
+                                                <ScoreDistribution value="Result1" recordCount="67" confidence="0.29004329004329"/>
+                                                <ScoreDistribution value="Result2" recordCount="90" confidence="0.38961038961039"/>
+                                                <ScoreDistribution value="Result3" recordCount="74" confidence="0.32034632034632"/>
+                                                <Node id="1696" score="Result1" recordCount="72" defaultChild="3392">
+                                                    <SimplePredicate field="Double" operator="lessThan" value="16.845"/>
+                                                    <ScoreDistribution value="Result1" recordCount="27" confidence="0.375"/>
+                                                    <ScoreDistribution value="Result2" recordCount="27" confidence="0.375"/>
+                                                    <ScoreDistribution value="Result3" recordCount="18" confidence="0.25"/>
+                                                    <Node id="3392" score="Result2" recordCount="56" defaultChild="6784">
+                                                        <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                            <Array n="3" type="string">&quot;Cat1&quot; &quot;Cat2&quot; &quot;Cat3&quot;</Array>
+                                                        </SimpleSetPredicate>
+                                                        <ScoreDistribution value="Result1" recordCount="19" confidence="0.339285714285714"/>
+                                                        <ScoreDistribution value="Result2" recordCount="25" confidence="0.446428571428571"/>
+                                                        <ScoreDistribution value="Result3" recordCount="12" confidence="0.214285714285714"/>
+                                                        <Node id="6784" score="Result2" recordCount="9">
+                                                            <SimplePredicate field="Double" operator="greaterOrEqual" value="14.92"/>
+                                                            <ScoreDistribution value="Result1" recordCount="4" confidence="0.444444444444444"/>
+                                                            <ScoreDistribution value="Result2" recordCount="5" confidence="0.555555555555556"/>
+                                                            <ScoreDistribution value="Result3" recordCount="0" confidence="0"/>
+                                                        </Node>
+                                                        <Node id="6785" score="Result2" recordCount="47" defaultChild="13570">
+                                                            <SimplePredicate field="Double" operator="lessThan" value="14.92"/>
+                                                            <ScoreDistribution value="Result1" recordCount="15" confidence="0.319148936170213"/>
+                                                            <ScoreDistribution value="Result2" recordCount="20" confidence="0.425531914893617"/>
+                                                            <ScoreDistribution value="Result3" recordCount="12" confidence="0.25531914893617"/>
+                                                            <Node id="13570" score="Result1" recordCount="7">
+                                                                <SimplePredicate field="Integer" operator="lessThan" value="23.5"/>
+                                                                <ScoreDistribution value="Result1" recordCount="4" confidence="0.571428571428571"/>
+                                                                <ScoreDistribution value="Result2" recordCount="3" confidence="0.428571428571429"/>
+                                                                <ScoreDistribution value="Result3" recordCount="0" confidence="0"/>
+                                                            </Node>
+                                                            <Node id="13571" score="Result2" recordCount="40" defaultChild="27142">
+                                                                <SimplePredicate field="Integer" operator="greaterOrEqual" value="23.5"/>
+                                                                <ScoreDistribution value="Result1" recordCount="11" confidence="0.275"/>
+                                                                <ScoreDistribution value="Result2" recordCount="17" confidence="0.425"/>
+                                                                <ScoreDistribution value="Result3" recordCount="12" confidence="0.3"/>
+                                                                <Node id="27142" score="Result2" recordCount="26" defaultChild="54284">
+                                                                    <CompoundPredicate booleanOperator="surrogate">
+                                                                        <SimplePredicate field="Integer" operator="greaterOrEqual" value="38.5"/>
+                                                                        <SimplePredicate field="Double" operator="lessThan" value="13.76"/>
+                                                                    </CompoundPredicate>
+                                                                    <ScoreDistribution value="Result1" recordCount="8" confidence="0.307692307692308"/>
+                                                                    <ScoreDistribution value="Result2" recordCount="12" confidence="0.461538461538462"/>
+                                                                    <ScoreDistribution value="Result3" recordCount="6" confidence="0.230769230769231"/>
+                                                                    <Node id="54284" score="Result2" recordCount="15">
+                                                                        <CompoundPredicate booleanOperator="surrogate">
+                                                                            <SimplePredicate field="Boolean" operator="greaterOrEqual" value="0.5"/>
+                                                                            <SimplePredicate field="Double" operator="greaterOrEqual" value="11.735"/>
+                                                                            <SimplePredicate field="Integer" operator="lessThan" value="62.5"/>
+                                                                        </CompoundPredicate>
+                                                                        <ScoreDistribution value="Result1" recordCount="4" confidence="0.266666666666667"/>
+                                                                        <ScoreDistribution value="Result2" recordCount="9" confidence="0.6"/>
+                                                                        <ScoreDistribution value="Result3" recordCount="2" confidence="0.133333333333333"/>
+                                                                    </Node>
+                                                                    <Node id="54285" score="Result1" recordCount="11">
+                                                                        <CompoundPredicate booleanOperator="surrogate">
+                                                                            <SimplePredicate field="Boolean" operator="lessThan" value="0.5"/>
+                                                                            <SimplePredicate field="Double" operator="lessThan" value="11.735"/>
+                                                                            <SimplePredicate field="Integer" operator="greaterOrEqual" value="62.5"/>
+                                                                        </CompoundPredicate>
+                                                                        <ScoreDistribution value="Result1" recordCount="4" confidence="0.363636363636364"/>
+                                                                        <ScoreDistribution value="Result2" recordCount="3" confidence="0.272727272727273"/>
+                                                                        <ScoreDistribution value="Result3" recordCount="4" confidence="0.363636363636364"/>
+                                                                    </Node>
+                                                                </Node>
+                                                                <Node id="27143" score="Result3" recordCount="14">
+                                                                    <CompoundPredicate booleanOperator="surrogate">
+                                                                        <SimplePredicate field="Integer" operator="lessThan" value="38.5"/>
+                                                                        <SimplePredicate field="Double" operator="greaterOrEqual" value="13.76"/>
+                                                                    </CompoundPredicate>
+                                                                    <ScoreDistribution value="Result1" recordCount="3" confidence="0.214285714285714"/>
+                                                                    <ScoreDistribution value="Result2" recordCount="5" confidence="0.357142857142857"/>
+                                                                    <ScoreDistribution value="Result3" recordCount="6" confidence="0.428571428571429"/>
+                                                                </Node>
+                                                            </Node>
+                                                        </Node>
+                                                    </Node>
+                                                    <Node id="3393" score="Result1" recordCount="16">
+                                                        <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                            <Array n="1" type="string">&quot;Cat4&quot;</Array>
+                                                        </SimpleSetPredicate>
+                                                        <ScoreDistribution value="Result1" recordCount="8" confidence="0.5"/>
+                                                        <ScoreDistribution value="Result2" recordCount="2" confidence="0.125"/>
+                                                        <ScoreDistribution value="Result3" recordCount="6" confidence="0.375"/>
+                                                    </Node>
+                                                </Node>
+                                                <Node id="1697" score="Result2" recordCount="159" defaultChild="3394">
+                                                    <SimplePredicate field="Double" operator="greaterOrEqual" value="16.845"/>
+                                                    <ScoreDistribution value="Result1" recordCount="40" confidence="0.251572327044025"/>
+                                                    <ScoreDistribution value="Result2" recordCount="63" confidence="0.39622641509434"/>
+                                                    <ScoreDistribution value="Result3" recordCount="56" confidence="0.352201257861635"/>
+                                                    <Node id="3394" score="Result1" recordCount="75" defaultChild="6788">
+                                                        <CompoundPredicate booleanOperator="surrogate">
+                                                            <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                                <Array n="2" type="string">&quot;Cat1&quot; &quot;Cat3&quot;</Array>
+                                                            </SimpleSetPredicate>
+                                                            <SimplePredicate field="Double" operator="lessThan" value="27.785"/>
+                                                        </CompoundPredicate>
+                                                        <ScoreDistribution value="Result1" recordCount="26" confidence="0.346666666666667"/>
+                                                        <ScoreDistribution value="Result2" recordCount="26" confidence="0.346666666666667"/>
+                                                        <ScoreDistribution value="Result3" recordCount="23" confidence="0.306666666666667"/>
+                                                        <Node id="6788" score="Result1" recordCount="50" defaultChild="13576">
+                                                            <CompoundPredicate booleanOperator="surrogate">
+                                                                <SimplePredicate field="Integer" operator="greaterOrEqual" value="35.5"/>
+                                                                <SimplePredicate field="Double" operator="greaterOrEqual" value="18.785"/>
+                                                            </CompoundPredicate>
+                                                            <ScoreDistribution value="Result1" recordCount="20" confidence="0.4"/>
+                                                            <ScoreDistribution value="Result2" recordCount="18" confidence="0.36"/>
+                                                            <ScoreDistribution value="Result3" recordCount="12" confidence="0.24"/>
+                                                            <Node id="13576" score="Result1" recordCount="30">
+                                                                <CompoundPredicate booleanOperator="surrogate">
+                                                                    <SimplePredicate field="Integer" operator="lessThan" value="59.5"/>
+                                                                    <SimplePredicate field="Double" operator="lessThan" value="39.635"/>
+                                                                </CompoundPredicate>
+                                                                <ScoreDistribution value="Result1" recordCount="14" confidence="0.466666666666667"/>
+                                                                <ScoreDistribution value="Result2" recordCount="12" confidence="0.4"/>
+                                                                <ScoreDistribution value="Result3" recordCount="4" confidence="0.133333333333333"/>
+                                                            </Node>
+                                                            <Node id="13577" score="Result3" recordCount="20" defaultChild="27154">
+                                                                <CompoundPredicate booleanOperator="surrogate">
+                                                                    <SimplePredicate field="Integer" operator="greaterOrEqual" value="59.5"/>
+                                                                    <SimplePredicate field="Double" operator="greaterOrEqual" value="39.635"/>
+                                                                </CompoundPredicate>
+                                                                <ScoreDistribution value="Result1" recordCount="6" confidence="0.3"/>
+                                                                <ScoreDistribution value="Result2" recordCount="6" confidence="0.3"/>
+                                                                <ScoreDistribution value="Result3" recordCount="8" confidence="0.4"/>
+                                                                <Node id="27154" score="Result2" recordCount="8">
+                                                                    <CompoundPredicate booleanOperator="surrogate">
+                                                                        <SimplePredicate field="Integer" operator="greaterOrEqual" value="65.5"/>
+                                                                        <SimplePredicate field="Double" operator="lessThan" value="23.94"/>
+                                                                    </CompoundPredicate>
+                                                                    <ScoreDistribution value="Result1" recordCount="3" confidence="0.375"/>
+                                                                    <ScoreDistribution value="Result2" recordCount="4" confidence="0.5"/>
+                                                                    <ScoreDistribution value="Result3" recordCount="1" confidence="0.125"/>
+                                                                </Node>
+                                                                <Node id="27155" score="Result3" recordCount="12">
+                                                                    <CompoundPredicate booleanOperator="surrogate">
+                                                                        <SimplePredicate field="Integer" operator="lessThan" value="65.5"/>
+                                                                        <SimplePredicate field="Double" operator="greaterOrEqual" value="23.94"/>
+                                                                    </CompoundPredicate>
+                                                                    <ScoreDistribution value="Result1" recordCount="3" confidence="0.25"/>
+                                                                    <ScoreDistribution value="Result2" recordCount="2" confidence="0.166666666666667"/>
+                                                                    <ScoreDistribution value="Result3" recordCount="7" confidence="0.583333333333333"/>
+                                                                </Node>
+                                                            </Node>
+                                                        </Node>
+                                                        <Node id="6789" score="Result3" recordCount="25" defaultChild="13578">
+                                                            <CompoundPredicate booleanOperator="surrogate">
+                                                                <SimplePredicate field="Integer" operator="lessThan" value="35.5"/>
+                                                                <SimplePredicate field="Double" operator="lessThan" value="18.785"/>
+                                                            </CompoundPredicate>
+                                                            <ScoreDistribution value="Result1" recordCount="6" confidence="0.24"/>
+                                                            <ScoreDistribution value="Result2" recordCount="8" confidence="0.32"/>
+                                                            <ScoreDistribution value="Result3" recordCount="11" confidence="0.44"/>
+                                                            <Node id="13578" score="Result2" recordCount="10">
+                                                                <CompoundPredicate booleanOperator="surrogate">
+                                                                    <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                                        <Array n="1" type="string">&quot;Cat3&quot;</Array>
+                                                                    </SimpleSetPredicate>
+                                                                    <SimplePredicate field="Double" operator="lessThan" value="18.59"/>
+                                                                </CompoundPredicate>
+                                                                <ScoreDistribution value="Result1" recordCount="3" confidence="0.3"/>
+                                                                <ScoreDistribution value="Result2" recordCount="5" confidence="0.5"/>
+                                                                <ScoreDistribution value="Result3" recordCount="2" confidence="0.2"/>
+                                                            </Node>
+                                                            <Node id="13579" score="Result3" recordCount="15">
+                                                                <CompoundPredicate booleanOperator="surrogate">
+                                                                    <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                                        <Array n="1" type="string">&quot;Cat1&quot;</Array>
+                                                                    </SimpleSetPredicate>
+                                                                    <SimplePredicate field="Double" operator="greaterOrEqual" value="18.59"/>
+                                                                </CompoundPredicate>
+                                                                <ScoreDistribution value="Result1" recordCount="3" confidence="0.2"/>
+                                                                <ScoreDistribution value="Result2" recordCount="3" confidence="0.2"/>
+                                                                <ScoreDistribution value="Result3" recordCount="9" confidence="0.6"/>
+                                                            </Node>
+                                                        </Node>
+                                                    </Node>
+                                                    <Node id="3395" score="Result2" recordCount="84" defaultChild="6790">
+                                                        <CompoundPredicate booleanOperator="surrogate">
+                                                            <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                                <Array n="2" type="string">&quot;Cat2&quot; &quot;Cat4&quot;</Array>
+                                                            </SimpleSetPredicate>
+                                                            <SimplePredicate field="Double" operator="greaterOrEqual" value="27.785"/>
+                                                        </CompoundPredicate>
+                                                        <ScoreDistribution value="Result1" recordCount="14" confidence="0.166666666666667"/>
+                                                        <ScoreDistribution value="Result2" recordCount="37" confidence="0.44047619047619"/>
+                                                        <ScoreDistribution value="Result3" recordCount="33" confidence="0.392857142857143"/>
+                                                        <Node id="6790" score="Result2" recordCount="16">
+                                                            <CompoundPredicate booleanOperator="surrogate">
+                                                                <SimplePredicate field="Integer" operator="greaterOrEqual" value="64.5"/>
+                                                                <SimplePredicate field="Double" operator="lessThan" value="17.445"/>
+                                                            </CompoundPredicate>
+                                                            <ScoreDistribution value="Result1" recordCount="5" confidence="0.3125"/>
+                                                            <ScoreDistribution value="Result2" recordCount="7" confidence="0.4375"/>
+                                                            <ScoreDistribution value="Result3" recordCount="4" confidence="0.25"/>
+                                                        </Node>
+                                                        <Node id="6791" score="Result2" recordCount="68" defaultChild="13582">
+                                                            <CompoundPredicate booleanOperator="surrogate">
+                                                                <SimplePredicate field="Integer" operator="lessThan" value="64.5"/>
+                                                                <SimplePredicate field="Double" operator="greaterOrEqual" value="17.445"/>
+                                                            </CompoundPredicate>
+                                                            <ScoreDistribution value="Result1" recordCount="9" confidence="0.132352941176471"/>
+                                                            <ScoreDistribution value="Result2" recordCount="30" confidence="0.441176470588235"/>
+                                                            <ScoreDistribution value="Result3" recordCount="29" confidence="0.426470588235294"/>
+                                                            <Node id="13582" score="Result3" recordCount="28">
+                                                                <SimplePredicate field="Double" operator="lessThan" value="33.485"/>
+                                                                <ScoreDistribution value="Result1" recordCount="6" confidence="0.214285714285714"/>
+                                                                <ScoreDistribution value="Result2" recordCount="9" confidence="0.321428571428571"/>
+                                                                <ScoreDistribution value="Result3" recordCount="13" confidence="0.464285714285714"/>
+                                                            </Node>
+                                                            <Node id="13583" score="Result2" recordCount="40">
+                                                                <SimplePredicate field="Double" operator="greaterOrEqual" value="33.485"/>
+                                                                <ScoreDistribution value="Result1" recordCount="3" confidence="0.075"/>
+                                                                <ScoreDistribution value="Result2" recordCount="21" confidence="0.525"/>
+                                                                <ScoreDistribution value="Result3" recordCount="16" confidence="0.4"/>
+                                                            </Node>
+                                                        </Node>
+                                                    </Node>
+                                                </Node>
+                                            </Node>
+                                            <Node id="849" score="Result3" recordCount="29" defaultChild="1698">
+                                                <SimplePredicate field="Integer" operator="greaterOrEqual" value="73.5"/>
+                                                <ScoreDistribution value="Result1" recordCount="11" confidence="0.379310344827586"/>
+                                                <ScoreDistribution value="Result2" recordCount="5" confidence="0.172413793103448"/>
+                                                <ScoreDistribution value="Result3" recordCount="13" confidence="0.448275862068966"/>
+                                                <Node id="1698" score="Result1" recordCount="9">
+                                                    <SimplePredicate field="Integer" operator="lessThan" value="76.5"/>
+                                                    <ScoreDistribution value="Result1" recordCount="6" confidence="0.666666666666667"/>
+                                                    <ScoreDistribution value="Result2" recordCount="0" confidence="0"/>
+                                                    <ScoreDistribution value="Result3" recordCount="3" confidence="0.333333333333333"/>
+                                                </Node>
+                                                <Node id="1699" score="Result3" recordCount="20" defaultChild="3398">
+                                                    <SimplePredicate field="Integer" operator="greaterOrEqual" value="76.5"/>
+                                                    <ScoreDistribution value="Result1" recordCount="5" confidence="0.25"/>
+                                                    <ScoreDistribution value="Result2" recordCount="5" confidence="0.25"/>
+                                                    <ScoreDistribution value="Result3" recordCount="10" confidence="0.5"/>
+                                                    <Node id="3398" score="Result2" recordCount="7">
+                                                        <SimplePredicate field="Integer" operator="lessThan" value="79.5"/>
+                                                        <ScoreDistribution value="Result1" recordCount="2" confidence="0.285714285714286"/>
+                                                        <ScoreDistribution value="Result2" recordCount="3" confidence="0.428571428571429"/>
+                                                        <ScoreDistribution value="Result3" recordCount="2" confidence="0.285714285714286"/>
+                                                    </Node>
+                                                    <Node id="3399" score="Result3" recordCount="13">
+                                                        <SimplePredicate field="Integer" operator="greaterOrEqual" value="79.5"/>
+                                                        <ScoreDistribution value="Result1" recordCount="3" confidence="0.230769230769231"/>
+                                                        <ScoreDistribution value="Result2" recordCount="2" confidence="0.153846153846154"/>
+                                                        <ScoreDistribution value="Result3" recordCount="8" confidence="0.615384615384615"/>
+                                                    </Node>
+                                                </Node>
+                                            </Node>
+                                        </Node>
+                                        <Node id="425" score="Result3" recordCount="11">
+                                            <SimplePredicate field="Double" operator="lessThan" value="2.94"/>
+                                            <ScoreDistribution value="Result1" recordCount="1" confidence="0.0909090909090909"/>
+                                            <ScoreDistribution value="Result2" recordCount="3" confidence="0.272727272727273"/>
+                                            <ScoreDistribution value="Result3" recordCount="7" confidence="0.636363636363636"/>
+                                        </Node>
+                                    </Node>
+                                    <Node id="213" score="Result3" recordCount="7">
+                                        <SimplePredicate field="Integer" operator="lessThan" value="10.5"/>
+                                        <ScoreDistribution value="Result1" recordCount="3" confidence="0.428571428571429"/>
+                                        <ScoreDistribution value="Result2" recordCount="0" confidence="0"/>
+                                        <ScoreDistribution value="Result3" recordCount="4" confidence="0.571428571428571"/>
+                                    </Node>
+                                </Node>
+                                <Node id="107" score="Result3" recordCount="20" defaultChild="214">
+                                    <SimplePredicate field="Integer" operator="lessThan" value="8.5"/>
+                                    <ScoreDistribution value="Result1" recordCount="2" confidence="0.1"/>
+                                    <ScoreDistribution value="Result2" recordCount="8" confidence="0.4"/>
+                                    <ScoreDistribution value="Result3" recordCount="10" confidence="0.5"/>
+                                    <Node id="214" score="Result2" recordCount="8">
+                                        <CompoundPredicate booleanOperator="surrogate">
+                                            <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                <Array n="2" type="string">&quot;Cat3&quot; &quot;Cat4&quot;</Array>
+                                            </SimpleSetPredicate>
+                                            <SimplePredicate field="Double" operator="greaterOrEqual" value="44.27"/>
+                                            <SimplePredicate field="Integer" operator="greaterOrEqual" value="5.5"/>
+                                        </CompoundPredicate>
+                                        <ScoreDistribution value="Result1" recordCount="0" confidence="0"/>
+                                        <ScoreDistribution value="Result2" recordCount="5" confidence="0.625"/>
+                                        <ScoreDistribution value="Result3" recordCount="3" confidence="0.375"/>
+                                    </Node>
+                                    <Node id="215" score="Result3" recordCount="12">
+                                        <CompoundPredicate booleanOperator="surrogate">
+                                            <SimpleSetPredicate field="Category" booleanOperator="isIn">
+                                                <Array n="2" type="string">&quot;Cat1&quot; &quot;Cat2&quot;</Array>
+                                            </SimpleSetPredicate>
+                                            <SimplePredicate field="Double" operator="lessThan" value="44.27"/>
+                                            <SimplePredicate field="Integer" operator="lessThan" value="5.5"/>
+                                        </CompoundPredicate>
+                                        <ScoreDistribution value="Result1" recordCount="2" confidence="0.166666666666667"/>
+                                        <ScoreDistribution value="Result2" recordCount="3" confidence="0.25"/>
+                                        <ScoreDistribution value="Result3" recordCount="7" confidence="0.583333333333333"/>
+                                    </Node>
+                                </Node>
+                            </Node>
+                        </Node>
+                        <Node id="27" score="Result3" recordCount="7">
+                            <SimplePredicate field="Integer" operator="lessThan" value="2.5"/>
+                            <ScoreDistribution value="Result1" recordCount="0" confidence="0"/>
+                            <ScoreDistribution value="Result2" recordCount="3" confidence="0.428571428571429"/>
+                            <ScoreDistribution value="Result3" recordCount="4" confidence="0.571428571428571"/>
+                        </Node>
+                    </Node>
+                </Node>
+                <Node id="7" score="Result3" recordCount="24">
+                    <SimplePredicate field="Integer" operator="greaterOrEqual" value="90.5"/>
+                    <ScoreDistribution value="Result1" recordCount="7" confidence="0.291666666666667"/>
+                    <ScoreDistribution value="Result2" recordCount="3" confidence="0.125"/>
+                    <ScoreDistribution value="Result3" recordCount="14" confidence="0.583333333333333"/>
+                </Node>
+            </Node>
+        </Node>
+    </TreeModel>
+</PMML>

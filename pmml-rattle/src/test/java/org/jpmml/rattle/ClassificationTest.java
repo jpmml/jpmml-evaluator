@@ -20,12 +20,10 @@ package org.jpmml.rattle;
 
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
-import org.jpmml.manager.InvalidFeatureException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class ClassificationTest {
 
@@ -33,13 +31,7 @@ public class ClassificationTest {
 	public void evaluateDecisionTreeIris() throws Exception {
 		Batch batch = new RattleBatch("DecisionTree", "Iris");
 
-		try {
-			BatchUtil.evaluateDefault(batch);
-
-			fail();
-		} catch(InvalidFeatureException ife){
-			// Ignored
-		}
+		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
@@ -96,13 +88,7 @@ public class ClassificationTest {
 	public void evaluateDecisionTreeAudit() throws Exception {
 		Batch batch = new RattleBatch("DecisionTree", "Audit");
 
-		try {
-			BatchUtil.evaluateDefault(batch);
-
-			fail();
-		} catch(InvalidFeatureException ife){
-			// Ignored
-		}
+		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}

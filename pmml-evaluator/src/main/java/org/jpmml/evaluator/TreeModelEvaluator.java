@@ -246,6 +246,13 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			case LAST_PREDICTION:
 				return new FinalNodeResult(trail.getLast());
 			case DEFAULT_CHILD:
+				List<Node> children = node.getNodes();
+
+				if(children.isEmpty()){
+					return null;
+				}
+
+				// "The defaultChild missing value strategy requires the presence of the defaultChild attribute in every non-leaf Node"
 				String defaultChild = node.getDefaultChild();
 				if(defaultChild == null){
 					throw new InvalidFeatureException(node);
