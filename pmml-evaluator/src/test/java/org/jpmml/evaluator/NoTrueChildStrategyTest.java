@@ -35,22 +35,33 @@ import org.dmg.pmml.TreeModel;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void returnNullPrediction() throws Exception {
-		assertEquals(null, getNodeId(NoTrueChildStrategyType.RETURN_NULL_PREDICTION, 0d));
-		assertEquals("T1", getNodeId(NoTrueChildStrategyType.RETURN_NULL_PREDICTION, 1d));
+		NodeClassificationMap targetValue = evaluate(NoTrueChildStrategyType.RETURN_NULL_PREDICTION, 0d);
+
+		assertNull(targetValue);
+
+		targetValue = evaluate(NoTrueChildStrategyType.RETURN_NULL_PREDICTION, 1d);
+
+		assertEquals("T1", targetValue.getEntityId());
 	}
 
 	@Test
 	public void returnLastPrediction() throws Exception {
-		assertEquals("N1", getNodeId(NoTrueChildStrategyType.RETURN_LAST_PREDICTION, 0d));
-		assertEquals("T1", getNodeId(NoTrueChildStrategyType.RETURN_LAST_PREDICTION, 1d));
+		NodeClassificationMap targetValue = evaluate(NoTrueChildStrategyType.RETURN_LAST_PREDICTION, 0d);
+
+		assertEquals("N1", targetValue.getEntityId());
+
+		targetValue = evaluate(NoTrueChildStrategyType.RETURN_LAST_PREDICTION, 1d);
+
+		assertEquals("T1", targetValue.getEntityId());
 	}
 
-	private String getNodeId(NoTrueChildStrategyType noTrueChildStrategy, Double value) throws Exception {
+	private NodeClassificationMap evaluate(NoTrueChildStrategyType noTrueChildStrategy, Double value) throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		TreeModel treeModel = ((TreeModel)evaluator.getModel())
@@ -60,6 +71,6 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		return getEntityId(result.get(evaluator.getTargetField()));
+		return (NodeClassificationMap)result.get(evaluator.getTargetField());
 	}
 }

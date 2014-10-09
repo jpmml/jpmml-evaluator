@@ -46,16 +46,16 @@ public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		InstanceClassificationMap target = (InstanceClassificationMap)result.get(evaluator.getTargetField());
+		InstanceClassificationMap targetValue = (InstanceClassificationMap)result.get(evaluator.getTargetField());
 
 		try {
-			target.getResult();
+			targetValue.getResult();
 
 			fail();
 		} catch(EvaluationException ee){
 		}
 
-		assertEquals(Arrays.asList("3", "1", "4"), (target.getEntityIdRanking()).subList(0, 3));
+		assertEquals(Arrays.asList("3", "1", "4"), (targetValue.getEntityIdRanking()).subList(0, 3));
 
 		assertEquals("3", result.get(new FieldName("neighbor1")));
 		assertEquals("1", result.get(new FieldName("neighbor2")));

@@ -35,13 +35,13 @@ public class EmptyTargetCategoryTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		ProbabilityClassificationMap<?> classificationMap = (ProbabilityClassificationMap<?>)result.get(evaluator.getTargetField());
+		ProbabilityClassificationMap<?> targetValue = (ProbabilityClassificationMap<?>)result.get(evaluator.getTargetField());
 
-		assertEquals("yes", classificationMap.getResult());
+		assertEquals("yes", targetValue.getResult());
 
 		double value = (3d * -28.6617384d + 3d * -20.42027426d + 125.56601826d);
 
-		assertEquals(Math.exp(0d) / (Math.exp(0d) + Math.exp(value)), classificationMap.getProbability("yes"), 1.e-8);
-		assertEquals(Math.exp(value) / (Math.exp(0d) + Math.exp(value)), classificationMap.getProbability("no"), 1.e-8);
+		assertEquals(Math.exp(0d) / (Math.exp(0d) + Math.exp(value)), targetValue.getProbability("yes"), 1.e-8);
+		assertEquals(Math.exp(value) / (Math.exp(0d) + Math.exp(value)), targetValue.getProbability("no"), 1.e-8);
 	}
 }

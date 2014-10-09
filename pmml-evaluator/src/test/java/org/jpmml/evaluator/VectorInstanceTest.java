@@ -52,9 +52,7 @@ public class VectorInstanceTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		FieldName targetField = evaluator.getTargetField();
-
-		Number targetValue = (Number)result.get(targetField);
+		Number targetValue = (Number)result.get(evaluator.getTargetField());
 
 		return targetValue.doubleValue();
 	}

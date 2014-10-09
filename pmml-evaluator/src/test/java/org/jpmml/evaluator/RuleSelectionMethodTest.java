@@ -52,9 +52,9 @@ public class RuleSelectionMethodTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		RuleClassificationMap classificationMap = (RuleClassificationMap)result.get(evaluator.getTargetField());
+		RuleClassificationMap targetValue = (RuleClassificationMap)result.get(evaluator.getTargetField());
 
-		return classificationMap.getEntityId();
+		return targetValue.getEntityId();
 	}
 
 	public String getScore(Map<FieldName, ?> arguments) throws Exception {
@@ -62,8 +62,8 @@ public class RuleSelectionMethodTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		RuleClassificationMap classificationMap = (RuleClassificationMap)result.get(evaluator.getTargetField());
+		RuleClassificationMap targetValue = (RuleClassificationMap)result.get(evaluator.getTargetField());
 
-		return classificationMap.getResult();
+		return targetValue.getResult();
 	}
 }

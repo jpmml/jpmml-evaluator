@@ -37,16 +37,4 @@ public class ModelEvaluatorTest extends PMMLManagerTest {
 			is.close();
 		}
 	}
-
-	static
-	public String getEntityId(Object object){
-
-		if(object instanceof HasEntityId){
-			HasEntityId hasEntityId = (HasEntityId)object;
-
-			return hasEntityId.getEntityId();
-		}
-
-		return null;
-	}
 }
