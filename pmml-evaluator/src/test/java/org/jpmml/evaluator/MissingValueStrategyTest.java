@@ -95,9 +95,9 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 	}
 
 	private NodeClassificationMap evaluate(MissingValueStrategyType missingValueStrategy, Double missingValuePenalty, Map<FieldName, ?> arguments) throws Exception {
-		ModelEvaluator<?> evaluator = createModelEvaluator();
+		TreeModelEvaluator evaluator = (TreeModelEvaluator)createModelEvaluator();
 
-		TreeModel treeModel = ((TreeModel)evaluator.getModel())
+		TreeModel treeModel = evaluator.getModel()
 			.withMissingValueStrategy(missingValueStrategy)
 			.withMissingValuePenalty(missingValuePenalty);
 

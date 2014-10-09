@@ -39,9 +39,9 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		ModelEvaluator<?> evaluator = createModelEvaluator();
+		NearestNeighborModelEvaluator evaluator = (NearestNeighborModelEvaluator)createModelEvaluator();
 
-		NearestNeighborModel nearestNeighborModel = ((NearestNeighborModel)evaluator.getModel())
+		NearestNeighborModel nearestNeighborModel = evaluator.getModel()
 			.withNumberOfNeighbors(1); // XXX
 
 		Map<FieldName, ?> arguments = createArguments("petal length", 4.7d, "petal width", 1.4d, "sepal length", 7d, "sepal width", 3.2d);

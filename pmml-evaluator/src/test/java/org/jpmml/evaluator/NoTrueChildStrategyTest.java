@@ -62,9 +62,9 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 	}
 
 	private NodeClassificationMap evaluate(NoTrueChildStrategyType noTrueChildStrategy, Double value) throws Exception {
-		ModelEvaluator<?> evaluator = createModelEvaluator();
+		TreeModelEvaluator evaluator = (TreeModelEvaluator)createModelEvaluator();
 
-		TreeModel treeModel = ((TreeModel)evaluator.getModel())
+		TreeModel treeModel = evaluator.getModel()
 			.withNoTrueChildStrategy(noTrueChildStrategy);
 
 		Map<FieldName, ?> arguments = createArguments("probability", value);

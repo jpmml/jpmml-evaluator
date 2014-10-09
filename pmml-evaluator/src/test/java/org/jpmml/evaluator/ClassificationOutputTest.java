@@ -29,7 +29,7 @@ public class ClassificationOutputTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		ModelEvaluator<?> evaluator = createModelEvaluator();
+		Evaluator evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("flag", false);
 

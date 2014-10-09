@@ -32,7 +32,7 @@ public class SelectAllTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		ModelEvaluator<?> evaluator = createModelEvaluator();
+		Evaluator evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("sepal_length", 5.1d, "sepal_width", 3.5d, "petal_length", 1.4d, "petal_width", 0.2d);
 

@@ -29,16 +29,15 @@ public class AlternateBinaryTargetCategoryTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		Evaluator evaluator = createModelEvaluator();
-
-		assertEquals("no", evaluate(evaluator, 0d, 0d));
-		assertEquals("yes", evaluate(evaluator, 0d, 1d));
-		assertEquals("yes", evaluate(evaluator, 1d, 0d));
-		assertEquals("no", evaluate(evaluator, 1d, 1d));
+		assertEquals("no", evaluate(0d, 0d));
+		assertEquals("yes", evaluate(0d, 1d));
+		assertEquals("yes", evaluate(1d, 0d));
+		assertEquals("no", evaluate(1d, 1d));
 	}
 
-	static
-	private String evaluate(Evaluator evaluator, double x1, double x2){
+	private String evaluate(double x1, double x2) throws Exception {
+		Evaluator evaluator = createModelEvaluator();
+
 		Map<FieldName, ?> arguments = createArguments("x1", x1, "x2", x2);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);

@@ -31,9 +31,9 @@ abstract
 public class RuleSelectionMethodTest extends ModelEvaluatorTest {
 
 	public String getRuleId(RuleSelectionMethod.Criterion criterion, Map<FieldName, ?> arguments) throws Exception {
-		ModelEvaluator<?> evaluator = createModelEvaluator();
+		RuleSetModelEvaluator evaluator = (RuleSetModelEvaluator)createModelEvaluator();
 
-		RuleSetModel ruleSetModel = (RuleSetModel)evaluator.getModel();
+		RuleSetModel ruleSetModel = evaluator.getModel();
 
 		RuleSet ruleSet = ruleSetModel.getRuleSet();
 
