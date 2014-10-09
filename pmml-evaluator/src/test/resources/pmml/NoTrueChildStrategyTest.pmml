@@ -10,10 +10,13 @@
             <MiningField name="probability"/>
             <MiningField name="score" usageType="predicted"/>
         </MiningSchema>
-        <Node id="N1" score="0">
+        <Node id="1">
             <True/>
-            <Node id="T1" score="1">
+            <Node id="2" score="0.33">
                 <SimplePredicate field="probability" operator="greaterThan" value="0.33"/>
+                <Node id="3" score="0.66">
+                    <SimplePredicate field="probability" operator="greaterThan" value="0.66"/>
+                </Node>
             </Node>
         </Node>
     </TreeModel>

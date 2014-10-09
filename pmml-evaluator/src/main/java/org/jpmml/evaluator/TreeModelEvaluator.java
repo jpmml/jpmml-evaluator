@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Map;
 
@@ -133,9 +133,9 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			throw new InvalidFeatureException(treeModel);
 		}
 
-		NodeResult result = null;
-
 		Boolean status = evaluateNode(root, trail, context);
+
+		NodeResult result = null;
 
 		if(status == null){
 			result = handleMissingValue(root, trail, context);
@@ -158,7 +158,15 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			case RETURN_NULL_PREDICTION:
 				return null;
 			case RETURN_LAST_PREDICTION:
-				return trail.getLast();
+				if(trail.size() > 0){
+					Node parent = trail.getFirst();
+
+					// "Return the parent Node only if it specifies a score attribute"
+					if(parent.getScore() != null){
+						return parent;
+					}
+				}
+				return null;
 			default:
 				throw new UnsupportedFeatureException(treeModel, noTrueChildStrategy);
 		}
@@ -192,6 +200,9 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 	}
 
+	/**
+	 * @param id The {@link Node#getId id} of the first child Node to consider. If <code>null</code>, all child Nodes are considered.
+	 */
 	private NodeResult handleTrue(Node node, String id, Trail trail, EvaluationContext context){
 		List<Node> children = node.getNodes();
 
@@ -200,7 +211,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			return new NodeResult(node);
 		}
 
-		trail.add(node);
+		trail.push(node);
 
 		for(Node child : children){
 
@@ -244,7 +255,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			case NULL_PREDICTION:
 				return new FinalNodeResult(null);
 			case LAST_PREDICTION:
-				return new FinalNodeResult(trail.getLast());
+				return new FinalNodeResult(trail.getFirst());
 			case DEFAULT_CHILD:
 				List<Node> children = node.getNodes();
 
@@ -310,22 +321,12 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	}
 
 	static
-	private class Trail extends ArrayList<Node> {
+	private class Trail extends ArrayDeque<Node> {
 
 		private int missingLevels = 0;
 
 
 		public Trail(){
-		}
-
-		public Node getLast(){
-			int size = size();
-
-			if(size == 0){
-				throw new EvaluationException();
-			}
-
-			return get(size - 1);
 		}
 
 		public void addMissingLevel(){

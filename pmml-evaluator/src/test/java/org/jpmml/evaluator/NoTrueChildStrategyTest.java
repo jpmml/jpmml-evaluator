@@ -45,20 +45,29 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 
 		assertNull(targetValue);
 
+		targetValue = evaluate(NoTrueChildStrategyType.RETURN_NULL_PREDICTION, 0.5d);
+
+		assertNull(targetValue);
+
 		targetValue = evaluate(NoTrueChildStrategyType.RETURN_NULL_PREDICTION, 1d);
 
-		assertEquals("T1", targetValue.getEntityId());
+		assertEquals("3", targetValue.getEntityId());
 	}
 
 	@Test
 	public void returnLastPrediction() throws Exception {
 		NodeClassificationMap targetValue = evaluate(NoTrueChildStrategyType.RETURN_LAST_PREDICTION, 0d);
 
-		assertEquals("N1", targetValue.getEntityId());
+		// The root Node evaluates to true, but it cannot be returned as a result, because it does not specify a score attribute
+		assertNull(targetValue);
+
+		targetValue = evaluate(NoTrueChildStrategyType.RETURN_LAST_PREDICTION, 0.5d);
+
+		assertEquals("2", targetValue.getEntityId());
 
 		targetValue = evaluate(NoTrueChildStrategyType.RETURN_LAST_PREDICTION, 1d);
 
-		assertEquals("T1", targetValue.getEntityId());
+		assertEquals("3", targetValue.getEntityId());
 	}
 
 	private NodeClassificationMap evaluate(NoTrueChildStrategyType noTrueChildStrategy, Double value) throws Exception {
