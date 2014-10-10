@@ -142,7 +142,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		} else
 
 		if(status.booleanValue()){
-			result = handleTrue(root, null, trail, context);
+			result = handleTrue(root, trail, context);
 		} // End if
 
 		if(result != null && result.isFinal()){
@@ -196,10 +196,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 	}
 
-	/**
-	 * @param id The {@link Node#getId id} of the first child Node to consider. If <code>null</code>, all child Nodes are considered.
-	 */
-	private NodeResult handleTrue(Node node, String id, Trail trail, EvaluationContext context){
+	private NodeResult handleTrue(Node node, Trail trail, EvaluationContext context){
 		List<Node> children = node.getNodes();
 
 		// A "true" leaf node
@@ -208,6 +205,34 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 
 		trail.push(node);
+
+		return handleChildren(node, null, trail, context);
+	}
+
+	private NodeResult handleDefaultChild(Node node, Trail trail, EvaluationContext context){
+		List<Node> children = node.getNodes();
+
+		// A leaf node
+		if(children.isEmpty()){
+			return null;
+		}
+
+		// "The defaultChild missing value strategy requires the presence of the defaultChild attribute in every non-leaf Node"
+		String defaultChild = node.getDefaultChild();
+		if(defaultChild == null){
+			throw new InvalidFeatureException(node);
+		}
+
+		trail.addMissingLevel();
+
+		return handleChildren(node, defaultChild, trail, context);
+	}
+
+	/**
+	 * @param id The {@link Node#getId id} of the first child Node to consider. If <code>null</code>, all child Nodes are considered.
+	 */
+	private NodeResult handleChildren(Node node, String id, Trail trail, EvaluationContext context){
+		List<Node> children = node.getNodes();
 
 		for(Node child : children){
 
@@ -231,7 +256,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			} else
 
 			if(status.booleanValue()){
-				return handleTrue(child, null, trail, context);
+				return handleTrue(child, trail, context);
 			}
 		}
 
@@ -253,21 +278,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			case LAST_PREDICTION:
 				return new FinalNodeResult(trail.getFirst());
 			case DEFAULT_CHILD:
-				List<Node> children = node.getNodes();
-
-				if(children.isEmpty()){
-					return null;
-				}
-
-				// "The defaultChild missing value strategy requires the presence of the defaultChild attribute in every non-leaf Node"
-				String defaultChild = node.getDefaultChild();
-				if(defaultChild == null){
-					throw new InvalidFeatureException(node);
-				}
-
-				trail.addMissingLevel();
-
-				return handleTrue(node, defaultChild, trail, context);
+				return handleDefaultChild(node, trail, context);
 			case NONE:
 				return null;
 			default:
