@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
@@ -40,6 +41,13 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 	}
 
 	@Test
+	public void nullPredictionDefault() throws Exception {
+		NodeClassificationMap targetValue = evaluate(MissingValueStrategyType.NULL_PREDICTION, Collections.<FieldName, FieldValue>emptyMap());
+
+		assertNull(targetValue);
+	}
+
+	@Test
 	public void lastPrediction() throws Exception {
 		Map<FieldName, ?> arguments = createArguments("outlook", "sunny", "temperature", null, "humidity", null);
 
@@ -53,7 +61,18 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 	}
 
 	@Test
-	public void defaultChildSingle() throws Exception {
+	public void lastPredictionDefault() throws Exception {
+		NodeClassificationMap targetValue = evaluate(MissingValueStrategyType.LAST_PREDICTION, Collections.<FieldName, FieldValue>emptyMap());
+
+		assertEquals("1", targetValue.getEntityId());
+
+		assertEquals((Double)(60d / 100d), targetValue.getProbability("will play"));
+		assertEquals((Double)(30d / 100d), targetValue.getProbability("may play"));
+		assertEquals((Double)(10d / 100d), targetValue.getProbability("no play"));
+	}
+
+	@Test
+	public void defaultChildSinglePenalty() throws Exception {
 		Map<FieldName, ?> arguments = createArguments("outlook", null, "temperature", 40d, "humidity", 70d);
 
 		NodeClassificationMap targetValue = evaluate(MissingValueStrategyType.DEFAULT_CHILD, 0.8d, arguments);
@@ -72,7 +91,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 	}
 
 	@Test
-	public void defaultChildMultiple() throws Exception {
+	public void defaultChildMultiplePenalties() throws Exception {
 		Map<FieldName, ?> arguments = createArguments("outlook", null, "temperature", null, "humidity", 70d);
 
 		NodeClassificationMap targetValue = evaluate(MissingValueStrategyType.DEFAULT_CHILD, 0.8d, arguments);
