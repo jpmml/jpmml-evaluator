@@ -311,12 +311,12 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		} // End for
 
 		for(ScoreDistribution scoreDistribution : scoreDistributions){
-			Double value = scoreDistribution.getProbability();
-			if(value == null){
-				value = (scoreDistribution.getRecordCount() / sum);
+			Double probability = scoreDistribution.getProbability();
+			if(probability == null){
+				probability = (scoreDistribution.getRecordCount() / sum);
 			}
 
-			result.put(scoreDistribution.getValue(), value);
+			result.put(scoreDistribution.getValue(), probability);
 
 			Double confidence = scoreDistribution.getConfidence();
 			if(confidence != null){

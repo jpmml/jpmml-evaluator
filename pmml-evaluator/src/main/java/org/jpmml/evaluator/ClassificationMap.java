@@ -243,6 +243,12 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 		 */
 		@Override
 		public int compare(Double left, Double right){
+
+			// The behaviour of missing values in comparison operations is not defined
+			if(left == null || right == null){
+				throw new EvaluationException();
+			}
+
 			int order = (left).compareTo(right);
 
 			Ordering ordering = getOrdering();

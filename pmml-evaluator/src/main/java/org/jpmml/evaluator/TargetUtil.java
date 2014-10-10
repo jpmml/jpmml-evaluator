@@ -189,11 +189,18 @@ public class TargetUtil {
 		}
 
 		TargetValue value = values.get(0);
+
+		// "Attributes value and priorProbability are used only if the optype of the field is categorical or ordinal"
 		if(value.getValue() != null || value.getPriorProbability() != null){
 			throw new InvalidFeatureException(value);
 		}
 
-		return value.getDefaultValue();
+		Double result = value.getDefaultValue();
+		if(result == null){
+			throw new InvalidFeatureException(value);
+		}
+
+		return result;
 	}
 
 	static
@@ -203,11 +210,19 @@ public class TargetUtil {
 		List<TargetValue> values = target.getTargetValues();
 		for(TargetValue value : values){
 
+			// "The attribute defaultValue is used only if the optype of the field is continuous"
 			if(value.getDefaultValue() != null){
 				throw new InvalidFeatureException(value);
 			}
 
-			result.put(value.getValue(), value.getPriorProbability());
+			String targetCategory = value.getValue();
+			Double probability = value.getPriorProbability();
+
+			if(targetCategory == null || probability == null){
+				throw new InvalidFeatureException(value);
+			}
+
+			result.put(targetCategory, probability);
 		}
 
 		return result;
