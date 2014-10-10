@@ -178,6 +178,38 @@ public class FunctionUtilTest {
 	}
 
 	@Test
+	public void evaluateBooleanComparisonFunctions(){
+
+		try {
+			evaluate("lessOrEqual", false, "false");
+
+			fail();
+		} catch(TypeCheckException tce){
+			// Ignored
+		}
+
+		assertEquals(Boolean.TRUE, evaluate("lessThan", false, 0.5d));
+		assertEquals(Boolean.FALSE, evaluate("lessThan", true, 0.5d));
+
+		assertEquals(Boolean.TRUE, evaluate("lessOrEqual", false, 0d));
+		assertEquals(Boolean.FALSE, evaluate("lessOrEqual", true, 0d));
+
+		assertEquals(Boolean.FALSE, evaluate("greaterThan", false, 0.5d));
+		assertEquals(Boolean.TRUE, evaluate("greaterThan", true, 0.5d));
+
+		assertEquals(Boolean.FALSE, evaluate("greaterOrEqual", false, 1d));
+		assertEquals(Boolean.TRUE, evaluate("greaterOrEqual", true, 1d));
+
+		try {
+			evaluate("lessOrEqual", false, false);
+
+			fail();
+		} catch(TypeCheckException tce){
+			// Ignored
+		}
+	}
+
+	@Test
 	public void evaluateBinaryFunctions(){
 		assertEquals(Boolean.TRUE, evaluate("and", Boolean.TRUE, Boolean.TRUE));
 		assertEquals(Boolean.TRUE, evaluate("and", Boolean.TRUE, Boolean.TRUE, Boolean.TRUE));

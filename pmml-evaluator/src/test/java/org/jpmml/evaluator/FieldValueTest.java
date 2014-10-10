@@ -29,16 +29,17 @@ import static org.junit.Assert.assertTrue;
 public class FieldValueTest {
 
 	@Test
-	public void compareToString(){
-		FieldValue zero = FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, 0);
-
-		assertTrue(zero.compareToString("-1") > 0);
-		assertTrue(zero.compareToString("-1.5") > 0);
+	public void categoricalBoolean(){
+		FieldValue zero = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
+		FieldValue one = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
 
 		assertTrue(zero.compareToString("0") == 0);
+		assertTrue(zero.compareToString("0.0") == 0);
+		assertTrue(one.compareToString("0") > 0);
 
 		assertTrue(zero.compareToString("1") < 0);
-		assertTrue(zero.compareToString("1.5") < 0);
+		assertTrue(one.compareToString("1") == 0);
+		assertTrue(one.compareToString("1.0") == 0);
 	}
 
 	@Test
@@ -73,5 +74,19 @@ public class FieldValueTest {
 		assertTrue(louder.compareToValue(loud) > 0);
 		assertTrue(louder.compareToValue(louder) == 0);
 		assertTrue(louder.compareToValue(insane) < 0);
+	}
+
+	@Test
+	public void continuousInteger(){
+		FieldValue zero = FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, 0);
+
+		assertTrue(zero.compareToString("-1") > 0);
+		assertTrue(zero.compareToString("-1.5") > 0);
+
+		assertTrue(zero.compareToString("0") == 0);
+		assertTrue(zero.compareToString("0.0") == 0);
+
+		assertTrue(zero.compareToString("1") < 0);
+		assertTrue(zero.compareToString("1.5") < 0);
 	}
 }

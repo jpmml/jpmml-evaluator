@@ -77,6 +77,31 @@ public class PredicateUtilTest {
 	}
 
 	@Test
+	public void evaluateBooleanSimplePredicate(){
+		FieldName flag = new FieldName("flag");
+
+		SimplePredicate simplePredicate = new SimplePredicate(flag, SimplePredicate.Operator.EQUAL)
+			.withValue("true");
+
+		assertEquals(Boolean.TRUE, evaluate(simplePredicate, flag, true));
+		assertEquals(Boolean.FALSE, evaluate(simplePredicate, flag, false));
+
+		simplePredicate = simplePredicate.withOperator(SimplePredicate.Operator.NOT_EQUAL);
+		assertEquals(Boolean.FALSE, evaluate(simplePredicate, flag, true));
+		assertEquals(Boolean.TRUE, evaluate(simplePredicate, flag, false));
+
+		simplePredicate = simplePredicate.withValue("0.5");
+
+		simplePredicate = simplePredicate.withOperator(SimplePredicate.Operator.LESS_OR_EQUAL);
+		assertEquals(Boolean.FALSE, evaluate(simplePredicate, flag, true));
+		assertEquals(Boolean.TRUE, evaluate(simplePredicate, flag, false));
+
+		simplePredicate = simplePredicate.withOperator(SimplePredicate.Operator.GREATER_THAN);
+		assertEquals(Boolean.TRUE, evaluate(simplePredicate, flag, true));
+		assertEquals(Boolean.FALSE, evaluate(simplePredicate, flag, false));
+	}
+
+	@Test
 	public void evaluateSurrogateCompoundPredicate(){
 		FieldName temperature = new FieldName("temperature");
 		FieldName humidity = new FieldName("humidity");
