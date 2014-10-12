@@ -93,6 +93,14 @@ public class TypeUtilTest {
 		assertEquals(Boolean.TRUE, TypeUtil.parse(DataType.BOOLEAN, "1"));
 		assertEquals(Boolean.TRUE, TypeUtil.parse(DataType.BOOLEAN, "1.0"));
 
+		try {
+			TypeUtil.parse(DataType.BOOLEAN, "0.5");
+
+			fail();
+		} catch(IllegalArgumentException iae){
+			// Ignored
+		}
+
 		assertEquals(Boolean.FALSE, TypeUtil.parse(DataType.BOOLEAN, "0"));
 		assertEquals(Boolean.FALSE, TypeUtil.parse(DataType.BOOLEAN, "0.0"));
 	}

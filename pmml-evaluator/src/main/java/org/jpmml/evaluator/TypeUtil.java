@@ -29,6 +29,7 @@ import org.joda.time.Seconds;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeParser;
 import org.joda.time.format.DateTimeParserBucket;
+import org.jpmml.manager.UnsupportedFeatureException;
 
 public class TypeUtil {
 
@@ -60,6 +61,9 @@ public class TypeUtil {
 		return cast(dataType, value);
 	}
 
+	/**
+	 * @throws IllegalArgumentException If the String representation of the value cannot be parsed to the requested representation.
+	 */
 	static
 	public Object parse(DataType dataType, String value){
 
@@ -95,10 +99,8 @@ public class TypeUtil {
 			case DATE_TIME_SECONDS_SINCE_1980:
 				return new SecondsSinceDate(YEAR_1980, parseDateTime(value));
 			default:
-				break;
+				throw new UnsupportedFeatureException();
 		}
-
-		throw new EvaluationException();
 	}
 
 	static
@@ -149,6 +151,8 @@ public class TypeUtil {
 			return (Boolean)cast(DataType.BOOLEAN, parseDouble(value));
 		} catch(NumberFormatException nfe){
 			// Ignored
+		} catch(TypeCheckException tce){
+			// Ignored
 		}
 
 		throw new IllegalArgumentException(value);
@@ -188,7 +192,7 @@ public class TypeUtil {
 			return Seconds.seconds((int)(millis / 1000L));
 		}
 
-		throw new EvaluationException();
+		throw new IllegalArgumentException(value);
 	}
 
 	static
@@ -303,16 +307,15 @@ public class TypeUtil {
 			case DATE_DAYS_SINCE_1960:
 			case DATE_DAYS_SINCE_1970:
 			case DATE_DAYS_SINCE_1980:
+			case TIME_SECONDS:
 			case DATE_TIME_SECONDS_SINCE_0:
 			case DATE_TIME_SECONDS_SINCE_1960:
 			case DATE_TIME_SECONDS_SINCE_1970:
 			case DATE_TIME_SECONDS_SINCE_1980:
 				return OpType.ORDINAL;
 			default:
-				break;
+				throw new UnsupportedFeatureException();
 		}
-
-		throw new EvaluationException();
 	}
 
 	static
@@ -350,10 +353,8 @@ public class TypeUtil {
 			case DATE_TIME_SECONDS_SINCE_1980:
 				return toSecondsSinceDate(value, YEAR_1980);
 			default:
-				break;
+				throw new UnsupportedFeatureException();
 		}
-
-		throw new EvaluationException();
 	}
 
 	/**
