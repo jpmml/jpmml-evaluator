@@ -89,6 +89,12 @@ public class TypeUtilTest {
 		} catch(IllegalArgumentException iae){
 			// Ignored
 		}
+
+		assertEquals(Boolean.TRUE, TypeUtil.parse(DataType.BOOLEAN, "1"));
+		assertEquals(Boolean.TRUE, TypeUtil.parse(DataType.BOOLEAN, "1.0"));
+
+		assertEquals(Boolean.FALSE, TypeUtil.parse(DataType.BOOLEAN, "0"));
+		assertEquals(Boolean.FALSE, TypeUtil.parse(DataType.BOOLEAN, "0.0"));
 	}
 
 	@Test
@@ -177,6 +183,34 @@ public class TypeUtilTest {
 
 			fail();
 		} catch(EvaluationException ee){
+			// Ignored
+		}
+	}
+
+	@Test
+	public void castBoolean(){
+		assertEquals(Boolean.TRUE, TypeUtil.cast(DataType.BOOLEAN, (byte)1));
+		assertEquals(Boolean.TRUE, TypeUtil.cast(DataType.BOOLEAN, (short)1));
+		assertEquals(Boolean.TRUE, TypeUtil.cast(DataType.BOOLEAN, 1));
+		assertEquals(Boolean.TRUE, TypeUtil.cast(DataType.BOOLEAN, 1l));
+		assertEquals(Boolean.TRUE, TypeUtil.cast(DataType.BOOLEAN, 1f));
+		assertEquals(Boolean.TRUE, TypeUtil.cast(DataType.BOOLEAN, 1.0f));
+		assertEquals(Boolean.TRUE, TypeUtil.cast(DataType.BOOLEAN, 1d));
+		assertEquals(Boolean.TRUE, TypeUtil.cast(DataType.BOOLEAN, 1.0d));
+
+		try {
+			TypeUtil.cast(DataType.BOOLEAN, Math.nextUp(1f));
+
+			fail();
+		} catch(TypeCheckException tce){
+			// Ignored
+		}
+
+		try {
+			TypeUtil.cast(DataType.BOOLEAN, Math.nextUp(1d));
+
+			fail();
+		} catch(TypeCheckException tce){
 			// Ignored
 		}
 	}

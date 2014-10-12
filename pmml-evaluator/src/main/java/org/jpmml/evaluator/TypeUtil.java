@@ -145,6 +145,12 @@ public class TypeUtil {
 			return Boolean.FALSE;
 		}
 
+		try {
+			return (Boolean)cast(DataType.BOOLEAN, parseDouble(value));
+		} catch(NumberFormatException nfe){
+			// Ignored
+		}
+
 		throw new IllegalArgumentException(value);
 	}
 
@@ -466,6 +472,18 @@ public class TypeUtil {
 
 		if(value instanceof Boolean){
 			return (Boolean)value;
+		} else
+
+		if((value instanceof Double) || (value instanceof Float) || (value instanceof Long) || (value instanceof Integer) || (value instanceof Short) || (value instanceof Byte)){
+			Number number = (Number)value;
+
+			if(Double.compare(1d, number.doubleValue()) == 0){
+				return Boolean.TRUE;
+			} else
+
+			if(Double.compare(0d, number.doubleValue()) == 0){
+				return Boolean.FALSE;
+			}
 		}
 
 		throw new TypeCheckException(DataType.BOOLEAN, value);
