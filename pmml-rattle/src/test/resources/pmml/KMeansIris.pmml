@@ -20,11 +20,9 @@
   </MiningSchema>
   <Output>
    <OutputField name="predictedValue" feature="predictedValue"/>
-   <!--
-   <OutputField name="clusterAffinity_1" feature="clusterAffinity" value="1"/>
-   <OutputField name="clusterAffinity_2" feature="clusterAffinity" value="2"/>
-   <OutputField name="clusterAffinity_3" feature="clusterAffinity" value="3"/>
-   -->
+   <OutputField name="affinity_1" feature="affinity" value="1"/>
+   <OutputField name="affinity_2" feature="affinity" value="2"/>
+   <OutputField name="affinity_3" feature="affinity" value="3"/>
   </Output>
   <ComparisonMeasure kind="distance">
    <squaredEuclidean/>
