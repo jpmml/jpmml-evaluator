@@ -136,7 +136,16 @@ public class TypeUtil {
 
 	static
 	private Boolean parseBoolean(String value){
-		return Boolean.valueOf(value);
+
+		if("true".equalsIgnoreCase(value)){
+			return Boolean.TRUE;
+		} else
+
+		if("false".equalsIgnoreCase(value)){
+			return Boolean.FALSE;
+		}
+
+		throw new IllegalArgumentException(value);
 	}
 
 	static

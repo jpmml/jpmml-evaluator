@@ -75,6 +75,23 @@ public class TypeUtilTest {
 	}
 
 	@Test
+	public void parseBoolean(){
+		assertEquals(Boolean.TRUE, TypeUtil.parse(DataType.BOOLEAN, "true"));
+		assertEquals(Boolean.TRUE, TypeUtil.parse(DataType.BOOLEAN, "TRUE"));
+
+		assertEquals(Boolean.FALSE, TypeUtil.parse(DataType.BOOLEAN, "false"));
+		assertEquals(Boolean.FALSE, TypeUtil.parse(DataType.BOOLEAN, "FALSE"));
+
+		try {
+			TypeUtil.parse(DataType.BOOLEAN, "yes");
+
+			fail();
+		} catch(IllegalArgumentException iae){
+			// Ignored
+		}
+	}
+
+	@Test
 	public void cast(){
 		assertEquals("1", TypeUtil.cast(DataType.STRING, "1"));
 
