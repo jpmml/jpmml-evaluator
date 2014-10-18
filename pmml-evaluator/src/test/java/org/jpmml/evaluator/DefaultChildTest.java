@@ -38,10 +38,10 @@ public class DefaultChildTest extends ModelEvaluatorTest {
 		NodeClassificationMap targetValue = (NodeClassificationMap)result.get(evaluator.getTargetField());
 
 		assertEquals("Result1", targetValue.getResult());
-		assertEquals("184", targetValue.getEntityId());
+		assertEquals("10", targetValue.getEntityId());
 
-		assertEquals(15d / 26d, targetValue.getProbability("Result1"), 1.e-8);
-		assertEquals(8d / 26d, targetValue.getProbability("Result2"), 1.e-8);
-		assertEquals(3d / 26d, targetValue.getProbability("Result3"), 1.e-8);
+		assertEquals(21d / 42d, targetValue.getProbability("Result1"), 1.e-8);
+		assertEquals(15d / 42d, targetValue.getProbability("Result2"), 1.e-8);
+		assertEquals(6d / 42d, targetValue.getProbability("Result3"), 1.e-8);
 	}
 }

@@ -20,6 +20,7 @@ package org.jpmml.rattle;
 
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
+import org.jpmml.evaluator.NodeClassificationMap;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -31,7 +32,9 @@ public class ClassificationTest {
 	public void evaluateDecisionTreeIris() throws Exception {
 		Batch batch = new RattleBatch("DecisionTree", "Iris");
 
-		assertEquals(null, BatchUtil.evaluateDefault(batch));
+		NodeClassificationMap targetValue = (NodeClassificationMap)BatchUtil.evaluateDefault(batch);
+
+		assertEquals("7", targetValue.getEntityId());
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
@@ -88,7 +91,9 @@ public class ClassificationTest {
 	public void evaluateDecisionTreeAudit() throws Exception {
 		Batch batch = new RattleBatch("DecisionTree", "Audit");
 
-		assertEquals(null, BatchUtil.evaluateDefault(batch));
+		NodeClassificationMap targetValue = (NodeClassificationMap)BatchUtil.evaluateDefault(batch);
+
+		assertEquals("2", targetValue.getEntityId());
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
