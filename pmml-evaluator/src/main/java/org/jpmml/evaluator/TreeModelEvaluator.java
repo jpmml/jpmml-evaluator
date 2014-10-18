@@ -135,38 +135,13 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		Boolean status = evaluateNode(root, trail, context);
 
-		NodeResult result = null;
+		if(status != null && status.booleanValue()){
+			NodeResult result = handleTrue(root, trail, context);
 
-		if(status == null){
-			// The root node does not have a parent node
-			result = handleMissingValue(null, root, trail, context);
-		} else
-
-		if(status.booleanValue()){
-			result = handleTrue(root, trail, context);
-		} // End if
-
-		if(result != null && result.isFinal()){
 			return result.getNode();
 		}
 
-		NoTrueChildStrategyType noTrueChildStrategy = treeModel.getNoTrueChildStrategy();
-		switch(noTrueChildStrategy){
-			case RETURN_NULL_PREDICTION:
-				return null;
-			case RETURN_LAST_PREDICTION:
-				if(trail.size() > 0){
-					Node parent = trail.getFirst();
-
-					// "Return the parent Node only if it specifies a score attribute"
-					if(parent.getScore() != null){
-						return parent;
-					}
-				}
-				return null;
-			default:
-				throw new UnsupportedFeatureException(treeModel, noTrueChildStrategy);
-		}
+		return null;
 	}
 
 	private Boolean evaluateNode(Node node, Trail trail, EvaluationContext context){
@@ -223,8 +198,8 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			}
 		}
 
-		// A branch node with no "true" leaf nodes
-		return new NodeResult(null);
+		// A "true" non-leaf node
+		return handleNoTrueChild(node, trail, context);
 	}
 
 	private NodeResult handleDefaultChild(Node node, Trail trail, EvaluationContext context){
@@ -251,6 +226,28 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		throw new InvalidFeatureException(node);
 	}
 
+	private NodeResult handleNoTrueChild(Node node, Trail trail, EvaluationContext context){
+		TreeModel treeModel = getModel();
+
+		NoTrueChildStrategyType noTrueChildStrategy = treeModel.getNoTrueChildStrategy();
+		switch(noTrueChildStrategy){
+			case RETURN_NULL_PREDICTION:
+				return new NodeResult(null);
+			case RETURN_LAST_PREDICTION:
+				if(trail.size() > 0){
+					Node parent = trail.getLastPrediction();
+
+					// "Return the parent Node only if it specifies a score attribute"
+					if(parent.getScore() != null){
+						return new NodeResult(parent);
+					}
+				}
+				return new NodeResult(null);
+			default:
+				throw new UnsupportedFeatureException(treeModel, noTrueChildStrategy);
+		}
+	}
+
 	/**
 	 * @param parent The parent Node of the Node that evaluated to the missing value.
 	 * @param node The Node that evaluated to the missing value.
@@ -261,9 +258,9 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		MissingValueStrategyType missingValueStrategy = treeModel.getMissingValueStrategy();
 		switch(missingValueStrategy){
 			case NULL_PREDICTION:
-				return new FinalNodeResult(null);
+				return new NodeResult(null);
 			case LAST_PREDICTION:
-				return new FinalNodeResult(trail.getFirst());
+				return new NodeResult(trail.getLastPrediction());
 			case DEFAULT_CHILD:
 				if(parent == null){
 					throw new EvaluationException();
@@ -326,6 +323,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		public Trail(){
 		}
 
+		public Node getLastPrediction(){
+			return getFirst();
+		}
+
 		public void addMissingLevel(){
 			setMissingLevels(getMissingLevels() + 1);
 		}
@@ -349,34 +350,12 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			setNode(node);
 		}
 
-		/**
-		 * @return <code>true</code> if the result should be exempt from any post-processing (eg. "no true child strategy" treatment), <code>false</code> otherwise.
-		 */
-		public boolean isFinal(){
-			Node node = getNode();
-
-			return (node != null);
-		}
-
 		public Node getNode(){
 			return this.node;
 		}
 
 		private void setNode(Node node){
 			this.node = node;
-		}
-	}
-
-	static
-	private class FinalNodeResult extends NodeResult {
-
-		public FinalNodeResult(Node node){
-			super(node);
-		}
-
-		@Override
-		public boolean isFinal(){
-			return true;
 		}
 	}
 
