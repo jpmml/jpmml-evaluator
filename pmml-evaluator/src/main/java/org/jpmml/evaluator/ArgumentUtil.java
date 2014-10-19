@@ -51,18 +51,10 @@ public class ArgumentUtil {
 	static
 	public FieldValue prepare(DataField dataField, MiningField miningField, Object value){
 
-		if(dataField == null){
-			throw new InvalidFeatureException();
-		}
-
 		outlierTreatment:
 		if(isOutlier(dataField, value)){
-
-			if(miningField == null){
-				throw new InvalidFeatureException();
-			}
-
 			OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
+
 			switch(outlierTreatmentMethod){
 				case AS_IS:
 					break;
@@ -92,16 +84,12 @@ public class ArgumentUtil {
 				default:
 					throw new UnsupportedFeatureException(miningField, outlierTreatmentMethod);
 			}
-		}
+		} // End if
 
 		missingValueTreatment:
 		if(isMissing(dataField, value)){
-
-			if(miningField == null){
-				return null;
-			}
-
 			value = miningField.getMissingValueReplacement();
+
 			if(value != null){
 				break missingValueTreatment;
 			}
@@ -111,12 +99,8 @@ public class ArgumentUtil {
 
 		invalidValueTreatment:
 		if(isInvalid(dataField, value)){
-
-			if(miningField == null){
-				throw new InvalidFeatureException();
-			}
-
 			InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
+
 			switch(invalidValueTreatmentMethod){
 				case RETURN_INVALID:
 					throw new InvalidResultException(miningField);

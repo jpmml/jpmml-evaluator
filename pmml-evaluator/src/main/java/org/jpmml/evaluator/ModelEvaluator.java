@@ -35,8 +35,10 @@ import java.util.concurrent.Callable;
 import com.google.common.cache.Cache;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldUsageType;
+import org.dmg.pmml.MiningField;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 import org.jpmml.manager.ModelManager;
@@ -53,7 +55,14 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	@Override
 	public FieldValue prepare(FieldName name, Object value){
-		return ArgumentUtil.prepare(getDataField(name), getMiningField(name), value);
+		DataField dataField = getDataField(name);
+		MiningField miningField = getMiningField(name);
+
+		if(dataField == null || miningField == null){
+			throw new EvaluationException();
+		}
+
+		return ArgumentUtil.prepare(dataField, miningField, value);
 	}
 
 	public ModelEvaluationContext createContext(ModelEvaluationContext parent){
