@@ -439,7 +439,7 @@ public class FunctionRegistry {
 				{
 					FieldValue falseValue = (arguments.size() > 2 ? arguments.get(2) : null);
 
-					// "The ELSE part is optional. If the ELSE part is absent then a missing value is returned"
+					// "The ELSE part is optional. If the ELSE part is absent, then a missing value is returned"
 					if(falseValue == null){
 						return null;
 					}

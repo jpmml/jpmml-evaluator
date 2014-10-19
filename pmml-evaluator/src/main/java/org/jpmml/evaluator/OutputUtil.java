@@ -408,7 +408,7 @@ public class OutputUtil {
 	private ResultFeatureType getResultFeatureType(OutputField outputField){
 		ResultFeatureType resultFeature = outputField.getFeature();
 
-		// "If the attribute feature is not specified then the output value is a copy of the target field value"
+		// "If the attribute feature is not specified, then the output value is a copy of the target field value"
 		if(resultFeature == null){
 			resultFeature = ResultFeatureType.PREDICTED_VALUE;
 		}
@@ -486,7 +486,7 @@ public class OutputUtil {
 	private String getCategoryValue(Object object, OutputField outputField){
 		String value = outputField.getValue();
 
-		// "If the attribute value is not specified then the predicted categorical value should be returned as a result"
+		// "If the attribute value is not specified, then the predicted categorical value should be returned as a result"
 		if(value == null){
 			return TypeUtil.format(getPredictedValue(object));
 		}

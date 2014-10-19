@@ -55,6 +55,16 @@ public class ArgumentUtil {
 	static
 	public FieldValue prepare(DataField dataField, MiningField miningField, Object value){
 
+		if(value != null){
+			DataType dataType = dataField.getDataType();
+
+			try {
+				value = TypeUtil.parseOrCast(dataType, value);
+			} catch(IllegalArgumentException iae){
+				// Ignored
+			}
+		}
+
 		outlierTreatment:
 		if(isOutlier(dataField, value)){
 			OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
@@ -172,8 +182,7 @@ public class ArgumentUtil {
 			return true;
 		}
 
-		// Compare as String. Missing values are often represented as String constants that cannot be parsed to runtime data type (eg. N/A).
-		String stringValue = TypeUtil.format(value);
+		DataType dataType = dataField.getDataType();
 
 		List<Value> fieldValues = dataField.getValues();
 		for(Value fieldValue : fieldValues){
@@ -182,7 +191,7 @@ public class ArgumentUtil {
 			switch(property){
 				case MISSING:
 					{
-						boolean equals = TypeUtil.equals(DataType.STRING, stringValue, fieldValue.getValue());
+						boolean equals = equals(dataType, value, fieldValue.getValue());
 						if(equals){
 							return true;
 						}
@@ -218,20 +227,17 @@ public class ArgumentUtil {
 
 		DataType dataType = dataField.getDataType();
 
-		// Compare as runtime data type
-		value = TypeUtil.parseOrCast(dataType, value);
-
 		List<Interval> intervals = dataField.getIntervals();
 
 		OpType opType = dataField.getOptype();
 		switch(opType){
 			case CONTINUOUS:
 				{
-					// "If intervals are present, any data that is outside the intervals is considered invalid"
+					// "If intervals are present, then a value that is outside the intervals is considered invalid"
 					if(intervals.size() > 0){
 						RangeSet<Double> validRanges = CacheUtil.getValue(dataField, ArgumentUtil.validRangeCache);
 
-						Double doubleValue = (Double)TypeUtil.cast(DataType.DOUBLE, value);
+						Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
 
 						return validRanges.contains(doubleValue);
 					}
@@ -256,38 +262,37 @@ public class ArgumentUtil {
 								{
 									validValueCount += 1;
 
-									boolean equals = TypeUtil.equals(dataType, value, TypeUtil.parseOrCast(dataType, fieldValue.getValue()));
+									boolean equals = equals(dataType, value, fieldValue.getValue());
 									if(equals){
 										return true;
 									}
 								}
 								break;
 							case INVALID:
+							case MISSING:
 								{
-									boolean equals = TypeUtil.equals(dataType, value, TypeUtil.parseOrCast(dataType, fieldValue.getValue()));
+									boolean equals = equals(dataType, value, fieldValue.getValue());
 									if(equals){
 										return false;
 									}
 								}
-								break;
-							case MISSING:
 								break;
 							default:
 								throw new UnsupportedFeatureException(fieldValue, property);
 						}
 					}
 
-					// "Other values than the sequence of valid values are considered invalid"
+					// "If a field contains at least one Value element where the value of property is valid, then the set of Value elements completely defines the set of valid values"
 					if(validValueCount > 0){
 						return false;
 					}
+
+					// "Any value is valid by default"
+					return true;
 				}
-				break;
 			default:
 				throw new UnsupportedFeatureException(dataField, opType);
 		}
-
-		return true;
 	}
 
 	static
@@ -301,7 +306,7 @@ public class ArgumentUtil {
 			switch(property){
 				case VALID:
 					{
-						boolean equals = TypeUtil.equals(dataType, value, TypeUtil.parseOrCast(dataType, fieldValue.getValue()));
+						boolean equals = equals(dataType, value, fieldValue.getValue());
 						if(equals){
 							return fieldValue;
 						}
@@ -337,6 +342,24 @@ public class ArgumentUtil {
 		}
 
 		return result;
+	}
+
+	static
+	private boolean equals(DataType dataType, Object value, String referenceValue){
+
+		try {
+			return TypeUtil.equals(dataType, value, TypeUtil.parseOrCast(dataType, referenceValue));
+		} catch(IllegalArgumentException iae){
+
+			// The String representation of invalid or missing values (eg. "N/A") may not be parseable to the requested representation
+			try {
+				return TypeUtil.equals(DataType.STRING, value, referenceValue);
+			} catch(TypeCheckException tce){
+				// Ignored
+			}
+
+			throw iae;
+		}
 	}
 
 	static
