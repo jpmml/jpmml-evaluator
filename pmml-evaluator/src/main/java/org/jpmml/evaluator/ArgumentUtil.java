@@ -26,8 +26,12 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
+import com.google.common.collect.RangeSet;
+import com.google.common.collect.TreeRangeSet;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Interval;
@@ -67,6 +71,10 @@ public class ArgumentUtil {
 						Double highValue = miningField.getHighValue();
 
 						if(lowValue == null || highValue == null){
+							throw new InvalidFeatureException(miningField);
+						} // End if
+
+						if((lowValue).compareTo(highValue) > 0){
 							throw new InvalidFeatureException(miningField);
 						}
 
@@ -130,56 +138,20 @@ public class ArgumentUtil {
 			return false;
 		}
 
+		List<Interval> intervals = dataField.getIntervals();
+
 		OpType opType = dataField.getOptype();
 		switch(opType){
 			case CONTINUOUS:
 				{
-					List<Double> range = null;
+					if(intervals.size() > 0){
+						RangeSet<Double> validRange = CacheUtil.getValue(dataField, ArgumentUtil.validRangeCache);
 
-					List<Interval> fieldIntervals = dataField.getIntervals();
-					for(Interval fieldInterval : fieldIntervals){
+						Range<Double> validRangeSpan = validRange.span();
 
-						if(range == null){
-							range = Lists.newArrayList();
-						}
+						Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
 
-						range.add(fieldInterval.getLeftMargin());
-						range.add(fieldInterval.getRightMargin());
-					}
-
-					List<Value> fieldValues = dataField.getValues();
-					for(Value fieldValue : fieldValues){
-						Value.Property property = fieldValue.getProperty();
-
-						switch(property){
-							case VALID:
-								{
-									if(range == null){
-										range = Lists.newArrayList();
-									}
-
-									range.add((Double)TypeUtil.parseOrCast(DataType.DOUBLE, fieldValue.getValue()));
-								}
-								break;
-							default:
-								break;
-						}
-					}
-
-					if(range == null){
-						return false;
-					}
-
-					Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
-
-					Double minValue = Collections.min(range);
-					if(TypeUtil.compare(DataType.DOUBLE, doubleValue, minValue) < 0){
-						return true;
-					}
-
-					Double maxValue = Collections.max(range);
-					if(TypeUtil.compare(DataType.DOUBLE, doubleValue, maxValue) > 0){
-						return true;
+						return !validRangeSpan.contains(doubleValue);
 					}
 				}
 				break;
@@ -249,31 +221,30 @@ public class ArgumentUtil {
 		// Compare as runtime data type
 		value = TypeUtil.parseOrCast(dataType, value);
 
+		List<Interval> intervals = dataField.getIntervals();
+
 		OpType opType = dataField.getOptype();
 		switch(opType){
 			case CONTINUOUS:
 				{
-					Double doubleValue = (Double)TypeUtil.cast(DataType.DOUBLE, value);
+					// "If intervals are present, any data that is outside the intervals is considered invalid"
+					if(intervals.size() > 0){
+						RangeSet<Double> validRanges = CacheUtil.getValue(dataField, ArgumentUtil.validRangeCache);
 
-					int intervalCount = 0;
+						Double doubleValue = (Double)TypeUtil.cast(DataType.DOUBLE, value);
 
-					List<Interval> fieldIntervals = dataField.getIntervals();
-					for(Interval fieldInterval : fieldIntervals){
-						intervalCount += 1;
-
-						if(DiscretizationUtil.contains(fieldInterval, doubleValue)){
-							return true;
-						}
-					}
-
-					if(intervalCount > 0){
-						return false;
+						return validRanges.contains(doubleValue);
 					}
 				}
 				// Falls through
 			case CATEGORICAL:
 			case ORDINAL:
 				{
+					// "Intervals are not allowed for non-continuous fields"
+					if(intervals.size() > 0){
+						throw new InvalidFeatureException(dataField);
+					}
+
 					int validValueCount = 0;
 
 					List<Value> fieldValues = dataField.getValues();
@@ -306,6 +277,7 @@ public class ArgumentUtil {
 						}
 					}
 
+					// "Other values than the sequence of valid values are considered invalid"
 					if(validValueCount > 0){
 						return false;
 					}
@@ -320,10 +292,9 @@ public class ArgumentUtil {
 
 	static
 	public Value getValidValue(TypeDefinitionField field, Object value){
-		List<Value> fieldValues = field.getValues();
-
 		DataType dataType = field.getDataType();
 
+		List<Value> fieldValues = field.getValues();
 		for(Value fieldValue : fieldValues){
 			Value.Property property = fieldValue.getProperty();
 
@@ -373,6 +344,20 @@ public class ArgumentUtil {
 		return CacheUtil.getValue(field, ArgumentUtil.targetCategoryCache);
 	}
 
+	static
+	private RangeSet<Double> parseValidRanges(DataField dataField){
+		RangeSet<Double> result = TreeRangeSet.create();
+
+		List<Interval> intervals = dataField.getIntervals();
+		for(Interval interval : intervals){
+			Range<Double> range = DiscretizationUtil.toRange(interval);
+
+			result.add(range);
+		}
+
+		return result;
+	}
+
 	private static final LoadingCache<TypeDefinitionField, List<String>> targetCategoryCache = CacheBuilder.newBuilder()
 		.weakKeys()
 		.build(new CacheLoader<TypeDefinitionField, List<String>>(){
@@ -395,6 +380,16 @@ public class ArgumentUtil {
 				};
 
 				return ImmutableList.copyOf(Iterables.transform(values, function));
+			}
+		});
+
+	private static final LoadingCache<DataField, RangeSet<Double>> validRangeCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<DataField, RangeSet<Double>>(){
+
+			@Override
+			public RangeSet<Double> load(DataField dataField){
+				return ImmutableRangeSet.copyOf(parseValidRanges(dataField));
 			}
 		});
 }

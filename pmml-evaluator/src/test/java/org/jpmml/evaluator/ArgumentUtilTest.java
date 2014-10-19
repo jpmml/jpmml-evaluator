@@ -35,6 +35,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ArgumentUtilTest {
 
@@ -44,9 +46,7 @@ public class ArgumentUtilTest {
 
 		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE);
 
-		MiningField miningField = new MiningField(name)
-			.withLowValue(1d)
-			.withHighValue(3d);
+		MiningField miningField = new MiningField(name);
 
 		assertEquals(1d, prepare(dataField, miningField, "1"));
 		assertEquals(1d, prepare(dataField, miningField, 1));
@@ -78,16 +78,49 @@ public class ArgumentUtilTest {
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
 
-		miningField = miningField.withOutlierTreatment(OutlierTreatmentMethodType.AS_EXTREME_VALUES)
+		miningField = miningField.withOutlierTreatment(OutlierTreatmentMethodType.AS_MISSING_VALUES)
 			.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+
+		assertEquals(0d, prepare(dataField, miningField, -1d));
+		assertEquals(1d, prepare(dataField, miningField, 1d));
+		assertEquals(0d, prepare(dataField, miningField, 5d));
+
+		miningField = miningField.withOutlierTreatment(OutlierTreatmentMethodType.AS_EXTREME_VALUES)
+			.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS)
+			.withLowValue(1d)
+			.withHighValue(3d);
 
 		assertEquals(1d, prepare(dataField, miningField, -1d));
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(3d, prepare(dataField, miningField, 5d));
 
+		miningField = miningField.withOutlierTreatment(OutlierTreatmentMethodType.AS_MISSING_VALUES)
+			.withInvalidValueTreatment(InvalidValueTreatmentMethodType.RETURN_INVALID)
+			.withLowValue(null)
+			.withHighValue(null);
+
+		try {
+			prepare(dataField, miningField, -1d);
+
+			fail();
+		} catch(InvalidResultException ire){
+			// Ignored
+		}
+
+		assertEquals(1d, prepare(dataField, miningField, 1d));
+
+		try {
+			prepare(dataField, miningField, 5d);
+
+			fail();
+		} catch(InvalidResultException ire){
+			// Ignored
+		}
+
 		miningField = miningField.withOutlierTreatment(OutlierTreatmentMethodType.AS_IS)
 			.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 
+		assertEquals(0d, prepare(dataField, miningField, -1d));
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(0d, prepare(dataField, miningField, 5d));
 
@@ -121,6 +154,21 @@ public class ArgumentUtilTest {
 	}
 
 	@Test
+	public void isOutlier(){
+		FieldName name = new FieldName("x");
+
+		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE)
+			.withIntervals(
+				createInterval(Interval.Closure.CLOSED_CLOSED, -10d, -1d),
+				createInterval(Interval.Closure.CLOSED_CLOSED, 1d, 10d)
+			);
+
+		assertTrue(ArgumentUtil.isOutlier(dataField, -15d));
+		assertFalse(ArgumentUtil.isOutlier(dataField, 0d));
+		assertTrue(ArgumentUtil.isOutlier(dataField, 15d));
+	}
+
+	@Test
 	public void isInvalid(){
 		assertFalse(ArgumentUtil.isInvalid(null, null));
 	}
@@ -139,13 +187,22 @@ public class ArgumentUtilTest {
 
 	static
 	private DataField clear(DataField dataField){
-		List<Value> values = dataField.getValues();
-		values.clear();
-
 		List<Interval> intervals = dataField.getIntervals();
 		intervals.clear();
 
+		List<Value> values = dataField.getValues();
+		values.clear();
+
 		return dataField;
+	}
+
+	static
+	private Interval createInterval(Interval.Closure closure, Double leftMargin, Double rightMargin){
+		Interval result = new Interval(closure)
+			.withLeftMargin(leftMargin)
+			.withRightMargin(rightMargin);
+
+		return result;
 	}
 
 	static

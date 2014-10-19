@@ -21,7 +21,14 @@ package org.jpmml.evaluator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableRangeMap;
+import com.google.common.collect.Range;
+import com.google.common.collect.RangeMap;
 import com.google.common.collect.Table;
+import com.google.common.collect.TreeRangeMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Discretize;
 import org.dmg.pmml.DiscretizeBin;
@@ -29,6 +36,7 @@ import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.Interval;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.TableLocator;
+import org.jpmml.manager.InvalidFeatureException;
 import org.jpmml.manager.UnsupportedFeatureException;
 
 public class DiscretizationUtil {
@@ -45,57 +53,14 @@ public class DiscretizationUtil {
 
 	static
 	public String discretize(Discretize discretize, double value){
-		List<DiscretizeBin> bins = discretize.getDiscretizeBins();
+		RangeMap<Double, String> binRanges = CacheUtil.getValue(discretize, DiscretizationUtil.binRangeCache);
 
-		for(DiscretizeBin bin : bins){
-			Interval interval = bin.getInterval();
-
-			if(contains(interval, value)){
-				return bin.getBinValue();
-			}
+		Map.Entry<Range<Double>, String> entry = binRanges.getEntry(value);
+		if(entry != null){
+			return entry.getValue();
 		}
 
 		return discretize.getDefaultValue();
-	}
-
-	static
-	public boolean contains(Interval interval, double value){
-		Double left = interval.getLeftMargin();
-		Double right = interval.getRightMargin();
-
-		Interval.Closure closure = interval.getClosure();
-		switch(closure){
-			case OPEN_CLOSED:
-				return greaterThan(value, left) && lessOrEqual(value, right);
-			case OPEN_OPEN:
-				return greaterThan(value, left) && lessThan(value, right);
-			case CLOSED_OPEN:
-				return greaterOrEqual(value, left) && lessThan(value, right);
-			case CLOSED_CLOSED:
-				return greaterOrEqual(value, left) && lessOrEqual(value, right);
-			default:
-				throw new UnsupportedFeatureException(interval, closure);
-		}
-	}
-
-	static
-	private boolean lessThan(double value, Double reference){
-		return reference == null || Double.compare(value, reference) < 0;
-	}
-
-	static
-	private boolean lessOrEqual(double value, Double reference){
-		return reference == null || Double.compare(value, reference) <= 0;
-	}
-
-	static
-	private boolean greaterThan(double value, Double reference){
-		return reference == null || Double.compare(value, reference) > 0;
-	}
-
-	static
-	private boolean greaterOrEqual(double value, Double reference){
-		return reference == null || Double.compare(value, reference) >= 0;
 	}
 
 	static
@@ -124,4 +89,100 @@ public class DiscretizationUtil {
 
 		return FieldValueUtil.create(dataType, null, mapValues.getDefaultValue());
 	}
+
+	static
+	public Range<Double> toRange(Interval interval){
+		Double leftMargin = interval.getLeftMargin();
+		Double rightMargin = interval.getRightMargin();
+
+		// "The attributes leftMargin and rightMargin are optional but at least one value must be defined"
+		if(leftMargin == null && rightMargin == null){
+			throw new InvalidFeatureException(interval);
+		}
+
+		Interval.Closure closure = interval.getClosure();
+		switch(closure){
+			case OPEN_OPEN:
+				{
+					if(leftMargin == null){
+						return Range.lessThan(rightMargin);
+					} else
+
+					if(rightMargin == null){
+						return Range.greaterThan(leftMargin);
+					}
+
+					return Range.open(leftMargin, rightMargin);
+				}
+			case OPEN_CLOSED:
+				{
+					if(leftMargin == null){
+						return Range.atMost(rightMargin);
+					} else
+
+					if(rightMargin == null){
+						return Range.greaterThan(leftMargin);
+					}
+
+					return Range.openClosed(leftMargin, rightMargin);
+				}
+			case CLOSED_OPEN:
+				{
+					if(leftMargin == null){
+						return Range.lessThan(rightMargin);
+					} else
+
+					if(rightMargin == null){
+						return Range.atLeast(leftMargin);
+					}
+
+					return Range.closedOpen(leftMargin, rightMargin);
+				}
+			case CLOSED_CLOSED:
+				{
+					if(leftMargin == null){
+						return Range.atMost(rightMargin);
+					} else
+
+					if(rightMargin == null){
+						return Range.atLeast(leftMargin);
+					}
+
+					return Range.closed(leftMargin, rightMargin);
+				}
+			default:
+				throw new UnsupportedFeatureException(interval, closure);
+		}
+	}
+
+	static
+	private RangeMap<Double, String> parseBinRanges(Discretize discretize){
+		RangeMap<Double, String> result = TreeRangeMap.create();
+
+		List<DiscretizeBin> discretizeBins = discretize.getDiscretizeBins();
+		for(DiscretizeBin discretizeBin : discretizeBins){
+			Interval interval = discretizeBin.getInterval();
+			String binValue = discretizeBin.getBinValue();
+
+			if(interval == null || binValue == null){
+				throw new InvalidFeatureException(discretizeBin);
+			}
+
+			Range<Double> range = toRange(interval);
+
+			result.put(range, binValue);
+		}
+
+		return result;
+	}
+
+	private static final LoadingCache<Discretize, RangeMap<Double, String>> binRangeCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<Discretize, RangeMap<Double, String>>(){
+
+			@Override
+			public RangeMap<Double, String> load(Discretize discretize){
+				return ImmutableRangeMap.copyOf(parseBinRanges(discretize));
+			}
+		});
 }

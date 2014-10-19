@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import com.google.common.collect.Range;
 import org.dmg.pmml.Interval;
 import org.junit.Test;
 
@@ -27,40 +28,69 @@ import static org.junit.Assert.assertTrue;
 public class DiscretizationUtilTest {
 
 	@Test
-	public void contains(){
-		Double min = Double.valueOf(Integer.MIN_VALUE);
-		Double max = Double.valueOf(Integer.MAX_VALUE);
+	public void boundedRange(){
+		Range<Double> open = toRange(Interval.Closure.OPEN_OPEN, -1d, 1d);
+		assertFalse(open.contains(-Double.MAX_VALUE));
+		assertFalse(open.contains(-1d));
+		assertTrue(open.contains(0d));
+		assertFalse(open.contains(1d));
+		assertFalse(open.contains(Double.MAX_VALUE));
 
-		Interval negative = createInterval(Interval.Closure.OPEN_OPEN, min, 0d);
-		assertTrue(DiscretizationUtil.contains(negative, -1d));
-		assertFalse(DiscretizationUtil.contains(negative, 0d));
+		Range<Double> openClosed = toRange(Interval.Closure.OPEN_CLOSED, -1d, 1d);
+		assertFalse(openClosed.contains(-Double.MAX_VALUE));
+		assertFalse(openClosed.contains(-1d));
+		assertTrue(openClosed.contains(0d));
+		assertTrue(openClosed.contains(1d));
+		assertFalse(openClosed.contains(Double.MAX_VALUE));
 
-		Interval negativeNull = createInterval(Interval.Closure.OPEN_OPEN, null, 0d);
-		assertTrue(DiscretizationUtil.contains(negativeNull, -1d));
-		assertFalse(DiscretizationUtil.contains(negativeNull, 0d));
+		Range<Double> closedOpen = toRange(Interval.Closure.CLOSED_OPEN, -1d, 1d);
+		assertFalse(closedOpen.contains(-Double.MAX_VALUE));
+		assertTrue(closedOpen.contains(-1d));
+		assertTrue(closedOpen.contains(0d));
+		assertFalse(closedOpen.contains(1d));
+		assertFalse(closedOpen.contains(Double.MAX_VALUE));
 
-		Interval positive = createInterval(Interval.Closure.OPEN_OPEN, 0d, max);
-		assertFalse(DiscretizationUtil.contains(positive, 0d));
-		assertTrue(DiscretizationUtil.contains(positive, 1d));
+		Range<Double> closed = toRange(Interval.Closure.CLOSED_CLOSED, -1d, 1d);
+		assertFalse(closed.contains(-Double.MAX_VALUE));
+		assertTrue(closed.contains(-1d));
+		assertTrue(closed.contains(0d));
+		assertTrue(closed.contains(1d));
+		assertFalse(closed.contains(Double.MAX_VALUE));
+	}
 
-		Interval positiveNull = createInterval(Interval.Closure.OPEN_OPEN, 0d, null);
-		assertFalse(DiscretizationUtil.contains(positiveNull, 0d));
-		assertTrue(DiscretizationUtil.contains(positiveNull, 1d));
+	@Test
+	public void unboundedRange(){
+		Range<Double> lessThan = toRange(Interval.Closure.OPEN_OPEN, null, 0d);
+		assertTrue(lessThan.contains(-Double.MAX_VALUE));
+		assertFalse(lessThan.contains(0d));
+		assertFalse(lessThan.contains(Double.MAX_VALUE));
 
-		Interval negativeAndZero = createInterval(Interval.Closure.OPEN_CLOSED, min, 0d);
-		assertTrue(DiscretizationUtil.contains(negativeAndZero, -1d));
-		assertTrue(DiscretizationUtil.contains(negativeAndZero, 0d));
+		Range<Double> atMost = toRange(Interval.Closure.OPEN_CLOSED, null, 0d);
+		assertTrue(atMost.contains(-Double.MAX_VALUE));
+		assertTrue(atMost.contains(0d));
+		assertFalse(atMost.contains(Double.MAX_VALUE));
 
-		Interval zeroAndPositive = createInterval(Interval.Closure.CLOSED_OPEN, 0d, max);
-		assertTrue(DiscretizationUtil.contains(zeroAndPositive, 0d));
-		assertTrue(DiscretizationUtil.contains(zeroAndPositive, 1d));
+		Range<Double> greaterThan = toRange(Interval.Closure.OPEN_OPEN, 0d, null);
+		assertFalse(greaterThan.contains(-Double.MAX_VALUE));
+		assertFalse(greaterThan.contains(0d));
+		assertTrue(greaterThan.contains(Double.MAX_VALUE));
+
+		Range<Double> atLeast = toRange(Interval.Closure.CLOSED_OPEN, 0d, null);
+		assertFalse(atLeast.contains(-Double.MAX_VALUE));
+		assertTrue(atLeast.contains(0d));
+		assertTrue(atLeast.contains(Double.MAX_VALUE));
 	}
 
 	static
-	private Interval createInterval(Interval.Closure closure, Double left, Double right){
+	private Range<Double> toRange(Interval.Closure closure, Double leftMargin, Double rightMargin){
+		return DiscretizationUtil.toRange(createInterval(closure, leftMargin, rightMargin));
+	}
+
+	static
+	private Interval createInterval(Interval.Closure closure, Double leftMargin, Double rightMargin){
 		Interval result = new Interval(closure)
-			.withLeftMargin(left)
-			.withRightMargin(right);
+			.withLeftMargin(leftMargin)
+			.withRightMargin(rightMargin);
 
 		return result;
 	}
