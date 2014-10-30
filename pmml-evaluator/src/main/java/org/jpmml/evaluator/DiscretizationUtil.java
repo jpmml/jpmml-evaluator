@@ -98,6 +98,10 @@ public class DiscretizationUtil {
 		// "The attributes leftMargin and rightMargin are optional but at least one value must be defined"
 		if(leftMargin == null && rightMargin == null){
 			throw new InvalidFeatureException(interval);
+		} // End if
+
+		if(leftMargin != null && rightMargin != null && (leftMargin).compareTo(rightMargin) > 0){
+			throw new InvalidFeatureException(interval);
 		}
 
 		Interval.Closure closure = interval.getClosure();
