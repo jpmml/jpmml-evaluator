@@ -503,7 +503,7 @@ public class FunctionRegistry {
 
 			@Override
 			public FieldValue evaluate(List<FieldValue> arguments){
-				checkVariableArguments(arguments, 2);
+				checkVariableArguments(arguments, 2, true);
 
 				StringBuilder sb = new StringBuilder();
 

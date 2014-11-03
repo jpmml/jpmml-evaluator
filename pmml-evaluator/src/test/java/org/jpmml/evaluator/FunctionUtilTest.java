@@ -267,6 +267,7 @@ public class FunctionUtilTest {
 	@Test
 	public void evaluateConcatenationFunction(){
 		assertEquals("2-2000", evaluate("concat", "2", "-", "2000"));
+		assertEquals("2-2000", evaluate("concat", "2", null, "-", null, "2000"));
 
 		assertEquals("2-2000", evaluate("concat", 2, "-", 2000));
 	}
