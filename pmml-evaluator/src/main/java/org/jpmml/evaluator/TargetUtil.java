@@ -184,6 +184,11 @@ public class TargetUtil {
 	static
 	private Double getDefaultValue(Target target){
 		List<TargetValue> values = target.getTargetValues();
+
+		if(values.isEmpty()){
+			return null;
+		} // End if
+
 		if(values.size() != 1){
 			throw new InvalidFeatureException(target);
 		}
@@ -195,12 +200,7 @@ public class TargetUtil {
 			throw new InvalidFeatureException(value);
 		}
 
-		Double result = value.getDefaultValue();
-		if(result == null){
-			throw new InvalidFeatureException(value);
-		}
-
-		return result;
+		return value.getDefaultValue();
 	}
 
 	static
@@ -219,10 +219,14 @@ public class TargetUtil {
 			Double probability = value.getPriorProbability();
 
 			if(targetCategory == null || probability == null){
-				throw new InvalidFeatureException(value);
+				continue;
 			}
 
 			result.put(targetCategory, probability);
+		}
+
+		if(result.isEmpty()){
+			return null;
 		}
 
 		return result;

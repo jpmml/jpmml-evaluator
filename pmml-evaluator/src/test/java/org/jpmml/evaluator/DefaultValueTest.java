@@ -21,6 +21,8 @@ package org.jpmml.evaluator;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.Target;
+import org.dmg.pmml.Targets;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -40,5 +42,25 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 		Number amount = predictions.get(evaluator.getTargetField());
 
 		assertEquals(432.21d, amount);
+	}
+
+	@Test
+	public void evaluateEmptyTarget() throws Exception {
+		ModelEvaluator<?> evaluator = createModelEvaluator();
+
+		Targets targets = evaluator.getTargets();
+		for(Target target : targets){
+			(target.getTargetValues()).clear();
+		}
+
+		ModelEvaluationContext context = evaluator.createContext(null);
+
+		Map<FieldName, ? extends Number> predictions = TargetUtil.evaluateRegressionDefault(context);
+
+		assertEquals(1, predictions.size());
+
+		Number amount = predictions.get(evaluator.getTargetField());
+
+		assertEquals(null, amount);
 	}
 }

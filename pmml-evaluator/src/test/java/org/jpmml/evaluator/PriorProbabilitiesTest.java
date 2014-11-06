@@ -22,6 +22,8 @@ import java.util.Map;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.Target;
+import org.dmg.pmml.Targets;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -56,5 +58,25 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		assertEquals(0.02d, result.get(new FieldName("P_responseYes")));
 		assertEquals(0.98d, result.get(new FieldName("P_responseNo")));
+	}
+
+	@Test
+	public void evaluateEmptyTarget() throws Exception {
+		ModelEvaluator<?> evaluator = createModelEvaluator();
+
+		Targets targets = evaluator.getTargets();
+		for(Target target : targets){
+			(target.getTargetValues()).clear();
+		}
+
+		ModelEvaluationContext context = evaluator.createContext(null);
+
+		Map<FieldName, ? extends ClassificationMap> predictions = TargetUtil.evaluateClassificationDefault(context);
+
+		assertEquals(1, predictions.size());
+
+		ClassificationMap<?> response = predictions.get(evaluator.getTargetField());
+
+		assertEquals(null, response);
 	}
 }
