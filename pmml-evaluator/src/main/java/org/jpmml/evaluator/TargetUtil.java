@@ -73,12 +73,12 @@ public class TargetUtil {
 			Target target = modelEvaluator.getTarget(key);
 			if(target != null){
 
-				if(value != null){
-					value = process(target, entry.getValue());
-				} else
-
-				{
+				if(value == null){
 					value = getDefaultValue(target);
+				} // End if
+
+				if(value != null){
+					value = processValue(target, value);
 				}
 			}
 
@@ -134,7 +134,7 @@ public class TargetUtil {
 	}
 
 	static
-	public Number process(Target target, Number value){
+	public Number processValue(Target target, Number value){
 		double result = value.doubleValue();
 
 		Double min = target.getMin();
@@ -147,7 +147,7 @@ public class TargetUtil {
 			result = Math.min(result, max.doubleValue());
 		}
 
-		result = (result * target.getRescaleFactor() + target.getRescaleConstant());
+		result = (result * target.getRescaleFactor()) + target.getRescaleConstant();
 
 		Target.CastInteger castInteger = target.getCastInteger();
 		if(castInteger == null){

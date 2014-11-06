@@ -27,18 +27,18 @@ import static org.junit.Assert.assertEquals;
 public class TargetUtilTest {
 
 	@Test
-	public void process(){
+	public void processValue(){
 		Target target = new Target(new FieldName("amount"))
 			.withRescaleFactor(3.14d)
 			.withRescaleConstant(10d);
 
-		assertEquals(35.12d, (Double)TargetUtil.process(target, 8d), 1.e-8);
+		assertEquals(35.12d, (Double)TargetUtil.processValue(target, 8d), 1.e-8);
 
 		target = target.withCastInteger(Target.CastInteger.ROUND)
 			.withMin(-10d)
 			.withMax(10.5d);
 
-		assertEquals(35, TargetUtil.process(target, 8d));
-		assertEquals(43, TargetUtil.process(target, 12.97d));
+		assertEquals(35, TargetUtil.processValue(target, 8d));
+		assertEquals(43, TargetUtil.processValue(target, 12.97d));
 	}
 }
