@@ -24,22 +24,21 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class FieldValueTest {
 
 	@Test
-	public void categoricalBoolean(){
-		FieldValue zero = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
-		FieldValue one = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
+	public void categoricalString(){
+		FieldValue zero = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "0");
+		FieldValue one = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "1");
 
-		assertTrue(zero.compareToString("0") == 0);
-		assertTrue(zero.compareToString("0.0") == 0);
-		assertTrue(one.compareToString("0") > 0);
+		assertEquals((Integer)0, zero.asInteger());
+		assertEquals(Boolean.FALSE, zero.asBoolean());
 
-		assertTrue(zero.compareToString("1") < 0);
-		assertTrue(one.compareToString("1") == 0);
-		assertTrue(one.compareToString("1.0") == 0);
+		assertEquals((Integer)1, one.asInteger());
+		assertEquals(Boolean.TRUE, one.asBoolean());
 	}
 
 	@Test
@@ -88,5 +87,19 @@ public class FieldValueTest {
 
 		assertTrue(zero.compareToString("1") < 0);
 		assertTrue(zero.compareToString("1.5") < 0);
+	}
+
+	@Test
+	public void categoricalBoolean(){
+		FieldValue zero = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
+		FieldValue one = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
+
+		assertTrue(zero.compareToString("0") == 0);
+		assertTrue(zero.compareToString("0.0") == 0);
+		assertTrue(one.compareToString("0") > 0);
+
+		assertTrue(zero.compareToString("1") < 0);
+		assertTrue(one.compareToString("1") == 0);
+		assertTrue(one.compareToString("1.0") == 0);
 	}
 }

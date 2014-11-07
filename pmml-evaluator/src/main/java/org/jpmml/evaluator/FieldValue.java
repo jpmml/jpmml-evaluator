@@ -101,30 +101,18 @@ public class FieldValue implements Serializable {
 		return TypeUtil.compare(dataType, getValue(), value.getValue());
 	}
 
-	public Object parseValue(String string){
+	protected Object parseValue(String string){
 		DataType dataType = getDataType();
 
 		return TypeUtil.parse(dataType, string);
 	}
 
 	public String asString(){
-		Object value = getValue();
-
-		if(value instanceof String){
-			return (String)value;
-		}
-
-		throw new TypeCheckException(DataType.STRING, value);
+		return (String)getValue(DataType.STRING);
 	}
 
 	public Integer asInteger(){
-		Object value = getValue();
-
-		if(value instanceof Integer){
-			return (Integer)value;
-		}
-
-		throw new TypeCheckException(DataType.INTEGER, value);
+		return (Integer)getValue(DataType.INTEGER);
 	}
 
 	public Number asNumber(){
@@ -134,89 +122,72 @@ public class FieldValue implements Serializable {
 			return (Number)value;
 		}
 
-		throw new TypeCheckException(DataType.DOUBLE, value);
+		return (Double)getValue(DataType.DOUBLE);
 	}
 
 	public Boolean asBoolean(){
-		Object value = getValue();
-
-		if(value instanceof Boolean){
-			return (Boolean)value;
-		}
-
-		throw new TypeCheckException(DataType.BOOLEAN, value);
-	}
-
-	public LocalDate asLocalDate(){
-		Object value = getValue();
-
-		if(value instanceof LocalDate){
-			return (LocalDate)value;
-		} else
-
-		if(value instanceof LocalDateTime){
-			LocalDateTime instant = (LocalDateTime)value;
-
-			return instant.toLocalDate();
-		}
-
-		throw new TypeCheckException(DataType.DATE, value);
-	}
-
-	public LocalTime asLocalTime(){
-		Object value = getValue();
-
-		if(value instanceof LocalTime){
-			return (LocalTime)value;
-		} else
-
-		if(value instanceof LocalDateTime){
-			LocalDateTime instant = (LocalDateTime)value;
-
-			return instant.toLocalTime();
-		}
-
-		throw new TypeCheckException(DataType.TIME, value);
+		return (Boolean)getValue(DataType.BOOLEAN);
 	}
 
 	public LocalDateTime asLocalDateTime(){
-		Object value = getValue();
+		return (LocalDateTime)getValue(DataType.DATE_TIME);
+	}
 
-		if(value instanceof LocalDate){
-			LocalDate instant = (LocalDate)value;
+	public LocalDate asLocalDate(){
+		return (LocalDate)getValue(DataType.DATE);
+	}
 
-			return new LocalDateTime(instant.getYear(), instant.getMonthOfYear(), instant.getDayOfMonth(), 0, 0, 0);
-		} else
-
-		if(value instanceof LocalDateTime){
-			return (LocalDateTime)value;
-		}
-
-		throw new TypeCheckException(DataType.DATE_TIME, value);
+	public LocalTime asLocalTime(){
+		return (LocalTime)getValue(DataType.TIME);
 	}
 
 	public DateTime asDateTime(){
+
+		try {
+			LocalDateTime dateTime = asLocalDateTime();
+
+			return dateTime.toDateTime();
+		} catch(TypeCheckException tceDateTime){
+
+			try {
+				LocalDate date = asLocalDate();
+
+				return date.toDateTimeAtStartOfDay();
+			} catch(TypeCheckException tceDate){
+				// Ignored
+			}
+
+			try {
+				LocalTime time = asLocalTime();
+
+				return time.toDateTimeToday();
+			} catch(TypeCheckException tceTime){
+				// Ignored
+			}
+
+			throw tceDateTime;
+		}
+	}
+
+	private Object getValue(DataType dataType){
 		Object value = getValue();
 
-		if(value instanceof LocalDate){
-			LocalDate instant = (LocalDate)value;
+		try {
+			return TypeUtil.cast(dataType, value);
+		} catch(TypeCheckException tce){
 
-			return instant.toDateTimeAtStartOfDay();
-		} else
+			try {
+				if(value instanceof String){
+					String string = (String)value;
 
-		if(value instanceof LocalTime){
-			LocalTime instant = (LocalTime)value;
+					return TypeUtil.parse(dataType, string);
+				}
+			} catch(IllegalArgumentException iae){
+				// Ignored
+			}
 
-			return instant.toDateTimeToday();
-		} else
-
-		if(value instanceof LocalDateTime){
-			LocalDateTime instant = (LocalDateTime)value;
-
-			return instant.toDateTime();
+			throw tce;
 		}
-
-		throw new TypeCheckException(DataType.DATE_TIME, value);
 	}
 
 	@Override

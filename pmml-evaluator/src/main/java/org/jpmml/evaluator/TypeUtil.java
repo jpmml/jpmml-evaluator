@@ -498,6 +498,12 @@ public class TypeUtil {
 
 		if(value instanceof LocalDate){
 			return (LocalDate)value;
+		} else
+
+		if(value instanceof LocalDateTime){
+			LocalDateTime instant = (LocalDateTime)value;
+
+			return instant.toLocalDate();
 		}
 
 		throw new TypeCheckException(DataType.DATE, value);
@@ -511,6 +517,12 @@ public class TypeUtil {
 
 		if(value instanceof LocalTime){
 			return (LocalTime)value;
+		} else
+
+		if(value instanceof LocalDateTime){
+			LocalDateTime instant = (LocalDateTime)value;
+
+			return instant.toLocalTime();
 		}
 
 		throw new TypeCheckException(DataType.TIME, value);
