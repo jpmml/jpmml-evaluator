@@ -22,9 +22,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Seconds;
 
-public class SecondsSinceDate implements Comparable<SecondsSinceDate> {
-
-	private LocalDate epoch = null;
+public class SecondsSinceDate extends ComplexPeriod<SecondsSinceDate> {
 
 	private Seconds seconds = null;
 
@@ -38,8 +36,14 @@ public class SecondsSinceDate implements Comparable<SecondsSinceDate> {
 	}
 
 	public SecondsSinceDate(LocalDate epoch, Seconds seconds){
-		setEpoch(epoch);
+		super(epoch);
+
 		setSeconds(seconds);
+	}
+
+	@Override
+	public int intValue(){
+		return getSeconds().getSeconds();
 	}
 
 	@Override
@@ -67,18 +71,6 @@ public class SecondsSinceDate implements Comparable<SecondsSinceDate> {
 		}
 
 		return false;
-	}
-
-	public int intValue(){
-		return getSeconds().getSeconds();
-	}
-
-	public LocalDate getEpoch(){
-		return this.epoch;
-	}
-
-	private void setEpoch(LocalDate epoch){
-		this.epoch = epoch;
 	}
 
 	public Seconds getSeconds(){

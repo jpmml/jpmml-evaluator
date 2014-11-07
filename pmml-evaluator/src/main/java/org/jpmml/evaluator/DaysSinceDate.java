@@ -21,9 +21,7 @@ package org.jpmml.evaluator;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
-public class DaysSinceDate implements Comparable<DaysSinceDate> {
-
-	private LocalDate epoch = null;
+public class DaysSinceDate extends ComplexPeriod<DaysSinceDate> {
 
 	private Days days = null;
 
@@ -37,8 +35,14 @@ public class DaysSinceDate implements Comparable<DaysSinceDate> {
 	}
 
 	public DaysSinceDate(LocalDate epoch, Days days){
-		setEpoch(epoch);
+		super(epoch);
+
 		setDays(days);
+	}
+
+	@Override
+	public int intValue(){
+		return getDays().getDays();
 	}
 
 	@Override
@@ -66,18 +70,6 @@ public class DaysSinceDate implements Comparable<DaysSinceDate> {
 		}
 
 		return false;
-	}
-
-	public int intValue(){
-		return getDays().getDays();
-	}
-
-	public LocalDate getEpoch(){
-		return this.epoch;
-	}
-
-	private void setEpoch(LocalDate epoch){
-		this.epoch = epoch;
 	}
 
 	public Days getDays(){

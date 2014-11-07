@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class FieldValueTest {
 
@@ -90,6 +91,19 @@ public class FieldValueTest {
 	}
 
 	@Test
+	public void categoricalInteger(){
+		FieldValue zero = FieldValueUtil.create(DataType.INTEGER, OpType.CATEGORICAL, 0);
+
+		try {
+			zero.compareToString("0");
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
+	}
+
+	@Test
 	public void categoricalBoolean(){
 		FieldValue zero = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
 		FieldValue one = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
@@ -101,5 +115,19 @@ public class FieldValueTest {
 		assertTrue(zero.compareToString("1") < 0);
 		assertTrue(one.compareToString("1") == 0);
 		assertTrue(one.compareToString("1.0") == 0);
+	}
+
+	@Test
+	public void categoricalDaysSinceDate(){
+		FieldValue period = FieldValueUtil.create(DataType.DATE_DAYS_SINCE_1960, OpType.CATEGORICAL, "1960-01-03");
+
+		assertEquals((Integer)2, period.asInteger());
+	}
+
+	@Test
+	public void categoricalSecondsSinceDate(){
+		FieldValue period = FieldValueUtil.create(DataType.DATE_TIME_SECONDS_SINCE_1960, OpType.CATEGORICAL, "1960-01-03T03:30:03");
+
+		assertEquals((Integer)185403, period.asInteger());
 	}
 }

@@ -30,13 +30,18 @@ import org.joda.time.field.PreciseDurationDateTimeField;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 
-public class SecondsSinceMidnight implements Comparable<SecondsSinceMidnight> {
+public class SecondsSinceMidnight extends SimplePeriod<SecondsSinceMidnight> {
 
 	private Seconds seconds = null;
 
 
 	public SecondsSinceMidnight(Seconds seconds){
 		setSeconds(seconds);
+	}
+
+	@Override
+	public int intValue(){
+		return getSeconds().getSeconds();
 	}
 
 	@Override
@@ -61,10 +66,6 @@ public class SecondsSinceMidnight implements Comparable<SecondsSinceMidnight> {
 		return false;
 	}
 
-	public int intValue(){
-		return getSeconds().getSeconds();
-	}
-
 	public Seconds getSeconds(){
 		return this.seconds;
 	}
@@ -85,12 +86,12 @@ public class SecondsSinceMidnight implements Comparable<SecondsSinceMidnight> {
 
 	static
 	private DateTimeFormatter createFormat(){
-		DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder();
-		builder = builder.appendSignedDecimal(HoursOfEpochFieldType.getInstance(), 1, 4)
-					.appendLiteral(':')
-					.appendFixedDecimal(DateTimeFieldType.minuteOfHour(), 2)
-					.appendLiteral(':')
-					.appendFixedDecimal(DateTimeFieldType.secondOfMinute(), 2);
+		DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder()
+			.appendSignedDecimal(HoursOfEpochFieldType.getInstance(), 1, 4)
+			.appendLiteral(':')
+			.appendFixedDecimal(DateTimeFieldType.minuteOfHour(), 2)
+			.appendLiteral(':')
+			.appendFixedDecimal(DateTimeFieldType.secondOfMinute(), 2);
 
 		return builder.toFormatter();
 	}

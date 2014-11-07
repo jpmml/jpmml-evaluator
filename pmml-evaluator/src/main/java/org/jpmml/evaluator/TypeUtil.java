@@ -408,6 +408,12 @@ public class TypeUtil {
 			Number number = (Number)value;
 
 			return Integer.valueOf(number.intValue());
+		} else
+
+		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
+			Number number = (Number)value;
+
+			return Integer.valueOf(number.intValue());
 		}
 
 		throw new TypeCheckException(DataType.INTEGER, value);
@@ -439,6 +445,12 @@ public class TypeUtil {
 			Number number = (Number)value;
 
 			return Float.valueOf(number.floatValue());
+		} else
+
+		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
+			Number number = (Number)value;
+
+			return Float.valueOf(number.floatValue());
 		}
 
 		throw new TypeCheckException(DataType.FLOAT, value);
@@ -457,6 +469,12 @@ public class TypeUtil {
 		} else
 
 		if((value instanceof Float) || (value instanceof Long) || (value instanceof Integer) || (value instanceof Short) || (value instanceof Byte)){
+			Number number = (Number)value;
+
+			return Double.valueOf(number.doubleValue());
+		} else
+
+		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
 			Number number = (Number)value;
 
 			return Double.valueOf(number.doubleValue());
