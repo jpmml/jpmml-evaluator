@@ -25,12 +25,12 @@ import org.dmg.pmml.FieldName;
 public class LocalEvaluationContext extends EvaluationContext {
 
 	@Override
-	public DerivedField resolveDerivedField(FieldName name){
-		return null;
+	public Result<DerivedField> resolveDerivedField(FieldName name){
+		return createResult(null);
 	}
 
 	@Override
-	public DefineFunction resolveFunction(String name){
-		return null;
+	public Result<DefineFunction> resolveFunction(String name){
+		return createResult(null);
 	}
 }

@@ -34,17 +34,21 @@ public class PMMLEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public DerivedField resolveDerivedField(FieldName name){
+	public Result<DerivedField> resolveDerivedField(FieldName name){
 		PMMLManager pmmlManager = getPmmlManager();
 
-		return pmmlManager.getDerivedField(name);
+		DerivedField derivedField = pmmlManager.getDerivedField(name);
+
+		return createResult(derivedField);
 	}
 
 	@Override
-	public DefineFunction resolveFunction(String name){
+	public Result<DefineFunction> resolveFunction(String name){
 		PMMLManager pmmlManager = getPmmlManager();
 
-		return pmmlManager.getFunction(name);
+		DefineFunction defineFunction = pmmlManager.getFunction(name);
+
+		return createResult(defineFunction);
 	}
 
 	@Override

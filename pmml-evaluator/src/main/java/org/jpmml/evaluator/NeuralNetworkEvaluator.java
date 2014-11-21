@@ -204,9 +204,9 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		if(expression instanceof FieldRef){
 			FieldRef fieldRef = (FieldRef)expression;
 
-			derivedField = context.resolveDerivedField(fieldRef.getField());
-			if(derivedField != null){
-				return getExpression(derivedField, context);
+			EvaluationContext.Result<DerivedField> result = context.resolveDerivedField(fieldRef.getField());
+			if(result != null){
+				return getExpression(result.getElement(), context);
 			}
 
 			return fieldRef;

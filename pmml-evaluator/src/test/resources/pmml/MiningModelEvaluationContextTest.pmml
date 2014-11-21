@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
+    <DataDictionary>
+        <DataField name="Age" optype="continuous" dataType="integer"/>
+    </DataDictionary>
+    <TransformationDictionary>
+        <DerivedField name="Age_missing" displayName="Age missing or not" optype="categorical" dataType="string">
+            <Discretize field="Age" mapMissingTo="Missing" defaultValue="Not missing"/>
+        </DerivedField>
+    </TransformationDictionary>
+    <MiningModel functionName="classification">
+        <MiningSchema>
+            <MiningField name="Age"/>
+        </MiningSchema>
+        <Segmentation multipleModelMethod="majorityVote">
+            <Segment>
+                <True/>
+                <TreeModel functionName="classification" splitCharacteristic="binarySplit">
+                    <MiningSchema>
+                        <MiningField name="Age"/>
+                    </MiningSchema>
+                    <Node>
+                        <SimplePredicate field="Age_missing" operator="equal" value="Not missing"/>
+                        <Node score="under 50">
+                            <SimplePredicate field="Age" operator="lessOrEqual" value="50"/>
+                        </Node>
+                        <Node score="over 50">
+                            <SimplePredicate field="Age" operator="greaterThan" value="50"/>
+                        </Node>
+                    </Node>
+                </TreeModel>
+            </Segment>
+        </Segmentation>
+    </MiningModel>
+</PMML>

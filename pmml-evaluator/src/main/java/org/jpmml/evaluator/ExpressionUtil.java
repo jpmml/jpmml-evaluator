@@ -52,21 +52,25 @@ public class ExpressionUtil {
 	static
 	public FieldValue evaluate(FieldName name, EvaluationContext context){
 		Map.Entry<FieldName, FieldValue> entry = context.getFieldEntry(name);
-		if(entry == null){
-			DerivedField derivedField = context.resolveDerivedField(name);
-			if(derivedField == null){
-				return null;
-			}
+		if(entry != null){
+			return entry.getValue();
+		}
 
-			FieldValue value = evaluate(derivedField, context);
+		EvaluationContext.Result<DerivedField> result = context.resolveDerivedField(name);
+		if(result != null){
+			FieldValue value = evaluate(result.getElement(), context);
 
-			// Make the calculated value available for re-use
 			context.declare(name, value);
+
+			EvaluationContext resultContext = result.getContext();
+			if(!(resultContext).equals(context)){
+				resultContext.declare(name, value);
+			}
 
 			return value;
 		}
 
-		return entry.getValue();
+		return null;
 	}
 
 	static

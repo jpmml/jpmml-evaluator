@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2014 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,37 +18,31 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.DefineFunction;
-import org.dmg.pmml.DerivedField;
+import java.util.Map;
+
 import org.dmg.pmml.FieldName;
+import org.junit.Test;
 
-public class DefineFunctionEvaluationContext extends EvaluationContext {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-	private EvaluationContext parent = null;
+public class MiningModelEvaluationContextTest extends ModelEvaluatorTest {
 
+	@Test
+	public void evaluate() throws Exception {
+		MiningModelEvaluator evaluator = (MiningModelEvaluator)createModelEvaluator();
 
-	public DefineFunctionEvaluationContext(EvaluationContext parent){
-		setParent(parent);
-	}
+		MiningModelEvaluationContext context = evaluator.createContext(null);
+		context.declare(new FieldName("Age"), 35);
 
-	@Override
-	public Result<DerivedField> resolveDerivedField(FieldName name){
-		// "The function body must not refer to fields other than the parameter fields"
-		return createResult(null);
-	}
+		Map<FieldName, ?> result = evaluator.evaluate(context);
 
-	@Override
-	public Result<DefineFunction> resolveFunction(String name){
-		EvaluationContext parent = getParent();
+		ClassificationMap<?> targetValue = (ClassificationMap<?>)result.get(evaluator.getTargetField());
 
-		return parent.resolveFunction(name);
-	}
+		assertEquals("under 50", targetValue.getResult());
 
-	public EvaluationContext getParent(){
-		return this.parent;
-	}
+		FieldValue value = context.getField(new FieldName("Age_missing"));
 
-	private void setParent(EvaluationContext parent){
-		this.parent = parent;
+		assertNotNull(value);
 	}
 }

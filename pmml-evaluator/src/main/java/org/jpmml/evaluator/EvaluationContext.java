@@ -29,6 +29,7 @@ import com.google.common.collect.Maps;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.PMMLObject;
 
 abstract
 public class EvaluationContext {
@@ -39,10 +40,10 @@ public class EvaluationContext {
 
 
 	abstract
-	public DerivedField resolveDerivedField(FieldName name);
+	public Result<DerivedField> resolveDerivedField(FieldName name);
 
 	abstract
-	public DefineFunction resolveFunction(String name);
+	public Result<DefineFunction> resolveFunction(String name);
 
 	/**
 	 * @see #getFieldEntry(FieldName)
@@ -123,5 +124,36 @@ public class EvaluationContext {
 
 	public List<String> getWarnings(){
 		return this.warnings;
+	}
+
+	<E extends PMMLObject> Result<E> createResult(E element){
+
+		if(element != null){
+			return new Result<E>(element);
+		}
+
+		return null;
+	}
+
+	public class Result<E extends PMMLObject> {
+
+		private E element = null;
+
+
+		Result(E element){
+			setElement(element);
+		}
+
+		public EvaluationContext getContext(){
+			return EvaluationContext.this;
+		}
+
+		public E getElement(){
+			return this.element;
+		}
+
+		private void setElement(E element){
+			this.element = element;
+		}
 	}
 }

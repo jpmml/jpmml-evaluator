@@ -53,7 +53,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public DerivedField resolveDerivedField(FieldName name){
+	public Result<DerivedField> resolveDerivedField(FieldName name){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
 		DerivedField derivedField = modelEvaluator.getLocalDerivedField(name);
@@ -63,17 +63,19 @@ public class ModelEvaluationContext extends EvaluationContext {
 				return parent.resolveDerivedField(name);
 			}
 
-			return modelEvaluator.getDerivedField(name);
+			derivedField = modelEvaluator.getDerivedField(name);
 		}
 
-		return derivedField;
+		return createResult(derivedField);
 	}
 
 	@Override
-	public DefineFunction resolveFunction(String name){
+	public Result<DefineFunction> resolveFunction(String name){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
-		return modelEvaluator.getFunction(name);
+		DefineFunction defineFunction = modelEvaluator.getFunction(name);
+
+		return createResult(defineFunction);
 	}
 
 	@Override

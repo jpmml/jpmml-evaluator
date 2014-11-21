@@ -41,12 +41,12 @@ public class FunctionUtil {
 			return function.evaluate(values);
 		}
 
-		DefineFunction defineFunction = context.resolveFunction(name);
-		if(defineFunction != null){
-			return evaluate(defineFunction, values, context);
+		EvaluationContext.Result<DefineFunction> result = context.resolveFunction(name);
+		if(result != null){
+			return evaluate(result.getElement(), values, context);
 		}
 
-		throw new UnsupportedFeatureException(apply, "function", apply.getFunction());
+		throw new UnsupportedFeatureException(apply, "function", name);
 	}
 
 	static
