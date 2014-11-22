@@ -210,35 +210,6 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 	}
 
 	static
-	public <K> void subtract(Map<K, Double> map, List<K> keys){
-		double offset = 0d;
-
-		for(int i = 0; i < keys.size() - 1; i++){
-			K key = keys.get(i);
-
-			Double cumulativeProbability = map.get(key);
-			if(cumulativeProbability == null || cumulativeProbability > 1d){
-				throw new EvaluationException();
-			}
-
-			Double probability = (cumulativeProbability - offset);
-			if(probability < 0d){
-				throw new EvaluationException();
-			}
-
-			map.put(key, probability);
-
-			offset = cumulativeProbability;
-		}
-
-		if(keys.size() > 1){
-			K key = keys.get(keys.size() - 1);
-
-			map.put(key, 1d - offset);
-		}
-	}
-
-	static
 	public enum Type implements Comparator<Double> {
 		PROBABILITY(Ordering.INCREASING),
 		CONFIDENCE(Ordering.INCREASING),

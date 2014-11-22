@@ -292,7 +292,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			entry.setValue(normalizeClassificationResult(entry.getValue()));
 		}
 
-		ClassificationMap.subtract(values, targetCategories);
+		calculateCategoryProbabilities(values, targetCategories);
 	}
 
 	private Double normalizeClassificationResult(Double value){
@@ -310,6 +310,35 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				return 0.5d + (1d / Math.PI) * Math.atan(value);
 			default:
 				throw new UnsupportedFeatureException(regressionModel, regressionNormalizationMethod);
+		}
+	}
+
+	static
+	public void calculateCategoryProbabilities(Map<String, Double> map, List<String> categories){
+		double offset = 0d;
+
+		for(int i = 0; i < categories.size() - 1; i++){
+			String category = categories.get(i);
+
+			Double cumulativeProbability = map.get(category);
+			if(cumulativeProbability == null || cumulativeProbability > 1d){
+				throw new EvaluationException();
+			}
+
+			Double probability = (cumulativeProbability - offset);
+			if(probability < 0d){
+				throw new EvaluationException();
+			}
+
+			map.put(category, probability);
+
+			offset = cumulativeProbability;
+		}
+
+		if(categories.size() > 1){
+			String category = categories.get(categories.size() - 1);
+
+			map.put(category, 1d - offset);
 		}
 	}
 }
