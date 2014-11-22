@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -201,11 +202,68 @@ public class ExpressionUtil {
 	public FieldValue evaluateApply(Apply apply, EvaluationContext context){
 		String mapMissingTo = apply.getMapMissingTo();
 
+		List<Expression> expressions = apply.getExpressions();
+
+		Iterator<Expression> arguments = expressions.iterator();
+
 		List<FieldValue> values = Lists.newArrayList();
 
-		List<Expression> arguments = apply.getExpressions();
-		for(Expression argument : arguments){
-			FieldValue value = evaluate(argument, context);
+		String name = apply.getFunction();
+
+		if(("if").equals(name)){
+
+			if(arguments.hasNext()){
+				FieldValue flag = evaluate(arguments.next(), context);
+
+				if(flag == null && mapMissingTo != null){
+					return FieldValueUtil.create(mapMissingTo);
+				}
+
+				values.add(flag);
+
+				// Evaluate THEN part, skip ELSE part
+				if(flag.asBoolean()){
+
+					if(arguments.hasNext()){
+						FieldValue trueValue = evaluate(arguments.next(), context);
+
+						if(trueValue == null && mapMissingTo != null){
+							return FieldValueUtil.create(mapMissingTo);
+						}
+
+						values.add(trueValue);
+
+						if(arguments.hasNext()){
+							arguments.next();
+
+							values.add(null);
+						}
+					}
+				} else
+
+				// Skip THEN part, evaluate ELSE part
+				{
+					if(arguments.hasNext()){
+						arguments.next();
+
+						values.add(null);
+
+						if(arguments.hasNext()){
+							FieldValue falseValue = evaluate(arguments.next(), context);
+
+							if(falseValue == null && mapMissingTo != null){
+								return FieldValueUtil.create(mapMissingTo);
+							}
+
+							values.add(falseValue);
+						}
+					}
+				}
+			}
+		}
+
+		while(arguments.hasNext()){
+			FieldValue value = evaluate(arguments.next(), context);
 
 			// "If a mapMissingTo value is specified and any of the input values of the function are missing, then the function is not applied at all and the mapMissingTo value is returned instead"
 			if(value == null && mapMissingTo != null){

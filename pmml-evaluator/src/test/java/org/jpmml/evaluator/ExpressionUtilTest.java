@@ -168,6 +168,52 @@ public class ExpressionUtilTest {
 	}
 
 	@Test
+	public void evaluateApplyCondition(){
+		FieldName name = new FieldName("x");
+
+		Apply condition = new Apply("isNotMissing")
+			.withExpressions(new FieldRef(name));
+
+		Apply apply = new Apply("if")
+			.withExpressions(condition);
+
+		try {
+			evaluate(apply, name, null);
+
+			fail();
+		} catch(FunctionException fe){
+			// Ignored
+		}
+
+		Expression thenPart = new Apply("abs")
+			.withExpressions(new FieldRef(name));
+
+		apply = apply.withExpressions(thenPart);
+
+		assertEquals(1, evaluate(apply, name, 1));
+		assertEquals(1, evaluate(apply, name, -1));
+
+		assertEquals(null, evaluate(apply, name, null));
+
+		Expression elsePart = new Constant("-1")
+			.withDataType(DataType.DOUBLE);
+
+		apply = apply.withExpressions(elsePart);
+
+		assertEquals(-1d, evaluate(apply, name, null));
+
+		apply = apply.withExpressions(new FieldRef(name));
+
+		try {
+			evaluate(apply, name, null);
+
+			fail();
+		} catch(FunctionException fe){
+			// Ignored
+		}
+	}
+
+	@Test
 	public void evaluateAggregate(){
 		FieldName name = new FieldName("x");
 
