@@ -192,7 +192,7 @@ public class FieldValue implements Serializable {
 
 	@Override
 	public String toString(){
-		ToStringHelper helper = Objects.toStringHelper(getClass())
+		ToStringHelper helper = Objects.toStringHelper(this)
 			.add("opType", getOpType())
 			.add("dataType", getDataType())
 			.add("value", getValue());

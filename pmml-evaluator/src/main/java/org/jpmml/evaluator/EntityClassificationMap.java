@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Objects.ToStringHelper;
 import org.dmg.pmml.Entity;
 
 @Beta
@@ -66,6 +67,14 @@ public class EntityClassificationMap<E extends Entity> extends ClassificationMap
 		}
 
 		return super.put(key, value);
+	}
+
+	@Override
+	protected ToStringHelper toStringHelper(){
+		ToStringHelper helper = super.toStringHelper()
+			.add("entityId", getEntityId());
+
+		return helper;
 	}
 
 	public E getEntity(){

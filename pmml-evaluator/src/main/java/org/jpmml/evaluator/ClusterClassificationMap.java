@@ -29,13 +29,13 @@ public class ClusterClassificationMap extends EntityClassificationMap<Cluster> i
 	protected ClusterClassificationMap(Type type){
 		super(type);
 
-		checkArgument((Type.DISTANCE).equals(type) || (Type.SIMILARITY).equals(type));
+		checkType(type);
 	}
 
 	protected ClusterClassificationMap(Type type, Cluster cluster){
 		super(type, cluster);
 
-		checkArgument((Type.DISTANCE).equals(type) || (Type.SIMILARITY).equals(type));
+		checkType(type);
 	}
 
 	@Override
@@ -58,5 +58,10 @@ public class ClusterClassificationMap extends EntityClassificationMap<Cluster> i
 	@Override
 	public Double getClusterAffinity(){
 		return getAffinity(getClusterId());
+	}
+
+	static
+	private void checkType(Type type){
+		checkArgument((Type.DISTANCE).equals(type) || (Type.SIMILARITY).equals(type));
 	}
 }

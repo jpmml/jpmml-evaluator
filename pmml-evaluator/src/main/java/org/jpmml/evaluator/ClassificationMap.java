@@ -27,6 +27,8 @@ import java.util.Map;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Lists;
 
 @Beta
@@ -124,6 +126,23 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 
 	void normalizeValues(){
 		normalize(this);
+	}
+
+	@Override
+	public String toString(){
+		ToStringHelper helper = toStringHelper();
+
+		return helper.toString();
+	}
+
+	protected ToStringHelper toStringHelper(){
+		Type type = getType();
+
+		ToStringHelper helper = Objects.toStringHelper(this)
+			.add("type", type)
+			.add(type.entryKey(), entrySet());
+
+		return helper;
 	}
 
 	public Type getType(){
@@ -260,6 +279,12 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 				default:
 					throw new IllegalStateException();
 			}
+		}
+
+		protected String entryKey(){
+			String name = name();
+
+			return (name.toLowerCase() + "_entries");
 		}
 
 		public Ordering getOrdering(){

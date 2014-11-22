@@ -22,6 +22,8 @@ import java.util.BitSet;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.AssociationRule;
 import org.dmg.pmml.OutputField;
@@ -87,6 +89,15 @@ public class Association implements Computable, HasRuleValues {
 		}
 
 		return result;
+	}
+
+	@Override
+	public String toString(){
+		ToStringHelper helper = Objects.toStringHelper(this)
+			.add("antecedentFlags", getAntecedentFlags())
+			.add("consequentFlags", getConsequentFlags());
+
+		return helper.toString();
 	}
 
 	public List<AssociationRule> getAssociationRules(){

@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.Map;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Maps;
 import org.dmg.pmml.Node;
 
@@ -62,5 +63,13 @@ public class NodeClassificationMap extends EntityClassificationMap<Node> impleme
 	@Override
 	public Double getProbability(String value){
 		return getFeature(value);
+	}
+
+	@Override
+	protected ToStringHelper toStringHelper(){
+		ToStringHelper helper = super.toStringHelper()
+			.add(Type.CONFIDENCE.entryKey(), this.confidences.entrySet());
+
+		return helper;
 	}
 }
