@@ -210,6 +210,7 @@ public class ExpressionUtil {
 
 		String name = apply.getFunction();
 
+		condition:
 		if(("if").equals(name)){
 
 			if(arguments.hasNext()){
@@ -220,6 +221,24 @@ public class ExpressionUtil {
 				}
 
 				values.add(flag);
+
+				// Skip both THEN and ELSE parts
+				if(flag == null){
+
+					if(arguments.hasNext()){
+						arguments.next();
+
+						values.add(null);
+
+						if(arguments.hasNext()){
+							arguments.next();
+
+							values.add(null);
+						}
+					}
+
+					break condition;
+				} // End if
 
 				// Evaluate THEN part, skip ELSE part
 				if(flag.asBoolean()){
