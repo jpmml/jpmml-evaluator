@@ -43,8 +43,7 @@ Supported model types:
 * [Cluster model] (http://www.dmg.org/v4-2-1/ClusteringModel.html) (clustering).
   * Except for the `CenterFields` element. This element was removed in PMML schema version 3.2.
 * [General regression] (http://www.dmg.org/v4-2-1/GeneralRegression.html) (regression, classification).
-  * Except for the `cauchit`, `negbin` and `probit` values of the `linkFunction` attribute.
-  * Except for the `probit` value of the `cumulativeLinkFunction` attribute.
+  * Except for the `cauchit` and `negbin` values of the `linkFunction` attribute.
 * [k-Nearest neighbors (k-NN)] (http://www.dmg.org/v4-2-1/KNN.html) (regression, classification, clustering).
   * Except for the `median` value of the `continuousScoringMethod` attribute.
 * [Naive Bayes] (http://www.dmg.org/v4-2-1/NaiveBayes.html) (classification).
@@ -52,7 +51,6 @@ Supported model types:
 * [Neural network] (http://www.dmg.org/v4-2-1/NeuralNetwork.html) (regression, classification).
   * Except for the `radialBasis` value of the `activationFunction` attribute.
 * [Regression] (http://www.dmg.org/v4-2-1/Regression.html) (regression, classification).
-  * Except for the `probit` value of the `normalizationMethod` attribute.
 * [Rule set] (http://www.dmg.org/v4-2-1/RuleSet.html) (classification).
 * [Scorecard] (http://www.dmg.org/v4-2-1/Scorecard.html) (regression).
 * [Tree model] (http://www.dmg.org/v4-2-1/TreeModel.html) (classification).

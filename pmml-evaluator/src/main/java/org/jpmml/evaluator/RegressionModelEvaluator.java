@@ -302,6 +302,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		switch(regressionNormalizationMethod){
 			case LOGIT:
 				return 1d / (1d + Math.exp(-value));
+			case PROBIT:
+				return NormalDistributionUtil.cumulativeProbability(value);
 			case CLOGLOG:
 				return 1d - Math.exp(-Math.exp(value));
 			case LOGLOG:

@@ -24,6 +24,14 @@ writeIris = function(classes, probabilities, file){
 	writeCsv(result, file)
 }
 
+categoricalLogitProbabilities = function(probabilities){
+	return (probabilities / ((1.0 / (1.0 + exp(0))) + probabilities))
+}
+
+categoricalProbitProbabilities = function(probabilities){
+	return (probabilities / (pnorm(0) + probabilities))
+}
+
 generateDecisionTreeIris = function(){
 	rpart = rpart(irisFormula, irisData)
 	saveXML(pmml(rpart), "pmml/DecisionTreeIris.pmml")
@@ -92,7 +100,7 @@ generateRegressionIris()
 generateSupportVectorMachineIris()
 
 # Convert target field from categorical to binomial
-versicolor = as.character(as.integer(irisData$Species == 'versicolor'))
+versicolor = as.factor(as.integer(irisData$Species == 'versicolor'))
 versicolorData = cbind(irisData[, 1:4], versicolor)
 versicolorFormula = formula(versicolor ~ .)
 
@@ -103,15 +111,11 @@ writeVersicolor = function(classes, probabilities, file){
 	writeCsv(result, file)
 }
 
-binomialProbabilities = function(probabilities){
-	return (probabilities / (probabilities + (1.0 / (1.0 + exp(0)))))
-}
-
 generateGeneralRegressionIris = function(){
-	glm = glm(versicolorFormula, versicolorData, family = binomial)
+	glm = glm(versicolorFormula, versicolorData, family = binomial(link = probit))
 	saveXML(pmml(glm), "pmml/GeneralRegressionIris.pmml")
 
-	probabilities = binomialProbabilities(predict(glm, type = "response"))
+	probabilities = categoricalProbitProbabilities(predict(glm, type = "response"))
 	classes = as.character(as.integer(probabilities > 0.5))
 	writeVersicolor(classes, probabilities, "csv/GeneralRegressionIris.csv")
 }
@@ -157,7 +161,7 @@ generateGeneralRegressionAudit = function(){
 	xmlAttrs(pmml.lm[3]$RegressionModel)["normalizationMethod"] = "logit"
 	saveXML(pmml.lm, "pmml/RegressionAudit.pmml")
 
-	probabilities = binomialProbabilities(predict(glm, type = "response"))
+	probabilities = categoricalLogitProbabilities(predict(glm, type = "response"))
 	classes = as.character(as.integer(probabilities > 0.5))
 	probabilities = cbind(1 - probabilities, probabilities)
 	writeAudit(classes, probabilities, "csv/GeneralRegressionAudit.csv")

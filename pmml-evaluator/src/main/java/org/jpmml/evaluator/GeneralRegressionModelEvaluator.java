@@ -439,6 +439,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					return Math.pow(value + a, 1d / d) * b;
 				}
 				return Math.exp(value + a) * b;
+			case PROBIT:
+				return NormalDistributionUtil.cumulativeProbability(value + a) * b;
 			default:
 				throw new UnsupportedFeatureException(generalRegressionModel, linkFunction);
 		}
@@ -460,6 +462,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		switch(cumulativeLinkFunction){
 			case LOGIT:
 				return 1d / (1d + Math.exp(-(value + a)));
+			case PROBIT:
+				return NormalDistributionUtil.cumulativeProbability(value + a);
 			case CLOGLOG:
 				return 1d - Math.exp(-Math.exp(value + a));
 			case LOGLOG:

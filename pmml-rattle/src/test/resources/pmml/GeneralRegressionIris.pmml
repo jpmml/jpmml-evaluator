@@ -3,7 +3,7 @@
  <Header copyright="Copyright (c) 2014 vfed" description="Generalized Linear Regression Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-07-06 23:51:06</Timestamp>
+  <Timestamp>2014-11-28 22:25:01</Timestamp>
  </Header>
  <DataDictionary numberOfFields="5">
   <DataField name="versicolor" optype="categorical" dataType="string">
@@ -15,7 +15,7 @@
   <DataField name="Petal_Length" optype="continuous" dataType="double"/>
   <DataField name="Petal_Width" optype="continuous" dataType="double"/>
  </DataDictionary>
- <GeneralRegressionModel modelName="General_Regression_Model" modelType="generalizedLinear" functionName="classification" algorithmName="glm" distribution="binomial" linkFunction="logit">
+ <GeneralRegressionModel modelName="General_Regression_Model" modelType="generalizedLinear" functionName="classification" algorithmName="glm" distribution="binomial" linkFunction="probit">
   <MiningSchema>
    <MiningField name="versicolor" usageType="predicted"/>
    <MiningField name="Sepal_Length" usageType="active"/>
@@ -48,11 +48,11 @@
    <PPCell value="1" predictorName="Petal_Width" parameterName="p4"/>
   </PPMatrix>
   <ParamMatrix>
-   <PCell targetCategory="1" parameterName="p0" df="1" beta="7.37848655335254"/>
-   <PCell targetCategory="1" parameterName="p1" df="1" beta="-0.245356708026873"/>
-   <PCell targetCategory="1" parameterName="p2" df="1" beta="-2.79656809436688"/>
-   <PCell targetCategory="1" parameterName="p3" df="1" beta="1.3136433131914"/>
-   <PCell targetCategory="1" parameterName="p4" df="1" beta="-2.7783439101903"/>
+   <PCell targetCategory="1" parameterName="p0" df="1" beta="4.35138554867845"/>
+   <PCell targetCategory="1" parameterName="p1" df="1" beta="-0.146548724456552"/>
+   <PCell targetCategory="1" parameterName="p2" df="1" beta="-1.65809706356601"/>
+   <PCell targetCategory="1" parameterName="p3" df="1" beta="0.770924894244004"/>
+   <PCell targetCategory="1" parameterName="p4" df="1" beta="-1.61118639579554"/>
   </ParamMatrix>
  </GeneralRegressionModel>
 </PMML>
