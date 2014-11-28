@@ -57,10 +57,10 @@ public class TargetValueCountsTest extends ModelEvaluatorTest {
 		ClassificationMap<?> targetValue = (ClassificationMap<?>)result.get(evaluator.getTargetField());
 
 		double l0 = 8723d * 0.001d * 4273d / 8598d * 225d / 8561d * 830d / 8008d;
-		double l1 = 2557d * probability(24, 24.936, 0.516) * 1321d / 2533d * 10d / 2436d * 182d / 2266d;
-		double l2 = 1530d * probability(24, 24.588, 0.635) * 780d / 1522d * 9d / 1496d * 51d / 1191d;
-		double l3 = 709d * probability(24, 24.428, 0.379) * 405d / 697d * 0.001d * 26d / 699d;
-		double l4 = 100d * probability(24, 24.770, 0.314) * 42d / 90d * 10d / 98d * 6d / 87d;
+		double l1 = 2557d * probability(24.936, 0.516, 24) * 1321d / 2533d * 10d / 2436d * 182d / 2266d;
+		double l2 = 1530d * probability(24.588, 0.635, 24) * 780d / 1522d * 9d / 1496d * 51d / 1191d;
+		double l3 = 709d * probability(24.428, 0.379, 24) * 405d / 697d * 0.001d * 26d / 699d;
+		double l4 = 100d * probability(24.770, 0.314, 24) * 42d / 90d * 10d / 98d * 6d / 87d;
 
 		double denominator = (l0 + l1 + l2 + l3 + l4);
 
@@ -72,7 +72,7 @@ public class TargetValueCountsTest extends ModelEvaluatorTest {
 	}
 
 	static
-	private double probability(double x, double mean, double variance){
-		return Math.exp(-Math.pow(x - mean, 2) / (2d * variance)) / Math.sqrt(2d * Math.PI * variance);
+	private double probability(double mean, double variance, double value){
+		return NormalDistributionUtil.probability(mean, Math.sqrt(variance), value);
 	}
 }

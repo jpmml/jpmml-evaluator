@@ -26,8 +26,20 @@ public class NormalDistributionUtil {
 	}
 
 	static
-	public double cumulativeProbability(double value){
-		return NormalDistributionUtil.normalDistribution.cumulativeProbability(value);
+	public double probability(double x){
+		return NormalDistributionUtil.normalDistribution.density(x);
+	}
+
+	static
+	public double probability(double mean, double stdev, double x){
+		NormalDistribution normalDistribution = new NormalDistribution(mean, stdev);
+
+		return normalDistribution.density(x);
+	}
+
+	static
+	public double cumulativeProbability(double x){
+		return NormalDistributionUtil.normalDistribution.cumulativeProbability(x);
 	}
 
 	private static final NormalDistribution normalDistribution = new NormalDistribution();

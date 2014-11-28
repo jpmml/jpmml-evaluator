@@ -199,7 +199,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			double mean = gaussianDistribution.getMean();
 			double variance = gaussianDistribution.getVariance();
 
-			double probability = Math.exp(-Math.pow(x - mean, 2) / (2d * variance)) / Math.sqrt(2d * Math.PI * variance);
+			double probability = NormalDistributionUtil.probability(mean, Math.sqrt(variance), x);
 
 			// The calculated probability cannot fall below the default probability
 			probability = Math.max(probability, threshold);
