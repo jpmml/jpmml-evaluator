@@ -53,8 +53,10 @@ public class PMMLException extends RuntimeException {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getClass().getName());
 
-		Locatable locatable = getContext();
-		if(locatable != null){
+		PMMLObject context = getContext();
+		if(context instanceof Locatable){
+			Locatable locatable = (Locatable)context;
+
 			int lineNumber = -1;
 
 			Locator locator = locatable.sourceLocation();
