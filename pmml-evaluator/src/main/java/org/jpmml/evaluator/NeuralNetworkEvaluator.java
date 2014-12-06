@@ -320,7 +320,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			case LOGISTIC:
 				return 1d / (1d + Math.exp(-z));
 			case TANH:
-				return Math.exp(z);
+				return Math.tanh(z);
 			case IDENTITY:
 				return z;
 			case EXPONENTIAL:
