@@ -22,7 +22,6 @@ import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -92,19 +91,13 @@ public class EvaluationContext {
 	}
 
 	public void declareAll(Map<FieldName, ?> fields){
-		declareAll(fields, null);
+		declareAll(fields.keySet(), fields);
 	}
 
-	public void declareAll(Map<FieldName, ?> fields, final Set<FieldName> filter){
-		Collection<? extends Map.Entry<FieldName, ?>> entries = fields.entrySet();
+	public void declareAll(Collection<FieldName> names, Map<FieldName, ?> fields){
 
-		for(Map.Entry<FieldName, ?> entry : entries){
-
-			if(filter != null && !filter.contains(entry.getKey())){
-				continue;
-			}
-
-			declare(entry.getKey(), entry.getValue());
+		for(FieldName name : names){
+			declare(name, fields.get(name));
 		}
 	}
 
