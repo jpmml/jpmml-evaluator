@@ -29,7 +29,6 @@ import org.dmg.pmml.CenterFields;
 import org.dmg.pmml.ClusteringModel;
 import org.dmg.pmml.ContinuousDistribution;
 import org.dmg.pmml.ContinuousScoringMethodType;
-import org.dmg.pmml.CumulativeLinkFunctionType;
 import org.dmg.pmml.DecisionTree;
 import org.dmg.pmml.GaussianDistribution;
 import org.dmg.pmml.GeneralRegressionModel;
@@ -47,8 +46,6 @@ import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.Predictor;
 import org.dmg.pmml.Regression;
-import org.dmg.pmml.RegressionModel;
-import org.dmg.pmml.RegressionNormalizationMethodType;
 import org.dmg.pmml.ResultFeatureType;
 import org.dmg.pmml.Segmentation;
 import org.dmg.pmml.SequenceModel;
@@ -137,17 +134,7 @@ public class UnsupportedFeatureInspector extends AbstractSimpleVisitor {
 		switch(linkFunction){
 			case CAUCHIT:
 			case NEGBIN:
-			case PROBIT:
 				report(new UnsupportedFeatureException(generalRegressionModel, linkFunction));
-				break;
-			default:
-				break;
-		}
-
-		CumulativeLinkFunctionType cumulativeLinkFunction = generalRegressionModel.getCumulativeLink();
-		switch(cumulativeLinkFunction){
-			case PROBIT:
-				report(new UnsupportedFeatureException(generalRegressionModel, cumulativeLinkFunction));
 				break;
 			default:
 				break;
@@ -276,29 +263,6 @@ public class UnsupportedFeatureInspector extends AbstractSimpleVisitor {
 		report(new UnsupportedFeatureException(regression));
 
 		return VisitorAction.SKIP;
-	}
-
-	@Override
-	public VisitorAction visit(RegressionModel regressionModel){
-		MiningFunctionType miningFunctionType = regressionModel.getFunctionName();
-
-		switch(miningFunctionType){
-			case CLASSIFICATION:
-				RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
-
-				switch(regressionNormalizationMethod){
-					case PROBIT:
-						report(new UnsupportedFeatureException(regressionModel, regressionNormalizationMethod));
-						break;
-					default:
-						break;
-				}
-				break;
-			default:
-				break;
-		}
-
-		return super.visit(regressionModel);
 	}
 
 	@Override
