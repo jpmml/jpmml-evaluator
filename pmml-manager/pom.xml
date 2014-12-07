@@ -27,12 +27,12 @@
 		<dependency>
 			<groupId>org.jpmml</groupId>
 			<artifactId>pmml-model</artifactId>
-			<version>1.1.8</version>
+			<version>1.1.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jpmml</groupId>
 			<artifactId>pmml-schema</artifactId>
-			<version>1.1.8</version>
+			<version>1.1.9</version>
 		</dependency>
 
 		<dependency>

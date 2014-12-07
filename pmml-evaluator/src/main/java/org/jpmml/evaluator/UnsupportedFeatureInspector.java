@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import org.dmg.pmml.AbstractSimpleVisitor;
 import org.dmg.pmml.ActivationFunctionType;
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.BaselineModel;
@@ -62,6 +61,7 @@ import org.dmg.pmml.TimeSeriesModel;
 import org.dmg.pmml.TreeModel;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.manager.UnsupportedFeatureException;
+import org.jpmml.model.AbstractSimpleVisitor;
 
 public class UnsupportedFeatureInspector extends AbstractSimpleVisitor {
 
