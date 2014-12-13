@@ -96,6 +96,15 @@ public interface Evaluator extends Consumer {
 	FieldValue prepare(FieldName name, Object value);
 
 	/**
+	 * Verifies the model.
+	 *
+	 * @throws PMMLException If the verification fails.
+	 */
+	void verify();
+
+	/**
+	 * Evaluates the model with the specified arguments.
+	 *
 	 * @param arguments Map of {@link #getActiveFields() active field} values.
 	 *
 	 * @return Map of {@link #getTargetFields() target field} and {@link #getOutputFields() output field} values.

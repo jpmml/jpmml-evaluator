@@ -30,6 +30,7 @@ JPMML-Evaluator is *de facto* the reference implementation of the PMML specifica
   * Replacing a missing classification result with the map of prior probabilities.
 4. Calculation of auxiliary output fields according to the [Output] (http://www.dmg.org/v4-2-1/Output.html) element:
   * Over 20 different result feature types.
+5. Model verification according to the [ModelVerification] (http://www.dmg.org/v4-2-1/ModelVerification.html) element.
 
 For more information please see the [features.md] (https://github.com/jpmml/jpmml-evaluator/blob/master/features.md) file.
 
@@ -151,7 +152,8 @@ mvn clean install
 ```
 
 The resulting uber-JAR file `target/example-1.1-SNAPSHOT.jar` contains the following command-line applications:
-* `org.jpmml.evaluator.CsvEvaluationExample` [(source)] (https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/CsvEvaluationExample.java). Evaluates a PMML model using data records from a CSV file.
+* `org.jpmml.evaluator.CsvEvaluationExample` [(source)] (https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/CsvEvaluationExample.java). Evaluates a PMML model using data records from a TSV or CSV file.
+* `org.jpmml.evaluator.ModelEnhancementExample`. Enhances a PMML model with a ModelVerification element using data records from a TSV or CSV file.
 
 For example, evaluating `model.pmml` using data records from `input.tsv`:
 ```

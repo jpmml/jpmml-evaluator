@@ -240,8 +240,8 @@ public class CsvEvaluationExample extends Example {
 		List<Map<FieldName, Object>> stringRows = new ArrayList<Map<FieldName, Object>>();
 
 		body:
-		for(int row = 1; row < table.size(); row++){
-			List<String> bodyRow = table.get(row);
+		for(int i = 1; i < table.size(); i++){
+			List<String> bodyRow = table.get(i);
 
 			Map<FieldName, Object> stringRow = new LinkedHashMap<FieldName, Object>();
 

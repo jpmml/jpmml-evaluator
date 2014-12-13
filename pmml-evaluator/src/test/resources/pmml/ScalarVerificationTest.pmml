@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
+    <Header copyright="Copyright (c) 2014 vfed" description="RPart Decision Tree Model">
+        <Extension extender="Rattle/PMML" name="user" value="vfed"/>
+        <Application name="Rattle/PMML" version="1.4"/>
+        <Timestamp>2014-07-06 23:51:05</Timestamp>
+    </Header>
+    <DataDictionary numberOfFields="5">
+        <DataField name="species" optype="categorical" dataType="string">
+            <Value value="setosa"/>
+            <Value value="versicolor"/>
+            <Value value="virginica"/>
+        </DataField>
+        <DataField name="sepal length" optype="continuous" dataType="double"/>
+        <DataField name="sepal width" optype="continuous" dataType="double"/>
+        <DataField name="petal length" optype="continuous" dataType="double"/>
+        <DataField name="petal width" optype="continuous" dataType="double"/>
+    </DataDictionary>
+    <TreeModel modelName="RPart_Model" functionName="classification" algorithmName="rpart" missingValueStrategy="defaultChild" splitCharacteristic="binarySplit">
+        <MiningSchema>
+            <MiningField name="species" usageType="predicted"/>
+            <MiningField name="sepal length" usageType="active"/>
+            <MiningField name="sepal width" usageType="active"/>
+            <MiningField name="petal length" usageType="active"/>
+            <MiningField name="petal width" usageType="active"/>
+        </MiningSchema>
+        <Output>
+            <OutputField name="predicted species" optype="categorical" dataType="string" feature="predictedValue"/>
+            <OutputField name="probability setosa" optype="continuous" dataType="double" feature="probability" value="setosa"/>
+            <OutputField name="probability versicolor" optype="continuous" dataType="double" feature="probability" value="versicolor"/>
+            <OutputField name="probability virginica" optype="continuous" dataType="double" feature="probability" value="virginica"/>
+        </Output>
+        <Node id="1" score="setosa" recordCount="150.0" defaultChild="3">
+            <True/>
+            <ScoreDistribution value="setosa" recordCount="50.0" confidence="0.333333333333333"/>
+            <ScoreDistribution value="versicolor" recordCount="50.0" confidence="0.333333333333333"/>
+            <ScoreDistribution value="virginica" recordCount="50.0" confidence="0.333333333333333"/>
+            <Node id="2" score="setosa" recordCount="50.0">
+                <CompoundPredicate booleanOperator="surrogate">
+                    <SimplePredicate field="petal length" operator="lessThan" value="2.45"/>
+                    <SimplePredicate field="petal width" operator="lessThan" value="0.8"/>
+                    <SimplePredicate field="sepal length" operator="lessThan" value="5.45"/>
+                    <SimplePredicate field="sepal width" operator="greaterOrEqual" value="3.35"/>
+                </CompoundPredicate>
+                <ScoreDistribution value="setosa" recordCount="50.0" confidence="1.0"/>
+                <ScoreDistribution value="versicolor" recordCount="0.0" confidence="0.0"/>
+                <ScoreDistribution value="virginica" recordCount="0.0" confidence="0.0"/>
+            </Node>
+            <Node id="3" score="versicolor" recordCount="100.0" defaultChild="7">
+                <CompoundPredicate booleanOperator="surrogate">
+                    <SimplePredicate field="petal length" operator="greaterOrEqual" value="2.45"/>
+                    <SimplePredicate field="petal width" operator="greaterOrEqual" value="0.8"/>
+                    <SimplePredicate field="sepal length" operator="greaterOrEqual" value="5.45"/>
+                    <SimplePredicate field="sepal width" operator="lessThan" value="3.35"/>
+                </CompoundPredicate>
+                <ScoreDistribution value="setosa" recordCount="0.0" confidence="0.0"/>
+                <ScoreDistribution value="versicolor" recordCount="50.0" confidence="0.5"/>
+                <ScoreDistribution value="virginica" recordCount="50.0" confidence="0.5"/>
+                <Node id="6" score="versicolor" recordCount="54.0">
+                    <CompoundPredicate booleanOperator="surrogate">
+                        <SimplePredicate field="petal width" operator="lessThan" value="1.75"/>
+                        <SimplePredicate field="petal length" operator="lessThan" value="4.75"/>
+                        <SimplePredicate field="sepal length" operator="lessThan" value="6.15"/>
+                        <SimplePredicate field="sepal width" operator="lessThan" value="2.95"/>
+                    </CompoundPredicate>
+                    <ScoreDistribution value="setosa" recordCount="0.0" confidence="0.0"/>
+                    <ScoreDistribution value="versicolor" recordCount="49.0" confidence="0.907407407407407"/>
+                    <ScoreDistribution value="virginica" recordCount="5.0" confidence="0.0925925925925926"/>
+                </Node>
+                <Node id="7" score="virginica" recordCount="46.0">
+                    <CompoundPredicate booleanOperator="surrogate">
+                        <SimplePredicate field="petal width" operator="greaterOrEqual" value="1.75"/>
+                        <SimplePredicate field="petal length" operator="greaterOrEqual" value="4.75"/>
+                        <SimplePredicate field="sepal length" operator="greaterOrEqual" value="6.15"/>
+                        <SimplePredicate field="sepal width" operator="greaterOrEqual" value="2.95"/>
+                    </CompoundPredicate>
+                    <ScoreDistribution value="setosa" recordCount="0.0" confidence="0.0"/>
+                    <ScoreDistribution value="versicolor" recordCount="1.0" confidence="0.0217391304347826"/>
+                    <ScoreDistribution value="virginica" recordCount="45.0" confidence="0.978260869565217"/>
+                </Node>
+            </Node>
+        </Node>
+        <ModelVerification>
+            <VerificationFields>
+                <VerificationField field="sepal length" column="sepal_x0020_length"/>
+                <VerificationField field="sepal width" column="sepal_x0020_width"/>
+                <VerificationField field="petal length" column="petal_x0020_length"/>
+                <VerificationField field="petal width" column="petal_x0020_width"/>
+                <VerificationField field="species"/>
+                <VerificationField field="predicted species" column="predicted_x0020_species"/>
+                <VerificationField field="probability setosa" column="probability_x0020_setosa"/>
+                <VerificationField field="probability versicolor" column="probability_x0020_versicolor"/>
+                <VerificationField field="probability virginica" column="probability_x0020_virginica"/>
+            </VerificationFields>
+            <InlineTable>
+                <row>
+                    <sepal_x0020_length>5.1</sepal_x0020_length>
+                    <sepal_x0020_width>3.5</sepal_x0020_width>
+                    <petal_x0020_length>1.4</petal_x0020_length>
+                    <petal_x0020_width>0.2</petal_x0020_width>
+                    <species>setosa</species>
+                    <predicted_x0020_species>setosa</predicted_x0020_species>
+                    <probability_x0020_setosa>1</probability_x0020_setosa>
+                    <probability_x0020_versicolor>0</probability_x0020_versicolor>
+                    <probability_x0020_virginica>0</probability_x0020_virginica>
+                </row>
+                <row>
+                    <sepal_x0020_length>7</sepal_x0020_length>
+                    <sepal_x0020_width>3.2</sepal_x0020_width>
+                    <petal_x0020_length>4.7</petal_x0020_length>
+                    <petal_x0020_width>1.4</petal_x0020_width>
+                    <species>versicolor</species>
+                    <predicted_x0020_species>versicolor</predicted_x0020_species>
+                    <probability_x0020_setosa>0</probability_x0020_setosa>
+                    <probability_x0020_versicolor>0.9074074074</probability_x0020_versicolor>
+                    <probability_x0020_virginica>0.0925925926</probability_x0020_virginica>
+                </row>
+                <row>
+                    <sepal_x0020_length>5.9</sepal_x0020_length>
+                    <sepal_x0020_width>3.2</sepal_x0020_width>
+                    <petal_x0020_length>4.8</petal_x0020_length>
+                    <!--<petal_x0020_width>1.8</petal_x0020_width>-->
+                    <species>virginica</species>
+                </row>
+                <row>
+                    <sepal_x0020_length>6.3</sepal_x0020_length>
+                    <sepal_x0020_width>3.3</sepal_x0020_width>
+                    <petal_x0020_length>6</petal_x0020_length>
+                    <petal_x0020_width>2.5</petal_x0020_width>
+                    <species>virginica</species>
+                    <predicted_x0020_species>virginica</predicted_x0020_species>
+                    <probability_x0020_setosa>0</probability_x0020_setosa>
+                    <probability_x0020_versicolor>0.0217391304</probability_x0020_versicolor>
+                    <probability_x0020_virginica>0.9782608696</probability_x0020_virginica>
+                </row>
+                <row>
+                    <sepal_x0020_length>4.9</sepal_x0020_length>
+                    <sepal_x0020_width>2.5</sepal_x0020_width>
+                    <petal_x0020_length>4.5</petal_x0020_length>
+                    <!--<petal_x0020_width>1.7</petal_x0020_width>-->
+                    <species>versicolor</species>
+                </row>
+            </InlineTable>
+        </ModelVerification>
+    </TreeModel>
+</PMML>

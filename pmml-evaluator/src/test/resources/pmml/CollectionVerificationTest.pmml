@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+    <Header copyright="www.dmg.org" description="example model for association rules"/>
+    <DataDictionary numberOfFields="2">
+        <DataField name="transaction" optype="categorical" dataType="string"/>
+        <DataField name="item" optype="categorical" dataType="string"/>
+    </DataDictionary>
+    <AssociationModel functionName="associationRules" numberOfTransactions="5" minimumSupport="0.6" minimumConfidence="0.5" numberOfItems="6" numberOfItemsets="6" numberOfRules="5">
+        <MiningSchema>
+            <MiningField name="transaction" usageType="group"/>
+            <MiningField name="item" usageType="active"/>
+        </MiningSchema>
+        <Output>
+            <OutputField name="Recommendation" feature="ruleValue" ruleFeature="ruleId" algorithm="recommendation" rank="0" rankBasis="lift" isMultiValued="1"/>
+            <OutputField name="Exclusive_Recommendation" feature="ruleValue" ruleFeature="ruleId" algorithm="exclusiveRecommendation" rank="0" rankBasis="lift" isMultiValued="1"/>
+            <OutputField name="Rule_Association" feature="ruleValue" ruleFeature="ruleId" algorithm="ruleAssociation" rank="0" rankBasis="lift" isMultiValued="1"/>
+        </Output>
+        <Item id="1" value="Cracker"/>
+        <Item id="2" value="Water"/>
+        <Item id="3" value="Coke"/>
+        <Item id="4" value="Nachos"/>
+        <Item id="5" value="Pear"/>
+        <Item id="6" value="Banana"/>
+        <Itemset id="1" numberOfItems="1">
+            <ItemRef itemRef="1"/>
+        </Itemset>
+        <Itemset id="2" numberOfItems="1">
+            <ItemRef itemRef="2"/>
+        </Itemset>
+        <Itemset id="3" numberOfItems="1">
+            <ItemRef itemRef="3"/>
+        </Itemset>
+        <Itemset id="4" numberOfItems="1">
+            <ItemRef itemRef="4"/>
+        </Itemset>
+        <Itemset id="5" numberOfItems="2">
+            <ItemRef itemRef="1"/>
+            <ItemRef itemRef="2"/>
+        </Itemset>
+        <Itemset id="6" numberOfItems="2">
+            <ItemRef itemRef="5"/>
+            <ItemRef itemRef="6"/>
+        </Itemset>
+        <AssociationRule antecedent="1" consequent="2" support="1.0" confidence="1.0" lift="1.0"/>
+        <AssociationRule antecedent="2" consequent="1" support="1.0" confidence="1.0" lift="1.0"/>
+        <AssociationRule antecedent="1" consequent="3" support="1.0" confidence="1.0" lift="1.0"/>
+        <AssociationRule antecedent="5" consequent="4" support="1.0" confidence="1.0" lift="1.0"/>
+        <AssociationRule antecedent="2" consequent="6" support="1.0" confidence="1.0" lift="1.0"/>
+        <ModelVerification>
+            <VerificationFields>
+                <VerificationField field="transaction"/>
+                <VerificationField field="item"/>
+                <VerificationField field="Recommendation"/>
+                <VerificationField field="Exclusive_Recommendation"/>
+                <VerificationField field="Rule_Association"/>
+            </VerificationFields>
+            <InlineTable>
+                <row>
+                    <transaction>1</transaction>
+                    <item>Cracker</item>
+                    <Recommendation>1</Recommendation>
+                    <Exclusive_Recommendation>1</Exclusive_Recommendation>
+                    <Rule_Association>3</Rule_Association>
+                </row>
+                <row>
+                    <transaction>1</transaction>
+                    <item>Coke</item>
+                    <Recommendation>3</Recommendation>
+                </row>
+                <row>
+                    <transaction>2</transaction>
+                    <item>Cracker</item>
+                    <Recommendation>1</Recommendation>
+                    <Exclusive_Recommendation>3</Exclusive_Recommendation>
+                    <Rule_Association>1</Rule_Association>
+                </row>
+                <row>
+                    <transaction>2</transaction>
+                    <item>Water</item>
+                    <Recommendation>2</Recommendation>
+                    <Exclusive_Recommendation>4</Exclusive_Recommendation>
+                    <Rule_Association>2</Rule_Association>
+                </row>
+                <row>
+                    <transaction>2</transaction>
+                    <Recommendation>3</Recommendation>
+                    <Exclusive_Recommendation>5</Exclusive_Recommendation>
+                </row>
+                <row>
+                    <transaction>2</transaction>
+                    <Recommendation>4</Recommendation>
+                </row>
+                <row>
+                    <transaction>2</transaction>
+                    <Recommendation>5</Recommendation>
+                </row>
+            </InlineTable>
+        </ModelVerification>
+    </AssociationModel>
+</PMML>
