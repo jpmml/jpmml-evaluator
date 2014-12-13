@@ -152,12 +152,12 @@ mvn clean install
 ```
 
 The resulting uber-JAR file `target/example-1.1-SNAPSHOT.jar` contains the following command-line applications:
-* `org.jpmml.evaluator.CsvEvaluationExample` [(source)] (https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/CsvEvaluationExample.java). Evaluates a PMML model using data records from a TSV or CSV file.
+* `org.jpmml.evaluator.ModelEvaluationExample` [(source)] (https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/ModelEvaluationExample.java). Evaluates a PMML model using data records from a TSV or CSV file.
 * `org.jpmml.evaluator.ModelEnhancementExample`. Enhances a PMML model with a ModelVerification element using data records from a TSV or CSV file.
 
 For example, evaluating `model.pmml` using data records from `input.tsv`:
 ```
-java -cp target/example-1.1-SNAPSHOT.jar org.jpmml.evaluator.CsvEvaluationExample --model model.pmml --input input.tsv --output output.tsv
+java -cp target/example-1.1-SNAPSHOT.jar org.jpmml.evaluator.ModelEvaluationExample --model model.pmml --input input.tsv --output output.tsv
 ```
 
 # Documentation #

@@ -44,7 +44,7 @@ import org.jpmml.model.ImportFilter;
 import org.jpmml.model.JAXBUtil;
 import org.xml.sax.InputSource;
 
-public class CsvEvaluationExample extends Example {
+public class ModelEvaluationExample extends Example {
 
 	@Parameter (
 		names = {"--model"},
@@ -98,7 +98,7 @@ public class CsvEvaluationExample extends Example {
 
 	static
 	public void main(String... args) throws Exception {
-		execute(CsvEvaluationExample.class, args);
+		execute(ModelEvaluationExample.class, args);
 	}
 
 	@Override
