@@ -50,8 +50,8 @@ public class PMMLUtil {
 	}
 
 	static
-	public ModelEvaluator<?> createModelEvaluator(InputStream is) throws Exception {
-		return (ModelEvaluator<?>)createModelManager(is, ModelEvaluatorFactory.getInstance());
+	public ModelEvaluator<?> createModelEvaluator(InputStream is, ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
+		return (ModelEvaluator<?>)createModelManager(is, modelEvaluatorFactory);
 	}
 
 	static

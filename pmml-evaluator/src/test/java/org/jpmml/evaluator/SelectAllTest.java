@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.Model;
+import org.dmg.pmml.PMML;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -32,11 +34,16 @@ public class SelectAllTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		Evaluator evaluator = createModelEvaluator();
+		CountingModelEvaluatorFactory evaluatorFactory = new CountingModelEvaluatorFactory();
+
+		Evaluator evaluator = createModelEvaluator(evaluatorFactory);
 
 		Map<FieldName, ?> arguments = createArguments("sepal_length", 5.1d, "sepal_width", 3.5d, "petal_length", 1.4d, "petal_width", 0.2d);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+
+		assertEquals(1, evaluatorFactory.getMiningModelCount());
+		assertEquals(5, evaluatorFactory.getTreeModelCount());
 
 		assertEquals(1, result.size());
 
@@ -49,5 +56,41 @@ public class SelectAllTest extends ModelEvaluatorTest {
 		}
 
 		assertEquals(Arrays.asList("setosa", "setosa", "setosa", "setosa", "versicolor"), EvaluatorUtil.decode(species));
+	}
+
+	static
+	private class CountingModelEvaluatorFactory extends ModelEvaluatorFactory {
+
+		private int miningModelCount = 0;
+
+		private int treeModelCount = 0;
+
+
+		@Override
+		public ModelEvaluator<? extends Model> getModelManager(PMML pmml, Model model){
+			ModelEvaluator<?> result = super.getModelManager(pmml, model);
+
+			if(result instanceof MiningModelEvaluator){
+				this.miningModelCount++;
+			} else
+
+			if(result instanceof TreeModelEvaluator){
+				this.treeModelCount++;
+			} else
+
+			{
+				throw new AssertionError();
+			}
+
+			return result;
+		}
+
+		public int getMiningModelCount(){
+			return this.miningModelCount;
+		}
+
+		public int getTreeModelCount(){
+			return this.treeModelCount;
+		}
 	}
 }

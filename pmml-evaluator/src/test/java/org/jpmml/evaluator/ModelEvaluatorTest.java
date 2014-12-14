@@ -27,12 +27,21 @@ public class ModelEvaluatorTest extends PMMLManagerTest {
 		return createModelEvaluator(getClass());
 	}
 
+	public ModelEvaluator<?> createModelEvaluator(ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
+		return createModelEvaluator(getClass(), modelEvaluatorFactory);
+	}
+
 	static
 	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz) throws Exception {
+		return createModelEvaluator(clazz, ModelEvaluatorFactory.getInstance());
+	}
+
+	static
+	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz, ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
 		InputStream is = getInputStream(clazz);
 
 		try {
-			return PMMLUtil.createModelEvaluator(is);
+			return PMMLUtil.createModelEvaluator(is, modelEvaluatorFactory);
 		} finally {
 			is.close();
 		}

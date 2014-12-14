@@ -51,6 +51,9 @@ import org.jpmml.manager.UnsupportedFeatureException;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 
+	private ModelEvaluatorFactory evaluatorFactory = null;
+
+
 	public MiningModelEvaluator(PMML pmml){
 		this(pmml, find(pmml.getModels(), MiningModel.class));
 	}
@@ -386,6 +389,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		MiningFunctionType miningFunction = miningModel.getFunctionName();
 
+		ModelEvaluatorFactory evaluatorFactory = getEvaluatorFactory();
+		if(evaluatorFactory == null){
+			evaluatorFactory = ModelEvaluatorFactory.getInstance();
+		}
+
 		List<Segment> segments = segmentation.getSegments();
 		for(Segment segment : segments){
 			Predicate predicate = segment.getPredicate();
@@ -417,7 +425,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					break;
 			}
 
-			ModelEvaluator<?> evaluator = MiningModelEvaluator.evaluatorFactory.getModelManager(getPMML(), model);
+			ModelEvaluator<?> evaluator = evaluatorFactory.getModelManager(getPMML(), model);
 
 			ModelEvaluationContext segmentContext = evaluator.createContext(context);
 
@@ -491,6 +499,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 
 		return result.asMap();
+	}
+
+	public ModelEvaluatorFactory getEvaluatorFactory(){
+		return this.evaluatorFactory;
+	}
+
+	public void setEvaluatorFactory(ModelEvaluatorFactory evaluatorFactory){
+		this.evaluatorFactory = evaluatorFactory;
 	}
 
 	static
@@ -614,6 +630,4 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				return EntityUtil.buildBiMap(segmentation.getSegments());
 			}
 		});
-
-	private static final ModelEvaluatorFactory evaluatorFactory = ModelEvaluatorFactory.getInstance();
 }

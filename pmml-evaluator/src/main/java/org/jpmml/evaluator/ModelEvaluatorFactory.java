@@ -65,7 +65,10 @@ public class ModelEvaluatorFactory extends ModelManagerFactory {
 		} else
 
 		if(model instanceof MiningModel){
-			return new MiningModelEvaluator(pmml, (MiningModel)model);
+			MiningModelEvaluator evaluator = new MiningModelEvaluator(pmml, (MiningModel)model);
+			evaluator.setEvaluatorFactory(this);
+
+			return evaluator;
 		} else
 
 		if(model instanceof NaiveBayesModel){
