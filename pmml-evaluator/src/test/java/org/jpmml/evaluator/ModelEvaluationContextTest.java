@@ -39,7 +39,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		ModelEvaluator<?> evaluator = createModelEvaluator(AssociationAlgorithmTest.class);
+		ModelEvaluator<?> evaluator = createModelEvaluator(StandardAssociationSchemaTest.class);
 
 		FieldName item = new FieldName("item");
 		List<String> itemValue = Arrays.asList("Cracker", "Water", "Coke");

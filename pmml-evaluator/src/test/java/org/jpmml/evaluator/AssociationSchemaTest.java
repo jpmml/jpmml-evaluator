@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +28,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class AssociationAlgorithmTest extends ModelEvaluatorTest {
+abstract
+public class AssociationSchemaTest extends ModelEvaluatorTest {
+
+	abstract
+	public Map<FieldName, ?> createItemArguments(List<String> items);
 
 	@Test
 	public void evaluate() throws Exception {
@@ -40,10 +43,10 @@ public class AssociationAlgorithmTest extends ModelEvaluatorTest {
 		evaluate(Arrays.asList("Cracker", "Water", "Banana", "Apple"), Arrays.asList("1", "2", "3", "4", "5"), Arrays.asList("3", "4", "5"), Arrays.asList("1", "2"));
 	}
 
-	private void evaluate(Collection<String> items, List<String> recommendations, List<String> exclusiveRecommendations, List<String> ruleAssociations) throws Exception {
+	private void evaluate(List<String> items, List<String> recommendations, List<String> exclusiveRecommendations, List<String> ruleAssociations) throws Exception {
 		Evaluator evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("item", items);
+		Map<FieldName, ?> arguments = createItemArguments(items);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 

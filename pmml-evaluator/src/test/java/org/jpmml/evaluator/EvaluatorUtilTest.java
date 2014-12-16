@@ -51,7 +51,7 @@ public class EvaluatorUtilTest {
 
 	@Test
 	public void prepare() throws Exception {
-		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(AssociationAlgorithmTest.class);
+		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(StandardAssociationSchemaTest.class);
 
 		FieldValue simple = EvaluatorUtil.prepare(evaluator, new FieldName("item"), "Cracker");
 

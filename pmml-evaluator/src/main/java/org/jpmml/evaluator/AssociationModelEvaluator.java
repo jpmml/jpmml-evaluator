@@ -31,6 +31,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.AssociationModel;
@@ -40,6 +41,7 @@ import org.dmg.pmml.Item;
 import org.dmg.pmml.ItemRef;
 import org.dmg.pmml.Itemset;
 import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
 import org.jpmml.manager.InvalidFeatureException;
@@ -58,20 +60,6 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	@Override
 	public String getSummary(){
 		return "Association rules";
-	}
-
-	public FieldName getActiveField(){
-		List<FieldName> activeFields = getActiveFields();
-
-		if(activeFields.size() < 1){
-			throw new InvalidFeatureException("No active fields", getMiningSchema());
-		} else
-
-		if(activeFields.size() > 1){
-			throw new InvalidFeatureException("Too many active fields", getMiningSchema());
-		}
-
-		return activeFields.get(0);
 	}
 
 	/**
@@ -111,22 +99,9 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	private Map<FieldName, ?> evaluateAssociationRules(EvaluationContext context){
 		AssociationModel associationModel = getModel();
 
-		FieldName activeField = getActiveField();
+		Collection<?> activeValue = getActiveValue(context);
 
-		FieldValue value = context.getField(activeField);
-		if(value == null){
-			throw new MissingFieldException(activeField, associationModel);
-		}
-
-		Collection<?> values;
-
-		try {
-			values = (Collection<?>)FieldValueUtil.getValue(value);
-		} catch(ClassCastException cce){
-			throw new TypeCheckException(Collection.class, value);
-		}
-
-		Set<String> input = createInput(values, context);
+		Set<String> input = createInput(activeValue, context);
 
 		Map<String, Boolean> flags = Maps.newLinkedHashMap();
 
@@ -177,6 +152,78 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		};
 
 		return Collections.singletonMap(getTargetField(), association);
+	}
+
+	public Collection<?> getActiveValue(EvaluationContext context){
+		MiningSchema miningSchema = getMiningSchema();
+
+		List<FieldName> activeFields = getActiveFields();
+		List<FieldName> groupFields = getGroupFields();
+
+		// Custom IBM SPSS-style model: no group fields, one or more active fields
+		if(groupFields.size() == 0){
+
+			if(activeFields.size() < 0){
+				throw new InvalidFeatureException("No active fields", miningSchema);
+			}
+
+			List<String> result = Lists.newArrayList();
+
+			for(FieldName activeField : activeFields){
+				FieldValue value = context.getField(activeField);
+
+				if(value == null){
+					throw new MissingFieldException(activeField);
+				} // End if
+
+				if(value.equalsString("T")){
+					result.add(activeField.getValue());
+				} else
+
+				if(value.equalsString("F")){
+					continue;
+				} else
+
+				{
+					throw new EvaluationException();
+				}
+			}
+
+			return result;
+		} else
+
+		// Standard model: one group field, one active field
+		if(groupFields.size() == 1){
+
+			if(activeFields.size() < 1){
+				throw new InvalidFeatureException("No active fields", miningSchema);
+			} else
+
+			if(activeFields.size() > 1){
+				throw new InvalidFeatureException("Too many active fields", miningSchema);
+			}
+
+			FieldName activeField = activeFields.get(0);
+
+			FieldValue value = context.getField(activeField);
+			if(value == null){
+				throw new MissingFieldException(activeField);
+			}
+
+			Collection<?> result;
+
+			try {
+				result = (Collection<?>)FieldValueUtil.getValue(value);
+			} catch(ClassCastException cce){
+				throw new TypeCheckException(Collection.class, value);
+			}
+
+			return result;
+		} else
+
+		{
+			throw new InvalidFeatureException(miningSchema);
+		}
 	}
 
 	/**
