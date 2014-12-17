@@ -73,11 +73,7 @@ public class ModelManagerCache {
 		return this.cache.asMap();
 	}
 
-	protected PMML process(PMML pmml){
-		return pmml;
-	}
-
-	private ModelManager<? extends Model> loadModelManager(Class<?> clazz) throws IOException, JAXBException, SAXException {
+	protected ModelManager<? extends Model> loadModelManager(Class<?> clazz) throws IOException, JAXBException, SAXException {
 		String path = (clazz.getName()).replace('.', '/') + ".pmml";
 
 		ClassLoader clazzLoader = clazz.getClassLoader();
@@ -107,6 +103,10 @@ public class ModelManagerCache {
 		ModelManagerFactory modelManagerFactory = getModelManagerFactory();
 
 		return pmmlManager.getModelManager(modelManagerFactory);
+	}
+
+	protected PMML process(PMML pmml){
+		return pmml;
 	}
 
 	public ModelManagerFactory getModelManagerFactory(){

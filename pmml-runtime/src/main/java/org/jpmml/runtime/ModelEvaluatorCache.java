@@ -18,10 +18,15 @@
  */
 package org.jpmml.runtime;
 
+import java.io.IOException;
+
+import javax.xml.bind.JAXBException;
+
 import com.google.common.cache.CacheBuilder;
 import org.dmg.pmml.Model;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
+import org.xml.sax.SAXException;
 
 public class ModelEvaluatorCache extends ModelManagerCache {
 
@@ -36,5 +41,13 @@ public class ModelEvaluatorCache extends ModelManagerCache {
 	@Override
 	public ModelEvaluator<? extends Model> get(Class<?> clazz) throws Exception {
 		return (ModelEvaluator<? extends Model>)super.get(clazz);
+	}
+
+	@Override
+	protected ModelEvaluator<? extends Model> loadModelManager(Class<?> clazz) throws IOException, JAXBException, SAXException {
+		ModelEvaluator<? extends Model> modelEvaluator = (ModelEvaluator<? extends Model>)super.loadModelManager(clazz);
+		modelEvaluator.verify();
+
+		return modelEvaluator;
 	}
 }

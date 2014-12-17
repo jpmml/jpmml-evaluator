@@ -78,6 +78,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return ArgumentUtil.prepare(dataField, miningField, value);
 	}
 
+	@Override
 	public void verify(){
 		M model = getModel();
 
