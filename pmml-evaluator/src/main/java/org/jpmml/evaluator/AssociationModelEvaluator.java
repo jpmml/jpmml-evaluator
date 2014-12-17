@@ -41,7 +41,6 @@ import org.dmg.pmml.Item;
 import org.dmg.pmml.ItemRef;
 import org.dmg.pmml.Itemset;
 import org.dmg.pmml.MiningFunctionType;
-import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
 import org.jpmml.manager.InvalidFeatureException;
@@ -73,6 +72,17 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	@Override
 	public BiMap<String, AssociationRule> getEntityRegistry(){
 		return getValue(AssociationModelEvaluator.entityCache);
+	}
+
+	@Override
+	public void verify(){
+		List<FieldName> targetFields = getTargetFields();
+
+		if(targetFields.size() > 0){
+			throw new InvalidFeatureException("Too many target fields", getMiningSchema());
+		}
+
+		super.verify();
 	}
 
 	@Override
@@ -155,8 +165,6 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	public Collection<?> getActiveValue(EvaluationContext context){
-		MiningSchema miningSchema = getMiningSchema();
-
 		List<FieldName> activeFields = getActiveFields();
 		List<FieldName> groupFields = getGroupFields();
 
@@ -164,7 +172,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		if(groupFields.size() == 0){
 
 			if(activeFields.size() < 0){
-				throw new InvalidFeatureException("No active fields", miningSchema);
+				throw new InvalidFeatureException("No active fields", getMiningSchema());
 			}
 
 			List<String> result = Lists.newArrayList();
@@ -198,11 +206,11 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		if(groupFields.size() == 1){
 
 			if(activeFields.size() < 1){
-				throw new InvalidFeatureException("No active fields", miningSchema);
+				throw new InvalidFeatureException("No active fields", getMiningSchema());
 			} else
 
 			if(activeFields.size() > 1){
-				throw new InvalidFeatureException("Too many active fields", miningSchema);
+				throw new InvalidFeatureException("Too many active fields", getMiningSchema());
 			}
 
 			FieldName activeField = activeFields.get(0);
@@ -224,7 +232,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		} else
 
 		{
-			throw new InvalidFeatureException(miningSchema);
+			throw new InvalidFeatureException(getMiningSchema());
 		}
 	}
 
