@@ -37,6 +37,10 @@ import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SlidingWindowReservoir;
 import com.codahale.metrics.Timer;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.jpmml.manager.PMMLManager;
@@ -227,13 +231,23 @@ public class ModelEvaluationExample extends Example {
 		{
 			List<String> headerRow = table.get(0);
 			for(int column = 0; column < headerRow.size(); column++){
-				FieldName field = FieldName.create(headerRow.get(column));
+				FieldName name = FieldName.create(headerRow.get(column));
 
-				if(!(activeFields.contains(field) || groupFields.contains(field))){
-					field = null;
+				if(!(activeFields.contains(name) || groupFields.contains(name))){
+					name = null;
 				}
 
-				names.add(field);
+				names.add(name);
+			}
+
+			Sets.SetView<FieldName> missingActiveFields = difference(activeFields, names);
+			if(missingActiveFields.size() > 0){
+				throw new IllegalArgumentException("Missing active field(s): " + missingActiveFields.toString());
+			}
+
+			Sets.SetView<FieldName> missingGroupFields = difference(groupFields, names);
+			if(missingGroupFields.size() > 0){
+				throw new IllegalArgumentException("Missing group field(s): " + missingGroupFields.toString());
 			}
 		}
 
@@ -302,6 +316,13 @@ public class ModelEvaluationExample extends Example {
 		}
 
 		return resultList;
+	}
+
+	static
+	private Sets.SetView<FieldName> difference(List<FieldName> requiredFields, List<FieldName> fields){
+		Predicate<FieldName> notNull = Predicates.notNull();
+
+		return Sets.difference(Sets.newHashSet(Iterables.filter(requiredFields, notNull)), Sets.newHashSet(Iterables.filter(fields, notNull)));
 	}
 
 	static
