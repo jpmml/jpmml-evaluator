@@ -163,19 +163,21 @@ public class ArgumentUtilTest {
 				createInterval(Interval.Closure.CLOSED_CLOSED, 1d, 10d)
 			);
 
-		assertTrue(ArgumentUtil.isOutlier(dataField, -15d));
-		assertFalse(ArgumentUtil.isOutlier(dataField, 0d));
-		assertTrue(ArgumentUtil.isOutlier(dataField, 15d));
+		MiningField miningField = new MiningField(name);
+
+		assertTrue(ArgumentUtil.isOutlier(dataField, miningField, -15d));
+		assertFalse(ArgumentUtil.isOutlier(dataField, miningField, 0d));
+		assertTrue(ArgumentUtil.isOutlier(dataField, miningField, 15d));
 	}
 
 	@Test
 	public void isInvalid(){
-		assertFalse(ArgumentUtil.isInvalid(null, null));
+		assertFalse(ArgumentUtil.isInvalid(null, null, null));
 	}
 
 	@Test
 	public void isValid(){
-		assertFalse(ArgumentUtil.isValid(null, null));
+		assertFalse(ArgumentUtil.isValid(null, null, null));
 	}
 
 	static

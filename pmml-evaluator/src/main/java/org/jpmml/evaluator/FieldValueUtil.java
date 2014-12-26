@@ -24,8 +24,10 @@ import java.util.List;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
+import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.TypeDefinitionField;
 import org.dmg.pmml.Value;
@@ -37,7 +39,7 @@ public class FieldValueUtil {
 
 	static
 	public FieldValue create(Object value){
-		return create(null, null, value);
+		return create((DataType)null, (OpType)null, value);
 	}
 
 	static
@@ -49,6 +51,18 @@ public class FieldValueUtil {
 		}
 
 		return result;
+	}
+
+	static
+	public FieldValue create(DataField dataField, MiningField miningField, Object value){
+		DataType dataType = dataField.getDataType();
+
+		OpType opType = miningField.getOptype();
+		if(opType == null){
+			opType = dataField.getOptype();
+		}
+
+		return create(dataType, opType, value);
 	}
 
 	static

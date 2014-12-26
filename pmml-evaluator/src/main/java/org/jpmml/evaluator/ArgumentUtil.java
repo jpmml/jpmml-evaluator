@@ -66,7 +66,7 @@ public class ArgumentUtil {
 		}
 
 		outlierTreatment:
-		if(isOutlier(dataField, value)){
+		if(isOutlier(dataField, miningField, value)){
 			OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
 
 			switch(outlierTreatmentMethod){
@@ -116,7 +116,7 @@ public class ArgumentUtil {
 		} // End if
 
 		invalidValueTreatment:
-		if(isInvalid(dataField, value)){
+		if(isInvalid(dataField, miningField, value)){
 			InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
 
 			switch(invalidValueTreatmentMethod){
@@ -138,11 +138,11 @@ public class ArgumentUtil {
 			}
 		}
 
-		return FieldValueUtil.create(dataField, value);
+		return FieldValueUtil.create(dataField, miningField, value);
 	}
 
 	static
-	public boolean isOutlier(DataField dataField, Object value){
+	public boolean isOutlier(DataField dataField, MiningField miningField, Object value){
 
 		if(value == null){
 			return false;
@@ -150,7 +150,11 @@ public class ArgumentUtil {
 
 		List<Interval> intervals = dataField.getIntervals();
 
-		OpType opType = dataField.getOptype();
+		OpType opType = miningField.getOptype();
+		if(opType == null){
+			opType = dataField.getOptype();
+		}
+
 		switch(opType){
 			case CONTINUOUS:
 				{
@@ -169,7 +173,7 @@ public class ArgumentUtil {
 			case ORDINAL:
 				break;
 			default:
-				throw new UnsupportedFeatureException(dataField, opType);
+				throw new UnsupportedFeatureException(miningField, opType);
 		}
 
 		return false;
@@ -206,20 +210,20 @@ public class ArgumentUtil {
 	}
 
 	static
-	public boolean isInvalid(DataField dataField, Object value){
+	public boolean isInvalid(DataField dataField, MiningField miningField, Object value){
 
 		if(value == null){
 			return false;
 		}
 
-		return !isValid(dataField, value);
+		return !isValid(dataField, miningField, value);
 	}
 
 	@SuppressWarnings (
 		value = "fallthrough"
 	)
 	static
-	public boolean isValid(DataField dataField, Object value){
+	public boolean isValid(DataField dataField, MiningField miningField, Object value){
 
 		if(value == null){
 			return false;
@@ -229,7 +233,11 @@ public class ArgumentUtil {
 
 		List<Interval> intervals = dataField.getIntervals();
 
-		OpType opType = dataField.getOptype();
+		OpType opType = miningField.getOptype();
+		if(opType == null){
+			opType = dataField.getOptype();
+		}
+
 		switch(opType){
 			case CONTINUOUS:
 				{
@@ -291,7 +299,7 @@ public class ArgumentUtil {
 					return true;
 				}
 			default:
-				throw new UnsupportedFeatureException(dataField, opType);
+				throw new UnsupportedFeatureException(miningField, opType);
 		}
 	}
 
