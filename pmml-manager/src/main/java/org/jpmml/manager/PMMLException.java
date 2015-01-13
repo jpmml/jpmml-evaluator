@@ -18,7 +18,6 @@
  */
 package org.jpmml.manager;
 
-import com.sun.xml.bind.Locatable;
 import org.dmg.pmml.PMMLObject;
 import org.xml.sax.Locator;
 
@@ -54,15 +53,13 @@ public class PMMLException extends RuntimeException {
 		sb.append(getClass().getName());
 
 		PMMLObject context = getContext();
-		if(context instanceof Locatable){
-			Locatable locatable = (Locatable)context;
-
+		if(context != null){
 			int lineNumber = -1;
 
-			Locator locator = locatable.sourceLocation();
+			Locator locator = context.getLocator();
 			if(locator != null){
 				lineNumber = locator.getLineNumber();
-			}
+			} // End if
 
 			if(lineNumber != -1){
 				sb.append(" ").append("(at or around line ").append(lineNumber).append(")");
