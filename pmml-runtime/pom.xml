@@ -33,7 +33,4 @@
 			<artifactId>junit</artifactId>
 		</dependency>
 	</dependencies>
-
-	<build>
-	</build>
 </project>
