@@ -525,6 +525,10 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private BiMap<FieldName, Predictor> parsePredictorRegistry(PredictorList predictorList){
 		BiMap<FieldName, Predictor> result = HashBiMap.create();
 
+		if(predictorList == null){
+			return result;
+		}
+
 		List<Predictor> predictors = predictorList.getPredictors();
 		for(Predictor predictor : predictors){
 			result.put(predictor.getName(), predictor);
