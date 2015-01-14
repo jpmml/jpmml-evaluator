@@ -358,7 +358,12 @@ public class OutputUtil {
 			case TRANSFORMED_VALUE:
 			case DECISION:
 				{
-					throw new TypeAnalysisException(outputField);
+					Expression expression = outputField.getExpression();
+					if(expression == null){
+						throw new InvalidFeatureException(outputField);
+					}
+
+					return ExpressionUtil.getDataType(expression, modelEvaluator);
 				}
 			case PROBABILITY:
 			case RESIDUAL:

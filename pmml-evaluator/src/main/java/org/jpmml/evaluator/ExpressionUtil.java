@@ -32,6 +32,7 @@ import com.google.common.collect.Maps;
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.Constant;
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Discretize;
@@ -114,6 +115,84 @@ public class ExpressionUtil {
 
 		if(expression instanceof Aggregate){
 			return evaluateAggregate((Aggregate)expression, context);
+		}
+
+		throw new UnsupportedFeatureException(expression);
+	}
+
+	/**
+	 * @throws TypeAnalysisException If the data type cannot be determined.
+	 */
+	static
+	public DataType getDataType(Expression expression, ModelEvaluator<?> modelEvaluator){
+
+		if(expression instanceof Constant){
+			Constant constant = (Constant)expression;
+
+			String value = constant.getValue();
+
+			DataType dataType = constant.getDataType();
+			if(dataType == null){
+				dataType = TypeUtil.getConstantDataType(value);
+			}
+
+			return dataType;
+		} else
+
+		if(expression instanceof FieldRef){
+			FieldRef fieldRef = (FieldRef)expression;
+
+			FieldName name = fieldRef.getField();
+
+			DataField dataField = modelEvaluator.getDataField(name);
+			if(dataField != null){
+				return dataField.getDataType();
+			}
+
+			DerivedField derivedField = modelEvaluator.resolveDerivedField(name);
+			if(derivedField != null){
+				return derivedField.getDataType();
+			}
+
+			throw new TypeAnalysisException(expression);
+		} else
+
+		if(expression instanceof NormContinuous){
+			return DataType.DOUBLE;
+		} else
+
+		if(expression instanceof NormDiscrete){
+			return DataType.DOUBLE;
+		} else
+
+		if(expression instanceof Discretize){
+			Discretize discretize = (Discretize)expression;
+
+			DataType dataType = discretize.getDataType();
+			if(dataType == null){
+				dataType = DataType.STRING;
+			}
+
+			return dataType;
+		} else
+
+		if(expression instanceof MapValues){
+			MapValues mapValues = (MapValues)expression;
+
+			DataType dataType = mapValues.getDataType();
+			if(dataType == null){
+				dataType = DataType.STRING;
+			}
+
+			return dataType;
+		} else
+
+		if(expression instanceof Apply){
+			throw new TypeAnalysisException(expression);
+		} else
+
+		if(expression instanceof Aggregate){
+			throw new TypeAnalysisException(expression);
 		}
 
 		throw new UnsupportedFeatureException(expression);
