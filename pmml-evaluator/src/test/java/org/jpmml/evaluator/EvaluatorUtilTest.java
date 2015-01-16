@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,11 +31,14 @@ import org.dmg.pmml.OpType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class EvaluatorUtilTest {
 
 	@Test
 	public void decode(){
+		assertEquals(null, EvaluatorUtil.decode((Object)null));
+
 		Computable value = new Computable(){
 
 			@Override
@@ -47,6 +51,28 @@ public class EvaluatorUtilTest {
 
 		assertEquals(Arrays.asList("value"), EvaluatorUtil.decode(Arrays.asList(value)));
 		assertEquals(Arrays.asList("value", "value"), EvaluatorUtil.decode(Arrays.asList(value, value)));
+
+		assertEquals(Collections.<String, String>singletonMap((String)null, "value"), EvaluatorUtil.decode(Collections.singletonMap((FieldName)null, value)));
+		assertEquals(Collections.<String, String>singletonMap("key", "value"), EvaluatorUtil.decode(Collections.singletonMap(new FieldName("key"), value)));
+
+		Computable invalidValue = new Computable(){
+
+			@Override
+			public Object getResult(){
+				throw new EvaluationException();
+			}
+		};
+
+		try {
+			EvaluatorUtil.decode(invalidValue);
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
+
+		assertEquals(Collections.emptyMap(), EvaluatorUtil.decode(Collections.singletonMap((FieldName)null, invalidValue)));
+		assertEquals(Collections.emptyMap(), EvaluatorUtil.decode(Collections.singletonMap(new FieldName("key"), invalidValue)));
 	}
 
 	@Test

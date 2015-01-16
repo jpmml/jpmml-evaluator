@@ -76,11 +76,11 @@ public class EvaluatorUtil {
 			FieldName key = entry.getKey();
 			Object value = entry.getValue();
 
-			if(key == null){
-				continue;
+			try {
+				result.put(key != null ? key.getValue() : null, decode(value));
+			} catch(EvaluationException ee){
+				// Ignored
 			}
-
-			result.put(key.getValue(), decode(value));
 		}
 
 		return result;

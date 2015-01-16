@@ -53,6 +53,7 @@ public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
 
 			fail();
 		} catch(EvaluationException ee){
+			// Ignored
 		}
 
 		assertEquals(Arrays.asList("3", "1", "4"), (targetValue.getEntityIdRanking()).subList(0, 3));
