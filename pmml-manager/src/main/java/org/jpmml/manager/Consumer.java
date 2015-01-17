@@ -48,6 +48,8 @@ public interface Consumer extends Serializable {
 
 	/**
 	 * Gets the definition of a field from the {@link DataDictionary}.
+	 *
+	 * @param name The name of the field. The name of the default target field is <code>null</code>.
 	 */
 	DataField getDataField(FieldName name);
 
@@ -76,9 +78,30 @@ public interface Consumer extends Serializable {
 	/**
 	 * Convenience method for retrieving the sole target field.
 	 *
-	 * @return The sole target field, or <code>null</code> if it does not exist
+	 * A supervised model should, but is not required to, define a target field. An unsupervised model, by definition, does not define a target field.
+	 * If the {@link #getTargetFields() collection of target fields} is empty, the model consumer should assume that the model defines a default target field, which is represented by <code>null</code>.
+	 * The default target field could be either "true" or "phantom". They can be distinguished from one another by looking up the definitoon.
+	 * <pre>
+	 * Consumer consumer = ...;
 	 *
-	 * @throws InvalidFeatureException If the number of target fields is not exactly one.
+	 * List&lt;FieldName&gt; targetFields = consumer.getTargetFields();
+	 * if(targetFields.isEmpty()){
+	 *   FieldName targetField = consumer.getTargetField();
+	 *
+	 *   DataField dataField = consumer.getDataField(targetField);
+	 *   if(dataField != null){
+	 *     // A "true" default target field
+	 *   } else
+	 *
+	 *   {
+	 *     // A "phantom" default target field
+	 *   }
+	 * }
+	 * </pre>
+	 *
+	 * @return The sole target field.
+	 *
+	 * @throws InvalidFeatureException If the number of target fields is greater than one.
 	 *
 	 * @see #getTargetFields()
 	 */
@@ -86,6 +109,8 @@ public interface Consumer extends Serializable {
 
 	/**
 	 * Gets the definition of a field from the {@link MiningSchema}.
+	 *
+	 * @param name The name of the field.
 	 *
 	 * @see #getActiveFields()
 	 * @see #getGroupFields()

@@ -79,7 +79,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			throw new InvalidResultException(clusteringModel);
 		}
 
-		Map<FieldName, ?> predictions;
+		Map<FieldName, ClusterClassificationMap> predictions;
 
 		MiningFunctionType miningFunction = clusteringModel.getFunctionName();
 		switch(miningFunction){

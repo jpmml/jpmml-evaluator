@@ -48,8 +48,10 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldUsageType;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.MiningField;
+import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.ModelVerification;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
@@ -65,6 +67,36 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	abstract
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context);
+
+	@Override
+	public DataField getDataField(FieldName name){
+
+		if(name == null){
+			return getDataField();
+		}
+
+		return super.getDataField(name);
+	}
+
+	/**
+	 * @return A synthetic {@link DataField} describing the default target field.
+	 */
+	protected DataField getDataField(){
+		Model model = getModel();
+
+		MiningFunctionType miningFunction = model.getFunctionName();
+		switch(miningFunction){
+			case REGRESSION:
+				return new DataField(null, OpType.CONTINUOUS, DataType.DOUBLE);
+			case CLASSIFICATION:
+			case CLUSTERING:
+				return new DataField(null, OpType.CATEGORICAL, DataType.STRING);
+			default:
+				break;
+		}
+
+		return null;
+	}
 
 	@Override
 	public FieldValue prepare(FieldName name, Object value){

@@ -118,7 +118,7 @@ public class BatchUtil {
 
 				Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-				// Delete the synthetic target field
+				// Delete the default target field
 				if(targetFields.size() == 0){
 					result = Maps.newLinkedHashMap(result);
 

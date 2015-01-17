@@ -35,8 +35,6 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Item;
 import org.dmg.pmml.ItemRef;
 import org.dmg.pmml.Itemset;
-import org.dmg.pmml.MiningFunctionType;
-import org.dmg.pmml.Model;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.OutputField;
@@ -328,26 +326,12 @@ public class OutputUtil {
 					FieldName targetField = outputField.getTargetField();
 					if(targetField == null){
 						targetField = modelEvaluator.getTargetField();
-					} // End if
-
-					if(targetField == null){
-						Model model = modelEvaluator.getModel();
-
-						MiningFunctionType miningFunction = model.getFunctionName();
-						switch(miningFunction){
-							case REGRESSION:
-								return DataType.DOUBLE;
-							case CLASSIFICATION:
-							case CLUSTERING:
-								return DataType.STRING;
-							default:
-								break;
-						}
-
-						throw new TypeAnalysisException(outputField);
 					}
 
 					DataField dataField = modelEvaluator.getDataField(targetField);
+					if(dataField == null){
+						throw new TypeAnalysisException(outputField);
+					}
 
 					return dataField.getDataType();
 				}

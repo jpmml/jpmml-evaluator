@@ -86,6 +86,14 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return "k-Nearest neighbors model";
 	}
 
+	/**
+	 * @return <code>null</code> Always.
+	 */
+	@Override
+	protected DataField getDataField(){
+		return null;
+	}
+
 	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
@@ -93,7 +101,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			throw new InvalidResultException(nearestNeighborModel);
 		}
 
-		Map<FieldName, ?> predictions;
+		Map<FieldName, InstanceClassificationMap> predictions;
 
 		MiningFunctionType miningFunction = nearestNeighborModel.getFunctionName();
 		switch(miningFunction){

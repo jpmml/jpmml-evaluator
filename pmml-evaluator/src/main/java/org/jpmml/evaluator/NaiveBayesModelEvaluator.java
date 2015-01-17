@@ -86,7 +86,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			throw new InvalidResultException(naiveBayesModel);
 		}
 
-		Map<FieldName, ?> predictions;
+		Map<FieldName, ? extends ClassificationMap<?>> predictions;
 
 		MiningFunctionType miningFunction = naiveBayesModel.getFunctionName();
 		switch(miningFunction){

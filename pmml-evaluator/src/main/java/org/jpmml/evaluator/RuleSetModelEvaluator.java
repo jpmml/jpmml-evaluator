@@ -59,7 +59,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 			throw new InvalidResultException(ruleSetModel);
 		}
 
-		Map<FieldName, ?> predictions;
+		Map<FieldName, ? extends ClassificationMap<?>> predictions;
 
 		MiningFunctionType miningFunction = ruleSetModel.getFunctionName();
 		switch(miningFunction){

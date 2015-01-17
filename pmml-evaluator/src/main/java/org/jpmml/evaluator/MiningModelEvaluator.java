@@ -33,6 +33,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.FieldName;
@@ -79,6 +80,24 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
+	protected DataField getDataField(){
+		MiningModel miningModel = getModel();
+
+		Segmentation segmentation = miningModel.getSegmentation();
+		if(segmentation == null){
+			return null;
+		}
+
+		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+		switch(multipleModelMethod){
+			case SELECT_ALL:
+				return null;
+			default:
+				return super.getDataField();
+		}
+	}
+
+	@Override
 	public MiningModelEvaluationContext createContext(ModelEvaluationContext parent){
 		return new MiningModelEvaluationContext(parent, this);
 	}
@@ -97,6 +116,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		EmbeddedModel embeddedModel = Iterables.getFirst(miningModel.getEmbeddedModels(), null);
 		if(embeddedModel != null){
 			throw new UnsupportedFeatureException(embeddedModel);
+		}
+
+		Segmentation segmentation = miningModel.getSegmentation();
+		if(segmentation == null){
+			throw new InvalidFeatureException(miningModel);
 		}
 
 		Map<FieldName, ?> predictions;

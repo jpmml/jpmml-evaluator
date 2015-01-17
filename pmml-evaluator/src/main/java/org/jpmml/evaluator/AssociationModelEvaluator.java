@@ -92,7 +92,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			throw new InvalidResultException(associationModel);
 		}
 
-		Map<FieldName, ?> predictions;
+		Map<FieldName, Association> predictions;
 
 		MiningFunctionType miningFunction = associationModel.getFunctionName();
 		switch(miningFunction){
@@ -106,7 +106,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateAssociationRules(EvaluationContext context){
+	private Map<FieldName, Association> evaluateAssociationRules(EvaluationContext context){
 		AssociationModel associationModel = getModel();
 
 		Collection<?> activeValue = getActiveValue(context);
