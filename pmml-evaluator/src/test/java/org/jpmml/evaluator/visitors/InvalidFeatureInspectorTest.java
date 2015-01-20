@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2015 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -21,35 +21,24 @@ package org.jpmml.evaluator.visitors;
 import java.util.List;
 
 import org.dmg.pmml.DataDictionary;
-import org.dmg.pmml.GeneralRegressionModel;
-import org.dmg.pmml.Header;
 import org.dmg.pmml.PMML;
-import org.jpmml.manager.UnsupportedFeatureException;
+import org.jpmml.manager.InvalidFeatureException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class UnsupportedFeatureInspectorTest {
+public class InvalidFeatureInspectorTest {
 
 	@Test
-	public void inspect(){
-		PMML pmml = new PMML(new Header(), new DataDictionary(), "4.2");
+	public void inspect() throws Exception {
+		PMML pmml = new PMML(null, new DataDictionary(), null);
 
-		GeneralRegressionModel model = new GeneralRegressionModel()
-			.withModelType(GeneralRegressionModel.ModelType.COX_REGRESSION);
-
-		pmml = pmml.withModels(model);
-
-		UnsupportedFeatureInspector inspector = new UnsupportedFeatureInspector();
+		InvalidFeatureInspector inspector = new InvalidFeatureInspector();
 
 		pmml.accept(inspector);
 
-		List<UnsupportedFeatureException> exceptions = inspector.getExceptions();
+		List<InvalidFeatureException> exceptions = inspector.getExceptions();
 
-		assertEquals(1, exceptions.size());
-
-		UnsupportedFeatureException exception = exceptions.get(0);
-
-		assertEquals("GeneralRegressionModel@modelType=CoxRegression", exception.getMessage());
+		assertEquals(2 + 1, exceptions.size());
 	}
 }
