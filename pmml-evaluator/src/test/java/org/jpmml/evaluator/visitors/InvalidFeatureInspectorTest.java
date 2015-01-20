@@ -26,6 +26,7 @@ import org.jpmml.manager.InvalidFeatureException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class InvalidFeatureInspectorTest {
 
@@ -35,10 +36,14 @@ public class InvalidFeatureInspectorTest {
 
 		InvalidFeatureInspector inspector = new InvalidFeatureInspector();
 
-		pmml.accept(inspector);
+		try {
+			inspector.applyTo(pmml);
 
-		List<InvalidFeatureException> exceptions = inspector.getExceptions();
+			fail();
+		} catch(InvalidFeatureException ife){
+			List<InvalidFeatureException> exceptions = inspector.getExceptions();
 
-		assertEquals(2 + 1, exceptions.size());
+			assertEquals(2 + 1, exceptions.size());
+		}
 	}
 }

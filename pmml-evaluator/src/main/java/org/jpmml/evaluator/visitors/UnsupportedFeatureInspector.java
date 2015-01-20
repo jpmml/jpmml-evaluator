@@ -56,14 +56,25 @@ import org.dmg.pmml.TargetValueStat;
 import org.dmg.pmml.TextModel;
 import org.dmg.pmml.TimeSeriesModel;
 import org.dmg.pmml.TreeModel;
+import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.manager.UnsupportedFeatureException;
-import org.jpmml.model.AbstractSimpleVisitor;
+import org.jpmml.model.visitors.AbstractVisitor;
 
-public class UnsupportedFeatureInspector extends AbstractSimpleVisitor {
+public class UnsupportedFeatureInspector extends AbstractVisitor {
 
 	private List<UnsupportedFeatureException> exceptions = Lists.newArrayList();
 
+
+	@Override
+	public void applyTo(Visitable visitable){
+		super.applyTo(visitable);
+
+		List<UnsupportedFeatureException> exceptions = getExceptions();
+		if(exceptions.size() > 0){
+			throw exceptions.get(0);
+		}
+	}
 
 	@Override
 	public VisitorAction visit(Aggregate aggregate){

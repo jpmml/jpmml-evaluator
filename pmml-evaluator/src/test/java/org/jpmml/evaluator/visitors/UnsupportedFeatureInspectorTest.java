@@ -28,6 +28,7 @@ import org.jpmml.manager.UnsupportedFeatureException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class UnsupportedFeatureInspectorTest {
 
@@ -42,14 +43,16 @@ public class UnsupportedFeatureInspectorTest {
 
 		UnsupportedFeatureInspector inspector = new UnsupportedFeatureInspector();
 
-		pmml.accept(inspector);
+		try {
+			inspector.applyTo(pmml);
 
-		List<UnsupportedFeatureException> exceptions = inspector.getExceptions();
+			fail();
+		} catch(UnsupportedFeatureException ufe){
+			List<UnsupportedFeatureException> exceptions = inspector.getExceptions();
 
-		assertEquals(1, exceptions.size());
+			assertEquals(1, exceptions.size());
 
-		UnsupportedFeatureException exception = exceptions.get(0);
-
-		assertEquals("GeneralRegressionModel@modelType=CoxRegression", exception.getMessage());
+			assertEquals("GeneralRegressionModel@modelType=CoxRegression", ufe.getMessage());
+		}
 	}
 }

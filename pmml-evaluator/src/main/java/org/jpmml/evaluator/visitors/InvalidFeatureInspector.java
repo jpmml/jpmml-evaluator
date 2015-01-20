@@ -26,14 +26,25 @@ import javax.xml.bind.annotation.XmlElement;
 
 import com.google.common.collect.Lists;
 import org.dmg.pmml.PMMLObject;
+import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.model.AbstractSimpleVisitor;
+import org.jpmml.model.visitors.AbstractSimpleVisitor;
 
 public class InvalidFeatureInspector extends AbstractSimpleVisitor {
 
 	private List<InvalidFeatureException> exceptions = Lists.newArrayList();
 
+
+	@Override
+	public void applyTo(Visitable visitable){
+		super.applyTo(visitable);
+
+		List<InvalidFeatureException> exceptions = getExceptions();
+		if(exceptions.size() > 0){
+			throw exceptions.get(0);
+		}
+	}
 
 	@Override
 	public VisitorAction visit(PMMLObject object){
@@ -69,7 +80,7 @@ public class InvalidFeatureInspector extends AbstractSimpleVisitor {
 			}
 		}
 
-		return super.visit(object);
+		return VisitorAction.CONTINUE;
 	}
 
 	private void report(InvalidFeatureException exception){
