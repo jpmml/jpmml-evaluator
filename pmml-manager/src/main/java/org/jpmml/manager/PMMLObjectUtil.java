@@ -19,9 +19,12 @@
 package org.jpmml.manager;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.dmg.pmml.PMMLObject;
@@ -32,80 +35,90 @@ public class PMMLObjectUtil {
 	}
 
 	static
-	public String getRootElementName(PMMLObject element){
-		Class<?> clazz = element.getClass();
-
-		XmlRootElement xmlRootElement = clazz.getAnnotation(XmlRootElement.class);
-		if(xmlRootElement == null){
-			throw new RuntimeException();
-		}
-
-		return xmlRootElement.name();
-	}
-
-	static
-	public String getAttributeName(PMMLObject element, String name){
-		Class<?> clazz = element.getClass();
-
-		Field field;
+	public Field getField(PMMLObject object, String name){
+		Class<?> clazz = object.getClass();
 
 		try {
-			field = clazz.getDeclaredField(name);
+			return clazz.getDeclaredField(name);
 		} catch(NoSuchFieldException nsfe){
 			throw new RuntimeException(nsfe);
 		}
+	}
 
-		XmlAttribute xmlAttribute = field.getAnnotation(XmlAttribute.class);
-		if(xmlAttribute == null){
-			throw new RuntimeException();
-		}
-
-		return xmlAttribute.name();
+	static
+	public <E> E getFieldValue(PMMLObject object, String name){
+		return getFieldValue(object, getField(object, name));
 	}
 
 	@SuppressWarnings (
 		value = {"unchecked"}
 	)
 	static
-	public <E> E getAttributeValue(PMMLObject element, String name){
-		Class<?> clazz = element.getClass();
+	public <E> E getFieldValue(PMMLObject object, Field field){
 
-		Field field;
-
-		try {
-			field = clazz.getDeclaredField(name);
-		} catch(NoSuchFieldException nsfe){
-			throw new RuntimeException(nsfe);
+		if(!field.isAccessible()){
+			field.setAccessible(true);
 		}
 
 		try {
-			if(!field.isAccessible()){
-				field.setAccessible(true);
-			}
-
-			return (E)field.get(element);
+			return (E)field.get(object);
 		} catch(IllegalAccessException iae){
 			throw new RuntimeException(iae);
 		}
 	}
 
 	static
-	public String getValue(Enum<?> value){
-		Class<?> clazz = value.getClass();
+	public String formatXPath(PMMLObject object){
+		Class<?> clazz = object.getClass();
 
-		Field field;
+		return getElementName(clazz);
+	}
 
-		try {
-			field = clazz.getField(value.name());
-		} catch(NoSuchFieldException nsfe){
-			throw new RuntimeException(nsfe);
+	static
+	public String formatXPath(PMMLObject object, Field field){
+		XmlElement element = field.getAnnotation(XmlElement.class);
+		if(element != null){
+			Class<?> elementClazz = field.getType();
+
+			if(List.class.isAssignableFrom(elementClazz)){
+				ParameterizedType listType = (ParameterizedType)field.getGenericType();
+
+				Type[] typeArguments = listType.getActualTypeArguments();
+				if(typeArguments.length != 1){
+					throw new RuntimeException();
+				}
+
+				elementClazz = (Class<?>)typeArguments[0];
+			}
+
+			return formatXPath(object) + "/" + getElementName(elementClazz);
 		}
 
-		XmlEnumValue xmlEnumValue = field.getAnnotation(XmlEnumValue.class);
-		if(xmlEnumValue == null){
-			throw new RuntimeException();
+		XmlAttribute attribute = field.getAnnotation(XmlAttribute.class);
+		if(attribute != null){
+			return formatXPath(object) + "@" + attribute.name();
 		}
 
-		return xmlEnumValue.value();
+		throw new RuntimeException();
+	}
+
+	static
+	public String formatXPath(PMMLObject object, Field field, Object value){
+		XmlAttribute attribute = field.getAnnotation(XmlAttribute.class);
+		if(attribute != null){
+			return formatXPath(object, field) + (value != null ? ("=" + String.valueOf(value)) : "");
+		}
+
+		throw new RuntimeException();
+	}
+
+	static
+	private String getElementName(Class<?> clazz){
+		XmlRootElement rootElement = clazz.getAnnotation(XmlRootElement.class);
+		if(rootElement != null){
+			return rootElement.name();
+		}
+
+		throw new RuntimeException();
 	}
 }

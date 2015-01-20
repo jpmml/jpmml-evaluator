@@ -27,10 +27,12 @@
  */
 package org.jpmml.manager;
 
+import java.lang.reflect.Field;
+
 import org.dmg.pmml.PMMLObject;
 
 /**
- * Signals that the specified PMML content is invalid.
+ * Indicates that the class model object is not valid.
  */
 public class InvalidFeatureException extends PMMLException {
 
@@ -42,11 +44,19 @@ public class InvalidFeatureException extends PMMLException {
 		super(message);
 	}
 
-	public InvalidFeatureException(String message, PMMLObject context){
-		super(message, context);
+	public InvalidFeatureException(PMMLObject object){
+		this(PMMLObjectUtil.formatXPath(object), object);
 	}
 
-	public InvalidFeatureException(PMMLObject element){
-		super(PMMLObjectUtil.getRootElementName(element), element);
+	public InvalidFeatureException(PMMLObject object, Field field){
+		this(PMMLObjectUtil.formatXPath(object, field), object);
+	}
+
+	public InvalidFeatureException(PMMLObject object, Field field, Object value){
+		this(PMMLObjectUtil.formatXPath(object, field, value), object);
+	}
+
+	public InvalidFeatureException(String message, PMMLObject object){
+		super(message, object);
 	}
 }

@@ -29,10 +29,12 @@ package org.jpmml.manager;
 
 import java.lang.reflect.Field;
 
+import javax.xml.bind.annotation.XmlEnumValue;
+
 import org.dmg.pmml.PMMLObject;
 
 /**
- * Signals that the specified PMML content is not supported (but is probably valid).
+ * Indicates that the class model object is not supported (but is probably valid).
  */
 public class UnsupportedFeatureException extends PMMLException {
 
@@ -44,36 +46,54 @@ public class UnsupportedFeatureException extends PMMLException {
 		super(message);
 	}
 
+	public UnsupportedFeatureException(PMMLObject object){
+		this(PMMLObjectUtil.formatXPath(object), object);
+	}
+
+	public UnsupportedFeatureException(PMMLObject object, Field field){
+		this(PMMLObjectUtil.formatXPath(object, field), object);
+	}
+
+	public UnsupportedFeatureException(PMMLObject object, Field field, Object value){
+		this(PMMLObjectUtil.formatXPath(object, field, value), object);
+	}
+
+	public UnsupportedFeatureException(PMMLObject object, Enum<?> value){
+		this(object, getEnumField(object, value), getEnumValue(value));
+	}
+
 	public UnsupportedFeatureException(String message, PMMLObject context){
 		super(message, context);
 	}
 
-	public UnsupportedFeatureException(PMMLObject element){
-		this(PMMLObjectUtil.getRootElementName(element), element);
-	}
-
-	public UnsupportedFeatureException(PMMLObject element, String name){
-		this(element, name, null);
-	}
-
-	public UnsupportedFeatureException(PMMLObject element, Enum<?> value){
-		this(element, resolveField(element, value), PMMLObjectUtil.getValue(value));
-	}
-
-	public UnsupportedFeatureException(PMMLObject element, String name, String value){
-		this(PMMLObjectUtil.getRootElementName(element) + "@" + PMMLObjectUtil.getAttributeName(element, name) + (value != null ? ("=" + value) : ""), element);
-	}
-
 	static
-	private String resolveField(PMMLObject element, Enum<?> value){
+	private Field getEnumField(PMMLObject element, Enum<?> value){
 		Class<?> clazz = element.getClass();
 
 		Field[] fields = clazz.getDeclaredFields();
 		for(Field field : fields){
 
 			if((field.getType()).equals(value.getClass())){
-				return field.getName();
+				return field;
 			}
+		}
+
+		throw new RuntimeException();
+	}
+
+	static
+	private String getEnumValue(Enum<?> value){
+		Class<?> clazz = value.getClass();
+
+		try {
+			Field field = clazz.getField(value.name());
+
+			XmlEnumValue xmlEnumValue = field.getAnnotation(XmlEnumValue.class);
+			if(xmlEnumValue != null){
+				return xmlEnumValue.value();
+			}
+		} catch(NoSuchFieldException nsfe){
+			throw new RuntimeException(nsfe);
 		}
 
 		throw new RuntimeException();

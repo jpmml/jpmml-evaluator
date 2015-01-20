@@ -29,6 +29,7 @@ import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.PMMLObjectUtil;
 import org.jpmml.model.visitors.AbstractSimpleVisitor;
 
 public class InvalidFeatureInspector extends AbstractSimpleVisitor {
@@ -52,17 +53,7 @@ public class InvalidFeatureInspector extends AbstractSimpleVisitor {
 
 		Field[] fields = clazz.getDeclaredFields();
 		for(Field field : fields){
-			Object value;
-
-			try {
-				if(!field.isAccessible()){
-					field.setAccessible(true);
-				}
-
-				value = field.get(object);
-			} catch(IllegalAccessException iae){
-				throw new RuntimeException(iae);
-			}
+			Object value = PMMLObjectUtil.getFieldValue(object, field);
 
 			// The field is set
 			if(value != null){
@@ -71,12 +62,12 @@ public class InvalidFeatureInspector extends AbstractSimpleVisitor {
 
 			XmlElement element = field.getAnnotation(XmlElement.class);
 			if(element != null && element.required()){
-				report(new InvalidFeatureException(object));
+				report(new InvalidFeatureException(object, field));
 			}
 
 			XmlAttribute attribute = field.getAnnotation(XmlAttribute.class);
 			if(attribute != null && attribute.required()){
-				report(new InvalidFeatureException(object));
+				report(new InvalidFeatureException(object, field));
 			}
 		}
 

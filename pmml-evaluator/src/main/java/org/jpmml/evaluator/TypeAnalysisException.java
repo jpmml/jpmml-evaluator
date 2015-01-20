@@ -20,7 +20,6 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.PMMLObject;
 import org.jpmml.manager.PMMLException;
-import org.jpmml.manager.PMMLObjectUtil;
 
 public class TypeAnalysisException extends PMMLException {
 
@@ -32,11 +31,11 @@ public class TypeAnalysisException extends PMMLException {
 		super(message);
 	}
 
-	public TypeAnalysisException(String message, PMMLObject context){
-		super(message, context);
+	public TypeAnalysisException(PMMLObject context){
+		super(context);
 	}
 
-	public TypeAnalysisException(PMMLObject element){
-		super(PMMLObjectUtil.getRootElementName(element), element);
+	public TypeAnalysisException(String message, PMMLObject context){
+		super(message, context);
 	}
 }
