@@ -18,42 +18,41 @@
  */
 package org.jpmml.evaluator.visitors;
 
-import java.lang.reflect.Field;
+import java.util.List;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-
+import com.google.common.collect.Lists;
 import org.dmg.pmml.PMMLObject;
+import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.PMMLObjectUtil;
+import org.jpmml.manager.PMMLException;
+import org.jpmml.model.visitors.AbstractSimpleVisitor;
 
-public class InvalidFeatureInspector extends FeatureInspector<InvalidFeatureException> {
+abstract
+class FeatureInspector<E extends PMMLException> extends AbstractSimpleVisitor {
+
+	private List<E> exceptions = Lists.newArrayList();
+
 
 	@Override
 	public VisitorAction visit(PMMLObject object){
-		Class<?> clazz = object.getClass();
+		return VisitorAction.CONTINUE;
+	}
 
-		Field[] fields = clazz.getDeclaredFields();
-		for(Field field : fields){
-			Object value = PMMLObjectUtil.getFieldValue(object, field);
+	@Override
+	public void applyTo(Visitable visitable){
+		super.applyTo(visitable);
 
-			// The field is set
-			if(value != null){
-				continue;
-			}
-
-			XmlElement element = field.getAnnotation(XmlElement.class);
-			if(element != null && element.required()){
-				report(new InvalidFeatureException(object, field));
-			}
-
-			XmlAttribute attribute = field.getAnnotation(XmlAttribute.class);
-			if(attribute != null && attribute.required()){
-				report(new InvalidFeatureException(object, field));
-			}
+		List<E> exceptions = getExceptions();
+		if(exceptions.size() > 0){
+			throw exceptions.get(0);
 		}
+	}
 
-		return super.visit(object);
+	void report(E exception){
+		this.exceptions.add(exception);
+	}
+
+	public List<E> getExceptions(){
+		return this.exceptions;
 	}
 }

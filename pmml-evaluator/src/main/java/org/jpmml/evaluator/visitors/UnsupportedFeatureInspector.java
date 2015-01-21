@@ -18,9 +18,6 @@
  */
 package org.jpmml.evaluator.visitors;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
 import org.dmg.pmml.ActivationFunctionType;
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.BaselineModel;
@@ -56,25 +53,10 @@ import org.dmg.pmml.TargetValueStat;
 import org.dmg.pmml.TextModel;
 import org.dmg.pmml.TimeSeriesModel;
 import org.dmg.pmml.TreeModel;
-import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.manager.UnsupportedFeatureException;
-import org.jpmml.model.visitors.AbstractVisitor;
 
-public class UnsupportedFeatureInspector extends AbstractVisitor {
-
-	private List<UnsupportedFeatureException> exceptions = Lists.newArrayList();
-
-
-	@Override
-	public void applyTo(Visitable visitable){
-		super.applyTo(visitable);
-
-		List<UnsupportedFeatureException> exceptions = getExceptions();
-		if(exceptions.size() > 0){
-			throw exceptions.get(0);
-		}
-	}
+public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFeatureException> {
 
 	@Override
 	public VisitorAction visit(Aggregate aggregate){
@@ -355,13 +337,5 @@ public class UnsupportedFeatureInspector extends AbstractVisitor {
 		}
 
 		return super.visit(treeModel);
-	}
-
-	private void report(UnsupportedFeatureException exception){
-		this.exceptions.add(exception);
-	}
-
-	public List<UnsupportedFeatureException> getExceptions(){
-		return this.exceptions;
 	}
 }

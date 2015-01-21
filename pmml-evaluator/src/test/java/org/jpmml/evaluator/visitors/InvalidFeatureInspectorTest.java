@@ -43,7 +43,17 @@ public class InvalidFeatureInspectorTest {
 		} catch(InvalidFeatureException ife){
 			List<InvalidFeatureException> exceptions = inspector.getExceptions();
 
-			assertEquals(2 + 1, exceptions.size());
+			String[] features = {"PMML/Header", "PMML@version", "DataDictionary/DataField"};
+
+			assertEquals(features.length, exceptions.size());
+
+			for(int i = 0; i < exceptions.size(); i++){
+				InvalidFeatureException exception = exceptions.get(i);
+
+				assertEquals(features[i], exception.getMessage());
+			}
+
+			assertEquals("PMML/Header", ife.getMessage());
 		}
 	}
 }
