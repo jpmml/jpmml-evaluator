@@ -344,11 +344,6 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			result[i] = (value.asNumber()).doubleValue();
 		}
 
-		Integer numberOfFields = vectorFields.getNumberOfFields();
-		if(numberOfFields != null && numberOfFields.intValue() != result.length){
-			throw new InvalidFeatureException(vectorFields);
-		}
-
 		return result;
 	}
 
@@ -361,6 +356,8 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		VectorDictionary vectorDictionary = supportVectorMachineModel.getVectorDictionary();
 
 		VectorFields vectorFields = vectorDictionary.getVectorFields();
+
+		List<FieldRef> fieldRefs = vectorFields.getFieldRefs();
 
 		Map<String, double[]> result = Maps.newLinkedHashMap();
 
@@ -388,17 +385,11 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				throw new InvalidFeatureException(vectorInstance);
 			} // End if
 
-			Integer numberOfFields = vectorFields.getNumberOfFields();
-			if(numberOfFields != null && numberOfFields.intValue() != vector.length){
+			if(fieldRefs.size() != vector.length){
 				throw new InvalidFeatureException(vectorInstance);
 			}
 
 			result.put(id, vector);
-		}
-
-		Integer numberOfVectors = vectorDictionary.getNumberOfVectors();
-		if(numberOfVectors != null && numberOfVectors.intValue() != result.size()){
-			throw new InvalidFeatureException(vectorDictionary);
 		}
 
 		return result;

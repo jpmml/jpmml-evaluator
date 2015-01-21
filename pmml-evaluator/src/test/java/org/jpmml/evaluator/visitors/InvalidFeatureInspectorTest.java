@@ -18,25 +18,36 @@
  */
 package org.jpmml.evaluator.visitors;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.PMML;
 import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.manager.PMMLObjectUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 public class InvalidFeatureInspectorTest {
 
 	@Test
 	public void inspect() throws Exception {
-		DataDictionary dataDictionary = new DataDictionary();
+		DataDictionary dataDictionary = new DataDictionary()
+			.withNumberOfFields(1);
+
+		Field field = PMMLObjectUtil.getField(dataDictionary, "dataFields");
+
+		assertNull(PMMLObjectUtil.getFieldValue(dataDictionary, field));
 
 		List<DataField> dataFields = dataDictionary.getDataFields();
 		assertEquals(0, dataFields.size());
+
+		assertNotNull(PMMLObjectUtil.getFieldValue(dataDictionary, field));
 
 		PMML pmml = new PMML(null, dataDictionary, null);
 
@@ -49,7 +60,7 @@ public class InvalidFeatureInspectorTest {
 		} catch(InvalidFeatureException ife){
 			List<InvalidFeatureException> exceptions = inspector.getExceptions();
 
-			String[] features = {"PMML/Header", "PMML@version", "DataDictionary/DataField"};
+			String[] features = {"PMML/Header", "PMML@version", "DataDictionary", "DataDictionary/DataField"};
 
 			assertEquals(features.length, exceptions.size());
 
