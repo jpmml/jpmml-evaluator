@@ -21,6 +21,7 @@ package org.jpmml.evaluator.visitors;
 import java.util.List;
 
 import org.dmg.pmml.DataDictionary;
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.PMML;
 import org.jpmml.manager.InvalidFeatureException;
 import org.junit.Test;
@@ -32,7 +33,12 @@ public class InvalidFeatureInspectorTest {
 
 	@Test
 	public void inspect() throws Exception {
-		PMML pmml = new PMML(null, new DataDictionary(), null);
+		DataDictionary dataDictionary = new DataDictionary();
+
+		List<DataField> dataFields = dataDictionary.getDataFields();
+		assertEquals(0, dataFields.size());
+
+		PMML pmml = new PMML(null, dataDictionary, null);
 
 		InvalidFeatureInspector inspector = new InvalidFeatureInspector();
 

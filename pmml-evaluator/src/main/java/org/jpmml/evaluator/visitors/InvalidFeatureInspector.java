@@ -19,6 +19,7 @@
 package org.jpmml.evaluator.visitors;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -37,6 +38,15 @@ public class InvalidFeatureInspector extends FeatureInspector<InvalidFeatureExce
 		Field[] fields = clazz.getDeclaredFields();
 		for(Field field : fields){
 			Object value = PMMLObjectUtil.getFieldValue(object, field);
+
+			if(value instanceof List){
+				List<?> collection = (List<?>)value;
+
+				// The getter method may have initialized the field with an empty ArrayList instance
+				if(collection.size() == 0){
+					value = null;
+				}
+			} // End if
 
 			// The field is set
 			if(value != null){
