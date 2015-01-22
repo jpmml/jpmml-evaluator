@@ -38,10 +38,16 @@ import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.SupportVectors;
 import org.dmg.pmml.VectorDictionary;
 import org.dmg.pmml.VectorFields;
+import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.manager.InvalidFeatureException;
 import org.jpmml.manager.PMMLObjectUtil;
 
+/**
+ * A Visitor that inspects a class model object for invalid features.
+ *
+ * @see FeatureInspector#applyTo(Visitable)
+ */
 public class InvalidFeatureInspector extends FeatureInspector<InvalidFeatureException> {
 
 	@Override

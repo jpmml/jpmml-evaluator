@@ -53,9 +53,15 @@ import org.dmg.pmml.TargetValueStat;
 import org.dmg.pmml.TextModel;
 import org.dmg.pmml.TimeSeriesModel;
 import org.dmg.pmml.TreeModel;
+import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.manager.UnsupportedFeatureException;
 
+/**
+ * A visitor that inspects a class model object for unsupported features.
+ *
+ * @see FeatureInspector#applyTo(Visitable)
+ */
 public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFeatureException> {
 
 	@Override
