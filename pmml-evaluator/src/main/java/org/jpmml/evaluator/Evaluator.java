@@ -32,7 +32,7 @@ import org.jpmml.manager.UnsupportedFeatureException;
  * Performs the evaluation of a {@link Model} in "interpreted mode".
  * </p>
  *
- * Obtaining {@link Evaluator} instance:
+ * <h3>Obtaining and verifying an Evaluator instance</h3>
  * <pre>
  * PMML pmml = ...;
  * PMMLManager pmmlManager = new PMMLManager(pmml);
@@ -40,39 +40,44 @@ import org.jpmml.manager.UnsupportedFeatureException;
  * evaluator.verify();
  * </pre>
  *
- * Preparing {@link Evaluator#getActiveFields() active fields}:
+ * <h3>Preparing arguments</h3>
+ * Converting an user-supplied map of arguments to a prepared map of arguments:
  * <pre>
+ * Map&lt;FieldName, ?&gt; userArguments = ...;
  * Map&lt;FieldName, FieldValue&gt; arguments = new LinkedHashMap&lt;FieldName, FieldValue&gt;();
  * List&lt;FieldName&gt; activeFields = evaluator.getActiveFields();
  * for(FieldName activeField : activeFields){
- *   FieldValue activeValue = evaluator.prepare(activeField, ...);
+ *   FieldValue activeValue = evaluator.prepare(activeField, userArguments.get(activeField));
  *   arguments.put(activeField, activeValue);
  * }
  * </pre>
  *
- * Performing the {@link Evaluator#evaluate(Map) evaluation}:
+ * <h3>Performing the evaluation</h3>
  * <pre>
  * Map&lt;FieldName, ?&gt; result = evaluator.evaluate(arguments);
  * </pre>
  *
- * Retrieving the value of the {@link Evaluator#getTargetField() target field} and {@link Evaluator#getOutputFields() output fields}:
+ * <h3>Processing results</h3>
+ * Retrieving the value of the {@link #getTargetField() target field} (ie. the primary result):
  * <pre>
  * FieldName targetField = evaluator.getTargetField();
  * Object targetValue = result.get(targetField);
+ * </pre>
  *
- * List&lt;FieldName&gt; outputFields = evaluator.getOutputFields();
- * for(FieldName outputField : outputFields){
- *   Object outputValue = result.get(outputField);
+ * Decoding a {@link Computable complex value} to a Java primitive value:
+ * <pre>
+ * if(targetValue instanceof Computable){
+ *   Computable computable = (Computable)targetValue;
+ *
+ *   targetValue = computable.getResult();
  * }
  * </pre>
  *
- * Decoding {@link Computable complex value} to simple value:
+ * Retrieving the values of {@link #getOutputFields() output fields} (ie. secondary results):
  * <pre>
- * Object value = ...;
- * if(value instanceof Computable){
- *   Computable computable = (Computable)value;
- *
- *   value = computable.getResult();
+ * List&lt;FieldName&gt; outputFields = evaluator.getOutputFields();
+ * for(FieldName outputField : outputFields){
+ *   Object outputValue = result.get(outputField);
  * }
  * </pre>
  *
