@@ -133,6 +133,12 @@
 			</dependency>
 
 			<dependency>
+				<groupId>com.github.jbellis</groupId>
+				<artifactId>jamm</artifactId>
+				<version>0.3.0</version>
+			</dependency>
+
+			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
 				<version>[15.0, 18.0]</version>

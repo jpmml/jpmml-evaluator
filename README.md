@@ -154,10 +154,16 @@ mvn clean install
 The resulting uber-JAR file `target/example-1.1-SNAPSHOT.jar` contains the following command-line applications:
 * `org.jpmml.evaluator.ModelEvaluationExample` [(source)] (https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/ModelEvaluationExample.java). Evaluates a PMML model using data records from a TSV or CSV file.
 * `org.jpmml.evaluator.ModelEnhancementExample`. Enhances a PMML model with a ModelVerification element using data records from a TSV or CSV file.
+* `org.jpmml.evaluator.ModelMeasurementExample`. Measures a PMML model.
 
-For example, evaluating `model.pmml` using data records from `input.tsv`:
+Evaluating model `model.pmml` by loading input data records from `input.tsv` and storing output data records to `output.tsv`:
 ```
 java -cp target/example-1.1-SNAPSHOT.jar org.jpmml.evaluator.ModelEvaluationExample --model model.pmml --input input.tsv --output output.tsv
+```
+
+Measuring model `model.pmml` using the [Java Agent for Memory Measurements (JAMM)] (https://github.com/jbellis/jamm) library:
+```
+java -javaagent:jamm-0.3.0.jar -cp target/example-1.1-SNAPSHOT.jar org.jpmml.evaluator.ModelMeasurementExample --model model.pmml --visitor-classes org.jpmml.model.visitors.SourceLocationNullifier,org.jpmml.evaluator.visitors.PredicateInterner
 ```
 
 # Documentation #
