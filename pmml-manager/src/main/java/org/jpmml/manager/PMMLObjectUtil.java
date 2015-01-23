@@ -68,6 +68,20 @@ public class PMMLObjectUtil {
 	}
 
 	static
+	public void setFieldValue(PMMLObject object, Field field, Object value){
+
+		if(!field.isAccessible()){
+			field.setAccessible(true);
+		}
+
+		try {
+			field.set(object, value);
+		} catch(IllegalAccessException iae){
+			throw new RuntimeException(iae);
+		}
+	}
+
+	static
 	public String formatXPath(PMMLObject object){
 		Class<?> clazz = object.getClass();
 
