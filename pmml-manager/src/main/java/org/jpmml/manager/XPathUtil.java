@@ -29,56 +29,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.dmg.pmml.PMMLObject;
 
-public class PMMLObjectUtil {
+public class XPathUtil {
 
-	private PMMLObjectUtil(){
-	}
-
-	static
-	public Field getField(PMMLObject object, String name){
-		Class<?> clazz = object.getClass();
-
-		try {
-			return clazz.getDeclaredField(name);
-		} catch(NoSuchFieldException nsfe){
-			throw new RuntimeException(nsfe);
-		}
-	}
-
-	static
-	public <E> E getFieldValue(PMMLObject object, String name){
-		return getFieldValue(object, getField(object, name));
-	}
-
-	@SuppressWarnings (
-		value = {"unchecked"}
-	)
-	static
-	public <E> E getFieldValue(PMMLObject object, Field field){
-
-		if(!field.isAccessible()){
-			field.setAccessible(true);
-		}
-
-		try {
-			return (E)field.get(object);
-		} catch(IllegalAccessException iae){
-			throw new RuntimeException(iae);
-		}
-	}
-
-	static
-	public void setFieldValue(PMMLObject object, Field field, Object value){
-
-		if(!field.isAccessible()){
-			field.setAccessible(true);
-		}
-
-		try {
-			field.set(object, value);
-		} catch(IllegalAccessException iae){
-			throw new RuntimeException(iae);
-		}
+	private XPathUtil(){
 	}
 
 	static
@@ -128,9 +81,15 @@ public class PMMLObjectUtil {
 
 	static
 	private String getElementName(Class<?> clazz){
-		XmlRootElement rootElement = clazz.getAnnotation(XmlRootElement.class);
-		if(rootElement != null){
-			return rootElement.name();
+
+		while(clazz != null){
+			XmlRootElement rootElement = clazz.getAnnotation(XmlRootElement.class);
+
+			if(rootElement != null){
+				return rootElement.name();
+			}
+
+			clazz = clazz.getSuperclass();
 		}
 
 		throw new RuntimeException();

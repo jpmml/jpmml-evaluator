@@ -45,15 +45,15 @@ public class InvalidFeatureException extends PMMLException {
 	}
 
 	public InvalidFeatureException(PMMLObject object){
-		this(PMMLObjectUtil.formatXPath(object), object);
+		this(XPathUtil.formatXPath(object), object);
 	}
 
 	public InvalidFeatureException(PMMLObject object, Field field){
-		this(PMMLObjectUtil.formatXPath(object, field), object);
+		this(XPathUtil.formatXPath(object, field), object);
 	}
 
 	public InvalidFeatureException(PMMLObject object, Field field, Object value){
-		this(PMMLObjectUtil.formatXPath(object, field, value), object);
+		this(XPathUtil.formatXPath(object, field, value), object);
 	}
 
 	public InvalidFeatureException(String message, PMMLObject object){

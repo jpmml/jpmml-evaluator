@@ -117,7 +117,7 @@
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model</artifactId>
-				<version>1.1.12</version>
+				<version>1.1.13</version>
 			</dependency>
 
 			<dependency>
@@ -130,12 +130,6 @@
 				<groupId>com.codahale.metrics</groupId>
 				<artifactId>metrics-core</artifactId>
 				<version>3.0.2</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.github.jbellis</groupId>
-				<artifactId>jamm</artifactId>
-				<version>0.3.0</version>
 			</dependency>
 
 			<dependency>

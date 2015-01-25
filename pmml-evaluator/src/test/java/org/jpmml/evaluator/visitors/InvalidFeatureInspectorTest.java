@@ -25,7 +25,7 @@ import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.PMML;
 import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.PMMLObjectUtil;
+import org.jpmml.model.ReflectionUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -40,14 +40,14 @@ public class InvalidFeatureInspectorTest {
 		DataDictionary dataDictionary = new DataDictionary()
 			.withNumberOfFields(1);
 
-		Field field = PMMLObjectUtil.getField(dataDictionary, "dataFields");
+		Field field = ReflectionUtil.getField(dataDictionary, "dataFields");
 
-		assertNull(PMMLObjectUtil.getFieldValue(dataDictionary, field));
+		assertNull(ReflectionUtil.getFieldValue(field, dataDictionary));
 
 		List<DataField> dataFields = dataDictionary.getDataFields();
 		assertEquals(0, dataFields.size());
 
-		assertNotNull(PMMLObjectUtil.getFieldValue(dataDictionary, field));
+		assertNotNull(ReflectionUtil.getFieldValue(field, dataDictionary));
 
 		PMML pmml = new PMML(null, dataDictionary, null);
 

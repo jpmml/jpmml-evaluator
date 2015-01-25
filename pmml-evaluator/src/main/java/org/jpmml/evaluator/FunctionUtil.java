@@ -25,8 +25,8 @@ import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.ParameterField;
 import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.PMMLObjectUtil;
 import org.jpmml.manager.UnsupportedFeatureException;
+import org.jpmml.model.ReflectionUtil;
 
 public class FunctionUtil {
 
@@ -47,7 +47,7 @@ public class FunctionUtil {
 			return evaluate(result.getElement(), values, context);
 		}
 
-		throw new UnsupportedFeatureException(apply, PMMLObjectUtil.getField(apply, "function"), name);
+		throw new UnsupportedFeatureException(apply, ReflectionUtil.getField(apply, "function"), name);
 	}
 
 	static

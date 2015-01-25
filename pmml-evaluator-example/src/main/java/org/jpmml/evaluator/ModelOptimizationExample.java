@@ -21,20 +21,21 @@ package org.jpmml.evaluator;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.transform.Source;
 
 import com.beust.jcommander.Parameter;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Visitor;
-import org.github.jamm.MemoryMeter;
 import org.jpmml.model.ImportFilter;
 import org.jpmml.model.JAXBUtil;
+import org.jpmml.model.visitors.MemoryMeasurer;
 import org.xml.sax.InputSource;
 
-public class ModelMeasurementExample extends Example {
+public class ModelOptimizationExample extends Example {
 
 	@Parameter (
 		names = {"--model"},
@@ -47,12 +48,19 @@ public class ModelMeasurementExample extends Example {
 		names = {"--visitor-classes"},
 		description = "List of Visitor class names"
 	)
-	private List<String> visitorClasses = null;
+	private List<String> visitorClasses = new ArrayList<String>();
+
+	@Parameter (
+		names = {"--summary"},
+		description = "Print memory usage summary after every step. Requires JPMML agent",
+		arity = 1
+	)
+	private boolean summary = true;
 
 
 	static
 	public void main(String... args) throws Exception {
-		execute(ModelMeasurementExample.class, args);
+		execute(ModelOptimizationExample.class, args);
 	}
 
 	@Override
@@ -75,9 +83,11 @@ public class ModelMeasurementExample extends Example {
 			is.close();
 		}
 
-		printSummary(pmml);
+		if(this.summary){
+			printSummary(pmml);
+		}
 
-		List<String> visitorClasses = (this.visitorClasses != null ? this.visitorClasses : Collections.<String>emptyList());
+		List<String> visitorClasses = this.visitorClasses;
 		for(String visitorClass : visitorClasses){
 			Class<?> clazz = Class.forName(visitorClass);
 
@@ -90,20 +100,20 @@ public class ModelMeasurementExample extends Example {
 
 			System.out.println("Applied Visitor class " + clazz.getName() + " in " + (end - begin) + " ms.");
 
-			printSummary(pmml);
+			if(this.summary){
+				printSummary(pmml);
+			}
 		}
 	}
 
 	private void printSummary(PMML pmml){
-		MemoryMeter meter = new MemoryMeter();
+		MemoryMeasurer measurer = new MemoryMeasurer();
+		measurer.applyTo(pmml);
 
-		long size = meter.measure(pmml);
-		System.out.println("The size of the PMML object: " + size + " bytes");
+		long size = measurer.getSize();
+		System.out.println("The size of the PMML class model object: " + size + " bytes");
 
-		long deepSize = meter.measureDeep(pmml);
-		System.out.println("The size of the PMML object with child objects: " + deepSize + " bytes");
-
-		long numberOfChildren = meter.countChildren(pmml);
-		System.out.println("The number of child object references: " + numberOfChildren);
+		Set<Object> objects = measurer.getObjects();
+		System.out.println("The number of objects: " + objects.size());
 	}
 }

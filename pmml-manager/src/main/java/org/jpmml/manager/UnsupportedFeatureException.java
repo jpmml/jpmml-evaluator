@@ -47,15 +47,15 @@ public class UnsupportedFeatureException extends PMMLException {
 	}
 
 	public UnsupportedFeatureException(PMMLObject object){
-		this(PMMLObjectUtil.formatXPath(object), object);
+		this(XPathUtil.formatXPath(object), object);
 	}
 
 	public UnsupportedFeatureException(PMMLObject object, Field field){
-		this(PMMLObjectUtil.formatXPath(object, field), object);
+		this(XPathUtil.formatXPath(object, field), object);
 	}
 
 	public UnsupportedFeatureException(PMMLObject object, Field field, Object value){
-		this(PMMLObjectUtil.formatXPath(object, field, value), object);
+		this(XPathUtil.formatXPath(object, field, value), object);
 	}
 
 	public UnsupportedFeatureException(PMMLObject object, Enum<?> value){

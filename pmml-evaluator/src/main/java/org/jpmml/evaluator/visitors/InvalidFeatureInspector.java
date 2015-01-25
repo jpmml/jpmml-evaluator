@@ -41,7 +41,7 @@ import org.dmg.pmml.VectorFields;
 import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.PMMLObjectUtil;
+import org.jpmml.model.ReflectionUtil;
 
 /**
  * A Visitor that inspects a class model object for invalid features.
@@ -52,11 +52,10 @@ public class InvalidFeatureInspector extends FeatureInspector<InvalidFeatureExce
 
 	@Override
 	public VisitorAction visit(PMMLObject object){
-		Class<?> clazz = object.getClass();
+		List<Field> fields = ReflectionUtil.getAllInstanceFields(object);
 
-		Field[] fields = clazz.getDeclaredFields();
 		for(Field field : fields){
-			Object value = PMMLObjectUtil.getFieldValue(object, field);
+			Object value = ReflectionUtil.getFieldValue(field, object);
 
 			if(value instanceof List){
 				List<?> collection = (List<?>)value;

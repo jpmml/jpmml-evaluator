@@ -29,24 +29,24 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class PMMLObjectUtilTest {
+public class XPathUtilTest {
 
 	@Test
 	public void formatXPath() throws Exception {
 		DataField dataField = new DataField(new FieldName("x"), OpType.CATEGORICAL, DataType.DOUBLE)
 			.withValues(new Value("0"), new Value("1"));
 
-		assertEquals("DataField", PMMLObjectUtil.formatXPath(dataField));
+		assertEquals("DataField", XPathUtil.formatXPath(dataField));
 
 		Field valuesField = DataField.class.getDeclaredField("values");
 
-		assertEquals("DataField/Value", PMMLObjectUtil.formatXPath(dataField, valuesField));
+		assertEquals("DataField/Value", XPathUtil.formatXPath(dataField, valuesField));
 
 		Field isCyclicField = DataField.class.getDeclaredField("cyclic");
 
-		assertEquals("DataField@isCyclic", PMMLObjectUtil.formatXPath(dataField, isCyclicField));
+		assertEquals("DataField@isCyclic", XPathUtil.formatXPath(dataField, isCyclicField));
 
-		assertEquals("DataField@isCyclic", PMMLObjectUtil.formatXPath(dataField, isCyclicField, null));
-		assertEquals("DataField@isCyclic=0", PMMLObjectUtil.formatXPath(dataField, isCyclicField, "0"));
+		assertEquals("DataField@isCyclic", XPathUtil.formatXPath(dataField, isCyclicField, null));
+		assertEquals("DataField@isCyclic=0", XPathUtil.formatXPath(dataField, isCyclicField, "0"));
 	}
 }

@@ -27,6 +27,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +56,8 @@ import org.dmg.pmml.VectorDictionary;
 import org.dmg.pmml.VectorFields;
 import org.dmg.pmml.VectorInstance;
 import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.PMMLObjectUtil;
 import org.jpmml.manager.UnsupportedFeatureException;
+import org.jpmml.model.ReflectionUtil;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
 
@@ -279,7 +280,9 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		// Older versions of several popular PMML producer software are known to omit the classificationMethod attribute.
 		// The method SupportVectorMachineModel#getSvmRepresentation() replaces a missing value with the default value "OneAgainstAll", which may lead to incorrect behaviour.
 		// The workaround is to bypass this method using Java Reflection API, and infer the correct classification method type based on evidence.
-		SvmClassificationMethodType svmClassificationMethod = PMMLObjectUtil.getFieldValue(supportVectorMachineModel, "classificationMethod");
+		Field field = ReflectionUtil.getField(supportVectorMachineModel, "classificationMethod");
+
+		SvmClassificationMethodType svmClassificationMethod = ReflectionUtil.getFieldValue(field, supportVectorMachineModel);
 		if(svmClassificationMethod != null){
 			return svmClassificationMethod;
 		}
