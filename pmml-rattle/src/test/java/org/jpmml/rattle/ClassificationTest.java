@@ -18,6 +18,10 @@
  */
 package org.jpmml.rattle;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
 import org.jpmml.evaluator.NodeClassificationMap;
@@ -120,7 +124,9 @@ public class ClassificationTest {
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		assertTrue(BatchUtil.evaluate(batch));
+		Set<FieldName> ignoredFields = Sets.newHashSet(new FieldName("Probability_0"), new FieldName("Probability_1"));
+
+		assertTrue(BatchUtil.evaluate(batch, ignoredFields));
 	}
 
 	@Test

@@ -83,10 +83,8 @@
   </MiningSchema>
   <Output>
    <OutputField name="Predicted_Adjusted" feature="predictedValue"/>
-   <!--
    <OutputField name="Probability_0" optype="continuous" dataType="double" feature="probability" value="0"/>
    <OutputField name="Probability_1" optype="continuous" dataType="double" feature="probability" value="1"/>
-   -->
   </Output>
   <NeuralInputs numberOfInputs="43">
    <NeuralInput id="1">

@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Equivalence;
 import com.google.common.collect.Iterables;
@@ -40,11 +41,19 @@ public class BatchUtil {
 	}
 
 	/**
-	 * @see #evaluate(Batch, double, double)
+	 * @see #evaluate(Batch, Set, double, double)
 	 */
 	static
 	public boolean evaluate(Batch batch) throws Exception {
-		return evaluate(batch, BatchUtil.precision, BatchUtil.zeroThreshold);
+		return evaluate(batch, null, BatchUtil.precision, BatchUtil.zeroThreshold);
+	}
+
+	/**
+	 * @see #evaluate(Batch, Set, double, double)
+	 */
+	static
+	public boolean evaluate(Batch batch, Set<FieldName> ignoredFields) throws Exception {
+		return evaluate(batch, ignoredFields, BatchUtil.precision, BatchUtil.zeroThreshold);
 	}
 
 	/**
@@ -53,8 +62,8 @@ public class BatchUtil {
 	 * @return <code>true</code> If there were no differences between expected and actual results, <code>false</code> otherwise.
 	 */
 	static
-	public boolean evaluate(Batch batch, double precision, double zeroThreshold) throws Exception {
-		List<MapDifference<FieldName, ?>> differences = difference(batch, precision, zeroThreshold);
+	public boolean evaluate(Batch batch, Set<FieldName> ignoredFields, double precision, double zeroThreshold) throws Exception {
+		List<MapDifference<FieldName, ?>> differences = difference(batch, ignoredFields, precision, zeroThreshold);
 
 		return Iterables.isEmpty(differences);
 	}
@@ -76,7 +85,7 @@ public class BatchUtil {
 	}
 
 	static
-	public List<MapDifference<FieldName, ?>> difference(Batch batch, final double precision, final double zeroThreshold) throws Exception {
+	public List<MapDifference<FieldName, ?>> difference(Batch batch, Set<FieldName> ignoredFields, final double precision, final double zeroThreshold) throws Exception {
 		List<? extends Map<FieldName, ?>> input = CsvUtil.load(batch.getInput());
 		List<? extends Map<FieldName, String>> output = CsvUtil.load(batch.getOutput());
 
@@ -135,6 +144,13 @@ public class BatchUtil {
 					result = Maps.newLinkedHashMap(result);
 
 					result.remove(evaluator.getTargetField());
+				} // End if
+
+				if(ignoredFields != null && ignoredFields.size() > 0){
+					result = Maps.newLinkedHashMap(result);
+
+					Set<FieldName> fields = result.keySet();
+					fields.removeAll(ignoredFields);
 				}
 
 				MapDifference<FieldName, Object> difference = Maps.<FieldName, Object>difference(output.get(i), result, equivalence);
