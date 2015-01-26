@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.Visitor;
+import org.jpmml.evaluator.visitors.InvalidFeatureInspector;
+import org.jpmml.evaluator.visitors.UnsupportedFeatureInspector;
 
 public class BatchUtil {
 
@@ -75,7 +80,14 @@ public class BatchUtil {
 		List<? extends Map<FieldName, ?>> input = CsvUtil.load(batch.getInput());
 		List<? extends Map<FieldName, String>> output = CsvUtil.load(batch.getOutput());
 
-		Evaluator evaluator = PMMLUtil.createModelEvaluator(batch.getModel(), ModelEvaluatorFactory.getInstance());
+		ModelEvaluator<?> evaluator = PMMLUtil.createModelEvaluator(batch.getModel(), ModelEvaluatorFactory.getInstance());
+
+		PMML pmml = evaluator.getPMML();
+
+		List<Visitor> visitors = Arrays.<Visitor>asList(new InvalidFeatureInspector(), new UnsupportedFeatureInspector());
+		for(Visitor visitor : visitors){
+			visitor.applyTo(pmml);
+		}
 
 		List<FieldName> groupFields = evaluator.getGroupFields();
 		List<FieldName> targetFields = evaluator.getTargetFields();

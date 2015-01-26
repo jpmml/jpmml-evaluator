@@ -39,7 +39,7 @@
     </Targets>
     <NeuralInputs numberOfInputs="4">
       <NeuralInput id="Sepal_Length">
-        <DerivedField datatype="double" optype="continuous">
+        <DerivedField dataType="double" optype="continuous">
           <NormContinuous field="Sepal_Length">
             <LinearNorm norm="-1" orig="4.300"/>
             <LinearNorm norm="1" orig="7.900"/>
@@ -47,7 +47,7 @@
         </DerivedField>
       </NeuralInput>
       <NeuralInput id="Sepal_Width">
-        <DerivedField datatype="double" optype="continuous">
+        <DerivedField dataType="double" optype="continuous">
           <NormContinuous field="Sepal_Width">
             <LinearNorm norm="-1" orig="2.000"/>
             <LinearNorm norm="1" orig="4.400"/>
@@ -55,7 +55,7 @@
         </DerivedField>
       </NeuralInput>
       <NeuralInput id="Petal_Length">
-        <DerivedField datatype="double" optype="continuous">
+        <DerivedField dataType="double" optype="continuous">
           <NormContinuous field="Petal_Length">
             <LinearNorm norm="-1" orig="1.000"/>
             <LinearNorm norm="1" orig="6.900"/>
@@ -63,7 +63,7 @@
         </DerivedField>
       </NeuralInput>
       <NeuralInput id="Petal_Width">
-        <DerivedField datatype="double" optype="continuous">
+        <DerivedField dataType="double" optype="continuous">
           <NormContinuous field="Petal_Width">
             <LinearNorm norm="-1" orig="0.100"/>
             <LinearNorm norm="1" orig="2.500"/>
@@ -128,17 +128,17 @@
     </NeuralLayer>
     <NeuralOutputs numberOfOutputs="3">
       <NeuralOutput outputNeuron="Class 'setosa'">
-        <DerivedField datatype="string" optype="categorical">
+        <DerivedField dataType="string" optype="categorical">
           <NormDiscrete field="Species" value="setosa"/>
         </DerivedField>
       </NeuralOutput>
       <NeuralOutput outputNeuron="Class 'versicolor'">
-        <DerivedField datatype="string" optype="categorical">
+        <DerivedField dataType="string" optype="categorical">
           <NormDiscrete field="Species" value="versicolor"/>
         </DerivedField>
       </NeuralOutput>
       <NeuralOutput outputNeuron="Class 'virginica'">
-        <DerivedField datatype="string" optype="categorical">
+        <DerivedField dataType="string" optype="categorical">
           <NormDiscrete field="Species" value="virginica"/>
         </DerivedField>
       </NeuralOutput>

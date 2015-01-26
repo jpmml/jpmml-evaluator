@@ -125,15 +125,17 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 				report(new UnsupportedFeatureException(generalRegressionModel, modelType));
 
 				return VisitorAction.SKIP;
-			default:
-				break;
-		}
+			case GENERALIZED_LINEAR:
+				LinkFunctionType linkFunction = generalRegressionModel.getLinkFunction();
 
-		LinkFunctionType linkFunction = generalRegressionModel.getLinkFunction();
-		switch(linkFunction){
-			case CAUCHIT:
-			case NEGBIN:
-				report(new UnsupportedFeatureException(generalRegressionModel, linkFunction));
+				switch(linkFunction){
+					case CAUCHIT:
+					case NEGBIN:
+						report(new UnsupportedFeatureException(generalRegressionModel, linkFunction));
+						break;
+					default:
+						break;
+				}
 				break;
 			default:
 				break;
@@ -201,12 +203,15 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 	public VisitorAction visit(NeuralLayer neuralLayer){
 		ActivationFunctionType activationFunction = neuralLayer.getActivationFunction();
 
-		switch(activationFunction){
-			case RADIAL_BASIS:
-				report(new UnsupportedFeatureException(neuralLayer, activationFunction));
-				break;
-			default:
-				break;
+		if(activationFunction != null){
+
+			switch(activationFunction){
+				case RADIAL_BASIS:
+					report(new UnsupportedFeatureException(neuralLayer, activationFunction));
+					break;
+				default:
+					break;
+			}
 		}
 
 		return super.visit(neuralLayer);
