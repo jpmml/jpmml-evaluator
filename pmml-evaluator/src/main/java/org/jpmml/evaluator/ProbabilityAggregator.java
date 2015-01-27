@@ -22,29 +22,41 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-class ProbabilityAggregator<K> extends LinkedHashMap<K, Double> {
+class ProbabilityAggregator extends LinkedHashMap<Object, Double> {
 
 	ProbabilityAggregator(){
 	}
 
-	public void max(K key, Double value){
-		Double max = get(key);
-		if(max == null || (max).compareTo(value) < 0){
-			max = value;
-		}
+	public void max(ClassificationMap<?> probabilities){
+		Collection<? extends Map.Entry<?, Double>> entries = probabilities.entrySet();
 
-		put(key, max);
+		for(Map.Entry<?, Double> entry : entries){
+			Double max = get(entry.getKey());
+
+			if(max == null || (max).compareTo(entry.getValue()) < 0){
+				put(entry.getKey(), entry.getValue());
+			}
+		}
 	}
 
-	public void add(K key, Double value){
-		Double sum = get(key);
+	public void sum(ClassificationMap<?> probabilities){
+		sum(probabilities, 1d);
+	}
 
-		put(key, sum != null ? (sum + value) : value);
+	public void sum(ClassificationMap<?> probabilities, double weight){
+		Collection<? extends Map.Entry<?, Double>> entries = probabilities.entrySet();
+
+		for(Map.Entry<?, Double> entry : entries){
+			Double sum = get(entry.getKey());
+
+			put(entry.getKey(), sum != null ? (sum + (entry.getValue() * weight)) : (entry.getValue() * weight));
+		}
 	}
 
 	public void divide(Double value){
-		Collection<Map.Entry<K, Double>> entries = entrySet();
-		for(Map.Entry<K, Double> entry : entries){
+		Collection<Map.Entry<Object, Double>> entries = entrySet();
+
+		for(Map.Entry<Object, Double> entry : entries){
 			entry.setValue(entry.getValue() / value);
 		}
 	}

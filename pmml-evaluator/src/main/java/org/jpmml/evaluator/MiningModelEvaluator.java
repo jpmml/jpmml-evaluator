@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -160,6 +159,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		double sum = 0d;
 
+		double denominator = 0d;
+
 		for(SegmentResultMap segmentResult : segmentResults){
 			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
 
@@ -167,11 +168,17 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			switch(multipleModelMethod){
 				case SUM:
-				case AVERAGE:
 					sum += number.doubleValue();
 					break;
+				case AVERAGE:
+					sum += number.doubleValue();
+					denominator += 1d;
+					break;
 				case WEIGHTED_AVERAGE:
-					sum += segmentResult.getWeight() * number.doubleValue();
+					double weight = segmentResult.getWeight();
+
+					sum += (weight * number.doubleValue());
+					denominator += weight;
 					break;
 				default:
 					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
@@ -186,7 +193,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				break;
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
-				result = (sum / segmentResults.size());
+				result = (sum / denominator);
 				break;
 			default:
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
@@ -569,9 +576,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	static
 	private Map<Object, Double> aggregateProbabilities(Segmentation segmentation, List<SegmentResultMap> segmentResults){
-		ProbabilityAggregator<Object> aggregator = new ProbabilityAggregator<Object>();
+		ProbabilityAggregator aggregator = new ProbabilityAggregator();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+
+		double denominator = 0d;
 
 		for(SegmentResultMap segmentResult : segmentResults){
 			Object targetValue = segmentResult.getTargetValue();
@@ -586,24 +595,22 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				throw new EvaluationException();
 			}
 
-			Collection<? extends Map.Entry<?, Double>> entries = values.entrySet();
-			for(Map.Entry<?, Double> entry : entries){
-				Object targetCategory = entry.getKey();
-				Double probability = entry.getValue();
+			switch(multipleModelMethod){
+				case MAX:
+					aggregator.max(values);
+					break;
+				case AVERAGE:
+					aggregator.sum(values);
+					denominator += 1d;
+					break;
+				case WEIGHTED_AVERAGE:
+					double weight = segmentResult.getWeight();
 
-				switch(multipleModelMethod){
-					case MAX:
-						aggregator.max(targetCategory, probability);
-						break;
-					case AVERAGE:
-						aggregator.add(targetCategory, probability);
-						break;
-					case WEIGHTED_AVERAGE:
-						aggregator.add(targetCategory, segmentResult.getWeight() * probability);
-						break;
-					default:
-						throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
-				}
+					aggregator.sum(values, weight);
+					denominator += weight;
+					break;
+				default:
+					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 			}
 		}
 
@@ -612,7 +619,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				break;
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
-				aggregator.divide((double)segmentResults.size());
+				aggregator.divide(denominator);
 				break;
 			default:
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
