@@ -19,7 +19,9 @@
 package org.jpmml.evaluator;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
@@ -163,6 +165,16 @@ public class ExpressionUtilTest {
 			// Ignored
 		}
 
+		apply = apply.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+
+		try {
+			evaluate(apply, name, 1);
+
+			fail();
+		} catch(InvalidResultException ire){
+			// Ignored
+		}
+
 		apply = apply.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 		assertEquals("-1", evaluate(apply, name, 1));
 	}
@@ -231,19 +243,23 @@ public class ExpressionUtilTest {
 
 	static
 	private Object evaluate(Expression expression){
-		return evaluate(expression, new LocalEvaluationContext());
+		Map<FieldName, ?> arguments = Collections.emptyMap();
+
+		return evaluate(expression, arguments);
 	}
 
 	static
 	private Object evaluate(Expression expression, FieldName field, Object value){
-		EvaluationContext context = new LocalEvaluationContext();
-		context.declare(field, value);
+		Map<FieldName, ?> arguments = Collections.singletonMap(field, value);
 
-		return evaluate(expression, context);
+		return evaluate(expression, arguments);
 	}
 
 	static
-	private Object evaluate(Expression expression, EvaluationContext context){
+	private Object evaluate(Expression expression, Map<FieldName, ?> arguments){
+		EvaluationContext context = new LocalEvaluationContext();
+		context.declareAll(arguments);
+
 		FieldValue result = ExpressionUtil.evaluate(expression, context);
 
 		return FieldValueUtil.getValue(result);

@@ -62,7 +62,7 @@ public class FunctionUtilTest {
 	}
 
 	@Test
-	public void evaluateInvalidArithmenticFunctions(){
+	public void evaluateDivisionByZero(){
 
 		try {
 			evaluate("/", 1, 0);
@@ -72,12 +72,11 @@ public class FunctionUtilTest {
 			// Ignored
 		}
 
-		try {
-			evaluate("/", 1f, 0);
-			evaluate("/", 1d, 0);
-		} catch(InvalidResultException ire){
-			fail();
-		}
+		assertEquals(Float.NEGATIVE_INFINITY, evaluate("/", -1f, 0));
+		assertEquals(Float.POSITIVE_INFINITY, evaluate("/", 1f, 0));
+
+		assertEquals(Double.NEGATIVE_INFINITY, evaluate("/", -1d, 0));
+		assertEquals(Double.POSITIVE_INFINITY, evaluate("/", 1d, 0));
 	}
 
 	@Test
