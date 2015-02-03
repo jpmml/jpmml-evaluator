@@ -49,7 +49,7 @@ public class InvalidFeatureInspectorTest {
 
 		assertNotNull(ReflectionUtil.getFieldValue(field, dataDictionary));
 
-		PMML pmml = new PMML(null, dataDictionary, null);
+		PMML pmml = new PMML(null, null, dataDictionary);
 
 		InvalidFeatureInspector inspector = new InvalidFeatureInspector();
 
@@ -60,7 +60,7 @@ public class InvalidFeatureInspectorTest {
 		} catch(InvalidFeatureException ife){
 			List<InvalidFeatureException> exceptions = inspector.getExceptions();
 
-			String[] features = {"PMML/Header", "PMML@version", "DataDictionary", "DataDictionary/DataField"};
+			String[] features = {"PMML@version", "PMML/Header", "DataDictionary", "DataDictionary/DataField"};
 
 			assertEquals(features.length, exceptions.size());
 
@@ -70,7 +70,7 @@ public class InvalidFeatureInspectorTest {
 				assertEquals(features[i], exception.getMessage());
 			}
 
-			assertEquals("PMML/Header", ife.getMessage());
+			assertEquals("PMML@version", ife.getMessage());
 		}
 	}
 }

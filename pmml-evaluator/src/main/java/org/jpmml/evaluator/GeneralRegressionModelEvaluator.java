@@ -157,7 +157,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		DataField dataField = getDataField(targetField);
 
-		OpType opType = dataField.getOptype();
+		OpType opType = dataField.getOpType();
 		switch(opType){
 			case CONTINUOUS:
 				throw new InvalidFeatureException(dataField);

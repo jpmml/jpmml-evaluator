@@ -34,7 +34,7 @@ public class UnsupportedFeatureInspectorTest {
 
 	@Test
 	public void inspect(){
-		PMML pmml = new PMML(new Header(), new DataDictionary(), "4.2");
+		PMML pmml = new PMML("4.2", new Header(), new DataDictionary());
 
 		GeneralRegressionModel model = new GeneralRegressionModel()
 			.withModelType(GeneralRegressionModel.ModelType.COX_REGRESSION);

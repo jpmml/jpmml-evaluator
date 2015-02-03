@@ -163,7 +163,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			Object value;
 
-			OpType opType = dataField.getOptype();
+			OpType opType = dataField.getOpType();
 			switch(opType){
 				case CONTINUOUS:
 					value = calculateContinuousTarget(targetField, nearestInstanceResults, table);

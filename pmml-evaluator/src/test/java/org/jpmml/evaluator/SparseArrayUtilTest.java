@@ -41,9 +41,9 @@ public class SparseArrayUtilTest {
 			.withIndices(2, 5)
 			.withEntries(3, 42);
 
-		assertEquals(0, SparseArrayUtil.getValue(sparseArray, 1));
-		assertEquals(3, SparseArrayUtil.getValue(sparseArray, 2));
-		assertEquals(42, SparseArrayUtil.getValue(sparseArray, 5));
-		assertEquals(0, SparseArrayUtil.getValue(sparseArray, 7));
+		assertEquals((Integer)0, SparseArrayUtil.getValue(sparseArray, 1));
+		assertEquals((Integer)3, SparseArrayUtil.getValue(sparseArray, 2));
+		assertEquals((Integer)42, SparseArrayUtil.getValue(sparseArray, 5));
+		assertEquals((Integer)0, SparseArrayUtil.getValue(sparseArray, 7));
 	}
 }

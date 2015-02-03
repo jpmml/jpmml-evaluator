@@ -75,7 +75,7 @@ public class ExpressionUtilTest {
 	public void evaluateNormContinuous(){
 		FieldName name = new FieldName("x");
 
-		NormContinuous normContinuous = new NormContinuous(name)
+		NormContinuous normContinuous = new NormContinuous(name, null)
 			.withMapMissingTo(5d);
 
 		assertEquals(5d, evaluate(normContinuous, name, null));

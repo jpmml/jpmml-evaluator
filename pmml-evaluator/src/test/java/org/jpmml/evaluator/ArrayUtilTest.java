@@ -69,11 +69,11 @@ public class ArrayUtilTest {
 
 	static
 	private List<String> parseIntArray(String content){
-		return ArrayUtil.parse(new Array(content, Array.Type.INT));
+		return ArrayUtil.parse(new Array(Array.Type.INT, content));
 	}
 
 	static
 	private List<String> parseStringArray(String content){
-		return ArrayUtil.parse(new Array(content, Array.Type.STRING));
+		return ArrayUtil.parse(new Array(Array.Type.STRING, content));
 	}
 }

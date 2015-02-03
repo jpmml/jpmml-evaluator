@@ -44,7 +44,7 @@ public class FieldValueUtil {
 
 	static
 	public FieldValue create(Field field, Object value){
-		FieldValue result = create(field.getDataType(), field.getOptype(), value);
+		FieldValue result = create(field.getDataType(), field.getOpType(), value);
 
 		if(field instanceof TypeDefinitionField){
 			return enhance((TypeDefinitionField)field, result);
@@ -57,9 +57,9 @@ public class FieldValueUtil {
 	public FieldValue create(DataField dataField, MiningField miningField, Object value){
 		DataType dataType = dataField.getDataType();
 
-		OpType opType = miningField.getOptype();
+		OpType opType = miningField.getOpType();
 		if(opType == null){
-			opType = dataField.getOptype();
+			opType = dataField.getOpType();
 		}
 
 		return create(dataType, opType, value);
@@ -113,7 +113,7 @@ public class FieldValueUtil {
 
 	static
 	public FieldValue refine(Field field, FieldValue value){
-		FieldValue result = refine(field.getDataType(), field.getOptype(), value);
+		FieldValue result = refine(field.getDataType(), field.getOpType(), value);
 
 		if(field instanceof TypeDefinitionField){
 			return enhance((TypeDefinitionField)field, result);

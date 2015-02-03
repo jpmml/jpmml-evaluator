@@ -79,6 +79,6 @@ public class FunctionUtil {
 
 		FieldValue result = ExpressionUtil.evaluate(expression, functionContext);
 
-		return FieldValueUtil.refine(defineFunction.getDataType(), defineFunction.getOptype(), result);
+		return FieldValueUtil.refine(defineFunction.getDataType(), defineFunction.getOpType(), result);
 	}
 }

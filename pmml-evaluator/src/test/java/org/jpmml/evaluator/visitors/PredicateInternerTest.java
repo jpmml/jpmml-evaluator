@@ -48,10 +48,10 @@ public class PredicateInternerTest {
 	@Test
 	public void internSimpleSetPredicate(){
 		Node left = new Node()
-			.withPredicate(new SimpleSetPredicate(new Array("1", Array.Type.STRING), new FieldName("x"), SimpleSetPredicate.BooleanOperator.IS_IN));
+			.withPredicate(new SimpleSetPredicate(new FieldName("x"), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "1")));
 
 		Node right = new Node()
-			.withPredicate(new SimpleSetPredicate(new Array("\"1\"", Array.Type.STRING), new FieldName("x"), SimpleSetPredicate.BooleanOperator.IS_IN));
+			.withPredicate(new SimpleSetPredicate(new FieldName("x"), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "\"1\"")));
 
 		checkTree(left, right);
 	}

@@ -191,7 +191,7 @@ public class OutputUtil {
 
 						DataField dataField = modelEvaluator.getDataField(targetField);
 
-						OpType opType = dataField.getOptype();
+						OpType opType = dataField.getOpType();
 						switch(opType){
 							case CONTINUOUS:
 								value = getContinuousResidual(value, expectedValue);
@@ -466,7 +466,7 @@ public class OutputUtil {
 			}
 		}
 
-		OpType opType = dataField.getOptype();
+		OpType opType = dataField.getOpType();
 
 		if((OpType.CATEGORICAL).equals(opType) || (OpType.ORDINAL).equals(opType)){
 			Value value = ArgumentUtil.getValidValue(dataField, object);

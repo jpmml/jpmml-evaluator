@@ -150,9 +150,9 @@ public class ArgumentUtil {
 
 		List<Interval> intervals = dataField.getIntervals();
 
-		OpType opType = miningField.getOptype();
+		OpType opType = miningField.getOpType();
 		if(opType == null){
-			opType = dataField.getOptype();
+			opType = dataField.getOpType();
 		}
 
 		switch(opType){
@@ -233,9 +233,9 @@ public class ArgumentUtil {
 
 		List<Interval> intervals = dataField.getIntervals();
 
-		OpType opType = miningField.getOptype();
+		OpType opType = miningField.getOpType();
 		if(opType == null){
-			opType = dataField.getOptype();
+			opType = dataField.getOpType();
 		}
 
 		switch(opType){
