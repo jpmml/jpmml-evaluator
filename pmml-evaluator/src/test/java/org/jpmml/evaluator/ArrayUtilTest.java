@@ -34,6 +34,7 @@ import org.dmg.pmml.Array;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 public class ArrayUtilTest {
 
@@ -54,6 +55,16 @@ public class ArrayUtilTest {
 
 		assertEquals(Arrays.asList("a \"b\" c"), parseStringArray("\"a \\\"b\\\" c\""));
 		assertEquals(Arrays.asList("\"a b c\""), parseStringArray("\"\\\"a b c\\\"\""));
+	}
+
+	@Test
+	public void intern(){
+		List<String> left = parseStringArray("a b c");
+		List<String> right = parseStringArray("\"a\" \"b\" \"c\"");
+
+		for(int i = 0; i < 3; i++){
+			assertSame(left.get(i), right.get(i));
+		}
 	}
 
 	static

@@ -34,6 +34,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.Array;
 import org.jpmml.manager.InvalidFeatureException;
@@ -227,10 +229,14 @@ public class ArrayUtil {
 			result = sb.substring(0, sb.length());
 		}
 
+		result = ArrayUtil.tokenInterner.intern(result);
+
 		sb.setLength(0);
 
 		return result;
 	}
+
+	private static Interner<String> tokenInterner = Interners.newWeakInterner();
 
 	private static final LoadingCache<Array, List<String>> contentCache = CacheBuilder.newBuilder()
 		.weakKeys()
