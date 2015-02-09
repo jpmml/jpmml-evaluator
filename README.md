@@ -170,7 +170,8 @@ java -javaagent:pmml-agent-1.1-SNAPSHOT.jar -cp target/example-1.1-SNAPSHOT.jar 
 
 The [Openscoring.io blog] (http://openscoring.io/blog/) contains fully worked out examples about using JPMML-Model and JPMML-Evaluator libraries.
 
-Notable blog posts:
+Recommended reading:
+* [Preparing arguments for evaluation] (http://openscoring.io/blog/2014/05/15/jpmml_evaluator_api_prepare_evaluate/)
 * [Testing PMML Applications] (http://openscoring.io/blog/2014/05/12/testing_pmml_applications/)
 
 # License #
