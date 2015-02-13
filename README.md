@@ -3,6 +3,10 @@ JPMML-Evaluator [![Build Status](https://travis-ci.org/jpmml/jpmml-evaluator.png
 
 Java Evaluator API for Predictive Model Markup Language (PMML).
 
+# IMPORTANT #
+
+Are you happy with our solution to your model deployment problem? Please show your support to this exciting technology **by voting** for our Hadoop Summit 2015 talk ["Rapid deployment of predictive models across Big Data platforms"] (https://hadoopsummit.uservoice.com/forums/283261-data-science-and-hadoop/suggestions/7074084). Thank you!
+
 # Features #
 
 JPMML-Evaluator is *de facto* the reference implementation of the PMML specification for the Java platform:
@@ -45,13 +49,13 @@ JPMML-Evaluator is thread safe and can easily deliver over one million scorings 
 
 JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/). Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for release announcements.
 
-The current version is **1.1.15** (27 January, 2015).
+The current version is **1.1.16** (14 February, 2015).
 
 ```xml
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.1.15</version>
+	<version>1.1.16</version>
 </dependency>
 ```
 
