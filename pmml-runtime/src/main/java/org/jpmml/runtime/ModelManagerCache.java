@@ -21,6 +21,8 @@ package org.jpmml.runtime;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.xml.bind.JAXBException;
@@ -44,17 +46,17 @@ public class ModelManagerCache {
 
 	private ModelManagerFactory modelManagerFactory = null;
 
-	private LoadingCache<Class<?>, ModelManager<? extends Model>> cache = null;
+	private LoadingCache<URI, ModelManager<? extends Model>> cache = null;
 
 
 	public ModelManagerCache(ModelManagerFactory modelManagerFactory, CacheBuilder<Object, Object> cacheBuilder){
 		setModelEvaluatorFactory(modelManagerFactory);
 
-		CacheLoader<Class<?>, ModelManager<? extends Model>> cacheLoader = new CacheLoader<Class<?>, ModelManager<? extends Model>>(){
+		CacheLoader<URI, ModelManager<? extends Model>> cacheLoader = new CacheLoader<URI, ModelManager<? extends Model>>(){
 
 			@Override
-			public ModelManager<? extends Model> load(Class<?> clazz) throws Exception {
-				return ModelManagerCache.this.loadModelManager(clazz);
+			public ModelManager<? extends Model> load(URI uri) throws Exception {
+				return ModelManagerCache.this.loadModelManager(uri);
 			}
 		};
 
@@ -62,26 +64,33 @@ public class ModelManagerCache {
 	}
 
 	public ModelManager<? extends Model> get(Class<?> clazz) throws Exception {
-		return this.cache.get(clazz);
+		return get(toURL(clazz));
 	}
 
-	public void remove(Class<?> clazz){
-		this.cache.invalidate(clazz);
+	public ModelManager<? extends Model> get(URL url) throws Exception {
+		URI uri = url.toURI();
+
+		return this.cache.get(uri);
 	}
 
-	public ConcurrentMap<Class<?>, ModelManager<? extends Model>> asMap(){
+	public void remove(Class<?> clazz) throws Exception {
+		remove(toURL(clazz));
+	}
+
+	public void remove(URL url) throws Exception {
+		URI uri = url.toURI();
+
+		this.cache.invalidate(uri);
+	}
+
+	public ConcurrentMap<URI, ModelManager<? extends Model>> asMap(){
 		return this.cache.asMap();
 	}
 
-	protected ModelManager<? extends Model> loadModelManager(Class<?> clazz) throws IOException, JAXBException, SAXException {
-		String path = (clazz.getName()).replace('.', '/') + ".pmml";
+	protected ModelManager<? extends Model> loadModelManager(URI uri) throws IOException, JAXBException, SAXException {
+		URL url = uri.toURL();
 
-		ClassLoader clazzLoader = clazz.getClassLoader();
-
-		InputStream is = clazzLoader.getResourceAsStream(path);
-		if(is == null){
-			throw new FileNotFoundException(path);
-		}
+		InputStream is = url.openStream();
 
 		PMML pmml;
 
@@ -115,5 +124,19 @@ public class ModelManagerCache {
 
 	private void setModelEvaluatorFactory(ModelManagerFactory modelManagerFactory){
 		this.modelManagerFactory = modelManagerFactory;
+	}
+
+	static
+	private URL toURL(Class<?> clazz) throws IOException {
+		String path = (clazz.getName()).replace('.', '/') + ".pmml";
+
+		ClassLoader clazzLoader = clazz.getClassLoader();
+
+		URL url = clazzLoader.getResource(path);
+		if(url == null){
+			throw new FileNotFoundException(path);
+		}
+
+		return url;
 	}
 }

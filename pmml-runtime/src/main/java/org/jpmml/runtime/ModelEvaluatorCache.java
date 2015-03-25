@@ -19,6 +19,8 @@
 package org.jpmml.runtime;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 
 import javax.xml.bind.JAXBException;
 
@@ -44,8 +46,13 @@ public class ModelEvaluatorCache extends ModelManagerCache {
 	}
 
 	@Override
-	protected ModelEvaluator<? extends Model> loadModelManager(Class<?> clazz) throws IOException, JAXBException, SAXException {
-		ModelEvaluator<? extends Model> modelEvaluator = (ModelEvaluator<? extends Model>)super.loadModelManager(clazz);
+	public ModelEvaluator<? extends Model> get(URL url) throws Exception {
+		return (ModelEvaluator<? extends Model>)super.get(url);
+	}
+
+	@Override
+	protected ModelEvaluator<? extends Model> loadModelManager(URI uri) throws IOException, JAXBException, SAXException {
+		ModelEvaluator<? extends Model> modelEvaluator = (ModelEvaluator<? extends Model>)super.loadModelManager(uri);
 		modelEvaluator.verify();
 
 		return modelEvaluator;
