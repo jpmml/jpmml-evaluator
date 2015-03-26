@@ -42,7 +42,6 @@ import org.dmg.pmml.Categories;
 import org.dmg.pmml.Category;
 import org.dmg.pmml.CumulativeLinkFunctionType;
 import org.dmg.pmml.DataField;
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.GeneralRegressionModel;
 import org.dmg.pmml.LinkFunctionType;
@@ -115,17 +114,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		{
 			parameterPredictorRows = ppMatrixMap.get(null);
 			if(parameterPredictorRows == null){
-				PPMatrix ppMatrix = generalRegressionModel.getPPMatrix();
-
-				throw new InvalidFeatureException(ppMatrix);
+				throw new InvalidFeatureException(generalRegressionModel.getPPMatrix());
 			}
 		}
 
 		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
 		if(paramMatrixMap.size() != 1 || !paramMatrixMap.containsKey(null)){
-			ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
-
-			throw new InvalidFeatureException(paramMatrix);
+			throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
 		}
 
 		Iterable<PCell> parameterCells = paramMatrixMap.get(null);
@@ -180,10 +175,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		final
 		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
 
-		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
-
 		String targetReferenceCategory = generalRegressionModel.getTargetReferenceCategory();
 
+		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
 		switch(modelType){
 			case GENERALIZED_LINEAR:
 			case MULTINOMIAL_LOGISTIC:
@@ -388,33 +382,15 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private Double computeLink(Double value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		Double a = getValue(DataType.DOUBLE, context.getField(generalRegressionModel.getOffsetVariable()), generalRegressionModel.getOffsetValue());
-		if(a == null){
-			a = 0d;
-		}
-
-		Integer b = getValue(DataType.INTEGER, context.getField(generalRegressionModel.getTrialsVariable()), generalRegressionModel.getTrialsValue());
-		if(b == null){
-			b = 1;
-		}
-
-		Double d = generalRegressionModel.getLinkParameter();
-
 		LinkFunctionType linkFunction = generalRegressionModel.getLinkFunction();
 		if(linkFunction == null){
 			throw new InvalidFeatureException(generalRegressionModel);
 		}
 
-		switch(linkFunction){
-			case ODDSPOWER:
-			case POWER:
-				if(d == null){
-					throw new InvalidFeatureException(generalRegressionModel);
-				}
-				break;
-			default:
-				break;
-		}
+		Double a = getOffset(generalRegressionModel, context);
+		Integer b = getTrials(generalRegressionModel, context);
+
+		Double d = generalRegressionModel.getLinkParameter();
 
 		switch(linkFunction){
 			case CLOGLOG:
@@ -430,11 +406,19 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			case LOGLOG:
 				return Math.exp(-Math.exp(-(value + a))) * b;
 			case ODDSPOWER:
+				if(d == null){
+					throw new InvalidFeatureException(generalRegressionModel);
+				} // End if
+
 				if(d < 0d || d > 0d){
 					return (1d / (1d + Math.pow(1d + d * (value + a), -(1d / d)))) * b;
 				}
 				return (1d / (1d + Math.exp(-(value + a)))) * b;
 			case POWER:
+				if(d == null){
+					throw new InvalidFeatureException(generalRegressionModel);
+				} // End if
+
 				if(d < 0d || d > 0d){
 					return Math.pow(value + a, 1d / d) * b;
 				}
@@ -449,15 +433,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private Double computeCumulativeLink(Double value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		Double a = getValue(DataType.DOUBLE, context.getField(generalRegressionModel.getOffsetVariable()), generalRegressionModel.getOffsetValue());
-		if(a == null){
-			a = 0d;
-		}
-
 		CumulativeLinkFunctionType cumulativeLinkFunction = generalRegressionModel.getCumulativeLink();
 		if(cumulativeLinkFunction == null){
 			throw new InvalidFeatureException(generalRegressionModel);
 		}
+
+		Double a = getOffset(generalRegressionModel, context);
 
 		switch(cumulativeLinkFunction){
 			case LOGIT:
@@ -519,6 +500,50 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	 */
 	private Map<String, List<PCell>> getParamMatrixMap(){
 		return getValue(GeneralRegressionModelEvaluator.paramMatrixCache);
+	}
+
+	static
+	private Double getOffset(GeneralRegressionModel generalRegressionModel, EvaluationContext context){
+		FieldName offsetVariable = generalRegressionModel.getOffsetVariable();
+		if(offsetVariable != null){
+			FieldValue value = getVariable(offsetVariable, context);
+
+			return (value.asNumber()).doubleValue();
+		}
+
+		Double offsetValue = generalRegressionModel.getOffsetValue();
+		if(offsetValue != null){
+			return offsetValue;
+		}
+
+		return 0d;
+	}
+
+	static
+	private Integer getTrials(GeneralRegressionModel generalRegressionModel, EvaluationContext context){
+		FieldName trialsVariable = generalRegressionModel.getTrialsVariable();
+		if(trialsVariable != null){
+			FieldValue value = getVariable(trialsVariable, context);
+
+			return value.asInteger();
+		}
+
+		Integer trialsValue = generalRegressionModel.getTrialsValue();
+		if(trialsValue != null){
+			return trialsValue;
+		}
+
+		return 1;
+	}
+
+	static
+	private FieldValue getVariable(FieldName name, EvaluationContext context){
+		FieldValue value = context.getField(name);
+		if(value == null){
+			throw new MissingFieldException(name);
+		}
+
+		return value;
 	}
 
 	static
@@ -605,19 +630,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		ListMultimap<String, PCell> targetCategoryCells = groupByTargetCategory(paramMatrix.getPCells());
 
 		return asMap(targetCategoryCells);
-	}
-
-	@SuppressWarnings (
-		value = {"unchecked"}
-	)
-	static
-	private <V extends Number> V getValue(DataType dataType, FieldValue argumentValue, V xmlValue){
-
-		if(argumentValue != null){
-			return (V)argumentValue.asNumber();
-		} // End if
-
-		return xmlValue;
 	}
 
 	@SuppressWarnings (
