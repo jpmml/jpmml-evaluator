@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +26,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 import org.dmg.pmml.AssociationRule;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
@@ -593,8 +593,7 @@ public class OutputUtil {
 	public Object getRuleValue(Object object, OutputField outputField, RuleFeatureType ruleFeature){
 		HasRuleValues hasRuleValues = asResultFeature(HasRuleValues.class, object);
 
-		List<AssociationRule> associationRules = hasRuleValues.getRuleValues(outputField.getAlgorithm());
-		sortRules(associationRules, outputField);
+		List<AssociationRule> associationRules = getRuleValues(hasRuleValues, outputField);
 
 		String isMultiValued = outputField.getIsMultiValued();
 		if(!("0").equals(isMultiValued)){
@@ -618,8 +617,7 @@ public class OutputUtil {
 	public Object getRuleValue(Object object, OutputField outputField){
 		HasRuleValues hasRuleValues = asResultFeature(HasRuleValues.class, object);
 
-		List<AssociationRule> associationRules = hasRuleValues.getRuleValues(outputField.getAlgorithm());
-		sortRules(associationRules, outputField);
+		List<AssociationRule> associationRules = getRuleValues(hasRuleValues, outputField);
 
 		String isMultiValued = outputField.getIsMultiValued();
 
@@ -674,7 +672,9 @@ public class OutputUtil {
 	}
 
 	static
-	private void sortRules(List<AssociationRule> associationRules, final OutputField outputField){
+	private List<AssociationRule> getRuleValues(HasRuleValues hasRuleValues, final OutputField outputField){
+		List<AssociationRule> associationRules = hasRuleValues.getRuleValues(outputField.getAlgorithm());
+
 		Comparator<AssociationRule> comparator = new Comparator<AssociationRule>(){
 
 			private OutputField.RankBasis rankBasis = outputField.getRankBasis();
@@ -745,7 +745,10 @@ public class OutputUtil {
 				return value;
 			}
 		};
-		Collections.sort(associationRules, comparator);
+
+		Ordering<AssociationRule> ordering = Ordering.from(comparator);
+
+		return ordering.sortedCopy(associationRules);
 	}
 
 	static

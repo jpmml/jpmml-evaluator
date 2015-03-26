@@ -19,17 +19,18 @@
 package org.jpmml.evaluator;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 
 @Beta
 public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Computable {
@@ -63,37 +64,19 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 	}
 
 	Map.Entry<K, Double> getWinner(){
-		Map.Entry<K, Double> result = null;
+		Ordering<Map.Entry<K, Double>> ordering = createOrdering();
 
-		Type type = getType();
-
-		Collection<Map.Entry<K, Double>> entries = entrySet();
-		for(Map.Entry<K, Double> entry : entries){
-
-			if(result == null || type.compare(entry.getValue(), result.getValue()) > 0){
-				result = entry;
-			}
+		try {
+			return ordering.max(entrySet());
+		} catch(NoSuchElementException nsee){
+			return null;
 		}
-
-		return result;
 	}
 
 	List<Map.Entry<K, Double>> getWinnerList(){
-		List<Map.Entry<K, Double>> result = Lists.newArrayList(entrySet());
+		Ordering<Map.Entry<K, Double>> ordering = (createOrdering()).reverse();
 
-		final
-		Type type = getType();
-
-		Comparator<Map.Entry<K, Double>> comparator = new Comparator<Map.Entry<K, Double>>(){
-
-			@Override
-			public int compare(Map.Entry<K, Double> left, Map.Entry<K, Double> right){
-				return -1 * type.compare(left.getValue(), right.getValue());
-			}
-		};
-		Collections.sort(result, comparator);
-
-		return result;
+		return ordering.sortedCopy(entrySet());
 	}
 
 	List<K> getWinnerKeys(){
@@ -126,6 +109,21 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 
 	void normalizeValues(){
 		normalize(this);
+	}
+
+	Ordering<Map.Entry<K, Double>> createOrdering(){
+		Comparator<Map.Entry<K, Double>> comparator = new Comparator<Map.Entry<K, Double>>(){
+
+			private Type type = getType();
+
+
+			@Override
+			public int compare(Map.Entry<K, Double> left, Map.Entry<K, Double> right){
+				return this.type.compare(left.getValue(), right.getValue());
+			}
+		};
+
+		return Ordering.from(comparator);
 	}
 
 	@Override

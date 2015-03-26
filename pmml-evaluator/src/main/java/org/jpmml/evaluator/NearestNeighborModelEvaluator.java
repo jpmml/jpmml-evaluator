@@ -30,7 +30,6 @@ package org.jpmml.evaluator;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +46,7 @@ import com.google.common.collect.LinkedHashMultiset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Table;
 import org.dmg.pmml.CategoricalScoringMethodType;
 import org.dmg.pmml.ComparisonMeasure;
@@ -129,16 +129,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		List<InstanceResult> instanceResults = evaluateInstanceRows(context);
 
-		List<InstanceResult> nearestInstanceResults = Lists.newArrayList(instanceResults);
+		Ordering<InstanceResult> ordering = (Ordering.natural()).reverse();
 
-		Comparator<InstanceResult> comparator = new Comparator<InstanceResult>(){
-
-			@Override
-			public int compare(InstanceResult left, InstanceResult right){
-				return -1 * (left).compareTo(right);
-			}
-		};
-		Collections.sort(nearestInstanceResults, comparator);
+		List<InstanceResult> nearestInstanceResults = ordering.sortedCopy(instanceResults);
 
 		nearestInstanceResults = nearestInstanceResults.subList(0, nearestNeighborModel.getNumberOfNeighbors());
 
