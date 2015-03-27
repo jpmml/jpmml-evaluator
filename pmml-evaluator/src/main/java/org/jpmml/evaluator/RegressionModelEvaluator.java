@@ -123,7 +123,6 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new UnsupportedFeatureException(dataField, opType);
 		}
 
-
 		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
 		if(regressionTables.size() < 1){
 			throw new InvalidFeatureException(regressionModel);

@@ -139,7 +139,6 @@ public class ExpressionUtilTest {
 		assertEquals("Default", evaluate(mapValues, name, "3"));
 	}
 
-
 	@Test
 	public void evaluateApply(){
 		FieldName name = new FieldName("x");

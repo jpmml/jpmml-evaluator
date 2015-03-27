@@ -105,7 +105,6 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 				break;
 		}
 
-
 		return super.visit(clusteringModel);
 	}
 
