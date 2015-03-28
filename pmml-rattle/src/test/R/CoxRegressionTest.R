@@ -8,8 +8,7 @@ lungData$ph.ecog = as.factor(lungData$ph.ecog)
 writeLung = function(values, file){
 	survival = exp(-values)
 
-	result = data.frame(survival, survival, values)
-	names(result) = c("survival", "Predicted_survival", "cumulativeHazard")
+	result = data.frame("survival" = survival, "Predicted_survival" = survival, "cumulativeHazard" = values)
 
 	writeCsv(result, file)
 }

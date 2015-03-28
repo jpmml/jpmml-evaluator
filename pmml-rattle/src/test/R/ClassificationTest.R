@@ -9,16 +9,10 @@ irisData = readCsv("csv/Iris.csv")
 irisFormula = formula(Species ~ .)
 
 writeIris = function(classes, probabilities, file){
-	result = NULL
+	result = data.frame("Species" = classes, "Predicted_Species" = classes)
 
-	if(is.null(probabilities)){
-		result = data.frame(classes, classes)
-		names(result) = c("Species", "Predicted_Species")
-	} else
-
-	{
-		result = data.frame(classes, classes, probabilities)
-		names(result) = c("Species", "Predicted_Species", "Probability_setosa", "Probability_versicolor", "Probability_virginica")
+	if(!is.null(probabilities)){
+		result = data.frame(result, "Probability_setosa" = probabilities[, 1], "Probability_versicolor" = probabilities[, 2], "Probability_virginica" = probabilities[, 3])
 	}
 
 	writeCsv(result, file)
@@ -105,8 +99,7 @@ versicolorData = cbind(irisData[, 1:4], versicolor)
 versicolorFormula = formula(versicolor ~ .)
 
 writeVersicolor = function(classes, probabilities, file){
-	result = data.frame(classes, classes, probabilities)
-	names(result) = c("versicolor", "Predicted_versicolor", "Probability_1")
+	result = data.frame("versicolor" = classes, "Predicted_versicolor" = classes, "Probability_1" = probabilities)
 
 	writeCsv(result, file)
 }
@@ -127,16 +120,10 @@ auditData[, "Adjusted"] = as.factor(auditData[, "Adjusted"])
 auditFormula = formula(Adjusted ~ Employment + Education + Marital + Occupation + Income + Gender + Deductions + Hours)
 
 writeAudit = function(classes, probabilities, file){
-	result = NULL
+	result = data.frame("Adjusted" = classes, "Predicted_Adjusted" = classes)
 
-	if(is.null(probabilities)){
-		result = data.frame(classes, classes)
-		names(result) = c("Adjusted", "Predicted_Adjusted")
-	} else
-
-	{
-		result = data.frame(classes, classes, probabilities)
-		names(result) = c("Adjusted", "Predicted_Adjusted", "Probability_0", "Probability_1")
+	if(!is.null(probabilities)){
+		result = data.frame(result, "Probability_0" = probabilities[, 1], "Probability_1" = probabilities[, 2])
 	}
 
 	writeCsv(result, file)

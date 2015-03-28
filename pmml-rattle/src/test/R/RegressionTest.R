@@ -8,8 +8,7 @@ ozoneFormula = formula(O3 ~ temp + ibh + ibt)
 ozoneGlmFormula = formula(O3 ~ temp * ibh * ibt)
 
 writeOzone = function(values, file){
-	result = data.frame(values, values)
-	names(result) = c("O3", "Predicted_O3")
+	result = data.frame("O3" = values, "Predicted_O3" = values)
 
 	writeCsv(result, file)
 }
@@ -42,7 +41,7 @@ generateRandomForestOzone = function(){
 generateRegressionOzone = function(){
 	lm = lm(ozoneFormula, ozoneData)
 	saveXML(pmml(lm), "pmml/RegressionOzone.pmml")
-	
+
 	writeOzone(predict(lm), "csv/RegressionOzone.csv")
 }
 
