@@ -20,8 +20,8 @@ package org.jpmml.evaluator.visitors;
 
 import java.util.List;
 
+import org.dmg.pmml.ClusteringModel;
 import org.dmg.pmml.DataDictionary;
-import org.dmg.pmml.GeneralRegressionModel;
 import org.dmg.pmml.Header;
 import org.dmg.pmml.PMML;
 import org.jpmml.manager.UnsupportedFeatureException;
@@ -36,8 +36,8 @@ public class UnsupportedFeatureInspectorTest {
 	public void inspect(){
 		PMML pmml = new PMML("4.2", new Header(), new DataDictionary());
 
-		GeneralRegressionModel model = new GeneralRegressionModel()
-			.withModelType(GeneralRegressionModel.ModelType.COX_REGRESSION);
+		ClusteringModel model = new ClusteringModel()
+			.withModelClass(ClusteringModel.ModelClass.DISTRIBUTION_BASED);
 
 		pmml = pmml.withModels(model);
 
@@ -52,7 +52,7 @@ public class UnsupportedFeatureInspectorTest {
 
 			assertEquals(1, exceptions.size());
 
-			assertEquals("GeneralRegressionModel@modelType=CoxRegression", ufe.getMessage());
+			assertEquals("ClusteringModel@modelClass=distributionBased", ufe.getMessage());
 		}
 	}
 }

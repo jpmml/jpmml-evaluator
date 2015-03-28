@@ -120,10 +120,6 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
 
 		switch(modelType){
-			case COX_REGRESSION:
-				report(new UnsupportedFeatureException(generalRegressionModel, modelType));
-
-				return VisitorAction.SKIP;
 			case GENERALIZED_LINEAR:
 				LinkFunctionType linkFunction = generalRegressionModel.getLinkFunction();
 

@@ -42,7 +42,7 @@ Supported model types:
 * [Assocation rules] (http://www.dmg.org/v4-2-1/AssociationRules.html) (association).
 * [Cluster model] (http://www.dmg.org/v4-2-1/ClusteringModel.html) (clustering).
   * Except for the `CenterFields` element. This element was removed in PMML schema version 3.2.
-* [General regression] (http://www.dmg.org/v4-2-1/GeneralRegression.html) (regression, classification).
+* [General regression] (http://www.dmg.org/v4-2-1/GeneralRegression.html) (regression, Cox regression, classification).
   * Except for the `cauchit` and `negbin` values of the `linkFunction` attribute.
 * [k-Nearest neighbors (k-NN)] (http://www.dmg.org/v4-2-1/KNN.html) (regression, classification, clustering).
   * Except for the `median` value of the `continuousScoringMethod` attribute.
@@ -63,7 +63,6 @@ Supported model types:
 Not yet supported model types:
 
 * [Baseline model] (http://www.dmg.org/v4-2-1/BaselineModel.html).
-* [Cox regression] (http://www.dmg.org/v4-2-1/GeneralRegression.html).
 * [Sequence rules] (http://www.dmg.org/v4-2-1/Sequence.html).
 * [Text model] (http://www.dmg.org/v4-2-1/Text.html).
 * [Time series model] (http://www.dmg.org/v4-2-1/TimeSeriesModel.html).

@@ -330,7 +330,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		List<PairCounts> pairCounts = bayesInput.getPairCounts();
 		for(PairCounts pairCount : pairCounts){
 
-			if((value).equalsString(pairCount.getValue())){
+			if(value.equalsString(pairCount.getValue())){
 				return pairCount.getTargetValueCounts();
 			}
 		}

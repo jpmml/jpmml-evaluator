@@ -1,3 +1,5 @@
+setwd("../resources")
+
 readCsv = function(file){
 	return (read.csv(file = file, header = TRUE))
 }

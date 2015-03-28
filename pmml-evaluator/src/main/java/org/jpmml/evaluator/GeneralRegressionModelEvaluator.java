@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,11 +38,16 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
+import org.dmg.pmml.BaseCumHazardTables;
+import org.dmg.pmml.BaselineCell;
+import org.dmg.pmml.BaselineStratum;
 import org.dmg.pmml.Categories;
 import org.dmg.pmml.Category;
 import org.dmg.pmml.CumulativeLinkFunctionType;
 import org.dmg.pmml.DataField;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.GeneralRegressionModel;
 import org.dmg.pmml.LinkFunctionType;
@@ -53,7 +59,9 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.PPCell;
 import org.dmg.pmml.PPMatrix;
 import org.dmg.pmml.ParamMatrix;
+import org.dmg.pmml.Parameter;
 import org.dmg.pmml.ParameterCell;
+import org.dmg.pmml.ParameterList;
 import org.dmg.pmml.Predictor;
 import org.dmg.pmml.PredictorList;
 import org.jpmml.manager.InvalidFeatureException;
@@ -71,7 +79,15 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 	@Override
 	public String getSummary(){
-		return "General regression";
+		GeneralRegressionModel generalRegressionModel = getModel();
+
+		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
+		switch(modelType){
+			case COX_REGRESSION:
+				return "Cox regression";
+			default:
+				return "General regression";
+		}
 	}
 
 	@Override
@@ -98,34 +114,135 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Number> evaluateRegression(ModelEvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		Map<FieldName, FieldValue> arguments = getArguments(context);
+		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
+		switch(modelType){
+			case COX_REGRESSION:
+				return evaluateCoxRegression(context);
+			default:
+				return evaluateGeneralRegression(context);
+		}
+	}
 
-		Map<String, Map<String, Row>> ppMatrixMap = getPPMatrixMap();
+	private Map<FieldName, ? extends Number> evaluateCoxRegression(ModelEvaluationContext context){
+		GeneralRegressionModel generalRegressionModel = getModel();
 
-		Map<String, Row> parameterPredictorRows;
+		BaseCumHazardTables baseCumHazardTables = generalRegressionModel.getBaseCumHazardTables();
+		if(baseCumHazardTables == null){
+			throw new InvalidFeatureException(generalRegressionModel);
+		}
 
-		if(ppMatrixMap.isEmpty()){
-			parameterPredictorRows = Collections.emptyMap();
+		FieldName targetField = getTargetField();
+
+		List<BaselineCell> baselineCells;
+
+		Double maxTime;
+
+		FieldName baselineStrataVariable = generalRegressionModel.getBaselineStrataVariable();
+
+		if(baselineStrataVariable != null){
+			FieldValue value = getVariable(baselineStrataVariable, context);
+
+			BaselineStratum baselineStratum = getBaselineStratum(baseCumHazardTables, value);
+
+			// "If the value does not have a corresponding BaselineStratum element, then the result is a missing value"
+			if(baselineStratum == null){
+				return null;
+			}
+
+			baselineCells = baselineStratum.getBaselineCells();
+
+			maxTime = baselineStratum.getMaxTime();
 		} else
 
 		{
-			parameterPredictorRows = ppMatrixMap.get(null);
-			if(parameterPredictorRows == null){
-				throw new InvalidFeatureException(generalRegressionModel.getPPMatrix());
+			baselineCells = baseCumHazardTables.getBaselineCells();
+
+			maxTime = baseCumHazardTables.getMaxTime();
+			if(maxTime == null){
+				throw new InvalidFeatureException(baseCumHazardTables);
 			}
 		}
 
-		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
-		if(paramMatrixMap.size() != 1 || !paramMatrixMap.containsKey(null)){
-			throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
+		Comparator<BaselineCell> comparator = new Comparator<BaselineCell>(){
+
+			@Override
+			public int compare(BaselineCell left, BaselineCell right){
+				return Double.compare(left.getTime(), right.getTime());
+			}
+		};
+
+		Ordering<BaselineCell> ordering = Ordering.from(comparator);
+
+		double baselineCumHazard;
+
+		FieldName startTimeVariable = generalRegressionModel.getStartTimeVariable();
+		FieldName endTimeVariable = generalRegressionModel.getEndTimeVariable();
+
+		if(endTimeVariable != null){
+			BaselineCell minBaselineCell = ordering.min(baselineCells);
+
+			Double minTime = minBaselineCell.getTime();
+
+			final
+			FieldValue value = getVariable(endTimeVariable, context);
+
+			FieldValue minTimeValue = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, minTime);
+
+			// "If the value is less than the minimum time, then predicted survival is 1 and cumulative hazard is 0"
+			if(value.compareToValue(minTimeValue) < 0){
+				return Collections.singletonMap(targetField, 1d);
+			}
+
+			FieldValue maxTimeValue = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, maxTime);
+
+			// "If the value is greater than the maximum time, then the result is a missing value"
+			if(value.compareToValue(maxTimeValue) > 0){
+				return null;
+			}
+
+			Predicate<BaselineCell> predicate = new Predicate<BaselineCell>(){
+
+				private double time = (value.asNumber()).doubleValue();
+
+
+				@Override
+				public boolean apply(BaselineCell baselineCell){
+					return (baselineCell.getTime() <= this.time);
+				}
+			};
+
+			// "Select the BaselineCell element that has the largest time attribute value that is not greater than the value"
+			BaselineCell baselineCell = ordering.max(Iterables.filter(baselineCells, predicate));
+
+			baselineCumHazard = baselineCell.getCumHazard();
+		} else
+
+		{
+			throw new InvalidFeatureException(generalRegressionModel);
 		}
 
-		Iterable<PCell> parameterCells = paramMatrixMap.get(null);
+		Double r = computeDotProduct(context);
 
-		Double result = computeDotProduct(parameterCells, parameterPredictorRows, arguments);
+		Double s = computeReferencePoint();
+
+		if(r == null || s == null){
+			return null;
+		}
+
+		Double cumHazard = baselineCumHazard * Math.exp(r - s);
+
+		Double survival = Math.exp(-1 * cumHazard);
+
+		return Collections.singletonMap(targetField, survival);
+	}
+
+	private Map<FieldName, ? extends Number> evaluateGeneralRegression(ModelEvaluationContext context){
+		GeneralRegressionModel generalRegressionModel = getModel();
+
+		Double result = computeDotProduct(context);
 		if(result == null){
 			return TargetUtil.evaluateRegressionDefault(context);
 		}
@@ -352,6 +469,36 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return TargetUtil.evaluateClassification(Collections.singletonMap(targetField, result), context);
 	}
 
+	private Double computeDotProduct(EvaluationContext context){
+		GeneralRegressionModel generalRegressionModel = getModel();
+
+		Map<FieldName, FieldValue> arguments = getArguments(context);
+
+		Map<String, Map<String, Row>> ppMatrixMap = getPPMatrixMap();
+
+		Map<String, Row> parameterPredictorRows;
+
+		if(ppMatrixMap.isEmpty()){
+			parameterPredictorRows = Collections.emptyMap();
+		} else
+
+		{
+			parameterPredictorRows = ppMatrixMap.get(null);
+			if(parameterPredictorRows == null){
+				throw new InvalidFeatureException(generalRegressionModel.getPPMatrix());
+			}
+		}
+
+		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
+		if(paramMatrixMap.size() != 1 || !paramMatrixMap.containsKey(null)){
+			throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
+		}
+
+		Iterable<PCell> parameterCells = paramMatrixMap.get(null);
+
+		return computeDotProduct(parameterCells, parameterPredictorRows, arguments);
+	}
+
 	private Double computeDotProduct(Iterable<PCell> parameterCells, Map<String, Row> parameterPredictorRows, Map<FieldName, FieldValue> arguments){
 		Double sum = null;
 
@@ -372,6 +519,34 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			{
 				value = (1d * parameterCell.getBeta());
 			}
+
+			sum = (sum != null ? (sum + value) : value);
+		}
+
+		return sum;
+	}
+
+	private Double computeReferencePoint(){
+		GeneralRegressionModel generalRegressionModel = getModel();
+
+		BiMap<String, Parameter> parameters = getParameterRegistry();
+
+		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
+		if(paramMatrixMap.size() != 1 || !paramMatrixMap.containsKey(null)){
+			throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
+		}
+
+		Iterable<PCell> parameterCells = paramMatrixMap.get(null);
+
+		Double sum = null;
+
+		for(PCell parameterCell : parameterCells){
+			Parameter parameter = parameters.get(parameterCell.getParameterName());
+			if(parameter == null){
+				return null;
+			}
+
+			double value = (parameter.getReferencePoint() * parameterCell.getBeta());
 
 			sum = (sum != null ? (sum + value) : value);
 		}
@@ -472,6 +647,10 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return result;
 	}
 
+	public BiMap<String, Parameter> getParameterRegistry(){
+		return getValue(GeneralRegressionModelEvaluator.parameterCache);
+	}
+
 	public BiMap<FieldName, Predictor> getFactorRegistry(){
 		return getValue(GeneralRegressionModelEvaluator.factorCache);
 	}
@@ -544,6 +723,31 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		return value;
+	}
+
+	static
+	private BaselineStratum getBaselineStratum(BaseCumHazardTables baseCumHazardTables, FieldValue value){
+		List<BaselineStratum> baselineStrata = baseCumHazardTables.getBaselineStrata();
+		for(BaselineStratum baselineStratum : baselineStrata){
+
+			if(value.equalsString(baselineStratum.getValue())){
+				return baselineStratum;
+			}
+		}
+
+		return null;
+	}
+
+	static
+	private BiMap<String, Parameter> parseParameterRegistry(ParameterList parameterList){
+		BiMap<String, Parameter> result = HashBiMap.create();
+
+		List<Parameter> parameters = parameterList.getParameters();
+		for(Parameter parameter : parameters){
+			result.put(parameter.getName(), parameter);
+		}
+
+		return result;
 	}
 
 	static
@@ -915,6 +1119,16 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 		}
 	}
+
+	private static final LoadingCache<GeneralRegressionModel, BiMap<String, Parameter>> parameterCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<GeneralRegressionModel, BiMap<String, Parameter>>(){
+
+			@Override
+			public BiMap<String, Parameter> load(GeneralRegressionModel generalRegressionModel){
+				return ImmutableBiMap.copyOf(parseParameterRegistry(generalRegressionModel.getParameterList()));
+			}
+		});
 
 	private static final LoadingCache<GeneralRegressionModel, BiMap<FieldName, Predictor>> factorCache = CacheBuilder.newBuilder()
 		.weakKeys()
