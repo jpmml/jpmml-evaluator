@@ -27,22 +27,15 @@ import static org.junit.Assert.assertTrue;
 public class RegressionTest {
 
 	@Test
-	public void evaluateGeneralRegressionOzone() throws Exception {
-		Batch batch = new KnimeBatch("GeneralRegression", "Ozone");
+	public void evaluateGeneralRegressionAuto() throws Exception {
+		Batch batch = new KnimeBatch("GeneralRegression", "Auto");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
 
 	@Test
-	public void evaluateNeuralNetworkOzone() throws Exception {
-		Batch batch = new KnimeBatch("NeuralNetwork", "Ozone");
-
-		assertTrue(BatchUtil.evaluate(batch));
-	}
-
-	@Test
-	public void evaluateRegressionOzone() throws Exception {
-		Batch batch = new KnimeBatch("Regression", "Ozone");
+	public void evaluateRegressionAuto() throws Exception {
+		Batch batch = new KnimeBatch("Regression", "Auto");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
