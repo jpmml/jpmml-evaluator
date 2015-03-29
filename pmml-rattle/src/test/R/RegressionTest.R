@@ -3,59 +3,62 @@ library("nnet")
 library("pmml")
 library("randomForest")
 
-ozoneData = readCsv("csv/Ozone.csv")
-ozoneFormula = formula(O3 ~ temp + ibh + ibt)
-ozoneGlmFormula = formula(O3 ~ temp * ibh * ibt)
+autoData = readCsv("csv/Auto.csv")
+autoData$cylinders = as.factor(autoData$cylinders)
+autoData$model_year = as.factor(autoData$model_year)
+autoData$origin = as.factor(autoData$origin)
 
-writeOzone = function(values, file){
-	result = data.frame("O3" = values, "Predicted_O3" = values)
+autoFormula = formula(mpg ~ .)
+
+writeAuto = function(values, file){
+	result = data.frame("mpg" = values, "Predicted_mpg" = values)
 
 	writeCsv(result, file)
 }
 
-generateGeneralRegressionOzone = function(){
-	glm = glm(ozoneGlmFormula, ozoneData, family = gaussian)
-	saveXML(pmml(glm), "pmml/GeneralRegressionOzone.pmml")
+generateGeneralRegressionAuto = function(){
+	glm = glm(autoFormula, autoData, family = gaussian)
+	saveXML(pmml(glm), "pmml/GeneralRegressionAuto.pmml")
 
-	writeOzone(predict(glm), "csv/GeneralRegressionOzone.csv")
+	writeAuto(predict(glm), "csv/GeneralRegressionAuto.csv")
 }
 
-generateNeuralNetworkOzone = function(){
+generateNeuralNetworkAuto = function(){
+	set.seed(13)
+
+	nnet = nnet(autoFormula, autoData, size = 7, decay = 0.1, maxit = 1000, linout = TRUE)
+	saveXML(pmml(nnet), "pmml/NeuralNetworkAuto.pmml")
+
+	writeAuto(predict(nnet), "csv/NeuralNetworkAuto.csv")
+}
+
+generateRandomForestAuto = function(){
 	set.seed(42)
 
-	nnet = nnet(ozoneFormula, ozoneData, size = 4, decay = 1e-3, maxit = 10000, linout = TRUE)
-	saveXML(pmml(nnet), "pmml/NeuralNetworkOzone.pmml")
+	randomForest = randomForest(autoFormula, autoData, ntree = 10, mtry = 3, nodesize = 10)
+	saveXML(pmml(randomForest), "pmml/RandomForestAuto.pmml")
 
-	writeOzone(predict(nnet), "csv/NeuralNetworkOzone.csv")
+	writeAuto(predict(randomForest, newdata = autoData), "csv/RandomForestAuto.csv")
 }
 
-generateRandomForestOzone = function(){
+generateRegressionAuto = function(){
+	lm = lm(autoFormula, autoData)
+	saveXML(pmml(lm), "pmml/RegressionAuto.pmml")
+
+	writeAuto(predict(lm), "csv/RegressionAuto.csv")
+}
+
+generateSupportVectorMachineAuto = function(){
 	set.seed(42)
 
-	randomForest = randomForest(ozoneFormula, ozoneData, ntree = 10, mtry = 3, nodesize = 10)
-	saveXML(pmml(randomForest), "pmml/RandomForestOzone.pmml")
+	ksvm = ksvm(autoFormula, autoData)
+	saveXML(pmml(ksvm, dataset = autoData), "pmml/SupportVectorMachineAuto.pmml")
 
-	writeOzone(predict(randomForest, newdata = ozoneData), "csv/RandomForestOzone.csv")
+	writeAuto(predict(ksvm, newdata = autoData), "csv/SupportVectorMachineAuto.csv")
 }
 
-generateRegressionOzone = function(){
-	lm = lm(ozoneFormula, ozoneData)
-	saveXML(pmml(lm), "pmml/RegressionOzone.pmml")
-
-	writeOzone(predict(lm), "csv/RegressionOzone.csv")
-}
-
-generateSupportVectorMachineOzone = function(){
-	set.seed(42)
-
-	ksvm = ksvm(ozoneFormula, ozoneData)
-	saveXML(pmml(ksvm, dataset = ozoneData), "pmml/SupportVectorMachineOzone.pmml")
-
-	writeOzone(predict(ksvm, newdata = ozoneData), "csv/SupportVectorMachineOzone.csv")
-}
-
-generateGeneralRegressionOzone()
-generateNeuralNetworkOzone()
-generateRandomForestOzone()
-generateRegressionOzone()
-generateSupportVectorMachineOzone()
+generateGeneralRegressionAuto()
+generateNeuralNetworkAuto()
+generateRandomForestAuto()
+generateRegressionAuto()
+generateSupportVectorMachineAuto()

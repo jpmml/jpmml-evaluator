@@ -28,8 +28,8 @@ import static org.junit.Assert.assertTrue;
 public class RegressionTest {
 
 	@Test
-	public void evaluateGeneralRegressionOzone() throws Exception {
-		Batch batch = new RattleBatch("GeneralRegression", "Ozone");
+	public void evaluateGeneralRegressionAuto() throws Exception {
+		Batch batch = new RattleBatch("GeneralRegression", "Auto");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
@@ -37,8 +37,8 @@ public class RegressionTest {
 	}
 
 	@Test
-	public void evaluateNeuralNetworkOzone() throws Exception {
-		Batch batch = new RattleBatch("NeuralNetwork", "Ozone");
+	public void evaluateNeuralNetworkAuto() throws Exception {
+		Batch batch = new RattleBatch("NeuralNetwork", "Auto");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
@@ -46,15 +46,15 @@ public class RegressionTest {
 	}
 
 	@Test
-	public void evaluateRandomForestOzone() throws Exception {
-		Batch batch = new RattleBatch("RandomForest", "Ozone");
+	public void evaluateRandomForestAuto() throws Exception {
+		Batch batch = new RattleBatch("RandomForest", "Auto");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
 
 	@Test
-	public void evaluateRegressionOzone() throws Exception {
-		Batch batch = new RattleBatch("Regression", "Ozone");
+	public void evaluateRegressionAuto() throws Exception {
+		Batch batch = new RattleBatch("Regression", "Auto");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
@@ -62,8 +62,8 @@ public class RegressionTest {
 	}
 
 	@Test
-	public void evaluateSupportVectorMachineOzone() throws Exception {
-		Batch batch = new RattleBatch("SupportVectorMachine", "Ozone");
+	public void evaluateSupportVectorMachineAuto() throws Exception {
+		Batch batch = new RattleBatch("SupportVectorMachine", "Auto");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
