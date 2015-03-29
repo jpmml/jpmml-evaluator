@@ -1,15 +1,16 @@
 <?xml version="1.0"?>
 <PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_2 http://www.dmg.org/v4-2/pmml-4-2.xsd">
- <Header copyright="Copyright (c) 2014 vfed" description="Linear Regression Model">
+ <Header copyright="Copyright (c) 2015 vfed" description="Linear Regression Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-07-08 11:04:47</Timestamp>
+  <Timestamp>2015-03-29 14:10:58</Timestamp>
  </Header>
- <DataDictionary numberOfFields="9">
+ <DataDictionary numberOfFields="10">
   <DataField name="Adjusted" optype="categorical" dataType="string">
    <Value value="0"/>
    <Value value="1"/>
   </DataField>
+  <DataField name="Age" optype="continuous" dataType="double"/>
   <DataField name="Employment" optype="categorical" dataType="string">
    <Value value="Consultant"/>
    <Value value="Private"/>
@@ -72,6 +73,7 @@
  <RegressionModel modelName="Linear_Regression_Model" functionName="classification" algorithmName="glm" normalizationMethod="logit">
   <MiningSchema>
    <MiningField name="Adjusted" usageType="predicted"/>
+   <MiningField name="Age" usageType="active"/>
    <MiningField name="Employment" usageType="active"/>
    <MiningField name="Education" usageType="active"/>
    <MiningField name="Marital" usageType="active"/>
@@ -86,55 +88,56 @@
    <OutputField name="Probability_0" optype="continuous" dataType="double" feature="probability" value="0"/>
    <OutputField name="Probability_1" optype="continuous" dataType="double" feature="probability" value="1"/>
   </Output>
-  <RegressionTable targetCategory="1" intercept="-5.40475486934435">
-   <NumericPredictor name="Income" exponent="1" coefficient="1.37103951153888e-06"/>
-   <NumericPredictor name="Deductions" exponent="1" coefficient="0.00109088551898972"/>
-   <NumericPredictor name="Hours" exponent="1" coefficient="0.027211885308648"/>
+  <RegressionTable targetCategory="1" intercept="-6.71351133627935">
+   <NumericPredictor name="Age" exponent="1" coefficient="0.0297589202754057"/>
+   <NumericPredictor name="Income" exponent="1" coefficient="2.50415198425518e-06"/>
+   <NumericPredictor name="Deductions" exponent="1" coefficient="0.00110606302370331"/>
+   <NumericPredictor name="Hours" exponent="1" coefficient="0.0362349279931495"/>
    <CategoricalPredictor name="Employment" value="Consultant" coefficient="0"/>
-   <CategoricalPredictor name="Employment" value="Private" coefficient="0.16281018807637"/>
-   <CategoricalPredictor name="Employment" value="PSFederal" coefficient="0.137442925005083"/>
-   <CategoricalPredictor name="Employment" value="PSLocal" coefficient="-0.0336841238750315"/>
-   <CategoricalPredictor name="Employment" value="PSState" coefficient="0.255790209517916"/>
-   <CategoricalPredictor name="Employment" value="SelfEmp" coefficient="0.171535559623543"/>
-   <CategoricalPredictor name="Employment" value="Volunteer" coefficient="-17.1465239418317"/>
+   <CategoricalPredictor name="Employment" value="Private" coefficient="0.348322295361073"/>
+   <CategoricalPredictor name="Employment" value="PSFederal" coefficient="0.305237414946248"/>
+   <CategoricalPredictor name="Employment" value="PSLocal" coefficient="0.104747345853164"/>
+   <CategoricalPredictor name="Employment" value="PSState" coefficient="0.317671895719315"/>
+   <CategoricalPredictor name="Employment" value="SelfEmp" coefficient="0.140429537576101"/>
+   <CategoricalPredictor name="Employment" value="Volunteer" coefficient="-17.5516372976773"/>
    <CategoricalPredictor name="Education" value="Associate" coefficient="0"/>
-   <CategoricalPredictor name="Education" value="Bachelor" coefficient="0.165370069133508"/>
-   <CategoricalPredictor name="Education" value="College" coefficient="-0.734946434992089"/>
-   <CategoricalPredictor name="Education" value="Doctorate" coefficient="1.52177024774816"/>
-   <CategoricalPredictor name="Education" value="HSgrad" coefficient="-1.05762858148175"/>
-   <CategoricalPredictor name="Education" value="Master" coefficient="0.790960842746632"/>
-   <CategoricalPredictor name="Education" value="Preschool" coefficient="-15.6477306962957"/>
-   <CategoricalPredictor name="Education" value="Professional" coefficient="1.99806950844467"/>
-   <CategoricalPredictor name="Education" value="Vocational" coefficient="-0.905281328151149"/>
-   <CategoricalPredictor name="Education" value="Yr10" coefficient="-1.40817445897119"/>
-   <CategoricalPredictor name="Education" value="Yr11" coefficient="-1.42611146517702"/>
-   <CategoricalPredictor name="Education" value="Yr12" coefficient="-1.5827391430161"/>
-   <CategoricalPredictor name="Education" value="Yr1t4" coefficient="-17.1243486493294"/>
-   <CategoricalPredictor name="Education" value="Yr5t6" coefficient="-16.6669362438405"/>
-   <CategoricalPredictor name="Education" value="Yr7t8" coefficient="-16.3482083791612"/>
-   <CategoricalPredictor name="Education" value="Yr9" coefficient="-2.63774611388388"/>
+   <CategoricalPredictor name="Education" value="Bachelor" coefficient="0.0556835094295327"/>
+   <CategoricalPredictor name="Education" value="College" coefficient="-0.853312427574191"/>
+   <CategoricalPredictor name="Education" value="Doctorate" coefficient="0.970486287918939"/>
+   <CategoricalPredictor name="Education" value="HSgrad" coefficient="-1.11970786522541"/>
+   <CategoricalPredictor name="Education" value="Master" coefficient="0.490554984536586"/>
+   <CategoricalPredictor name="Education" value="Preschool" coefficient="-15.5836079123024"/>
+   <CategoricalPredictor name="Education" value="Professional" coefficient="1.69141358394513"/>
+   <CategoricalPredictor name="Education" value="Vocational" coefficient="-1.02981456447471"/>
+   <CategoricalPredictor name="Education" value="Yr10" coefficient="-1.53171999709468"/>
+   <CategoricalPredictor name="Education" value="Yr11" coefficient="-1.49084375231043"/>
+   <CategoricalPredictor name="Education" value="Yr12" coefficient="-1.70524853452331"/>
+   <CategoricalPredictor name="Education" value="Yr1t4" coefficient="-17.3356032212834"/>
+   <CategoricalPredictor name="Education" value="Yr5t6" coefficient="-2.8476969022414"/>
+   <CategoricalPredictor name="Education" value="Yr7t8" coefficient="-16.6663767643099"/>
+   <CategoricalPredictor name="Education" value="Yr9" coefficient="-2.92065051107939"/>
    <CategoricalPredictor name="Marital" value="Absent" coefficient="0"/>
-   <CategoricalPredictor name="Marital" value="Divorced" coefficient="0.40570954411805"/>
-   <CategoricalPredictor name="Marital" value="Married" coefficient="3.00566721391929"/>
-   <CategoricalPredictor name="Marital" value="Married-spouse-absent" coefficient="0.85470066087297"/>
-   <CategoricalPredictor name="Marital" value="Unmarried" coefficient="0.921467925298333"/>
-   <CategoricalPredictor name="Marital" value="Widowed" coefficient="0.889578419521982"/>
+   <CategoricalPredictor name="Marital" value="Divorced" coefficient="-0.042705478766959"/>
+   <CategoricalPredictor name="Marital" value="Married" coefficient="2.69574326622228"/>
+   <CategoricalPredictor name="Marital" value="Married-spouse-absent" coefficient="0.453050282925054"/>
+   <CategoricalPredictor name="Marital" value="Unmarried" coefficient="0.612882858381805"/>
+   <CategoricalPredictor name="Marital" value="Widowed" coefficient="0.133633448311347"/>
    <CategoricalPredictor name="Occupation" value="Cleaner" coefficient="0"/>
-   <CategoricalPredictor name="Occupation" value="Clerical" coefficient="1.25477349997524"/>
-   <CategoricalPredictor name="Occupation" value="Executive" coefficient="1.78877774869345"/>
-   <CategoricalPredictor name="Occupation" value="Farming" coefficient="0.333811091599449"/>
-   <CategoricalPredictor name="Occupation" value="Home" coefficient="-12.3557294715966"/>
-   <CategoricalPredictor name="Occupation" value="Machinist" coefficient="0.645184810869703"/>
-   <CategoricalPredictor name="Occupation" value="Military" coefficient="-13.0109153098259"/>
-   <CategoricalPredictor name="Occupation" value="Professional" coefficient="1.41796622240719"/>
-   <CategoricalPredictor name="Occupation" value="Protective" coefficient="1.99946145807149"/>
-   <CategoricalPredictor name="Occupation" value="Repair" coefficient="0.755156203538225"/>
-   <CategoricalPredictor name="Occupation" value="Sales" coefficient="1.10691724740465"/>
-   <CategoricalPredictor name="Occupation" value="Service" coefficient="-0.162884614778333"/>
-   <CategoricalPredictor name="Occupation" value="Support" coefficient="1.39630076676115"/>
-   <CategoricalPredictor name="Occupation" value="Transport" coefficient="0.385814282486537"/>
+   <CategoricalPredictor name="Occupation" value="Clerical" coefficient="1.18826825891785"/>
+   <CategoricalPredictor name="Occupation" value="Executive" coefficient="1.61307778304776"/>
+   <CategoricalPredictor name="Occupation" value="Farming" coefficient="0.0215784641395748"/>
+   <CategoricalPredictor name="Occupation" value="Home" coefficient="-12.4013390836383"/>
+   <CategoricalPredictor name="Occupation" value="Machinist" coefficient="0.49723082402297"/>
+   <CategoricalPredictor name="Occupation" value="Military" coefficient="-12.8975238184503"/>
+   <CategoricalPredictor name="Occupation" value="Professional" coefficient="1.27352720553335"/>
+   <CategoricalPredictor name="Occupation" value="Protective" coefficient="1.90358949382414"/>
+   <CategoricalPredictor name="Occupation" value="Repair" coefficient="0.689140161776305"/>
+   <CategoricalPredictor name="Occupation" value="Sales" coefficient="0.985916584583916"/>
+   <CategoricalPredictor name="Occupation" value="Service" coefficient="-0.347597662685376"/>
+   <CategoricalPredictor name="Occupation" value="Support" coefficient="1.32681352913446"/>
+   <CategoricalPredictor name="Occupation" value="Transport" coefficient="0.249216261467727"/>
    <CategoricalPredictor name="Gender" value="Female" coefficient="0"/>
-   <CategoricalPredictor name="Gender" value="Male" coefficient="0.214898714164643"/>
+   <CategoricalPredictor name="Gender" value="Male" coefficient="0.196670002272302"/>
   </RegressionTable>
   <RegressionTable targetCategory="0" intercept="0.0"/>
  </RegressionModel>

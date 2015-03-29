@@ -6,6 +6,7 @@ library("randomForest")
 library("rpart")
 
 irisData = readCsv("csv/Iris.csv")
+
 irisFormula = formula(Species ~ .)
 
 writeIris = function(classes, probabilities, file){
@@ -96,6 +97,7 @@ generateSupportVectorMachineIris()
 # Convert target field from categorical to binomial
 versicolor = as.factor(as.integer(irisData$Species == 'versicolor'))
 versicolorData = cbind(irisData[, 1:4], versicolor)
+
 versicolorFormula = formula(versicolor ~ .)
 
 writeVersicolor = function(classes, probabilities, file){
@@ -116,8 +118,9 @@ generateGeneralRegressionIris = function(){
 generateGeneralRegressionIris()
 
 auditData = readCsv("csv/Audit.csv")
-auditData[, "Adjusted"] = as.factor(auditData[, "Adjusted"])
-auditFormula = formula(Adjusted ~ Employment + Education + Marital + Occupation + Income + Gender + Deductions + Hours)
+auditData$Adjusted = as.factor(auditData$Adjusted)
+
+auditFormula = formula(Adjusted ~ .)
 
 writeAudit = function(classes, probabilities, file){
 	result = data.frame("Adjusted" = classes, "Predicted_Adjusted" = classes)

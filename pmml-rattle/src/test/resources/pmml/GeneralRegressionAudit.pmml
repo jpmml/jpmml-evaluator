@@ -1,15 +1,16 @@
 <?xml version="1.0"?>
 <PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_2 http://www.dmg.org/v4-2/pmml-4-2.xsd">
- <Header copyright="Copyright (c) 2014 vfed" description="Generalized Linear Regression Model">
+ <Header copyright="Copyright (c) 2015 vfed" description="Generalized Linear Regression Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-07-06 23:51:07</Timestamp>
+  <Timestamp>2015-03-29 14:10:58</Timestamp>
  </Header>
- <DataDictionary numberOfFields="9">
+ <DataDictionary numberOfFields="10">
   <DataField name="Adjusted" optype="categorical" dataType="string">
    <Value value="0"/>
    <Value value="1"/>
   </DataField>
+  <DataField name="Age" optype="continuous" dataType="double"/>
   <DataField name="Employment" optype="categorical" dataType="string">
    <Value value="Consultant"/>
    <Value value="Private"/>
@@ -72,6 +73,7 @@
  <GeneralRegressionModel modelName="General_Regression_Model" modelType="generalizedLinear" functionName="classification" algorithmName="glm" distribution="binomial" linkFunction="logit">
   <MiningSchema>
    <MiningField name="Adjusted" usageType="predicted"/>
+   <MiningField name="Age" usageType="active"/>
    <MiningField name="Employment" usageType="active"/>
    <MiningField name="Education" usageType="active"/>
    <MiningField name="Marital" usageType="active"/>
@@ -88,49 +90,50 @@
   </Output>
   <ParameterList>
    <Parameter name="p0" label="(Intercept)"/>
-   <Parameter name="p1" label="EmploymentPrivate"/>
-   <Parameter name="p2" label="EmploymentPSFederal"/>
-   <Parameter name="p3" label="EmploymentPSLocal"/>
-   <Parameter name="p4" label="EmploymentPSState"/>
-   <Parameter name="p5" label="EmploymentSelfEmp"/>
-   <Parameter name="p6" label="EmploymentVolunteer"/>
-   <Parameter name="p7" label="EducationBachelor"/>
-   <Parameter name="p8" label="EducationCollege"/>
-   <Parameter name="p9" label="EducationDoctorate"/>
-   <Parameter name="p10" label="EducationHSgrad"/>
-   <Parameter name="p11" label="EducationMaster"/>
-   <Parameter name="p12" label="EducationPreschool"/>
-   <Parameter name="p13" label="EducationProfessional"/>
-   <Parameter name="p14" label="EducationVocational"/>
-   <Parameter name="p15" label="EducationYr10"/>
-   <Parameter name="p16" label="EducationYr11"/>
-   <Parameter name="p17" label="EducationYr12"/>
-   <Parameter name="p18" label="EducationYr1t4"/>
-   <Parameter name="p19" label="EducationYr5t6"/>
-   <Parameter name="p20" label="EducationYr7t8"/>
-   <Parameter name="p21" label="EducationYr9"/>
-   <Parameter name="p22" label="MaritalDivorced"/>
-   <Parameter name="p23" label="MaritalMarried"/>
-   <Parameter name="p24" label="MaritalMarried-spouse-absent"/>
-   <Parameter name="p25" label="MaritalUnmarried"/>
-   <Parameter name="p26" label="MaritalWidowed"/>
-   <Parameter name="p27" label="OccupationClerical"/>
-   <Parameter name="p28" label="OccupationExecutive"/>
-   <Parameter name="p29" label="OccupationFarming"/>
-   <Parameter name="p30" label="OccupationHome"/>
-   <Parameter name="p31" label="OccupationMachinist"/>
-   <Parameter name="p32" label="OccupationMilitary"/>
-   <Parameter name="p33" label="OccupationProfessional"/>
-   <Parameter name="p34" label="OccupationProtective"/>
-   <Parameter name="p35" label="OccupationRepair"/>
-   <Parameter name="p36" label="OccupationSales"/>
-   <Parameter name="p37" label="OccupationService"/>
-   <Parameter name="p38" label="OccupationSupport"/>
-   <Parameter name="p39" label="OccupationTransport"/>
-   <Parameter name="p40" label="Income"/>
-   <Parameter name="p41" label="GenderMale"/>
-   <Parameter name="p42" label="Deductions"/>
-   <Parameter name="p43" label="Hours"/>
+   <Parameter name="p1" label="Age"/>
+   <Parameter name="p2" label="EmploymentPrivate"/>
+   <Parameter name="p3" label="EmploymentPSFederal"/>
+   <Parameter name="p4" label="EmploymentPSLocal"/>
+   <Parameter name="p5" label="EmploymentPSState"/>
+   <Parameter name="p6" label="EmploymentSelfEmp"/>
+   <Parameter name="p7" label="EmploymentVolunteer"/>
+   <Parameter name="p8" label="EducationBachelor"/>
+   <Parameter name="p9" label="EducationCollege"/>
+   <Parameter name="p10" label="EducationDoctorate"/>
+   <Parameter name="p11" label="EducationHSgrad"/>
+   <Parameter name="p12" label="EducationMaster"/>
+   <Parameter name="p13" label="EducationPreschool"/>
+   <Parameter name="p14" label="EducationProfessional"/>
+   <Parameter name="p15" label="EducationVocational"/>
+   <Parameter name="p16" label="EducationYr10"/>
+   <Parameter name="p17" label="EducationYr11"/>
+   <Parameter name="p18" label="EducationYr12"/>
+   <Parameter name="p19" label="EducationYr1t4"/>
+   <Parameter name="p20" label="EducationYr5t6"/>
+   <Parameter name="p21" label="EducationYr7t8"/>
+   <Parameter name="p22" label="EducationYr9"/>
+   <Parameter name="p23" label="MaritalDivorced"/>
+   <Parameter name="p24" label="MaritalMarried"/>
+   <Parameter name="p25" label="MaritalMarried-spouse-absent"/>
+   <Parameter name="p26" label="MaritalUnmarried"/>
+   <Parameter name="p27" label="MaritalWidowed"/>
+   <Parameter name="p28" label="OccupationClerical"/>
+   <Parameter name="p29" label="OccupationExecutive"/>
+   <Parameter name="p30" label="OccupationFarming"/>
+   <Parameter name="p31" label="OccupationHome"/>
+   <Parameter name="p32" label="OccupationMachinist"/>
+   <Parameter name="p33" label="OccupationMilitary"/>
+   <Parameter name="p34" label="OccupationProfessional"/>
+   <Parameter name="p35" label="OccupationProtective"/>
+   <Parameter name="p36" label="OccupationRepair"/>
+   <Parameter name="p37" label="OccupationSales"/>
+   <Parameter name="p38" label="OccupationService"/>
+   <Parameter name="p39" label="OccupationSupport"/>
+   <Parameter name="p40" label="OccupationTransport"/>
+   <Parameter name="p41" label="Income"/>
+   <Parameter name="p42" label="GenderMale"/>
+   <Parameter name="p43" label="Deductions"/>
+   <Parameter name="p44" label="Hours"/>
   </ParameterList>
   <FactorList>
    <Predictor name="Employment"/>
@@ -140,100 +143,103 @@
    <Predictor name="Gender"/>
   </FactorList>
   <CovariateList>
+   <Predictor name="Age"/>
    <Predictor name="Income"/>
    <Predictor name="Deductions"/>
    <Predictor name="Hours"/>
   </CovariateList>
   <PPMatrix>
-   <PPCell value="Private" predictorName="Employment" parameterName="p1"/>
-   <PPCell value="PSFederal" predictorName="Employment" parameterName="p2"/>
-   <PPCell value="PSLocal" predictorName="Employment" parameterName="p3"/>
-   <PPCell value="PSState" predictorName="Employment" parameterName="p4"/>
-   <PPCell value="SelfEmp" predictorName="Employment" parameterName="p5"/>
-   <PPCell value="Volunteer" predictorName="Employment" parameterName="p6"/>
-   <PPCell value="Bachelor" predictorName="Education" parameterName="p7"/>
-   <PPCell value="College" predictorName="Education" parameterName="p8"/>
-   <PPCell value="Doctorate" predictorName="Education" parameterName="p9"/>
-   <PPCell value="HSgrad" predictorName="Education" parameterName="p10"/>
-   <PPCell value="Master" predictorName="Education" parameterName="p11"/>
-   <PPCell value="Preschool" predictorName="Education" parameterName="p12"/>
-   <PPCell value="Professional" predictorName="Education" parameterName="p13"/>
-   <PPCell value="Vocational" predictorName="Education" parameterName="p14"/>
-   <PPCell value="Yr10" predictorName="Education" parameterName="p15"/>
-   <PPCell value="Yr11" predictorName="Education" parameterName="p16"/>
-   <PPCell value="Yr12" predictorName="Education" parameterName="p17"/>
-   <PPCell value="Yr1t4" predictorName="Education" parameterName="p18"/>
-   <PPCell value="Yr5t6" predictorName="Education" parameterName="p19"/>
-   <PPCell value="Yr7t8" predictorName="Education" parameterName="p20"/>
-   <PPCell value="Yr9" predictorName="Education" parameterName="p21"/>
-   <PPCell value="Divorced" predictorName="Marital" parameterName="p22"/>
-   <PPCell value="Married" predictorName="Marital" parameterName="p23"/>
-   <PPCell value="Married-spouse-absent" predictorName="Marital" parameterName="p24"/>
-   <PPCell value="Unmarried" predictorName="Marital" parameterName="p25"/>
-   <PPCell value="Widowed" predictorName="Marital" parameterName="p26"/>
-   <PPCell value="Clerical" predictorName="Occupation" parameterName="p27"/>
-   <PPCell value="Executive" predictorName="Occupation" parameterName="p28"/>
-   <PPCell value="Farming" predictorName="Occupation" parameterName="p29"/>
-   <PPCell value="Home" predictorName="Occupation" parameterName="p30"/>
-   <PPCell value="Machinist" predictorName="Occupation" parameterName="p31"/>
-   <PPCell value="Military" predictorName="Occupation" parameterName="p32"/>
-   <PPCell value="Professional" predictorName="Occupation" parameterName="p33"/>
-   <PPCell value="Protective" predictorName="Occupation" parameterName="p34"/>
-   <PPCell value="Repair" predictorName="Occupation" parameterName="p35"/>
-   <PPCell value="Sales" predictorName="Occupation" parameterName="p36"/>
-   <PPCell value="Service" predictorName="Occupation" parameterName="p37"/>
-   <PPCell value="Support" predictorName="Occupation" parameterName="p38"/>
-   <PPCell value="Transport" predictorName="Occupation" parameterName="p39"/>
-   <PPCell value="1" predictorName="Income" parameterName="p40"/>
-   <PPCell value="Male" predictorName="Gender" parameterName="p41"/>
-   <PPCell value="1" predictorName="Deductions" parameterName="p42"/>
-   <PPCell value="1" predictorName="Hours" parameterName="p43"/>
+   <PPCell value="1" predictorName="Age" parameterName="p1"/>
+   <PPCell value="Private" predictorName="Employment" parameterName="p2"/>
+   <PPCell value="PSFederal" predictorName="Employment" parameterName="p3"/>
+   <PPCell value="PSLocal" predictorName="Employment" parameterName="p4"/>
+   <PPCell value="PSState" predictorName="Employment" parameterName="p5"/>
+   <PPCell value="SelfEmp" predictorName="Employment" parameterName="p6"/>
+   <PPCell value="Volunteer" predictorName="Employment" parameterName="p7"/>
+   <PPCell value="Bachelor" predictorName="Education" parameterName="p8"/>
+   <PPCell value="College" predictorName="Education" parameterName="p9"/>
+   <PPCell value="Doctorate" predictorName="Education" parameterName="p10"/>
+   <PPCell value="HSgrad" predictorName="Education" parameterName="p11"/>
+   <PPCell value="Master" predictorName="Education" parameterName="p12"/>
+   <PPCell value="Preschool" predictorName="Education" parameterName="p13"/>
+   <PPCell value="Professional" predictorName="Education" parameterName="p14"/>
+   <PPCell value="Vocational" predictorName="Education" parameterName="p15"/>
+   <PPCell value="Yr10" predictorName="Education" parameterName="p16"/>
+   <PPCell value="Yr11" predictorName="Education" parameterName="p17"/>
+   <PPCell value="Yr12" predictorName="Education" parameterName="p18"/>
+   <PPCell value="Yr1t4" predictorName="Education" parameterName="p19"/>
+   <PPCell value="Yr5t6" predictorName="Education" parameterName="p20"/>
+   <PPCell value="Yr7t8" predictorName="Education" parameterName="p21"/>
+   <PPCell value="Yr9" predictorName="Education" parameterName="p22"/>
+   <PPCell value="Divorced" predictorName="Marital" parameterName="p23"/>
+   <PPCell value="Married" predictorName="Marital" parameterName="p24"/>
+   <PPCell value="Married-spouse-absent" predictorName="Marital" parameterName="p25"/>
+   <PPCell value="Unmarried" predictorName="Marital" parameterName="p26"/>
+   <PPCell value="Widowed" predictorName="Marital" parameterName="p27"/>
+   <PPCell value="Clerical" predictorName="Occupation" parameterName="p28"/>
+   <PPCell value="Executive" predictorName="Occupation" parameterName="p29"/>
+   <PPCell value="Farming" predictorName="Occupation" parameterName="p30"/>
+   <PPCell value="Home" predictorName="Occupation" parameterName="p31"/>
+   <PPCell value="Machinist" predictorName="Occupation" parameterName="p32"/>
+   <PPCell value="Military" predictorName="Occupation" parameterName="p33"/>
+   <PPCell value="Professional" predictorName="Occupation" parameterName="p34"/>
+   <PPCell value="Protective" predictorName="Occupation" parameterName="p35"/>
+   <PPCell value="Repair" predictorName="Occupation" parameterName="p36"/>
+   <PPCell value="Sales" predictorName="Occupation" parameterName="p37"/>
+   <PPCell value="Service" predictorName="Occupation" parameterName="p38"/>
+   <PPCell value="Support" predictorName="Occupation" parameterName="p39"/>
+   <PPCell value="Transport" predictorName="Occupation" parameterName="p40"/>
+   <PPCell value="1" predictorName="Income" parameterName="p41"/>
+   <PPCell value="Male" predictorName="Gender" parameterName="p42"/>
+   <PPCell value="1" predictorName="Deductions" parameterName="p43"/>
+   <PPCell value="1" predictorName="Hours" parameterName="p44"/>
   </PPMatrix>
   <ParamMatrix>
-   <PCell targetCategory="1" parameterName="p0" df="1" beta="-5.40475486934435"/>
-   <PCell targetCategory="1" parameterName="p1" df="1" beta="0.16281018807637"/>
-   <PCell targetCategory="1" parameterName="p2" df="1" beta="0.137442925005083"/>
-   <PCell targetCategory="1" parameterName="p3" df="1" beta="-0.0336841238750315"/>
-   <PCell targetCategory="1" parameterName="p4" df="1" beta="0.255790209517916"/>
-   <PCell targetCategory="1" parameterName="p5" df="1" beta="0.171535559623543"/>
-   <PCell targetCategory="1" parameterName="p6" df="1" beta="-17.1465239418317"/>
-   <PCell targetCategory="1" parameterName="p7" df="1" beta="0.165370069133508"/>
-   <PCell targetCategory="1" parameterName="p8" df="1" beta="-0.734946434992089"/>
-   <PCell targetCategory="1" parameterName="p9" df="1" beta="1.52177024774816"/>
-   <PCell targetCategory="1" parameterName="p10" df="1" beta="-1.05762858148175"/>
-   <PCell targetCategory="1" parameterName="p11" df="1" beta="0.790960842746632"/>
-   <PCell targetCategory="1" parameterName="p12" df="1" beta="-15.6477306962957"/>
-   <PCell targetCategory="1" parameterName="p13" df="1" beta="1.99806950844467"/>
-   <PCell targetCategory="1" parameterName="p14" df="1" beta="-0.905281328151149"/>
-   <PCell targetCategory="1" parameterName="p15" df="1" beta="-1.40817445897119"/>
-   <PCell targetCategory="1" parameterName="p16" df="1" beta="-1.42611146517702"/>
-   <PCell targetCategory="1" parameterName="p17" df="1" beta="-1.5827391430161"/>
-   <PCell targetCategory="1" parameterName="p18" df="1" beta="-17.1243486493294"/>
-   <PCell targetCategory="1" parameterName="p19" df="1" beta="-16.6669362438405"/>
-   <PCell targetCategory="1" parameterName="p20" df="1" beta="-16.3482083791612"/>
-   <PCell targetCategory="1" parameterName="p21" df="1" beta="-2.63774611388388"/>
-   <PCell targetCategory="1" parameterName="p22" df="1" beta="0.40570954411805"/>
-   <PCell targetCategory="1" parameterName="p23" df="1" beta="3.00566721391929"/>
-   <PCell targetCategory="1" parameterName="p24" df="1" beta="0.85470066087297"/>
-   <PCell targetCategory="1" parameterName="p25" df="1" beta="0.921467925298333"/>
-   <PCell targetCategory="1" parameterName="p26" df="1" beta="0.889578419521982"/>
-   <PCell targetCategory="1" parameterName="p27" df="1" beta="1.25477349997524"/>
-   <PCell targetCategory="1" parameterName="p28" df="1" beta="1.78877774869345"/>
-   <PCell targetCategory="1" parameterName="p29" df="1" beta="0.333811091599449"/>
-   <PCell targetCategory="1" parameterName="p30" df="1" beta="-12.3557294715966"/>
-   <PCell targetCategory="1" parameterName="p31" df="1" beta="0.645184810869703"/>
-   <PCell targetCategory="1" parameterName="p32" df="1" beta="-13.0109153098259"/>
-   <PCell targetCategory="1" parameterName="p33" df="1" beta="1.41796622240719"/>
-   <PCell targetCategory="1" parameterName="p34" df="1" beta="1.99946145807149"/>
-   <PCell targetCategory="1" parameterName="p35" df="1" beta="0.755156203538225"/>
-   <PCell targetCategory="1" parameterName="p36" df="1" beta="1.10691724740465"/>
-   <PCell targetCategory="1" parameterName="p37" df="1" beta="-0.162884614778333"/>
-   <PCell targetCategory="1" parameterName="p38" df="1" beta="1.39630076676115"/>
-   <PCell targetCategory="1" parameterName="p39" df="1" beta="0.385814282486537"/>
-   <PCell targetCategory="1" parameterName="p40" df="1" beta="1.37103951153888e-06"/>
-   <PCell targetCategory="1" parameterName="p41" df="1" beta="0.214898714164643"/>
-   <PCell targetCategory="1" parameterName="p42" df="1" beta="0.00109088551898972"/>
-   <PCell targetCategory="1" parameterName="p43" df="1" beta="0.027211885308648"/>
+   <PCell targetCategory="1" parameterName="p0" df="1" beta="-6.71351133627935"/>
+   <PCell targetCategory="1" parameterName="p1" df="1" beta="0.0297589202754057"/>
+   <PCell targetCategory="1" parameterName="p2" df="1" beta="0.348322295361073"/>
+   <PCell targetCategory="1" parameterName="p3" df="1" beta="0.305237414946248"/>
+   <PCell targetCategory="1" parameterName="p4" df="1" beta="0.104747345853164"/>
+   <PCell targetCategory="1" parameterName="p5" df="1" beta="0.317671895719315"/>
+   <PCell targetCategory="1" parameterName="p6" df="1" beta="0.140429537576101"/>
+   <PCell targetCategory="1" parameterName="p7" df="1" beta="-17.5516372976773"/>
+   <PCell targetCategory="1" parameterName="p8" df="1" beta="0.0556835094295327"/>
+   <PCell targetCategory="1" parameterName="p9" df="1" beta="-0.853312427574191"/>
+   <PCell targetCategory="1" parameterName="p10" df="1" beta="0.970486287918939"/>
+   <PCell targetCategory="1" parameterName="p11" df="1" beta="-1.11970786522541"/>
+   <PCell targetCategory="1" parameterName="p12" df="1" beta="0.490554984536586"/>
+   <PCell targetCategory="1" parameterName="p13" df="1" beta="-15.5836079123024"/>
+   <PCell targetCategory="1" parameterName="p14" df="1" beta="1.69141358394513"/>
+   <PCell targetCategory="1" parameterName="p15" df="1" beta="-1.02981456447471"/>
+   <PCell targetCategory="1" parameterName="p16" df="1" beta="-1.53171999709468"/>
+   <PCell targetCategory="1" parameterName="p17" df="1" beta="-1.49084375231043"/>
+   <PCell targetCategory="1" parameterName="p18" df="1" beta="-1.70524853452331"/>
+   <PCell targetCategory="1" parameterName="p19" df="1" beta="-17.3356032212834"/>
+   <PCell targetCategory="1" parameterName="p20" df="1" beta="-2.8476969022414"/>
+   <PCell targetCategory="1" parameterName="p21" df="1" beta="-16.6663767643099"/>
+   <PCell targetCategory="1" parameterName="p22" df="1" beta="-2.92065051107939"/>
+   <PCell targetCategory="1" parameterName="p23" df="1" beta="-0.042705478766959"/>
+   <PCell targetCategory="1" parameterName="p24" df="1" beta="2.69574326622228"/>
+   <PCell targetCategory="1" parameterName="p25" df="1" beta="0.453050282925054"/>
+   <PCell targetCategory="1" parameterName="p26" df="1" beta="0.612882858381805"/>
+   <PCell targetCategory="1" parameterName="p27" df="1" beta="0.133633448311347"/>
+   <PCell targetCategory="1" parameterName="p28" df="1" beta="1.18826825891785"/>
+   <PCell targetCategory="1" parameterName="p29" df="1" beta="1.61307778304776"/>
+   <PCell targetCategory="1" parameterName="p30" df="1" beta="0.0215784641395748"/>
+   <PCell targetCategory="1" parameterName="p31" df="1" beta="-12.4013390836383"/>
+   <PCell targetCategory="1" parameterName="p32" df="1" beta="0.49723082402297"/>
+   <PCell targetCategory="1" parameterName="p33" df="1" beta="-12.8975238184503"/>
+   <PCell targetCategory="1" parameterName="p34" df="1" beta="1.27352720553335"/>
+   <PCell targetCategory="1" parameterName="p35" df="1" beta="1.90358949382414"/>
+   <PCell targetCategory="1" parameterName="p36" df="1" beta="0.689140161776305"/>
+   <PCell targetCategory="1" parameterName="p37" df="1" beta="0.985916584583916"/>
+   <PCell targetCategory="1" parameterName="p38" df="1" beta="-0.347597662685376"/>
+   <PCell targetCategory="1" parameterName="p39" df="1" beta="1.32681352913446"/>
+   <PCell targetCategory="1" parameterName="p40" df="1" beta="0.249216261467727"/>
+   <PCell targetCategory="1" parameterName="p41" df="1" beta="2.50415198425518e-06"/>
+   <PCell targetCategory="1" parameterName="p42" df="1" beta="0.196670002272302"/>
+   <PCell targetCategory="1" parameterName="p43" df="1" beta="0.00110606302370331"/>
+   <PCell targetCategory="1" parameterName="p44" df="1" beta="0.0362349279931495"/>
   </ParamMatrix>
  </GeneralRegressionModel>
 </PMML>

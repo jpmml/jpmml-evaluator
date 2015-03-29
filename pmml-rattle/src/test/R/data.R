@@ -6,9 +6,10 @@ names(iris) = c("Sepal_Length", "Sepal_Width", "Petal_Length", "Petal_Width", "S
 writeCsv(iris, "csv/Iris.csv")
 
 data("audit")
-names(audit)[11] = "Account"
-names(audit)[12] = "Adjustment"
-names(audit)[13] = "Adjusted"
+audit$ID = NULL
+audit$IGNORE_Accounts = NULL
+audit$RISK_Adjustment = NULL
+names(audit)[10] = "Adjusted"
 audit = na.omit(audit)
 writeCsv(audit, "csv/Audit.csv")
 
