@@ -28,6 +28,13 @@ import static org.junit.Assert.assertTrue;
 public class RegressionTest {
 
 	@Test
+	public void evaluateDecisionTreeAuto() throws Exception {
+		Batch batch = new RattleBatch("DecisionTree", "Auto");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
 	public void evaluateGeneralRegressionAuto() throws Exception {
 		Batch batch = new RattleBatch("GeneralRegression", "Auto");
 

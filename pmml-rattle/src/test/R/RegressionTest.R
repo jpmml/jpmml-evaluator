@@ -2,6 +2,7 @@ library("kernlab")
 library("nnet")
 library("pmml")
 library("randomForest")
+library("rpart")
 
 autoData = readCsv("csv/Auto.csv")
 autoData$cylinders = as.factor(autoData$cylinders)
@@ -14,6 +15,13 @@ writeAuto = function(values, file){
 	result = data.frame("mpg" = values, "Predicted_mpg" = values)
 
 	writeCsv(result, file)
+}
+
+generateDecisionTreeAuto = function(){
+	rpart = rpart(autoFormula, autoData)
+	saveXML(pmml(rpart), "pmml/DecisionTreeAuto.pmml")
+
+	writeAuto(predict(rpart), "csv/DecisionTreeAuto.csv")
 }
 
 generateGeneralRegressionAuto = function(){
@@ -57,6 +65,7 @@ generateSupportVectorMachineAuto = function(){
 	writeAuto(predict(ksvm, newdata = autoData), "csv/SupportVectorMachineAuto.csv")
 }
 
+generateDecisionTreeAuto()
 generateGeneralRegressionAuto()
 generateNeuralNetworkAuto()
 generateRandomForestAuto()
