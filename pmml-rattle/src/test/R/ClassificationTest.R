@@ -36,6 +36,15 @@ generateDecisionTreeIris = function(){
 	writeIris(classes, probabilities, "csv/DecisionTreeIris.csv")
 }
 
+generateLogisticRegressionIris = function(){
+	multinom = multinom(irisFormula, irisData)
+	saveXML(pmml(multinom), "pmml/LogisticRegressionIris.pmml")
+
+	classes = predict(multinom)
+	probabilities = predict(multinom, type = "probs")
+	writeIris(classes, probabilities, "csv/LogisticRegressionIris.csv")
+}
+
 generateNaiveBayesIris = function(){
 	naiveBayes = naiveBayes(irisFormula, irisData, threshold = 0)
 	saveXML(pmml(naiveBayes, predictedField = "Species"), "pmml/NaiveBayesIris.pmml")
@@ -51,7 +60,7 @@ generateNeuralNetworkIris = function(){
 	nnet = nnet(irisFormula, irisData, size = 5)
 	saveXML(pmml(nnet), "pmml/NeuralNetworkIris.pmml")
 
-	classes = predict(nnet, type = "class", decay = 1e-3, maxit = 10000)
+	classes = predict(nnet, type = "class")
 	probabilities = predict(nnet, type = "raw")
 	writeIris(classes, probabilities, "csv/NeuralNetworkIris.csv")
 }
@@ -88,6 +97,7 @@ generateSupportVectorMachineIris = function(){
 }
 
 generateDecisionTreeIris()
+generateLogisticRegressionIris()
 generateNaiveBayesIris()
 generateNeuralNetworkIris()
 generateRandomForestIris()
@@ -158,6 +168,16 @@ generateGeneralRegressionAudit = function(){
 	writeAudit(classes, probabilities, "csv/RegressionAudit.csv")
 }
 
+generateLogisticRegressionAudit = function(){
+	multinom = multinom(auditFormula, auditData)
+	saveXML(pmml(multinom), "pmml/LogisticRegressionAudit.pmml")
+
+	classes = predict(multinom)
+	probabilities = predict(multinom, type = "prob")
+	probabilities = cbind(1 - probabilities, probabilities)
+	writeAudit(classes, probabilities, "csv/LogisticRegressionAudit.csv")
+}
+
 generateNaiveBayesAudit = function(){
 	naiveBayes = naiveBayes(auditFormula, auditData, threshold = 0)
 	saveXML(pmml(naiveBayes, predictedField = "Adjusted"), "pmml/NaiveBayesAudit.pmml")
@@ -202,6 +222,7 @@ generateSupportVectorMachineAudit = function(){
 
 generateDecisionTreeAudit()
 generateGeneralRegressionAudit()
+generateLogisticRegressionAudit()
 generateNaiveBayesAudit()
 generateNeuralNetworkAudit()
 generateRandomForestAudit()

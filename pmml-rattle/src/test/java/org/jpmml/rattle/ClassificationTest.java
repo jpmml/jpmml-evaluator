@@ -53,6 +53,13 @@ public class ClassificationTest {
 	}
 
 	@Test
+	public void evaluateLogisticRegressionIris() throws Exception {
+		Batch batch = new RattleBatch("LogisticRegression", "Iris");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
 	public void evaluateNaiveBayesIris() throws Exception {
 		Batch batch = new RattleBatch("NaiveBayes", "Iris");
 
@@ -107,6 +114,13 @@ public class ClassificationTest {
 		Batch batch = new RattleBatch("GeneralRegression", "Audit");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateLogisticRegressionAudit() throws Exception {
+		Batch batch = new RattleBatch("LogisticRegression", "Audit");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
