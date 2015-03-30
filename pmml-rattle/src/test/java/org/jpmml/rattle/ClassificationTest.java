@@ -53,6 +53,20 @@ public class ClassificationTest {
 	}
 
 	@Test
+	public void evaluateKernlabSVMIris() throws Exception {
+		Batch batch = new RattleBatch("KernlabSVM", "Iris");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateLibSVMIris() throws Exception {
+		Batch batch = new RattleBatch("LibSVM", "Iris");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
 	public void evaluateLogisticRegressionIris() throws Exception {
 		Batch batch = new RattleBatch("LogisticRegression", "Iris");
 
@@ -92,13 +106,6 @@ public class ClassificationTest {
 	}
 
 	@Test
-	public void evaluateSupportVectorMachineIris() throws Exception {
-		Batch batch = new RattleBatch("SupportVectorMachine", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
-	}
-
-	@Test
 	public void evaluateDecisionTreeAudit() throws Exception {
 		Batch batch = new RattleBatch("DecisionTree", "Audit");
 
@@ -114,6 +121,20 @@ public class ClassificationTest {
 		Batch batch = new RattleBatch("GeneralRegression", "Audit");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateKernlabSVMAudit() throws Exception {
+		Batch batch = new RattleBatch("KernlabSVM", "Audit");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateLibSVMAudit() throws Exception {
+		Batch batch = new RattleBatch("LibSVM", "Audit");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
@@ -155,13 +176,6 @@ public class ClassificationTest {
 		Batch batch = new RattleBatch("Regression", "Audit");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
-
-		assertTrue(BatchUtil.evaluate(batch));
-	}
-
-	@Test
-	public void evaluateSupportVectorMachineAudit() throws Exception {
-		Batch batch = new RattleBatch("SupportVectorMachine", "Audit");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}

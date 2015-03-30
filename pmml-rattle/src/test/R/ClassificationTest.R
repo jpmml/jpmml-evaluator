@@ -36,6 +36,25 @@ generateDecisionTreeIris = function(){
 	writeIris(classes, probabilities, "csv/DecisionTreeIris.csv")
 }
 
+generateKernlabSVMIris = function(){
+	set.seed(42)
+
+	ksvm = ksvm(irisFormula, irisData)
+	saveXML(pmml(ksvm, dataset = irisData), "pmml/KernlabSVMIris.pmml")
+
+	classes = predict(ksvm, newdata = irisData, type = "response")
+	votes = predict(ksvm, newdata = irisData, type = "votes")
+	writeIris(classes, t(votes / 3), "csv/KernlabSVMIris.csv")
+}
+
+generateLibSVMIris = function(){
+	svm = svm(irisFormula, irisData)
+	saveXML(pmml(svm), "pmml/LibSVMIris.pmml")
+
+	classes = predict(svm)
+	writeIris(classes, NULL, "csv/LibSVMIris.csv")
+}
+
 generateLogisticRegressionIris = function(){
 	multinom = multinom(irisFormula, irisData)
 	saveXML(pmml(multinom), "pmml/LogisticRegressionIris.pmml")
@@ -85,24 +104,14 @@ generateRegressionIris = function(){
 	writeIris(classes, probabilities, "csv/RegressionIris.csv")
 }
 
-generateSupportVectorMachineIris = function(){
-	set.seed(42)
-
-	ksvm = ksvm(irisFormula, irisData)
-	saveXML(pmml(ksvm, dataset = irisData), "pmml/SupportVectorMachineIris.pmml")
-
-	classes = predict(ksvm, newdata = irisData, type = "response")
-	votes = predict(ksvm, newdata = irisData, type = "votes")
-	writeIris(classes, t(votes / 3), "csv/SupportVectorMachineIris.csv")
-}
-
 generateDecisionTreeIris()
+generateKernlabSVMIris()
+generateLibSVMIris()
 generateLogisticRegressionIris()
 generateNaiveBayesIris()
 generateNeuralNetworkIris()
 generateRandomForestIris()
 generateRegressionIris()
-generateSupportVectorMachineIris()
 
 # Convert target field from categorical to binomial
 versicolor = as.factor(as.integer(irisData$Species == 'versicolor'))
@@ -168,6 +177,25 @@ generateGeneralRegressionAudit = function(){
 	writeAudit(classes, probabilities, "csv/RegressionAudit.csv")
 }
 
+generateKernlabSVMAudit = function(){
+	set.seed(42)
+
+	ksvm = ksvm(auditFormula, auditData)
+	saveXML(pmml(ksvm, dataset = auditData), "pmml/KernlabSVMAudit.pmml")
+
+	classes = predict(ksvm, newdata = auditData, type = "response")
+	votes = predict(ksvm, newdata = auditData, type = "votes")
+	writeAudit(classes, t(votes), "csv/KernlabSVMAudit.csv")
+}
+
+generateLibSVMAudit = function(){
+	svm = svm(auditFormula, auditData)
+	saveXML(pmml(svm), "pmml/LibSVMAudit.pmml")
+
+	classes = predict(svm)
+	writeAudit(classes, NULL, "csv/LibSVMAudit.csv")
+}
+
 generateLogisticRegressionAudit = function(){
 	multinom = multinom(auditFormula, auditData)
 	saveXML(pmml(multinom), "pmml/LogisticRegressionAudit.pmml")
@@ -209,21 +237,11 @@ generateRandomForestAudit = function(){
 	writeAudit(classes, probabilities, "csv/RandomForestAudit.csv")
 }
 
-generateSupportVectorMachineAudit = function(){
-	set.seed(42)
-
-	ksvm = ksvm(auditFormula, auditData)
-	saveXML(pmml(ksvm, dataset = auditData), "pmml/SupportVectorMachineAudit.pmml")
-
-	classes = predict(ksvm, newdata = auditData, type = "response")
-	votes = predict(ksvm, newdata = auditData, type = "votes")
-	writeAudit(classes, t(votes), "csv/SupportVectorMachineAudit.csv")
-}
-
 generateDecisionTreeAudit()
 generateGeneralRegressionAudit()
+generateKernlabSVMAudit()
+generateLibSVMAudit()
 generateLogisticRegressionAudit()
 generateNaiveBayesAudit()
 generateNeuralNetworkAudit()
 generateRandomForestAudit()
-generateSupportVectorMachineAudit()

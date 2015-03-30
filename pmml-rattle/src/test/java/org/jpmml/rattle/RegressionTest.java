@@ -18,6 +18,10 @@
  */
 package org.jpmml.rattle;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
 import org.junit.Test;
@@ -44,6 +48,22 @@ public class RegressionTest {
 	}
 
 	@Test
+	public void evaluateKernlabSVMAuto() throws Exception {
+		Batch batch = new RattleBatch("KernlabSVM", "Auto");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateLibSVMAuto() throws Exception {
+		Batch batch = new RattleBatch("LibSVM", "Auto");
+
+		Set<FieldName> ignoredColumns = Sets.newHashSet(FieldName.create("mpg"), FieldName.create("predictedValue"));
+
+		assertTrue(BatchUtil.evaluate(batch, ignoredColumns));
+	}
+
+	@Test
 	public void evaluateNeuralNetworkAuto() throws Exception {
 		Batch batch = new RattleBatch("NeuralNetwork", "Auto");
 
@@ -64,13 +84,6 @@ public class RegressionTest {
 		Batch batch = new RattleBatch("Regression", "Auto");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
-
-		assertTrue(BatchUtil.evaluate(batch));
-	}
-
-	@Test
-	public void evaluateSupportVectorMachineAuto() throws Exception {
-		Batch batch = new RattleBatch("SupportVectorMachine", "Auto");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}

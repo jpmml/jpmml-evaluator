@@ -1,3 +1,4 @@
+library("e1071")
 library("kernlab")
 library("nnet")
 library("pmml")
@@ -31,6 +32,23 @@ generateGeneralRegressionAuto = function(){
 	writeAuto(predict(glm), "csv/GeneralRegressionAuto.csv")
 }
 
+generateKernlabSVMAuto = function(){
+	set.seed(42)
+
+	ksvm = ksvm(autoFormula, autoData)
+	saveXML(pmml(ksvm, dataset = autoData), "pmml/KernlabSVMAuto.pmml")
+
+	writeAuto(predict(ksvm, newdata = autoData), "csv/KernlabSVMAuto.csv")
+}
+
+generateLibSVMAuto = function(){
+	svm = svm(autoFormula, autoData)
+	saveXML(pmml(svm), "pmml/LibSVMAuto.pmml")
+
+	result = data.frame("svm_predict_function" = predict(svm))
+	writeCsv(result, "csv/LibSVMAuto.csv")
+}
+
 generateNeuralNetworkAuto = function(){
 	set.seed(13)
 
@@ -56,18 +74,10 @@ generateRegressionAuto = function(){
 	writeAuto(predict(lm), "csv/RegressionAuto.csv")
 }
 
-generateSupportVectorMachineAuto = function(){
-	set.seed(42)
-
-	ksvm = ksvm(autoFormula, autoData)
-	saveXML(pmml(ksvm, dataset = autoData), "pmml/SupportVectorMachineAuto.pmml")
-
-	writeAuto(predict(ksvm, newdata = autoData), "csv/SupportVectorMachineAuto.csv")
-}
-
 generateDecisionTreeAuto()
 generateGeneralRegressionAuto()
+generateKernlabSVMAuto()
+generateLibSVMAuto()
 generateNeuralNetworkAuto()
 generateRandomForestAuto()
 generateRegressionAuto()
-generateSupportVectorMachineAuto()
