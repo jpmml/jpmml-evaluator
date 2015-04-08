@@ -39,4 +39,11 @@ public class RegressionTest {
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
+
+	@Test
+	public void evaluateRegressionEnsembleAuto() throws Exception {
+		Batch batch = new KnimeBatch("RegressionEnsemble", "Auto");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
 }

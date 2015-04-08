@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2">
+  <Header copyright="vfed">
+    <Application name="KNIME" version="2.11.2"/>
+  </Header>
+  <DataDictionary numberOfFields="8">
+    <DataField dataType="integer" name="weight" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="1613.0" rightMargin="5140.0"/>
+    </DataField>
+    <DataField dataType="integer" name="cylinders" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="3.0" rightMargin="8.0"/>
+    </DataField>
+    <DataField dataType="double" name="mpg" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="9.0" rightMargin="46.6"/>
+    </DataField>
+    <DataField dataType="double" name="displacement" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="68.0" rightMargin="455.0"/>
+    </DataField>
+    <DataField dataType="integer" name="origin" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="1.0" rightMargin="3.0"/>
+    </DataField>
+    <DataField dataType="integer" name="model_year" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="70.0" rightMargin="82.0"/>
+    </DataField>
+    <DataField dataType="double" name="acceleration" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="8.0" rightMargin="24.8"/>
+    </DataField>
+    <DataField dataType="integer" name="horsepower" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="46.0" rightMargin="230.0"/>
+    </DataField>
+  </DataDictionary>
+  <MiningModel functionName="regression">
+    <MiningSchema>
+      <MiningField invalidValueTreatment="asIs" name="cylinders"/>
+      <MiningField invalidValueTreatment="asIs" name="displacement"/>
+      <MiningField invalidValueTreatment="asIs" name="horsepower"/>
+      <MiningField invalidValueTreatment="asIs" name="weight"/>
+      <MiningField invalidValueTreatment="asIs" name="acceleration"/>
+      <MiningField invalidValueTreatment="asIs" name="model_year"/>
+      <MiningField invalidValueTreatment="asIs" name="origin"/>
+      <MiningField invalidValueTreatment="asIs" name="mpg" usageType="target"/>
+    </MiningSchema>
+    <Segmentation multipleModelMethod="weightedAverage">
+      <Segment>
+        <True/>
+        <GeneralRegressionModel algorithmName="LinearRegression" functionName="regression" modelName="KNIME Linear Regression" modelType="generalLinear">
+          <MiningSchema>
+            <MiningField invalidValueTreatment="asIs" name="cylinders"/>
+            <MiningField invalidValueTreatment="asIs" name="displacement"/>
+            <MiningField invalidValueTreatment="asIs" name="horsepower"/>
+            <MiningField invalidValueTreatment="asIs" name="weight"/>
+            <MiningField invalidValueTreatment="asIs" name="acceleration"/>
+            <MiningField invalidValueTreatment="asIs" name="model_year"/>
+            <MiningField invalidValueTreatment="asIs" name="origin"/>
+            <MiningField invalidValueTreatment="asIs" name="mpg" usageType="target"/>
+          </MiningSchema>
+          <ParameterList>
+            <Parameter label="Intercept" name="p0"/>
+            <Parameter label="cylinders" name="p1"/>
+            <Parameter label="displacement" name="p2"/>
+            <Parameter label="horsepower" name="p3"/>
+            <Parameter label="weight" name="p4"/>
+            <Parameter label="acceleration" name="p5"/>
+            <Parameter label="model_year" name="p6"/>
+            <Parameter label="origin" name="p7"/>
+          </ParameterList>
+          <FactorList/>
+          <CovariateList>
+            <Predictor name="cylinders"/>
+            <Predictor name="displacement"/>
+            <Predictor name="horsepower"/>
+            <Predictor name="weight"/>
+            <Predictor name="acceleration"/>
+            <Predictor name="model_year"/>
+            <Predictor name="origin"/>
+          </CovariateList>
+          <PPMatrix>
+            <PPCell parameterName="p1" predictorName="cylinders" value="1"/>
+            <PPCell parameterName="p2" predictorName="displacement" value="1"/>
+            <PPCell parameterName="p3" predictorName="horsepower" value="1"/>
+            <PPCell parameterName="p4" predictorName="weight" value="1"/>
+            <PPCell parameterName="p5" predictorName="acceleration" value="1"/>
+            <PPCell parameterName="p6" predictorName="model_year" value="1"/>
+            <PPCell parameterName="p7" predictorName="origin" value="1"/>
+          </PPMatrix>
+          <ParamMatrix>
+            <PCell beta="-19.931878819175868" df="1" parameterName="p0"/>
+            <PCell beta="-0.7324104296092032" df="1" parameterName="p1"/>
+            <PCell beta="0.02305523920493924" df="1" parameterName="p2"/>
+            <PCell beta="-0.01893926256577087" df="1" parameterName="p3"/>
+            <PCell beta="-0.006116777272171067" df="1" parameterName="p4"/>
+            <PCell beta="0.10929648825011089" df="1" parameterName="p5"/>
+            <PCell beta="0.7728240765335999" df="1" parameterName="p6"/>
+            <PCell beta="1.6432471797841208" df="1" parameterName="p7"/>
+          </ParamMatrix>
+        </GeneralRegressionModel>
+      </Segment>
+      <Segment>
+        <True/>
+        <GeneralRegressionModel algorithmName="LinearRegression" functionName="regression" modelName="KNIME Linear Regression" modelType="generalLinear">
+          <MiningSchema>
+            <MiningField invalidValueTreatment="asIs" name="cylinders"/>
+            <MiningField invalidValueTreatment="asIs" name="displacement"/>
+            <MiningField invalidValueTreatment="asIs" name="horsepower"/>
+            <MiningField invalidValueTreatment="asIs" name="weight"/>
+            <MiningField invalidValueTreatment="asIs" name="acceleration"/>
+            <MiningField invalidValueTreatment="asIs" name="model_year"/>
+            <MiningField invalidValueTreatment="asIs" name="origin"/>
+            <MiningField invalidValueTreatment="asIs" name="mpg" usageType="target"/>
+          </MiningSchema>
+          <ParameterList>
+            <Parameter label="Intercept" name="p0"/>
+            <Parameter label="cylinders" name="p1"/>
+            <Parameter label="displacement" name="p2"/>
+            <Parameter label="horsepower" name="p3"/>
+            <Parameter label="weight" name="p4"/>
+            <Parameter label="acceleration" name="p5"/>
+            <Parameter label="model_year" name="p6"/>
+            <Parameter label="origin" name="p7"/>
+          </ParameterList>
+          <FactorList/>
+          <CovariateList>
+            <Predictor name="cylinders"/>
+            <Predictor name="displacement"/>
+            <Predictor name="horsepower"/>
+            <Predictor name="weight"/>
+            <Predictor name="acceleration"/>
+            <Predictor name="model_year"/>
+            <Predictor name="origin"/>
+          </CovariateList>
+          <PPMatrix>
+            <PPCell parameterName="p1" predictorName="cylinders" value="1"/>
+            <PPCell parameterName="p2" predictorName="displacement" value="1"/>
+            <PPCell parameterName="p3" predictorName="horsepower" value="1"/>
+            <PPCell parameterName="p4" predictorName="weight" value="1"/>
+            <PPCell parameterName="p5" predictorName="acceleration" value="1"/>
+            <PPCell parameterName="p6" predictorName="model_year" value="1"/>
+            <PPCell parameterName="p7" predictorName="origin" value="1"/>
+          </PPMatrix>
+          <ParamMatrix>
+            <PCell beta="-18.01956795029707" df="1" parameterName="p0"/>
+            <PCell beta="-0.24631391786696022" df="1" parameterName="p1"/>
+            <PCell beta="0.022957477822279478" df="1" parameterName="p2"/>
+            <PCell beta="-0.029778610830835297" df="1" parameterName="p3"/>
+            <PCell beta="-0.006905778811590067" df="1" parameterName="p4"/>
+            <PCell beta="0.11060069464011649" df="1" parameterName="p5"/>
+            <PCell beta="0.7613639966736722" df="1" parameterName="p6"/>
+            <PCell beta="1.5451530467317716" df="1" parameterName="p7"/>
+          </ParamMatrix>
+        </GeneralRegressionModel>
+      </Segment>
+      <Segment>
+        <True/>
+        <GeneralRegressionModel algorithmName="LinearRegression" functionName="regression" modelName="KNIME Linear Regression" modelType="generalLinear">
+          <MiningSchema>
+            <MiningField invalidValueTreatment="asIs" name="cylinders"/>
+            <MiningField invalidValueTreatment="asIs" name="displacement"/>
+            <MiningField invalidValueTreatment="asIs" name="horsepower"/>
+            <MiningField invalidValueTreatment="asIs" name="weight"/>
+            <MiningField invalidValueTreatment="asIs" name="acceleration"/>
+            <MiningField invalidValueTreatment="asIs" name="model_year"/>
+            <MiningField invalidValueTreatment="asIs" name="origin"/>
+            <MiningField invalidValueTreatment="asIs" name="mpg" usageType="target"/>
+          </MiningSchema>
+          <ParameterList>
+            <Parameter label="Intercept" name="p0"/>
+            <Parameter label="cylinders" name="p1"/>
+            <Parameter label="displacement" name="p2"/>
+            <Parameter label="horsepower" name="p3"/>
+            <Parameter label="weight" name="p4"/>
+            <Parameter label="acceleration" name="p5"/>
+            <Parameter label="model_year" name="p6"/>
+            <Parameter label="origin" name="p7"/>
+          </ParameterList>
+          <FactorList/>
+          <CovariateList>
+            <Predictor name="cylinders"/>
+            <Predictor name="displacement"/>
+            <Predictor name="horsepower"/>
+            <Predictor name="weight"/>
+            <Predictor name="acceleration"/>
+            <Predictor name="model_year"/>
+            <Predictor name="origin"/>
+          </CovariateList>
+          <PPMatrix>
+            <PPCell parameterName="p1" predictorName="cylinders" value="1"/>
+            <PPCell parameterName="p2" predictorName="displacement" value="1"/>
+            <PPCell parameterName="p3" predictorName="horsepower" value="1"/>
+            <PPCell parameterName="p4" predictorName="weight" value="1"/>
+            <PPCell parameterName="p5" predictorName="acceleration" value="1"/>
+            <PPCell parameterName="p6" predictorName="model_year" value="1"/>
+            <PPCell parameterName="p7" predictorName="origin" value="1"/>
+          </PPMatrix>
+          <ParamMatrix>
+            <PCell beta="-9.84736927686673" df="1" parameterName="p0"/>
+            <PCell beta="-0.7539191433630679" df="1" parameterName="p1"/>
+            <PCell beta="0.01979653560213079" df="1" parameterName="p2"/>
+            <PCell beta="-0.02041844172278214" df="1" parameterName="p3"/>
+            <PCell beta="-0.006227650164975851" df="1" parameterName="p4"/>
+            <PCell beta="-0.01981186391137458" df="1" parameterName="p5"/>
+            <PCell beta="0.6853045560685515" df="1" parameterName="p6"/>
+            <PCell beta="1.504121542442586" df="1" parameterName="p7"/>
+          </ParamMatrix>
+        </GeneralRegressionModel>
+      </Segment>
+      <Segment>
+        <True/>
+        <GeneralRegressionModel algorithmName="LinearRegression" functionName="regression" modelName="KNIME Linear Regression" modelType="generalLinear">
+          <MiningSchema>
+            <MiningField invalidValueTreatment="asIs" name="cylinders"/>
+            <MiningField invalidValueTreatment="asIs" name="displacement"/>
+            <MiningField invalidValueTreatment="asIs" name="horsepower"/>
+            <MiningField invalidValueTreatment="asIs" name="weight"/>
+            <MiningField invalidValueTreatment="asIs" name="acceleration"/>
+            <MiningField invalidValueTreatment="asIs" name="model_year"/>
+            <MiningField invalidValueTreatment="asIs" name="origin"/>
+            <MiningField invalidValueTreatment="asIs" name="mpg" usageType="target"/>
+          </MiningSchema>
+          <ParameterList>
+            <Parameter label="Intercept" name="p0"/>
+            <Parameter label="cylinders" name="p1"/>
+            <Parameter label="displacement" name="p2"/>
+            <Parameter label="horsepower" name="p3"/>
+            <Parameter label="weight" name="p4"/>
+            <Parameter label="acceleration" name="p5"/>
+            <Parameter label="model_year" name="p6"/>
+            <Parameter label="origin" name="p7"/>
+          </ParameterList>
+          <FactorList/>
+          <CovariateList>
+            <Predictor name="cylinders"/>
+            <Predictor name="displacement"/>
+            <Predictor name="horsepower"/>
+            <Predictor name="weight"/>
+            <Predictor name="acceleration"/>
+            <Predictor name="model_year"/>
+            <Predictor name="origin"/>
+          </CovariateList>
+          <PPMatrix>
+            <PPCell parameterName="p1" predictorName="cylinders" value="1"/>
+            <PPCell parameterName="p2" predictorName="displacement" value="1"/>
+            <PPCell parameterName="p3" predictorName="horsepower" value="1"/>
+            <PPCell parameterName="p4" predictorName="weight" value="1"/>
+            <PPCell parameterName="p5" predictorName="acceleration" value="1"/>
+            <PPCell parameterName="p6" predictorName="model_year" value="1"/>
+            <PPCell parameterName="p7" predictorName="origin" value="1"/>
+          </PPMatrix>
+          <ParamMatrix>
+            <PCell beta="-14.647548238265886" df="1" parameterName="p0"/>
+            <PCell beta="-0.6409012764465091" df="1" parameterName="p1"/>
+            <PCell beta="0.025803206367970472" df="1" parameterName="p2"/>
+            <PCell beta="-0.04211810966549816" df="1" parameterName="p3"/>
+            <PCell beta="-0.0059914595733450045" df="1" parameterName="p4"/>
+            <PCell beta="-0.051451892322580975" df="1" parameterName="p5"/>
+            <PCell beta="0.7561180194284639" df="1" parameterName="p6"/>
+            <PCell beta="1.3979097833294918" df="1" parameterName="p7"/>
+          </ParamMatrix>
+        </GeneralRegressionModel>
+      </Segment>
+      <Segment>
+        <True/>
+        <GeneralRegressionModel algorithmName="LinearRegression" functionName="regression" modelName="KNIME Linear Regression" modelType="generalLinear">
+          <MiningSchema>
+            <MiningField invalidValueTreatment="asIs" name="cylinders"/>
+            <MiningField invalidValueTreatment="asIs" name="displacement"/>
+            <MiningField invalidValueTreatment="asIs" name="horsepower"/>
+            <MiningField invalidValueTreatment="asIs" name="weight"/>
+            <MiningField invalidValueTreatment="asIs" name="acceleration"/>
+            <MiningField invalidValueTreatment="asIs" name="model_year"/>
+            <MiningField invalidValueTreatment="asIs" name="origin"/>
+            <MiningField invalidValueTreatment="asIs" name="mpg" usageType="target"/>
+          </MiningSchema>
+          <ParameterList>
+            <Parameter label="Intercept" name="p0"/>
+            <Parameter label="cylinders" name="p1"/>
+            <Parameter label="displacement" name="p2"/>
+            <Parameter label="horsepower" name="p3"/>
+            <Parameter label="weight" name="p4"/>
+            <Parameter label="acceleration" name="p5"/>
+            <Parameter label="model_year" name="p6"/>
+            <Parameter label="origin" name="p7"/>
+          </ParameterList>
+          <FactorList/>
+          <CovariateList>
+            <Predictor name="cylinders"/>
+            <Predictor name="displacement"/>
+            <Predictor name="horsepower"/>
+            <Predictor name="weight"/>
+            <Predictor name="acceleration"/>
+            <Predictor name="model_year"/>
+            <Predictor name="origin"/>
+          </CovariateList>
+          <PPMatrix>
+            <PPCell parameterName="p1" predictorName="cylinders" value="1"/>
+            <PPCell parameterName="p2" predictorName="displacement" value="1"/>
+            <PPCell parameterName="p3" predictorName="horsepower" value="1"/>
+            <PPCell parameterName="p4" predictorName="weight" value="1"/>
+            <PPCell parameterName="p5" predictorName="acceleration" value="1"/>
+            <PPCell parameterName="p6" predictorName="model_year" value="1"/>
+            <PPCell parameterName="p7" predictorName="origin" value="1"/>
+          </PPMatrix>
+          <ParamMatrix>
+            <PCell beta="-22.024788785105663" df="1" parameterName="p0"/>
+            <PCell beta="-0.5945171909652184" df="1" parameterName="p1"/>
+            <PCell beta="0.01609374508274631" df="1" parameterName="p2"/>
+            <PCell beta="-0.010805484500770133" df="1" parameterName="p3"/>
+            <PCell beta="-0.005748140109815317" df="1" parameterName="p4"/>
+            <PCell beta="0.14350316018473402" df="1" parameterName="p5"/>
+            <PCell beta="0.7806456083787626" df="1" parameterName="p6"/>
+            <PCell beta="1.4304637045456756" df="1" parameterName="p7"/>
+          </ParamMatrix>
+        </GeneralRegressionModel>
+      </Segment>
+    </Segmentation>
+  </MiningModel>
+</PMML>
