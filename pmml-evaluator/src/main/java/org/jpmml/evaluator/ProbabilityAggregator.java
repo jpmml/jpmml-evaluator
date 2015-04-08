@@ -22,15 +22,19 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-class ProbabilityAggregator extends LinkedHashMap<Object, Double> {
+class ProbabilityAggregator extends LinkedHashMap<String, Double> {
 
 	ProbabilityAggregator(){
 	}
 
-	public void max(ClassificationMap<?> probabilities){
-		Collection<? extends Map.Entry<?, Double>> entries = probabilities.entrySet();
+	@SuppressWarnings (
+		value = {"unchecked"}
+	)
+	public void max(HasProbability hasProbability){
+		ClassificationMap<String> probabilities = (ClassificationMap<String>)hasProbability;
 
-		for(Map.Entry<?, Double> entry : entries){
+		Collection<Map.Entry<String, Double>> entries = probabilities.entrySet();
+		for(Map.Entry<String, Double> entry : entries){
 			Double max = get(entry.getKey());
 
 			if(max == null || (max).compareTo(entry.getValue()) < 0){
@@ -39,14 +43,18 @@ class ProbabilityAggregator extends LinkedHashMap<Object, Double> {
 		}
 	}
 
-	public void sum(ClassificationMap<?> probabilities){
-		sum(probabilities, 1d);
+	public void sum(HasProbability hasProbability){
+		sum(hasProbability, 1d);
 	}
 
-	public void sum(ClassificationMap<?> probabilities, double weight){
-		Collection<? extends Map.Entry<?, Double>> entries = probabilities.entrySet();
+	@SuppressWarnings (
+		value = {"unchecked"}
+	)
+	public void sum(HasProbability hasProbability, double weight){
+		ClassificationMap<String> probabilities = (ClassificationMap<String>)hasProbability;
 
-		for(Map.Entry<?, Double> entry : entries){
+		Collection<Map.Entry<String, Double>> entries = probabilities.entrySet();
+		for(Map.Entry<String, Double> entry : entries){
 			Double sum = get(entry.getKey());
 
 			put(entry.getKey(), sum != null ? (sum + (entry.getValue() * weight)) : (entry.getValue() * weight));
@@ -54,9 +62,13 @@ class ProbabilityAggregator extends LinkedHashMap<Object, Double> {
 	}
 
 	public void divide(Double value){
-		Collection<Map.Entry<Object, Double>> entries = entrySet();
 
-		for(Map.Entry<Object, Double> entry : entries){
+		if(isEmpty()){
+			return;
+		}
+
+		Collection<Map.Entry<String, Double>> entries = entrySet();
+		for(Map.Entry<String, Double> entry : entries){
 			entry.setValue(entry.getValue() / value);
 		}
 	}

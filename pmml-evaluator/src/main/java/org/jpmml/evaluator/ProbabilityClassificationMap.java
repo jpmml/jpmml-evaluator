@@ -18,13 +18,20 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Set;
+
 import com.google.common.annotations.Beta;
 
 @Beta
-public class ProbabilityClassificationMap<K> extends ClassificationMap<K> implements HasProbability {
+public class ProbabilityClassificationMap extends ClassificationMap<String> implements HasProbability {
 
 	protected ProbabilityClassificationMap(){
 		super(Type.PROBABILITY);
+	}
+
+	@Override
+	public Set<String> getCategoryValues(){
+		return keySet();
 	}
 
 	@Override

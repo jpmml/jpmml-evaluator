@@ -204,8 +204,8 @@ public class TargetUtil {
 	}
 
 	static
-	private ProbabilityClassificationMap<String> getPriorProbabilities(Target target){
-		ProbabilityClassificationMap<String> result = new ProbabilityClassificationMap<String>();
+	private ProbabilityClassificationMap getPriorProbabilities(Target target){
+		ProbabilityClassificationMap result = new ProbabilityClassificationMap();
 
 		List<TargetValue> values = target.getTargetValues();
 		for(TargetValue value : values){

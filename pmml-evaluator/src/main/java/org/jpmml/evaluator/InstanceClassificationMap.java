@@ -29,6 +29,7 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.annotations.Beta;
 
@@ -60,6 +61,11 @@ public class InstanceClassificationMap extends ClassificationMap<String> impleme
 
 	private void setResult(Object result){
 		this.result = result;
+	}
+
+	@Override
+	public Set<String> getCategoryValues(){
+		return keySet();
 	}
 
 	@Override

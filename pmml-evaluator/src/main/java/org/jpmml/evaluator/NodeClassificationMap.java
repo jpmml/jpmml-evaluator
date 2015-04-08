@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects.ToStringHelper;
@@ -49,6 +50,11 @@ public class NodeClassificationMap extends EntityClassificationMap<Node> impleme
 		}
 
 		return super.getResult();
+	}
+
+	@Override
+	public Set<String> getCategoryValues(){
+		return keySet();
 	}
 
 	@Override

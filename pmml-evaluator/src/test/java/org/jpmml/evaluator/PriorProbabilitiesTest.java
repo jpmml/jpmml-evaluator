@@ -40,7 +40,7 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		assertEquals(1, predictions.size());
 
-		ProbabilityClassificationMap<?> response = (ProbabilityClassificationMap<?>)predictions.get(evaluator.getTargetField());
+		ProbabilityClassificationMap response = (ProbabilityClassificationMap)predictions.get(evaluator.getTargetField());
 
 		assertEquals((Double)0.02d, response.getProbability("YES"));
 		assertEquals((Double)0.98d, response.getProbability("NO"));

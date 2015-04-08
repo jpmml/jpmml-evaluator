@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Set;
+
 import com.google.common.annotations.Beta;
 import org.dmg.pmml.Cluster;
 
@@ -36,6 +38,11 @@ public class ClusterClassificationMap extends EntityClassificationMap<Cluster> i
 		super(type, cluster);
 
 		checkType(type);
+	}
+
+	@Override
+	public Set<String> getCategoryValues(){
+		return keySet();
 	}
 
 	@Override

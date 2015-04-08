@@ -23,7 +23,10 @@ import org.dmg.pmml.ResultFeatureType;
 /**
  * @see ResultFeatureType#AFFINITY
  */
-public interface HasAffinity extends ResultFeature {
+public interface HasAffinity extends CategoricalResultFeature {
 
+	/**
+	 * @see #getCategoryValues()
+	 */
 	Double getAffinity(String value);
 }

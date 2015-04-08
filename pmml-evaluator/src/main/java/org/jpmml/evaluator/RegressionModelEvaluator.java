@@ -133,7 +133,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			throw new InvalidFeatureException(dataField);
 		}
 
-		ProbabilityClassificationMap<String> result = new ProbabilityClassificationMap<String>();
+		ProbabilityClassificationMap result = new ProbabilityClassificationMap();
 
 		for(RegressionTable regressionTable : regressionTables){
 			String targetCategory = regressionTable.getTargetCategory();

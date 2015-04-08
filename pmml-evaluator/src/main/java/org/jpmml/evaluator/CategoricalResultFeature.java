@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2015 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,15 +18,9 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.ResultFeatureType;
+import java.util.Set;
 
-/**
- * @see ResultFeatureType#PROBABILITY
- */
-public interface HasProbability extends CategoricalResultFeature {
+public interface CategoricalResultFeature extends ResultFeature {
 
-	/**
-	 * @see #getCategoryValues()
-	 */
-	Double getProbability(String value);
+	Set<String> getCategoryValues();
 }

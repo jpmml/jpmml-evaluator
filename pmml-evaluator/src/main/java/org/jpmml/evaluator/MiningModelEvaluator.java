@@ -252,13 +252,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
-		ClassificationMap<Object> result;
+		ClassificationMap<String> result;
 
 		switch(multipleModelMethod){
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 				{
-					result = new ProbabilityClassificationMap<Object>();
+					result = new ProbabilityClassificationMap();
 					result.putAll(countVotes(segmentation, segmentResults));
 
 					// Convert from votes to probabilities
@@ -270,7 +270,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case WEIGHTED_AVERAGE:
 				{
 					// The aggregation operation implicitly converts from probabilities to votes
-					result = new ClassificationMap<Object>(ClassificationMap.Type.VOTE);
+					result = new ClassificationMap<String>(ClassificationMap.Type.VOTE);
 					result.putAll(aggregateProbabilities(segmentation, segmentResults));
 				}
 				break;
@@ -328,7 +328,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		ClassificationMap<Object> result = new ClassificationMap<Object>(ClassificationMap.Type.VOTE);
+		ClassificationMap<String> result = new ClassificationMap<String>(ClassificationMap.Type.VOTE);
 		result.putAll(countVotes(segmentation, segmentResults));
 
 		return Collections.singletonMap(getTargetField(), result);
@@ -551,13 +551,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	static
-	private Map<Object, Double> countVotes(Segmentation segmentation, List<SegmentResultMap> segmentResults){
-		VoteCounter<Object> counter = new VoteCounter<Object>();
+	private Map<String, Double> countVotes(Segmentation segmentation, List<SegmentResultMap> segmentResults){
+		VoteCounter<String> counter = new VoteCounter<String>();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		for(SegmentResultMap segmentResult : segmentResults){
-			Object targetCategory = EvaluatorUtil.decode(segmentResult.getTargetValue());
+			String targetCategory = (String)EvaluatorUtil.decode(segmentResult.getTargetValue());
 
 			switch(multipleModelMethod){
 				case MAJORITY_VOTE:
@@ -575,7 +575,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	static
-	private Map<Object, Double> aggregateProbabilities(Segmentation segmentation, List<SegmentResultMap> segmentResults){
+	private Map<String, Double> aggregateProbabilities(Segmentation segmentation, List<SegmentResultMap> segmentResults){
 		ProbabilityAggregator aggregator = new ProbabilityAggregator();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
@@ -585,28 +585,24 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		for(SegmentResultMap segmentResult : segmentResults){
 			Object targetValue = segmentResult.getTargetValue();
 
-			if(!(targetValue instanceof ClassificationMap)){
-				throw new TypeCheckException(ClassificationMap.class, targetValue);
+			if(!(targetValue instanceof HasProbability)){
+				throw new TypeCheckException(HasProbability.class, targetValue);
 			}
 
-			ClassificationMap<?> values = (ClassificationMap<?>)targetValue;
-
-			if(!(ClassificationMap.Type.PROBABILITY).equals(values.getType())){
-				throw new EvaluationException();
-			}
+			HasProbability hasProbability = (HasProbability)targetValue;
 
 			switch(multipleModelMethod){
 				case MAX:
-					aggregator.max(values);
+					aggregator.max(hasProbability);
 					break;
 				case AVERAGE:
-					aggregator.sum(values);
+					aggregator.sum(hasProbability);
 					denominator += 1d;
 					break;
 				case WEIGHTED_AVERAGE:
 					double weight = segmentResult.getWeight();
 
-					aggregator.sum(values, weight);
+					aggregator.sum(hasProbability, weight);
 					denominator += weight;
 					break;
 				default:

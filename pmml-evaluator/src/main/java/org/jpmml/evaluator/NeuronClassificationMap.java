@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Set;
+
 import com.google.common.annotations.Beta;
 import org.dmg.pmml.Entity;
 
@@ -30,6 +32,11 @@ public class NeuronClassificationMap extends EntityClassificationMap<Entity> imp
 
 	protected NeuronClassificationMap(Entity entity){
 		super(Type.PROBABILITY, entity);
+	}
+
+	@Override
+	public Set<String> getCategoryValues(){
+		return keySet();
 	}
 
 	@Override

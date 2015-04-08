@@ -18,13 +18,20 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Set;
+
 import com.google.common.annotations.Beta;
 
 @Beta
-public class VoteClassificationMap<K> extends ClassificationMap<K> implements HasProbability {
+public class VoteClassificationMap extends ClassificationMap<String> implements HasProbability {
 
 	public VoteClassificationMap(){
 		super(Type.VOTE);
+	}
+
+	@Override
+	public Set<String> getCategoryValues(){
+		return keySet();
 	}
 
 	@Override

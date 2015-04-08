@@ -65,8 +65,8 @@ public class ProbabilityAggregatorTest {
 	}
 
 	static
-	private ClassificationMap<String> createClassificationMap(Double a, Double b){
-		ProbabilityClassificationMap<String> result = new ProbabilityClassificationMap<String>();
+	private ProbabilityClassificationMap createClassificationMap(Double a, Double b){
+		ProbabilityClassificationMap result = new ProbabilityClassificationMap();
 		result.put("A", a);
 		result.put("B", b);
 

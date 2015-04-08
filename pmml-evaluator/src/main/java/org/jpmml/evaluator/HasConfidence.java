@@ -18,7 +18,10 @@
  */
 package org.jpmml.evaluator;
 
-public interface HasConfidence extends ResultFeature {
+public interface HasConfidence extends CategoricalResultFeature {
 
+	/**
+	 * @see #getCategoryValues()
+	 */
 	Double getConfidence(String value);
 }

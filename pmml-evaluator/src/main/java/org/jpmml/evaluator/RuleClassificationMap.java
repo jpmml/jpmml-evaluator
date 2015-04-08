@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Set;
+
 import com.google.common.annotations.Beta;
 import org.dmg.pmml.SimpleRule;
 
@@ -41,6 +43,11 @@ public class RuleClassificationMap extends EntityClassificationMap<SimpleRule> i
 		}
 
 		return super.getResult();
+	}
+
+	@Override
+	public Set<String> getCategoryValues(){
+		return keySet();
 	}
 
 	@Override
