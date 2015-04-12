@@ -18,9 +18,21 @@
  */
 package org.jpmml.evaluator;
 
+
+/**
+ * <p>
+ * Confidences are similar to probabilities, but more relaxed.
+ * Most notably, the confidences are not required to sum to 1 across all categories, whereas the probabilities are.
+ * </p>
+ */
 public interface HasConfidence extends CategoricalResultFeature {
 
 	/**
+	 * Gets the confidence of the specified category.
+	 *
+	 * @return A confidence that normally lies in the range from 0.0 to 1.0.
+	 * The confidence of an unknown category is 0.0.
+	 *
 	 * @see #getCategoryValues()
 	 */
 	Double getConfidence(String value);

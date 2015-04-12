@@ -18,6 +18,9 @@
  */
 package org.jpmml.evaluator;
 
+/**
+ * @see ResultFeature
+ */
 public interface Computable {
 
 	/**

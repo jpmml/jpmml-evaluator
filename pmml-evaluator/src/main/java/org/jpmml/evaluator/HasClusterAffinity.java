@@ -25,5 +25,8 @@ import org.dmg.pmml.ResultFeatureType;
  */
 public interface HasClusterAffinity extends ResultFeature {
 
+	/**
+	 * Gets the affinity towards the winning cluster.
+	 */
 	Double getClusterAffinity();
 }

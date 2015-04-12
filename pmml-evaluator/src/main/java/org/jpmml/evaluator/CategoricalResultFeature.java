@@ -22,5 +22,8 @@ import java.util.Set;
 
 public interface CategoricalResultFeature extends ResultFeature {
 
+	/**
+	 * Gets the set of known categories.
+	 */
 	Set<String> getCategoryValues();
 }

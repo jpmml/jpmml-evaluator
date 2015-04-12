@@ -31,5 +31,9 @@ import java.util.List;
 
 public interface HasAffinityRanking extends HasAffinity {
 
+	/**
+	 * Gets the affinities for known categories.
+	 * Affinities are ordered from the most optimal one to the least optimal one.
+	 */
 	List<Double> getAffinityRanking();
 }
