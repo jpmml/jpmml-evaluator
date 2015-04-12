@@ -211,7 +211,7 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 	}
 
 	private static final Ordering<Double> BIGGER_IS_BETTER = Ordering.<Double>natural();
-	private static final Ordering<Double> SMALLER_IS_BETTER = (Ordering.<Double>natural()).reverse();
+	private static final Ordering<Double> SMALLER_IS_BETTER = Ordering.<Double>natural().reverse();
 
 	static
 	public enum Type implements Comparator<Double> {
