@@ -26,7 +26,7 @@ import org.dmg.pmml.Cluster;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Beta
-public class ClusterClassificationMap extends EntityClassificationMap<Cluster> implements HasDisplayValue, HasClusterId, HasAffinity, HasClusterAffinity {
+public class ClusterClassificationMap extends EntityClassificationMap<Cluster> implements HasDisplayValue, HasAffinity, HasEntityAffinity {
 
 	protected ClusterClassificationMap(Type type){
 		super(type);
@@ -53,18 +53,13 @@ public class ClusterClassificationMap extends EntityClassificationMap<Cluster> i
 	}
 
 	@Override
-	public String getClusterId(){
-		return getEntityId();
-	}
-
-	@Override
 	public Double getAffinity(String value){
 		return getFeature(value);
 	}
 
 	@Override
-	public Double getClusterAffinity(){
-		return getAffinity(getClusterId());
+	public Double getEntityAffinity(){
+		return getAffinity(getEntityId());
 	}
 
 	static

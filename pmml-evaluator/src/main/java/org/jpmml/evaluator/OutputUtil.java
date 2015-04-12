@@ -204,6 +204,11 @@ public class OutputUtil {
 						}
 					}
 					break;
+				case CLUSTER_ID:
+					{
+						value = getClusterId(value);
+					}
+					break;
 				case ENTITY_ID:
 					{
 						// "Result feature entityId returns the id of the winning segment"
@@ -218,20 +223,15 @@ public class OutputUtil {
 						value = getEntityId(value, outputField);
 					}
 					break;
-				case CLUSTER_ID:
-					{
-						value = getClusterId(value);
-					}
-					break;
 				case AFFINITY:
-				case ENTITY_AFFINITY:
 					{
 						value = getAffinity(value, outputField);
 					}
 					break;
 				case CLUSTER_AFFINITY:
+				case ENTITY_AFFINITY:
 					{
-						value = getClusterAffinity(value);
+						value = getEntityAffinity(value);
 					}
 					break;
 				case REASON_CODE:
@@ -526,6 +526,13 @@ public class OutputUtil {
 	}
 
 	static
+	private String getClusterId(Object object){
+		HasEntityId hasEntityId = asResultFeature(HasEntityId.class, object);
+
+		return hasEntityId.getEntityId();
+	}
+
+	static
 	private String getEntityId(Object object, OutputField outputField){
 		HasEntityId hasEntityId = asResultFeature(HasEntityId.class, object);
 
@@ -541,13 +548,6 @@ public class OutputUtil {
 		}
 
 		return hasEntityId.getEntityId();
-	}
-
-	static
-	private String getClusterId(Object object){
-		HasClusterId hasClusterId = asResultFeature(HasClusterId.class, object);
-
-		return hasClusterId.getClusterId();
 	}
 
 	static
@@ -571,10 +571,10 @@ public class OutputUtil {
 	}
 
 	static
-	public Double getClusterAffinity(Object object){
-		HasClusterAffinity hasClusterAffinity = asResultFeature(HasClusterAffinity.class, object);
+	public Double getEntityAffinity(Object object){
+		HasEntityAffinity hasEntityAffinity = asResultFeature(HasEntityAffinity.class, object);
 
-		return hasClusterAffinity.getClusterAffinity();
+		return hasEntityAffinity.getEntityAffinity();
 	}
 
 	static

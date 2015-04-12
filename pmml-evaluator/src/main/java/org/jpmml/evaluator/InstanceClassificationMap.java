@@ -36,7 +36,7 @@ import com.google.common.annotations.Beta;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Beta
-public class InstanceClassificationMap extends ClassificationMap<String> implements HasEntityIdRanking, HasClusterId, HasAffinityRanking, HasClusterAffinity {
+public class InstanceClassificationMap extends ClassificationMap<String> implements HasEntityIdRanking, HasAffinityRanking, HasEntityAffinity {
 
 	private Object result = null;
 
@@ -84,11 +84,6 @@ public class InstanceClassificationMap extends ClassificationMap<String> impleme
 	}
 
 	@Override
-	public String getClusterId(){
-		return getEntityId();
-	}
-
-	@Override
 	public Double getAffinity(String id){
 		return getFeature(id);
 	}
@@ -99,7 +94,7 @@ public class InstanceClassificationMap extends ClassificationMap<String> impleme
 	}
 
 	@Override
-	public Double getClusterAffinity(){
-		return getAffinity(getClusterId());
+	public Double getEntityAffinity(){
+		return getAffinity(getEntityId());
 	}
 }

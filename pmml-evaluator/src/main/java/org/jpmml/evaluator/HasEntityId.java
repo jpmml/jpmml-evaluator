@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import org.dmg.pmml.ResultFeatureType;
 
 /**
+ * @see ResultFeatureType#CLUSTER_ID
  * @see ResultFeatureType#ENTITY_ID
  */
 public interface HasEntityId extends ResultFeature {

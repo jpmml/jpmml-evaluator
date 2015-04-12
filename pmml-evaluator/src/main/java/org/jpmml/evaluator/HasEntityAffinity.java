@@ -22,11 +22,12 @@ import org.dmg.pmml.ResultFeatureType;
 
 /**
  * @see ResultFeatureType#CLUSTER_AFFINITY
+ * @see ResultFeatureType#ENTITY_AFFINITY
  */
-public interface HasClusterAffinity extends ResultFeature {
+public interface HasEntityAffinity extends ResultFeature {
 
 	/**
-	 * Gets the affinity towards the winning cluster.
+	 * Gets the affinity towards the winning entity.
 	 */
-	Double getClusterAffinity();
+	Double getEntityAffinity();
 }
