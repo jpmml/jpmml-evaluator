@@ -31,6 +31,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Range;
 
 @Beta
 public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Computable {
@@ -57,7 +58,9 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 
 		// The specified value was not encountered during scoring
 		if(result == null){
-			return 0d;
+			Type type = getType();
+
+			return type.getDefault();
 		}
 
 		return result;
@@ -212,18 +215,27 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 
 	static
 	public enum Type implements Comparator<Double> {
-		PROBABILITY(ClassificationMap.BIGGER_IS_BETTER),
-		CONFIDENCE(ClassificationMap.BIGGER_IS_BETTER),
-		DISTANCE(ClassificationMap.SMALLER_IS_BETTER),
-		SIMILARITY(ClassificationMap.BIGGER_IS_BETTER),
-		VOTE(ClassificationMap.BIGGER_IS_BETTER),
+		PROBABILITY(ClassificationMap.BIGGER_IS_BETTER, Range.closed(0d, 1d)),
+		CONFIDENCE(ClassificationMap.BIGGER_IS_BETTER, Range.atLeast(0d)),
+		DISTANCE(ClassificationMap.SMALLER_IS_BETTER, Range.atLeast(0d)){
+
+			@Override
+			public double getDefault(){
+				return Double.POSITIVE_INFINITY;
+			}
+		},
+		SIMILARITY(ClassificationMap.BIGGER_IS_BETTER, Range.atLeast(0d)),
+		VOTE(ClassificationMap.BIGGER_IS_BETTER, Range.atLeast(0d)),
 		;
 
 		private Ordering<Double> ordering;
 
+		private Range<Double> range;
 
-		private Type(Ordering<Double> ordering){
+
+		private Type(Ordering<Double> ordering, Range<Double> range){
 			setOrdering(ordering);
+			setRange(range);
 		}
 
 		/**
@@ -245,6 +257,19 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 			return ordering.compare(left, right);
 		}
 
+		/**
+		 * Gets the least optimal value in the range of valid values.
+		 */
+		public double getDefault(){
+			return 0d;
+		}
+
+		public boolean isValid(Double value){
+			Range<Double> range = getRange();
+
+			return range.contains(value);
+		}
+
 		protected String entryKey(){
 			String name = name();
 
@@ -257,6 +282,14 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 
 		private void setOrdering(Ordering<Double> ordering){
 			this.ordering = ordering;
+		}
+
+		public Range<Double> getRange(){
+			return this.range;
+		}
+
+		private void setRange(Range<Double> range){
+			this.range = range;
 		}
 	}
 }

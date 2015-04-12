@@ -29,12 +29,13 @@ package org.jpmml.evaluator;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ClassificationMapTest {
 
 	@Test
-	public void increasingOrder(){
+	public void measureSimilarity(){
 		ClassificationMap.Type type = ClassificationMap.Type.SIMILARITY;
 
 		assertTrue(type.compare(0.5d, 0d) > 0);
@@ -44,10 +45,15 @@ public class ClassificationMapTest {
 
 		assertTrue(type.compare(1d, 0.5d) > 0);
 		assertTrue(type.compare(0.5d, 1d) < 0);
+
+		assertFalse(type.isValid(-0d));
+
+		assertTrue(type.isValid(0d));
+		assertTrue(type.isValid(Double.POSITIVE_INFINITY));
 	}
 
 	@Test
-	public void decreasingOrder(){
+	public void measureDistance(){
 		ClassificationMap.Type type = ClassificationMap.Type.DISTANCE;
 
 		assertTrue(type.compare(0.5d, 0d) < 0);
@@ -57,5 +63,10 @@ public class ClassificationMapTest {
 
 		assertTrue(type.compare(1d, 0.5d) < 0);
 		assertTrue(type.compare(0.5d, 1d) > 0);
+
+		assertFalse(type.isValid(-0d));
+
+		assertTrue(type.isValid(0d));
+		assertTrue(type.isValid(Double.POSITIVE_INFINITY));
 	}
 }
