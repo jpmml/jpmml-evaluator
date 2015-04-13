@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.Iterables;
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
@@ -86,19 +88,21 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends Number> evaluateRegression(ModelEvaluationContext context){
-		Double result = null;
+	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
+		Double score = null;
 
 		Trail trail = new Trail();
 
 		Node node = evaluateTree(trail, context);
 		if(node != null){
-			String score = ensureScore(node);
-
-			result = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, score);
+			score = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, node.getScore());
 		}
 
-		return TargetUtil.evaluateRegression(result, context);
+		Map<FieldName, ? extends Number> result = TargetUtil.evaluateRegression(score, context);
+
+		Map.Entry<FieldName, ? extends Number> resultEntry = Iterables.getOnlyElement(result.entrySet());
+
+		return Collections.singletonMap(resultEntry.getKey(), createNodeScore(node, resultEntry.getValue()));
 	}
 
 	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
@@ -110,8 +114,6 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		Node node = evaluateTree(trail, context);
 		if(node != null){
-			ensureScore(node);
-
 			double missingValuePenalty = 1d;
 
 			int missingLevels = trail.getMissingLevels();
@@ -138,7 +140,17 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		if(status != null && status.booleanValue()){
 			NodeResult result = handleTrue(root, trail, context);
 
-			return result.getNode();
+			Node node = result.getNode();
+			if(node != null){
+				String score = node.getScore();
+
+				// "It is not possible that the scoring process ends in a Node which does not have a score attribute"
+				if(score == null){
+					throw new InvalidFeatureException(node);
+				}
+			}
+
+			return node;
 		}
 
 		return null;
@@ -274,15 +286,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	}
 
 	static
-	private String ensureScore(Node node){
-		String score = node.getScore();
+	private NodeScore createNodeScore(Node node, Number score){
+		NodeScore result = new NodeScore(node, score);
 
-		// "It is not possible that the scoring process ends in a Node which does not have a score attribute"
-		if(score == null){
-			throw new InvalidFeatureException(node);
-		}
-
-		return score;
+		return result;
 	}
 
 	static

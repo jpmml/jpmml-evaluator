@@ -24,6 +24,7 @@ import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
+import org.jpmml.evaluator.NodeScore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -34,6 +35,10 @@ public class RegressionTest {
 	@Test
 	public void evaluateDecisionTreeAuto() throws Exception {
 		Batch batch = new RattleBatch("DecisionTree", "Auto");
+
+		NodeScore targetValue = (NodeScore)BatchUtil.evaluateDefault(batch);
+
+		assertEquals("14", targetValue.getEntityId());
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
