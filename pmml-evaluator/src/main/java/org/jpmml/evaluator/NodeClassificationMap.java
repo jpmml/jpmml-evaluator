@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,6 +55,13 @@ public class NodeClassificationMap extends EntityClassificationMap<Node> impleme
 
 	@Override
 	public Set<String> getCategoryValues(){
+
+		if(isEmpty()){
+			Node node = getEntity();
+
+			return Collections.singleton(node.getScore());
+		}
+
 		return keySet();
 	}
 
@@ -68,6 +76,15 @@ public class NodeClassificationMap extends EntityClassificationMap<Node> impleme
 
 	@Override
 	public Double getProbability(String value){
+
+		if(isEmpty()){
+			Node node = getEntity();
+
+			if(value != null && (value).equals(node.getScore())){
+				return 1d;
+			}
+		}
+
 		return getFeature(value);
 	}
 
