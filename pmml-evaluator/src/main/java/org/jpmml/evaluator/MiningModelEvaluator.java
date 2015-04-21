@@ -265,9 +265,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					result.normalizeValues();
 				}
 				break;
-			case MAX:
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
+				{
+					// Averages and weighted averages of probabilities are probabilities
+					result = new ProbabilityClassificationMap();
+					result.putAll(aggregateProbabilities(segmentation, segmentResults));
+				}
+				break;
+			case MAX:
 				{
 					// The aggregation operation implicitly converts from probabilities to votes
 					result = new ClassificationMap<String>(ClassificationMap.Type.VOTE);
