@@ -95,6 +95,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		Node node = evaluateTree(trail, context);
 		if(node != null){
+
+			if(node.hasScoreDistributions()){
+				throw new InvalidFeatureException(node);
+			}
+
 			score = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, node.getScore());
 		}
 
