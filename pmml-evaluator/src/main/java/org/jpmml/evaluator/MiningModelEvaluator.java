@@ -266,11 +266,17 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				}
 				break;
 			case MAX:
+				{
+					// The max aggregation function yields a non-probability distribution
+					result = new ClassificationMap<String>(ClassificationMap.Type.VOTE);
+					result.putAll(aggregateProbabilities(segmentation, segmentResults));
+				}
+				break;
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
 				{
-					// The aggregation operation implicitly converts from probabilities to votes
-					result = new ClassificationMap<String>(ClassificationMap.Type.VOTE);
+					// The average and weighted average (with weights summing to 1) aggregation functions yield probability distributions
+					result = new ProbabilityClassificationMap();
 					result.putAll(aggregateProbabilities(segmentation, segmentResults));
 				}
 				break;
