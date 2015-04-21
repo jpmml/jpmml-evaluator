@@ -190,15 +190,15 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	}
 
 	private NodeResult handleTrue(Node node, Trail trail, EvaluationContext context){
-		List<Node> children = node.getNodes();
 
 		// A "true" leaf node
-		if(children.isEmpty()){
+		if(!node.hasNodes()){
 			return new NodeResult(node);
 		}
 
 		trail.push(node);
 
+		List<Node> children = node.getNodes();
 		for(Node child : children){
 			Boolean status = evaluateNode(child, trail, context);
 
@@ -220,7 +220,6 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	}
 
 	private NodeResult handleDefaultChild(Node node, Trail trail, EvaluationContext context){
-		List<Node> children = node.getNodes();
 
 		// "The defaultChild missing value strategy requires the presence of the defaultChild attribute in every non-leaf Node"
 		String defaultChild = node.getDefaultChild();
@@ -230,6 +229,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		trail.addMissingLevel();
 
+		List<Node> children = node.getNodes();
 		for(Node child : children){
 			String id = child.getId();
 
