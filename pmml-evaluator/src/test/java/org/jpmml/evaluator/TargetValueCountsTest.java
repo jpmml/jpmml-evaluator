@@ -29,6 +29,7 @@ package org.jpmml.evaluator;
 
 import java.util.Map;
 
+import org.apache.commons.math3.distribution.NormalDistribution;
 import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
@@ -72,7 +73,9 @@ public class TargetValueCountsTest extends ModelEvaluatorTest {
 	}
 
 	static
-	private double probability(double mean, double variance, double value){
-		return NormalDistributionUtil.probability(mean, Math.sqrt(variance), value);
+	private double probability(double mean, double variance, double x){
+		NormalDistribution distribution = new NormalDistribution(mean, Math.sqrt(variance));
+
+		return distribution.density(x);
 	}
 }

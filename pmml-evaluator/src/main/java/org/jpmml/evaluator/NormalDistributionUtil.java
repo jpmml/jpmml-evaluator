@@ -22,21 +22,6 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 
 public class NormalDistributionUtil {
 
-	private NormalDistributionUtil(){
-	}
-
-	static
-	public double probability(double x){
-		return NormalDistributionUtil.normalDistribution.density(x);
-	}
-
-	static
-	public double probability(double mean, double stdev, double x){
-		NormalDistribution normalDistribution = new NormalDistribution(mean, stdev);
-
-		return normalDistribution.density(x);
-	}
-
 	static
 	public double cumulativeProbability(double x){
 		return NormalDistributionUtil.normalDistribution.cumulativeProbability(x);

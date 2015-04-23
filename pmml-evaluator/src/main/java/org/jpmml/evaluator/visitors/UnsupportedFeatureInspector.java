@@ -24,10 +24,8 @@ import org.dmg.pmml.BaselineModel;
 import org.dmg.pmml.Categories;
 import org.dmg.pmml.CenterFields;
 import org.dmg.pmml.ClusteringModel;
-import org.dmg.pmml.ContinuousDistribution;
 import org.dmg.pmml.ContinuousScoringMethodType;
 import org.dmg.pmml.DecisionTree;
-import org.dmg.pmml.GaussianDistribution;
 import org.dmg.pmml.GeneralRegressionModel;
 import org.dmg.pmml.LinkFunctionType;
 import org.dmg.pmml.LocalTransformations;
@@ -49,7 +47,6 @@ import org.dmg.pmml.SequenceModel;
 import org.dmg.pmml.SupportVectorMachineModel;
 import org.dmg.pmml.SvmRepresentationType;
 import org.dmg.pmml.TableLocator;
-import org.dmg.pmml.TargetValueStat;
 import org.dmg.pmml.TextModel;
 import org.dmg.pmml.TimeSeriesModel;
 import org.dmg.pmml.TreeModel;
@@ -302,17 +299,6 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 		report(new UnsupportedFeatureException(tableLocator));
 
 		return VisitorAction.SKIP;
-	}
-
-	@Override
-	public VisitorAction visit(TargetValueStat targetValueStat){
-		ContinuousDistribution continuousDistribution = targetValueStat.getContinuousDistribution();
-
-		if(!(continuousDistribution instanceof GaussianDistribution)){
-			report(new UnsupportedFeatureException(continuousDistribution));
-		}
-
-		return super.visit(targetValueStat);
 	}
 
 	@Override

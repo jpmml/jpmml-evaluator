@@ -56,6 +56,7 @@ import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.NaiveBayesModel;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PairCounts;
+import org.dmg.pmml.PoissonDistribution;
 import org.dmg.pmml.TargetValueCount;
 import org.dmg.pmml.TargetValueCounts;
 import org.dmg.pmml.TargetValueStat;
@@ -180,26 +181,19 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	}
 
 	private void calculateContinuousProbabilities(FieldValue value, TargetValueStats targetValueStats, double threshold, Map<String, Double> probabilities){
-		double x = (value.asNumber()).doubleValue();
+		Number x = value.asNumber();
 
 		for(TargetValueStat targetValueStat : targetValueStats){
 			String targetValue = targetValueStat.getValue();
 
 			ContinuousDistribution distribution = targetValueStat.getContinuousDistribution();
-			if(distribution == null){
-				throw new InvalidFeatureException(targetValueStat);
-			} // End if
 
-			if(!(distribution instanceof GaussianDistribution)){
-				throw new UnsupportedFeatureException(distribution);
+			// "For Naive Bayes models, continuous distribution types are restricted to Gaussian and Poisson distributions"
+			if(!((distribution instanceof GaussianDistribution) || (distribution instanceof PoissonDistribution))){
+				throw new InvalidFeatureException(targetValueStat);
 			}
 
-			GaussianDistribution gaussianDistribution = (GaussianDistribution)distribution;
-
-			double mean = gaussianDistribution.getMean();
-			double variance = gaussianDistribution.getVariance();
-
-			double probability = NormalDistributionUtil.probability(mean, Math.sqrt(variance), x);
+			double probability = DistributionUtil.probability(distribution, x);
 
 			// The calculated probability cannot fall below the default probability
 			probability = Math.max(probability, threshold);

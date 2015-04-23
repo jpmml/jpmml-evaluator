@@ -47,7 +47,6 @@ Supported model types:
 * [k-Nearest neighbors (k-NN)] (http://www.dmg.org/v4-2-1/KNN.html) (regression, classification, clustering).
   * Except for the `median` value of the `continuousScoringMethod` attribute.
 * [Naive Bayes] (http://www.dmg.org/v4-2-1/NaiveBayes.html) (classification).
-  * Except for the `AnyDistribution`, `PoissonDistribution` and `UniformDistribution` child elements of the `BayesInput/TargetValueStats/TargetValueStat` element.
 * [Neural network] (http://www.dmg.org/v4-2-1/NeuralNetwork.html) (regression, classification).
   * Except for the `radialBasis` value of the `activationFunction` attribute.
 * [Regression] (http://www.dmg.org/v4-2-1/Regression.html) (regression, classification).
