@@ -44,5 +44,7 @@ public class VoteCounterTest {
 		counter.increment("A", 0.5d);
 
 		assertEquals(Sets.newLinkedHashSet(Arrays.asList("A", "B")), counter.getWinners());
+
+		assertEquals(3, counter.size());
 	}
 }

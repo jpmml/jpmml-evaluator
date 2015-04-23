@@ -37,6 +37,8 @@ public class ProbabilityAggregatorTest {
 
 		assertEquals((Double)3d, aggregator.get("A"));
 		assertEquals((Double)3d, aggregator.get("B"));
+
+		assertEquals(2, aggregator.size());
 	}
 
 	@Test
@@ -62,6 +64,8 @@ public class ProbabilityAggregatorTest {
 
 		assertEquals((Double)(sumA / denominator), aggregator.get("A"));
 		assertEquals((Double)(sumB / denominator), aggregator.get("B"));
+
+		assertEquals(2, aggregator.size());
 	}
 
 	static

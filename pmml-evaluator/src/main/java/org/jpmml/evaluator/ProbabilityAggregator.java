@@ -21,24 +21,23 @@ package org.jpmml.evaluator;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 class ProbabilityAggregator extends LinkedHashMap<String, Double> {
 
 	ProbabilityAggregator(){
 	}
 
-	@SuppressWarnings (
-		value = {"unchecked"}
-	)
 	public void max(HasProbability hasProbability){
-		ClassificationMap<String> probabilities = (ClassificationMap<String>)hasProbability;
+		Set<String> categories = hasProbability.getCategoryValues();
 
-		Collection<Map.Entry<String, Double>> entries = probabilities.entrySet();
-		for(Map.Entry<String, Double> entry : entries){
-			Double max = get(entry.getKey());
+		for(String category : categories){
+			Double max = get(category);
 
-			if(max == null || (max).compareTo(entry.getValue()) < 0){
-				put(entry.getKey(), entry.getValue());
+			Double probability = hasProbability.getProbability(category);
+
+			if(max == null || (max).compareTo(probability) < 0){
+				put(category, probability);
 			}
 		}
 	}
@@ -47,17 +46,15 @@ class ProbabilityAggregator extends LinkedHashMap<String, Double> {
 		sum(hasProbability, 1d);
 	}
 
-	@SuppressWarnings (
-		value = {"unchecked"}
-	)
 	public void sum(HasProbability hasProbability, double weight){
-		ClassificationMap<String> probabilities = (ClassificationMap<String>)hasProbability;
+		Set<String> categories = hasProbability.getCategoryValues();
 
-		Collection<Map.Entry<String, Double>> entries = probabilities.entrySet();
-		for(Map.Entry<String, Double> entry : entries){
-			Double sum = get(entry.getKey());
+		for(String category : categories){
+			Double sum = get(category);
 
-			put(entry.getKey(), sum != null ? (sum + (entry.getValue() * weight)) : (entry.getValue() * weight));
+			Double probability = hasProbability.getProbability(category) * weight;
+
+			put(category, sum != null ? (sum + probability) : probability);
 		}
 	}
 
