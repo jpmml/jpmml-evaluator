@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Map;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -25,51 +27,38 @@ import static org.junit.Assert.assertEquals;
 public class ProbabilityAggregatorTest {
 
 	@Test
-	public void max(){
+	public void add(){
 		ProbabilityAggregator aggregator = new ProbabilityAggregator();
 
-		aggregator.max(createClassificationMap(1d, 3d));
+		aggregator.add(createClassificationMap(1d, 3d));
 
-		assertEquals((Double)1d, aggregator.get("A"));
-		assertEquals((Double)3d, aggregator.get("B"));
+		Map<String, Double> maxMap = aggregator.maxMap();
 
-		aggregator.max(createClassificationMap(3d, 1d));
+		assertEquals((Double)1d, maxMap.get("A"));
+		assertEquals((Double)3d, maxMap.get("B"));
 
-		assertEquals((Double)3d, aggregator.get("A"));
-		assertEquals((Double)3d, aggregator.get("B"));
+		aggregator.add(createClassificationMap(3d, 1d), 0.5d);
 
-		assertEquals(2, aggregator.size());
-	}
+		maxMap = aggregator.maxMap();
 
-	@Test
-	public void sum(){
-		ProbabilityAggregator aggregator = new ProbabilityAggregator();
+		assertEquals((Double)(3d * 0.5d), maxMap.get("A"));
+		assertEquals((Double)3d, maxMap.get("B"));
 
-		aggregator.sum(createClassificationMap(1d, 3d));
+		double denominator = (1d + 0.5d);
 
-		assertEquals((Double)1d, aggregator.get("A"));
-		assertEquals((Double)3d, aggregator.get("B"));
-
-		aggregator.sum(createClassificationMap(3d, 1d), 0.5d);
+		Map<String, Double> averageMap = aggregator.averageMap(denominator);
 
 		double sumA = (1d + (3d * 0.5d));
 		double sumB = (3d + (1d * 0.5d));
 
-		assertEquals((Double)sumA, aggregator.get("A"));
-		assertEquals((Double)sumB, aggregator.get("B"));
-
-		aggregator.divide(1.5d);
-
-		double denominator = (1d + 0.5d);
-
-		assertEquals((Double)(sumA / denominator), aggregator.get("A"));
-		assertEquals((Double)(sumB / denominator), aggregator.get("B"));
+		assertEquals((Double)(sumA / denominator), averageMap.get("A"));
+		assertEquals((Double)(sumB / denominator), averageMap.get("B"));
 
 		assertEquals(2, aggregator.size());
 	}
 
 	static
-	private ProbabilityClassificationMap createClassificationMap(Double a, Double b){
+	private HasProbability createClassificationMap(Double a, Double b){
 		ProbabilityClassificationMap result = new ProbabilityClassificationMap();
 		result.put("A", a);
 		result.put("B", b);

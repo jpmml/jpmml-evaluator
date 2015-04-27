@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2015 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,53 +18,64 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 
-class ProbabilityAggregator extends ClassificationAggregator<String> {
+class RegressionAggregator {
 
-	ProbabilityAggregator(){
+	private List<Double> values = Lists.newArrayList();
+
+
+	public int size(){
+		return this.values.size();
 	}
 
-	public void add(HasProbability hasProbability){
-		add(hasProbability, 1d);
+	public void clear(){
+		this.values.clear();
 	}
 
-	public void add(HasProbability hasProbability, double weight){
-		Set<String> categories = hasProbability.getCategoryValues();
+	public void add(Double value){
+		this.values.add(value);
+	}
 
-		for(String category : categories){
-			Double probability = hasProbability.getProbability(category);
+	public Double sum(){
+		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
 
-			add(category, probability * weight);
+			@Override
+			public Double apply(List<Double> values){
+				return sum(values);
+			}
+		};
+
+		return transform(function);
+	}
+
+	public Double average(final double denominator){
+		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
+
+			@Override
+			public Double apply(List<Double> values){
+				return sum(values) / denominator;
+			}
+		};
+
+		return transform(function);
+	}
+
+	protected Double transform(Function<List<Double>, Double> function){
+		return function.apply(this.values);
+	}
+
+	static
+	double sum(List<Double> values){
+		double result = 0d;
+
+		for(Double value : values){
+			result += value.doubleValue();
 		}
-	}
 
-	public Map<String, Double> averageMap(final double denominator){
-		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
-
-			@Override
-			public Double apply(List<Double> values){
-				return RegressionAggregator.sum(values) / denominator;
-			}
-		};
-
-		return transform(function);
-	}
-
-	public Map<String, Double> maxMap(){
-		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
-
-			@Override
-			public Double apply(List<Double> values){
-				return Collections.max(values);
-			}
-		};
-
-		return transform(function);
+		return result;
 	}
 }

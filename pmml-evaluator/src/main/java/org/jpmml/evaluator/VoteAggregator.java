@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2015 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,53 +18,48 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Sets;
 
-class ProbabilityAggregator extends ClassificationAggregator<String> {
+class VoteAggregator<K> extends ClassificationAggregator<K> {
 
-	ProbabilityAggregator(){
+	public VoteAggregator(){
 	}
 
-	public void add(HasProbability hasProbability){
-		add(hasProbability, 1d);
+	public Map<K, Double> sumMap(){
+		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
+
+			@Override
+			public Double apply(List<Double> values){
+				return RegressionAggregator.sum(values);
+			}
+		};
+
+		return transform(function);
 	}
 
-	public void add(HasProbability hasProbability, double weight){
-		Set<String> categories = hasProbability.getCategoryValues();
+	public Set<K> getWinners(){
+		Set<K> result = Sets.newLinkedHashSet();
 
-		for(String category : categories){
-			Double probability = hasProbability.getProbability(category);
+		Map<K, Double> sumMap = sumMap();
 
-			add(category, probability * weight);
+		final
+		Double max = Collections.max(sumMap.values());
+
+		Collection<Map.Entry<K, Double>> entries = sumMap.entrySet();
+		for(Map.Entry<K, Double> entry : entries){
+
+			if((entry.getValue()).equals(max)){
+				result.add(entry.getKey());
+			}
 		}
-	}
 
-	public Map<String, Double> averageMap(final double denominator){
-		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
-
-			@Override
-			public Double apply(List<Double> values){
-				return RegressionAggregator.sum(values) / denominator;
-			}
-		};
-
-		return transform(function);
-	}
-
-	public Map<String, Double> maxMap(){
-		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
-
-			@Override
-			public Double apply(List<Double> values){
-				return Collections.max(values);
-			}
-		};
-
-		return transform(function);
+		return result;
 	}
 }

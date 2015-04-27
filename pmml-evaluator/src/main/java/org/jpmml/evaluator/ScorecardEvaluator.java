@@ -80,7 +80,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 		boolean useReasonCodes = scorecard.isUseReasonCodes();
 
-		VoteCounter<String> reasonCodePoints = new VoteCounter<String>();
+		VoteAggregator<String> reasonCodePoints = new VoteAggregator<String>();
 
 		Characteristics characteristics = scorecard.getCharacteristics();
 		for(Characteristic characteristic : characteristics){
@@ -162,7 +162,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 							throw new UnsupportedFeatureException(scorecard, reasonCodeAlgorithm);
 					}
 
-					reasonCodePoints.increment(reasonCode, difference);
+					reasonCodePoints.add(reasonCode, difference);
 				}
 
 				hasTrueAttribute = true;
@@ -188,7 +188,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 	}
 
 	static
-	private ScoreClassificationMap createScoreMap(Number value, Map<String, Double> reasonCodePoints){
+	private ScoreClassificationMap createScoreMap(Number value, VoteAggregator<String> reasonCodePoints){
 		ScoreClassificationMap result = new ScoreClassificationMap(value);
 
 		// Filter out meaningless (ie. negative values) explanations
@@ -199,7 +199,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 				return Double.compare(entry.getValue(), 0) >= 0;
 			}
 		};
-		result.putAll(Maps.filterEntries(reasonCodePoints, predicate));
+		result.putAll(Maps.filterEntries(reasonCodePoints.sumMap(), predicate));
 
 		return result;
 	}

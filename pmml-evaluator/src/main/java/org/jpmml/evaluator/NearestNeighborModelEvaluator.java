@@ -261,7 +261,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Double calculateContinuousTarget(FieldName name, List<InstanceResult> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		double sum = 0d;
+		RegressionAggregator aggregator = new RegressionAggregator();
+
+		double denominator = 0d;
 
 		ContinuousScoringMethodType continuousScoringMethod = nearestNeighborModel.getContinuousScoringMethod();
 
@@ -275,17 +277,27 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			switch(continuousScoringMethod){
 				case AVERAGE:
-					sum += number.doubleValue();
+					aggregator.add(number.doubleValue());
+					denominator += 1d;
 					break;
 				case WEIGHTED_AVERAGE:
-					sum += instanceResult.getWeight(nearestNeighborModel.getThreshold()) * number.doubleValue();
+					double weight = instanceResult.getWeight(nearestNeighborModel.getThreshold());
+
+					aggregator.add(number.doubleValue() * weight);
+					denominator += weight;
 					break;
 				default:
 					throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
 			}
 		}
 
-		return (sum / instanceResults.size());
+		switch(continuousScoringMethod){
+			case AVERAGE:
+			case WEIGHTED_AVERAGE:
+				return aggregator.average(denominator);
+			default:
+				throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
+		}
 	}
 
 	@SuppressWarnings (
@@ -294,7 +306,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Object calculateCategoricalTarget(FieldName name, List<InstanceResult> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		VoteCounter<Object> counter = new VoteCounter<Object>();
+		VoteAggregator<Object> aggregator = new VoteAggregator<Object>();
 
 		CategoricalScoringMethodType categoricalScoringMethod = nearestNeighborModel.getCategoricalScoringMethod();
 
@@ -308,17 +320,17 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			switch(categoricalScoringMethod){
 				case MAJORITY_VOTE:
-					counter.increment(object);
+					aggregator.add(object, 1d);
 					break;
 				case WEIGHTED_MAJORITY_VOTE:
-					counter.increment(object, instanceResult.getWeight(nearestNeighborModel.getThreshold()));
+					aggregator.add(object, instanceResult.getWeight(nearestNeighborModel.getThreshold()));
 					break;
 				default:
 					throw new UnsupportedFeatureException(nearestNeighborModel, categoricalScoringMethod);
 			}
 		}
 
-		Set<Object> winners = counter.getWinners();
+		Set<Object> winners = aggregator.getWinners();
 
 		// "In case of a tie, the category with the largest number of cases in the training data is the winner"
 		if(winners.size() > 1){
@@ -335,13 +347,13 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			};
 			multiset.addAll(Collections2.transform(column.values(), function));
 
-			counter.clear();
+			aggregator.clear();
 
 			for(Object winner : winners){
-				counter.increment(winner, (double)multiset.count(winner));
+				aggregator.add(winner, (double)multiset.count(winner));
 			}
 
-			winners = counter.getWinners();
+			winners = aggregator.getWinners();
 
 			// "If multiple categories are tied on the largest number of cases in the training data, then the category with the smallest data value (in lexical order) among the tied categories is the winner"
 			if(winners.size() > 1){

@@ -18,33 +18,40 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import com.google.common.collect.Sets;
-import org.junit.Test;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
-import static org.junit.Assert.assertEquals;
+abstract
+class ClassificationAggregator<K> {
 
-public class VoteCounterTest {
+	private Map<K, List<Double>> map = Maps.newLinkedHashMap();
 
-	@Test
-	public void increment(){
-		VoteCounter<String> counter = new VoteCounter<String>();
-		counter.increment("A");
-		counter.increment("B");
-		counter.increment("C");
 
-		assertEquals(Sets.newLinkedHashSet(Arrays.asList("A", "B", "C")), counter.getWinners());
+	public int size(){
+		return this.map.size();
+	}
 
-		counter.increment("B", 0.5d);
+	public void clear(){
+		this.map.clear();
+	}
 
-		assertEquals(Collections.singleton("B"), counter.getWinners());
+	public void add(K key, Double value){
+		List<Double> values = this.map.get(key);
 
-		counter.increment("A", 0.5d);
+		if(values == null){
+			values = Lists.newArrayList();
 
-		assertEquals(Sets.newLinkedHashSet(Arrays.asList("A", "B")), counter.getWinners());
+			this.map.put(key, values);
+		}
 
-		assertEquals(3, counter.size());
+		values.add(value);
+	}
+
+	protected <V> Map<K, V> transform(Function<List<Double>, V> function){
+		return Maps.transformValues(this.map, function);
 	}
 }
