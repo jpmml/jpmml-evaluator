@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -148,7 +149,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		List<SegmentResultMap> segmentResults = evaluateSegmentation(context);
 
-		Map<FieldName, ?> predictions = getRegressionResult(segmentResults);
+		Map<FieldName, ?> predictions = getSegmentationResult(REGRESSION_METHODS, segmentResults);
 		if(predictions != null){
 			return predictions;
 		}
@@ -160,49 +161,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return TargetUtil.evaluateRegression(result, context);
 	}
 
-	@SuppressWarnings (
-		value = {"fallthrough"}
-	)
-	private Map<FieldName, ?> getRegressionResult(List<SegmentResultMap> segmentResults){
-		MiningModel miningModel = getModel();
-
-		Segmentation segmentation = miningModel.getSegmentation();
-
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
-		switch(multipleModelMethod){
-			case SELECT_ALL:
-				return selectAll(segmentResults);
-			case SELECT_FIRST:
-				if(segmentResults.size() > 0){
-					return getFirst(segmentResults);
-				}
-				// Falls through
-			case MODEL_CHAIN:
-				if(segmentResults.size() > 0){
-					return getLast(segmentResults);
-				}
-				// Falls through
-			case SUM:
-			case MEDIAN:
-			case AVERAGE:
-			case WEIGHTED_AVERAGE:
-				if(segmentResults.size() == 0){
-					return Collections.singletonMap(getTargetField(), null);
-				}
-				break;
-			default:
-				break;
-		}
-
-		return null;
-	}
-
 	private Map<FieldName, ?> evaluateClassification(MiningModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
 		List<SegmentResultMap> segmentResults = evaluateSegmentation(context);
 
-		Map<FieldName, ?> predictions = getClassificationResult(segmentResults);
+		Map<FieldName, ?> predictions = getSegmentationResult(CLASSIFICATION_METHODS, segmentResults);
 		if(predictions != null){
 			return predictions;
 		}
@@ -247,51 +211,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return TargetUtil.evaluateClassification(result, context);
 	}
 
-	@SuppressWarnings (
-		value = {"fallthrough"}
-	)
-	private Map<FieldName, ?> getClassificationResult(List<SegmentResultMap> segmentResults){
-		MiningModel miningModel = getModel();
-
-		Segmentation segmentation = miningModel.getSegmentation();
-
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
-		switch(multipleModelMethod){
-			case SELECT_ALL:
-				return selectAll(segmentResults);
-			case SELECT_FIRST:
-				if(segmentResults.size() > 0){
-					return getFirst(segmentResults);
-				}
-				// Falls through
-			case MODEL_CHAIN:
-				if(segmentResults.size() > 0){
-					return getLast(segmentResults);
-				}
-				// Falls through
-			case MAJORITY_VOTE:
-			case WEIGHTED_MAJORITY_VOTE:
-			case MAX:
-			case MEDIAN:
-			case AVERAGE:
-			case WEIGHTED_AVERAGE:
-				if(segmentResults.size() == 0){
-					return Collections.singletonMap(getTargetField(), null);
-				}
-				break;
-			default:
-				break;
-		}
-
-		return null;
-	}
-
 	private Map<FieldName, ?> evaluateClustering(MiningModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
 		List<SegmentResultMap> segmentResults = evaluateSegmentation(context);
 
-		Map<FieldName, ?> predictions = getClusteringResult(segmentResults);
+		Map<FieldName, ?> predictions = getSegmentationResult(CLUSTERING_METHODS, segmentResults);
 		if(predictions != null){
 			return predictions;
 		}
@@ -304,70 +229,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return Collections.singletonMap(getTargetField(), result);
 	}
 
-	@SuppressWarnings (
-		value = {"fallthrough"}
-	)
-	private Map<FieldName, ?> getClusteringResult(List<SegmentResultMap> segmentResults){
-		MiningModel miningModel = getModel();
-
-		Segmentation segmentation = miningModel.getSegmentation();
-
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
-		switch(multipleModelMethod){
-			case SELECT_ALL:
-				return selectAll(segmentResults);
-			case SELECT_FIRST:
-				if(segmentResults.size() > 0){
-					return getFirst(segmentResults);
-				}
-				// Falls through
-			case MODEL_CHAIN:
-				if(segmentResults.size() > 0){
-					return getLast(segmentResults);
-				}
-				// Falls through
-			case MAJORITY_VOTE:
-			case WEIGHTED_MAJORITY_VOTE:
-				if(segmentResults.size() == 0){
-					return Collections.singletonMap(getTargetField(), null);
-				}
-				break;
-			default:
-				break;
-		}
-
-		return null;
-	}
-
-	@SuppressWarnings (
-		value = {"fallthrough"}
-	)
 	private Map<FieldName, ?> evaluateAny(MiningModelEvaluationContext context){
-		MiningModel miningModel = getModel();
-
 		List<SegmentResultMap> segmentResults = evaluateSegmentation(context);
 
-		Segmentation segmentation = miningModel.getSegmentation();
-
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
-		switch(multipleModelMethod){
-			case SELECT_ALL:
-				return selectAll(segmentResults);
-			case SELECT_FIRST:
-				if(segmentResults.size() > 0){
-					return getFirst(segmentResults);
-				}
-				// Falls through
-			case MODEL_CHAIN:
-				if(segmentResults.size() > 0){
-					return getLast(segmentResults);
-				}
-				return Collections.singletonMap(getTargetField(), null);
-			default:
-				break;
-		}
-
-		throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+		return getSegmentationResult(Collections.<MultipleModelMethodType>emptySet(), segmentResults);
 	}
 
 	private List<SegmentResultMap> evaluateSegmentation(MiningModelEvaluationContext context){
@@ -478,28 +343,38 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return results;
 	}
 
-	private Map<FieldName, ?> selectAll(List<SegmentResultMap> segmentResults){
-		ListMultimap<FieldName, Object> result = ArrayListMultimap.create();
+	private Map<FieldName, ?> getSegmentationResult(Set<MultipleModelMethodType> multipleModelMethods, List<SegmentResultMap> segmentResults){
+		MiningModel miningModel = getModel();
 
-		Set<FieldName> keys = null;
+		Segmentation segmentation = miningModel.getSegmentation();
 
-		for(SegmentResultMap segmentResult : segmentResults){
-
-			if(keys == null){
-				keys = Sets.newLinkedHashSet(segmentResult.keySet());
-			} // End if
-
-			// Ensure that all List values in the ListMultimap contain the same number of elements
-			if(!(keys).equals(segmentResult.keySet())){
-				throw new EvaluationException();
-			}
-
-			for(FieldName key : keys){
-				result.put(key, segmentResult.get(key));
-			}
+		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+		switch(multipleModelMethod){
+			case SELECT_ALL:
+				return selectAll(segmentResults);
+			case SELECT_FIRST:
+				if(segmentResults.size() > 0){
+					return segmentResults.get(0);
+				}
+				break;
+			case MODEL_CHAIN:
+				if(segmentResults.size() > 0){
+					return segmentResults.get(segmentResults.size() - 1);
+				}
+				break;
+			default:
+				if(!(multipleModelMethods).contains(multipleModelMethod)){
+					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+				}
+				break;
 		}
 
-		return result.asMap();
+		// "If no segments have predicates that evaluate to true, then the result is a missing value"
+		if(segmentResults.size() == 0){
+			return Collections.singletonMap(getTargetField(), null);
+		}
+
+		return null;
 	}
 
 	public ModelEvaluatorFactory getEvaluatorFactory(){
@@ -508,16 +383,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	public void setEvaluatorFactory(ModelEvaluatorFactory evaluatorFactory){
 		this.evaluatorFactory = evaluatorFactory;
-	}
-
-	static
-	private <E> E getFirst(List<E> list){
-		return list.get(0);
-	}
-
-	static
-	private <E> E getLast(List<E> list){
-		return list.get(list.size() - 1);
 	}
 
 	static
@@ -641,6 +506,31 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	static
+	private Map<FieldName, ?> selectAll(List<SegmentResultMap> segmentResults){
+		ListMultimap<FieldName, Object> result = ArrayListMultimap.create();
+
+		Set<FieldName> keys = null;
+
+		for(SegmentResultMap segmentResult : segmentResults){
+
+			if(keys == null){
+				keys = Sets.newLinkedHashSet(segmentResult.keySet());
+			} // End if
+
+			// Ensure that all List values in the ListMultimap contain the same number of elements
+			if(!(keys).equals(segmentResult.keySet())){
+				throw new EvaluationException();
+			}
+
+			for(FieldName key : keys){
+				result.put(key, segmentResult.get(key));
+			}
+		}
+
+		return result.asMap();
+	}
+
+	static
 	private boolean isRandomForest(MiningModel miningModel){
 		Segmentation segmentation = miningModel.getSegmentation();
 
@@ -661,6 +551,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		return result;
 	}
+
+	private static final Set<MultipleModelMethodType> REGRESSION_METHODS = EnumSet.of(MultipleModelMethodType.SUM, MultipleModelMethodType.MEDIAN, MultipleModelMethodType.AVERAGE, MultipleModelMethodType.WEIGHTED_AVERAGE);
+	private static final Set<MultipleModelMethodType> CLASSIFICATION_METHODS = EnumSet.of(MultipleModelMethodType.MAJORITY_VOTE, MultipleModelMethodType.WEIGHTED_MAJORITY_VOTE, MultipleModelMethodType.SUM, MultipleModelMethodType.MEDIAN, MultipleModelMethodType.AVERAGE, MultipleModelMethodType.WEIGHTED_AVERAGE);
+	private static final Set<MultipleModelMethodType> CLUSTERING_METHODS = EnumSet.of(MultipleModelMethodType.MAJORITY_VOTE, MultipleModelMethodType.WEIGHTED_MAJORITY_VOTE);
 
 	private static final LoadingCache<MiningModel, BiMap<String, Segment>> entityCache = CacheBuilder.newBuilder()
 		.weakKeys()
