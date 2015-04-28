@@ -44,24 +44,36 @@ class ProbabilityAggregator extends ClassificationAggregator<String> {
 		}
 	}
 
-	public Map<String, Double> averageMap(final double denominator){
-		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
-
-			@Override
-			public Double apply(List<Double> values){
-				return RegressionAggregator.sum(values) / denominator;
-			}
-		};
-
-		return transform(function);
-	}
-
 	public Map<String, Double> maxMap(){
 		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
 
 			@Override
 			public Double apply(List<Double> values){
 				return Collections.max(values);
+			}
+		};
+
+		return transform(function);
+	}
+
+	public Map<String, Double> medianMap(){
+		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
+
+			@Override
+			public Double apply(List<Double> values){
+				return RegressionAggregator.median(values);
+			}
+		};
+
+		return transform(function);
+	}
+
+	public Map<String, Double> averageMap(final double denominator){
+		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
+
+			@Override
+			public Double apply(List<Double> values){
+				return RegressionAggregator.sum(values) / denominator;
 			}
 		};
 

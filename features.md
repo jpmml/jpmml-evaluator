@@ -57,7 +57,6 @@ Supported model types:
 * [Support Vector Machine (SVM)] (http://www.dmg.org/v4-2-1/SupportVectorMachine.html) (regression, classification).
   * Except for the `Coefficients` value of the `svmRepresentation` attribute.
 * [Ensemble model (ensembles of all of the above model types)] (http://www.dmg.org/v4-2-1/MultipleModels.html) (regression, classification, clustering).
-  * Except for the `median` value of the `Segmentation@multipleModelMethod` attribute.
 
 Not yet supported model types:
 

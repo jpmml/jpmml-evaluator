@@ -183,6 +183,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				}
 				// Falls through
 			case SUM:
+			case MEDIAN:
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
 				if(segmentResults.size() == 0){
@@ -224,8 +225,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				}
 				break;
 			case MAX:
+			case MEDIAN:
 				{
-					// The max aggregation function yields a non-probability distribution
+					// The max and median aggregation functions yield non-probability distributions
 					result = new ClassificationMap<String>(ClassificationMap.Type.VOTE);
 					result.putAll(aggregateProbabilities(segmentation, segmentResults));
 				}
@@ -269,6 +271,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				// Falls through
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
+			case MAX:
+			case MEDIAN:
+			case AVERAGE:
+			case WEIGHTED_AVERAGE:
 				if(segmentResults.size() == 0){
 					return Collections.singletonMap(getTargetField(), null);
 				}
@@ -529,6 +535,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			switch(multipleModelMethod){
 				case SUM:
+				case MEDIAN:
 					aggregator.add(value);
 					break;
 				case AVERAGE:
@@ -549,6 +556,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		switch(multipleModelMethod){
 			case SUM:
 				return aggregator.sum();
+			case MEDIAN:
+				return aggregator.median();
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
 				return aggregator.average(denominator);
@@ -600,6 +609,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			switch(multipleModelMethod){
 				case MAX:
+				case MEDIAN:
 					aggregator.add(hasProbability);
 					break;
 				case AVERAGE:
@@ -620,6 +630,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		switch(multipleModelMethod){
 			case MAX:
 				return aggregator.maxMap();
+			case MEDIAN:
+				return aggregator.medianMap();
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
 				return aggregator.averageMap(denominator);

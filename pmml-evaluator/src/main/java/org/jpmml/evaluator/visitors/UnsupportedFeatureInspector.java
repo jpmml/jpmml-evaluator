@@ -30,10 +30,7 @@ import org.dmg.pmml.GeneralRegressionModel;
 import org.dmg.pmml.LinkFunctionType;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Matrix;
-import org.dmg.pmml.MiningFunctionType;
-import org.dmg.pmml.MiningModel;
 import org.dmg.pmml.MissingValueStrategyType;
-import org.dmg.pmml.MultipleModelMethodType;
 import org.dmg.pmml.NearestNeighborModel;
 import org.dmg.pmml.NeuralLayer;
 import org.dmg.pmml.NeuralNetwork;
@@ -134,31 +131,6 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 		}
 
 		return super.visit(generalRegressionModel);
-	}
-
-	@Override
-	public VisitorAction visit(MiningModel miningModel){
-		MiningFunctionType miningFunction = miningModel.getFunctionName();
-
-		switch(miningFunction){
-			case REGRESSION:
-			case CLASSIFICATION:
-				Segmentation segmentation = miningModel.getSegmentation();
-
-				MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
-				switch(multipleModelMethod){
-					case MEDIAN:
-						report(new UnsupportedFeatureException(segmentation, multipleModelMethod));
-						break;
-					default:
-						break;
-				}
-				break;
-			default:
-				break;
-		}
-
-		return super.visit(miningModel);
 	}
 
 	@Override

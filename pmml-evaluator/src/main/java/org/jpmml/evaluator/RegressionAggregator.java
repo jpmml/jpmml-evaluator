@@ -18,10 +18,13 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Doubles;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 class RegressionAggregator {
 
@@ -46,6 +49,18 @@ class RegressionAggregator {
 			@Override
 			public Double apply(List<Double> values){
 				return sum(values);
+			}
+		};
+
+		return transform(function);
+	}
+
+	public Double median(){
+		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
+
+			@Override
+			public Double apply(List<Double> values){
+				return median(values);
 			}
 		};
 
@@ -77,5 +92,18 @@ class RegressionAggregator {
 		}
 
 		return result;
+	}
+
+	static
+	double median(List<Double> values){
+		double[] data = Doubles.toArray(values);
+
+		// The data must be ordered
+		Arrays.sort(data);
+
+		Percentile percentile = new Percentile();
+		percentile.setData(data);
+
+		return percentile.evaluate(50);
 	}
 }
