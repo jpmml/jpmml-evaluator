@@ -24,14 +24,12 @@ import org.dmg.pmml.BaselineModel;
 import org.dmg.pmml.Categories;
 import org.dmg.pmml.CenterFields;
 import org.dmg.pmml.ClusteringModel;
-import org.dmg.pmml.ContinuousScoringMethodType;
 import org.dmg.pmml.DecisionTree;
 import org.dmg.pmml.GeneralRegressionModel;
 import org.dmg.pmml.LinkFunctionType;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Matrix;
 import org.dmg.pmml.MissingValueStrategyType;
-import org.dmg.pmml.NearestNeighborModel;
 import org.dmg.pmml.NeuralLayer;
 import org.dmg.pmml.NeuralNetwork;
 import org.dmg.pmml.NormDiscrete;
@@ -131,21 +129,6 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 		}
 
 		return super.visit(generalRegressionModel);
-	}
-
-	@Override
-	public VisitorAction visit(NearestNeighborModel nearestNeighborModel){
-		ContinuousScoringMethodType continuousScoringMethod = nearestNeighborModel.getContinuousScoringMethod();
-
-		switch(continuousScoringMethod){
-			case MEDIAN:
-				report(new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod));
-				break;
-			default:
-				break;
-		}
-
-		return super.visit(nearestNeighborModel);
 	}
 
 	@Override

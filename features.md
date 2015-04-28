@@ -45,7 +45,6 @@ Supported model types:
 * [General regression] (http://www.dmg.org/v4-2-1/GeneralRegression.html) (regression, Cox regression, classification).
   * Except for the `cauchit` and `negbin` values of the `linkFunction` attribute.
 * [k-Nearest neighbors (k-NN)] (http://www.dmg.org/v4-2-1/KNN.html) (regression, classification, clustering).
-  * Except for the `median` value of the `continuousScoringMethod` attribute.
 * [Naive Bayes] (http://www.dmg.org/v4-2-1/NaiveBayes.html) (classification).
 * [Neural network] (http://www.dmg.org/v4-2-1/NeuralNetwork.html) (regression, classification).
   * Except for the `radialBasis` value of the `activationFunction` attribute.

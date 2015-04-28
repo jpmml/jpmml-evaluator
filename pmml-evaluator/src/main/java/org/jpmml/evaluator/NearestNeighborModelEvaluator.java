@@ -276,6 +276,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			Number number = value.asNumber();
 
 			switch(continuousScoringMethod){
+				case MEDIAN:
+					aggregator.add(number.doubleValue());
+					break;
 				case AVERAGE:
 					aggregator.add(number.doubleValue());
 					denominator += 1d;
@@ -292,6 +295,8 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 
 		switch(continuousScoringMethod){
+			case MEDIAN:
+				return aggregator.median();
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
 				return aggregator.average(denominator);
