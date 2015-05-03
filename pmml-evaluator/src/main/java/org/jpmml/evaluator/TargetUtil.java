@@ -195,7 +195,7 @@ public class TargetUtil {
 
 		TargetValue value = values.get(0);
 
-		// "Attributes value and priorProbability are used only if the optype of the field is categorical or ordinal"
+		// "The value and priorProbability attributes are used only if the optype of the field is categorical or ordinal"
 		if(value.getValue() != null || value.getPriorProbability() != null){
 			throw new InvalidFeatureException(value);
 		}
@@ -210,7 +210,7 @@ public class TargetUtil {
 		List<TargetValue> values = target.getTargetValues();
 		for(TargetValue value : values){
 
-			// "The attribute defaultValue is used only if the optype of the field is continuous"
+			// "The defaultValue attribute is used only if the optype of the field is continuous"
 			if(value.getDefaultValue() != null){
 				throw new InvalidFeatureException(value);
 			}

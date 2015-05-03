@@ -75,18 +75,20 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, EvaluationContext context){
+		String stringValue = simplePredicate.getValue();
+
 		SimplePredicate.Operator operator = simplePredicate.getOperator();
 		switch(operator){
 			case IS_MISSING:
 			case IS_NOT_MISSING:
-				// "If the operator is isMissing or isNotMissing, the attribute value must not appear"
-				if(simplePredicate.getValue() != null){
+				// "If the operator is isMissing or isNotMissing, then the value attribute must not appear"
+				if(stringValue != null){
 					throw new InvalidFeatureException(simplePredicate);
 				}
 				break;
 			default:
-				// "With all other operators, however, the attribute value is required"
-				if(simplePredicate.getValue() == null){
+				// "With all other operators, however, the value attribute is required"
+				if(stringValue == null){
 					throw new InvalidFeatureException(simplePredicate);
 				}
 				break;
@@ -110,14 +112,14 @@ public class PredicateUtil {
 
 		switch(operator){
 			case EQUAL:
-				return value.equalsString(simplePredicate.getValue());
+				return value.equalsString(stringValue);
 			case NOT_EQUAL:
-				return !value.equalsString(simplePredicate.getValue());
+				return !value.equalsString(stringValue);
 			default:
 				break;
 		}
 
-		int order = value.compareToString(simplePredicate.getValue());
+		int order = value.compareToString(stringValue);
 
 		switch(operator){
 			case LESS_THAN:

@@ -95,7 +95,7 @@ public class DiscretizationUtil {
 		Double leftMargin = interval.getLeftMargin();
 		Double rightMargin = interval.getRightMargin();
 
-		// "The attributes leftMargin and rightMargin are optional but at least one value must be defined"
+		// "The leftMargin and rightMargin attributes are optional, but at least one value must be defined"
 		if(leftMargin == null && rightMargin == null){
 			throw new InvalidFeatureException(interval);
 		} // End if
