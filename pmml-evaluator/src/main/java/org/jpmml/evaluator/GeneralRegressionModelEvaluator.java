@@ -608,7 +608,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private Double computeCumulativeLink(Double value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		CumulativeLinkFunctionType cumulativeLinkFunction = generalRegressionModel.getCumulativeLink();
+		CumulativeLinkFunctionType cumulativeLinkFunction = generalRegressionModel.getCumulativeLinkFunction();
 		if(cumulativeLinkFunction == null){
 			throw new InvalidFeatureException(generalRegressionModel);
 		}

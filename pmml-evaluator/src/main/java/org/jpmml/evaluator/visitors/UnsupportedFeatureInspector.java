@@ -116,7 +116,6 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 				LinkFunctionType linkFunction = generalRegressionModel.getLinkFunction();
 
 				switch(linkFunction){
-					case CAUCHIT:
 					case NEGBIN:
 						report(new UnsupportedFeatureException(generalRegressionModel, linkFunction));
 						break;
