@@ -43,7 +43,6 @@ Supported model types:
 * [Cluster model] (http://www.dmg.org/v4-2-1/ClusteringModel.html) (clustering).
   * Except for the `CenterFields` element. This element was removed in PMML schema version 3.2.
 * [General regression] (http://www.dmg.org/v4-2-1/GeneralRegression.html) (regression, Cox regression, classification).
-  * Except for the `negbin` value of the `linkFunction` attribute.
 * [k-Nearest neighbors (k-NN)] (http://www.dmg.org/v4-2-1/KNN.html) (regression, classification, clustering).
 * [Naive Bayes] (http://www.dmg.org/v4-2-1/NaiveBayes.html) (classification).
 * [Neural network] (http://www.dmg.org/v4-2-1/NeuralNetwork.html) (regression, classification).

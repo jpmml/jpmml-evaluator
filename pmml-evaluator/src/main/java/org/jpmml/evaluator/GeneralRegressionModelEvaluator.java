@@ -565,6 +565,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		Double a = getOffset(generalRegressionModel, context);
 		Integer b = getTrials(generalRegressionModel, context);
 
+		Double c = generalRegressionModel.getDistParameter();
 		Double d = generalRegressionModel.getLinkParameter();
 
 		switch(linkFunction){
@@ -580,6 +581,11 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				return (1d / (1d + Math.exp(-(value + a)))) * b;
 			case LOGLOG:
 				return Math.exp(-Math.exp(-(value + a))) * b;
+			case NEGBIN:
+				if(c == null){
+					throw new InvalidFeatureException(generalRegressionModel);
+				}
+				return (1d / (c * (Math.exp(-(value + a)) - 1d))) * b;
 			case ODDSPOWER:
 				if(d == null){
 					throw new InvalidFeatureException(generalRegressionModel);

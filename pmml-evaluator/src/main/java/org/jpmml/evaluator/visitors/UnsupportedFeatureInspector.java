@@ -25,8 +25,6 @@ import org.dmg.pmml.Categories;
 import org.dmg.pmml.CenterFields;
 import org.dmg.pmml.ClusteringModel;
 import org.dmg.pmml.DecisionTree;
-import org.dmg.pmml.GeneralRegressionModel;
-import org.dmg.pmml.LinkFunctionType;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Matrix;
 import org.dmg.pmml.MissingValueStrategyType;
@@ -105,29 +103,6 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 		report(new UnsupportedFeatureException(decisionTree));
 
 		return VisitorAction.SKIP;
-	}
-
-	@Override
-	public VisitorAction visit(GeneralRegressionModel generalRegressionModel){
-		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
-
-		switch(modelType){
-			case GENERALIZED_LINEAR:
-				LinkFunctionType linkFunction = generalRegressionModel.getLinkFunction();
-
-				switch(linkFunction){
-					case NEGBIN:
-						report(new UnsupportedFeatureException(generalRegressionModel, linkFunction));
-						break;
-					default:
-						break;
-				}
-				break;
-			default:
-				break;
-		}
-
-		return super.visit(generalRegressionModel);
 	}
 
 	@Override
