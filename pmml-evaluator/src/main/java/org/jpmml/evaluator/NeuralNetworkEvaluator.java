@@ -305,9 +305,13 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		ActivationFunctionType activationFunction = neuralLayer.getActivationFunction();
 		if(activationFunction == null){
-			locatable = neuralLayer;
+			locatable = neuralNetwork;
 
 			activationFunction = neuralNetwork.getActivationFunction();
+		} // End if
+
+		if(activationFunction == null){
+			throw new InvalidFeatureException(locatable);
 		}
 
 		switch(activationFunction){
