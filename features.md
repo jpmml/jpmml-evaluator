@@ -41,7 +41,7 @@ Supported model types:
 
 * [Assocation rules] (http://www.dmg.org/v4-2-1/AssociationRules.html) (association).
 * [Cluster model] (http://www.dmg.org/v4-2-1/ClusteringModel.html) (clustering).
-  * Except for the `CenterFields` element. This element was removed in PMML schema version 3.2.
+  * Except for the `distributionBased` value of the `modelClass` attribute.
 * [General regression] (http://www.dmg.org/v4-2-1/GeneralRegression.html) (regression, Cox regression, classification).
 * [k-Nearest neighbors (k-NN)] (http://www.dmg.org/v4-2-1/KNN.html) (regression, classification, clustering).
 * [Naive Bayes] (http://www.dmg.org/v4-2-1/NaiveBayes.html) (classification).
@@ -65,9 +65,10 @@ Not yet supported model types:
 
 ### Known limitations ###
 
-* [Model composition] (http://www.dmg.org/v4-2-1/MultipleModels.html). Model composition specifies a mechanism for embedding defeatured regression and decision tree models (represented by the `Regression` and `DecisionTree` elements, respectively) into other models. This mechanism was deprecated in PMML schema version 4.1.
-* The `MiningModel/Segmentation/LocalTransformations` element. This element was deprecated in PMML schema version 4.1. The definitions of `DerivedField` child elements should be simply moved over to the `MiningModel/LocalTransformations` element.
-* The `TableLocator` element. This element specifies a mechanism for incorporating data from external data sources (eg. CSV files, databases). The `TableLocator` element is simply a placeholder as of PMML schema version 4.2. Different PMML producer and consumer software are free to use their own extensions.
+* [Model composition] (http://www.dmg.org/v4-2-1/MultipleModels.html). Model composition specifies a mechanism for embedding defeatured regression and decision tree models (represented by the `Regression` and `DecisionTree` elements, respectively) into other models. Model composition was deprecated in PMML schema version 4.1.
+* The `ClusteringModel/CenterFields` element. This element was removed in PMML schema version 3.2. PMML producers should move the list of `DerivedField` child elements to the `ClusteringModel/LocalTransformations` element, and reference them using a list of `ClusteringField` elements instead.
+* The `MiningModel/Segmentation/LocalTransformations` element. This element was deprecated in PMML schema version 4.1. PMML producers should move the list of `DerivedField` child elements to the `MiningModel/LocalTransformations` element instead.
+* The `TableLocator` element. The `TableLocator` element specifies a mechanism for incorporating data from external data sources (eg. CSV files, databases). The `TableLocator` element is simply a placeholder in PMML schema version 4.2.
 
 # Inspection API #
 
