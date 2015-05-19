@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -29,11 +30,13 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
+import com.google.common.io.ByteStreams;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Visitor;
 import org.jpmml.evaluator.visitors.InvalidFeatureInspector;
 import org.jpmml.evaluator.visitors.UnsupportedFeatureInspector;
+import org.jpmml.model.visitors.LocatorTransformer;
 
 public class BatchUtil {
 
@@ -93,9 +96,17 @@ public class BatchUtil {
 
 		PMML pmml = evaluator.getPMML();
 
-		List<Visitor> visitors = Arrays.<Visitor>asList(new InvalidFeatureInspector(), new UnsupportedFeatureInspector());
+		List<Visitor> visitors = Arrays.<Visitor>asList(new LocatorTransformer(), new InvalidFeatureInspector(), new UnsupportedFeatureInspector());
 		for(Visitor visitor : visitors){
 			visitor.applyTo(pmml);
+		}
+
+		ObjectOutputStream oos = new ObjectOutputStream(ByteStreams.nullOutputStream());
+
+		try {
+			oos.writeObject(evaluator);
+		} finally {
+			oos.close();
 		}
 
 		List<FieldName> groupFields = evaluator.getGroupFields();

@@ -27,11 +27,13 @@
  */
 package org.jpmml.manager;
 
+import java.io.Serializable;
+
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 
 abstract
-public class ModelManagerFactory {
+public class ModelManagerFactory implements Serializable {
 
 	protected ModelManagerFactory(){
 	}
