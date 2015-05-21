@@ -31,15 +31,14 @@ public class RegressionOutputTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> predictions = createArguments("result", 8d);
+		Map<FieldName, ?> arguments = createArguments("x", 8d);
 
-		ModelEvaluationContext context = evaluator.createContext(null);
+		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		Map<FieldName, ?> result = OutputUtil.evaluate(predictions, context);
+		assertEquals(8d, result.get(new FieldName("TargetResult")));
 
 		assertEquals(8d, result.get(new FieldName("RawResult")));
 		assertEquals(35d, result.get(new FieldName("FinalResult")));
-
 		assertEquals("waive", result.get(new FieldName("BusinessDecision")));
 	}
 }

@@ -27,8 +27,10 @@ import com.google.common.collect.Lists;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
+import org.dmg.pmml.FieldUsageType;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.Target;
 import org.dmg.pmml.TypeDefinitionField;
 import org.dmg.pmml.Value;
 
@@ -53,14 +55,28 @@ public class FieldValueUtil {
 		return result;
 	}
 
+	/**
+	 * Creates a FieldValue for an active field.
+	 *
+	 * @see FieldUsageType#ACTIVE
+	 */
 	static
 	public FieldValue create(DataField dataField, MiningField miningField, Object value){
-		DataType dataType = dataField.getDataType();
+		return create(dataField, miningField, null, value);
+	}
 
-		OpType opType = miningField.getOpType();
-		if(opType == null){
-			opType = dataField.getOpType();
-		}
+	/**
+	 * Creates a FieldValue for a target field.
+	 *
+	 * @see FieldUsageType#TARGET
+	 */
+	static
+	public FieldValue create(DataField dataField, MiningField miningField, Target target, Object value){
+		DataType dataType = dataField.getDataType();
+		OpType opType = dataField.getOpType();
+
+		// "A MiningField overrides a DataField, and a Target overrides a MiningField"
+		opType = override(opType, override(miningField != null ? miningField.getOpType() : null, target != null ? target.getOpType() : null));
 
 		return create(dataType, opType, value);
 	}
@@ -165,6 +181,16 @@ public class FieldValueUtil {
 	static
 	public Object getValue(FieldValue value){
 		return (value != null ? value.getValue() : null);
+	}
+
+	static
+	private <E> E override(E value, E overrideValue){
+
+		if(overrideValue != null){
+			return overrideValue;
+		}
+
+		return value;
 	}
 
 	static

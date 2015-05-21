@@ -27,6 +27,7 @@ import com.google.common.collect.Maps;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
@@ -70,6 +71,8 @@ public class TargetUtil {
 				throw new EvaluationException();
 			}
 
+			MiningField miningField = modelEvaluator.getMiningField(key);
+
 			Target target = modelEvaluator.getTarget(key);
 			if(target != null){
 
@@ -85,6 +88,8 @@ public class TargetUtil {
 			if(value != null){
 				value = TypeUtil.cast(dataField.getDataType(), value);
 			}
+
+			context.declare(key, FieldValueUtil.create(dataField, miningField, target, value));
 
 			result.put(key, value);
 		}
@@ -123,6 +128,8 @@ public class TargetUtil {
 				throw new EvaluationException();
 			}
 
+			MiningField miningField = modelEvaluator.getMiningField(key);
+
 			Target target = modelEvaluator.getTarget(key);
 			if(target != null){
 
@@ -134,6 +141,8 @@ public class TargetUtil {
 			if(value != null){
 				value.computeResult(dataField.getDataType());
 			}
+
+			context.declare(key, FieldValueUtil.create(dataField, miningField, target, value != null ? value.getResult() : null));
 
 			result.put(key, value);
 		}

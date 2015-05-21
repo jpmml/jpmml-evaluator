@@ -155,11 +155,11 @@ public class OutputUtil {
 					break;
 				case PREDICTED_DISPLAY_VALUE:
 					{
-						Target target = modelEvaluator.getTarget(targetField);
-
 						DataField dataField = modelEvaluator.getDataField(targetField);
 
-						value = getPredictedDisplayValue(value, target, dataField);
+						Target target = modelEvaluator.getTarget(targetField);
+
+						value = getPredictedDisplayValue(value, dataField, target);
 					}
 					break;
 				case TRANSFORMED_VALUE:
@@ -444,7 +444,7 @@ public class OutputUtil {
 	}
 
 	static
-	private Object getPredictedDisplayValue(Object object, Target target, DataField dataField){
+	private Object getPredictedDisplayValue(Object object, DataField dataField, Target target){
 
 		if(object instanceof HasDisplayValue){
 			HasDisplayValue hasDisplayValue = asResultFeature(HasDisplayValue.class, object);
