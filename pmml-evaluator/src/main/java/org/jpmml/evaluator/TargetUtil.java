@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
@@ -41,12 +40,12 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ? extends Number> evaluateRegressionDefault(ModelEvaluationContext context){
+	public Map<FieldName, ?> evaluateRegressionDefault(ModelEvaluationContext context){
 		return evaluateRegression((Double)null, context);
 	}
 
 	static
-	public Map<FieldName, ? extends Number> evaluateRegression(Double value, ModelEvaluationContext context){
+	public Map<FieldName, ?> evaluateRegression(Double value, ModelEvaluationContext context){
 		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
 
 		return evaluateRegression(Collections.singletonMap(modelEvaluator.getTargetField(), value), context);
@@ -56,20 +55,20 @@ public class TargetUtil {
 	 * Evaluates the {@link Targets} element for {@link MiningFunctionType#REGRESSION regression} models.
 	 */
 	static
-	public Map<FieldName, ? extends Number> evaluateRegression(Map<FieldName, ? extends Number> predictions, ModelEvaluationContext context){
+	public Map<FieldName, ?> evaluateRegression(Map<FieldName, ? extends Number> predictions, ModelEvaluationContext context){
 		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
 
-		Targets targets = modelEvaluator.getTargets();
-		if(targets == null || Iterables.isEmpty(targets)){
-			return predictions;
-		}
-
-		Map<FieldName, Number> result = Maps.newLinkedHashMap();
+		Map<FieldName, Object> result = Maps.newLinkedHashMap();
 
 		Collection<? extends Map.Entry<FieldName, ? extends Number>> entries = predictions.entrySet();
 		for(Map.Entry<FieldName, ? extends Number> entry : entries){
 			FieldName key = entry.getKey();
-			Number value = entry.getValue();
+			Object value = entry.getValue();
+
+			DataField dataField = modelEvaluator.getDataField(key);
+			if(dataField == null){
+				throw new EvaluationException();
+			}
 
 			Target target = modelEvaluator.getTarget(key);
 			if(target != null){
@@ -79,8 +78,12 @@ public class TargetUtil {
 				} // End if
 
 				if(value != null){
-					value = processValue(target, value);
+					value = processValue(target, (Number)value);
 				}
+			} // End if
+
+			if(value != null){
+				value = TypeUtil.cast(dataField.getDataType(), value);
 			}
 
 			result.put(key, value);

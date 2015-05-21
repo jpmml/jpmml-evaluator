@@ -106,7 +106,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends Number> evaluateRegression(ModelEvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();

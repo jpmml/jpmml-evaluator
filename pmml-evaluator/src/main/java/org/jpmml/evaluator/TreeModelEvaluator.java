@@ -103,9 +103,9 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			score = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, node.getScore());
 		}
 
-		Map<FieldName, ? extends Number> result = TargetUtil.evaluateRegression(score, context);
+		Map<FieldName, ?> result = TargetUtil.evaluateRegression(score, context);
 
-		Map.Entry<FieldName, ? extends Number> resultEntry = Iterables.getOnlyElement(result.entrySet());
+		Map.Entry<FieldName, ?> resultEntry = Iterables.getOnlyElement(result.entrySet());
 
 		return Collections.singletonMap(resultEntry.getKey(), createNodeScore(node, resultEntry.getValue()));
 	}
@@ -291,8 +291,8 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	}
 
 	static
-	private NodeScore createNodeScore(Node node, Number score){
-		NodeScore result = new NodeScore(node, score);
+	private NodeScore createNodeScore(Node node, Object value){
+		NodeScore result = new NodeScore(node, value);
 
 		return result;
 	}

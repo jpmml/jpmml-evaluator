@@ -77,7 +77,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends Number> evaluateRegression(ModelEvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		FieldName targetField = regressionModel.getTargetFieldName();

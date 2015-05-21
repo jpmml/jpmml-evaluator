@@ -30,14 +30,20 @@ package org.jpmml.evaluator;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
+import org.dmg.pmml.DataType;
 
 @Beta
 public class ScoreClassificationMap extends ClassificationMap<String> implements HasReasonCodeRanking {
 
-	protected ScoreClassificationMap(Number result){
+	protected ScoreClassificationMap(Object result){
 		super(Type.VOTE);
 
 		setResult(result);
+	}
+
+	@Override
+	void computeResult(DataType dataType){
+		throw new EvaluationException();
 	}
 
 	@Override

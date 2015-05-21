@@ -37,11 +37,11 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 
 		ModelEvaluationContext context = evaluator.createContext(null);
 
-		Map<FieldName, ? extends Number> predictions = TargetUtil.evaluateRegressionDefault(context);
+		Map<FieldName, ?> predictions = TargetUtil.evaluateRegressionDefault(context);
 
 		assertEquals(1, predictions.size());
 
-		Number amount = predictions.get(evaluator.getTargetField());
+		Number amount = (Number)predictions.get(evaluator.getTargetField());
 
 		assertEquals(432.21d, amount);
 	}
@@ -59,11 +59,11 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 
 		ModelEvaluationContext context = evaluator.createContext(null);
 
-		Map<FieldName, ? extends Number> predictions = TargetUtil.evaluateRegressionDefault(context);
+		Map<FieldName, ?> predictions = TargetUtil.evaluateRegressionDefault(context);
 
 		assertEquals(1, predictions.size());
 
-		Number amount = predictions.get(evaluator.getTargetField());
+		Number amount = (Number)predictions.get(evaluator.getTargetField());
 
 		assertEquals(null, amount);
 	}

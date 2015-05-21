@@ -153,6 +153,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		List<FieldName> targetFields = getTargetFields();
 		for(FieldName targetField : targetFields){
 			DataField dataField = getDataField(targetField);
+			if(dataField == null){
+				throw new EvaluationException();
+			}
 
 			Object value;
 
@@ -167,6 +170,8 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				default:
 					throw new UnsupportedFeatureException(dataField, opType);
 			}
+
+			value = TypeUtil.parseOrCast(dataField.getDataType(), value);
 
 			result.put(targetField, createMeasureMap(instanceResults, function, value));
 		}

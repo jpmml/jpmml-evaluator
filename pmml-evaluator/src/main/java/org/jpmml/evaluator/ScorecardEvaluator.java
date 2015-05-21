@@ -176,10 +176,10 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			}
 		}
 
-		Map<FieldName, ? extends Number> result = TargetUtil.evaluateRegression(score, context);
+		Map<FieldName, ?> result = TargetUtil.evaluateRegression(score, context);
 
 		if(useReasonCodes){
-			Map.Entry<FieldName, ? extends Number> resultEntry = Iterables.getOnlyElement(result.entrySet());
+			Map.Entry<FieldName, ?> resultEntry = Iterables.getOnlyElement(result.entrySet());
 
 			return Collections.singletonMap(resultEntry.getKey(), createScoreMap(reasonCodePoints, resultEntry.getValue()));
 		}
@@ -188,7 +188,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 	}
 
 	static
-	private ScoreClassificationMap createScoreMap(VoteAggregator<String> reasonCodePoints, Number value){
+	private ScoreClassificationMap createScoreMap(VoteAggregator<String> reasonCodePoints, Object value){
 		ScoreClassificationMap result = new ScoreClassificationMap(value);
 
 		// Filter out meaningless (ie. negative values) explanations

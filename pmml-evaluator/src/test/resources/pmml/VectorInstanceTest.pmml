@@ -4,10 +4,7 @@
     <DataDictionary numberOfFields="3">
         <DataField name="x1" optype="continuous" dataType="double"/>
         <DataField name="x2" optype="continuous" dataType="double"/>
-        <DataField name="class" optype="categorical" dataType="string">
-            <Value value="no"/>
-            <Value value="yes"/>
-        </DataField>
+        <DataField name="class" optype="continuous" dataType="double"/>
     </DataDictionary>
     <SupportVectorMachineModel modelName="SVM XOR Model" functionName="regression" algorithmName="supportVectorMachine" svmRepresentation="SupportVectors">
         <MiningSchema>

@@ -114,7 +114,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends Number> evaluateRegression(ModelEvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
@@ -126,7 +126,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 	}
 
-	private Map<FieldName, ? extends Number> evaluateCoxRegression(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Double> evaluateCoxRegression(ModelEvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		BaseCumHazardTables baseCumHazardTables = generalRegressionModel.getBaseCumHazardTables();
@@ -239,7 +239,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return Collections.singletonMap(targetField, survival);
 	}
 
-	private Map<FieldName, ? extends Number> evaluateGeneralRegression(ModelEvaluationContext context){
+	private Map<FieldName, ?> evaluateGeneralRegression(ModelEvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		Double result = computeDotProduct(context);
