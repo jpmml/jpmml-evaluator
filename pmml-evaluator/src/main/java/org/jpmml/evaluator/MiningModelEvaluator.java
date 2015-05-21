@@ -226,6 +226,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		ClassificationMap<String> result = new ClassificationMap<String>(ClassificationMap.Type.VOTE);
 		result.putAll(aggregateVotes(segmentation, segmentResults));
 
+		result.computeResult(DataType.STRING);
+
 		return Collections.singletonMap(getTargetField(), result);
 	}
 
@@ -438,14 +440,16 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		for(SegmentResultMap segmentResult : segmentResults){
-			String targetCategory = (String)EvaluatorUtil.decode(segmentResult.getTargetValue());
+			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
+
+			String key = (String)targetValue;
 
 			switch(multipleModelMethod){
 				case MAJORITY_VOTE:
-					aggregator.add(targetCategory, 1d);
+					aggregator.add(key, 1d);
 					break;
 				case WEIGHTED_MAJORITY_VOTE:
-					aggregator.add(targetCategory, segmentResult.getWeight());
+					aggregator.add(key, segmentResult.getWeight());
 					break;
 				default:
 					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);

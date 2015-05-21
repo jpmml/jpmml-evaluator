@@ -42,11 +42,6 @@ public class EntityClassificationMap<E extends Entity> extends ClassificationMap
 	}
 
 	@Override
-	public String getResult(){
-		return (String)super.getResult();
-	}
-
-	@Override
 	public String getEntityId(){
 		E entity = getEntity();
 

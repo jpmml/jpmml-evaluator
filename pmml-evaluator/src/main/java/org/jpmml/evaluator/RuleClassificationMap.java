@@ -21,7 +21,9 @@ package org.jpmml.evaluator;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.SimpleRule;
+import org.jpmml.manager.InvalidFeatureException;
 
 @Beta
 public class RuleClassificationMap extends EntityClassificationMap<SimpleRule> implements HasConfidence {
@@ -35,14 +37,23 @@ public class RuleClassificationMap extends EntityClassificationMap<SimpleRule> i
 	}
 
 	@Override
-	public String getResult(){
+	void computeResult(DataType dataType){
 		SimpleRule rule = getEntity();
 
 		if(rule != null){
-			return rule.getScore();
+			String score = rule.getScore();
+			if(score == null){
+				throw new InvalidFeatureException(rule);
+			}
+
+			Object result = TypeUtil.parseOrCast(dataType, score);
+
+			super.setResult(result);
+
+			return;
 		}
 
-		return super.getResult();
+		super.computeResult(dataType);
 	}
 
 	@Override

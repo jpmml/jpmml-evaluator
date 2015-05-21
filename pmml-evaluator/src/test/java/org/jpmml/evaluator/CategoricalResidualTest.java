@@ -43,6 +43,8 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 		response.put("Y", 0.8d);
 		response.put("N", 0.2d);
 
+		response.computeResult(DataType.STRING);
+
 		Map<FieldName, ?> prediction = Collections.singletonMap(evaluator.getTargetField(), response);
 
 		Map<FieldName, ?> result = OutputUtil.evaluate(prediction, context);

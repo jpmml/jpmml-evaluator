@@ -32,14 +32,12 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
+import org.dmg.pmml.DataType;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Beta
 public class InstanceClassificationMap extends ClassificationMap<String> implements HasEntityIdRanking, HasAffinityRanking, HasEntityAffinity {
-
-	private Object result = null;
-
 
 	protected InstanceClassificationMap(Type type, Object result){
 		super(type);
@@ -50,17 +48,8 @@ public class InstanceClassificationMap extends ClassificationMap<String> impleme
 	}
 
 	@Override
-	public Object getResult(){
-
-		if(this.result == null){
-			throw new EvaluationException();
-		}
-
-		return this.result;
-	}
-
-	private void setResult(Object result){
-		this.result = result;
+	void computeResult(DataType dataType){
+		throw new EvaluationException();
 	}
 
 	@Override

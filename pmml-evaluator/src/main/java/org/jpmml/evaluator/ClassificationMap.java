@@ -32,11 +32,14 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
+import org.dmg.pmml.DataType;
 
 @Beta
 public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Computable {
 
 	private Type type = null;
+
+	private Object result = null;
 
 
 	protected ClassificationMap(Type type){
@@ -45,12 +48,27 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 
 	@Override
 	public Object getResult(){
+
+		if(this.result == null){
+			throw new EvaluationException();
+		}
+
+		return this.result;
+	}
+
+	void computeResult(DataType dataType){
 		Map.Entry<K, Double> entry = getWinner();
 		if(entry == null){
 			throw new EvaluationException();
 		}
 
-		return entry.getKey();
+		Object result = TypeUtil.parseOrCast(dataType, entry.getKey());
+
+		setResult(result);
+	}
+
+	void setResult(Object result){
+		this.result = result;
 	}
 
 	Double getFeature(String value){

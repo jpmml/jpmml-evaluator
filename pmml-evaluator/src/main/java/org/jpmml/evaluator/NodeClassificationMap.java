@@ -25,6 +25,7 @@ import java.util.Set;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Maps;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.Node;
 
 @Beta
@@ -42,15 +43,19 @@ public class NodeClassificationMap extends EntityClassificationMap<Node> impleme
 	}
 
 	@Override
-	public String getResult(){
+	void computeResult(DataType dataType){
 		Node node = getEntity();
 
 		String score = node.getScore();
 		if(score != null){
-			return score;
+			Object result = TypeUtil.parseOrCast(dataType, score);
+
+			super.setResult(result);
+
+			return;
 		}
 
-		return super.getResult();
+		super.computeResult(dataType);
 	}
 
 	@Override

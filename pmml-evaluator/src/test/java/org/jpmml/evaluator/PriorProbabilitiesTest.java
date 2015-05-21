@@ -18,11 +18,13 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Target;
+import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.Targets;
 import org.junit.Test;
 
@@ -66,7 +68,9 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		Targets targets = evaluator.getTargets();
 		for(Target target : targets){
-			(target.getTargetValues()).clear();
+			List<TargetValue> targetValues = target.getTargetValues();
+
+			targetValues.clear();
 		}
 
 		ModelEvaluationContext context = evaluator.createContext(null);

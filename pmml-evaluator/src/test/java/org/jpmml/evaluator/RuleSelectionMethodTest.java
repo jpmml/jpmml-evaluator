@@ -64,6 +64,6 @@ public class RuleSelectionMethodTest extends ModelEvaluatorTest {
 
 		RuleClassificationMap targetValue = (RuleClassificationMap)result.get(evaluator.getTargetField());
 
-		return targetValue.getResult();
+		return (String)targetValue.getResult();
 	}
 }

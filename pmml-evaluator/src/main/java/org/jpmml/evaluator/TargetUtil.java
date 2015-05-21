@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningFunctionType;
@@ -40,15 +41,15 @@ public class TargetUtil {
 	}
 
 	static
+	public Map<FieldName, ? extends Number> evaluateRegressionDefault(ModelEvaluationContext context){
+		return evaluateRegression((Double)null, context);
+	}
+
+	static
 	public Map<FieldName, ? extends Number> evaluateRegression(Double value, ModelEvaluationContext context){
 		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
 
 		return evaluateRegression(Collections.singletonMap(modelEvaluator.getTargetField(), value), context);
-	}
-
-	static
-	public Map<FieldName, ? extends Number> evaluateRegressionDefault(ModelEvaluationContext context){
-		return evaluateRegression((Double)null, context);
 	}
 
 	/**
@@ -89,15 +90,15 @@ public class TargetUtil {
 	}
 
 	static
+	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassificationDefault(ModelEvaluationContext context){
+		return evaluateClassification((ClassificationMap<?>)null, context);
+	}
+
+	static
 	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ClassificationMap<?> value, ModelEvaluationContext context){
 		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
 
 		return evaluateClassification(Collections.singletonMap(modelEvaluator.getTargetField(), value), context);
-	}
-
-	static
-	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassificationDefault(ModelEvaluationContext context){
-		return evaluateClassification((ClassificationMap<?>)null, context);
 	}
 
 	/**
@@ -107,11 +108,6 @@ public class TargetUtil {
 	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(Map<FieldName, ? extends ClassificationMap<?>> predictions, ModelEvaluationContext context){
 		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
 
-		Targets targets = modelEvaluator.getTargets();
-		if(targets == null || Iterables.isEmpty(targets)){
-			return predictions;
-		}
-
 		Map<FieldName, ClassificationMap<?>> result = Maps.newLinkedHashMap();
 
 		Collection<? extends Map.Entry<FieldName, ? extends ClassificationMap<?>>> entries = predictions.entrySet();
@@ -119,12 +115,21 @@ public class TargetUtil {
 			FieldName key = entry.getKey();
 			ClassificationMap<?> value = entry.getValue();
 
+			DataField dataField = modelEvaluator.getDataField(key);
+			if(dataField == null){
+				throw new EvaluationException();
+			}
+
 			Target target = modelEvaluator.getTarget(key);
 			if(target != null){
 
 				if(value == null){
 					value = getPriorProbabilities(target);
 				}
+			} // End if
+
+			if(value != null){
+				value.computeResult(dataField.getDataType());
 			}
 
 			result.put(key, value);

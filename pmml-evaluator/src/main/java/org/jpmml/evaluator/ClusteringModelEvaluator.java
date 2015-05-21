@@ -35,6 +35,7 @@ import org.dmg.pmml.Cluster;
 import org.dmg.pmml.ClusteringField;
 import org.dmg.pmml.ClusteringModel;
 import org.dmg.pmml.ComparisonMeasure;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.MiningFunctionType;
@@ -135,6 +136,9 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		{
 			throw new UnsupportedFeatureException(measure);
 		}
+
+		// "For clustering models, the identifier of the winning cluster is returned as the predictedValue"
+		result.computeResult(DataType.STRING);
 
 		return Collections.singletonMap(getTargetField(), result);
 	}

@@ -181,14 +181,14 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		if(useReasonCodes){
 			Map.Entry<FieldName, ? extends Number> resultEntry = Iterables.getOnlyElement(result.entrySet());
 
-			return Collections.singletonMap(resultEntry.getKey(), createScoreMap(resultEntry.getValue(), reasonCodePoints));
+			return Collections.singletonMap(resultEntry.getKey(), createScoreMap(reasonCodePoints, resultEntry.getValue()));
 		}
 
 		return result;
 	}
 
 	static
-	private ScoreClassificationMap createScoreMap(Number value, VoteAggregator<String> reasonCodePoints){
+	private ScoreClassificationMap createScoreMap(VoteAggregator<String> reasonCodePoints, Number value){
 		ScoreClassificationMap result = new ScoreClassificationMap(value);
 
 		// Filter out meaningless (ie. negative values) explanations

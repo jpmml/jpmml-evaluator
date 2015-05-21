@@ -168,7 +168,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 					throw new UnsupportedFeatureException(dataField, opType);
 			}
 
-			result.put(targetField, createMeasureMap(value, instanceResults, function));
+			result.put(targetField, createMeasureMap(instanceResults, function, value));
 		}
 
 		return result;
@@ -188,7 +188,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Function<Integer, String> function = createIdentifierResolver(FieldName.create(idField), table);
 
-		return Collections.singletonMap(getTargetField(), createMeasureMap(null, instanceResults, function));
+		return Collections.singletonMap(getTargetField(), createMeasureMap(instanceResults, function, null));
 	}
 
 	private List<InstanceResult> evaluateInstanceRows(ModelEvaluationContext context){
@@ -386,7 +386,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return function;
 	}
 
-	private InstanceClassificationMap createMeasureMap(Object value, List<InstanceResult> instanceResults, Function<Integer, String> function){
+	private InstanceClassificationMap createMeasureMap(List<InstanceResult> instanceResults, Function<Integer, String> function, Object value){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		InstanceClassificationMap result;
