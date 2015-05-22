@@ -27,8 +27,15 @@ import static org.junit.Assert.assertTrue;
 public class ClusteringTest {
 
 	@Test
-	public void evaluateKmeansIris() throws Exception {
+	public void evaluateKMeansIris() throws Exception {
 		Batch batch = new KnimeBatch("KMeans", "Iris");
+
+		assertTrue(BatchUtil.evaluate(batch));
+	}
+
+	@Test
+	public void evaluateKMeansEnsembleIris() throws Exception {
+		Batch batch = new KnimeBatch("KMeansEnsemble", "Iris");
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
