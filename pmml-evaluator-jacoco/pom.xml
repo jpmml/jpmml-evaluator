@@ -9,7 +9,7 @@
 	</parent>
 
 	<groupId>org.jpmml</groupId>
-	<artifactId>pmml-evaluator-code-coverage</artifactId>
+	<artifactId>pmml-evaluator-jacoco</artifactId>
 	<packaging>jar</packaging>
 
 	<name>JPMML evaluator code coverage</name>
