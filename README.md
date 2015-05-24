@@ -45,13 +45,13 @@ JPMML-Evaluator is thread safe and can easily deliver over one million scorings 
 
 JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/). Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for release announcements.
 
-The current version is **1.1.19** (8 May, 2015).
+The current version is **1.1.20** (22 May, 2015).
 
 ```xml
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.1.19</version>
+	<version>1.1.20</version>
 </dependency>
 ```
 
@@ -151,19 +151,19 @@ This module can be built using [Apache Maven] (http://maven.apache.org/):
 mvn clean install
 ```
 
-The resulting uber-JAR file `target/example-1.1-SNAPSHOT.jar` contains the following command-line applications:
+The resulting uber-JAR file `target/example-1.2-SNAPSHOT.jar` contains the following command-line applications:
 * `org.jpmml.evaluator.ModelEvaluationExample` [(source)] (https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/ModelEvaluationExample.java). Evaluates a PMML model using data records from a TSV or CSV file.
 * `org.jpmml.evaluator.ModelEnhancementExample`. Enhances a PMML model with a ModelVerification element using data records from a TSV or CSV file.
 * `org.jpmml.evaluator.ModelOptimizationExample`. Optimizes a PMML model.
 
 Evaluating model `model.pmml` by loading input data records from `input.tsv` and storing output data records to `output.tsv`:
 ```
-java -cp target/example-1.1-SNAPSHOT.jar org.jpmml.evaluator.ModelEvaluationExample --model model.pmml --input input.tsv --output output.tsv
+java -cp target/example-1.2-SNAPSHOT.jar org.jpmml.evaluator.ModelEvaluationExample --model model.pmml --input input.tsv --output output.tsv
 ```
 
 Optimizing model `model.pmml` by appling a list of four Visitor classes to it. The JVM option `javaagent` loads the [JPMML agent] (https://github.com/jpmml/jpmml-model/tree/master/pmml-agent), which provides memory usage measurement functionality:
 ```
-java -javaagent:pmml-agent-1.1-SNAPSHOT.jar -cp target/example-1.1-SNAPSHOT.jar org.jpmml.evaluator.ModelOptimizationExample --model model.pmml --visitor-classes org.jpmml.model.visitors.LocatorNullifier,org.jpmml.model.visitors.ArrayListOptimizer,org.jpmml.model.visitors.StringInterner,org.jpmml.evaluator.visitors.PredicateInterner
+java -javaagent:pmml-agent-1.2-SNAPSHOT.jar -cp target/example-1.2-SNAPSHOT.jar org.jpmml.evaluator.ModelOptimizationExample --model model.pmml --visitor-classes org.jpmml.model.visitors.LocatorNullifier,org.jpmml.model.visitors.ArrayListOptimizer,org.jpmml.model.visitors.StringInterner,org.jpmml.evaluator.visitors.PredicateInterner
 ```
 
 # Documentation #
