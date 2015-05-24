@@ -35,7 +35,7 @@ import org.jpmml.model.JAXBUtil;
 import org.jpmml.model.visitors.MemoryMeasurer;
 import org.xml.sax.InputSource;
 
-public class ModelOptimizationExample extends Example {
+public class OptimizationExample extends Example {
 
 	@Parameter (
 		names = {"--model"},
@@ -60,7 +60,7 @@ public class ModelOptimizationExample extends Example {
 
 	static
 	public void main(String... args) throws Exception {
-		execute(ModelOptimizationExample.class, args);
+		execute(OptimizationExample.class, args);
 	}
 
 	@Override

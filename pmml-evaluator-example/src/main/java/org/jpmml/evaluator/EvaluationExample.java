@@ -47,7 +47,7 @@ import org.jpmml.model.ImportFilter;
 import org.jpmml.model.JAXBUtil;
 import org.xml.sax.InputSource;
 
-public class ModelEvaluationExample extends Example {
+public class EvaluationExample extends Example {
 
 	@Parameter (
 		names = {"--model"},
@@ -101,7 +101,7 @@ public class ModelEvaluationExample extends Example {
 
 	static
 	public void main(String... args) throws Exception {
-		execute(ModelEvaluationExample.class, args);
+		execute(EvaluationExample.class, args);
 	}
 
 	@Override

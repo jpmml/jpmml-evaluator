@@ -49,7 +49,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
-public class ModelEnhancementExample extends Example {
+public class EnhancementExample extends Example {
 
 	@Parameter (
 		names = {"--model"},
@@ -74,7 +74,7 @@ public class ModelEnhancementExample extends Example {
 
 	static
 	public void main(String... args) throws Exception {
-		execute(ModelEnhancementExample.class, args);
+		execute(EnhancementExample.class, args);
 	}
 
 	@Override
