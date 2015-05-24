@@ -41,8 +41,6 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.ScoreDistribution;
 import org.dmg.pmml.TreeModel;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements HasEntityRegistry<Node> {
 

@@ -29,7 +29,6 @@ import org.joda.time.Seconds;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeParser;
 import org.joda.time.format.DateTimeParserBucket;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class TypeUtil {
 

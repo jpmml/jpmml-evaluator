@@ -42,8 +42,6 @@ import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.MissingValueWeights;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> implements HasEntityRegistry<Cluster> {
 

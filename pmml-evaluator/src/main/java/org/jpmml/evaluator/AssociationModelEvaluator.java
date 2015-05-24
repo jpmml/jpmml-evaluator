@@ -43,8 +43,6 @@ import org.dmg.pmml.Itemset;
 import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> implements HasEntityRegistry<AssociationRule> {
 

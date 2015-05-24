@@ -23,7 +23,6 @@ import java.util.Set;
 import com.google.common.annotations.Beta;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.SimpleRule;
-import org.jpmml.manager.InvalidFeatureException;
 
 @Beta
 public class RuleClassificationMap extends EntityClassificationMap<SimpleRule> implements HasConfidence {

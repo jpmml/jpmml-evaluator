@@ -64,8 +64,6 @@ import org.dmg.pmml.ParameterCell;
 import org.dmg.pmml.ParameterList;
 import org.dmg.pmml.Predictor;
 import org.dmg.pmml.PredictorList;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegressionModel> {
 

@@ -43,8 +43,6 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.Row;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.PMMLManager;
 import org.jpmml.model.ImportFilter;
 import org.jpmml.model.JAXBUtil;
 import org.w3c.dom.Document;

@@ -55,8 +55,6 @@ import org.dmg.pmml.SvmRepresentationType;
 import org.dmg.pmml.VectorDictionary;
 import org.dmg.pmml.VectorFields;
 import org.dmg.pmml.VectorInstance;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 import org.jpmml.model.ReflectionUtil;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {

@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
-import org.jpmml.manager.PMMLException;
+import org.jpmml.evaluator.PMMLException;
 import org.jpmml.model.visitors.AbstractSimpleVisitor;
 
 /**

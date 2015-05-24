@@ -16,16 +16,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.runtime;
+package org.jpmml.evaluator;
 
 import java.net.URI;
+import java.net.URL;
 import java.util.Map;
 
 import com.google.common.cache.CacheBuilder;
 import org.dmg.pmml.Model;
-import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.TreeModelEvaluator;
-import org.jpmml.manager.ModelManager;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -36,25 +34,27 @@ public class ModelEvaluatorCacheTest {
 
 	@Test
 	public void getAndRemove() throws Exception {
+		URL url = ModelEvaluatorCacheTest.class.getResource("/pmml/" + MixedNeighborhoodTest.class.getSimpleName() + ".pmml");
+
 		ModelEvaluatorCache cache = new ModelEvaluatorCache(CacheBuilder.newBuilder());
 
 		Map<URI, ModelManager<? extends Model>> map = cache.asMap();
 
 		assertEquals(0, map.size());
 
-		ModelEvaluator<?> firstEvaluator = cache.get(ModelEvaluatorCacheTest.class);
+		ModelEvaluator<?> firstEvaluator = cache.get(url);
 
 		assertEquals(1, map.size());
 
-		assertTrue(firstEvaluator instanceof TreeModelEvaluator);
+		assertTrue(firstEvaluator instanceof NearestNeighborModelEvaluator);
 
-		ModelEvaluator<?> secondEvaluator = cache.get(ModelEvaluatorCacheTest.class);
+		ModelEvaluator<?> secondEvaluator = cache.get(url);
 
 		assertEquals(1, map.size());
 
 		assertSame(firstEvaluator, secondEvaluator);
 
-		cache.remove(ModelEvaluatorCacheTest.class);
+		cache.remove(url);
 
 		assertEquals(0, map.size());
 	}

@@ -23,7 +23,6 @@ import java.util.List;
 import com.google.common.collect.ImmutableBiMap;
 import org.dmg.pmml.HasId;
 import org.dmg.pmml.PMMLObject;
-import org.jpmml.manager.InvalidFeatureException;
 
 public class EntityUtil {
 

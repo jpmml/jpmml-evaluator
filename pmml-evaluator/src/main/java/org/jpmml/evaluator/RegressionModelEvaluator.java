@@ -35,8 +35,6 @@ import org.dmg.pmml.PredictorTerm;
 import org.dmg.pmml.RegressionModel;
 import org.dmg.pmml.RegressionNormalizationMethodType;
 import org.dmg.pmml.RegressionTable;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 

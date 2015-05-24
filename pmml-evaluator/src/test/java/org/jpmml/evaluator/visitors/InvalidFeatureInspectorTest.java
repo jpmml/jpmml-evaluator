@@ -24,7 +24,7 @@ import java.util.List;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.PMML;
-import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.evaluator.InvalidFeatureException;
 import org.jpmml.model.ReflectionUtil;
 import org.junit.Test;
 

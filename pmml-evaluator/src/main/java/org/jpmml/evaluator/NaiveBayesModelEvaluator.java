@@ -61,8 +61,6 @@ import org.dmg.pmml.TargetValueCount;
 import org.dmg.pmml.TargetValueCounts;
 import org.dmg.pmml.TargetValueStat;
 import org.dmg.pmml.TargetValueStats;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 import org.jpmml.model.ExtensionUtil;
 
 public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {

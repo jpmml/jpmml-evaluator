@@ -44,7 +44,6 @@ import org.dmg.pmml.InvalidValueTreatmentMethodType;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class ExpressionUtil {
 

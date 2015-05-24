@@ -43,7 +43,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
-import org.jpmml.manager.PMMLManager;
 import org.jpmml.model.ImportFilter;
 import org.jpmml.model.JAXBUtil;
 import org.xml.sax.InputSource;

@@ -23,9 +23,6 @@ import java.io.InputStream;
 import javax.xml.transform.Source;
 
 import org.dmg.pmml.PMML;
-import org.jpmml.manager.ModelManager;
-import org.jpmml.manager.ModelManagerFactory;
-import org.jpmml.manager.PMMLManager;
 import org.jpmml.model.ImportFilter;
 import org.jpmml.model.JAXBUtil;
 import org.xml.sax.InputSource;

@@ -27,8 +27,6 @@ import com.google.common.collect.Iterables;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.MatCell;
 import org.dmg.pmml.Matrix;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class MatrixUtil {
 

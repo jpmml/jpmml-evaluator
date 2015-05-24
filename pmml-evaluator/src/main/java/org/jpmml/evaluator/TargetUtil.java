@@ -32,8 +32,6 @@ import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.Targets;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class TargetUtil {
 

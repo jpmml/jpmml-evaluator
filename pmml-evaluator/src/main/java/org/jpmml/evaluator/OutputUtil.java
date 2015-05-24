@@ -44,8 +44,6 @@ import org.dmg.pmml.RuleFeatureType;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.Value;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class OutputUtil {
 

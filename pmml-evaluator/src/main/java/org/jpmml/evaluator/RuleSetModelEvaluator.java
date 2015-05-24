@@ -34,8 +34,6 @@ import org.dmg.pmml.RuleSelectionMethod;
 import org.dmg.pmml.RuleSet;
 import org.dmg.pmml.RuleSetModel;
 import org.dmg.pmml.SimpleRule;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 

@@ -41,8 +41,6 @@ import org.dmg.pmml.RuleSetModel;
 import org.dmg.pmml.Scorecard;
 import org.dmg.pmml.SupportVectorMachineModel;
 import org.dmg.pmml.TreeModel;
-import org.jpmml.manager.ModelManagerFactory;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class ModelEvaluatorFactory extends ModelManagerFactory {
 

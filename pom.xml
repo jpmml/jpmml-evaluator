@@ -42,10 +42,8 @@
 		<module>pmml-evaluator-jacoco</module>
 		<module>pmml-extension</module>
 		<module>pmml-knime</module>
-		<module>pmml-manager</module>
 		<module>pmml-rapidminer</module>
 		<module>pmml-rattle</module>
-		<module>pmml-runtime</module>
 	</modules>
 
 	<scm>
@@ -95,22 +93,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
-				<artifactId>pmml-manager</artifactId>
-				<version>1.2-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-rapidminer</artifactId>
 				<version>1.2-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-rattle</artifactId>
-				<version>1.2-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jpmml</groupId>
-				<artifactId>pmml-runtime</artifactId>
 				<version>1.2-SNAPSHOT</version>
 			</dependency>
 

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.runtime;
+package org.jpmml.evaluator;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,8 +26,6 @@ import javax.xml.bind.JAXBException;
 
 import com.google.common.cache.CacheBuilder;
 import org.dmg.pmml.Model;
-import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.xml.sax.SAXException;
 
 public class ModelEvaluatorCache extends ModelManagerCache {

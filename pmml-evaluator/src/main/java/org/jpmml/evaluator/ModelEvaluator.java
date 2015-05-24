@@ -55,8 +55,6 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.ModelManager;
 
 abstract
 public class ModelEvaluator<M extends Model> extends ModelManager<M> implements Evaluator {

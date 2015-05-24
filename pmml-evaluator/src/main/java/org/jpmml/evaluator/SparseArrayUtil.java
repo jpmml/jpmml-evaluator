@@ -39,8 +39,6 @@ import com.google.common.collect.Maps;
 import org.dmg.pmml.IntSparseArray;
 import org.dmg.pmml.RealSparseArray;
 import org.dmg.pmml.SparseArray;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class SparseArrayUtil {
 

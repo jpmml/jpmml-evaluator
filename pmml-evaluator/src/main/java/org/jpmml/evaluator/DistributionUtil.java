@@ -22,7 +22,6 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 import org.dmg.pmml.ContinuousDistribution;
 import org.dmg.pmml.GaussianDistribution;
 import org.dmg.pmml.PoissonDistribution;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class DistributionUtil {
 

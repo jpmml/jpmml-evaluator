@@ -40,7 +40,7 @@ import org.dmg.pmml.VectorDictionary;
 import org.dmg.pmml.VectorFields;
 import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
-import org.jpmml.manager.InvalidFeatureException;
+import org.jpmml.evaluator.InvalidFeatureException;
 import org.jpmml.model.ReflectionUtil;
 
 /**

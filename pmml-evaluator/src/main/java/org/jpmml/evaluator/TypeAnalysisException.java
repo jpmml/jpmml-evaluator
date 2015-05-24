@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import org.dmg.pmml.PMMLObject;
-import org.jpmml.manager.PMMLException;
 
 public class TypeAnalysisException extends PMMLException {
 

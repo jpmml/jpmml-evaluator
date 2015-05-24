@@ -34,8 +34,6 @@ import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.Scorecard;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 

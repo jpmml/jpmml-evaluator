@@ -34,8 +34,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import org.dmg.pmml.PMMLObject;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.PMMLException;
 
 public class CacheUtil {
 

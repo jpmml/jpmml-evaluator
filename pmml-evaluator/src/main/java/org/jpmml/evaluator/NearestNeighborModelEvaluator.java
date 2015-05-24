@@ -68,8 +68,6 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.TableLocator;
 import org.dmg.pmml.TrainingInstances;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighborModel> {
 

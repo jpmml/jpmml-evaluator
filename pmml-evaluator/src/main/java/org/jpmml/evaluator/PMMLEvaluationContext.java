@@ -22,7 +22,6 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
-import org.jpmml.manager.PMMLManager;
 
 public class PMMLEvaluationContext extends EvaluationContext {
 

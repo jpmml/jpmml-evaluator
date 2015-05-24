@@ -24,8 +24,6 @@ import org.dmg.pmml.Apply;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.ParameterField;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 import org.jpmml.model.ReflectionUtil;
 
 public class FunctionUtil {

@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.FieldName;
-import org.jpmml.manager.PMMLManager;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

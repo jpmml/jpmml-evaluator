@@ -23,7 +23,6 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 import org.dmg.pmml.FieldName;
-import org.jpmml.manager.PMMLManager;
 
 abstract
 public class PMMLManagerTest {

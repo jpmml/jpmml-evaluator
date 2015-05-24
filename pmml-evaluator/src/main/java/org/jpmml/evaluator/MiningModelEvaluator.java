@@ -47,8 +47,6 @@ import org.dmg.pmml.Predicate;
 import org.dmg.pmml.Segment;
 import org.dmg.pmml.Segmentation;
 import org.dmg.pmml.TreeModel;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 

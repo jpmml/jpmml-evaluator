@@ -41,8 +41,6 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethodType;
 import org.dmg.pmml.TypeDefinitionField;
 import org.dmg.pmml.Value;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class ArgumentUtil {
 

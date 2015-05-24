@@ -38,8 +38,6 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.SimpleMatching;
 import org.dmg.pmml.SquaredEuclidean;
 import org.dmg.pmml.Tanimoto;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class MeasureUtil {
 

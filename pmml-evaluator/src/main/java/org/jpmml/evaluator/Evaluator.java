@@ -22,10 +22,6 @@ import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Model;
-import org.jpmml.manager.Consumer;
-import org.jpmml.manager.InvalidFeatureException;
-import org.jpmml.manager.PMMLException;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 /**
  * <p>

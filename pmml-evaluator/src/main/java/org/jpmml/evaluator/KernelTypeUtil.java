@@ -32,7 +32,6 @@ import org.dmg.pmml.LinearKernelType;
 import org.dmg.pmml.PolynomialKernelType;
 import org.dmg.pmml.RadialBasisKernelType;
 import org.dmg.pmml.SigmoidKernelType;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 public class KernelTypeUtil {
 

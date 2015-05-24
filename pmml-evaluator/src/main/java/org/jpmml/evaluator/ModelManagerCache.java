@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.runtime;
+package org.jpmml.evaluator;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,9 +33,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
-import org.jpmml.manager.ModelManager;
-import org.jpmml.manager.ModelManagerFactory;
-import org.jpmml.manager.PMMLManager;
 import org.jpmml.model.ImportFilter;
 import org.jpmml.model.JAXBUtil;
 import org.xml.sax.InputSource;

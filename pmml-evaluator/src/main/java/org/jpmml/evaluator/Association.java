@@ -27,7 +27,6 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.AssociationRule;
 import org.dmg.pmml.OutputField;
-import org.jpmml.manager.UnsupportedFeatureException;
 
 @Beta
 abstract

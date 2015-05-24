@@ -24,7 +24,7 @@ import org.dmg.pmml.ClusteringModel;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.Header;
 import org.dmg.pmml.PMML;
-import org.jpmml.manager.UnsupportedFeatureException;
+import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

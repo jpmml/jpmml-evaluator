@@ -45,7 +45,7 @@ import org.dmg.pmml.TimeSeriesModel;
 import org.dmg.pmml.TreeModel;
 import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
-import org.jpmml.manager.UnsupportedFeatureException;
+import org.jpmml.evaluator.UnsupportedFeatureException;
 
 /**
  * A visitor that inspects a class model object for unsupported features.
