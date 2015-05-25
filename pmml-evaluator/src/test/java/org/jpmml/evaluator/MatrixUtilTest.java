@@ -31,8 +31,8 @@ public class MatrixUtilTest {
 	@Test
 	public void diagonalMatrix(){
 		Matrix matrix = new Matrix()
-			.withKind(Matrix.Kind.DIAGONAL)
-			.withArrays(new Array(Array.Type.INT, "1 2 3"));
+			.setKind(Matrix.Kind.DIAGONAL)
+			.addArrays(new Array(Array.Type.INT, "1 2 3"));
 
 		assertEquals(1, MatrixUtil.getElementAt(matrix, 1, 1));
 		assertEquals(2, MatrixUtil.getElementAt(matrix, 2, 2));
@@ -41,7 +41,8 @@ public class MatrixUtilTest {
 		assertEquals(null, MatrixUtil.getElementAt(matrix, 1, 3));
 		assertEquals(null, MatrixUtil.getElementAt(matrix, 3, 1));
 
-		matrix = matrix.withOffDiagDefault(0d);
+		matrix.setOffDiagDefault(0d);
+
 		assertEquals(0d, MatrixUtil.getElementAt(matrix, 1, 3));
 		assertEquals(0d, MatrixUtil.getElementAt(matrix, 3, 1));
 
@@ -68,8 +69,8 @@ public class MatrixUtilTest {
 	@Test
 	public void symmetricMatrix(){
 		Matrix matrix = new Matrix()
-			.withKind(Matrix.Kind.SYMMETRIC)
-			.withArrays(
+			.setKind(Matrix.Kind.SYMMETRIC)
+			.addArrays(
 				new Array(Array.Type.INT, "1"),
 				new Array(Array.Type.INT, "4 2"),
 				new Array(Array.Type.INT, "6 5 3")
@@ -109,7 +110,7 @@ public class MatrixUtilTest {
 	@Test
 	public void anyMatrixDense(){
 		Matrix matrix = new Matrix()
-			.withArrays(
+			.addArrays(
 				new Array(Array.Type.REAL, "0 0 0 42 0"),
 				new Array(Array.Type.REAL, "0 1 0 0 0"),
 				new Array(Array.Type.REAL, "5 0 0 0 0"),
@@ -123,9 +124,9 @@ public class MatrixUtilTest {
 	@Test
 	public void anyMatrixSparse(){
 		Matrix matrix = new Matrix()
-			.withDiagDefault(0d)
-			.withOffDiagDefault(0d)
-			.withMatCells(
+			.setDiagDefault(0d)
+			.setOffDiagDefault(0d)
+			.addMatCells(
 				new MatCell(1, 4, "42"),
 				new MatCell(2, 2, "1"),
 				new MatCell(3, 1, "5"),

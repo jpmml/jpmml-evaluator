@@ -42,7 +42,7 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 		NearestNeighborModelEvaluator evaluator = (NearestNeighborModelEvaluator)createModelEvaluator();
 
 		NearestNeighborModel nearestNeighborModel = evaluator.getModel()
-			.withNumberOfNeighbors(1); // XXX
+			.setNumberOfNeighbors(1); // XXX
 
 		Map<FieldName, ?> arguments = createArguments("petal length", 4.7d, "petal width", 1.4d, "sepal length", 7d, "sepal width", 3.2d);
 

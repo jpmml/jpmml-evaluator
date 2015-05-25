@@ -41,6 +41,10 @@ JPMML-Evaluator has been tested with popular open-source PMML producer software:
 
 JPMML-Evaluator is thread safe and can easily deliver over one million scorings per second (on a single quad-core CPU) when working with simpler models.
 
+# Prerequisites #
+
+* Java 1.7 or newer
+
 # Installation #
 
 JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/). Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for release announcements.

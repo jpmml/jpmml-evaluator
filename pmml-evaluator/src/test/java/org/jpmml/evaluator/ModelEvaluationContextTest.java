@@ -48,10 +48,10 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 		String dummyValue = "Dummy";
 
 		DataDictionary dataDictionary = evaluator.getDataDictionary()
-			.withDataFields(new DataField(dummy, OpType.CATEGORICAL, DataType.STRING));
+			.addDataFields(new DataField(dummy, OpType.CATEGORICAL, DataType.STRING));
 
 		Output output = evaluator.getOutput()
-			.withOutputFields(createArgumentCopy(item, null), createArgumentCopy(dummy, "missing"));
+			.addOutputFields(createArgumentCopy(item, null), createArgumentCopy(dummy, "missing"));
 
 		Map<FieldName, ?> arguments = createArguments(item, EvaluatorUtil.prepare(evaluator, item, itemValue), dummy, dummyValue);
 
@@ -64,12 +64,12 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 	static
 	private OutputField createArgumentCopy(FieldName name, String mapMissingTo){
 		FieldRef fieldRef = new FieldRef(name)
-			.withMapMissingTo(mapMissingTo);
+			.setMapMissingTo(mapMissingTo);
 
 		OutputField result = new OutputField()
-			.withName(FieldName.create(name.getValue() + "_copy"))
-			.withFeature(ResultFeatureType.TRANSFORMED_VALUE)
-			.withExpression(fieldRef);
+			.setName(FieldName.create(name.getValue() + "_copy"))
+			.setFeature(ResultFeatureType.TRANSFORMED_VALUE)
+			.setExpression(fieldRef);
 
 		return result;
 	}

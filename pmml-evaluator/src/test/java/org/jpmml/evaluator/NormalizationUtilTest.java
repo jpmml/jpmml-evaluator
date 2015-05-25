@@ -46,12 +46,14 @@ public class NormalizationUtilTest {
 		assertEquals(interpolate(-1d, BEGIN, MIDPOINT), NormalizationUtil.normalize(normContinuous, -1d), 1e-8);
 		assertEquals(interpolate(12.2d, MIDPOINT, END), NormalizationUtil.normalize(normContinuous, 12.2d), 1e-8);
 
-		normContinuous = normContinuous.withOutliers(OutlierTreatmentMethodType.AS_MISSING_VALUES)
-			.withMapMissingTo(0.5d);
+		normContinuous.setOutliers(OutlierTreatmentMethodType.AS_MISSING_VALUES)
+			.setMapMissingTo(0.5d);
+
 		assertEquals(0.5d, NormalizationUtil.normalize(normContinuous, -1d), 1e-8);
 		assertEquals(0.5d, NormalizationUtil.normalize(normContinuous, 12.2d), 1e-8);
 
-		normContinuous = normContinuous.withOutliers(OutlierTreatmentMethodType.AS_EXTREME_VALUES);
+		normContinuous.setOutliers(OutlierTreatmentMethodType.AS_EXTREME_VALUES);
+
 		assertEquals(BEGIN[1], NormalizationUtil.normalize(normContinuous, -1d), 1e-8);
 		assertEquals(END[1], NormalizationUtil.normalize(normContinuous, 12.2d), 1e-8);
 	}
@@ -75,7 +77,7 @@ public class NormalizationUtilTest {
 	static
 	private NormContinuous createNormContinuous(){
 		NormContinuous result = new NormContinuous(new FieldName("x"), null)
-			.withLinearNorms(
+			.addLinearNorms(
 				new LinearNorm(BEGIN[0], BEGIN[1]),
 				new LinearNorm(MIDPOINT[0], MIDPOINT[1]),
 				new LinearNorm(END[0], END[1])

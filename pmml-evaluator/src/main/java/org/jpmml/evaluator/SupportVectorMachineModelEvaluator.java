@@ -42,7 +42,7 @@ import org.dmg.pmml.Coefficient;
 import org.dmg.pmml.Coefficients;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
-import org.dmg.pmml.KernelType;
+import org.dmg.pmml.Kernel;
 import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.RealSparseArray;
@@ -239,7 +239,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		double result = 0d;
 
-		KernelType kernelType = supportVectorMachineModel.getKernelType();
+		Kernel kernel = supportVectorMachineModel.getKernel();
 
 		Coefficients coefficients = supportVectorMachine.getCoefficients();
 		Iterator<Coefficient> coefficientIterator = coefficients.iterator();
@@ -258,7 +258,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				throw new InvalidFeatureException(supportVector);
 			}
 
-			Double value = KernelTypeUtil.evaluate(kernelType, input, vector);
+			Double value = KernelUtil.evaluate(kernel, input, vector);
 
 			result += (coefficient.getValue() * value);
 		}

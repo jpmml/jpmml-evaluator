@@ -133,7 +133,7 @@ public class EnhancementExample extends Example {
 				VerificationField verificationField = new VerificationField(field);
 
 				if(field.contains(" ")){
-					verificationField = verificationField.withColumn(field.replace(" ", "_x0020_"));
+					verificationField.setColumn(field.replace(" ", "_x0020_"));
 
 					tagNames.add(verificationField.getColumn());
 				} else
@@ -142,11 +142,11 @@ public class EnhancementExample extends Example {
 					tagNames.add(field);
 				}
 
-				verificationFields = verificationFields.withVerificationFields(verificationField);
+				verificationFields.addVerificationFields(verificationField);
 			}
 		}
 
-		modelVerification = modelVerification.withVerificationFields(verificationFields);
+		modelVerification.setVerificationFields(verificationFields);
 
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		documentBuilderFactory.setNamespaceAware(true);
@@ -179,15 +179,15 @@ public class EnhancementExample extends Example {
 				Element element = document.createElementNS(this.dataURI, this.dataURI != null ? ("data:" + tagName) : tagName);
 				element.setTextContent(value);
 
-				row = row.withContent(element);
+				row.addContent(element);
 
 				documentBuilder.reset();
 			}
 
-			inlineTable = inlineTable.withRows(row);
+			inlineTable.addRows(row);
 		}
 
-		modelVerification = modelVerification.withInlineTable(inlineTable);
+		modelVerification.setInlineTable(inlineTable);
 
 		model.setModelVerification(modelVerification);
 

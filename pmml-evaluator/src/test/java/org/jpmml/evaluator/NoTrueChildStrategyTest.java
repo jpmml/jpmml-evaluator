@@ -74,7 +74,7 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 		TreeModelEvaluator evaluator = (TreeModelEvaluator)createModelEvaluator();
 
 		TreeModel treeModel = evaluator.getModel()
-			.withNoTrueChildStrategy(noTrueChildStrategy);
+			.setNoTrueChildStrategy(noTrueChildStrategy);
 
 		Map<FieldName, ?> arguments = createArguments("probability", value);
 

@@ -117,8 +117,8 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 		TreeModelEvaluator evaluator = (TreeModelEvaluator)createModelEvaluator();
 
 		TreeModel treeModel = evaluator.getModel()
-			.withMissingValueStrategy(missingValueStrategy)
-			.withMissingValuePenalty(missingValuePenalty);
+			.setMissingValueStrategy(missingValueStrategy)
+			.setMissingValuePenalty(missingValuePenalty);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 

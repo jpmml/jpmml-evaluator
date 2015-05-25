@@ -38,7 +38,7 @@ public class InvalidFeatureInspectorTest {
 	@Test
 	public void inspect() throws Exception {
 		DataDictionary dataDictionary = new DataDictionary()
-			.withNumberOfFields(1);
+			.setNumberOfFields(1);
 
 		Field field = ReflectionUtil.getField(dataDictionary, "dataFields");
 

@@ -55,49 +55,49 @@ public class ArgumentUtilTest {
 
 		Value missingValue = createValue("N/A", Property.MISSING);
 
-		dataField = dataField.withValues(missingValue);
+		dataField.addValues(missingValue);
 
 		assertEquals(null, prepare(dataField, miningField, null));
 		assertEquals(null, prepare(dataField, miningField, "N/A"));
 
-		miningField = miningField.withMissingValueReplacement("0");
+		miningField.setMissingValueReplacement("0");
 
 		assertEquals(0d, prepare(dataField, miningField, null));
 		assertEquals(0d, prepare(dataField, miningField, "N/A"));
 
 		Interval validInterval = new Interval(Closure.CLOSED_CLOSED)
-			.withLeftMargin(1d)
-			.withRightMargin(3d);
+			.setLeftMargin(1d)
+			.setRightMargin(3d);
 
-		dataField = dataField.withIntervals(validInterval);
+		dataField.addIntervals(validInterval);
 
-		miningField = miningField.withOutlierTreatment(OutlierTreatmentMethodType.AS_IS)
-			.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_IS)
+			.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
 
 		assertEquals(-1d, prepare(dataField, miningField, -1d));
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
 
-		miningField = miningField.withOutlierTreatment(OutlierTreatmentMethodType.AS_MISSING_VALUES)
-			.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_MISSING_VALUES)
+			.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
 
 		assertEquals(0d, prepare(dataField, miningField, -1d));
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(0d, prepare(dataField, miningField, 5d));
 
-		miningField = miningField.withOutlierTreatment(OutlierTreatmentMethodType.AS_EXTREME_VALUES)
-			.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS)
-			.withLowValue(1d)
-			.withHighValue(3d);
+		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_EXTREME_VALUES)
+			.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS)
+			.setLowValue(1d)
+			.setHighValue(3d);
 
 		assertEquals(1d, prepare(dataField, miningField, -1d));
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(3d, prepare(dataField, miningField, 5d));
 
-		miningField = miningField.withOutlierTreatment(OutlierTreatmentMethodType.AS_MISSING_VALUES)
-			.withInvalidValueTreatment(InvalidValueTreatmentMethodType.RETURN_INVALID)
-			.withLowValue(null)
-			.withHighValue(null);
+		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_MISSING_VALUES)
+			.setInvalidValueTreatment(InvalidValueTreatmentMethodType.RETURN_INVALID)
+			.setLowValue(null)
+			.setHighValue(null);
 
 		try {
 			prepare(dataField, miningField, -1d);
@@ -117,37 +117,37 @@ public class ArgumentUtilTest {
 			// Ignored
 		}
 
-		miningField = miningField.withOutlierTreatment(OutlierTreatmentMethodType.AS_IS)
-			.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_IS)
+			.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 
 		assertEquals(0d, prepare(dataField, miningField, -1d));
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(0d, prepare(dataField, miningField, 5d));
 
-		dataField = clear(dataField);
+		dataField = clearIntervaldAndValues(dataField);
 
-		dataField = dataField.withValues(missingValue, createValue("1", Value.Property.VALID), createValue("2", Value.Property.VALID), createValue("3", Value.Property.VALID));
+		dataField.addValues(missingValue, createValue("1", Value.Property.VALID), createValue("2", Value.Property.VALID), createValue("3", Value.Property.VALID));
 
-		miningField = miningField.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
 
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
 
-		miningField = miningField.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(0d, prepare(dataField, miningField, 5d));
 
-		dataField = clear(dataField);
+		dataField = clearIntervaldAndValues(dataField);
 
-		dataField = dataField.withValues(missingValue, createValue("1", Value.Property.INVALID));
+		dataField.addValues(missingValue, createValue("1", Value.Property.INVALID));
 
-		miningField = miningField.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
 
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
 
-		miningField = miningField.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 
 		assertEquals(0d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
@@ -158,7 +158,7 @@ public class ArgumentUtilTest {
 		FieldName name = new FieldName("x");
 
 		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE)
-			.withIntervals(
+			.addIntervals(
 				createInterval(Interval.Closure.CLOSED_CLOSED, -10d, -1d),
 				createInterval(Interval.Closure.CLOSED_CLOSED, 1d, 10d)
 			);
@@ -188,7 +188,7 @@ public class ArgumentUtilTest {
 	}
 
 	static
-	private DataField clear(DataField dataField){
+	private DataField clearIntervaldAndValues(DataField dataField){
 		List<Interval> intervals = dataField.getIntervals();
 		intervals.clear();
 
@@ -201,8 +201,8 @@ public class ArgumentUtilTest {
 	static
 	private Interval createInterval(Interval.Closure closure, Double leftMargin, Double rightMargin){
 		Interval result = new Interval(closure)
-			.withLeftMargin(leftMargin)
-			.withRightMargin(rightMargin);
+			.setLeftMargin(leftMargin)
+			.setRightMargin(rightMargin);
 
 		return result;
 	}
@@ -210,7 +210,7 @@ public class ArgumentUtilTest {
 	static
 	private Value createValue(String value, Value.Property property){
 		Value result = new Value(value)
-			.withProperty(property);
+			.setProperty(property);
 
 		return result;
 	}

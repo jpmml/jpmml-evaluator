@@ -46,23 +46,27 @@ public class MeasureUtilTest {
 
 	@Test
 	public void evaluateSimilarity(){
+		ComparisonMeasure comparisonMeasure = new ComparisonMeasure(ComparisonMeasure.Kind.SIMILARITY);
+
 		List<ClusteringField> clusteringFields = createClusteringFields("one", "two", "three", "four");
 
 		BitSet flags = createFlags(0, 0, 1, 1);
 		BitSet referenceFlags = createFlags(0, 1, 0, 1);
 
-		ComparisonMeasure comparisonMeasure = new ComparisonMeasure(ComparisonMeasure.Kind.SIMILARITY);
+		comparisonMeasure.setMeasure(new SimpleMatching());
 
-		comparisonMeasure = comparisonMeasure.withMeasure(new SimpleMatching());
 		assertEquals((2d / 4d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags), 1e-8);
 
-		comparisonMeasure = comparisonMeasure.withMeasure(new Jaccard());
+		comparisonMeasure.setMeasure(new Jaccard());
+
 		assertEquals((1d / 3d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags), 1e-8);
 
-		comparisonMeasure = comparisonMeasure.withMeasure(new Tanimoto());
+		comparisonMeasure.setMeasure(new Tanimoto());
+
 		assertEquals((2d / (1d + 2 * 2d + 1d)), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags), 1e-8);
 
-		comparisonMeasure = comparisonMeasure.withMeasure(new BinarySimilarity(0.5d, 0.5d, 0.5d, 0.5d, 1d, 1d, 1d, 1d));
+		comparisonMeasure.setMeasure(new BinarySimilarity(0.5d, 0.5d, 0.5d, 0.5d, 1d, 1d, 1d, 1d));
+
 		assertEquals((2d / 4d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags), 1e-8);
 	}
 

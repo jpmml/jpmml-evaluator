@@ -31,7 +31,7 @@ public class NodeClassificationMapTest {
 	@Test
 	public void getProbability(){
 		Node node = new Node()
-			.withScore("ham");
+			.setScore("ham");
 
 		NodeClassificationMap classificationMap = new NodeClassificationMap(node);
 

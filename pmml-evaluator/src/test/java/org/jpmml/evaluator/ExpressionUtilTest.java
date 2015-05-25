@@ -46,15 +46,18 @@ public class ExpressionUtilTest {
 	@Test
 	public void evaluateConstant(){
 		Constant constant = new Constant("3")
-			.withDataType(DataType.STRING);
+			.setDataType(DataType.STRING);
+
 		assertEquals("3", evaluate(constant));
 
 		Constant integerThree = new Constant("3")
-			.withDataType(DataType.INTEGER);
+			.setDataType(DataType.INTEGER);
+
 		assertEquals(3, evaluate(integerThree));
 
 		Constant floatThree = new Constant("3")
-			.withDataType(DataType.FLOAT);
+			.setDataType(DataType.FLOAT);
+
 		assertEquals(3f, evaluate(floatThree));
 	}
 
@@ -63,11 +66,12 @@ public class ExpressionUtilTest {
 		FieldName name = new FieldName("x");
 
 		FieldRef fieldRef = new FieldRef(name);
-		assertEquals("3", evaluate(fieldRef, name, "3"));
 
+		assertEquals("3", evaluate(fieldRef, name, "3"));
 		assertEquals(null, evaluate(fieldRef, name, null));
 
-		fieldRef = fieldRef.withMapMissingTo("Missing");
+		fieldRef.setMapMissingTo("Missing");
+
 		assertEquals("Missing", evaluate(fieldRef, name, null));
 	}
 
@@ -76,7 +80,7 @@ public class ExpressionUtilTest {
 		FieldName name = new FieldName("x");
 
 		NormContinuous normContinuous = new NormContinuous(name, null)
-			.withMapMissingTo(5d);
+			.setMapMissingTo(5d);
 
 		assertEquals(5d, evaluate(normContinuous, name, null));
 	}
@@ -89,17 +93,21 @@ public class ExpressionUtilTest {
 		Double notEquals = 0d;
 
 		NormDiscrete stringThree = new NormDiscrete(name, "3");
+
 		assertEquals(equals, evaluate(stringThree, name, "3"));
 		assertEquals(notEquals, evaluate(stringThree, name, "1"));
 
-		stringThree = stringThree.withMapMissingTo(5d);
+		stringThree.setMapMissingTo(5d);
+
 		assertEquals(5d, evaluate(stringThree, name, null));
 
 		NormDiscrete integerThree = new NormDiscrete(name, "3");
+
 		assertEquals(equals, evaluate(integerThree, name, 3));
 		assertEquals(notEquals, evaluate(integerThree, name, 1));
 
 		NormDiscrete floatThree = new NormDiscrete(name, "3.0");
+
 		assertEquals(equals, evaluate(floatThree, name, 3f));
 		assertEquals(notEquals, evaluate(floatThree, name, 1f));
 	}
@@ -112,12 +120,13 @@ public class ExpressionUtilTest {
 
 		assertEquals(null, evaluate(discretize));
 
-		discretize = discretize.withMapMissingTo("Missing");
-		assertEquals("Missing", evaluate(discretize));
+		discretize.setMapMissingTo("Missing");
 
+		assertEquals("Missing", evaluate(discretize));
 		assertEquals(null, evaluate(discretize, name, 3));
 
-		discretize = discretize.withDefaultValue("Default");
+		discretize.setDefaultValue("Default");
+
 		assertEquals("Default", evaluate(discretize, name, 3));
 	}
 
@@ -126,16 +135,17 @@ public class ExpressionUtilTest {
 		FieldName name = new FieldName("x");
 
 		MapValues mapValues = new MapValues(null)
-			.withFieldColumnPairs(new FieldColumnPair(name, null));
+			.addFieldColumnPairs(new FieldColumnPair(name, null));
 
 		assertEquals(null, evaluate(mapValues));
 
-		mapValues = mapValues.withMapMissingTo("Missing");
-		assertEquals("Missing", evaluate(mapValues));
+		mapValues.setMapMissingTo("Missing");
 
+		assertEquals("Missing", evaluate(mapValues));
 		assertEquals(null, evaluate(mapValues, name, "3"));
 
-		mapValues = mapValues.withDefaultValue("Default");
+		mapValues.setDefaultValue("Default");
+
 		assertEquals("Default", evaluate(mapValues, name, "3"));
 	}
 
@@ -144,17 +154,19 @@ public class ExpressionUtilTest {
 		FieldName name = new FieldName("x");
 
 		Apply apply = new Apply("/")
-			.withExpressions(new FieldRef(name), new Constant("0"));
+			.addExpressions(new FieldRef(name), new Constant("0"));
 
 		assertEquals(null, evaluate(apply, name, null));
 
-		apply = apply.withDefaultValue("-1");
+		apply.setDefaultValue("-1");
+
 		assertEquals("-1", evaluate(apply, name, null));
 
-		apply = apply.withMapMissingTo("missing");
+		apply.setMapMissingTo("missing");
+
 		assertEquals("missing", evaluate(apply, name, null));
 
-		apply = apply.withInvalidValueTreatment(InvalidValueTreatmentMethodType.RETURN_INVALID);
+		apply.setInvalidValueTreatment(InvalidValueTreatmentMethodType.RETURN_INVALID);
 
 		try {
 			evaluate(apply, name, 1);
@@ -164,7 +176,7 @@ public class ExpressionUtilTest {
 			// Ignored
 		}
 
-		apply = apply.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		apply.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
 
 		try {
 			evaluate(apply, name, 1);
@@ -174,7 +186,8 @@ public class ExpressionUtilTest {
 			// Ignored
 		}
 
-		apply = apply.withInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		apply.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+
 		assertEquals("-1", evaluate(apply, name, 1));
 	}
 
@@ -183,10 +196,10 @@ public class ExpressionUtilTest {
 		FieldName name = new FieldName("x");
 
 		Apply condition = new Apply("isNotMissing")
-			.withExpressions(new FieldRef(name));
+			.addExpressions(new FieldRef(name));
 
 		Apply apply = new Apply("if")
-			.withExpressions(condition);
+			.addExpressions(condition);
 
 		try {
 			evaluate(apply, name, null);
@@ -197,9 +210,9 @@ public class ExpressionUtilTest {
 		}
 
 		Expression thenPart = new Apply("abs")
-			.withExpressions(new FieldRef(name));
+			.addExpressions(new FieldRef(name));
 
-		apply = apply.withExpressions(thenPart);
+		apply.addExpressions(thenPart);
 
 		assertEquals(1, evaluate(apply, name, 1));
 		assertEquals(1, evaluate(apply, name, -1));
@@ -207,13 +220,13 @@ public class ExpressionUtilTest {
 		assertEquals(null, evaluate(apply, name, null));
 
 		Expression elsePart = new Constant("-1")
-			.withDataType(DataType.DOUBLE);
+			.setDataType(DataType.DOUBLE);
 
-		apply = apply.withExpressions(elsePart);
+		apply.addExpressions(elsePart);
 
 		assertEquals(-1d, evaluate(apply, name, null));
 
-		apply = apply.withExpressions(new FieldRef(name));
+		apply.addExpressions(new FieldRef(name));
 
 		try {
 			evaluate(apply, name, null);
@@ -231,12 +244,15 @@ public class ExpressionUtilTest {
 		List<?> values = Arrays.asList(TypeUtil.parse(DataType.DATE, "2013-01-01"), TypeUtil.parse(DataType.DATE, "2013-02-01"), TypeUtil.parse(DataType.DATE, "2013-03-01"));
 
 		Aggregate aggregate = new Aggregate(name, Aggregate.Function.COUNT);
+
 		assertEquals(3, evaluate(aggregate, name, values));
 
-		aggregate = aggregate.withFunction(Aggregate.Function.MIN);
+		aggregate.setFunction(Aggregate.Function.MIN);
+
 		assertEquals(values.get(0), evaluate(aggregate, name, values));
 
-		aggregate = aggregate.withFunction(Aggregate.Function.MAX);
+		aggregate.setFunction(Aggregate.Function.MAX);
+
 		assertEquals(values.get(2), evaluate(aggregate, name, values));
 	}
 

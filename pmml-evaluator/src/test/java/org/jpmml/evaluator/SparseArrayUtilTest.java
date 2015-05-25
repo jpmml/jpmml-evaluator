@@ -37,9 +37,9 @@ public class SparseArrayUtilTest {
 	@Test
 	public void intSparseArray(){
 		IntSparseArray sparseArray = new IntSparseArray()
-			.withN(7)
-			.withIndices(2, 5)
-			.withEntries(3, 42);
+			.setN(7)
+			.addIndices(2, 5)
+			.addEntries(3, 42);
 
 		assertEquals((Integer)0, SparseArrayUtil.getValue(sparseArray, 1));
 		assertEquals((Integer)3, SparseArrayUtil.getValue(sparseArray, 2));

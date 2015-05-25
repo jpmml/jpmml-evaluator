@@ -27,57 +27,57 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.KernelType;
-import org.dmg.pmml.LinearKernelType;
-import org.dmg.pmml.PolynomialKernelType;
-import org.dmg.pmml.RadialBasisKernelType;
-import org.dmg.pmml.SigmoidKernelType;
+import org.dmg.pmml.Kernel;
+import org.dmg.pmml.LinearKernel;
+import org.dmg.pmml.PolynomialKernel;
+import org.dmg.pmml.RadialBasisKernel;
+import org.dmg.pmml.SigmoidKernel;
 
-public class KernelTypeUtil {
+public class KernelUtil {
 
-	private KernelTypeUtil(){
+	private KernelUtil(){
 	}
 
 	static
-	public double evaluate(KernelType kernelType, double[] input, double[] vector){
+	public double evaluate(Kernel kernel, double[] input, double[] vector){
 
-		if(kernelType instanceof LinearKernelType){
-			return evaluateLinearKernel((LinearKernelType)kernelType, input, vector);
+		if(kernel instanceof LinearKernel){
+			return evaluateLinearKernel((LinearKernel)kernel, input, vector);
 		} else
 
-		if(kernelType instanceof PolynomialKernelType){
-			return evaluatePolynomialKernel((PolynomialKernelType)kernelType, input, vector);
+		if(kernel instanceof PolynomialKernel){
+			return evaluatePolynomialKernel((PolynomialKernel)kernel, input, vector);
 		} else
 
-		if(kernelType instanceof RadialBasisKernelType){
-			return evaluateRadialBasisKernel((RadialBasisKernelType)kernelType, input, vector);
+		if(kernel instanceof RadialBasisKernel){
+			return evaluateRadialBasisKernel((RadialBasisKernel)kernel, input, vector);
 		} else
 
-		if(kernelType instanceof SigmoidKernelType){
-			return evaluateSigmoidKernel((SigmoidKernelType)kernelType, input, vector);
+		if(kernel instanceof SigmoidKernel){
+			return evaluateSigmoidKernel((SigmoidKernel)kernel, input, vector);
 		}
 
-		throw new UnsupportedFeatureException(kernelType);
+		throw new UnsupportedFeatureException(kernel);
 	}
 
 	static
-	public double evaluateLinearKernel(LinearKernelType linearKernelType, double[] input, double[] vector){
+	public double evaluateLinearKernel(LinearKernel linearKernel, double[] input, double[] vector){
 		return dotProduct(input, vector);
 	}
 
 	static
-	public double evaluatePolynomialKernel(PolynomialKernelType polynomialKernelType, double[] input, double[] vector){
-		return Math.pow(polynomialKernelType.getGamma() * dotProduct(input, vector) + polynomialKernelType.getCoef0(), polynomialKernelType.getDegree());
+	public double evaluatePolynomialKernel(PolynomialKernel polynomialKernel, double[] input, double[] vector){
+		return Math.pow(polynomialKernel.getGamma() * dotProduct(input, vector) + polynomialKernel.getCoef0(), polynomialKernel.getDegree());
 	}
 
 	static
-	public double evaluateRadialBasisKernel(RadialBasisKernelType radialBasisKernelType, double[] input, double[] vector){
-		return Math.exp(-radialBasisKernelType.getGamma() * squaredDistance(input, vector));
+	public double evaluateRadialBasisKernel(RadialBasisKernel radialBasisKernel, double[] input, double[] vector){
+		return Math.exp(-radialBasisKernel.getGamma() * squaredDistance(input, vector));
 	}
 
 	static
-	public double evaluateSigmoidKernel(SigmoidKernelType sigmoidKernelType, double[] input, double[] vector){
-		return Math.tanh(sigmoidKernelType.getGamma() * dotProduct(input, vector) + sigmoidKernelType.getCoef0());
+	public double evaluateSigmoidKernel(SigmoidKernel sigmoidKernel, double[] input, double[] vector){
+		return Math.tanh(sigmoidKernel.getGamma() * dotProduct(input, vector) + sigmoidKernel.getCoef0());
 	}
 
 	static

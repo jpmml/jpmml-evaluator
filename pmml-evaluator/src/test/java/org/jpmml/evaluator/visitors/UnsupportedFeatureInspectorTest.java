@@ -37,9 +37,9 @@ public class UnsupportedFeatureInspectorTest {
 		PMML pmml = new PMML("4.2", new Header(), new DataDictionary());
 
 		ClusteringModel model = new ClusteringModel()
-			.withModelClass(ClusteringModel.ModelClass.DISTRIBUTION_BASED);
+			.setModelClass(ClusteringModel.ModelClass.DISTRIBUTION_BASED);
 
-		pmml = pmml.withModels(model);
+		pmml.addModels(model);
 
 		UnsupportedFeatureInspector inspector = new UnsupportedFeatureInspector();
 

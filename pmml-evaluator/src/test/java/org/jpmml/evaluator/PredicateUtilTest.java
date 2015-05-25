@@ -46,33 +46,41 @@ public class PredicateUtilTest {
 		FieldName age = new FieldName("age");
 
 		SimplePredicate simplePredicate = new SimplePredicate(age, SimplePredicate.Operator.IS_MISSING);
+
 		assertEquals(Boolean.FALSE, evaluate(simplePredicate, age, 30));
 		assertEquals(Boolean.TRUE, evaluate(simplePredicate));
 
-		simplePredicate = simplePredicate.withOperator(SimplePredicate.Operator.IS_NOT_MISSING);
+		simplePredicate.setOperator(SimplePredicate.Operator.IS_NOT_MISSING);
+
 		assertEquals(Boolean.TRUE, evaluate(simplePredicate, age, 30));
 		assertEquals(Boolean.FALSE, evaluate(simplePredicate));
 
-		simplePredicate = simplePredicate.withValue("30");
+		simplePredicate.setValue("30");
 
-		simplePredicate = simplePredicate.withOperator(SimplePredicate.Operator.EQUAL);
+		simplePredicate.setOperator(SimplePredicate.Operator.EQUAL);
+
 		assertEquals(Boolean.TRUE, evaluate(simplePredicate, age, 30));
 		assertEquals(null, evaluate(simplePredicate));
 
-		simplePredicate = simplePredicate.withOperator(SimplePredicate.Operator.NOT_EQUAL);
+		simplePredicate.setOperator(SimplePredicate.Operator.NOT_EQUAL);
+
 		assertEquals(Boolean.FALSE, evaluate(simplePredicate, age, 30));
 		assertEquals(null, evaluate(simplePredicate));
 
-		simplePredicate = simplePredicate.withOperator(SimplePredicate.Operator.LESS_THAN);
+		simplePredicate.setOperator(SimplePredicate.Operator.LESS_THAN);
+
 		assertEquals(Boolean.FALSE, evaluate(simplePredicate, age, 30));
 
-		simplePredicate = simplePredicate.withOperator(SimplePredicate.Operator.LESS_OR_EQUAL);
+		simplePredicate.setOperator(SimplePredicate.Operator.LESS_OR_EQUAL);
+
 		assertEquals(Boolean.TRUE, evaluate(simplePredicate, age, 30));
 
-		simplePredicate = simplePredicate.withOperator(SimplePredicate.Operator.GREATER_OR_EQUAL);
+		simplePredicate.setOperator(SimplePredicate.Operator.GREATER_OR_EQUAL);
+
 		assertEquals(Boolean.TRUE, evaluate(simplePredicate, age, 30));
 
-		simplePredicate = simplePredicate.withOperator(SimplePredicate.Operator.GREATER_THAN);
+		simplePredicate.setOperator(SimplePredicate.Operator.GREATER_THAN);
+
 		assertEquals(Boolean.FALSE, evaluate(simplePredicate, age, 30));
 	}
 
@@ -81,22 +89,25 @@ public class PredicateUtilTest {
 		FieldName flag = new FieldName("flag");
 
 		SimplePredicate simplePredicate = new SimplePredicate(flag, SimplePredicate.Operator.EQUAL)
-			.withValue("true");
+			.setValue("true");
 
 		assertEquals(Boolean.TRUE, evaluate(simplePredicate, flag, true));
 		assertEquals(Boolean.FALSE, evaluate(simplePredicate, flag, false));
 
-		simplePredicate = simplePredicate.withOperator(SimplePredicate.Operator.NOT_EQUAL);
+		simplePredicate.setOperator(SimplePredicate.Operator.NOT_EQUAL);
+
 		assertEquals(Boolean.FALSE, evaluate(simplePredicate, flag, true));
 		assertEquals(Boolean.TRUE, evaluate(simplePredicate, flag, false));
 
-		simplePredicate = simplePredicate.withValue("0.5");
+		simplePredicate.setValue("0.5");
 
-		simplePredicate = simplePredicate.withOperator(SimplePredicate.Operator.LESS_OR_EQUAL);
+		simplePredicate.setOperator(SimplePredicate.Operator.LESS_OR_EQUAL);
+
 		assertEquals(Boolean.FALSE, evaluate(simplePredicate, flag, true));
 		assertEquals(Boolean.TRUE, evaluate(simplePredicate, flag, false));
 
-		simplePredicate = simplePredicate.withOperator(SimplePredicate.Operator.GREATER_THAN);
+		simplePredicate.setOperator(SimplePredicate.Operator.GREATER_THAN);
+
 		assertEquals(Boolean.TRUE, evaluate(simplePredicate, flag, true));
 		assertEquals(Boolean.FALSE, evaluate(simplePredicate, flag, false));
 	}
@@ -107,15 +118,15 @@ public class PredicateUtilTest {
 		FieldName humidity = new FieldName("humidity");
 
 		CompoundPredicate temperaturePredicate = new CompoundPredicate(CompoundPredicate.BooleanOperator.AND)
-			.withPredicates(
-				new SimplePredicate(temperature, SimplePredicate.Operator.LESS_THAN).withValue("90"),
-				new SimplePredicate(temperature, SimplePredicate.Operator.GREATER_THAN).withValue("50")
+			.addPredicates(
+				new SimplePredicate(temperature, SimplePredicate.Operator.LESS_THAN).setValue("90"),
+				new SimplePredicate(temperature, SimplePredicate.Operator.GREATER_THAN).setValue("50")
 			);
 
-		SimplePredicate humidityPredicate = new SimplePredicate(humidity, SimplePredicate.Operator.GREATER_OR_EQUAL).withValue("80");
+		SimplePredicate humidityPredicate = new SimplePredicate(humidity, SimplePredicate.Operator.GREATER_OR_EQUAL).setValue("80");
 
 		CompoundPredicate compoundPredicate = new CompoundPredicate(CompoundPredicate.BooleanOperator.SURROGATE)
-			.withPredicates(temperaturePredicate, humidityPredicate);
+			.addPredicates(temperaturePredicate, humidityPredicate);
 
 		assertEquals(Boolean.TRUE, evaluate(compoundPredicate, temperature, 70));
 		assertEquals(Boolean.FALSE, evaluate(compoundPredicate, temperature, 40));
@@ -130,15 +141,18 @@ public class PredicateUtilTest {
 	@Test
 	public void evaluateBooleanCompoundPredicate(){
 		CompoundPredicate compoundPredicate = new CompoundPredicate()
-			.withPredicates(new True(), new False());
+			.addPredicates(new True(), new False());
 
-		compoundPredicate = compoundPredicate.withBooleanOperator(CompoundPredicate.BooleanOperator.AND);
+		compoundPredicate.setBooleanOperator(CompoundPredicate.BooleanOperator.AND);
+
 		assertEquals(Boolean.FALSE, evaluate(compoundPredicate));
 
-		compoundPredicate = compoundPredicate.withBooleanOperator(CompoundPredicate.BooleanOperator.OR);
+		compoundPredicate.setBooleanOperator(CompoundPredicate.BooleanOperator.OR);
+
 		assertEquals(Boolean.TRUE, evaluate(compoundPredicate));
 
-		compoundPredicate = compoundPredicate.withBooleanOperator(CompoundPredicate.BooleanOperator.XOR);
+		compoundPredicate.setBooleanOperator(CompoundPredicate.BooleanOperator.XOR);
+
 		assertEquals(Boolean.TRUE, evaluate(compoundPredicate));
 	}
 
@@ -147,12 +161,14 @@ public class PredicateUtilTest {
 		FieldName fruit = new FieldName("fruit");
 
 		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(fruit, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "apple orange"));
+
 		assertEquals(null, evaluate(simpleSetPredicate));
 
 		assertEquals(Boolean.TRUE, evaluate(simpleSetPredicate, fruit, "apple"));
 		assertEquals(Boolean.FALSE, evaluate(simpleSetPredicate, fruit, "pineapple"));
 
-		simpleSetPredicate = simpleSetPredicate.withBooleanOperator(SimpleSetPredicate.BooleanOperator.IS_NOT_IN);
+		simpleSetPredicate.setBooleanOperator(SimpleSetPredicate.BooleanOperator.IS_NOT_IN);
+
 		assertEquals(Boolean.FALSE, evaluate(simpleSetPredicate, fruit, "apple"));
 		assertEquals(Boolean.TRUE, evaluate(simpleSetPredicate, fruit, "pineapple"));
 	}

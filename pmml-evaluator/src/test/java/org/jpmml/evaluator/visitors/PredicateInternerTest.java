@@ -35,12 +35,12 @@ public class PredicateInternerTest {
 	@Test
 	public void internSimplePredicate(){
 		Node left = new Node()
-			.withPredicate(new SimplePredicate(new FieldName("x"), SimplePredicate.Operator.EQUAL)
-				.withValue("1"));
+			.setPredicate(new SimplePredicate(new FieldName("x"), SimplePredicate.Operator.EQUAL)
+				.setValue("1"));
 
 		Node right = new Node()
-			.withPredicate(new SimplePredicate(new FieldName("x"), SimplePredicate.Operator.EQUAL)
-				.withValue("1"));
+			.setPredicate(new SimplePredicate(new FieldName("x"), SimplePredicate.Operator.EQUAL)
+				.setValue("1"));
 
 		checkTree(left, right);
 	}
@@ -48,10 +48,10 @@ public class PredicateInternerTest {
 	@Test
 	public void internSimpleSetPredicate(){
 		Node left = new Node()
-			.withPredicate(new SimpleSetPredicate(new FieldName("x"), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "1")));
+			.setPredicate(new SimpleSetPredicate(new FieldName("x"), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "1")));
 
 		Node right = new Node()
-			.withPredicate(new SimpleSetPredicate(new FieldName("x"), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "\"1\"")));
+			.setPredicate(new SimpleSetPredicate(new FieldName("x"), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "\"1\"")));
 
 		checkTree(left, right);
 	}
@@ -59,10 +59,10 @@ public class PredicateInternerTest {
 	@Test
 	public void internTrue(){
 		Node left = new Node()
-			.withPredicate(new True());
+			.setPredicate(new True());
 
 		Node right = new Node()
-			.withPredicate(new True());
+			.setPredicate(new True());
 
 		checkTree(left, right);
 	}
@@ -70,10 +70,10 @@ public class PredicateInternerTest {
 	@Test
 	public void internFalse(){
 		Node left = new Node()
-			.withPredicate(new False());
+			.setPredicate(new False());
 
 		Node right = new Node()
-			.withPredicate(new False());
+			.setPredicate(new False());
 
 		checkTree(left, right);
 	}
@@ -81,7 +81,7 @@ public class PredicateInternerTest {
 	static
 	private void checkTree(Node left, Node right){
 		Node root = new Node()
-			.withNodes(left, right);
+			.addNodes(left, right);
 
 		assertNotSame(left.getPredicate(), right.getPredicate());
 

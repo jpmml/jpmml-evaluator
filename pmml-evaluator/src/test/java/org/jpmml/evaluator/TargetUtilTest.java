@@ -29,14 +29,14 @@ public class TargetUtilTest {
 	@Test
 	public void processValue(){
 		Target target = new Target(new FieldName("amount"))
-			.withRescaleFactor(3.14d)
-			.withRescaleConstant(10d);
+			.setRescaleFactor(3.14d)
+			.setRescaleConstant(10d);
 
 		assertEquals(35.12d, (Double)TargetUtil.processValue(target, 8d), 1.e-8);
 
-		target = target.withCastInteger(Target.CastInteger.ROUND)
-			.withMin(-10d)
-			.withMax(10.5d);
+		target.setCastInteger(Target.CastInteger.ROUND)
+			.setMin(-10d)
+			.setMax(10.5d);
 
 		assertEquals(35, TargetUtil.processValue(target, 8d));
 		assertEquals(43, TargetUtil.processValue(target, 12.97d));

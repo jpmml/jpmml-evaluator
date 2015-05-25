@@ -89,8 +89,8 @@ public class DiscretizationUtilTest {
 	static
 	private Interval createInterval(Interval.Closure closure, Double leftMargin, Double rightMargin){
 		Interval result = new Interval(closure)
-			.withLeftMargin(leftMargin)
-			.withRightMargin(rightMargin);
+			.setLeftMargin(leftMargin)
+			.setRightMargin(rightMargin);
 
 		return result;
 	}
