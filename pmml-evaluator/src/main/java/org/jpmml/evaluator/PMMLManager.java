@@ -123,34 +123,6 @@ public class PMMLManager implements Serializable {
 		return pmml.getModels();
 	}
 
-	/**
-	 * @param modelName The name of the Model to be selected. If <code>null</code>, the first model is selected.
-	 *
-	 * @see Model#getModelName()
-	 */
-	public Model getModel(String modelName){
-		List<Model> models = getModels();
-
-		for(Model model : models){
-
-			if(modelName == null || (modelName).equals(model.getModelName())){
-				return model;
-			}
-		}
-
-		return null;
-	}
-
-	public ModelManager<? extends Model> getModelManager(ModelManagerFactory modelManagerFactory){
-		return getModelManager(null, modelManagerFactory);
-	}
-
-	public ModelManager<? extends Model> getModelManager(String modelName, ModelManagerFactory modelManagerFactory){
-		Model model = getModel(modelName);
-
-		return modelManagerFactory.getModelManager(getPMML(), model);
-	}
-
 	@SuppressWarnings (
 		value = {"unchecked"}
 	)

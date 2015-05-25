@@ -104,11 +104,9 @@ public class ModelManagerCache {
 
 		pmml = process(pmml);
 
-		PMMLManager pmmlManager = new PMMLManager(pmml);
-
 		ModelManagerFactory modelManagerFactory = getModelManagerFactory();
 
-		return pmmlManager.getModelManager(modelManagerFactory);
+		return modelManagerFactory.getModelManager(pmml);
 	}
 
 	protected PMML process(PMML pmml){

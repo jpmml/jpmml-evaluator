@@ -93,9 +93,9 @@ public class EnhancementExample extends Example {
 
 		CsvUtil.Table verificationTable = CsvUtil.readTable(this.verification);
 
-		PMMLManager pmmlManager = new PMMLManager(pmml);
+		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.getInstance();
 
-		ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)pmmlManager.getModelManager(ModelEvaluatorFactory.getInstance());
+		ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)modelEvaluatorFactory.getModelManager(pmml);
 
 		Model model = modelEvaluator.getModel();
 

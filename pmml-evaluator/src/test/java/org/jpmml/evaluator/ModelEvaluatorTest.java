@@ -20,6 +20,8 @@ package org.jpmml.evaluator;
 
 import java.io.InputStream;
 
+import org.dmg.pmml.PMML;
+
 abstract
 public class ModelEvaluatorTest extends PMMLManagerTest {
 
@@ -41,9 +43,18 @@ public class ModelEvaluatorTest extends PMMLManagerTest {
 		InputStream is = getInputStream(clazz);
 
 		try {
-			return PMMLUtil.createModelEvaluator(is, modelEvaluatorFactory);
+			return createModelEvaluator(is, modelEvaluatorFactory);
 		} finally {
 			is.close();
 		}
+	}
+
+	static
+	public ModelEvaluator<?> createModelEvaluator(InputStream is, ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
+		PMML pmml = loadPMML(is);
+
+		ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)modelEvaluatorFactory.getModelManager(pmml);
+
+		return modelEvaluator;
 	}
 }

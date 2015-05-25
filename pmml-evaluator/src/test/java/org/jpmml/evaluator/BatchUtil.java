@@ -78,7 +78,7 @@ public class BatchUtil {
 	 */
 	static
 	public Object evaluateDefault(Batch batch) throws Exception {
-		Evaluator evaluator = PMMLUtil.createModelEvaluator(batch.getModel(), ModelEvaluatorFactory.getInstance());
+		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(batch.getModel(), ModelEvaluatorFactory.getInstance());
 
 		Map<FieldName, ?> arguments = Collections.emptyMap();
 
@@ -92,7 +92,7 @@ public class BatchUtil {
 		List<? extends Map<FieldName, ?>> input = CsvUtil.load(batch.getInput());
 		List<? extends Map<FieldName, String>> output = CsvUtil.load(batch.getOutput());
 
-		ModelEvaluator<?> evaluator = PMMLUtil.createModelEvaluator(batch.getModel(), ModelEvaluatorFactory.getInstance());
+		ModelEvaluator<?> evaluator = ModelEvaluatorTest.createModelEvaluator(batch.getModel(), ModelEvaluatorFactory.getInstance());
 
 		PMML pmml = evaluator.getPMML();
 

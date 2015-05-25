@@ -57,23 +57,42 @@ The current version is **1.1.20** (22 May, 2015).
 
 # Usage #
 
-A model evaluator class can be instantiated directly when the contents of the PMML document is known:
+JPMML-Evaluator depends on the [JPMML-Model] (https://github.com/jpmml/jpmml-model) library for PMML class model.
+
+Loading a PMML schema version 3.X or 4.X document into an `org.dmg.pmml.PMML` instance:
+```
+PMML pmml;
+
+InputStream is = ...;
+
+try {
+	Source transformedSource = ImportFilter.apply(new InputSource(is));
+
+	pmml = JAXBUtil.unmarshalPMML(transformedSource);
+} finally {
+	is.close();
+}
+```
+
+If the model type is known, then it is possible to instantiate the corresponding subclass of `org.jpmml.evaluator.ModelEvaluator` directly:
 ```java
 PMML pmml = ...;
 
 ModelEvaluator<TreeModel> modelEvaluator = new TreeModelEvaluator(pmml);
 ```
 
-Otherwise, a PMML manager class should be instantiated first, which will inspect the contents of the PMML document and instantiate the right model evaluator class later:
+Otherwise, if the model type is unknown, then the model evaluator instantiation work should be delegated to an instance of class `org.jpmml.evaluator.ModelEvaluatorFactory`:
 ```java
 PMML pmml = ...;
 
-PMMLManager pmmlManager = new PMMLManager(pmml);
+ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.getInstance();
  
-ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)pmmlManager.getModelManager(ModelEvaluatorFactory.getInstance());
+ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)modelEvaluatorFactory.getModelManager(pmml);
 ```
 
-Model evaluator classes follow functional programming principles. Model evaluator instances are cheap enough to be created and discarded as needed (eg. not worth the pooling effort).
+Model evaluator classes follow functional programming principles and are completely thread safe.
+
+Model evaluator instances are fairly lightweight, which makes them cheap to create and destroy. Nevertheless, long-running applications should maintain a one-to-one mapping between `PMML` and `ModelEvaluator` instances for better performance.
 
 It is advisable for application code to work against the `org.jpmml.evaluator.Evaluator` interface:
 ```java
@@ -113,6 +132,7 @@ Map<FieldName, ?> results = evaluator.evaluate(arguments);
 Typically, a model has exactly one target field:
 ```java
 FieldName targetName = evaluator.getTargetField();
+
 Object targetValue = results.get(targetName);
 ```
 

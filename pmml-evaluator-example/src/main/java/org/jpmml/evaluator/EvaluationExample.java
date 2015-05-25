@@ -131,9 +131,9 @@ public class EvaluationExample extends Example {
 			is.close();
 		}
 
-		PMMLManager pmmlManager = new PMMLManager(pmml);
+		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.getInstance();
 
-		Evaluator evaluator = (Evaluator)pmmlManager.getModelManager(ModelEvaluatorFactory.getInstance());
+		Evaluator evaluator = (Evaluator)modelEvaluatorFactory.getModelManager(pmml);
 
 		List<Map<FieldName, FieldValue>> argumentsList;
 

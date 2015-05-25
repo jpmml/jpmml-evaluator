@@ -28,6 +28,7 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
@@ -40,4 +41,32 @@ public class ModelManagerFactory implements Serializable {
 
 	abstract
 	public ModelManager<? extends Model> getModelManager(PMML pmml, Model model);
+
+	public ModelManager<? extends Model> getModelManager(PMML pmml){
+		return getModelManager(pmml, (String)null);
+	}
+
+	/**
+	 * @param modelName The name of the Model to be selected. If <code>null</code>, then the default model is selected.
+	 *
+	 * @throws IllegalArgumentException If the model cannot be selected.
+	 *
+	 * @see Model#getModelName()
+	 */
+	public ModelManager<? extends Model> getModelManager(PMML pmml, String modelName){
+
+		if(!pmml.hasModels()){
+			throw new InvalidFeatureException(pmml);
+		}
+
+		List<Model> models = pmml.getModels();
+		for(Model model : models){
+
+			if(modelName == null || (modelName).equals(model.getModelName())){
+				return getModelManager(pmml, model);
+			}
+		}
+
+		throw new IllegalArgumentException(modelName);
+	}
 }
