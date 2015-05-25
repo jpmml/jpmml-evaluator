@@ -42,7 +42,7 @@ import org.dmg.pmml.Scorecard;
 import org.dmg.pmml.SupportVectorMachineModel;
 import org.dmg.pmml.TreeModel;
 
-public class ModelEvaluatorFactory extends ModelManagerFactory {
+public class ModelEvaluatorFactory extends ModelManagerFactory<ModelEvaluator<? extends Model>> {
 
 	protected ModelEvaluatorFactory(){
 	}

@@ -87,7 +87,7 @@ PMML pmml = ...;
 
 ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
  
-ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)modelEvaluatorFactory.newModelManager(pmml);
+ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelManager(pmml);
 ```
 
 Model evaluator classes follow functional programming principles and are completely thread safe.

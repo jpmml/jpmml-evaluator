@@ -95,7 +95,7 @@ public class EnhancementExample extends Example {
 
 		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
 
-		ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)modelEvaluatorFactory.newModelManager(pmml);
+		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelManager(pmml);
 
 		Model model = modelEvaluator.getModel();
 

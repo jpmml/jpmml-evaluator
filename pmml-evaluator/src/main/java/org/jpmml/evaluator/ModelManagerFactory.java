@@ -34,15 +34,15 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 
 abstract
-public class ModelManagerFactory implements Serializable {
+public class ModelManagerFactory<M extends ModelManager<? extends Model>> implements Serializable {
 
 	protected ModelManagerFactory(){
 	}
 
 	abstract
-	public ModelManager<? extends Model> newModelManager(PMML pmml, Model model);
+	public M newModelManager(PMML pmml, Model model);
 
-	public ModelManager<? extends Model> newModelManager(PMML pmml){
+	public M newModelManager(PMML pmml){
 		return newModelManager(pmml, (String)null);
 	}
 
@@ -53,7 +53,7 @@ public class ModelManagerFactory implements Serializable {
 	 *
 	 * @see Model#getModelName()
 	 */
-	public ModelManager<? extends Model> newModelManager(PMML pmml, String modelName){
+	public M newModelManager(PMML pmml, String modelName){
 
 		if(!pmml.hasModels()){
 			throw new InvalidFeatureException(pmml);
