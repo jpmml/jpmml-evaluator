@@ -45,7 +45,7 @@ import org.dmg.pmml.TreeModel;
 public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements HasEntityRegistry<Node> {
 
 	public TreeModelEvaluator(PMML pmml){
-		this(pmml, find(pmml.getModels(), TreeModel.class));
+		super(pmml, TreeModel.class);
 	}
 
 	public TreeModelEvaluator(PMML pmml, TreeModel treeModel){

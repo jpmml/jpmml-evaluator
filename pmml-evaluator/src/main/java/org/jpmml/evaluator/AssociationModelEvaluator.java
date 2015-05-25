@@ -47,7 +47,7 @@ import org.dmg.pmml.Target;
 public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> implements HasEntityRegistry<AssociationRule> {
 
 	public AssociationModelEvaluator(PMML pmml){
-		this(pmml, find(pmml.getModels(), AssociationModel.class));
+		super(pmml, AssociationModel.class);
 	}
 
 	public AssociationModelEvaluator(PMML pmml, AssociationModel associationModel){

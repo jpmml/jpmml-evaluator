@@ -38,7 +38,7 @@ import org.dmg.pmml.Scorecard;
 public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 	public ScorecardEvaluator(PMML pmml){
-		this(pmml, find(pmml.getModels(), Scorecard.class));
+		super(pmml, Scorecard.class);
 	}
 
 	public ScorecardEvaluator(PMML pmml, Scorecard scorecard){

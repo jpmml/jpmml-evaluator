@@ -39,7 +39,7 @@ import org.dmg.pmml.RegressionTable;
 public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 	public RegressionModelEvaluator(PMML pmml){
-		this(pmml, find(pmml.getModels(), RegressionModel.class));
+		super(pmml, RegressionModel.class);
 	}
 
 	public RegressionModelEvaluator(PMML pmml, RegressionModel regressionModel){

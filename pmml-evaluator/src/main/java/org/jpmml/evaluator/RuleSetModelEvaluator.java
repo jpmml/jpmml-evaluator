@@ -38,7 +38,7 @@ import org.dmg.pmml.SimpleRule;
 public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 
 	public RuleSetModelEvaluator(PMML pmml){
-		this(pmml, find(pmml.getModels(), RuleSetModel.class));
+		super(pmml, RuleSetModel.class);
 	}
 
 	public RuleSetModelEvaluator(PMML pmml, RuleSetModel ruleSetModel){

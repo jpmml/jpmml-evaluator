@@ -68,7 +68,7 @@ import org.dmg.pmml.PredictorList;
 public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegressionModel> {
 
 	public GeneralRegressionModelEvaluator(PMML pmml){
-		this(pmml, find(pmml.getModels(), GeneralRegressionModel.class));
+		super(pmml, GeneralRegressionModel.class);
 	}
 
 	public GeneralRegressionModelEvaluator(PMML pmml, GeneralRegressionModel generalRegressionModel){

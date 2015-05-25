@@ -46,7 +46,7 @@ import org.dmg.pmml.Target;
 public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> implements HasEntityRegistry<Cluster> {
 
 	public ClusteringModelEvaluator(PMML pmml){
-		this(pmml, find(pmml.getModels(), ClusteringModel.class));
+		super(pmml, ClusteringModel.class);
 	}
 
 	public ClusteringModelEvaluator(PMML pmml, ClusteringModel clusteringModel){

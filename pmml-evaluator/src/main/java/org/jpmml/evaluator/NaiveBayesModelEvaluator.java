@@ -66,7 +66,7 @@ import org.jpmml.model.ExtensionUtil;
 public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 	public NaiveBayesModelEvaluator(PMML pmml){
-		this(pmml, find(pmml.getModels(), NaiveBayesModel.class));
+		super(pmml, NaiveBayesModel.class);
 	}
 
 	public NaiveBayesModelEvaluator(PMML pmml, NaiveBayesModel naiveBayesModel){

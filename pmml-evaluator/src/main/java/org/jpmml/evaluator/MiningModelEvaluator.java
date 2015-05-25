@@ -54,7 +54,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 
 	public MiningModelEvaluator(PMML pmml){
-		this(pmml, find(pmml.getModels(), MiningModel.class));
+		super(pmml, MiningModel.class);
 	}
 
 	public MiningModelEvaluator(PMML pmml, MiningModel miningModel){

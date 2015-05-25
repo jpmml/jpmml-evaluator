@@ -60,7 +60,7 @@ import org.jpmml.model.ReflectionUtil;
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
 
 	public SupportVectorMachineModelEvaluator(PMML pmml){
-		this(pmml, find(pmml.getModels(), SupportVectorMachineModel.class));
+		super(pmml, SupportVectorMachineModel.class);
 	}
 
 	public SupportVectorMachineModelEvaluator(PMML pmml, SupportVectorMachineModel supportVectorMachineModel){

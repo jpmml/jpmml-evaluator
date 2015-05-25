@@ -60,7 +60,7 @@ import org.dmg.pmml.PMMLObject;
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<Entity> {
 
 	public NeuralNetworkEvaluator(PMML pmml){
-		this(pmml, find(pmml.getModels(), NeuralNetwork.class));
+		super(pmml, NeuralNetwork.class);
 	}
 
 	public NeuralNetworkEvaluator(PMML pmml, NeuralNetwork neuralNetwork){

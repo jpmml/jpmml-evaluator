@@ -55,15 +55,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	public ModelManager(PMML pmml, M model){
 		super(pmml);
 
-		setModel(model);
-	}
-
-	public M getModel(){
-		return this.model;
-	}
-
-	private void setModel(M model){
-		this.model = checkNotNull(model);
+		setModel(checkNotNull(model));
 	}
 
 	@Override
@@ -110,6 +102,9 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	@Override
 	public MiningField getMiningField(FieldName name){
 		MiningSchema miningSchema = getMiningSchema();
+		if(miningSchema == null){
+			return null;
+		}
 
 		List<MiningField> miningFields = miningSchema.getMiningFields();
 
@@ -120,6 +115,9 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		List<FieldName> result = Lists.newArrayList();
 
 		MiningSchema miningSchema = getMiningSchema();
+		if(miningSchema == null){
+			return result;
+		}
 
 		List<MiningField> miningFields = miningSchema.getMiningFields();
 		for(MiningField miningField : miningFields){
@@ -202,7 +200,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	public MiningSchema getMiningSchema(){
 		M model = getModel();
 
-		return checkNotNull(model.getMiningSchema());
+		return model.getMiningSchema();
 	}
 
 	public LocalTransformations getLocalTransformations(){
@@ -221,6 +219,14 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		M model = getModel();
 
 		return model.getTargets();
+	}
+
+	public M getModel(){
+		return this.model;
+	}
+
+	private void setModel(M model){
+		this.model = model;
 	}
 
 	private static final EnumSet<FieldUsageType> ACTIVE_SET = EnumSet.of(FieldUsageType.ACTIVE);

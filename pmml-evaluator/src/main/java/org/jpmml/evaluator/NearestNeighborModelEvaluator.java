@@ -72,7 +72,7 @@ import org.dmg.pmml.TrainingInstances;
 public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighborModel> {
 
 	public NearestNeighborModelEvaluator(PMML pmml){
-		this(pmml, find(pmml.getModels(), NearestNeighborModel.class));
+		super(pmml, NearestNeighborModel.class);
 	}
 
 	public NearestNeighborModelEvaluator(PMML pmml, NearestNeighborModel nearestNeighborModel){

@@ -31,15 +31,12 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.HasName;
-import org.dmg.pmml.Header;
-import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.TransformationDictionary;
@@ -52,11 +49,14 @@ public class PMMLManager implements Serializable {
 
 
 	public PMMLManager(PMML pmml){
-		setPMML(pmml);
+		setPMML(checkNotNull(pmml));
 	}
 
 	public DataField getDataField(FieldName name){
 		DataDictionary dataDictionary = getDataDictionary();
+		if(dataDictionary == null){
+			return null;
+		}
 
 		List<DataField> dataFields = dataDictionary.getDataFields();
 
@@ -91,24 +91,10 @@ public class PMMLManager implements Serializable {
 		return null;
 	}
 
-	public PMML getPMML(){
-		return this.pmml;
-	}
-
-	private void setPMML(PMML pmml){
-		this.pmml = checkNotNull(pmml);
-	}
-
-	public Header getHeader(){
-		PMML pmml = getPMML();
-
-		return checkNotNull(pmml.getHeader());
-	}
-
 	public DataDictionary getDataDictionary(){
 		PMML pmml = getPMML();
 
-		return checkNotNull(pmml.getDataDictionary());
+		return pmml.getDataDictionary();
 	}
 
 	public TransformationDictionary getTransformationDictionary(){
@@ -117,43 +103,12 @@ public class PMMLManager implements Serializable {
 		return pmml.getTransformationDictionary();
 	}
 
-	public List<Model> getModels(){
-		PMML pmml = getPMML();
-
-		return pmml.getModels();
+	public PMML getPMML(){
+		return this.pmml;
 	}
 
-	@SuppressWarnings (
-		value = {"unchecked"}
-	)
-	static
-	public <E extends PMMLObject> E find(List<?> objects, Class<? extends E> clazz){
-
-		for(Object object : objects){
-
-			if((object.getClass()).equals(clazz)){
-				return (E)object;
-			}
-		}
-
-		return null;
-	}
-
-	@SuppressWarnings (
-		value = {"unchecked"}
-	)
-	static
-	public <E extends PMMLObject> List<E> findAll(List<?> objects, Class<? extends E> clazz){
-		List<E> result = Lists.newArrayList();
-
-		for(Object object : objects){
-
-			if((object.getClass()).equals(clazz)){
-				result.add((E)object);
-			}
-		}
-
-		return result;
+	private void setPMML(PMML pmml){
+		this.pmml = pmml;
 	}
 
 	static
