@@ -23,7 +23,6 @@ import java.net.URL;
 import java.util.Map;
 
 import com.google.common.cache.CacheBuilder;
-import org.dmg.pmml.Model;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -38,7 +37,7 @@ public class ModelEvaluatorCacheTest {
 
 		ModelEvaluatorCache cache = new ModelEvaluatorCache(CacheBuilder.newBuilder());
 
-		Map<URI, ModelManager<? extends Model>> map = cache.asMap();
+		Map<URI, ModelEvaluator<?>> map = cache.asMap();
 
 		assertEquals(0, map.size());
 

@@ -18,41 +18,125 @@
  */
 package org.jpmml.evaluator;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.transform.sax.SAXSource;
 
 import com.google.common.cache.CacheBuilder;
-import org.dmg.pmml.Model;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import org.dmg.pmml.PMML;
+import org.jpmml.model.ImportFilter;
+import org.jpmml.model.JAXBUtil;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class ModelEvaluatorCache extends ModelManagerCache {
+public class ModelEvaluatorCache {
+
+	private ModelEvaluatorFactory modelEvaluatorFactory = null;
+
+	private LoadingCache<URI, ModelEvaluator<?>> cache = null;
+
 
 	public ModelEvaluatorCache(CacheBuilder<Object, Object> cacheBuilder){
 		this(ModelEvaluatorFactory.newInstance(), cacheBuilder);
 	}
 
 	public ModelEvaluatorCache(ModelEvaluatorFactory modelEvaluatorFactory, CacheBuilder<Object, Object> cacheBuilder){
-		super(modelEvaluatorFactory, cacheBuilder);
+		setModelEvaluatorFactory(modelEvaluatorFactory);
+
+		CacheLoader<URI, ModelEvaluator<?>> cacheLoader = new CacheLoader<URI, ModelEvaluator<?>>(){
+
+			@Override
+			public ModelEvaluator<?> load(URI uri) throws Exception {
+				return ModelEvaluatorCache.this.loadModelEvaluator(uri);
+			}
+		};
+
+		this.cache = cacheBuilder.build(cacheLoader);
 	}
 
-	@Override
-	public ModelEvaluator<? extends Model> get(Class<?> clazz) throws Exception {
-		return (ModelEvaluator<? extends Model>)super.get(clazz);
+	public ModelEvaluator<?> get(Class<?> clazz) throws Exception {
+		return get(toURL(clazz));
 	}
 
-	@Override
-	public ModelEvaluator<? extends Model> get(URL url) throws Exception {
-		return (ModelEvaluator<? extends Model>)super.get(url);
+	public ModelEvaluator<?> get(URL url) throws Exception {
+		URI uri = url.toURI();
+
+		return this.cache.get(uri);
 	}
 
-	@Override
-	protected ModelEvaluator<? extends Model> loadModelManager(URI uri) throws IOException, JAXBException, SAXException {
-		ModelEvaluator<? extends Model> modelEvaluator = (ModelEvaluator<? extends Model>)super.loadModelManager(uri);
+	public void remove(Class<?> clazz) throws Exception {
+		remove(toURL(clazz));
+	}
+
+	public void remove(URL url) throws Exception {
+		URI uri = url.toURI();
+
+		this.cache.invalidate(uri);
+	}
+
+	protected ModelEvaluator<?> loadModelEvaluator(URI uri) throws IOException, JAXBException, SAXException {
+		URL url = uri.toURL();
+
+		InputStream is = url.openStream();
+
+		PMML pmml;
+
+		try {
+			InputSource source = new InputSource(is);
+
+			// Transform a PMML schema version 3.X or 4.X document to a PMML schema version 4.2 document
+			SAXSource transformedSource = ImportFilter.apply(source);
+
+			pmml = JAXBUtil.unmarshalPMML(transformedSource);
+		} finally {
+			is.close();
+		}
+
+		pmml = process(pmml);
+
+		ModelEvaluatorFactory modelEvaluatorFactory = getModelEvaluatorFactory();
+
+		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelManager(pmml);
 		modelEvaluator.verify();
 
 		return modelEvaluator;
+	}
+
+	protected PMML process(PMML pmml){
+		return pmml;
+	}
+
+	public ModelEvaluatorFactory getModelEvaluatorFactory(){
+		return this.modelEvaluatorFactory;
+	}
+
+	private void setModelEvaluatorFactory(ModelEvaluatorFactory modelEvaluatorFactory){
+		this.modelEvaluatorFactory = modelEvaluatorFactory;
+	}
+
+	public ConcurrentMap<URI, ModelEvaluator<?>> asMap(){
+		return this.cache.asMap();
+	}
+
+	static
+	private URL toURL(Class<?> clazz) throws IOException {
+		String path = (clazz.getName()).replace('.', '/') + ".pmml";
+
+		ClassLoader clazzLoader = clazz.getClassLoader();
+
+		URL url = clazzLoader.getResource(path);
+		if(url == null){
+			throw new FileNotFoundException(path);
+		}
+
+		return url;
 	}
 }
