@@ -38,6 +38,8 @@ import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.OutputField;
+import org.dmg.pmml.Target;
+import org.dmg.pmml.Targets;
 
 public interface Consumer extends Serializable {
 
@@ -79,8 +81,8 @@ public interface Consumer extends Serializable {
 	 * Convenience method for retrieving the sole target field.
 	 *
 	 * A supervised model should, but is not required to, define a target field. An unsupervised model, by definition, does not define a target field.
-	 * If the {@link #getTargetFields() collection of target fields} is empty, the model consumer should assume that the model defines a default target field, which is represented by <code>null</code>.
-	 * The default target field could be either "true" or "phantom". They can be distinguished from one another by looking up the definitoon.
+	 * If the {@link #getTargetFields() collection of target fields} is empty, then the model consumer should assume that the model defines a default target field, which is represented by <code>null</code>.
+	 * The default target field could be either "real" or "phantom". They can be distinguished from one another by looking up the definition of the field from the {@link DataDictionary}.
 	 * <pre>
 	 * Consumer consumer = ...;
 	 *
@@ -90,7 +92,7 @@ public interface Consumer extends Serializable {
 	 *
 	 *   DataField dataField = consumer.getDataField(targetField);
 	 *   if(dataField != null){
-	 *     // A "true" default target field
+	 *     // A "real" default target field
 	 *   } else
 	 *
 	 *   {
@@ -119,14 +121,21 @@ public interface Consumer extends Serializable {
 	MiningField getMiningField(FieldName name);
 
 	/**
-	 * Gets the definition of a field from the {@link Output}
+	 * Gets the definition of a field from the {@link Targets}.
 	 *
-	 * @see #getOutputFields()
+	 * @see #getTargetFields()
 	 */
-	OutputField getOutputField(FieldName name);
+	Target getTarget(FieldName name);
 
 	/**
 	 * Gets the output fields of a {@link Model} from its {@link Output}.
 	 */
 	List<FieldName> getOutputFields();
+
+	/**
+	 * Gets the definition of a field from the {@link Output}
+	 *
+	 * @see #getOutputFields()
+	 */
+	OutputField getOutputField(FieldName name);
 }

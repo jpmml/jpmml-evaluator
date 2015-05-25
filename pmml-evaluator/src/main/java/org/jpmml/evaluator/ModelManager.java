@@ -154,15 +154,20 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	@Override
-	public OutputField getOutputField(FieldName name){
-		Output output = getOutput();
-		if(output == null){
+	public Target getTarget(FieldName name){
+		Targets targets = getTargets();
+		if(targets == null){
 			return null;
 		}
 
-		List<OutputField> outputFields = output.getOutputFields();
+		for(Target target : targets){
 
-		return find(outputFields, name);
+			if((target.getField()).equals(name)){
+				return target;
+			}
+		}
+
+		return null;
 	}
 
 	@Override
@@ -182,20 +187,16 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return result;
 	}
 
-	public Target getTarget(FieldName name){
-		Targets targets = getTargets();
-		if(targets == null){
+	@Override
+	public OutputField getOutputField(FieldName name){
+		Output output = getOutput();
+		if(output == null){
 			return null;
 		}
 
-		for(Target target : targets){
+		List<OutputField> outputFields = output.getOutputFields();
 
-			if((target.getField()).equals(name)){
-				return target;
-			}
-		}
-
-		return null;
+		return find(outputFields, name);
 	}
 
 	public MiningSchema getMiningSchema(){

@@ -45,9 +45,9 @@ public class TargetUtil {
 
 	static
 	public Map<FieldName, ?> evaluateRegression(Double value, ModelEvaluationContext context){
-		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
+		Evaluator evaluator = context.getModelEvaluator();
 
-		return evaluateRegression(Collections.singletonMap(modelEvaluator.getTargetField(), value), context);
+		return evaluateRegression(Collections.singletonMap(evaluator.getTargetField(), value), context);
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class TargetUtil {
 	 */
 	static
 	public Map<FieldName, ?> evaluateRegression(Map<FieldName, ? extends Number> predictions, ModelEvaluationContext context){
-		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
+		Evaluator evaluator = context.getModelEvaluator();
 
 		Map<FieldName, Object> result = Maps.newLinkedHashMap();
 
@@ -64,14 +64,14 @@ public class TargetUtil {
 			FieldName key = entry.getKey();
 			Object value = entry.getValue();
 
-			DataField dataField = modelEvaluator.getDataField(key);
+			DataField dataField = evaluator.getDataField(key);
 			if(dataField == null){
 				throw new EvaluationException();
 			}
 
-			MiningField miningField = modelEvaluator.getMiningField(key);
+			MiningField miningField = evaluator.getMiningField(key);
 
-			Target target = modelEvaluator.getTarget(key);
+			Target target = evaluator.getTarget(key);
 			if(target != null){
 
 				if(value == null){
@@ -102,9 +102,9 @@ public class TargetUtil {
 
 	static
 	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ClassificationMap<?> value, ModelEvaluationContext context){
-		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
+		Evaluator evaluator = context.getModelEvaluator();
 
-		return evaluateClassification(Collections.singletonMap(modelEvaluator.getTargetField(), value), context);
+		return evaluateClassification(Collections.singletonMap(evaluator.getTargetField(), value), context);
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class TargetUtil {
 	 */
 	static
 	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(Map<FieldName, ? extends ClassificationMap<?>> predictions, ModelEvaluationContext context){
-		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
+		Evaluator evaluator = context.getModelEvaluator();
 
 		Map<FieldName, ClassificationMap<?>> result = Maps.newLinkedHashMap();
 
@@ -121,14 +121,14 @@ public class TargetUtil {
 			FieldName key = entry.getKey();
 			ClassificationMap<?> value = entry.getValue();
 
-			DataField dataField = modelEvaluator.getDataField(key);
+			DataField dataField = evaluator.getDataField(key);
 			if(dataField == null){
 				throw new EvaluationException();
 			}
 
-			MiningField miningField = modelEvaluator.getMiningField(key);
+			MiningField miningField = evaluator.getMiningField(key);
 
-			Target target = modelEvaluator.getTarget(key);
+			Target target = evaluator.getTarget(key);
 			if(target != null){
 
 				if(value == null){
