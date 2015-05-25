@@ -85,9 +85,9 @@ Otherwise, if the model type is unknown, then the model evaluator instantiation 
 ```java
 PMML pmml = ...;
 
-ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.getInstance();
+ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
  
-ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)modelEvaluatorFactory.getModelManager(pmml);
+ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)modelEvaluatorFactory.newModelManager(pmml);
 ```
 
 Model evaluator classes follow functional programming principles and are completely thread safe.

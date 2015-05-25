@@ -35,7 +35,7 @@ public class ModelEvaluatorTest extends PMMLManagerTest {
 
 	static
 	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz) throws Exception {
-		return createModelEvaluator(clazz, ModelEvaluatorFactory.getInstance());
+		return createModelEvaluator(clazz, ModelEvaluatorFactory.newInstance());
 	}
 
 	static
@@ -53,7 +53,7 @@ public class ModelEvaluatorTest extends PMMLManagerTest {
 	public ModelEvaluator<?> createModelEvaluator(InputStream is, ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
 		PMML pmml = loadPMML(is);
 
-		ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)modelEvaluatorFactory.getModelManager(pmml);
+		ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)modelEvaluatorFactory.newModelManager(pmml);
 
 		return modelEvaluator;
 	}

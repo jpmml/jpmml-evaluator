@@ -257,7 +257,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		ModelEvaluatorFactory evaluatorFactory = getEvaluatorFactory();
 		if(evaluatorFactory == null){
-			evaluatorFactory = ModelEvaluatorFactory.getInstance();
+			evaluatorFactory = ModelEvaluatorFactory.newInstance();
 		}
 
 		List<Segment> segments = segmentation.getSegments();
@@ -291,7 +291,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					break;
 			}
 
-			ModelEvaluator<?> evaluator = evaluatorFactory.getModelManager(getPMML(), model);
+			ModelEvaluator<?> evaluator = evaluatorFactory.newModelManager(getPMML(), model);
 
 			ModelEvaluationContext segmentContext = evaluator.createContext(context);
 

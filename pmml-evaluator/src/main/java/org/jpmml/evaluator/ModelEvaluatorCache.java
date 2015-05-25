@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
 public class ModelEvaluatorCache extends ModelManagerCache {
 
 	public ModelEvaluatorCache(CacheBuilder<Object, Object> cacheBuilder){
-		this(ModelEvaluatorFactory.getInstance(), cacheBuilder);
+		this(ModelEvaluatorFactory.newInstance(), cacheBuilder);
 	}
 
 	public ModelEvaluatorCache(ModelEvaluatorFactory modelEvaluatorFactory, CacheBuilder<Object, Object> cacheBuilder){

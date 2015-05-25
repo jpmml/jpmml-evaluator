@@ -40,10 +40,10 @@ public class ModelManagerFactory implements Serializable {
 	}
 
 	abstract
-	public ModelManager<? extends Model> getModelManager(PMML pmml, Model model);
+	public ModelManager<? extends Model> newModelManager(PMML pmml, Model model);
 
-	public ModelManager<? extends Model> getModelManager(PMML pmml){
-		return getModelManager(pmml, (String)null);
+	public ModelManager<? extends Model> newModelManager(PMML pmml){
+		return newModelManager(pmml, (String)null);
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class ModelManagerFactory implements Serializable {
 	 *
 	 * @see Model#getModelName()
 	 */
-	public ModelManager<? extends Model> getModelManager(PMML pmml, String modelName){
+	public ModelManager<? extends Model> newModelManager(PMML pmml, String modelName){
 
 		if(!pmml.hasModels()){
 			throw new InvalidFeatureException(pmml);
@@ -63,7 +63,7 @@ public class ModelManagerFactory implements Serializable {
 		for(Model model : models){
 
 			if(modelName == null || (modelName).equals(model.getModelName())){
-				return getModelManager(pmml, model);
+				return newModelManager(pmml, model);
 			}
 		}
 

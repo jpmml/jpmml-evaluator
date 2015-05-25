@@ -31,8 +31,8 @@ import org.dmg.pmml.Model;
  * <h3>Obtaining and verifying an Evaluator instance</h3>
  * <pre>
  * PMML pmml = ...;
- * ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.getInstance();
- * Evaluator evaluator = (Evaluator)modelEvaluatorFactory.getModelManager(pmml);
+ * ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
+ * Evaluator evaluator = (Evaluator)modelEvaluatorFactory.newModelManager(pmml);
  * evaluator.verify();
  * </pre>
  *

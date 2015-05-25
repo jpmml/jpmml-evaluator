@@ -48,7 +48,7 @@ public class ModelEvaluatorFactory extends ModelManagerFactory {
 	}
 
 	@Override
-	public ModelEvaluator<? extends Model> getModelManager(PMML pmml, Model model){
+	public ModelEvaluator<? extends Model> newModelManager(PMML pmml, Model model){
 
 		if(model instanceof AssociationModel){
 			return new AssociationModelEvaluator(pmml, (AssociationModel)model);
@@ -105,7 +105,7 @@ public class ModelEvaluatorFactory extends ModelManagerFactory {
 	}
 
 	static
-	public ModelEvaluatorFactory getInstance(){
+	public ModelEvaluatorFactory newInstance(){
 		return new ModelEvaluatorFactory();
 	}
 }
