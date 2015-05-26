@@ -34,8 +34,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBException;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -61,7 +59,6 @@ import org.dmg.pmml.TargetValueCount;
 import org.dmg.pmml.TargetValueCounts;
 import org.dmg.pmml.TargetValueStat;
 import org.dmg.pmml.TargetValueStats;
-import org.jpmml.model.ExtensionUtil;
 
 public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
@@ -263,9 +260,13 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 	static
 	private List<BayesInput> parseBayesInputs(NaiveBayesModel naiveBayesModel){
-		List<BayesInput> result = new ArrayList<>();
-
 		BayesInputs bayesInputs = naiveBayesModel.getBayesInputs();
+
+		if(!bayesInputs.hasExtensions()){
+			return bayesInputs.getBayesInputs();
+		}
+
+		List<BayesInput> result = new ArrayList<>(bayesInputs.getBayesInputs());
 
 		// The support for continuous fields using the TargetValueStats element was officially introduced in PMML schema version 4.2.
 		// However, it is possible to encounter this feature in older PMML schema version documents (most notably, produced by R's "pmml" package),
@@ -282,22 +283,17 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		// </BayesInputs>
 		List<Extension> extensions = bayesInputs.getExtensions();
 		for(Extension extension : extensions){
-			BayesInput bayesInput;
+			List<?> objects = extension.getContent();
 
-			try {
-				bayesInput = ExtensionUtil.getExtension(extension, BayesInput.class);
-			} catch(JAXBException je){
-				throw new InvalidFeatureException(extension);
+			for(Object object : objects){
+
+				if(object instanceof BayesInput){
+					BayesInput bayesInput = (BayesInput)object;
+
+					result.add(bayesInput);
+				}
 			}
-
-			if(bayesInput == null){
-				continue;
-			}
-
-			result.add(bayesInput);
 		}
-
-		result.addAll(bayesInputs.getBayesInputs());
 
 		return result;
 	}
