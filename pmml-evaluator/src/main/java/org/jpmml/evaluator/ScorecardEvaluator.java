@@ -78,7 +78,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 		boolean useReasonCodes = scorecard.isUseReasonCodes();
 
-		VoteAggregator<String> reasonCodePoints = new VoteAggregator<String>();
+		VoteAggregator<String> reasonCodePoints = new VoteAggregator<>();
 
 		Characteristics characteristics = scorecard.getCharacteristics();
 		for(Characteristic characteristic : characteristics){

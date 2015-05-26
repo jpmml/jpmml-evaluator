@@ -315,7 +315,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Object calculateCategoricalTarget(FieldName name, List<InstanceResult> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		VoteAggregator<Object> aggregator = new VoteAggregator<Object>();
+		VoteAggregator<Object> aggregator = new VoteAggregator<>();
 
 		CategoricalScoringMethodType categoricalScoringMethod = nearestNeighborModel.getCategoricalScoringMethod();
 

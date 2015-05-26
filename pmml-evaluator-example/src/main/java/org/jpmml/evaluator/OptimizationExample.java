@@ -48,7 +48,7 @@ public class OptimizationExample extends Example {
 		names = {"--visitor-classes"},
 		description = "List of Visitor class names"
 	)
-	private List<String> visitorClasses = new ArrayList<String>();
+	private List<String> visitorClasses = new ArrayList<>();
 
 	@Parameter (
 		names = {"--summary"},

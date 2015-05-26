@@ -136,7 +136,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		SvmClassificationMethodType svmClassificationMethod = getClassificationMethod();
 		switch(svmClassificationMethod){
 			case ONE_AGAINST_ALL:
-				result = new ClassificationMap<String>(ClassificationMap.Type.DISTANCE);
+				result = new ClassificationMap<>(ClassificationMap.Type.DISTANCE);
 				break;
 			case ONE_AGAINST_ONE:
 				result = new VoteClassificationMap();

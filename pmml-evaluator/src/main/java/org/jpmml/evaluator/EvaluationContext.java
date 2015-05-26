@@ -60,7 +60,7 @@ public class EvaluationContext {
 		Map<FieldName, FieldValue> fields = getFields();
 
 		if(fields.containsKey(name)){
-			Map.Entry<FieldName, FieldValue> entry = new AbstractMap.SimpleEntry<FieldName, FieldValue>(name, fields.get(name));
+			Map.Entry<FieldName, FieldValue> entry = new AbstractMap.SimpleEntry<>(name, fields.get(name));
 
 			return entry;
 		}
@@ -122,7 +122,7 @@ public class EvaluationContext {
 	<E extends PMMLObject> Result<E> createResult(E element){
 
 		if(element != null){
-			return new Result<E>(element);
+			return new Result<>(element);
 		}
 
 		return null;

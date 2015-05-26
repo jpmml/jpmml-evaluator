@@ -190,7 +190,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MEDIAN:
 				{
 					// The max and median aggregation functions yield non-probability distributions
-					result = new ClassificationMap<String>(ClassificationMap.Type.VOTE);
+					result = new ClassificationMap<>(ClassificationMap.Type.VOTE);
 					result.putAll(aggregateProbabilities(segmentation, segmentResults));
 				}
 				break;
@@ -221,7 +221,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		ClassificationMap<String> result = new ClassificationMap<String>(ClassificationMap.Type.VOTE);
+		ClassificationMap<String> result = new ClassificationMap<>(ClassificationMap.Type.VOTE);
 		result.putAll(aggregateVotes(segmentation, segmentResults));
 
 		result.computeResult(DataType.STRING);
@@ -433,7 +433,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	static
 	private Map<String, Double> aggregateVotes(Segmentation segmentation, List<SegmentResultMap> segmentResults){
-		VoteAggregator<String> aggregator = new VoteAggregator<String>();
+		VoteAggregator<String> aggregator = new VoteAggregator<>();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 

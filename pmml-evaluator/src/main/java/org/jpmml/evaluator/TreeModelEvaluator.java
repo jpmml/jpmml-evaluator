@@ -375,7 +375,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 			@Override
 			public BiMap<String, Node> load(TreeModel treeModel){
-				ImmutableBiMap.Builder<String, Node> builder = new ImmutableBiMap.Builder<String, Node>();
+				ImmutableBiMap.Builder<String, Node> builder = new ImmutableBiMap.Builder<>();
 
 				builder = collectNodes(treeModel.getNode(), builder);
 

@@ -31,7 +31,7 @@ public class VoteAggregatorTest {
 
 	@Test
 	public void increment(){
-		VoteAggregator<String> aggregator = new VoteAggregator<String>();
+		VoteAggregator<String> aggregator = new VoteAggregator<>();
 		aggregator.add("A", 1d);
 		aggregator.add("B", 1d);
 		aggregator.add("C", 1d);

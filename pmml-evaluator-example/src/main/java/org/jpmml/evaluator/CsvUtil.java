@@ -117,7 +117,7 @@ public class CsvUtil {
 
 	static
 	public List<String> parseLine(String line, String separator){
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 
 		String[] cells = line.split(separator);
 		for(String cell : cells){

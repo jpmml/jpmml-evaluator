@@ -31,7 +31,7 @@ public class EntityUtil {
 
 	static
 	public <E extends PMMLObject & HasId> ImmutableBiMap<String, E> buildBiMap(List<E> entities){
-		ImmutableBiMap.Builder<String, E> builder = new ImmutableBiMap.Builder<String, E>();
+		ImmutableBiMap.Builder<String, E> builder = new ImmutableBiMap.Builder<>();
 
 		builder = putAll(entities, builder);
 

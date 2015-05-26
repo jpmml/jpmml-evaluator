@@ -172,13 +172,13 @@ public class EvaluationExample extends Example {
 		CsvUtil.Table outputTable = new CsvUtil.Table();
 		outputTable.setSeparator(inputTable.getSeparator());
 
-		List<FieldName> fields = new ArrayList<FieldName>();
+		List<FieldName> fields = new ArrayList<>();
 		fields.addAll(evaluator.getTargetFields());
 		fields.addAll(evaluator.getOutputFields());
 
 		header:
 		{
-			List<String> headerRow = new ArrayList<String>();
+			List<String> headerRow = new ArrayList<>();
 
 			if(copyCells){
 				headerRow.addAll(inputTable.get(0));
@@ -193,7 +193,7 @@ public class EvaluationExample extends Example {
 
 		body:
 		for(int i = 0; i < resultList.size(); i++){
-			List<String> bodyRow = new ArrayList<String>();
+			List<String> bodyRow = new ArrayList<>();
 
 			if(copyCells){
 				bodyRow.addAll(inputTable.get(i + 1));
@@ -221,7 +221,7 @@ public class EvaluationExample extends Example {
 
 	static
 	private List<Map<FieldName, FieldValue>> prepareAll(Evaluator evaluator, CsvUtil.Table table){
-		List<FieldName> names = new ArrayList<FieldName>();
+		List<FieldName> names = new ArrayList<>();
 
 		List<FieldName> activeFields = evaluator.getActiveFields();
 		List<FieldName> groupFields = evaluator.getGroupFields();
@@ -250,13 +250,13 @@ public class EvaluationExample extends Example {
 			}
 		}
 
-		List<Map<FieldName, Object>> stringRows = new ArrayList<Map<FieldName, Object>>();
+		List<Map<FieldName, Object>> stringRows = new ArrayList<>();
 
 		body:
 		for(int i = 1; i < table.size(); i++){
 			List<String> bodyRow = table.get(i);
 
-			Map<FieldName, Object> stringRow = new LinkedHashMap<FieldName, Object>();
+			Map<FieldName, Object> stringRow = new LinkedHashMap<>();
 
 			for(int column = 0; column < bodyRow.size(); column++){
 				FieldName name = names.get(column);
@@ -285,10 +285,10 @@ public class EvaluationExample extends Example {
 			throw new EvaluationException();
 		}
 
-		List<Map<FieldName, FieldValue>> fieldValueRows = new ArrayList<Map<FieldName, FieldValue>>();
+		List<Map<FieldName, FieldValue>> fieldValueRows = new ArrayList<>();
 
 		for(Map<FieldName, Object> stringRow : stringRows){
-			Map<FieldName, FieldValue> fieldValueRow = new LinkedHashMap<FieldName, FieldValue>();
+			Map<FieldName, FieldValue> fieldValueRow = new LinkedHashMap<>();
 
 			Collection<Map.Entry<FieldName, Object>> entries = stringRow.entrySet();
 			for(Map.Entry<FieldName, Object> entry : entries){
@@ -306,7 +306,7 @@ public class EvaluationExample extends Example {
 
 	static
 	private List<Map<FieldName, ?>> evaluateAll(Evaluator evaluator, List<Map<FieldName, FieldValue>> argumentsList){
-		List<Map<FieldName, ?>> resultList = new ArrayList<Map<FieldName, ?>>();
+		List<Map<FieldName, ?>> resultList = new ArrayList<>();
 
 		for(Map<FieldName, FieldValue> arguments : argumentsList){
 			Map<FieldName, ?> result = evaluator.evaluate(arguments);

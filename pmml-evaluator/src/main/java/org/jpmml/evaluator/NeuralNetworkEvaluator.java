@@ -352,7 +352,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 			@Override
 			public BiMap<String, Entity> load(NeuralNetwork neuralNetwork){
-				ImmutableBiMap.Builder<String, Entity> builder = new ImmutableBiMap.Builder<String, Entity>();
+				ImmutableBiMap.Builder<String, Entity> builder = new ImmutableBiMap.Builder<>();
 
 				NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
 				if(neuralInputs == null){
