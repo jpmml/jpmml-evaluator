@@ -24,7 +24,7 @@ import org.dmg.pmml.Entity;
 
 @Beta
 abstract
-public class EntityClassificationMap<E extends Entity> extends ClassificationMap<String> implements HasEntityId {
+public class EntityClassificationMap<E extends Entity> extends ClassificationMap implements HasEntityId {
 
 	private E entity = null;
 
@@ -33,12 +33,6 @@ public class EntityClassificationMap<E extends Entity> extends ClassificationMap
 
 	protected EntityClassificationMap(Type type){
 		super(type);
-	}
-
-	protected EntityClassificationMap(Type type, E entity){
-		super(type);
-
-		setEntity(entity);
 	}
 
 	@Override
@@ -61,7 +55,7 @@ public class EntityClassificationMap<E extends Entity> extends ClassificationMap
 			setEntity(entity);
 		}
 
-		return super.put(key, value);
+		return put(key, value);
 	}
 
 	@Override

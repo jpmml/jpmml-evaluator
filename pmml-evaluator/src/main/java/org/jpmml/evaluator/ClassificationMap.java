@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -35,7 +36,9 @@ import com.google.common.collect.Range;
 import org.dmg.pmml.DataType;
 
 @Beta
-public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Computable {
+public class ClassificationMap implements Computable {
+
+	private Map<String, Double> map = new LinkedHashMap<>();
 
 	private Type type = null;
 
@@ -57,7 +60,7 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 	}
 
 	void computeResult(DataType dataType){
-		Map.Entry<K, Double> entry = getWinner();
+		Map.Entry<String, Double> entry = getWinner();
 		if(entry == null){
 			throw new EvaluationException();
 		}
@@ -71,21 +74,33 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 		this.result = result;
 	}
 
-	Double getFeature(String value){
-		Double result = get(value);
+	Double get(String key){
+		Double value = this.map.get(key);
 
 		// The specified value was not encountered during scoring
-		if(result == null){
+		if(value == null){
 			Type type = getType();
 
 			return type.getDefault();
 		}
 
-		return result;
+		return value;
 	}
 
-	Map.Entry<K, Double> getWinner(){
-		Ordering<Map.Entry<K, Double>> ordering = createOrdering();
+	Double put(String key, Double value){
+		return this.map.put(key, value);
+	}
+
+	void putAll(Map<String, Double> values){
+		this.map.putAll(values);
+	}
+
+	boolean isEmpty(){
+		return this.map.isEmpty();
+	}
+
+	Map.Entry<String, Double> getWinner(){
+		Ordering<Map.Entry<String, Double>> ordering = createOrdering();
 
 		try {
 			return ordering.max(entrySet());
@@ -94,19 +109,19 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 		}
 	}
 
-	List<Map.Entry<K, Double>> getWinnerList(){
-		Ordering<Map.Entry<K, Double>> ordering = (createOrdering()).reverse();
+	List<Map.Entry<String, Double>> getWinnerList(){
+		Ordering<Map.Entry<String, Double>> ordering = (createOrdering()).reverse();
 
 		return ordering.sortedCopy(entrySet());
 	}
 
-	List<K> getWinnerKeys(){
-		List<Map.Entry<K, Double>> winners = getWinnerList();
+	List<String> getWinnerKeys(){
+		List<Map.Entry<String, Double>> winners = getWinnerList();
 
-		Function<Map.Entry<K, Double>, K> function = new Function<Map.Entry<K, Double>, K>(){
+		Function<Map.Entry<String, Double>, String> function = new Function<Map.Entry<String, Double>, String>(){
 
 			@Override
-			public K apply(Map.Entry<K, Double> entry){
+			public String apply(Map.Entry<String, Double> entry){
 				return entry.getKey();
 			}
 		};
@@ -115,12 +130,12 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 	}
 
 	List<Double> getWinnerValues(){
-		List<Map.Entry<K, Double>> winners = getWinnerList();
+		List<Map.Entry<String, Double>> winners = getWinnerList();
 
-		Function<Map.Entry<K, Double>, Double> function = new Function<Map.Entry<K, Double>, Double>(){
+		Function<Map.Entry<String, Double>, Double> function = new Function<Map.Entry<String, Double>, Double>(){
 
 			@Override
-			public Double apply(Map.Entry<K, Double> entry){
+			public Double apply(Map.Entry<String, Double> entry){
 				return entry.getValue();
 			}
 		};
@@ -128,23 +143,35 @@ public class ClassificationMap<K> extends LinkedHashMap<K, Double> implements Co
 		return Lists.transform(winners, function);
 	}
 
-	void normalizeValues(){
-		normalize(this);
+	Double sumValues(){
+		return sum(this.map);
 	}
 
-	Ordering<Map.Entry<K, Double>> createOrdering(){
-		Comparator<Map.Entry<K, Double>> comparator = new Comparator<Map.Entry<K, Double>>(){
+	void normalizeValues(){
+		normalize(this.map);
+	}
+
+	Ordering<Map.Entry<String, Double>> createOrdering(){
+		Comparator<Map.Entry<String, Double>> comparator = new Comparator<Map.Entry<String, Double>>(){
 
 			private Type type = getType();
 
 
 			@Override
-			public int compare(Map.Entry<K, Double> left, Map.Entry<K, Double> right){
+			public int compare(Map.Entry<String, Double> left, Map.Entry<String, Double> right){
 				return this.type.compare(left.getValue(), right.getValue());
 			}
 		};
 
 		return Ordering.from(comparator);
+	}
+
+	Set<String> keySet(){
+		return this.map.keySet();
+	}
+
+	Set<Map.Entry<String, Double>> entrySet(){
+		return this.map.entrySet();
 	}
 
 	@Override

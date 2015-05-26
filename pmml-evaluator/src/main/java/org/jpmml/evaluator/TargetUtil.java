@@ -96,12 +96,12 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassificationDefault(ModelEvaluationContext context){
-		return evaluateClassification((ClassificationMap<?>)null, context);
+	public Map<FieldName, ? extends ClassificationMap> evaluateClassificationDefault(ModelEvaluationContext context){
+		return evaluateClassification((ClassificationMap)null, context);
 	}
 
 	static
-	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ClassificationMap<?> value, ModelEvaluationContext context){
+	public Map<FieldName, ? extends ClassificationMap> evaluateClassification(ClassificationMap value, ModelEvaluationContext context){
 		Evaluator evaluator = context.getModelEvaluator();
 
 		return evaluateClassification(Collections.singletonMap(evaluator.getTargetField(), value), context);
@@ -111,15 +111,15 @@ public class TargetUtil {
 	 * Evaluates the {@link Targets} element for {@link MiningFunctionType#CLASSIFICATION classification} models.
 	 */
 	static
-	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(Map<FieldName, ? extends ClassificationMap<?>> predictions, ModelEvaluationContext context){
+	public Map<FieldName, ? extends ClassificationMap> evaluateClassification(Map<FieldName, ? extends ClassificationMap> predictions, ModelEvaluationContext context){
 		Evaluator evaluator = context.getModelEvaluator();
 
-		Map<FieldName, ClassificationMap<?>> result = new LinkedHashMap<>();
+		Map<FieldName, ClassificationMap> result = new LinkedHashMap<>();
 
-		Collection<? extends Map.Entry<FieldName, ? extends ClassificationMap<?>>> entries = predictions.entrySet();
-		for(Map.Entry<FieldName, ? extends ClassificationMap<?>> entry : entries){
+		Collection<? extends Map.Entry<FieldName, ? extends ClassificationMap>> entries = predictions.entrySet();
+		for(Map.Entry<FieldName, ? extends ClassificationMap> entry : entries){
 			FieldName key = entry.getKey();
-			ClassificationMap<?> value = entry.getValue();
+			ClassificationMap value = entry.getValue();
 
 			DataField dataField = evaluator.getDataField(key);
 			if(dataField == null){

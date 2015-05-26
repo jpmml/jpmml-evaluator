@@ -30,10 +30,6 @@ public class NeuronClassificationMap extends EntityClassificationMap<Entity> imp
 		super(Type.PROBABILITY);
 	}
 
-	protected NeuronClassificationMap(Entity entity){
-		super(Type.PROBABILITY, entity);
-	}
-
 	@Override
 	public Set<String> getCategoryValues(){
 		return keySet();
@@ -41,6 +37,6 @@ public class NeuronClassificationMap extends EntityClassificationMap<Entity> imp
 
 	@Override
 	public Double getProbability(String value){
-		return getFeature(value);
+		return get(value);
 	}
 }

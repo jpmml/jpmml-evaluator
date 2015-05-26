@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -100,7 +101,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		return TargetUtil.evaluateRegression(Collections.singletonMap(targetField, result), context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelEvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		FieldName targetField = regressionModel.getTargetFieldName();
@@ -131,7 +132,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			throw new InvalidFeatureException(dataField);
 		}
 
-		ProbabilityClassificationMap result = new ProbabilityClassificationMap();
+		Map<String, Double> values = new LinkedHashMap<>();
 
 		for(RegressionTable regressionTable : regressionTables){
 			String targetCategory = regressionTable.getTargetCategory();
@@ -146,19 +147,22 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				return TargetUtil.evaluateClassificationDefault(context);
 			}
 
-			result.put(targetCategory, value);
+			values.put(targetCategory, value);
 		}
 
 		switch(opType){
 			case CATEGORICAL:
-				computeCategoricalProbabilities(result);
+				computeCategoricalProbabilities(values);
 				break;
 			case ORDINAL:
-				computeOrdinalProbabilities(result, targetCategories);
+				computeOrdinalProbabilities(values, targetCategories);
 				break;
 			default:
 				throw new UnsupportedFeatureException(dataField, opType);
 		}
+
+		ProbabilityClassificationMap result = new ProbabilityClassificationMap();
+		result.putAll(values);
 
 		return TargetUtil.evaluateClassification(Collections.singletonMap(targetField, result), context);
 	}
@@ -245,7 +249,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		}
 	}
 
-	private void computeCategoricalProbabilities(ClassificationMap<String> values){
+	private void computeCategoricalProbabilities(Map<String, Double> values){
 		RegressionModel regressionModel = getModel();
 
 		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
@@ -267,10 +271,10 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			entry.setValue(normalizeClassificationResult(entry.getValue()));
 		}
 
-		values.normalizeValues();
+		ClassificationMap.normalize(values);
 	}
 
-	private void computeOrdinalProbabilities(ClassificationMap<String> values, List<String> targetCategories){
+	private void computeOrdinalProbabilities(Map<String, Double> values, List<String> targetCategories){
 		RegressionModel regressionModel = getModel();
 
 		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();

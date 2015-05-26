@@ -37,7 +37,7 @@ import org.dmg.pmml.DataType;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Beta
-public class InstanceClassificationMap extends ClassificationMap<String> implements HasEntityIdRanking, HasAffinityRanking, HasEntityAffinity {
+public class InstanceClassificationMap extends ClassificationMap implements HasEntityIdRanking, HasAffinityRanking, HasEntityAffinity {
 
 	protected InstanceClassificationMap(Type type, Object result){
 		super(type);
@@ -74,7 +74,7 @@ public class InstanceClassificationMap extends ClassificationMap<String> impleme
 
 	@Override
 	public Double getAffinity(String id){
-		return getFeature(id);
+		return get(id);
 	}
 
 	@Override

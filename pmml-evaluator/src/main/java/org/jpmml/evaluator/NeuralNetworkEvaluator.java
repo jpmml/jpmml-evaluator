@@ -148,7 +148,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return TargetUtil.evaluateRegression(result, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelEvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
 		Map<String, Entity> entities = getEntityRegistry();

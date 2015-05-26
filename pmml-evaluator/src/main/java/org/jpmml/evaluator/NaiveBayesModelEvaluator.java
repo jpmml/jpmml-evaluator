@@ -82,7 +82,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			throw new InvalidResultException(naiveBayesModel);
 		}
 
-		Map<FieldName, ? extends ClassificationMap<?>> predictions;
+		Map<FieldName, ? extends ClassificationMap> predictions;
 
 		MiningFunctionType miningFunction = naiveBayesModel.getFunctionName();
 		switch(miningFunction){
@@ -96,13 +96,13 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelEvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 
 		double threshold = naiveBayesModel.getThreshold();
 
 		// Probability calculations use logarithmic scale for greater numerical stability
-		ProbabilityClassificationMap result = new ProbabilityClassificationMap();
+		Map<String, Double> probabilities = new LinkedHashMap<>();
 
 		Map<FieldName, Map<String, Double>> fieldCountSums = getFieldCountSums();
 
@@ -119,7 +119,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			TargetValueStats targetValueStats = getTargetValueStats(bayesInput);
 			if(targetValueStats != null){
-				calculateContinuousProbabilities(value, targetValueStats, threshold, result);
+				calculateContinuousProbabilities(value, targetValueStats, threshold, probabilities);
 
 				continue;
 			}
@@ -149,20 +149,22 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			TargetValueCounts targetValueCounts = getTargetValueCounts(bayesInput, value);
 			if(targetValueCounts != null){
-				calculateDiscreteProbabilities(countSums, targetValueCounts, threshold, result);
+				calculateDiscreteProbabilities(countSums, targetValueCounts, threshold, probabilities);
 			}
 		}
 
 		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
 
-		calculatePriorProbabilities(bayesOutput.getTargetValueCounts(), result);
+		calculatePriorProbabilities(bayesOutput.getTargetValueCounts(), probabilities);
 
-		final Double max = Collections.max(result.values());
+		ProbabilityClassificationMap result = new ProbabilityClassificationMap();
+
+		final Double max = Collections.max(probabilities.values());
 
 		// Convert from logarithmic scale to normal scale
-		Collection<Map.Entry<String, Double>> entries = result.entrySet();
+		Collection<Map.Entry<String, Double>> entries = probabilities.entrySet();
 		for(Map.Entry<String, Double> entry : entries){
-			entry.setValue(Math.exp(entry.getValue() - max));
+			result.put(entry.getKey(), Math.exp(entry.getValue() - max));
 		}
 
 		result.normalizeValues();

@@ -57,7 +57,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 			throw new InvalidResultException(ruleSetModel);
 		}
 
-		Map<FieldName, ? extends ClassificationMap<?>> predictions;
+		Map<FieldName, ? extends ClassificationMap> predictions;
 
 		MiningFunctionType miningFunction = ruleSetModel.getFunctionName();
 		switch(miningFunction){
@@ -71,7 +71,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelEvaluationContext context){
 		RuleSetModel ruleSetModel = getModel();
 
 		RuleSet ruleSet = ruleSetModel.getRuleSet();

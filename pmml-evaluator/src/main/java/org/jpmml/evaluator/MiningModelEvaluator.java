@@ -173,7 +173,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
-		ClassificationMap<String> result;
+		ClassificationMap result;
 
 		switch(multipleModelMethod){
 			case MAJORITY_VOTE:
@@ -190,7 +190,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MEDIAN:
 				{
 					// The max and median aggregation functions yield non-probability distributions
-					result = new ClassificationMap<>(ClassificationMap.Type.VOTE);
+					result = new ClassificationMap(ClassificationMap.Type.VOTE);
 					result.putAll(aggregateProbabilities(segmentation, segmentResults));
 				}
 				break;
@@ -221,7 +221,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		ClassificationMap<String> result = new ClassificationMap<>(ClassificationMap.Type.VOTE);
+		ClassificationMap result = new ClassificationMap(ClassificationMap.Type.VOTE);
 		result.putAll(aggregateVotes(segmentation, segmentResults));
 
 		result.computeResult(DataType.STRING);

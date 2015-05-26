@@ -31,10 +31,6 @@ public class RuleClassificationMap extends EntityClassificationMap<SimpleRule> i
 		super(Type.CONFIDENCE);
 	}
 
-	protected RuleClassificationMap(SimpleRule rule){
-		super(Type.CONFIDENCE, rule);
-	}
-
 	@Override
 	void computeResult(DataType dataType){
 		SimpleRule rule = getEntity();
@@ -62,6 +58,6 @@ public class RuleClassificationMap extends EntityClassificationMap<SimpleRule> i
 
 	@Override
 	public Double getConfidence(String value){
-		return getFeature(value);
+		return get(value);
 	}
 }

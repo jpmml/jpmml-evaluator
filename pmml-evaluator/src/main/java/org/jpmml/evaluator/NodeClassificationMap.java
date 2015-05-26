@@ -34,12 +34,10 @@ public class NodeClassificationMap extends EntityClassificationMap<Node> impleme
 	private Map<String, Double> confidences = new LinkedHashMap<>();
 
 
-	protected NodeClassificationMap(){
-		super(Type.PROBABILITY);
-	}
-
 	protected NodeClassificationMap(Node node){
-		super(Type.PROBABILITY, node);
+		super(Type.PROBABILITY);
+
+		setEntity(node);
 	}
 
 	@Override
@@ -90,7 +88,7 @@ public class NodeClassificationMap extends EntityClassificationMap<Node> impleme
 			}
 		}
 
-		return getFeature(value);
+		return get(value);
 	}
 
 	@Override

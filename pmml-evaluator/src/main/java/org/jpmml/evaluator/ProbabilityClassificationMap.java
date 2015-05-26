@@ -23,7 +23,7 @@ import java.util.Set;
 import com.google.common.annotations.Beta;
 
 @Beta
-public class ProbabilityClassificationMap extends ClassificationMap<String> implements HasProbability {
+public class ProbabilityClassificationMap extends ClassificationMap implements HasProbability {
 
 	protected ProbabilityClassificationMap(){
 		super(Type.PROBABILITY);
@@ -36,6 +36,6 @@ public class ProbabilityClassificationMap extends ClassificationMap<String> impl
 
 	@Override
 	public Double getProbability(String value){
-		return getFeature(value);
+		return get(value);
 	}
 }

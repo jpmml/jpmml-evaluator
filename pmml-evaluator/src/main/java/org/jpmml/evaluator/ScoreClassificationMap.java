@@ -33,7 +33,7 @@ import com.google.common.annotations.Beta;
 import org.dmg.pmml.DataType;
 
 @Beta
-public class ScoreClassificationMap extends ClassificationMap<String> implements HasReasonCodeRanking {
+public class ScoreClassificationMap extends ClassificationMap implements HasReasonCodeRanking {
 
 	protected ScoreClassificationMap(Object result){
 		super(Type.VOTE);

@@ -108,7 +108,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return Collections.singletonMap(resultEntry.getKey(), createNodeScore(node, resultEntry.getValue()));
 	}
 
-	private Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelEvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		NodeClassificationMap result = null;

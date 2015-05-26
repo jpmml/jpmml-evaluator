@@ -23,7 +23,7 @@ import java.util.Set;
 import com.google.common.annotations.Beta;
 
 @Beta
-public class VoteClassificationMap extends ClassificationMap<String> implements HasProbability {
+public class VoteClassificationMap extends ClassificationMap implements HasProbability {
 
 	public VoteClassificationMap(){
 		super(Type.VOTE);
@@ -36,6 +36,6 @@ public class VoteClassificationMap extends ClassificationMap<String> implements 
 
 	@Override
 	public Double getProbability(String value){
-		return getFeature(value) / sum(this);
+		return get(value) / sumValues();
 	}
 }
