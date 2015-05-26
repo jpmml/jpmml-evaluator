@@ -18,14 +18,14 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 import org.dmg.pmml.AssociationRule;
 import org.dmg.pmml.DataField;
@@ -69,7 +69,7 @@ public class OutputUtil {
 			return predictions;
 		}
 
-		Map<FieldName, Object> result = Maps.newLinkedHashMap(predictions);
+		Map<FieldName, Object> result = new LinkedHashMap<>(predictions);
 
 		List<OutputField> outputFields = output.getOutputFields();
 
@@ -655,7 +655,7 @@ public class OutputUtil {
 
 			associationRules = associationRules.subList(0, size);
 
-			List<Object> result = Lists.newArrayList();
+			List<Object> result = new ArrayList<>();
 
 			for(AssociationRule associationRule : associationRules){
 				result.add(getRuleFeature(hasRuleValues, associationRule, outputField));
@@ -836,7 +836,7 @@ public class OutputUtil {
 
 	static
 	private List<String> getItemValues(HasRuleValues hasRuleValues, String id){
-		List<String> result = Lists.newArrayList();
+		List<String> result = new ArrayList<>();
 
 		BiMap<String, Item> itemRegistry = hasRuleValues.getItemRegistry();
 		BiMap<String, Itemset> itemsetRegistry = hasRuleValues.getItemsetRegistry();

@@ -29,6 +29,7 @@ package org.jpmml.evaluator;
 
 import java.lang.reflect.Field;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.Coefficient;
 import org.dmg.pmml.Coefficients;
@@ -360,7 +360,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		List<FieldRef> fieldRefs = vectorFields.getFieldRefs();
 
-		Map<String, double[]> result = Maps.newLinkedHashMap();
+		Map<String, double[]> result = new LinkedHashMap<>();
 
 		List<VectorInstance> vectorInstances = vectorDictionary.getVectorInstances();
 		for(VectorInstance vectorInstance : vectorInstances){

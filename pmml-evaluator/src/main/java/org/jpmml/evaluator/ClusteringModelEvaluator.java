@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +29,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.CenterFields;
 import org.dmg.pmml.Cluster;
@@ -108,7 +108,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			throw new UnsupportedFeatureException(centerFields);
 		}
 
-		List<FieldValue> values = Lists.newArrayList();
+		List<FieldValue> values = new ArrayList<>();
 
 		List<ClusteringField> clusteringFields = getCenterClusteringFields();
 		for(ClusteringField clusteringField : clusteringFields){
@@ -214,7 +214,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 	private List<ClusteringField> getCenterClusteringFields(){
 		ClusteringModel clusteringModel = getModel();
 
-		List<ClusteringField> result = Lists.newArrayList();
+		List<ClusteringField> result = new ArrayList<>();
 
 		List<ClusteringField> clusteringFields = clusteringModel.getClusteringFields();
 		for(ClusteringField clusteringField : clusteringFields){
@@ -242,7 +242,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			public List<FieldValue> load(Cluster cluster){
 				Array array = cluster.getArray();
 
-				List<FieldValue> result = Lists.newArrayList();
+				List<FieldValue> result = new ArrayList<>();
 
 				List<? extends Number> values = ArrayUtil.getNumberContent(array);
 				for(Number value : values){

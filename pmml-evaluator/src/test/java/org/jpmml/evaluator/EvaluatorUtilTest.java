@@ -18,13 +18,13 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
@@ -94,7 +94,7 @@ public class EvaluatorUtilTest {
 
 	@Test
 	public void groupRows(){
-		List<Map<FieldName, Object>> table = Lists.newArrayList();
+		List<Map<FieldName, Object>> table = new ArrayList<>();
 		table.add(createRow("1", "Cracker"));
 		table.add(createRow("2", "Cracker"));
 		table.add(createRow("1", "Coke"));
@@ -112,7 +112,7 @@ public class EvaluatorUtilTest {
 
 	static
 	private Map<FieldName, Object> createRow(String transaction, String item){
-		Map<FieldName, Object> result = Maps.newLinkedHashMap();
+		Map<FieldName, Object> result = new LinkedHashMap<>();
 		result.put(new FieldName("transaction"), transaction);
 		result.put(new FieldName("item"), item);
 

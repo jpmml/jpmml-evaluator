@@ -20,12 +20,12 @@ package org.jpmml.evaluator;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Sets;
 
 class VoteAggregator<K> extends ClassificationAggregator<K> {
 
@@ -45,7 +45,7 @@ class VoteAggregator<K> extends ClassificationAggregator<K> {
 	}
 
 	public Set<K> getWinners(){
-		Set<K> result = Sets.newLinkedHashSet();
+		Set<K> result = new LinkedHashSet<>();
 
 		Map<K, Double> sumMap = sumMap();
 

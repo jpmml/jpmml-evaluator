@@ -19,12 +19,12 @@
 package org.jpmml.evaluator;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
@@ -33,9 +33,9 @@ import org.dmg.pmml.PMMLObject;
 abstract
 public class EvaluationContext {
 
-	private Map<FieldName, FieldValue> fields = Maps.newLinkedHashMap();
+	private Map<FieldName, FieldValue> fields = new LinkedHashMap<>();
 
-	private List<String> warnings = Lists.newArrayList();
+	private List<String> warnings = new ArrayList<>();
 
 
 	abstract

@@ -18,9 +18,11 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +39,6 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.BaseCumHazardTables;
@@ -321,7 +322,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		if(targetReferenceCategory != null){
-			targetCategories = Lists.newArrayList(targetCategories);
+			targetCategories = new ArrayList<>(targetCategories);
 
 			// Move the element from any position to the last position
 			if(targetCategories.remove(targetReferenceCategory)){
@@ -639,7 +640,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		BiMap<FieldName, Predictor> factors = getFactorRegistry();
 		BiMap<FieldName, Predictor> covariates = getCovariateRegistry();
 
-		Map<FieldName, FieldValue> result = Maps.newLinkedHashMap();
+		Map<FieldName, FieldValue> result = new LinkedHashMap<>();
 
 		Iterable<Predictor> predictors = Iterables.concat(factors.values(), covariates.values());
 		for(Predictor predictor : predictors){
@@ -812,11 +813,11 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		ListMultimap<String, PPCell> targetCategoryMap = groupByTargetCategory(ppMatrix.getPPCells());
 
-		Map<String, Map<String, Row>> result = Maps.newLinkedHashMap();
+		Map<String, Map<String, Row>> result = new LinkedHashMap<>();
 
 		Collection<Map.Entry<String, List<PPCell>>> targetCategoryEntries = (asMap(targetCategoryMap)).entrySet();
 		for(Map.Entry<String, List<PPCell>> targetCategoryEntry : targetCategoryEntries){
-			Map<String, Row> predictorMap = Maps.newLinkedHashMap();
+			Map<String, Row> predictorMap = new LinkedHashMap<>();
 
 			ListMultimap<String, PPCell> parameterNameMap = groupByParameterName(targetCategoryEntry.getValue());
 
@@ -888,9 +889,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	static
 	private class Row {
 
-		private List<FactorHandler> factorHandlers = Lists.newArrayList();
+		private List<FactorHandler> factorHandlers = new ArrayList<>();
 
-		private List<CovariateHandler> covariateHandlers = Lists.newArrayList();
+		private List<CovariateHandler> covariateHandlers = new ArrayList<>();
 
 
 		public Double evaluate(Map<FieldName, FieldValue> arguments){

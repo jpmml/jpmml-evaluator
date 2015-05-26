@@ -18,16 +18,16 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
@@ -69,7 +69,7 @@ public class EvaluatorUtil {
 	 */
 	static
 	public Map<String, ?> decode(Map<FieldName, ?> map){
-		Map<String, Object> result = Maps.newLinkedHashMap();
+		Map<String, Object> result = new LinkedHashMap<>();
 
 		Collection<? extends Map.Entry<FieldName, ?>> entries = map.entrySet();
 		for(Map.Entry<FieldName, ?> entry : entries){
@@ -122,7 +122,7 @@ public class EvaluatorUtil {
 
 	static
 	public <K> List<Map<K, Object>> groupRows(K groupKey, List<? extends Map<K, ?>> table){
-		Map<Object, ListMultimap<K, Object>> groupedRows = Maps.newLinkedHashMap();
+		Map<Object, ListMultimap<K, Object>> groupedRows = new LinkedHashMap<>();
 
 		for(int i = 0; i < table.size(); i++){
 			Map<K, ?> row = table.get(i);
@@ -145,11 +145,11 @@ public class EvaluatorUtil {
 			}
 		}
 
-		List<Map<K, Object>> resultTable = Lists.newArrayList();
+		List<Map<K, Object>> resultTable = new ArrayList<>();
 
 		Collection<Map.Entry<Object, ListMultimap<K, Object>>> entries = groupedRows.entrySet();
 		for(Map.Entry<Object, ListMultimap<K, Object>> entry : entries){
-			Map<K, Object> resultRow = Maps.newLinkedHashMap();
+			Map<K, Object> resultRow = new LinkedHashMap<>();
 			resultRow.putAll((entry.getValue()).asMap());
 
 			// The value of the "group by" column is a single Object, not a Collection (ie. java.util.List) of Objects
@@ -166,9 +166,9 @@ public class EvaluatorUtil {
 
 		// Try to preserve the original contract
 		if(template instanceof Set){
-			return Sets.newLinkedHashSet();
+			return new LinkedHashSet<>();
 		}
 
-		return Lists.newArrayList();
+		return new ArrayList<>();
 	}
 }

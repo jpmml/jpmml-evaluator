@@ -18,9 +18,9 @@
  */
 package org.jpmml.evaluator.visitors;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
@@ -56,7 +56,7 @@ import org.jpmml.model.visitors.AbstractSimpleVisitor;
 abstract
 public class FeatureInspector<E extends PMMLException> extends AbstractSimpleVisitor {
 
-	private List<E> exceptions = Lists.newArrayList();
+	private List<E> exceptions = new ArrayList<>();
 
 
 	@Override

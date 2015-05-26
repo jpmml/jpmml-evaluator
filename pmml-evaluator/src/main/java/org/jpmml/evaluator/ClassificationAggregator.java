@@ -18,17 +18,18 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 abstract
 class ClassificationAggregator<K> {
 
-	private Map<K, List<Double>> map = Maps.newLinkedHashMap();
+	private Map<K, List<Double>> map = new LinkedHashMap<>();
 
 
 	public int size(){
@@ -43,7 +44,7 @@ class ClassificationAggregator<K> {
 		List<Double> values = this.map.get(key);
 
 		if(values == null){
-			values = Lists.newArrayList();
+			values = new ArrayList<>();
 
 			this.map.put(key, values);
 		}

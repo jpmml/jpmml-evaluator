@@ -27,9 +27,11 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +45,6 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultiset;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Ordering;
@@ -146,7 +147,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			function = createIdentifierResolver(FieldName.create(idField), table);
 		}
 
-		Map<FieldName, InstanceClassificationMap> result = Maps.newLinkedHashMap();
+		Map<FieldName, InstanceClassificationMap> result = new LinkedHashMap<>();
 
 		List<FieldName> targetFields = getTargetFields();
 		for(FieldName targetField : targetFields){
@@ -197,7 +198,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private List<InstanceResult> evaluateInstanceRows(ModelEvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		List<FieldValue> values = Lists.newArrayList();
+		List<FieldValue> values = new ArrayList<>();
 
 		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
 		for(KNNInput knnInput : knnInputs){
@@ -224,7 +225,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private List<InstanceResult> evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
-		List<InstanceResult> result = Lists.newArrayList();
+		List<InstanceResult> result = new ArrayList<>();
 
 		BitSet flags = MeasureUtil.toBitSet(values);
 
@@ -243,7 +244,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private List<InstanceResult> evaluateDistance(ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
-		List<InstanceResult> result = Lists.newArrayList();
+		List<InstanceResult> result = new ArrayList<>();
 
 		Double adjustment = MeasureUtil.calculateAdjustment(values);
 
@@ -445,7 +446,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		String idField = nearestNeighborModel.getInstanceIdVariable();
 
-		List<FieldLoader> fieldLoaders = Lists.newArrayList();
+		List<FieldLoader> fieldLoaders = new ArrayList<>();
 
 		InstanceFields instanceFields = trainingInstances.getInstanceFields();
 		for(InstanceField instanceField : instanceFields){
@@ -539,7 +540,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 	static
 	private Map<Integer, BitSet> loadInstanceFlags(NearestNeighborModelEvaluator modelEvaluator){
-		Map<Integer, BitSet> result = Maps.newLinkedHashMap();
+		Map<Integer, BitSet> result = new LinkedHashMap<>();
 
 		Map<Integer, List<FieldValue>> valueMap = modelEvaluator.getValue(createInstanceValueLoader(modelEvaluator), NearestNeighborModelEvaluator.instanceValueCache);
 
@@ -574,7 +575,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Map<Integer, List<FieldValue>> loadInstanceValues(NearestNeighborModelEvaluator modelEvaluator){
 		NearestNeighborModel nearestNeighborModel = modelEvaluator.getModel();
 
-		Map<Integer, List<FieldValue>> result = Maps.newLinkedHashMap();
+		Map<Integer, List<FieldValue>> result = new LinkedHashMap<>();
 
 		Table<Integer, FieldName, FieldValue> table = modelEvaluator.getValue(createTrainingInstanceLoader(modelEvaluator), NearestNeighborModelEvaluator.trainingInstanceCache);
 
@@ -582,7 +583,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Set<Integer> rowKeys = ImmutableSortedSet.copyOf(table.rowKeySet());
 		for(Integer rowKey : rowKeys){
-			List<FieldValue> values = Lists.newArrayList();
+			List<FieldValue> values = new ArrayList<>();
 
 			Map<FieldName, FieldValue> rowValues = table.row(rowKey);
 

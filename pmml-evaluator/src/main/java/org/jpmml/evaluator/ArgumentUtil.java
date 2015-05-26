@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +29,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
@@ -333,7 +333,7 @@ public class ArgumentUtil {
 			return Collections.emptyList();
 		}
 
-		List<Value> result = Lists.newArrayList();
+		List<Value> result = new ArrayList<>();
 
 		for(Value fieldValue : fieldValues){
 			Value.Property property = fieldValue.getProperty();

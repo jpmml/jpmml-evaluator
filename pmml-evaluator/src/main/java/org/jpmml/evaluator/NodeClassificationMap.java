@@ -19,19 +19,19 @@
 package org.jpmml.evaluator;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Maps;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Node;
 
 @Beta
 public class NodeClassificationMap extends EntityClassificationMap<Node> implements HasConfidence, HasProbability {
 
-	private Map<String, Double> confidences = Maps.newLinkedHashMap();
+	private Map<String, Double> confidences = new LinkedHashMap<>();
 
 
 	protected NodeClassificationMap(){

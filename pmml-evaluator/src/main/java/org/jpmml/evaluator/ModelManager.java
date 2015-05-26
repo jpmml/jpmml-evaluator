@@ -27,11 +27,11 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldUsageType;
@@ -112,7 +112,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	protected List<FieldName> getMiningFields(EnumSet<FieldUsageType> fieldUsageTypes){
-		List<FieldName> result = Lists.newArrayList();
+		List<FieldName> result = new ArrayList<>();
 
 		MiningSchema miningSchema = getMiningSchema();
 		if(miningSchema == null){
@@ -175,7 +175,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 			return Collections.emptyList();
 		}
 
-		List<FieldName> result = Lists.newArrayList();
+		List<FieldName> result = new ArrayList<>();
 
 		List<OutputField> outputFields = output.getOutputFields();
 		for(OutputField outputField : outputFields){

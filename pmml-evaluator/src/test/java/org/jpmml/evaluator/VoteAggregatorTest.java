@@ -20,9 +20,9 @@ package org.jpmml.evaluator;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
-import com.google.common.collect.Sets;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -36,7 +36,7 @@ public class VoteAggregatorTest {
 		aggregator.add("B", 1d);
 		aggregator.add("C", 1d);
 
-		assertEquals(Sets.newLinkedHashSet(Arrays.asList("A", "B", "C")), aggregator.getWinners());
+		assertEquals(new LinkedHashSet<>(Arrays.asList("A", "B", "C")), aggregator.getWinners());
 
 		aggregator.add("B", 0.5d);
 
@@ -44,7 +44,7 @@ public class VoteAggregatorTest {
 
 		aggregator.add("A", 0.5d);
 
-		assertEquals(Sets.newLinkedHashSet(Arrays.asList("A", "B")), aggregator.getWinners());
+		assertEquals(new LinkedHashSet<>(Arrays.asList("A", "B")), aggregator.getWinners());
 
 		Map<String, Double> sumMap = aggregator.sumMap();
 

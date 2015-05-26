@@ -27,6 +27,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Function;
@@ -146,7 +147,7 @@ public class ArrayUtil {
 
 	static
 	public List<String> tokenize(String string, boolean enableQuotes){
-		List<String> result = Lists.newArrayList();
+		List<String> result = new ArrayList<>();
 
 		StringBuilder sb = new StringBuilder();
 

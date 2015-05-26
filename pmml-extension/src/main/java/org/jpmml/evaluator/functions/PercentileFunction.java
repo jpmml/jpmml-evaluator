@@ -18,11 +18,11 @@
  */
 package org.jpmml.evaluator.functions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.dmg.pmml.DataType;
@@ -75,7 +75,7 @@ public class PercentileFunction extends AbstractFunction {
 
 	static
 	private Double evaluate(Collection<?> values, int quantile){
-		List<Double> doubleValues = Lists.newArrayList();
+		List<Double> doubleValues = new ArrayList<>();
 
 		for(Object value : values){
 			Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);

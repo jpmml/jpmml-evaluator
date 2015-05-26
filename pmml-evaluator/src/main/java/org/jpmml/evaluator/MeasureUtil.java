@@ -18,11 +18,11 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import org.dmg.pmml.BinarySimilarity;
 import org.dmg.pmml.Chebychev;
 import org.dmg.pmml.CityBlock;
@@ -181,7 +181,7 @@ public class MeasureUtil {
 			throw new UnsupportedFeatureException(measure);
 		}
 
-		List<Double> distances = Lists.newArrayList();
+		List<Double> distances = new ArrayList<>();
 
 		comparisonFields:
 		for(int i = 0; i < comparisonFields.size(); i++){

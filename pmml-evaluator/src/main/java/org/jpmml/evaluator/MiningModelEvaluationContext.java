@@ -18,13 +18,12 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
 
 public class MiningModelEvaluationContext extends ModelEvaluationContext {
 
-	private Map<String, SegmentResultMap> results = Maps.newLinkedHashMap();
+	private Map<String, SegmentResultMap> results = new LinkedHashMap<>();
 
 
 	public MiningModelEvaluationContext(ModelEvaluationContext parent, MiningModelEvaluator modelEvaluator){

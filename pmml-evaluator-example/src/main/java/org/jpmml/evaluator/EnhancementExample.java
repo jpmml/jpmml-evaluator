@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -32,7 +33,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamResult;
 
 import com.beust.jcommander.Parameter;
-import com.beust.jcommander.internal.Lists;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.MiningField;
@@ -106,7 +106,7 @@ public class EnhancementExample extends Example {
 
 		modelVerification = new ModelVerification();
 
-		List<String> tagNames = Lists.newArrayList();
+		List<String> tagNames = new ArrayList<>();
 
 		VerificationFields verificationFields = new VerificationFields();
 

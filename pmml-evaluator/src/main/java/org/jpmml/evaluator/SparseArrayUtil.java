@@ -30,12 +30,12 @@ package org.jpmml.evaluator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.Maps;
 import org.dmg.pmml.IntSparseArray;
 import org.dmg.pmml.RealSparseArray;
 import org.dmg.pmml.SparseArray;
@@ -82,7 +82,7 @@ public class SparseArrayUtil {
 
 	static
 	public <E extends Number> SortedMap<Integer, E> parse(SparseArray<E> sparseArray){
-		SortedMap<Integer, E> result = Maps.newTreeMap();
+		SortedMap<Integer, E> result = new TreeMap<>();
 
 		List<Integer> indices = sparseArray.getIndices();
 		List<E> entries = sparseArray.getEntries();

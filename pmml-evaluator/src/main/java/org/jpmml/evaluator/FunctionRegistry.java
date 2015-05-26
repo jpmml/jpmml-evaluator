@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.IllegalFormatException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -26,7 +27,6 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.rank.Max;
 import org.apache.commons.math3.stat.descriptive.rank.Min;
@@ -105,7 +105,7 @@ public class FunctionRegistry {
 		return function;
 	}
 
-	private static final Map<String, Function> functions = Maps.newLinkedHashMap();
+	private static final Map<String, Function> functions = new LinkedHashMap<>();
 
 	static {
 		putFunction(new ArithmeticFunction("+"){

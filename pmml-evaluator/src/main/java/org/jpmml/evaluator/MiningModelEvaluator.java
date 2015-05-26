@@ -18,8 +18,10 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,8 +33,6 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
@@ -238,7 +238,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private List<SegmentResultMap> evaluateSegmentation(MiningModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResultMap> results = Lists.newArrayList();
+		List<SegmentResultMap> results = new ArrayList<>();
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
@@ -516,7 +516,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		for(SegmentResultMap segmentResult : segmentResults){
 
 			if(keys == null){
-				keys = Sets.newLinkedHashSet(segmentResult.keySet());
+				keys = new LinkedHashSet<>(segmentResult.keySet());
 			} // End if
 
 			// Ensure that all List values in the ListMultimap contain the same number of elements

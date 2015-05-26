@@ -27,10 +27,10 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import org.dmg.pmml.BinarySimilarity;
 import org.dmg.pmml.ClusteringField;
 import org.dmg.pmml.ComparisonMeasure;
@@ -72,7 +72,7 @@ public class MeasureUtilTest {
 
 	static
 	private List<ClusteringField> createClusteringFields(String... names){
-		List<ClusteringField> result = Lists.newArrayList();
+		List<ClusteringField> result = new ArrayList<>();
 
 		for(String name : names){
 			result.add(new ClusteringField(new FieldName(name)));
@@ -83,7 +83,7 @@ public class MeasureUtilTest {
 
 	static
 	private BitSet createFlags(Number... numbers){
-		List<FieldValue> result = Lists.newArrayList();
+		List<FieldValue> result = new ArrayList<>();
 
 		for(Number number : numbers){
 			result.add(FieldValueUtil.create(number));

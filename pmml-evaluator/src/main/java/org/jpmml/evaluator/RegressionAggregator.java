@@ -18,17 +18,17 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 
 class RegressionAggregator {
 
-	private List<Double> values = Lists.newArrayList();
+	private List<Double> values = new ArrayList<>();
 
 
 	public int size(){

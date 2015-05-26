@@ -23,13 +23,14 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.dmg.pmml.FieldName;
 
 public class CsvUtil {
@@ -39,7 +40,7 @@ public class CsvUtil {
 
 	static
 	public List<Map<FieldName, String>> load(InputStream is) throws IOException {
-		List<Map<FieldName, String>> table = Lists.newArrayList();
+		List<Map<FieldName, String>> table = new ArrayList<>();
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
 
@@ -57,7 +58,7 @@ public class CsvUtil {
 					break;
 				}
 
-				Map<FieldName, String> row = Maps.newLinkedHashMap();
+				Map<FieldName, String> row = new LinkedHashMap<>();
 
 				List<String> bodyCells = parseLine(bodyLine);
 

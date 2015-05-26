@@ -19,9 +19,9 @@
 package org.jpmml.evaluator;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -30,7 +30,7 @@ public class RegressionModelEvaluatorTest {
 
 	@Test
 	public void calculateCategoryProbabilities(){
-		Map<String, Double> values = Maps.newLinkedHashMap();
+		Map<String, Double> values = new LinkedHashMap<>();
 		values.put("loud", 0.2d);
 		values.put("louder", 0.7d);
 		values.put("insane", 1d);

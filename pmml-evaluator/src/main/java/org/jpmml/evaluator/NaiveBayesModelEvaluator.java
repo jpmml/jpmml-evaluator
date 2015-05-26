@@ -27,8 +27,10 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,8 +41,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.commons.math3.util.Precision;
 import org.dmg.pmml.BayesInput;
 import org.dmg.pmml.BayesInputs;
@@ -238,13 +238,13 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 	static
 	private Map<FieldName, Map<String, Double>> calculateFieldCountSums(NaiveBayesModel naiveBayesModel){
-		Map<FieldName, Map<String, Double>> result = Maps.newLinkedHashMap();
+		Map<FieldName, Map<String, Double>> result = new LinkedHashMap<>();
 
 		List<BayesInput> bayesInputs = CacheUtil.getValue(naiveBayesModel, NaiveBayesModelEvaluator.bayesInputCache);
 		for(BayesInput bayesInput : bayesInputs){
 			FieldName name = bayesInput.getFieldName();
 
-			Map<String, Double> counts = Maps.newLinkedHashMap();
+			Map<String, Double> counts = new LinkedHashMap<>();
 
 			List<PairCounts> pairCounts = bayesInput.getPairCounts();
 			for(PairCounts pairCount : pairCounts){
@@ -263,7 +263,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 	static
 	private List<BayesInput> parseBayesInputs(NaiveBayesModel naiveBayesModel){
-		List<BayesInput> result = Lists.newArrayList();
+		List<BayesInput> result = new ArrayList<>();
 
 		BayesInputs bayesInputs = naiveBayesModel.getBayesInputs();
 

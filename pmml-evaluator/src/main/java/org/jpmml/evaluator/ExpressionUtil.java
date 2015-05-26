@@ -18,9 +18,11 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +30,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.Constant;
@@ -261,7 +262,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateMapValues(MapValues mapValues, EvaluationContext context){
-		Map<String, FieldValue> values = Maps.newLinkedHashMap();
+		Map<String, FieldValue> values = new LinkedHashMap<>();
 
 		List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
 		for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
@@ -284,7 +285,7 @@ public class ExpressionUtil {
 
 		Iterator<Expression> arguments = expressions.iterator();
 
-		List<FieldValue> values = Lists.newArrayList();
+		List<FieldValue> values = new ArrayList<>();
 
 		String name = apply.getFunction();
 

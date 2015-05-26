@@ -20,10 +20,10 @@ package org.jpmml.evaluator;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
@@ -57,7 +57,7 @@ public class TargetUtil {
 	public Map<FieldName, ?> evaluateRegression(Map<FieldName, ? extends Number> predictions, ModelEvaluationContext context){
 		Evaluator evaluator = context.getModelEvaluator();
 
-		Map<FieldName, Object> result = Maps.newLinkedHashMap();
+		Map<FieldName, Object> result = new LinkedHashMap<>();
 
 		Collection<? extends Map.Entry<FieldName, ? extends Number>> entries = predictions.entrySet();
 		for(Map.Entry<FieldName, ? extends Number> entry : entries){
@@ -114,7 +114,7 @@ public class TargetUtil {
 	public Map<FieldName, ? extends ClassificationMap<?>> evaluateClassification(Map<FieldName, ? extends ClassificationMap<?>> predictions, ModelEvaluationContext context){
 		Evaluator evaluator = context.getModelEvaluator();
 
-		Map<FieldName, ClassificationMap<?>> result = Maps.newLinkedHashMap();
+		Map<FieldName, ClassificationMap<?>> result = new LinkedHashMap<>();
 
 		Collection<? extends Map.Entry<FieldName, ? extends ClassificationMap<?>>> entries = predictions.entrySet();
 		for(Map.Entry<FieldName, ? extends ClassificationMap<?>> entry : entries){

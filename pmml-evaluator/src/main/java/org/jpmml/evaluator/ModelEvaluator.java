@@ -27,8 +27,10 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,8 +40,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 import com.google.common.collect.Table;
@@ -127,7 +127,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			throw new InvalidFeatureException(modelVerification);
 		}
 
-		Map<FieldName, VerificationField> fieldMap = Maps.newLinkedHashMap();
+		Map<FieldName, VerificationField> fieldMap = new LinkedHashMap<>();
 
 		for(VerificationField verificationField : verificationFields){
 			fieldMap.put(FieldName.create(verificationField.getField()), verificationField);
@@ -140,13 +140,13 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		Table<Integer, String, String> table = InlineTableUtil.getContent(inlineTable);
 
-		List<Map<FieldName, Object>> records = Lists.newArrayList();
+		List<Map<FieldName, Object>> records = new ArrayList<>();
 
 		Set<Integer> rowKeys = table.rowKeySet();
 		for(Integer rowKey : rowKeys){
 			Map<String, String> row = table.row(rowKey);
 
-			Map<FieldName, Object> record = Maps.newLinkedHashMap();
+			Map<FieldName, Object> record = new LinkedHashMap<>();
 
 			for(VerificationField verificationField : verificationFields){
 				String field = verificationField.getField();
@@ -188,7 +188,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		List<FieldName> outputFields = getOutputFields();
 
 		for(Map<FieldName, Object> record : records){
-			Map<FieldName, Object> arguments = Maps.newLinkedHashMap();
+			Map<FieldName, Object> arguments = new LinkedHashMap<>();
 
 			for(FieldName activeField : activeFields){
 				arguments.put(activeField, EvaluatorUtil.prepare(this, activeField, record.get(activeField)));

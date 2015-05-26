@@ -18,9 +18,12 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,9 +34,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.dmg.pmml.AssociationModel;
 import org.dmg.pmml.AssociationRule;
 import org.dmg.pmml.FieldName;
@@ -111,7 +111,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		Set<String> input = createInput(activeValue, context);
 
-		Map<String, Boolean> flags = Maps.newLinkedHashMap();
+		Map<String, Boolean> flags = new LinkedHashMap<>();
 
 		List<Itemset> itemsets = associationModel.getItemsets();
 		for(Itemset itemset : itemsets){
@@ -173,7 +173,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				throw new InvalidFeatureException("No active fields", getMiningSchema());
 			}
 
-			List<String> result = Lists.newArrayList();
+			List<String> result = new ArrayList<>();
 
 			for(FieldName activeField : activeFields){
 				FieldValue value = context.getField(activeField);
@@ -238,7 +238,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	 * @return A set of {@link Item#getId() Item identifiers}.
 	 */
 	private Set<String> createInput(Collection<?> values, EvaluationContext context){
-		Set<String> result = Sets.newLinkedHashSet();
+		Set<String> result = new LinkedHashSet<>();
 
 		Map<String, String> valueItems = (getItemValues().inverse());
 

@@ -19,9 +19,9 @@
 package org.jpmml.evaluator;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
 import org.junit.Test;
@@ -70,7 +70,7 @@ public class InlineTableUtilTest {
 
 	static
 	private Map<String, String> createRow(String[][] strings){
-		Map<String, String> result = Maps.newLinkedHashMap();
+		Map<String, String> result = new LinkedHashMap<>();
 
 		for(int i = 0; i < strings.length; i++){
 			result.put(strings[i][0], strings[i][1]);
@@ -99,7 +99,7 @@ public class InlineTableUtilTest {
 
 	static
 	private Map<String, FieldValue> createValues(Object[][] objects){
-		Map<String, FieldValue> result = Maps.newLinkedHashMap();
+		Map<String, FieldValue> result = new LinkedHashMap<>();
 
 		for(int i = 0; i < objects.length; i++){
 			result.put((String)objects[i][0], FieldValueUtil.create(objects[i][1]));

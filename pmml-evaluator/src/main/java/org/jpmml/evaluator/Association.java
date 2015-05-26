@@ -18,13 +18,13 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Lists;
 import org.dmg.pmml.AssociationRule;
 import org.dmg.pmml.OutputField;
 
@@ -79,7 +79,7 @@ public class Association implements Computable, HasRuleValues {
 				throw new UnsupportedFeatureException();
 		}
 
-		List<AssociationRule> result = Lists.newArrayList();
+		List<AssociationRule> result = new ArrayList<>();
 
 		for(int i = flags.nextSetBit(0); i > -1; i = flags.nextSetBit(i + 1)){
 			AssociationRule associationRule = associationRules.get(i);

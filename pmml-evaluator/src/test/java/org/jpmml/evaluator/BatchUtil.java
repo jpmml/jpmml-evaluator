@@ -19,15 +19,16 @@
 package org.jpmml.evaluator;
 
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Equivalence;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
@@ -143,7 +144,7 @@ public class BatchUtil {
 				throw new EvaluationException();
 			}
 
-			List<MapDifference<FieldName, ?>> differences = Lists.newArrayList();
+			List<MapDifference<FieldName, ?>> differences = new ArrayList<>();
 
 			for(int i = 0; i < input.size(); i++){
 				Map<FieldName, ?> arguments = input.get(i);
@@ -152,13 +153,13 @@ public class BatchUtil {
 
 				// Delete the default target field
 				if(targetFields.size() == 0){
-					result = Maps.newLinkedHashMap(result);
+					result = new LinkedHashMap<>(result);
 
 					result.remove(evaluator.getTargetField());
 				} // End if
 
 				if(ignoredFields != null && ignoredFields.size() > 0){
-					result = Maps.newLinkedHashMap(result);
+					result = new LinkedHashMap<>(result);
 
 					Set<FieldName> fields = result.keySet();
 					fields.removeAll(ignoredFields);

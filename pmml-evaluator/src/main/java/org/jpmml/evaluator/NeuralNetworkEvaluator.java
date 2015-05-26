@@ -27,6 +27,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.Maps;
 import org.dmg.pmml.ActivationFunctionType;
 import org.dmg.pmml.Connection;
 import org.dmg.pmml.DerivedField;
@@ -109,7 +109,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			return TargetUtil.evaluateRegressionDefault(context);
 		}
 
-		Map<FieldName, Double> result = Maps.newLinkedHashMap();
+		Map<FieldName, Double> result = new LinkedHashMap<>();
 
 		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
 		if(neuralOutputs == null){
@@ -158,7 +158,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			return TargetUtil.evaluateClassificationDefault(context);
 		}
 
-		Map<FieldName, NeuronClassificationMap> result = Maps.newLinkedHashMap();
+		Map<FieldName, NeuronClassificationMap> result = new LinkedHashMap<>();
 
 		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
 		if(neuralOutputs == null){
@@ -224,7 +224,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	public Map<String, Double> evaluateRaw(EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
-		Map<String, Double> result = Maps.newLinkedHashMap();
+		Map<String, Double> result = new LinkedHashMap<>();
 
 		NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
 		if(neuralInputs == null){
@@ -244,7 +244,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
 		for(NeuralLayer neuralLayer : neuralLayers){
-			Map<String, Double> outputs = Maps.newLinkedHashMap();
+			Map<String, Double> outputs = new LinkedHashMap<>();
 
 			List<Neuron> neurons = neuralLayer.getNeurons();
 			for(Neuron neuron : neurons){
