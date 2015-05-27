@@ -47,11 +47,11 @@ public class Association implements Computable, HasRuleValues {
 	}
 
 	/**
-	 * @throws EvaluationException Always.
+	 * @throws UnsupportedOperationException Always.
 	 */
 	@Override
 	public Object getResult(){
-		throw new EvaluationException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

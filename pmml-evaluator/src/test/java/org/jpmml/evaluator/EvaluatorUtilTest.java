@@ -59,7 +59,7 @@ public class EvaluatorUtilTest {
 
 			@Override
 			public Object getResult(){
-				throw new EvaluationException();
+				throw new UnsupportedOperationException();
 			}
 		};
 
@@ -67,7 +67,7 @@ public class EvaluatorUtilTest {
 			EvaluatorUtil.decode(invalidValue);
 
 			fail();
-		} catch(EvaluationException ee){
+		} catch(UnsupportedOperationException ee){
 			// Ignored
 		}
 

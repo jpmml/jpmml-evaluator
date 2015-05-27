@@ -24,7 +24,7 @@ package org.jpmml.evaluator;
 public interface Computable {
 
 	/**
-	 * @throws EvaluationException If the computation fails.
+	 * @throws UnsupportedOperationException If this object cannot be represented as a Java primitive value.
 	 */
 	Object getResult();
 }
