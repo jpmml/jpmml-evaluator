@@ -22,6 +22,8 @@ import java.io.InputStream;
 
 import org.dmg.pmml.PMML;
 
+import static org.junit.Assert.assertNull;
+
 abstract
 public class ModelEvaluatorTest extends PMMLManagerTest {
 
@@ -52,6 +54,8 @@ public class ModelEvaluatorTest extends PMMLManagerTest {
 	static
 	public ModelEvaluator<?> createModelEvaluator(InputStream is, ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
 		PMML pmml = loadPMML(is);
+
+		assertNull(pmml.getLocator());
 
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelManager(pmml);
 

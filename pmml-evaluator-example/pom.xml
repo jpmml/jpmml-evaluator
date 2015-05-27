@@ -37,6 +37,13 @@
 			<groupId>com.codahale.metrics</groupId>
 			<artifactId>metrics-core</artifactId>
 		</dependency>
+
+		<!-- Mirrors the one specified by the org.jpmml:pmml-evaluator/org.jpmml:pmml-model dependency -->
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.2.11</version>
+		</dependency>
 	</dependencies>
 
 	<build>
