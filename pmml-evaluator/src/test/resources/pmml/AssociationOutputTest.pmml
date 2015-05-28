@@ -11,6 +11,7 @@
             <MiningField name="item" usageType="active"/>
         </MiningSchema>
         <Output>
+            <OutputField name="entityId" feature="entityId" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
             <!-- PMML schema version 4.2 -->
             <OutputField name="antecedent" feature="antecedent" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
             <OutputField name="consequent" feature="consequent" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>

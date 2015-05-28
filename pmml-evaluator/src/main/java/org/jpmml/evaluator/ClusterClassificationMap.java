@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
@@ -26,7 +27,7 @@ import org.dmg.pmml.Cluster;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Beta
-public class ClusterClassificationMap extends EntityClassificationMap<Cluster> implements HasDisplayValue, HasAffinity, HasEntityAffinity {
+public class ClusterClassificationMap extends EntityClassificationMap<Cluster> implements HasEntityIdRanking, HasDisplayValue, HasAffinity, HasEntityAffinity {
 
 	protected ClusterClassificationMap(Type type){
 		super(type);
@@ -37,6 +38,11 @@ public class ClusterClassificationMap extends EntityClassificationMap<Cluster> i
 	@Override
 	public Set<String> getCategoryValues(){
 		return keySet();
+	}
+
+	@Override
+	public List<String> getEntityIdRanking(){
+		return getWinnerKeys();
 	}
 
 	@Override

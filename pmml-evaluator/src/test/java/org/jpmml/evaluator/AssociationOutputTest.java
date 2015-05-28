@@ -37,6 +37,8 @@ public class AssociationOutputTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
+		assertEquals("1", result.get(new FieldName("entityId")));
+
 		checkValue(Arrays.asList("Cracker"), result, "antecedent");
 		checkValue(Arrays.asList("Water"), result, "consequent");
 

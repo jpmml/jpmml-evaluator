@@ -216,6 +216,12 @@ public class OutputUtil {
 							value = segmentResult.getId();
 
 							break;
+						} // End if
+
+						if(value instanceof HasRuleValues){
+							value = getRuleValue(value, outputField, RuleFeatureType.RULE_ID);
+
+							break;
 						}
 
 						value = getEntityId(value, outputField);
