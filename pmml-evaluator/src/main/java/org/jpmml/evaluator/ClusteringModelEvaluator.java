@@ -144,11 +144,11 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 	private ClusterClassificationMap evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
 		ClusteringModel clusteringModel = getModel();
 
-		ClusterClassificationMap result = new ClusterClassificationMap(ClassificationMap.Type.SIMILARITY);
+		BiMap<String, Cluster> entityRegistry = getEntityRegistry();
+
+		ClusterClassificationMap result = new ClusterClassificationMap(ClassificationMap.Type.SIMILARITY, entityRegistry);
 
 		BitSet flags = MeasureUtil.toBitSet(values);
-
-		BiMap<Cluster, String> inverseEntities = (getEntityRegistry()).inverse();
 
 		List<Cluster> clusters = clusteringModel.getClusters();
 		for(Cluster cluster : clusters){
@@ -158,7 +158,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 				throw new InvalidFeatureException(cluster);
 			}
 
-			String id = inverseEntities.get(cluster);
+			String id = EntityUtil.getId(cluster, entityRegistry);
 
 			Double similarity = MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, clusterFlags);
 
@@ -171,7 +171,9 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 	private ClusterClassificationMap evaluateDistance(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
 		ClusteringModel clusteringModel = getModel();
 
-		ClusterClassificationMap result = new ClusterClassificationMap(ClassificationMap.Type.DISTANCE);
+		BiMap<String, Cluster> entityRegistry = getEntityRegistry();
+
+		ClusterClassificationMap result = new ClusterClassificationMap(ClassificationMap.Type.DISTANCE, entityRegistry);
 
 		Double adjustment;
 
@@ -191,8 +193,6 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			adjustment = MeasureUtil.calculateAdjustment(values);
 		}
 
-		BiMap<Cluster, String> inverseEntities = (getEntityRegistry()).inverse();
-
 		List<Cluster> clusters = clusteringModel.getClusters();
 		for(Cluster cluster : clusters){
 			List<FieldValue> clusterValues = CacheUtil.getValue(cluster, ClusteringModelEvaluator.clusterValueCache);
@@ -201,7 +201,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 				throw new InvalidFeatureException(cluster);
 			}
 
-			String id = inverseEntities.get(cluster);
+			String id = EntityUtil.getId(cluster, entityRegistry);
 
 			Double distance = MeasureUtil.evaluateDistance(comparisonMeasure, clusteringFields, values, clusterValues, adjustment);
 

@@ -22,6 +22,7 @@ import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -288,16 +289,18 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 	}
 
-	static
 	private NodeScore createNodeScore(Node node, Object value){
-		NodeScore result = new NodeScore(node, value);
+		BiMap<String, Node> entityRegistry = getEntityRegistry();
+
+		NodeScore result = new NodeScore(entityRegistry, node, value);
 
 		return result;
 	}
 
-	static
 	private NodeClassificationMap createNodeClassificationMap(Node node, double missingValuePenalty){
-		NodeClassificationMap result = new NodeClassificationMap(node);
+		BiMap<String, Node> entityRegistry = getEntityRegistry();
+
+		NodeClassificationMap result = new NodeClassificationMap(entityRegistry, node);
 
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
 
@@ -377,17 +380,21 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			public BiMap<String, Node> load(TreeModel treeModel){
 				ImmutableBiMap.Builder<String, Node> builder = new ImmutableBiMap.Builder<>();
 
-				builder = collectNodes(treeModel.getNode(), builder);
+				builder = collectNodes(treeModel.getNode(), new AtomicInteger(1), builder);
 
 				return builder.build();
 			}
 
-			private ImmutableBiMap.Builder<String, Node> collectNodes(Node node, ImmutableBiMap.Builder<String, Node> builder){
-				builder = EntityUtil.put(node, builder);
+			private ImmutableBiMap.Builder<String, Node> collectNodes(Node node, AtomicInteger index, ImmutableBiMap.Builder<String, Node> builder){
+				builder = EntityUtil.put(node, index, builder);
+
+				if(!node.hasNodes()){
+					return builder;
+				}
 
 				List<Node> children = node.getNodes();
 				for(Node child : children){
-					builder = collectNodes(child, builder);
+					builder = collectNodes(child, index, builder);
 				}
 
 				return builder;

@@ -21,17 +21,21 @@ package org.jpmml.evaluator;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.BiMap;
 import org.dmg.pmml.Node;
 
 @Beta
-public class NodeScore implements Computable, HasEntityId {
+public class NodeScore implements Computable, HasEntityId, HasEntityRegistry<Node> {
+
+	private BiMap<String, Node> entityRegistry = null;
 
 	private Node node = null;
 
 	private Object result = null;
 
 
-	protected NodeScore(Node node, Object result){
+	protected NodeScore(BiMap<String, Node> entityRegistry, Node node, Object result){
+		setEntityRegistry(entityRegistry);
 		setNode(node);
 		setResult(result);
 	}
@@ -40,7 +44,7 @@ public class NodeScore implements Computable, HasEntityId {
 	public String getEntityId(){
 		Node node = getNode();
 
-		return node.getId();
+		return EntityUtil.getId(node, this);
 	}
 
 	@Override
@@ -49,6 +53,15 @@ public class NodeScore implements Computable, HasEntityId {
 			.add("entityId", getEntityId());
 
 		return helper.toString();
+	}
+
+	@Override
+	public BiMap<String, Node> getEntityRegistry(){
+		return this.entityRegistry;
+	}
+
+	private void setEntityRegistry(BiMap<String, Node> entityRegistry){
+		this.entityRegistry = entityRegistry;
 	}
 
 	public Node getNode(){

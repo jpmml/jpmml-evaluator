@@ -760,6 +760,9 @@ public class OutputUtil {
 		return getRuleFeature(hasRuleValues, associationRule, outputField, outputField.getRuleFeature());
 	}
 
+	@SuppressWarnings (
+		value = {"unchecked"}
+	)
 	static
 	private Object getRuleFeature(HasRuleValues hasRuleValues, AssociationRule associationRule, PMMLObject element, RuleFeatureType ruleFeature){
 
@@ -786,14 +789,9 @@ public class OutputUtil {
 				}
 			case RULE_ID:
 				{
-					String id = associationRule.getId();
-					if(id == null){
-						BiMap<String, AssociationRule> associationRuleRegistry = hasRuleValues.getAssociationRuleRegistry();
+					HasEntityRegistry<AssociationRule> hasEntityRegistry = (HasEntityRegistry<AssociationRule>)hasRuleValues;
 
-						id = (associationRuleRegistry.inverse()).get(associationRule);
-					}
-
-					return id;
+					return EntityUtil.getId(associationRule, hasEntityRegistry);
 				}
 			case CONFIDENCE:
 				return associationRule.getConfidence();

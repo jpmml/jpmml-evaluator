@@ -21,13 +21,14 @@ package org.jpmml.evaluator;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.BiMap;
 import org.dmg.pmml.Entity;
 
 @Beta
 public class NeuronClassificationMap extends EntityClassificationMap<Entity> implements HasProbability {
 
-	protected NeuronClassificationMap(){
-		super(Type.PROBABILITY);
+	protected NeuronClassificationMap(BiMap<String, Entity> entityRegistry){
+		super(Type.PROBABILITY, entityRegistry);
 	}
 
 	@Override

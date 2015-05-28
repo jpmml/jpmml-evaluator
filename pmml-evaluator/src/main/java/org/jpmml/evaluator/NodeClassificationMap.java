@@ -25,6 +25,7 @@ import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.BiMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Node;
 
@@ -34,8 +35,8 @@ public class NodeClassificationMap extends EntityClassificationMap<Node> impleme
 	private Map<String, Double> confidences = new LinkedHashMap<>();
 
 
-	protected NodeClassificationMap(Node node){
-		super(Type.PROBABILITY);
+	protected NodeClassificationMap(BiMap<String, Node> entityRegistry, Node node){
+		super(Type.PROBABILITY, entityRegistry);
 
 		setEntity(node);
 	}

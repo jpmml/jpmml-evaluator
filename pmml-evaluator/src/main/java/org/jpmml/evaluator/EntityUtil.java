@@ -19,8 +19,11 @@
 package org.jpmml.evaluator;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import org.dmg.pmml.Entity;
 import org.dmg.pmml.HasId;
 import org.dmg.pmml.PMMLObject;
 
@@ -30,38 +33,51 @@ public class EntityUtil {
 	}
 
 	static
+	public <E extends Entity> String getId(E entity, HasEntityRegistry<E> hasEntityRegistry){
+		BiMap<String, E> entityRegistry = hasEntityRegistry.getEntityRegistry();
+
+		return getId(entity, entityRegistry);
+	}
+
+	static
+	public <E extends Entity> String getId(E entity, BiMap<String, E> entityRegistry){
+		String id = entity.getId();
+
+		if(id == null){
+			BiMap<E, String> inversedEntityRegistry = entityRegistry.inverse();
+
+			return inversedEntityRegistry.get(entity);
+		}
+
+		return id;
+	}
+
+	static
 	public <E extends PMMLObject & HasId> ImmutableBiMap<String, E> buildBiMap(List<E> entities){
 		ImmutableBiMap.Builder<String, E> builder = new ImmutableBiMap.Builder<>();
 
-		builder = putAll(entities, builder);
+		builder = putAll(entities, new AtomicInteger(1), builder);
 
 		return builder.build();
 	}
 
 	static
-	public <E extends PMMLObject & HasId> ImmutableBiMap.Builder<String, E> put(E entity, ImmutableBiMap.Builder<String, E> builder){
+	<E extends PMMLObject & HasId> ImmutableBiMap.Builder<String, E> put(E entity, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
+		String implicitId = String.valueOf(index.getAndIncrement());
+
 		String id = entity.getId();
 		if(id == null){
-			throw new InvalidFeatureException(entity);
+			id = implicitId;
 		}
 
 		return builder.put(id, entity);
 	}
 
 	static
-	public <E extends PMMLObject & HasId> ImmutableBiMap.Builder<String, E> putAll(List<E> entities, ImmutableBiMap.Builder<String, E> builder){
+	<E extends PMMLObject & HasId> ImmutableBiMap.Builder<String, E> putAll(List<E> entities, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
 
-		for(int i = 0, j = 1; i < entities.size(); i++, j++){
-			E entity = entities.get(i);
-
-			String id = entity.getId();
-
-			// Generate an implicit identifier (ie. 1-based index) if the explicit identifier is missing
-			if(id == null){
-				id = String.valueOf(j);
-			} // End if
-
-			builder = builder.put(id, entity);
+		for(E entity : entities){
+			builder = put(entity, index, builder);
 		}
 
 		return builder;

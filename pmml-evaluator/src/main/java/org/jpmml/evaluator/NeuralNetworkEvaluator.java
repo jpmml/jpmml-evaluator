@@ -30,6 +30,7 @@ package org.jpmml.evaluator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -151,7 +152,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelEvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
-		Map<String, Entity> entities = getEntityRegistry();
+		BiMap<String, Entity> entityRegistry = getEntityRegistry();
 
 		Map<String, Double> entityOutputs = evaluateRaw(context);
 		if(entityOutputs == null){
@@ -176,12 +177,12 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 				NeuronClassificationMap values = result.get(field);
 				if(values == null){
-					values = new NeuronClassificationMap();
+					values = new NeuronClassificationMap(entityRegistry);
 
 					result.put(field, values);
 				}
 
-				Entity entity = entities.get(id);
+				Entity entity = entityRegistry.get(id);
 
 				Double value = entityOutputs.get(id);
 
@@ -354,13 +355,15 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			public BiMap<String, Entity> load(NeuralNetwork neuralNetwork){
 				ImmutableBiMap.Builder<String, Entity> builder = new ImmutableBiMap.Builder<>();
 
+				AtomicInteger index = new AtomicInteger(1);
+
 				NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
 				if(neuralInputs == null){
 					throw new InvalidFeatureException(neuralNetwork);
 				}
 
 				for(NeuralInput neuralInput : neuralInputs){
-					builder = EntityUtil.put(neuralInput, builder);
+					builder = EntityUtil.put(neuralInput, index, builder);
 				}
 
 				List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
@@ -368,7 +371,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 					List<Neuron> neurons = neuralLayer.getNeurons();
 
 					for(Neuron neuron : neurons){
-						builder = EntityUtil.put(neuron, builder);
+						builder = EntityUtil.put(neuron, index, builder);
 					}
 				}
 

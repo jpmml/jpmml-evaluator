@@ -25,12 +25,13 @@ import java.util.List;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.BiMap;
 import org.dmg.pmml.AssociationRule;
 import org.dmg.pmml.OutputField;
 
 @Beta
 abstract
-public class Association implements Computable, HasRuleValues {
+public class Association implements Computable, HasRuleValues, HasEntityRegistry<AssociationRule> {
 
 	private List<AssociationRule> associationRules = null;
 
@@ -88,6 +89,11 @@ public class Association implements Computable, HasRuleValues {
 		}
 
 		return result;
+	}
+
+	@Override
+	public BiMap<String, AssociationRule> getEntityRegistry(){
+		return getAssociationRuleRegistry();
 	}
 
 	@Override

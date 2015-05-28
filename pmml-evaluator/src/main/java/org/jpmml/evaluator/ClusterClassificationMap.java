@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.BiMap;
 import org.dmg.pmml.Cluster;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -29,8 +30,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 @Beta
 public class ClusterClassificationMap extends EntityClassificationMap<Cluster> implements HasEntityIdRanking, HasDisplayValue, HasAffinity, HasEntityAffinity {
 
-	protected ClusterClassificationMap(Type type){
-		super(type);
+	protected ClusterClassificationMap(Type type, BiMap<String, Cluster> entityRegistry){
+		super(type, entityRegistry);
 
 		checkArgument((Type.DISTANCE).equals(type) || (Type.SIMILARITY).equals(type));
 	}

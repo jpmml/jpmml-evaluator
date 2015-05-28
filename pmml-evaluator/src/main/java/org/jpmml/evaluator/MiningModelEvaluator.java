@@ -247,18 +247,18 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			throw new UnsupportedFeatureException(localTransformations);
 		}
 
-		BiMap<Segment, String> inverseEntities = (getEntityRegistry()).inverse();
+		ModelEvaluatorFactory evaluatorFactory = getEvaluatorFactory();
+		if(evaluatorFactory == null){
+			evaluatorFactory = ModelEvaluatorFactory.newInstance();
+		}
+
+		BiMap<String, Segment> entityRegistry = getEntityRegistry();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		Model lastModel = null;
 
 		MiningFunctionType miningFunction = miningModel.getFunctionName();
-
-		ModelEvaluatorFactory evaluatorFactory = getEvaluatorFactory();
-		if(evaluatorFactory == null){
-			evaluatorFactory = ModelEvaluatorFactory.newInstance();
-		}
 
 		List<Segment> segments = segmentation.getSegments();
 		for(Segment segment : segments){
@@ -271,8 +271,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			if(status == null || !status.booleanValue()){
 				continue;
 			}
-
-			String id = inverseEntities.get(segment);
 
 			Model model = segment.getModel();
 			if(model == null){
@@ -314,6 +312,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			for(String warning : warnings){
 				context.addWarning(warning);
 			}
+
+			String id = EntityUtil.getId(segment, entityRegistry);
 
 			SegmentResultMap segmentResult = new SegmentResultMap(segment, targetField);
 			segmentResult.putAll(result);

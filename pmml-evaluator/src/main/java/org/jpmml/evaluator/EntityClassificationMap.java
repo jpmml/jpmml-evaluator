@@ -20,30 +20,31 @@ package org.jpmml.evaluator;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.collect.BiMap;
 import org.dmg.pmml.Entity;
 
 @Beta
 abstract
-public class EntityClassificationMap<E extends Entity> extends ClassificationMap implements HasEntityId {
+public class EntityClassificationMap<E extends Entity> extends ClassificationMap implements HasEntityId, HasEntityRegistry<E> {
+
+	private BiMap<String, E> entityRegistry = null;
 
 	private E entity = null;
 
 	private Double entityValue = null;
 
 
-	protected EntityClassificationMap(Type type){
+	protected EntityClassificationMap(Type type, BiMap<String, E> entityRegistry){
 		super(type);
+
+		setEntityRegistry(entityRegistry);
 	}
 
 	@Override
 	public String getEntityId(){
 		E entity = getEntity();
 
-		if(entity != null){
-			return entity.getId();
-		}
-
-		return null;
+		return EntityUtil.getId(entity, this);
 	}
 
 	Double put(E entity, String key, Double value){
@@ -64,6 +65,15 @@ public class EntityClassificationMap<E extends Entity> extends ClassificationMap
 			.add("entityId", getEntityId());
 
 		return helper;
+	}
+
+	@Override
+	public BiMap<String, E> getEntityRegistry(){
+		return this.entityRegistry;
+	}
+
+	private void setEntityRegistry(BiMap<String, E> entityRegistry){
+		this.entityRegistry = entityRegistry;
 	}
 
 	public E getEntity(){

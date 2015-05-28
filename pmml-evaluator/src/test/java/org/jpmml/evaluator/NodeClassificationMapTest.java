@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.Node;
 import org.junit.Test;
@@ -33,7 +35,11 @@ public class NodeClassificationMapTest {
 		Node node = new Node()
 			.setScore("ham");
 
-		NodeClassificationMap classificationMap = new NodeClassificationMap(node);
+		BiMap<String, Node> entityRegistry = ImmutableBiMap.of("1", node);
+
+		NodeClassificationMap classificationMap = new NodeClassificationMap(entityRegistry, node);
+
+		assertEquals("1", classificationMap.getEntityId());
 
 		assertTrue(classificationMap.isEmpty());
 

@@ -21,14 +21,15 @@ package org.jpmml.evaluator;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.BiMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.SimpleRule;
 
 @Beta
 public class RuleClassificationMap extends EntityClassificationMap<SimpleRule> implements HasConfidence {
 
-	protected RuleClassificationMap(){
-		super(Type.CONFIDENCE);
+	protected RuleClassificationMap(BiMap<String, SimpleRule> entityRegistry){
+		super(Type.CONFIDENCE, entityRegistry);
 	}
 
 	@Override

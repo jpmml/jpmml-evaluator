@@ -21,7 +21,13 @@ package org.jpmml.evaluator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.dmg.pmml.CompoundRule;
@@ -35,7 +41,7 @@ import org.dmg.pmml.RuleSet;
 import org.dmg.pmml.RuleSetModel;
 import org.dmg.pmml.SimpleRule;
 
-public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
+public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implements HasEntityRegistry<SimpleRule> {
 
 	public RuleSetModelEvaluator(PMML pmml){
 		super(pmml, RuleSetModel.class);
@@ -48,6 +54,11 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 	@Override
 	public String getSummary(){
 		return "Ruleset model";
+	}
+
+	@Override
+	public BiMap<String, SimpleRule> getEntityRegistry(){
+		return getValue(RuleSetModelEvaluator.entityCache);
 	}
 
 	@Override
@@ -87,12 +98,11 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 		// Both the ordering of keys and values is significant
 		ListMultimap<String, SimpleRule> firedRules = LinkedListMultimap.create();
 
-		List<Rule> rules = ruleSet.getRules();
-		for(Rule rule : rules){
-			collectFiredRules(firedRules, rule, context);
-		}
+		evaluateRules(ruleSet.getRules(), firedRules, context);
 
-		RuleClassificationMap result = new RuleClassificationMap();
+		BiMap<String, SimpleRule> entityRegistry = getEntityRegistry();
+
+		RuleClassificationMap result = new RuleClassificationMap(entityRegistry);
 
 		// Return the default prediction when no rules in the ruleset fire
 		if(firedRules.size() == 0){
@@ -163,7 +173,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 	}
 
 	static
-	private void collectFiredRules(ListMultimap<String, SimpleRule> firedRules, Rule rule, EvaluationContext context){
+	private void evaluateRule(Rule rule, ListMultimap<String, SimpleRule> firedRules, EvaluationContext context){
 		Predicate predicate = rule.getPredicate();
 		if(predicate == null){
 			throw new InvalidFeatureException(rule);
@@ -183,14 +193,65 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> {
 		if(rule instanceof CompoundRule){
 			CompoundRule compoundRule = (CompoundRule)rule;
 
-			List<Rule> childRules = compoundRule.getRules();
-			for(Rule childRule : childRules){
-				collectFiredRules(firedRules, childRule, context);
-			}
+			evaluateRules(compoundRule.getRules(), firedRules, context);
 		} else
 
 		{
 			throw new UnsupportedFeatureException(rule);
 		}
 	}
+
+	static
+	private void evaluateRules(List<Rule> rules, ListMultimap<String, SimpleRule> firedRules, EvaluationContext context){
+
+		for(Rule rule : rules){
+			evaluateRule(rule, firedRules, context);
+		}
+	}
+
+	private static final LoadingCache<RuleSetModel, BiMap<String, SimpleRule>> entityCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<RuleSetModel, BiMap<String, SimpleRule>>(){
+
+			@Override
+			public BiMap<String, SimpleRule> load(RuleSetModel ruleSetModel){
+				ImmutableBiMap.Builder<String, SimpleRule> builder = new ImmutableBiMap.Builder<>();
+
+				RuleSet ruleSet = ruleSetModel.getRuleSet();
+
+				builder = collectRules(ruleSet.getRules(), new AtomicInteger(1), builder);
+
+				return builder.build();
+			}
+
+			private ImmutableBiMap.Builder<String, SimpleRule> collectRule(Rule rule, AtomicInteger index, ImmutableBiMap.Builder<String, SimpleRule> builder){
+
+				if(rule instanceof SimpleRule){
+					SimpleRule simpleRule = (SimpleRule)rule;
+
+					builder = EntityUtil.put(simpleRule, index, builder);
+				} else
+
+				if(rule instanceof CompoundRule){
+					CompoundRule compoundRule = (CompoundRule)rule;
+
+					builder = collectRules(compoundRule.getRules(), index, builder);
+				} else
+
+				{
+					throw new UnsupportedFeatureException(rule);
+				}
+
+				return builder;
+			}
+
+			private ImmutableBiMap.Builder<String, SimpleRule> collectRules(List<Rule> rules, AtomicInteger index, ImmutableBiMap.Builder<String, SimpleRule> builder){
+
+				for(Rule rule : rules){
+					builder = collectRule(rule, index, builder);
+				}
+
+				return builder;
+			}
+		});
 }
