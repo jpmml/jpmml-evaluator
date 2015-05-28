@@ -548,6 +548,14 @@ public class OutputUtil {
 		if(rank > 1){
 			HasEntityIdRanking hasEntityIdRanking = asResultFeature(HasEntityIdRanking.class, object);
 
+			OutputField.RankOrder rankOrder = outputField.getRankOrder();
+			switch(rankOrder){
+				case DESCENDING:
+					break;
+				default:
+					throw new UnsupportedFeatureException(outputField, rankOrder);
+			}
+
 			return getElement(hasEntityIdRanking.getEntityIdRanking(), rank);
 		}
 
@@ -565,6 +573,14 @@ public class OutputUtil {
 
 		if(rank > 1){
 			HasAffinityRanking hasAffinityRanking = asResultFeature(HasAffinityRanking.class, object);
+
+			OutputField.RankOrder rankOrder = outputField.getRankOrder();
+			switch(rankOrder){
+				case DESCENDING:
+					break;
+				default:
+					throw new UnsupportedFeatureException(outputField, rankOrder);
+			}
 
 			return getElement(hasAffinityRanking.getAffinityRanking(), rank);
 		}
