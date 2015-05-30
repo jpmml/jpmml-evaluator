@@ -33,7 +33,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.MiningFunctionType;
 
+/**
+ * @see MiningFunctionType#CLASSIFICATION
+ * @see MiningFunctionType#CLUSTERING
+ */
 public class Classification implements Computable {
 
 	private Map<String, Double> map = new LinkedHashMap<>();

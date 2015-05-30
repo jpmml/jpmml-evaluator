@@ -21,8 +21,12 @@ package org.jpmml.evaluator;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.BiMap;
+import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.Node;
 
+/**
+ * @see MiningFunctionType#REGRESSION
+ */
 public class NodeScore implements Computable, HasEntityId, HasEntityRegistry<Node> {
 
 	private BiMap<String, Node> entityRegistry = null;

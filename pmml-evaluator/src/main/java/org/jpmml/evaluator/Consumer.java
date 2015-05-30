@@ -34,6 +34,7 @@ import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningField;
+import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.Output;
@@ -44,9 +45,14 @@ import org.dmg.pmml.Targets;
 public interface Consumer extends Serializable {
 
 	/**
-	 * Returns a short description of the underlying {@link Model}
+	 * Gets a short description of the {@link Model}.
 	 */
 	String getSummary();
+
+	/**
+	 * Gets the type of the {@link Model}.
+	 */
+	MiningFunctionType getMiningFunction();
 
 	/**
 	 * Gets the definition of a field from the {@link DataDictionary}.
@@ -69,6 +75,8 @@ public interface Consumer extends Serializable {
 
 	/**
 	 * Gets the order fields of a {@link Model} from its {@link MiningSchema}.
+	 *
+	 * This field set is relevant only for {@link MiningFunctionType#ASSOCIATION_RULES association rules} model type.
 	 */
 	List<FieldName> getOrderFields();
 

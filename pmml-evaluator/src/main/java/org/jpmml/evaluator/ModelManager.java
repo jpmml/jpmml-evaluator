@@ -37,6 +37,7 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldUsageType;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MiningField;
+import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.Output;
@@ -61,6 +62,13 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	@Override
 	public String getSummary(){
 		return null;
+	}
+
+	@Override
+	public MiningFunctionType getMiningFunction(){
+		Model model = getModel();
+
+		return model.getFunctionName();
 	}
 
 	@Override

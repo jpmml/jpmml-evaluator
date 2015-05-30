@@ -26,8 +26,12 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.AssociationRule;
+import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.OutputField;
 
+/**
+ * @see MiningFunctionType#ASSOCIATION_RULES
+ */
 abstract
 public class Association implements Computable, HasRuleValues, HasEntityRegistry<AssociationRule> {
 
