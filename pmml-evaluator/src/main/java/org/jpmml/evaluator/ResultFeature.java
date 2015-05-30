@@ -22,28 +22,13 @@ import org.dmg.pmml.ResultFeatureType;
 
 /**
  * <p>
- * If the model does not declare an Output element, or if the declared Output element is incomplete,
- * then it is possible to enhance the evaluation result with proper output fields programmatically.
+ * A common superinterface for all result features.
  * </p>
  *
  * <p>
  * Every {@link ResultFeatureType result feature} is mapped to a specialized subinterface.
  * A target value may implement any number of subinterfaces.
  * Application developer should use the <code>instanceof</code> type comparison operator to check if the target value implements a particular subinterface or not.
- * </p>
- *
- * <p>
- * For example, handling the target value of a binary probabilistic classification:
- * <pre>
- * Object targetValue = result.get(evaluator.getTargetField());
- *
- * if(targetValue instanceof HasProbabilities){
- *   HasProbabilities hasProbabilities = (HasProbabilities)targetValue;
- *
- *   Double probabilityYes = hasProbabilities.getProbability("yes");
- *   Double probabilityNo = hasProbabilities.getProbability("no");
- * }
- * </pre>
  * </p>
  *
  * @see Computable

@@ -18,11 +18,13 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.ClusteringModel;
-import org.dmg.pmml.NearestNeighborModel;
 import org.dmg.pmml.ResultFeatureType;
 
 /**
+ * <p>
+ * A marker interface for classification or clustering results that provide an affinity distribution.
+ * </p>
+ *
  * <p>
  * Affinity represents a degree of attraction between the sample and a particular category.
  * </p>
@@ -33,14 +35,6 @@ import org.dmg.pmml.ResultFeatureType;
  *   <li>Distance between two points in an n-dimensional feature space. Smaller distance values indicate more optimal fit.</li>
  *   <li>Similarity between two feature vectors. Greater similarity values indicate more optimal fit.</li>
  * </ul>
- * </p>
- *
- * <p>
- * Clustering is an unsupervised learning task.
- * The set of all categories is defined by the identifiers of reference entities.
- *
- * For {@link ClusteringModel clustering models} this includes all {@link Cluster clusters}.
- * For {@link NearestNeighborModel k-nearest neighbor models} this includes <code>k</code> most optimal training instances.
  * </p>
  *
  * @see ResultFeatureType#AFFINITY

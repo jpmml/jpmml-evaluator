@@ -22,21 +22,13 @@ import org.dmg.pmml.ResultFeatureType;
 
 /**
  * <p>
- * A marker interface for <a href="http://en.wikipedia.org/wiki/Probabilistic_classification">probabilistic classification</a> results.
+ * A marker interface for classification results that provide a probability distribution.
  * </p>
  *
  * <p>
  * Probability represents a degree of certainty that the sample belongs to a particular category.
  * Probabilities are required to sum to 1 across all categories.
  * Ideally, the probability of the predicted category should approach 1.0, and the probabilities of all other categories should approach 0.0.
- * </p>
- *
- * <p>
- * Classification is a supervised learning task.
- * The set of all categories is defined by the valid values of the {@link Evaluator#getTargetField() target field}.
- *
- * The {@link #getCategoryValues() set of known categories} may be smaller than the set of all categories.
- * It is assumed that the probability of missing categories is 0.0.
  * </p>
  *
  * @see ResultFeatureType#PROBABILITY

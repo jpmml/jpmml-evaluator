@@ -18,13 +18,26 @@
  */
 package org.jpmml.evaluator;
 
+import org.dmg.pmml.Entity;
 import org.dmg.pmml.ResultFeatureType;
 
 /**
+ * <p>
+ * A marker interface for results that are associated with a "winning" {@link Entity}.
+ * </p>
+ *
+ * <p>
+ * If a result implements both {@link HasEntityId} and {@link HasEntityRegistry}, which is typically the case,
+ * then the provided {@link HasEntityRegistry#getEntityRegistry() entity registry} is suitable for {@link Entity} resolution purposes.
+ * </p>
+ *
  * @see ResultFeatureType#CLUSTER_ID
  * @see ResultFeatureType#ENTITY_ID
  */
 public interface HasEntityId extends ResultFeature {
 
+	/**
+	 * Gets the {@link Entity#getId() Entity identifier}.
+	 */
 	String getEntityId();
 }

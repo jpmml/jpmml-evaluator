@@ -21,6 +21,10 @@ package org.jpmml.evaluator;
 
 /**
  * <p>
+ * A marker interface for classification results that provide a confidence distribution.
+ * </p>
+ *
+ * <p>
  * Confidences are similar to probabilities, but more relaxed.
  * Most notably, the confidences are not required to sum to 1 across all categories, whereas the probabilities are.
  * </p>

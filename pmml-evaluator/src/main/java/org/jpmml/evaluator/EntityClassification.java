@@ -22,9 +22,6 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.Entity;
 
-/**
- * A variant of {@link Classification} where the {@link #getResult() computed result} is associated with a winning {@link Entity}.
- */
 abstract
 public class EntityClassification<E extends Entity> extends Classification implements HasEntityId, HasEntityRegistry<E> {
 

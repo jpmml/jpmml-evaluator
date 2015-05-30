@@ -20,10 +20,34 @@ package org.jpmml.evaluator;
 
 import java.util.Set;
 
+import org.dmg.pmml.ClusteringModel;
+import org.dmg.pmml.NearestNeighborModel;
+
+/**
+ * <p>
+ * A common superinterface for categorical result features.
+ * </p>
+ *
+ * <p>
+ * Classification is a supervised learning task.
+ * The set of all categories is defined by the valid values of the {@link Evaluator#getTargetField() target field}.
+ * </p>
+ *
+ * <p>
+ * Clustering is an unsupervised learning task.
+ * The set of all categories is defined by the identifiers of reference entities.
+ * For {@link ClusteringModel clustering models} this includes all {@link Cluster clusters}.
+ * For {@link NearestNeighborModel k-nearest neighbor models} this includes <em>k</em> nearest training instances.
+ * </p>
+ */
 public interface CategoricalResultFeature extends ResultFeature {
 
 	/**
+	 * <p>
 	 * Gets the set of known categories.
+	 * </p>
+	 *
+	 * The set of known categories either equals the set of all categories, or is a proper subset of it.
 	 */
 	Set<String> getCategoryValues();
 }

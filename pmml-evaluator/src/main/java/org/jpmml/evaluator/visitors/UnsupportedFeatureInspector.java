@@ -48,7 +48,7 @@ import org.dmg.pmml.VisitorAction;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 
 /**
- * A visitor that inspects a class model object for unsupported features.
+ * A Visitor that inspects a class model object for unsupported features.
  *
  * @see FeatureInspector#applyTo(Visitable)
  */
