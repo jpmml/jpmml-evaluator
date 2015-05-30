@@ -30,14 +30,14 @@ public class ProbabilityAggregatorTest {
 	public void add(){
 		ProbabilityAggregator aggregator = new ProbabilityAggregator();
 
-		aggregator.add(createClassificationMap(1d, 3d));
+		aggregator.add(createProbabilityDistribution(1d, 3d));
 
 		Map<String, Double> maxMap = aggregator.maxMap();
 
 		assertEquals((Double)1d, maxMap.get("A"));
 		assertEquals((Double)3d, maxMap.get("B"));
 
-		aggregator.add(createClassificationMap(3d, 1d), 0.5d);
+		aggregator.add(createProbabilityDistribution(3d, 1d), 0.5d);
 
 		maxMap = aggregator.maxMap();
 
@@ -58,8 +58,8 @@ public class ProbabilityAggregatorTest {
 	}
 
 	static
-	private HasProbability createClassificationMap(Double a, Double b){
-		ProbabilityClassificationMap result = new ProbabilityClassificationMap();
+	private HasProbability createProbabilityDistribution(Double a, Double b){
+		ProbabilityDistribution result = new ProbabilityDistribution();
 		result.put("A", a);
 		result.put("B", b);
 

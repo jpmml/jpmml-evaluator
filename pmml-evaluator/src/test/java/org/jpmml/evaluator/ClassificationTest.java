@@ -32,11 +32,11 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class ClassificationMapTest {
+public class ClassificationTest {
 
 	@Test
 	public void measureSimilarity(){
-		ClassificationMap.Type type = ClassificationMap.Type.SIMILARITY;
+		Classification.Type type = Classification.Type.SIMILARITY;
 
 		assertTrue(type.compare(0.5d, 0d) > 0);
 		assertTrue(type.compare(0d, 0.5d) < 0);
@@ -54,7 +54,7 @@ public class ClassificationMapTest {
 
 	@Test
 	public void measureDistance(){
-		ClassificationMap.Type type = ClassificationMap.Type.DISTANCE;
+		Classification.Type type = Classification.Type.DISTANCE;
 
 		assertTrue(type.compare(0.5d, 0d) < 0);
 		assertTrue(type.compare(0d, 0.5d) > 0);

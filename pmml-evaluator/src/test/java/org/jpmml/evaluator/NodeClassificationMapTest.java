@@ -37,25 +37,25 @@ public class NodeClassificationMapTest {
 
 		BiMap<String, Node> entityRegistry = ImmutableBiMap.of("1", node);
 
-		NodeClassificationMap classificationMap = new NodeClassificationMap(entityRegistry, node);
+		NodeScoreDistribution classification = new NodeScoreDistribution(entityRegistry, node);
 
-		assertEquals("1", classificationMap.getEntityId());
+		assertEquals("1", classification.getEntityId());
 
-		assertTrue(classificationMap.isEmpty());
+		assertTrue(classification.isEmpty());
 
-		assertEquals(Sets.newHashSet("ham"), classificationMap.getCategoryValues());
+		assertEquals(Sets.newHashSet("ham"), classification.getCategoryValues());
 
-		assertEquals((Double)1d, classificationMap.getProbability("ham"));
-		assertEquals((Double)0d, classificationMap.getProbability("spam"));
+		assertEquals((Double)1d, classification.getProbability("ham"));
+		assertEquals((Double)0d, classification.getProbability("spam"));
 
-		classificationMap.put("ham", 0.75d);
-		classificationMap.put("spam", 0.25d);
+		classification.put("ham", 0.75d);
+		classification.put("spam", 0.25d);
 
-		assertFalse(classificationMap.isEmpty());
+		assertFalse(classification.isEmpty());
 
-		assertEquals(Sets.newHashSet("ham", "spam"), classificationMap.getCategoryValues());
+		assertEquals(Sets.newHashSet("ham", "spam"), classification.getCategoryValues());
 
-		assertEquals((Double)0.75d, classificationMap.getProbability("ham"));
-		assertEquals((Double)0.25d, classificationMap.getProbability("spam"));
+		assertEquals((Double)0.75d, classification.getProbability("ham"));
+		assertEquals((Double)0.25d, classification.getProbability("spam"));
 	}
 }

@@ -121,7 +121,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		return TargetUtil.evaluateRegression(result, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
@@ -131,15 +131,15 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		String alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
 
-		ClassificationMap result;
+		Classification result;
 
 		SvmClassificationMethodType svmClassificationMethod = getClassificationMethod();
 		switch(svmClassificationMethod){
 			case ONE_AGAINST_ALL:
-				result = new ClassificationMap(ClassificationMap.Type.DISTANCE);
+				result = new Classification(Classification.Type.DISTANCE);
 				break;
 			case ONE_AGAINST_ONE:
-				result = new VoteClassificationMap();
+				result = new VoteDistribution();
 				break;
 			default:
 				throw new UnsupportedFeatureException(supportVectorMachineModel, svmClassificationMethod);

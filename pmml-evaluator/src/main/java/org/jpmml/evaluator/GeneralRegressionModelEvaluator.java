@@ -261,7 +261,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return TargetUtil.evaluateRegression(result, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		FieldName targetField = getTargetField();
@@ -330,7 +330,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 		}
 
-		ProbabilityClassificationMap result = new ProbabilityClassificationMap();
+		ProbabilityDistribution result = new ProbabilityDistribution();
 
 		Double previousValue = null;
 

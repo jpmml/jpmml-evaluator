@@ -101,7 +101,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		return TargetUtil.evaluateRegression(Collections.singletonMap(targetField, result), context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		FieldName targetField = regressionModel.getTargetFieldName();
@@ -161,7 +161,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new UnsupportedFeatureException(dataField, opType);
 		}
 
-		ProbabilityClassificationMap result = new ProbabilityClassificationMap();
+		ProbabilityDistribution result = new ProbabilityDistribution();
 		result.putAll(values);
 
 		return TargetUtil.evaluateClassification(Collections.singletonMap(targetField, result), context);
@@ -257,10 +257,10 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			case NONE:
 				return;
 			case SIMPLEMAX:
-				ClassificationMap.normalize(values);
+				Classification.normalize(values);
 				return;
 			case SOFTMAX:
-				ClassificationMap.normalizeSoftMax(values);
+				Classification.normalizeSoftMax(values);
 				return;
 			default:
 				break;
@@ -271,7 +271,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			entry.setValue(normalizeClassificationResult(entry.getValue()));
 		}
 
-		ClassificationMap.normalize(values);
+		Classification.normalize(values);
 	}
 
 	private void computeOrdinalProbabilities(Map<String, Double> values, List<String> targetCategories){

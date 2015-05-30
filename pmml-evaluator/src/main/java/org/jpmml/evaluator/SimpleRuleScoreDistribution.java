@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2013 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -21,12 +21,35 @@ package org.jpmml.evaluator;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.BiMap;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.SimpleRule;
 
 @Beta
-public class VoteClassificationMap extends ClassificationMap implements HasProbability {
+public class SimpleRuleScoreDistribution extends EntityClassification<SimpleRule> implements HasConfidence {
 
-	public VoteClassificationMap(){
-		super(Type.VOTE);
+	protected SimpleRuleScoreDistribution(BiMap<String, SimpleRule> entityRegistry){
+		super(Type.CONFIDENCE, entityRegistry);
+	}
+
+	@Override
+	void computeResult(DataType dataType){
+		SimpleRule simpleRule = getEntity();
+
+		if(simpleRule != null){
+			String score = simpleRule.getScore();
+			if(score == null){
+				throw new InvalidFeatureException(simpleRule);
+			}
+
+			Object result = TypeUtil.parseOrCast(dataType, score);
+
+			super.setResult(result);
+
+			return;
+		}
+
+		super.computeResult(dataType);
 	}
 
 	@Override
@@ -35,7 +58,7 @@ public class VoteClassificationMap extends ClassificationMap implements HasProba
 	}
 
 	@Override
-	public Double getProbability(String value){
-		return get(value) / sumValues();
+	public Double getConfidence(String value){
+		return get(value);
 	}
 }

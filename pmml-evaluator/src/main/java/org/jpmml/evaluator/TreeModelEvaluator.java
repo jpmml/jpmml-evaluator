@@ -109,10 +109,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return Collections.singletonMap(resultEntry.getKey(), createNodeScore(node, resultEntry.getValue()));
 	}
 
-	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
 		TreeModel treeModel = getModel();
 
-		NodeClassificationMap result = null;
+		NodeScoreDistribution result = null;
 
 		Trail trail = new Trail();
 
@@ -125,7 +125,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 				missingValuePenalty *= treeModel.getMissingValuePenalty();
 			}
 
-			result = createNodeClassificationMap(node, missingValuePenalty);
+			result = createNodeScoreDistribution(node, missingValuePenalty);
 		}
 
 		return TargetUtil.evaluateClassification(result, context);
@@ -297,10 +297,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return result;
 	}
 
-	private NodeClassificationMap createNodeClassificationMap(Node node, double missingValuePenalty){
+	private NodeScoreDistribution createNodeScoreDistribution(Node node, double missingValuePenalty){
 		BiMap<String, Node> entityRegistry = getEntityRegistry();
 
-		NodeClassificationMap result = new NodeClassificationMap(entityRegistry, node);
+		NodeScoreDistribution result = new NodeScoreDistribution(entityRegistry, node);
 
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
 

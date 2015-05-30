@@ -18,26 +18,24 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.BiMap;
-import org.dmg.pmml.Node;
 
 @Beta
-public class NodeScore implements Computable, HasEntityId, HasEntityRegistry<Node> {
-
-	private BiMap<String, Node> entityRegistry = null;
-
-	private Node node = null;
+public class ReasonCodeRanking implements Computable, HasReasonCodeRanking {
 
 	private Object result = null;
 
+	private Map<String, Double> reasonCodes = null;
 
-	protected NodeScore(BiMap<String, Node> entityRegistry, Node node, Object result){
-		setEntityRegistry(entityRegistry);
-		setNode(node);
+
+	protected ReasonCodeRanking(Object result, Map<String, Double> reasonCodes){
 		setResult(result);
+		setReasonCodes(reasonCodes);
 	}
 
 	@Override
@@ -50,35 +48,26 @@ public class NodeScore implements Computable, HasEntityId, HasEntityRegistry<Nod
 	}
 
 	@Override
-	public String getEntityId(){
-		Node node = getNode();
+	public List<String> getReasonCodeRanking(){
+		Map<String, Double> reasonCodes = getReasonCodes();
 
-		return EntityUtil.getId(node, this);
-	}
-
-	@Override
-	public BiMap<String, Node> getEntityRegistry(){
-		return this.entityRegistry;
-	}
-
-	private void setEntityRegistry(BiMap<String, Node> entityRegistry){
-		this.entityRegistry = entityRegistry;
+		return Classification.entryKeys(Classification.getWinnerList(Classification.Type.VOTE, reasonCodes.entrySet()));
 	}
 
 	@Override
 	public String toString(){
 		ToStringHelper helper = Objects.toStringHelper(this)
 			.add("result", getResult())
-			.add("entityId", getEntityId());
+			.add("reasonCodeRanking", getReasonCodeRanking());
 
 		return helper.toString();
 	}
 
-	public Node getNode(){
-		return this.node;
+	public Map<String, Double> getReasonCodes(){
+		return this.reasonCodes;
 	}
 
-	private void setNode(Node node){
-		this.node = node;
+	private void setReasonCodes(Map<String, Double> reasonCodes){
+		this.reasonCodes = reasonCodes;
 	}
 }

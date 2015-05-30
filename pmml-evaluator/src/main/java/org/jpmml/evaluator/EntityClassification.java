@@ -23,9 +23,12 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.Entity;
 
+/**
+ * A variant of {@link Classification} where the {@link #getResult() computed result} is associated with a winning {@link Entity}.
+ */
 @Beta
 abstract
-public class EntityClassificationMap<E extends Entity> extends ClassificationMap implements HasEntityId, HasEntityRegistry<E> {
+public class EntityClassification<E extends Entity> extends Classification implements HasEntityId, HasEntityRegistry<E> {
 
 	private BiMap<String, E> entityRegistry = null;
 
@@ -34,7 +37,7 @@ public class EntityClassificationMap<E extends Entity> extends ClassificationMap
 	private Double entityValue = null;
 
 
-	protected EntityClassificationMap(Type type, BiMap<String, E> entityRegistry){
+	protected EntityClassification(Type type, BiMap<String, E> entityRegistry){
 		super(type);
 
 		setEntityRegistry(entityRegistry);
@@ -47,16 +50,13 @@ public class EntityClassificationMap<E extends Entity> extends ClassificationMap
 		return EntityUtil.getId(entity, this);
 	}
 
-	Double put(E entity, String key, Double value){
-		Type type = getType();
+	@Override
+	public BiMap<String, E> getEntityRegistry(){
+		return this.entityRegistry;
+	}
 
-		if(this.entityValue == null || type.compare(value, this.entityValue) > 0){
-			this.entityValue = value;
-
-			setEntity(entity);
-		}
-
-		return put(key, value);
+	private void setEntityRegistry(BiMap<String, E> entityRegistry){
+		this.entityRegistry = entityRegistry;
 	}
 
 	@Override
@@ -67,13 +67,16 @@ public class EntityClassificationMap<E extends Entity> extends ClassificationMap
 		return helper;
 	}
 
-	@Override
-	public BiMap<String, E> getEntityRegistry(){
-		return this.entityRegistry;
-	}
+	Double put(E entity, String key, Double value){
+		Type type = getType();
 
-	private void setEntityRegistry(BiMap<String, E> entityRegistry){
-		this.entityRegistry = entityRegistry;
+		if(this.entityValue == null || type.compare(value, this.entityValue) > 0){
+			this.entityValue = value;
+
+			setEntity(entity);
+		}
+
+		return put(key, value);
 	}
 
 	public E getEntity(){

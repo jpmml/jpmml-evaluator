@@ -39,7 +39,7 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 		ModelEvaluationContext context = evaluator.createContext(null);
 		context.declareAll(arguments);
 
-		ProbabilityClassificationMap response = new ProbabilityClassificationMap();
+		ProbabilityDistribution response = new ProbabilityDistribution();
 		response.put("Y", 0.8d);
 		response.put("N", 0.2d);
 

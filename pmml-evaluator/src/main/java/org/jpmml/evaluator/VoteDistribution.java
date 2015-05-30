@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2014 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -21,14 +21,12 @@ package org.jpmml.evaluator;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.BiMap;
-import org.dmg.pmml.Entity;
 
 @Beta
-public class NeuronClassificationMap extends EntityClassificationMap<Entity> implements HasProbability {
+public class VoteDistribution extends Classification implements HasProbability {
 
-	protected NeuronClassificationMap(BiMap<String, Entity> entityRegistry){
-		super(Type.PROBABILITY, entityRegistry);
+	public VoteDistribution(){
+		super(Type.VOTE);
 	}
 
 	@Override
@@ -38,6 +36,6 @@ public class NeuronClassificationMap extends EntityClassificationMap<Entity> imp
 
 	@Override
 	public Double getProbability(String value){
-		return get(value);
+		return get(value) / sumValues();
 	}
 }

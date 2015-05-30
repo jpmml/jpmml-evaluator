@@ -96,12 +96,12 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ? extends ClassificationMap> evaluateClassificationDefault(ModelEvaluationContext context){
-		return evaluateClassification((ClassificationMap)null, context);
+	public Map<FieldName, ? extends Classification> evaluateClassificationDefault(ModelEvaluationContext context){
+		return evaluateClassification((Classification)null, context);
 	}
 
 	static
-	public Map<FieldName, ? extends ClassificationMap> evaluateClassification(ClassificationMap value, ModelEvaluationContext context){
+	public Map<FieldName, ? extends Classification> evaluateClassification(Classification value, ModelEvaluationContext context){
 		Evaluator evaluator = context.getModelEvaluator();
 
 		return evaluateClassification(Collections.singletonMap(evaluator.getTargetField(), value), context);
@@ -111,15 +111,15 @@ public class TargetUtil {
 	 * Evaluates the {@link Targets} element for {@link MiningFunctionType#CLASSIFICATION classification} models.
 	 */
 	static
-	public Map<FieldName, ? extends ClassificationMap> evaluateClassification(Map<FieldName, ? extends ClassificationMap> predictions, ModelEvaluationContext context){
+	public Map<FieldName, ? extends Classification> evaluateClassification(Map<FieldName, ? extends Classification> predictions, ModelEvaluationContext context){
 		Evaluator evaluator = context.getModelEvaluator();
 
-		Map<FieldName, ClassificationMap> result = new LinkedHashMap<>();
+		Map<FieldName, Classification> result = new LinkedHashMap<>();
 
-		Collection<? extends Map.Entry<FieldName, ? extends ClassificationMap>> entries = predictions.entrySet();
-		for(Map.Entry<FieldName, ? extends ClassificationMap> entry : entries){
+		Collection<? extends Map.Entry<FieldName, ? extends Classification>> entries = predictions.entrySet();
+		for(Map.Entry<FieldName, ? extends Classification> entry : entries){
 			FieldName key = entry.getKey();
-			ClassificationMap value = entry.getValue();
+			Classification value = entry.getValue();
 
 			DataField dataField = evaluator.getDataField(key);
 			if(dataField == null){
@@ -219,8 +219,8 @@ public class TargetUtil {
 	}
 
 	static
-	private ProbabilityClassificationMap getPriorProbabilities(Target target){
-		ProbabilityClassificationMap result = new ProbabilityClassificationMap();
+	private ProbabilityDistribution getPriorProbabilities(Target target){
+		ProbabilityDistribution result = new ProbabilityDistribution();
 
 		List<TargetValue> values = target.getTargetValues();
 		for(TargetValue value : values){

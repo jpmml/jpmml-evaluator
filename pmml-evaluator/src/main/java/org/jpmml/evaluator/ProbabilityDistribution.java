@@ -21,35 +21,12 @@ package org.jpmml.evaluator;
 import java.util.Set;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.BiMap;
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.SimpleRule;
 
 @Beta
-public class RuleClassificationMap extends EntityClassificationMap<SimpleRule> implements HasConfidence {
+public class ProbabilityDistribution extends Classification implements HasProbability {
 
-	protected RuleClassificationMap(BiMap<String, SimpleRule> entityRegistry){
-		super(Type.CONFIDENCE, entityRegistry);
-	}
-
-	@Override
-	void computeResult(DataType dataType){
-		SimpleRule rule = getEntity();
-
-		if(rule != null){
-			String score = rule.getScore();
-			if(score == null){
-				throw new InvalidFeatureException(rule);
-			}
-
-			Object result = TypeUtil.parseOrCast(dataType, score);
-
-			super.setResult(result);
-
-			return;
-		}
-
-		super.computeResult(dataType);
+	protected ProbabilityDistribution(){
+		super(Type.PROBABILITY);
 	}
 
 	@Override
@@ -58,7 +35,7 @@ public class RuleClassificationMap extends EntityClassificationMap<SimpleRule> i
 	}
 
 	@Override
-	public Double getConfidence(String value){
+	public Double getProbability(String value){
 		return get(value);
 	}
 }

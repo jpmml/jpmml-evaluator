@@ -35,14 +35,14 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 	public void nullPrediction() throws Exception {
 		Map<FieldName, ?> arguments = createArguments("outlook", "sunny", "temperature", null, "humidity", null);
 
-		NodeClassificationMap targetValue = evaluate(MissingValueStrategyType.NULL_PREDICTION, arguments);
+		NodeScoreDistribution targetValue = evaluate(MissingValueStrategyType.NULL_PREDICTION, arguments);
 
 		assertNull(targetValue);
 	}
 
 	@Test
 	public void nullPredictionDefault() throws Exception {
-		NodeClassificationMap targetValue = evaluate(MissingValueStrategyType.NULL_PREDICTION, Collections.<FieldName, FieldValue>emptyMap());
+		NodeScoreDistribution targetValue = evaluate(MissingValueStrategyType.NULL_PREDICTION, Collections.<FieldName, FieldValue>emptyMap());
 
 		assertNull(targetValue);
 	}
@@ -51,7 +51,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 	public void lastPrediction() throws Exception {
 		Map<FieldName, ?> arguments = createArguments("outlook", "sunny", "temperature", null, "humidity", null);
 
-		NodeClassificationMap targetValue = evaluate(MissingValueStrategyType.LAST_PREDICTION, arguments);
+		NodeScoreDistribution targetValue = evaluate(MissingValueStrategyType.LAST_PREDICTION, arguments);
 
 		assertEquals("2", targetValue.getEntityId());
 
@@ -62,7 +62,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void lastPredictionDefault() throws Exception {
-		NodeClassificationMap targetValue = evaluate(MissingValueStrategyType.LAST_PREDICTION, Collections.<FieldName, FieldValue>emptyMap());
+		NodeScoreDistribution targetValue = evaluate(MissingValueStrategyType.LAST_PREDICTION, Collections.<FieldName, FieldValue>emptyMap());
 
 		assertEquals("1", targetValue.getEntityId());
 
@@ -75,7 +75,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 	public void defaultChildSinglePenalty() throws Exception {
 		Map<FieldName, ?> arguments = createArguments("outlook", null, "temperature", 40d, "humidity", 70d);
 
-		NodeClassificationMap targetValue = evaluate(MissingValueStrategyType.DEFAULT_CHILD, 0.8d, arguments);
+		NodeScoreDistribution targetValue = evaluate(MissingValueStrategyType.DEFAULT_CHILD, 0.8d, arguments);
 
 		assertEquals("4", targetValue.getEntityId());
 
@@ -94,7 +94,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 	public void defaultChildMultiplePenalties() throws Exception {
 		Map<FieldName, ?> arguments = createArguments("outlook", null, "temperature", null, "humidity", 70d);
 
-		NodeClassificationMap targetValue = evaluate(MissingValueStrategyType.DEFAULT_CHILD, 0.8d, arguments);
+		NodeScoreDistribution targetValue = evaluate(MissingValueStrategyType.DEFAULT_CHILD, 0.8d, arguments);
 
 		assertEquals("3", targetValue.getEntityId());
 
@@ -109,11 +109,11 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 		assertEquals((Double)(0.05d * missingValuePenalty), targetValue.getConfidence("no play"));
 	}
 
-	private NodeClassificationMap evaluate(MissingValueStrategyType missingValueStrategy, Map<FieldName, ?> arguments) throws Exception {
+	private NodeScoreDistribution evaluate(MissingValueStrategyType missingValueStrategy, Map<FieldName, ?> arguments) throws Exception {
 		return evaluate(missingValueStrategy, null, arguments);
 	}
 
-	private NodeClassificationMap evaluate(MissingValueStrategyType missingValueStrategy, Double missingValuePenalty, Map<FieldName, ?> arguments) throws Exception {
+	private NodeScoreDistribution evaluate(MissingValueStrategyType missingValueStrategy, Double missingValuePenalty, Map<FieldName, ?> arguments) throws Exception {
 		TreeModelEvaluator evaluator = (TreeModelEvaluator)createModelEvaluator();
 
 		TreeModel treeModel = evaluator.getModel()
@@ -122,6 +122,6 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		return (NodeClassificationMap)result.get(evaluator.getTargetField());
+		return (NodeScoreDistribution)result.get(evaluator.getTargetField());
 	}
 }

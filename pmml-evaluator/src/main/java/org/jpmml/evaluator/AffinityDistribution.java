@@ -28,26 +28,62 @@
 package org.jpmml.evaluator;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.common.annotations.Beta;
 import org.dmg.pmml.DataType;
 
-@Beta
-public class ScoreClassificationMap extends ClassificationMap implements HasReasonCodeRanking {
+import static com.google.common.base.Preconditions.checkArgument;
 
-	protected ScoreClassificationMap(Object result){
-		super(Type.VOTE);
+@Beta
+public class AffinityDistribution extends Classification implements HasEntityIdRanking, HasAffinityRanking, HasEntityAffinity {
+
+	protected AffinityDistribution(Type type, Object result){
+		super(type);
+
+		checkArgument((Type.DISTANCE).equals(type) || (Type.SIMILARITY).equals(type));
 
 		setResult(result);
 	}
 
 	@Override
 	void computeResult(DataType dataType){
-		throw new EvaluationException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public List<String> getReasonCodeRanking(){
+	public Set<String> getCategoryValues(){
+		return keySet();
+	}
+
+	@Override
+	public String getEntityId(){
+		Map.Entry<String, Double> entry = getWinner();
+		if(entry == null){
+			return null;
+		}
+
+		return entry.getKey();
+	}
+
+	@Override
+	public List<String> getEntityIdRanking(){
 		return getWinnerKeys();
+	}
+
+	@Override
+	public Double getAffinity(String id){
+		return get(id);
+	}
+
+	@Override
+	public List<Double> getAffinityRanking(){
+		return getWinnerValues();
+	}
+
+	@Override
+	public Double getEntityAffinity(){
+		return getAffinity(getEntityId());
 	}
 }

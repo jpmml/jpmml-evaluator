@@ -78,7 +78,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			throw new InvalidResultException(clusteringModel);
 		}
 
-		Map<FieldName, ClusterClassificationMap> predictions;
+		Map<FieldName, ClusterAffinityDistribution> predictions;
 
 		MiningFunctionType miningFunction = clusteringModel.getFunctionName();
 		switch(miningFunction){
@@ -92,7 +92,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ClusterClassificationMap> evaluateClustering(EvaluationContext context){
+	private Map<FieldName, ClusterAffinityDistribution> evaluateClustering(EvaluationContext context){
 		ClusteringModel clusteringModel = getModel();
 
 		ClusteringModel.ModelClass modelClass = clusteringModel.getModelClass();
@@ -117,7 +117,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			values.add(value);
 		}
 
-		ClusterClassificationMap result;
+		ClusterAffinityDistribution result;
 
 		ComparisonMeasure comparisonMeasure = clusteringModel.getComparisonMeasure();
 
@@ -141,12 +141,12 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		return Collections.singletonMap(getTargetField(), result);
 	}
 
-	private ClusterClassificationMap evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
+	private ClusterAffinityDistribution evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
 		ClusteringModel clusteringModel = getModel();
 
 		BiMap<String, Cluster> entityRegistry = getEntityRegistry();
 
-		ClusterClassificationMap result = new ClusterClassificationMap(ClassificationMap.Type.SIMILARITY, entityRegistry);
+		ClusterAffinityDistribution result = new ClusterAffinityDistribution(Classification.Type.SIMILARITY, entityRegistry);
 
 		BitSet flags = MeasureUtil.toBitSet(values);
 
@@ -168,12 +168,12 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		return result;
 	}
 
-	private ClusterClassificationMap evaluateDistance(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
+	private ClusterAffinityDistribution evaluateDistance(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
 		ClusteringModel clusteringModel = getModel();
 
 		BiMap<String, Cluster> entityRegistry = getEntityRegistry();
 
-		ClusterClassificationMap result = new ClusterClassificationMap(ClassificationMap.Type.DISTANCE, entityRegistry);
+		ClusterAffinityDistribution result = new ClusterAffinityDistribution(Classification.Type.DISTANCE, entityRegistry);
 
 		Double adjustment;
 

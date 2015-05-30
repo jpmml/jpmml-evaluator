@@ -68,7 +68,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 			throw new InvalidResultException(ruleSetModel);
 		}
 
-		Map<FieldName, ? extends ClassificationMap> predictions;
+		Map<FieldName, ? extends Classification> predictions;
 
 		MiningFunctionType miningFunction = ruleSetModel.getFunctionName();
 		switch(miningFunction){
@@ -82,7 +82,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
 		RuleSetModel ruleSetModel = getModel();
 
 		RuleSet ruleSet = ruleSetModel.getRuleSet();
@@ -102,7 +102,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 		BiMap<String, SimpleRule> entityRegistry = getEntityRegistry();
 
-		RuleClassificationMap result = new RuleClassificationMap(entityRegistry);
+		SimpleRuleScoreDistribution result = new SimpleRuleScoreDistribution(entityRegistry);
 
 		// Return the default prediction when no rules in the ruleset fire
 		if(firedRules.size() == 0){

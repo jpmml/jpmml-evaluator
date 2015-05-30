@@ -100,7 +100,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			throw new InvalidResultException(nearestNeighborModel);
 		}
 
-		Map<FieldName, InstanceClassificationMap> predictions;
+		Map<FieldName, AffinityDistribution> predictions;
 
 		MiningFunctionType miningFunction = nearestNeighborModel.getFunctionName();
 		switch(miningFunction){
@@ -121,7 +121,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, InstanceClassificationMap> evaluateMixed(ModelEvaluationContext context){
+	private Map<FieldName, AffinityDistribution> evaluateMixed(ModelEvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
@@ -147,7 +147,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			function = createIdentifierResolver(FieldName.create(idField), table);
 		}
 
-		Map<FieldName, InstanceClassificationMap> result = new LinkedHashMap<>();
+		Map<FieldName, AffinityDistribution> result = new LinkedHashMap<>();
 
 		List<FieldName> targetFields = getTargetFields();
 		for(FieldName targetField : targetFields){
@@ -172,13 +172,13 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			value = TypeUtil.parseOrCast(dataField.getDataType(), value);
 
-			result.put(targetField, createMeasureMap(instanceResults, function, value));
+			result.put(targetField, createAffinityDistribution(instanceResults, function, value));
 		}
 
 		return result;
 	}
 
-	private Map<FieldName, InstanceClassificationMap> evaluateClustering(ModelEvaluationContext context){
+	private Map<FieldName, AffinityDistribution> evaluateClustering(ModelEvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
@@ -192,7 +192,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Function<Integer, String> function = createIdentifierResolver(FieldName.create(idField), table);
 
-		return Collections.singletonMap(getTargetField(), createMeasureMap(instanceResults, function, null));
+		return Collections.singletonMap(getTargetField(), createAffinityDistribution(instanceResults, function, null));
 	}
 
 	private List<InstanceResult> evaluateInstanceRows(ModelEvaluationContext context){
@@ -390,21 +390,21 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return function;
 	}
 
-	private InstanceClassificationMap createMeasureMap(List<InstanceResult> instanceResults, Function<Integer, String> function, Object value){
+	private AffinityDistribution createAffinityDistribution(List<InstanceResult> instanceResults, Function<Integer, String> function, Object value){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		InstanceClassificationMap result;
+		AffinityDistribution result;
 
 		ComparisonMeasure comparisonMeasure = nearestNeighborModel.getComparisonMeasure();
 
 		Measure measure = comparisonMeasure.getMeasure();
 
 		if(MeasureUtil.isSimilarity(measure)){
-			result = new InstanceClassificationMap(ClassificationMap.Type.SIMILARITY, value);
+			result = new AffinityDistribution(Classification.Type.SIMILARITY, value);
 		} else
 
 		if(MeasureUtil.isDistance(measure)){
-			result = new InstanceClassificationMap(ClassificationMap.Type.DISTANCE, value);
+			result = new AffinityDistribution(Classification.Type.DISTANCE, value);
 		} else
 
 		{
@@ -759,7 +759,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			public int compareTo(InstanceResult that){
 
 				if(that instanceof Similarity){
-					return ClassificationMap.Type.SIMILARITY.compare(this.getValue(), that.getValue());
+					return Classification.Type.SIMILARITY.compare(this.getValue(), that.getValue());
 				}
 
 				throw new ClassCastException();
@@ -782,7 +782,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			public int compareTo(InstanceResult that){
 
 				if(that instanceof Distance){
-					return ClassificationMap.Type.DISTANCE.compare(this.getValue(), that.getValue());
+					return Classification.Type.DISTANCE.compare(this.getValue(), that.getValue());
 				}
 
 				throw new ClassCastException();

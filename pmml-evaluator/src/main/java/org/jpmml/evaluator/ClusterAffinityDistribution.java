@@ -28,9 +28,9 @@ import org.dmg.pmml.Cluster;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Beta
-public class ClusterClassificationMap extends EntityClassificationMap<Cluster> implements HasEntityIdRanking, HasDisplayValue, HasAffinityRanking, HasEntityAffinity {
+public class ClusterAffinityDistribution extends EntityClassification<Cluster> implements HasEntityIdRanking, HasDisplayValue, HasAffinityRanking, HasEntityAffinity {
 
-	protected ClusterClassificationMap(Type type, BiMap<String, Cluster> entityRegistry){
+	protected ClusterAffinityDistribution(Type type, BiMap<String, Cluster> entityRegistry){
 		super(type, entityRegistry);
 
 		checkArgument((Type.DISTANCE).equals(type) || (Type.SIMILARITY).equals(type));

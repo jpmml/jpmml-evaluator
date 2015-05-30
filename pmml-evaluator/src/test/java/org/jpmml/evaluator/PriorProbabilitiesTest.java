@@ -38,11 +38,11 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		ModelEvaluationContext context = evaluator.createContext(null);
 
-		Map<FieldName, ? extends ClassificationMap> predictions = TargetUtil.evaluateClassificationDefault(context);
+		Map<FieldName, ? extends Classification> predictions = TargetUtil.evaluateClassificationDefault(context);
 
 		assertEquals(1, predictions.size());
 
-		ProbabilityClassificationMap response = (ProbabilityClassificationMap)predictions.get(evaluator.getTargetField());
+		ProbabilityDistribution response = (ProbabilityDistribution)predictions.get(evaluator.getTargetField());
 
 		assertEquals((Double)0.02d, response.getProbability("YES"));
 		assertEquals((Double)0.98d, response.getProbability("NO"));
@@ -75,11 +75,11 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		ModelEvaluationContext context = evaluator.createContext(null);
 
-		Map<FieldName, ? extends ClassificationMap> predictions = TargetUtil.evaluateClassificationDefault(context);
+		Map<FieldName, ? extends Classification> predictions = TargetUtil.evaluateClassificationDefault(context);
 
 		assertEquals(1, predictions.size());
 
-		ClassificationMap response = predictions.get(evaluator.getTargetField());
+		Classification response = predictions.get(evaluator.getTargetField());
 
 		assertEquals(null, response);
 	}

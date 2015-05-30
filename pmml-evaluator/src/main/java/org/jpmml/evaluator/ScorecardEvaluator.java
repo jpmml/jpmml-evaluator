@@ -179,17 +179,14 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		if(useReasonCodes){
 			Map.Entry<FieldName, ?> resultEntry = Iterables.getOnlyElement(result.entrySet());
 
-			return Collections.singletonMap(resultEntry.getKey(), createScoreMap(reasonCodePoints, resultEntry.getValue()));
+			return Collections.singletonMap(resultEntry.getKey(), createReasonCodeList(reasonCodePoints.sumMap(), resultEntry.getValue()));
 		}
 
 		return result;
 	}
 
 	static
-	private ScoreClassificationMap createScoreMap(VoteAggregator<String> reasonCodePoints, Object value){
-		ScoreClassificationMap result = new ScoreClassificationMap(value);
-
-		// Filter out meaningless (ie. negative values) explanations
+	private ReasonCodeRanking createReasonCodeList(Map<String, Double> reasonCodes, Object value){
 		com.google.common.base.Predicate<Map.Entry<String, Double>> predicate = new com.google.common.base.Predicate<Map.Entry<String, Double>>(){
 
 			@Override
@@ -197,7 +194,10 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 				return Double.compare(entry.getValue(), 0) >= 0;
 			}
 		};
-		result.putAll(Maps.filterEntries(reasonCodePoints.sumMap(), predicate));
+
+		Map<String, Double> meaningfulReasonCodes = Maps.filterEntries(reasonCodes, predicate);
+
+		ReasonCodeRanking result = new ReasonCodeRanking(value, meaningfulReasonCodes);
 
 		return result;
 	}

@@ -149,7 +149,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return TargetUtil.evaluateRegression(result, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
 		BiMap<String, Entity> entityRegistry = getEntityRegistry();
@@ -159,7 +159,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			return TargetUtil.evaluateClassificationDefault(context);
 		}
 
-		Map<FieldName, NeuronClassificationMap> result = new LinkedHashMap<>();
+		Map<FieldName, EntityProbabilityDistribution<Entity>> result = new LinkedHashMap<>();
 
 		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
 		if(neuralOutputs == null){
@@ -175,9 +175,9 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 				FieldName field = normDiscrete.getField();
 
-				NeuronClassificationMap values = result.get(field);
+				EntityProbabilityDistribution<Entity> values = result.get(field);
 				if(values == null){
-					values = new NeuronClassificationMap(entityRegistry);
+					values = new EntityProbabilityDistribution<>(entityRegistry);
 
 					result.put(field, values);
 				}
@@ -287,10 +287,10 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			case NONE:
 				break;
 			case SIMPLEMAX:
-				ClassificationMap.normalize(values);
+				Classification.normalize(values);
 				break;
 			case SOFTMAX:
-				ClassificationMap.normalizeSoftMax(values);
+				Classification.normalizeSoftMax(values);
 				break;
 			default:
 				throw new UnsupportedFeatureException(locatable, normalizationMethod);

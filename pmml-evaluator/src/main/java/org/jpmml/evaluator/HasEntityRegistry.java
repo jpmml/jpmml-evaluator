@@ -24,8 +24,6 @@ import org.dmg.pmml.Entity;
 public interface HasEntityRegistry<E extends Entity> {
 
 	/**
-	 * Takes the snapshot of all known (ie. registered with the class model) Entity instances.
-	 *
 	 * @return A bidirectional map between {@link Entity#getId() Entity identifiers} and {@link Entity Entity instances}.
 	 */
 	BiMap<String, E> getEntityRegistry();

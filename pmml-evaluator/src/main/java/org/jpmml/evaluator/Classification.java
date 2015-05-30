@@ -36,16 +36,16 @@ import com.google.common.collect.Range;
 import org.dmg.pmml.DataType;
 
 @Beta
-public class ClassificationMap implements Computable {
+public class Classification implements Computable {
 
 	private Map<String, Double> map = new LinkedHashMap<>();
 
-	private Type type = null;
-
 	private Object result = null;
 
+	private Type type = null;
 
-	protected ClassificationMap(Type type){
+
+	protected Classification(Type type){
 		setType(type);
 	}
 
@@ -74,6 +74,21 @@ public class ClassificationMap implements Computable {
 		this.result = result;
 	}
 
+	@Override
+	public String toString(){
+		ToStringHelper helper = toStringHelper();
+
+		return helper.toString();
+	}
+
+	protected ToStringHelper toStringHelper(){
+		ToStringHelper helper = Objects.toStringHelper(this)
+			.add("result", getResult())
+			.add(getType().entryKey(), entrySet());
+
+		return helper;
+	}
+
 	Double get(String key){
 		Double value = this.map.get(key);
 
@@ -100,47 +115,19 @@ public class ClassificationMap implements Computable {
 	}
 
 	Map.Entry<String, Double> getWinner(){
-		Ordering<Map.Entry<String, Double>> ordering = createOrdering();
-
-		try {
-			return ordering.max(entrySet());
-		} catch(NoSuchElementException nsee){
-			return null;
-		}
+		return getWinner(getType(), entrySet());
 	}
 
-	List<Map.Entry<String, Double>> getWinnerList(){
-		Ordering<Map.Entry<String, Double>> ordering = (createOrdering()).reverse();
-
-		return ordering.sortedCopy(entrySet());
+	List<Map.Entry<String, Double>> getWinnerRanking(){
+		return getWinnerList(getType(), entrySet());
 	}
 
 	List<String> getWinnerKeys(){
-		List<Map.Entry<String, Double>> winners = getWinnerList();
-
-		Function<Map.Entry<String, Double>, String> function = new Function<Map.Entry<String, Double>, String>(){
-
-			@Override
-			public String apply(Map.Entry<String, Double> entry){
-				return entry.getKey();
-			}
-		};
-
-		return Lists.transform(winners, function);
+		return entryKeys(getWinnerRanking());
 	}
 
 	List<Double> getWinnerValues(){
-		List<Map.Entry<String, Double>> winners = getWinnerList();
-
-		Function<Map.Entry<String, Double>, Double> function = new Function<Map.Entry<String, Double>, Double>(){
-
-			@Override
-			public Double apply(Map.Entry<String, Double> entry){
-				return entry.getValue();
-			}
-		};
-
-		return Lists.transform(winners, function);
+		return entryValues(getWinnerRanking());
 	}
 
 	Double sumValues(){
@@ -151,21 +138,6 @@ public class ClassificationMap implements Computable {
 		normalize(this.map);
 	}
 
-	Ordering<Map.Entry<String, Double>> createOrdering(){
-		Comparator<Map.Entry<String, Double>> comparator = new Comparator<Map.Entry<String, Double>>(){
-
-			private Type type = getType();
-
-
-			@Override
-			public int compare(Map.Entry<String, Double> left, Map.Entry<String, Double> right){
-				return this.type.compare(left.getValue(), right.getValue());
-			}
-		};
-
-		return Ordering.from(comparator);
-	}
-
 	Set<String> keySet(){
 		return this.map.keySet();
 	}
@@ -174,29 +146,69 @@ public class ClassificationMap implements Computable {
 		return this.map.entrySet();
 	}
 
-	@Override
-	public String toString(){
-		ToStringHelper helper = toStringHelper();
-
-		return helper.toString();
-	}
-
-	protected ToStringHelper toStringHelper(){
-		Type type = getType();
-
-		ToStringHelper helper = Objects.toStringHelper(this)
-			.add("type", type)
-			.add(type.entryKey(), entrySet());
-
-		return helper;
-	}
-
 	public Type getType(){
 		return this.type;
 	}
 
 	private void setType(Type type){
 		this.type = type;
+	}
+
+	static
+	Map.Entry<String, Double> getWinner(Type type, Collection<Map.Entry<String, Double>> entries){
+		Ordering<Map.Entry<String, Double>> ordering = createOrdering(type);
+
+		try {
+			return ordering.max(entries);
+		} catch(NoSuchElementException nsee){
+			return null;
+		}
+	}
+
+	static
+	List<Map.Entry<String, Double>> getWinnerList(Type type, Collection<Map.Entry<String, Double>> entries){
+		Ordering<Map.Entry<String, Double>> ordering = (createOrdering(type)).reverse();
+
+		return ordering.sortedCopy(entries);
+	}
+
+	static
+	Ordering<Map.Entry<String, Double>> createOrdering(final Type type){
+		Comparator<Map.Entry<String, Double>> comparator = new Comparator<Map.Entry<String, Double>>(){
+
+			@Override
+			public int compare(Map.Entry<String, Double> left, Map.Entry<String, Double> right){
+				return type.compare(left.getValue(), right.getValue());
+			}
+		};
+
+		return Ordering.from(comparator);
+	}
+
+	static
+	public <K, V> List<K> entryKeys(List<Map.Entry<K, V>> entries){
+		Function<Map.Entry<K, V>, K> function = new Function<Map.Entry<K, V>, K>(){
+
+			@Override
+			public K apply(Map.Entry<K, V> entry){
+				return entry.getKey();
+			}
+		};
+
+		return Lists.transform(entries, function);
+	}
+
+	static
+	public <K, V> List<V> entryValues(List<Map.Entry<K, V>> entries){
+		Function<Map.Entry<K, V>, V> function = new Function<Map.Entry<K, V>, V>(){
+
+			@Override
+			public V apply(Map.Entry<K, V> entry){
+				return entry.getValue();
+			}
+		};
+
+		return Lists.transform(entries, function);
 	}
 
 	static
@@ -260,17 +272,17 @@ public class ClassificationMap implements Computable {
 
 	static
 	public enum Type implements Comparator<Double> {
-		PROBABILITY(ClassificationMap.BIGGER_IS_BETTER, Range.closed(0d, 1d)),
-		CONFIDENCE(ClassificationMap.BIGGER_IS_BETTER, Range.atLeast(0d)),
-		DISTANCE(ClassificationMap.SMALLER_IS_BETTER, Range.atLeast(0d)){
+		PROBABILITY(Classification.BIGGER_IS_BETTER, Range.closed(0d, 1d)),
+		CONFIDENCE(Classification.BIGGER_IS_BETTER, Range.atLeast(0d)),
+		DISTANCE(Classification.SMALLER_IS_BETTER, Range.atLeast(0d)){
 
 			@Override
 			public double getDefault(){
 				return Double.POSITIVE_INFINITY;
 			}
 		},
-		SIMILARITY(ClassificationMap.BIGGER_IS_BETTER, Range.atLeast(0d)),
-		VOTE(ClassificationMap.BIGGER_IS_BETTER, Range.atLeast(0d)),
+		SIMILARITY(Classification.BIGGER_IS_BETTER, Range.atLeast(0d)),
+		VOTE(Classification.BIGGER_IS_BETTER, Range.atLeast(0d)),
 		;
 
 		private Ordering<Double> ordering;

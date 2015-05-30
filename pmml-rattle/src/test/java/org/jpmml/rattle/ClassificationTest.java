@@ -24,7 +24,7 @@ import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
-import org.jpmml.evaluator.NodeClassificationMap;
+import org.jpmml.evaluator.NodeScoreDistribution;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -36,7 +36,7 @@ public class ClassificationTest {
 	public void evaluateDecisionTreeIris() throws Exception {
 		Batch batch = new RattleBatch("DecisionTree", "Iris");
 
-		NodeClassificationMap targetValue = (NodeClassificationMap)BatchUtil.evaluateDefault(batch);
+		NodeScoreDistribution targetValue = (NodeScoreDistribution)BatchUtil.evaluateDefault(batch);
 
 		assertEquals("7", targetValue.getEntityId());
 
@@ -109,7 +109,7 @@ public class ClassificationTest {
 	public void evaluateDecisionTreeAudit() throws Exception {
 		Batch batch = new RattleBatch("DecisionTree", "Audit");
 
-		NodeClassificationMap targetValue = (NodeClassificationMap)BatchUtil.evaluateDefault(batch);
+		NodeScoreDistribution targetValue = (NodeScoreDistribution)BatchUtil.evaluateDefault(batch);
 
 		assertEquals("2", targetValue.getEntityId());
 

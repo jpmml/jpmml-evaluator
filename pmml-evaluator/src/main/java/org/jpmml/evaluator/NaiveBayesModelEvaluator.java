@@ -82,7 +82,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			throw new InvalidResultException(naiveBayesModel);
 		}
 
-		Map<FieldName, ? extends ClassificationMap> predictions;
+		Map<FieldName, ? extends Classification> predictions;
 
 		MiningFunctionType miningFunction = naiveBayesModel.getFunctionName();
 		switch(miningFunction){
@@ -96,7 +96,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends ClassificationMap> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 
 		double threshold = naiveBayesModel.getThreshold();
@@ -157,7 +157,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		calculatePriorProbabilities(bayesOutput.getTargetValueCounts(), probabilities);
 
-		ProbabilityClassificationMap result = new ProbabilityClassificationMap();
+		ProbabilityDistribution result = new ProbabilityDistribution();
 
 		final Double max = Collections.max(probabilities.values());
 

@@ -30,12 +30,12 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.Node;
 
 @Beta
-public class NodeClassificationMap extends EntityClassificationMap<Node> implements HasConfidence, HasProbability {
+public class NodeScoreDistribution extends EntityClassification<Node> implements HasProbability, HasConfidence {
 
 	private Map<String, Double> confidences = new LinkedHashMap<>();
 
 
-	protected NodeClassificationMap(BiMap<String, Node> entityRegistry, Node node){
+	protected NodeScoreDistribution(BiMap<String, Node> entityRegistry, Node node){
 		super(Type.PROBABILITY, entityRegistry);
 
 		setEntity(node);
@@ -70,15 +70,6 @@ public class NodeClassificationMap extends EntityClassificationMap<Node> impleme
 	}
 
 	@Override
-	public Double getConfidence(String value){
-		return this.confidences.get(value);
-	}
-
-	void putConfidence(String value, Double confidence){
-		this.confidences.put(value, confidence);
-	}
-
-	@Override
 	public Double getProbability(String value){
 
 		if(isEmpty()){
@@ -90,6 +81,15 @@ public class NodeClassificationMap extends EntityClassificationMap<Node> impleme
 		}
 
 		return get(value);
+	}
+
+	@Override
+	public Double getConfidence(String value){
+		return this.confidences.get(value);
+	}
+
+	void putConfidence(String value, Double confidence){
+		this.confidences.put(value, confidence);
 	}
 
 	@Override

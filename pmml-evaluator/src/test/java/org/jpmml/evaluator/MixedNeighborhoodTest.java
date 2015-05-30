@@ -48,11 +48,11 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		InstanceClassificationMap species = (InstanceClassificationMap)result.get(new FieldName("species"));
+		AffinityDistribution species = (AffinityDistribution)result.get(new FieldName("species"));
 		assertEquals(20d, species.getResult());
 		assertEquals("51", (species.getEntityIdRanking()).get(0));
 
-		InstanceClassificationMap speciesClass = (InstanceClassificationMap)result.get(new FieldName("species_class"));
+		AffinityDistribution speciesClass = (AffinityDistribution)result.get(new FieldName("species_class"));
 		assertEquals("Iris-versicolor", speciesClass.getResult());
 		assertEquals("51", (speciesClass.getEntityIdRanking()).get(0));
 
