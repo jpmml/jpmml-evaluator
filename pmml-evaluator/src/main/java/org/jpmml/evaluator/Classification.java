@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -35,7 +34,6 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 import org.dmg.pmml.DataType;
 
-@Beta
 public class Classification implements Computable {
 
 	private Map<String, Double> map = new LinkedHashMap<>();

@@ -20,9 +20,6 @@ package org.jpmml.evaluator;
 
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
-
-@Beta
 public class ProbabilityDistribution extends Classification implements HasProbability {
 
 	protected ProbabilityDistribution(){

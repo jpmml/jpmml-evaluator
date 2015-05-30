@@ -20,12 +20,10 @@ package org.jpmml.evaluator;
 
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.SimpleRule;
 
-@Beta
 public class SimpleRuleScoreDistribution extends EntityClassification<SimpleRule> implements HasConfidence {
 
 	protected SimpleRuleScoreDistribution(BiMap<String, SimpleRule> entityRegistry){

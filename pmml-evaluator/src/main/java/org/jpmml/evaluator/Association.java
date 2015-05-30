@@ -22,14 +22,12 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.AssociationRule;
 import org.dmg.pmml.OutputField;
 
-@Beta
 abstract
 public class Association implements Computable, HasRuleValues, HasEntityRegistry<AssociationRule> {
 

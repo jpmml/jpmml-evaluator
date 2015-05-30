@@ -21,13 +21,11 @@ package org.jpmml.evaluator;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.Cluster;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-@Beta
 public class ClusterAffinityDistribution extends EntityClassification<Cluster> implements HasEntityIdRanking, HasDisplayValue, HasAffinityRanking, HasEntityAffinity {
 
 	protected ClusterAffinityDistribution(Type type, BiMap<String, Cluster> entityRegistry){

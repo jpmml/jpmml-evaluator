@@ -20,11 +20,9 @@ package org.jpmml.evaluator;
 
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.Entity;
 
-@Beta
 public class EntityProbabilityDistribution<E extends Entity> extends EntityClassification<E> implements HasProbability {
 
 	protected EntityProbabilityDistribution(BiMap<String, E> entityRegistry){

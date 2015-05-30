@@ -20,9 +20,6 @@ package org.jpmml.evaluator;
 
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
-
-@Beta
 public class VoteDistribution extends Classification implements HasProbability {
 
 	public VoteDistribution(){

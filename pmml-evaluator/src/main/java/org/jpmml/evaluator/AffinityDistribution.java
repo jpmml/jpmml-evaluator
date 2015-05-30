@@ -31,12 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.annotations.Beta;
 import org.dmg.pmml.DataType;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-@Beta
 public class AffinityDistribution extends Classification implements HasEntityIdRanking, HasAffinityRanking, HasEntityAffinity {
 
 	protected AffinityDistribution(Type type, Object result){

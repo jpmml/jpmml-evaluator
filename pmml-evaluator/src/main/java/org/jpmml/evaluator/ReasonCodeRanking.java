@@ -21,11 +21,9 @@ package org.jpmml.evaluator;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
-@Beta
 public class ReasonCodeRanking implements Computable, HasReasonCodeRanking {
 
 	private Object result = null;
