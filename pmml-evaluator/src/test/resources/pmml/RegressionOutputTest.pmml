@@ -15,6 +15,7 @@
                 <FieldRef field="result"/>
             </OutputField>
             <OutputField name="RawResult" optype="continuous" dataType="double" feature="predictedValue"/>
+            <OutputField name="RawIntegerResult" optype="continuous" dataType="integer" feature="predictedValue"/>
             <OutputField name="FinalResult" optype="continuous" dataType="double" feature="transformedValue">
                 <Apply function="round">
                     <NormContinuous field="RawResult">
@@ -24,6 +25,9 @@
                         <LinearNorm orig="100.0" norm="42.97"/>
                     </NormContinuous>
                 </Apply>
+            </OutputField>
+            <OutputField name="FinalIntegerResult" optype="continuous" dataType="integer" feature="transformedValue">
+                <FieldRef field="FinalResult"/>
             </OutputField>
             <OutputField name="BusinessDecision" optype="categorical" dataType="string" feature="decision">
                 <Decisions businessProblem="Should the outstanding amount be collected?" description="The decision depends on the likelihood to get the money and the cost to try.">

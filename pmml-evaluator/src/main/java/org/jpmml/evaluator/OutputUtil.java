@@ -297,10 +297,12 @@ public class OutputUtil {
 					throw new UnsupportedFeatureException(outputField, resultFeature);
 			}
 
-			// The result of one output field becomes available to other other output fields
-			context.declare(outputField.getName(), FieldValueUtil.create(outputField, value));
+			FieldValue outputValue = FieldValueUtil.create(outputField, value);
 
-			result.put(outputField.getName(), value);
+			// The result of one output field becomes available to other other output fields
+			context.declare(outputField.getName(), outputValue);
+
+			result.put(outputField.getName(), FieldValueUtil.getValue(outputValue));
 		}
 
 		return result;
