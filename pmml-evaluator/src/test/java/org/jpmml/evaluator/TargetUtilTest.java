@@ -38,7 +38,7 @@ public class TargetUtilTest {
 			.setMin(-10d)
 			.setMax(10.5d);
 
-		assertEquals(35, TargetUtil.processValue(target, 8d));
-		assertEquals(43, TargetUtil.processValue(target, 12.97d));
+		assertEquals((Double)35d, TargetUtil.processValue(target, 8d));
+		assertEquals((Double)43d, TargetUtil.processValue(target, 12.97d));
 	}
 }

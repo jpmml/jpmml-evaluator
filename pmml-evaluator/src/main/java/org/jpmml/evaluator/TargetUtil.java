@@ -54,13 +54,13 @@ public class TargetUtil {
 	 * Evaluates the {@link Targets} element for {@link MiningFunctionType#REGRESSION regression} models.
 	 */
 	static
-	public Map<FieldName, ?> evaluateRegression(Map<FieldName, ? extends Number> predictions, ModelEvaluationContext context){
+	public Map<FieldName, ?> evaluateRegression(Map<FieldName, ? extends Double> predictions, ModelEvaluationContext context){
 		Evaluator evaluator = context.getModelEvaluator();
 
 		Map<FieldName, Object> result = new LinkedHashMap<>();
 
-		Collection<? extends Map.Entry<FieldName, ? extends Number>> entries = predictions.entrySet();
-		for(Map.Entry<FieldName, ? extends Number> entry : entries){
+		Collection<? extends Map.Entry<FieldName, ? extends Double>> entries = predictions.entrySet();
+		for(Map.Entry<FieldName, ? extends Double> entry : entries){
 			FieldName key = entry.getKey();
 			Object value = entry.getValue();
 
@@ -79,7 +79,7 @@ public class TargetUtil {
 				} // End if
 
 				if(value != null){
-					value = processValue(target, (Number)value);
+					value = processValue(target, (Double)value);
 				}
 			} // End if
 
@@ -149,7 +149,7 @@ public class TargetUtil {
 	}
 
 	static
-	public Number processValue(Target target, Number value){
+	public Double processValue(Target target, Double value){
 		double result = value.doubleValue();
 
 		Double min = target.getMin();
@@ -171,11 +171,11 @@ public class TargetUtil {
 
 		switch(castInteger){
 			case ROUND:
-				return (int)Math.round(result);
+				return (double)Math.round(result);
 			case CEILING:
-				return (int)Math.ceil(result);
+				return Math.ceil(result);
 			case FLOOR:
-				return (int)Math.floor(result);
+				return Math.floor(result);
 			default:
 				throw new UnsupportedFeatureException(target, castInteger);
 		}
