@@ -19,14 +19,6 @@ writeIris = function(classes, probabilities, file){
 	writeCsv(result, file)
 }
 
-categoricalLogitProbabilities = function(probabilities){
-	return (probabilities / ((1.0 / (1.0 + exp(0))) + probabilities))
-}
-
-categoricalProbitProbabilities = function(probabilities){
-	return (probabilities / (pnorm(0) + probabilities))
-}
-
 generateDecisionTreeIris = function(){
 	rpart = rpart(irisFormula, irisData)
 	saveXML(pmml(rpart), "pmml/DecisionTreeIris.pmml")
@@ -120,7 +112,7 @@ versicolorData = cbind(irisData[, 1:4], versicolor)
 versicolorFormula = formula(versicolor ~ .)
 
 writeVersicolor = function(classes, probabilities, file){
-	result = data.frame("versicolor" = classes, "Predicted_versicolor" = classes, "Probability_1" = probabilities)
+	result = data.frame("versicolor" = classes, "Predicted_versicolor" = classes, "Probability_0" = probabilities[, 1], "Probability_1" = probabilities[, 2])
 
 	writeCsv(result, file)
 }
@@ -129,8 +121,9 @@ generateGeneralRegressionIris = function(){
 	glm = glm(versicolorFormula, versicolorData, family = binomial(link = probit))
 	saveXML(pmml(glm), "pmml/GeneralRegressionIris.pmml")
 
-	probabilities = categoricalProbitProbabilities(predict(glm, type = "response"))
+	probabilities = predict(glm, type = "response")
 	classes = as.character(as.integer(probabilities > 0.5))
+	probabilities = cbind(1 - probabilities, probabilities)
 	writeVersicolor(classes, probabilities, "csv/GeneralRegressionIris.csv")
 }
 
@@ -162,19 +155,12 @@ generateDecisionTreeAudit = function(){
 
 generateGeneralRegressionAudit = function(){
 	glm = glm(auditFormula, auditData, family = binomial)
-	pmml.glm = pmml.glm(glm)
-	saveXML(pmml.glm, "pmml/GeneralRegressionAudit.pmml")
+	saveXML(pmml(glm), "pmml/GeneralRegressionAudit.pmml")
 
-	pmml.lm = pmml.lm(glm)
-	# Change the normalization method from "softmax" to "logit"
-	xmlAttrs(pmml.lm[3]$RegressionModel)["normalizationMethod"] = "logit"
-	saveXML(pmml.lm, "pmml/RegressionAudit.pmml")
-
-	probabilities = categoricalLogitProbabilities(predict(glm, type = "response"))
+	probabilities = predict(glm, type = "response")
 	classes = as.character(as.integer(probabilities > 0.5))
 	probabilities = cbind(1 - probabilities, probabilities)
 	writeAudit(classes, probabilities, "csv/GeneralRegressionAudit.csv")
-	writeAudit(classes, probabilities, "csv/RegressionAudit.csv")
 }
 
 generateKernlabSVMAudit = function(){

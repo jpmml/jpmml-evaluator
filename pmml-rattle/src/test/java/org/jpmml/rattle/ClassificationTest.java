@@ -170,13 +170,4 @@ public class ClassificationTest {
 
 		assertTrue(BatchUtil.evaluate(batch));
 	}
-
-	@Test
-	public void evaluateRegressionAudit() throws Exception {
-		Batch batch = new RattleBatch("Regression", "Audit");
-
-		assertEquals(null, BatchUtil.evaluateDefault(batch));
-
-		assertTrue(BatchUtil.evaluate(batch));
-	}
 }

@@ -414,14 +414,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			// The last category
 			{
-				value = 0d;
-
 				switch(modelType){
 					case GENERALIZED_LINEAR:
-						value = computeLink(value, context);
+						value = (1d - previousValue);
 						break;
 					case MULTINOMIAL_LOGISTIC:
-						value = Math.exp(value);
+						// "By convention, the vector of Parameter estimates for the last category is 0"
+						value = Math.exp(0d);
 						break;
 					case ORDINAL_MULTINOMIAL:
 						value = 1d;
@@ -456,6 +455,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		switch(modelType){
 			case GENERALIZED_LINEAR:
+				break;
 			case MULTINOMIAL_LOGISTIC:
 				result.normalizeValues();
 				break;
