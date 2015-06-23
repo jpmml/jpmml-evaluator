@@ -434,9 +434,9 @@ public class ExpressionUtil {
 			case COUNT:
 				return FieldValueUtil.create(values.size());
 			case SUM:
-				return FunctionUtil.evaluate(new Apply("sum"), createValues(values), context);
+				return Functions.SUM.evaluate(createArguments(values));
 			case AVERAGE:
-				return FunctionUtil.evaluate(new Apply("avg"), createValues(values), context);
+				return Functions.AVG.evaluate(createArguments(values));
 			case MIN:
 				return FieldValueUtil.create(Collections.min((List<Comparable>)values));
 			case MAX:
@@ -447,7 +447,7 @@ public class ExpressionUtil {
 	}
 
 	static
-	private List<FieldValue> createValues(Collection<?> values){
+	private List<FieldValue> createArguments(Collection<?> values){
 		Function<Object, FieldValue> function = new Function<Object, FieldValue>(){
 
 			@Override
