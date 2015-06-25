@@ -19,8 +19,8 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
+import java.util.Objects;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
@@ -191,8 +191,25 @@ public class FieldValue implements Serializable {
 	}
 
 	@Override
+	public int hashCode(){
+		return Objects.hash(getOpType(), getDataType(), getValue());
+	}
+
+	@Override
+	public boolean equals(Object object){
+
+		if(object instanceof FieldValue){
+			FieldValue that = (FieldValue)object;
+
+			return Objects.equals(this.getOpType(), that.getOpType()) && Objects.equals(this.getDataType(), that.getDataType()) && Objects.equals(this.getValue(), that.getValue());
+		}
+
+		return false;
+	}
+
+	@Override
 	public String toString(){
-		ToStringHelper helper = Objects.toStringHelper(this)
+		ToStringHelper helper = com.google.common.base.Objects.toStringHelper(this)
 			.add("opType", getOpType())
 			.add("dataType", getDataType())
 			.add("value", getValue());

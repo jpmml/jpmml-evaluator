@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
@@ -55,6 +56,23 @@ public class OrdinalValue extends FieldValue {
 		}
 
 		return compare(ordering, getValue(), value.getValue());
+	}
+
+	@Override
+	public int hashCode(){
+		return 31 * super.hashCode() + Objects.hash(getOrdering());
+	}
+
+	@Override
+	public boolean equals(Object object){
+
+		if(object instanceof OrdinalValue){
+			OrdinalValue that = (OrdinalValue)object;
+
+			return super.equals(object) && Objects.equals(this.getOrdering(), that.getOrdering());
+		}
+
+		return false;
 	}
 
 	public List<?> getOrdering(){
