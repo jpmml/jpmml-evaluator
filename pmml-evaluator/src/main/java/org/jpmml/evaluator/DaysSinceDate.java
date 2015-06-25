@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Objects;
+
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
@@ -57,7 +59,7 @@ public class DaysSinceDate extends ComplexPeriod<DaysSinceDate> {
 
 	@Override
 	public int hashCode(){
-		return 37 * getEpoch().hashCode() + getDays().hashCode();
+		return Objects.hash(getEpoch(), getDays());
 	}
 
 	@Override
@@ -66,7 +68,7 @@ public class DaysSinceDate extends ComplexPeriod<DaysSinceDate> {
 		if(object instanceof DaysSinceDate){
 			DaysSinceDate that = (DaysSinceDate)object;
 
-			return (this.getEpoch()).equals(that.getEpoch()) && (this.getDays()).equals(that.getDays());
+			return Objects.equals(this.getEpoch(), that.getEpoch()) && Objects.equals(this.getDays(), that.getDays());
 		}
 
 		return false;

@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Objects;
+
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Seconds;
@@ -58,7 +60,7 @@ public class SecondsSinceDate extends ComplexPeriod<SecondsSinceDate> {
 
 	@Override
 	public int hashCode(){
-		return 37 * getEpoch().hashCode() + getSeconds().hashCode();
+		return Objects.hash(getEpoch(), getSeconds());
 	}
 
 	@Override
@@ -67,7 +69,7 @@ public class SecondsSinceDate extends ComplexPeriod<SecondsSinceDate> {
 		if(object instanceof SecondsSinceDate){
 			SecondsSinceDate that = (SecondsSinceDate)object;
 
-			return (this.getEpoch()).equals(that.getEpoch()) && (this.getSeconds()).equals(that.getSeconds());
+			return Objects.equals(this.getEpoch(), that.getEpoch()) && Objects.equals(this.getSeconds(), that.getSeconds());
 		}
 
 		return false;
