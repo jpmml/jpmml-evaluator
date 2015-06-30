@@ -242,14 +242,9 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			public List<FieldValue> load(Cluster cluster){
 				Array array = cluster.getArray();
 
-				List<FieldValue> result = new ArrayList<>();
-
 				List<? extends Number> values = ArrayUtil.getNumberContent(array);
-				for(Number value : values){
-					result.add(FieldValueUtil.create(value));
-				}
 
-				return ImmutableList.copyOf(result);
+				return ImmutableList.copyOf(FieldValueUtil.createAll(values));
 			}
 		});
 

@@ -26,7 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -434,9 +433,9 @@ public class ExpressionUtil {
 			case COUNT:
 				return FieldValueUtil.create(values.size());
 			case SUM:
-				return Functions.SUM.evaluate(createArguments(values));
+				return Functions.SUM.evaluate(FieldValueUtil.createAll((List<?>)values));
 			case AVERAGE:
-				return Functions.AVG.evaluate(createArguments(values));
+				return Functions.AVG.evaluate(FieldValueUtil.createAll((List<?>)values));
 			case MIN:
 				return FieldValueUtil.create(Collections.min((List<Comparable>)values));
 			case MAX:
@@ -444,18 +443,5 @@ public class ExpressionUtil {
 			default:
 				throw new UnsupportedFeatureException(aggregate, function);
 		}
-	}
-
-	static
-	private List<FieldValue> createArguments(Collection<?> values){
-		Function<Object, FieldValue> function = new Function<Object, FieldValue>(){
-
-			@Override
-			public FieldValue apply(Object value){
-				return FieldValueUtil.create(value);
-			}
-		};
-
-		return Lists.newArrayList(Iterables.transform(values, function));
 	}
 }

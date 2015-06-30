@@ -21,8 +21,6 @@ package org.jpmml.evaluator;
 import java.util.Arrays;
 import java.util.List;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
@@ -332,14 +330,6 @@ public class FunctionTest {
 
 	static
 	private FieldValue evaluate(Function function, List<?> arguments){
-		com.google.common.base.Function<Object, FieldValue> transformer = new com.google.common.base.Function<Object, FieldValue>(){
-
-			@Override
-			public FieldValue apply(Object object){
-				return FieldValueUtil.create(object);
-			}
-		};
-
-		return function.evaluate(Lists.newArrayList(Iterables.transform(arguments, transformer)));
+		return function.evaluate(FieldValueUtil.createAll(arguments));
 	}
 }

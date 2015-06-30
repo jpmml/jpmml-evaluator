@@ -28,6 +28,7 @@
 package org.jpmml.evaluator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
 
@@ -50,8 +51,8 @@ public class MeasureUtilTest {
 
 		List<ClusteringField> clusteringFields = createClusteringFields("one", "two", "three", "four");
 
-		BitSet flags = createFlags(0, 0, 1, 1);
-		BitSet referenceFlags = createFlags(0, 1, 0, 1);
+		BitSet flags = createFlags(Arrays.asList(0, 0, 1, 1));
+		BitSet referenceFlags = createFlags(Arrays.asList(0, 1, 0, 1));
 
 		comparisonMeasure.setMeasure(new SimpleMatching());
 
@@ -82,13 +83,7 @@ public class MeasureUtilTest {
 	}
 
 	static
-	private BitSet createFlags(Number... numbers){
-		List<FieldValue> result = new ArrayList<>();
-
-		for(Number number : numbers){
-			result.add(FieldValueUtil.create(number));
-		}
-
-		return MeasureUtil.toBitSet(result);
+	private BitSet createFlags(List<Integer> values){
+		return MeasureUtil.toBitSet(FieldValueUtil.createAll(values));
 	}
 }

@@ -45,6 +45,19 @@ public class FieldValueUtil {
 	}
 
 	static
+	public List<FieldValue> createAll(List<?> values){
+		Function<Object, FieldValue> function = new Function<Object, FieldValue>(){
+
+			@Override
+			public FieldValue apply(Object value){
+				return create(value);
+			}
+		};
+
+		return Lists.transform(values, function);
+	}
+
+	static
 	public FieldValue create(Field field, Object value){
 		FieldValue result = create(field.getDataType(), field.getOpType(), value);
 
@@ -69,6 +82,7 @@ public class FieldValueUtil {
 	 * Creates a FieldValue for a target field.
 	 *
 	 * @see FieldUsageType#TARGET
+	 * @see FieldUsageType#PREDICTED
 	 */
 	static
 	public FieldValue create(DataField dataField, MiningField miningField, Target target, Object value){

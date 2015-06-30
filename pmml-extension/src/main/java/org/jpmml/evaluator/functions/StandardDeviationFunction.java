@@ -61,7 +61,7 @@ public class StandardDeviationFunction extends AbstractFunction {
 			throw new FunctionException(getName(), "Missing arguments");
 		}
 
-		Object values = (arguments.get(0)).getValue();
+		Object values = FieldValueUtil.getValue(arguments.get(0));
 
 		if(!(values instanceof Collection)){
 			throw new TypeCheckException(Collection.class, values);

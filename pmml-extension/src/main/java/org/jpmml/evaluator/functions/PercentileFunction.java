@@ -57,7 +57,7 @@ public class PercentileFunction extends AbstractFunction {
 	public FieldValue evaluate(List<FieldValue> arguments){
 		checkArguments(arguments, 2);
 
-		Object values = (arguments.get(0)).getValue();
+		Object values = FieldValueUtil.getValue(arguments.get(0));
 
 		if(!(values instanceof Collection)){
 			throw new TypeCheckException(Collection.class, values);
