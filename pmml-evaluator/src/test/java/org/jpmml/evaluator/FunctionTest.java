@@ -23,14 +23,13 @@ import java.util.List;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import org.dmg.pmml.DataType;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 import org.jpmml.evaluator.functions.EchoFunction;
+import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class FunctionTest {
@@ -45,18 +44,18 @@ public class FunctionTest {
 		assertEquals(null, evaluate(Functions.PLUS, 1d, null));
 		assertEquals(null, evaluate(Functions.PLUS, null, 1d));
 
-		assertEquals(DataType.INTEGER, TypeUtil.getDataType(evaluate(Functions.MULTIPLY, 1, 1)));
-		assertEquals(DataType.FLOAT, TypeUtil.getDataType(evaluate(Functions.MULTIPLY, 1f, 1f)));
-		assertEquals(DataType.DOUBLE, TypeUtil.getDataType(evaluate(Functions.MULTIPLY, 1d, 1d)));
+		assertEquals(1, evaluate(Functions.MULTIPLY, 1, 1));
+		assertEquals(1f, evaluate(Functions.MULTIPLY, 1f, 1f));
+		assertEquals(1d, evaluate(Functions.MULTIPLY, 1d, 1d));
 
-		assertEquals(DataType.INTEGER, TypeUtil.getDataType(evaluate(Functions.DIVIDE, 1, 1)));
+		assertEquals(1, evaluate(Functions.DIVIDE, 1, 1));
 
-		assertEquals(DataType.FLOAT, TypeUtil.getDataType(evaluate(Functions.DIVIDE, 1, 1f)));
-		assertEquals(DataType.FLOAT, TypeUtil.getDataType(evaluate(Functions.DIVIDE, 1f, 1f)));
+		assertEquals(1f, evaluate(Functions.DIVIDE, 1, 1f));
+		assertEquals(1f, evaluate(Functions.DIVIDE, 1f, 1f));
 
-		assertEquals(DataType.DOUBLE, TypeUtil.getDataType(evaluate(Functions.DIVIDE, 1, 1d)));
-		assertEquals(DataType.DOUBLE, TypeUtil.getDataType(evaluate(Functions.DIVIDE, 1f, 1d)));
-		assertEquals(DataType.DOUBLE, TypeUtil.getDataType(evaluate(Functions.DIVIDE, 1d, 1d)));
+		assertEquals(1d, evaluate(Functions.DIVIDE, 1, 1d));
+		assertEquals(1d, evaluate(Functions.DIVIDE, 1f, 1d));
+		assertEquals(1d, evaluate(Functions.DIVIDE, 1d, 1d));
 	}
 
 	@Test
@@ -81,47 +80,33 @@ public class FunctionTest {
 	public void evaluateAggregateFunctions(){
 		List<Integer> values = Arrays.asList(1, 2, 3);
 
-		Object min = evaluate(Functions.MIN, values);
-		assertEquals(1, min);
-		assertEquals(DataType.INTEGER, TypeUtil.getDataType(min));
-
-		Object max = evaluate(Functions.MAX, values);
-		assertEquals(3, max);
-		assertEquals(DataType.INTEGER, TypeUtil.getDataType(max));
-
-		Object average = evaluate(Functions.AVG, values);
-		assertEquals(2d, average);
-		assertEquals(DataType.DOUBLE, TypeUtil.getDataType(average));
-
-		Object sum = evaluate(Functions.SUM, values);
-		assertEquals(6, sum);
-		assertEquals(DataType.INTEGER, TypeUtil.getDataType(sum));
-
-		Object product = evaluate(Functions.PRODUCT, values);
-		assertEquals(6, product);
-		assertEquals(DataType.INTEGER, TypeUtil.getDataType(product));
+		assertEquals(1, evaluate(Functions.MIN, values));
+		assertEquals(3, evaluate(Functions.MAX, values));
+		assertEquals(2d, evaluate(Functions.AVG, values));
+		assertEquals(6, evaluate(Functions.SUM, values));
+		assertEquals(6, evaluate(Functions.PRODUCT, values));
 	}
 
 	@Test
 	public void evaluateMathFunctions(){
-		assertEquals(DataType.DOUBLE, TypeUtil.getDataType(evaluate(Functions.LOG10, 1)));
-		assertEquals(DataType.FLOAT, TypeUtil.getDataType(evaluate(Functions.LOG10, 1f)));
+		assertEquals(0d, evaluate(Functions.LOG10, 1));
+		assertEquals(0f, evaluate(Functions.LOG10, 1f));
 
-		assertEquals(DataType.DOUBLE, TypeUtil.getDataType(evaluate(Functions.LN, 1)));
-		assertEquals(DataType.FLOAT, TypeUtil.getDataType(evaluate(Functions.LN, 1f)));
+		assertEquals(0d, evaluate(Functions.LN, 1));
+		assertEquals(0f, evaluate(Functions.LN, 1f));
 
-		assertEquals(DataType.DOUBLE, TypeUtil.getDataType(evaluate(Functions.EXP, 1)));
-		assertEquals(DataType.FLOAT, TypeUtil.getDataType(evaluate(Functions.EXP, 1f)));
+		assertEquals(1d, evaluate(Functions.EXP, 0));
+		assertEquals(1f, evaluate(Functions.EXP, 0f));
 
-		assertEquals(DataType.DOUBLE, TypeUtil.getDataType(evaluate(Functions.SQRT, 1)));
-		assertEquals(DataType.FLOAT, TypeUtil.getDataType(evaluate(Functions.SQRT, 1f)));
+		assertEquals(1d, evaluate(Functions.SQRT, 1));
+		assertEquals(1f, evaluate(Functions.SQRT, 1f));
 
 		assertEquals(1, evaluate(Functions.ABS, -1));
 		assertEquals(1f, evaluate(Functions.ABS, -1f));
 		assertEquals(1d, evaluate(Functions.ABS, -1d));
 
-		assertEquals(DataType.INTEGER, TypeUtil.getDataType(evaluate(Functions.POW, 1, 1)));
-		assertEquals(DataType.FLOAT, TypeUtil.getDataType(evaluate(Functions.POW, 1f, 1f)));
+		assertEquals(1, evaluate(Functions.POW, 1, 1));
+		assertEquals(1f, evaluate(Functions.POW, 1f, 1f));
 
 		assertEquals(0, evaluate(Functions.THRESHOLD, 2, 3));
 		assertEquals(0, evaluate(Functions.THRESHOLD, 3, 3));
@@ -143,35 +128,35 @@ public class FunctionTest {
 
 	@Test
 	public void evaluateValueFunctions(){
-		assertEquals(Boolean.TRUE, evaluate(Functions.IS_MISSING, (String)null));
-		assertEquals(Boolean.FALSE, evaluate(Functions.IS_MISSING, "value"));
+		assertEquals(true, evaluate(Functions.IS_MISSING, (String)null));
+		assertEquals(false, evaluate(Functions.IS_MISSING, "value"));
 
-		assertEquals(Boolean.TRUE, evaluate(Functions.IS_NOT_MISSING, "value"));
-		assertEquals(Boolean.FALSE, evaluate(Functions.IS_NOT_MISSING, (String)null));
+		assertEquals(true, evaluate(Functions.IS_NOT_MISSING, "value"));
+		assertEquals(false, evaluate(Functions.IS_NOT_MISSING, (String)null));
 	}
 
 	@Test
 	public void evaluateEqualityFunctions(){
-		assertEquals(Boolean.TRUE, evaluate(Functions.EQUAL, 1, 1d));
-		assertEquals(Boolean.TRUE, evaluate(Functions.EQUAL, 1d, 1d));
+		assertEquals(true, evaluate(Functions.EQUAL, 1, 1d));
+		assertEquals(true, evaluate(Functions.EQUAL, 1d, 1d));
 
-		assertEquals(Boolean.TRUE, evaluate(Functions.NOT_EQUAL, 1d, 3d));
-		assertEquals(Boolean.TRUE, evaluate(Functions.NOT_EQUAL, 1, 3));
+		assertEquals(true, evaluate(Functions.NOT_EQUAL, 1d, 3d));
+		assertEquals(true, evaluate(Functions.NOT_EQUAL, 1, 3));
 	}
 
 	@Test
 	public void evaluateComparisonFunctions(){
-		assertEquals(Boolean.TRUE, evaluate(Functions.LESS_THAN, 1d, 3d));
-		assertEquals(Boolean.TRUE, evaluate(Functions.LESS_THAN, 1, 3d));
+		assertEquals(true, evaluate(Functions.LESS_THAN, 1d, 3d));
+		assertEquals(true, evaluate(Functions.LESS_THAN, 1, 3d));
 
-		assertEquals(Boolean.TRUE, evaluate(Functions.LESS_OR_EQUAL, 1d, 1d));
-		assertEquals(Boolean.TRUE, evaluate(Functions.LESS_OR_EQUAL, 1, 1d));
+		assertEquals(true, evaluate(Functions.LESS_OR_EQUAL, 1d, 1d));
+		assertEquals(true, evaluate(Functions.LESS_OR_EQUAL, 1, 1d));
 
-		assertEquals(Boolean.TRUE, evaluate(Functions.GREATER_THAN, 3d, 1d));
-		assertEquals(Boolean.TRUE, evaluate(Functions.GREATER_THAN, 3, 1d));
+		assertEquals(true, evaluate(Functions.GREATER_THAN, 3d, 1d));
+		assertEquals(true, evaluate(Functions.GREATER_THAN, 3, 1d));
 
-		assertEquals(Boolean.TRUE, evaluate(Functions.GREATER_OR_EQUAL, 3d, 3d));
-		assertEquals(Boolean.TRUE, evaluate(Functions.GREATER_OR_EQUAL, 3, 3d));
+		assertEquals(true, evaluate(Functions.GREATER_OR_EQUAL, 3d, 3d));
+		assertEquals(true, evaluate(Functions.GREATER_OR_EQUAL, 3, 3d));
 	}
 
 	@Test
@@ -185,17 +170,17 @@ public class FunctionTest {
 			// Ignored
 		}
 
-		assertEquals(Boolean.TRUE, evaluate(Functions.LESS_THAN, false, 0.5d));
-		assertEquals(Boolean.FALSE, evaluate(Functions.LESS_THAN, true, 0.5d));
+		assertEquals(true, evaluate(Functions.LESS_THAN, false, 0.5d));
+		assertEquals(false, evaluate(Functions.LESS_THAN, true, 0.5d));
 
-		assertEquals(Boolean.TRUE, evaluate(Functions.LESS_OR_EQUAL, false, 0d));
-		assertEquals(Boolean.FALSE, evaluate(Functions.LESS_OR_EQUAL, true, 0d));
+		assertEquals(true, evaluate(Functions.LESS_OR_EQUAL, false, 0d));
+		assertEquals(false, evaluate(Functions.LESS_OR_EQUAL, true, 0d));
 
-		assertEquals(Boolean.FALSE, evaluate(Functions.GREATER_THAN, false, 0.5d));
-		assertEquals(Boolean.TRUE, evaluate(Functions.GREATER_THAN, true, 0.5d));
+		assertEquals(false, evaluate(Functions.GREATER_THAN, false, 0.5d));
+		assertEquals(true, evaluate(Functions.GREATER_THAN, true, 0.5d));
 
-		assertEquals(Boolean.FALSE, evaluate(Functions.GREATER_OR_EQUAL, false, 1d));
-		assertEquals(Boolean.TRUE, evaluate(Functions.GREATER_OR_EQUAL, true, 1d));
+		assertEquals(false, evaluate(Functions.GREATER_OR_EQUAL, false, 1d));
+		assertEquals(true, evaluate(Functions.GREATER_OR_EQUAL, true, 1d));
 
 		try {
 			evaluate(Functions.LESS_OR_EQUAL, false, false);
@@ -208,43 +193,43 @@ public class FunctionTest {
 
 	@Test
 	public void evaluateBinaryFunctions(){
-		assertEquals(Boolean.TRUE, evaluate(Functions.AND, Boolean.TRUE, Boolean.TRUE));
-		assertEquals(Boolean.TRUE, evaluate(Functions.AND, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE));
+		assertEquals(true, evaluate(Functions.AND, true, true));
+		assertEquals(true, evaluate(Functions.AND, true, true, true));
 
-		assertEquals(Boolean.FALSE, evaluate(Functions.AND, Boolean.TRUE, Boolean.FALSE));
-		assertEquals(Boolean.FALSE, evaluate(Functions.AND, Boolean.FALSE, Boolean.TRUE));
+		assertEquals(false, evaluate(Functions.AND, true, false));
+		assertEquals(false, evaluate(Functions.AND, false, true));
 
-		assertEquals(Boolean.TRUE, evaluate(Functions.OR, Boolean.FALSE, Boolean.TRUE));
-		assertEquals(Boolean.TRUE, evaluate(Functions.OR, Boolean.FALSE, Boolean.FALSE, Boolean.TRUE));
+		assertEquals(true, evaluate(Functions.OR, false, true));
+		assertEquals(true, evaluate(Functions.OR, false, false, true));
 
-		assertEquals(Boolean.FALSE, evaluate(Functions.OR, Boolean.FALSE, Boolean.FALSE));
+		assertEquals(false, evaluate(Functions.OR, false, false));
 	}
 
 	@Test
 	public void evaluateUnaryFunction(){
-		assertEquals(Boolean.TRUE, evaluate(Functions.NOT, Boolean.FALSE));
-		assertEquals(Boolean.FALSE, evaluate(Functions.NOT, Boolean.TRUE));
+		assertEquals(true, evaluate(Functions.NOT, false));
+		assertEquals(false, evaluate(Functions.NOT, true));
 	}
 
 	@Test
 	public void evaluateValueListFunctions(){
-		assertEquals(Boolean.TRUE, evaluate(Functions.IS_IN, "3", "1", "2", "3"));
-		assertEquals(Boolean.TRUE, evaluate(Functions.IS_NOT_IN, "0", "1", "2", "3"));
+		assertEquals(true, evaluate(Functions.IS_IN, "3", "1", "2", "3"));
+		assertEquals(true, evaluate(Functions.IS_NOT_IN, "0", "1", "2", "3"));
 
-		assertEquals(Boolean.TRUE, evaluate(Functions.IS_IN, 3, 1, 2, 3));
-		assertEquals(Boolean.TRUE, evaluate(Functions.IS_NOT_IN, 0, 1, 2, 3));
+		assertEquals(true, evaluate(Functions.IS_IN, 3, 1, 2, 3));
+		assertEquals(true, evaluate(Functions.IS_NOT_IN, 0, 1, 2, 3));
 
-		assertEquals(Boolean.TRUE, evaluate(Functions.IS_IN, 3d, 1d, 2d, 3d));
-		assertEquals(Boolean.TRUE, evaluate(Functions.IS_NOT_IN, 0d, 1d, 2d, 3d));
+		assertEquals(true, evaluate(Functions.IS_IN, 3d, 1d, 2d, 3d));
+		assertEquals(true, evaluate(Functions.IS_NOT_IN, 0d, 1d, 2d, 3d));
 	}
 
 	@Test
 	public void evaluateIfFunction(){
-		assertEquals("left", evaluate(Functions.IF, Boolean.TRUE, "left"));
-		assertEquals("left", evaluate(Functions.IF, Boolean.TRUE, "left", "right"));
+		assertEquals("left", evaluate(Functions.IF, true, "left"));
+		assertEquals("left", evaluate(Functions.IF, true, "left", "right"));
 
-		assertEquals(null, evaluate(Functions.IF, Boolean.FALSE, "left"));
-		assertEquals("right", evaluate(Functions.IF, Boolean.FALSE, "left", "right"));
+		assertEquals(null, evaluate(Functions.IF, false, "left"));
+		assertEquals("right", evaluate(Functions.IF, false, "left", "right"));
 	}
 
 	@Test
@@ -283,15 +268,15 @@ public class FunctionTest {
 
 		String[] monthNames = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 		for(int i = 0; i < monthNames.length; i++){
-			Boolean matches = Boolean.valueOf(i == 0 || i == 1 || i == 4);
+			boolean matches = (i == 0 || i == 1 || i == 4);
 
 			assertEquals(matches, evaluate(Functions.MATCHES, monthNames[i], "ar?y"));
 		}
 
 		// See http://www.w3.org/TR/xquery-operators/#func-matches
-		assertEquals(Boolean.TRUE, evaluate(Functions.MATCHES, "abracadabra", "bra"));
-		assertEquals(Boolean.TRUE, evaluate(Functions.MATCHES, "abracadabra", "^a.*a$"));
-		assertEquals(Boolean.FALSE, evaluate(Functions.MATCHES, "abracadabra", "^bra"));
+		assertEquals(true, evaluate(Functions.MATCHES, "abracadabra", "bra"));
+		assertEquals(true, evaluate(Functions.MATCHES, "abracadabra", "^a.*a$"));
+		assertEquals(false, evaluate(Functions.MATCHES, "abracadabra", "^bra"));
 	}
 
 	@Test
@@ -336,12 +321,17 @@ public class FunctionTest {
 	}
 
 	static
-	private Object evaluate(Function function, Object... values){
-		return evaluate(function, Arrays.asList(values));
+	private void assertEquals(Object expected, FieldValue actual){
+		Assert.assertEquals(FieldValueUtil.create(expected), actual);
 	}
 
 	static
-	private Object evaluate(Function function, List<?> values){
+	private FieldValue evaluate(Function function, Object... arguments){
+		return evaluate(function, Arrays.asList(arguments));
+	}
+
+	static
+	private FieldValue evaluate(Function function, List<?> arguments){
 		com.google.common.base.Function<Object, FieldValue> transformer = new com.google.common.base.Function<Object, FieldValue>(){
 
 			@Override
@@ -350,8 +340,6 @@ public class FunctionTest {
 			}
 		};
 
-		FieldValue result = function.evaluate(Lists.newArrayList(Iterables.transform(values, transformer)));
-
-		return FieldValueUtil.getValue(result);
+		return function.evaluate(Lists.newArrayList(Iterables.transform(arguments, transformer)));
 	}
 }
