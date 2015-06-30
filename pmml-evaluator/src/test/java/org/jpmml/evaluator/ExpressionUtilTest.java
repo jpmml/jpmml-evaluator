@@ -45,10 +45,18 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateConstant(){
-		Constant constant = new Constant("3")
+		Constant constant = new Constant("3");
+
+		assertEquals(DataType.INTEGER, getDataType(constant));
+
+		assertEquals(3, evaluate(constant));
+
+		Constant stringThree = new Constant("3")
 			.setDataType(DataType.STRING);
 
-		assertEquals("3", evaluate(constant));
+		assertEquals(DataType.STRING, getDataType(stringThree));
+
+		assertEquals("3", evaluate(stringThree));
 
 		Constant integerThree = new Constant("3")
 			.setDataType(DataType.INTEGER);
@@ -82,6 +90,8 @@ public class ExpressionUtilTest {
 		NormContinuous normContinuous = new NormContinuous(name, null)
 			.setMapMissingTo(5d);
 
+		assertEquals(DataType.DOUBLE, getDataType(normContinuous));
+
 		assertEquals(5d, evaluate(normContinuous, name, null));
 	}
 
@@ -93,6 +103,8 @@ public class ExpressionUtilTest {
 		Double notEquals = 0d;
 
 		NormDiscrete stringThree = new NormDiscrete(name, "3");
+
+		assertEquals(DataType.DOUBLE, getDataType(stringThree));
 
 		assertEquals(equals, evaluate(stringThree, name, "3"));
 		assertEquals(notEquals, evaluate(stringThree, name, "1"));
@@ -118,6 +130,8 @@ public class ExpressionUtilTest {
 
 		Discretize discretize = new Discretize(name);
 
+		assertEquals(DataType.STRING, getDataType(discretize));
+
 		assertEquals(null, evaluate(discretize));
 
 		discretize.setMapMissingTo("Missing");
@@ -136,6 +150,8 @@ public class ExpressionUtilTest {
 
 		MapValues mapValues = new MapValues(null)
 			.addFieldColumnPairs(new FieldColumnPair(name, null));
+
+		assertEquals(DataType.STRING, getDataType(mapValues));
 
 		assertEquals(null, evaluate(mapValues));
 
@@ -238,6 +254,25 @@ public class ExpressionUtilTest {
 	}
 
 	@Test
+	public void evaluateAggregateArithmetic(){
+		FieldName name = new FieldName("x");
+
+		List<Integer> values = Arrays.asList(1, 2, 3);
+
+		Aggregate aggregate = new Aggregate(name, Aggregate.Function.COUNT);
+
+		assertEquals(3, evaluate(aggregate, name, values));
+
+		aggregate.setFunction(Aggregate.Function.SUM);
+
+		assertEquals(6, evaluate(aggregate, name, values));
+
+		aggregate.setFunction(Aggregate.Function.AVERAGE);
+
+		assertEquals(2d, evaluate(aggregate, name, values));
+	}
+
+	@Test
 	public void evaluateAggregate(){
 		FieldName name = new FieldName("x");
 
@@ -278,5 +313,10 @@ public class ExpressionUtilTest {
 		FieldValue result = ExpressionUtil.evaluate(expression, context);
 
 		return FieldValueUtil.getValue(result);
+	}
+
+	static
+	private DataType getDataType(Expression expression){
+		return ExpressionUtil.getDataType(expression, null);
 	}
 }
