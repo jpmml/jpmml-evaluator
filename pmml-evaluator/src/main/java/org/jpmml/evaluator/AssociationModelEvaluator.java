@@ -41,6 +41,7 @@ import org.dmg.pmml.Item;
 import org.dmg.pmml.ItemRef;
 import org.dmg.pmml.Itemset;
 import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
 
@@ -74,10 +75,13 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 	@Override
 	public void verify(){
-		List<FieldName> targetFields = getTargetFields();
+		AssociationModel associationModel = getModel();
 
+		List<FieldName> targetFields = getTargetFields();
 		if(targetFields.size() > 0){
-			throw new InvalidFeatureException("Too many target fields", getMiningSchema());
+			MiningSchema miningSchema = associationModel.getMiningSchema();
+
+			throw new InvalidFeatureException("Too many target fields", miningSchema);
 		}
 
 		super.verify();
@@ -163,14 +167,18 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	public Collection<?> getActiveValue(EvaluationContext context){
+		AssociationModel associationModel = getModel();
+
 		List<FieldName> activeFields = getActiveFields();
 		List<FieldName> groupFields = getGroupFields();
+
+		MiningSchema miningSchema = associationModel.getMiningSchema();
 
 		// Custom IBM SPSS-style model: no group fields, one or more active fields
 		if(groupFields.size() == 0){
 
 			if(activeFields.size() < 0){
-				throw new InvalidFeatureException("No active fields", getMiningSchema());
+				throw new InvalidFeatureException("No active fields", miningSchema);
 			}
 
 			List<String> result = new ArrayList<>();
@@ -204,11 +212,11 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		if(groupFields.size() == 1){
 
 			if(activeFields.size() < 1){
-				throw new InvalidFeatureException("No active fields", getMiningSchema());
+				throw new InvalidFeatureException("No active fields", miningSchema);
 			} else
 
 			if(activeFields.size() > 1){
-				throw new InvalidFeatureException("Too many active fields", getMiningSchema());
+				throw new InvalidFeatureException("Too many active fields", miningSchema);
 			}
 
 			FieldName activeField = activeFields.get(0);
@@ -230,7 +238,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		} else
 
 		{
-			throw new InvalidFeatureException(getMiningSchema());
+			throw new InvalidFeatureException(miningSchema);
 		}
 	}
 

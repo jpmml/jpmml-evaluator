@@ -57,6 +57,11 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		super(pmml);
 
 		setModel(checkNotNull(model));
+
+		MiningSchema miningSchema = model.getMiningSchema();
+		if(miningSchema == null){
+			throw new InvalidFeatureException(model);
+		}
 	}
 
 	@Override
@@ -93,6 +98,8 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	@Override
 	public FieldName getTargetField(){
+		M model = getModel();
+
 		List<FieldName> targetFields = getTargetFields();
 
 		// "The definition of target fields in the MiningSchema is not required"
@@ -101,7 +108,9 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		} else
 
 		if(targetFields.size() > 1){
-			throw new InvalidFeatureException("Too many target fields", getMiningSchema());
+			MiningSchema miningSchema = model.getMiningSchema();
+
+			throw new InvalidFeatureException("Too many target fields", miningSchema);
 		}
 
 		return targetFields.get(0);
@@ -109,23 +118,19 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	@Override
 	public MiningField getMiningField(FieldName name){
-		MiningSchema miningSchema = getMiningSchema();
-		if(miningSchema == null){
-			return null;
-		}
+		M model = getModel();
 
-		List<MiningField> miningFields = miningSchema.getMiningFields();
+		MiningSchema miningSchema = model.getMiningSchema();
 
-		return find(miningFields, name);
+		return findField(miningSchema.getMiningFields(), name);
 	}
 
 	protected List<FieldName> getMiningFields(EnumSet<FieldUsageType> fieldUsageTypes){
-		List<FieldName> result = new ArrayList<>();
+		M model = getModel();
 
-		MiningSchema miningSchema = getMiningSchema();
-		if(miningSchema == null){
-			return result;
-		}
+		MiningSchema miningSchema = model.getMiningSchema();
+
+		List<FieldName> result = new ArrayList<>();
 
 		List<MiningField> miningFields = miningSchema.getMiningFields();
 		for(MiningField miningField : miningFields){
@@ -140,14 +145,14 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	public DerivedField getLocalDerivedField(FieldName name){
-		LocalTransformations localTransformations = getLocalTransformations();
+		M model = getModel();
+
+		LocalTransformations localTransformations = model.getLocalTransformations();
 		if(localTransformations == null){
 			return null;
 		}
 
-		List<DerivedField> derivedFields = localTransformations.getDerivedFields();
-
-		return find(derivedFields, name);
+		return findField(localTransformations.getDerivedFields(), name);
 	}
 
 	public DerivedField resolveDerivedField(FieldName name){
@@ -161,7 +166,9 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	@Override
 	public Target getTarget(FieldName name){
-		Targets targets = getTargets();
+		M model = getModel();
+
+		Targets targets = model.getTargets();
 		if(targets == null){
 			return null;
 		}
@@ -178,7 +185,9 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	@Override
 	public List<FieldName> getOutputFields(){
-		Output output = getOutput();
+		M model = getModel();
+
+		Output output = model.getOutput();
 		if(output == null){
 			return Collections.emptyList();
 		}
@@ -195,38 +204,14 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	@Override
 	public OutputField getOutputField(FieldName name){
-		Output output = getOutput();
+		M model = getModel();
+
+		Output output = model.getOutput();
 		if(output == null){
 			return null;
 		}
 
-		List<OutputField> outputFields = output.getOutputFields();
-
-		return find(outputFields, name);
-	}
-
-	public MiningSchema getMiningSchema(){
-		M model = getModel();
-
-		return model.getMiningSchema();
-	}
-
-	public LocalTransformations getLocalTransformations(){
-		M model = getModel();
-
-		return model.getLocalTransformations();
-	}
-
-	public Output getOutput(){
-		M model = getModel();
-
-		return model.getOutput();
-	}
-
-	public Targets getTargets(){
-		M model = getModel();
-
-		return model.getTargets();
+		return findField(output.getOutputFields(), name);
 	}
 
 	public M getModel(){

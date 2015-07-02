@@ -27,9 +27,11 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
+import org.dmg.pmml.Model;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.OutputField;
+import org.dmg.pmml.PMML;
 import org.dmg.pmml.ResultFeatureType;
 import org.junit.Test;
 
@@ -47,10 +49,14 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 		FieldName dummy = new FieldName("dummy");
 		String dummyValue = "Dummy";
 
-		DataDictionary dataDictionary = evaluator.getDataDictionary()
+		PMML pmml = evaluator.getPMML();
+
+		DataDictionary dataDictionary = pmml.getDataDictionary()
 			.addDataFields(new DataField(dummy, OpType.CATEGORICAL, DataType.STRING));
 
-		Output output = evaluator.getOutput()
+		Model model = evaluator.getModel();
+
+		Output output = model.getOutput()
 			.addOutputFields(createArgumentCopy(item, null), createArgumentCopy(dummy, "missing"));
 
 		Map<FieldName, ?> arguments = createArguments(item, EvaluatorUtil.prepare(evaluator, item, itemValue), dummy, dummyValue);

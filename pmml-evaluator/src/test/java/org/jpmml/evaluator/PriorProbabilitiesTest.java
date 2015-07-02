@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.Model;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.Targets;
@@ -66,7 +67,9 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 	public void evaluateEmptyTarget() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		Targets targets = evaluator.getTargets();
+		Model model = evaluator.getModel();
+
+		Targets targets = model.getTargets();
 		for(Target target : targets){
 			List<TargetValue> targetValues = target.getTargetValues();
 

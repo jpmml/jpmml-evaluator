@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.Model;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.Targets;
@@ -50,7 +51,9 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 	public void evaluateEmptyTarget() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		Targets targets = evaluator.getTargets();
+		Model model = evaluator.getModel();
+
+		Targets targets = model.getTargets();
 		for(Target target : targets){
 			List<TargetValue> targetValues = target.getTargetValues();
 

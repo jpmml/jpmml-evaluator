@@ -35,6 +35,7 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Item;
 import org.dmg.pmml.ItemRef;
 import org.dmg.pmml.Itemset;
+import org.dmg.pmml.Model;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.OutputField;
@@ -64,7 +65,9 @@ public class OutputUtil {
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> predictions, ModelEvaluationContext context){
 		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
 
-		Output output = modelEvaluator.getOutput();
+		Model model = modelEvaluator.getModel();
+
+		Output output = model.getOutput();
 		if(output == null){
 			return predictions;
 		}

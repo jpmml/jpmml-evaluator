@@ -35,10 +35,9 @@ import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.HasName;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.TransformationDictionary;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -50,32 +49,36 @@ public class PMMLManager implements Serializable {
 
 	public PMMLManager(PMML pmml){
 		setPMML(checkNotNull(pmml));
+
+		DataDictionary dataDictionary = pmml.getDataDictionary();
+		if(dataDictionary == null){
+			throw new InvalidFeatureException(pmml);
+		}
 	}
 
 	public DataField getDataField(FieldName name){
-		DataDictionary dataDictionary = getDataDictionary();
-		if(dataDictionary == null){
-			return null;
-		}
+		PMML pmml = getPMML();
 
-		List<DataField> dataFields = dataDictionary.getDataFields();
+		DataDictionary dataDictionary = pmml.getDataDictionary();
 
-		return find(dataFields, name);
+		return findField(dataDictionary.getDataFields(), name);
 	}
 
 	public DerivedField getDerivedField(FieldName name){
-		TransformationDictionary transformationDictionary = getTransformationDictionary();
+		PMML pmml = getPMML();
+
+		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
 		if(transformationDictionary == null){
 			return null;
 		}
 
-		List<DerivedField> derivedFields = transformationDictionary.getDerivedFields();
-
-		return find(derivedFields, name);
+		return findField(transformationDictionary.getDerivedFields(), name);
 	}
 
 	public DefineFunction getFunction(String name){
-		TransformationDictionary transformationDictionary = getTransformationDictionary();
+		PMML pmml = getPMML();
+
+		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
 		if(transformationDictionary == null){
 			return null;
 		}
@@ -91,18 +94,6 @@ public class PMMLManager implements Serializable {
 		return null;
 	}
 
-	public DataDictionary getDataDictionary(){
-		PMML pmml = getPMML();
-
-		return pmml.getDataDictionary();
-	}
-
-	public TransformationDictionary getTransformationDictionary(){
-		PMML pmml = getPMML();
-
-		return pmml.getTransformationDictionary();
-	}
-
 	public PMML getPMML(){
 		return this.pmml;
 	}
@@ -112,12 +103,12 @@ public class PMMLManager implements Serializable {
 	}
 
 	static
-	public <E extends PMMLObject & HasName> E find(Collection<E> objects, FieldName name){
+	protected <F extends Field> F findField(Collection<? extends F> fields, FieldName name){
 
-		for(E object : objects){
+		for(F field : fields){
 
-			if((object.getName()).equals(name)){
-				return object;
+			if((field.getName()).equals(name)){
+				return field;
 			}
 		}
 
