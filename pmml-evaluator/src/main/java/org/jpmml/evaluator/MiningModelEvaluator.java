@@ -46,7 +46,6 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.Segment;
 import org.dmg.pmml.Segmentation;
-import org.dmg.pmml.TreeModel;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 
@@ -63,12 +62,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	@Override
 	public String getSummary(){
-		MiningModel miningModel = getModel();
-
-		if(isRandomForest(miningModel)){
-			return "Random forest";
-		}
-
 		return "Ensemble model";
 	}
 
@@ -530,28 +523,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 
 		return result.asMap();
-	}
-
-	static
-	private boolean isRandomForest(MiningModel miningModel){
-		Segmentation segmentation = miningModel.getSegmentation();
-
-		if(segmentation == null){
-			return false;
-		}
-
-		List<Segment> segments = segmentation.getSegments();
-
-		// How many trees does it take to make a forest?
-		boolean result = (segments.size() > 3);
-
-		for(Segment segment : segments){
-			Model model = segment.getModel();
-
-			result &= (model instanceof TreeModel);
-		}
-
-		return result;
 	}
 
 	private static final Set<MultipleModelMethodType> REGRESSION_METHODS = EnumSet.of(MultipleModelMethodType.SUM, MultipleModelMethodType.MEDIAN, MultipleModelMethodType.AVERAGE, MultipleModelMethodType.WEIGHTED_AVERAGE);
