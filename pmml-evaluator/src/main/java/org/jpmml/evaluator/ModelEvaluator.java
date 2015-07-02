@@ -144,6 +144,8 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		List<FieldName> targetFields = getTargetFields();
 		List<FieldName> outputFields = getOutputFields();
 
+		SetView<FieldName> intersection = Sets.intersection(batch.keySet(), ImmutableSet.copyOf(outputFields));
+
 		for(Map<FieldName, Object> record : records){
 			Map<FieldName, Object> arguments = new LinkedHashMap<>();
 
@@ -152,8 +154,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			}
 
 			Map<FieldName, ?> result = evaluate(arguments);
-
-			SetView<FieldName> intersection = Sets.intersection(record.keySet(), ImmutableSet.copyOf(outputFields));
 
 			// "If there exist VerificationField elements that refer to OutputField elements,
 			// then any VerificationField element that refers to a MiningField element whose "usageType=target" should be ignored,
