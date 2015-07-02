@@ -37,6 +37,8 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -122,54 +124,9 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			return;
 		}
 
-		VerificationFields verificationFields = modelVerification.getVerificationFields();
-		if(verificationFields == null){
-			throw new InvalidFeatureException(modelVerification);
-		}
+		VerificationBatch batch = CacheUtil.getValue(modelVerification, ModelEvaluator.batchCache);
 
-		Map<FieldName, VerificationField> fieldMap = new LinkedHashMap<>();
-
-		for(VerificationField verificationField : verificationFields){
-			fieldMap.put(FieldName.create(verificationField.getField()), verificationField);
-		}
-
-		InlineTable inlineTable = modelVerification.getInlineTable();
-		if(inlineTable == null){
-			throw new InvalidFeatureException(modelVerification);
-		}
-
-		Table<Integer, String, String> table = InlineTableUtil.getContent(inlineTable);
-
-		List<Map<FieldName, Object>> records = new ArrayList<>();
-
-		Set<Integer> rowKeys = table.rowKeySet();
-		for(Integer rowKey : rowKeys){
-			Map<String, String> row = table.row(rowKey);
-
-			Map<FieldName, Object> record = new LinkedHashMap<>();
-
-			for(VerificationField verificationField : verificationFields){
-				String field = verificationField.getField();
-				String column = verificationField.getColumn();
-
-				if(column == null){
-					column = field;
-				} // End if
-
-				if(!row.containsKey(column)){
-					continue;
-				}
-
-				record.put(FieldName.create(field), row.get(column));
-			}
-
-			records.add(record);
-		}
-
-		Integer recordCount = modelVerification.getRecordCount();
-		if(recordCount != null && recordCount.intValue() != records.size()){
-			throw new InvalidFeatureException(inlineTable);
-		}
+		List<Map<FieldName, Object>> records = batch.getRecords();
 
 		List<FieldName> activeFields = getActiveFields();
 		List<FieldName> groupFields = getGroupFields();
@@ -204,7 +161,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			if(intersection.size() > 0){
 
 				for(FieldName outputField : outputFields){
-					VerificationField verificationField = fieldMap.get(outputField);
+					VerificationField verificationField = batch.get(outputField);
 
 					if(verificationField == null){
 						continue;
@@ -218,7 +175,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			// then any VerificationField element that refers to a MiningField element whose "usageType=target" should be considered to represent an expected output"
 			{
 				for(FieldName targetField : targetFields){
-					VerificationField verificationField = fieldMap.get(targetField);
+					VerificationField verificationField = batch.get(targetField);
 
 					if(verificationField == null){
 						continue;
@@ -291,6 +248,87 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		return model;
 	}
+
+	static
+	private VerificationBatch parseModelVerification(ModelVerification modelVerification){
+		VerificationBatch result = new VerificationBatch();
+
+		VerificationFields verificationFields = modelVerification.getVerificationFields();
+		if(verificationFields == null){
+			throw new InvalidFeatureException(modelVerification);
+		}
+
+		for(VerificationField verificationField : verificationFields){
+			result.put(FieldName.create(verificationField.getField()), verificationField);
+		}
+
+		InlineTable inlineTable = modelVerification.getInlineTable();
+		if(inlineTable == null){
+			throw new InvalidFeatureException(modelVerification);
+		}
+
+		Table<Integer, String, String> table = InlineTableUtil.getContent(inlineTable);
+
+		List<Map<FieldName, Object>> records = new ArrayList<>();
+
+		Set<Integer> rowKeys = table.rowKeySet();
+		for(Integer rowKey : rowKeys){
+			Map<String, String> row = table.row(rowKey);
+
+			Map<FieldName, Object> record = new LinkedHashMap<>();
+
+			for(VerificationField verificationField : verificationFields){
+				String field = verificationField.getField();
+				String column = verificationField.getColumn();
+
+				if(column == null){
+					column = field;
+				} // End if
+
+				if(!row.containsKey(column)){
+					continue;
+				}
+
+				record.put(FieldName.create(field), row.get(column));
+			}
+
+			records.add(record);
+		}
+
+		Integer recordCount = modelVerification.getRecordCount();
+		if(recordCount != null && recordCount.intValue() != records.size()){
+			throw new InvalidFeatureException(inlineTable);
+		}
+
+		result.setRecords(records);
+
+		return result;
+	}
+
+	static
+	private class VerificationBatch extends LinkedHashMap<FieldName, VerificationField> {
+
+		private List<Map<FieldName, Object>> records = null;
+
+
+		public List<Map<FieldName, Object>> getRecords(){
+			return this.records;
+		}
+
+		private void setRecords(List<Map<FieldName, Object>> records){
+			this.records = records;
+		}
+	}
+
+	private static final LoadingCache<ModelVerification, VerificationBatch> batchCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<ModelVerification, VerificationBatch>(){
+
+			@Override
+			public VerificationBatch load(ModelVerification modelVerification){
+				return parseModelVerification(modelVerification);
+			}
+		});
 
 	private static final EnumSet<FieldUsageType> FILTER_SET = EnumSet.of(FieldUsageType.ACTIVE, FieldUsageType.GROUP, FieldUsageType.ORDER);
 }
