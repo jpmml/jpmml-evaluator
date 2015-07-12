@@ -42,7 +42,7 @@ public class CsvUtil {
 	public List<Map<FieldName, String>> load(InputStream is) throws IOException {
 		List<Map<FieldName, String>> table = new ArrayList<>();
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is, "US-ASCII"));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 
 		try {
 			String headerLine = reader.readLine();
