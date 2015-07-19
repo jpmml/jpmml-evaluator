@@ -24,6 +24,7 @@
         </MiningSchema>
         <Output>
             <OutputField name="Class Node" feature="entityId" segmentId="1"/>
+            <OutputField name="Class Score" feature="transformedValue" value="TransformedPredictedClass" segmentId="1"/>
         </Output>
         <Segmentation multipleModelMethod="modelChain">
             <Segment id="1">
@@ -36,6 +37,13 @@
                     </MiningSchema>
                     <Output>
                         <OutputField name="PredictedClass" optype="categorical" dataType="string" feature="predictedValue"/>
+                        <OutputField name="TransformedPredictedClass" optype="categorical" dataType="string" feature="transformedValue">
+                            <Apply function="replace">
+                                <FieldRef field="PredictedClass"/>
+                                <Constant>Iris-</Constant>
+                                <Constant/>
+                            </Apply>
+                        </OutputField>
                     </Output>
                     <Node id="1" score="Iris-setosa" recordCount="150.0">
                         <True/>

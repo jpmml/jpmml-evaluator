@@ -87,6 +87,8 @@ public class OutputUtil {
 
 			String segmentId = outputField.getSegmentId();
 
+			SegmentResultMap segmentPredictions = null;
+
 			// Load the target value of the specified segment
 			if(segmentId != null){
 
@@ -96,7 +98,7 @@ public class OutputUtil {
 
 				MiningModelEvaluationContext miningModelContext = (MiningModelEvaluationContext)context;
 
-				SegmentResultMap segmentPredictions = miningModelContext.getResult(segmentId);
+				segmentPredictions = miningModelContext.getResult(segmentId);
 
 				// "If there is no Segment matching segmentId or if the predicate of the matching Segment evaluated to false, then the result delivered by this OutputField is missing"
 				if(segmentPredictions == null){
@@ -173,7 +175,19 @@ public class OutputUtil {
 				case DECISION:
 					{
 						if(segmentId != null){
-							throw new UnsupportedFeatureException(outputField);
+							String name = outputField.getValue();
+							if(name == null){
+								throw new InvalidFeatureException(outputField);
+							}
+
+							Expression expression = outputField.getExpression();
+							if(expression != null){
+								throw new InvalidFeatureException(outputField);
+							}
+
+							value = segmentPredictions.get(FieldName.create(name));
+
+							break;
 						}
 
 						Expression expression = outputField.getExpression();
