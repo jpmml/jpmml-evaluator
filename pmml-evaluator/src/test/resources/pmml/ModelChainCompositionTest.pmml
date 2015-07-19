@@ -23,7 +23,7 @@
             <MiningField name="PollenIndex" usageType="predicted"/>
         </MiningSchema>
         <Output>
-            <OutputField name="Class Node" targetField="Class" feature="entityId" segmentId="1"/>
+            <OutputField name="Class Node" feature="entityId" segmentId="1"/>
         </Output>
         <Segmentation multipleModelMethod="modelChain">
             <Segment id="1">

@@ -79,86 +79,85 @@ public class OutputUtil {
 
 		outputFields:
 		for(OutputField outputField : outputFields){
-			Map<FieldName, ?> segmentPredictions = predictions;
+			FieldName targetField = outputField.getTargetField();
+
+			Object targetValue = null;
+
+			ResultFeatureType resultFeature = outputField.getFeature();
 
 			String segmentId = outputField.getSegmentId();
+
+			// Load the target value of the specified segment
 			if(segmentId != null){
+
+				if(!(model instanceof MiningModel)){
+					throw new InvalidFeatureException(outputField);
+				}
+
 				MiningModelEvaluationContext miningModelContext = (MiningModelEvaluationContext)context;
 
-				segmentPredictions = miningModelContext.getResult(segmentId);
-			} // End if
+				SegmentResultMap segmentPredictions = miningModelContext.getResult(segmentId);
 
-			// "If there is no Segment matching segmentId or if the predicate of the matching Segment evaluated to false, then the result delivered by this OutputField is missing"
-			if(segmentPredictions == null){
-				continue outputFields;
-			}
+				// "If there is no Segment matching segmentId or if the predicate of the matching Segment evaluated to false, then the result delivered by this OutputField is missing"
+				if(segmentPredictions == null){
+					continue outputFields;
+				} // End if
 
-			// "Attribute targetField is required in case the model has multiple target fields"
-			FieldName targetField = outputField.getTargetField();
-			if(targetField == null){
-				targetField = modelEvaluator.getTargetField();
-			}
+				if(targetField != null){
 
-			Object value = null;
+					if(!segmentPredictions.containsKey(targetField)){
+						throw new MissingFieldException(targetField, outputField);
+					}
 
-			ResultFeatureType resultFeature = getResultFeatureType(outputField);
+					targetValue = segmentPredictions.get(targetField);
+				} else
 
-			// Load the mining result
-			switch(resultFeature){
-				case ENTITY_ID:
-					{
-						if(model instanceof MiningModel){
+				{
+					targetValue = segmentPredictions.getTargetValue();
+				}
+			} else
 
+			// Load the target value
+			{
+				switch(resultFeature){
+					case ENTITY_ID:
+						{
 							// "Result feature entityId returns the id of the winning segment"
-							if(segmentId == null){
-								value = asResultFeature(HasEntityId.class, segmentPredictions);
+							if(model instanceof MiningModel){
+								targetValue = asResultFeature(HasEntityId.class, predictions);
 
 								break;
 							}
 						}
-					}
-					// Falls through
-				case PREDICTED_VALUE:
-				case PREDICTED_DISPLAY_VALUE:
-				case PROBABILITY:
-				case RESIDUAL:
-				case CLUSTER_ID:
-				case AFFINITY:
-				case ENTITY_AFFINITY:
-				case CLUSTER_AFFINITY:
-				case REASON_CODE:
-				case RULE_VALUE:
-				case ANTECEDENT:
-				case CONSEQUENT:
-				case RULE:
-				case RULE_ID:
-				case CONFIDENCE:
-				case SUPPORT:
-				case LIFT:
-				case LEVERAGE:
-					{
-						if(!segmentPredictions.containsKey(targetField)){
-							throw new MissingFieldException(targetField, outputField);
+						// Falls through
+					default:
+						{
+							if(targetField == null){
+								targetField = modelEvaluator.getTargetField();
+							} // End if
+
+							if(!predictions.containsKey(targetField)){
+								throw new MissingFieldException(targetField, outputField);
+							}
+
+							targetValue = predictions.get(targetField);
 						}
+						break;
+				}
+			}
 
-						// A target value could be either simple or complex values
-						value = segmentPredictions.get(targetField);
+			// If the target value is missing, then the result delivered by this OutputField is missing
+			if(targetValue == null){
+				continue outputFields;
+			}
 
-						// If the target value is missing, then the result delivered by this OutputField is missing
-						if(value == null){
-							continue outputFields;
-						}
-					}
-					break;
-				default:
-					break;
-			} // End switch
+			Object value;
 
-			// Perform the requested computation on the mining result
+			// Perform the requested computation on the target value
 			switch(resultFeature){
 				case PREDICTED_VALUE:
 					{
-						value = getPredictedValue(value);
+						value = getPredictedValue(targetValue);
 					}
 					break;
 				case PREDICTED_DISPLAY_VALUE:
@@ -167,7 +166,7 @@ public class OutputUtil {
 
 						Target target = modelEvaluator.getTarget(targetField);
 
-						value = getPredictedDisplayValue(value, dataField, target);
+						value = getPredictedDisplayValue(targetValue, dataField, target);
 					}
 					break;
 				case TRANSFORMED_VALUE:
@@ -187,7 +186,7 @@ public class OutputUtil {
 					break;
 				case PROBABILITY:
 					{
-						value = getProbability(value, outputField);
+						value = getProbability(targetValue, outputField);
 					}
 					break;
 				case RESIDUAL:
@@ -202,10 +201,10 @@ public class OutputUtil {
 						OpType opType = dataField.getOpType();
 						switch(opType){
 							case CONTINUOUS:
-								value = getContinuousResidual(value, expectedValue);
+								value = getContinuousResidual(targetValue, expectedValue);
 								break;
 							case CATEGORICAL:
-								value = getCategoricalResidual(value, expectedValue);
+								value = getCategoricalResidual(targetValue, expectedValue);
 								break;
 							default:
 								throw new UnsupportedFeatureException(dataField, opType);
@@ -214,79 +213,79 @@ public class OutputUtil {
 					break;
 				case CLUSTER_ID:
 					{
-						value = getClusterId(value);
+						value = getClusterId(targetValue);
 					}
 					break;
 				case ENTITY_ID:
 					{
-						if(value instanceof HasRuleValues){
-							value = getRuleValue(value, outputField, RuleFeatureType.RULE_ID);
+						if(targetValue instanceof HasRuleValues){
+							value = getRuleValue(targetValue, outputField, RuleFeatureType.RULE_ID);
 
 							break;
 						}
 
-						value = getEntityId(value, outputField);
+						value = getEntityId(targetValue, outputField);
 					}
 					break;
 				case AFFINITY:
 					{
-						value = getAffinity(value, outputField);
+						value = getAffinity(targetValue, outputField);
 					}
 					break;
 				case CLUSTER_AFFINITY:
 				case ENTITY_AFFINITY:
 					{
-						value = getEntityAffinity(value);
+						value = getEntityAffinity(targetValue);
 					}
 					break;
 				case REASON_CODE:
 					{
-						value = getReasonCode(value, outputField);
+						value = getReasonCode(targetValue, outputField);
 					}
 					break;
 				case RULE_VALUE:
 					{
-						value = getRuleValue(value, outputField);
+						value = getRuleValue(targetValue, outputField);
 					}
 					break;
 				case ANTECEDENT:
 					{
-						value = getRuleValue(value, outputField, RuleFeatureType.ANTECEDENT);
+						value = getRuleValue(targetValue, outputField, RuleFeatureType.ANTECEDENT);
 					}
 					break;
 				case CONSEQUENT:
 					{
-						value = getRuleValue(value, outputField, RuleFeatureType.CONSEQUENT);
+						value = getRuleValue(targetValue, outputField, RuleFeatureType.CONSEQUENT);
 					}
 					break;
 				case RULE:
 					{
-						value = getRuleValue(value, outputField, RuleFeatureType.RULE);
+						value = getRuleValue(targetValue, outputField, RuleFeatureType.RULE);
 					}
 					break;
 				case RULE_ID:
 					{
-						value = getRuleValue(value, outputField, RuleFeatureType.RULE_ID);
+						value = getRuleValue(targetValue, outputField, RuleFeatureType.RULE_ID);
 					}
 					break;
 				case CONFIDENCE:
 					{
-						value = getRuleValue(value, outputField, RuleFeatureType.CONFIDENCE);
+						value = getRuleValue(targetValue, outputField, RuleFeatureType.CONFIDENCE);
 					}
 					break;
 				case SUPPORT:
 					{
-						value = getRuleValue(value, outputField, RuleFeatureType.SUPPORT);
+						value = getRuleValue(targetValue, outputField, RuleFeatureType.SUPPORT);
 					}
 					break;
 				case LIFT:
 					{
-						value = getRuleValue(value, outputField, RuleFeatureType.LIFT);
+						value = getRuleValue(targetValue, outputField, RuleFeatureType.LIFT);
 					}
 					break;
 				case LEVERAGE:
 					{
-						value = getRuleValue(value, outputField, RuleFeatureType.LEVERAGE);
+						value = getRuleValue(targetValue, outputField, RuleFeatureType.LEVERAGE);
 					}
 					break;
 				case WARNING:
@@ -325,8 +324,7 @@ public class OutputUtil {
 			throw new TypeAnalysisException(outputField);
 		}
 
-		ResultFeatureType resultFeature = getResultFeatureType(outputField);
-
+		ResultFeatureType resultFeature = outputField.getFeature();
 		switch(resultFeature){
 			case PREDICTED_VALUE:
 				{
@@ -420,18 +418,6 @@ public class OutputUtil {
 			default:
 				throw new UnsupportedFeatureException(outputField, resultFeature);
 		}
-	}
-
-	static
-	private ResultFeatureType getResultFeatureType(OutputField outputField){
-		ResultFeatureType resultFeature = outputField.getFeature();
-
-		// "If the feature attribute is not specified, then the output value is a copy of the target field value"
-		if(resultFeature == null){
-			resultFeature = ResultFeatureType.PREDICTED_VALUE;
-		}
-
-		return resultFeature;
 	}
 
 	static
