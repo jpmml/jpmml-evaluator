@@ -67,7 +67,7 @@ public class EvaluatorUtilTest {
 			EvaluatorUtil.decode(invalidValue);
 
 			fail();
-		} catch(UnsupportedOperationException ee){
+		} catch(UnsupportedOperationException uoe){
 			// Ignored
 		}
 

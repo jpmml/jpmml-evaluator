@@ -122,7 +122,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 		MiningSchema miningSchema = model.getMiningSchema();
 
-		return findField(miningSchema.getMiningFields(), name);
+		return find(miningSchema.getMiningFields(), name);
 	}
 
 	protected List<FieldName> getMiningFields(EnumSet<FieldUsageType> fieldUsageTypes){
@@ -148,11 +148,11 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		M model = getModel();
 
 		LocalTransformations localTransformations = model.getLocalTransformations();
-		if(localTransformations == null){
+		if(localTransformations == null || !localTransformations.hasDerivedFields()){
 			return null;
 		}
 
-		return findField(localTransformations.getDerivedFields(), name);
+		return find(localTransformations.getDerivedFields(), name);
 	}
 
 	public DerivedField resolveDerivedField(FieldName name){
@@ -211,7 +211,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 			return null;
 		}
 
-		return findField(output.getOutputFields(), name);
+		return find(output.getOutputFields(), name);
 	}
 
 	public M getModel(){

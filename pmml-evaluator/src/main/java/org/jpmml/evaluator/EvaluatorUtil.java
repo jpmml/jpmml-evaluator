@@ -78,7 +78,7 @@ public class EvaluatorUtil {
 
 			try {
 				result.put(key != null ? key.getValue() : null, decode(value));
-			} catch(UnsupportedOperationException ee){
+			} catch(UnsupportedOperationException uoe){
 				// Ignored
 			}
 		}

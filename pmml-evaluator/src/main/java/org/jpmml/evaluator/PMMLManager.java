@@ -29,14 +29,13 @@ package org.jpmml.evaluator;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
-import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.Indexable;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.TransformationDictionary;
 
@@ -61,37 +60,29 @@ public class PMMLManager implements Serializable {
 
 		DataDictionary dataDictionary = pmml.getDataDictionary();
 
-		return findField(dataDictionary.getDataFields(), name);
+		return find(dataDictionary.getDataFields(), name);
 	}
 
 	public DerivedField getDerivedField(FieldName name){
 		PMML pmml = getPMML();
 
 		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
-		if(transformationDictionary == null){
+		if(transformationDictionary == null || !transformationDictionary.hasDerivedFields()){
 			return null;
 		}
 
-		return findField(transformationDictionary.getDerivedFields(), name);
+		return find(transformationDictionary.getDerivedFields(), name);
 	}
 
 	public DefineFunction getFunction(String name){
 		PMML pmml = getPMML();
 
 		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
-		if(transformationDictionary == null){
+		if(transformationDictionary == null || !transformationDictionary.hasDefineFunctions()){
 			return null;
 		}
 
-		List<DefineFunction> defineFunctions = transformationDictionary.getDefineFunctions();
-		for(DefineFunction defineFunction : defineFunctions){
-
-			if((defineFunction.getName()).equals(name)){
-				return defineFunction;
-			}
-		}
-
-		return null;
+		return find(transformationDictionary.getDefineFunctions(), name);
 	}
 
 	public PMML getPMML(){
@@ -103,12 +94,12 @@ public class PMMLManager implements Serializable {
 	}
 
 	static
-	protected <F extends Field> F findField(Collection<? extends F> fields, FieldName name){
+	<K, E extends Indexable<K>> E find(Collection<? extends E> elements, K key){
 
-		for(F field : fields){
+		for(E element : elements){
 
-			if((field.getName()).equals(name)){
-				return field;
+			if((element.getKey()).equals(key)){
+				return element;
 			}
 		}
 
