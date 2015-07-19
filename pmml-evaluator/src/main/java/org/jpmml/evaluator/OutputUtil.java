@@ -35,6 +35,7 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Item;
 import org.dmg.pmml.ItemRef;
 import org.dmg.pmml.Itemset;
+import org.dmg.pmml.MiningModel;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
@@ -106,8 +107,14 @@ public class OutputUtil {
 			switch(resultFeature){
 				case ENTITY_ID:
 					{
-						if(isSegmentId(segmentPredictions, outputField)){
-							break;
+						if(model instanceof MiningModel){
+
+							// "Result feature entityId returns the id of the winning segment"
+							if(segmentId == null){
+								value = asResultFeature(HasEntityId.class, segmentPredictions);
+
+								break;
+							}
 						}
 					}
 					// Falls through
@@ -212,15 +219,6 @@ public class OutputUtil {
 					break;
 				case ENTITY_ID:
 					{
-						// "Result feature entityId returns the id of the winning segment"
-						if(isSegmentId(segmentPredictions, outputField)){
-							SegmentResultMap segmentResult = (SegmentResultMap)segmentPredictions;
-
-							value = segmentResult.getId();
-
-							break;
-						} // End if
-
 						if(value instanceof HasRuleValues){
 							value = getRuleValue(value, outputField, RuleFeatureType.RULE_ID);
 
@@ -302,7 +300,7 @@ public class OutputUtil {
 
 			FieldValue outputValue = FieldValueUtil.create(outputField, value);
 
-			// The result of one output field becomes available to other other output fields
+			// The result of one output field becomes available to other output fields
 			context.declare(outputField.getName(), outputValue);
 
 			result.put(outputField.getName(), FieldValueUtil.getValue(outputValue));
@@ -434,17 +432,6 @@ public class OutputUtil {
 		}
 
 		return resultFeature;
-	}
-
-	static
-	private boolean isSegmentId(Map<FieldName, ?> predictions, OutputField outputField){
-		FieldName targetField = outputField.getTargetField();
-
-		if(targetField == null){
-			return (predictions instanceof SegmentResultMap);
-		}
-
-		return false;
 	}
 
 	static

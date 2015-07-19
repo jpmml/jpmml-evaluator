@@ -23,7 +23,8 @@ import java.util.LinkedHashMap;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Segment;
 
-class SegmentResultMap extends LinkedHashMap<FieldName, Object> {
+abstract
+class SegmentResultMap extends LinkedHashMap<FieldName, Object> implements HasEntityId {
 
 	private Segment segment = null;
 

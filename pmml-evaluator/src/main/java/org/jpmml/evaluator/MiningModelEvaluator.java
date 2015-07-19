@@ -306,12 +306,19 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				context.addWarning(warning);
 			}
 
-			String id = EntityUtil.getId(segment, entityRegistry);
+			final
+			String entityId = EntityUtil.getId(segment, entityRegistry);
 
-			SegmentResultMap segmentResult = new SegmentResultMap(segment, targetField);
+			SegmentResultMap segmentResult = new SegmentResultMap(segment, targetField){
+
+				@Override
+				public String getEntityId(){
+					return entityId;
+				}
+			};
 			segmentResult.putAll(result);
 
-			context.putResult(id, segmentResult);
+			context.putResult(entityId, segmentResult);
 
 			switch(multipleModelMethod){
 				case SELECT_FIRST:
