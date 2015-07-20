@@ -87,11 +87,11 @@ public class ArrayUtil {
 				return getIntContent(array);
 			case REAL:
 				return getRealContent(array);
+			case STRING:
+				throw new InvalidFeatureException(array);
 			default:
-				break;
+				throw new UnsupportedFeatureException(array, type);
 		}
-
-		throw new TypeCheckException(Number.class, null);
 	}
 
 	static

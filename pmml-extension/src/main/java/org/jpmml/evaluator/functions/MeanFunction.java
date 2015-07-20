@@ -25,7 +25,6 @@ import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.dmg.pmml.DataType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.TypeCheckException;
 import org.jpmml.evaluator.TypeUtil;
 
 /**
@@ -52,13 +51,9 @@ public class MeanFunction extends AbstractFunction {
 	public FieldValue evaluate(List<FieldValue> arguments){
 		checkArguments(arguments, 1);
 
-		Object values = FieldValueUtil.getValue(arguments.get(0));
+		Collection<?> values = FieldValueUtil.getValue(Collection.class, arguments.get(0));
 
-		if(!(values instanceof Collection)){
-			throw new TypeCheckException(Collection.class, values);
-		}
-
-		Double result = evaluate((Collection<?>)values);
+		Double result = evaluate(values);
 
 		return FieldValueUtil.create(result);
 	}

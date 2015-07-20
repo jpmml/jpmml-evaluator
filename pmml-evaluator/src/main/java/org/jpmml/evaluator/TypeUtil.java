@@ -356,6 +356,16 @@ public class TypeUtil {
 		}
 	}
 
+	static
+	public <V> V cast(Class<? extends V> clazz, Object value){
+
+		if(!clazz.isInstance(value)){
+			throw new TypeCheckException(clazz, value);
+		}
+
+		return clazz.cast(value);
+	}
+
 	/**
 	 * Casts the specified value to String data type.
 	 *

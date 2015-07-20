@@ -126,7 +126,7 @@ public class OutputUtil {
 						{
 							// "Result feature entityId returns the id of the winning segment"
 							if(model instanceof MiningModel){
-								targetValue = asResultFeature(HasEntityId.class, predictions);
+								targetValue = TypeUtil.cast(HasEntityId.class, predictions);
 
 								break;
 							}
@@ -443,7 +443,7 @@ public class OutputUtil {
 	private Object getPredictedDisplayValue(Object object, DataField dataField, Target target){
 
 		if(object instanceof HasDisplayValue){
-			HasDisplayValue hasDisplayValue = asResultFeature(HasDisplayValue.class, object);
+			HasDisplayValue hasDisplayValue = TypeUtil.cast(HasDisplayValue.class, object);
 
 			return hasDisplayValue.getDisplayValue();
 		}
@@ -482,7 +482,7 @@ public class OutputUtil {
 
 	static
 	private Double getProbability(Object object, OutputField outputField){
-		HasProbability hasProbability = asResultFeature(HasProbability.class, object);
+		HasProbability hasProbability = TypeUtil.cast(HasProbability.class, object);
 
 		String value = getCategoryValue(object, outputField);
 
@@ -511,7 +511,7 @@ public class OutputUtil {
 
 	static
 	public Double getCategoricalResidual(Object object, FieldValue expectedObject){
-		HasProbability hasProbability = asResultFeature(HasProbability.class, object);
+		HasProbability hasProbability = TypeUtil.cast(HasProbability.class, object);
 
 		String value = TypeUtil.format(getPredictedValue(object));
 		String expectedValue = TypeUtil.format(FieldValueUtil.getValue(expectedObject));
@@ -523,14 +523,14 @@ public class OutputUtil {
 
 	static
 	private String getClusterId(Object object){
-		HasEntityId hasEntityId = asResultFeature(HasEntityId.class, object);
+		HasEntityId hasEntityId = TypeUtil.cast(HasEntityId.class, object);
 
 		return hasEntityId.getEntityId();
 	}
 
 	static
 	private String getEntityId(Object object, OutputField outputField){
-		HasEntityId hasEntityId = asResultFeature(HasEntityId.class, object);
+		HasEntityId hasEntityId = TypeUtil.cast(HasEntityId.class, object);
 
 		int rank = outputField.getRank();
 		if(rank <= 0){
@@ -538,7 +538,7 @@ public class OutputUtil {
 		}
 
 		if(rank > 1){
-			HasEntityIdRanking hasEntityIdRanking = asResultFeature(HasEntityIdRanking.class, object);
+			HasEntityIdRanking hasEntityIdRanking = TypeUtil.cast(HasEntityIdRanking.class, object);
 
 			OutputField.RankOrder rankOrder = outputField.getRankOrder();
 			switch(rankOrder){
@@ -556,7 +556,7 @@ public class OutputUtil {
 
 	static
 	public Double getAffinity(Object object, OutputField outputField){
-		HasAffinity hasAffinity = asResultFeature(HasAffinity.class, object);
+		HasAffinity hasAffinity = TypeUtil.cast(HasAffinity.class, object);
 
 		int rank = outputField.getRank();
 		if(rank <= 0){
@@ -564,7 +564,7 @@ public class OutputUtil {
 		}
 
 		if(rank > 1){
-			HasAffinityRanking hasAffinityRanking = asResultFeature(HasAffinityRanking.class, object);
+			HasAffinityRanking hasAffinityRanking = TypeUtil.cast(HasAffinityRanking.class, object);
 
 			OutputField.RankOrder rankOrder = outputField.getRankOrder();
 			switch(rankOrder){
@@ -584,14 +584,14 @@ public class OutputUtil {
 
 	static
 	public Double getEntityAffinity(Object object){
-		HasEntityAffinity hasEntityAffinity = asResultFeature(HasEntityAffinity.class, object);
+		HasEntityAffinity hasEntityAffinity = TypeUtil.cast(HasEntityAffinity.class, object);
 
 		return hasEntityAffinity.getEntityAffinity();
 	}
 
 	static
 	public String getReasonCode(Object object, OutputField outputField){
-		HasReasonCodeRanking hasReasonCodeRanking = asResultFeature(HasReasonCodeRanking.class, object);
+		HasReasonCodeRanking hasReasonCodeRanking = TypeUtil.cast(HasReasonCodeRanking.class, object);
 
 		int rank = outputField.getRank();
 		if(rank <= 0){
@@ -603,7 +603,7 @@ public class OutputUtil {
 
 	static
 	public Object getRuleValue(Object object, OutputField outputField, RuleFeatureType ruleFeature){
-		HasRuleValues hasRuleValues = asResultFeature(HasRuleValues.class, object);
+		HasRuleValues hasRuleValues = TypeUtil.cast(HasRuleValues.class, object);
 
 		List<AssociationRule> associationRules = getRuleValues(hasRuleValues, outputField);
 
@@ -627,7 +627,7 @@ public class OutputUtil {
 
 	static
 	public Object getRuleValue(Object object, OutputField outputField){
-		HasRuleValues hasRuleValues = asResultFeature(HasRuleValues.class, object);
+		HasRuleValues hasRuleValues = TypeUtil.cast(HasRuleValues.class, object);
 
 		List<AssociationRule> associationRules = getRuleValues(hasRuleValues, outputField);
 
@@ -863,16 +863,6 @@ public class OutputUtil {
 		}
 
 		return result;
-	}
-
-	static
-	private <E extends ResultFeature> E asResultFeature(Class<? extends E> clazz, Object object){
-
-		if(!clazz.isInstance(object)){
-			throw new TypeCheckException(clazz, object);
-		}
-
-		return clazz.cast(object);
 	}
 
 	static

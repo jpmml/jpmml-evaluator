@@ -198,6 +198,11 @@ public class FieldValueUtil {
 	}
 
 	static
+	public <V> V getValue(Class<? extends V> clazz, FieldValue value){
+		return TypeUtil.cast(clazz, getValue(value));
+	}
+
+	static
 	private <E> E override(E value, E overrideValue){
 
 		if(overrideValue != null){

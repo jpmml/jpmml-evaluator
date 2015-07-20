@@ -29,7 +29,6 @@ import org.dmg.pmml.DataType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FunctionException;
-import org.jpmml.evaluator.TypeCheckException;
 import org.jpmml.evaluator.TypeUtil;
 
 /**
@@ -57,18 +56,14 @@ public class PercentileFunction extends AbstractFunction {
 	public FieldValue evaluate(List<FieldValue> arguments){
 		checkArguments(arguments, 2);
 
-		Object values = FieldValueUtil.getValue(arguments.get(0));
-
-		if(!(values instanceof Collection)){
-			throw new TypeCheckException(Collection.class, values);
-		}
+		Collection<?> values = FieldValueUtil.getValue(Collection.class, arguments.get(0));
 
 		Integer percentile = (arguments.get(1)).asInteger();
 		if(percentile < 1 || percentile > 100){
 			throw new FunctionException(getName(), "Invalid arguments");
 		}
 
-		Double result = evaluate((Collection<?>)values, percentile.intValue());
+		Double result = evaluate(values, percentile.intValue());
 
 		return FieldValueUtil.create(result);
 	}

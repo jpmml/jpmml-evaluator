@@ -226,13 +226,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				throw new MissingFieldException(activeField);
 			}
 
-			Collection<?> result;
-
-			try {
-				result = (Collection<?>)FieldValueUtil.getValue(value);
-			} catch(ClassCastException cce){
-				throw new TypeCheckException(Collection.class, value);
-			}
+			Collection<?> result = FieldValueUtil.getValue(Collection.class, value);
 
 			return result;
 		} else

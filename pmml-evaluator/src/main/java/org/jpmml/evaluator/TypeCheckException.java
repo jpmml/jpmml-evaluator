@@ -22,25 +22,21 @@ import org.dmg.pmml.DataType;
 
 public class TypeCheckException extends EvaluationException {
 
-	public TypeCheckException(DataType expected, FieldValue value){
-		this(expected, FieldValueUtil.getValue(value));
-	}
-
 	public TypeCheckException(DataType expected, Object value){
-		super(formatMessage(expected, (value != null ? TypeUtil.getDataType(value) : null), value));
-	}
-
-	public TypeCheckException(Class<?> expected, FieldValue value){
-		this(expected, FieldValueUtil.getValue(value));
+		this(String.valueOf(expected), String.valueOf(getDataType(value)), value);
 	}
 
 	public TypeCheckException(Class<?> expected, Object value){
-		super(formatMessage(expected, (value != null ? value.getClass() : null), value));
+		this(String.valueOf(expected), String.valueOf(getClass(value)), value);
+	}
+
+	private TypeCheckException(String expected, String actual, Object value){
+		super(formatMessage(expected, actual, value));
 	}
 
 	static
-	private String formatMessage(DataType expected, DataType actual, Object value){
-		String message = "Expected " + expected + ", but got " + (actual != null ? actual : "null");
+	private String formatMessage(String expected, String actual, Object value){
+		String message = "Expected " + expected + ", but got " + actual;
 
 		if(value != null){
 			message += (" (" + String.valueOf(value) + ")");
@@ -50,13 +46,27 @@ public class TypeCheckException extends EvaluationException {
 	}
 
 	static
-	private String formatMessage(Class<?> expected, Class<?> actual, Object value){
-		String message = "Expected " + expected.getName() + ", but got " + (actual != null ? actual.getName() : "null");
+	private DataType getDataType(Object value){
 
 		if(value != null){
-			message += (" (" + String.valueOf(value) + ")");
+
+			try {
+				return TypeUtil.getDataType(value);
+			} catch(EvaluationException ee){
+				// Ignored
+			}
 		}
 
-		return message;
+		return null;
+	}
+
+	static
+	private Class<?> getClass(Object value){
+
+		if(value != null){
+			return value.getClass();
+		}
+
+		return null;
 	}
 }

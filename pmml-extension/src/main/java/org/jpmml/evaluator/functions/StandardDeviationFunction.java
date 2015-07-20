@@ -26,7 +26,6 @@ import org.dmg.pmml.DataType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FunctionException;
-import org.jpmml.evaluator.TypeCheckException;
 import org.jpmml.evaluator.TypeUtil;
 
 /**
@@ -61,18 +60,14 @@ public class StandardDeviationFunction extends AbstractFunction {
 			throw new FunctionException(getName(), "Missing arguments");
 		}
 
-		Object values = FieldValueUtil.getValue(arguments.get(0));
-
-		if(!(values instanceof Collection)){
-			throw new TypeCheckException(Collection.class, values);
-		}
+		Collection<?> values = FieldValueUtil.getValue(Collection.class, arguments.get(0));
 
 		Boolean biasCorrected = Boolean.FALSE;
 		if(arguments.size() > 1){
 			biasCorrected = (arguments.get(1)).asBoolean();
 		}
 
-		Double result = evaluate((Collection<?>)values, biasCorrected);
+		Double result = evaluate(values, biasCorrected);
 
 		return FieldValueUtil.create(result);
 	}

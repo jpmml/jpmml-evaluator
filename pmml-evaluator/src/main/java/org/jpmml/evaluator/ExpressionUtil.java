@@ -407,15 +407,9 @@ public class ExpressionUtil {
 	public FieldValue evaluateAggregate(Aggregate aggregate, EvaluationContext context){
 		FieldValue value = evaluate(aggregate.getField(), context);
 
-		Collection<?> values;
-
 		// The JPMML library operates with single records, so it's impossible to implement "proper" aggregation over multiple records
 		// It is assumed that the aggregation has been performed by application developer beforehand
-		try {
-			values = (Collection<?>)FieldValueUtil.getValue(value);
-		} catch(ClassCastException cce){
-			throw new TypeCheckException(Collection.class, value);
-		}
+		Collection<?> values = FieldValueUtil.getValue(Collection.class, value);
 
 		FieldName groupName = aggregate.getGroupField();
 		if(groupName != null){

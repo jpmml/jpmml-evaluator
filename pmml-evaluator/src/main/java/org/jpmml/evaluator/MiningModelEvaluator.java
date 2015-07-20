@@ -468,11 +468,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		for(SegmentResultMap segmentResult : segmentResults){
 			Object targetValue = segmentResult.getTargetValue();
 
-			if(!(targetValue instanceof HasProbability)){
-				throw new TypeCheckException(HasProbability.class, targetValue);
-			}
-
-			HasProbability hasProbability = (HasProbability)targetValue;
+			HasProbability hasProbability = TypeUtil.cast(HasProbability.class, targetValue);
 
 			switch(multipleModelMethod){
 				case MAX:
