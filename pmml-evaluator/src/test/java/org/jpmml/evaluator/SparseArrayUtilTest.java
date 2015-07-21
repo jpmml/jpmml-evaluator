@@ -27,7 +27,10 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Arrays;
+
 import org.dmg.pmml.IntSparseArray;
+import org.dmg.pmml.RealSparseArray;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -41,9 +44,14 @@ public class SparseArrayUtilTest {
 			.addIndices(2, 5)
 			.addEntries(3, 42);
 
-		assertEquals((Integer)0, SparseArrayUtil.getValue(sparseArray, 1));
-		assertEquals((Integer)3, SparseArrayUtil.getValue(sparseArray, 2));
-		assertEquals((Integer)42, SparseArrayUtil.getValue(sparseArray, 5));
-		assertEquals((Integer)0, SparseArrayUtil.getValue(sparseArray, 7));
+		assertEquals(Arrays.asList(0, 3, 0, 0, 42, 0, 0), SparseArrayUtil.asNumberList(sparseArray));
+	}
+
+	@Test
+	public void realSparseArray(){
+		RealSparseArray sparseArray = new RealSparseArray()
+			.setN(7);
+
+		assertEquals(Arrays.asList(0d, 0d, 0d, 0d, 0d, 0d, 0d), SparseArrayUtil.asNumberList(sparseArray));
 	}
 }

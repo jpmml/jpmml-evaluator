@@ -37,6 +37,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.primitives.Doubles;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.Coefficient;
 import org.dmg.pmml.Coefficients;
@@ -372,23 +373,25 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			Array array = vectorInstance.getArray();
 			RealSparseArray sparseArray = vectorInstance.getREALSparseArray();
 
-			double[] vector;
+			List<? extends Number> values;
 
 			if(array != null && sparseArray == null){
-				vector = ArrayUtil.toArray(array);
+				values = ArrayUtil.asNumberList(array);
 			} else
 
 			if(array == null && sparseArray != null){
-				vector = SparseArrayUtil.toArray(sparseArray);
+				values = SparseArrayUtil.asNumberList(sparseArray);
 			} else
 
 			{
 				throw new InvalidFeatureException(vectorInstance);
 			} // End if
 
-			if(fieldRefs.size() != vector.length){
+			if(fieldRefs.size() != values.size()){
 				throw new InvalidFeatureException(vectorInstance);
 			}
+
+			double[] vector = Doubles.toArray(values);
 
 			result.put(id, vector);
 		}

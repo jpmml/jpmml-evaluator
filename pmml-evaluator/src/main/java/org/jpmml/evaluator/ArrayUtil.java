@@ -63,61 +63,20 @@ public class ArrayUtil {
 	}
 
 	static
-	public double[] toArray(Array array){
-		int size = getSize(array);
+	public List<? extends Number> asNumberList(Array array){
+		List<String> content = getContent(array);
 
-		double[] result = new double[size];
-
-		List<? extends Number> content = getNumberContent(array);
-		for(int i = 0; i < size; i++){
-			Number value = content.get(i);
-
-			result[i] = value.doubleValue();
-		}
-
-		return result;
-	}
-
-	static
-	public List<? extends Number> getNumberContent(Array array){
 		Array.Type type = array.getType();
-
 		switch(type){
 			case INT:
-				return getIntContent(array);
+				return Lists.transform(content, INT_PARSER);
 			case REAL:
-				return getRealContent(array);
+				return Lists.transform(content, REAL_PARSER);
 			case STRING:
 				throw new InvalidFeatureException(array);
 			default:
 				throw new UnsupportedFeatureException(array, type);
 		}
-	}
-
-	static
-	public List<Integer> getIntContent(Array array){
-		Function<String, Integer> transformer = new Function<String, Integer>(){
-
-			@Override
-			public Integer apply(String string){
-				return Integer.valueOf(string);
-			}
-		};
-
-		return Lists.transform(getContent(array), transformer);
-	}
-
-	static
-	public List<Double> getRealContent(Array array){
-		Function<String, Double> transformer = new Function<String, Double>(){
-
-			@Override
-			public Double apply(String string){
-				return Double.valueOf(string);
-			}
-		};
-
-		return Lists.transform(getContent(array), transformer);
 	}
 
 	static
@@ -236,6 +195,22 @@ public class ArrayUtil {
 	}
 
 	private static Interner<String> tokenInterner = Interners.newWeakInterner();
+
+	private static final Function<String, Integer> INT_PARSER = new Function<String, Integer>(){
+
+		@Override
+		public Integer apply(String string){
+			return Integer.valueOf(string);
+		}
+	};
+
+	private static final Function<String, Double> REAL_PARSER = new Function<String, Double>(){
+
+		@Override
+		public Double apply(String string){
+			return Double.valueOf(string);
+		}
+	};
 
 	private static final LoadingCache<Array, List<String>> contentCache = CacheBuilder.newBuilder()
 		.weakKeys()

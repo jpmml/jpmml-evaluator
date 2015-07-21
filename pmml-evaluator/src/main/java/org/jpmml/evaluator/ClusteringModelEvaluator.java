@@ -181,7 +181,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		if(missingValueWeights != null){
 			Array array = missingValueWeights.getArray();
 
-			List<Double> adjustmentValues = ArrayUtil.getRealContent(array);
+			List<? extends Number> adjustmentValues = ArrayUtil.asNumberList(array);
 			if(values.size() != adjustmentValues.size()){
 				throw new InvalidFeatureException(missingValueWeights);
 			}
@@ -242,7 +242,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			public List<FieldValue> load(Cluster cluster){
 				Array array = cluster.getArray();
 
-				List<? extends Number> values = ArrayUtil.getNumberContent(array);
+				List<? extends Number> values = ArrayUtil.asNumberList(array);
 
 				return ImmutableList.copyOf(FieldValueUtil.createAll(values));
 			}

@@ -298,14 +298,14 @@ public class MeasureUtil {
 	}
 
 	static
-	public Double calculateAdjustment(List<FieldValue> values, List<Double> adjustmentValues){
+	public Double calculateAdjustment(List<FieldValue> values, List<? extends Number> adjustmentValues){
 		double sum = 0d;
 		double nonmissingSum = 0d;
 
 		for(int i = 0; i < values.size(); i++){
 			FieldValue value = values.get(i);
 
-			Double adjustmentValue = adjustmentValues.get(i);
+			Number adjustmentValue = adjustmentValues.get(i);
 
 			sum += adjustmentValue.doubleValue();
 			nonmissingSum += (value != null ? adjustmentValue.doubleValue() : 0d);

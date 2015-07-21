@@ -54,7 +54,7 @@ public class MatrixUtil {
 					if(arrays.size() == 1){
 						Array array = arrays.get(0);
 
-						List<? extends Number> elements = ArrayUtil.getNumberContent(array);
+						List<? extends Number> elements = ArrayUtil.asNumberList(array);
 
 						// Diagonal element
 						if(row == column){
@@ -129,7 +129,7 @@ public class MatrixUtil {
 	private Number getArrayValue(List<Array> arrays, int row, int column){
 		Array array = arrays.get(row - 1);
 
-		List<? extends Number> elements = ArrayUtil.getNumberContent(array);
+		List<? extends Number> elements = ArrayUtil.asNumberList(array);
 
 		return elements.get(column - 1);
 	}

@@ -27,8 +27,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.AbstractList;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -45,18 +45,6 @@ public class SparseArrayUtil {
 	private SparseArrayUtil(){
 	}
 
-	static
-	public <E extends Number> int getSize(SparseArray<E> sparseArray){
-		Integer n = sparseArray.getN();
-		if(n != null){
-			return n.intValue();
-		}
-
-		SortedMap<Integer, E> content = getContent(sparseArray);
-
-		return content.size();
-	}
-
 	@SuppressWarnings (
 		value = {"unchecked"}
 	)
@@ -65,17 +53,61 @@ public class SparseArrayUtil {
 		return (SortedMap<Integer, E>)CacheUtil.getValue(sparseArray, SparseArrayUtil.contentCache);
 	}
 
+	@SuppressWarnings (
+		value = {"unchecked"}
+	)
 	static
-	public <E extends Number> double[] toArray(SparseArray<E> sparseArray){
-		int size = getSize(sparseArray);
+	public <E extends Number> List<E> asNumberList(SparseArray<E> sparseArray){
+		final
+		SortedMap<Integer, E> content = getContent(sparseArray);
 
-		double[] result = new double[size];
+		final int size;
 
-		for(int i = 0; i < size; i++){
-			Number value = getValue(sparseArray, Integer.valueOf(i + 1));
+		Integer n = sparseArray.getN();
+		if(n != null){
+			size = n.intValue();
+		} else
 
-			result[i] = value.doubleValue();
+		{
+			size = content.size();
 		}
+
+		final E defaultValue;
+
+		if(sparseArray instanceof IntSparseArray){
+			IntSparseArray intSparseArray = (IntSparseArray)sparseArray;
+
+			defaultValue = (E)Integer.valueOf(intSparseArray.getDefaultValue());
+		} else
+
+		if(sparseArray instanceof RealSparseArray){
+			RealSparseArray realSparseArray = (RealSparseArray)sparseArray;
+
+			defaultValue = (E)Double.valueOf(realSparseArray.getDefaultValue());
+		} else
+
+		{
+			throw new UnsupportedFeatureException(sparseArray);
+		}
+
+		List<E> result = new AbstractList<E>(){
+
+			@Override
+			public int size(){
+				return size;
+			}
+
+			@Override
+			public E get(int index){
+				E value = content.get(Integer.valueOf(index + 1));
+
+				if(value == null){
+					value = defaultValue;
+				}
+
+				return value;
+			}
+		};
 
 		return result;
 	}
@@ -92,16 +124,19 @@ public class SparseArrayUtil {
 			throw new InvalidFeatureException(sparseArray);
 		}
 
+		Integer n = sparseArray.getN();
+
 		for(int i = 0; i < indices.size(); i++){
 			Integer index = indices.get(i);
 			E entry = entries.get(i);
 
-			checkIndex(sparseArray, index);
+			if((index < 1) || (n != null && index > n.intValue())){
+				throw new InvalidFeatureException(sparseArray);
+			}
 
 			result.put(index, entry);
 		}
 
-		Integer n = sparseArray.getN();
 		if(n != null && n.intValue() < result.size()){
 			throw new InvalidFeatureException(sparseArray);
 		}
@@ -109,60 +144,9 @@ public class SparseArrayUtil {
 		return result;
 	}
 
-	static
-	public <E extends Number> E getValue(SparseArray<E> sparseArray, Integer index){
-
-		if(sparseArray instanceof IntSparseArray){
-			return (E)getIntValue((IntSparseArray)sparseArray, index);
-		} else
-
-		if(sparseArray instanceof RealSparseArray){
-			return (E)getRealValue((RealSparseArray)sparseArray, index);
-		}
-
-		throw new UnsupportedFeatureException(sparseArray);
-	}
-
-	static
-	public Integer getIntValue(IntSparseArray sparseArray, Integer index){
-		Map<Integer, Integer> content = getContent(sparseArray);
-
-		Integer result = content.get(index);
-		if(result == null){
-			checkIndex(sparseArray, index);
-
-			return sparseArray.getDefaultValue();
-		}
-
-		return result;
-	}
-
-	static
-	public Double getRealValue(RealSparseArray sparseArray, Integer index){
-		Map<Integer, Double> content = getContent(sparseArray);
-
-		Double result = content.get(index);
-		if(result == null){
-			checkIndex(sparseArray, index);
-
-			return sparseArray.getDefaultValue();
-		}
-
-		return result;
-	}
-
-	static
-	private <E extends Number> void checkIndex(SparseArray<E> sparseArray, Integer index){
-		Integer n = sparseArray.getN();
-
-		if(index < 1 || (n != null && index > n)){
-			throw new EvaluationException();
-		}
-	}
-
-	private static final LoadingCache<SparseArray<?>, SortedMap<Integer, ? extends Number>> contentCache = CacheBuilder.newBuilder()
+	private static final LoadingCache<SparseArray<? extends Number>, SortedMap<Integer, ? extends Number>> contentCache = CacheBuilder.newBuilder()
 		.weakKeys()
-		.build(new CacheLoader<SparseArray<?>, SortedMap<Integer, ? extends Number>>(){
+		.build(new CacheLoader<SparseArray<? extends Number>, SortedMap<Integer, ? extends Number>>(){
 
 			@Override
 			public SortedMap<Integer, ? extends Number> load(SparseArray<?> sparseArray){
