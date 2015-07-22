@@ -77,20 +77,48 @@ import org.dmg.pmml.Model;
  * }
  * </pre>
  *
+ * <h3>Handling exceptions</h3>
+ * A code block that does exception-prone work should be surrounded with two levels of try-catch statements.
+ * The inner try statement should catch {@link EvaluationException} instances that indicate "local" problems, which are related to individual data records.
+ * The outer try statement should catch {@link InvalidFeatureException} and {@link UnsupportedFeatureException} instances that indicate "global" problems, which are related to the class model object.
+ * <pre>
+ * try {
+ *   List&lt;Map&lt;FieldName, ?&gt;&gt; records = ...;
+ *   for(Map&lt;FieldName, ?&gt; record : records){
+ *     try {
+ *       // Do exception-prone work
+ *     } catch(EvaluationException ee){
+ *       // The work failed because of the data record.
+ *       // Skip this data record and proceed as usual with the next one
+ *     }
+ *   }
+ * } catch(InvalidFeatureException | UnsupportedFeatureException fe){
+ *   // The work failed because of the class model object.
+ *   // This is a persistent problem that is very likely to affect all data records
+ *   // Decommission the Evaluator instance
+ * }
+ * </pre>
+ *
  * @see EvaluatorUtil
  */
 public interface Evaluator extends Consumer {
 
 	/**
+	 * <p>
 	 * Prepares the input value for a field.
+	 * </p>
 	 *
+	 * <p>
 	 * First, the value is converted from the user-supplied representation to internal representation.
-	 * Later on, the value is subjected to missing value treatment, invalid value treatment and outlier treatment.
+	 * After that, the value is subjected to missing value treatment, invalid value treatment and outlier treatment.
+	 * </p>
 	 *
 	 * @param name The name of the field
 	 * @param string The input value in user-supplied representation. Use <code>null</code> to represent a missing input value.
 	 *
-	 * @throws PMMLException If the input value preparation fails.
+	 * @throws EvaluationException If the input value preparation fails.
+	 * @throws InvalidFeatureException
+	 * @throws UnsupportedFeatureException
 	 *
 	 * @see #getDataField(FieldName)
 	 * @see #getMiningField(FieldName)
@@ -98,14 +126,20 @@ public interface Evaluator extends Consumer {
 	FieldValue prepare(FieldName name, Object value);
 
 	/**
+	 * <p>
 	 * Verifies the model.
+	 * </p>
 	 *
-	 * @throws PMMLException If the verification fails.
+	 * @throws EvaluationException If the verification fails.
+	 * @throws InvalidFeatureException
+	 * @throws UnsupportedFeatureException
 	 */
 	void verify();
 
 	/**
+	 * <p>
 	 * Evaluates the model with the specified arguments.
+	 * </p>
 	 *
 	 * @param arguments Map of {@link #getActiveFields() active field} values.
 	 *
@@ -114,9 +148,9 @@ public interface Evaluator extends Consumer {
 	 * Complex values are represented as instances of {@link Computable} that return simple values.
 	 * A missing result is represented by <code>null</code>.
 	 *
-	 * @throws PMMLException If the evaluation fails.
-	 * This is either {@link InvalidFeatureException} or {@link UnsupportedFeatureException} if there is a persistent structural problem with the PMML class model.
-	 * This is {@link EvaluationException} (or one of its subclasses) if there is a problem with the evaluation request (eg. badly prepared arguments).
+	 * @throws EvaluationException If the evaluation fails.
+	 * @throws InvalidFeatureException
+	 * @throws UnsupportedFeatureException
 	 *
 	 * @see Computable
 	 */

@@ -22,7 +22,9 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMMLObject;
 
 /**
- * Signals a duplicate field value declaration.
+ * <p>
+ * Thrown to indicate a violation of <a href="http://www.dmg.org/v4-2-1/FieldScope.html">PMML field scoping rules</a>.
+ * </p>
  */
 public class DuplicateFieldException extends EvaluationException {
 

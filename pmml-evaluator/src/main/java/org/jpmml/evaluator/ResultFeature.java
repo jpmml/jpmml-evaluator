@@ -28,7 +28,7 @@ import org.dmg.pmml.ResultFeatureType;
  * <p>
  * Every {@link ResultFeatureType result feature} is mapped to a specialized subinterface.
  * A target value may implement any number of subinterfaces.
- * Application developer should use the <code>instanceof</code> type comparison operator to check if the target value implements a particular subinterface or not.
+ * Application developers should use the <code>instanceof</code> type comparison operator to check if the target value implements a particular subinterface or not.
  * </p>
  *
  * @see Computable

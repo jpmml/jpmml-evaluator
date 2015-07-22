@@ -20,6 +20,13 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.PMMLObject;
 
+/**
+ * <p>
+ * Thrown to indicate an incorrect function invocation.
+ * </p>
+ *
+ * @see Function
+ */
 public class FunctionException extends EvaluationException {
 
 	public FunctionException(String name, String message){

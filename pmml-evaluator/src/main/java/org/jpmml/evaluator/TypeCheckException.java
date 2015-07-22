@@ -20,14 +20,20 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.DataType;
 
+/**
+ * <p>
+ * Thrown to indicate a violation of PMML type system.
+ * This exception class can be regarded as the PMML equivalent of {@link ClassCastException}.
+ * </p>
+ */
 public class TypeCheckException extends EvaluationException {
 
 	public TypeCheckException(DataType expected, Object value){
-		this(String.valueOf(expected), String.valueOf(getDataType(value)), value);
+		this(formatDataType(expected), formatDataType(getDataType(value)), value);
 	}
 
 	public TypeCheckException(Class<?> expected, Object value){
-		this(String.valueOf(expected), String.valueOf(getClass(value)), value);
+		this(formatClass(expected), formatClass(getClass(value)), value);
 	}
 
 	private TypeCheckException(String expected, String actual, Object value){
@@ -61,6 +67,11 @@ public class TypeCheckException extends EvaluationException {
 	}
 
 	static
+	private String formatDataType(DataType dataType){
+		return String.valueOf(dataType);
+	}
+
+	static
 	private Class<?> getClass(Object value){
 
 		if(value != null){
@@ -68,5 +79,10 @@ public class TypeCheckException extends EvaluationException {
 		}
 
 		return null;
+	}
+
+	static
+	private String formatClass(Class<?> clazz){
+		return String.valueOf(clazz != null ? clazz.getName() : null);
 	}
 }

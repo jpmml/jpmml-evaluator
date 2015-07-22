@@ -29,6 +29,26 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 
+/**
+ * <p>
+ * A field value representation that meets the requirements of PMML type system.
+ * </p>
+ *
+ * <p>
+ * Type information has two components to it:
+ * <ul>
+ *   <li>{@link #getOpType() Operational type}. Determines supported type equality and type comparison operations.</li>
+ *   <li>{@link #getDataType() Data type}. Determines supported type conversions.</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * A field value is created after a {@link Field field}.
+ * It may be later refined by {@link Expression transformations} and {@link Function functions}.
+ * </p>
+ *
+ * @see FieldValueUtil
+ */
 abstract
 public class FieldValue implements Serializable {
 

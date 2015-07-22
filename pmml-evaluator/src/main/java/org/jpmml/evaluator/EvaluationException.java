@@ -29,6 +29,11 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.PMMLObject;
 
+/**
+ * <p>
+ * Thrown to indicate an abrupt termination of the evaluation process.
+ * </p>
+ */
 public class EvaluationException extends PMMLException {
 
 	public EvaluationException(){

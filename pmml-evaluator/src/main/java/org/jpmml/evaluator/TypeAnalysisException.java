@@ -20,6 +20,11 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.PMMLObject;
 
+/**
+ * <p>
+ * Thrown to indicate an impassable obstacle in a type analysis process.
+ * </p>
+ */
 public class TypeAnalysisException extends PMMLException {
 
 	public TypeAnalysisException(){

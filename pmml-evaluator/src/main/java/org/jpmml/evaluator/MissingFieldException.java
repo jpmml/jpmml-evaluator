@@ -22,7 +22,9 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMMLObject;
 
 /**
- * Signals that a required field value is missing.
+ * <p>
+ * Thrown to indicate a missing field value.
+ * </p>
  */
 public class MissingFieldException extends EvaluationException {
 

@@ -21,7 +21,9 @@ package org.jpmml.evaluator;
 import org.dmg.pmml.PMMLObject;
 
 /**
- * Signals an invalid result.
+ * <p>
+ * Thrown to indicate a well-defined "stop condition", which requires the abrupt termination of the evaluation process.
+ * </p>
  */
 public class InvalidResultException extends EvaluationException {
 

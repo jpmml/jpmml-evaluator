@@ -32,7 +32,11 @@ import java.lang.reflect.Field;
 import org.dmg.pmml.PMMLObject;
 
 /**
- * Indicates that the class model object is not valid.
+ * <p>
+ * Thrown to indicate that the class model object is not valid.
+ * </p>
+ *
+ * @see UnsupportedFeatureException
  */
 public class InvalidFeatureException extends PMMLException {
 

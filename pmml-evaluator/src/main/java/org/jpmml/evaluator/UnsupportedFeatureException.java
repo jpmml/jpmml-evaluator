@@ -34,7 +34,11 @@ import javax.xml.bind.annotation.XmlEnumValue;
 import org.dmg.pmml.PMMLObject;
 
 /**
- * Indicates that the class model object is not supported (but is probably valid).
+ * <p>
+ * Thrown to indicate that the class model object is not supported.
+ * </p>
+ *
+ * @see InvalidFeatureException
  */
 public class UnsupportedFeatureException extends PMMLException {
 
