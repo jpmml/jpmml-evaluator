@@ -21,6 +21,8 @@ package org.jpmml.evaluator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class FunctionRegistry {
 
 	private FunctionRegistry(){
@@ -37,21 +39,13 @@ public class FunctionRegistry {
 	}
 
 	static
-	public void putFunctions(Function... functions){
-
-		for(Function function : functions){
-			putFunction(function);
-		}
-	}
-
-	static
 	public void putFunction(Function function){
 		putFunction(function.getName(), function);
 	}
 
 	static
 	public void putFunction(String name, Function function){
-		FunctionRegistry.functions.put(name, function);
+		FunctionRegistry.functions.put(checkNotNull(name), function);
 	}
 
 	static
@@ -85,22 +79,4 @@ public class FunctionRegistry {
 	}
 
 	private static final Map<String, Function> functions = new LinkedHashMap<>();
-
-	static {
-		putFunctions(Functions.PLUS, Functions.MINUS, Functions.MULTIPLY, Functions.DIVIDE);
-		putFunctions(Functions.MIN, Functions.MAX, Functions.AVG, Functions.SUM, Functions.PRODUCT);
-		putFunctions(Functions.LOG10, Functions.LN, Functions.EXP, Functions.SQRT, Functions.ABS, Functions.POW, Functions.THRESHOLD, Functions.FLOOR, Functions.CEIL, Functions.ROUND);
-		putFunctions(Functions.IS_MISSING, Functions.IS_NOT_MISSING);
-		putFunctions(Functions.EQUAL, Functions.NOT_EQUAL);
-		putFunctions(Functions.LESS_THAN, Functions.LESS_OR_EQUAL, Functions.GREATER_THAN, Functions.GREATER_OR_EQUAL);
-		putFunctions(Functions.AND, Functions.OR);
-		putFunctions(Functions.NOT);
-		putFunctions(Functions.IS_IN, Functions.IS_NOT_IN);
-		putFunctions(Functions.IF);
-		putFunctions(Functions.UPPERCASE, Functions.LOWERCASE, Functions.SUBSTRING, Functions.TRIM_BLANKS);
-		putFunctions(Functions.CONCAT);
-		putFunctions(Functions.REPLACE, Functions.MATCHES);
-		putFunctions(Functions.FORMAT_NUMBER, Functions.FORMAT_DATETIME);
-		putFunctions(Functions.DATE_DAYS_SINCE_YEAR, Functions.DATE_SECONDS_SINCE_MIDNIGHT, Functions.DATE_SECONDS_SINCE_YEAR);
-	}
 }

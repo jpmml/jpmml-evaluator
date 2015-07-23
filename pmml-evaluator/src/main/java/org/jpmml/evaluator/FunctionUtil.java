@@ -18,8 +18,11 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.Expression;
@@ -35,9 +38,18 @@ public class FunctionUtil {
 	public FieldValue evaluate(Apply apply, List<FieldValue> values, EvaluationContext context){
 		String name = apply.getFunction();
 
-		Function function = FunctionRegistry.getFunction(name);
-		if(function != null){
-			return function.evaluate(values);
+		if(name == null){
+			throw new InvalidFeatureException(apply);
+		}
+
+		Function builtInFunction = getFunction(name);
+		if(builtInFunction != null){
+			return builtInFunction.evaluate(values);
+		}
+
+		Function userDefinedFunction = FunctionRegistry.getFunction(name);
+		if(userDefinedFunction != null){
+			return userDefinedFunction.evaluate(values);
 		}
 
 		EvaluationContext.Result<DefineFunction> result = context.resolveFunction(name);
@@ -78,5 +90,40 @@ public class FunctionUtil {
 		FieldValue result = ExpressionUtil.evaluate(expression, functionContext);
 
 		return FieldValueUtil.refine(defineFunction.getDataType(), defineFunction.getOpType(), result);
+	}
+
+	static
+	public Function getFunction(String name){
+		return FunctionUtil.builtInFunctions.get(name);
+	}
+
+	private static final Map<String, Function> builtInFunctions;
+
+	static {
+		List<? extends Function> functions = Arrays.asList(
+			Functions.PLUS, Functions.MINUS, Functions.MULTIPLY, Functions.DIVIDE,
+			Functions.MIN, Functions.MAX, Functions.AVG, Functions.SUM, Functions.PRODUCT,
+			Functions.LOG10, Functions.LN, Functions.EXP, Functions.SQRT, Functions.ABS, Functions.POW, Functions.THRESHOLD, Functions.FLOOR, Functions.CEIL, Functions.ROUND,
+			Functions.IS_MISSING, Functions.IS_NOT_MISSING,
+			Functions.EQUAL, Functions.NOT_EQUAL,
+			Functions.LESS_THAN, Functions.LESS_OR_EQUAL, Functions.GREATER_THAN, Functions.GREATER_OR_EQUAL,
+			Functions.AND, Functions.OR,
+			Functions.NOT,
+			Functions.IS_IN, Functions.IS_NOT_IN,
+			Functions.IF,
+			Functions.UPPERCASE, Functions.LOWERCASE, Functions.SUBSTRING, Functions.TRIM_BLANKS,
+			Functions.CONCAT,
+			Functions.REPLACE, Functions.MATCHES,
+			Functions.FORMAT_NUMBER, Functions.FORMAT_DATETIME,
+			Functions.DATE_DAYS_SINCE_YEAR, Functions.DATE_SECONDS_SINCE_MIDNIGHT, Functions.DATE_SECONDS_SINCE_YEAR
+		);
+
+		ImmutableMap.Builder<String, Function> builder = new ImmutableMap.Builder<>();
+
+		for(Function function : functions){
+			builder.put(function.getName(), function);
+		}
+
+		builtInFunctions = builder.build();
 	}
 }

@@ -35,7 +35,7 @@ public class AbstractFunction implements Function {
 
 
 	public AbstractFunction(String name){
-		setName(name);
+		setName(checkNotNull(name));
 	}
 
 	protected void checkArguments(List<FieldValue> arguments, int size){
@@ -74,7 +74,7 @@ public class AbstractFunction implements Function {
 	}
 
 	private void setName(String name){
-		this.name = checkNotNull(name);
+		this.name = name;
 	}
 
 	static
