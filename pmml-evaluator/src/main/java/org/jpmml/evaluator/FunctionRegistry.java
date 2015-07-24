@@ -49,6 +49,11 @@ public class FunctionRegistry {
 	}
 
 	static
+	public Function removeFunction(String name){
+		return FunctionRegistry.functions.remove(name);
+	}
+
+	static
 	private Function loadJavaFunction(String name){
 		Class<?> clazz;
 
@@ -64,7 +69,7 @@ public class FunctionRegistry {
 		}
 
 		if(!(Function.class).isAssignableFrom(clazz)){
-			return null;
+			throw new TypeCheckException(Function.class, clazz);
 		}
 
 		Function function;
