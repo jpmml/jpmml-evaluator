@@ -20,9 +20,33 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
+/**
+ * <p>
+ * A common superinterface for PMML built-in functions and Java user-defined functions.
+ * </p>
+ *
+ * @see FunctionRegistry
+ */
 public interface Function {
 
+	/**
+	 * <p>
+	 * Gets the default name of this function.
+	 * </p>
+	 *
+	 * <p>
+	 * The default name should be unique in application scope.
+	 * Currently, the JPMML library does not check or enforce this constraint in any way.
+	 * </p>
+	 */
 	String getName();
 
+	/**
+	 * <p>
+	 * Evaluates this function with the specified arguments.
+	 * </p>
+	 *
+	 * @throws FunctionException If the arguments do not match the formal parameters of this function.
+	 */
 	FieldValue evaluate(List<FieldValue> arguments);
 }

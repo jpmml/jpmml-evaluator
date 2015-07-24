@@ -23,11 +23,26 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * <p>
+ * A registry of Java user-defined functions (Java UDFs).
+ * </p>
+ */
 public class FunctionRegistry {
 
 	private FunctionRegistry(){
 	}
 
+	/**
+	 * <p>
+	 * Gets a function for a name.
+	 * <p>
+	 *
+	 * <p>
+	 * First, if the name is registered with a singleton function instance, returns that instance.
+	 * After that, if the name represents a {@link Function} class on the application classpath, loads it, and returns a newly created instance.
+	 * </p>
+	 */
 	static
 	public Function getFunction(String name){
 		Function function = FunctionRegistry.functions.get(name);
@@ -38,11 +53,21 @@ public class FunctionRegistry {
 		return function;
 	}
 
+	/**
+	 * <p>
+	 * Registers a function by its default name.
+	 * </p>
+	 */
 	static
 	public void putFunction(Function function){
 		putFunction(function.getName(), function);
 	}
 
+	/**
+	 * <p>
+	 * Registers a function by a name other than its default name.
+	 * </p>
+	 */
 	static
 	public void putFunction(String name, Function function){
 		FunctionRegistry.functions.put(checkNotNull(name), function);

@@ -42,6 +42,14 @@ public class AbstractFunction implements Function {
 		checkArguments(arguments, size, false);
 	}
 
+	/**
+	 * Validates arguments for a function that has a fixed number of formal parameters.
+	 *
+	 * @param size The number of arguments.
+	 * @param allowNulls <code>true</code> if missing arguments are permitted, <code>false</code> otherwise.
+	 *
+	 * @throws FunctionException If the validation fails.
+	 */
 	protected void checkArguments(List<FieldValue> arguments, int size, boolean allowNulls){
 
 		if(arguments.size() != size){
@@ -53,14 +61,22 @@ public class AbstractFunction implements Function {
 		}
 	}
 
-	protected void checkVariableArguments(List<FieldValue> arguments, int size){
-		checkVariableArguments(arguments, size, false);
+	protected void checkVariableArguments(List<FieldValue> arguments, int minSize){
+		checkVariableArguments(arguments, minSize, false);
 	}
 
-	protected void checkVariableArguments(List<FieldValue> arguments, int size, boolean allowNulls){
+	/**
+	 * Validates arguments for a function that has a variable number ("<code>n</code> or more") of formal parameters.
+	 *
+	 * @param minSize The minimum number of arguments.
+	 * @param allowNulls <code>true</code> if missing arguments are allowed, <code>false</code> otherwise.
+	 *
+	 * @throws FunctionException If the validation fails.
+	 */
+	protected void checkVariableArguments(List<FieldValue> arguments, int minSize, boolean allowNulls){
 
-		if(arguments.size() < size){
-			throw new FunctionException(this, "Expected " + size + " or more arguments, but got " + arguments.size() + " arguments");
+		if(arguments.size() < minSize){
+			throw new FunctionException(this, "Expected " + minSize + " or more arguments, but got " + arguments.size() + " arguments");
 		} // End if
 
 		if(!allowNulls && arguments.contains(null)){
