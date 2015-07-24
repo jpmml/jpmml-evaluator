@@ -58,12 +58,12 @@ public class PercentileFunction extends AbstractFunction {
 
 		Collection<?> values = FieldValueUtil.getValue(Collection.class, arguments.get(0));
 
-		Integer percentile = (arguments.get(1)).asInteger();
+		int percentile = (arguments.get(1)).asInteger();
 		if(percentile < 1 || percentile > 100){
-			throw new FunctionException(getName(), "Invalid arguments");
+			throw new FunctionException(this, "Invalid percentile value " + percentile + ". Must be greater than 0 and equal or less than 100");
 		}
 
-		Double result = evaluate(values, percentile.intValue());
+		Double result = evaluate(values, percentile);
 
 		return FieldValueUtil.create(result);
 	}

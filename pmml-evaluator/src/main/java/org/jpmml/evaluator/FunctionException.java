@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.PMMLObject;
 
 /**
  * <p>
@@ -29,16 +28,20 @@ import org.dmg.pmml.PMMLObject;
  */
 public class FunctionException extends EvaluationException {
 
-	public FunctionException(String name, String message){
-		super(formatMessage(name, message));
+	private Function function = null;
+
+
+	public FunctionException(Function function, String message){
+		super(message);
+
+		setFunction(function);
 	}
 
-	public FunctionException(String name, String message, PMMLObject context){
-		super(formatMessage(name, message), context);
+	public Function getFunction(){
+		return this.function;
 	}
 
-	static
-	private String formatMessage(String name, String message){
-		return message;
+	private void setFunction(Function function){
+		this.function = function;
 	}
 }

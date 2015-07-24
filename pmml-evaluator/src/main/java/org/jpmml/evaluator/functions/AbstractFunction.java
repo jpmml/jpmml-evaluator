@@ -45,11 +45,11 @@ public class AbstractFunction implements Function {
 	protected void checkArguments(List<FieldValue> arguments, int size, boolean allowNulls){
 
 		if(arguments.size() != size){
-			throw new FunctionException(getName(), "Expected " + size + " arguments, but got " + arguments.size() + " arguments");
+			throw new FunctionException(this, "Expected " + size + " arguments, but got " + arguments.size() + " arguments");
 		} // End if
 
 		if(!allowNulls && arguments.contains(null)){
-			throw new FunctionException(getName(), "Missing arguments");
+			throw new FunctionException(this, "Missing arguments");
 		}
 	}
 
@@ -60,11 +60,11 @@ public class AbstractFunction implements Function {
 	protected void checkVariableArguments(List<FieldValue> arguments, int size, boolean allowNulls){
 
 		if(arguments.size() < size){
-			throw new FunctionException(getName(), "Expected " + size + " or more arguments, but got " + arguments.size() + " arguments");
+			throw new FunctionException(this, "Expected " + size + " or more arguments, but got " + arguments.size() + " arguments");
 		} // End if
 
 		if(!allowNulls && arguments.contains(null)){
-			throw new FunctionException(getName(), "Missing arguments");
+			throw new FunctionException(this, "Missing arguments");
 		}
 	}
 

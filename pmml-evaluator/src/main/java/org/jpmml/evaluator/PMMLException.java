@@ -47,10 +47,20 @@ public class PMMLException extends RuntimeException {
 		setContext(context);
 	}
 
+	void ensureContext(PMMLObject parentContext){
+		PMMLObject context = getContext();
+
+		if(context == null){
+			setContext(parentContext);
+		}
+	}
+
 	@Override
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(getClass().getName());
+
+		Class<? extends PMMLException> clazz = getClass();
+		sb.append(clazz.getName());
 
 		PMMLObject context = getContext();
 		if(context != null){

@@ -343,12 +343,12 @@ public class Functions {
 		public FieldValue evaluate(List<FieldValue> arguments){
 
 			if((arguments.size() < 2 || arguments.size() > 3)){
-				throw new FunctionException(getName(), "Expected 2 or 3 arguments, but got " + arguments.size() + " arguments");
+				throw new FunctionException(this, "Expected 2 or 3 arguments, but got " + arguments.size() + " arguments");
 			}
 
 			FieldValue flag = arguments.get(0);
 			if(flag == null){
-				throw new FunctionException(getName(), "Missing arguments");
+				throw new FunctionException(this, "Missing arguments");
 			} // End if
 
 			if(flag.asBoolean()){
@@ -356,7 +356,7 @@ public class Functions {
 
 				// "The THEN part is required"
 				if(trueValue == null){
-					throw new FunctionException(getName(), "Missing arguments");
+					throw new FunctionException(this, "Missing arguments");
 				}
 
 				return trueValue;
@@ -400,13 +400,16 @@ public class Functions {
 			String string = (arguments.get(0)).asString();
 
 			int position = (arguments.get(1)).asInteger();
-			int length = (arguments.get(2)).asInteger();
-
-			// "The first character of a string is located at position 1 (not position 0)"
-			if(position <= 0 || length < 0){
-				throw new FunctionException(getName(), "Invalid arguments");
+			if(position < 1){
+				throw new FunctionException(this, "Invalid position value " + position + ". Must be equal or greater than 1");
 			}
 
+			int length = (arguments.get(2)).asInteger();
+			if(length < 0){
+				throw new FunctionException(this, "Invalid length value " + length);
+			}
+
+			// "The first character of a string is located at position 1 (not position 0)"
 			String result = string.substring(position - 1, (position + length) - 1);
 
 			return FieldValueUtil.create(result);
@@ -492,7 +495,7 @@ public class Functions {
 			try {
 				result = String.format(pattern.asString(), value.asNumber());
 			} catch(IllegalFormatException ife){
-				throw ife;
+				throw new FunctionException(this, formatMessage("Invalid format value \"" + pattern.asString() + "\"", ife));
 			}
 
 			return FieldValueUtil.create(result);
@@ -513,7 +516,7 @@ public class Functions {
 			try {
 				result = String.format(translatePattern(pattern.asString()), (value.asDateTime()).toDate());
 			} catch(IllegalFormatException ife){
-				throw ife;
+				throw new FunctionException(this, formatMessage("Invalid format value \"" + pattern.asString() + "\"", ife));
 			}
 
 			return FieldValueUtil.create(result);
@@ -588,4 +591,15 @@ public class Functions {
 			return FieldValueUtil.create(period.intValue());
 		}
 	};
+
+	static
+	private String formatMessage(String message, Exception cause){
+		String causeMessage = cause.getMessage();
+
+		if(causeMessage != null){
+			message += " (" + causeMessage + ")";
+		}
+
+		return message;
+	}
 }

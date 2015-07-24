@@ -53,11 +53,11 @@ public class StandardDeviationFunction extends AbstractFunction {
 	public FieldValue evaluate(List<FieldValue> arguments){
 
 		if(arguments.size() < 1 || arguments.size() > 2){
-			throw new FunctionException(getName(), "Expected 1 or 2 arguments, but got " + arguments.size() + " arguments");
+			throw new FunctionException(this, "Expected 1 or 2 arguments, but got " + arguments.size() + " arguments");
 		} // End if
 
 		if(arguments.contains(null)){
-			throw new FunctionException(getName(), "Missing arguments");
+			throw new FunctionException(this, "Missing arguments");
 		}
 
 		Collection<?> values = FieldValueUtil.getValue(Collection.class, arguments.get(0));

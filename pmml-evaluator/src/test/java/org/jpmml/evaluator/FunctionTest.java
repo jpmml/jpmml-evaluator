@@ -24,7 +24,6 @@ import java.util.List;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
-import org.jpmml.evaluator.functions.EchoFunction;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -293,29 +292,6 @@ public class FunctionTest {
 		assertEquals(19410, evaluate(Functions.DATE_SECONDS_SINCE_MIDNIGHT, new LocalDateTime(1960, 1, 1, 5, 23, 30)));
 
 		assertEquals(185403, evaluate(Functions.DATE_SECONDS_SINCE_YEAR, new LocalDateTime(1960, 1, 3, 3, 30, 3), 1960));
-	}
-
-	@Test
-	public void evaluateEchoFunction(){
-		Function function = new EchoFunction();
-
-		try {
-			evaluate(function);
-
-			fail();
-		} catch(FunctionException fe){
-			// Ignored
-		}
-
-		assertEquals("Hello World!", evaluate(function, "Hello World!"));
-
-		try {
-			evaluate(function, "Hello World!", "Hello World!");
-
-			fail();
-		} catch(FunctionException fe){
-			// Ignored
-		}
 	}
 
 	static

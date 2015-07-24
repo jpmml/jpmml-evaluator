@@ -42,19 +42,25 @@ public class FunctionUtil {
 			throw new InvalidFeatureException(apply);
 		}
 
-		Function builtInFunction = getFunction(name);
-		if(builtInFunction != null){
-			return builtInFunction.evaluate(values);
-		}
+		try {
+			Function builtInFunction = getFunction(name);
+			if(builtInFunction != null){
+				return builtInFunction.evaluate(values);
+			}
 
-		Function userDefinedFunction = FunctionRegistry.getFunction(name);
-		if(userDefinedFunction != null){
-			return userDefinedFunction.evaluate(values);
-		}
+			Function userDefinedFunction = FunctionRegistry.getFunction(name);
+			if(userDefinedFunction != null){
+				return userDefinedFunction.evaluate(values);
+			}
 
-		EvaluationContext.Result<DefineFunction> result = context.resolveFunction(name);
-		if(result != null){
-			return evaluate(result.getElement(), values, context);
+			EvaluationContext.Result<DefineFunction> result = context.resolveFunction(name);
+			if(result != null){
+				return evaluate(result.getElement(), values, context);
+			}
+		} catch(PMMLException pe){
+			pe.ensureContext(apply);
+
+			throw pe;
 		}
 
 		throw new UnsupportedFeatureException(apply, ReflectionUtil.getField(apply, "function"), name);
@@ -69,7 +75,7 @@ public class FunctionUtil {
 		} // End if
 
 		if(parameterFields.size() != values.size()){
-			throw new FunctionException(defineFunction.getName(), "Expected " + parameterFields.size() + " arguments, but got " + values.size() + " arguments");
+			throw new EvaluationException();
 		}
 
 		DefineFunctionEvaluationContext functionContext = new DefineFunctionEvaluationContext(context);
