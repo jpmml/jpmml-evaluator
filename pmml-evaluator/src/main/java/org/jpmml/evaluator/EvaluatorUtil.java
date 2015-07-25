@@ -65,7 +65,9 @@ public class EvaluatorUtil {
 	}
 
 	/**
+	 * <p>
 	 * Decouples a {@link Map} instance from the current runtime environment by decoding both its keys and values.
+	 * </p>
 	 */
 	static
 	public Map<String, ?> decode(Map<FieldName, ?> map){

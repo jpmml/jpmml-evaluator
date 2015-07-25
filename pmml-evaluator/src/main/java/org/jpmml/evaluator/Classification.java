@@ -299,7 +299,9 @@ public class Classification implements Computable {
 		}
 
 		/**
+		 * <p>
 		 * Calculates the order between arguments.
+		 * </p>
 		 *
 		 * @param left A value
 		 * @param right The reference value
@@ -318,7 +320,9 @@ public class Classification implements Computable {
 		}
 
 		/**
+		 * <p>
 		 * Gets the least optimal value in the range of valid values.
+		 * </p>
 		 */
 		public double getDefault(){
 			return 0d;

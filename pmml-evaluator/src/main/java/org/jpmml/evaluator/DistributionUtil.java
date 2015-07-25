@@ -29,7 +29,9 @@ public class DistributionUtil {
 	}
 
 	/**
+	 * <p>
 	 * Calculates the value of the specified probability function at the specified point.
+	 * </p>
 	 */
 	static
 	public double probability(ContinuousDistribution distribution, Number x){

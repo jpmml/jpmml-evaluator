@@ -47,7 +47,9 @@ public interface CategoricalResultFeature extends ResultFeature {
 	 * Gets the set of known categories.
 	 * </p>
 	 *
+	 * <p>
 	 * The set of known categories either equals the set of all categories, or is a proper subset of it.
+	 * </p>
 	 */
 	Set<String> getCategoryValues();
 }

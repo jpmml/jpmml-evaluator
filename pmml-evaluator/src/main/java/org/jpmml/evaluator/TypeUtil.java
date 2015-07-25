@@ -266,7 +266,7 @@ public class TypeUtil {
 	}
 
 	/**
-	 * @return The least restrictive data type of the data types of two values
+	 * @return The least restrictive data type of the data types of two values.
 	 */
 	static
 	public DataType getResultDataType(DataType left, DataType right){
@@ -367,7 +367,9 @@ public class TypeUtil {
 	}
 
 	/**
+	 * <p>
 	 * Casts the specified value to String data type.
+	 * </p>
 	 *
 	 * @see DataType#STRING
 	 */
@@ -388,7 +390,9 @@ public class TypeUtil {
 	}
 
 	/**
+	 * <p>
 	 * Casts the specified value to Integer data type.
+	 * </p>
 	 *
 	 * @see DataType#INTEGER
 	 */
@@ -439,7 +443,9 @@ public class TypeUtil {
 	}
 
 	/**
+	 * <p>
 	 * Casts the specified value to Float data type.
+	 * </p>
 	 *
 	 * @see DataType#FLOAT
 	 */
@@ -466,7 +472,9 @@ public class TypeUtil {
 	}
 
 	/**
+	 * <p>
 	 * Casts the specified value to Double data type.
+	 * </p>
 	 *
 	 * @see DataType#DOUBLE
 	 */

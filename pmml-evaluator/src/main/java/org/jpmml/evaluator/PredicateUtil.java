@@ -43,7 +43,7 @@ public class PredicateUtil {
 	}
 
 	/**
-	 * @return The {@link Boolean} value of the predicate, or <code>null</code> if the value is unknown
+	 * @return The {@link Boolean} value of the predicate, or <code>null</code> if the value is unknown.
 	 */
 	static
 	public Boolean evaluate(Predicate predicate, EvaluationContext context){

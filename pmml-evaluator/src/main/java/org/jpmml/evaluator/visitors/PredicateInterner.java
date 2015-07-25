@@ -41,7 +41,9 @@ import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 /**
+ * <p>
  * A Visitor that interns {@link Predicate} elements.
+ * </p>
  */
 public class PredicateInterner extends AbstractVisitor {
 

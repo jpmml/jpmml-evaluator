@@ -66,7 +66,9 @@ public class FieldValue implements Serializable {
 	public OpType getOpType();
 
 	/**
+	 * <p>
 	 * Checks if this value is equal to the reference value.
+	 * </p>
 	 *
 	 * @param string The reference value.
 	 */
@@ -107,7 +109,9 @@ public class FieldValue implements Serializable {
 	}
 
 	/**
+	 * <p>
 	 * Calculates the order between this value and the reference value.
+	 * </p>
 	 *
 	 * @param string The reference value.
 	 */

@@ -665,15 +665,18 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	/**
-	 * @return A map of predictor-to-parameter correlation matrices.
 	 * <p>
 	 * A PPMatrix element may encode zero or more matrices.
 	 * Regression models return a singleton map, whereas classification models
 	 * may return a singleton map or a multi-valued map, which overrides the default
 	 * matrix for one or more target categories.
+	 * </p>
 	 *
 	 * <p>
 	 * The default matrix is mapped to the <code>null</code> key.
+	 * </p>
+	 *
+	 * @return A map of predictor-to-parameter correlation matrices.
 	 */
 	private Map<String, Map<String, Row>> getPPMatrixMap(){
 		return getValue(GeneralRegressionModelEvaluator.ppMatrixCache);

@@ -43,7 +43,9 @@ public class AbstractFunction implements Function {
 	}
 
 	/**
+	 * <p>
 	 * Validates arguments for a function that has a fixed number of formal parameters.
+	 * </p>
 	 *
 	 * @param size The number of arguments.
 	 * @param allowNulls <code>true</code> if missing arguments are permitted, <code>false</code> otherwise.
@@ -66,7 +68,9 @@ public class AbstractFunction implements Function {
 	}
 
 	/**
+	 * <p>
 	 * Validates arguments for a function that has a variable number ("<code>n</code> or more") of formal parameters.
+	 * </p>
 	 *
 	 * @param minSize The minimum number of arguments.
 	 * @param allowNulls <code>true</code> if missing arguments are allowed, <code>false</code> otherwise.

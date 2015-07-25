@@ -53,11 +53,13 @@ public class OutputUtil {
 	}
 
 	/**
+	 * <p>
 	 * Evaluates the {@link Output} element.
+	 * </p>
 	 *
-	 * @param predictions Map of {@link Evaluator#getTargetFields() target field} values.
+	 * @param predictions A map of {@link Evaluator#getTargetFields() target field} values.
 	 *
-	 * @return Map of {@link Evaluator#getTargetFields() target field} values together with {@link Evaluator#getOutputFields() output field} values.
+	 * @return A map of {@link Evaluator#getTargetFields() target field} values together with {@link Evaluator#getOutputFields() output field} values.
 	 */
 	@SuppressWarnings (
 		value = {"fallthrough"}

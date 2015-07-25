@@ -37,7 +37,9 @@ import org.dmg.pmml.ResultFeatureType;
 public interface HasEntityId extends ResultFeature {
 
 	/**
+	 * <p>
 	 * Gets the {@link Entity#getId() Entity identifier}.
+	 * </p>
 	 */
 	String getEntityId();
 }

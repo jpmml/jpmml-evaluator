@@ -45,52 +45,75 @@ import org.dmg.pmml.Targets;
 public interface Consumer extends Serializable {
 
 	/**
+	 * <p>
 	 * Gets a short description of the {@link Model}.
+	 * </p>
 	 */
 	String getSummary();
 
 	/**
+	 * <p>
 	 * Gets the type of the {@link Model}.
+	 * </p>
 	 */
 	MiningFunctionType getMiningFunction();
 
 	/**
+	 * <p>
 	 * Gets the definition of a field from the {@link DataDictionary}.
+	 * </p>
 	 *
 	 * @param name The name of the field. The name of the default target field is <code>null</code>.
 	 */
 	DataField getDataField(FieldName name);
 
 	/**
+	 * <p>
 	 * Gets the independent (ie. input) fields of a {@link Model} from its {@link MiningSchema}.
+	 * </p>
 	 */
 	List<FieldName> getActiveFields();
 
 	/**
+	 * <p>
 	 * Gets the group fields of a {@link Model} from its {@link MiningSchema}.
+	 * </p>
 	 *
+	 * <p>
 	 * A model should have no more than 1 group field.
+	 * </p>
 	 */
 	List<FieldName> getGroupFields();
 
 	/**
+	 * <p>
 	 * Gets the order fields of a {@link Model} from its {@link MiningSchema}.
+	 * </p>
 	 *
+	 * <p>
 	 * This field set is relevant only for {@link MiningFunctionType#ASSOCIATION_RULES association rules} model type.
+	 * </p>
 	 */
 	List<FieldName> getOrderFields();
 
 	/**
+	 * <p>
 	 * Gets the dependent (ie. target in supervised training) fields of a {@link Model} from its {@link MiningSchema}.
+	 * </p>
 	 */
 	List<FieldName> getTargetFields();
 
 	/**
+	 * <p>
 	 * Convenience method for retrieving the sole target field.
+	 * </p>
 	 *
+	 * <p>
 	 * A supervised model should, but is not required to, define a target field. An unsupervised model, by definition, does not define a target field.
 	 * If the {@link #getTargetFields() collection of target fields} is empty, then the model consumer should assume that the model defines a default target field, which is represented by <code>null</code>.
 	 * The default target field could be either "real" or "phantom". They can be distinguished from one another by looking up the definition of the field from the {@link DataDictionary}.
+	 * </p>
+	 *
 	 * <pre>
 	 * Consumer consumer = ...;
 	 *
@@ -118,7 +141,9 @@ public interface Consumer extends Serializable {
 	FieldName getTargetField();
 
 	/**
+	 * <p>
 	 * Gets the definition of a field from the {@link MiningSchema}.
+	 * </p>
 	 *
 	 * @param name The name of the field.
 	 *
@@ -129,19 +154,25 @@ public interface Consumer extends Serializable {
 	MiningField getMiningField(FieldName name);
 
 	/**
+	 * <p>
 	 * Gets the definition of a field from the {@link Targets}.
+	 * </p>
 	 *
 	 * @see #getTargetFields()
 	 */
 	Target getTarget(FieldName name);
 
 	/**
+	 * <p>
 	 * Gets the output fields of a {@link Model} from its {@link Output}.
+	 * </p>
 	 */
 	List<FieldName> getOutputFields();
 
 	/**
+	 * <p>
 	 * Gets the definition of a field from the {@link Output}
+	 * </p>
 	 *
 	 * @see #getOutputFields()
 	 */

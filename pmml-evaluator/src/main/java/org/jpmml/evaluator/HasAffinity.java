@@ -42,7 +42,9 @@ import org.dmg.pmml.ResultFeatureType;
 public interface HasAffinity extends CategoricalResultFeature {
 
 	/**
+	 * <p>
 	 * Gets the affinity towards the specified category.
+	 * </p>
 	 *
 	 * @return An affinity in the range from 0.0 to positive infinity.
 	 * The affinity of an unknown category is the least optimal value in the range of valid values (ie. {@link Double#POSITIVE_INFINITY} for distance measures and 0.0 for similarity measures).

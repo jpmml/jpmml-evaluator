@@ -44,9 +44,12 @@ import org.jpmml.evaluator.InvalidFeatureException;
 import org.jpmml.model.ReflectionUtil;
 
 /**
+ * <p>
  * A Visitor that inspects a class model object for invalid features.
+ * </p>
  *
  * @see FeatureInspector#applyTo(Visitable)
+ * @see InvalidFeatureException
  */
 public class InvalidFeatureInspector extends FeatureInspector<InvalidFeatureException> {
 

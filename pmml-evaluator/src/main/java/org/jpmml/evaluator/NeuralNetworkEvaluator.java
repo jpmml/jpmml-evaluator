@@ -215,9 +215,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	}
 
 	/**
-	 * Evaluates neural network.
-	 *
-	 * @return Mapping between Entity identifiers and their outputs
+	 * @return A map between {@link Entity#getId() Entity identifiers} and their outputs.
 	 *
 	 * @see NeuralInput#getId()
 	 * @see Neuron#getId()

@@ -23,12 +23,16 @@ import java.io.InputStream;
 public interface Batch {
 
 	/**
-	 * Model's description in PMML data format
+	 * <p>
+	 * A PMML document with a model.
+	 * </p>
 	 */
 	InputStream getModel();
 
 	/**
-	 * Model input in CSV data format.
+	 * <p>
+	 * A CSV document with input data records.
+	 * </p>
 	 *
 	 * @see Evaluator#getActiveFields()
 	 * @see Evaluator#getGroupFields()
@@ -36,7 +40,9 @@ public interface Batch {
 	InputStream getInput();
 
 	/**
-	 * Model output in CSV data format.
+	 * <p>
+	 * A CSV document with expected output data records.
+	 * </p>
 	 *
 	 * @see Evaluator#getTargetFields()
 	 * @see Evaluator#getOutputFields()

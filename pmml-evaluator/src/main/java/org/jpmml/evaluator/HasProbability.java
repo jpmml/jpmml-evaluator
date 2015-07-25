@@ -36,7 +36,9 @@ import org.dmg.pmml.ResultFeatureType;
 public interface HasProbability extends CategoricalResultFeature {
 
 	/**
+	 * <p>
 	 * Gets the probability of the specified category.
+	 * </p>
 	 *
 	 * @return A probability in the range from 0.0 to 1.0.
 	 * The probability of an unknown category is 0.0.

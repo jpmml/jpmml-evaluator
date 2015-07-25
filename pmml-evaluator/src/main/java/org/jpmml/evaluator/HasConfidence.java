@@ -32,7 +32,9 @@ package org.jpmml.evaluator;
 public interface HasConfidence extends CategoricalResultFeature {
 
 	/**
+	 * <p>
 	 * Gets the confidence of the specified category.
+	 * </p>
 	 *
 	 * @return A confidence that normally lies in the range from 0.0 to 1.0.
 	 * The confidence of an unknown category is 0.0.

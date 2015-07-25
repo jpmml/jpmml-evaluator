@@ -69,7 +69,9 @@ public class FieldValueUtil {
 	}
 
 	/**
+	 * <p>
 	 * Creates a FieldValue for an active field.
+	 * </p>
 	 *
 	 * @see FieldUsageType#ACTIVE
 	 */
@@ -79,7 +81,9 @@ public class FieldValueUtil {
 	}
 
 	/**
+	 * <p>
 	 * Creates a FieldValue for a target field.
+	 * </p>
 	 *
 	 * @see FieldUsageType#TARGET
 	 * @see FieldUsageType#PREDICTED

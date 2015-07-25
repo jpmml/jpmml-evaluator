@@ -51,7 +51,9 @@ public class TargetUtil {
 	}
 
 	/**
+	 * <p>
 	 * Evaluates the {@link Targets} element for {@link MiningFunctionType#REGRESSION regression} models.
+	 * </p>
 	 */
 	static
 	public Map<FieldName, ?> evaluateRegression(Map<FieldName, ? extends Double> predictions, ModelEvaluationContext context){
@@ -108,7 +110,9 @@ public class TargetUtil {
 	}
 
 	/**
+	 * <p>
 	 * Evaluates the {@link Targets} element for {@link MiningFunctionType#CLASSIFICATION classification} models.
+	 * </p>
 	 */
 	static
 	public Map<FieldName, ? extends Classification> evaluateClassification(Map<FieldName, ? extends Classification> predictions, ModelEvaluationContext context){

@@ -27,7 +27,9 @@ import org.dmg.pmml.ResultFeatureType;
 public interface HasEntityAffinity extends ResultFeature {
 
 	/**
+	 * <p>
 	 * Gets the affinity towards the winning entity.
+	 * </p>
 	 */
 	Double getEntityAffinity();
 }

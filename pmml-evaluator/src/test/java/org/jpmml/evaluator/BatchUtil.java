@@ -61,7 +61,9 @@ public class BatchUtil {
 	}
 
 	/**
+	 * <p>
 	 * Evaluates the model using arguments from the specified CSV resource.
+	 * </p>
 	 *
 	 * @return <code>true</code> If there were no differences between expected and actual results, <code>false</code> otherwise.
 	 */
@@ -73,7 +75,9 @@ public class BatchUtil {
 	}
 
 	/**
+	 * <p>
 	 * Evaluates the model using empty arguments.
+	 * </p>
 	 *
 	 * @return The value of the target field.
 	 */

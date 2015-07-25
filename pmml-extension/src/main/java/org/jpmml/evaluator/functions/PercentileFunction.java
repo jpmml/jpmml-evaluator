@@ -32,6 +32,10 @@ import org.jpmml.evaluator.FunctionException;
 import org.jpmml.evaluator.TypeUtil;
 
 /**
+ * <p>
+ * A Java UDF for calculating the n-th percentile of a collection of values.
+ * </p>
+ *
  * Pseudo-declaration of function:
  * <pre>
  *   &lt;DefineFunction name="..." dataType="double"&gt;
