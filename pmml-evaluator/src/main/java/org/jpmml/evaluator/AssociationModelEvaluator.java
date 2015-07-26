@@ -148,13 +148,13 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		Association association = new Association(associationRules, antecedentFlags, consequentFlags){
 
 			@Override
-			public BiMap<String, Item> getItemRegistry(){
-				return AssociationModelEvaluator.this.getItemRegistry();
+			public Map<String, Item> getItems(){
+				return AssociationModelEvaluator.this.getItems();
 			}
 
 			@Override
-			public BiMap<String, Itemset> getItemsetRegistry(){
-				return AssociationModelEvaluator.this.getItemsetRegistry();
+			public Map<String, Itemset> getItemsets(){
+				return AssociationModelEvaluator.this.getItemsets();
 			}
 
 			@Override
@@ -277,17 +277,11 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		return result;
 	}
 
-	/**
-	 * @return A bidirectional map between {@link Item#getId Item identifiers} and {@link Item instances}.
-	 */
-	private BiMap<String, Item> getItemRegistry(){
+	private Map<String, Item> getItems(){
 		return getValue(AssociationModelEvaluator.itemCache);
 	}
 
-	/**
-	 * @return A bidirectional map between {@link Itemset#getId() Itemset identifiers} and {@link Itemset instances}.
-	 */
-	private BiMap<String, Itemset> getItemsetRegistry(){
+	private Map<String, Itemset> getItemsets(){
 		return getValue(AssociationModelEvaluator.itemsetCache);
 	}
 
@@ -320,23 +314,23 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			}
 		});
 
-	private static final LoadingCache<AssociationModel, BiMap<String, Item>> itemCache = CacheBuilder.newBuilder()
+	private static final LoadingCache<AssociationModel, Map<String, Item>> itemCache = CacheBuilder.newBuilder()
 		.weakKeys()
-		.build(new CacheLoader<AssociationModel, BiMap<String, Item>>(){
+		.build(new CacheLoader<AssociationModel, Map<String, Item>>(){
 
 			@Override
-			public BiMap<String, Item> load(AssociationModel associationModel){
-				return EntityUtil.buildBiMap(associationModel.getItems());
+			public Map<String, Item> load(AssociationModel associationModel){
+				return IndexableUtil.buildMap(associationModel.getItems());
 			}
 		});
 
-	private static final LoadingCache<AssociationModel, BiMap<String, Itemset>> itemsetCache = CacheBuilder.newBuilder()
+	private static final LoadingCache<AssociationModel, Map<String, Itemset>> itemsetCache = CacheBuilder.newBuilder()
 		.weakKeys()
-		.build(new CacheLoader<AssociationModel, BiMap<String, Itemset>>(){
+		.build(new CacheLoader<AssociationModel, Map<String, Itemset>>(){
 
 			@Override
-			public BiMap<String, Itemset> load(AssociationModel associationModel){
-				return EntityUtil.buildBiMap(associationModel.getItemsets());
+			public Map<String, Itemset> load(AssociationModel associationModel){
+				return IndexableUtil.buildMap(associationModel.getItemsets());
 			}
 		});
 

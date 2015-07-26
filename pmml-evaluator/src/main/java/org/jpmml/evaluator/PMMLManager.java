@@ -28,14 +28,12 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.Indexable;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.TransformationDictionary;
 
@@ -60,7 +58,7 @@ public class PMMLManager implements Serializable {
 
 		DataDictionary dataDictionary = pmml.getDataDictionary();
 
-		return find(dataDictionary.getDataFields(), name);
+		return IndexableUtil.find(dataDictionary.getDataFields(), name);
 	}
 
 	public DerivedField getDerivedField(FieldName name){
@@ -71,7 +69,7 @@ public class PMMLManager implements Serializable {
 			return null;
 		}
 
-		return find(transformationDictionary.getDerivedFields(), name);
+		return IndexableUtil.find(transformationDictionary.getDerivedFields(), name);
 	}
 
 	public DefineFunction getFunction(String name){
@@ -82,7 +80,7 @@ public class PMMLManager implements Serializable {
 			return null;
 		}
 
-		return find(transformationDictionary.getDefineFunctions(), name);
+		return IndexableUtil.find(transformationDictionary.getDefineFunctions(), name);
 	}
 
 	public PMML getPMML(){
@@ -91,18 +89,5 @@ public class PMMLManager implements Serializable {
 
 	private void setPMML(PMML pmml){
 		this.pmml = pmml;
-	}
-
-	static
-	<K, E extends Indexable<K>> E find(Collection<? extends E> elements, K key){
-
-		for(E element : elements){
-
-			if((element.getKey()).equals(key)){
-				return element;
-			}
-		}
-
-		return null;
 	}
 }

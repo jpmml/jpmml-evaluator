@@ -56,6 +56,7 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.ModelVerification;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.Target;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
 
@@ -101,6 +102,26 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 
 		return null;
+	}
+
+	@Override
+	public MiningField getMiningField(FieldName name){
+
+		if(name == null){
+			return null;
+		}
+
+		return super.getMiningField(name);
+	}
+
+	@Override
+	public Target getTarget(FieldName name){
+
+		if(name == null){
+			return null;
+		}
+
+		return super.getTarget(name);
 	}
 
 	@Override

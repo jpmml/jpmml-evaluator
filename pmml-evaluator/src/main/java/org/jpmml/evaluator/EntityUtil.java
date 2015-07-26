@@ -24,8 +24,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import org.dmg.pmml.Entity;
-import org.dmg.pmml.HasId;
-import org.dmg.pmml.PMMLObject;
 
 public class EntityUtil {
 
@@ -53,7 +51,7 @@ public class EntityUtil {
 	}
 
 	static
-	public <E extends PMMLObject & HasId> ImmutableBiMap<String, E> buildBiMap(List<E> entities){
+	public <E extends Entity> ImmutableBiMap<String, E> buildBiMap(List<E> entities){
 		ImmutableBiMap.Builder<String, E> builder = new ImmutableBiMap.Builder<>();
 
 		builder = putAll(entities, new AtomicInteger(1), builder);
@@ -62,7 +60,7 @@ public class EntityUtil {
 	}
 
 	static
-	<E extends PMMLObject & HasId> ImmutableBiMap.Builder<String, E> put(E entity, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
+	<E extends Entity> ImmutableBiMap.Builder<String, E> put(E entity, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
 		String implicitId = String.valueOf(index.getAndIncrement());
 
 		String id = entity.getId();
@@ -74,7 +72,7 @@ public class EntityUtil {
 	}
 
 	static
-	<E extends PMMLObject & HasId> ImmutableBiMap.Builder<String, E> putAll(List<E> entities, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
+	<E extends Entity> ImmutableBiMap.Builder<String, E> putAll(List<E> entities, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
 
 		for(E entity : entities){
 			builder = put(entity, index, builder);

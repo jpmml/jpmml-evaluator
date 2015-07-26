@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.BiMap;
 import com.google.common.collect.Ordering;
 import org.dmg.pmml.AssociationRule;
 import org.dmg.pmml.DataField;
@@ -852,14 +851,14 @@ public class OutputUtil {
 	private List<String> getItemValues(HasRuleValues hasRuleValues, String id){
 		List<String> result = new ArrayList<>();
 
-		BiMap<String, Item> itemRegistry = hasRuleValues.getItemRegistry();
-		BiMap<String, Itemset> itemsetRegistry = hasRuleValues.getItemsetRegistry();
+		Map<String, Item> items = hasRuleValues.getItems();
+		Map<String, Itemset> itemsets = hasRuleValues.getItemsets();
 
-		Itemset itemset = itemsetRegistry.get(id);
+		Itemset itemset = itemsets.get(id);
 
 		List<ItemRef> itemRefs = itemset.getItemRefs();
 		for(ItemRef itemRef : itemRefs){
-			Item item = itemRegistry.get(itemRef.getItemRef());
+			Item item = items.get(itemRef.getItemRef());
 
 			result.add(item.getValue());
 		}
