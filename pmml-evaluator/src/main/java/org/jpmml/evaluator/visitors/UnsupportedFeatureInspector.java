@@ -25,6 +25,7 @@ import org.dmg.pmml.Categories;
 import org.dmg.pmml.CenterFields;
 import org.dmg.pmml.ClusteringModel;
 import org.dmg.pmml.DecisionTree;
+import org.dmg.pmml.FeatureType;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Matrix;
 import org.dmg.pmml.MissingValueStrategyType;
@@ -34,7 +35,6 @@ import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.Predictor;
 import org.dmg.pmml.Regression;
-import org.dmg.pmml.ResultFeatureType;
 import org.dmg.pmml.Segmentation;
 import org.dmg.pmml.SequenceModel;
 import org.dmg.pmml.SupportVectorMachineModel;
@@ -158,11 +158,11 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 	@Override
 	public VisitorAction visit(OutputField outputField){
-		ResultFeatureType resultFeature = outputField.getFeature();
+		FeatureType feature = outputField.getFeature();
 
-		switch(resultFeature){
+		switch(feature){
 			case STANDARD_ERROR:
-				report(new UnsupportedFeatureException(outputField, resultFeature));
+				report(new UnsupportedFeatureException(outputField, feature));
 				break;
 			default:
 				break;

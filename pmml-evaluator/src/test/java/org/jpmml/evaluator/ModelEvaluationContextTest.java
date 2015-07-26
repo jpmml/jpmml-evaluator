@@ -25,6 +25,7 @@ import java.util.Map;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.FeatureType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.Model;
@@ -32,7 +33,6 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.ResultFeatureType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -74,7 +74,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 
 		OutputField result = new OutputField()
 			.setName(FieldName.create(name.getValue() + "_copy"))
-			.setFeature(ResultFeatureType.TRANSFORMED_VALUE)
+			.setFeature(FeatureType.TRANSFORMED_VALUE)
 			.setExpression(fieldRef);
 
 		return result;

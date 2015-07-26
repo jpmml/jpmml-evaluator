@@ -173,14 +173,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 			return null;
 		}
 
-		for(Target target : targets){
-
-			if((target.getField()).equals(name)){
-				return target;
-			}
-		}
-
-		return null;
+		return find(targets.getTargets(), name);
 	}
 
 	@Override

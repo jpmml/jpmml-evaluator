@@ -36,8 +36,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSortedMap;
-import org.dmg.pmml.IntSparseArray;
-import org.dmg.pmml.RealSparseArray;
 import org.dmg.pmml.SparseArray;
 
 public class SparseArrayUtil {
@@ -53,15 +51,13 @@ public class SparseArrayUtil {
 		return (SortedMap<Integer, E>)CacheUtil.getValue(sparseArray, SparseArrayUtil.contentCache);
 	}
 
-	@SuppressWarnings (
-		value = {"unchecked"}
-	)
 	static
 	public <E extends Number> List<E> asNumberList(SparseArray<E> sparseArray){
 		final
 		SortedMap<Integer, E> content = getContent(sparseArray);
 
-		final int size;
+		final
+		int size;
 
 		Integer n = sparseArray.getN();
 		if(n != null){
@@ -72,23 +68,8 @@ public class SparseArrayUtil {
 			size = content.size();
 		}
 
-		final E defaultValue;
-
-		if(sparseArray instanceof IntSparseArray){
-			IntSparseArray intSparseArray = (IntSparseArray)sparseArray;
-
-			defaultValue = (E)Integer.valueOf(intSparseArray.getDefaultValue());
-		} else
-
-		if(sparseArray instanceof RealSparseArray){
-			RealSparseArray realSparseArray = (RealSparseArray)sparseArray;
-
-			defaultValue = (E)Double.valueOf(realSparseArray.getDefaultValue());
-		} else
-
-		{
-			throw new UnsupportedFeatureException(sparseArray);
-		}
+		final
+		E defaultValue = sparseArray.getDefaultValue();
 
 		List<E> result = new AbstractList<E>(){
 

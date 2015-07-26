@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.ResultFeatureType;
+import org.dmg.pmml.FeatureType;
 
 /**
  * <p>
@@ -31,7 +31,7 @@ import org.dmg.pmml.ResultFeatureType;
  * Ideally, the probability of the predicted category should approach 1.0, and the probabilities of all other categories should approach 0.0.
  * </p>
  *
- * @see ResultFeatureType#PROBABILITY
+ * @see FeatureType#PROBABILITY
  */
 public interface HasProbability extends CategoricalResultFeature {
 

@@ -31,6 +31,7 @@ import org.dmg.pmml.AssociationRule;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Expression;
+import org.dmg.pmml.FeatureType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Item;
 import org.dmg.pmml.ItemRef;
@@ -41,7 +42,6 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMMLObject;
-import org.dmg.pmml.ResultFeatureType;
 import org.dmg.pmml.RuleFeatureType;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
@@ -85,7 +85,7 @@ public class OutputUtil {
 
 			Object targetValue = null;
 
-			ResultFeatureType resultFeature = outputField.getFeature();
+			FeatureType feature = outputField.getFeature();
 
 			String segmentId = outputField.getSegmentId();
 
@@ -123,7 +123,7 @@ public class OutputUtil {
 
 			// Load the target value
 			{
-				switch(resultFeature){
+				switch(feature){
 					case ENTITY_ID:
 						{
 							// "Result feature entityId returns the id of the winning segment"
@@ -158,7 +158,7 @@ public class OutputUtil {
 			Object value;
 
 			// Perform the requested computation on the target value
-			switch(resultFeature){
+			switch(feature){
 				case PREDICTED_VALUE:
 					{
 						value = getPredictedValue(targetValue);
@@ -310,7 +310,7 @@ public class OutputUtil {
 					}
 					break;
 				default:
-					throw new UnsupportedFeatureException(outputField, resultFeature);
+					throw new UnsupportedFeatureException(outputField, feature);
 			}
 
 			FieldValue outputValue = FieldValueUtil.create(outputField, value);
@@ -340,8 +340,8 @@ public class OutputUtil {
 			throw new TypeAnalysisException(outputField);
 		}
 
-		ResultFeatureType resultFeature = outputField.getFeature();
-		switch(resultFeature){
+		FeatureType feature = outputField.getFeature();
+		switch(feature){
 			case PREDICTED_VALUE:
 				{
 					FieldName targetField = outputField.getTargetField();
@@ -432,7 +432,7 @@ public class OutputUtil {
 					throw new TypeAnalysisException(outputField);
 				}
 			default:
-				throw new UnsupportedFeatureException(outputField, resultFeature);
+				throw new UnsupportedFeatureException(outputField, feature);
 		}
 	}
 

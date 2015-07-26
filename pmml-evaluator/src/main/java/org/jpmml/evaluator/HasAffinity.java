@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.ResultFeatureType;
+import org.dmg.pmml.FeatureType;
 
 /**
  * <p>
@@ -37,7 +37,7 @@ import org.dmg.pmml.ResultFeatureType;
  * </ul>
  * </p>
  *
- * @see ResultFeatureType#AFFINITY
+ * @see FeatureType#AFFINITY
  */
 public interface HasAffinity extends CategoricalResultFeature {
 

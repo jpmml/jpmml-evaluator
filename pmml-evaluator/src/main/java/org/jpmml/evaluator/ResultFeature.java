@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.ResultFeatureType;
+import org.dmg.pmml.FeatureType;
 
 /**
  * <p>
@@ -26,7 +26,7 @@ import org.dmg.pmml.ResultFeatureType;
  * </p>
  *
  * <p>
- * Every {@link ResultFeatureType result feature} is mapped to a specialized subinterface.
+ * Every {@link FeatureType result feature} is mapped to a specialized subinterface.
  * A target value may implement any number of subinterfaces.
  * Application developers should use the <code>instanceof</code> type comparison operator to check if the target value implements a particular subinterface or not.
  * </p>

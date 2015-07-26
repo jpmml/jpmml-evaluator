@@ -18,11 +18,11 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.ResultFeatureType;
+import org.dmg.pmml.FeatureType;
 
 /**
- * @see ResultFeatureType#CLUSTER_AFFINITY
- * @see ResultFeatureType#ENTITY_AFFINITY
+ * @see FeatureType#CLUSTER_AFFINITY
+ * @see FeatureType#ENTITY_AFFINITY
  */
 public interface HasEntityAffinity extends ResultFeature {
 
