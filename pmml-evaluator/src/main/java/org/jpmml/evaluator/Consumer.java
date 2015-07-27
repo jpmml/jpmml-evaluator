@@ -100,6 +100,8 @@ public interface Consumer extends Serializable {
 	 * <p>
 	 * Gets the dependent (ie. target in supervised training) fields of a {@link Model} from its {@link MiningSchema}.
 	 * </p>
+	 *
+	 * @see #getTarget(FieldName)
 	 */
 	List<FieldName> getTargetFields();
 
@@ -135,8 +137,6 @@ public interface Consumer extends Serializable {
 	 * @return The sole target field.
 	 *
 	 * @throws InvalidFeatureException If the number of target fields is greater than one.
-	 *
-	 * @see #getTargetFields()
 	 */
 	FieldName getTargetField();
 
@@ -166,6 +166,8 @@ public interface Consumer extends Serializable {
 	 * <p>
 	 * Gets the output fields of a {@link Model} from its {@link Output}.
 	 * </p>
+	 *
+	 * @see #getOutputField(FieldName)
 	 */
 	List<FieldName> getOutputFields();
 

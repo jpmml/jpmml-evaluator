@@ -29,6 +29,7 @@ package org.jpmml.evaluator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,23 +46,47 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 import com.google.common.collect.Table;
+import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.DefineFunction;
+import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldUsageType;
 import org.dmg.pmml.InlineTable;
+import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.ModelVerification;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.Output;
+import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
+import org.dmg.pmml.Targets;
+import org.dmg.pmml.TransformationDictionary;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
 
 abstract
 public class ModelEvaluator<M extends Model> extends ModelManager<M> implements Evaluator {
+
+	private Map<FieldName, DataField> dataFields = Collections.emptyMap();
+
+	private Map<FieldName, DerivedField> derivedFields = Collections.emptyMap();
+
+	private Map<String, DefineFunction> functions = Collections.emptyMap();
+
+	private Map<FieldName, MiningField> miningFields = Collections.emptyMap();
+
+	private Map<FieldName, DerivedField> localDerivedFields = Collections.emptyMap();
+
+	private Map<FieldName, Target> targets = Collections.emptyMap();
+
+	private Map<FieldName, OutputField> outputFields = Collections.emptyMap();
+
 
 	public ModelEvaluator(PMML pmml, Class<? extends M> clazz){
 		this(pmml, selectModel(pmml, clazz));
@@ -69,6 +94,40 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	public ModelEvaluator(PMML pmml, M model){
 		super(pmml, model);
+
+		DataDictionary dataDictionary = pmml.getDataDictionary();
+		if(dataDictionary.hasDataFields()){
+			this.dataFields = CacheUtil.getValue(dataDictionary, ModelEvaluator.dataFieldCache);
+		}
+
+		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
+		if(transformationDictionary != null && transformationDictionary.hasDerivedFields()){
+			this.derivedFields = CacheUtil.getValue(transformationDictionary, ModelEvaluator.derivedFieldCache);
+		} // End if
+
+		if(transformationDictionary != null && transformationDictionary.hasDefineFunctions()){
+			this.functions = CacheUtil.getValue(transformationDictionary, ModelEvaluator.functionCache);
+		}
+
+		MiningSchema miningSchema = model.getMiningSchema();
+		if(miningSchema.hasMiningFields()){
+			this.miningFields = CacheUtil.getValue(miningSchema, ModelEvaluator.miningFieldCache);
+		}
+
+		LocalTransformations localTransformations = model.getLocalTransformations();
+		if(localTransformations != null && localTransformations.hasDerivedFields()){
+			this.localDerivedFields = CacheUtil.getValue(localTransformations, ModelEvaluator.localDerivedFieldCache);
+		}
+
+		Targets targets = model.getTargets();
+		if(targets != null){
+			this.targets = CacheUtil.getValue(targets, ModelEvaluator.targetCache);
+		}
+
+		Output output = model.getOutput();
+		if(output != null){
+			this.outputFields = CacheUtil.getValue(output, ModelEvaluator.outputFieldCache);
+		}
 	}
 
 	abstract
@@ -81,7 +140,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			return getDataField();
 		}
 
-		return super.getDataField(name);
+		return this.dataFields.get(name);
 	}
 
 	/**
@@ -105,13 +164,28 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	@Override
+	public DerivedField getDerivedField(FieldName name){
+		return this.derivedFields.get(name);
+	}
+
+	@Override
+	public DefineFunction getFunction(String name){
+		return this.functions.get(name);
+	}
+
+	@Override
 	public MiningField getMiningField(FieldName name){
 
 		if(name == null){
 			return null;
 		}
 
-		return super.getMiningField(name);
+		return this.miningFields.get(name);
+	}
+
+	@Override
+	public DerivedField getLocalDerivedField(FieldName name){
+		return this.localDerivedFields.get(name);
 	}
 
 	@Override
@@ -121,7 +195,12 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			return null;
 		}
 
-		return super.getTarget(name);
+		return this.targets.get(name);
+	}
+
+	@Override
+	public OutputField getOutputField(FieldName name){
+		return this.outputFields.get(name);
 	}
 
 	@Override
@@ -325,6 +404,76 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		return result;
 	}
+
+	private static final LoadingCache<DataDictionary, Map<FieldName, DataField>> dataFieldCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<DataDictionary, Map<FieldName, DataField>>(){
+
+			@Override
+			public Map<FieldName, DataField> load(DataDictionary dataDictionary){
+				return IndexableUtil.buildMap(dataDictionary.getDataFields());
+			}
+		});
+
+	private static final LoadingCache<TransformationDictionary, Map<FieldName, DerivedField>> derivedFieldCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<TransformationDictionary, Map<FieldName, DerivedField>>(){
+
+			@Override
+			public Map<FieldName, DerivedField> load(TransformationDictionary transformationDictionary){
+				return IndexableUtil.buildMap(transformationDictionary.getDerivedFields());
+			}
+		});
+
+	private static final LoadingCache<TransformationDictionary, Map<String, DefineFunction>> functionCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<TransformationDictionary, Map<String, DefineFunction>>(){
+
+			@Override
+			public Map<String, DefineFunction> load(TransformationDictionary transformationDictionary){
+				return IndexableUtil.buildMap(transformationDictionary.getDefineFunctions());
+			}
+		});
+
+	private static final LoadingCache<MiningSchema, Map<FieldName, MiningField>> miningFieldCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<MiningSchema, Map<FieldName, MiningField>>(){
+
+			@Override
+			public Map<FieldName, MiningField> load(MiningSchema miningSchema){
+				return IndexableUtil.buildMap(miningSchema.getMiningFields());
+			}
+		});
+
+	private static final LoadingCache<LocalTransformations, Map<FieldName, DerivedField>> localDerivedFieldCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<LocalTransformations, Map<FieldName, DerivedField>>(){
+
+			@Override
+			public Map<FieldName, DerivedField> load(LocalTransformations localTransformations){
+				return IndexableUtil.buildMap(localTransformations.getDerivedFields());
+			}
+		});
+
+	private static final LoadingCache<Targets, Map<FieldName, Target>> targetCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<Targets, Map<FieldName, Target>>(){
+
+			@Override
+			public Map<FieldName, Target> load(Targets targets){
+				return IndexableUtil.buildMap(targets.getTargets());
+			}
+		});
+
+	private static final LoadingCache<Output, Map<FieldName, OutputField>> outputFieldCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<Output, Map<FieldName, OutputField>>(){
+
+			@Override
+			public Map<FieldName, OutputField> load(Output output){
+				return IndexableUtil.buildMap(output.getOutputFields());
+			}
+		});
 
 	static
 	private class VerificationBatch extends LinkedHashMap<FieldName, VerificationField> {

@@ -65,22 +65,22 @@ public class PMMLManager implements Serializable {
 		PMML pmml = getPMML();
 
 		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
-		if(transformationDictionary == null || !transformationDictionary.hasDerivedFields()){
-			return null;
+		if(transformationDictionary != null && transformationDictionary.hasDerivedFields()){
+			return IndexableUtil.find(transformationDictionary.getDerivedFields(), name);
 		}
 
-		return IndexableUtil.find(transformationDictionary.getDerivedFields(), name);
+		return null;
 	}
 
 	public DefineFunction getFunction(String name){
 		PMML pmml = getPMML();
 
 		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
-		if(transformationDictionary == null || !transformationDictionary.hasDefineFunctions()){
-			return null;
+		if(transformationDictionary != null && transformationDictionary.hasDefineFunctions()){
+			return IndexableUtil.find(transformationDictionary.getDefineFunctions(), name);
 		}
 
-		return IndexableUtil.find(transformationDictionary.getDefineFunctions(), name);
+		return null;
 	}
 
 	public PMML getPMML(){

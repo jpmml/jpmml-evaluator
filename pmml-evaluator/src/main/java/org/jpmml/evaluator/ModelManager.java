@@ -148,11 +148,11 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		M model = getModel();
 
 		LocalTransformations localTransformations = model.getLocalTransformations();
-		if(localTransformations == null || !localTransformations.hasDerivedFields()){
-			return null;
+		if(localTransformations != null && localTransformations.hasDerivedFields()){
+			return IndexableUtil.find(localTransformations.getDerivedFields(), name);
 		}
 
-		return IndexableUtil.find(localTransformations.getDerivedFields(), name);
+		return null;
 	}
 
 	public DerivedField resolveDerivedField(FieldName name){
@@ -169,11 +169,11 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		M model = getModel();
 
 		Targets targets = model.getTargets();
-		if(targets == null){
-			return null;
+		if(targets != null){
+			return IndexableUtil.find(targets.getTargets(), name);
 		}
 
-		return IndexableUtil.find(targets.getTargets(), name);
+		return null;
 	}
 
 	@Override
@@ -200,11 +200,11 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		M model = getModel();
 
 		Output output = model.getOutput();
-		if(output == null){
-			return null;
+		if(output != null){
+			return IndexableUtil.find(output.getOutputFields(), name);
 		}
 
-		return IndexableUtil.find(output.getOutputFields(), name);
+		return null;
 	}
 
 	public M getModel(){
