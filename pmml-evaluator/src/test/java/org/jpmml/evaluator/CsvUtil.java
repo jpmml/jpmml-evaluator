@@ -52,7 +52,7 @@ public class CsvUtil {
 
 			List<String> headerCells = parseLine(headerLine);
 
-			while(true){
+			for(int pos = 1; true; pos++){
 				String bodyLine = reader.readLine();
 				if(bodyLine == null){
 					break;
@@ -64,7 +64,7 @@ public class CsvUtil {
 
 				// Must be of equal length
 				if(headerCells.size() != bodyCells.size()){
-					throw new RuntimeException();
+					throw new IllegalArgumentException("Expected " + headerCells.size() + " cells, but got " + bodyCells.size() + " cells (data record " + pos + ")");
 				}
 
 				for(int i = 0; i < headerCells.size(); i++){
