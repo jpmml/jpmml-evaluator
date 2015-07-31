@@ -19,14 +19,13 @@
 package org.jpmml.evaluator.functions;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.Function;
 import org.jpmml.evaluator.FunctionException;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 abstract
 public class AbstractFunction implements Function {
@@ -35,7 +34,7 @@ public class AbstractFunction implements Function {
 
 
 	public AbstractFunction(String name){
-		setName(checkNotNull(name));
+		setName(Objects.requireNonNull(name));
 	}
 
 	protected void checkArguments(List<FieldValue> arguments, int size){

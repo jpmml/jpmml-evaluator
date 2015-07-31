@@ -20,8 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Objects;
 
 /**
  * <p>
@@ -70,7 +69,7 @@ public class FunctionRegistry {
 	 */
 	static
 	public void putFunction(String name, Function function){
-		FunctionRegistry.functions.put(checkNotNull(name), function);
+		FunctionRegistry.functions.put(Objects.requireNonNull(name), function);
 	}
 
 	static

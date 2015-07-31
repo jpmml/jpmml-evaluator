@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
@@ -46,8 +47,6 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 public class ModelManager<M extends Model> extends PMMLManager implements Consumer {
 
 	private M model = null;
@@ -56,7 +55,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	public ModelManager(PMML pmml, M model){
 		super(pmml);
 
-		setModel(checkNotNull(model));
+		setModel(Objects.requireNonNull(model));
 
 		MiningSchema miningSchema = model.getMiningSchema();
 		if(miningSchema == null){

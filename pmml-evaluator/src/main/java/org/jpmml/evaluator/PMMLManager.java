@@ -28,6 +28,7 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
@@ -37,15 +38,13 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.TransformationDictionary;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 public class PMMLManager implements Serializable {
 
 	private PMML pmml = null;
 
 
 	public PMMLManager(PMML pmml){
-		setPMML(checkNotNull(pmml));
+		setPMML(Objects.requireNonNull(pmml));
 
 		DataDictionary dataDictionary = pmml.getDataDictionary();
 		if(dataDictionary == null){
