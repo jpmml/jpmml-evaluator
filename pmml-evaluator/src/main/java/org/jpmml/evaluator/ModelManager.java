@@ -155,15 +155,6 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return null;
 	}
 
-	public DerivedField resolveDerivedField(FieldName name){
-		DerivedField derivedField = getLocalDerivedField(name);
-		if(derivedField == null){
-			return getDerivedField(name);
-		}
-
-		return derivedField;
-	}
-
 	@Override
 	public Target getTarget(FieldName name){
 		M model = getModel();

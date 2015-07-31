@@ -32,7 +32,6 @@ import com.google.common.collect.Lists;
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.Constant;
-import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Discretize;
@@ -44,6 +43,7 @@ import org.dmg.pmml.InvalidValueTreatmentMethodType;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
+import org.dmg.pmml.TypeDefinitionField;
 
 public class ExpressionUtil {
 
@@ -143,14 +143,9 @@ public class ExpressionUtil {
 
 			FieldName name = fieldRef.getField();
 
-			DataField dataField = modelEvaluator.getDataField(name);
-			if(dataField != null){
-				return dataField.getDataType();
-			}
-
-			DerivedField derivedField = modelEvaluator.resolveDerivedField(name);
-			if(derivedField != null){
-				return derivedField.getDataType();
+			TypeDefinitionField typeDefField = modelEvaluator.resolveField(name);
+			if(typeDefField != null){
+				return typeDefField.getDataType();
 			}
 
 			throw new TypeAnalysisException(expression);

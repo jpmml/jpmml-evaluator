@@ -67,6 +67,7 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.TransformationDictionary;
+import org.dmg.pmml.TypeDefinitionField;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
 
@@ -321,6 +322,26 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		context.declareAll(filterFields, arguments);
 
 		return evaluate(context);
+	}
+
+	TypeDefinitionField resolveField(FieldName name){
+		TypeDefinitionField result = getDataField(name);
+
+		if(result == null){
+			result = resolveDerivedField(name);
+		}
+
+		return result;
+	}
+
+	DerivedField resolveDerivedField(FieldName name){
+		DerivedField result = getDerivedField(name);
+
+		if(result == null){
+			result = getLocalDerivedField(name);
+		}
+
+		return result;
 	}
 
 	public <V> V getValue(LoadingCache<M, V> cache){

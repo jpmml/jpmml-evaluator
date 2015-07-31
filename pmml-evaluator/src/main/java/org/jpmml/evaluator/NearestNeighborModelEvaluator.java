@@ -69,6 +69,7 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.TableLocator;
 import org.dmg.pmml.TrainingInstances;
+import org.dmg.pmml.TypeDefinitionField;
 
 public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighborModel> {
 
@@ -461,17 +462,20 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				continue;
 			}
 
-			DataField dataField = modelEvaluator.getDataField(name);
-			MiningField miningField = modelEvaluator.getMiningField(name);
+			TypeDefinitionField typeDefField = modelEvaluator.resolveField(name);
 
-			if(dataField != null && miningField != null){
+			if(typeDefField instanceof DataField){
+				DataField dataField = (DataField)typeDefField;
+				MiningField miningField = modelEvaluator.getMiningField(name);
+
 				fieldLoaders.add(new DataFieldLoader(name, column, dataField, miningField));
 
 				continue;
-			}
+			} else
 
-			DerivedField derivedField = modelEvaluator.resolveDerivedField(name);
-			if(derivedField != null){
+			if(typeDefField instanceof DerivedField){
+				DerivedField derivedField = (DerivedField)typeDefField;
+
 				fieldLoaders.add(new DerivedFieldLoader(name, column, derivedField));
 
 				continue;
