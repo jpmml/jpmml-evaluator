@@ -77,22 +77,22 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 	@Override
 	public List<FieldName> getActiveFields(){
-		return getMiningFields(ModelManager.ACTIVE_SET);
+		return getMiningFields(ModelManager.ACTIVE_TYPES);
 	}
 
 	@Override
 	public List<FieldName> getGroupFields(){
-		return getMiningFields(ModelManager.GROUP_SET);
+		return getMiningFields(ModelManager.GROUP_TYPES);
 	}
 
 	@Override
 	public List<FieldName> getOrderFields(){
-		return getMiningFields(ModelManager.ORDER_SET);
+		return getMiningFields(ModelManager.ORDER_TYPES);
 	}
 
 	@Override
 	public List<FieldName> getTargetFields(){
-		return getMiningFields(ModelManager.TARGET_SET);
+		return getMiningFields(ModelManager.TARGET_TYPES);
 	}
 
 	@Override
@@ -205,8 +205,8 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		this.model = model;
 	}
 
-	private static final EnumSet<FieldUsageType> ACTIVE_SET = EnumSet.of(FieldUsageType.ACTIVE);
-	private static final EnumSet<FieldUsageType> GROUP_SET = EnumSet.of(FieldUsageType.GROUP);
-	private static final EnumSet<FieldUsageType> ORDER_SET = EnumSet.of(FieldUsageType.ORDER);
-	private static final EnumSet<FieldUsageType> TARGET_SET = EnumSet.of(FieldUsageType.PREDICTED, FieldUsageType.TARGET);
+	protected static final EnumSet<FieldUsageType> ACTIVE_TYPES = EnumSet.of(FieldUsageType.ACTIVE);
+	protected static final EnumSet<FieldUsageType> GROUP_TYPES = EnumSet.of(FieldUsageType.GROUP);
+	protected static final EnumSet<FieldUsageType> ORDER_TYPES = EnumSet.of(FieldUsageType.ORDER);
+	protected static final EnumSet<FieldUsageType> TARGET_TYPES = EnumSet.of(FieldUsageType.PREDICTED, FieldUsageType.TARGET);
 }

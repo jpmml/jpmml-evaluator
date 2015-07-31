@@ -28,10 +28,12 @@
 package org.jpmml.evaluator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,8 +43,11 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 import com.google.common.collect.Table;
@@ -82,6 +87,8 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	private Map<FieldName, MiningField> miningFields = Collections.emptyMap();
 
+	private ListMultimap<EnumSet<FieldUsageType>, FieldName> miningFieldNames = ImmutableListMultimap.of();
+
 	private Map<FieldName, DerivedField> localDerivedFields = Collections.emptyMap();
 
 	private Map<FieldName, Target> targets = Collections.emptyMap();
@@ -113,6 +120,10 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		MiningSchema miningSchema = model.getMiningSchema();
 		if(miningSchema.hasMiningFields()){
 			this.miningFields = CacheUtil.getValue(miningSchema, ModelEvaluator.miningFieldCache);
+		} // End if
+
+		if(miningSchema.hasMiningFields()){
+			this.miningFieldNames = CacheUtil.getValue(miningSchema, ModelEvaluator.miningFieldNameCache);
 		}
 
 		LocalTransformations localTransformations = model.getLocalTransformations();
@@ -182,6 +193,17 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 
 		return this.miningFields.get(name);
+	}
+
+	@Override
+	protected List<FieldName> getMiningFields(EnumSet<FieldUsageType> types){
+		List<FieldName> result = this.miningFieldNames.get(types);
+
+		if(result != null){
+			return result;
+		}
+
+		return super.getMiningFields(types);
 	}
 
 	@Override
@@ -316,7 +338,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
-		List<FieldName> filterFields = getMiningFields(ModelEvaluator.FILTER_SET);
+		List<FieldName> filterFields = getMiningFields(ModelEvaluator.INPUT_TYPES);
 
 		ModelEvaluationContext context = createContext(null);
 		context.declareAll(filterFields, arguments);
@@ -368,6 +390,27 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 
 		return model;
+	}
+
+	static
+	private ListMultimap<EnumSet<FieldUsageType>, FieldName> parseMiningFieldNames(List<MiningField> miningFields){
+		Set<EnumSet<FieldUsageType>> keys = new LinkedHashSet<>();
+		keys.addAll(Arrays.asList(ModelManager.ACTIVE_TYPES, ModelManager.GROUP_TYPES, ModelManager.ORDER_TYPES, ModelManager.TARGET_TYPES));
+		keys.addAll(Arrays.asList(ModelEvaluator.INPUT_TYPES));
+
+		ListMultimap<EnumSet<FieldUsageType>, FieldName> result = ArrayListMultimap.create();
+
+		for(MiningField miningField : miningFields){
+
+			for(EnumSet<FieldUsageType> key : keys){
+
+				if(key.contains(miningField.getUsageType())){
+					result.put(key, miningField.getName());
+				}
+			}
+		}
+
+		return result;
 	}
 
 	static
@@ -466,6 +509,16 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			}
 		});
 
+	private static final LoadingCache<MiningSchema, ListMultimap<EnumSet<FieldUsageType>, FieldName>> miningFieldNameCache = CacheBuilder.newBuilder()
+		.weakKeys()
+		.build(new CacheLoader<MiningSchema, ListMultimap<EnumSet<FieldUsageType>, FieldName>>(){
+
+			@Override
+			public ListMultimap<EnumSet<FieldUsageType>, FieldName> load(MiningSchema miningSchema){
+				return ImmutableListMultimap.copyOf(parseMiningFieldNames(miningSchema.getMiningFields()));
+			}
+		});
+
 	private static final LoadingCache<LocalTransformations, Map<FieldName, DerivedField>> localDerivedFieldCache = CacheBuilder.newBuilder()
 		.weakKeys()
 		.build(new CacheLoader<LocalTransformations, Map<FieldName, DerivedField>>(){
@@ -521,5 +574,5 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			}
 		});
 
-	private static final EnumSet<FieldUsageType> FILTER_SET = EnumSet.of(FieldUsageType.ACTIVE, FieldUsageType.GROUP, FieldUsageType.ORDER);
+	protected static final EnumSet<FieldUsageType> INPUT_TYPES = EnumSet.of(FieldUsageType.ACTIVE, FieldUsageType.GROUP, FieldUsageType.ORDER);
 }
