@@ -24,14 +24,10 @@ import java.util.Set;
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.Cluster;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 public class ClusterAffinityDistribution extends EntityClassification<Cluster> implements HasEntityIdRanking, HasDisplayValue, HasAffinityRanking, HasEntityAffinity {
 
 	protected ClusterAffinityDistribution(Type type, BiMap<String, Cluster> entityRegistry){
-		super(type, entityRegistry);
-
-		checkArgument((Type.DISTANCE).equals(type) || (Type.SIMILARITY).equals(type));
+		super(AffinityDistribution.validateType(type), entityRegistry);
 	}
 
 	@Override

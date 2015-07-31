@@ -33,14 +33,10 @@ import java.util.Set;
 
 import org.dmg.pmml.DataType;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 public class AffinityDistribution extends Classification implements HasEntityIdRanking, HasAffinityRanking, HasEntityAffinity {
 
 	protected AffinityDistribution(Type type, Object result){
-		super(type);
-
-		checkArgument((Type.DISTANCE).equals(type) || (Type.SIMILARITY).equals(type));
+		super(AffinityDistribution.validateType(type));
 
 		setResult(result);
 	}
@@ -83,5 +79,17 @@ public class AffinityDistribution extends Classification implements HasEntityIdR
 	@Override
 	public Double getEntityAffinity(){
 		return getAffinity(getEntityId());
+	}
+
+	static
+	protected Type validateType(Type type){
+
+		switch(type){
+			case DISTANCE:
+			case SIMILARITY:
+				return type;
+			default:
+				throw new IllegalArgumentException();
+		}
 	}
 }
