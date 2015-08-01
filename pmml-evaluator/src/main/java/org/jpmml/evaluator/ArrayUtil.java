@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Function;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
@@ -212,13 +211,11 @@ public class ArrayUtil {
 		}
 	};
 
-	private static final LoadingCache<Array, List<String>> contentCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<Array, List<String>>(){
+	private static final LoadingCache<Array, List<String>> contentCache = CacheUtil.buildLoadingCache(new CacheLoader<Array, List<String>>(){
 
-			@Override
-			public List<String> load(Array array){
-				return ImmutableList.copyOf(parse(array));
-			}
-		});
+		@Override
+		public List<String> load(Array array){
+			return ImmutableList.copyOf(parse(array));
+		}
+	});
 }

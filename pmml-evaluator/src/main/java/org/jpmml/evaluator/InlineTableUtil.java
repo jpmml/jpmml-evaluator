@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.HashBasedTable;
@@ -103,13 +102,11 @@ public class InlineTableUtil {
 		return null;
 	}
 
-	private static final LoadingCache<InlineTable, Table<Integer, String, String>> contentCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<InlineTable, Table<Integer, String, String>>(){
+	private static final LoadingCache<InlineTable, Table<Integer, String, String>> contentCache = CacheUtil.buildLoadingCache(new CacheLoader<InlineTable, Table<Integer, String, String>>(){
 
-			@Override
-			public Table<Integer, String, String> load(InlineTable inlineTable){
-				return Tables.unmodifiableTable(parse(inlineTable));
-			}
-		});
+		@Override
+		public Table<Integer, String, String> load(InlineTable inlineTable){
+			return Tables.unmodifiableTable(parse(inlineTable));
+		}
+	});
 }

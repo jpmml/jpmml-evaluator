@@ -39,7 +39,6 @@ import java.util.concurrent.Callable;
 
 import com.google.common.base.Function;
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableSortedSet;
@@ -799,15 +798,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 	}
 
-	private static final Cache<NearestNeighborModel, Table<Integer, FieldName, FieldValue>> trainingInstanceCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build();
+	private static final Cache<NearestNeighborModel, Table<Integer, FieldName, FieldValue>> trainingInstanceCache = CacheUtil.buildCache();
 
-	private static final Cache<NearestNeighborModel, Map<Integer, BitSet>> instanceFlagCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build();
+	private static final Cache<NearestNeighborModel, Map<Integer, BitSet>> instanceFlagCache = CacheUtil.buildCache();
 
-	private static final Cache<NearestNeighborModel, Map<Integer, List<FieldValue>>> instanceValueCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build();
+	private static final Cache<NearestNeighborModel, Map<Integer, List<FieldValue>>> instanceValueCache = CacheUtil.buildCache();
 }

@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
@@ -345,35 +344,33 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		}
 	}
 
-	private static final LoadingCache<NeuralNetwork, BiMap<String, Entity>> entityCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<NeuralNetwork, BiMap<String, Entity>>(){
+	private static final LoadingCache<NeuralNetwork, BiMap<String, Entity>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<NeuralNetwork, BiMap<String, Entity>>(){
 
-			@Override
-			public BiMap<String, Entity> load(NeuralNetwork neuralNetwork){
-				ImmutableBiMap.Builder<String, Entity> builder = new ImmutableBiMap.Builder<>();
+		@Override
+		public BiMap<String, Entity> load(NeuralNetwork neuralNetwork){
+			ImmutableBiMap.Builder<String, Entity> builder = new ImmutableBiMap.Builder<>();
 
-				AtomicInteger index = new AtomicInteger(1);
+			AtomicInteger index = new AtomicInteger(1);
 
-				NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
-				if(neuralInputs == null){
-					throw new InvalidFeatureException(neuralNetwork);
-				}
-
-				for(NeuralInput neuralInput : neuralInputs){
-					builder = EntityUtil.put(neuralInput, index, builder);
-				}
-
-				List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
-				for(NeuralLayer neuralLayer : neuralLayers){
-					List<Neuron> neurons = neuralLayer.getNeurons();
-
-					for(Neuron neuron : neurons){
-						builder = EntityUtil.put(neuron, index, builder);
-					}
-				}
-
-				return builder.build();
+			NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
+			if(neuralInputs == null){
+				throw new InvalidFeatureException(neuralNetwork);
 			}
-		});
+
+			for(NeuralInput neuralInput : neuralInputs){
+				builder = EntityUtil.put(neuralInput, index, builder);
+			}
+
+			List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
+			for(NeuralLayer neuralLayer : neuralLayers){
+				List<Neuron> neurons = neuralLayer.getNeurons();
+
+				for(Neuron neuron : neurons){
+					builder = EntityUtil.put(neuron, index, builder);
+				}
+			}
+
+			return builder.build();
+		}
+	});
 }

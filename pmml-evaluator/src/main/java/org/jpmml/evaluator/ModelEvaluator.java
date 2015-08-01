@@ -40,7 +40,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
@@ -469,85 +468,69 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return result;
 	}
 
-	private static final LoadingCache<DataDictionary, Map<FieldName, DataField>> dataFieldCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<DataDictionary, Map<FieldName, DataField>>(){
+	private static final LoadingCache<DataDictionary, Map<FieldName, DataField>> dataFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<DataDictionary, Map<FieldName, DataField>>(){
 
-			@Override
-			public Map<FieldName, DataField> load(DataDictionary dataDictionary){
-				return IndexableUtil.buildMap(dataDictionary.getDataFields());
-			}
-		});
+		@Override
+		public Map<FieldName, DataField> load(DataDictionary dataDictionary){
+			return IndexableUtil.buildMap(dataDictionary.getDataFields());
+		}
+	});
 
-	private static final LoadingCache<TransformationDictionary, Map<FieldName, DerivedField>> derivedFieldCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<TransformationDictionary, Map<FieldName, DerivedField>>(){
+	private static final LoadingCache<TransformationDictionary, Map<FieldName, DerivedField>> derivedFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<TransformationDictionary, Map<FieldName, DerivedField>>(){
 
-			@Override
-			public Map<FieldName, DerivedField> load(TransformationDictionary transformationDictionary){
-				return IndexableUtil.buildMap(transformationDictionary.getDerivedFields());
-			}
-		});
+		@Override
+		public Map<FieldName, DerivedField> load(TransformationDictionary transformationDictionary){
+			return IndexableUtil.buildMap(transformationDictionary.getDerivedFields());
+		}
+	});
 
-	private static final LoadingCache<TransformationDictionary, Map<String, DefineFunction>> functionCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<TransformationDictionary, Map<String, DefineFunction>>(){
+	private static final LoadingCache<TransformationDictionary, Map<String, DefineFunction>> functionCache = CacheUtil.buildLoadingCache(new CacheLoader<TransformationDictionary, Map<String, DefineFunction>>(){
 
-			@Override
-			public Map<String, DefineFunction> load(TransformationDictionary transformationDictionary){
-				return IndexableUtil.buildMap(transformationDictionary.getDefineFunctions());
-			}
-		});
+		@Override
+		public Map<String, DefineFunction> load(TransformationDictionary transformationDictionary){
+			return IndexableUtil.buildMap(transformationDictionary.getDefineFunctions());
+		}
+	});
 
-	private static final LoadingCache<MiningSchema, Map<FieldName, MiningField>> miningFieldCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<MiningSchema, Map<FieldName, MiningField>>(){
+	private static final LoadingCache<MiningSchema, Map<FieldName, MiningField>> miningFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<MiningSchema, Map<FieldName, MiningField>>(){
 
-			@Override
-			public Map<FieldName, MiningField> load(MiningSchema miningSchema){
-				return IndexableUtil.buildMap(miningSchema.getMiningFields());
-			}
-		});
+		@Override
+		public Map<FieldName, MiningField> load(MiningSchema miningSchema){
+			return IndexableUtil.buildMap(miningSchema.getMiningFields());
+		}
+	});
 
-	private static final LoadingCache<MiningSchema, ListMultimap<EnumSet<FieldUsageType>, FieldName>> miningFieldNameCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<MiningSchema, ListMultimap<EnumSet<FieldUsageType>, FieldName>>(){
+	private static final LoadingCache<MiningSchema, ListMultimap<EnumSet<FieldUsageType>, FieldName>> miningFieldNameCache = CacheUtil.buildLoadingCache(new CacheLoader<MiningSchema, ListMultimap<EnumSet<FieldUsageType>, FieldName>>(){
 
-			@Override
-			public ListMultimap<EnumSet<FieldUsageType>, FieldName> load(MiningSchema miningSchema){
-				return ImmutableListMultimap.copyOf(parseMiningFieldNames(miningSchema.getMiningFields()));
-			}
-		});
+		@Override
+		public ListMultimap<EnumSet<FieldUsageType>, FieldName> load(MiningSchema miningSchema){
+			return ImmutableListMultimap.copyOf(parseMiningFieldNames(miningSchema.getMiningFields()));
+		}
+	});
 
-	private static final LoadingCache<LocalTransformations, Map<FieldName, DerivedField>> localDerivedFieldCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<LocalTransformations, Map<FieldName, DerivedField>>(){
+	private static final LoadingCache<LocalTransformations, Map<FieldName, DerivedField>> localDerivedFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<LocalTransformations, Map<FieldName, DerivedField>>(){
 
-			@Override
-			public Map<FieldName, DerivedField> load(LocalTransformations localTransformations){
-				return IndexableUtil.buildMap(localTransformations.getDerivedFields());
-			}
-		});
+		@Override
+		public Map<FieldName, DerivedField> load(LocalTransformations localTransformations){
+			return IndexableUtil.buildMap(localTransformations.getDerivedFields());
+		}
+	});
 
-	private static final LoadingCache<Targets, Map<FieldName, Target>> targetCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<Targets, Map<FieldName, Target>>(){
+	private static final LoadingCache<Targets, Map<FieldName, Target>> targetCache = CacheUtil.buildLoadingCache(new CacheLoader<Targets, Map<FieldName, Target>>(){
 
-			@Override
-			public Map<FieldName, Target> load(Targets targets){
-				return IndexableUtil.buildMap(targets.getTargets());
-			}
-		});
+		@Override
+		public Map<FieldName, Target> load(Targets targets){
+			return IndexableUtil.buildMap(targets.getTargets());
+		}
+	});
 
-	private static final LoadingCache<Output, Map<FieldName, OutputField>> outputFieldCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<Output, Map<FieldName, OutputField>>(){
+	private static final LoadingCache<Output, Map<FieldName, OutputField>> outputFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<Output, Map<FieldName, OutputField>>(){
 
-			@Override
-			public Map<FieldName, OutputField> load(Output output){
-				return IndexableUtil.buildMap(output.getOutputFields());
-			}
-		});
+		@Override
+		public Map<FieldName, OutputField> load(Output output){
+			return IndexableUtil.buildMap(output.getOutputFields());
+		}
+	});
 
 	static
 	private class VerificationBatch extends LinkedHashMap<FieldName, VerificationField> {
@@ -564,15 +547,13 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 	}
 
-	private static final LoadingCache<ModelVerification, VerificationBatch> batchCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<ModelVerification, VerificationBatch>(){
+	private static final LoadingCache<ModelVerification, VerificationBatch> batchCache = CacheUtil.buildLoadingCache(new CacheLoader<ModelVerification, VerificationBatch>(){
 
-			@Override
-			public VerificationBatch load(ModelVerification modelVerification){
-				return parseModelVerification(modelVerification);
-			}
-		});
+		@Override
+		public VerificationBatch load(ModelVerification modelVerification){
+			return parseModelVerification(modelVerification);
+		}
+	});
 
 	protected static final EnumSet<FieldUsageType> INPUT_TYPES = EnumSet.of(FieldUsageType.ACTIVE, FieldUsageType.GROUP, FieldUsageType.ORDER);
 }

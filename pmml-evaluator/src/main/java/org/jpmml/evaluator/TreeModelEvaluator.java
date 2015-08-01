@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
@@ -367,32 +366,30 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 	}
 
-	private static final LoadingCache<TreeModel, BiMap<String, Node>> entityCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<TreeModel, BiMap<String, Node>>(){
+	private static final LoadingCache<TreeModel, BiMap<String, Node>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<TreeModel, BiMap<String, Node>>(){
 
-			@Override
-			public BiMap<String, Node> load(TreeModel treeModel){
-				ImmutableBiMap.Builder<String, Node> builder = new ImmutableBiMap.Builder<>();
+		@Override
+		public BiMap<String, Node> load(TreeModel treeModel){
+			ImmutableBiMap.Builder<String, Node> builder = new ImmutableBiMap.Builder<>();
 
-				builder = collectNodes(treeModel.getNode(), new AtomicInteger(1), builder);
+			builder = collectNodes(treeModel.getNode(), new AtomicInteger(1), builder);
 
-				return builder.build();
-			}
+			return builder.build();
+		}
 
-			private ImmutableBiMap.Builder<String, Node> collectNodes(Node node, AtomicInteger index, ImmutableBiMap.Builder<String, Node> builder){
-				builder = EntityUtil.put(node, index, builder);
+		private ImmutableBiMap.Builder<String, Node> collectNodes(Node node, AtomicInteger index, ImmutableBiMap.Builder<String, Node> builder){
+			builder = EntityUtil.put(node, index, builder);
 
-				if(!node.hasNodes()){
-					return builder;
-				}
-
-				List<Node> children = node.getNodes();
-				for(Node child : children){
-					builder = collectNodes(child, index, builder);
-				}
-
+			if(!node.hasNodes()){
 				return builder;
 			}
-		});
+
+			List<Node> children = node.getNodes();
+			for(Node child : children){
+				builder = collectNodes(child, index, builder);
+			}
+
+			return builder;
+		}
+	});
 }

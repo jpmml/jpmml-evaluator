@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
@@ -234,39 +233,33 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		return result;
 	}
 
-	private static final LoadingCache<Cluster, List<FieldValue>> clusterValueCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<Cluster, List<FieldValue>>(){
+	private static final LoadingCache<Cluster, List<FieldValue>> clusterValueCache = CacheUtil.buildLoadingCache(new CacheLoader<Cluster, List<FieldValue>>(){
 
-			@Override
-			public List<FieldValue> load(Cluster cluster){
-				Array array = cluster.getArray();
+		@Override
+		public List<FieldValue> load(Cluster cluster){
+			Array array = cluster.getArray();
 
-				List<? extends Number> values = ArrayUtil.asNumberList(array);
+			List<? extends Number> values = ArrayUtil.asNumberList(array);
 
-				return ImmutableList.copyOf(FieldValueUtil.createAll(values));
-			}
-		});
+			return ImmutableList.copyOf(FieldValueUtil.createAll(values));
+		}
+	});
 
-	private static final LoadingCache<Cluster, BitSet> clusterFlagCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<Cluster, BitSet>(){
+	private static final LoadingCache<Cluster, BitSet> clusterFlagCache = CacheUtil.buildLoadingCache(new CacheLoader<Cluster, BitSet>(){
 
-			@Override
-			public BitSet load(Cluster cluster){
-				List<FieldValue> values = CacheUtil.getValue(cluster, ClusteringModelEvaluator.clusterValueCache);
+		@Override
+		public BitSet load(Cluster cluster){
+			List<FieldValue> values = CacheUtil.getValue(cluster, ClusteringModelEvaluator.clusterValueCache);
 
-				return MeasureUtil.toBitSet(values);
-			}
-		});
+			return MeasureUtil.toBitSet(values);
+		}
+	});
 
-	private static final LoadingCache<ClusteringModel, BiMap<String, Cluster>> entityCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<ClusteringModel, BiMap<String, Cluster>>(){
+	private static final LoadingCache<ClusteringModel, BiMap<String, Cluster>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<ClusteringModel, BiMap<String, Cluster>>(){
 
-			@Override
-			public BiMap<String, Cluster> load(ClusteringModel clusteringModel){
-				return EntityUtil.buildBiMap(clusteringModel.getClusters());
-			}
-		});
+		@Override
+		public BiMap<String, Cluster> load(ClusteringModel clusteringModel){
+			return EntityUtil.buildBiMap(clusteringModel.getClusters());
+		}
+	});
 }

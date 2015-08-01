@@ -29,7 +29,6 @@ import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
@@ -1128,56 +1127,45 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 	}
 
-	private static final LoadingCache<GeneralRegressionModel, BiMap<String, Parameter>> parameterCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<GeneralRegressionModel, BiMap<String, Parameter>>(){
+	private static final LoadingCache<GeneralRegressionModel, BiMap<String, Parameter>> parameterCache = CacheUtil.buildLoadingCache(new CacheLoader<GeneralRegressionModel, BiMap<String, Parameter>>(){
 
-			@Override
-			public BiMap<String, Parameter> load(GeneralRegressionModel generalRegressionModel){
-				return ImmutableBiMap.copyOf(parseParameterRegistry(generalRegressionModel.getParameterList()));
-			}
-		});
+		@Override
+		public BiMap<String, Parameter> load(GeneralRegressionModel generalRegressionModel){
+			return ImmutableBiMap.copyOf(parseParameterRegistry(generalRegressionModel.getParameterList()));
+		}
+	});
 
-	private static final LoadingCache<GeneralRegressionModel, BiMap<FieldName, Predictor>> factorCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<GeneralRegressionModel, BiMap<FieldName, Predictor>>(){
+	private static final LoadingCache<GeneralRegressionModel, BiMap<FieldName, Predictor>> factorCache = CacheUtil.buildLoadingCache(new CacheLoader<GeneralRegressionModel, BiMap<FieldName, Predictor>>(){
 
-			@Override
-			public BiMap<FieldName, Predictor> load(GeneralRegressionModel generalRegressionModel){
-				return ImmutableBiMap.copyOf(parsePredictorRegistry(generalRegressionModel.getFactorList()));
-			}
-		});
+		@Override
+		public BiMap<FieldName, Predictor> load(GeneralRegressionModel generalRegressionModel){
+			return ImmutableBiMap.copyOf(parsePredictorRegistry(generalRegressionModel.getFactorList()));
+		}
+	});
 
-	private static final LoadingCache<GeneralRegressionModel, BiMap<FieldName, Predictor>> covariateCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<GeneralRegressionModel, BiMap<FieldName, Predictor>>(){
+	private static final LoadingCache<GeneralRegressionModel, BiMap<FieldName, Predictor>> covariateCache = CacheUtil.buildLoadingCache(new CacheLoader<GeneralRegressionModel, BiMap<FieldName, Predictor>>(){
 
-			@Override
-			public BiMap<FieldName, Predictor> load(GeneralRegressionModel generalRegressionModel){
-				return ImmutableBiMap.copyOf(parsePredictorRegistry(generalRegressionModel.getCovariateList()));
-			}
-		});
+		@Override
+		public BiMap<FieldName, Predictor> load(GeneralRegressionModel generalRegressionModel){
+			return ImmutableBiMap.copyOf(parsePredictorRegistry(generalRegressionModel.getCovariateList()));
+		}
+	});
 
-	private static final LoadingCache<GeneralRegressionModel, Map<String, Map<String, Row>>> ppMatrixCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<GeneralRegressionModel, Map<String, Map<String, Row>>>(){
+	private static final LoadingCache<GeneralRegressionModel, Map<String, Map<String, Row>>> ppMatrixCache = CacheUtil.buildLoadingCache(new CacheLoader<GeneralRegressionModel, Map<String, Map<String, Row>>>(){
 
-			@Override
-			public Map<String, Map<String, Row>> load(GeneralRegressionModel generalRegressionModel){
-				// Cannot use Guava's ImmutableMap, because it is null-hostile
-				return Collections.unmodifiableMap(parsePPMatrix(generalRegressionModel));
-			}
-		});
+		@Override
+		public Map<String, Map<String, Row>> load(GeneralRegressionModel generalRegressionModel){
+			// Cannot use Guava's ImmutableMap, because it is null-hostile
+			return Collections.unmodifiableMap(parsePPMatrix(generalRegressionModel));
+		}
+	});
 
-	private static final LoadingCache<GeneralRegressionModel, Map<String, List<PCell>>> paramMatrixCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<GeneralRegressionModel, Map<String, List<PCell>>>(){
+	private static final LoadingCache<GeneralRegressionModel, Map<String, List<PCell>>> paramMatrixCache = CacheUtil.buildLoadingCache(new CacheLoader<GeneralRegressionModel, Map<String, List<PCell>>>(){
 
-			@Override
-			public Map<String, List<PCell>> load(GeneralRegressionModel generalRegressionModel){
-				// Cannot use Guava's ImmutableMap, because it is null-hostile
-				return Collections.unmodifiableMap(parseParamMatrix(generalRegressionModel));
-			}
-		});
-
+		@Override
+		public Map<String, List<PCell>> load(GeneralRegressionModel generalRegressionModel){
+			// Cannot use Guava's ImmutableMap, because it is null-hostile
+			return Collections.unmodifiableMap(parseParamMatrix(generalRegressionModel));
+		}
+	});
 }

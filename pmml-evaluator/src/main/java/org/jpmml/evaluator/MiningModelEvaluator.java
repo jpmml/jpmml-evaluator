@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
@@ -532,15 +531,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private static final Set<MultipleModelMethodType> CLASSIFICATION_METHODS = EnumSet.of(MultipleModelMethodType.MAJORITY_VOTE, MultipleModelMethodType.WEIGHTED_MAJORITY_VOTE, MultipleModelMethodType.SUM, MultipleModelMethodType.MEDIAN, MultipleModelMethodType.AVERAGE, MultipleModelMethodType.WEIGHTED_AVERAGE);
 	private static final Set<MultipleModelMethodType> CLUSTERING_METHODS = EnumSet.of(MultipleModelMethodType.MAJORITY_VOTE, MultipleModelMethodType.WEIGHTED_MAJORITY_VOTE);
 
-	private static final LoadingCache<MiningModel, BiMap<String, Segment>> entityCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<MiningModel, BiMap<String, Segment>>(){
+	private static final LoadingCache<MiningModel, BiMap<String, Segment>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<MiningModel, BiMap<String, Segment>>(){
 
-			@Override
-			public BiMap<String, Segment> load(MiningModel miningModel){
-				Segmentation segmentation = miningModel.getSegmentation();
+		@Override
+		public BiMap<String, Segment> load(MiningModel miningModel){
+			Segmentation segmentation = miningModel.getSegmentation();
 
-				return EntityUtil.buildBiMap(segmentation.getSegments());
-			}
-		});
+			return EntityUtil.buildBiMap(segmentation.getSegments());
+		}
+	});
 }

@@ -33,7 +33,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
@@ -399,13 +398,11 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		return result;
 	}
 
-	private static final LoadingCache<SupportVectorMachineModel, Map<String, double[]>> vectorCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<SupportVectorMachineModel, Map<String, double[]>>(){
+	private static final LoadingCache<SupportVectorMachineModel, Map<String, double[]>> vectorCache = CacheUtil.buildLoadingCache(new CacheLoader<SupportVectorMachineModel, Map<String, double[]>>(){
 
-			@Override
-			public Map<String, double[]> load(SupportVectorMachineModel supportVectorMachineModel){
-				return ImmutableMap.copyOf(parseVectorDictionary(supportVectorMachineModel));
-			}
-		});
+		@Override
+		public Map<String, double[]> load(SupportVectorMachineModel supportVectorMachineModel){
+			return ImmutableMap.copyOf(parseVectorDictionary(supportVectorMachineModel));
+		}
+	});
 }

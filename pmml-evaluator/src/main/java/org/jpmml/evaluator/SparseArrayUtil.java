@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSortedMap;
@@ -125,13 +124,11 @@ public class SparseArrayUtil {
 		return result;
 	}
 
-	private static final LoadingCache<SparseArray<? extends Number>, SortedMap<Integer, ? extends Number>> contentCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<SparseArray<? extends Number>, SortedMap<Integer, ? extends Number>>(){
+	private static final LoadingCache<SparseArray<? extends Number>, SortedMap<Integer, ? extends Number>> contentCache = CacheUtil.buildLoadingCache(new CacheLoader<SparseArray<? extends Number>, SortedMap<Integer, ? extends Number>>(){
 
-			@Override
-			public SortedMap<Integer, ? extends Number> load(SparseArray<?> sparseArray){
-				return ImmutableSortedMap.copyOf(parse(sparseArray));
-			}
-		});
+		@Override
+		public SortedMap<Integer, ? extends Number> load(SparseArray<?> sparseArray){
+			return ImmutableSortedMap.copyOf(parse(sparseArray));
+		}
+	});
 }

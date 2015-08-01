@@ -34,7 +34,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
@@ -328,23 +327,19 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		return null;
 	}
 
-	private static final LoadingCache<NaiveBayesModel, List<BayesInput>> bayesInputCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<NaiveBayesModel, List<BayesInput>>(){
+	private static final LoadingCache<NaiveBayesModel, List<BayesInput>> bayesInputCache = CacheUtil.buildLoadingCache(new CacheLoader<NaiveBayesModel, List<BayesInput>>(){
 
-			@Override
-			public List<BayesInput> load(NaiveBayesModel naiveBayesModel){
-				return ImmutableList.copyOf(parseBayesInputs(naiveBayesModel));
-			}
-		});
+		@Override
+		public List<BayesInput> load(NaiveBayesModel naiveBayesModel){
+			return ImmutableList.copyOf(parseBayesInputs(naiveBayesModel));
+		}
+	});
 
-	private static final LoadingCache<NaiveBayesModel, Map<FieldName, Map<String, Double>>> fieldCountSumCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<NaiveBayesModel, Map<FieldName, Map<String, Double>>>(){
+	private static final LoadingCache<NaiveBayesModel, Map<FieldName, Map<String, Double>>> fieldCountSumCache = CacheUtil.buildLoadingCache(new CacheLoader<NaiveBayesModel, Map<FieldName, Map<String, Double>>>(){
 
-			@Override
-			public Map<FieldName, Map<String, Double>> load(NaiveBayesModel naiveBayesModel){
-				return ImmutableMap.copyOf(calculateFieldCountSums(naiveBayesModel));
-			}
-		});
+		@Override
+		public Map<FieldName, Map<String, Double>> load(NaiveBayesModel naiveBayesModel){
+			return ImmutableMap.copyOf(calculateFieldCountSums(naiveBayesModel));
+		}
+	});
 }

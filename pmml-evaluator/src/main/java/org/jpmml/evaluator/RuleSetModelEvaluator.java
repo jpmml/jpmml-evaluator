@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
@@ -209,49 +208,47 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		}
 	}
 
-	private static final LoadingCache<RuleSetModel, BiMap<String, SimpleRule>> entityCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<RuleSetModel, BiMap<String, SimpleRule>>(){
+	private static final LoadingCache<RuleSetModel, BiMap<String, SimpleRule>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<RuleSetModel, BiMap<String, SimpleRule>>(){
 
-			@Override
-			public BiMap<String, SimpleRule> load(RuleSetModel ruleSetModel){
-				ImmutableBiMap.Builder<String, SimpleRule> builder = new ImmutableBiMap.Builder<>();
+		@Override
+		public BiMap<String, SimpleRule> load(RuleSetModel ruleSetModel){
+			ImmutableBiMap.Builder<String, SimpleRule> builder = new ImmutableBiMap.Builder<>();
 
-				RuleSet ruleSet = ruleSetModel.getRuleSet();
+			RuleSet ruleSet = ruleSetModel.getRuleSet();
 
-				builder = collectRules(ruleSet.getRules(), new AtomicInteger(1), builder);
+			builder = collectRules(ruleSet.getRules(), new AtomicInteger(1), builder);
 
-				return builder.build();
+			return builder.build();
+		}
+
+		private ImmutableBiMap.Builder<String, SimpleRule> collectRule(Rule rule, AtomicInteger index, ImmutableBiMap.Builder<String, SimpleRule> builder){
+
+			if(rule instanceof SimpleRule){
+				SimpleRule simpleRule = (SimpleRule)rule;
+
+				builder = EntityUtil.put(simpleRule, index, builder);
+			} else
+
+			if(rule instanceof CompoundRule){
+				CompoundRule compoundRule = (CompoundRule)rule;
+
+				builder = collectRules(compoundRule.getRules(), index, builder);
+			} else
+
+			{
+				throw new UnsupportedFeatureException(rule);
 			}
 
-			private ImmutableBiMap.Builder<String, SimpleRule> collectRule(Rule rule, AtomicInteger index, ImmutableBiMap.Builder<String, SimpleRule> builder){
+			return builder;
+		}
 
-				if(rule instanceof SimpleRule){
-					SimpleRule simpleRule = (SimpleRule)rule;
+		private ImmutableBiMap.Builder<String, SimpleRule> collectRules(List<Rule> rules, AtomicInteger index, ImmutableBiMap.Builder<String, SimpleRule> builder){
 
-					builder = EntityUtil.put(simpleRule, index, builder);
-				} else
-
-				if(rule instanceof CompoundRule){
-					CompoundRule compoundRule = (CompoundRule)rule;
-
-					builder = collectRules(compoundRule.getRules(), index, builder);
-				} else
-
-				{
-					throw new UnsupportedFeatureException(rule);
-				}
-
-				return builder;
+			for(Rule rule : rules){
+				builder = collectRule(rule, index, builder);
 			}
 
-			private ImmutableBiMap.Builder<String, SimpleRule> collectRules(List<Rule> rules, AtomicInteger index, ImmutableBiMap.Builder<String, SimpleRule> builder){
-
-				for(Rule rule : rules){
-					builder = collectRule(rule, index, builder);
-				}
-
-				return builder;
-			}
-		});
+			return builder;
+		}
+	});
 }

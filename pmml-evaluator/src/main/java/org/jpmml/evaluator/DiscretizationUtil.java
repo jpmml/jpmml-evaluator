@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableRangeMap;
@@ -178,13 +177,11 @@ public class DiscretizationUtil {
 		return result;
 	}
 
-	private static final LoadingCache<Discretize, RangeMap<Double, String>> binRangeCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<Discretize, RangeMap<Double, String>>(){
+	private static final LoadingCache<Discretize, RangeMap<Double, String>> binRangeCache = CacheUtil.buildLoadingCache(new CacheLoader<Discretize, RangeMap<Double, String>>(){
 
-			@Override
-			public RangeMap<Double, String> load(Discretize discretize){
-				return ImmutableRangeMap.copyOf(parseBinRanges(discretize));
-			}
-		});
+		@Override
+		public RangeMap<Double, String> load(Discretize discretize){
+			return ImmutableRangeMap.copyOf(parseBinRanges(discretize));
+		}
+	});
 }

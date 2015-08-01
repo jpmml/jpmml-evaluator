@@ -31,6 +31,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import org.dmg.pmml.PMMLObject;
@@ -74,5 +76,21 @@ public class CacheUtil {
 
 			throw new InvalidFeatureException(key);
 		}
+	}
+
+	static
+	public <K extends PMMLObject, V> Cache<K, V> buildCache(){
+		CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
+			.weakKeys();
+
+		return cacheBuilder.build();
+	}
+
+	static
+	public <K extends PMMLObject, V> LoadingCache<K, V> buildLoadingCache(CacheLoader<K, V> cacheLoader){
+		CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
+			.weakKeys();
+
+		return cacheBuilder.build(cacheLoader);
 	}
 }

@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Function;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
@@ -387,38 +386,34 @@ public class ArgumentUtil {
 		return result;
 	}
 
-	private static final LoadingCache<TypeDefinitionField, List<String>> targetCategoryCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<TypeDefinitionField, List<String>>(){
+	private static final LoadingCache<TypeDefinitionField, List<String>> targetCategoryCache = CacheUtil.buildLoadingCache(new CacheLoader<TypeDefinitionField, List<String>>(){
 
-			@Override
-			public List<String> load(TypeDefinitionField field){
-				List<Value> values = getValidValues(field);
+		@Override
+		public List<String> load(TypeDefinitionField field){
+			List<Value> values = getValidValues(field);
 
-				Function<Value, String> function = new Function<Value, String>(){
+			Function<Value, String> function = new Function<Value, String>(){
 
-					@Override
-					public String apply(Value value){
-						String result = value.getValue();
-						if(result == null){
-							throw new InvalidFeatureException(value);
-						}
-
-						return result;
+				@Override
+				public String apply(Value value){
+					String result = value.getValue();
+					if(result == null){
+						throw new InvalidFeatureException(value);
 					}
-				};
 
-				return ImmutableList.copyOf(Iterables.transform(values, function));
-			}
-		});
+					return result;
+				}
+			};
 
-	private static final LoadingCache<DataField, RangeSet<Double>> validRangeCache = CacheBuilder.newBuilder()
-		.weakKeys()
-		.build(new CacheLoader<DataField, RangeSet<Double>>(){
+			return ImmutableList.copyOf(Iterables.transform(values, function));
+		}
+	});
 
-			@Override
-			public RangeSet<Double> load(DataField dataField){
-				return ImmutableRangeSet.copyOf(parseValidRanges(dataField));
-			}
-		});
+	private static final LoadingCache<DataField, RangeSet<Double>> validRangeCache = CacheUtil.buildLoadingCache(new CacheLoader<DataField, RangeSet<Double>>(){
+
+		@Override
+		public RangeSet<Double> load(DataField dataField){
+			return ImmutableRangeSet.copyOf(parseValidRanges(dataField));
+		}
+	});
 }
