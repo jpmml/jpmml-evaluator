@@ -51,9 +51,14 @@ public class ArgumentUtil {
 	)
 	static
 	public FieldValue prepare(DataField dataField, MiningField miningField, Object value){
+		DataType dataType = dataField.getDataType();
+		OpType opType = dataField.getOpType();
+
+		if(dataType == null || opType == null){
+			throw new InvalidFeatureException(dataField);
+		} // End if
 
 		if(value != null){
-			DataType dataType = dataField.getDataType();
 
 			try {
 				value = TypeUtil.parseOrCast(dataType, value);
