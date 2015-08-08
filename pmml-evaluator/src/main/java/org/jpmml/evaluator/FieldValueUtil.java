@@ -80,6 +80,11 @@ public class FieldValueUtil {
 		return create(dataField, miningField, null, value);
 	}
 
+	static
+	public FieldValue createMissingValue(DataField dataField, MiningField miningField){
+		return create(dataField, miningField, miningField.getMissingValueReplacement());
+	}
+
 	/**
 	 * <p>
 	 * Creates a FieldValue for a target field.

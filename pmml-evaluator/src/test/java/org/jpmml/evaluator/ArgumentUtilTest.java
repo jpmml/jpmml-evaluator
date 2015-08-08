@@ -34,14 +34,12 @@ import org.dmg.pmml.Value.Property;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ArgumentUtilTest {
 
 	@Test
-	public void prepare(){
+	public void prepareContinuous(){
 		FieldName name = new FieldName("x");
 
 		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE);
@@ -65,39 +63,43 @@ public class ArgumentUtilTest {
 		assertEquals(0d, prepare(dataField, miningField, null));
 		assertEquals(0d, prepare(dataField, miningField, "N/A"));
 
+		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_IS)
+			.setLowValue(1d)
+			.setHighValue(3d);
+
+		assertEquals(-1d, prepare(dataField, miningField, -1d));
+		assertEquals(1d, prepare(dataField, miningField, 1d));
+		assertEquals(5d, prepare(dataField, miningField, 5d));
+
+		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_MISSING_VALUES);
+
+		assertEquals(0d, prepare(dataField, miningField, -1d));
+		assertEquals(1d, prepare(dataField, miningField, 1d));
+		assertEquals(0d, prepare(dataField, miningField, 5d));
+
+		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_EXTREME_VALUES);
+
+		assertEquals(1d, prepare(dataField, miningField, -1d));
+		assertEquals(1d, prepare(dataField, miningField, 1d));
+		assertEquals(3d, prepare(dataField, miningField, 5d));
+
+		miningField.setOutlierTreatment(null)
+			.setLowValue(null)
+			.setHighValue(null);
+
 		Interval validInterval = new Interval(Closure.CLOSED_CLOSED)
 			.setLeftMargin(1d)
 			.setRightMargin(3d);
 
 		dataField.addIntervals(validInterval);
 
-		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_IS)
-			.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
-
-		assertEquals(-1d, prepare(dataField, miningField, -1d));
-		assertEquals(1d, prepare(dataField, miningField, 1d));
-		assertEquals(5d, prepare(dataField, miningField, 5d));
-
-		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_MISSING_VALUES)
-			.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
 
 		assertEquals(0d, prepare(dataField, miningField, -1d));
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(0d, prepare(dataField, miningField, 5d));
 
-		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_EXTREME_VALUES)
-			.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS)
-			.setLowValue(1d)
-			.setHighValue(3d);
-
-		assertEquals(1d, prepare(dataField, miningField, -1d));
-		assertEquals(1d, prepare(dataField, miningField, 1d));
-		assertEquals(3d, prepare(dataField, miningField, 5d));
-
-		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_MISSING_VALUES)
-			.setInvalidValueTreatment(InvalidValueTreatmentMethodType.RETURN_INVALID)
-			.setLowValue(null)
-			.setHighValue(null);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.RETURN_INVALID);
 
 		try {
 			prepare(dataField, miningField, -1d);
@@ -117,14 +119,7 @@ public class ArgumentUtilTest {
 			// Ignored
 		}
 
-		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_IS)
-			.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
-
-		assertEquals(0d, prepare(dataField, miningField, -1d));
-		assertEquals(1d, prepare(dataField, miningField, 1d));
-		assertEquals(0d, prepare(dataField, miningField, 5d));
-
-		dataField = clearIntervaldAndValues(dataField);
+		clearIntervalsAndValues(dataField);
 
 		dataField.addValues(missingValue, createValue("1", Value.Property.VALID), createValue("2", Value.Property.VALID), createValue("3", Value.Property.VALID));
 
@@ -138,7 +133,7 @@ public class ArgumentUtilTest {
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(0d, prepare(dataField, miningField, 5d));
 
-		dataField = clearIntervaldAndValues(dataField);
+		clearIntervalsAndValues(dataField);
 
 		dataField.addValues(missingValue, createValue("1", Value.Property.INVALID));
 
@@ -154,30 +149,29 @@ public class ArgumentUtilTest {
 	}
 
 	@Test
-	public void isOutlier(){
+	public void prepareCategorical(){
 		FieldName name = new FieldName("x");
 
-		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE)
-			.addIntervals(
-				createInterval(Interval.Closure.CLOSED_CLOSED, -10d, -1d),
-				createInterval(Interval.Closure.CLOSED_CLOSED, 1d, 10d)
-			);
+		DataField dataField = new DataField(name, OpType.CATEGORICAL, DataType.INTEGER);
 
 		MiningField miningField = new MiningField(name);
 
-		assertTrue(ArgumentUtil.isOutlier(dataField, miningField, -15d));
-		assertFalse(ArgumentUtil.isOutlier(dataField, miningField, 0d));
-		assertTrue(ArgumentUtil.isOutlier(dataField, miningField, 15d));
-	}
+		assertEquals(1, prepare(dataField, miningField, "1"));
+		assertEquals(1, prepare(dataField, miningField, 1));
 
-	@Test
-	public void isInvalid(){
-		assertFalse(ArgumentUtil.isInvalid(null, null, null));
-	}
+		Value missingValue = createValue("-999", Property.MISSING);
 
-	@Test
-	public void isValid(){
-		assertFalse(ArgumentUtil.isValid(null, null, null));
+		dataField.addValues(missingValue);
+
+		assertEquals(null, prepare(dataField, miningField, null));
+		assertEquals(null, prepare(dataField, miningField, "-999"));
+		assertEquals(null, prepare(dataField, miningField, -999));
+
+		miningField.setMissingValueReplacement("0");
+
+		assertEquals(0, prepare(dataField, miningField, null));
+		assertEquals(0, prepare(dataField, miningField, "-999"));
+		assertEquals(0, prepare(dataField, miningField, -999));
 	}
 
 	static
@@ -188,14 +182,12 @@ public class ArgumentUtilTest {
 	}
 
 	static
-	private DataField clearIntervaldAndValues(DataField dataField){
+	private void clearIntervalsAndValues(DataField dataField){
 		List<Interval> intervals = dataField.getIntervals();
 		intervals.clear();
 
 		List<Value> values = dataField.getValues();
 		values.clear();
-
-		return dataField;
 	}
 
 	static

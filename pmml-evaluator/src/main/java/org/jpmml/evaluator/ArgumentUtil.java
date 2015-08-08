@@ -38,6 +38,7 @@ import org.dmg.pmml.InvalidValueTreatmentMethodType;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethodType;
+import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.TypeDefinitionField;
 import org.dmg.pmml.Value;
 
@@ -46,9 +47,6 @@ public class ArgumentUtil {
 	private ArgumentUtil(){
 	}
 
-	@SuppressWarnings (
-		value = {"unused"}
-	)
 	static
 	public FieldValue prepare(DataField dataField, MiningField miningField, Object value){
 		DataType dataType = dataField.getDataType();
@@ -67,176 +65,136 @@ public class ArgumentUtil {
 			}
 		}
 
-		outlierTreatment:
-		if(isOutlier(dataField, miningField, value)){
-			OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
-
-			switch(outlierTreatmentMethod){
-				case AS_IS:
-					break;
-				case AS_MISSING_VALUES:
-					value = null;
-					break;
-				case AS_EXTREME_VALUES:
-					{
-						Double lowValue = miningField.getLowValue();
-						Double highValue = miningField.getHighValue();
-
-						if(lowValue == null || highValue == null){
-							throw new InvalidFeatureException(miningField);
-						} // End if
-
-						if((lowValue).compareTo(highValue) > 0){
-							throw new InvalidFeatureException(miningField);
-						}
-
-						Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
-
-						if(TypeUtil.compare(DataType.DOUBLE, doubleValue, lowValue) < 0){
-							value = lowValue;
-						} else
-
-						if(TypeUtil.compare(DataType.DOUBLE, doubleValue, highValue) > 0){
-							value = highValue;
-						}
-					}
-					break;
-				default:
-					throw new UnsupportedFeatureException(miningField, outlierTreatmentMethod);
-			}
-		} // End if
-
-		missingValueTreatment:
-		if(isMissing(dataField, value)){
-			value = miningField.getMissingValueReplacement();
-
-			if(value != null){
-				break missingValueTreatment;
-			}
-
-			return null;
-		} // End if
-
-		invalidValueTreatment:
-		if(isInvalid(dataField, miningField, value)){
-			InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
-
-			switch(invalidValueTreatmentMethod){
-				case RETURN_INVALID:
-					throw new InvalidResultException(miningField);
-				case AS_IS:
-					break invalidValueTreatment;
-				case AS_MISSING:
-					{
-						value = miningField.getMissingValueReplacement();
-						if(value != null){
-							break invalidValueTreatment;
-						}
-
-						return null;
-					}
-				default:
-					throw new UnsupportedFeatureException(miningField, invalidValueTreatmentMethod);
-			}
-		}
-
-		return FieldValueUtil.create(dataField, miningField, value);
-	}
-
-	static
-	public boolean isOutlier(DataField dataField, MiningField miningField, Object value){
-
-		if(value == null){
-			return false;
-		}
-
-		List<Interval> intervals = dataField.getIntervals();
-
-		OpType opType = miningField.getOpType();
-		if(opType == null){
-			opType = dataField.getOpType();
-		}
-
-		switch(opType){
-			case CONTINUOUS:
+		Value.Property status = getStatus(dataField, miningField, value);
+		switch(status){
+			case VALID:
 				{
-					if(intervals.size() > 0){
-						RangeSet<Double> validRange = CacheUtil.getValue(dataField, ArgumentUtil.validRangeCache);
+					OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
 
-						Range<Double> validRangeSpan = validRange.span();
+					Double lowValue = miningField.getLowValue();
+					Double highValue = miningField.getHighValue();
 
-						Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
+					Double doubleValue = null;
 
-						return !validRangeSpan.contains(doubleValue);
+					switch(outlierTreatmentMethod){
+						case AS_MISSING_VALUES:
+						case AS_EXTREME_VALUES:
+							{
+								if(lowValue == null || highValue == null){
+									throw new InvalidFeatureException(miningField);
+								} // End if
+
+								if((lowValue).compareTo(highValue) > 0){
+									throw new InvalidFeatureException(miningField);
+								}
+
+								doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
+							}
+							break;
+						default:
+							break;
+					} // End switch
+
+					switch(outlierTreatmentMethod){
+						case AS_IS:
+							break;
+						case AS_MISSING_VALUES:
+							{
+								if(TypeUtil.compare(DataType.DOUBLE, doubleValue, lowValue) < 0 || TypeUtil.compare(DataType.DOUBLE, doubleValue, highValue) > 0){
+									return FieldValueUtil.createMissingValue(dataField, miningField);
+								}
+							}
+							break;
+						case AS_EXTREME_VALUES:
+							{
+								if(TypeUtil.compare(DataType.DOUBLE, doubleValue, lowValue) < 0){
+									value = lowValue;
+								} else
+
+								if(TypeUtil.compare(DataType.DOUBLE, doubleValue, highValue) > 0){
+									value = highValue;
+								}
+							}
+							break;
+						default:
+							throw new UnsupportedFeatureException(miningField, outlierTreatmentMethod);
 					}
+
+					return FieldValueUtil.create(dataField, miningField, value);
 				}
-				break;
-			case CATEGORICAL:
-			case ORDINAL:
-				break;
+			case INVALID:
+				{
+					InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
+
+					switch(invalidValueTreatmentMethod){
+						case AS_IS:
+							break;
+						case AS_MISSING:
+							return FieldValueUtil.createMissingValue(dataField, miningField);
+						case RETURN_INVALID:
+							throw new InvalidResultException(miningField);
+						default:
+							throw new UnsupportedFeatureException(miningField, invalidValueTreatmentMethod);
+					}
+
+					return FieldValueUtil.create(dataField, miningField, value);
+				}
+			case MISSING:
+				{
+					return FieldValueUtil.createMissingValue(dataField, miningField);
+				}
 			default:
-				throw new UnsupportedFeatureException(miningField, opType);
+				break;
 		}
 
-		return false;
+		throw new EvaluationException();
 	}
 
+	@SuppressWarnings (
+		value = {"fallthrough"}
+	)
 	static
-	public boolean isMissing(DataField dataField, Object value){
+	private Value.Property getStatus(DataField dataField, MiningField miningField, Object value){
 
 		if(value == null){
-			return true;
+			return Value.Property.MISSING;
 		}
 
 		DataType dataType = dataField.getDataType();
+
+		boolean hasValidSpace = false;
 
 		List<Value> fieldValues = dataField.getValues();
 		for(Value fieldValue : fieldValues){
 			Value.Property property = fieldValue.getProperty();
 
 			switch(property){
+				case VALID:
+					hasValidSpace = true;
+					// Falls through
+				case INVALID:
 				case MISSING:
 					{
 						boolean equals = equals(dataType, value, fieldValue.getValue());
+
 						if(equals){
-							return true;
+							return property;
 						}
 					}
 					break;
 				default:
-					break;
+					throw new UnsupportedFeatureException(fieldValue, property);
 			}
 		}
 
-		return false;
-	}
-
-	static
-	public boolean isInvalid(DataField dataField, MiningField miningField, Object value){
-
-		if(value == null){
-			return false;
-		}
-
-		return !isValid(dataField, miningField, value);
-	}
-
-	@SuppressWarnings (
-		value = "fallthrough"
-	)
-	static
-	public boolean isValid(DataField dataField, MiningField miningField, Object value){
-
-		if(value == null){
-			return false;
-		}
-
-		DataType dataType = dataField.getDataType();
-
 		List<Interval> intervals = dataField.getIntervals();
+
+		PMMLObject locatable = miningField;
 
 		OpType opType = miningField.getOpType();
 		if(opType == null){
+			locatable = dataField;
+
 			opType = dataField.getOpType();
 		}
 
@@ -249,10 +207,10 @@ public class ArgumentUtil {
 
 						Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
 
-						return validRanges.contains(doubleValue);
+						return (validRanges.contains(doubleValue) ? Value.Property.VALID : Value.Property.INVALID);
 					}
 				}
-				// Falls through
+				break;
 			case CATEGORICAL:
 			case ORDINAL:
 				{
@@ -260,49 +218,19 @@ public class ArgumentUtil {
 					if(intervals.size() > 0){
 						throw new InvalidFeatureException(dataField);
 					}
-
-					int validValueCount = 0;
-
-					List<Value> fieldValues = dataField.getValues();
-					for(Value fieldValue : fieldValues){
-						Value.Property property = fieldValue.getProperty();
-
-						switch(property){
-							case VALID:
-								{
-									validValueCount += 1;
-
-									boolean equals = equals(dataType, value, fieldValue.getValue());
-									if(equals){
-										return true;
-									}
-								}
-								break;
-							case INVALID:
-							case MISSING:
-								{
-									boolean equals = equals(dataType, value, fieldValue.getValue());
-									if(equals){
-										return false;
-									}
-								}
-								break;
-							default:
-								throw new UnsupportedFeatureException(fieldValue, property);
-						}
-					}
-
-					// "If a field contains at least one Value element where the value of property is valid, then the set of Value elements completely defines the set of valid values"
-					if(validValueCount > 0){
-						return false;
-					}
-
-					// "Any value is valid by default"
-					return true;
 				}
+				break;
 			default:
-				throw new UnsupportedFeatureException(miningField, opType);
+				throw new UnsupportedFeatureException(locatable, opType);
 		}
+
+		// "If a field contains at least one Value element where the value of property is valid, then the set of Value elements completely defines the set of valid values"
+		if(hasValidSpace){
+			return Value.Property.INVALID;
+		}
+
+		// "Any value is valid by default"
+		return Value.Property.VALID;
 	}
 
 	static
