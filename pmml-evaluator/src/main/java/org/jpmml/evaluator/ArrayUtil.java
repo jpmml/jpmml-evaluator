@@ -51,9 +51,9 @@ public class ArrayUtil {
 			return n.intValue();
 		}
 
-		List<String> context = getContent(array);
+		List<String> content = getContent(array);
 
-		return context.size();
+		return content.size();
 	}
 
 	static
