@@ -672,7 +672,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		@Override
 		public FieldValue prepare(String value){
-			return ArgumentUtil.prepare(getDataField(), getMiningField(), value);
+			return FieldValueUtil.prepare(getDataField(), getMiningField(), value);
 		}
 
 		public DataField getDataField(){

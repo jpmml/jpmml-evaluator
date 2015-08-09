@@ -32,8 +32,8 @@ public class FieldValueTest {
 
 	@Test
 	public void categoricalString(){
-		FieldValue zero = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "0");
-		FieldValue one = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "1");
+		FieldValue zero = create(DataType.STRING, OpType.CATEGORICAL, "0");
+		FieldValue one = create(DataType.STRING, OpType.CATEGORICAL, "1");
 
 		assertEquals((Integer)0, zero.asInteger());
 		assertEquals(Boolean.FALSE, zero.asBoolean());
@@ -50,8 +50,8 @@ public class FieldValueTest {
 
 		assertTrue(louder.equalsString("louder"));
 
-		assertTrue(louder.equalsValue(FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "louder")));
-		assertTrue(louder.equalsValue(FieldValueUtil.create(DataType.STRING, OpType.ORDINAL, "louder")));
+		assertTrue(louder.equalsValue(create(DataType.STRING, OpType.CATEGORICAL, "louder")));
+		assertTrue(louder.equalsValue(create(DataType.STRING, OpType.ORDINAL, "louder")));
 
 		// Implicit (ie. lexicographic) ordering
 		louder.setOrdering(null);
@@ -78,7 +78,7 @@ public class FieldValueTest {
 
 	@Test
 	public void continuousInteger(){
-		FieldValue zero = FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, 0);
+		FieldValue zero = create(DataType.INTEGER, OpType.CONTINUOUS, 0);
 
 		assertTrue(zero.compareToString("-1") > 0);
 		assertTrue(zero.compareToString("-1.5") > 0);
@@ -92,7 +92,7 @@ public class FieldValueTest {
 
 	@Test
 	public void categoricalInteger(){
-		FieldValue zero = FieldValueUtil.create(DataType.INTEGER, OpType.CATEGORICAL, 0);
+		FieldValue zero = create(DataType.INTEGER, OpType.CATEGORICAL, 0);
 
 		try {
 			zero.compareToString("0");
@@ -105,8 +105,8 @@ public class FieldValueTest {
 
 	@Test
 	public void categoricalBoolean(){
-		FieldValue zero = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
-		FieldValue one = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
+		FieldValue zero = create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
+		FieldValue one = create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
 
 		assertTrue(zero.compareToString("0") == 0);
 		assertTrue(zero.compareToString("0.0") == 0);
@@ -119,15 +119,20 @@ public class FieldValueTest {
 
 	@Test
 	public void categoricalDaysSinceDate(){
-		FieldValue period = FieldValueUtil.create(DataType.DATE_DAYS_SINCE_1960, OpType.CATEGORICAL, "1960-01-03");
+		FieldValue period = create(DataType.DATE_DAYS_SINCE_1960, OpType.CATEGORICAL, "1960-01-03");
 
 		assertEquals((Integer)2, period.asInteger());
 	}
 
 	@Test
 	public void categoricalSecondsSinceDate(){
-		FieldValue period = FieldValueUtil.create(DataType.DATE_TIME_SECONDS_SINCE_1960, OpType.CATEGORICAL, "1960-01-03T03:30:03");
+		FieldValue period = create(DataType.DATE_TIME_SECONDS_SINCE_1960, OpType.CATEGORICAL, "1960-01-03T03:30:03");
 
 		assertEquals((Integer)185403, period.asInteger());
+	}
+
+	static
+	private FieldValue create(DataType dataType, OpType opType, Object value){
+		return FieldValueUtil.create(dataType, opType, value);
 	}
 }

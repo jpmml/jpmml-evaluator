@@ -234,7 +234,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			throw new EvaluationException();
 		}
 
-		return ArgumentUtil.prepare(dataField, miningField, value);
+		return FieldValueUtil.prepare(dataField, miningField, value);
 	}
 
 	@Override

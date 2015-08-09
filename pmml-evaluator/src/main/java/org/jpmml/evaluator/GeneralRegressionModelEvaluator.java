@@ -278,7 +278,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new UnsupportedFeatureException(dataField, opType);
 		}
 
-		List<String> targetCategories = ArgumentUtil.getTargetCategories(dataField);
+		List<String> targetCategories = FieldValueUtil.getTargetCategories(dataField);
 		if(targetCategories.size() > 0 && targetCategories.size() < 2){
 			throw new InvalidFeatureException(dataField);
 		}

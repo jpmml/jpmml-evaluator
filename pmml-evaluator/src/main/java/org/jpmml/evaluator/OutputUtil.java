@@ -466,7 +466,7 @@ public class OutputUtil {
 		OpType opType = dataField.getOpType();
 
 		if((OpType.CATEGORICAL).equals(opType) || (OpType.ORDINAL).equals(opType)){
-			Value value = ArgumentUtil.getValidValue(dataField, object);
+			Value value = FieldValueUtil.getValidValue(dataField, object);
 
 			if(value != null){
 				String displayValue = value.getDisplayValue();

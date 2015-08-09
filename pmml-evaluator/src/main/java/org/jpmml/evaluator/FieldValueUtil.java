@@ -18,18 +18,31 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Function;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
+import com.google.common.collect.RangeSet;
+import com.google.common.collect.TreeRangeSet;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldUsageType;
+import org.dmg.pmml.Interval;
+import org.dmg.pmml.InvalidValueTreatmentMethodType;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.OutlierTreatmentMethodType;
+import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TypeDefinitionField;
 import org.dmg.pmml.Value;
@@ -37,6 +50,192 @@ import org.dmg.pmml.Value;
 public class FieldValueUtil {
 
 	private FieldValueUtil(){
+	}
+
+	static
+	public FieldValue prepare(DataField dataField, MiningField miningField, Object value){
+		DataType dataType = dataField.getDataType();
+		OpType opType = dataField.getOpType();
+
+		if(dataType == null || opType == null){
+			throw new InvalidFeatureException(dataField);
+		} // End if
+
+		if(value != null){
+
+			try {
+				value = TypeUtil.parseOrCast(dataType, value);
+			} catch(IllegalArgumentException iae){
+				// Ignored
+			}
+		}
+
+		Value.Property status = getStatus(dataField, miningField, value);
+		switch(status){
+			case VALID:
+				{
+					OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
+
+					Double lowValue = miningField.getLowValue();
+					Double highValue = miningField.getHighValue();
+
+					Double doubleValue = null;
+
+					switch(outlierTreatmentMethod){
+						case AS_MISSING_VALUES:
+						case AS_EXTREME_VALUES:
+							{
+								if(lowValue == null || highValue == null){
+									throw new InvalidFeatureException(miningField);
+								} // End if
+
+								if((lowValue).compareTo(highValue) > 0){
+									throw new InvalidFeatureException(miningField);
+								}
+
+								doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
+							}
+							break;
+						default:
+							break;
+					} // End switch
+
+					switch(outlierTreatmentMethod){
+						case AS_IS:
+							break;
+						case AS_MISSING_VALUES:
+							{
+								if(TypeUtil.compare(DataType.DOUBLE, doubleValue, lowValue) < 0 || TypeUtil.compare(DataType.DOUBLE, doubleValue, highValue) > 0){
+									return createMissingValue(dataField, miningField);
+								}
+							}
+							break;
+						case AS_EXTREME_VALUES:
+							{
+								if(TypeUtil.compare(DataType.DOUBLE, doubleValue, lowValue) < 0){
+									value = lowValue;
+								} else
+
+								if(TypeUtil.compare(DataType.DOUBLE, doubleValue, highValue) > 0){
+									value = highValue;
+								}
+							}
+							break;
+						default:
+							throw new UnsupportedFeatureException(miningField, outlierTreatmentMethod);
+					}
+
+					return create(dataField, miningField, value);
+				}
+			case INVALID:
+				{
+					InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
+
+					switch(invalidValueTreatmentMethod){
+						case AS_IS:
+							break;
+						case AS_MISSING:
+							return createMissingValue(dataField, miningField);
+						case RETURN_INVALID:
+							throw new InvalidResultException(miningField);
+						default:
+							throw new UnsupportedFeatureException(miningField, invalidValueTreatmentMethod);
+					}
+
+					return create(dataField, miningField, value);
+				}
+			case MISSING:
+				{
+					return createMissingValue(dataField, miningField);
+				}
+			default:
+				break;
+		}
+
+		throw new EvaluationException();
+	}
+
+	@SuppressWarnings (
+		value = {"fallthrough"}
+	)
+	static
+	private Value.Property getStatus(DataField dataField, MiningField miningField, Object value){
+
+		if(value == null){
+			return Value.Property.MISSING;
+		}
+
+		DataType dataType = dataField.getDataType();
+
+		boolean hasValidSpace = false;
+
+		List<Value> fieldValues = dataField.getValues();
+		for(Value fieldValue : fieldValues){
+			Value.Property property = fieldValue.getProperty();
+
+			switch(property){
+				case VALID:
+					hasValidSpace = true;
+					// Falls through
+				case INVALID:
+				case MISSING:
+					{
+						boolean equals = equals(dataType, value, fieldValue.getValue());
+
+						if(equals){
+							return property;
+						}
+					}
+					break;
+				default:
+					throw new UnsupportedFeatureException(fieldValue, property);
+			}
+		}
+
+		List<Interval> intervals = dataField.getIntervals();
+
+		PMMLObject locatable = miningField;
+
+		OpType opType = miningField.getOpType();
+		if(opType == null){
+			locatable = dataField;
+
+			opType = dataField.getOpType();
+		}
+
+		switch(opType){
+			case CONTINUOUS:
+				{
+					// "If intervals are present, then a value that is outside the intervals is considered invalid"
+					if(intervals.size() > 0){
+						RangeSet<Double> validRanges = getValidRanges(dataField);
+
+						Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
+
+						return (validRanges.contains(doubleValue) ? Value.Property.VALID : Value.Property.INVALID);
+					}
+				}
+				break;
+			case CATEGORICAL:
+			case ORDINAL:
+				{
+					// "Intervals are not allowed for non-continuous fields"
+					if(intervals.size() > 0){
+						throw new InvalidFeatureException(dataField);
+					}
+				}
+				break;
+			default:
+				throw new UnsupportedFeatureException(locatable, opType);
+		}
+
+		// "If a field contains at least one Value element where the value of property is valid, then the set of Value elements completely defines the set of valid values"
+		if(hasValidSpace){
+			return Value.Property.INVALID;
+		}
+
+		// "Any value is valid by default"
+		return Value.Property.VALID;
 	}
 
 	static
@@ -212,6 +411,83 @@ public class FieldValueUtil {
 	}
 
 	static
+	public Value getValidValue(TypeDefinitionField field, Object value){
+		DataType dataType = field.getDataType();
+
+		List<Value> fieldValues = field.getValues();
+		for(Value fieldValue : fieldValues){
+			Value.Property property = fieldValue.getProperty();
+
+			switch(property){
+				case VALID:
+					{
+						boolean equals = equals(dataType, value, fieldValue.getValue());
+						if(equals){
+							return fieldValue;
+						}
+					}
+					break;
+				default:
+					break;
+			}
+		}
+
+		return null;
+	}
+
+	static
+	public List<Value> getValidValues(TypeDefinitionField field){
+		List<Value> fieldValues = field.getValues();
+		if(fieldValues.isEmpty()){
+			return Collections.emptyList();
+		}
+
+		List<Value> result = new ArrayList<>();
+
+		for(Value fieldValue : fieldValues){
+			Value.Property property = fieldValue.getProperty();
+
+			switch(property){
+				case VALID:
+					result.add(fieldValue);
+					break;
+				default:
+					break;
+			}
+		}
+
+		return result;
+	}
+
+	static
+	public List<String> getTargetCategories(TypeDefinitionField field){
+		return CacheUtil.getValue(field, FieldValueUtil.targetCategoryCache);
+	}
+
+	static
+	public RangeSet<Double> getValidRanges(DataField dataField){
+		return CacheUtil.getValue(dataField, FieldValueUtil.validRangeCache);
+	}
+
+	static
+	private boolean equals(DataType dataType, Object value, String referenceValue){
+
+		try {
+			return TypeUtil.equals(dataType, value, TypeUtil.parseOrCast(dataType, referenceValue));
+		} catch(IllegalArgumentException iae){
+
+			// The String representation of invalid or missing values (eg. "N/A") may not be parseable to the requested representation
+			try {
+				return TypeUtil.equals(DataType.STRING, value, referenceValue);
+			} catch(TypeCheckException tce){
+				// Ignored
+			}
+
+			throw iae;
+		}
+	}
+
+	static
 	private <E> E override(E value, E overrideValue){
 
 		if(overrideValue != null){
@@ -222,8 +498,22 @@ public class FieldValueUtil {
 	}
 
 	static
+	private RangeSet<Double> parseValidRanges(DataField dataField){
+		RangeSet<Double> result = TreeRangeSet.create();
+
+		List<Interval> intervals = dataField.getIntervals();
+		for(Interval interval : intervals){
+			Range<Double> range = DiscretizationUtil.toRange(interval);
+
+			result.add(range);
+		}
+
+		return result;
+	}
+
+	static
 	private List<?> getOrdering(TypeDefinitionField field, final DataType dataType){
-		List<Value> values = ArgumentUtil.getValidValues(field);
+		List<Value> values = getValidValues(field);
 		if(values.isEmpty()){
 			return null;
 		}
@@ -238,4 +528,35 @@ public class FieldValueUtil {
 
 		return Lists.newArrayList(Iterables.transform(values, function));
 	}
+
+	private static final LoadingCache<TypeDefinitionField, List<String>> targetCategoryCache = CacheUtil.buildLoadingCache(new CacheLoader<TypeDefinitionField, List<String>>(){
+
+		@Override
+		public List<String> load(TypeDefinitionField field){
+			List<Value> values = getValidValues(field);
+
+			Function<Value, String> function = new Function<Value, String>(){
+
+				@Override
+				public String apply(Value value){
+					String result = value.getValue();
+					if(result == null){
+						throw new InvalidFeatureException(value);
+					}
+
+					return result;
+				}
+			};
+
+			return ImmutableList.copyOf(Iterables.transform(values, function));
+		}
+	});
+
+	private static final LoadingCache<DataField, RangeSet<Double>> validRangeCache = CacheUtil.buildLoadingCache(new CacheLoader<DataField, RangeSet<Double>>(){
+
+		@Override
+		public RangeSet<Double> load(DataField dataField){
+			return ImmutableRangeSet.copyOf(parseValidRanges(dataField));
+		}
+	});
 }
