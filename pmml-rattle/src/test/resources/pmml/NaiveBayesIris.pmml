@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_2 http://www.dmg.org/v4-2/pmml-4-2.xsd">
- <Header copyright="Copyright (c) 2014 vfed" description="NaiveBayes Model">
+ <Header copyright="Copyright (c) 2015 vfed" description="NaiveBayes Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-07-06 23:51:05</Timestamp>
+  <Timestamp>2015-08-09 17:44:24</Timestamp>
  </Header>
- <DataDictionary numberOfFields="6">
+ <DataDictionary numberOfFields="5">
   <DataField name="Species" optype="categorical" dataType="string">
    <Value value="setosa"/>
    <Value value="versicolor"/>
@@ -15,9 +15,6 @@
   <DataField name="Sepal_Width" optype="continuous" dataType="double"/>
   <DataField name="Petal_Length" optype="continuous" dataType="double"/>
   <DataField name="Petal_Width" optype="continuous" dataType="double"/>
-  <DataField name="DiscretePlaceHolder" optype="categorical" dataType="string">
-   <Value value="pseudoValue"/>
-  </DataField>
  </DataDictionary>
  <NaiveBayesModel modelName="naiveBayes_Model" functionName="classification" threshold="0">
   <MiningSchema>
@@ -26,7 +23,6 @@
    <MiningField name="Sepal_Width" usageType="active"/>
    <MiningField name="Petal_Length" usageType="active"/>
    <MiningField name="Petal_Width" usageType="active"/>
-   <MiningField name="DiscretePlaceHolder" usageType="active"/>
   </MiningSchema>
   <Output>
    <OutputField name="Predicted_Species" feature="predictedValue"/>
@@ -35,74 +31,57 @@
    <OutputField name="Probability_virginica" optype="continuous" dataType="double" feature="probability" value="virginica"/>
   </Output>
   <BayesInputs>
-   <Extension>
-    <BayesInput fieldName="Sepal_Length">
-     <TargetValueStats>
-      <TargetValueStat value="setosa">
-       <GaussianDistribution mean="5.006" variance="0.124248979591837"/>
-      </TargetValueStat>
-      <TargetValueStat value="versicolor">
-       <GaussianDistribution mean="5.936" variance="0.266432653061224"/>
-      </TargetValueStat>
-      <TargetValueStat value="virginica">
-       <GaussianDistribution mean="6.588" variance="0.404342857142857"/>
-      </TargetValueStat>
-     </TargetValueStats>
-    </BayesInput>
-   </Extension>
-   <Extension>
-    <BayesInput fieldName="Sepal_Width">
-     <TargetValueStats>
-      <TargetValueStat value="setosa">
-       <GaussianDistribution mean="3.428" variance="0.143689795918367"/>
-      </TargetValueStat>
-      <TargetValueStat value="versicolor">
-       <GaussianDistribution mean="2.77" variance="0.0984693877551021"/>
-      </TargetValueStat>
-      <TargetValueStat value="virginica">
-       <GaussianDistribution mean="2.974" variance="0.104004081632653"/>
-      </TargetValueStat>
-     </TargetValueStats>
-    </BayesInput>
-   </Extension>
-   <Extension>
-    <BayesInput fieldName="Petal_Length">
-     <TargetValueStats>
-      <TargetValueStat value="setosa">
-       <GaussianDistribution mean="1.462" variance="0.0301591836734694"/>
-      </TargetValueStat>
-      <TargetValueStat value="versicolor">
-       <GaussianDistribution mean="4.26" variance="0.220816326530612"/>
-      </TargetValueStat>
-      <TargetValueStat value="virginica">
-       <GaussianDistribution mean="5.552" variance="0.304587755102041"/>
-      </TargetValueStat>
-     </TargetValueStats>
-    </BayesInput>
-   </Extension>
-   <Extension>
-    <BayesInput fieldName="Petal_Width">
-     <TargetValueStats>
-      <TargetValueStat value="setosa">
-       <GaussianDistribution mean="0.246" variance="0.0111061224489796"/>
-      </TargetValueStat>
-      <TargetValueStat value="versicolor">
-       <GaussianDistribution mean="1.326" variance="0.0391061224489796"/>
-      </TargetValueStat>
-      <TargetValueStat value="virginica">
-       <GaussianDistribution mean="2.026" variance="0.0754326530612245"/>
-      </TargetValueStat>
-     </TargetValueStats>
-    </BayesInput>
-   </Extension>
-   <BayesInput fieldName="DiscretePlaceHolder">
-    <PairCounts value="pseudoValue">
-     <TargetValueCounts>
-      <TargetValueCount value="setosa" count="50"/>
-      <TargetValueCount value="versicolor" count="50"/>
-      <TargetValueCount value="virginica" count="50"/>
-     </TargetValueCounts>
-    </PairCounts>
+   <BayesInput fieldName="Sepal_Length">
+    <TargetValueStats>
+     <TargetValueStat value="setosa">
+      <GaussianDistribution mean="5.006" variance="0.124248979591837"/>
+     </TargetValueStat>
+     <TargetValueStat value="versicolor">
+      <GaussianDistribution mean="5.936" variance="0.266432653061224"/>
+     </TargetValueStat>
+     <TargetValueStat value="virginica">
+      <GaussianDistribution mean="6.588" variance="0.404342857142857"/>
+     </TargetValueStat>
+    </TargetValueStats>
+   </BayesInput>
+   <BayesInput fieldName="Sepal_Width">
+    <TargetValueStats>
+     <TargetValueStat value="setosa">
+      <GaussianDistribution mean="3.428" variance="0.143689795918367"/>
+     </TargetValueStat>
+     <TargetValueStat value="versicolor">
+      <GaussianDistribution mean="2.77" variance="0.0984693877551021"/>
+     </TargetValueStat>
+     <TargetValueStat value="virginica">
+      <GaussianDistribution mean="2.974" variance="0.104004081632653"/>
+     </TargetValueStat>
+    </TargetValueStats>
+   </BayesInput>
+   <BayesInput fieldName="Petal_Length">
+    <TargetValueStats>
+     <TargetValueStat value="setosa">
+      <GaussianDistribution mean="1.462" variance="0.0301591836734694"/>
+     </TargetValueStat>
+     <TargetValueStat value="versicolor">
+      <GaussianDistribution mean="4.26" variance="0.220816326530612"/>
+     </TargetValueStat>
+     <TargetValueStat value="virginica">
+      <GaussianDistribution mean="5.552" variance="0.304587755102041"/>
+     </TargetValueStat>
+    </TargetValueStats>
+   </BayesInput>
+   <BayesInput fieldName="Petal_Width">
+    <TargetValueStats>
+     <TargetValueStat value="setosa">
+      <GaussianDistribution mean="0.246" variance="0.0111061224489796"/>
+     </TargetValueStat>
+     <TargetValueStat value="versicolor">
+      <GaussianDistribution mean="1.326" variance="0.0391061224489796"/>
+     </TargetValueStat>
+     <TargetValueStat value="virginica">
+      <GaussianDistribution mean="2.026" variance="0.0754326530612245"/>
+     </TargetValueStat>
+    </TargetValueStats>
    </BayesInput>
   </BayesInputs>
   <BayesOutput fieldName="Species">

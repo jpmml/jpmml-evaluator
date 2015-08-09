@@ -19,6 +19,22 @@ writeIris = function(classes, probabilities, file){
 	writeCsv(result, file)
 }
 
+fixGeneralRegressionOutput = function(pmml, targetFieldName){
+	generalRegressionModelNode = pmml["GeneralRegressionModel"][[1]]
+
+	outputNode = generalRegressionModelNode["Output"][[1]]
+
+	outputFieldNode = xmlNode("OutputField", attrs = list(name = "Probability_0", targetField = targetFieldName, feature = "probability", value = "0"))
+
+	outputNode = append.xmlNode(outputNode, outputFieldNode)
+
+	generalRegressionModelNode["Output"][[1]] = outputNode
+
+	pmml["GeneralRegressionModel"][[1]] = generalRegressionModelNode
+
+	return (pmml)
+}
+
 generateDecisionTreeIris = function(){
 	rpart = rpart(irisFormula, irisData)
 	saveXML(pmml(rpart), "pmml/DecisionTreeIris.pmml")
@@ -119,7 +135,12 @@ writeVersicolor = function(classes, probabilities, file){
 
 generateGeneralRegressionIris = function(){
 	glm = glm(versicolorFormula, versicolorData, family = binomial(link = probit))
-	saveXML(pmml(glm), "pmml/GeneralRegressionIris.pmml")
+
+	glmPmml = pmml(glm)
+
+	glmPmml = fixGeneralRegressionOutput(glmPmml, "versicolor")
+
+	saveXML(glmPmml, "pmml/GeneralRegressionIris.pmml")
 
 	probabilities = predict(glm, type = "response")
 	classes = as.character(as.integer(probabilities > 0.5))
@@ -155,7 +176,12 @@ generateDecisionTreeAudit = function(){
 
 generateGeneralRegressionAudit = function(){
 	glm = glm(auditFormula, auditData, family = binomial)
-	saveXML(pmml(glm), "pmml/GeneralRegressionAudit.pmml")
+
+	glmPmml = pmml(glm)
+
+	glmPmml = fixGeneralRegressionOutput(glmPmml, "Adjusted")
+
+	saveXML(glmPmml, "pmml/GeneralRegressionAudit.pmml")
 
 	probabilities = predict(glm, type = "response")
 	classes = as.character(as.integer(probabilities > 0.5))

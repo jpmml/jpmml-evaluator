@@ -3,10 +3,10 @@
  <Header copyright="Copyright (c) 2015 vfed" description="CoxPH Survival Regression Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2015-03-28 16:30:03</Timestamp>
+  <Timestamp>2015-08-09 17:44:58</Timestamp>
  </Header>
  <DataDictionary numberOfFields="6">
-  <DataField name="survival" optype="continuous" dataType="double"/>
+  <DataField name="hazard" optype="continuous" dataType="double"/>
   <DataField name="age" optype="continuous" dataType="double"/>
   <DataField name="ph.ecog" optype="categorical" dataType="string"/>
   <DataField name="time" optype="continuous" dataType="double"/>
@@ -15,7 +15,7 @@
  </DataDictionary>
  <GeneralRegressionModel modelType="CoxRegression" modelName="CoxPH_Survival_Regression_Model" functionName="regression" algorithmName="coxph" endTimeVariable="time" statusVariable="status" baselineStrataVariable="inst">
   <MiningSchema>
-   <MiningField name="survival" usageType="predicted"/>
+   <MiningField name="hazard" usageType="predicted"/>
    <MiningField name="age" usageType="active"/>
    <MiningField name="ph.ecog" usageType="active"/>
    <MiningField name="time" usageType="active"/>
@@ -23,12 +23,12 @@
    <MiningField name="inst" usageType="active"/>
   </MiningSchema>
   <Output>
-   <OutputField name="Predicted_survival" feature="predictedValue"/>
-   <OutputField name="cumulativeHazard" feature="transformedValue">
-    <Apply function="*">
-     <Constant>-1.0</Constant>
-     <Apply function="ln">
-      <FieldRef field="Predicted_survival"/>
+   <OutputField name="Predicted_hazard" feature="predictedValue"/>
+   <OutputField name="SurvivalProbability" feature="transformedValue">
+    <Apply function="exp">
+     <Apply function="*">
+      <Constant>-1.0</Constant>
+      <FieldRef field="Predicted_hazard"/>
      </Apply>
     </Apply>
    </OutputField>

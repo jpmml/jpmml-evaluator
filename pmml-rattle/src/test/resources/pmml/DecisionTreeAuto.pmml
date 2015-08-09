@@ -3,7 +3,7 @@
  <Header copyright="Copyright (c) 2015 vfed" description="RPart Decision Tree Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2015-03-30 11:11:09</Timestamp>
+  <Timestamp>2015-08-09 17:45:06</Timestamp>
  </Header>
  <DataDictionary numberOfFields="8">
   <DataField name="mpg" optype="continuous" dataType="double"/>
@@ -39,7 +39,7 @@
    <Value value="3"/>
   </DataField>
  </DataDictionary>
- <TreeModel modelName="RPart_Model" functionName="regression" algorithmName="rpart" splitCharacteristic="binarySplit" missingValueStrategy="defaultChild">
+ <TreeModel modelName="RPart_Model" functionName="regression" algorithmName="rpart" splitCharacteristic="binarySplit" missingValueStrategy="defaultChild" noTrueChildStrategy="returnLastPrediction">
   <MiningSchema>
    <MiningField name="mpg" usageType="predicted"/>
    <MiningField name="cylinders" usageType="active"/>

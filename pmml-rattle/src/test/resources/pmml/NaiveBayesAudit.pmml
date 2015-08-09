@@ -3,7 +3,7 @@
  <Header copyright="Copyright (c) 2015 vfed" description="NaiveBayes Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2015-03-29 14:10:58</Timestamp>
+  <Timestamp>2015-08-09 17:44:35</Timestamp>
  </Header>
  <DataDictionary numberOfFields="10">
   <DataField name="Adjusted" optype="categorical" dataType="string">
@@ -89,18 +89,16 @@
    <OutputField name="Probability_1" optype="continuous" dataType="double" feature="probability" value="1"/>
   </Output>
   <BayesInputs>
-   <Extension>
-    <BayesInput fieldName="Age">
-     <TargetValueStats>
-      <TargetValueStat value="0">
-       <GaussianDistribution mean="36.5358126721763" variance="173.689274804305"/>
-      </TargetValueStat>
-      <TargetValueStat value="1">
-       <GaussianDistribution mean="44.0425055928412" variance="112.462314784161"/>
-      </TargetValueStat>
-     </TargetValueStats>
-    </BayesInput>
-   </Extension>
+   <BayesInput fieldName="Age">
+    <TargetValueStats>
+     <TargetValueStat value="0">
+      <GaussianDistribution mean="36.5358126721763" variance="173.689274804305"/>
+     </TargetValueStat>
+     <TargetValueStat value="1">
+      <GaussianDistribution mean="44.0425055928412" variance="112.462314784161"/>
+     </TargetValueStat>
+    </TargetValueStats>
+   </BayesInput>
    <BayesInput fieldName="Employment">
     <PairCounts value="Consultant">
      <TargetValueCounts>
@@ -367,18 +365,16 @@
      </TargetValueCounts>
     </PairCounts>
    </BayesInput>
-   <Extension>
-    <BayesInput fieldName="Income">
-     <TargetValueStats>
-      <TargetValueStat value="0">
-       <GaussianDistribution mean="92021.7223553719" variance="4831743475.64958"/>
-      </TargetValueStat>
-      <TargetValueStat value="1">
-       <GaussianDistribution mean="59662.8827516779" variance="4145742866.94502"/>
-      </TargetValueStat>
-     </TargetValueStats>
-    </BayesInput>
-   </Extension>
+   <BayesInput fieldName="Income">
+    <TargetValueStats>
+     <TargetValueStat value="0">
+      <GaussianDistribution mean="92021.7223553719" variance="4831743475.64958"/>
+     </TargetValueStat>
+     <TargetValueStat value="1">
+      <GaussianDistribution mean="59662.8827516779" variance="4145742866.94502"/>
+     </TargetValueStat>
+    </TargetValueStats>
+   </BayesInput>
    <BayesInput fieldName="Gender">
     <PairCounts value="Female">
      <TargetValueCounts>
@@ -393,30 +389,26 @@
      </TargetValueCounts>
     </PairCounts>
    </BayesInput>
-   <Extension>
-    <BayesInput fieldName="Deductions">
-     <TargetValueStats>
-      <TargetValueStat value="0">
-       <GaussianDistribution mean="33.2070707070707" variance="41692.5672460883"/>
-      </TargetValueStat>
-      <TargetValueStat value="1">
-       <GaussianDistribution mean="183.821029082774" variance="341086.761619566"/>
-      </TargetValueStat>
-     </TargetValueStats>
-    </BayesInput>
-   </Extension>
-   <Extension>
-    <BayesInput fieldName="Hours">
-     <TargetValueStats>
-      <TargetValueStat value="0">
-       <GaussianDistribution mean="39.1914600550964" variance="133.38992012728"/>
-      </TargetValueStat>
-      <TargetValueStat value="1">
-       <GaussianDistribution mean="45.0357941834452" variance="118.366428908217"/>
-      </TargetValueStat>
-     </TargetValueStats>
-    </BayesInput>
-   </Extension>
+   <BayesInput fieldName="Deductions">
+    <TargetValueStats>
+     <TargetValueStat value="0">
+      <GaussianDistribution mean="33.2070707070707" variance="41692.5672460883"/>
+     </TargetValueStat>
+     <TargetValueStat value="1">
+      <GaussianDistribution mean="183.821029082774" variance="341086.761619566"/>
+     </TargetValueStat>
+    </TargetValueStats>
+   </BayesInput>
+   <BayesInput fieldName="Hours">
+    <TargetValueStats>
+     <TargetValueStat value="0">
+      <GaussianDistribution mean="39.1914600550964" variance="133.38992012728"/>
+     </TargetValueStat>
+     <TargetValueStat value="1">
+      <GaussianDistribution mean="45.0357941834452" variance="118.366428908217"/>
+     </TargetValueStat>
+    </TargetValueStats>
+   </BayesInput>
   </BayesInputs>
   <BayesOutput fieldName="Adjusted">
    <TargetValueCounts>

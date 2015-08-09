@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <PMML version="4.1" xmlns="http://www.dmg.org/PMML-4_1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_1 http://www.dmg.org/v4-1/pmml-4-1.xsd">
- <Header copyright="Copyright (c) 2014 vfed" description="arules association rules model">
+ <Header copyright="Copyright (c) 2015 vfed" description="arules association rules model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-07-08 17:05:45</Timestamp>
+  <Timestamp>2015-08-09 17:44:09</Timestamp>
  </Header>
  <DataDictionary numberOfFields="2">
   <DataField name="transaction" optype="categorical" dataType="string"/>
@@ -14,12 +14,6 @@
    <MiningField name="transaction" usageType="group"/>
    <MiningField name="item" usageType="active"/>
   </MiningSchema>
-  <Output>
-   <OutputField name="ruleId" feature="ruleValue" ruleFeature="ruleId" algorithm="exclusiveRecommendation" rank="1" rankBasis="support"/>
-   <OutputField name="support" feature="ruleValue" ruleFeature="support" algorithm="exclusiveRecommendation" rank="1" rankBasis="support"/>
-   <OutputField name="confidence" feature="ruleValue" ruleFeature="confidence" algorithm="exclusiveRecommendation" rank="1" rankBasis="support"/>
-   <OutputField name="lift" feature="ruleValue" ruleFeature="lift" algorithm="exclusiveRecommendation" rank="1" rankBasis="support"/>
-  </Output>
   <Item id="1" value="beer"/>
   <Item id="2" value="cannedmeat"/>
   <Item id="3" value="cannedveg"/>
@@ -865,5 +859,11 @@
   <AssociationRule support="0.00851970181043664" confidence="0.8" lift="2.47920792079208" antecedent="115" consequent="118"/>
   <AssociationRule support="0.00851970181043664" confidence="0.888888888888889" lift="2.76379690949227" antecedent="116" consequent="119"/>
   <AssociationRule support="0.00851970181043664" confidence="1" lift="3.20477815699659" antecedent="117" consequent="120"/>
+  <Output>
+   <OutputField name="ruleId" feature="ruleValue" ruleFeature="ruleId" algorithm="exclusiveRecommendation" rank="1" rankBasis="support"/>
+   <OutputField name="support" feature="ruleValue" ruleFeature="support" algorithm="exclusiveRecommendation" rank="1" rankBasis="support"/>
+   <OutputField name="confidence" feature="ruleValue" ruleFeature="confidence" algorithm="exclusiveRecommendation" rank="1" rankBasis="support"/>
+   <OutputField name="lift" feature="ruleValue" ruleFeature="lift" algorithm="exclusiveRecommendation" rank="1" rankBasis="support"/>
+  </Output>
  </AssociationModel>
 </PMML>

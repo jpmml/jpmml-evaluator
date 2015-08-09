@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_2 http://www.dmg.org/v4-2/pmml-4-2.xsd">
- <Header copyright="Copyright (c) 2014 vfed" description="Multinomial Logistic Model">
+ <Header copyright="Copyright (c) 2015 vfed" description="Multinomial Logistic Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2014-07-06 23:51:06</Timestamp>
+  <Timestamp>2015-08-09 17:44:24</Timestamp>
  </Header>
  <DataDictionary numberOfFields="5">
   <DataField name="Species" optype="categorical" dataType="string">

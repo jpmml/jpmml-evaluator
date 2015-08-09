@@ -189,9 +189,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			FieldValue minTimeValue = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, minTime);
 
-			// "If the value is less than the minimum time, then predicted survival is 1 and cumulative hazard is 0"
+			// "If the value is less than the minimum time, then cumulative hazard is 0 and predicted survival is 1"
 			if(value.compareToValue(minTimeValue) < 0){
-				return Collections.singletonMap(targetField, 1d);
+				return Collections.singletonMap(targetField, 0d);
 			}
 
 			FieldValue maxTimeValue = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, maxTime);
@@ -232,9 +232,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		Double cumHazard = baselineCumHazard * Math.exp(r - s);
 
-		Double survival = Math.exp(-1 * cumHazard);
-
-		return Collections.singletonMap(targetField, survival);
+		return Collections.singletonMap(targetField, cumHazard);
 	}
 
 	private Map<FieldName, ?> evaluateGeneralRegression(ModelEvaluationContext context){

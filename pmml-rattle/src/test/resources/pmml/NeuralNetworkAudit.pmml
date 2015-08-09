@@ -3,7 +3,7 @@
  <Header copyright="Copyright (c) 2015 vfed" description="Neural Network PMML Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2015-03-29 14:11:01</Timestamp>
+  <Timestamp>2015-08-09 17:44:38</Timestamp>
  </Header>
  <DataDictionary numberOfFields="10">
   <DataField name="Adjusted" optype="categorical" dataType="string">
