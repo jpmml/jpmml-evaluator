@@ -96,6 +96,10 @@ public class SparseArrayUtil {
 	public <E extends Number> SortedMap<Integer, E> parse(SparseArray<E> sparseArray){
 		SortedMap<Integer, E> result = new TreeMap<>();
 
+		if(!sparseArray.hasIndices() && !sparseArray.hasEntries()){
+			return result;
+		}
+
 		List<Integer> indices = sparseArray.getIndices();
 		List<E> entries = sparseArray.getEntries();
 

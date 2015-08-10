@@ -749,6 +749,10 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private BiMap<String, Parameter> parseParameterRegistry(ParameterList parameterList){
 		BiMap<String, Parameter> result = HashBiMap.create();
 
+		if(!parameterList.hasParameters()){
+			return result;
+		}
+
 		List<Parameter> parameters = parameterList.getParameters();
 		for(Parameter parameter : parameters){
 			result.put(parameter.getName(), parameter);
@@ -761,7 +765,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private BiMap<FieldName, Predictor> parsePredictorRegistry(PredictorList predictorList){
 		BiMap<FieldName, Predictor> result = HashBiMap.create();
 
-		if(predictorList == null){
+		if(predictorList == null || !predictorList.hasPredictors()){
 			return result;
 		}
 

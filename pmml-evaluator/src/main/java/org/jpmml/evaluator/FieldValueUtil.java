@@ -188,34 +188,34 @@ public class FieldValueUtil {
 			return Value.Property.MISSING;
 		}
 
-		DataType dataType = dataField.getDataType();
-
 		boolean hasValidSpace = false;
 
-		List<Value> fieldValues = dataField.getValues();
-		for(Value fieldValue : fieldValues){
-			Value.Property property = fieldValue.getProperty();
+		if(dataField.hasValues()){
+			DataType dataType = dataField.getDataType();
 
-			switch(property){
-				case VALID:
-					hasValidSpace = true;
-					// Falls through
-				case INVALID:
-				case MISSING:
-					{
-						boolean equals = equals(dataType, value, fieldValue.getValue());
+			List<Value> fieldValues = dataField.getValues();
+			for(Value fieldValue : fieldValues){
+				Value.Property property = fieldValue.getProperty();
 
-						if(equals){
-							return property;
+				switch(property){
+					case VALID:
+						hasValidSpace = true;
+						// Falls through
+					case INVALID:
+					case MISSING:
+						{
+							boolean equals = equals(dataType, value, fieldValue.getValue());
+
+							if(equals){
+								return property;
+							}
 						}
-					}
-					break;
-				default:
-					throw new UnsupportedFeatureException(fieldValue, property);
+						break;
+					default:
+						throw new UnsupportedFeatureException(fieldValue, property);
+				}
 			}
 		}
-
-		List<Interval> intervals = dataField.getIntervals();
 
 		PMMLObject locatable = miningField;
 
@@ -230,7 +230,7 @@ public class FieldValueUtil {
 			case CONTINUOUS:
 				{
 					// "If intervals are present, then a value that is outside the intervals is considered invalid"
-					if(intervals.size() > 0){
+					if(dataField.hasIntervals()){
 						RangeSet<Double> validRanges = getValidRanges(dataField);
 
 						Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
@@ -243,7 +243,7 @@ public class FieldValueUtil {
 			case ORDINAL:
 				{
 					// "Intervals are not allowed for non-continuous fields"
-					if(intervals.size() > 0){
+					if(dataField.hasIntervals()){
 						throw new InvalidFeatureException(dataField);
 					}
 				}
@@ -417,6 +417,7 @@ public class FieldValueUtil {
 
 		if(value instanceof OrdinalValue){
 			OrdinalValue ordinalValue = (OrdinalValue)value;
+
 			ordinalValue.setOrdering(getOrdering(field, ordinalValue.getDataType()));
 		}
 
@@ -435,6 +436,11 @@ public class FieldValueUtil {
 
 	static
 	public Value getValidValue(TypeDefinitionField field, Object value){
+
+		if(!field.hasValues()){
+			return null;
+		}
+
 		DataType dataType = field.getDataType();
 
 		List<Value> fieldValues = field.getValues();
@@ -445,6 +451,7 @@ public class FieldValueUtil {
 				case VALID:
 					{
 						boolean equals = equals(dataType, value, fieldValue.getValue());
+
 						if(equals){
 							return fieldValue;
 						}
@@ -460,13 +467,14 @@ public class FieldValueUtil {
 
 	static
 	public List<Value> getValidValues(TypeDefinitionField field){
-		List<Value> fieldValues = field.getValues();
-		if(fieldValues.isEmpty()){
+
+		if(!field.hasValues()){
 			return Collections.emptyList();
 		}
 
 		List<Value> result = new ArrayList<>();
 
+		List<Value> fieldValues = field.getValues();
 		for(Value fieldValue : fieldValues){
 			Value.Property property = fieldValue.getProperty();
 
