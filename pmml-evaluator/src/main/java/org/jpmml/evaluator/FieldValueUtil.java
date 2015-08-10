@@ -40,6 +40,7 @@ import org.dmg.pmml.FieldUsageType;
 import org.dmg.pmml.Interval;
 import org.dmg.pmml.InvalidValueTreatmentMethodType;
 import org.dmg.pmml.MiningField;
+import org.dmg.pmml.MissingValueTreatmentMethodType;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethodType;
 import org.dmg.pmml.PMMLObject;
@@ -73,81 +74,11 @@ public class FieldValueUtil {
 		Value.Property status = getStatus(dataField, miningField, value);
 		switch(status){
 			case VALID:
-				{
-					OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
-
-					Double lowValue = miningField.getLowValue();
-					Double highValue = miningField.getHighValue();
-
-					Double doubleValue = null;
-
-					switch(outlierTreatmentMethod){
-						case AS_MISSING_VALUES:
-						case AS_EXTREME_VALUES:
-							{
-								if(lowValue == null || highValue == null){
-									throw new InvalidFeatureException(miningField);
-								} // End if
-
-								if((lowValue).compareTo(highValue) > 0){
-									throw new InvalidFeatureException(miningField);
-								}
-
-								doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
-							}
-							break;
-						default:
-							break;
-					} // End switch
-
-					switch(outlierTreatmentMethod){
-						case AS_IS:
-							break;
-						case AS_MISSING_VALUES:
-							{
-								if(TypeUtil.compare(DataType.DOUBLE, doubleValue, lowValue) < 0 || TypeUtil.compare(DataType.DOUBLE, doubleValue, highValue) > 0){
-									return createMissingValue(dataField, miningField);
-								}
-							}
-							break;
-						case AS_EXTREME_VALUES:
-							{
-								if(TypeUtil.compare(DataType.DOUBLE, doubleValue, lowValue) < 0){
-									value = lowValue;
-								} else
-
-								if(TypeUtil.compare(DataType.DOUBLE, doubleValue, highValue) > 0){
-									value = highValue;
-								}
-							}
-							break;
-						default:
-							throw new UnsupportedFeatureException(miningField, outlierTreatmentMethod);
-					}
-
-					return create(dataField, miningField, value);
-				}
+				return performValidValueTreatment(dataField, miningField, value);
 			case INVALID:
-				{
-					InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
-
-					switch(invalidValueTreatmentMethod){
-						case AS_IS:
-							break;
-						case AS_MISSING:
-							return createMissingValue(dataField, miningField);
-						case RETURN_INVALID:
-							throw new InvalidResultException(miningField);
-						default:
-							throw new UnsupportedFeatureException(miningField, invalidValueTreatmentMethod);
-					}
-
-					return create(dataField, miningField, value);
-				}
+				return performInvalidValueTreatment(dataField, miningField, value);
 			case MISSING:
-				{
-					return createMissingValue(dataField, miningField);
-				}
+				return performMissingValueTreatment(dataField, miningField);
 			default:
 				break;
 		}
@@ -155,11 +86,103 @@ public class FieldValueUtil {
 		throw new EvaluationException();
 	}
 
+	static
+	public FieldValue performValidValueTreatment(DataField dataField, MiningField miningField, Object value){
+		OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
+
+		Double lowValue = miningField.getLowValue();
+		Double highValue = miningField.getHighValue();
+
+		Double doubleValue = null;
+
+		switch(outlierTreatmentMethod){
+			case AS_MISSING_VALUES:
+			case AS_EXTREME_VALUES:
+				{
+					if(lowValue == null || highValue == null){
+						throw new InvalidFeatureException(miningField);
+					} // End if
+
+					if((lowValue).compareTo(highValue) > 0){
+						throw new InvalidFeatureException(miningField);
+					}
+
+					doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
+				}
+				break;
+			default:
+				break;
+		} // End switch
+
+		switch(outlierTreatmentMethod){
+			case AS_IS:
+				break;
+			case AS_MISSING_VALUES:
+				{
+					if(TypeUtil.compare(DataType.DOUBLE, doubleValue, lowValue) < 0 || TypeUtil.compare(DataType.DOUBLE, doubleValue, highValue) > 0){
+						return createMissingValue(dataField, miningField);
+					}
+				}
+				break;
+			case AS_EXTREME_VALUES:
+				{
+					if(TypeUtil.compare(DataType.DOUBLE, doubleValue, lowValue) < 0){
+						value = lowValue;
+					} else
+
+					if(TypeUtil.compare(DataType.DOUBLE, doubleValue, highValue) > 0){
+						value = highValue;
+					}
+				}
+				break;
+			default:
+				throw new UnsupportedFeatureException(miningField, outlierTreatmentMethod);
+		}
+
+		return create(dataField, miningField, value);
+	}
+
+	static
+	public FieldValue performInvalidValueTreatment(DataField dataField, MiningField miningField, Object value){
+		InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
+
+		switch(invalidValueTreatmentMethod){
+			case AS_IS:
+				return create(dataField, miningField, value);
+			case AS_MISSING:
+				return createMissingValue(dataField, miningField);
+			case RETURN_INVALID:
+				throw new InvalidResultException(miningField);
+			default:
+				throw new UnsupportedFeatureException(miningField, invalidValueTreatmentMethod);
+		}
+	}
+
+	static
+	public FieldValue performMissingValueTreatment(DataField dataField, MiningField miningField){
+		MissingValueTreatmentMethodType missingValueTreatmentMethod = miningField.getMissingValueTreatment();
+
+		if(missingValueTreatmentMethod == null){
+			missingValueTreatmentMethod = MissingValueTreatmentMethodType.AS_IS;
+		}
+
+		switch(missingValueTreatmentMethod){
+			case AS_IS:
+			case AS_MEAN:
+			case AS_MEDIAN:
+			case AS_MODE:
+			case AS_VALUE:
+				return createMissingValue(dataField, miningField);
+			default:
+				throw new UnsupportedFeatureException(miningField, missingValueTreatmentMethod);
+		}
+	}
+
 	@SuppressWarnings (
 		value = {"fallthrough"}
 	)
 	static
-	private Value.Property getStatus(DataField dataField, MiningField miningField, Object value){
+	public Value.Property getStatus(DataField dataField, MiningField miningField, Object value){
 
 		if(value == null){
 			return Value.Property.MISSING;
