@@ -60,16 +60,9 @@ public class FieldValueUtil {
 
 		if(dataType == null || opType == null){
 			throw new InvalidFeatureException(dataField);
-		} // End if
-
-		if(value != null){
-
-			try {
-				value = TypeUtil.parseOrCast(dataType, value);
-			} catch(IllegalArgumentException iae){
-				// Ignored
-			}
 		}
+
+		value = safeParseOrCast(dataType, value);
 
 		Value.Property status = getStatus(dataField, miningField, value);
 		switch(status){
@@ -443,6 +436,8 @@ public class FieldValueUtil {
 
 		DataType dataType = field.getDataType();
 
+		value = safeParseOrCast(dataType, value);
+
 		List<Value> fieldValues = field.getValues();
 		for(Value fieldValue : fieldValues){
 			Value.Property property = fieldValue.getProperty();
@@ -498,6 +493,21 @@ public class FieldValueUtil {
 	static
 	public RangeSet<Double> getValidRanges(DataField dataField){
 		return CacheUtil.getValue(dataField, FieldValueUtil.validRangeCache);
+	}
+
+	static
+	private Object safeParseOrCast(DataType dataType, Object value){
+
+		if(value != null){
+
+			try {
+				return TypeUtil.parseOrCast(dataType, value);
+			} catch(IllegalArgumentException iae){
+				// Ignored
+			}
+		}
+
+		return value;
 	}
 
 	static

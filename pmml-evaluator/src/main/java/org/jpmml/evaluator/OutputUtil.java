@@ -464,17 +464,25 @@ public class OutputUtil {
 		}
 
 		OpType opType = dataField.getOpType();
+		switch(opType){
+			case CONTINUOUS:
+				break;
+			case CATEGORICAL:
+			case ORDINAL:
+				{
+					Value value = FieldValueUtil.getValidValue(dataField, object);
 
-		if((OpType.CATEGORICAL).equals(opType) || (OpType.ORDINAL).equals(opType)){
-			Value value = FieldValueUtil.getValidValue(dataField, object);
+					if(value != null){
+						String displayValue = value.getDisplayValue();
 
-			if(value != null){
-				String displayValue = value.getDisplayValue();
-
-				if(displayValue != null){
-					return displayValue;
+						if(displayValue != null){
+							return displayValue;
+						}
+					}
 				}
-			}
+				break;
+			default:
+				throw new UnsupportedFeatureException(dataField, opType);
 		}
 
 		// "If the display value is not specified explicitly, then the raw predicted value is used by default"
