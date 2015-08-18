@@ -32,6 +32,11 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
+	public FieldValue createFieldValue(FieldName name, Object value){
+		throw new EvaluationException();
+	}
+
+	@Override
 	public Result<DerivedField> resolveDerivedField(FieldName name){
 		// "The function body must not refer to fields other than the parameter fields"
 		return createResult(null);

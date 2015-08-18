@@ -2,7 +2,8 @@
 <PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
     <Header copyright="DMG.org"/>
     <DataDictionary>
-        <DataField name="result" optype="continuous" dataType="double"/>
+        <DataField name="StartTime" optype="continuous" dataType="integer"/>
+        <DataField name="State" optype="categorical" dataType="string"/>
     </DataDictionary>
     <TransformationDictionary>
         <DefineFunction name="AMPM" optype="categorical" dataType="string">

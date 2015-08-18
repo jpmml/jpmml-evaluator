@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,10 +38,12 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
+import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.MiningModel;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.MultipleModelMethodType;
+import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.Segment;
@@ -252,6 +255,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		MiningFunctionType miningFunction = miningModel.getFunctionName();
 
+		Map<FieldName, OutputField> segmentOutputFields = new LinkedHashMap<>();
+
 		List<Segment> segments = segmentation.getSegments();
 		for(Segment segment : segments){
 			Predicate predicate = segment.getPredicate();
@@ -285,25 +290,51 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			ModelEvaluationContext segmentContext = evaluator.createContext(context);
 
+			List<FieldName> activeFields = evaluator.getActiveFields();
+			for(FieldName activeField : activeFields){
+				FieldValue value = context.getField(activeField);
+
+				DataField dataField = getDataField(activeField);
+				if(dataField != null){
+					// Unwrap the value so that it is subjected to model-specific field value preparation logic again
+					segmentContext.declare(activeField, FieldValueUtil.getValue(value));
+
+					continue;
+				}
+
+				OutputField outputField = null;
+
+				switch(multipleModelMethod){
+					case MODEL_CHAIN:
+						outputField = segmentOutputFields.get(activeField);
+						break;
+					default:
+						break;
+				}
+
+				MiningField miningField = evaluator.getMiningField(activeField);
+
+				if(outputField != null){
+
+					if(value == null){
+						value = FieldValueUtil.performMissingValueTreatment(outputField, miningField);
+					} else
+
+					{
+						value = FieldValueUtil.performValidValueTreatment(outputField, miningField, FieldValueUtil.getValue(value));
+					}
+
+					segmentContext.declare(activeField, value);
+
+					continue;
+				}
+
+				throw new InvalidFeatureException(miningField);
+			}
+
 			Map<FieldName, ?> result = evaluator.evaluate(segmentContext);
 
 			FieldName targetField = evaluator.getTargetField();
-
-			List<FieldName> outputFields = evaluator.getOutputFields();
-			for(FieldName outputField : outputFields){
-				FieldValue outputValue = segmentContext.getField(outputField);
-				if(outputValue == null){
-					throw new MissingFieldException(outputField, segment);
-				}
-
-				// "The OutputFields from one model element can be passed as input to the MiningSchema of subsequent models"
-				context.declare(outputField, outputValue);
-			}
-
-			List<String> warnings = segmentContext.getWarnings();
-			for(String warning : warnings){
-				context.addWarning(warning);
-			}
 
 			final
 			String entityId = EntityUtil.getId(segment, entityRegistry);
@@ -318,6 +349,33 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			segmentResult.putAll(result);
 
 			context.putResult(entityId, segmentResult);
+
+			switch(multipleModelMethod){
+				case MODEL_CHAIN:
+					{
+						List<FieldName> outputFields = evaluator.getOutputFields();
+						for(FieldName outputField : outputFields){
+							FieldValue outputValue = segmentContext.getField(outputField);
+							if(outputValue == null){
+								throw new MissingFieldException(outputField, segment);
+							}
+
+							context.declare(outputField, outputValue);
+
+							OutputField segmentOutputField = evaluator.getOutputField(outputField);
+
+							segmentOutputFields.put(outputField, segmentOutputField);
+						}
+					}
+					break;
+				default:
+					break;
+			}
+
+			List<String> warnings = segmentContext.getWarnings();
+			for(String warning : warnings){
+				context.addWarning(warning);
+			}
 
 			switch(multipleModelMethod){
 				case SELECT_FIRST:

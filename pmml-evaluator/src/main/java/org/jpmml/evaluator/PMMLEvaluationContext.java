@@ -33,6 +33,18 @@ public class PMMLEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
+	public FieldValue createFieldValue(FieldName name, Object value){
+		PMMLManager pmmlManager = getPmmlManager();
+
+		DataField dataField = pmmlManager.getDataField(name);
+		if(dataField == null){
+			throw new EvaluationException();
+		}
+
+		return FieldValueUtil.create(dataField, value);
+	}
+
+	@Override
 	public Result<DerivedField> resolveDerivedField(FieldName name){
 		PMMLManager pmmlManager = getPmmlManager();
 
@@ -48,18 +60,6 @@ public class PMMLEvaluationContext extends EvaluationContext {
 		DefineFunction defineFunction = pmmlManager.getFunction(name);
 
 		return createResult(defineFunction);
-	}
-
-	@Override
-	public FieldValue createFieldValue(FieldName name, Object value){
-		PMMLManager pmmlManager = getPmmlManager();
-
-		DataField dataField = pmmlManager.getDataField(name);
-		if(dataField != null){
-			return FieldValueUtil.create(dataField, value);
-		}
-
-		return super.createFieldValue(name, value);
 	}
 
 	public PMMLManager getPmmlManager(){

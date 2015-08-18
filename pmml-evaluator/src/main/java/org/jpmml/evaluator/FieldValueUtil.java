@@ -80,7 +80,7 @@ public class FieldValueUtil {
 	}
 
 	static
-	public FieldValue performValidValueTreatment(DataField dataField, MiningField miningField, Object value){
+	public FieldValue performValidValueTreatment(Field field, MiningField miningField, Object value){
 		OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
 
 		Double lowValue = miningField.getLowValue();
@@ -113,7 +113,7 @@ public class FieldValueUtil {
 			case AS_MISSING_VALUES:
 				{
 					if(TypeUtil.compare(DataType.DOUBLE, doubleValue, lowValue) < 0 || TypeUtil.compare(DataType.DOUBLE, doubleValue, highValue) > 0){
-						return createMissingValue(dataField, miningField);
+						return createMissingValue(field, miningField);
 					}
 				}
 				break;
@@ -132,18 +132,18 @@ public class FieldValueUtil {
 				throw new UnsupportedFeatureException(miningField, outlierTreatmentMethod);
 		}
 
-		return create(dataField, miningField, value);
+		return create(field, miningField, value);
 	}
 
 	static
-	public FieldValue performInvalidValueTreatment(DataField dataField, MiningField miningField, Object value){
+	public FieldValue performInvalidValueTreatment(Field field, MiningField miningField, Object value){
 		InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
 
 		switch(invalidValueTreatmentMethod){
 			case AS_IS:
-				return create(dataField, miningField, value);
+				return create(field, miningField, value);
 			case AS_MISSING:
-				return createMissingValue(dataField, miningField);
+				return createMissingValue(field, miningField);
 			case RETURN_INVALID:
 				throw new InvalidResultException(miningField);
 			default:
@@ -152,7 +152,7 @@ public class FieldValueUtil {
 	}
 
 	static
-	public FieldValue performMissingValueTreatment(DataField dataField, MiningField miningField){
+	public FieldValue performMissingValueTreatment(Field field, MiningField miningField){
 		MissingValueTreatmentMethodType missingValueTreatmentMethod = miningField.getMissingValueTreatment();
 
 		if(missingValueTreatmentMethod == null){
@@ -165,7 +165,7 @@ public class FieldValueUtil {
 			case AS_MEDIAN:
 			case AS_MODE:
 			case AS_VALUE:
-				return createMissingValue(dataField, miningField);
+				return createMissingValue(field, miningField);
 			default:
 				throw new UnsupportedFeatureException(miningField, missingValueTreatmentMethod);
 		}
@@ -291,13 +291,13 @@ public class FieldValueUtil {
 	 * @see FieldUsageType#ACTIVE
 	 */
 	static
-	public FieldValue create(DataField dataField, MiningField miningField, Object value){
-		return create(dataField, miningField, null, value);
+	public FieldValue create(Field field, MiningField miningField, Object value){
+		return create(field, miningField, null, value);
 	}
 
 	static
-	public FieldValue createMissingValue(DataField dataField, MiningField miningField){
-		return create(dataField, miningField, miningField.getMissingValueReplacement());
+	public FieldValue createMissingValue(Field field, MiningField miningField){
+		return create(field, miningField, miningField.getMissingValueReplacement());
 	}
 
 	/**
@@ -309,9 +309,9 @@ public class FieldValueUtil {
 	 * @see FieldUsageType#PREDICTED
 	 */
 	static
-	public FieldValue create(DataField dataField, MiningField miningField, Target target, Object value){
-		DataType dataType = dataField.getDataType();
-		OpType opType = dataField.getOpType();
+	public FieldValue create(Field field, MiningField miningField, Target target, Object value){
+		DataType dataType = field.getDataType();
+		OpType opType = field.getOpType();
 
 		// "A MiningField overrides a DataField, and a Target overrides a MiningField"
 		opType = override(opType, override(miningField != null ? miningField.getOpType() : null, target != null ? target.getOpType() : null));

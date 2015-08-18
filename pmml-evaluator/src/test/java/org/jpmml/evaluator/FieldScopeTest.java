@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2015 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,24 +18,23 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.DefineFunction;
-import org.dmg.pmml.DerivedField;
+import java.util.Map;
+
 import org.dmg.pmml.FieldName;
+import org.junit.Test;
 
-public class LocalEvaluationContext extends EvaluationContext {
+import static org.junit.Assert.assertEquals;
 
-	@Override
-	public FieldValue createFieldValue(FieldName name, Object value){
-		return FieldValueUtil.create(value);
-	}
+public class FieldScopeTest extends ModelEvaluatorTest {
 
-	@Override
-	public Result<DerivedField> resolveDerivedField(FieldName name){
-		return createResult(null);
-	}
+	@Test
+	public void evaluate() throws Exception {
+		Evaluator evaluator = createModelEvaluator();
 
-	@Override
-	public Result<DefineFunction> resolveFunction(String name){
-		return createResult(null);
+		Map<FieldName, ?> arguments = createArguments("input", null);
+
+		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+
+		assertEquals(1000d, result.get(new FieldName("prediction")));
 	}
 }

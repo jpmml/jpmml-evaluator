@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
@@ -39,28 +40,27 @@ public class EvaluationContext {
 
 
 	abstract
+	public FieldValue createFieldValue(FieldName name, Object value);
+
+	abstract
 	public Result<DerivedField> resolveDerivedField(FieldName name);
 
 	abstract
 	public Result<DefineFunction> resolveFunction(String name);
 
-	/**
-	 * @see #getFieldEntry(FieldName)
-	 */
 	public FieldValue getField(FieldName name){
-		Map.Entry<FieldName, FieldValue> entry = getFieldEntry(name);
-		if(entry != null){
-			return entry.getValue();
-		}
+		Map<FieldName, FieldValue> fields = getFields();
 
-		return null;
+		return fields.get(name);
 	}
 
 	public Map.Entry<FieldName, FieldValue> getFieldEntry(FieldName name){
 		Map<FieldName, FieldValue> fields = getFields();
 
 		if(fields.containsKey(name)){
-			Map.Entry<FieldName, FieldValue> entry = new AbstractMap.SimpleEntry<>(name, fields.get(name));
+			FieldValue value = fields.get(name);
+
+			Map.Entry<FieldName, FieldValue> entry = new AbstractMap.SimpleImmutableEntry<>(name, value);
 
 			return entry;
 		}
@@ -97,12 +97,18 @@ public class EvaluationContext {
 	public void declareAll(Collection<FieldName> names, Map<FieldName, ?> fields){
 
 		for(FieldName name : names){
-			declare(name, fields.get(name));
-		}
-	}
+			Object value;
 
-	public FieldValue createFieldValue(FieldName name, Object value){
-		return FieldValueUtil.create(value);
+			if(fields.containsKey(name)){
+				value = fields.get(name);
+			} else
+
+			{
+				value = null;
+			}
+
+			declare(name, value);
+		}
 	}
 
 	public void addWarning(String warning){
@@ -134,7 +140,7 @@ public class EvaluationContext {
 
 
 		Result(E element){
-			setElement(element);
+			setElement(Objects.requireNonNull(element));
 		}
 
 		public EvaluationContext getContext(){

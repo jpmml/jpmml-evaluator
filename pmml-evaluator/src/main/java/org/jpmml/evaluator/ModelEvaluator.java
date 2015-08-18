@@ -337,10 +337,10 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
-		List<FieldName> filterFields = getMiningFields(ModelEvaluator.INPUT_TYPES);
+		List<FieldName> names = getMiningFields(ModelEvaluator.INPUT_TYPES);
 
 		ModelEvaluationContext context = createContext(null);
-		context.declareAll(filterFields, arguments);
+		context.declareAll(names, arguments);
 
 		return evaluate(context);
 	}

@@ -23,14 +23,14 @@ import java.util.Map;
 import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 public class ModelChainSimpleTest extends ModelChainTest {
 
 	@Test
-	public void evaluate() throws Exception {
+	public void evaluateSetosa() throws Exception {
 		Map<FieldName, ?> result = evaluateExample(1.4, 0.2);
 
-		assertNotNull(result.get(new FieldName("PollenIndex")));
+		assertEquals(0.8d + 0.3d, result.get(new FieldName("PollenIndex")));
 	}
 }

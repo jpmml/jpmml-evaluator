@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Map;
-
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
@@ -38,18 +36,15 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public Map.Entry<FieldName, FieldValue> getFieldEntry(FieldName name){
-		Map.Entry<FieldName, FieldValue> entry = super.getFieldEntry(name);
-		if(entry == null){
-			ModelEvaluationContext parent = getParent();
-			if(parent != null){
-				return parent.getFieldEntry(name);
-			}
+	public FieldValue createFieldValue(FieldName name, Object value){
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
-			return null;
+		MiningField miningField = modelEvaluator.getMiningField(name);
+		if(miningField == null){
+			throw new EvaluationException();
 		}
 
-		return entry;
+		return EvaluatorUtil.prepare(modelEvaluator, name, value);
 	}
 
 	@Override
@@ -59,6 +54,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 		DerivedField derivedField = modelEvaluator.getLocalDerivedField(name);
 		if(derivedField == null){
 			ModelEvaluationContext parent = getParent();
+
 			if(parent != null){
 				return parent.resolveDerivedField(name);
 			}
@@ -76,18 +72,6 @@ public class ModelEvaluationContext extends EvaluationContext {
 		DefineFunction defineFunction = modelEvaluator.getFunction(name);
 
 		return createResult(defineFunction);
-	}
-
-	@Override
-	public FieldValue createFieldValue(FieldName name, Object value){
-		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
-
-		MiningField miningField = modelEvaluator.getMiningField(name);
-		if(miningField != null){
-			return EvaluatorUtil.prepare(modelEvaluator, name, value);
-		}
-
-		return super.createFieldValue(name, value);
 	}
 
 	public ModelEvaluationContext getParent(){
