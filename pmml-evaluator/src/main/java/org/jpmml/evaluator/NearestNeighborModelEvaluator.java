@@ -202,7 +202,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
 		for(KNNInput knnInput : knnInputs){
-			FieldValue value = ExpressionUtil.evaluate(knnInput.getField(), context);
+			FieldValue value = context.evaluate(knnInput.getField());
 
 			values.add(value);
 		}

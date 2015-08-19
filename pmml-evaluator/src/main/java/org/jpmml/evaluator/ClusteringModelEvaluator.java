@@ -111,7 +111,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 		List<ClusteringField> clusteringFields = getCenterClusteringFields();
 		for(ClusteringField clusteringField : clusteringFields){
-			FieldValue value = ExpressionUtil.evaluate(clusteringField.getField(), context);
+			FieldValue value = context.evaluate(clusteringField.getField());
 
 			values.add(value);
 		}

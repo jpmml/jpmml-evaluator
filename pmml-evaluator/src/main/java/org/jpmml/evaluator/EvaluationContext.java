@@ -48,6 +48,29 @@ public class EvaluationContext {
 	abstract
 	public Result<DefineFunction> resolveFunction(String name);
 
+	public FieldValue evaluate(FieldName name){
+		Map.Entry<FieldName, FieldValue> entry = getFieldEntry(name);
+		if(entry != null){
+			return entry.getValue();
+		}
+
+		EvaluationContext.Result<DerivedField> result = resolveDerivedField(name);
+		if(result != null){
+			FieldValue value = ExpressionUtil.evaluate(result.getElement(), this);
+
+			declare(name, value);
+
+			EvaluationContext resultContext = result.getContext();
+			if(!(resultContext).equals(this)){
+				resultContext.declare(name, value);
+			}
+
+			return value;
+		}
+
+		return null;
+	}
+
 	public FieldValue getField(FieldName name){
 		Map<FieldName, FieldValue> fields = getFields();
 

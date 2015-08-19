@@ -109,7 +109,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		for(BayesInput bayesInput : bayesInputs){
 			FieldName name = bayesInput.getFieldName();
 
-			FieldValue value = ExpressionUtil.evaluate(name, context);
+			FieldValue value = context.evaluate(name);
 
 			// "Missing values are ignored"
 			if(value == null){

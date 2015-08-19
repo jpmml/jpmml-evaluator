@@ -32,7 +32,7 @@ public class PMMLEvaluationContextTest extends PMMLManagerTest {
 		PMMLEvaluationContext context = new PMMLEvaluationContext(pmmlManager);
 		context.declareAll(createArguments("StartTime", 34742));
 
-		assertValueEquals("AM", evaluateDerivedField(new FieldName("Shift"), context));
+		assertValueEquals("AM", context.evaluate(new FieldName("Shift")));
 	}
 
 	@Test
@@ -42,16 +42,11 @@ public class PMMLEvaluationContextTest extends PMMLManagerTest {
 		PMMLEvaluationContext context = new PMMLEvaluationContext(pmmlManager);
 		context.declareAll(createArguments("State", "CA"));
 
-		assertValueEquals("West", evaluateDerivedField(new FieldName("Group"), context));
+		assertValueEquals("West", context.evaluate(new FieldName("Group")));
 	}
 
 	static
 	private void assertValueEquals(Object expected, FieldValue actual){
 		assertEquals(expected, FieldValueUtil.getValue(actual));
-	}
-
-	static
-	private FieldValue evaluateDerivedField(FieldName name, EvaluationContext context){
-		return ExpressionUtil.evaluate(name, context);
 	}
 }

@@ -51,30 +51,6 @@ public class ExpressionUtil {
 	}
 
 	static
-	public FieldValue evaluate(FieldName name, EvaluationContext context){
-		Map.Entry<FieldName, FieldValue> entry = context.getFieldEntry(name);
-		if(entry != null){
-			return entry.getValue();
-		}
-
-		EvaluationContext.Result<DerivedField> result = context.resolveDerivedField(name);
-		if(result != null){
-			FieldValue value = evaluate(result.getElement(), context);
-
-			context.declare(name, value);
-
-			EvaluationContext resultContext = result.getContext();
-			if(!(resultContext).equals(context)){
-				resultContext.declare(name, value);
-			}
-
-			return value;
-		}
-
-		return null;
-	}
-
-	static
 	public FieldValue evaluate(DerivedField derivedField, EvaluationContext context){
 		FieldValue value = evaluate(derivedField.getExpression(), context);
 
@@ -206,7 +182,8 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateFieldRef(FieldRef fieldRef, EvaluationContext context){
-		FieldValue value = evaluate(fieldRef.getField(), context);
+		FieldValue value = context.evaluate(fieldRef.getField());
+
 		if(value == null){
 			return FieldValueUtil.create(fieldRef.getMapMissingTo());
 		}
@@ -216,7 +193,8 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateNormContinuous(NormContinuous normContinuous, EvaluationContext context){
-		FieldValue value = evaluate(normContinuous.getField(), context);
+		FieldValue value = context.evaluate(normContinuous.getField());
+
 		if(value == null){
 			return FieldValueUtil.create(normContinuous.getMapMissingTo());
 		}
@@ -226,7 +204,8 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateNormDiscrete(NormDiscrete normDiscrete, EvaluationContext context){
-		FieldValue value = evaluate(normDiscrete.getField(), context);
+		FieldValue value = context.evaluate(normDiscrete.getField());
+
 		if(value == null){
 			return FieldValueUtil.create(normDiscrete.getMapMissingTo());
 		}
@@ -246,7 +225,8 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateDiscretize(Discretize discretize, EvaluationContext context){
-		FieldValue value = evaluate(discretize.getField(), context);
+		FieldValue value = context.evaluate(discretize.getField());
+
 		if(value == null){
 			return FieldValueUtil.create(discretize.getDataType(), null, discretize.getMapMissingTo());
 		}
@@ -260,7 +240,8 @@ public class ExpressionUtil {
 
 		List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
 		for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
-			FieldValue value = evaluate(fieldColumnPair.getField(), context);
+			FieldValue value = context.evaluate(fieldColumnPair.getField());
+
 			if(value == null){
 				return FieldValueUtil.create(mapValues.getDataType(), null, mapValues.getMapMissingTo());
 			}
@@ -400,7 +381,7 @@ public class ExpressionUtil {
 	)
 	static
 	public FieldValue evaluateAggregate(Aggregate aggregate, EvaluationContext context){
-		FieldValue value = evaluate(aggregate.getField(), context);
+		FieldValue value = context.evaluate(aggregate.getField());
 
 		// The JPMML library operates with single records, so it's impossible to implement "proper" aggregation over multiple records.
 		// It is assumed that application developers have performed the aggregation beforehand
@@ -408,7 +389,7 @@ public class ExpressionUtil {
 
 		FieldName groupName = aggregate.getGroupField();
 		if(groupName != null){
-			FieldValue groupValue = evaluate(groupName, context);
+			FieldValue groupValue = context.evaluate(groupName);
 
 			// Ensure that the group value is a simple type, not a collection type
 			TypeUtil.getDataType(FieldValueUtil.getValue(groupValue));

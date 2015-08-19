@@ -176,7 +176,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		for(NumericPredictor numericPredictor : numericPredictors){
 			FieldName name = numericPredictor.getName();
 
-			FieldValue value = ExpressionUtil.evaluate(name, context);
+			FieldValue value = context.evaluate(name);
 
 			// "If the input value is missing, then the result evaluates to a missing value"
 			if(value == null){
@@ -192,7 +192,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
 			FieldName name = categoricalPredictor.getName();
 
-			FieldValue value = ExpressionUtil.evaluate(name, context);
+			FieldValue value = context.evaluate(name);
 
 			// "If the input value is missing, then the product is ignored"
 			if(value == null){

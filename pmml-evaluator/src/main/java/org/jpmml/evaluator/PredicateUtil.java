@@ -92,7 +92,7 @@ public class PredicateUtil {
 				break;
 		}
 
-		FieldValue value = ExpressionUtil.evaluate(simplePredicate.getField(), context);
+		FieldValue value = context.evaluate(simplePredicate.getField());
 
 		switch(operator){
 			case IS_MISSING:
@@ -194,7 +194,7 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext context){
-		FieldValue value = ExpressionUtil.evaluate(simpleSetPredicate.getField(), context);
+		FieldValue value = context.evaluate(simpleSetPredicate.getField());
 		if(value == null){
 			return null;
 		}
