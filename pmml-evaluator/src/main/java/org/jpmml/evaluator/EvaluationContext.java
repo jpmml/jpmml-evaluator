@@ -50,6 +50,7 @@ public class EvaluationContext {
 
 	public FieldValue evaluate(FieldName name){
 		Map.Entry<FieldName, FieldValue> entry = getFieldEntry(name);
+
 		if(entry != null){
 			return entry.getValue();
 		}
@@ -59,11 +60,6 @@ public class EvaluationContext {
 			FieldValue value = ExpressionUtil.evaluate(result.getElement(), this);
 
 			declare(name, value);
-
-			EvaluationContext resultContext = result.getContext();
-			if(!(resultContext).equals(this)){
-				resultContext.declare(name, value);
-			}
 
 			return value;
 		}

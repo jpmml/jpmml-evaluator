@@ -332,6 +332,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				throw new InvalidFeatureException(miningField);
 			}
 
+			segmentContext.computeDifference();
+
 			Map<FieldName, ?> result = evaluator.evaluate(segmentContext);
 
 			FieldName targetField = evaluator.getTargetField();

@@ -18,6 +18,12 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
@@ -29,10 +35,57 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 	private ModelEvaluator<?> modelEvaluator = null;
 
+	private boolean compatible = false;
+
 
 	public ModelEvaluationContext(ModelEvaluationContext parent, ModelEvaluator<?> modelEvaluator){
 		setParent(parent);
 		setModelEvaluator(modelEvaluator);
+	}
+
+	@Override
+	public FieldValue evaluate(FieldName name){
+		Map.Entry<FieldName, FieldValue> entry = getFieldEntry(name);
+
+		if(entry != null){
+			return entry.getValue();
+		}
+
+		Iterator<ModelEvaluationContext> parents = getCompatibleParents();
+		while(parents.hasNext()){
+			ModelEvaluationContext parent = parents.next();
+
+			entry = parent.getFieldEntry(name);
+			if(entry != null){
+				FieldValue value = entry.getValue();
+
+				declare(name, value);
+
+				return value;
+			}
+		}
+
+		Result<DerivedField> result = resolveDerivedField(name);
+		if(result != null){
+			FieldValue value = ExpressionUtil.evaluate(result.getElement(), this);
+
+			declare(name, value);
+
+			parents = getCompatibleParents();
+			while(parents.hasNext()){
+				ModelEvaluationContext parent = parents.next();
+
+				parent.declare(name, value);
+
+				if((result.getContext()).equals(parent)){
+					break;
+				}
+			}
+
+			return value;
+		}
+
+		return null;
 	}
 
 	@Override
@@ -55,6 +108,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 		if(derivedField == null){
 			ModelEvaluationContext parent = getParent();
 
+			// The resolution of DerivedField elements must be handled by ModelEvaluationContext that is "closest" to them
 			if(parent != null){
 				return parent.resolveDerivedField(name);
 			}
@@ -74,6 +128,66 @@ public class ModelEvaluationContext extends EvaluationContext {
 		return createResult(defineFunction);
 	}
 
+	Iterator<ModelEvaluationContext> getCompatibleParents(){
+		Iterator<ModelEvaluationContext> result = new Iterator<ModelEvaluationContext>(){
+
+			private ModelEvaluationContext parent = getParent(ModelEvaluationContext.this);
+
+
+			@Override
+			public boolean hasNext(){
+				return (this.parent != null);
+			}
+
+			@Override
+			public ModelEvaluationContext next(){
+				ModelEvaluationContext result = this.parent;
+
+				if(result == null){
+					throw new NoSuchElementException();
+				}
+
+				this.parent = getParent(result);
+
+				return result;
+			}
+
+			@Override
+			public void remove(){
+				throw new UnsupportedOperationException();
+			}
+
+			private ModelEvaluationContext getParent(ModelEvaluationContext context){
+				ModelEvaluationContext parent = context.getParent();
+
+				if(parent != null){
+
+					if(!context.isCompatible()){
+						return null;
+					}
+
+					return parent;
+				}
+
+				return null;
+			}
+		};
+
+		return result;
+	}
+
+	void computeDifference(){
+		ModelEvaluationContext parent = getParent();
+
+		if(parent != null){
+			setCompatible(isSubset(getFields(), parent.getFields()));
+		} else
+
+		{
+			setCompatible(false);
+		}
+	}
+
 	public ModelEvaluationContext getParent(){
 		return this.parent;
 	}
@@ -88,5 +202,34 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 	private void setModelEvaluator(ModelEvaluator<?> modelEvaluator){
 		this.modelEvaluator = modelEvaluator;
+	}
+
+	boolean isCompatible(){
+		return this.compatible;
+	}
+
+	private void setCompatible(boolean compatible){
+		this.compatible = compatible;
+	}
+
+	static
+	private <K, V> boolean isSubset(Map<K, V> left, Map<K, V> right){
+		Collection<Map.Entry<K, V>> entries = left.entrySet();
+
+		for(Map.Entry<K, V> entry : entries){
+			K key = entry.getKey();
+			V value = entry.getValue();
+
+			if(!right.containsKey(key)){
+				return false;
+			}
+
+			boolean equal = Objects.equals(value, right.get(key));
+			if(!equal){
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

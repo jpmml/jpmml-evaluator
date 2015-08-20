@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2015 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,65 +18,67 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.Collections;
 
-import org.dmg.pmml.DataDictionary;
-import org.dmg.pmml.DataField;
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.FeatureType;
+import com.google.common.collect.Lists;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.FieldRef;
-import org.dmg.pmml.Model;
-import org.dmg.pmml.OpType;
-import org.dmg.pmml.Output;
-import org.dmg.pmml.OutputField;
-import org.dmg.pmml.PMML;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		ModelEvaluator<?> evaluator = createModelEvaluator(StandardAssociationSchemaTest.class);
+		ModelEvaluator<?> evaluator = createModelEvaluator(FieldScopeTest.class);
 
-		FieldName item = new FieldName("item");
-		List<String> itemValue = Arrays.asList("Cracker", "Water", "Coke");
+		FieldName input = new FieldName("input");
 
-		FieldName dummy = new FieldName("dummy");
-		String dummyValue = "Dummy";
+		ModelEvaluationContext parentContext = new ModelEvaluationContext(null, evaluator);
+		parentContext.declare(input, 1d);
 
-		PMML pmml = evaluator.getPMML();
+		assertEquals(Collections.emptyList(), Lists.newArrayList(parentContext.getCompatibleParents()));
 
-		DataDictionary dataDictionary = pmml.getDataDictionary()
-			.addDataFields(new DataField(dummy, OpType.CATEGORICAL, DataType.STRING));
+		ModelEvaluationContext childContext = new ModelEvaluationContext(parentContext, evaluator);
+		childContext.declare(input, 0d);
 
-		Model model = evaluator.getModel();
+		childContext.computeDifference();
 
-		Output output = model.getOutput()
-			.addOutputFields(createArgumentCopy(item, null), createArgumentCopy(dummy, "missing"));
+		assertEquals(Collections.emptyList(), Lists.newArrayList(childContext.getCompatibleParents()));
 
-		Map<FieldName, ?> arguments = createArguments(item, EvaluatorUtil.prepare(evaluator, item, itemValue), dummy, dummyValue);
+		ModelEvaluationContext grandChildContext = new ModelEvaluationContext(childContext, evaluator);
+		grandChildContext.declare(input, 0d);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		grandChildContext.computeDifference();
 
-		assertEquals(itemValue, result.get(new FieldName("item_copy")));
-		assertEquals("missing", result.get(new FieldName("dummy_copy")));
-	}
+		assertEquals(Collections.singletonList(childContext), Lists.newArrayList(grandChildContext.getCompatibleParents()));
 
-	static
-	private OutputField createArgumentCopy(FieldName name, String mapMissingTo){
-		FieldRef fieldRef = new FieldRef(name)
-			.setMapMissingTo(mapMissingTo);
+		FieldName squaredInput = new FieldName("squaredInput");
 
-		OutputField result = new OutputField()
-			.setName(FieldName.create(name.getValue() + "_copy"))
-			.setFeature(FeatureType.TRANSFORMED_VALUE)
-			.setExpression(fieldRef);
+		FieldValue squaredInputValue = childContext.evaluate(squaredInput);
 
-		return result;
+		assertNull(parentContext.getFieldEntry(squaredInput));
+		assertNotNull(childContext.getFieldEntry(squaredInput));
+		assertNull(grandChildContext.getFieldEntry(squaredInput));
+
+		assertNotSame(squaredInputValue, parentContext.evaluate(squaredInput));
+		assertSame(squaredInputValue, childContext.evaluate(squaredInput));
+		assertSame(squaredInputValue, grandChildContext.evaluate(squaredInput));
+
+		FieldName cubedInput = new FieldName("cubedInput");
+
+		FieldValue cubedInputValue = grandChildContext.evaluate(cubedInput);
+
+		assertNull(parentContext.getFieldEntry(cubedInput));
+		assertNotNull(childContext.getFieldEntry(cubedInput));
+		assertNotNull(grandChildContext.getFieldEntry(cubedInput));
+
+		assertNotSame(cubedInputValue, parentContext.evaluate(cubedInput));
+		assertSame(cubedInputValue, childContext.evaluate(cubedInput));
+		assertSame(cubedInputValue, grandChildContext.evaluate(cubedInput));
 	}
 }
