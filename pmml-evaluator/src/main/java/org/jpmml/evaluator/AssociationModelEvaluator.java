@@ -176,7 +176,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		// Custom IBM SPSS-style model: no group fields, one or more active fields
 		if(groupFields.size() == 0){
 
-			if(activeFields.size() < 0){
+			if(activeFields.size() < 1){
 				throw new InvalidFeatureException("No active fields", miningSchema);
 			}
 
