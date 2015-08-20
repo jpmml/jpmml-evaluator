@@ -180,8 +180,6 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 			// "If the input value is missing, then the result evaluates to a missing value"
 			if(value == null){
-				context.addWarning("Missing argument \"" + name.getValue() + "\"");
-
 				return null;
 			}
 
@@ -196,8 +194,6 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 			// "If the input value is missing, then the product is ignored"
 			if(value == null){
-				context.addWarning("Missing argument \"" + name.getValue() + "\"");
-
 				continue;
 			}
 
