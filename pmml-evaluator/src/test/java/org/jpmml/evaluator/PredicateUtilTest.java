@@ -27,6 +27,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Map;
+
 import org.dmg.pmml.Array;
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.False;
@@ -48,24 +50,24 @@ public class PredicateUtilTest {
 		SimplePredicate simplePredicate = new SimplePredicate(age, SimplePredicate.Operator.IS_MISSING);
 
 		assertEquals(Boolean.FALSE, evaluate(simplePredicate, age, 30));
-		assertEquals(Boolean.TRUE, evaluate(simplePredicate));
+		assertEquals(Boolean.TRUE, evaluate(simplePredicate, age, null));
 
 		simplePredicate.setOperator(SimplePredicate.Operator.IS_NOT_MISSING);
 
 		assertEquals(Boolean.TRUE, evaluate(simplePredicate, age, 30));
-		assertEquals(Boolean.FALSE, evaluate(simplePredicate));
+		assertEquals(Boolean.FALSE, evaluate(simplePredicate, age, null));
 
 		simplePredicate.setValue("30");
 
 		simplePredicate.setOperator(SimplePredicate.Operator.EQUAL);
 
 		assertEquals(Boolean.TRUE, evaluate(simplePredicate, age, 30));
-		assertEquals(null, evaluate(simplePredicate));
+		assertEquals(null, evaluate(simplePredicate, age, null));
 
 		simplePredicate.setOperator(SimplePredicate.Operator.NOT_EQUAL);
 
 		assertEquals(Boolean.FALSE, evaluate(simplePredicate, age, 30));
-		assertEquals(null, evaluate(simplePredicate));
+		assertEquals(null, evaluate(simplePredicate, age, null));
 
 		simplePredicate.setOperator(SimplePredicate.Operator.LESS_THAN);
 
@@ -128,14 +130,14 @@ public class PredicateUtilTest {
 		CompoundPredicate compoundPredicate = new CompoundPredicate(CompoundPredicate.BooleanOperator.SURROGATE)
 			.addPredicates(temperaturePredicate, humidityPredicate);
 
-		assertEquals(Boolean.TRUE, evaluate(compoundPredicate, temperature, 70));
-		assertEquals(Boolean.FALSE, evaluate(compoundPredicate, temperature, 40));
-		assertEquals(Boolean.FALSE, evaluate(compoundPredicate,  temperature, 100));
+		assertEquals(Boolean.TRUE, evaluate(compoundPredicate, temperature, 70, humidity, null));
+		assertEquals(Boolean.FALSE, evaluate(compoundPredicate, temperature, 40, humidity, null));
+		assertEquals(Boolean.FALSE, evaluate(compoundPredicate,  temperature, 100, humidity, null));
 
-		assertEquals(Boolean.TRUE, evaluate(compoundPredicate, humidity, 90));
-		assertEquals(Boolean.FALSE, evaluate(compoundPredicate, humidity, 70));
+		assertEquals(Boolean.TRUE, evaluate(compoundPredicate, temperature, null, humidity, 90));
+		assertEquals(Boolean.FALSE, evaluate(compoundPredicate, temperature, null, humidity, 70));
 
-		assertEquals(null, evaluate(compoundPredicate));
+		assertEquals(null, evaluate(compoundPredicate, temperature, null, humidity, null));
 	}
 
 	@Test
@@ -162,7 +164,7 @@ public class PredicateUtilTest {
 
 		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(fruit, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "apple orange"));
 
-		assertEquals(null, evaluate(simpleSetPredicate));
+		assertEquals(null, evaluate(simpleSetPredicate, fruit, null));
 
 		assertEquals(Boolean.TRUE, evaluate(simpleSetPredicate, fruit, "apple"));
 		assertEquals(Boolean.FALSE, evaluate(simpleSetPredicate, fruit, "pineapple"));
@@ -227,22 +229,17 @@ public class PredicateUtilTest {
 	}
 
 	static
-	private Boolean evaluate(Predicate predicate){
-		EvaluationContext context = new LocalEvaluationContext();
+	private Boolean evaluate(Predicate predicate, Object... objects){
+		Map<FieldName, ?> arguments = PMMLManagerTest.createArguments(objects);
 
-		return evaluate(predicate, context);
+		return evaluate(predicate, arguments);
 	}
 
 	static
-	private Boolean evaluate(Predicate predicate, FieldName field, Object value){
+	private Boolean evaluate(Predicate predicate, Map<FieldName, ?> arguments){
 		EvaluationContext context = new LocalEvaluationContext();
-		context.declare(field, value);
+		context.declareAll(arguments);
 
-		return evaluate(predicate, context);
-	}
-
-	static
-	private Boolean evaluate(Predicate predicate, EvaluationContext context){
 		return PredicateUtil.evaluate(predicate, context);
 	}
 }

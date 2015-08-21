@@ -64,7 +64,7 @@ public class EvaluationContext {
 			return value;
 		}
 
-		return null;
+		throw new MissingFieldException(name);
 	}
 
 	public FieldValue getField(FieldName name){

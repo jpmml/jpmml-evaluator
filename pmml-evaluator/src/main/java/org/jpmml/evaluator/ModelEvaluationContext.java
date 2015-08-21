@@ -85,7 +85,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 			return value;
 		}
 
-		return null;
+		throw new MissingFieldException(name);
 	}
 
 	@Override

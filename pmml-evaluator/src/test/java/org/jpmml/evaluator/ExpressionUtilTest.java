@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -132,11 +131,11 @@ public class ExpressionUtilTest {
 
 		assertEquals(DataType.STRING, getDataType(discretize));
 
-		assertEquals(null, evaluate(discretize));
+		assertEquals(null, evaluate(discretize, name, null));
 
 		discretize.setMapMissingTo("Missing");
 
-		assertEquals("Missing", evaluate(discretize));
+		assertEquals("Missing", evaluate(discretize, name, null));
 		assertEquals(null, evaluate(discretize, name, 3));
 
 		discretize.setDefaultValue("Default");
@@ -153,11 +152,11 @@ public class ExpressionUtilTest {
 
 		assertEquals(DataType.STRING, getDataType(mapValues));
 
-		assertEquals(null, evaluate(mapValues));
+		assertEquals(null, evaluate(mapValues, name, null));
 
 		mapValues.setMapMissingTo("Missing");
 
-		assertEquals("Missing", evaluate(mapValues));
+		assertEquals("Missing", evaluate(mapValues, name, null));
 		assertEquals(null, evaluate(mapValues, name, "3"));
 
 		mapValues.setDefaultValue("Default");
@@ -292,15 +291,8 @@ public class ExpressionUtilTest {
 	}
 
 	static
-	private Object evaluate(Expression expression){
-		Map<FieldName, ?> arguments = Collections.emptyMap();
-
-		return evaluate(expression, arguments);
-	}
-
-	static
-	private Object evaluate(Expression expression, FieldName field, Object value){
-		Map<FieldName, ?> arguments = Collections.singletonMap(field, value);
+	private Object evaluate(Expression expression, Object... objects){
+		Map<FieldName, ?> arguments = PMMLManagerTest.createArguments(objects);
 
 		return evaluate(expression, arguments);
 	}
