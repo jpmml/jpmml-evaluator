@@ -22,7 +22,7 @@ import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
 
-public class LocalEvaluationContext extends EvaluationContext {
+class VirtualEvaluationContext extends EvaluationContext {
 
 	@Override
 	public FieldValue createFieldValue(FieldName name, Object value){

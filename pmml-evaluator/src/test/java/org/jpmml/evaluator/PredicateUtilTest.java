@@ -237,7 +237,7 @@ public class PredicateUtilTest {
 
 	static
 	private Boolean evaluate(Predicate predicate, Map<FieldName, ?> arguments){
-		EvaluationContext context = new LocalEvaluationContext();
+		EvaluationContext context = new VirtualEvaluationContext();
 		context.declareAll(arguments);
 
 		return PredicateUtil.evaluate(predicate, context);

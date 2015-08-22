@@ -299,7 +299,7 @@ public class ExpressionUtilTest {
 
 	static
 	private Object evaluate(Expression expression, Map<FieldName, ?> arguments){
-		EvaluationContext context = new LocalEvaluationContext();
+		EvaluationContext context = new VirtualEvaluationContext();
 		context.declareAll(arguments);
 
 		FieldValue result = ExpressionUtil.evaluate(expression, context);

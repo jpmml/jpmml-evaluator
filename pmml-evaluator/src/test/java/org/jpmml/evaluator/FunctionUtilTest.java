@@ -37,7 +37,7 @@ public class FunctionUtilTest {
 
 	static
 	private Object evaluate(Apply apply, Object... arguments){
-		EvaluationContext context = new LocalEvaluationContext();
+		EvaluationContext context = new VirtualEvaluationContext();
 
 		List<FieldValue> values = FieldValueUtil.createAll(Arrays.asList(arguments));
 
