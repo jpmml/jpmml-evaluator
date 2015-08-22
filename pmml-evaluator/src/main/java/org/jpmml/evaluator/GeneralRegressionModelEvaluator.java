@@ -724,7 +724,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private FieldValue getVariable(FieldName name, EvaluationContext context){
 		FieldValue value = context.getField(name);
 		if(value == null){
-			throw new MissingFieldException(name);
+			throw new MissingValueException(name);
 		}
 
 		return value;

@@ -103,7 +103,7 @@ public class EvaluationContext {
 
 		boolean declared = fields.containsKey(name);
 		if(declared){
-			throw new DuplicateFieldException(name);
+			throw new DuplicateValueException(name);
 		}
 
 		fields.put(name, value);

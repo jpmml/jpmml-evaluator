@@ -359,7 +359,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 						for(FieldName outputField : outputFields){
 							FieldValue outputValue = segmentContext.getField(outputField);
 							if(outputValue == null){
-								throw new MissingFieldException(outputField, segment);
+								throw new MissingValueException(outputField, segment);
 							}
 
 							context.declare(outputField, outputValue);

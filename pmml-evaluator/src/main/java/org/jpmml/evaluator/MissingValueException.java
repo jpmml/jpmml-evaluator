@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Villu Ruusmann
+ * Copyright (c) 2013 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,32 +18,21 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MiningField;
 import org.dmg.pmml.PMMLObject;
 
 /**
  * <p>
- * Thrown to indicate that a field name cannot be resolved to a field in the current context.
- * </p>
- *
- * <p>
- * According to <a href="http://www.dmg.org/v4-2-1/FieldScope.html">PMML field scoping rules</a>,
- * it is possible to refer to exactly two kinds of field elements inside a Model element:
- * <ul>
- *   <li>{@link MiningField}</li>
- *   <li>{@link DerivedField}</li>
- * </ul>
+ * Thrown to indicate a missing field value.
  * </p>
  */
-public class MissingFieldException extends EvaluationException {
+public class MissingValueException extends EvaluationException {
 
-	public MissingFieldException(FieldName name){
+	public MissingValueException(FieldName name){
 		super(name.getValue());
 	}
 
-	public MissingFieldException(FieldName name, PMMLObject context){
+	public MissingValueException(FieldName name, PMMLObject context){
 		super(name.getValue(), context);
 	}
 }

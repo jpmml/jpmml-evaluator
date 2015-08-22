@@ -274,7 +274,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		for(InstanceResult instanceResult : instanceResults){
 			FieldValue value = table.get(instanceResult.getId(), name);
 			if(value == null){
-				throw new MissingFieldException(name);
+				throw new MissingValueException(name);
 			}
 
 			Number number = value.asNumber();
@@ -322,7 +322,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		for(InstanceResult instanceResult : instanceResults){
 			FieldValue value = table.get(instanceResult.getId(), name);
 			if(value == null){
-				throw new MissingFieldException(name);
+				throw new MissingValueException(name);
 			}
 
 			Object object = value.getValue();
@@ -380,7 +380,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			public String apply(Integer row){
 				FieldValue value = table.get(row, name);
 				if(value == null){
-					throw new MissingFieldException(name);
+					throw new MissingValueException(name);
 				}
 
 				return value.asString();

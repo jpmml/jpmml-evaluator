@@ -23,16 +23,16 @@ import org.dmg.pmml.PMMLObject;
 
 /**
  * <p>
- * Thrown to indicate a violation of <a href="http://www.dmg.org/v4-2-1/FieldScope.html">PMML field scoping rules</a>.
+ * Thrown to indicate a duplicate field value.
  * </p>
  */
-public class DuplicateFieldException extends EvaluationException {
+public class DuplicateValueException extends EvaluationException {
 
-	public DuplicateFieldException(FieldName name){
+	public DuplicateValueException(FieldName name){
 		super(name.getValue());
 	}
 
-	public DuplicateFieldException(FieldName name, PMMLObject context){
+	public DuplicateValueException(FieldName name, PMMLObject context){
 		super(name.getValue(), context);
 	}
 }

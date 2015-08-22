@@ -222,7 +222,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 			FieldValue value = context.getField(activeField);
 			if(value == null){
-				throw new MissingFieldException(activeField);
+				throw new MissingValueException(activeField);
 			}
 
 			Collection<?> result = FieldValueUtil.getValue(Collection.class, value);

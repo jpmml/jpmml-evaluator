@@ -109,7 +109,7 @@ public class OutputUtil {
 				if(targetField != null){
 
 					if(!segmentPredictions.containsKey(targetField)){
-						throw new MissingFieldException(targetField, outputField);
+						throw new MissingValueException(targetField, outputField);
 					}
 
 					targetValue = segmentPredictions.get(targetField);
@@ -140,7 +140,7 @@ public class OutputUtil {
 							} // End if
 
 							if(!predictions.containsKey(targetField)){
-								throw new MissingFieldException(targetField, outputField);
+								throw new MissingValueException(targetField, outputField);
 							}
 
 							targetValue = predictions.get(targetField);
@@ -208,7 +208,7 @@ public class OutputUtil {
 					{
 						FieldValue expectedValue = context.getField(targetField);
 						if(expectedValue == null){
-							throw new MissingFieldException(targetField, outputField);
+							throw new MissingValueException(targetField, outputField);
 						}
 
 						DataField dataField = modelEvaluator.getDataField(targetField);

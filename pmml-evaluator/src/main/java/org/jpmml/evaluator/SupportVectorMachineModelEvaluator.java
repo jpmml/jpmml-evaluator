@@ -339,7 +339,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 			FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
 			if(value == null){
-				throw new MissingFieldException(fieldRef.getField(), vectorFields);
+				throw new MissingValueException(fieldRef.getField(), vectorFields);
 			}
 
 			result[i] = (value.asNumber()).doubleValue();
