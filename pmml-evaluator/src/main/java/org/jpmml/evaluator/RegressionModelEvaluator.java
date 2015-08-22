@@ -216,7 +216,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			}
 
 			for(FieldRef fieldRef : fieldRefs){
-				FieldValue value = ExpressionUtil.evaluateFieldRef(fieldRef, context);
+				FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
 
 				// "If the input value is missing, then the result evaluates to a missing value"
 				if(value == null){

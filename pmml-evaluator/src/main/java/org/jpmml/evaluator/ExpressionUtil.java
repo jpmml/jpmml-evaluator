@@ -60,6 +60,18 @@ public class ExpressionUtil {
 	static
 	public FieldValue evaluate(Expression expression, EvaluationContext context){
 
+		try {
+			return evaluateExpression(expression, context);
+		} catch(PMMLException pe){
+			pe.ensureContext(expression);
+
+			throw pe;
+		}
+	}
+
+	static
+	FieldValue evaluateExpression(Expression expression, EvaluationContext context){
+
 		if(expression instanceof Constant){
 			return evaluateConstant((Constant)expression, context);
 		} else

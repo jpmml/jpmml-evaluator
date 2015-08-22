@@ -42,25 +42,19 @@ public class FunctionUtil {
 			throw new InvalidFeatureException(apply);
 		}
 
-		try {
-			Function builtInFunction = getFunction(name);
-			if(builtInFunction != null){
-				return builtInFunction.evaluate(values);
-			}
+		Function builtInFunction = getFunction(name);
+		if(builtInFunction != null){
+			return builtInFunction.evaluate(values);
+		}
 
-			Function userDefinedFunction = FunctionRegistry.getFunction(name);
-			if(userDefinedFunction != null){
-				return userDefinedFunction.evaluate(values);
-			}
+		Function userDefinedFunction = FunctionRegistry.getFunction(name);
+		if(userDefinedFunction != null){
+			return userDefinedFunction.evaluate(values);
+		}
 
-			EvaluationContext.Result<DefineFunction> result = context.resolveFunction(name);
-			if(result != null){
-				return evaluate(result.getElement(), values, context);
-			}
-		} catch(PMMLException pe){
-			pe.ensureContext(apply);
-
-			throw pe;
+		EvaluationContext.Result<DefineFunction> result = context.resolveFunction(name);
+		if(result != null){
+			return evaluate(result.getElement(), values, context);
 		}
 
 		throw new UnsupportedFeatureException(apply, ReflectionUtil.getField(apply, "function"), name);

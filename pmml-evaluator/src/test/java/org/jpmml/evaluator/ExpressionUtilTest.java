@@ -35,6 +35,7 @@ import org.dmg.pmml.InvalidValueTreatmentMethodType;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
+import org.jpmml.evaluator.functions.EchoFunction;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -250,6 +251,26 @@ public class ExpressionUtilTest {
 		} catch(FunctionException fe){
 			// Ignored
 		}
+	}
+
+	@Test
+	public void evaluateApplyJavaFunction(){
+		FieldName name = new FieldName("x");
+
+		FieldRef fieldRef = new FieldRef(name);
+
+		Apply apply = new Apply(EchoFunction.class.getName())
+			.addExpressions(fieldRef);
+
+		try {
+			evaluate(apply);
+
+			fail();
+		} catch(EvaluationException ee){
+			assertEquals(fieldRef, ee.getContext());
+		}
+
+		assertEquals("Hello World!", evaluate(apply, name, "Hello World!"));
 	}
 
 	@Test
