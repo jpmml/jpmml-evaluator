@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Equivalence;
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
@@ -69,9 +71,9 @@ public class BatchUtil {
 	 */
 	static
 	public boolean evaluate(Batch batch, Set<FieldName> ignoredFields, double precision, double zeroThreshold) throws Exception {
-		List<MapDifference<FieldName, ?>> differences = difference(batch, ignoredFields, precision, zeroThreshold);
+		List<Conflict> conflicts = evaluateInternal(batch, ignoredFields, precision, zeroThreshold);
 
-		return Iterables.isEmpty(differences);
+		return Iterables.isEmpty(conflicts);
 	}
 
 	/**
@@ -93,7 +95,7 @@ public class BatchUtil {
 	}
 
 	static
-	public List<MapDifference<FieldName, ?>> difference(Batch batch, Set<FieldName> ignoredFields, final double precision, final double zeroThreshold) throws Exception {
+	public List<Conflict> evaluateInternal(Batch batch, Set<FieldName> ignoredFields, final double precision, final double zeroThreshold) throws Exception {
 		List<? extends Map<FieldName, ?>> input = CsvUtil.load(batch.getInput());
 		List<? extends Map<FieldName, String>> output = CsvUtil.load(batch.getOutput());
 
@@ -148,7 +150,7 @@ public class BatchUtil {
 				throw new EvaluationException();
 			}
 
-			List<MapDifference<FieldName, ?>> differences = new ArrayList<>();
+			List<Conflict> conflicts = new ArrayList<>();
 
 			for(int i = 0; i < input.size(); i++){
 				Map<FieldName, ?> arguments = input.get(i);
@@ -169,13 +171,15 @@ public class BatchUtil {
 					fields.removeAll(ignoredFields);
 				}
 
-				MapDifference<FieldName, Object> difference = Maps.<FieldName, Object>difference(output.get(i), result, equivalence);
+				MapDifference<FieldName, ?> difference = Maps.<FieldName, Object>difference(output.get(i), result, equivalence);
 				if(!difference.areEqual()){
-					differences.add(difference);
+					Conflict conflict = new Conflict(i, arguments, difference);
+
+					conflicts.add(conflict);
 				}
 			}
 
-			return differences;
+			return conflicts;
 		} else
 
 		{
@@ -186,6 +190,57 @@ public class BatchUtil {
 			}
 
 			return Collections.emptyList();
+		}
+	}
+
+	static
+	public class Conflict {
+
+		private Integer id = null;
+
+		private Map<FieldName, ?> arguments = null;
+
+		private MapDifference<FieldName, ?> difference = null;
+
+
+		public Conflict(Integer id, Map<FieldName, ?> arguments, MapDifference<FieldName, ?> difference){
+			setId(id);
+			setArguments(arguments);
+			setDifference(difference);
+		}
+
+		@Override
+		public String toString(){
+			ToStringHelper helper = Objects.toStringHelper(this)
+				.add("id", getId())
+				.add("arguments", getArguments())
+				.add("difference", getDifference());
+
+			return helper.toString();
+		}
+
+		public Integer getId(){
+			return this.id;
+		}
+
+		private void setId(Integer id){
+			this.id = id;
+		}
+
+		public Map<FieldName, ?> getArguments(){
+			return this.arguments;
+		}
+
+		private void setArguments(Map<FieldName, ?> arguments){
+			this.arguments = arguments;
+		}
+
+		public MapDifference<FieldName, ?> getDifference(){
+			return this.difference;
+		}
+
+		private void setDifference(MapDifference<FieldName, ?> difference){
+			this.difference = difference;
 		}
 	}
 
