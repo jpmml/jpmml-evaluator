@@ -18,34 +18,32 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import org.dmg.pmml.FieldName;
 
 public interface Batch {
 
-	/**
-	 * <p>
-	 * A PMML document with a model.
-	 * </p>
-	 */
-	InputStream getModel();
+	Evaluator getEvaluator() throws Exception;
 
 	/**
 	 * <p>
-	 * A CSV document with input data records.
+	 * Input data records.
 	 * </p>
 	 *
 	 * @see Evaluator#getActiveFields()
 	 * @see Evaluator#getGroupFields()
 	 */
-	InputStream getInput();
+	List<? extends Map<FieldName, ?>> getInput() throws Exception;
 
 	/**
 	 * <p>
-	 * A CSV document with expected output data records.
+	 * Expected output data records.
 	 * </p>
 	 *
 	 * @see Evaluator#getTargetFields()
 	 * @see Evaluator#getOutputFields()
 	 */
-	InputStream getOutput();
+	List<? extends Map<FieldName, ?>> getOutput() throws Exception;
 }

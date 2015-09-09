@@ -18,7 +18,18 @@
  */
 package org.jpmml.evaluator;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.transform.Source;
+
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.PMML;
+import org.jpmml.model.ImportFilter;
+import org.jpmml.model.JAXBUtil;
+import org.xml.sax.InputSource;
 
 abstract
 public class ArchiveBatch implements Batch {
@@ -33,25 +44,53 @@ public class ArchiveBatch implements Batch {
 		setDataset(dataset);
 	}
 
+	@Override
+	public Evaluator getEvaluator() throws Exception {
+		PMML pmml = getPMML();
+
+		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
+
+		return modelEvaluatorFactory.newModelManager(pmml);
+	}
+
+	public PMML getPMML() throws Exception {
+		InputStream is = open("/pmml/" + (getName() + getDataset()) + ".pmml");
+
+		try {
+			Source source = ImportFilter.apply(new InputSource(is));
+
+			return JAXBUtil.unmarshalPMML(source);
+		} finally {
+			is.close();
+		}
+	}
+
+	@Override
+	public List<Map<FieldName, String>> getInput() throws IOException {
+		InputStream is = open("/csv/" + getDataset() + ".csv");
+
+		try {
+			return CsvUtil.load(is);
+		} finally {
+			is.close();
+		}
+	}
+
+	@Override
+	public List<Map<FieldName, String>> getOutput() throws IOException {
+		InputStream is = open("/csv/" + (getName() + getDataset()) + ".csv");
+
+		try {
+			return CsvUtil.load(is);
+		} finally {
+			is.close();
+		}
+	}
+
 	public InputStream open(String path){
 		Class<?> clazz = getClass();
 
 		return clazz.getResourceAsStream(path);
-	}
-
-	@Override
-	public InputStream getModel(){
-		return open("/pmml/" + (getName() + getDataset()) + ".pmml");
-	}
-
-	@Override
-	public InputStream getInput(){
-		return open("/csv/" + getDataset() + ".csv");
-	}
-
-	@Override
-	public InputStream getOutput(){
-		return open("/csv/" + (getName() + getDataset()) + ".csv");
 	}
 
 	public String getName(){
