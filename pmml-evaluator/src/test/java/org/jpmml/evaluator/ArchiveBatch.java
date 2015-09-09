@@ -44,6 +44,9 @@ public class ArchiveBatch implements Batch {
 		setDataset(dataset);
 	}
 
+	abstract
+	public InputStream open(String path);
+
 	@Override
 	public Evaluator getEvaluator() throws Exception {
 		PMML pmml = getPMML();
@@ -85,12 +88,6 @@ public class ArchiveBatch implements Batch {
 		} finally {
 			is.close();
 		}
-	}
-
-	public InputStream open(String path){
-		Class<?> clazz = getClass();
-
-		return clazz.getResourceAsStream(path);
 	}
 
 	public String getName(){

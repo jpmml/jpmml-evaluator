@@ -22,74 +22,68 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
+import org.jpmml.evaluator.ArchiveBatchTest;
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
 import org.jpmml.evaluator.NodeScore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-public class RegressionTest {
+public class RegressionTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateDecisionTreeAuto() throws Exception {
-		Batch batch = new RattleBatch("DecisionTree", "Auto");
+		Batch batch = createBatch("DecisionTree", "Auto");
 
 		NodeScore targetValue = (NodeScore)BatchUtil.evaluateDefault(batch);
 
 		assertEquals("14", targetValue.getEntityId());
 
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate(batch);
 	}
 
 	@Test
 	public void evaluateGeneralRegressionAuto() throws Exception {
-		Batch batch = new RattleBatch("GeneralRegression", "Auto");
+		Batch batch = createBatch("GeneralRegression", "Auto");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate(batch);
 	}
 
 	@Test
 	public void evaluateKernlabSVMAuto() throws Exception {
-		Batch batch = new RattleBatch("KernlabSVM", "Auto");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("KernlabSVM", "Auto");
 	}
 
 	@Test
 	public void evaluateLibSVMAuto() throws Exception {
-		Batch batch = new RattleBatch("LibSVM", "Auto");
-
 		Set<FieldName> ignoredColumns = Sets.newHashSet(FieldName.create("mpg"), FieldName.create("predictedValue"));
 
-		assertTrue(BatchUtil.evaluate(batch, ignoredColumns));
+		evaluate("LibSVM", "Auto", ignoredColumns);
 	}
 
 	@Test
 	public void evaluateNeuralNetworkAuto() throws Exception {
-		Batch batch = new RattleBatch("NeuralNetwork", "Auto");
+		Batch batch = createBatch("NeuralNetwork", "Auto");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate(batch);
 	}
 
 	@Test
 	public void evaluateRandomForestAuto() throws Exception {
-		Batch batch = new RattleBatch("RandomForest", "Auto");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("RandomForest", "Auto");
 	}
 
 	@Test
 	public void evaluateRegressionAuto() throws Exception {
-		Batch batch = new RattleBatch("Regression", "Auto");
+		Batch batch = createBatch("Regression", "Auto");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate(batch);
 	}
 }

@@ -22,152 +22,132 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
+import org.jpmml.evaluator.ArchiveBatchTest;
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
 import org.jpmml.evaluator.NodeScoreDistribution;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-public class ClassificationTest {
+public class ClassificationTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateDecisionTreeIris() throws Exception {
-		Batch batch = new RattleBatch("DecisionTree", "Iris");
+		Batch batch = createBatch("DecisionTree", "Iris");
 
 		NodeScoreDistribution targetValue = (NodeScoreDistribution)BatchUtil.evaluateDefault(batch);
 
 		assertEquals("7", targetValue.getEntityId());
 
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate(batch);
 	}
 
 	@Test
 	public void evaluateGeneralRegressionIris() throws Exception {
-		Batch batch = new RattleBatch("GeneralRegression", "Iris");
+		Batch batch = createBatch("GeneralRegression", "Iris");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate(batch);
 	}
 
 	@Test
 	public void evaluateKernlabSVMIris() throws Exception {
-		Batch batch = new RattleBatch("KernlabSVM", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("KernlabSVM", "Iris");
 	}
 
 	@Test
 	public void evaluateLibSVMIris() throws Exception {
-		Batch batch = new RattleBatch("LibSVM", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("LibSVM", "Iris");
 	}
 
 	@Test
 	public void evaluateLogisticRegressionIris() throws Exception {
-		Batch batch = new RattleBatch("LogisticRegression", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("LogisticRegression", "Iris");
 	}
 
 	@Test
 	public void evaluateNaiveBayesIris() throws Exception {
-		Batch batch = new RattleBatch("NaiveBayes", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("NaiveBayes", "Iris");
 	}
 
 	@Test
 	public void evaluateNeuralNetworkIris() throws Exception {
-		Batch batch = new RattleBatch("NeuralNetwork", "Iris");
+		Batch batch = createBatch("NeuralNetwork", "Iris");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate(batch);
 	}
 
 	@Test
 	public void evaluateRandomForestIris() throws Exception {
-		Batch batch = new RattleBatch("RandomForest", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("RandomForest", "Iris");
 	}
 
 	@Test
 	public void evaluateRegressionIris() throws Exception {
-		Batch batch = new RattleBatch("Regression", "Iris");
+		Batch batch = createBatch("Regression", "Iris");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate(batch);
 	}
 
 	@Test
 	public void evaluateDecisionTreeAudit() throws Exception {
-		Batch batch = new RattleBatch("DecisionTree", "Audit");
+		Batch batch = createBatch("DecisionTree", "Audit");
 
 		NodeScoreDistribution targetValue = (NodeScoreDistribution)BatchUtil.evaluateDefault(batch);
 
 		assertEquals("2", targetValue.getEntityId());
 
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate(batch);
 	}
 
 	@Test
 	public void evaluateGeneralRegressionAudit() throws Exception {
-		Batch batch = new RattleBatch("GeneralRegression", "Audit");
+		Batch batch = createBatch("GeneralRegression", "Audit");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate(batch);
 	}
 
 	@Test
 	public void evaluateKernlabSVMAudit() throws Exception {
-		Batch batch = new RattleBatch("KernlabSVM", "Audit");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("KernlabSVM", "Audit");
 	}
 
 	@Test
 	public void evaluateLibSVMAudit() throws Exception {
-		Batch batch = new RattleBatch("LibSVM", "Audit");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("LibSVM", "Audit");
 	}
 
 	@Test
 	public void evaluateLogisticRegressionAudit() throws Exception {
-		Batch batch = new RattleBatch("LogisticRegression", "Audit");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("LogisticRegression", "Audit");
 	}
 
 	@Test
 	public void evaluateNaiveBayesAudit() throws Exception {
-		Batch batch = new RattleBatch("NaiveBayes", "Audit");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("NaiveBayes", "Audit");
 	}
 
 	@Test
 	public void evaluateNeuralNetworkAudit() throws Exception {
-		Batch batch = new RattleBatch("NeuralNetwork", "Audit");
+		Batch batch = createBatch("NeuralNetwork", "Audit");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
 		Set<FieldName> ignoredFields = Sets.newHashSet(new FieldName("Probability_0"), new FieldName("Probability_1"));
 
-		assertTrue(BatchUtil.evaluate(batch, ignoredFields));
+		evaluate(batch, ignoredFields);
 	}
 
 	@Test
 	public void evaluateRandomForestAudit() throws Exception {
-		Batch batch = new RattleBatch("RandomForest", "Audit");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("RandomForest", "Audit");
 	}
 }

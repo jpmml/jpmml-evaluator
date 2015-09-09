@@ -18,46 +18,33 @@
  */
 package org.jpmml.rapidminer;
 
-import org.jpmml.evaluator.Batch;
-import org.jpmml.evaluator.BatchUtil;
+import org.jpmml.evaluator.ArchiveBatchTest;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
-public class ClassificationTest {
+public class ClassificationTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateDecisionTreeIris() throws Exception {
-		Batch batch = new RapidMinerBatch("DecisionTree", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("DecisionTree", "Iris");
 	}
 
 	@Test
 	public void evaluateNeuralNetworkIris() throws Exception {
-		Batch batch = new RapidMinerBatch("NeuralNetwork", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("NeuralNetwork", "Iris");
 	}
 
 	@Test
 	public void evaluateRuleSetIris() throws Exception {
-		Batch batch = new RapidMinerBatch("RuleSet", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("RuleSet", "Iris");
 	}
 
 	@Test
 	public void evaluateDecisionTreeAudit() throws Exception {
-		Batch batch = new RapidMinerBatch("DecisionTree", "Audit");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("DecisionTree", "Audit");
 	}
 
 	@Test
 	public void evaluateRuleSetAudit() throws Exception {
-		Batch batch = new RapidMinerBatch("RuleSet", "Audit");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("RuleSet", "Audit");
 	}
 }

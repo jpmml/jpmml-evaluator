@@ -18,18 +18,13 @@
  */
 package org.jpmml.rattle;
 
-import org.jpmml.evaluator.Batch;
-import org.jpmml.evaluator.BatchUtil;
+import org.jpmml.evaluator.ArchiveBatchTest;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
-public class CoxRegressionTest {
+public class CoxRegressionTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateCoxRegressionLung() throws Exception {
-		Batch batch = new RattleBatch("CoxRegression", "Lung");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("CoxRegression", "Lung");
 	}
 }

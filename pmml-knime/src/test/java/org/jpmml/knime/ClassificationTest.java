@@ -18,67 +18,48 @@
  */
 package org.jpmml.knime;
 
-import org.jpmml.evaluator.Batch;
-import org.jpmml.evaluator.BatchUtil;
+import org.jpmml.evaluator.ArchiveBatchTest;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
-public class ClassificationTest {
+public class ClassificationTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateDecisionTreeIris() throws Exception {
-		Batch batch = new KnimeBatch("DecisionTree", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("DecisionTree", "Iris");
 	}
 
 	@Test
 	public void evaluateDecisionTreeEnsembleIris() throws Exception {
-		Batch batch = new KnimeBatch("DecisionTreeEnsemble", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("DecisionTreeEnsemble", "Iris");
 	}
 
 	@Test
 	public void evaluateGeneralRegressionIris() throws Exception {
-		Batch batch = new KnimeBatch("GeneralRegression", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("GeneralRegression", "Iris");
 	}
 
 	@Test
 	public void evaluateNeuralNetworkIris() throws Exception {
-		Batch batch = new KnimeBatch("NeuralNetwork", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("NeuralNetwork", "Iris");
 	}
 
 	@Test
 	public void evaluateSupportVectorMachineIris() throws Exception {
-		Batch batch = new KnimeBatch("SupportVectorMachine", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("SupportVectorMachine", "Iris");
 	}
 
 	@Test
 	public void evaluateDecisionTreeAudit() throws Exception {
-		Batch batch = new KnimeBatch("DecisionTree", "Audit");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("DecisionTree", "Audit");
 	}
 
 	@Test
 	public void evaluateDecisionTreeEnsembleAudit() throws Exception {
-		Batch batch = new KnimeBatch("DecisionTreeEnsemble", "Audit");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("DecisionTreeEnsemble", "Audit");
 	}
 
 	@Test
 	public void evaluateGeneralRegressionAudit() throws Exception {
-		Batch batch = new KnimeBatch("GeneralRegression", "Audit");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("GeneralRegression", "Audit");
 	}
 }

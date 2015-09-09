@@ -18,32 +18,23 @@
  */
 package org.jpmml.knime;
 
-import org.jpmml.evaluator.Batch;
-import org.jpmml.evaluator.BatchUtil;
+import org.jpmml.evaluator.ArchiveBatchTest;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
-public class RegressionTest {
+public class RegressionTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateGeneralRegressionAuto() throws Exception {
-		Batch batch = new KnimeBatch("GeneralRegression", "Auto");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("GeneralRegression", "Auto");
 	}
 
 	@Test
 	public void evaluateRegressionAuto() throws Exception {
-		Batch batch = new KnimeBatch("Regression", "Auto");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("Regression", "Auto");
 	}
 
 	@Test
 	public void evaluateRegressionEnsembleAuto() throws Exception {
-		Batch batch = new KnimeBatch("RegressionEnsemble", "Auto");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("RegressionEnsemble", "Auto");
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2015 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -16,13 +16,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.rattle;
+package org.jpmml.evaluator;
 
-import org.jpmml.evaluator.ArchiveBatch;
+import java.util.List;
+import java.util.Set;
 
-public class RattleBatch extends ArchiveBatch {
+import org.dmg.pmml.FieldName;
 
-	public RattleBatch(String name, String dataset){
-		super(name, dataset);
+import static org.junit.Assert.assertTrue;
+
+abstract
+public class BatchTest {
+
+	public void evaluate(Batch batch) throws Exception {
+		evaluate(batch, null);
 	}
+
+	public void evaluate(Batch batch, Set<FieldName> ignoredFields) throws Exception {
+		List<?> conflicts = BatchUtil.evaluate(batch, ignoredFields, BatchTest.precision, BatchTest.zeroThreshold);
+
+		assertTrue(conflicts.isEmpty());
+	}
+
+	// One part per million parts
+	private static final double precision = 1d / (1000 * 1000);
+
+	private static final double zeroThreshold = precision;
 }

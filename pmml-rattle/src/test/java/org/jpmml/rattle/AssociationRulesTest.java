@@ -18,18 +18,13 @@
  */
 package org.jpmml.rattle;
 
-import org.jpmml.evaluator.Batch;
-import org.jpmml.evaluator.BatchUtil;
+import org.jpmml.evaluator.ArchiveBatchTest;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
-public class AssociationRulesTest {
+public class AssociationRulesTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateAssociationRulesShopping() throws Exception {
-		Batch batch = new RattleBatch("AssociationRules", "Shopping");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("AssociationRules", "Shopping");
 	}
 }

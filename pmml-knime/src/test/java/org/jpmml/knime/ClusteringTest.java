@@ -18,25 +18,18 @@
  */
 package org.jpmml.knime;
 
-import org.jpmml.evaluator.Batch;
-import org.jpmml.evaluator.BatchUtil;
+import org.jpmml.evaluator.ArchiveBatchTest;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
-public class ClusteringTest {
+public class ClusteringTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateKMeansIris() throws Exception {
-		Batch batch = new KnimeBatch("KMeans", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("KMeans", "Iris");
 	}
 
 	@Test
 	public void evaluateKMeansEnsembleIris() throws Exception {
-		Batch batch = new KnimeBatch("KMeansEnsemble", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("KMeansEnsemble", "Iris");
 	}
 }

@@ -18,18 +18,13 @@
  */
 package org.jpmml.rapidminer;
 
-import org.jpmml.evaluator.Batch;
-import org.jpmml.evaluator.BatchUtil;
+import org.jpmml.evaluator.ArchiveBatchTest;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
-public class RegressionTest {
+public class RegressionTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateRegressionOzone() throws Exception {
-		Batch batch = new RapidMinerBatch("Regression", "Ozone");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("Regression", "Ozone");
 	}
 }

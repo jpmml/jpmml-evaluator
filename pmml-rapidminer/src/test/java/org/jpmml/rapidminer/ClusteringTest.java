@@ -18,18 +18,13 @@
  */
 package org.jpmml.rapidminer;
 
-import org.jpmml.evaluator.Batch;
-import org.jpmml.evaluator.BatchUtil;
+import org.jpmml.evaluator.ArchiveBatchTest;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
-public class ClusteringTest {
+public class ClusteringTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateKMeansIris() throws Exception {
-		Batch batch = new RapidMinerBatch("KMeans", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("KMeans", "Iris");
 	}
 }

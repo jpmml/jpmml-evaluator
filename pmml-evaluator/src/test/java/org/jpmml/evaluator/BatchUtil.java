@@ -30,7 +30,6 @@ import java.util.Set;
 import com.google.common.base.Equivalence;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
@@ -46,56 +45,8 @@ public class BatchUtil {
 	private BatchUtil(){
 	}
 
-	/**
-	 * @see #evaluate(Batch, Set, double, double)
-	 */
 	static
-	public boolean evaluate(Batch batch) throws Exception {
-		return evaluate(batch, null, BatchUtil.precision, BatchUtil.zeroThreshold);
-	}
-
-	/**
-	 * @see #evaluate(Batch, Set, double, double)
-	 */
-	static
-	public boolean evaluate(Batch batch, Set<FieldName> ignoredFields) throws Exception {
-		return evaluate(batch, ignoredFields, BatchUtil.precision, BatchUtil.zeroThreshold);
-	}
-
-	/**
-	 * <p>
-	 * Evaluates the model using arguments from the specified CSV resource.
-	 * </p>
-	 *
-	 * @return <code>true</code> If there were no differences between expected and actual results, <code>false</code> otherwise.
-	 */
-	static
-	public boolean evaluate(Batch batch, Set<FieldName> ignoredFields, double precision, double zeroThreshold) throws Exception {
-		List<Conflict> conflicts = evaluateInternal(batch, ignoredFields, precision, zeroThreshold);
-
-		return Iterables.isEmpty(conflicts);
-	}
-
-	/**
-	 * <p>
-	 * Evaluates the model using empty arguments.
-	 * </p>
-	 *
-	 * @return The value of the target field.
-	 */
-	static
-	public Object evaluateDefault(Batch batch) throws Exception {
-		Evaluator evaluator = batch.getEvaluator();
-
-		Map<FieldName, ?> arguments = Collections.emptyMap();
-
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
-
-		return result.get(evaluator.getTargetField());
-	}
-
-	static
-	public List<Conflict> evaluateInternal(Batch batch, Set<FieldName> ignoredFields, final double precision, final double zeroThreshold) throws Exception {
+	public List<Conflict> evaluate(Batch batch, Set<FieldName> ignoredFields, final double precision, final double zeroThreshold) throws Exception {
 		ModelEvaluator<?> evaluator = (ModelEvaluator<?>)batch.getEvaluator();
 
 		List<? extends Map<FieldName, ?>> input = batch.getInput();
@@ -193,6 +144,24 @@ public class BatchUtil {
 		}
 	}
 
+	/**
+	 * <p>
+	 * Evaluates the model using empty arguments.
+	 * </p>
+	 *
+	 * @return The value of the target field.
+	 */
+	static
+	public Object evaluateDefault(Batch batch) throws Exception {
+		Evaluator evaluator = batch.getEvaluator();
+
+		Map<FieldName, ?> arguments = Collections.emptyMap();
+
+		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+
+		return result.get(evaluator.getTargetField());
+	}
+
 	static
 	public class Conflict {
 
@@ -244,8 +213,5 @@ public class BatchUtil {
 		}
 	}
 
-	// One part per million parts
-	private static final double precision = 1d / (1000 * 1000);
 
-	private static final double zeroThreshold = precision;
 }

@@ -18,25 +18,18 @@
  */
 package org.jpmml.rattle;
 
-import org.jpmml.evaluator.Batch;
-import org.jpmml.evaluator.BatchUtil;
+import org.jpmml.evaluator.ArchiveBatchTest;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
-public class ClusteringTest {
+public class ClusteringTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateHierarchicalClusteringIris() throws Exception {
-		Batch batch = new RattleBatch("HierarchicalClustering", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("HierarchicalClustering", "Iris");
 	}
 
 	@Test
 	public void evaluateKMeansIris() throws Exception {
-		Batch batch = new RattleBatch("KMeans", "Iris");
-
-		assertTrue(BatchUtil.evaluate(batch));
+		evaluate("KMeans", "Iris");
 	}
 }
