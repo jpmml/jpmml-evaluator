@@ -18,9 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,13 +30,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
-import com.google.common.io.ByteStreams;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.PMML;
-import org.dmg.pmml.Visitor;
-import org.jpmml.evaluator.visitors.InvalidFeatureInspector;
-import org.jpmml.evaluator.visitors.UnsupportedFeatureInspector;
-import org.jpmml.model.visitors.LocatorTransformer;
 
 public class BatchUtil {
 
@@ -47,25 +39,10 @@ public class BatchUtil {
 
 	static
 	public List<Conflict> evaluate(Batch batch, Set<FieldName> ignoredFields, final double precision, final double zeroThreshold) throws Exception {
-		ModelEvaluator<?> evaluator = (ModelEvaluator<?>)batch.getEvaluator();
+		Evaluator evaluator = batch.getEvaluator();
 
 		List<? extends Map<FieldName, ?>> input = batch.getInput();
 		List<? extends Map<FieldName, ?>> output = batch.getOutput();
-
-		PMML pmml = evaluator.getPMML();
-
-		List<Visitor> visitors = Arrays.<Visitor>asList(new LocatorTransformer(), new InvalidFeatureInspector(), new UnsupportedFeatureInspector());
-		for(Visitor visitor : visitors){
-			visitor.applyTo(pmml);
-		}
-
-		ObjectOutputStream oos = new ObjectOutputStream(ByteStreams.nullOutputStream());
-
-		try {
-			oos.writeObject(evaluator);
-		} finally {
-			oos.close();
-		}
 
 		List<FieldName> groupFields = evaluator.getGroupFields();
 		List<FieldName> targetFields = evaluator.getTargetFields();
