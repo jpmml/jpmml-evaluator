@@ -26,8 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Equivalence;
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Function;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import org.dmg.pmml.FieldName;
@@ -140,55 +139,52 @@ public class BatchUtil {
 	}
 
 	static
-	public class Conflict {
+	public List<Map<FieldName, String>> parseRecords(List<List<String>> table, Function<String, String> function){
+		List<Map<FieldName, String>> records = new ArrayList<>();
 
-		private Integer id = null;
+		List<String> headerRow = table.get(0);
 
-		private Map<FieldName, ?> arguments = null;
+		for(int i = 1; i < table.size(); i++){
+			List<String> bodyRow = table.get(i);
 
-		private MapDifference<FieldName, ?> difference = null;
+			if(headerRow.size() != bodyRow.size()){
+				throw new IllegalArgumentException("Expected " + headerRow.size() + " cells, but got " + bodyRow.size() + " cells (data record " + (i - 1) + ")");
+			}
 
+			Map<FieldName, String> record = new LinkedHashMap<>();
 
-		public Conflict(Integer id, Map<FieldName, ?> arguments, MapDifference<FieldName, ?> difference){
-			setId(id);
-			setArguments(arguments);
-			setDifference(difference);
+			for(int j = 0; j < headerRow.size(); j++){
+				record.put(FieldName.create(headerRow.get(j)), function.apply(bodyRow.get(j)));
+			}
+
+			records.add(record);
 		}
 
-		@Override
-		public String toString(){
-			ToStringHelper helper = Objects.toStringHelper(this)
-				.add("id", getId())
-				.add("arguments", getArguments())
-				.add("difference", getDifference());
-
-			return helper.toString();
-		}
-
-		public Integer getId(){
-			return this.id;
-		}
-
-		private void setId(Integer id){
-			this.id = id;
-		}
-
-		public Map<FieldName, ?> getArguments(){
-			return this.arguments;
-		}
-
-		private void setArguments(Map<FieldName, ?> arguments){
-			this.arguments = arguments;
-		}
-
-		public MapDifference<FieldName, ?> getDifference(){
-			return this.difference;
-		}
-
-		private void setDifference(MapDifference<FieldName, ?> difference){
-			this.difference = difference;
-		}
+		return records;
 	}
 
+	static
+	public List<List<String>> formatRecords(List<Map<FieldName, ?>> records, List<FieldName> names, Function<Object, String> function){
+		List<List<String>> table = new ArrayList<>();
 
+		List<String> headerRow = new ArrayList<>();
+
+		for(FieldName name : names){
+			headerRow.add(name.getValue());
+		}
+
+		table.add(headerRow);
+
+		for(Map<FieldName, ?> record : records){
+			List<String> bodyRow = new ArrayList<>();
+
+			for(FieldName name : names){
+				bodyRow.add(function.apply(record.get(name)));
+			}
+
+			table.add(bodyRow);
+		}
+
+		return table;
+	}
 }

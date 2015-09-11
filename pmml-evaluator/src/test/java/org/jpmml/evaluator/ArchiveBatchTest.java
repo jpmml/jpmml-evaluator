@@ -32,10 +32,10 @@ public class ArchiveBatchTest extends BatchTest {
 		evaluate(batch);
 	}
 
-	public void evaluate(String name, String dataset, Set<FieldName> ignoredColumns) throws Exception {
+	public void evaluate(String name, String dataset, Set<FieldName> ignoredFields) throws Exception {
 		Batch batch = createBatch(name, dataset);
 
-		evaluate(batch, ignoredColumns);
+		evaluate(batch, ignoredFields);
 	}
 
 	protected ArchiveBatch createBatch(String name, String dataset){

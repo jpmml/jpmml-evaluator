@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.xml.transform.Source;
 
+import com.google.common.base.Function;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.jpmml.model.ImportFilter;
@@ -57,7 +58,21 @@ public class ArchiveBatch implements Batch {
 	}
 
 	public PMML getPMML() throws Exception {
-		InputStream is = open("/pmml/" + (getName() + getDataset()) + ".pmml");
+		return loadPMML("/pmml/" + (getName() + getDataset()) + ".pmml");
+	}
+
+	@Override
+	public List<Map<FieldName, String>> getInput() throws IOException {
+		return loadRecords("/csv/" + getDataset() + ".csv");
+	}
+
+	@Override
+	public List<Map<FieldName, String>> getOutput() throws IOException {
+		return loadRecords("/csv/" + (getName() + getDataset()) + ".csv");
+	}
+
+	private PMML loadPMML(String path) throws Exception {
+		InputStream is = open(path);
 
 		try {
 			Source source = ImportFilter.apply(new InputSource(is));
@@ -68,26 +83,31 @@ public class ArchiveBatch implements Batch {
 		}
 	}
 
-	@Override
-	public List<Map<FieldName, String>> getInput() throws IOException {
-		InputStream is = open("/csv/" + getDataset() + ".csv");
+	private List<Map<FieldName, String>> loadRecords(String path) throws IOException {
+		List<List<String>> table;
+
+		InputStream is = open(path);
 
 		try {
-			return CsvUtil.load(is);
+			table = CsvUtil.readTable(is, ",");
 		} finally {
 			is.close();
 		}
-	}
 
-	@Override
-	public List<Map<FieldName, String>> getOutput() throws IOException {
-		InputStream is = open("/csv/" + (getName() + getDataset()) + ".csv");
+		Function<String, String> function = new Function<String, String>(){
 
-		try {
-			return CsvUtil.load(is);
-		} finally {
-			is.close();
-		}
+			@Override
+			public String apply(String string){
+
+				if(("N/A").equals(string) || ("NA").equals(string)){
+					return null;
+				}
+
+				return string;
+			}
+		};
+
+		return BatchUtil.parseRecords(table, function);
 	}
 
 	public String getName(){

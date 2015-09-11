@@ -20,16 +20,12 @@ package org.jpmml.evaluator;
 
 import java.io.Console;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import javax.xml.transform.Source;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.validators.PositiveInteger;
@@ -37,15 +33,12 @@ import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SlidingWindowReservoir;
 import com.codahale.metrics.Timer;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
-import org.jpmml.model.ImportFilter;
-import org.jpmml.model.JAXBUtil;
-import org.xml.sax.InputSource;
 
 public class EvaluationExample extends Example {
 
@@ -113,215 +106,163 @@ public class EvaluationExample extends Example {
 			.convertDurationsTo(TimeUnit.MILLISECONDS)
 			.build();
 
-		CsvUtil.Table inputTable = CsvUtil.readTable(this.input, this.separator);
+		CsvUtil.Table inputTable = readTable(this.input, this.separator);
+
+		Function<String, String> parseFunction = new Function<String, String>(){
+
+			@Override
+			public String apply(String string){
+
+				if(("").equals(string) || ("N/A").equals(string) || ("NA").equals(string)){
+					return null;
+				}
+
+				// Remove leading and trailing quotation marks
+				string = stripQuotes(string, '\"');
+				string = stripQuotes(string, '\"');
+
+				// Standardize European-style decimal marks (',') to US-style decimal marks ('.')
+				if(string.indexOf(',') > -1){
+					String usString = string.replace(',', '.');
+
+					try {
+						Double.parseDouble(usString);
+
+						string = usString;
+					} catch(NumberFormatException nfe){
+						// Ignored
+					}
+				}
+
+				return string;
+			}
+
+			private String stripQuotes(String string, char quoteChar){
+
+				if(string.length() > 1 && ((string.charAt(0) == quoteChar) && (string.charAt(string.length() - 1) == quoteChar))){
+					return string.substring(1, string.length() - 1);
+				}
+
+				return string;
+			}
+		};
+
+		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, parseFunction);
 
 		if(this.waitBefore){
 			waitForUserInput();
 		}
 
-		PMML pmml;
-
-		InputStream is = new FileInputStream(this.model);
-
-		try {
-			Source source = ImportFilter.apply(new InputSource(is));
-
-			pmml = JAXBUtil.unmarshalPMML(source);
-		} finally {
-			is.close();
-		}
+		PMML pmml = readPMML(this.model);
 
 		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
 
-		Evaluator evaluator = (Evaluator)modelEvaluatorFactory.newModelManager(pmml);
+		Evaluator evaluator = modelEvaluatorFactory.newModelManager(pmml);
 
-		List<Map<FieldName, FieldValue>> argumentsList;
-
-		List<Map<FieldName, ?>> resultList;
-
-		main:
-		{
-			Timer timer = new Timer(new SlidingWindowReservoir(this.loop));
-
-			metricRegistry.register("main", timer);
-
-			int i = 0;
-
-			do {
-				Timer.Context context = timer.time();
-
-				try {
-					argumentsList = prepareAll(evaluator, inputTable);
-
-					resultList = evaluateAll(evaluator, argumentsList);
-				} finally {
-					context.close();
-				}
-
-				i++;
-			} while(i < this.loop);
-		}
-
-		if(this.waitAfter){
-			waitForUserInput();
-		}
-
-		// Check if the input table and the output table have equal number of rows
-		boolean copyCells = (argumentsList.size() == (inputTable.size() - 1));
-
-		CsvUtil.Table outputTable = new CsvUtil.Table();
-		outputTable.setSeparator(inputTable.getSeparator());
-
-		List<FieldName> fields = new ArrayList<>();
-		fields.addAll(evaluator.getTargetFields());
-		fields.addAll(evaluator.getOutputFields());
-
-		header:
-		{
-			List<String> headerRow = new ArrayList<>();
-
-			if(copyCells){
-				headerRow.addAll(inputTable.get(0));
-			}
-
-			for(FieldName field : fields){
-				headerRow.add(field.getValue());
-			}
-
-			outputTable.add(headerRow);
-		}
-
-		body:
-		for(int i = 0; i < resultList.size(); i++){
-			List<String> bodyRow = new ArrayList<>();
-
-			if(copyCells){
-				bodyRow.addAll(inputTable.get(i + 1));
-			}
-
-			Map<FieldName, ?> result = resultList.get(i);
-
-			for(FieldName field : fields){
-				Object value = EvaluatorUtil.decode(result.get(field));
-
-				bodyRow.add(String.valueOf(value));
-			}
-
-			outputTable.add(bodyRow);
-		}
-
-		CsvUtil.writeTable(outputTable, this.output);
-
-		if(this.loop > 1){
-			reporter.report();
-		}
-
-		reporter.close();
-	}
-
-	static
-	private List<Map<FieldName, FieldValue>> prepareAll(Evaluator evaluator, CsvUtil.Table table){
-		List<FieldName> names = new ArrayList<>();
+		// Perform self-testing
+		evaluator.verify();
 
 		List<FieldName> activeFields = evaluator.getActiveFields();
 		List<FieldName> groupFields = evaluator.getGroupFields();
 
-		header:
-		{
-			List<String> headerRow = table.get(0);
-			for(int column = 0; column < headerRow.size(); column++){
-				FieldName name = FieldName.create(headerRow.get(column));
+		if(inputRecords.size() > 0){
+			Map<FieldName, ?> inputRecord = inputRecords.get(0);
 
-				if(!(activeFields.contains(name) || groupFields.contains(name))){
-					name = null;
-				}
-
-				names.add(name);
-			}
-
-			Sets.SetView<FieldName> missingActiveFields = difference(activeFields, names);
+			Sets.SetView<FieldName> missingActiveFields = Sets.difference(new LinkedHashSet<>(activeFields), inputRecord.keySet());
 			if(missingActiveFields.size() > 0){
 				throw new IllegalArgumentException("Missing active field(s): " + missingActiveFields.toString());
 			}
 
-			Sets.SetView<FieldName> missingGroupFields = difference(groupFields, names);
+			Sets.SetView<FieldName> missingGroupFields = Sets.difference(new LinkedHashSet<>(groupFields), inputRecord.keySet());
 			if(missingGroupFields.size() > 0){
 				throw new IllegalArgumentException("Missing group field(s): " + missingGroupFields.toString());
 			}
 		}
 
-		List<Map<FieldName, Object>> stringRows = new ArrayList<>();
-
-		body:
-		for(int i = 1; i < table.size(); i++){
-			List<String> bodyRow = table.get(i);
-
-			Map<FieldName, Object> stringRow = new LinkedHashMap<>();
-
-			for(int column = 0; column < bodyRow.size(); column++){
-				FieldName name = names.get(column);
-				if(name == null){
-					continue;
-				}
-
-				String value = bodyRow.get(column);
-				if(("").equals(value) || ("NA").equals(value) || ("N/A").equals(value)){
-					value = null;
-				}
-
-				stringRow.put(name, value);
-			}
-
-			stringRows.add(stringRow);
-		}
-
 		if(groupFields.size() == 1){
 			FieldName groupField = groupFields.get(0);
 
-			stringRows = EvaluatorUtil.groupRows(groupField, stringRows);
+			inputRecords = EvaluatorUtil.groupRows(groupField, inputRecords);
 		} else
 
 		if(groupFields.size() > 1){
 			throw new EvaluationException();
 		}
 
-		List<Map<FieldName, FieldValue>> fieldValueRows = new ArrayList<>();
+		List<Map<FieldName, ?>> outputRecords = new ArrayList<>();
 
-		for(Map<FieldName, Object> stringRow : stringRows){
-			Map<FieldName, FieldValue> fieldValueRow = new LinkedHashMap<>();
+		Timer timer = new Timer(new SlidingWindowReservoir(this.loop));
 
-			Collection<Map.Entry<FieldName, Object>> entries = stringRow.entrySet();
-			for(Map.Entry<FieldName, Object> entry : entries){
-				FieldName name = entry.getKey();
-				FieldValue value = EvaluatorUtil.prepare(evaluator, name, entry.getValue());
+		metricRegistry.register("main", timer);
 
-				fieldValueRow.put(name, value);
+		int epoch = 0;
+
+		do {
+			Timer.Context context = timer.time();
+
+			try {
+				for(Map<FieldName, ?> inputRecord : inputRecords){
+					Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
+
+					for(FieldName activeField : activeFields){
+						FieldValue activeValue = EvaluatorUtil.prepare(evaluator, activeField, inputRecord.get(activeField));
+
+						arguments.put(activeField, activeValue);
+					}
+
+					Map<FieldName, ?> result = evaluator.evaluate(arguments);
+
+					outputRecords.add(result);
+				}
+			} finally {
+				context.close();
 			}
 
-			fieldValueRows.add(fieldValueRow);
+			epoch++;
+		} while(epoch < this.loop);
+
+		if(this.waitAfter){
+			waitForUserInput();
 		}
 
-		return fieldValueRows;
-	}
+		List<FieldName> targetFields = evaluator.getTargetFields();
+		List<FieldName> outputFields = evaluator.getOutputFields();
 
-	static
-	private List<Map<FieldName, ?>> evaluateAll(Evaluator evaluator, List<Map<FieldName, FieldValue>> argumentsList){
-		List<Map<FieldName, ?>> resultList = new ArrayList<>();
+		Function<Object, String> formatFunction = new Function<Object, String>(){
 
-		for(Map<FieldName, FieldValue> arguments : argumentsList){
-			Map<FieldName, ?> result = evaluator.evaluate(arguments);
+			@Override
+			public String apply(Object object){
+				object = EvaluatorUtil.decode(object);
 
-			resultList.add(result);
+				if(object == null){
+					return "N/A";
+				}
+
+				return object.toString();
+			}
+		};
+
+		CsvUtil.Table outputTable = new CsvUtil.Table();
+		outputTable.setSeparator(inputTable.getSeparator());
+		outputTable.addAll(BatchUtil.formatRecords(outputRecords, Lists.newArrayList(Iterables.concat(targetFields, outputFields)), formatFunction));
+
+		if(inputTable.size() == outputTable.size()){
+
+			for(int i = 0; i < inputTable.size(); i++){
+				List<String> inputRow = inputTable.get(i);
+				List<String> outputRow = outputTable.get(i);
+
+				outputRow.addAll(0, inputRow);
+			}
 		}
 
-		return resultList;
-	}
+		writeTable(outputTable, this.output);
 
-	static
-	private Sets.SetView<FieldName> difference(List<FieldName> requiredFields, List<FieldName> fields){
-		Predicate<FieldName> notNull = Predicates.notNull();
+		if(this.loop > 1){
+			reporter.report();
+		}
 
-		return Sets.difference(Sets.newHashSet(Iterables.filter(requiredFields, notNull)), Sets.newHashSet(Iterables.filter(fields, notNull)));
+		reporter.close();
 	}
 
 	static

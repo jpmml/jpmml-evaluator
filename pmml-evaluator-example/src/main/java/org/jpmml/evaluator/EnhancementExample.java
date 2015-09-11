@@ -19,18 +19,11 @@
 package org.jpmml.evaluator;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamResult;
 
 import com.beust.jcommander.Parameter;
 import org.dmg.pmml.FieldName;
@@ -43,11 +36,8 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.Row;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
-import org.jpmml.model.ImportFilter;
-import org.jpmml.model.JAXBUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 
 public class EnhancementExample extends Example {
 
@@ -79,19 +69,9 @@ public class EnhancementExample extends Example {
 
 	@Override
 	public void execute() throws Exception {
-		PMML pmml;
+		PMML pmml = readPMML(this.model);
 
-		InputStream is = new FileInputStream(this.model);
-
-		try {
-			Source source = ImportFilter.apply(new InputSource(is));
-
-			pmml = JAXBUtil.unmarshalPMML(source);
-		} finally {
-			is.close();
-		}
-
-		CsvUtil.Table verificationTable = CsvUtil.readTable(this.verification);
+		CsvUtil.Table verificationTable = readTable(this.verification, null);
 
 		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
 
@@ -170,7 +150,7 @@ public class EnhancementExample extends Example {
 
 				String value = bodyRow.get(column);
 
-				if(("NA").equals(value) || ("N/A").equals(value)){
+				if(("N/A").equals(value) || ("NA").equals(value)){
 					continue;
 				}
 
@@ -191,14 +171,6 @@ public class EnhancementExample extends Example {
 
 		model.setModelVerification(modelVerification);
 
-		OutputStream os = new FileOutputStream(this.model);
-
-		try {
-			Result result = new StreamResult(os);
-
-			JAXBUtil.marshalPMML(pmml, result);
-		} finally {
-			os.close();
-		}
+		writePMML(pmml, this.model);
 	}
 }

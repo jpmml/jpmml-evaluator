@@ -19,21 +19,14 @@
 package org.jpmml.evaluator;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.transform.Source;
-
 import com.beust.jcommander.Parameter;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Visitor;
-import org.jpmml.model.ImportFilter;
-import org.jpmml.model.JAXBUtil;
 import org.jpmml.model.visitors.MemoryMeasurer;
-import org.xml.sax.InputSource;
 
 public class OptimizationExample extends Example {
 
@@ -67,20 +60,14 @@ public class OptimizationExample extends Example {
 	public void execute() throws Exception {
 		PMML pmml;
 
-		InputStream is = new FileInputStream(this.model);
-
-		try {
-			Source source = ImportFilter.apply(new InputSource(is));
-
+		{
 			long begin = System.currentTimeMillis();
 
-			pmml = JAXBUtil.unmarshalPMML(source);
+			pmml = readPMML(this.model);
 
 			long end = System.currentTimeMillis();
 
 			System.out.println("Loaded the PMML object in " + (end - begin) + " ms.");
-		} finally {
-			is.close();
 		}
 
 		if(this.summary){

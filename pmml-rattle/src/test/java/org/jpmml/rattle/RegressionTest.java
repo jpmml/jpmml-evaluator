@@ -59,9 +59,9 @@ public class RegressionTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateLibSVMAuto() throws Exception {
-		Set<FieldName> ignoredColumns = Sets.newHashSet(FieldName.create("mpg"), FieldName.create("predictedValue"));
+		Set<FieldName> ignoredFields = Sets.newHashSet(FieldName.create("mpg"), FieldName.create("predictedValue"));
 
-		evaluate("LibSVM", "Auto", ignoredColumns);
+		evaluate("LibSVM", "Auto", ignoredFields);
 	}
 
 	@Test

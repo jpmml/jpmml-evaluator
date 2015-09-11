@@ -33,9 +33,9 @@ public class BatchTest {
 	}
 
 	public void evaluate(Batch batch, Set<FieldName> ignoredFields) throws Exception {
-		List<?> conflicts = BatchUtil.evaluate(batch, ignoredFields, BatchTest.precision, BatchTest.zeroThreshold);
+		List<Conflict> conflicts = BatchUtil.evaluate(batch, ignoredFields, BatchTest.precision, BatchTest.zeroThreshold);
 
-		assertTrue(conflicts.isEmpty());
+		assertTrue("Found " + conflicts.size() + " conflict(s)", conflicts.isEmpty());
 	}
 
 	// One part per million parts

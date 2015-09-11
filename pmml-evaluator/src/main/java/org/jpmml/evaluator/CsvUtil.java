@@ -20,12 +20,17 @@ package org.jpmml.evaluator;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 
 public class CsvUtil {
 
@@ -33,32 +38,37 @@ public class CsvUtil {
 	}
 
 	static
-	public Table readTable(File file) throws IOException {
-		return readTable(file, null);
+	public Table readTable(InputStream is) throws IOException {
+		return readTable(is, null);
 	}
 
 	static
-	public Table readTable(File file, String separator) throws IOException {
+	public Table readTable(InputStream is, String separator) throws IOException {
 		Table table = new Table();
 
-		BufferedReader reader = new BufferedReader(new FileReader(file));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 
 		try {
+			Splitter splitter = null;
+
 			while(true){
 				String line = reader.readLine();
-				if(line == null){
-					break;
-				} // End if
 
-				if((line.trim()).equals("")){
+				if(line == null || (line.trim()).equals("")){
 					break;
 				} // End if
 
 				if(separator == null){
 					separator = getSeparator(line);
+				} // End if
+
+				if(splitter == null){
+					splitter = Splitter.on(separator);
 				}
 
-				table.add(parseLine(line, separator));
+				List<String> row = Lists.newArrayList(splitter.split(line));
+
+				table.add(row);
 			}
 		} finally {
 			reader.close();
@@ -70,31 +80,21 @@ public class CsvUtil {
 	}
 
 	static
-	public void writeTable(Table table, File file) throws IOException {
-		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+	public void writeTable(Table table, OutputStream os) throws IOException {
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
 		try {
-			String terminator = "";
+			Joiner joiner = Joiner.on(table.getSeparator());
 
-			for(List<String> row : table){
-				StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < table.size(); i++){
+				List<String> row = table.get(i);
 
-				sb.append(terminator);
-				terminator = "\n";
-
-				String separator = "";
-
-				for(int i = 0; i < row.size(); i++){
-					sb.append(separator);
-					separator = table.getSeparator();
-
-					sb.append(row.get(i));
+				if(i > 0){
+					writer.write('\n');
 				}
 
-				writer.write(sb.toString());
+				writer.write(joiner.join(row));
 			}
-
-			writer.flush();
 		} finally {
 			writer.close();
 		}
@@ -113,38 +113,6 @@ public class CsvUtil {
 		}
 
 		throw new IllegalArgumentException();
-	}
-
-	static
-	public List<String> parseLine(String line, String separator){
-		List<String> result = new ArrayList<>();
-
-		String[] cells = line.split(separator);
-		for(String cell : cells){
-
-			// Remove quotation marks, if any
-			cell = stripQuotes(cell, "\"");
-			cell = stripQuotes(cell, "\'");
-
-			// Standardize decimal marks to Full Stop (US)
-			if(!(",").equals(separator)){
-				cell = cell.replace(',', '.');
-			}
-
-			result.add(cell);
-		}
-
-		return result;
-	}
-
-	static
-	private String stripQuotes(String string, String quote){
-
-		if(string.startsWith(quote) && string.endsWith(quote)){
-			string = string.substring(quote.length(), string.length() - quote.length());
-		}
-
-		return string;
 	}
 
 	static

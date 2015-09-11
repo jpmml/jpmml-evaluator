@@ -18,8 +18,23 @@
  */
 package org.jpmml.evaluator;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamResult;
+
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import org.dmg.pmml.PMML;
+import org.jpmml.model.ImportFilter;
+import org.jpmml.model.JAXBUtil;
+import org.xml.sax.InputSource;
 
 abstract
 public class Example {
@@ -43,5 +58,53 @@ public class Example {
 		}
 
 		example.execute();
+	}
+
+	static
+	public PMML readPMML(File file) throws Exception {
+		InputStream is = new FileInputStream(file);
+
+		try {
+			Source source = ImportFilter.apply(new InputSource(is));
+
+			return JAXBUtil.unmarshalPMML(source);
+		} finally {
+			is.close();
+		}
+	}
+
+	static
+	public void writePMML(PMML pmml, File file) throws Exception {
+		OutputStream os = new FileOutputStream(file);
+
+		try {
+			Result result = new StreamResult(os);
+
+			JAXBUtil.marshalPMML(pmml, result);
+		} finally {
+			os.close();
+		}
+	}
+
+	static
+	public CsvUtil.Table readTable(File file, String separator) throws IOException {
+		InputStream is = new FileInputStream(file);
+
+		try {
+			return CsvUtil.readTable(is, separator);
+		} finally {
+			is.close();
+		}
+	}
+
+	static
+	public void writeTable(CsvUtil.Table table, File file) throws IOException {
+		OutputStream os = new FileOutputStream(file);
+
+		try {
+			CsvUtil.writeTable(table, os);
+		} finally {
+			os.close();
+		}
 	}
 }
