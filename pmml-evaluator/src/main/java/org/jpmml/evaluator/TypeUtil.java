@@ -37,7 +37,10 @@ public class TypeUtil {
 
 	static
 	public boolean equals(DataType dataType, Object left, Object right){
-		return (cast(dataType, left)).equals(cast(dataType, right));
+		left = cast(dataType, left);
+		right = cast(dataType, right);
+
+		return (left).equals(right);
 	}
 
 	@SuppressWarnings (
@@ -45,7 +48,10 @@ public class TypeUtil {
 	)
 	static
 	public int compare(DataType dataType, Object left, Object right){
-		return ((Comparable)cast(dataType, left)).compareTo(cast(dataType, right));
+		left = cast(dataType, left);
+		right = cast(dataType, right);
+
+		return ((Comparable)left).compareTo(right);
 	}
 
 	static
@@ -456,6 +462,12 @@ public class TypeUtil {
 			return (Float)value;
 		} else
 
+		if(value instanceof Double){
+			Number number = (Number)value;
+
+			return Float.valueOf(number.floatValue());
+		} else
+
 		if((value instanceof Long) || (value instanceof Integer) || (value instanceof Short) || (value instanceof Byte)){
 			Number number = (Number)value;
 
@@ -701,5 +713,4 @@ public class TypeUtil {
 	private static final LocalDate YEAR_1960 = new LocalDate(1960, 1, 1);
 	private static final LocalDate YEAR_1970 = new LocalDate(1970, 1, 1);
 	private static final LocalDate YEAR_1980 = new LocalDate(1980, 1, 1);
-
 }
