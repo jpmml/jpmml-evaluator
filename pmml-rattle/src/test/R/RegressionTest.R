@@ -2,6 +2,7 @@ library("e1071")
 library("kernlab")
 library("nnet")
 library("pmml")
+library("pmmlTransformations")
 library("randomForest")
 library("rpart")
 
@@ -11,6 +12,14 @@ autoData$model_year = as.factor(autoData$model_year)
 autoData$origin = as.factor(autoData$origin)
 
 autoFormula = formula(mpg ~ .)
+
+autoBox = WrapData(autoData)
+autoBox = ZScoreXform(autoBox, xformInfo = "displacement")
+autoBox = ZScoreXform(autoBox, xformInfo = "horsepower")
+autoBox = ZScoreXform(autoBox, xformInfo = "weight")
+autoBox = ZScoreXform(autoBox, xformInfo = "acceleration")
+
+autoXformFormula = formula(mpg ~ cylinders + derived_displacement + derived_horsepower + derived_weight + derived_acceleration + model_year + origin)
 
 writeAuto = function(values, file){
 	result = data.frame("mpg" = values, "Predicted_mpg" = values)
@@ -30,6 +39,13 @@ generateGeneralRegressionAuto = function(){
 	saveXML(pmml(glm), "pmml/GeneralRegressionAuto.pmml")
 
 	writeAuto(predict(glm), "csv/GeneralRegressionAuto.csv")
+}
+
+generateGeneralRegressionXformAuto = function(){
+	glm = glm(autoXformFormula, autoBox$data, family = gaussian)
+	saveXML(pmml(glm, transform = autoBox), "pmml/GeneralRegressionXformAuto.pmml")
+
+	writeAuto(predict(glm), "csv/GeneralRegressionXformAuto.csv")
 }
 
 generateKernlabSVMAuto = function(){
@@ -74,10 +90,19 @@ generateRegressionAuto = function(){
 	writeAuto(predict(lm), "csv/RegressionAuto.csv")
 }
 
+generateRegressionXformAuto = function(){
+	lm = lm(autoXformFormula, autoBox$data)
+	saveXML(pmml(lm, transform = autoBox), "pmml/RegressionXformAuto.pmml")
+
+	writeAuto(predict(lm), "csv/RegressionXformAuto.csv")
+}
+
 generateDecisionTreeAuto()
 generateGeneralRegressionAuto()
+generateGeneralRegressionXformAuto()
 generateKernlabSVMAuto()
 generateLibSVMAuto()
 generateNeuralNetworkAuto()
 generateRandomForestAuto()
 generateRegressionAuto()
+generateRegressionXformAuto()

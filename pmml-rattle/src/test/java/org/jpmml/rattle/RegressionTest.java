@@ -53,6 +53,11 @@ public class RegressionTest extends ArchiveBatchTest {
 	}
 
 	@Test
+	public void evaluateGeneralRegressionXformAuto() throws Exception {
+		evaluate("GeneralRegressionXform", "Auto");
+	}
+
+	@Test
 	public void evaluateKernlabSVMAuto() throws Exception {
 		evaluate("KernlabSVM", "Auto");
 	}
@@ -87,5 +92,10 @@ public class RegressionTest extends ArchiveBatchTest {
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
 		evaluate(batch);
+	}
+
+	@Test
+	public void evaluateRegressionXformAuto() throws Exception {
+		evaluate("RegressionXform", "Auto");
 	}
 }

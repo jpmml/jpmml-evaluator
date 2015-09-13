@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_2 http://www.dmg.org/v4-2/pmml-4-2.xsd">
+ <Header copyright="Copyright (c) 2015 vfed" description="Generalized Linear Regression Model">
+  <Extension name="user" value="vfed" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.4"/>
+  <Timestamp>2015-09-13 10:54:51</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="8">
+  <DataField name="mpg" optype="continuous" dataType="double"/>
+  <DataField name="cylinders" optype="categorical" dataType="string">
+   <Value value="3"/>
+   <Value value="4"/>
+   <Value value="5"/>
+   <Value value="6"/>
+   <Value value="8"/>
+  </DataField>
+  <DataField name="displacement" optype="continuous" dataType="double"/>
+  <DataField name="horsepower" optype="continuous" dataType="double"/>
+  <DataField name="weight" optype="continuous" dataType="double"/>
+  <DataField name="acceleration" optype="continuous" dataType="double"/>
+  <DataField name="model_year" optype="categorical" dataType="string">
+   <Value value="70"/>
+   <Value value="71"/>
+   <Value value="72"/>
+   <Value value="73"/>
+   <Value value="74"/>
+   <Value value="75"/>
+   <Value value="76"/>
+   <Value value="77"/>
+   <Value value="78"/>
+   <Value value="79"/>
+   <Value value="80"/>
+   <Value value="81"/>
+   <Value value="82"/>
+  </DataField>
+  <DataField name="origin" optype="categorical" dataType="string">
+   <Value value="1"/>
+   <Value value="2"/>
+   <Value value="3"/>
+  </DataField>
+ </DataDictionary>
+ <GeneralRegressionModel modelName="General_Regression_Model" modelType="generalizedLinear" functionName="regression" algorithmName="glm" distribution="normal" linkFunction="identity">
+  <MiningSchema>
+   <MiningField name="mpg" usageType="predicted"/>
+   <MiningField name="cylinders" usageType="active"/>
+   <MiningField name="displacement" usageType="active"/>
+   <MiningField name="horsepower" usageType="active"/>
+   <MiningField name="weight" usageType="active"/>
+   <MiningField name="acceleration" usageType="active"/>
+   <MiningField name="model_year" usageType="active"/>
+   <MiningField name="origin" usageType="active"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="Predicted_mpg" feature="predictedValue"/>
+  </Output>
+  <LocalTransformations>
+   <DerivedField name="derived_displacement" dataType="double" optype="continuous">
+    <NormContinuous field="displacement">
+     <LinearNorm orig="194.411989795918" norm="0"/>
+     <LinearNorm orig="299.055993704823" norm="1"/>
+    </NormContinuous>
+   </DerivedField>
+   <DerivedField name="derived_horsepower" dataType="double" optype="continuous">
+    <NormContinuous field="horsepower">
+     <LinearNorm orig="104.469387755102" norm="0"/>
+     <LinearNorm orig="142.960547687931" norm="1"/>
+    </NormContinuous>
+   </DerivedField>
+   <DerivedField name="derived_weight" dataType="double" optype="continuous">
+    <NormContinuous field="weight">
+     <LinearNorm orig="2977.58418367347" norm="0"/>
+     <LinearNorm orig="3826.98674371642" norm="1"/>
+    </NormContinuous>
+   </DerivedField>
+   <DerivedField name="derived_acceleration" dataType="double" optype="continuous">
+    <NormContinuous field="acceleration">
+     <LinearNorm orig="15.5413265306122" norm="0"/>
+     <LinearNorm orig="18.3001906498003" norm="1"/>
+    </NormContinuous>
+   </DerivedField>
+  </LocalTransformations>
+  <ParameterList>
+   <Parameter name="p0" label="(Intercept)"/>
+   <Parameter name="p1" label="cylinders4"/>
+   <Parameter name="p2" label="cylinders5"/>
+   <Parameter name="p3" label="cylinders6"/>
+   <Parameter name="p4" label="cylinders8"/>
+   <Parameter name="p5" label="derived_displacement"/>
+   <Parameter name="p6" label="derived_horsepower"/>
+   <Parameter name="p7" label="derived_weight"/>
+   <Parameter name="p8" label="derived_acceleration"/>
+   <Parameter name="p9" label="model_year71"/>
+   <Parameter name="p10" label="model_year72"/>
+   <Parameter name="p11" label="model_year73"/>
+   <Parameter name="p12" label="model_year74"/>
+   <Parameter name="p13" label="model_year75"/>
+   <Parameter name="p14" label="model_year76"/>
+   <Parameter name="p15" label="model_year77"/>
+   <Parameter name="p16" label="model_year78"/>
+   <Parameter name="p17" label="model_year79"/>
+   <Parameter name="p18" label="model_year80"/>
+   <Parameter name="p19" label="model_year81"/>
+   <Parameter name="p20" label="model_year82"/>
+   <Parameter name="p21" label="origin2"/>
+   <Parameter name="p22" label="origin3"/>
+  </ParameterList>
+  <FactorList>
+   <Predictor name="cylinders"/>
+   <Predictor name="model_year"/>
+   <Predictor name="origin"/>
+  </FactorList>
+  <CovariateList>
+   <Predictor name="derived_displacement"/>
+   <Predictor name="derived_horsepower"/>
+   <Predictor name="derived_weight"/>
+   <Predictor name="derived_acceleration"/>
+  </CovariateList>
+  <PPMatrix>
+   <PPCell value="4" predictorName="cylinders" parameterName="p1"/>
+   <PPCell value="5" predictorName="cylinders" parameterName="p2"/>
+   <PPCell value="6" predictorName="cylinders" parameterName="p3"/>
+   <PPCell value="8" predictorName="cylinders" parameterName="p4"/>
+   <PPCell value="1" predictorName="derived_displacement" parameterName="p5"/>
+   <PPCell value="1" predictorName="derived_horsepower" parameterName="p6"/>
+   <PPCell value="1" predictorName="derived_weight" parameterName="p7"/>
+   <PPCell value="1" predictorName="derived_acceleration" parameterName="p8"/>
+   <PPCell value="71" predictorName="model_year" parameterName="p9"/>
+   <PPCell value="72" predictorName="model_year" parameterName="p10"/>
+   <PPCell value="73" predictorName="model_year" parameterName="p11"/>
+   <PPCell value="74" predictorName="model_year" parameterName="p12"/>
+   <PPCell value="75" predictorName="model_year" parameterName="p13"/>
+   <PPCell value="76" predictorName="model_year" parameterName="p14"/>
+   <PPCell value="77" predictorName="model_year" parameterName="p15"/>
+   <PPCell value="78" predictorName="model_year" parameterName="p16"/>
+   <PPCell value="79" predictorName="model_year" parameterName="p17"/>
+   <PPCell value="80" predictorName="model_year" parameterName="p18"/>
+   <PPCell value="81" predictorName="model_year" parameterName="p19"/>
+   <PPCell value="82" predictorName="model_year" parameterName="p20"/>
+   <PPCell value="2" predictorName="origin" parameterName="p21"/>
+   <PPCell value="3" predictorName="origin" parameterName="p22"/>
+  </PPMatrix>
+  <ParamMatrix>
+   <PCell parameterName="p0" df="1" beta="13.7487641943836"/>
+   <PCell parameterName="p1" df="1" beta="6.93992155991982"/>
+   <PCell parameterName="p2" df="1" beta="6.63773099245212"/>
+   <PCell parameterName="p3" df="1" beta="4.29731390595244"/>
+   <PCell parameterName="p4" df="1" beta="6.36681292971352"/>
+   <PCell parameterName="p5" df="1" beta="1.23737263830383"/>
+   <PCell parameterName="p6" df="1" beta="-1.51009602369408"/>
+   <PCell parameterName="p7" df="1" beta="-4.40005761110894"/>
+   <PCell parameterName="p8" df="1" beta="0.00995393445237417"/>
+   <PCell parameterName="p9" df="1" beta="0.910428513263432"/>
+   <PCell parameterName="p10" df="1" beta="-0.490306154240107"/>
+   <PCell parameterName="p11" df="1" beta="-0.552893390892036"/>
+   <PCell parameterName="p12" df="1" beta="1.24199759364307"/>
+   <PCell parameterName="p13" df="1" beta="0.870401577733616"/>
+   <PCell parameterName="p14" df="1" beta="1.49665978516043"/>
+   <PCell parameterName="p15" df="1" beta="2.99869674527493"/>
+   <PCell parameterName="p16" df="1" beta="2.97377834939816"/>
+   <PCell parameterName="p17" df="1" beta="4.89617632845683"/>
+   <PCell parameterName="p18" df="1" beta="9.05893156767927"/>
+   <PCell parameterName="p19" df="1" beta="6.45815803267301"/>
+   <PCell parameterName="p20" df="1" beta="7.83758495781288"/>
+   <PCell parameterName="p21" df="1" beta="1.69328533376573"/>
+   <PCell parameterName="p22" df="1" beta="2.29292677766946"/>
+  </ParamMatrix>
+ </GeneralRegressionModel>
+</PMML>
