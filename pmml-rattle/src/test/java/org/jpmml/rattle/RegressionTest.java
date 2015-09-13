@@ -59,9 +59,11 @@ public class RegressionTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateLibSVMAuto() throws Exception {
+		Batch batch = createBatch("LibSVM", "Auto");
+
 		Set<FieldName> ignoredFields = Sets.newHashSet(FieldName.create("mpg"), FieldName.create("predictedValue"));
 
-		evaluate("LibSVM", "Auto", ignoredFields);
+		evaluate(batch, ignoredFields, 1e-7, 1e-7);
 	}
 
 	@Test
@@ -70,7 +72,7 @@ public class RegressionTest extends ArchiveBatchTest {
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		evaluate(batch);
+		evaluate(batch, null, 1e-6, 1e-6);
 	}
 
 	@Test

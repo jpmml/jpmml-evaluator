@@ -78,7 +78,7 @@ public class ClassificationTest extends ArchiveBatchTest {
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		evaluate(batch);
+		evaluate(batch, null, 1e-6, 1e-6);
 	}
 
 	@Test

@@ -33,13 +33,21 @@ public class BatchTest {
 	}
 
 	public void evaluate(Batch batch, Set<FieldName> ignoredFields) throws Exception {
-		List<Conflict> conflicts = BatchUtil.evaluate(batch, ignoredFields, BatchTest.precision, BatchTest.zeroThreshold);
+		evaluate(batch, ignoredFields, BatchTest.precision, BatchTest.zeroThreshold);
+	}
+
+	public void evaluate(Batch batch, Set<FieldName> ignoredFields, double precision, double zeroThreshold) throws Exception {
+		List<Conflict> conflicts = BatchUtil.evaluate(batch, ignoredFields, precision, zeroThreshold);
 
 		assertTrue("Found " + conflicts.size() + " conflict(s)", conflicts.isEmpty());
 	}
 
-	// One part per million parts
-	private static final double precision = 1d / (1000 * 1000);
+	// One part per billion parts
+	private static final double precision = 1d / (1000L * 1000L * 1000L);
+
+	static {
+		assertTrue(Double.compare(precision, 1e-9) <= 0);
+	}
 
 	private static final double zeroThreshold = precision;
 }
