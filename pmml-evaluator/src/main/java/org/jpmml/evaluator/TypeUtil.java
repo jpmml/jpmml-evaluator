@@ -125,6 +125,12 @@ public class TypeUtil {
 				}
 			} catch(NumberFormatException nfeDouble){
 				// Ignored
+			} // End try
+
+			try {
+				return toInteger(parseFlag(value));
+			} catch(IllegalArgumentException iae){
+				// Ignored
 			}
 
 			throw nfeInteger;
@@ -133,31 +139,66 @@ public class TypeUtil {
 
 	static
 	private Float parseFloat(String value){
-		return Float.valueOf(value);
+
+		try {
+			return Float.valueOf(value);
+		} catch(NumberFormatException nfe){
+
+			try {
+				return toFloat(parseFlag(value));
+			} catch(IllegalArgumentException iae){
+				// Ignored
+			}
+
+			throw nfe;
+		}
 	}
 
 	static
 	private Double parseDouble(String value){
-		return Double.valueOf(value);
+
+		try {
+			return Double.valueOf(value);
+		} catch(NumberFormatException nfe){
+
+			try {
+				return toDouble(parseFlag(value));
+			} catch(IllegalArgumentException iae){
+				// Ignored
+			}
+
+			throw nfe;
+		}
 	}
 
 	static
 	private Boolean parseBoolean(String value){
 
+		try {
+			return parseFlag(value);
+		} catch(IllegalArgumentException iae){
+
+			try {
+				return toBoolean(parseDouble(value));
+			} catch(NumberFormatException nfe){
+				// Ignored
+			} catch(TypeCheckException tce){
+				// Ignored
+			}
+
+			throw iae;
+		}
+	}
+
+	static
+	private boolean parseFlag(String value){
+
 		if("true".equalsIgnoreCase(value)){
-			return Boolean.TRUE;
+			return true;
 		} else
 
 		if("false".equalsIgnoreCase(value)){
-			return Boolean.FALSE;
-		}
-
-		try {
-			return (Boolean)cast(DataType.BOOLEAN, parseDouble(value));
-		} catch(NumberFormatException nfe){
-			// Ignored
-		} catch(TypeCheckException tce){
-			// Ignored
+			return false;
 		}
 
 		throw new IllegalArgumentException(value);
@@ -429,6 +470,12 @@ public class TypeUtil {
 			return Integer.valueOf(number.intValue());
 		} else
 
+		if(value instanceof Boolean){
+			Boolean flag = (Boolean)value;
+
+			return Integer.valueOf(flag.booleanValue() ? INTEGER_ONE : INTEGER_ZERO);
+		} else
+
 		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
 			Number number = (Number)value;
 
@@ -474,6 +521,12 @@ public class TypeUtil {
 			return Float.valueOf(number.floatValue());
 		} else
 
+		if(value instanceof Boolean){
+			Boolean flag = (Boolean)value;
+
+			return Float.valueOf(flag.booleanValue() ? FLOAT_ONE : FLOAT_ZERO);
+		} else
+
 		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
 			Number number = (Number)value;
 
@@ -501,6 +554,12 @@ public class TypeUtil {
 			Number number = (Number)value;
 
 			return Double.valueOf(number.doubleValue());
+		} else
+
+		if(value instanceof Boolean){
+			Boolean flag = (Boolean)value;
+
+			return Double.valueOf(flag.booleanValue() ? DOUBLE_ONE : DOUBLE_ZERO);
 		} else
 
 		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
@@ -709,6 +768,15 @@ public class TypeUtil {
 	}
 
 	private static final DataType[] inheritanceSequence = {DataType.STRING, DataType.DOUBLE, DataType.FLOAT, DataType.INTEGER};
+
+	private static final Integer INTEGER_ZERO = Integer.valueOf(0);
+	private static final Integer INTEGER_ONE = Integer.valueOf(1);
+
+	private static final Float FLOAT_ZERO = Float.valueOf(0f);
+	private static final Float FLOAT_ONE = Float.valueOf(1f);
+
+	private static final Double DOUBLE_ZERO = Double.valueOf(0d);
+	private static final Double DOUBLE_ONE = Double.valueOf(1d);
 
 	private static final LocalDate YEAR_1960 = new LocalDate(1960, 1, 1);
 	private static final LocalDate YEAR_1970 = new LocalDate(1970, 1, 1);

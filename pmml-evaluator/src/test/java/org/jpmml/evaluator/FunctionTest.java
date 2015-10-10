@@ -158,15 +158,6 @@ public class FunctionTest {
 
 	@Test
 	public void evaluateBooleanComparisonFunctions(){
-
-		try {
-			evaluate(Functions.LESS_OR_EQUAL, false, "false");
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
-
 		assertEquals(true, evaluate(Functions.LESS_THAN, false, 0.5d));
 		assertEquals(false, evaluate(Functions.LESS_THAN, true, 0.5d));
 
@@ -178,14 +169,6 @@ public class FunctionTest {
 
 		assertEquals(false, evaluate(Functions.GREATER_OR_EQUAL, false, 1d));
 		assertEquals(true, evaluate(Functions.GREATER_OR_EQUAL, true, 1d));
-
-		try {
-			evaluate(Functions.LESS_OR_EQUAL, false, false);
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
 	}
 
 	@Test

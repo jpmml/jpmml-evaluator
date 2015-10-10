@@ -79,6 +79,12 @@ public class FieldValueTest {
 	@Test
 	public void continuousInteger(){
 		FieldValue zero = create(DataType.INTEGER, OpType.CONTINUOUS, 0);
+		FieldValue one = create(DataType.INTEGER, OpType.CONTINUOUS, 1);
+
+		assertTrue(zero.compareToString("false") == 0);
+		assertTrue(one.compareToString("false") > 0);
+		assertTrue(zero.compareToString("true") < 0);
+		assertTrue(one.compareToString("true") == 0);
 
 		assertTrue(zero.compareToString("-1") > 0);
 		assertTrue(zero.compareToString("-1.5") > 0);
@@ -88,6 +94,12 @@ public class FieldValueTest {
 
 		assertTrue(zero.compareToString("1") < 0);
 		assertTrue(zero.compareToString("1.5") < 0);
+
+		assertTrue(zero.compareToValue(zero) == 0);
+		assertTrue(zero.compareToValue(one) < 0);
+
+		assertTrue(one.compareToValue(zero) > 0);
+		assertTrue(one.compareToValue(one) == 0);
 	}
 
 	@Test
@@ -108,6 +120,11 @@ public class FieldValueTest {
 		FieldValue zero = create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
 		FieldValue one = create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
 
+		assertTrue(zero.compareToString("false") == 0);
+		assertTrue(one.compareToString("false") > 0);
+		assertTrue(zero.compareToString("true") < 0);
+		assertTrue(one.compareToString("true") == 0);
+
 		assertTrue(zero.compareToString("0") == 0);
 		assertTrue(zero.compareToString("0.0") == 0);
 		assertTrue(one.compareToString("0") > 0);
@@ -115,6 +132,12 @@ public class FieldValueTest {
 		assertTrue(zero.compareToString("1") < 0);
 		assertTrue(one.compareToString("1") == 0);
 		assertTrue(one.compareToString("1.0") == 0);
+
+		assertTrue(zero.compareToValue(zero) == 0);
+		assertTrue(zero.compareToValue(one) < 0);
+
+		assertTrue(one.compareToValue(zero) > 0);
+		assertTrue(one.compareToValue(one) == 0);
 	}
 
 	@Test

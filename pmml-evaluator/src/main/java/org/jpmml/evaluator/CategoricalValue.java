@@ -37,13 +37,15 @@ public class CategoricalValue extends FieldValue {
 		DataType dataType = getDataType();
 
 		if((DataType.BOOLEAN).equals(dataType)){
-			Boolean value = asBoolean();
+			Object value;
 
 			try {
-				return TypeUtil.compare(DataType.DOUBLE, toDouble(value), TypeUtil.parse(DataType.DOUBLE, string));
+				value = TypeUtil.parse(DataType.DOUBLE, string);
 			} catch(NumberFormatException nfe){
 				throw new TypeCheckException(DataType.DOUBLE, string);
 			}
+
+			return TypeUtil.compare(DataType.DOUBLE, asBoolean(), value);
 		}
 
 		throw new EvaluationException();
@@ -54,23 +56,17 @@ public class CategoricalValue extends FieldValue {
 		DataType dataType = getDataType();
 
 		if((DataType.BOOLEAN).equals(dataType)){
-			Boolean value = asBoolean();
+			Object value;
 
 			try {
-				return TypeUtil.compare(DataType.DOUBLE, toDouble(value), that.asNumber());
+				value = that.asNumber();
 			} catch(TypeCheckException tce){
 				throw new TypeCheckException(DataType.DOUBLE, that.getValue());
 			}
+
+			return TypeUtil.compare(DataType.DOUBLE, asBoolean(), value);
 		}
 
 		throw new EvaluationException();
 	}
-
-	static
-	private Double toDouble(Boolean value){
-		return (value.booleanValue() ? CategoricalValue.ONE : CategoricalValue.ZERO);
-	}
-
-	private static final Double ONE = Double.valueOf(1d);
-	private static final Double ZERO = Double.valueOf(0d);
 }
