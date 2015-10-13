@@ -115,6 +115,23 @@ public class PredicateUtilTest {
 	}
 
 	@Test
+	public void evaluateSimpleSetPredicate(){
+		FieldName fruit = new FieldName("fruit");
+
+		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(fruit, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "apple orange"));
+
+		assertEquals(null, evaluate(simpleSetPredicate, fruit, null));
+
+		assertEquals(Boolean.TRUE, evaluate(simpleSetPredicate, fruit, "apple"));
+		assertEquals(Boolean.FALSE, evaluate(simpleSetPredicate, fruit, "pineapple"));
+
+		simpleSetPredicate.setBooleanOperator(SimpleSetPredicate.BooleanOperator.IS_NOT_IN);
+
+		assertEquals(Boolean.FALSE, evaluate(simpleSetPredicate, fruit, "apple"));
+		assertEquals(Boolean.TRUE, evaluate(simpleSetPredicate, fruit, "pineapple"));
+	}
+
+	@Test
 	public void evaluateSurrogateCompoundPredicate(){
 		FieldName temperature = new FieldName("temperature");
 		FieldName humidity = new FieldName("humidity");
@@ -156,23 +173,6 @@ public class PredicateUtilTest {
 		compoundPredicate.setBooleanOperator(CompoundPredicate.BooleanOperator.XOR);
 
 		assertEquals(Boolean.TRUE, evaluate(compoundPredicate));
-	}
-
-	@Test
-	public void evaluateSimpleSetPredicate(){
-		FieldName fruit = new FieldName("fruit");
-
-		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(fruit, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "apple orange"));
-
-		assertEquals(null, evaluate(simpleSetPredicate, fruit, null));
-
-		assertEquals(Boolean.TRUE, evaluate(simpleSetPredicate, fruit, "apple"));
-		assertEquals(Boolean.FALSE, evaluate(simpleSetPredicate, fruit, "pineapple"));
-
-		simpleSetPredicate.setBooleanOperator(SimpleSetPredicate.BooleanOperator.IS_NOT_IN);
-
-		assertEquals(Boolean.FALSE, evaluate(simpleSetPredicate, fruit, "apple"));
-		assertEquals(Boolean.TRUE, evaluate(simpleSetPredicate, fruit, "pineapple"));
 	}
 
 	@Test

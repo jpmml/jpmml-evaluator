@@ -64,12 +64,12 @@ public class PredicateUtil {
 			return evaluateSimplePredicate((SimplePredicate)predicate, context);
 		} else
 
-		if(predicate instanceof CompoundPredicate){
-			return evaluateCompoundPredicate((CompoundPredicate)predicate, context);
-		} else
-
 		if(predicate instanceof SimpleSetPredicate){
 			return evaluateSimpleSetPredicate((SimpleSetPredicate)predicate, context);
+		} else
+
+		if(predicate instanceof CompoundPredicate){
+			return evaluateCompoundPredicate((CompoundPredicate)predicate, context);
 		} else
 
 		if(predicate instanceof True){
@@ -146,6 +146,28 @@ public class PredicateUtil {
 	}
 
 	static
+	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext context){
+		FieldValue value = context.evaluate(simpleSetPredicate.getField());
+		if(value == null){
+			return null;
+		}
+
+		Array array = simpleSetPredicate.getArray();
+
+		List<String> content = ArrayUtil.getContent(array);
+
+		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.getBooleanOperator();
+		switch(booleanOperator){
+			case IS_IN:
+				return value.equalsAnyString(content);
+			case IS_NOT_IN:
+				return !value.equalsAnyString(content);
+			default:
+				throw new UnsupportedFeatureException(simpleSetPredicate, booleanOperator);
+		}
+	}
+
+	static
 	public Boolean evaluateCompoundPredicate(CompoundPredicate compoundPredicate, EvaluationContext context){
 		CompoundPredicateResult result = evaluateCompoundPredicateInternal(compoundPredicate, context);
 
@@ -202,28 +224,6 @@ public class PredicateUtil {
 		}
 
 		return new CompoundPredicateResult(result, false);
-	}
-
-	static
-	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext context){
-		FieldValue value = context.evaluate(simpleSetPredicate.getField());
-		if(value == null){
-			return null;
-		}
-
-		Array array = simpleSetPredicate.getArray();
-
-		List<String> content = ArrayUtil.getContent(array);
-
-		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.getBooleanOperator();
-		switch(booleanOperator){
-			case IS_IN:
-				return value.equalsAnyString(content);
-			case IS_NOT_IN:
-				return !value.equalsAnyString(content);
-			default:
-				throw new UnsupportedFeatureException(simpleSetPredicate, booleanOperator);
-		}
 	}
 
 	static
