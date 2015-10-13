@@ -353,11 +353,11 @@ public class FieldValueUtil {
 
 		switch(opType){
 			case CONTINUOUS:
-				return new ContinuousValue(dataType, value);
+				return ContinuousValue.create(dataType, value);
 			case CATEGORICAL:
-				return new CategoricalValue(dataType, value);
+				return CategoricalValue.create(dataType, value);
 			case ORDINAL:
-				return new OrdinalValue(dataType, value);
+				return OrdinalValue.create(dataType, value);
 			default:
 				break;
 		}

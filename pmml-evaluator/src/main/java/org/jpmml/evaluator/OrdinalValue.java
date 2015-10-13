@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -84,6 +85,21 @@ public class OrdinalValue extends FieldValue {
 	}
 
 	static
+	public OrdinalValue create(DataType dataType, Object value){
+
+		if(value instanceof Collection){
+			return new OrdinalValue(dataType, value);
+		}
+
+		switch(dataType){
+			case STRING:
+				return new OrdinalString(value);
+			default:
+				return new OrdinalValue(dataType, value);
+		}
+	}
+
+	static
 	private int compare(List<?> ordering, Object left, Object right){
 		int leftIndex = ordering.indexOf(left);
 		int rightIndex = ordering.indexOf(right);
@@ -93,5 +109,23 @@ public class OrdinalValue extends FieldValue {
 		}
 
 		return (leftIndex - rightIndex);
+	}
+
+	static
+	private class OrdinalString extends OrdinalValue implements Scalar<String> {
+
+		OrdinalString(Object value){
+			super(DataType.STRING, value);
+		}
+
+		@Override
+		public String asString(){
+			return getValue();
+		}
+
+		@Override
+		public String getValue(){
+			return (String)super.getValue();
+		}
 	}
 }

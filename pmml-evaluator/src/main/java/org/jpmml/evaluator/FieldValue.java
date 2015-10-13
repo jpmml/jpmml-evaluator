@@ -73,7 +73,13 @@ public class FieldValue implements Serializable {
 	 * @param string The reference value.
 	 */
 	public boolean equalsString(String string){
-		return TypeUtil.equals(getDataType(), getValue(), parseValue(string));
+		Object value = parseValue(string);
+
+		if(isScalar()){
+			return (getValue()).equals(value);
+		}
+
+		return TypeUtil.equals(getDataType(), getValue(), value);
 	}
 
 	public boolean equalsAnyString(Iterable<String> strings){
@@ -90,6 +96,11 @@ public class FieldValue implements Serializable {
 	}
 
 	public boolean equalsValue(FieldValue value){
+
+		if(sameScalarType(value)){
+			return (getValue()).equals(value.getValue());
+		}
+
 		DataType dataType = TypeUtil.getResultDataType(getDataType(), value.getDataType());
 
 		return TypeUtil.equals(dataType, getValue(), value.getValue());
@@ -116,19 +127,43 @@ public class FieldValue implements Serializable {
 	 * @param string The reference value.
 	 */
 	public int compareToString(String string){
-		return TypeUtil.compare(getDataType(), getValue(), parseValue(string));
+		Object value = parseValue(string);
+
+		if(isScalar()){
+			return ((Comparable)getValue()).compareTo(value);
+		}
+
+		return TypeUtil.compare(getDataType(), getValue(), value);
 	}
 
 	public int compareToValue(FieldValue value){
+
+		if(sameScalarType(value)){
+			return ((Comparable)getValue()).compareTo(value.getValue());
+		}
+
 		DataType dataType = TypeUtil.getResultDataType(getDataType(), value.getDataType());
 
 		return TypeUtil.compare(dataType, getValue(), value.getValue());
 	}
 
-	protected Object parseValue(String string){
+	public Object parseValue(String string){
 		DataType dataType = getDataType();
 
 		return TypeUtil.parse(dataType, string);
+	}
+
+	private boolean isScalar(){
+		return (this instanceof Scalar);
+	}
+
+	private boolean sameScalarType(FieldValue value){
+
+		if(isScalar()){
+			return (getClass()).equals(value.getClass());
+		}
+
+		return false;
 	}
 
 	public String asString(){
@@ -265,5 +300,11 @@ public class FieldValue implements Serializable {
 		}
 
 		this.value = value;
+	}
+
+	static
+	interface Scalar<V extends Comparable<V>> {
+
+		V getValue();
 	}
 }

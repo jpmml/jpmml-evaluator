@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Collection;
+
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 
@@ -34,39 +36,90 @@ public class CategoricalValue extends FieldValue {
 
 	@Override
 	public int compareToString(String string){
-		DataType dataType = getDataType();
-
-		if((DataType.BOOLEAN).equals(dataType)){
-			Object value;
-
-			try {
-				value = TypeUtil.parse(DataType.DOUBLE, string);
-			} catch(NumberFormatException nfe){
-				throw new TypeCheckException(DataType.DOUBLE, string);
-			}
-
-			return TypeUtil.compare(DataType.DOUBLE, asBoolean(), value);
-		}
-
 		throw new EvaluationException();
 	}
 
 	@Override
-	public int compareToValue(FieldValue that){
-		DataType dataType = getDataType();
+	public int compareToValue(FieldValue value){
+		throw new EvaluationException();
+	}
 
-		if((DataType.BOOLEAN).equals(dataType)){
-			Object value;
+	static
+	public CategoricalValue create(DataType dataType, Object value){
 
-			try {
-				value = that.asNumber();
-			} catch(TypeCheckException tce){
-				throw new TypeCheckException(DataType.DOUBLE, that.getValue());
-			}
-
-			return TypeUtil.compare(DataType.DOUBLE, asBoolean(), value);
+		if(value instanceof Collection){
+			return new CategoricalValue(dataType, value);
 		}
 
-		throw new EvaluationException();
+		switch(dataType){
+			case STRING:
+				return new CategoricalString((String)value);
+			case BOOLEAN:
+				return new CategoricalBoolean((Boolean)value);
+			default:
+				return new CategoricalValue(dataType, value);
+		}
+	}
+
+	static
+	private class CategoricalString extends CategoricalValue implements Scalar<String> {
+
+		CategoricalString(String value){
+			super(DataType.STRING, value);
+		}
+
+		@Override
+		public String asString(){
+			return getValue();
+		}
+
+		@Override
+		public String getValue(){
+			return (String)super.getValue();
+		}
+	}
+
+	static
+	private class CategoricalBoolean extends CategoricalValue implements Scalar<Boolean> {
+
+		CategoricalBoolean(Boolean value){
+			super(DataType.BOOLEAN, value);
+		}
+
+		@Override
+		public int compareToString(String string){
+			Number number;
+
+			try {
+				number = (Number)TypeUtil.parse(DataType.DOUBLE, string);
+			} catch(NumberFormatException nfe){
+				throw new TypeCheckException(DataType.DOUBLE, string);
+			}
+
+			return TypeUtil.compare(DataType.DOUBLE, asBoolean(), number);
+		}
+
+		@Override
+		public int compareToValue(FieldValue value){
+			Number number;
+
+			try {
+				number = value.asNumber();
+			} catch(TypeCheckException tce){
+				throw new TypeCheckException(DataType.DOUBLE, value.getValue());
+			}
+
+			return TypeUtil.compare(DataType.DOUBLE, asBoolean(), number);
+		}
+
+		@Override
+		public Boolean asBoolean(){
+			return getValue();
+		}
+
+		@Override
+		public Boolean getValue(){
+			return (Boolean)super.getValue();
+		}
 	}
 }

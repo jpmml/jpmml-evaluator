@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Collection;
+
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 
@@ -53,5 +55,83 @@ public class ContinuousValue extends FieldValue {
 	@Override
 	public int compareToValue(FieldValue value){
 		return super.compareToValue(value);
+	}
+
+	static
+	public ContinuousValue create(DataType dataType, Object value){
+
+		if(value instanceof Collection){
+			return new ContinuousValue(dataType, value);
+		}
+
+		switch(dataType){
+			case INTEGER:
+				return new ContinuousInteger((Integer)value);
+			case FLOAT:
+				return new ContinuousFloat((Float)value);
+			case DOUBLE:
+				return new ContinuousDouble((Double)value);
+			default:
+				return new ContinuousValue(dataType, value);
+		}
+	}
+
+	static
+	private class ContinuousInteger extends ContinuousValue implements Scalar<Integer> {
+
+		ContinuousInteger(Integer value){
+			super(DataType.INTEGER, value);
+		}
+
+		@Override
+		public Integer asInteger(){
+			return getValue();
+		}
+
+		@Override
+		public Number asNumber(){
+			return getValue();
+		}
+
+		@Override
+		public Integer getValue(){
+			return (Integer)super.getValue();
+		}
+	}
+
+	static
+	private class ContinuousFloat extends ContinuousValue implements Scalar<Float> {
+
+		ContinuousFloat(Float value){
+			super(DataType.FLOAT, value);
+		}
+
+		@Override
+		public Number asNumber(){
+			return getValue();
+		}
+
+		@Override
+		public Float getValue(){
+			return (Float)super.getValue();
+		}
+	}
+
+	static
+	private class ContinuousDouble extends ContinuousValue implements Scalar<Double> {
+
+		ContinuousDouble(Double value){
+			super(DataType.DOUBLE, value);
+		}
+
+		@Override
+		public Number asNumber(){
+			return getValue();
+		}
+
+		@Override
+		public Double getValue(){
+			return (Double)super.getValue();
+		}
 	}
 }
