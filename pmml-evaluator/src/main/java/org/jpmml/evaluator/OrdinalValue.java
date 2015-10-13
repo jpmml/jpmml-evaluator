@@ -29,7 +29,7 @@ public class OrdinalValue extends FieldValue {
 	private List<?> ordering = null;
 
 
-	public OrdinalValue(DataType dataType, Object value){
+	OrdinalValue(DataType dataType, Object value){
 		super(dataType, value);
 	}
 

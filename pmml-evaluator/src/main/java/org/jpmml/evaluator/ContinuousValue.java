@@ -23,7 +23,7 @@ import org.dmg.pmml.OpType;
 
 public class ContinuousValue extends FieldValue {
 
-	public ContinuousValue(DataType dataType, Object value){
+	ContinuousValue(DataType dataType, Object value){
 		super(dataType, value);
 	}
 

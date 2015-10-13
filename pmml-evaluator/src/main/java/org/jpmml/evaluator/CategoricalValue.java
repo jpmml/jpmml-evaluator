@@ -23,7 +23,7 @@ import org.dmg.pmml.OpType;
 
 public class CategoricalValue extends FieldValue {
 
-	public CategoricalValue(DataType dataType, Object value){
+	CategoricalValue(DataType dataType, Object value){
 		super(dataType, value);
 	}
 

@@ -57,7 +57,7 @@ public class FieldValue implements Serializable {
 	private Object value = null;
 
 
-	public FieldValue(DataType dataType, Object value){
+	FieldValue(DataType dataType, Object value){
 		setDataType(dataType);
 		setValue(value);
 	}
