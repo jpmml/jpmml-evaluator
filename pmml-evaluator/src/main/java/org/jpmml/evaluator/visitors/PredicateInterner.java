@@ -20,32 +20,23 @@ package org.jpmml.evaluator.visitors;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import org.dmg.pmml.Array;
-import org.dmg.pmml.Attribute;
-import org.dmg.pmml.CompoundPredicate;
-import org.dmg.pmml.CompoundRule;
 import org.dmg.pmml.False;
-import org.dmg.pmml.Node;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Predicate;
-import org.dmg.pmml.Segment;
 import org.dmg.pmml.SimplePredicate;
-import org.dmg.pmml.SimpleRule;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.True;
 import org.dmg.pmml.Visitable;
-import org.dmg.pmml.VisitorAction;
 import org.jpmml.evaluator.ArrayUtil;
-import org.jpmml.model.visitors.AbstractVisitor;
 
 /**
  * <p>
  * A Visitor that interns {@link Predicate} elements.
  * </p>
  */
-public class PredicateInterner extends AbstractVisitor {
+public class PredicateInterner extends PredicateFilterer {
 
 	private ElementHashMap<SimplePredicate> simplePredicateCache = new ElementHashMap<SimplePredicate>(){
 
@@ -87,6 +78,11 @@ public class PredicateInterner extends AbstractVisitor {
 
 
 	@Override
+	public Predicate filter(Predicate predicate){
+		return intern(predicate);
+	}
+
+	@Override
 	public void applyTo(Visitable visitable){
 		reset();
 
@@ -100,49 +96,11 @@ public class PredicateInterner extends AbstractVisitor {
 		this.falsePredicateCache.clear();
 	}
 
-	@Override
-	public VisitorAction visit(Attribute attribute){
-		attribute.setPredicate(intern(attribute.getPredicate()));
-
-		return super.visit(attribute);
-	}
-
-	@Override
-	public VisitorAction visit(CompoundPredicate compoundPredicate){
-		intern(compoundPredicate.getPredicates());
-
-		return super.visit(compoundPredicate);
-	}
-
-	@Override
-	public VisitorAction visit(CompoundRule compoundRule){
-		compoundRule.setPredicate(intern(compoundRule.getPredicate()));
-
-		return super.visit(compoundRule);
-	}
-
-	@Override
-	public VisitorAction visit(Node node){
-		node.setPredicate(intern(node.getPredicate()));
-
-		return super.visit(node);
-	}
-
-	@Override
-	public VisitorAction visit(Segment segment){
-		segment.setPredicate(intern(segment.getPredicate()));
-
-		return super.visit(segment);
-	}
-
-	@Override
-	public VisitorAction visit(SimpleRule simpleRule){
-		simpleRule.setPredicate(intern(simpleRule.getPredicate()));
-
-		return super.visit(simpleRule);
-	}
-
 	public Predicate intern(Predicate predicate){
+
+		if(predicate != null && predicate.hasExtensions()){
+			return predicate;
+		} // End if
 
 		if(predicate instanceof SimplePredicate){
 			return intern((SimplePredicate)predicate);
@@ -163,47 +121,20 @@ public class PredicateInterner extends AbstractVisitor {
 		return predicate;
 	}
 
-	private void intern(List<Predicate> predicates){
-
-		for(int i = 0; i < predicates.size(); i++){
-			predicates.set(i, intern(predicates.get(i)));
-		}
-	}
-
 	private SimplePredicate intern(SimplePredicate simplePredicate){
-
-		if(!simplePredicate.hasExtensions()){
-			return this.simplePredicateCache.intern(simplePredicate);
-		}
-
-		return simplePredicate;
+		return this.simplePredicateCache.intern(simplePredicate);
 	}
 
 	private SimpleSetPredicate intern(SimpleSetPredicate simpleSetPredicate){
-
-		if(!simpleSetPredicate.hasExtensions()){
-			return this.simpleSetPredicateCache.intern(simpleSetPredicate);
-		}
-
-		return simpleSetPredicate;
+		return this.simpleSetPredicateCache.intern(simpleSetPredicate);
 	}
 
 	private True intern(True truePredicate){
-
-		if(!truePredicate.hasExtensions()){
-			return this.truePredicateCache.intern(truePredicate);
-		}
-
-		return truePredicate;
+		return this.truePredicateCache.intern(truePredicate);
 	}
 
 	private False intern(False falsePredicate){
-
-		if(!falsePredicate.hasExtensions()){
-			return this.falsePredicateCache.intern(falsePredicate);
-		}
-
-		return falsePredicate;
+		return this.falsePredicateCache.intern(falsePredicate);
 	}
 
 	static
