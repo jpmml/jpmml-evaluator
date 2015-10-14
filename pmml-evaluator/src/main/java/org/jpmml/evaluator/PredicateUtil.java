@@ -28,6 +28,7 @@
 package org.jpmml.evaluator;
 
 import java.util.List;
+import java.util.Set;
 
 import org.dmg.pmml.Array;
 import org.dmg.pmml.CompoundPredicate;
@@ -120,26 +121,47 @@ public class PredicateUtil {
 			return null;
 		}
 
-		switch(operator){
-			case EQUAL:
-				return value.equalsString(stringValue);
-			case NOT_EQUAL:
-				return !value.equalsString(stringValue);
-			default:
-				break;
-		}
+		int order;
 
-		int order = value.compareToString(stringValue);
+		if(simplePredicate instanceof HasValue){
+			HasValue hasValue = (HasValue)simplePredicate;
+
+			FieldValue referenceValue = hasValue.getValue(value.getDataType(), value.getOpType());
+
+			switch(operator){
+				case EQUAL:
+					return value.equalsValue(referenceValue);
+				case NOT_EQUAL:
+					return !value.equalsValue(referenceValue);
+				default:
+					break;
+			}
+
+			order = value.compareToValue(referenceValue);
+		} else
+
+		{
+			switch(operator){
+				case EQUAL:
+					return value.equalsString(stringValue);
+				case NOT_EQUAL:
+					return !value.equalsString(stringValue);
+				default:
+					break;
+			}
+
+			order = value.compareToString(stringValue);
+		}
 
 		switch(operator){
 			case LESS_THAN:
 				return Boolean.valueOf(order < 0);
 			case LESS_OR_EQUAL:
 				return Boolean.valueOf(order <= 0);
-			case GREATER_THAN:
-				return Boolean.valueOf(order > 0);
 			case GREATER_OR_EQUAL:
 				return Boolean.valueOf(order >= 0);
+			case GREATER_THAN:
+				return Boolean.valueOf(order > 0);
 			default:
 				throw new UnsupportedFeatureException(simplePredicate, operator);
 		}
@@ -152,16 +174,30 @@ public class PredicateUtil {
 			return null;
 		}
 
-		Array array = simpleSetPredicate.getArray();
+		boolean contains;
 
-		List<String> content = ArrayUtil.getContent(array);
+		if(simpleSetPredicate instanceof HasValueSet){
+			HasValueSet hasValueSet = (HasValueSet)simpleSetPredicate;
+
+			Set<FieldValue> referenceValues = hasValueSet.getValueSet(value.getDataType(), value.getOpType());
+
+			contains = referenceValues.contains(value);
+		} else
+
+		{
+			Array array = simpleSetPredicate.getArray();
+
+			List<String> content = ArrayUtil.getContent(array);
+
+			contains = value.equalsAnyString(content);
+		}
 
 		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.getBooleanOperator();
 		switch(booleanOperator){
 			case IS_IN:
-				return value.equalsAnyString(content);
+				return contains;
 			case IS_NOT_IN:
-				return !value.equalsAnyString(content);
+				return !contains;
 			default:
 				throw new UnsupportedFeatureException(simpleSetPredicate, booleanOperator);
 		}

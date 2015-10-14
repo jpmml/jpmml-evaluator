@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,6 +40,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.Visitor;
+import org.jpmml.evaluator.visitors.PredicateParser;
 
 public class EvaluationExample extends Example {
 
@@ -90,6 +93,13 @@ public class EvaluationExample extends Example {
 		validateWith = PositiveInteger.class
 	)
 	private int loop = 1;
+
+	@Parameter (
+		names = "--optimize",
+		description = "Optimize PMML class model",
+		hidden = true
+	)
+	private boolean optimize = false;
 
 
 	static
@@ -154,6 +164,14 @@ public class EvaluationExample extends Example {
 		}
 
 		PMML pmml = readPMML(this.model);
+
+		if(this.optimize){
+			List<? extends Visitor> optimizers = Arrays.asList(new PredicateParser());
+
+			for(Visitor optimizer : optimizers){
+				optimizer.applyTo(pmml);
+			}
+		}
 
 		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
 
