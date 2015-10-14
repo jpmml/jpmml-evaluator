@@ -25,6 +25,7 @@ import org.dmg.pmml.OpType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -32,8 +33,36 @@ public class FieldValueTest {
 
 	@Test
 	public void categoricalString(){
-		FieldValue zero = create(DataType.STRING, OpType.CATEGORICAL, "0");
-		FieldValue one = create(DataType.STRING, OpType.CATEGORICAL, "1");
+		FieldValue zero = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "0");
+		FieldValue one = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "1");
+
+		assertTrue(zero.equalsString("0"));
+		assertFalse(zero.equalsString("0.0"));
+
+		assertTrue(one.equalsString("1"));
+		assertFalse(one.equalsString("1.0"));
+
+		assertTrue(zero.equalsValue(zero));
+		assertFalse(zero.equalsValue(one));
+
+		assertFalse(one.equalsValue(zero));
+		assertTrue(one.equalsValue(one));
+
+		try {
+			zero.compareToString("0");
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
+
+		try {
+			zero.compareTo(zero);
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
 
 		assertEquals((Integer)0, zero.asInteger());
 		assertEquals(Boolean.FALSE, zero.asBoolean());
@@ -44,14 +73,17 @@ public class FieldValueTest {
 
 	@Test
 	public void ordinalString(){
-		OrdinalValue loud = new OrdinalValue(DataType.STRING, "loud");
-		OrdinalValue louder = new OrdinalValue(DataType.STRING, "louder");
-		OrdinalValue insane = new OrdinalValue(DataType.STRING, "insane");
+		OrdinalValue loud = (OrdinalValue)FieldValueUtil.create(DataType.STRING, OpType.ORDINAL, "loud");
+		OrdinalValue louder = (OrdinalValue)FieldValueUtil.create(DataType.STRING, OpType.ORDINAL, "louder");
+		OrdinalValue insane = (OrdinalValue)FieldValueUtil.create(DataType.STRING, OpType.ORDINAL, "insane");
 
+		assertFalse(louder.equalsString("loud"));
 		assertTrue(louder.equalsString("louder"));
+		assertFalse(louder.equalsString("insane"));
 
-		assertTrue(louder.equalsValue(create(DataType.STRING, OpType.CATEGORICAL, "louder")));
-		assertTrue(louder.equalsValue(create(DataType.STRING, OpType.ORDINAL, "louder")));
+		assertFalse(louder.equalsValue(loud));
+		assertTrue(louder.equalsValue(louder));
+		assertFalse(louder.equalsValue(insane));
 
 		// Implicit (ie. lexicographic) ordering
 		louder.setOrdering(null);
@@ -60,54 +92,105 @@ public class FieldValueTest {
 		assertTrue(louder.compareToString("louder") == 0);
 		assertTrue(louder.compareToString("insane") > 0);
 
-		assertTrue(louder.compareToValue(loud) > 0);
-		assertTrue(louder.compareToValue(louder) == 0);
-		assertTrue(louder.compareToValue(insane) > 0);
+		assertTrue(louder.compareTo(loud) > 0);
+		assertTrue(louder.compareTo(louder) == 0);
+		assertTrue(louder.compareTo(insane) > 0);
 
 		// Explicit ordering
-		louder.setOrdering(Arrays.asList("loud", "louder", "insane"));
+		louder.setOrdering(Arrays.asList(loud.getValue(), louder.getValue(), insane.getValue()));
 
 		assertTrue(louder.compareToString("loud") > 0);
 		assertTrue(louder.compareToString("louder") == 0);
 		assertTrue(louder.compareToString("insane") < 0);
 
-		assertTrue(louder.compareToValue(loud) > 0);
-		assertTrue(louder.compareToValue(louder) == 0);
-		assertTrue(louder.compareToValue(insane) < 0);
+		assertTrue(louder.compareTo(loud) > 0);
+		assertTrue(louder.compareTo(louder) == 0);
+		assertTrue(louder.compareTo(insane) < 0);
 	}
 
 	@Test
 	public void continuousInteger(){
-		FieldValue zero = create(DataType.INTEGER, OpType.CONTINUOUS, 0);
-		FieldValue one = create(DataType.INTEGER, OpType.CONTINUOUS, 1);
+		FieldValue zero = FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, 0);
+		FieldValue one = FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, 1);
 
-		assertTrue(zero.compareToString("false") == 0);
-		assertTrue(one.compareToString("false") > 0);
-		assertTrue(zero.compareToString("true") < 0);
-		assertTrue(one.compareToString("true") == 0);
+		assertTrue(zero.equalsString("0"));
+		assertTrue(zero.equalsString("0.0"));
+		assertTrue(zero.equalsString("false"));
+		assertFalse(zero.equalsString("true"));
+
+		assertTrue(one.equalsString("1"));
+		assertTrue(one.equalsString("1.0"));
+		assertFalse(one.equalsString("false"));
+		assertTrue(one.equalsString("true"));
+
+		assertTrue(zero.equalsValue(zero));
+		assertFalse(zero.equalsValue(one));
+
+		assertFalse(one.equalsValue(zero));
+		assertTrue(one.equalsValue(one));
 
 		assertTrue(zero.compareToString("-1") > 0);
 		assertTrue(zero.compareToString("-1.5") > 0);
-
 		assertTrue(zero.compareToString("0") == 0);
 		assertTrue(zero.compareToString("0.0") == 0);
-
 		assertTrue(zero.compareToString("1") < 0);
 		assertTrue(zero.compareToString("1.5") < 0);
+		assertTrue(zero.compareToString("false") == 0);
+		assertTrue(zero.compareToString("true") < 0);
 
-		assertTrue(zero.compareToValue(zero) == 0);
-		assertTrue(zero.compareToValue(one) < 0);
+		assertTrue(one.compareToString("0") > 0);
+		assertTrue(one.compareToString("1") == 0);
+		assertTrue(one.compareToString("1.0") == 0);
+		assertTrue(one.compareToString("2") < 0);
+		assertTrue(one.compareToString("false") > 0);
+		assertTrue(one.compareToString("true") == 0);
 
-		assertTrue(one.compareToValue(zero) > 0);
-		assertTrue(one.compareToValue(one) == 0);
+		assertTrue(zero.compareTo(zero) == 0);
+		assertTrue(zero.compareTo(one) < 0);
+
+		try {
+			FieldValue categoricalZero = FieldValueUtil.refine(zero.getDataType(), OpType.CATEGORICAL, zero);
+
+			zero.compareTo(categoricalZero);
+
+			fail();
+		} catch(ClassCastException cce){
+			// Ignored
+		}
+
+		try {
+			FieldValue doubleZero = FieldValueUtil.refine(DataType.DOUBLE, zero.getOpType(), zero);
+
+			zero.compareTo(doubleZero);
+
+			fail();
+		} catch(ClassCastException cce){
+			// Ignored
+		}
+
+		assertTrue(one.compareTo(zero) > 0);
+		assertTrue(one.compareTo(one) == 0);
 	}
 
 	@Test
 	public void categoricalInteger(){
-		FieldValue zero = create(DataType.INTEGER, OpType.CATEGORICAL, 0);
+		FieldValue zero = FieldValueUtil.create(DataType.INTEGER, OpType.CATEGORICAL, 0);
+
+		assertTrue(zero.equalsString("0"));
+		assertTrue(zero.equalsString("0.0"));
+		assertTrue(zero.equalsString("false"));
+		assertFalse(zero.equalsString("true"));
 
 		try {
 			zero.compareToString("0");
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
+
+		try {
+			zero.compareTo(zero);
 
 			fail();
 		} catch(EvaluationException ee){
@@ -117,45 +200,41 @@ public class FieldValueTest {
 
 	@Test
 	public void categoricalBoolean(){
-		FieldValue zero = create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
-		FieldValue one = create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
-
-		assertTrue(zero.compareToString("false") == 0);
-		assertTrue(one.compareToString("false") > 0);
-		assertTrue(zero.compareToString("true") < 0);
-		assertTrue(one.compareToString("true") == 0);
+		FieldValue zero = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
+		FieldValue one = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
 
 		assertTrue(zero.compareToString("0") == 0);
 		assertTrue(zero.compareToString("0.0") == 0);
-		assertTrue(one.compareToString("0") > 0);
-
 		assertTrue(zero.compareToString("1") < 0);
+		assertTrue(zero.compareToString("1.0") < 0);
+		assertTrue(zero.compareToString("false") == 0);
+		assertTrue(zero.compareToString("true") < 0);
+
+		assertTrue(one.compareToString("0") > 0);
+		assertTrue(one.compareToString("0.0") > 0);
 		assertTrue(one.compareToString("1") == 0);
 		assertTrue(one.compareToString("1.0") == 0);
+		assertTrue(one.compareToString("false") > 0);
+		assertTrue(one.compareToString("true") == 0);
 
-		assertTrue(zero.compareToValue(zero) == 0);
-		assertTrue(zero.compareToValue(one) < 0);
+		assertTrue(zero.compareTo(zero) == 0);
+		assertTrue(zero.compareTo(one) < 0);
 
-		assertTrue(one.compareToValue(zero) > 0);
-		assertTrue(one.compareToValue(one) == 0);
+		assertTrue(one.compareTo(zero) > 0);
+		assertTrue(one.compareTo(one) == 0);
 	}
 
 	@Test
 	public void categoricalDaysSinceDate(){
-		FieldValue period = create(DataType.DATE_DAYS_SINCE_1960, OpType.CATEGORICAL, "1960-01-03");
+		FieldValue period = FieldValueUtil.create(DataType.DATE_DAYS_SINCE_1960, OpType.CATEGORICAL, "1960-01-03");
 
 		assertEquals((Integer)2, period.asInteger());
 	}
 
 	@Test
 	public void categoricalSecondsSinceDate(){
-		FieldValue period = create(DataType.DATE_TIME_SECONDS_SINCE_1960, OpType.CATEGORICAL, "1960-01-03T03:30:03");
+		FieldValue period = FieldValueUtil.create(DataType.DATE_TIME_SECONDS_SINCE_1960, OpType.CATEGORICAL, "1960-01-03T03:30:03");
 
 		assertEquals((Integer)185403, period.asInteger());
-	}
-
-	static
-	private FieldValue create(DataType dataType, OpType opType, Object value){
-		return FieldValueUtil.create(dataType, opType, value);
 	}
 }

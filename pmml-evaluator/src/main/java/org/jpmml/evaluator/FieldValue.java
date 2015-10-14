@@ -50,7 +50,7 @@ import org.joda.time.LocalTime;
  * @see FieldValueUtil
  */
 abstract
-public class FieldValue implements Serializable {
+public class FieldValue implements Comparable<FieldValue>, Serializable {
 
 	private DataType dataType = null;
 
@@ -64,6 +64,16 @@ public class FieldValue implements Serializable {
 
 	abstract
 	public OpType getOpType();
+
+	@Override
+	public int compareTo(FieldValue value){
+
+		if(!(getOpType()).equals(value.getOpType()) || !(getDataType()).equals(value.getDataType())){
+			throw new ClassCastException();
+		}
+
+		return compareToValue(value);
+	}
 
 	/**
 	 * <p>
