@@ -31,10 +31,10 @@ import org.dmg.pmml.SimpleSetPredicate;
 import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.HasValueSet;
+import org.jpmml.evaluator.HasParsedValueSet;
 import org.jpmml.model.ReflectionUtil;
 
-class ParsedSimpleSetPredicate extends SimpleSetPredicate implements HasValueSet {
+class ParsedSimpleSetPredicate extends SimpleSetPredicate implements HasParsedValueSet {
 
 	private Set<FieldValue> parsedValueSet = null;
 
@@ -44,24 +44,28 @@ class ParsedSimpleSetPredicate extends SimpleSetPredicate implements HasValueSet
 	}
 
 	@Override
-	public Set<FieldValue> getValueSet(final DataType dataType, final OpType opType){
+	public Set<FieldValue> getValueSet(DataType dataType, OpType opType){
 
 		if(this.parsedValueSet == null){
-			Array array = getArray();
-
-			List<String> content = ArrayUtil.getContent(array);
-
-			Function<String, FieldValue> function = new Function<String, FieldValue>(){
-
-				@Override
-				public FieldValue apply(String value){
-					return FieldValueUtil.create(dataType, opType, value);
-				}
-			};
-
-			this.parsedValueSet = ImmutableSet.copyOf(Iterables.transform(content, function));
+			this.parsedValueSet = ImmutableSet.copyOf(parseArray(dataType, opType));
 		}
 
 		return this.parsedValueSet;
+	}
+
+	private Iterable<FieldValue> parseArray(final DataType dataType, final OpType opType){
+		Array array = getArray();
+
+		List<String> content = ArrayUtil.getContent(array);
+
+		Function<String, FieldValue> function = new Function<String, FieldValue>(){
+
+			@Override
+			public FieldValue apply(String value){
+				return FieldValueUtil.create(dataType, opType, value);
+			}
+		};
+
+		return Iterables.transform(content, function);
 	}
 }

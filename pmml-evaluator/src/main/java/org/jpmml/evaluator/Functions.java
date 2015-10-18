@@ -324,16 +324,16 @@ public class Functions {
 	public static final ValueListFunction IS_IN = new ValueListFunction("isIn"){
 
 		@Override
-		public Boolean evaluate(FieldValue value, List<FieldValue> values){
-			return value.equalsAnyValue(values);
+		public Boolean evaluate(int index){
+			return Boolean.valueOf(index >= 0);
 		}
 	};
 
 	public static final ValueListFunction IS_NOT_IN = new ValueListFunction("isNotIn"){
 
 		@Override
-		public Boolean evaluate(FieldValue value, List<FieldValue> values){
-			return !value.equalsAnyValue(values);
+		public Boolean evaluate(int index){
+			return Boolean.valueOf(index < 0);
 		}
 	};
 

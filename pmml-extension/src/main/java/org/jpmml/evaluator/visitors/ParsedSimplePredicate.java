@@ -23,10 +23,10 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.SimplePredicate;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.HasValue;
+import org.jpmml.evaluator.HasParsedValue;
 import org.jpmml.model.ReflectionUtil;
 
-class ParsedSimplePredicate extends SimplePredicate implements HasValue {
+class ParsedSimplePredicate extends SimplePredicate implements HasParsedValue {
 
 	private FieldValue parsedValue = null;
 

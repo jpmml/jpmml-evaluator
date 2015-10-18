@@ -19,10 +19,19 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import org.dmg.pmml.Array;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.Expression;
+import org.dmg.pmml.Field;
+import org.dmg.pmml.HasValue;
+import org.dmg.pmml.HasValueSet;
 import org.dmg.pmml.OpType;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -65,23 +74,64 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	abstract
 	public OpType getOpType();
 
-	@Override
-	public int compareTo(FieldValue value){
-
-		if(!(getOpType()).equals(value.getOpType()) || !(getDataType()).equals(value.getDataType())){
-			throw new ClassCastException();
-		}
-
-		return compareToValue(value);
-	}
-
 	/**
 	 * <p>
 	 * Checks if this value is equal to the reference value.
 	 * </p>
-	 *
-	 * @param string The reference value.
 	 */
+	public boolean equals(HasValue hasValue){
+
+		if(hasValue instanceof HasParsedValue){
+			HasParsedValue hasParsedValue = (HasParsedValue)hasValue;
+
+			FieldValue value = hasParsedValue.getValue(getDataType(), getOpType());
+
+			return this.equals(value);
+		}
+
+		return equalsString(hasValue.getValue());
+	}
+
+	/**
+	 * <p>
+	 * Checks if this value is contained in the set of reference values.
+	 * </p>
+	 */
+	public boolean isIn(HasValueSet hasValueSet){
+
+		if(hasValueSet instanceof HasParsedValueSet){
+			HasParsedValueSet hasParsedValueSet = (HasParsedValueSet)hasValueSet;
+
+			Set<FieldValue> values = hasParsedValueSet.getValueSet(getDataType(), getOpType());
+
+			return values.contains(this);
+		}
+
+		Array array = hasValueSet.getArray();
+
+		List<String> content = ArrayUtil.getContent(array);
+
+		return indexInStrings(content) > -1;
+	}
+
+	/**
+	 * <p>
+	 * Calculates the order between this value and the reference value.
+	 * </p>
+	 */
+	public int compareTo(HasValue hasValue){
+
+		if(hasValue instanceof HasParsedValue){
+			HasParsedValue hasParsedValue = (HasParsedValue)hasValue;
+
+			FieldValue value = hasParsedValue.getValue(getDataType(), getOpType());
+
+			return this.compareTo(value);
+		}
+
+		return compareToString(hasValue.getValue());
+	}
+
 	public boolean equalsString(String string){
 		Object value = parseValue(string);
 
@@ -92,19 +142,11 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return TypeUtil.equals(getDataType(), getValue(), value);
 	}
 
-	public boolean equalsAnyString(Iterable<String> strings){
-
-		for(String string : strings){
-			boolean equals = equalsString(string);
-
-			if(equals){
-				return true;
-			}
-		}
-
-		return false;
-	}
-
+	/**
+	 * <p>
+	 * A value-safe replacement for {@link #equals(FieldValue)}.
+	 * </p>
+	 */
 	public boolean equalsValue(FieldValue value){
 
 		if(sameScalarType(value)){
@@ -116,26 +158,30 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return TypeUtil.equals(dataType, getValue(), value.getValue());
 	}
 
-	public boolean equalsAnyValue(Iterable<FieldValue> values){
+	public int indexInStrings(Iterable<String> strings){
+		Predicate<String> predicate = new Predicate<String>(){
 
-		for(FieldValue value : values){
-			boolean equals = equalsValue(value);
-
-			if(equals){
-				return true;
+			@Override
+			public boolean apply(String string){
+				return equalsString(string);
 			}
-		}
+		};
 
-		return false;
+		return Iterables.indexOf(strings, predicate);
 	}
 
-	/**
-	 * <p>
-	 * Calculates the order between this value and the reference value.
-	 * </p>
-	 *
-	 * @param string The reference value.
-	 */
+	public int indexInValues(Iterable<FieldValue> values){
+		Predicate<FieldValue> predicate = new Predicate<FieldValue>(){
+
+			@Override
+			public boolean apply(FieldValue value){
+				return equalsValue(value);
+			}
+		};
+
+		return Iterables.indexOf(values, predicate);
+	}
+
 	public int compareToString(String string){
 		Object value = parseValue(string);
 
@@ -146,6 +192,11 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return TypeUtil.compare(getDataType(), getValue(), value);
 	}
 
+	/**
+	 * <p>
+	 * A value-safe replacement for {@link #compareTo(FieldValue)}
+	 * </p>
+	 */
 	public int compareToValue(FieldValue value){
 
 		if(sameScalarType(value)){
@@ -257,6 +308,16 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 
 			throw tce;
 		}
+	}
+
+	@Override
+	public int compareTo(FieldValue that){
+
+		if(!Objects.equals(this.getDataType(), that.getDataType()) || !Objects.equals(this.getOpType(), that.getOpType())){
+			throw new ClassCastException();
+		}
+
+		return compareToValue(that);
 	}
 
 	@Override

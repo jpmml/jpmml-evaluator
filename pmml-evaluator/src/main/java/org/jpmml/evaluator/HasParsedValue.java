@@ -18,12 +18,11 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Set;
-
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.HasValue;
 import org.dmg.pmml.OpType;
 
-public interface HasValueSet {
+public interface HasParsedValue extends HasValue {
 
-	Set<FieldValue> getValueSet(DataType dataType, OpType opType);
+	FieldValue getValue(DataType dataType, OpType opType);
 }

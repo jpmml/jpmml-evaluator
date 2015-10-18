@@ -28,9 +28,7 @@
 package org.jpmml.evaluator;
 
 import java.util.List;
-import java.util.Set;
 
-import org.dmg.pmml.Array;
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.False;
 import org.dmg.pmml.Predicate;
@@ -121,37 +119,16 @@ public class PredicateUtil {
 			return null;
 		}
 
-		int order;
-
-		if(simplePredicate instanceof HasValue){
-			HasValue hasValue = (HasValue)simplePredicate;
-
-			FieldValue referenceValue = hasValue.getValue(value.getDataType(), value.getOpType());
-
-			switch(operator){
-				case EQUAL:
-					return value.equalsValue(referenceValue);
-				case NOT_EQUAL:
-					return !value.equalsValue(referenceValue);
-				default:
-					break;
-			}
-
-			order = value.compareToValue(referenceValue);
-		} else
-
-		{
-			switch(operator){
-				case EQUAL:
-					return value.equalsString(stringValue);
-				case NOT_EQUAL:
-					return !value.equalsString(stringValue);
-				default:
-					break;
-			}
-
-			order = value.compareToString(stringValue);
+		switch(operator){
+			case EQUAL:
+				return value.equals(simplePredicate);
+			case NOT_EQUAL:
+				return !value.equals(simplePredicate);
+			default:
+				break;
 		}
+
+		int order = value.compareTo(simplePredicate);
 
 		switch(operator){
 			case LESS_THAN:
@@ -170,34 +147,17 @@ public class PredicateUtil {
 	static
 	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext context){
 		FieldValue value = context.evaluate(simpleSetPredicate.getField());
+
 		if(value == null){
 			return null;
-		}
-
-		boolean contains;
-
-		if(simpleSetPredicate instanceof HasValueSet){
-			HasValueSet hasValueSet = (HasValueSet)simpleSetPredicate;
-
-			Set<FieldValue> referenceValues = hasValueSet.getValueSet(value.getDataType(), value.getOpType());
-
-			contains = referenceValues.contains(value);
-		} else
-
-		{
-			Array array = simpleSetPredicate.getArray();
-
-			List<String> content = ArrayUtil.getContent(array);
-
-			contains = value.equalsAnyString(content);
 		}
 
 		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.getBooleanOperator();
 		switch(booleanOperator){
 			case IS_IN:
-				return contains;
+				return value.isIn(simpleSetPredicate);
 			case IS_NOT_IN:
-				return !contains;
+				return !value.isIn(simpleSetPredicate);
 			default:
 				throw new UnsupportedFeatureException(simpleSetPredicate, booleanOperator);
 		}
