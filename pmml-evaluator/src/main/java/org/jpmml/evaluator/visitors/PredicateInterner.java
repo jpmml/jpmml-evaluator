@@ -30,6 +30,7 @@ import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.True;
 import org.dmg.pmml.Visitable;
 import org.jpmml.evaluator.ArrayUtil;
+import org.jpmml.model.visitors.PredicateFilterer;
 
 /**
  * <p>

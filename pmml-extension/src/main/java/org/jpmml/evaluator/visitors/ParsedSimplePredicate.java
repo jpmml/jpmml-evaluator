@@ -18,15 +18,13 @@
  */
 package org.jpmml.evaluator.visitors;
 
-import java.util.List;
-
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.Extension;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.SimplePredicate;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasValue;
+import org.jpmml.model.ReflectionUtil;
 
 class ParsedSimplePredicate extends SimplePredicate implements HasValue {
 
@@ -34,15 +32,7 @@ class ParsedSimplePredicate extends SimplePredicate implements HasValue {
 
 
 	ParsedSimplePredicate(SimplePredicate simplePredicate){
-		setField(simplePredicate.getField());
-		setOperator(simplePredicate.getOperator());
-		setValue(simplePredicate.getValue());
-
-		if(simplePredicate.hasExtensions()){
-			List<Extension> extensions = getExtensions();
-
-			extensions.addAll(simplePredicate.getExtensions());
-		}
+		ReflectionUtil.copyState(simplePredicate, this);
 	}
 
 	@Override

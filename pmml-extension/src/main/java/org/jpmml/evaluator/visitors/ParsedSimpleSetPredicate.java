@@ -26,13 +26,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.Extension;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasValueSet;
+import org.jpmml.model.ReflectionUtil;
 
 class ParsedSimpleSetPredicate extends SimpleSetPredicate implements HasValueSet {
 
@@ -40,15 +40,7 @@ class ParsedSimpleSetPredicate extends SimpleSetPredicate implements HasValueSet
 
 
 	ParsedSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate){
-		setField(simpleSetPredicate.getField());
-		setBooleanOperator(simpleSetPredicate.getBooleanOperator());
-		setArray(simpleSetPredicate.getArray());
-
-		if(simpleSetPredicate.hasExtensions()){
-			List<Extension> extensions = getExtensions();
-
-			extensions.addAll(simpleSetPredicate.getExtensions());
-		}
+		ReflectionUtil.copyState(simpleSetPredicate, this);
 	}
 
 	@Override

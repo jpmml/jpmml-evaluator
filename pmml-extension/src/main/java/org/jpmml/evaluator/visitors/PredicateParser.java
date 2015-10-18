@@ -21,6 +21,7 @@ package org.jpmml.evaluator.visitors;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
+import org.jpmml.model.visitors.PredicateFilterer;
 
 public class PredicateParser extends PredicateFilterer {
 
