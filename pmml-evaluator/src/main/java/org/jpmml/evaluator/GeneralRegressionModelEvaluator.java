@@ -643,7 +643,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		for(Predictor predictor : predictors){
 			FieldName name = predictor.getName();
 
-			result.put(name, context.evaluate(name));
+			FieldValue value = context.evaluate(name);
+
+			result.put(name, value);
 		}
 
 		return result;

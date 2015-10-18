@@ -174,9 +174,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
 		for(NumericPredictor numericPredictor : numericPredictors){
-			FieldName name = numericPredictor.getName();
-
-			FieldValue value = context.evaluate(name);
+			FieldValue value = context.evaluate(numericPredictor.getName());
 
 			// "If the input value is missing, then the result evaluates to a missing value"
 			if(value == null){
@@ -188,16 +186,14 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
 		for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
-			FieldName name = categoricalPredictor.getName();
-
-			FieldValue value = context.evaluate(name);
+			FieldValue value = context.evaluate(categoricalPredictor.getName());
 
 			// "If the input value is missing, then the product is ignored"
 			if(value == null){
 				continue;
 			}
 
-			boolean equals = value.equalsString(categoricalPredictor.getValue());
+			boolean equals = value.equals(categoricalPredictor);
 
 			result += categoricalPredictor.getCoefficient() * (equals ? 1d : 0d);
 		}
