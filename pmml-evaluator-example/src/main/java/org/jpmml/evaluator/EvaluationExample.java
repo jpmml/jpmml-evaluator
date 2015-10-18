@@ -41,6 +41,7 @@ import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Visitor;
+import org.jpmml.evaluator.visitors.ExpressionParser;
 import org.jpmml.evaluator.visitors.PredicateParser;
 
 public class EvaluationExample extends Example {
@@ -166,7 +167,7 @@ public class EvaluationExample extends Example {
 		PMML pmml = readPMML(this.model);
 
 		if(this.optimize){
-			List<? extends Visitor> optimizers = Arrays.asList(new PredicateParser());
+			List<? extends Visitor> optimizers = Arrays.asList(new ExpressionParser(), new PredicateParser());
 
 			for(Visitor optimizer : optimizers){
 				optimizer.applyTo(pmml);

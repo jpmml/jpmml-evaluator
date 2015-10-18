@@ -226,7 +226,7 @@ public class ExpressionUtil {
 		switch(method){
 			case INDICATOR:
 				{
-					boolean equals = value.equalsString(normDiscrete.getValue());
+					boolean equals = value.equals(normDiscrete);
 
 					return FieldValueUtil.create(equals ? 1d : 0d);
 				}
