@@ -42,6 +42,7 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Visitor;
 import org.jpmml.evaluator.visitors.ExpressionParser;
+import org.jpmml.evaluator.visitors.GeneralRegressionModelParser;
 import org.jpmml.evaluator.visitors.PredicateParser;
 import org.jpmml.evaluator.visitors.RegressionModelParser;
 
@@ -168,7 +169,7 @@ public class EvaluationExample extends Example {
 		PMML pmml = readPMML(this.model);
 
 		if(this.optimize){
-			List<? extends Visitor> optimizers = Arrays.asList(new ExpressionParser(), new PredicateParser(), new RegressionModelParser());
+			List<? extends Visitor> optimizers = Arrays.asList(new ExpressionParser(), new PredicateParser(), new GeneralRegressionModelParser(), new RegressionModelParser());
 
 			for(Visitor optimizer : optimizers){
 				optimizer.applyTo(pmml);

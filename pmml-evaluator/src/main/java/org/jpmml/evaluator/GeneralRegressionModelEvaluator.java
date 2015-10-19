@@ -35,6 +35,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -1029,7 +1030,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			@Override
 			public Double evaluate(FieldValue value){
-				boolean equals = value.equalsString(getCategory());
+				PPCell ppCell = getPPCell();
+
+				boolean equals = value.equals(ppCell);
 
 				return (equals ? 1d : 0d);
 			}
@@ -1046,6 +1049,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			private Matrix matrix = null;
 
 			private List<String> categories = null;
+
+			private List<FieldValue> parsedValueList = null;
 
 
 			private ContrastMatrixHandler(PPCell ppCell, Matrix matrix, List<String> categories){
@@ -1075,24 +1080,32 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 
 			public int getIndex(FieldValue value){
-				List<String> categories = getCategories();
 
-				for(int i = 0; i < categories.size(); i++){
-					String category = categories.get(i);
-
-					boolean equals = value.equalsString(category);
-					if(equals){
-						return i;
-					}
+				if(this.parsedValueList == null){
+					this.parsedValueList = ImmutableList.copyOf(parseCategories(value.getDataType(), value.getOpType()));
 				}
 
-				return -1;
+				return this.parsedValueList.indexOf(value);
 			}
 
 			public int getIndex(String category){
 				List<String> categories = getCategories();
 
 				return categories.indexOf(category);
+			}
+
+			private List<FieldValue> parseCategories(final DataType dataType, final OpType opType){
+				List<String> categories = getCategories();
+
+				Function<String, FieldValue> function = new Function<String, FieldValue>(){
+
+					@Override
+					public FieldValue apply(String value){
+						return FieldValueUtil.create(dataType, opType, value);
+					}
+				};
+
+				return Lists.transform(categories, function);
 			}
 
 			public Matrix getMatrix(){
