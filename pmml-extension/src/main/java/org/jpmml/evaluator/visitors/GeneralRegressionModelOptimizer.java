@@ -18,21 +18,28 @@
  */
 package org.jpmml.evaluator.visitors;
 
-import org.dmg.pmml.Expression;
-import org.dmg.pmml.NormDiscrete;
-import org.jpmml.model.visitors.ExpressionFilterer;
+import java.util.List;
+import java.util.ListIterator;
 
-public class ExpressionParser extends ExpressionFilterer {
+import org.dmg.pmml.PPCell;
+import org.dmg.pmml.PPMatrix;
+import org.dmg.pmml.VisitorAction;
+import org.jpmml.evaluator.RichPPCell;
+import org.jpmml.model.visitors.AbstractVisitor;
+
+public class GeneralRegressionModelOptimizer extends AbstractVisitor {
 
 	@Override
-	public Expression filter(Expression expression){
+	public VisitorAction visit(PPMatrix ppMatrix){
 
-		if(expression instanceof NormDiscrete){
-			NormDiscrete normDiscrete = (NormDiscrete)expression;
+		if(ppMatrix.hasPPCells()){
+			List<PPCell> ppCells = ppMatrix.getPPCells();
 
-			return new ParsedNormDiscrete(normDiscrete);
+			for(ListIterator<PPCell> it = ppCells.listIterator(); it.hasNext(); ){
+				it.set(new RichPPCell(it.next()));
+			}
 		}
 
-		return expression;
+		return super.visit(ppMatrix);
 	}
 }

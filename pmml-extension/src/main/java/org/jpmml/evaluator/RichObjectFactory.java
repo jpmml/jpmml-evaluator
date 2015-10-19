@@ -16,30 +16,37 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.visitors;
+package org.jpmml.evaluator;
 
-import org.dmg.pmml.Predicate;
-import org.dmg.pmml.SimplePredicate;
-import org.dmg.pmml.SimpleSetPredicate;
-import org.jpmml.model.visitors.PredicateFilterer;
+import javax.xml.bind.annotation.XmlRegistry;
 
-public class PredicateParser extends PredicateFilterer {
+import org.dmg.pmml.ObjectFactory;
+
+@XmlRegistry
+public class RichObjectFactory extends ObjectFactory {
 
 	@Override
-	public Predicate filter(Predicate predicate){
+	public RichCategoricalPredictor createCategoricalPredictor(){
+		return new RichCategoricalPredictor();
+	}
 
-		if(predicate instanceof SimplePredicate){
-			SimplePredicate simplePredicate = (SimplePredicate)predicate;
+	@Override
+	public RichNormDiscrete createNormDiscrete(){
+		return new RichNormDiscrete();
+	}
 
-			return new ParsedSimplePredicate(simplePredicate);
-		} else
+	@Override
+	public RichPPCell createPPCell(){
+		return new RichPPCell();
+	}
 
-		if(predicate instanceof SimpleSetPredicate){
-			SimpleSetPredicate simpleSetPredicate = (SimpleSetPredicate)predicate;
+	@Override
+	public RichSimplePredicate createSimplePredicate(){
+		return new RichSimplePredicate();
+	}
 
-			return new ParsedSimpleSetPredicate(simpleSetPredicate);
-		}
-
-		return predicate;
+	@Override
+	public RichSimpleSetPredicate createSimpleSetPredicate(){
+		return new RichSimpleSetPredicate();
 	}
 }

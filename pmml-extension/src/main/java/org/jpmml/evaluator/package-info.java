@@ -16,32 +16,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.visitors;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
-import org.dmg.pmml.SimplePredicate;
-import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.HasParsedValue;
-import org.jpmml.model.ReflectionUtil;
+@XmlSchema (
+	namespace = "http://www.dmg.org/PMML-4_2",
+	elementFormDefault = XmlNsForm.UNQUALIFIED
+)
+package org.jpmml.evaluator;
 
-class ParsedSimplePredicate extends SimplePredicate implements HasParsedValue {
-
-	private FieldValue parsedValue = null;
-
-
-	ParsedSimplePredicate(SimplePredicate simplePredicate){
-		ReflectionUtil.copyState(simplePredicate, this);
-	}
-
-	@Override
-	public FieldValue getValue(DataType dataType, OpType opType){
-
-		if(this.parsedValue == null){
-			this.parsedValue = FieldValueUtil.create(dataType, opType, getValue());
-		}
-
-		return this.parsedValue;
-	}
-}
+import javax.xml.bind.annotation.XmlNsForm;
+import javax.xml.bind.annotation.XmlSchema;

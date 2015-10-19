@@ -16,10 +16,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.visitors;
+package org.jpmml.evaluator;
 
 import java.util.List;
 import java.util.Set;
+
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -28,18 +31,21 @@ import org.dmg.pmml.Array;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.SimpleSetPredicate;
-import org.jpmml.evaluator.ArrayUtil;
-import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.HasParsedValueSet;
 import org.jpmml.model.ReflectionUtil;
 
-class ParsedSimpleSetPredicate extends SimpleSetPredicate implements HasParsedValueSet {
+@XmlRootElement (
+	name = "SimpleSetPredicate"
+)
+public class RichSimpleSetPredicate extends SimpleSetPredicate implements HasParsedValueSet {
 
+	@XmlTransient
 	private Set<FieldValue> parsedValueSet = null;
 
 
-	ParsedSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate){
+	public RichSimpleSetPredicate(){
+	}
+
+	public RichSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate){
 		ReflectionUtil.copyState(simpleSetPredicate, this);
 	}
 

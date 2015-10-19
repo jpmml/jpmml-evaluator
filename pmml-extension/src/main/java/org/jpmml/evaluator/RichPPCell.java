@@ -16,29 +16,39 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.visitors;
+package org.jpmml.evaluator;
 
-import java.util.List;
-import java.util.ListIterator;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-import org.dmg.pmml.CategoricalPredictor;
-import org.dmg.pmml.RegressionTable;
-import org.dmg.pmml.VisitorAction;
-import org.jpmml.model.visitors.AbstractVisitor;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
+import org.dmg.pmml.PPCell;
+import org.jpmml.model.ReflectionUtil;
 
-public class RegressionModelParser extends AbstractVisitor {
+@XmlRootElement (
+	name = "PPCell"
+)
+public class RichPPCell extends PPCell implements HasParsedValue {
+
+	@XmlTransient
+	private FieldValue parsedValue = null;
+
+
+	public RichPPCell(){
+	}
+
+	public RichPPCell(PPCell ppCell){
+		ReflectionUtil.copyState(ppCell, this);
+	}
 
 	@Override
-	public VisitorAction visit(RegressionTable regressionTable){
+	public FieldValue getValue(DataType dataType, OpType opType){
 
-		if(regressionTable.hasCategoricalPredictors()){
-			List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
-
-			for(ListIterator<CategoricalPredictor> it = categoricalPredictors.listIterator(); it.hasNext(); ){
-				it.set(new ParsedCategoricalPredictor(it.next()));
-			}
+		if(this.parsedValue == null){
+			this.parsedValue = FieldValueUtil.create(dataType, opType, getValue());
 		}
 
-		return super.visit(regressionTable);
+		return this.parsedValue;
 	}
 }

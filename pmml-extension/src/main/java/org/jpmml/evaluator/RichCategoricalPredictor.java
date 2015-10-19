@@ -16,23 +16,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.visitors;
+package org.jpmml.evaluator;
 
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.dmg.pmml.CategoricalPredictor;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
-import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.HasParsedValue;
 import org.jpmml.model.ReflectionUtil;
 
-class ParsedNormDiscrete extends NormDiscrete implements HasParsedValue {
+@XmlRootElement (
+	name = "CategoricalPredictor"
+)
+public class RichCategoricalPredictor extends CategoricalPredictor implements HasParsedValue {
 
+	@XmlTransient
 	private FieldValue parsedValue = null;
 
 
-	ParsedNormDiscrete(NormDiscrete normDiscrete){
-		ReflectionUtil.copyState(normDiscrete, this);
+	public RichCategoricalPredictor(){
+	}
+
+	public RichCategoricalPredictor(CategoricalPredictor categoricalPredictor){
+		ReflectionUtil.copyState(categoricalPredictor, this);
 	}
 
 	@Override

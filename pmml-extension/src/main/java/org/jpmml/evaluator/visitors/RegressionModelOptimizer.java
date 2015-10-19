@@ -18,30 +18,28 @@
  */
 package org.jpmml.evaluator.visitors;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
-import org.dmg.pmml.PPCell;
-import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.HasParsedValue;
-import org.jpmml.model.ReflectionUtil;
+import java.util.List;
+import java.util.ListIterator;
 
-class ParsedPPCell extends PPCell implements HasParsedValue {
+import org.dmg.pmml.CategoricalPredictor;
+import org.dmg.pmml.RegressionTable;
+import org.dmg.pmml.VisitorAction;
+import org.jpmml.evaluator.RichCategoricalPredictor;
+import org.jpmml.model.visitors.AbstractVisitor;
 
-	private FieldValue parsedValue = null;
-
-
-	ParsedPPCell(PPCell ppCell){
-		ReflectionUtil.copyState(ppCell, this);
-	}
+public class RegressionModelOptimizer extends AbstractVisitor {
 
 	@Override
-	public FieldValue getValue(DataType dataType, OpType opType){
+	public VisitorAction visit(RegressionTable regressionTable){
 
-		if(this.parsedValue == null){
-			this.parsedValue = FieldValueUtil.create(dataType, opType, getValue());
+		if(regressionTable.hasCategoricalPredictors()){
+			List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
+
+			for(ListIterator<CategoricalPredictor> it = categoricalPredictors.listIterator(); it.hasNext(); ){
+				it.set(new RichCategoricalPredictor(it.next()));
+			}
 		}
 
-		return this.parsedValue;
+		return super.visit(regressionTable);
 	}
 }
