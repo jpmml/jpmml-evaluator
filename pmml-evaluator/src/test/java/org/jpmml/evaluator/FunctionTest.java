@@ -217,11 +217,21 @@ public class FunctionTest {
 		assertEquals("VALUE", evaluate(Functions.UPPERCASE, "Value"));
 		assertEquals("value", evaluate(Functions.LOWERCASE, "Value"));
 
-		assertEquals("", evaluate(Functions.SUBSTRING, "value", 1, 0));
-		assertEquals("value", evaluate(Functions.SUBSTRING, "value", 1, 5));
+		assertEquals("Bc9", evaluate(Functions.SUBSTRING, "aBc9x", 2, 3));
 
-		assertEquals("alue", evaluate(Functions.SUBSTRING, "value", 2, 4));
+		assertEquals("", evaluate(Functions.SUBSTRING, "", 1, 0));
+		assertEquals("", evaluate(Functions.SUBSTRING, "", 1, Integer.MAX_VALUE));
+		assertEquals("", evaluate(Functions.SUBSTRING, "", Integer.MAX_VALUE, 0));
+		assertEquals("", evaluate(Functions.SUBSTRING, "", Integer.MAX_VALUE, Integer.MAX_VALUE));
+
+		assertEquals("", evaluate(Functions.SUBSTRING, "value", 1, 0));
 		assertEquals("valu", evaluate(Functions.SUBSTRING, "value", 1, 4));
+		assertEquals("value", evaluate(Functions.SUBSTRING, "value", 1, 5));
+		assertEquals("value", evaluate(Functions.SUBSTRING, "value", 1, Integer.MAX_VALUE));
+		assertEquals("alue", evaluate(Functions.SUBSTRING, "value", 2, 4));
+		assertEquals("alue", evaluate(Functions.SUBSTRING, "value", 2, Integer.MAX_VALUE));
+		assertEquals("", evaluate(Functions.SUBSTRING, "value", 6, Integer.MAX_VALUE));
+		assertEquals("", evaluate(Functions.SUBSTRING, "value", Integer.MAX_VALUE, Integer.MAX_VALUE));
 
 		assertEquals("value", evaluate(Functions.TRIM_BLANKS, "\tvalue\t"));
 	}

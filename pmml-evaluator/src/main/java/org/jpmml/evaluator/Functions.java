@@ -404,13 +404,18 @@ public class Functions {
 				throw new FunctionException(this, "Invalid position value " + position + ". Must be equal or greater than 1");
 			}
 
+			// "The first character of a string is located at position 1 (not position 0)"
+			int javaPosition = Math.min(position - 1, string.length());
+
 			int length = (arguments.get(2)).asInteger();
 			if(length < 0){
 				throw new FunctionException(this, "Invalid length value " + length);
 			}
 
-			// "The first character of a string is located at position 1 (not position 0)"
-			String result = string.substring(position - 1, (position + length) - 1);
+			int javaLength = Math.min(length, (string.length() - javaPosition));
+
+			// This expression must never throw a StringIndexOutOfBoundsException
+			String result = string.substring(javaPosition, javaPosition + javaLength);
 
 			return FieldValueUtil.create(result);
 		}
