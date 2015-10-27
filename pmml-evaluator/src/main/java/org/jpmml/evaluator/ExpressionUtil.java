@@ -21,8 +21,8 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -248,7 +248,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateMapValues(MapValues mapValues, EvaluationContext context){
-		Map<String, FieldValue> values = new LinkedHashMap<>();
+		Map<String, FieldValue> values = new HashMap<>();
 
 		List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
 		for(FieldColumnPair fieldColumnPair : fieldColumnPairs){

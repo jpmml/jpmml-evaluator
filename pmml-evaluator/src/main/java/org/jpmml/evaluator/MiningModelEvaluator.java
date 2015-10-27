@@ -21,7 +21,7 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -255,7 +255,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		MiningFunctionType miningFunction = miningModel.getFunctionName();
 
-		Map<FieldName, OutputField> segmentOutputFields = new LinkedHashMap<>();
+		Map<FieldName, OutputField> segmentOutputFields = new HashMap<>();
 
 		List<Segment> segments = segmentation.getSegments();
 		for(Segment segment : segments){

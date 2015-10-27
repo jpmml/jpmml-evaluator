@@ -19,7 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.io.InputStream;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.transform.Source;
@@ -59,7 +59,7 @@ public class PMMLManagerTest {
 
 	static
 	public Map<FieldName, ?> createArguments(Object... objects){
-		Map<FieldName, Object> result = new LinkedHashMap<>();
+		Map<FieldName, Object> result = new HashMap<>();
 
 		if(objects.length % 2 != 0){
 			throw new IllegalArgumentException();

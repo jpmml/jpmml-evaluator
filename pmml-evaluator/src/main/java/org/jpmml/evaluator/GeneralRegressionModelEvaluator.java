@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -638,7 +639,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		BiMap<FieldName, Predictor> factors = getFactorRegistry();
 		BiMap<FieldName, Predictor> covariates = getCovariateRegistry();
 
-		Map<FieldName, FieldValue> result = new LinkedHashMap<>();
+		Map<FieldName, FieldValue> result = new HashMap<>();
 
 		Iterable<Predictor> predictors = Iterables.concat(factors.values(), covariates.values());
 		for(Predictor predictor : predictors){

@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -114,7 +114,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		Set<String> input = createInput(activeValue, context);
 
-		Map<String, Boolean> flags = new LinkedHashMap<>();
+		Map<String, Boolean> flags = new HashMap<>();
 
 		List<Itemset> itemsets = associationModel.getItemsets();
 		for(Itemset itemset : itemsets){
@@ -237,7 +237,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	 * @return A set of {@link Item#getId() Item identifiers}.
 	 */
 	private Set<String> createInput(Collection<?> values, EvaluationContext context){
-		Set<String> result = new LinkedHashSet<>();
+		Set<String> result = new HashSet<>();
 
 		Map<String, String> valueItems = (getItemValues().inverse());
 

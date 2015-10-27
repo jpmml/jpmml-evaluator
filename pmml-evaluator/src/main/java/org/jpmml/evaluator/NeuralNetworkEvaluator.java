@@ -27,6 +27,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -222,7 +223,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	public Map<String, Double> evaluateRaw(EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
-		Map<String, Double> result = new LinkedHashMap<>();
+		Map<String, Double> result = new HashMap<>();
 
 		NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
 		if(neuralInputs == null){
@@ -242,7 +243,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
 		for(NeuralLayer neuralLayer : neuralLayers){
-			Map<String, Double> outputs = new LinkedHashMap<>();
+			Map<String, Double> outputs = new HashMap<>();
 
 			List<Neuron> neurons = neuralLayer.getNeurons();
 			for(Neuron neuron : neurons){

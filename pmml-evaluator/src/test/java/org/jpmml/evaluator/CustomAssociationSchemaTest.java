@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +28,7 @@ public class CustomAssociationSchemaTest extends AssociationSchemaTest {
 
 	@Override
 	public Map<FieldName, ?> createItemArguments(List<String> items){
-		Map<FieldName, String> result = new LinkedHashMap<>();
+		Map<FieldName, String> result = new HashMap<>();
 
 		String[] fields = {"Banana", "Coke", "Cracker", "Nachos", "Pear", "Water"};
 		for(String field : fields){

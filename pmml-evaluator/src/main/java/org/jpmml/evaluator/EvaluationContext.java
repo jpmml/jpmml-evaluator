@@ -21,7 +21,7 @@ package org.jpmml.evaluator;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,7 +34,7 @@ import org.dmg.pmml.PMMLObject;
 abstract
 public class EvaluationContext {
 
-	private Map<FieldName, FieldValue> fields = new LinkedHashMap<>();
+	private Map<FieldName, FieldValue> fields = new HashMap<>();
 
 	private List<String> warnings = new ArrayList<>();
 

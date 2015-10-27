@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -269,7 +270,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		SetView<FieldName> intersection = Sets.intersection(batch.keySet(), ImmutableSet.copyOf(outputFields));
 
 		for(Map<FieldName, Object> record : records){
-			Map<FieldName, Object> arguments = new LinkedHashMap<>();
+			Map<FieldName, Object> arguments = new HashMap<>();
 
 			for(FieldName activeField : activeFields){
 				arguments.put(activeField, EvaluatorUtil.prepare(this, activeField, record.get(activeField)));

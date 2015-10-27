@@ -21,7 +21,7 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -112,7 +112,7 @@ public class EvaluatorUtilTest {
 
 	static
 	private Map<FieldName, Object> createRow(String transaction, String item){
-		Map<FieldName, Object> result = new LinkedHashMap<>();
+		Map<FieldName, Object> result = new HashMap<>();
 		result.put(new FieldName("transaction"), transaction);
 		result.put(new FieldName("item"), item);
 
