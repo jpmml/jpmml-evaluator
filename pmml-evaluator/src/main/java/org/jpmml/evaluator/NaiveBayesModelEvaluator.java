@@ -316,11 +316,24 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 	static
 	private TargetValueCounts getTargetValueCounts(BayesInput bayesInput, FieldValue value){
+
+		if(bayesInput instanceof HasParsedValueMapping){
+			HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)bayesInput;
+
+			return (TargetValueCounts)value.getMapping(hasParsedValueMapping);
+		}
+
 		List<PairCounts> pairCounts = bayesInput.getPairCounts();
 		for(PairCounts pairCount : pairCounts){
 
 			if(value.equalsString(pairCount.getValue())){
-				return pairCount.getTargetValueCounts();
+				TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
+
+				if(targetValueCounts == null){
+					throw new InvalidFeatureException(pairCount);
+				}
+
+				return targetValueCounts;
 			}
 		}
 

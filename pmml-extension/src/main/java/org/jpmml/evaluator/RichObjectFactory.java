@@ -31,6 +31,11 @@ public class RichObjectFactory extends ObjectFactory {
 	}
 
 	@Override
+	public RichBayesInput createBayesInput(){
+		return new RichBayesInput();
+	}
+
+	@Override
 	public RichCategoricalPredictor createCategoricalPredictor(){
 		return new RichCategoricalPredictor();
 	}
