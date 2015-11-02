@@ -736,6 +736,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 	static
 	private BaselineStratum getBaselineStratum(BaseCumHazardTables baseCumHazardTables, FieldValue value){
+
+		if(baseCumHazardTables instanceof HasParsedValueMapping){
+			HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)baseCumHazardTables;
+
+			return (BaselineStratum)value.getMapping(hasParsedValueMapping);
+		}
+
 		List<BaselineStratum> baselineStrata = baseCumHazardTables.getBaselineStrata();
 		for(BaselineStratum baselineStratum : baselineStrata){
 

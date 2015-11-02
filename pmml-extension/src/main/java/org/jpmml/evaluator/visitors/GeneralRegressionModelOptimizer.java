@@ -21,13 +21,27 @@ package org.jpmml.evaluator.visitors;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.dmg.pmml.BaseCumHazardTables;
+import org.dmg.pmml.GeneralRegressionModel;
 import org.dmg.pmml.PPCell;
 import org.dmg.pmml.PPMatrix;
 import org.dmg.pmml.VisitorAction;
+import org.jpmml.evaluator.RichBaseCumHazardTables;
 import org.jpmml.evaluator.RichPPCell;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 public class GeneralRegressionModelOptimizer extends AbstractVisitor {
+
+	@Override
+	public VisitorAction visit(GeneralRegressionModel generalRegressionModel){
+		BaseCumHazardTables baseCumHazardTables = generalRegressionModel.getBaseCumHazardTables();
+
+		if(baseCumHazardTables != null){
+			generalRegressionModel.setBaseCumHazardTables(new RichBaseCumHazardTables(baseCumHazardTables));
+		}
+
+		return super.visit(generalRegressionModel);
+	}
 
 	@Override
 	public VisitorAction visit(PPMatrix ppMatrix){

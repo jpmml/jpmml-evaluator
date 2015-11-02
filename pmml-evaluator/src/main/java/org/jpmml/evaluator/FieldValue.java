@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -84,12 +85,16 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		if(hasValue instanceof HasParsedValue){
 			HasParsedValue hasParsedValue = (HasParsedValue)hasValue;
 
-			FieldValue value = hasParsedValue.getValue(getDataType(), getOpType());
-
-			return this.equals(value);
+			return equals(hasParsedValue);
 		}
 
 		return equalsString(hasValue.getValue());
+	}
+
+	public boolean equals(HasParsedValue hasParsedValue){
+		FieldValue value = hasParsedValue.getValue(getDataType(), getOpType());
+
+		return this.equals(value);
 	}
 
 	/**
@@ -102,9 +107,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		if(hasValueSet instanceof HasParsedValueSet){
 			HasParsedValueSet hasParsedValueSet = (HasParsedValueSet)hasValueSet;
 
-			Set<FieldValue> values = hasParsedValueSet.getValueSet(getDataType(), getOpType());
-
-			return values.contains(this);
+			return isIn(hasParsedValueSet);
 		}
 
 		Array array = hasValueSet.getArray();
@@ -112,6 +115,12 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		List<String> content = ArrayUtil.getContent(array);
 
 		return indexInStrings(content) > -1;
+	}
+
+	public boolean isIn(HasParsedValueSet hasParsedValueSet){
+		Set<FieldValue> values = hasParsedValueSet.getValueSet(getDataType(), getOpType());
+
+		return values.contains(this);
 	}
 
 	/**
@@ -124,12 +133,16 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		if(hasValue instanceof HasParsedValue){
 			HasParsedValue hasParsedValue = (HasParsedValue)hasValue;
 
-			FieldValue value = hasParsedValue.getValue(getDataType(), getOpType());
-
-			return this.compareTo(value);
+			return compareTo(hasParsedValue);
 		}
 
 		return compareToString(hasValue.getValue());
+	}
+
+	public int compareTo(HasParsedValue hasParsedValue){
+		FieldValue value = hasParsedValue.getValue(getDataType(), getOpType());
+
+		return this.compareTo(value);
 	}
 
 	public boolean equalsString(String string){
@@ -212,6 +225,12 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		DataType dataType = getDataType();
 
 		return TypeUtil.parse(dataType, string);
+	}
+
+	public <V> V getMapping(HasParsedValueMapping<V> hasParsedValueMapping){
+		Map<FieldValue, V> values = hasParsedValueMapping.getValueMapping(getDataType(), getOpType());
+
+		return values.get(this);
 	}
 
 	private boolean isScalar(){

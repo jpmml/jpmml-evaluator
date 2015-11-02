@@ -26,6 +26,11 @@ import org.dmg.pmml.ObjectFactory;
 public class RichObjectFactory extends ObjectFactory {
 
 	@Override
+	public RichBaseCumHazardTables createBaseCumHazardTables(){
+		return new RichBaseCumHazardTables();
+	}
+
+	@Override
 	public RichCategoricalPredictor createCategoricalPredictor(){
 		return new RichCategoricalPredictor();
 	}
