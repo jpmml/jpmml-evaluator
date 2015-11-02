@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Map;
+
 import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
@@ -27,22 +29,48 @@ public class PMMLEvaluationContextTest extends PMMLManagerTest {
 
 	@Test
 	public void evaluateAmPm() throws Exception {
-		PMMLManager pmmlManager = createPMMLManager();
-
-		PMMLEvaluationContext context = new PMMLEvaluationContext(pmmlManager);
-		context.declareAll(createArguments("StartTime", 34742));
-
-		assertValueEquals("AM", context.evaluate(new FieldName("Shift")));
+		assertValueEquals("AM", evaluate(new FieldName("Shift"), createArguments("StartTime", 34742)));
 	}
 
 	@Test
 	public void evaluateStategroup() throws Exception {
+		assertValueEquals("West", evaluate(new FieldName("Group"), createArguments("State", "CA")));
+	}
+
+	@Test
+	public void evaluateSimpleTable() throws Exception {
+		FieldName name = new FieldName("SimpleTable");
+
+		assertValueEquals(null, evaluate(name, createArguments("Value", null)));
+
+		assertValueEquals("first", evaluate(name, createArguments("Value", 1)));
+		assertValueEquals("second", evaluate(name, createArguments("Value", 2)));
+
+		assertValueEquals(null, evaluate(name, createArguments("Value", 3)));
+	}
+
+	@Test
+	public void evaluateComplexTable() throws Exception {
+		FieldName name = new FieldName("ComplexTable");
+
+		assertValueEquals(null, evaluate(name, createArguments("Value", null, "Modifier", null)));
+
+		assertValueEquals("firstTrue", evaluate(name, createArguments("Value", 1, "Modifier", true)));
+		assertValueEquals("firstFalse", evaluate(name, createArguments("Value", 1, "Modifier", false)));
+		assertValueEquals("secondTrue", evaluate(name, createArguments("Value", 2, "Modifier", true)));
+		assertValueEquals("secondFalse", evaluate(name, createArguments("Value", 2, "Modifier", false)));
+
+		assertValueEquals(null, evaluate(name, createArguments("Value", 3, "Modifier", null)));
+		assertValueEquals(null, evaluate(name, createArguments("Value", 3, "Modifier", true)));
+	}
+
+	private FieldValue evaluate(FieldName name, Map<FieldName, ?> arguments) throws Exception {
 		PMMLManager pmmlManager = createPMMLManager();
 
 		PMMLEvaluationContext context = new PMMLEvaluationContext(pmmlManager);
-		context.declareAll(createArguments("State", "CA"));
+		context.declareAll(arguments);
 
-		assertValueEquals("West", context.evaluate(new FieldName("Group")));
+		return context.evaluate(name);
 	}
 
 	static

@@ -79,7 +79,7 @@ public class ArrayUtil {
 	}
 
 	static
-	public List<String> parse(Array array){
+	List<String> parse(Array array){
 		List<String> result;
 
 		Array.Type type = array.getType();
@@ -104,7 +104,7 @@ public class ArrayUtil {
 	}
 
 	static
-	public List<String> tokenize(String string, boolean enableQuotes){
+	private List<String> tokenize(String string, boolean enableQuotes){
 		List<String> result = new ArrayList<>();
 
 		StringBuilder sb = new StringBuilder();

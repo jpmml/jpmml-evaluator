@@ -18,10 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -43,7 +40,7 @@ public class InlineTableUtil {
 	}
 
 	static
-	public Table<Integer, String, String> parse(InlineTable inlineTable){
+	Table<Integer, String, String> parse(InlineTable inlineTable){
 		Table<Integer, String, String> result = HashBasedTable.create();
 
 		Integer rowKey = 1;
@@ -65,41 +62,6 @@ public class InlineTableUtil {
 		}
 
 		return result;
-	}
-
-	static
-	public Map<String, String> match(Table<Integer, String, String> table, Map<String, FieldValue> values){
-		Set<Integer> rowKeys = table.rowKeySet();
-
-		rows:
-		for(Integer rowKey : rowKeys){
-			Map<String, String> row = table.row(rowKey);
-
-			// A table row contains a certain number of input columns, plus an output column
-			if(values.size() < (row.size() - 1)){
-				continue rows;
-			}
-
-			Collection<Map.Entry<String, FieldValue>> entries = values.entrySet();
-			for(Map.Entry<String, FieldValue> entry : entries){
-				String key = entry.getKey();
-				FieldValue value = entry.getValue();
-
-				String rowValue = row.get(key);
-				if(rowValue == null){
-					continue rows;
-				}
-
-				boolean equals = value.equalsString(rowValue);
-				if(!equals){
-					continue rows;
-				}
-			}
-
-			return row;
-		}
-
-		return null;
 	}
 
 	private static final LoadingCache<InlineTable, Table<Integer, String, String>> contentCache = CacheUtil.buildLoadingCache(new CacheLoader<InlineTable, Table<Integer, String, String>>(){
