@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.cache.CacheLoader;
@@ -185,6 +186,16 @@ public class FieldValueUtil {
 
 		if(dataField.hasValues()){
 			DataType dataType = dataField.getDataType();
+			OpType opType = dataField.getOpType();
+
+			if(dataField instanceof HasParsedValueMapping){
+				HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)dataField;
+
+				Value fieldValue = getValidValue(hasParsedValueMapping, dataType, opType, value);
+				if(fieldValue != null){
+					return Value.Property.VALID;
+				}
+			}
 
 			List<Value> fieldValues = dataField.getValues();
 			for(Value fieldValue : fieldValues){
@@ -430,30 +441,38 @@ public class FieldValueUtil {
 	static
 	public Value getValidValue(TypeDefinitionField field, Object value){
 
-		if(!field.hasValues()){
-			return null;
-		}
+		if(field.hasValues()){
+			DataType dataType = field.getDataType();
+			OpType opType = field.getOpType();
 
-		DataType dataType = field.getDataType();
+			value = safeParseOrCast(dataType, value);
 
-		value = safeParseOrCast(dataType, value);
+			if(field instanceof HasParsedValueMapping){
+				HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)field;
 
-		List<Value> fieldValues = field.getValues();
-		for(Value fieldValue : fieldValues){
-			Value.Property property = fieldValue.getProperty();
+				return getValidValue(hasParsedValueMapping, dataType, opType, value);
+			}
 
-			switch(property){
-				case VALID:
-					{
-						boolean equals = equals(dataType, value, fieldValue.getValue());
+			List<Value> fieldValues = field.getValues();
+			for(Value fieldValue : fieldValues){
+				Value.Property property = fieldValue.getProperty();
 
-						if(equals){
-							return fieldValue;
+				switch(property){
+					case VALID:
+						{
+							boolean equals = equals(dataType, value, fieldValue.getValue());
+
+							if(equals){
+								return fieldValue;
+							}
 						}
-					}
-					break;
-				default:
-					break;
+						break;
+					case INVALID:
+					case MISSING:
+						break;
+					default:
+						throw new UnsupportedFeatureException(fieldValue, property);
+				}
 			}
 		}
 
@@ -461,28 +480,46 @@ public class FieldValueUtil {
 	}
 
 	static
+	private Value getValidValue(HasParsedValueMapping<?> hasParsedValueMapping, DataType dataType, OpType opType, Object object){
+		FieldValue value;
+
+		try {
+			value = FieldValueUtil.create(dataType, opType, object);
+		} catch(IllegalArgumentException iae){
+			return null;
+		}
+
+		Map<FieldValue, ?> fieldValues = hasParsedValueMapping.getValueMapping(dataType, opType);
+
+		return (Value)fieldValues.get(value);
+	}
+
+	static
 	public List<Value> getValidValues(TypeDefinitionField field){
 
-		if(!field.hasValues()){
-			return Collections.emptyList();
-		}
+		if(field.hasValues()){
+			List<Value> result = new ArrayList<>();
 
-		List<Value> result = new ArrayList<>();
+			List<Value> fieldValues = field.getValues();
+			for(Value fieldValue : fieldValues){
+				Value.Property property = fieldValue.getProperty();
 
-		List<Value> fieldValues = field.getValues();
-		for(Value fieldValue : fieldValues){
-			Value.Property property = fieldValue.getProperty();
-
-			switch(property){
-				case VALID:
-					result.add(fieldValue);
-					break;
-				default:
-					break;
+				switch(property){
+					case VALID:
+						result.add(fieldValue);
+						break;
+					case INVALID:
+					case MISSING:
+						break;
+					default:
+						throw new UnsupportedFeatureException(fieldValue, property);
+				}
 			}
+
+			return result;
 		}
 
-		return result;
+		return Collections.emptyList();
 	}
 
 	static

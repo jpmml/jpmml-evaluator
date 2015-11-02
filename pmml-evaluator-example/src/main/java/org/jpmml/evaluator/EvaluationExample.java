@@ -42,6 +42,7 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Visitor;
 import org.jpmml.evaluator.visitors.ExpressionOptimizer;
+import org.jpmml.evaluator.visitors.FieldOptimizer;
 import org.jpmml.evaluator.visitors.GeneralRegressionModelOptimizer;
 import org.jpmml.evaluator.visitors.NaiveBayesModelOptimizer;
 import org.jpmml.evaluator.visitors.PredicateOptimizer;
@@ -170,7 +171,7 @@ public class EvaluationExample extends Example {
 		PMML pmml = readPMML(this.model);
 
 		if(this.optimize){
-			List<? extends Visitor> optimizers = Arrays.asList(new ExpressionOptimizer(), new PredicateOptimizer(), new GeneralRegressionModelOptimizer(), new NaiveBayesModelOptimizer(), new RegressionModelOptimizer());
+			List<? extends Visitor> optimizers = Arrays.asList(new ExpressionOptimizer(), new FieldOptimizer(), new PredicateOptimizer(), new GeneralRegressionModelOptimizer(), new NaiveBayesModelOptimizer(), new RegressionModelOptimizer());
 
 			for(Visitor optimizer : optimizers){
 				optimizer.applyTo(pmml);
