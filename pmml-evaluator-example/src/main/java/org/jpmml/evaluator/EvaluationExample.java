@@ -212,7 +212,7 @@ public class EvaluationExample extends Example {
 			throw new EvaluationException();
 		}
 
-		List<Map<FieldName, ?>> outputRecords = new ArrayList<>();
+		List<Map<FieldName, ?>> outputRecords = new ArrayList<>(inputRecords.size());
 
 		Timer timer = new Timer(new SlidingWindowReservoir(this.loop));
 
@@ -224,6 +224,8 @@ public class EvaluationExample extends Example {
 			Timer.Context context = timer.time();
 
 			try {
+				outputRecords.clear();
+
 				for(Map<FieldName, ?> inputRecord : inputRecords){
 					Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
 
