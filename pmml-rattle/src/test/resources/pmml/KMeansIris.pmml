@@ -3,7 +3,7 @@
  <Header copyright="Copyright (c) 2015 vfed" description="KMeans cluster model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2015-08-09 17:44:50</Timestamp>
+  <Timestamp>2015-11-03 23:18:23</Timestamp>
  </Header>
  <DataDictionary numberOfFields="4">
   <DataField name="Sepal_Length" optype="continuous" dataType="double"/>
@@ -20,9 +20,9 @@
   </MiningSchema>
   <Output>
    <OutputField name="predictedValue" feature="predictedValue"/>
-   <OutputField name="affinity_1" feature="affinity" value="1"/>
-   <OutputField name="affinity_2" feature="affinity" value="2"/>
-   <OutputField name="affinity_3" feature="affinity" value="3"/>
+   <OutputField name="clusterAffinity_1" feature="clusterAffinity" value="1"/>
+   <OutputField name="clusterAffinity_2" feature="clusterAffinity" value="2"/>
+   <OutputField name="clusterAffinity_3" feature="clusterAffinity" value="3"/>
   </Output>
   <ComparisonMeasure kind="distance">
    <squaredEuclidean/>

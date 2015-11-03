@@ -250,6 +250,15 @@ public class OutputUtil {
 				case CLUSTER_AFFINITY:
 				case ENTITY_AFFINITY:
 					{
+						String entityId = outputField.getValue();
+
+						// Select the specified entity instead of the winning entity
+						if(entityId != null){
+							value = getAffinity(targetValue, outputField);
+
+							break;
+						}
+
 						value = getEntityAffinity(targetValue);
 					}
 					break;
