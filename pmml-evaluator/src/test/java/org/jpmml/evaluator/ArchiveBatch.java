@@ -72,26 +72,19 @@ public class ArchiveBatch implements Batch {
 	}
 
 	private PMML loadPMML(String path) throws Exception {
-		InputStream is = open(path);
 
-		try {
+		try(InputStream is = open(path)){
 			Source source = ImportFilter.apply(new InputSource(is));
 
 			return JAXBUtil.unmarshalPMML(source);
-		} finally {
-			is.close();
 		}
 	}
 
 	private List<Map<FieldName, String>> loadRecords(String path) throws IOException {
 		List<List<String>> table;
 
-		InputStream is = open(path);
-
-		try {
+		try(InputStream is = open(path)){
 			table = CsvUtil.readTable(is, ",");
-		} finally {
-			is.close();
 		}
 
 		Function<String, String> function = new Function<String, String>(){

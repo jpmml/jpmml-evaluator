@@ -67,14 +67,10 @@ Loading a PMML schema version 3.X or 4.X document into an `org.dmg.pmml.PMML` in
 ```
 PMML pmml;
 
-InputStream is = ...;
-
-try {
+try(InputStream is = ...){
 	Source transformedSource = ImportFilter.apply(new InputSource(is));
 
 	pmml = JAXBUtil.unmarshalPMML(transformedSource);
-} finally {
-	is.close();
 }
 ```
 

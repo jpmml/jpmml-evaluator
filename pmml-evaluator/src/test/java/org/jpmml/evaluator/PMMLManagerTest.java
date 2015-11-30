@@ -39,12 +39,9 @@ public class PMMLManagerTest {
 
 	static
 	public PMMLManager createPMMLManager(Class<? extends PMMLManagerTest> clazz) throws Exception {
-		InputStream is = getInputStream(clazz);
 
-		try {
+		try(InputStream is = getInputStream(clazz)){
 			return createPMMLManager(is);
-		} finally {
-			is.close();
 		}
 	}
 

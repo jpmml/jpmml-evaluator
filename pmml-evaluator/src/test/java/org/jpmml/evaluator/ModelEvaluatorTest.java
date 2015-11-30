@@ -42,12 +42,9 @@ public class ModelEvaluatorTest extends PMMLManagerTest {
 
 	static
 	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz, ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
-		InputStream is = getInputStream(clazz);
 
-		try {
+		try(InputStream is = getInputStream(clazz)){
 			return createModelEvaluator(is, modelEvaluatorFactory);
-		} finally {
-			is.close();
 		}
 	}
 

@@ -46,9 +46,7 @@ public class CsvUtil {
 	public Table readTable(InputStream is, String separator) throws IOException {
 		Table table = new Table();
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-
-		try {
+		try(BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"))){
 			Splitter splitter = null;
 
 			while(true){
@@ -70,8 +68,6 @@ public class CsvUtil {
 
 				table.add(row);
 			}
-		} finally {
-			reader.close();
 		}
 
 		table.setSeparator(separator);
@@ -81,9 +77,8 @@ public class CsvUtil {
 
 	static
 	public void writeTable(Table table, OutputStream os) throws IOException {
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
 
-		try {
+		try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"))){
 			Joiner joiner = Joiner.on(table.getSeparator());
 
 			for(int i = 0; i < table.size(); i++){
@@ -95,8 +90,6 @@ public class CsvUtil {
 
 				writer.write(joiner.join(row));
 			}
-		} finally {
-			writer.close();
 		}
 	}
 

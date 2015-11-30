@@ -85,19 +85,15 @@ public class ModelEvaluatorCache {
 	protected ModelEvaluator<?> loadModelEvaluator(URI uri) throws IOException, JAXBException, SAXException {
 		URL url = uri.toURL();
 
-		InputStream is = url.openStream();
-
 		PMML pmml;
 
-		try {
+		try(InputStream is = url.openStream()){
 			InputSource source = new InputSource(is);
 
 			// Transform a PMML schema version 3.X or 4.X document to a PMML schema version 4.2 document
 			SAXSource transformedSource = ImportFilter.apply(source);
 
 			pmml = JAXBUtil.unmarshalPMML(transformedSource);
-		} finally {
-			is.close();
 		}
 
 		pmml = process(pmml);

@@ -62,49 +62,37 @@ public class Example {
 
 	static
 	public PMML readPMML(File file) throws Exception {
-		InputStream is = new FileInputStream(file);
 
-		try {
+		try(InputStream is = new FileInputStream(file)){
 			Source source = ImportFilter.apply(new InputSource(is));
 
 			return JAXBUtil.unmarshalPMML(source);
-		} finally {
-			is.close();
 		}
 	}
 
 	static
 	public void writePMML(PMML pmml, File file) throws Exception {
-		OutputStream os = new FileOutputStream(file);
 
-		try {
+		try(OutputStream os = new FileOutputStream(file)){
 			Result result = new StreamResult(os);
 
 			JAXBUtil.marshalPMML(pmml, result);
-		} finally {
-			os.close();
 		}
 	}
 
 	static
 	public CsvUtil.Table readTable(File file, String separator) throws IOException {
-		InputStream is = new FileInputStream(file);
 
-		try {
+		try(InputStream is = new FileInputStream(file)){
 			return CsvUtil.readTable(is, separator);
-		} finally {
-			is.close();
 		}
 	}
 
 	static
 	public void writeTable(CsvUtil.Table table, File file) throws IOException {
-		OutputStream os = new FileOutputStream(file);
 
-		try {
+		try(OutputStream os = new FileOutputStream(file)){
 			CsvUtil.writeTable(table, os);
-		} finally {
-			os.close();
 		}
 	}
 }
