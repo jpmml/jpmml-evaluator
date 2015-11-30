@@ -47,16 +47,15 @@ public class CacheUtil {
 
 		try {
 			return cache.get(key);
-		} catch(ExecutionException ee){
-			throw new InvalidFeatureException(key);
-		} catch(UncheckedExecutionException uee){
-			Throwable cause = uee.getCause();
+		} catch(ExecutionException | UncheckedExecutionException e){
+			Throwable cause = e.getCause();
 
 			if(cause instanceof PMMLException){
 				throw (PMMLException)cause;
 			}
 
-			throw new InvalidFeatureException(key);
+			throw (PMMLException)new InvalidFeatureException(key)
+				.initCause(cause);
 		}
 	}
 
@@ -65,16 +64,15 @@ public class CacheUtil {
 
 		try {
 			return cache.get(key, loader);
-		} catch(ExecutionException ee){
-			throw new InvalidFeatureException(key);
-		} catch(UncheckedExecutionException uee){
-			Throwable cause = uee.getCause();
+		} catch(ExecutionException | UncheckedExecutionException e){
+			Throwable cause = e.getCause();
 
 			if(cause instanceof PMMLException){
 				throw (PMMLException)cause;
 			}
 
-			throw new InvalidFeatureException(key);
+			throw (PMMLException)new InvalidFeatureException(key)
+				.initCause(cause);
 		}
 	}
 
