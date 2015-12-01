@@ -103,6 +103,11 @@
 				<artifactId>pmml-rattle</artifactId>
 				<version>1.2-SNAPSHOT</version>
 			</dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-sas</artifactId>
+				<version>1.2-SNAPSHOT</version>
+			</dependency>
 
 			<dependency>
 				<groupId>org.jpmml</groupId>

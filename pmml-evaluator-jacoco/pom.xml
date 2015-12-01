@@ -32,6 +32,10 @@
 			<groupId>org.jpmml</groupId>
 			<artifactId>pmml-rattle</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.jpmml</groupId>
+			<artifactId>pmml-sas</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -64,6 +68,7 @@
 										<fileset file="${rootdir}/pmml-knime/target/jacoco.exec" />
 										<fileset file="${rootdir}/pmml-rapidminer/target/jacoco.exec" />
 										<fileset file="${rootdir}/pmml-rattle/target/jacoco.exec" />
+										<fileset file="${rootdir}/pmml-sas/target/jacoco.exec" />
 									</executionData>
 									<structure name="PMML class model evaluator code coverage">
 										<classfiles>
