@@ -45,6 +45,7 @@
 		<module>pmml-knime</module>
 		<module>pmml-rapidminer</module>
 		<module>pmml-rattle</module>
+		<module>pmml-sas</module>
 	</modules>
 
 	<scm>
