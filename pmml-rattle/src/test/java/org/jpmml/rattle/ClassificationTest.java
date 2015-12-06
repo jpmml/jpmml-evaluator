@@ -20,7 +20,7 @@ package org.jpmml.rattle;
 
 import java.util.Set;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ArchiveBatchTest;
 import org.jpmml.evaluator.Batch;
@@ -141,7 +141,7 @@ public class ClassificationTest extends ArchiveBatchTest {
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		Set<FieldName> ignoredFields = Sets.newHashSet(new FieldName("Probability_0"), new FieldName("Probability_1"));
+		Set<FieldName> ignoredFields = ImmutableSet.of(FieldName.create("Probability_0"), FieldName.create("Probability_1"));
 
 		evaluate(batch, ignoredFields);
 	}

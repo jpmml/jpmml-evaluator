@@ -20,7 +20,7 @@ package org.jpmml.evaluator;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 import org.dmg.pmml.Node;
 import org.junit.Test;
 
@@ -43,7 +43,7 @@ public class NodeClassificationMapTest {
 
 		assertTrue(classification.isEmpty());
 
-		assertEquals(Sets.newHashSet("ham"), classification.getCategoryValues());
+		assertEquals(ImmutableSet.of("ham"), classification.getCategoryValues());
 
 		assertEquals((Double)1d, classification.getProbability("ham"));
 		assertEquals((Double)0d, classification.getProbability("spam"));
@@ -53,7 +53,7 @@ public class NodeClassificationMapTest {
 
 		assertFalse(classification.isEmpty());
 
-		assertEquals(Sets.newHashSet("ham", "spam"), classification.getCategoryValues());
+		assertEquals(ImmutableSet.of("ham", "spam"), classification.getCategoryValues());
 
 		assertEquals((Double)0.75d, classification.getProbability("ham"));
 		assertEquals((Double)0.25d, classification.getProbability("spam"));

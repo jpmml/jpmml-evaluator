@@ -20,7 +20,7 @@ package org.jpmml.rattle;
 
 import java.util.Set;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ArchiveBatchTest;
 import org.jpmml.evaluator.Batch;
@@ -66,7 +66,7 @@ public class RegressionTest extends ArchiveBatchTest {
 	public void evaluateLibSVMAuto() throws Exception {
 		Batch batch = createBatch("LibSVM", "Auto");
 
-		Set<FieldName> ignoredFields = Sets.newHashSet(FieldName.create("mpg"), FieldName.create("predictedValue"));
+		Set<FieldName> ignoredFields = ImmutableSet.of(FieldName.create("mpg"), FieldName.create("predictedValue"));
 
 		evaluate(batch, ignoredFields, 1e-7, 1e-7);
 	}

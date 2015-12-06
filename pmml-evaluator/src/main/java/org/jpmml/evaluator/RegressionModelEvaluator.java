@@ -152,7 +152,14 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		switch(opType){
 			case CATEGORICAL:
-				computeCategoricalProbabilities(values);
+				// "The binary logistic regression is a special case"
+				if(regressionTables.size() == 2){
+					computeBinomialProbabilities(values);
+				} else
+
+				{
+					computeMultinomialProbabilities(values);
+				}
 				break;
 			case ORDINAL:
 				computeOrdinalProbabilities(values, targetCategories);
@@ -241,7 +248,35 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		}
 	}
 
-	private void computeCategoricalProbabilities(Map<String, Double> values){
+	private void computeBinomialProbabilities(Map<String, Double> values){
+		Double probability = 0d;
+
+		int i = 0;
+
+		Collection<Map.Entry<String, Double>> entries = values.entrySet();
+		for(Map.Entry<String, Double> entry : entries){
+
+			// The probability of the first category is calculated
+			if(i == 0){
+				probability = normalizeClassificationResult(entry.getValue());
+
+				entry.setValue(probability);
+			} else
+
+			// The probability of the second category is obtained by subtracting the probability of the first category from 1.0
+			if(i == 1){
+				entry.setValue(1d - probability);
+			} else
+
+			{
+				throw new EvaluationException();
+			}
+
+			i++;
+		}
+	}
+
+	private void computeMultinomialProbabilities(Map<String, Double> values){
 		RegressionModel regressionModel = getModel();
 
 		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
@@ -293,6 +328,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
 		switch(regressionNormalizationMethod){
+			case SOFTMAX:
 			case LOGIT:
 				return 1d / (1d + Math.exp(-value));
 			case PROBIT:

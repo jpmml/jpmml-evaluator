@@ -18,37 +18,46 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.InputStream;
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 
-abstract
-public class ArchiveBatchTest extends BatchTest {
+public class FilterBatch implements Batch {
 
-	public void evaluate(String name, String dataset) throws Exception {
-		Batch batch = createBatch(name, dataset);
+	private Batch batch = null;
 
-		evaluate(batch);
+
+	public FilterBatch(Batch batch){
+		setBatch(batch);
 	}
 
-	public void evaluate(String name, String dataset, Set<FieldName> ignoredFields) throws Exception {
-		Batch batch = createBatch(name, dataset);
+	@Override
+	public Evaluator getEvaluator() throws Exception {
+		Batch batch = getBatch();
 
-		evaluate(batch, ignoredFields);
+		return batch.getEvaluator();
 	}
 
-	protected Batch createBatch(String name, String dataset){
-		Batch result = new ArchiveBatch(name, dataset){
+	@Override
+	public List<? extends Map<FieldName, ?>> getInput() throws Exception {
+		Batch batch = getBatch();
 
-			@Override
-			public InputStream open(String path){
-				Class<? extends ArchiveBatchTest> clazz = ArchiveBatchTest.this.getClass();
+		return batch.getInput();
+	}
 
-				return clazz.getResourceAsStream(path);
-			}
-		};
+	@Override
+	public List<? extends Map<FieldName, ?>> getOutput() throws Exception {
+		Batch batch = getBatch();
 
-		return result;
+		return batch.getOutput();
+	}
+
+	public Batch getBatch(){
+		return this.batch;
+	}
+
+	private void setBatch(Batch batch){
+		this.batch = batch;
 	}
 }

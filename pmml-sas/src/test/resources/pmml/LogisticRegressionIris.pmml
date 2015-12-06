@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+  <PMML version="4.1"
+   xmlns="http://www.dmg.org/PMML-4_1"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Header copyright="Copyright(c) 2002 SAS Institute Inc., Cary, NC, USA. All Rights Reserved.">
+    <Application name="SAS(r)" version="9.4"/>
+    <Timestamp>2015-12-04 12:56:43</Timestamp>
+    </Header>
+    <DataDictionary numberOfFields="5">
+      <DataField name="Petal_Length" optype="continuous" dataType="double"/>
+      <DataField name="Petal_Width" optype="continuous" dataType="double"/>
+      <DataField name="Sepal_Length" optype="continuous" dataType="double"/>
+      <DataField name="Sepal_Width" optype="continuous" dataType="double"/>
+      <DataField name="Species" optype="categorical" dataType="string"/>
+    </DataDictionary>
+    <TransformationDictionary>
+      <DefineFunction name="SAS-EM-String-Normalize" optype="categorical" dataType="string">
+        <ParameterField name="FMTWIDTH" optype="continuous"/>
+        <ParameterField name="AnyCInput" optype="categorical"/>
+        <Apply function="trimBlanks">
+          <Apply function="uppercase">
+            <Apply function="substring">
+              <FieldRef field="AnyCInput"/>
+              <Constant>1</Constant>
+              <Constant>FMTWIDTH</Constant>
+            </Apply>
+          </Apply>
+        </Apply>
+      </DefineFunction>
+      <DefineFunction name="SAS-FORMAT-BESTw" optype="categorical" dataType="string">
+        <ParameterField name="FMTWIDTH" optype="continuous"/>
+        <ParameterField name="AnyNInput" optype="continuous"/>
+        <Apply function="formatNumber">
+          <FieldRef field="AnyNInput"/>
+          <Constant>FMTWIDTH</Constant>
+        </Apply>
+      </DefineFunction>
+      <DefineFunction name="SAS-FORMAT-$CHARw" optype="categorical" dataType="string">
+        <ParameterField name="FMTWIDTH" optype="continuous"/>
+        <ParameterField name="AnyCInput" optype="continuous"/>
+        <Apply function="substring">
+          <FieldRef field="AnyCInput"/>
+          <Constant>1</Constant>
+          <Constant>FMTWIDTH</Constant>
+        </Apply>
+      </DefineFunction>
+    </TransformationDictionary>
+    <RegressionModel functionName="classification" targetFieldName="Species" normalizationMethod="softmax">
+      <MiningSchema>
+        <MiningField name="Petal_Length" usageType="active" optype="continuous"/>
+        <MiningField name="Petal_Width" usageType="active" optype="continuous"/>
+        <MiningField name="Species" usageType="predicted" optype="categorical"/>
+      </MiningSchema>
+      <Output>
+        <OutputField name="I_Species" displayName="Into: Species" optype="categorical" dataType="string" targetField="Species" feature="predictedValue"/>
+        <OutputField name="U_Species" displayName="Unnormalized Into: Species" optype="categorical" dataType="string" targetField="Species" feature="predictedDisplayValue"/>
+        <OutputField name="P_Speciesvirginica" displayName="Predicted: Species=virginica" optype="continuous" dataType="double" targetField="Species" feature="probability" value="VIRGINICA"/>
+        <OutputField name="P_Speciesversicolor" displayName="Predicted: Species=versicolor" optype="continuous" dataType="double" targetField="Species" feature="probability" value="VERSICOLOR"/>
+        <OutputField name="P_Speciessetosa" displayName="Predicted: Species=setosa" optype="continuous" dataType="double" targetField="Species" feature="probability" value="SETOSA"/>
+      </Output>
+      <Targets>
+        <Target field="Species" optype="categorical">
+          <TargetValue value="VIRGINICA" displayValue="virginica" priorProbability="0.3333333333"/>
+          <TargetValue value="VERSICOLOR" displayValue="versicolor" priorProbability="0.3333333333"/>
+          <TargetValue value="SETOSA" displayValue="setosa" priorProbability="0.3333333333"/>
+        </Target>
+      </Targets>
+      <LocalTransformations/>
+      <RegressionTable intercept="-85.34467961" targetCategory="VIRGINICA">
+        <NumericPredictor name="Petal_Length" coefficient="16.593364606"/>
+        <NumericPredictor name="Petal_Width" coefficient="27.987658068"/>
+      </RegressionTable>
+      <RegressionTable intercept="-40.07233583" targetCategory="VERSICOLOR">
+        <NumericPredictor name="Petal_Length" coefficient="10.838832287"/>
+        <NumericPredictor name="Petal_Width" coefficient="17.540958173"/>
+      </RegressionTable>
+      <RegressionTable intercept="0" targetCategory="SETOSA"/>
+    </RegressionModel>
+  </PMML>
