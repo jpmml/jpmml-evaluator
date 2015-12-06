@@ -2,5 +2,5 @@ language: java
 script: mvn clean package
 jdk:
   - oraclejdk8
-  - openjdk7
+# - openjdk7
   - oraclejdk7
