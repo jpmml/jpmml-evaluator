@@ -1,4 +1,4 @@
-versicolor,Predicted_versicolor,Probability_0,Probability_1
+Species,Predicted_Species,Probability_0,Probability_1
 0,0,0.925390428439219,0.0746095715607808
 0,0,0.720368589784034,0.279631410215966
 0,0,0.832311280258388,0.167688719741612

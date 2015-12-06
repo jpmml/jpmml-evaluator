@@ -103,15 +103,6 @@ generateRandomForestIris = function(){
 	writeIris(classes, probabilities, "csv/RandomForestIris.csv")
 }
 
-generateRegressionIris = function(){
-	multinom = multinom(irisFormula, irisData)
-	saveXML(pmml(multinom), "pmml/RegressionIris.pmml")
-
-	classes = predict(multinom)
-	probabilities = predict(multinom, type = "probs")
-	writeIris(classes, probabilities, "csv/RegressionIris.csv")
-}
-
 generateDecisionTreeIris()
 generateKernlabSVMIris()
 generateLibSVMIris()
@@ -119,36 +110,34 @@ generateLogisticRegressionIris()
 generateNaiveBayesIris()
 generateNeuralNetworkIris()
 generateRandomForestIris()
-generateRegressionIris()
 
-# Convert target field from categorical to binomial
-versicolor = as.factor(as.integer(irisData$Species == 'versicolor'))
-versicolorData = cbind(irisData[, 1:4], versicolor)
+versicolorData = readCsv("csv/Versicolor.csv")
+versicolorData$Species = as.factor(versicolorData$Species)
 
-versicolorFormula = formula(versicolor ~ .)
+versicolorFormula = formula(Species ~ .,)
 
 writeVersicolor = function(classes, probabilities, file){
-	result = data.frame("versicolor" = classes, "Predicted_versicolor" = classes, "Probability_0" = probabilities[, 1], "Probability_1" = probabilities[, 2])
+	result = data.frame("Species" = classes, "Predicted_Species" = classes, "Probability_0" = probabilities[, 1], "Probability_1" = probabilities[, 2])
 
 	writeCsv(result, file)
 }
 
-generateGeneralRegressionIris = function(){
+generateGeneralRegressionVersicolor = function(){
 	glm = glm(versicolorFormula, versicolorData, family = binomial(link = probit))
 
 	glmPmml = pmml(glm)
 
-	glmPmml = fixGeneralRegressionOutput(glmPmml, "versicolor")
+	glmPmml = fixGeneralRegressionOutput(glmPmml, "Species")
 
-	saveXML(glmPmml, "pmml/GeneralRegressionIris.pmml")
+	saveXML(glmPmml, "pmml/GeneralRegressionVersicolor.pmml")
 
 	probabilities = predict(glm, type = "response")
 	classes = as.character(as.integer(probabilities > 0.5))
 	probabilities = cbind(1 - probabilities, probabilities)
-	writeVersicolor(classes, probabilities, "csv/GeneralRegressionIris.csv")
+	writeVersicolor(classes, probabilities, "csv/GeneralRegressionVersicolor.csv")
 }
 
-generateGeneralRegressionIris()
+generateGeneralRegressionVersicolor()
 
 auditData = readCsv("csv/Audit.csv")
 auditData$Adjusted = as.factor(auditData$Adjusted)

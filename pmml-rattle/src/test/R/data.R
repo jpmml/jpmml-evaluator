@@ -5,6 +5,10 @@ data("iris")
 names(iris) = c("Sepal_Length", "Sepal_Width", "Petal_Length", "Petal_Width", "Species")
 writeCsv(iris, "csv/Iris.csv")
 
+versicolor = iris
+versicolor$Species = as.integer(versicolor$Species == "versicolor")
+writeCsv(versicolor, "csv/Versicolor.csv")
+
 data("audit")
 audit$ID = NULL
 audit$IGNORE_Accounts = NULL

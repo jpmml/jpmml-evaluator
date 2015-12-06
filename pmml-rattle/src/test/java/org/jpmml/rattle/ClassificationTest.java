@@ -44,15 +44,6 @@ public class ClassificationTest extends ArchiveBatchTest {
 	}
 
 	@Test
-	public void evaluateGeneralRegressionIris() throws Exception {
-		Batch batch = createBatch("GeneralRegression", "Iris");
-
-		assertEquals(null, BatchUtil.evaluateDefault(batch));
-
-		evaluate(batch);
-	}
-
-	@Test
 	public void evaluateKernlabSVMIris() throws Exception {
 		evaluate("KernlabSVM", "Iris");
 	}
@@ -64,7 +55,11 @@ public class ClassificationTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateLogisticRegressionIris() throws Exception {
-		evaluate("LogisticRegression", "Iris");
+		Batch batch = createBatch("LogisticRegression", "Iris");
+
+		assertEquals(null, BatchUtil.evaluateDefault(batch));
+
+		evaluate(batch);
 	}
 
 	@Test
@@ -87,8 +82,8 @@ public class ClassificationTest extends ArchiveBatchTest {
 	}
 
 	@Test
-	public void evaluateRegressionIris() throws Exception {
-		Batch batch = createBatch("Regression", "Iris");
+	public void evaluateGeneralRegressionVersicolor() throws Exception {
+		Batch batch = createBatch("GeneralRegression", "Versicolor");
 
 		assertEquals(null, BatchUtil.evaluateDefault(batch));
 
