@@ -30,6 +30,15 @@ public class PredicateOptimizer extends PredicateFilterer {
 	@Override
 	public Predicate filter(Predicate predicate){
 
+		if(predicate == null || predicate.hasExtensions()){
+			return predicate;
+		}
+
+		return optimize(predicate);
+	}
+
+	public Predicate optimize(Predicate predicate){
+
 		if(predicate instanceof SimplePredicate){
 			SimplePredicate simplePredicate = (SimplePredicate)predicate;
 

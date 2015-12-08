@@ -79,11 +79,6 @@ public class PredicateInterner extends PredicateFilterer {
 
 
 	@Override
-	public Predicate filter(Predicate predicate){
-		return intern(predicate);
-	}
-
-	@Override
 	public void applyTo(Visitable visitable){
 		reset();
 
@@ -97,11 +92,17 @@ public class PredicateInterner extends PredicateFilterer {
 		this.falsePredicateCache.clear();
 	}
 
-	public Predicate intern(Predicate predicate){
+	@Override
+	public Predicate filter(Predicate predicate){
 
-		if(predicate != null && predicate.hasExtensions()){
+		if(predicate == null || predicate.hasExtensions()){
 			return predicate;
-		} // End if
+		}
+
+		return intern(predicate);
+	}
+
+	public Predicate intern(Predicate predicate){
 
 		if(predicate instanceof SimplePredicate){
 			return intern((SimplePredicate)predicate);

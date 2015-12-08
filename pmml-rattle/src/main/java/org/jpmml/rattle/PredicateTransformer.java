@@ -32,14 +32,15 @@ public class PredicateTransformer extends PredicateFilterer {
 
 	@Override
 	public Predicate filter(Predicate predicate){
+
+		if(predicate == null || predicate.hasExtensions()){
+			return predicate;
+		}
+
 		return transform(predicate);
 	}
 
 	public Predicate transform(Predicate predicate){
-
-		if(predicate != null && predicate.hasExtensions()){
-			return predicate;
-		} // End if
 
 		if(predicate instanceof SimpleSetPredicate){
 			return transform((SimpleSetPredicate)predicate);
