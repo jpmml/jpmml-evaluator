@@ -183,7 +183,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			List<String> result = new ArrayList<>();
 
 			for(FieldName activeField : activeFields){
-				FieldValue value = context.getField(activeField);
+				FieldValue value = context.evaluate(activeField);
 
 				if(value == null){
 					continue;
@@ -218,7 +218,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 			FieldName activeField = activeFields.get(0);
 
-			FieldValue value = context.getField(activeField);
+			FieldValue value = context.evaluate(activeField);
 			if(value == null){
 				throw new MissingValueException(activeField);
 			}

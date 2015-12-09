@@ -37,6 +37,7 @@ import com.google.common.collect.TreeRangeSet;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
+import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldUsageType;
 import org.dmg.pmml.Interval;
 import org.dmg.pmml.InvalidValueTreatmentMethodType;
@@ -52,6 +53,39 @@ import org.dmg.pmml.Value;
 public class FieldValueUtil {
 
 	private FieldValueUtil(){
+	}
+
+	static
+	public boolean isDefault(MiningField miningField){
+		FieldName name = miningField.getName();
+
+		OpType opType = miningField.getOpType();
+		if(opType != null){
+			return false;
+		}
+
+		String missingValueReplacement = miningField.getMissingValueReplacement();
+		if(missingValueReplacement != null){
+			return false;
+		}
+
+		OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
+		switch(outlierTreatmentMethod){
+			case AS_IS:
+				break;
+			default:
+				return false;
+		}
+
+		InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
+		switch(invalidValueTreatmentMethod){
+			case RETURN_INVALID:
+				break;
+			default:
+				return false;
+		}
+
+		return true;
 	}
 
 	static

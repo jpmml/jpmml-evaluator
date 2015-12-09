@@ -290,14 +290,18 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			ModelEvaluationContext segmentContext = evaluator.createContext(context);
 
+			boolean compatible = true;
+
 			List<FieldName> activeFields = evaluator.getActiveFields();
 			for(FieldName activeField : activeFields){
-				FieldValue value = context.getField(activeField);
+				MiningField miningField = evaluator.getMiningField(activeField);
 
 				DataField dataField = getDataField(activeField);
 				if(dataField != null){
-					// Unwrap the value so that it is subjected to model-specific field value preparation logic again
-					segmentContext.declare(activeField, FieldValueUtil.getValue(value));
+
+					if(compatible){
+						compatible &= FieldValueUtil.isDefault(miningField);
+					}
 
 					continue;
 				}
@@ -312,9 +316,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 						break;
 				}
 
-				MiningField miningField = evaluator.getMiningField(activeField);
-
 				if(outputField != null){
+					FieldValue value = context.getField(activeField);
 
 					if(value == null){
 						value = FieldValueUtil.performMissingValueTreatment(outputField, miningField);
@@ -332,7 +335,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				throw new InvalidFeatureException(miningField);
 			}
 
-			segmentContext.computeDifference();
+			segmentContext.setCompatible(compatible);
 
 			Map<FieldName, ?> result = evaluator.evaluate(segmentContext);
 

@@ -50,7 +50,6 @@ public class EvaluationContext {
 
 	public FieldValue evaluate(FieldName name){
 		Map.Entry<FieldName, FieldValue> entry = getFieldEntry(name);
-
 		if(entry != null){
 			return entry.getValue();
 		}
@@ -59,9 +58,7 @@ public class EvaluationContext {
 		if(result != null){
 			FieldValue value = ExpressionUtil.evaluate(result.getElement(), this);
 
-			declare(name, value);
-
-			return value;
+			return declare(name, value);
 		}
 
 		throw new MissingFieldException(name);
@@ -79,26 +76,22 @@ public class EvaluationContext {
 		if(fields.containsKey(name)){
 			FieldValue value = fields.get(name);
 
-			Map.Entry<FieldName, FieldValue> entry = new AbstractMap.SimpleImmutableEntry<>(name, value);
-
-			return entry;
+			return new AbstractMap.SimpleImmutableEntry<>(name, value);
 		}
 
 		return null;
 	}
 
-	public void declare(FieldName name, Object value){
+	public FieldValue declare(FieldName name, Object value){
 
 		if(value instanceof FieldValue){
-			declare(name, (FieldValue)value);
-
-			return;
+			return declare(name, (FieldValue)value);
 		}
 
-		declare(name, createFieldValue(name, value));
+		return declare(name, createFieldValue(name, value));
 	}
 
-	public void declare(FieldName name, FieldValue value){
+	public FieldValue declare(FieldName name, FieldValue value){
 		Map<FieldName, FieldValue> fields = getFields();
 
 		boolean declared = fields.containsKey(name);
@@ -107,26 +100,15 @@ public class EvaluationContext {
 		}
 
 		fields.put(name, value);
+
+		return value;
 	}
 
-	public void declareAll(Map<FieldName, ?> fields){
-		declareAll(fields.keySet(), fields);
-	}
+	void declareAll(Map<FieldName, ?> values){
+		Collection<? extends Map.Entry<FieldName, ?>> entries = values.entrySet();
 
-	public void declareAll(Collection<FieldName> names, Map<FieldName, ?> fields){
-
-		for(FieldName name : names){
-			Object value;
-
-			if(fields.containsKey(name)){
-				value = fields.get(name);
-			} else
-
-			{
-				value = null;
-			}
-
-			declare(name, value);
+		for(Map.Entry<FieldName, ?> entry : entries){
+			declare(entry.getKey(), entry.getValue());
 		}
 	}
 

@@ -46,14 +46,14 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 		ModelEvaluationContext childContext = new ModelEvaluationContext(parentContext, evaluator);
 		childContext.declare(input, 0d);
 
-		childContext.computeDifference();
+		childContext.setCompatible(false);
 
 		assertEquals(Collections.emptyList(), Lists.newArrayList(childContext.getCompatibleParents()));
 
 		ModelEvaluationContext grandChildContext = new ModelEvaluationContext(childContext, evaluator);
 		grandChildContext.declare(input, 0d);
 
-		grandChildContext.computeDifference();
+		grandChildContext.setCompatible(true);
 
 		assertEquals(Collections.singletonList(childContext), Lists.newArrayList(grandChildContext.getCompatibleParents()));
 

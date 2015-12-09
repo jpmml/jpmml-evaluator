@@ -28,13 +28,11 @@
 package org.jpmml.evaluator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -338,10 +336,8 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
-		List<FieldName> names = getMiningFields(ModelEvaluator.INPUT_TYPES);
-
 		ModelEvaluationContext context = createContext(null);
-		context.declareAll(names, arguments);
+		context.setArguments(arguments);
 
 		return evaluate(context);
 	}
@@ -394,9 +390,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	static
 	private ListMultimap<EnumSet<FieldUsageType>, FieldName> parseMiningFieldNames(List<MiningField> miningFields){
-		Set<EnumSet<FieldUsageType>> keys = new LinkedHashSet<>();
-		keys.addAll(Arrays.asList(ModelManager.ACTIVE_TYPES, ModelManager.GROUP_TYPES, ModelManager.ORDER_TYPES, ModelManager.TARGET_TYPES));
-		keys.addAll(Arrays.asList(ModelEvaluator.INPUT_TYPES));
+		Set<EnumSet<FieldUsageType>> keys = ImmutableSet.of(ModelManager.ACTIVE_TYPES, ModelManager.GROUP_TYPES, ModelManager.ORDER_TYPES, ModelManager.TARGET_TYPES);
 
 		ListMultimap<EnumSet<FieldUsageType>, FieldName> result = ArrayListMultimap.create();
 
@@ -555,6 +549,4 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			return parseModelVerification(modelVerification);
 		}
 	});
-
-	protected static final EnumSet<FieldUsageType> INPUT_TYPES = EnumSet.of(FieldUsageType.ACTIVE, FieldUsageType.GROUP, FieldUsageType.ORDER);
 }

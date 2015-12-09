@@ -18,11 +18,10 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
@@ -35,6 +34,8 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 	private ModelEvaluator<?> modelEvaluator = null;
 
+	private Map<FieldName, ?> arguments = Collections.emptyMap();
+
 	private boolean compatible = false;
 
 
@@ -45,10 +46,33 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 	@Override
 	public FieldValue evaluate(FieldName name){
-		Map.Entry<FieldName, FieldValue> entry = getFieldEntry(name);
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
+		Map.Entry<FieldName, FieldValue> entry = getFieldEntry(name);
 		if(entry != null){
 			return entry.getValue();
+		}
+
+		MiningField miningField = modelEvaluator.getMiningField(name);
+		if(miningField != null){
+			ModelEvaluationContext parent = getParent();
+
+			if(parent != null){
+				FieldValue value = parent.evaluate(name);
+
+				// Unwrap the value so that it is subjected to model-specific field value preparation logic again
+				if(!isCompatible()){
+					return declare(name, FieldValueUtil.getValue(value));
+				}
+
+				return declare(name, value);
+			}
+
+			Map<FieldName, ?> arguments = getArguments();
+
+			Object value = arguments.get(name);
+
+			return declare(name, value);
 		}
 
 		Iterator<ModelEvaluationContext> parents = getCompatibleParents();
@@ -59,9 +83,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 			if(entry != null){
 				FieldValue value = entry.getValue();
 
-				declare(name, value);
-
-				return value;
+				return declare(name, value);
 			}
 		}
 
@@ -176,18 +198,6 @@ public class ModelEvaluationContext extends EvaluationContext {
 		return result;
 	}
 
-	void computeDifference(){
-		ModelEvaluationContext parent = getParent();
-
-		if(parent != null){
-			setCompatible(isSubset(getFields(), parent.getFields()));
-		} else
-
-		{
-			setCompatible(false);
-		}
-	}
-
 	public ModelEvaluationContext getParent(){
 		return this.parent;
 	}
@@ -204,32 +214,31 @@ public class ModelEvaluationContext extends EvaluationContext {
 		this.modelEvaluator = modelEvaluator;
 	}
 
+	Map<FieldName, ?> getArguments(){
+		return this.arguments;
+	}
+
+	void setArguments(Map<FieldName, ?> arguments){
+		ModelEvaluationContext parent = getParent();
+
+		if(parent != null){
+			throw new IllegalStateException();
+		}
+
+		this.arguments = arguments;
+	}
+
 	boolean isCompatible(){
 		return this.compatible;
 	}
 
-	private void setCompatible(boolean compatible){
-		this.compatible = compatible;
-	}
+	void setCompatible(boolean compatible){
+		ModelEvaluationContext parent = getParent();
 
-	static
-	private <K, V> boolean isSubset(Map<K, V> left, Map<K, V> right){
-		Collection<Map.Entry<K, V>> entries = left.entrySet();
-
-		for(Map.Entry<K, V> entry : entries){
-			K key = entry.getKey();
-			V value = entry.getValue();
-
-			if(!right.containsKey(key)){
-				return false;
-			}
-
-			boolean equal = Objects.equals(value, right.get(key));
-			if(!equal){
-				return false;
-			}
+		if(parent == null){
+			throw new IllegalStateException();
 		}
 
-		return true;
+		this.compatible = compatible;
 	}
 }

@@ -34,9 +34,17 @@ import org.dmg.pmml.Value.Property;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class FieldValueUtilTest {
+
+	@Test
+	public void isDefault(){
+		MiningField miningField = new MiningField(new FieldName("x"));
+
+		assertTrue(FieldValueUtil.isDefault(miningField));
+	}
 
 	@Test
 	public void prepareContinuous(){
@@ -188,15 +196,6 @@ public class FieldValueUtilTest {
 
 		List<Value> values = dataField.getValues();
 		values.clear();
-	}
-
-	static
-	private Interval createInterval(Interval.Closure closure, Double leftMargin, Double rightMargin){
-		Interval result = new Interval(closure)
-			.setLeftMargin(leftMargin)
-			.setRightMargin(rightMargin);
-
-		return result;
 	}
 
 	static
