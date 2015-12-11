@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -52,6 +53,14 @@ import org.dmg.pmml.Segmentation;
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 
 	private ModelEvaluatorFactory evaluatorFactory = null;
+
+	private LoadingCache<Model, SegmentHandler> segmentHandlerCache = CacheUtil.buildLoadingCache(new CacheLoader<Model, SegmentHandler>(){
+
+		@Override
+		public SegmentHandler load(Model model){
+			return createSegmentHandler(model);
+		}
+	});
 
 
 	public MiningModelEvaluator(PMML pmml){
@@ -242,11 +251,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			throw new UnsupportedFeatureException(localTransformations);
 		}
 
-		ModelEvaluatorFactory evaluatorFactory = getEvaluatorFactory();
-		if(evaluatorFactory == null){
-			evaluatorFactory = ModelEvaluatorFactory.newInstance();
-		}
-
 		BiMap<String, Segment> entityRegistry = getEntityRegistry();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
@@ -286,56 +290,43 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					break;
 			}
 
-			ModelEvaluator<?> evaluator = evaluatorFactory.newModelManager(getPMML(), model);
+			SegmentHandler segmentHandler = getSegmentHandler(model);
+
+			ModelEvaluator<?> evaluator = (ModelEvaluator<?>)segmentHandler.getEvaluator();
 
 			ModelEvaluationContext segmentContext = evaluator.createContext(context);
+			segmentContext.setCompatible(segmentHandler.isCompatible());
 
-			boolean compatible = true;
-
-			List<FieldName> activeFields = evaluator.getActiveFields();
-			for(FieldName activeField : activeFields){
-				MiningField miningField = evaluator.getMiningField(activeField);
-
-				DataField dataField = getDataField(activeField);
-				if(dataField != null){
-
-					if(compatible){
-						compatible &= MiningFieldUtil.isDefault(miningField);
-					}
-
-					continue;
-				}
+			Collection<FieldName> inputFields = segmentHandler.getInputFields();
+			for(FieldName inputField : inputFields){
+				MiningField miningField = evaluator.getMiningField(inputField);
 
 				OutputField outputField = null;
 
 				switch(multipleModelMethod){
 					case MODEL_CHAIN:
-						outputField = segmentOutputFields.get(activeField);
+						outputField = segmentOutputFields.get(inputField);
 						break;
 					default:
 						break;
 				}
 
-				if(outputField != null){
-					FieldValue value = context.getField(activeField);
-
-					if(value == null){
-						value = FieldValueUtil.performMissingValueTreatment(outputField, miningField);
-					} else
-
-					{
-						value = FieldValueUtil.performValidValueTreatment(outputField, miningField, FieldValueUtil.getValue(value));
-					}
-
-					segmentContext.declare(activeField, value);
-
-					continue;
+				if(outputField == null){
+					throw new InvalidFeatureException(miningField);
 				}
 
-				throw new InvalidFeatureException(miningField);
-			}
+				FieldValue value = context.getField(inputField);
 
-			segmentContext.setCompatible(compatible);
+				if(value == null){
+					value = FieldValueUtil.performMissingValueTreatment(outputField, miningField);
+				} else
+
+				{
+					value = FieldValueUtil.performValidValueTreatment(outputField, miningField, FieldValueUtil.getValue(value));
+				}
+
+				segmentContext.declare(inputField, value);
+			}
 
 			Map<FieldName, ?> result = evaluator.evaluate(segmentContext);
 
@@ -439,12 +430,51 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return null;
 	}
 
+	private SegmentHandler createSegmentHandler(Model model){
+		ModelEvaluatorFactory evaluatorFactory = getEvaluatorFactory();
+
+		if(evaluatorFactory == null){
+			evaluatorFactory = ModelEvaluatorFactory.newInstance();
+		}
+
+		ModelEvaluator<?> evaluator = evaluatorFactory.newModelManager(getPMML(), model);
+
+		boolean compatible = true;
+
+		Set<FieldName> inputFields = new LinkedHashSet<>();
+
+		List<FieldName> activeFields = evaluator.getActiveFields();
+		for(FieldName activeField : activeFields){
+			MiningField miningField = evaluator.getMiningField(activeField);
+
+			DataField dataField = getDataField(activeField);
+
+			// "A reference to the MiningField of the parent model"
+			if(dataField != null){
+				compatible &= MiningFieldUtil.isDefault(miningField);
+			} else
+
+			// "A reference to the OutputField of a model that is defined in a Segment that appears above/earlier in the parent model"
+			{
+				inputFields.add(activeField);
+			}
+		}
+
+		SegmentHandler result = new SegmentHandler(evaluator, compatible, inputFields);
+
+		return result;
+	}
+
 	public ModelEvaluatorFactory getEvaluatorFactory(){
 		return this.evaluatorFactory;
 	}
 
 	public void setEvaluatorFactory(ModelEvaluatorFactory evaluatorFactory){
 		this.evaluatorFactory = evaluatorFactory;
+	}
+
+	private SegmentHandler getSegmentHandler(Model model){
+		return CacheUtil.getValue(model, this.segmentHandlerCache);
 	}
 
 	static
@@ -588,6 +618,46 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 
 		return result.asMap();
+	}
+
+	private class SegmentHandler {
+
+		private Evaluator evaluator = null;
+
+		private boolean compatible = false;
+
+		private Set<FieldName> inputFields = null;
+
+
+		private SegmentHandler(Evaluator evaluator, boolean compatible, Set<FieldName> inputFields){
+			setEvaluator(evaluator);
+			setCompatible(compatible);
+			setInputFields(inputFields);
+		}
+
+		public Evaluator getEvaluator(){
+			return this.evaluator;
+		}
+
+		private void setEvaluator(Evaluator evaluator){
+			this.evaluator = evaluator;
+		}
+
+		public boolean isCompatible(){
+			return this.compatible;
+		}
+
+		private void setCompatible(boolean compatible){
+			this.compatible = compatible;
+		}
+
+		private Set<FieldName> getInputFields(){
+			return this.inputFields;
+		}
+
+		private void setInputFields(Set<FieldName> inputFields){
+			this.inputFields = inputFields;
+		}
 	}
 
 	private static final Set<MultipleModelMethodType> REGRESSION_METHODS = EnumSet.of(MultipleModelMethodType.SUM, MultipleModelMethodType.MEDIAN, MultipleModelMethodType.AVERAGE, MultipleModelMethodType.WEIGHTED_AVERAGE);
