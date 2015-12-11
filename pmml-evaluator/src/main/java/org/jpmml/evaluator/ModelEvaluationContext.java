@@ -61,7 +61,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 				FieldValue value = parent.evaluate(name);
 
 				// Unwrap the value so that it is subjected to model-specific field value preparation logic again
-				if(!isCompatible()){
+				if(!MiningFieldUtil.isDefault(miningField)){
 					return declare(name, FieldValueUtil.getValue(value));
 				}
 

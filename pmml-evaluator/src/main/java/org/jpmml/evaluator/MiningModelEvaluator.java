@@ -300,7 +300,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				if(dataField != null){
 
 					if(compatible){
-						compatible &= FieldValueUtil.isDefault(miningField);
+						compatible &= MiningFieldUtil.isDefault(miningField);
 					}
 
 					continue;

@@ -34,17 +34,9 @@ import org.dmg.pmml.Value.Property;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class FieldValueUtilTest {
-
-	@Test
-	public void isDefault(){
-		MiningField miningField = new MiningField(new FieldName("x"));
-
-		assertTrue(FieldValueUtil.isDefault(miningField));
-	}
 
 	@Test
 	public void prepareContinuous(){
