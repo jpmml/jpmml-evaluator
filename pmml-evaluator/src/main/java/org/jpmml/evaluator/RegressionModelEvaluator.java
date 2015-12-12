@@ -258,7 +258,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 			// The probability of the first category is calculated
 			if(i == 0){
-				probability = normalizeClassificationResult(entry.getValue());
+				probability = normalizeClassificationResult(entry.getValue(), 2);
 
 				entry.setValue(probability);
 			} else
@@ -295,7 +295,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		Collection<Map.Entry<String, Double>> entries = values.entrySet();
 		for(Map.Entry<String, Double> entry : entries){
-			entry.setValue(normalizeClassificationResult(entry.getValue()));
+			entry.setValue(normalizeClassificationResult(entry.getValue(), values.size()));
 		}
 
 		Classification.normalize(values);
@@ -310,25 +310,33 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				return;
 			case SIMPLEMAX:
 			case SOFTMAX:
-				throw new UnsupportedFeatureException(regressionModel, regressionNormalizationMethod);
+				throw new InvalidFeatureException(regressionModel);
 			default:
 				break;
 		}
 
 		Collection<Map.Entry<String, Double>> entries = values.entrySet();
 		for(Map.Entry<String, Double> entry : entries){
-			entry.setValue(normalizeClassificationResult(entry.getValue()));
+			entry.setValue(normalizeClassificationResult(entry.getValue(), values.size()));
 		}
 
 		calculateCategoryProbabilities(values, targetCategories);
 	}
 
-	private Double normalizeClassificationResult(Double value){
+	private Double normalizeClassificationResult(Double value, int classes){
 		RegressionModel regressionModel = getModel();
 
 		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
 		switch(regressionNormalizationMethod){
+			case NONE:
+				return value;
+			case SIMPLEMAX:
+				throw new InvalidFeatureException(regressionModel);
 			case SOFTMAX:
+				if(classes != 2){
+					throw new InvalidFeatureException(regressionModel);
+				}
+				// Falls through
 			case LOGIT:
 				return 1d / (1d + Math.exp(-value));
 			case PROBIT:
