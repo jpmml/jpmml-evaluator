@@ -25,7 +25,7 @@ import org.dmg.pmml.Model;
 
 /**
  * <p>
- * Performs the evaluation of a {@link Model} in "interpreted mode".
+ * Performs the evaluation of a {@link Model}.
  * </p>
  *
  * <h3>Obtaining and verifying an Evaluator instance</h3>

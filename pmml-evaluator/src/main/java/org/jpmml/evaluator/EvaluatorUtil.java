@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
@@ -102,6 +104,7 @@ public class EvaluatorUtil {
 
 			for(Object rawValue : rawValues){
 				FieldValue preparedValue = evaluator.prepare(name, rawValue);
+
 				if(preparedValue != null){
 
 					if(dataType == null){
@@ -164,13 +167,29 @@ public class EvaluatorUtil {
 	}
 
 	static
+	public List<FieldName> getTargetFields(Evaluator evaluator){
+		List<FieldName> targetFields = evaluator.getTargetFields();
+
+		if(targetFields.isEmpty()){
+			FieldName targetField = evaluator.getTargetField();
+
+			DataField dataField = evaluator.getDataField(targetField);
+			if(dataField != null){
+				return Collections.singletonList(targetField);
+			}
+		}
+
+		return targetFields;
+	}
+
+	static
 	private Collection<Object> createCollection(Collection<?> template){
 
 		// Try to preserve the original contract
 		if(template instanceof Set){
-			return new LinkedHashSet<>();
+			return new LinkedHashSet<>(template.size());
 		}
 
-		return new ArrayList<>();
+		return new ArrayList<>(template.size());
 	}
 }

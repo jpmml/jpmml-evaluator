@@ -110,6 +110,21 @@ public class EvaluatorUtilTest {
 		checkGroupedRow(table.get(2), "3", Arrays.asList("Cracker", "Water", "Coke"));
 	}
 
+	@Test
+	public void getTargetFields() throws Exception {
+		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(MixedNeighborhoodTest.class);
+
+		assertEquals(Arrays.asList(new FieldName("species"), new FieldName("species_class")), EvaluatorUtil.getTargetFields(evaluator));
+
+		evaluator = ModelEvaluatorTest.createModelEvaluator(RankingTest.class);
+
+		assertEquals(Collections.<FieldName>singletonList(null), EvaluatorUtil.getTargetFields(evaluator));
+
+		evaluator = ModelEvaluatorTest.createModelEvaluator(StandardAssociationSchemaTest.class);
+
+		assertEquals(Collections.emptyList(), EvaluatorUtil.getTargetFields(evaluator));
+	}
+
 	static
 	private Map<FieldName, Object> createRow(String transaction, String item){
 		Map<FieldName, Object> result = new HashMap<>();

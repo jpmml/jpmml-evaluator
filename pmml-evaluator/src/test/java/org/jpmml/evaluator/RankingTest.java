@@ -35,6 +35,10 @@ public class RankingTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
+		ClusterAffinityDistribution affinityDistribution = (ClusterAffinityDistribution)result.get(evaluator.getTargetField());
+
+		assertEquals("2", affinityDistribution.getResult());
+
 		checkValue("2", 1d, result, "first");
 		checkValue("3", 4d, result, "second");
 		checkValue("1", 16d, result, "third");
