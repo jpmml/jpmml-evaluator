@@ -76,7 +76,7 @@ public class NormalizationUtilTest {
 
 	static
 	private NormContinuous createNormContinuous(){
-		NormContinuous result = new NormContinuous(new FieldName("x"), null)
+		NormContinuous result = new NormContinuous(FieldName.create("x"), null)
 			.addLinearNorms(
 				new LinearNorm(BEGIN[0], BEGIN[1]),
 				new LinearNorm(MIDPOINT[0], MIDPOINT[1]),

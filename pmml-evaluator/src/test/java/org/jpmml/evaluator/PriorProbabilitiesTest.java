@@ -50,17 +50,17 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = OutputUtil.evaluate(predictions, context);
 
-		FieldName field = new FieldName("I_response");
-		FieldName displayField = new FieldName("U_response");
+		FieldName field = FieldName.create("I_response");
+		FieldName displayField = FieldName.create("U_response");
 
-		assertEquals("NO", result.get(field));
-		assertEquals("No", result.get(displayField));
+		assertEquals("NO", getOutput(result, field));
+		assertEquals("No", getOutput(result, displayField));
 
 		assertEquals(DataType.STRING, OutputUtil.getDataType(evaluator.getOutputField(field), evaluator));
 		assertEquals(DataType.STRING, OutputUtil.getDataType(evaluator.getOutputField(displayField), evaluator));
 
-		assertEquals(0.02d, result.get(new FieldName("P_responseYes")));
-		assertEquals(0.98d, result.get(new FieldName("P_responseNo")));
+		assertEquals(0.02d, getOutput(result, "P_responseYes"));
+		assertEquals(0.98d, getOutput(result, "P_responseNo"));
 	}
 
 	@Test

@@ -42,9 +42,9 @@ public class ContinuousResidualTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = OutputUtil.evaluate(prediction, context);
 
-		FieldName field = new FieldName("Residual");
+		FieldName field = FieldName.create("Residual");
 
-		assertEquals(2d, (Double)result.get(field), 1e-8);
+		assertEquals(2d, (Double)getOutput(result, field), 1e-8);
 
 		assertEquals(DataType.DOUBLE, OutputUtil.getDataType(evaluator.getOutputField(field), evaluator));
 	}

@@ -28,7 +28,7 @@ public class MiningFieldUtilTest {
 
 	@Test
 	public void isDefault(){
-		MiningField miningField = new MiningField(new FieldName("x"));
+		MiningField miningField = new MiningField(FieldName.create("x"));
 
 		assertTrue(MiningFieldUtil.isDefault(miningField));
 	}

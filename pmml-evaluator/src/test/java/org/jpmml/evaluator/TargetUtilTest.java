@@ -28,7 +28,7 @@ public class TargetUtilTest {
 
 	@Test
 	public void processValue(){
-		Target target = new Target(new FieldName("amount"))
+		Target target = new Target(FieldName.create("amount"))
 			.setRescaleFactor(3.14d)
 			.setRescaleConstant(10d);
 

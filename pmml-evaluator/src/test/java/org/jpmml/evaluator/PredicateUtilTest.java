@@ -45,7 +45,7 @@ public class PredicateUtilTest {
 
 	@Test
 	public void evaluateSimplePredicate(){
-		FieldName age = new FieldName("age");
+		FieldName age = FieldName.create("age");
 
 		SimplePredicate simplePredicate = new SimplePredicate(age, SimplePredicate.Operator.IS_MISSING);
 
@@ -88,7 +88,7 @@ public class PredicateUtilTest {
 
 	@Test
 	public void evaluateBooleanSimplePredicate(){
-		FieldName flag = new FieldName("flag");
+		FieldName flag = FieldName.create("flag");
 
 		SimplePredicate simplePredicate = new SimplePredicate(flag, SimplePredicate.Operator.EQUAL)
 			.setValue("true");
@@ -116,7 +116,7 @@ public class PredicateUtilTest {
 
 	@Test
 	public void evaluateSimpleSetPredicate(){
-		FieldName fruit = new FieldName("fruit");
+		FieldName fruit = FieldName.create("fruit");
 
 		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(fruit, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "apple orange"));
 
@@ -133,8 +133,8 @@ public class PredicateUtilTest {
 
 	@Test
 	public void evaluateSurrogateCompoundPredicate(){
-		FieldName temperature = new FieldName("temperature");
-		FieldName humidity = new FieldName("humidity");
+		FieldName temperature = FieldName.create("temperature");
+		FieldName humidity = FieldName.create("humidity");
 
 		CompoundPredicate temperaturePredicate = new CompoundPredicate(CompoundPredicate.BooleanOperator.AND)
 			.addPredicates(

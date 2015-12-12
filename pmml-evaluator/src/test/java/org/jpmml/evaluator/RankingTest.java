@@ -46,10 +46,7 @@ public class RankingTest extends ModelEvaluatorTest {
 
 	static
 	private void checkValue(String id, Double affinity, Map<FieldName, ?> result, String suffix){
-		FieldName idField = new FieldName("id_" + suffix);
-		FieldName affinityField = new FieldName("affinity_" + suffix);
-
-		assertEquals(id, result.get(idField));
-		assertEquals(affinity, result.get(affinityField));
+		assertEquals(id, getOutput(result, "id_" + suffix));
+		assertEquals(affinity, getOutput(result, "affinity_" + suffix));
 	}
 }

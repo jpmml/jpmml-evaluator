@@ -29,17 +29,17 @@ public class PMMLEvaluationContextTest extends PMMLManagerTest {
 
 	@Test
 	public void evaluateAmPm() throws Exception {
-		assertValueEquals("AM", evaluate(new FieldName("Shift"), createArguments("StartTime", 34742)));
+		assertValueEquals("AM", evaluate(FieldName.create("Shift"), createArguments("StartTime", 34742)));
 	}
 
 	@Test
 	public void evaluateStategroup() throws Exception {
-		assertValueEquals("West", evaluate(new FieldName("Group"), createArguments("State", "CA")));
+		assertValueEquals("West", evaluate(FieldName.create("Group"), createArguments("State", "CA")));
 	}
 
 	@Test
 	public void evaluateSimpleTable() throws Exception {
-		FieldName name = new FieldName("SimpleTable");
+		FieldName name = FieldName.create("SimpleTable");
 
 		assertValueEquals(null, evaluate(name, createArguments("Value", null)));
 
@@ -51,7 +51,7 @@ public class PMMLEvaluationContextTest extends PMMLManagerTest {
 
 	@Test
 	public void evaluateComplexTable() throws Exception {
-		FieldName name = new FieldName("ComplexTable");
+		FieldName name = FieldName.create("ComplexTable");
 
 		assertValueEquals(null, evaluate(name, createArguments("Value", null, "Modifier", null)));
 

@@ -37,7 +37,7 @@ public class AssociationOutputTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		assertEquals("1", result.get(new FieldName("entityId")));
+		assertEquals("1", getOutput(result, "entityId"));
 
 		checkValue(Arrays.asList("Cracker"), result, "antecedent");
 		checkValue(Arrays.asList("Water"), result, "consequent");
@@ -59,19 +59,13 @@ public class AssociationOutputTest extends ModelEvaluatorTest {
 
 	static
 	private void checkValue(Object expected, Map<FieldName, ?> result, String name){
-		FieldName field = new FieldName(name);
-		FieldName deprecatedField = new FieldName("deprecated_" + name);
-
-		assertEquals(expected, result.get(field));
-		assertEquals(expected, result.get(deprecatedField));
+		assertEquals(expected, getOutput(result, name));
+		assertEquals(expected, getOutput(result, "deprecated_" + name));
 	}
 
 	static
 	private void checkDataType(DataType expected, ModelEvaluator<?> evaluator, String name){
-		FieldName field = new FieldName(name);
-		FieldName deprecatedField = new FieldName("deprecated_" + name);
-
-		assertEquals(expected, OutputUtil.getDataType(evaluator.getOutputField(field), evaluator));
-		assertEquals(expected, OutputUtil.getDataType(evaluator.getOutputField(deprecatedField), evaluator));
+		assertEquals(expected, OutputUtil.getDataType(evaluator.getOutputField(FieldName.create(name)), evaluator));
+		assertEquals(expected, OutputUtil.getDataType(evaluator.getOutputField(FieldName.create("deprecated_" + name)), evaluator));
 	}
 }

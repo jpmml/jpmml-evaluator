@@ -73,15 +73,17 @@ public class PMMLManagerTest {
 	}
 
 	static
-	private FieldName toFieldName(Object object){
+	public Object getTarget(Map<FieldName, ?> result, Object name){
+		Object value = result.get(toFieldName(name));
 
-		if(object instanceof String){
-			String string = (String)object;
+		return EvaluatorUtil.decode(value);
+	}
 
-			return FieldName.create(string);
-		}
+	static
+	public Object getOutput(Map<FieldName, ?> result, Object name){
+		Object value = result.get(toFieldName(name));
 
-		return (FieldName)object;
+		return value;
 	}
 
 	static
@@ -94,5 +96,17 @@ public class PMMLManagerTest {
 		Source source = ImportFilter.apply(new InputSource(is));
 
 		return JAXBUtil.unmarshalPMML(source);
+	}
+
+	static
+	private FieldName toFieldName(Object object){
+
+		if(object instanceof String){
+			String string = (String)object;
+
+			return FieldName.create(string);
+		}
+
+		return (FieldName)object;
 	}
 }

@@ -33,7 +33,7 @@ public class XPathUtilTest {
 
 	@Test
 	public void formatXPath() throws Exception {
-		DataField dataField = new DataField(new FieldName("x"), OpType.CATEGORICAL, DataType.DOUBLE)
+		DataField dataField = new DataField(FieldName.create("x"), OpType.CATEGORICAL, DataType.DOUBLE)
 			.addValues(new Value("0"), new Value("1"));
 
 		assertEquals("DataField", XPathUtil.formatXPath(dataField));

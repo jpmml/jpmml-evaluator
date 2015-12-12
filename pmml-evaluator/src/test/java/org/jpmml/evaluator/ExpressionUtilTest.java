@@ -71,7 +71,7 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateFieldRef(){
-		FieldName name = new FieldName("x");
+		FieldName name = FieldName.create("x");
 
 		FieldRef fieldRef = new FieldRef(name);
 
@@ -85,7 +85,7 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateNormContinuous(){
-		FieldName name = new FieldName("x");
+		FieldName name = FieldName.create("x");
 
 		NormContinuous normContinuous = new NormContinuous(name, null)
 			.setMapMissingTo(5d);
@@ -97,7 +97,7 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateNormDiscrete(){
-		FieldName name = new FieldName("x");
+		FieldName name = FieldName.create("x");
 
 		Double equals = 1d;
 		Double notEquals = 0d;
@@ -126,7 +126,7 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateDiscretize(){
-		FieldName name = new FieldName("x");
+		FieldName name = FieldName.create("x");
 
 		Discretize discretize = new Discretize(name);
 
@@ -146,7 +146,7 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateMapValues(){
-		FieldName name = new FieldName("x");
+		FieldName name = FieldName.create("x");
 
 		MapValues mapValues = new MapValues(null)
 			.addFieldColumnPairs(new FieldColumnPair(name, null));
@@ -167,7 +167,7 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateApply(){
-		FieldName name = new FieldName("x");
+		FieldName name = FieldName.create("x");
 
 		Apply apply = new Apply("/")
 			.addExpressions(new FieldRef(name), new Constant("0"));
@@ -209,7 +209,7 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateApplyCondition(){
-		FieldName name = new FieldName("x");
+		FieldName name = FieldName.create("x");
 
 		Apply condition = new Apply("isNotMissing")
 			.addExpressions(new FieldRef(name));
@@ -255,7 +255,7 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateApplyJavaFunction(){
-		FieldName name = new FieldName("x");
+		FieldName name = FieldName.create("x");
 
 		FieldRef fieldRef = new FieldRef(name);
 
@@ -275,7 +275,7 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateAggregateArithmetic(){
-		FieldName name = new FieldName("x");
+		FieldName name = FieldName.create("x");
 
 		List<Integer> values = Arrays.asList(1, 2, 3);
 
@@ -294,7 +294,7 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateAggregate(){
-		FieldName name = new FieldName("x");
+		FieldName name = FieldName.create("x");
 
 		List<?> values = Arrays.asList(TypeUtil.parse(DataType.DATE, "2013-01-01"), TypeUtil.parse(DataType.DATE, "2013-02-01"), TypeUtil.parse(DataType.DATE, "2013-03-01"));
 

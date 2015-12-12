@@ -35,12 +35,12 @@ public class RegressionOutputTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		assertEquals(8d, result.get(new FieldName("TargetResult")));
+		assertEquals(8d, getOutput(result, "TargetResult"));
 
-		assertEquals(8d, result.get(new FieldName("RawResult")));
-		assertEquals(8, result.get(new FieldName("RawIntegerResult")));
-		assertEquals(35d, result.get(new FieldName("FinalResult")));
-		assertEquals(35, result.get(new FieldName("FinalIntegerResult")));
-		assertEquals("waive", result.get(new FieldName("BusinessDecision")));
+		assertEquals(8d, getOutput(result, "RawResult"));
+		assertEquals(8, getOutput(result, "RawIntegerResult"));
+		assertEquals(35d, getOutput(result, "FinalResult"));
+		assertEquals(35, getOutput(result, "FinalIntegerResult"));
+		assertEquals("waive", getOutput(result, "BusinessDecision"));
 	}
 }

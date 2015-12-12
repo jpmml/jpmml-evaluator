@@ -31,6 +31,6 @@ public class ModelChainSimpleTest extends ModelChainTest {
 	public void evaluateSetosa() throws Exception {
 		Map<FieldName, ?> result = evaluateExample(1.4, 0.2);
 
-		assertEquals(0.8d + 0.3d, result.get(new FieldName("PollenIndex")));
+		assertEquals(0.8d + 0.3d, getTarget(result, "PollenIndex"));
 	}
 }

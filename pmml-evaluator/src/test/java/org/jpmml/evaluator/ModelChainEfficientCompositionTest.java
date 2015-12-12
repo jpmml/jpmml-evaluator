@@ -31,20 +31,20 @@ public class ModelChainEfficientCompositionTest extends ModelChainTest {
 	public void evaluateSetosa() throws Exception {
 		Map<FieldName, ?> result = evaluateExample(1.4, 0.2);
 
-		assertEquals(0.3, result.get(new FieldName("Setosa Pollen Index")));
+		assertEquals(0.3, getOutput(result, "Setosa Pollen Index"));
 	}
 
 	@Test
 	public void evaluateVersicolor() throws Exception {
 		Map<FieldName, ?> result = evaluateExample(4.7, 1.4);
 
-		assertEquals(0.2, result.get(new FieldName("Versicolor Pollen Index")));
+		assertEquals(0.2, getOutput(result, "Versicolor Pollen Index"));
 	}
 
 	@Test
 	public void evaluateVirginica() throws Exception {
 		Map<FieldName, ?> result = evaluateExample(6, 2.5);
 
-		assertEquals(0.1, result.get(new FieldName("Virginica Pollen Index")));
+		assertEquals(0.1, getOutput(result, "Virginica Pollen Index"));
 	}
 }

@@ -33,7 +33,7 @@ public class PredicateTransformerTest {
 
 	@Test
 	public void transform(){
-		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(new FieldName("x"), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.INT, "1 2 3"));
+		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(FieldName.create("x"), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.INT, "1 2 3"));
 
 		assertSame(simpleSetPredicate, transform(simpleSetPredicate));
 

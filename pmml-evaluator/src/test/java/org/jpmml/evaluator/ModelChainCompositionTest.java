@@ -31,29 +31,29 @@ public class ModelChainCompositionTest extends ModelChainTest {
 	public void evaluateSetosa() throws Exception {
 		Map<FieldName, ?> result = evaluateExample(1.4, 0.2);
 
-		assertEquals(0.3, result.get(new FieldName("Setosa Pollen Index")));
-		assertEquals("2.1", result.get(new FieldName("Segment Id")));
-		assertEquals("2", result.get(new FieldName("Class Node")));
-		assertEquals("setosa", result.get(new FieldName("Class Score")));
+		assertEquals(0.3, getOutput(result, "Setosa Pollen Index"));
+		assertEquals("2.1", getOutput(result, "Segment Id"));
+		assertEquals("2", getOutput(result, "Class Node"));
+		assertEquals("setosa", getOutput(result, "Class Score"));
 	}
 
 	@Test
 	public void evaluateVersicolor() throws Exception {
 		Map<FieldName, ?> result = evaluateExample(4.7, 1.4);
 
-		assertEquals(0.2, result.get(new FieldName("Versicolor Pollen Index")));
-		assertEquals("2.2", result.get(new FieldName("Segment Id")));
-		assertEquals("4", result.get(new FieldName("Class Node")));
-		assertEquals("versicolor", result.get(new FieldName("Class Score")));
+		assertEquals(0.2, getOutput(result, "Versicolor Pollen Index"));
+		assertEquals("2.2", getOutput(result, "Segment Id"));
+		assertEquals("4", getOutput(result, "Class Node"));
+		assertEquals("versicolor", getOutput(result, "Class Score"));
 	}
 
 	@Test
 	public void evaluateVirginica() throws Exception {
 		Map<FieldName, ?> result = evaluateExample(6, 2.5);
 
-		assertEquals(0.1, result.get(new FieldName("Virginica Pollen Index")));
-		assertEquals("2.3", result.get(new FieldName("Segment Id")));
-		assertEquals("5", result.get(new FieldName("Class Node")));
-		assertEquals("virginica", result.get(new FieldName("Class Score")));
+		assertEquals(0.1, getOutput(result, "Virginica Pollen Index"));
+		assertEquals("2.3", getOutput(result, "Segment Id"));
+		assertEquals("5", getOutput(result, "Class Node"));
+		assertEquals("virginica", getOutput(result, "Class Score"));
 	}
 }

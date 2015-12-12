@@ -40,7 +40,7 @@ public class FieldValueUtilTest {
 
 	@Test
 	public void prepareContinuous(){
-		FieldName name = new FieldName("x");
+		FieldName name = FieldName.create("x");
 
 		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE);
 
@@ -150,7 +150,7 @@ public class FieldValueUtilTest {
 
 	@Test
 	public void prepareCategorical(){
-		FieldName name = new FieldName("x");
+		FieldName name = FieldName.create("x");
 
 		DataField dataField = new DataField(name, OpType.CATEGORICAL, DataType.INTEGER);
 

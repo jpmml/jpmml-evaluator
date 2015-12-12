@@ -53,7 +53,7 @@ public class EvaluatorUtilTest {
 		assertEquals(Arrays.asList("value", "value"), EvaluatorUtil.decode(Arrays.asList(value, value)));
 
 		assertEquals(Collections.<String, String>singletonMap((String)null, "value"), EvaluatorUtil.decode(Collections.singletonMap((FieldName)null, value)));
-		assertEquals(Collections.<String, String>singletonMap("key", "value"), EvaluatorUtil.decode(Collections.singletonMap(new FieldName("key"), value)));
+		assertEquals(Collections.<String, String>singletonMap("key", "value"), EvaluatorUtil.decode(Collections.singletonMap(FieldName.create("key"), value)));
 
 		Computable invalidValue = new Computable(){
 
@@ -72,20 +72,20 @@ public class EvaluatorUtilTest {
 		}
 
 		assertEquals(Collections.emptyMap(), EvaluatorUtil.decode(Collections.singletonMap((FieldName)null, invalidValue)));
-		assertEquals(Collections.emptyMap(), EvaluatorUtil.decode(Collections.singletonMap(new FieldName("key"), invalidValue)));
+		assertEquals(Collections.emptyMap(), EvaluatorUtil.decode(Collections.singletonMap(FieldName.create("key"), invalidValue)));
 	}
 
 	@Test
 	public void prepare() throws Exception {
 		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(StandardAssociationSchemaTest.class);
 
-		FieldValue simple = EvaluatorUtil.prepare(evaluator, new FieldName("item"), "Cracker");
+		FieldValue simple = EvaluatorUtil.prepare(evaluator, FieldName.create("item"), "Cracker");
 
 		assertEquals("Cracker", simple.getValue());
 		assertEquals(DataType.STRING, simple.getDataType());
 		assertEquals(OpType.CATEGORICAL, simple.getOpType());
 
-		FieldValue collection = EvaluatorUtil.prepare(evaluator, new FieldName("item"), Arrays.asList("Cracker", "Water", "Coke"));
+		FieldValue collection = EvaluatorUtil.prepare(evaluator, FieldName.create("item"), Arrays.asList("Cracker", "Water", "Coke"));
 
 		assertEquals(Arrays.asList("Cracker", "Water", "Coke"), collection.getValue());
 		assertEquals(DataType.STRING, collection.getDataType());
@@ -103,7 +103,7 @@ public class EvaluatorUtilTest {
 		table.add(createRow("3", "Coke"));
 		table.add(createRow("2", "Water"));
 
-		table = EvaluatorUtil.groupRows(new FieldName("transaction"), table);
+		table = EvaluatorUtil.groupRows(FieldName.create("transaction"), table);
 
 		checkGroupedRow(table.get(0), "1", Arrays.asList("Cracker", "Coke"));
 		checkGroupedRow(table.get(1), "2", Arrays.asList("Cracker", "Water"));
@@ -114,7 +114,7 @@ public class EvaluatorUtilTest {
 	public void getTargetFields() throws Exception {
 		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(MixedNeighborhoodTest.class);
 
-		assertEquals(Arrays.asList(new FieldName("species"), new FieldName("species_class")), EvaluatorUtil.getTargetFields(evaluator));
+		assertEquals(Arrays.asList(FieldName.create("species"), FieldName.create("species_class")), EvaluatorUtil.getTargetFields(evaluator));
 
 		evaluator = ModelEvaluatorTest.createModelEvaluator(RankingTest.class);
 
@@ -128,8 +128,8 @@ public class EvaluatorUtilTest {
 	static
 	private Map<FieldName, Object> createRow(String transaction, String item){
 		Map<FieldName, Object> result = new HashMap<>();
-		result.put(new FieldName("transaction"), transaction);
-		result.put(new FieldName("item"), item);
+		result.put(FieldName.create("transaction"), transaction);
+		result.put(FieldName.create("item"), item);
 
 		return result;
 	}
@@ -138,7 +138,7 @@ public class EvaluatorUtilTest {
 	private void checkGroupedRow(Map<FieldName, Object> row, String transaction, List<String> items){
 		assertEquals(2, row.size());
 
-		assertEquals(transaction, row.get(new FieldName("transaction")));
-		assertEquals(items, row.get(new FieldName("item")));
+		assertEquals(transaction, row.get(FieldName.create("transaction")));
+		assertEquals(items, row.get(FieldName.create("item")));
 	}
 }

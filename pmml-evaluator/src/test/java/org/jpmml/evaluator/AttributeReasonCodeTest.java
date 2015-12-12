@@ -31,10 +31,10 @@ public class AttributeReasonCodeTest extends ReasonCodeTest {
 	public void evaluate() throws Exception {
 		Map<FieldName, ?> result = evaluateExample();
 
-		assertEquals(29d, result.get(new FieldName("Final Score")));
+		assertEquals(29d, getOutput(result, "Final Score"));
 
-		assertEquals("RC2_3", result.get(new FieldName("Reason Code 1")));
-		assertEquals("RC1", result.get(new FieldName("Reason Code 2")));
-		assertEquals(null, result.get(new FieldName("Reason Code 3")));
+		assertEquals("RC2_3", getOutput(result, "Reason Code 1"));
+		assertEquals("RC1", getOutput(result, "Reason Code 2"));
+		assertEquals(null, getOutput(result, "Reason Code 3"));
 	}
 }

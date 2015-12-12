@@ -36,12 +36,12 @@ public class ContrastMatrixTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		FieldName lowField = new FieldName("Probability_Low");
-		FieldName highField = new FieldName("Probability_High");
+		FieldName lowField = FieldName.create("Probability_Low");
+		FieldName highField = FieldName.create("Probability_High");
 
 		// Expected values have been calculated by hand
-		assertEquals(0.81956470d, (Double)result.get(lowField), 1.e-8);
-		assertEquals(0.18043530d, (Double)result.get(highField), 1.e-8);
+		assertEquals(0.81956470d, (Double)getOutput(result, lowField), 1.e-8);
+		assertEquals(0.18043530d, (Double)getOutput(result, highField), 1.e-8);
 
 		assertEquals(DataType.DOUBLE, OutputUtil.getDataType(evaluator.getOutputField(lowField), evaluator));
 		assertEquals(DataType.DOUBLE, OutputUtil.getDataType(evaluator.getOutputField(highField), evaluator));

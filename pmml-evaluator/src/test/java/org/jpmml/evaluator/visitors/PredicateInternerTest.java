@@ -34,12 +34,14 @@ public class PredicateInternerTest {
 
 	@Test
 	public void internSimplePredicate(){
+		FieldName name = FieldName.create("x");
+
 		Node left = new Node()
-			.setPredicate(new SimplePredicate(new FieldName("x"), SimplePredicate.Operator.EQUAL)
+			.setPredicate(new SimplePredicate(name, SimplePredicate.Operator.EQUAL)
 				.setValue("1"));
 
 		Node right = new Node()
-			.setPredicate(new SimplePredicate(new FieldName("x"), SimplePredicate.Operator.EQUAL)
+			.setPredicate(new SimplePredicate(name, SimplePredicate.Operator.EQUAL)
 				.setValue("1"));
 
 		checkTree(left, right);
@@ -47,11 +49,13 @@ public class PredicateInternerTest {
 
 	@Test
 	public void internSimpleSetPredicate(){
+		FieldName name = FieldName.create("x");
+
 		Node left = new Node()
-			.setPredicate(new SimpleSetPredicate(new FieldName("x"), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "1")));
+			.setPredicate(new SimpleSetPredicate(name, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "1")));
 
 		Node right = new Node()
-			.setPredicate(new SimpleSetPredicate(new FieldName("x"), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "\"1\"")));
+			.setPredicate(new SimpleSetPredicate(name, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "\"1\"")));
 
 		checkTree(left, right);
 	}

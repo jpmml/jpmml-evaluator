@@ -48,15 +48,15 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		AffinityDistribution species = (AffinityDistribution)result.get(new FieldName("species"));
+		AffinityDistribution species = (AffinityDistribution)result.get(FieldName.create("species"));
 		assertEquals(20d, species.getResult());
 		assertEquals("51", (species.getEntityIdRanking()).get(0));
 
-		AffinityDistribution speciesClass = (AffinityDistribution)result.get(new FieldName("species_class"));
+		AffinityDistribution speciesClass = (AffinityDistribution)result.get(FieldName.create("species_class"));
 		assertEquals("Iris-versicolor", speciesClass.getResult());
 		assertEquals("51", (speciesClass.getEntityIdRanking()).get(0));
 
-		assertEquals(20d, result.get(new FieldName("output_1")));
-		assertEquals("Iris-versicolor", result.get(new FieldName("output_2")));
+		assertEquals(20d, getOutput(result, "output_1"));
+		assertEquals("Iris-versicolor", getOutput(result, "output_2"));
 	}
 }

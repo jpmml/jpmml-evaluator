@@ -33,7 +33,7 @@ public class MiningModelEvaluationContextTest extends ModelEvaluatorTest {
 		MiningModelEvaluator evaluator = (MiningModelEvaluator)createModelEvaluator();
 
 		MiningModelEvaluationContext context = evaluator.createContext(null);
-		context.declare(new FieldName("Age"), 35);
+		context.declare(FieldName.create("Age"), 35);
 
 		Map<FieldName, ?> result = evaluator.evaluate(context);
 
@@ -41,7 +41,7 @@ public class MiningModelEvaluationContextTest extends ModelEvaluatorTest {
 
 		assertEquals("under 50", targetValue.getResult());
 
-		FieldValue value = context.getField(new FieldName("Age_missing"));
+		FieldValue value = context.getField(FieldName.create("Age_missing"));
 
 		assertNotNull(value);
 	}

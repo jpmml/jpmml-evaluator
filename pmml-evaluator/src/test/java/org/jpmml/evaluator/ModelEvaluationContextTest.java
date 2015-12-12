@@ -36,7 +36,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator(FieldScopeTest.class);
 
-		FieldName input = new FieldName("input");
+		FieldName input = FieldName.create("input");
 
 		ModelEvaluationContext parentContext = new ModelEvaluationContext(null, evaluator);
 		parentContext.declare(input, 1d);
@@ -57,7 +57,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 
 		assertEquals(Collections.singletonList(childContext), Lists.newArrayList(grandChildContext.getCompatibleParents()));
 
-		FieldName squaredInput = new FieldName("squaredInput");
+		FieldName squaredInput = FieldName.create("squaredInput");
 
 		FieldValue squaredInputValue = childContext.evaluate(squaredInput);
 
@@ -69,7 +69,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 		assertSame(squaredInputValue, childContext.evaluate(squaredInput));
 		assertSame(squaredInputValue, grandChildContext.evaluate(squaredInput));
 
-		FieldName cubedInput = new FieldName("cubedInput");
+		FieldName cubedInput = FieldName.create("cubedInput");
 
 		FieldValue cubedInputValue = grandChildContext.evaluate(cubedInput);
 

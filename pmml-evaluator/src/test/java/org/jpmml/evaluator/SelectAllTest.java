@@ -47,7 +47,7 @@ public class SelectAllTest extends ModelEvaluatorTest {
 
 		assertEquals(1, result.size());
 
-		Collection<?> species = (Collection<?>)result.get(new FieldName("species"));
+		Collection<?> species = (Collection<?>)result.get(FieldName.create("species"));
 
 		assertEquals(5, species.size());
 
