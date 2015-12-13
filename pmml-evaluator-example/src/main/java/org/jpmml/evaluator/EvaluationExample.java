@@ -78,6 +78,13 @@ public class EvaluationExample extends Example {
 	private String separator = null;
 
 	@Parameter (
+		names = {"--sparse"},
+		description = "Permit missing active field columns",
+		hidden = true
+	)
+	private boolean sparse = false;
+
+	@Parameter (
 		names = {"--wait-before"},
 		description = "Pause before starting the work",
 		hidden = true
@@ -192,7 +199,7 @@ public class EvaluationExample extends Example {
 			Map<FieldName, ?> inputRecord = inputRecords.get(0);
 
 			Sets.SetView<FieldName> missingActiveFields = Sets.difference(new LinkedHashSet<>(activeFields), inputRecord.keySet());
-			if(missingActiveFields.size() > 0){
+			if(missingActiveFields.size() > 0 && !this.sparse){
 				throw new IllegalArgumentException("Missing active field(s): " + missingActiveFields.toString());
 			}
 
@@ -200,7 +207,7 @@ public class EvaluationExample extends Example {
 			if(missingGroupFields.size() > 0){
 				throw new IllegalArgumentException("Missing group field(s): " + missingGroupFields.toString());
 			}
-		}
+		} // End if
 
 		if(groupFields.size() == 1){
 			FieldName groupField = groupFields.get(0);
