@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,13 +55,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	private ModelEvaluatorFactory evaluatorFactory = null;
 
-	private LoadingCache<Model, SegmentHandler> segmentHandlerCache = CacheUtil.buildLoadingCache(new CacheLoader<Model, SegmentHandler>(){
-
-		@Override
-		public SegmentHandler load(Model model){
-			return createSegmentHandler(model);
-		}
-	});
+	/*
+	 * Caches produced by {@link CacheBuilder} are serializable.
+	 * The serialized representation of a cache includes its configuration properties, but not its contents.
+	 * Therefore, class SegmentHandlerCacheLoader must be serializable, whereas class SegmentHandler may, but need not, be serializable.
+	 */
+	private LoadingCache<Model, SegmentHandler> segmentHandlerCache = CacheUtil.buildLoadingCache(new SegmentHandlerCacheLoader());
 
 
 	public MiningModelEvaluator(PMML pmml){
@@ -622,6 +622,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return result.asMap();
 	}
 
+	private class SegmentHandlerCacheLoader extends CacheLoader<Model, SegmentHandler> implements Serializable {
+
+		@Override
+		public SegmentHandler load(Model model){
+			return createSegmentHandler(model);
+		}
+	}
+
+	static
 	private class SegmentHandler {
 
 		private Evaluator evaluator = null;
