@@ -51,11 +51,12 @@ public class ClassificationTest extends ArchiveBatchTest {
 	}
 
 	private void evaluateAudit(String name, String dataset) throws Exception {
-		Batch batch = createFilterBatch(name, dataset, ClassificationTest.AUDIT_COLUMNS);
 
-		Set<FieldName> ignoredFields = ImmutableSet.of(FieldName.create("I_Adjusted"), FieldName.create("U_Adjusted"), FieldName.create("P_Adjusted0"));
+		try(Batch batch = createFilterBatch(name, dataset, ClassificationTest.AUDIT_COLUMNS)){
+			Set<FieldName> ignoredFields = ImmutableSet.of(FieldName.create("I_Adjusted"), FieldName.create("U_Adjusted"), FieldName.create("P_Adjusted0"));
 
-		evaluate(batch, ignoredFields, 1e-5, 1e-5);
+			evaluate(batch, ignoredFields, 1e-5, 1e-5);
+		}
 	}
 
 	@Test
@@ -64,11 +65,12 @@ public class ClassificationTest extends ArchiveBatchTest {
 	}
 
 	private void evaluateIris(String name, String dataset) throws Exception {
-		Batch batch = createFilterBatch(name, dataset, ClassificationTest.IRIS_COLUMNS);
 
-		Set<FieldName> ignoredFields = ImmutableSet.of(FieldName.create("I_Species"), FieldName.create("P_Speciessetosa"), FieldName.create("P_Speciesversicolor"), FieldName.create("P_Speciesvirginica"));
+		try(Batch batch = createFilterBatch(name, dataset, ClassificationTest.IRIS_COLUMNS)){
+			Set<FieldName> ignoredFields = ImmutableSet.of(FieldName.create("I_Species"), FieldName.create("P_Speciessetosa"), FieldName.create("P_Speciesversicolor"), FieldName.create("P_Speciesvirginica"));
 
-		evaluate(batch, ignoredFields, 1e-5, 1e-5);
+			evaluate(batch, ignoredFields, 1e-5, 1e-5);
+		}
 	}
 
 	protected Batch createFilterBatch(String name, String dataset, final Map<FieldName, FieldName> columns){

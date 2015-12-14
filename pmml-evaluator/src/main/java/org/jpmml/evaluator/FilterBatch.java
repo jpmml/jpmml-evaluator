@@ -53,6 +53,13 @@ public class FilterBatch implements Batch {
 		return batch.getOutput();
 	}
 
+	@Override
+	public void close() throws Exception {
+		Batch batch = getBatch();
+
+		batch.close();
+	}
+
 	public Batch getBatch(){
 		return this.batch;
 	}

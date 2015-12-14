@@ -34,22 +34,24 @@ public class RegressionTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateDecisionTreeAuto() throws Exception {
-		Batch batch = createBatch("DecisionTree", "Auto");
 
-		NodeScore targetValue = (NodeScore)BatchUtil.evaluateDefault(batch);
+		try(Batch batch = createBatch("DecisionTree", "Auto")){
+			NodeScore targetValue = (NodeScore)BatchUtil.evaluateDefault(batch);
 
-		assertEquals("14", targetValue.getEntityId());
+			assertEquals("14", targetValue.getEntityId());
 
-		evaluate(batch);
+			evaluate(batch);
+		}
 	}
 
 	@Test
 	public void evaluateGeneralRegressionAuto() throws Exception {
-		Batch batch = createBatch("GeneralRegression", "Auto");
 
-		assertEquals(null, BatchUtil.evaluateDefault(batch));
+		try(Batch batch = createBatch("GeneralRegression", "Auto")){
+			assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		evaluate(batch);
+			evaluate(batch);
+		}
 	}
 
 	@Test
@@ -64,20 +66,22 @@ public class RegressionTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateLibSVMAuto() throws Exception {
-		Batch batch = createBatch("LibSVM", "Auto");
 
-		Set<FieldName> ignoredFields = ImmutableSet.of(FieldName.create("mpg"), FieldName.create("predictedValue"));
+		try(Batch batch = createBatch("LibSVM", "Auto")){
+			Set<FieldName> ignoredFields = ImmutableSet.of(FieldName.create("mpg"), FieldName.create("predictedValue"));
 
-		evaluate(batch, ignoredFields, 1e-7, 1e-7);
+			evaluate(batch, ignoredFields, 1e-7, 1e-7);
+		}
 	}
 
 	@Test
 	public void evaluateNeuralNetworkAuto() throws Exception {
-		Batch batch = createBatch("NeuralNetwork", "Auto");
 
-		assertEquals(null, BatchUtil.evaluateDefault(batch));
+		try(Batch batch = createBatch("NeuralNetwork", "Auto")){
+			assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		evaluate(batch, null, 1e-6, 1e-6);
+			evaluate(batch, null, 1e-6, 1e-6);
+		}
 	}
 
 	@Test
@@ -87,11 +91,12 @@ public class RegressionTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateRegressionAuto() throws Exception {
-		Batch batch = createBatch("Regression", "Auto");
 
-		assertEquals(null, BatchUtil.evaluateDefault(batch));
+		try(Batch batch = createBatch("Regression", "Auto")){
+			assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		evaluate(batch);
+			evaluate(batch);
+		}
 	}
 
 	@Test

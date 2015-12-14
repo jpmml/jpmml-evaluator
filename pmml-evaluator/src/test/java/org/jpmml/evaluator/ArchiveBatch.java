@@ -54,7 +54,10 @@ public class ArchiveBatch implements Batch {
 
 		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
 
-		return modelEvaluatorFactory.newModelManager(pmml);
+		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelManager(pmml);
+		modelEvaluator.verify();
+
+		return modelEvaluator;
 	}
 
 	public PMML getPMML() throws Exception {
@@ -69,6 +72,10 @@ public class ArchiveBatch implements Batch {
 	@Override
 	public List<Map<FieldName, String>> getOutput() throws IOException {
 		return loadRecords("/csv/" + (getName() + getDataset()) + ".csv");
+	}
+
+	@Override
+	public void close() throws Exception {
 	}
 
 	private PMML loadPMML(String path) throws Exception {

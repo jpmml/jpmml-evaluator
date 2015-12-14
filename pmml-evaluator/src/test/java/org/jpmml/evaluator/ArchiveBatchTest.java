@@ -27,15 +27,17 @@ abstract
 public class ArchiveBatchTest extends BatchTest {
 
 	public void evaluate(String name, String dataset) throws Exception {
-		Batch batch = createBatch(name, dataset);
 
-		evaluate(batch);
+		try(Batch batch = createBatch(name, dataset)){
+			evaluate(batch);
+		}
 	}
 
 	public void evaluate(String name, String dataset, Set<FieldName> ignoredFields) throws Exception {
-		Batch batch = createBatch(name, dataset);
 
-		evaluate(batch, ignoredFields);
+		try(Batch batch = createBatch(name, dataset)){
+			evaluate(batch, ignoredFields);
+		}
 	}
 
 	protected Batch createBatch(String name, String dataset){

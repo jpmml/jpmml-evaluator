@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 
-public interface Batch {
+public interface Batch extends AutoCloseable {
 
 	Evaluator getEvaluator() throws Exception;
 

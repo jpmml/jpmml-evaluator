@@ -34,13 +34,14 @@ public class ClassificationTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateDecisionTreeIris() throws Exception {
-		Batch batch = createBatch("DecisionTree", "Iris");
 
-		NodeScoreDistribution targetValue = (NodeScoreDistribution)BatchUtil.evaluateDefault(batch);
+		try(Batch batch = createBatch("DecisionTree", "Iris")){
+			NodeScoreDistribution targetValue = (NodeScoreDistribution)BatchUtil.evaluateDefault(batch);
 
-		assertEquals("7", targetValue.getEntityId());
+			assertEquals("7", targetValue.getEntityId());
 
-		evaluate(batch);
+			evaluate(batch);
+		}
 	}
 
 	@Test
@@ -55,11 +56,12 @@ public class ClassificationTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateLogisticRegressionIris() throws Exception {
-		Batch batch = createBatch("LogisticRegression", "Iris");
 
-		assertEquals(null, BatchUtil.evaluateDefault(batch));
+		try(Batch batch = createBatch("LogisticRegression", "Iris")){
+			assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		evaluate(batch);
+			evaluate(batch);
+		}
 	}
 
 	@Test
@@ -69,11 +71,12 @@ public class ClassificationTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateNeuralNetworkIris() throws Exception {
-		Batch batch = createBatch("NeuralNetwork", "Iris");
 
-		assertEquals(null, BatchUtil.evaluateDefault(batch));
+		try(Batch batch = createBatch("NeuralNetwork", "Iris")){
+			assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		evaluate(batch, null, 1e-6, 1e-6);
+			evaluate(batch, null, 1e-6, 1e-6);
+		}
 	}
 
 	@Test
@@ -83,31 +86,34 @@ public class ClassificationTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateGeneralRegressionVersicolor() throws Exception {
-		Batch batch = createBatch("GeneralRegression", "Versicolor");
 
-		assertEquals(null, BatchUtil.evaluateDefault(batch));
+		try(Batch batch = createBatch("GeneralRegression", "Versicolor")){
+			assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		evaluate(batch);
+			evaluate(batch);
+		}
 	}
 
 	@Test
 	public void evaluateDecisionTreeAudit() throws Exception {
-		Batch batch = createBatch("DecisionTree", "Audit");
 
-		NodeScoreDistribution targetValue = (NodeScoreDistribution)BatchUtil.evaluateDefault(batch);
+		try(Batch batch = createBatch("DecisionTree", "Audit")){
+			NodeScoreDistribution targetValue = (NodeScoreDistribution)BatchUtil.evaluateDefault(batch);
 
-		assertEquals("2", targetValue.getEntityId());
+			assertEquals("2", targetValue.getEntityId());
 
-		evaluate(batch);
+			evaluate(batch);
+		}
 	}
 
 	@Test
 	public void evaluateGeneralRegressionAudit() throws Exception {
-		Batch batch = createBatch("GeneralRegression", "Audit");
 
-		assertEquals(null, BatchUtil.evaluateDefault(batch));
+		try(Batch batch = createBatch("GeneralRegression", "Audit")){
+			assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		evaluate(batch);
+			evaluate(batch);
+		}
 	}
 
 	@Test
@@ -132,13 +138,14 @@ public class ClassificationTest extends ArchiveBatchTest {
 
 	@Test
 	public void evaluateNeuralNetworkAudit() throws Exception {
-		Batch batch = createBatch("NeuralNetwork", "Audit");
 
-		assertEquals(null, BatchUtil.evaluateDefault(batch));
+		try(Batch batch = createBatch("NeuralNetwork", "Audit")){
+			assertEquals(null, BatchUtil.evaluateDefault(batch));
 
-		Set<FieldName> ignoredFields = ImmutableSet.of(FieldName.create("Probability_0"), FieldName.create("Probability_1"));
+			Set<FieldName> ignoredFields = ImmutableSet.of(FieldName.create("Probability_0"), FieldName.create("Probability_1"));
 
-		evaluate(batch, ignoredFields);
+			evaluate(batch, ignoredFields);
+		}
 	}
 
 	@Test
