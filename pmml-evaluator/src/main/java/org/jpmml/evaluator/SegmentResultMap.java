@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.LinkedHashMap;
 
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Segment;
 
@@ -48,6 +49,26 @@ class SegmentResultMap extends LinkedHashMap<FieldName, Object> implements HasEn
 		return segment.getWeight();
 	}
 
+	public Object getTargetValue(DataType dataType){
+		Object targetValue = EvaluatorUtil.decode(getTargetValue());
+
+		try {
+			return TypeUtil.cast(dataType, targetValue);
+		} catch(TypeCheckException tce){
+			throw ensureContext(tce);
+		}
+	}
+
+	public <V> V getTargetValue(Class<V> clazz){
+		Object targetValue = getTargetValue();
+
+		try {
+			return TypeUtil.cast(clazz, targetValue);
+		} catch(TypeCheckException tce){
+			throw ensureContext(tce);
+		}
+	}
+
 	public Segment getSegment(){
 		return this.segment;
 	}
@@ -66,5 +87,13 @@ class SegmentResultMap extends LinkedHashMap<FieldName, Object> implements HasEn
 
 	public Object getTargetValue(){
 		return get(getTargetField());
+	}
+
+	private <E extends PMMLException> E ensureContext(E exception){
+		Segment segment = getSegment();
+
+		exception.ensureContext(segment);
+
+		return exception;
 	}
 }

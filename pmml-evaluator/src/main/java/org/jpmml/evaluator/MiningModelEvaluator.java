@@ -328,7 +328,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				segmentContext.declare(inputField, value);
 			}
 
-			Map<FieldName, ?> result = evaluator.evaluate(segmentContext);
+			Map<FieldName, ?> result;
+
+			try {
+				result = evaluator.evaluate(segmentContext);
+			} catch(PMMLException pe){
+				pe.ensureContext(segment);
+
+				throw pe;
+			}
 
 			FieldName targetField = evaluator.getTargetField();
 
@@ -486,9 +494,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		double denominator = 0d;
 
 		for(SegmentResultMap segmentResult : segmentResults){
-			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
-
-			Double value = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, targetValue);
+			Double value = (Double)segmentResult.getTargetValue(DataType.DOUBLE);
 
 			switch(multipleModelMethod){
 				case SUM:
@@ -530,9 +536,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		for(SegmentResultMap segmentResult : segmentResults){
-			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
-
-			String key = (String)targetValue;
+			String key = (String)segmentResult.getTargetValue(DataType.STRING);
 
 			switch(multipleModelMethod){
 				case MAJORITY_VOTE:
@@ -558,9 +562,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		double denominator = 0d;
 
 		for(SegmentResultMap segmentResult : segmentResults){
-			Object targetValue = segmentResult.getTargetValue();
-
-			HasProbability hasProbability = TypeUtil.cast(HasProbability.class, targetValue);
+			HasProbability hasProbability = segmentResult.getTargetValue(HasProbability.class);
 
 			switch(multipleModelMethod){
 				case MAX:
