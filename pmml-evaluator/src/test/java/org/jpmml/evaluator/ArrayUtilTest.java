@@ -45,6 +45,8 @@ public class ArrayUtilTest {
 
 	@Test
 	public void parseStringArray(){
+		assertEquals(Arrays.asList("a"), parseStringArray("\"a\""));
+
 		assertEquals(Arrays.asList("a", "b", "c"), parseStringArray("a b c"));
 		assertEquals(Arrays.asList("a", "b", "c"), parseStringArray("\"a\" \"b\" \"c\""));
 

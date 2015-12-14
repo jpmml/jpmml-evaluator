@@ -28,8 +28,8 @@ writeAuto = function(values, file){
 }
 
 generateDecisionTreeAuto = function(){
-	rpart = rpart(autoFormula, autoData)
-	saveXML(pmml(rpart), "pmml/DecisionTreeAuto.pmml")
+	rpart = rpart(autoFormula, autoData, method = "anova", control = rpart.control(maxcompete = 0, maxsurrogate = 0))
+	saveXML(pmml(rpart, dataset = autoData), "pmml/DecisionTreeAuto.pmml")
 
 	writeAuto(predict(rpart), "csv/DecisionTreeAuto.csv")
 }

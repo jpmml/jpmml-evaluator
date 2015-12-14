@@ -36,8 +36,8 @@ fixGeneralRegressionOutput = function(pmml, targetFieldName){
 }
 
 generateDecisionTreeIris = function(){
-	rpart = rpart(irisFormula, irisData)
-	saveXML(pmml(rpart), "pmml/DecisionTreeIris.pmml")
+	rpart = rpart(irisFormula, irisData, method = "class", control = rpart.control(maxcompete = 0, maxsurrogate = 0))
+	saveXML(pmml(rpart, dataset = irisData), "pmml/DecisionTreeIris.pmml")
 
 	classes = predict(rpart, type = "class")
 	probabilities = predict(rpart, type = "prob")
@@ -155,8 +155,8 @@ writeAudit = function(classes, probabilities, file){
 }
 
 generateDecisionTreeAudit = function(){
-	rpart = rpart(auditFormula, auditData, method = "class")
-	saveXML(pmml(rpart), "pmml/DecisionTreeAudit.pmml")
+	rpart = rpart(auditFormula, auditData, method = "class", control = rpart.control(maxcompete = 0, maxsurrogate = 0))
+	saveXML(pmml(rpart, dataset = auditData), "pmml/DecisionTreeAudit.pmml")
 
 	classes = predict(rpart, type = "class")
 	probabilities = predict(rpart, type = "prob")
