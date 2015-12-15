@@ -18,10 +18,10 @@
  */
 package org.jpmml.knime;
 
-import org.jpmml.evaluator.ArchiveBatchTest;
+import org.jpmml.evaluator.IntegrationTest;
 import org.junit.Test;
 
-public class RegressionTest extends ArchiveBatchTest {
+public class RegressionTest extends IntegrationTest {
 
 	@Test
 	public void evaluateGeneralRegressionAuto() throws Exception {

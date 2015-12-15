@@ -18,10 +18,10 @@
  */
 package org.jpmml.rattle;
 
-import org.jpmml.evaluator.ArchiveBatchTest;
+import org.jpmml.evaluator.IntegrationTest;
 import org.junit.Test;
 
-public class ClusteringTest extends ArchiveBatchTest {
+public class ClusteringTest extends IntegrationTest {
 
 	@Test
 	public void evaluateHierarchicalClusteringIris() throws Exception {

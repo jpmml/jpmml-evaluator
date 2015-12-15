@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2015 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -16,15 +16,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.rapidminer;
+package org.jpmml.evaluator;
 
-import org.jpmml.evaluator.IntegrationTest;
-import org.junit.Test;
+abstract
+public class IntegrationTest extends BatchTest {
 
-public class RegressionTest extends IntegrationTest {
+	public void evaluate(String name, String dataset) throws Exception {
 
-	@Test
-	public void evaluateRegressionOzone() throws Exception {
-		evaluate("Regression", "Ozone");
+		try(Batch batch = createBatch(name, dataset)){
+			evaluate(batch);
+		}
+	}
+
+	protected Batch createBatch(String name, String dataset){
+		Batch result = new IntegrationTestBatch(name, dataset){
+
+			@Override
+			public IntegrationTest getIntegrationTest(){
+				return IntegrationTest.this;
+			}
+		};
+
+		return result;
 	}
 }

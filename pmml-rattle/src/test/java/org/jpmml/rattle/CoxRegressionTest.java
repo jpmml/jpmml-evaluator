@@ -18,10 +18,10 @@
  */
 package org.jpmml.rattle;
 
-import org.jpmml.evaluator.ArchiveBatchTest;
+import org.jpmml.evaluator.IntegrationTest;
 import org.junit.Test;
 
-public class CoxRegressionTest extends ArchiveBatchTest {
+public class CoxRegressionTest extends IntegrationTest {
 
 	@Test
 	public void evaluateCoxRegressionLung() throws Exception {

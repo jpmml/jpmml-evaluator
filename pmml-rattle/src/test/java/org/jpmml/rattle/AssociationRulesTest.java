@@ -18,10 +18,10 @@
  */
 package org.jpmml.rattle;
 
-import org.jpmml.evaluator.ArchiveBatchTest;
+import org.jpmml.evaluator.IntegrationTest;
 import org.junit.Test;
 
-public class AssociationRulesTest extends ArchiveBatchTest {
+public class AssociationRulesTest extends IntegrationTest {
 
 	@Test
 	public void evaluateAssociationRulesShopping() throws Exception {

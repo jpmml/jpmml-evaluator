@@ -18,7 +18,6 @@
  */
 package org.jpmml.sas;
 
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -31,14 +30,14 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
-import org.jpmml.evaluator.ArchiveBatch;
-import org.jpmml.evaluator.ArchiveBatchTest;
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.FilterBatch;
+import org.jpmml.evaluator.IntegrationTest;
+import org.jpmml.evaluator.IntegrationTestBatch;
 import org.jpmml.sas.visitors.ExpressionCorrector;
 import org.junit.Test;
 
-public class ClassificationTest extends ArchiveBatchTest {
+public class ClassificationTest extends IntegrationTest {
 
 	@Test
 	public void evaluateLogisticRegressionAudit() throws Exception {
@@ -102,13 +101,11 @@ public class ClassificationTest extends ArchiveBatchTest {
 
 	@Override
 	protected Batch createBatch(String name, String dataset){
-		Batch result = new ArchiveBatch(name, dataset){
+		Batch result = new IntegrationTestBatch(name, dataset){
 
 			@Override
-			public InputStream open(String path){
-				Class<? extends ArchiveBatchTest> clazz = ClassificationTest.this.getClass();
-
-				return clazz.getResourceAsStream(path);
+			public ClassificationTest getIntegrationTest(){
+				return ClassificationTest.this;
 			}
 
 			@Override

@@ -22,7 +22,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 import org.dmg.pmml.FieldName;
-import org.jpmml.evaluator.ArchiveBatchTest;
+import org.jpmml.evaluator.IntegrationTest;
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
 import org.jpmml.evaluator.NodeScoreDistribution;
@@ -30,7 +30,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class ClassificationTest extends ArchiveBatchTest {
+public class ClassificationTest extends IntegrationTest {
 
 	@Test
 	public void evaluateDecisionTreeIris() throws Exception {

@@ -19,38 +19,23 @@
 package org.jpmml.evaluator;
 
 import java.io.InputStream;
-import java.util.Set;
-
-import org.dmg.pmml.FieldName;
 
 abstract
-public class ArchiveBatchTest extends BatchTest {
+public class IntegrationTestBatch extends ArchiveBatch {
 
-	public void evaluate(String name, String dataset) throws Exception {
-
-		try(Batch batch = createBatch(name, dataset)){
-			evaluate(batch);
-		}
+	public IntegrationTestBatch(String name, String dataset){
+		super(name, dataset);
 	}
 
-	public void evaluate(String name, String dataset, Set<FieldName> ignoredFields) throws Exception {
+	abstract
+	public IntegrationTest getIntegrationTest();
 
-		try(Batch batch = createBatch(name, dataset)){
-			evaluate(batch, ignoredFields);
-		}
-	}
+	@Override
+	public InputStream open(String path){
+		IntegrationTest integrationTest = getIntegrationTest();
 
-	protected Batch createBatch(String name, String dataset){
-		Batch result = new ArchiveBatch(name, dataset){
+		Class<? extends IntegrationTest> clazz = integrationTest.getClass();
 
-			@Override
-			public InputStream open(String path){
-				Class<? extends ArchiveBatchTest> clazz = ArchiveBatchTest.this.getClass();
-
-				return clazz.getResourceAsStream(path);
-			}
-		};
-
-		return result;
+		return clazz.getResourceAsStream(path);
 	}
 }

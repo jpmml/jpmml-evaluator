@@ -18,10 +18,10 @@
  */
 package org.jpmml.rapidminer;
 
-import org.jpmml.evaluator.ArchiveBatchTest;
+import org.jpmml.evaluator.IntegrationTest;
 import org.junit.Test;
 
-public class ClassificationTest extends ArchiveBatchTest {
+public class ClassificationTest extends IntegrationTest {
 
 	@Test
 	public void evaluateDecisionTreeIris() throws Exception {
