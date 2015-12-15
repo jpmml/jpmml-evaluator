@@ -18,10 +18,19 @@
  */
 package org.jpmml.evaluator;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
+
+import com.google.common.io.ByteStreams;
+import org.dmg.pmml.PMML;
+import org.jpmml.model.visitors.LocatorTransformer;
 
 abstract
 public class IntegrationTestBatch extends ArchiveBatch {
+
+	private Evaluator evaluator = null;
+
 
 	public IntegrationTestBatch(String name, String dataset){
 		super(name, dataset);
@@ -37,5 +46,50 @@ public class IntegrationTestBatch extends ArchiveBatch {
 		Class<? extends IntegrationTest> clazz = integrationTest.getClass();
 
 		return clazz.getResourceAsStream(path);
+	}
+
+	@Override
+	public PMML getPMML() throws Exception {
+		PMML pmml = super.getPMML();
+
+		LocatorTransformer locatorTransformer = new LocatorTransformer();
+		locatorTransformer.applyTo(pmml);
+
+		return pmml;
+	}
+
+	@Override
+	public Evaluator getEvaluator() throws Exception {
+
+		if(this.evaluator == null){
+			Evaluator evaluator =  super.getEvaluator();
+
+			ensureSerializability(evaluator);
+
+			this.evaluator = evaluator;
+		}
+
+		return this.evaluator;
+	}
+
+	@Override
+	public void close() throws Exception {
+
+		if(this.evaluator != null){
+
+			try {
+				ensureSerializability(this.evaluator);
+			} finally {
+				this.evaluator = null;
+			}
+		}
+	}
+
+	static
+	private void ensureSerializability(Evaluator evaluator) throws IOException {
+
+		try(ObjectOutputStream oos = new ObjectOutputStream(ByteStreams.nullOutputStream())){
+			oos.writeObject(evaluator);
+		}
 	}
 }
