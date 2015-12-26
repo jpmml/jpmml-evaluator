@@ -110,7 +110,7 @@ public class EnhancementExample extends Example {
 					}
 				}
 
-				VerificationField verificationField = new VerificationField(field);
+				VerificationField verificationField = new VerificationField(name);
 
 				if(field.contains(" ")){
 					verificationField.setColumn(field.replace(" ", "_x0020_"));

@@ -417,7 +417,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 
 		for(VerificationField verificationField : verificationFields){
-			result.put(FieldName.create(verificationField.getField()), verificationField);
+			result.put(verificationField.getField(), verificationField);
 		}
 
 		InlineTable inlineTable = modelVerification.getInlineTable();
@@ -436,18 +436,18 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			Map<FieldName, Object> record = new LinkedHashMap<>();
 
 			for(VerificationField verificationField : verificationFields){
-				String field = verificationField.getField();
+				FieldName name = verificationField.getField();
 				String column = verificationField.getColumn();
 
 				if(column == null){
-					column = field;
+					column = name.getValue();
 				} // End if
 
 				if(!row.containsKey(column)){
 					continue;
 				}
 
-				record.put(FieldName.create(field), row.get(column));
+				record.put(name, row.get(column));
 			}
 
 			records.add(record);

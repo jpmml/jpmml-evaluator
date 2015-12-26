@@ -142,9 +142,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			}
 		};
 
-		String idField = nearestNeighborModel.getInstanceIdVariable();
-		if(idField != null){
-			function = createIdentifierResolver(FieldName.create(idField), table);
+		FieldName instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
+		if(instanceIdVariable != null){
+			function = createIdentifierResolver(instanceIdVariable, table);
 		}
 
 		Map<FieldName, AffinityDistribution> result = new LinkedHashMap<>();
@@ -185,12 +185,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		List<InstanceResult> instanceResults = evaluateInstanceRows(context);
 
-		String idField = nearestNeighborModel.getInstanceIdVariable();
-		if(idField == null){
+		FieldName instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
+		if(instanceIdVariable == null){
 			throw new InvalidFeatureException(nearestNeighborModel);
 		}
 
-		Function<Integer, String> function = createIdentifierResolver(FieldName.create(idField), table);
+		Function<Integer, String> function = createIdentifierResolver(instanceIdVariable, table);
 
 		return Collections.singletonMap(getTargetField(), createAffinityDistribution(instanceResults, function, null));
 	}
@@ -444,18 +444,16 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			throw new UnsupportedFeatureException(tableLocator);
 		}
 
-		String idField = nearestNeighborModel.getInstanceIdVariable();
+		FieldName instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
 
 		List<FieldLoader> fieldLoaders = new ArrayList<>();
 
 		InstanceFields instanceFields = trainingInstances.getInstanceFields();
 		for(InstanceField instanceField : instanceFields){
-			String field = instanceField.getField();
+			FieldName name = instanceField.getField();
 			String column = instanceField.getColumn();
 
-			FieldName name = FieldName.create(field);
-
-			if(idField != null && (idField).equals(field)){
+			if(instanceIdVariable != null && (instanceIdVariable).equals(name)){
 				fieldLoaders.add(new IdentifierLoader(name, column));
 
 				continue;

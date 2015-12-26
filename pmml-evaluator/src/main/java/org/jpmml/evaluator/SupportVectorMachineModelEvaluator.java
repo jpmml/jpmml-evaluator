@@ -370,7 +370,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			}
 
 			Array array = vectorInstance.getArray();
-			RealSparseArray sparseArray = vectorInstance.getREALSparseArray();
+			RealSparseArray sparseArray = vectorInstance.getRealSparseArray();
 
 			List<? extends Number> values;
 

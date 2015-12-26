@@ -18,7 +18,6 @@
  */
 package org.jpmml.rattle;
 
-import java.util.Deque;
 import java.util.List;
 
 import org.dmg.pmml.MiningFunctionType;
@@ -31,9 +30,32 @@ import org.jpmml.model.visitors.AbstractVisitor;
 
 public class NodeTransformer extends AbstractVisitor {
 
+	private TreeModel treeModel = null;
+
+
+	@Override
+	public void pushParent(PMMLObject parent){
+		super.pushParent(parent);
+
+		if(parent instanceof TreeModel){
+			setTreeModel((TreeModel)parent);
+		}
+	}
+
+	@Override
+	public PMMLObject popParent(){
+		PMMLObject parent = super.popParent();
+
+		if(parent instanceof TreeModel){
+			setTreeModel(null);
+		}
+
+		return parent;
+	}
+
 	@Override
 	public VisitorAction visit(Node node){
-		TreeModel treeModel = getParent(TreeModel.class);
+		TreeModel treeModel = getTreeModel();
 
 		if(treeModel != null){
 			MiningFunctionType miningFunction = treeModel.getFunctionName();
@@ -54,16 +76,11 @@ public class NodeTransformer extends AbstractVisitor {
 		return super.visit(node);
 	}
 
-	private <E> E getParent(Class<? extends E> clazz){
-		Deque<PMMLObject> parents = getParents();
+	private TreeModel getTreeModel(){
+		return this.treeModel;
+	}
 
-		for(PMMLObject parent : parents){
-
-			if(clazz.isInstance(parent)){
-				return clazz.cast(parent);
-			}
-		}
-
-		return null;
+	private void setTreeModel(TreeModel treeModel){
+		this.treeModel = treeModel;
 	}
 }
