@@ -29,10 +29,10 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class NodeTransformerTest {
+public class ScoreDistributionCleanerTest {
 
 	@Test
-	public void transform(){
+	public void clean(){
 		Node node = new Node()
 			.setPredicate(new True())
 			.setScore("1")
@@ -40,14 +40,14 @@ public class NodeTransformerTest {
 
 		TreeModel treeModel = new TreeModel(MiningFunctionType.CLASSIFICATION, new MiningSchema(), node);
 
-		NodeTransformer transformer = new NodeTransformer();
-		transformer.applyTo(treeModel);
+		ScoreDistributionCleaner cleaner = new ScoreDistributionCleaner();
+		cleaner.applyTo(treeModel);
 
 		assertTrue(node.hasScoreDistributions());
 
 		treeModel.setFunctionName(MiningFunctionType.REGRESSION);
 
-		transformer.applyTo(treeModel);
+		cleaner.applyTo(treeModel);
 
 		assertFalse(node.hasScoreDistributions());
 	}

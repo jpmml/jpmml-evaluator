@@ -18,8 +18,11 @@
  */
 package org.jpmml.rattle;
 
+import java.util.Deque;
 import java.util.List;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.Node;
 import org.dmg.pmml.PMMLObject;
@@ -28,59 +31,31 @@ import org.dmg.pmml.TreeModel;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.model.visitors.AbstractVisitor;
 
-public class NodeTransformer extends AbstractVisitor {
-
-	private TreeModel treeModel = null;
-
-
-	@Override
-	public void pushParent(PMMLObject parent){
-		super.pushParent(parent);
-
-		if(parent instanceof TreeModel){
-			setTreeModel((TreeModel)parent);
-		}
-	}
-
-	@Override
-	public PMMLObject popParent(){
-		PMMLObject parent = super.popParent();
-
-		if(parent instanceof TreeModel){
-			setTreeModel(null);
-		}
-
-		return parent;
-	}
+public class ScoreDistributionCleaner extends AbstractVisitor {
 
 	@Override
 	public VisitorAction visit(Node node){
 		TreeModel treeModel = getTreeModel();
 
-		if(treeModel != null){
-			MiningFunctionType miningFunction = treeModel.getFunctionName();
+		MiningFunctionType miningFunction = treeModel.getFunctionName();
+		switch(miningFunction){
+			case REGRESSION:
+				if(node.hasScoreDistributions()){
+					List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
 
-			switch(miningFunction){
-				case REGRESSION:
-					if(node.hasScoreDistributions()){
-						List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
-
-						scoreDistributions.clear();
-					}
-					break;
-				default:
-					break;
-			}
+					scoreDistributions.clear();
+				}
+				break;
+			default:
+				break;
 		}
 
 		return super.visit(node);
 	}
 
 	private TreeModel getTreeModel(){
-		return this.treeModel;
-	}
+		Deque<PMMLObject> parents = getParents();
 
-	private void setTreeModel(TreeModel treeModel){
-		this.treeModel = treeModel;
+		return (TreeModel)Iterables.find(parents, Predicates.instanceOf(TreeModel.class));
 	}
 }
