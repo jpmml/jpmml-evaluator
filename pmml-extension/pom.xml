@@ -11,7 +11,7 @@
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-extension</artifactId>
 
-	<name>JPMML extension</name>
+	<name>JPMML evaluator extensions</name>
 	<description>JPMML class model evaluator extensions</description>
 
 	<licenses>
@@ -26,11 +26,6 @@
 		<dependency>
 			<groupId>org.jpmml</groupId>
 			<artifactId>pmml-evaluator</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-math3</artifactId>
 		</dependency>
 
 		<dependency>
