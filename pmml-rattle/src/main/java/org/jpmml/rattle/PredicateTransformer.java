@@ -21,11 +21,12 @@ package org.jpmml.rattle;
 import java.util.List;
 
 import org.dmg.pmml.Array;
+import org.dmg.pmml.CompoundPredicate;
+import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.jpmml.evaluator.ArrayUtil;
-import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.model.visitors.PredicateFilterer;
 
 public class PredicateTransformer extends PredicateFilterer {
@@ -44,6 +45,10 @@ public class PredicateTransformer extends PredicateFilterer {
 
 		if(predicate instanceof SimpleSetPredicate){
 			return transform((SimpleSetPredicate)predicate);
+		} else
+
+		if(predicate instanceof CompoundPredicate){
+			return transform((CompoundPredicate)predicate);
 		}
 
 		return predicate;
@@ -57,22 +62,39 @@ public class PredicateTransformer extends PredicateFilterer {
 			return simpleSetPredicate;
 		}
 
-		SimplePredicate.Operator operator;
+		String value = content.get(0);
 
 		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.getBooleanOperator();
 		switch(booleanOperator){
 			case IS_IN:
-				operator = SimplePredicate.Operator.EQUAL;
-				break;
+				return createSimplePredicate(simpleSetPredicate.getField(), SimplePredicate.Operator.EQUAL, value);
 			case IS_NOT_IN:
-				operator = SimplePredicate.Operator.NOT_EQUAL;
-				break;
+				return createSimplePredicate(simpleSetPredicate.getField(), SimplePredicate.Operator.NOT_EQUAL, value);
 			default:
-				throw new UnsupportedFeatureException(simpleSetPredicate, booleanOperator);
+				break;
 		}
 
-		SimplePredicate simplePredicate = new SimplePredicate(simpleSetPredicate.getField(), operator)
-			.setValue(content.get(0));
+		return simpleSetPredicate;
+	}
+
+	private Predicate transform(CompoundPredicate compoundPredicate){
+		List<Predicate> predicates = compoundPredicate.getPredicates();
+
+		CompoundPredicate.BooleanOperator booleanOperator = compoundPredicate.getBooleanOperator();
+		switch(booleanOperator){
+			case SURROGATE:
+				return transform(predicates.get(0));
+			default:
+				break;
+		}
+
+		return compoundPredicate;
+	}
+
+	static
+	private SimplePredicate createSimplePredicate(FieldName field, SimplePredicate.Operator operator, String value){
+		SimplePredicate simplePredicate = new SimplePredicate(field, operator)
+			.setValue(value);
 
 		return simplePredicate;
 	}

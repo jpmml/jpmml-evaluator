@@ -19,6 +19,7 @@
 package org.jpmml.rattle;
 
 import org.dmg.pmml.Array;
+import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Node;
 import org.dmg.pmml.Predicate;
@@ -37,12 +38,29 @@ public class PredicateTransformerTest {
 
 		assertSame(simpleSetPredicate, transform(simpleSetPredicate));
 
+		CompoundPredicate compoundPredicate = new CompoundPredicate(CompoundPredicate.BooleanOperator.XOR)
+			.addPredicates(simpleSetPredicate);
+
+		assertSame(compoundPredicate, transform(compoundPredicate));
+
+		compoundPredicate.setBooleanOperator(CompoundPredicate.BooleanOperator.SURROGATE);
+
+		assertSame(simpleSetPredicate, transform(compoundPredicate));
+
 		simpleSetPredicate.setArray(new Array(Array.Type.INT, "1"));
 
 		SimplePredicate simplePredicate = (SimplePredicate)transform(simpleSetPredicate);
 
 		assertEquals(simpleSetPredicate.getField(), simplePredicate.getField());
 		assertEquals(SimplePredicate.Operator.EQUAL, simplePredicate.getOperator());
+		assertEquals("1", simplePredicate.getValue());
+
+		simpleSetPredicate.setBooleanOperator(SimpleSetPredicate.BooleanOperator.IS_NOT_IN);
+
+		simplePredicate = (SimplePredicate)transform(compoundPredicate);
+
+		assertEquals(simpleSetPredicate.getField(), simplePredicate.getField());
+		assertEquals(SimplePredicate.Operator.NOT_EQUAL, simplePredicate.getOperator());
 		assertEquals("1", simplePredicate.getValue());
 	}
 
