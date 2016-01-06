@@ -174,16 +174,10 @@ mvn clean install
 The resulting uber-JAR file `target/example-1.2-SNAPSHOT.jar` contains the following command-line applications:
 * `org.jpmml.evaluator.EvaluationExample` [(source)] (https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/EvaluationExample.java). Evaluates a PMML model using data records from a TSV or CSV file.
 * `org.jpmml.evaluator.EnhancementExample`. Enhances a PMML model with a ModelVerification element using data records from a TSV or CSV file.
-* `org.jpmml.evaluator.OptimizationExample`. Optimizes a PMML model.
 
 Evaluating model `model.pmml` by loading input data records from `input.tsv` and storing output data records to `output.tsv`:
 ```
 java -cp target/example-1.2-SNAPSHOT.jar org.jpmml.evaluator.EvaluationExample --model model.pmml --input input.tsv --output output.tsv
-```
-
-Optimizing model `model.pmml` by appling a list of four Visitor classes to it. The JVM option `javaagent` loads the [JPMML agent] (https://github.com/jpmml/jpmml-model/tree/master/pmml-agent), which provides memory usage measurement functionality:
-```
-java -javaagent:pmml-agent-1.2-SNAPSHOT.jar -cp target/example-1.2-SNAPSHOT.jar org.jpmml.evaluator.OptimizationExample --model model.pmml --visitor-classes org.jpmml.model.visitors.LocatorNullifier,org.jpmml.model.visitors.ArrayListOptimizer,org.jpmml.model.visitors.StringInterner,org.jpmml.evaluator.visitors.PredicateInterner
 ```
 
 # Documentation #
