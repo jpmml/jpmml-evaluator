@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -143,6 +144,22 @@ public class BatchUtil {
 		List<Map<FieldName, String>> records = new ArrayList<>();
 
 		List<String> headerRow = table.get(0);
+
+		Set<String> uniqueHeaderRow = new LinkedHashSet<>(headerRow);
+
+		if(uniqueHeaderRow.size() < headerRow.size()){
+			List<String> duplicateCells = new ArrayList<>();
+
+			for(int j = 0; j < headerRow.size(); j++){
+				String cell = headerRow.get(j);
+
+				if(Collections.frequency(headerRow, cell) != 1){
+					duplicateCells.add(cell);
+				}
+			}
+
+			throw new IllegalArgumentException("Expected unique cell names, but got non-unique cell name(s) " + duplicateCells);
+		}
 
 		for(int i = 1; i < table.size(); i++){
 			List<String> bodyRow = table.get(i);
