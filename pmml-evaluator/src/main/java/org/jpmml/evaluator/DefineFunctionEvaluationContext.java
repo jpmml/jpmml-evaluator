@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import org.dmg.pmml.DefineFunction;
-import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
 
 public class DefineFunctionEvaluationContext extends EvaluationContext {
@@ -37,13 +36,7 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public Result<DerivedField> resolveDerivedField(FieldName name){
-		// "The function body must not refer to fields other than the parameter fields"
-		return createResult(null);
-	}
-
-	@Override
-	public Result<DefineFunction> resolveFunction(String name){
+	public DefineFunction resolveFunction(String name){
 		EvaluationContext parent = getParent();
 
 		return parent.resolveFunction(name);

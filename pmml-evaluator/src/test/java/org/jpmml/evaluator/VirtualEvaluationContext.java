@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.DefineFunction;
-import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
 
 class VirtualEvaluationContext extends EvaluationContext {
@@ -27,15 +25,5 @@ class VirtualEvaluationContext extends EvaluationContext {
 	@Override
 	public FieldValue createFieldValue(FieldName name, Object value){
 		return FieldValueUtil.create(value);
-	}
-
-	@Override
-	public Result<DerivedField> resolveDerivedField(FieldName name){
-		return createResult(null);
-	}
-
-	@Override
-	public Result<DefineFunction> resolveFunction(String name){
-		return createResult(null);
 	}
 }

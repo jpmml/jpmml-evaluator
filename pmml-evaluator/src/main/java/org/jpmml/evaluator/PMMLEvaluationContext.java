@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Map;
+
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
@@ -45,21 +47,40 @@ public class PMMLEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public Result<DerivedField> resolveDerivedField(FieldName name){
+	public DerivedField resolveDerivedField(FieldName name){
 		PMMLManager pmmlManager = getPmmlManager();
 
 		DerivedField derivedField = pmmlManager.getDerivedField(name);
 
-		return createResult(derivedField);
+		return derivedField;
 	}
 
 	@Override
-	public Result<DefineFunction> resolveFunction(String name){
+	public DefineFunction resolveFunction(String name){
 		PMMLManager pmmlManager = getPmmlManager();
 
 		DefineFunction defineFunction = pmmlManager.getFunction(name);
 
-		return createResult(defineFunction);
+		return defineFunction;
+	}
+
+	@Override
+	public FieldValue evaluate(FieldName name){
+		PMMLManager pmmlManager = getPmmlManager();
+
+		Map.Entry<FieldName, FieldValue> entry = getFieldEntry(name);
+		if(entry != null){
+			return entry.getValue();
+		}
+
+		DerivedField derivedField = pmmlManager.getDerivedField(name);
+		if(derivedField != null){
+			FieldValue value = ExpressionUtil.evaluate(derivedField, this);
+
+			return declare(name, value);
+		}
+
+		throw new MissingFieldException(name);
 	}
 
 	public PMMLManager getPmmlManager(){

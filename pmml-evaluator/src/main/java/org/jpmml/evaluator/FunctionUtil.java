@@ -52,9 +52,9 @@ public class FunctionUtil {
 			return userDefinedFunction.evaluate(values);
 		}
 
-		EvaluationContext.Result<DefineFunction> result = context.resolveFunction(name);
-		if(result != null){
-			return evaluate(result.getElement(), values, context);
+		DefineFunction defineFunction = context.resolveFunction(name);
+		if(defineFunction != null){
+			return evaluate(defineFunction, values, context);
 		}
 
 		throw new UnsupportedFeatureException(apply, ReflectionUtil.getField(apply, "function"), name);

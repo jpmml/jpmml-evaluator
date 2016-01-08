@@ -24,12 +24,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.PMMLObject;
 
 abstract
 public class EvaluationContext {
@@ -42,23 +40,18 @@ public class EvaluationContext {
 	abstract
 	public FieldValue createFieldValue(FieldName name, Object value);
 
-	abstract
-	public Result<DerivedField> resolveDerivedField(FieldName name);
+	public DerivedField resolveDerivedField(FieldName name){
+		return null;
+	}
 
-	abstract
-	public Result<DefineFunction> resolveFunction(String name);
+	public DefineFunction resolveFunction(String name){
+		return null;
+	}
 
 	public FieldValue evaluate(FieldName name){
 		Map.Entry<FieldName, FieldValue> entry = getFieldEntry(name);
 		if(entry != null){
 			return entry.getValue();
-		}
-
-		EvaluationContext.Result<DerivedField> result = resolveDerivedField(name);
-		if(result != null){
-			FieldValue value = ExpressionUtil.evaluate(result.getElement(), this);
-
-			return declare(name, value);
 		}
 
 		throw new MissingFieldException(name);
@@ -73,13 +66,19 @@ public class EvaluationContext {
 	public Map.Entry<FieldName, FieldValue> getFieldEntry(FieldName name){
 		Map<FieldName, FieldValue> fields = getFields();
 
-		if(fields.containsKey(name)){
-			FieldValue value = fields.get(name);
+		FieldValue value = fields.get(name);
 
-			return new AbstractMap.SimpleImmutableEntry<>(name, value);
+		// Distinguish between "key not present" and "key present, but mapped to null value" cases
+		if(value == null){
+
+			if(!fields.containsKey(name)){
+				return null;
+			}
 		}
 
-		return null;
+		Map.Entry<FieldName, FieldValue> result = new AbstractMap.SimpleImmutableEntry<>(name, value);
+
+		return result;
 	}
 
 	public FieldValue declare(FieldName name, Object value){
@@ -124,36 +123,5 @@ public class EvaluationContext {
 
 	public List<String> getWarnings(){
 		return this.warnings;
-	}
-
-	<E extends PMMLObject> Result<E> createResult(E element){
-
-		if(element != null){
-			return new Result<>(element);
-		}
-
-		return null;
-	}
-
-	public class Result<E extends PMMLObject> {
-
-		private E element = null;
-
-
-		Result(E element){
-			setElement(Objects.requireNonNull(element));
-		}
-
-		public EvaluationContext getContext(){
-			return EvaluationContext.this;
-		}
-
-		public E getElement(){
-			return this.element;
-		}
-
-		private void setElement(E element){
-			this.element = element;
-		}
 	}
 }

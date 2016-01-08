@@ -19,9 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
@@ -36,12 +34,56 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 	private Map<FieldName, ?> arguments = Collections.emptyMap();
 
+	/**
+	 * A flag indicating if this evaluation context "sees" field values that correspond to DataField elements exactly the same as its parent evaluation context.
+	 */
 	private boolean compatible = false;
 
 
 	public ModelEvaluationContext(ModelEvaluationContext parent, ModelEvaluator<?> modelEvaluator){
 		setParent(parent);
 		setModelEvaluator(modelEvaluator);
+	}
+
+	@Override
+	public FieldValue createFieldValue(FieldName name, Object value){
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
+
+		MiningField miningField = modelEvaluator.getMiningField(name);
+		if(miningField == null){
+			throw new EvaluationException();
+		}
+
+		return EvaluatorUtil.prepare(modelEvaluator, name, value);
+	}
+
+	@Override
+	public DerivedField resolveDerivedField(FieldName name){
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
+
+		DerivedField localDerivedField = modelEvaluator.getLocalDerivedField(name);
+		if(localDerivedField != null){
+			return localDerivedField;
+		}
+
+		ModelEvaluationContext parent = getParent();
+
+		if(parent != null){
+			return parent.resolveDerivedField(name);
+		}
+
+		DerivedField derivedField = modelEvaluator.getDerivedField(name);
+
+		return derivedField;
+	}
+
+	@Override
+	public DefineFunction resolveFunction(String name){
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
+
+		DefineFunction defineFunction = modelEvaluator.getFunction(name);
+
+		return defineFunction;
 	}
 
 	@Override
@@ -53,9 +95,33 @@ public class ModelEvaluationContext extends EvaluationContext {
 			return entry.getValue();
 		}
 
+		DerivedField localDerivedField = modelEvaluator.getLocalDerivedField(name);
+		if(localDerivedField != null){
+			FieldValue value = ExpressionUtil.evaluate(localDerivedField, this);
+
+			return declare(name, value);
+		}
+
+		ModelEvaluationContext parent = getParent();
+
+		DerivedField derivedField = modelEvaluator.getDerivedField(name);
+		if(derivedField != null){
+			FieldValue value;
+
+			// Perform the evaluation of a global DerivedField element at the highest compatible level
+			if(parent != null && isCompatible()){
+				value = parent.evaluate(name);
+			} else
+
+			{
+				value = ExpressionUtil.evaluate(derivedField, this);
+			}
+
+			return declare(name, value);
+		}
+
 		MiningField miningField = modelEvaluator.getMiningField(name);
 		if(miningField != null){
-			ModelEvaluationContext parent = getParent();
 
 			if(parent != null){
 				FieldValue value = parent.evaluate(name);
@@ -75,127 +141,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 			return declare(name, value);
 		}
 
-		Iterator<ModelEvaluationContext> parents = getCompatibleParents();
-		while(parents.hasNext()){
-			ModelEvaluationContext parent = parents.next();
-
-			entry = parent.getFieldEntry(name);
-			if(entry != null){
-				FieldValue value = entry.getValue();
-
-				return declare(name, value);
-			}
-		}
-
-		Result<DerivedField> result = resolveDerivedField(name);
-		if(result != null){
-			FieldValue value = ExpressionUtil.evaluate(result.getElement(), this);
-
-			declare(name, value);
-
-			parents = getCompatibleParents();
-			while(parents.hasNext()){
-				ModelEvaluationContext parent = parents.next();
-
-				parent.declare(name, value);
-
-				if((result.getContext()).equals(parent)){
-					break;
-				}
-			}
-
-			return value;
-		}
-
 		throw new MissingFieldException(name);
-	}
-
-	@Override
-	public FieldValue createFieldValue(FieldName name, Object value){
-		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
-
-		MiningField miningField = modelEvaluator.getMiningField(name);
-		if(miningField == null){
-			throw new EvaluationException();
-		}
-
-		return EvaluatorUtil.prepare(modelEvaluator, name, value);
-	}
-
-	@Override
-	public Result<DerivedField> resolveDerivedField(FieldName name){
-		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
-
-		DerivedField derivedField = modelEvaluator.getLocalDerivedField(name);
-		if(derivedField == null){
-			ModelEvaluationContext parent = getParent();
-
-			// The resolution of DerivedField elements must be handled by ModelEvaluationContext that is "closest" to them
-			if(parent != null){
-				return parent.resolveDerivedField(name);
-			}
-
-			derivedField = modelEvaluator.getDerivedField(name);
-		}
-
-		return createResult(derivedField);
-	}
-
-	@Override
-	public Result<DefineFunction> resolveFunction(String name){
-		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
-
-		DefineFunction defineFunction = modelEvaluator.getFunction(name);
-
-		return createResult(defineFunction);
-	}
-
-	Iterator<ModelEvaluationContext> getCompatibleParents(){
-		Iterator<ModelEvaluationContext> result = new Iterator<ModelEvaluationContext>(){
-
-			private ModelEvaluationContext parent = getParent(ModelEvaluationContext.this);
-
-
-			@Override
-			public boolean hasNext(){
-				return (this.parent != null);
-			}
-
-			@Override
-			public ModelEvaluationContext next(){
-				ModelEvaluationContext result = this.parent;
-
-				if(result == null){
-					throw new NoSuchElementException();
-				}
-
-				this.parent = getParent(result);
-
-				return result;
-			}
-
-			@Override
-			public void remove(){
-				throw new UnsupportedOperationException();
-			}
-
-			private ModelEvaluationContext getParent(ModelEvaluationContext context){
-				ModelEvaluationContext parent = context.getParent();
-
-				if(parent != null){
-
-					if(!context.isCompatible()){
-						return null;
-					}
-
-					return parent;
-				}
-
-				return null;
-			}
-		};
-
-		return result;
 	}
 
 	public ModelEvaluationContext getParent(){
