@@ -22,9 +22,9 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 import org.dmg.pmml.FieldName;
-import org.jpmml.evaluator.IntegrationTest;
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
+import org.jpmml.evaluator.IntegrationTest;
 import org.jpmml.evaluator.NodeScoreDistribution;
 import org.junit.Test;
 
@@ -82,6 +82,11 @@ public class ClassificationTest extends IntegrationTest {
 	@Test
 	public void evaluateRandomForestIris() throws Exception {
 		evaluate("RandomForest", "Iris");
+	}
+
+	@Test
+	public void evaluateRandomForestXformIris() throws Exception {
+		evaluate("RandomForestXform", "Iris");
 	}
 
 	@Test

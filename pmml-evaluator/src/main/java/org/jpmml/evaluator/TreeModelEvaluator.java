@@ -125,7 +125,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return TargetUtil.evaluateClassification(result, context);
 	}
 
-	private Node evaluateTree(Trail trail, ModelEvaluationContext context){
+	private Node evaluateTree(Trail trail, EvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		Node root = treeModel.getNode();

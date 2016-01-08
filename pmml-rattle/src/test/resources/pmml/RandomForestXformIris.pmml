@@ -1,0 +1,443 @@
+<?xml version="1.0"?>
+<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_2 http://www.dmg.org/v4-2/pmml-4-2.xsd">
+ <Header copyright="Copyright (c) 2016 vfed" description="Random Forest Tree Model">
+  <Extension name="user" value="vfed" extender="Rattle/PMML"/>
+  <Application name="Rattle/PMML" version="1.4"/>
+  <Timestamp>2016-01-08 21:53:56</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="5">
+  <DataField name="Species" optype="categorical" dataType="string">
+   <Value value="setosa"/>
+   <Value value="versicolor"/>
+   <Value value="virginica"/>
+  </DataField>
+  <DataField name="Sepal_Length" optype="continuous" dataType="double"/>
+  <DataField name="Sepal_Width" optype="continuous" dataType="double"/>
+  <DataField name="Petal_Length" optype="continuous" dataType="double"/>
+  <DataField name="Petal_Width" optype="continuous" dataType="double"/>
+ </DataDictionary>
+ <MiningModel modelName="randomForest_Model" algorithmName="randomForest" functionName="classification">
+  <MiningSchema>
+   <MiningField name="Species" usageType="predicted"/>
+   <MiningField name="Sepal_Length" usageType="active"/>
+   <MiningField name="Sepal_Width" usageType="active"/>
+   <MiningField name="Petal_Length" usageType="active"/>
+   <MiningField name="Petal_Width" usageType="active"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="Predicted_Species" feature="predictedValue"/>
+   <OutputField name="Probability_setosa" optype="continuous" dataType="double" feature="probability" value="setosa"/>
+   <OutputField name="Probability_versicolor" optype="continuous" dataType="double" feature="probability" value="versicolor"/>
+   <OutputField name="Probability_virginica" optype="continuous" dataType="double" feature="probability" value="virginica"/>
+  </Output>
+  <LocalTransformations>
+   <DerivedField name="derived_Sepal_Length" dataType="double" optype="continuous">
+    <NormContinuous field="Sepal_Length">
+     <LinearNorm orig="5.84333333333333" norm="0"/>
+     <LinearNorm orig="6.6713994613112" norm="1"/>
+    </NormContinuous>
+   </DerivedField>
+   <DerivedField name="derived_Sepal_Width" dataType="double" optype="continuous">
+    <NormContinuous field="Sepal_Width">
+     <LinearNorm orig="3.05733333333333" norm="0"/>
+     <LinearNorm orig="3.49319961827003" norm="1"/>
+    </NormContinuous>
+   </DerivedField>
+   <DerivedField name="derived_Petal_Length" dataType="double" optype="continuous">
+    <NormContinuous field="Petal_Length">
+     <LinearNorm orig="3.758" norm="0"/>
+     <LinearNorm orig="5.52329823325947" norm="1"/>
+    </NormContinuous>
+   </DerivedField>
+   <DerivedField name="derived_Petal_Width" dataType="double" optype="continuous">
+    <NormContinuous field="Petal_Width">
+     <LinearNorm orig="1.19933333333333" norm="0"/>
+     <LinearNorm orig="1.96157100229368" norm="1"/>
+    </NormContinuous>
+   </DerivedField>
+  </LocalTransformations>
+  <Segmentation multipleModelMethod="majorityVote">
+   <Segment id="1">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="Species" usageType="predicted"/>
+      <MiningField name="derived_Sepal_Length" usageType="active"/>
+      <MiningField name="derived_Sepal_Width" usageType="active"/>
+      <MiningField name="derived_Petal_Length" usageType="active"/>
+      <MiningField name="derived_Petal_Width" usageType="active"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2">
+       <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.561944707874294958"/>
+       <Node id="4" score="setosa">
+        <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="-0.740951288205219716"/>
+       </Node>
+       <Node id="5" score="versicolor">
+        <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="-0.740951288205219716"/>
+       </Node>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.561944707874294958"/>
+       <Node id="6">
+        <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.731887663884666417"/>
+        <Node id="8" score="versicolor">
+         <SimplePredicate field="derived_Petal_Width" operator="lessOrEqual" value="0.722434339171072359"/>
+        </Node>
+        <Node id="9" score="virginica">
+         <SimplePredicate field="derived_Petal_Width" operator="greaterThan" value="0.722434339171072359"/>
+        </Node>
+       </Node>
+       <Node id="7" score="virginica">
+        <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.731887663884666417"/>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="2">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="Species" usageType="predicted"/>
+      <MiningField name="derived_Sepal_Length" usageType="active"/>
+      <MiningField name="derived_Sepal_Width" usageType="active"/>
+      <MiningField name="derived_Petal_Length" usageType="active"/>
+      <MiningField name="derived_Petal_Width" usageType="active"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="setosa">
+       <SimplePredicate field="derived_Petal_Width" operator="lessOrEqual" value="-0.523896088575632524"/>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="derived_Petal_Width" operator="greaterThan" value="-0.523896088575632524"/>
+       <Node id="4">
+        <SimplePredicate field="derived_Petal_Width" operator="lessOrEqual" value="0.722434339171072359"/>
+        <Node id="6">
+         <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.87350679389330943"/>
+         <Node id="10">
+          <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.675240011881209412"/>
+          <Node id="14">
+           <SimplePredicate field="derived_Sepal_Length" operator="lessOrEqual" value="-1.0184371813308597"/>
+           <Node id="18" score="versicolor">
+            <SimplePredicate field="derived_Petal_Width" operator="lessOrEqual" value="0.197663632751407164"/>
+           </Node>
+           <Node id="19" score="virginica">
+            <SimplePredicate field="derived_Petal_Width" operator="greaterThan" value="0.197663632751407164"/>
+           </Node>
+          </Node>
+          <Node id="15" score="versicolor">
+           <SimplePredicate field="derived_Sepal_Length" operator="greaterThan" value="-1.0184371813308597"/>
+          </Node>
+         </Node>
+         <Node id="11">
+          <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.675240011881209412"/>
+          <Node id="16" score="virginica">
+           <SimplePredicate field="derived_Sepal_Width" operator="lessOrEqual" value="-1.04925145426137423"/>
+          </Node>
+          <Node id="17" score="versicolor">
+           <SimplePredicate field="derived_Sepal_Width" operator="greaterThan" value="-1.04925145426137423"/>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="7" score="virginica">
+         <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.87350679389330943"/>
+        </Node>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="derived_Petal_Width" operator="greaterThan" value="0.722434339171072359"/>
+        <Node id="8">
+         <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.618592359877752296"/>
+         <Node id="12" score="versicolor">
+          <SimplePredicate field="derived_Sepal_Length" operator="lessOrEqual" value="0.128814188943033342"/>
+         </Node>
+         <Node id="13" score="virginica">
+          <SimplePredicate field="derived_Sepal_Length" operator="greaterThan" value="0.128814188943033342"/>
+         </Node>
+        </Node>
+        <Node id="9" score="virginica">
+         <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.618592359877752296"/>
+        </Node>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="3">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="Species" usageType="predicted"/>
+      <MiningField name="derived_Sepal_Length" usageType="active"/>
+      <MiningField name="derived_Sepal_Width" usageType="active"/>
+      <MiningField name="derived_Petal_Length" usageType="active"/>
+      <MiningField name="derived_Petal_Width" usageType="active"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="setosa">
+       <SimplePredicate field="derived_Petal_Width" operator="lessOrEqual" value="-0.523896088575632524"/>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="derived_Petal_Width" operator="greaterThan" value="-0.523896088575632524"/>
+       <Node id="4">
+        <SimplePredicate field="derived_Petal_Width" operator="lessOrEqual" value="0.722434339171072359"/>
+        <Node id="6" score="versicolor">
+         <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.731887663884666417"/>
+        </Node>
+        <Node id="7" score="virginica">
+         <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.731887663884666417"/>
+        </Node>
+       </Node>
+       <Node id="5" score="virginica">
+        <SimplePredicate field="derived_Petal_Width" operator="greaterThan" value="0.722434339171072359"/>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="4">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="Species" usageType="predicted"/>
+      <MiningField name="derived_Sepal_Length" usageType="active"/>
+      <MiningField name="derived_Sepal_Width" usageType="active"/>
+      <MiningField name="derived_Petal_Length" usageType="active"/>
+      <MiningField name="derived_Petal_Width" usageType="active"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2">
+       <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.618592359877752296"/>
+       <Node id="4" score="setosa">
+        <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="-0.740951288205219716"/>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="-0.740951288205219716"/>
+        <Node id="8" score="versicolor">
+         <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.561944707874294958"/>
+        </Node>
+        <Node id="9">
+         <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.561944707874294958"/>
+         <Node id="12">
+          <SimplePredicate field="derived_Sepal_Width" operator="lessOrEqual" value="-0.131538812050259607"/>
+          <Node id="14" score="virginica">
+           <SimplePredicate field="derived_Sepal_Length" operator="lessOrEqual" value="0.793012350680549982"/>
+          </Node>
+          <Node id="15" score="versicolor">
+           <SimplePredicate field="derived_Sepal_Length" operator="greaterThan" value="0.793012350680549982"/>
+          </Node>
+         </Node>
+         <Node id="13" score="versicolor">
+          <SimplePredicate field="derived_Sepal_Width" operator="greaterThan" value="-0.131538812050259607"/>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.618592359877752296"/>
+       <Node id="6">
+        <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.675240011881209412"/>
+        <Node id="10" score="virginica">
+         <SimplePredicate field="derived_Sepal_Length" operator="lessOrEqual" value="0.793012350680549982"/>
+        </Node>
+        <Node id="11" score="versicolor">
+         <SimplePredicate field="derived_Sepal_Length" operator="greaterThan" value="0.793012350680549982"/>
+        </Node>
+       </Node>
+       <Node id="7" score="virginica">
+        <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.675240011881209412"/>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="5">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="Species" usageType="predicted"/>
+      <MiningField name="derived_Sepal_Length" usageType="active"/>
+      <MiningField name="derived_Sepal_Width" usageType="active"/>
+      <MiningField name="derived_Petal_Length" usageType="active"/>
+      <MiningField name="derived_Petal_Width" usageType="active"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="setosa">
+       <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="-0.655979810200034041"/>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="-0.655979810200034041"/>
+       <Node id="4">
+        <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.561944707874294958"/>
+        <Node id="6" score="virginica">
+         <SimplePredicate field="derived_Sepal_Length" operator="lessOrEqual" value="-1.07881883239790666"/>
+        </Node>
+        <Node id="7" score="versicolor">
+         <SimplePredicate field="derived_Sepal_Length" operator="greaterThan" value="-1.07881883239790666"/>
+        </Node>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.561944707874294958"/>
+        <Node id="8">
+         <SimplePredicate field="derived_Petal_Width" operator="lessOrEqual" value="0.722434339171072359"/>
+         <Node id="10" score="virginica">
+          <SimplePredicate field="derived_Petal_Width" operator="lessOrEqual" value="0.460048985961239831"/>
+         </Node>
+         <Node id="11">
+          <SimplePredicate field="derived_Petal_Width" operator="greaterThan" value="0.460048985961239831"/>
+          <Node id="14" score="versicolor">
+           <SimplePredicate field="derived_Sepal_Length" operator="lessOrEqual" value="1.33644721028397306"/>
+          </Node>
+          <Node id="15" score="virginica">
+           <SimplePredicate field="derived_Sepal_Length" operator="greaterThan" value="1.33644721028397306"/>
+          </Node>
+         </Node>
+        </Node>
+        <Node id="9">
+         <SimplePredicate field="derived_Petal_Width" operator="greaterThan" value="0.722434339171072359"/>
+         <Node id="12">
+          <SimplePredicate field="derived_Sepal_Length" operator="lessOrEqual" value="0.249577491077127456"/>
+          <Node id="16" score="virginica">
+           <SimplePredicate field="derived_Sepal_Width" operator="lessOrEqual" value="0.0978893485025193466"/>
+          </Node>
+          <Node id="17" score="versicolor">
+           <SimplePredicate field="derived_Sepal_Width" operator="greaterThan" value="0.0978893485025193466"/>
+          </Node>
+         </Node>
+         <Node id="13" score="virginica">
+          <SimplePredicate field="derived_Sepal_Length" operator="greaterThan" value="0.249577491077127456"/>
+         </Node>
+        </Node>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="6">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="Species" usageType="predicted"/>
+      <MiningField name="derived_Sepal_Length" usageType="active"/>
+      <MiningField name="derived_Sepal_Width" usageType="active"/>
+      <MiningField name="derived_Petal_Length" usageType="active"/>
+      <MiningField name="derived_Petal_Width" usageType="active"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="setosa">
+       <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="-0.740951288205219716"/>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="-0.740951288205219716"/>
+       <Node id="4">
+        <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.561944707874294958"/>
+        <Node id="6" score="virginica">
+         <SimplePredicate field="derived_Sepal_Length" operator="lessOrEqual" value="-1.07881883239790666"/>
+        </Node>
+        <Node id="7" score="versicolor">
+         <SimplePredicate field="derived_Sepal_Length" operator="greaterThan" value="-1.07881883239790666"/>
+        </Node>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.561944707874294958"/>
+        <Node id="8">
+         <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.731887663884666417"/>
+         <Node id="10">
+          <SimplePredicate field="derived_Petal_Width" operator="lessOrEqual" value="0.722434339171072359"/>
+          <Node id="12" score="versicolor">
+           <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.675240011881209412"/>
+          </Node>
+          <Node id="13">
+           <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.675240011881209412"/>
+           <Node id="14" score="virginica">
+            <SimplePredicate field="derived_Petal_Width" operator="lessOrEqual" value="0.525645324263697922"/>
+           </Node>
+           <Node id="15" score="versicolor">
+            <SimplePredicate field="derived_Petal_Width" operator="greaterThan" value="0.525645324263697922"/>
+           </Node>
+          </Node>
+         </Node>
+         <Node id="11" score="virginica">
+          <SimplePredicate field="derived_Petal_Width" operator="greaterThan" value="0.722434339171072359"/>
+         </Node>
+        </Node>
+        <Node id="9" score="virginica">
+         <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.731887663884666417"/>
+        </Node>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="7">
+    <True/>
+    <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
+     <MiningSchema>
+      <MiningField name="Species" usageType="predicted"/>
+      <MiningField name="derived_Sepal_Length" usageType="active"/>
+      <MiningField name="derived_Sepal_Width" usageType="active"/>
+      <MiningField name="derived_Petal_Length" usageType="active"/>
+      <MiningField name="derived_Petal_Width" usageType="active"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="setosa">
+       <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="-0.712627462203491158"/>
+      </Node>
+      <Node id="3">
+       <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="-0.712627462203491158"/>
+       <Node id="4">
+        <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.675240011881209412"/>
+        <Node id="6" score="versicolor">
+         <SimplePredicate field="derived_Sepal_Width" operator="lessOrEqual" value="-0.93453737398498482"/>
+        </Node>
+        <Node id="7">
+         <SimplePredicate field="derived_Sepal_Width" operator="greaterThan" value="-0.93453737398498482"/>
+         <Node id="10" score="versicolor">
+          <SimplePredicate field="derived_Petal_Width" operator="lessOrEqual" value="0.656838000868614325"/>
+         </Node>
+         <Node id="11">
+          <SimplePredicate field="derived_Petal_Width" operator="greaterThan" value="0.656838000868614325"/>
+          <Node id="14">
+           <SimplePredicate field="derived_Sepal_Length" operator="lessOrEqual" value="0.128814188943033342"/>
+           <Node id="16" score="virginica">
+            <SimplePredicate field="derived_Sepal_Length" operator="lessOrEqual" value="-0.11271241532515483"/>
+           </Node>
+           <Node id="17" score="versicolor">
+            <SimplePredicate field="derived_Sepal_Length" operator="greaterThan" value="-0.11271241532515483"/>
+           </Node>
+          </Node>
+          <Node id="15" score="virginica">
+           <SimplePredicate field="derived_Sepal_Length" operator="greaterThan" value="0.128814188943033342"/>
+          </Node>
+         </Node>
+        </Node>
+       </Node>
+       <Node id="5">
+        <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.675240011881209412"/>
+        <Node id="8">
+         <SimplePredicate field="derived_Petal_Length" operator="lessOrEqual" value="0.731887663884666417"/>
+         <Node id="12" score="virginica">
+          <SimplePredicate field="derived_Sepal_Length" operator="lessOrEqual" value="0.793012350680550093"/>
+         </Node>
+         <Node id="13" score="versicolor">
+          <SimplePredicate field="derived_Sepal_Length" operator="greaterThan" value="0.793012350680550093"/>
+         </Node>
+        </Node>
+        <Node id="9" score="virginica">
+         <SimplePredicate field="derived_Petal_Length" operator="greaterThan" value="0.731887663884666417"/>
+        </Node>
+       </Node>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+  </Segmentation>
+ </MiningModel>
+</PMML>

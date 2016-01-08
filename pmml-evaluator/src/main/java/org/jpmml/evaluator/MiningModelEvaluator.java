@@ -37,7 +37,9 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.EmbeddedModel;
+import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MiningField;
@@ -301,28 +303,39 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			for(FieldName inputField : inputFields){
 				MiningField miningField = evaluator.getMiningField(inputField);
 
-				OutputField outputField = null;
+				Field field = null;
 
-				switch(multipleModelMethod){
-					case MODEL_CHAIN:
-						outputField = segmentOutputFields.get(inputField);
-						break;
-					default:
-						break;
-				}
+				FieldValue value;
 
-				if(outputField == null){
-					throw new InvalidFeatureException(miningField);
-				}
+				DerivedField derivedField = context.resolveDerivedField(inputField);
+				if(derivedField != null){
+					field = derivedField;
 
-				FieldValue value = context.getField(inputField);
-
-				if(value == null){
-					value = FieldValueUtil.performMissingValueTreatment(outputField, miningField);
+					value = context.evaluate(inputField);
 				} else
 
 				{
-					value = FieldValueUtil.performValidValueTreatment(outputField, miningField, FieldValueUtil.getValue(value));
+					switch(multipleModelMethod){
+						case MODEL_CHAIN:
+							field = segmentOutputFields.get(inputField);
+							break;
+						default:
+							break;
+					}
+
+					if(field == null){
+						throw new InvalidFeatureException(miningField);
+					}
+
+					value = context.getField(inputField);
+				} // End if
+
+				if(value == null){
+					value = FieldValueUtil.performMissingValueTreatment(field, miningField);
+				} else
+
+				{
+					value = FieldValueUtil.performValidValueTreatment(field, miningField, FieldValueUtil.getValue(value));
 				}
 
 				segmentContext.declare(inputField, value);
@@ -462,6 +475,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				compatible &= MiningFieldUtil.isDefault(miningField);
 			} else
 
+			// "A reference to the DerivedField of the parent model"
 			// "A reference to the OutputField of a model that is defined in a Segment that appears above/earlier in the parent model"
 			{
 				inputFields.add(activeField);

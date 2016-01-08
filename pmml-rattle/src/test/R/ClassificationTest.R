@@ -2,12 +2,21 @@ library("e1071")
 library("kernlab")
 library("nnet")
 library("pmml")
+library("pmmlTransformations")
 library("randomForest")
 library("rpart")
 
 irisData = readCsv("csv/Iris.csv")
 
 irisFormula = formula(Species ~ .)
+
+irisBox = WrapData(irisData)
+irisBox = ZScoreXform(irisBox, xformInfo = "Sepal_Length")
+irisBox = ZScoreXform(irisBox, xformInfo = "Sepal_Width")
+irisBox = ZScoreXform(irisBox, xformInfo = "Petal_Length")
+irisBox = ZScoreXform(irisBox, xformInfo = "Petal_Width")
+
+irisXformFormula = formula(Species ~ derived_Sepal_Length + derived_Sepal_Width + derived_Petal_Length + derived_Petal_Width)
 
 writeIris = function(classes, probabilities, file){
 	result = data.frame("Species" = classes, "Predicted_Species" = classes)
@@ -103,6 +112,17 @@ generateRandomForestIris = function(){
 	writeIris(classes, probabilities, "csv/RandomForestIris.csv")
 }
 
+generateRandomForestXformIris = function(){
+	set.seed(42)
+
+	randomForest = randomForest(irisXformFormula, irisBox$data, ntree = 7)
+	saveXML(pmml(randomForest, transform = irisBox), "pmml/RandomForestXformIris.pmml")
+
+	classes = predict(randomForest, newdata = irisBox$data, type = "class")
+	probabilities = predict(randomForest, newdata = irisBox$data, type = "prob")
+	writeIris(classes, probabilities, "csv/RandomForestXformIris.csv")
+}
+
 generateDecisionTreeIris()
 generateKernlabSVMIris()
 generateLibSVMIris()
@@ -110,6 +130,7 @@ generateLogisticRegressionIris()
 generateNaiveBayesIris()
 generateNeuralNetworkIris()
 generateRandomForestIris()
+generateRandomForestXformIris()
 
 versicolorData = readCsv("csv/Versicolor.csv")
 versicolorData$Species = as.factor(versicolorData$Species)
