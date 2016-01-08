@@ -120,25 +120,26 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		for(NeuralOutput neuralOutput : neuralOutputs){
 			String id = neuralOutput.getOutputNeuron();
 
-			Expression expression = getExpression(neuralOutput.getDerivedField(), context);
+			Expression expression = getOutputExpression(neuralOutput);
+
 			if(expression instanceof FieldRef){
 				FieldRef fieldRef = (FieldRef)expression;
 
-				FieldName field = fieldRef.getField();
+				FieldName name = fieldRef.getField();
 
 				Double value = entityOutputs.get(id);
 
-				result.put(field, value);
+				result.put(name, value);
 			} else
 
 			if(expression instanceof NormContinuous){
 				NormContinuous normContinuous = (NormContinuous)expression;
 
-				FieldName field = normContinuous.getField();
+				FieldName name = normContinuous.getField();
 
 				Double value = NormalizationUtil.denormalize(normContinuous, entityOutputs.get(id));
 
-				result.put(field, value);
+				result.put(name, value);
 			} else
 
 			{
@@ -169,20 +170,21 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		for(NeuralOutput neuralOutput : neuralOutputs){
 			String id = neuralOutput.getOutputNeuron();
 
-			Expression expression = getExpression(neuralOutput.getDerivedField(), context);
+			Entity entity = entityRegistry.get(id);
+
+			Expression expression = getOutputExpression(neuralOutput);
+
 			if(expression instanceof NormDiscrete){
 				NormDiscrete normDiscrete = (NormDiscrete)expression;
 
-				FieldName field = normDiscrete.getField();
+				FieldName name = normDiscrete.getField();
 
-				EntityProbabilityDistribution<Entity> values = result.get(field);
+				EntityProbabilityDistribution<Entity> values = result.get(name);
 				if(values == null){
 					values = new EntityProbabilityDistribution<>(entityRegistry);
 
-					result.put(field, values);
+					result.put(name, values);
 				}
-
-				Entity entity = entityRegistry.get(id);
 
 				Double value = entityOutputs.get(id);
 
@@ -197,18 +199,16 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return TargetUtil.evaluateClassification(result, context);
 	}
 
-	private Expression getExpression(DerivedField derivedField, EvaluationContext context){
+	private Expression getOutputExpression(NeuralOutput neuralOutput){
+
+		DerivedField derivedField = neuralOutput.getDerivedField();
+		if(derivedField == null){
+			throw new InvalidFeatureException(neuralOutput);
+		}
+
 		Expression expression = derivedField.getExpression();
-
-		if(expression instanceof FieldRef){
-			FieldRef fieldRef = (FieldRef)expression;
-
-			DerivedField referencedDerivedField = context.resolveDerivedField(fieldRef.getField());
-			if(referencedDerivedField != null){
-				return getExpression(referencedDerivedField, context);
-			}
-
-			return fieldRef;
+		if(expression == null){
+			throw new InvalidFeatureException(derivedField);
 		}
 
 		return expression;
@@ -220,7 +220,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	 * @see NeuralInput#getId()
 	 * @see Neuron#getId()
 	 */
-	public Map<String, Double> evaluateRaw(EvaluationContext context){
+	private Map<String, Double> evaluateRaw(EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
 		Map<String, Double> result = new HashMap<>();
