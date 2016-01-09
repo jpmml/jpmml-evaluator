@@ -216,6 +216,7 @@
 				<version>2.19</version>
 				<configuration>
 					<argLine>${jacoco.agent}</argLine>
+					<trimStackTrace>false</trimStackTrace>
 				</configuration>
 			</plugin>
 			<plugin>

@@ -36,10 +36,10 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public DefineFunction resolveFunction(String name){
+	protected DefineFunction resolveDefineFunction(String name){
 		EvaluationContext parent = getParent();
 
-		return parent.resolveFunction(name);
+		return parent.resolveDefineFunction(name);
 	}
 
 	public EvaluationContext getParent(){

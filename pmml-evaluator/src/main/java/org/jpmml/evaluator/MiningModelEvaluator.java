@@ -20,7 +20,6 @@ package org.jpmml.evaluator;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -299,47 +298,16 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			ModelEvaluationContext segmentContext = evaluator.createContext(context);
 			segmentContext.setCompatible(segmentHandler.isCompatible());
 
-			Collection<FieldName> inputFields = segmentHandler.getInputFields();
-			for(FieldName inputField : inputFields){
-				MiningField miningField = evaluator.getMiningField(inputField);
+			Map<FieldName, FieldValueReference> segmentArguments = new HashMap<>();
 
-				Field field = null;
+			List<FieldProxy> fieldProxies = segmentHandler.getFieldProxies();
+			for(FieldProxy fieldProxy : fieldProxies){
+				FieldValueReference fieldValueReference = fieldProxy.createFieldValueReference(segmentOutputFields, context);
 
-				FieldValue value;
-
-				DerivedField derivedField = context.resolveDerivedField(inputField);
-				if(derivedField != null){
-					field = derivedField;
-
-					value = context.evaluate(inputField);
-				} else
-
-				{
-					switch(multipleModelMethod){
-						case MODEL_CHAIN:
-							field = segmentOutputFields.get(inputField);
-							break;
-						default:
-							break;
-					}
-
-					if(field == null){
-						throw new InvalidFeatureException(miningField);
-					}
-
-					value = context.getField(inputField);
-				} // End if
-
-				if(value == null){
-					value = FieldValueUtil.performMissingValueTreatment(field, miningField);
-				} else
-
-				{
-					value = FieldValueUtil.performValidValueTreatment(field, miningField, FieldValueUtil.getValue(value));
-				}
-
-				segmentContext.declare(inputField, value);
+				segmentArguments.put(fieldValueReference.getName(), fieldValueReference);
 			}
+
+			segmentContext.setArguments(segmentArguments);
 
 			Map<FieldName, ?> result;
 
@@ -462,7 +430,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		boolean compatible = true;
 
-		Set<FieldName> inputFields = new LinkedHashSet<>();
+		List<FieldProxy> fieldProxies = new ArrayList<>();
 
 		List<FieldName> activeFields = evaluator.getActiveFields();
 		for(FieldName activeField : activeFields){
@@ -473,16 +441,24 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			// "A reference to the MiningField of the parent model"
 			if(dataField != null){
 				compatible &= MiningFieldUtil.isDefault(miningField);
-			} else
+
+				continue;
+			}
+
+			DerivedField derivedField = getLocalDerivedField(activeField);
 
 			// "A reference to the DerivedField of the parent model"
+			if(derivedField != null){
+				fieldProxies.add(new DerivedFieldProxy(miningField, derivedField));
+			} else
+
 			// "A reference to the OutputField of a model that is defined in a Segment that appears above/earlier in the parent model"
 			{
-				inputFields.add(activeField);
+				fieldProxies.add(new OutputFieldProxy(miningField));
 			}
 		}
 
-		SegmentHandler result = new SegmentHandler(evaluator, compatible, inputFields);
+		SegmentHandler result = new SegmentHandler(evaluator, compatible, fieldProxies);
 
 		return result;
 	}
@@ -651,13 +627,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		private boolean compatible = false;
 
-		private Set<FieldName> inputFields = null;
+		private List<FieldProxy> fieldProxies = null;
 
 
-		private SegmentHandler(Evaluator evaluator, boolean compatible, Set<FieldName> inputFields){
+		private SegmentHandler(Evaluator evaluator, boolean compatible, List<FieldProxy> fieldProxies){
 			setEvaluator(evaluator);
 			setCompatible(compatible);
-			setInputFields(inputFields);
+			setFieldProxies(fieldProxies);
 		}
 
 		public Evaluator getEvaluator(){
@@ -676,12 +652,132 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			this.compatible = compatible;
 		}
 
-		private Set<FieldName> getInputFields(){
-			return this.inputFields;
+		public List<FieldProxy> getFieldProxies(){
+			return this.fieldProxies;
 		}
 
-		private void setInputFields(Set<FieldName> inputFields){
-			this.inputFields = inputFields;
+		private void setFieldProxies(List<FieldProxy> fieldProxies){
+			this.fieldProxies = fieldProxies;
+		}
+	}
+
+	static
+	abstract
+	private class FieldProxy {
+
+		private MiningField miningField = null;
+
+
+		private FieldProxy(MiningField miningField){
+			setMiningField(miningField);
+		}
+
+		abstract
+		public FieldValueReference createFieldValueReference(Map<FieldName, OutputField> outputFields, MiningModelEvaluationContext context);
+
+		public MiningField getMiningField(){
+			return this.miningField;
+		}
+
+		private void setMiningField(MiningField miningField){
+			this.miningField = miningField;
+		}
+
+		static
+		public FieldValue processFieldValue(Field field, MiningField miningField, FieldValue value){
+
+			if(MiningFieldUtil.isDefault(miningField)){
+				return value;
+			} // End if
+
+			if(value == null){
+				return FieldValueUtil.performMissingValueTreatment(field, miningField);
+			} else
+
+			{
+				return FieldValueUtil.performValidValueTreatment(field, miningField, FieldValueUtil.getValue(value));
+			}
+		}
+	}
+
+	static
+	private class DerivedFieldProxy extends FieldProxy {
+
+		private DerivedField derivedField = null;
+
+
+		private DerivedFieldProxy(MiningField miningField, DerivedField derivedField){
+			super(miningField);
+
+			setDerivedField(derivedField);
+		}
+
+		public FieldValueReference createFieldValueReference(Map<FieldName, OutputField> outputFields, final MiningModelEvaluationContext context){
+			final
+			MiningField miningField = getMiningField();
+
+			FieldName name = miningField.getName();
+
+			OutputField outputField = outputFields.get(name);
+			if(outputField != null){
+				throw new EvaluationException();
+			}
+
+			final
+			DerivedField derivedField = getDerivedField();
+
+			FieldValueReference result = new FieldValueReference(name){
+
+				@Override
+				public FieldValue get(){
+					FieldName name = getName();
+
+					return processFieldValue(derivedField, miningField, context.evaluate(name));
+				}
+			};
+
+			return result;
+		}
+
+		public DerivedField getDerivedField(){
+			return this.derivedField;
+		}
+
+		private void setDerivedField(DerivedField derivedField){
+			this.derivedField = derivedField;
+		}
+	}
+
+	static
+	private class OutputFieldProxy extends FieldProxy {
+
+		private OutputFieldProxy(MiningField miningField){
+			super(miningField);
+		}
+
+		public FieldValueReference createFieldValueReference(Map<FieldName, OutputField> outputFields, final MiningModelEvaluationContext context){
+			final
+			MiningField miningField = getMiningField();
+
+			FieldName name = miningField.getName();
+
+			final
+			OutputField outputField = outputFields.get(name);
+			if(outputField == null){
+				throw new MissingFieldException(name, miningField);
+			}
+
+			FieldValueReference result = new FieldValueReference(name){
+
+				@Override
+				public FieldValue get(){
+					FieldName name = getName();
+
+					return processFieldValue(outputField, miningField, context.getField(name));
+				}
+			};
+
+			return result;
 		}
 	}
 

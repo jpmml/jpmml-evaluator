@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.Collections;
 import java.util.Map;
 
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
@@ -34,8 +35,8 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 	private Map<FieldName, ?> arguments = Collections.emptyMap();
 
-	/**
-	 * A flag indicating if this evaluation context "sees" field values that correspond to DataField elements exactly the same as its parent evaluation context.
+	/*
+	 * A flag indicating if this evaluation context inherits {@link DataField data field} values from its parent evaluation context as they are (ie. without applying any new treatments).
 	 */
 	private boolean compatible = false;
 
@@ -46,7 +47,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public FieldValue createFieldValue(FieldName name, Object value){
+	protected FieldValue createFieldValue(FieldName name, Object value){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
 		MiningField miningField = modelEvaluator.getMiningField(name);
@@ -58,35 +59,6 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public DerivedField resolveDerivedField(FieldName name){
-		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
-
-		DerivedField localDerivedField = modelEvaluator.getLocalDerivedField(name);
-		if(localDerivedField != null){
-			return localDerivedField;
-		}
-
-		ModelEvaluationContext parent = getParent();
-
-		if(parent != null){
-			return parent.resolveDerivedField(name);
-		}
-
-		DerivedField derivedField = modelEvaluator.getDerivedField(name);
-
-		return derivedField;
-	}
-
-	@Override
-	public DefineFunction resolveFunction(String name){
-		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
-
-		DefineFunction defineFunction = modelEvaluator.getFunction(name);
-
-		return defineFunction;
-	}
-
-	@Override
 	public FieldValue evaluate(FieldName name){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
@@ -95,53 +67,87 @@ public class ModelEvaluationContext extends EvaluationContext {
 			return entry.getValue();
 		}
 
-		DerivedField localDerivedField = modelEvaluator.getLocalDerivedField(name);
-		if(localDerivedField != null){
-			FieldValue value = ExpressionUtil.evaluate(localDerivedField, this);
-
-			return declare(name, value);
-		}
-
 		ModelEvaluationContext parent = getParent();
 
-		DerivedField derivedField = modelEvaluator.getDerivedField(name);
-		if(derivedField != null){
-			FieldValue value;
-
-			// Perform the evaluation of a global DerivedField element at the highest compatible level
-			if(parent != null && isCompatible()){
-				value = parent.evaluate(name);
-			} else
-
-			{
-				value = ExpressionUtil.evaluate(derivedField, this);
-			}
-
-			return declare(name, value);
-		}
-
 		MiningField miningField = modelEvaluator.getMiningField(name);
-		if(miningField != null){
 
-			if(parent != null){
-				FieldValue value = parent.evaluate(name);
-
-				// Unwrap the value so that it is subjected to model-specific field value preparation logic again
-				if(!MiningFieldUtil.isDefault(miningField)){
-					return declare(name, FieldValueUtil.getValue(value));
-				}
+		// Fields that either need not or must not be referenced in the MiningSchema element
+		if(miningField == null){
+			DerivedField localDerivedField = modelEvaluator.getLocalDerivedField(name);
+			if(localDerivedField != null){
+				FieldValue value = ExpressionUtil.evaluate(localDerivedField, this);
 
 				return declare(name, value);
 			}
 
+			DerivedField derivedField = modelEvaluator.getDerivedField(name);
+			if(derivedField != null){
+				FieldValue value;
+
+				// Perform the evaluation of a global DerivedField element at the highest compatible level
+				if(parent != null && isCompatible()){
+					value = parent.evaluate(name);
+				} else
+
+				{
+					value = ExpressionUtil.evaluate(derivedField, this);
+				}
+
+				return declare(name, value);
+			}
+		} else
+
+		// Fields that must be referenced in the MiningSchema element
+		{
 			Map<FieldName, ?> arguments = getArguments();
 
-			Object value = arguments.get(name);
+			DataField dataField = modelEvaluator.getDataField(name);
+			if(dataField != null){
 
-			return declare(name, value);
+				if(parent != null){
+					FieldValue value = parent.evaluate(name);
+
+					if(MiningFieldUtil.isDefault(miningField)){
+						return declare(name, value);
+					}
+
+					// Unwrap the value so that it is subjected to model-specific field value preparation logic again
+					return declare(name, FieldValueUtil.getValue(value));
+				}
+
+				Object value = arguments.get(name);
+
+				return declare(name, value);
+			} else
+
+			{
+				Object value = arguments.get(name);
+
+				if(value instanceof FieldValueReference){
+					FieldValueReference fieldValueReference = (FieldValueReference)value;
+
+					return declare(name, fieldValueReference.get());
+				}
+			}
+
+			DerivedField localDerivedField = modelEvaluator.getLocalDerivedField(name);
+			DerivedField derivedField = modelEvaluator.getDerivedField(name);
+
+			if(localDerivedField != null || derivedField != null){
+				throw new InvalidFeatureException(miningField);
+			}
 		}
 
 		throw new MissingFieldException(name);
+	}
+
+	@Override
+	protected DefineFunction resolveDefineFunction(String name){
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
+
+		DefineFunction defineFunction = modelEvaluator.getFunction(name);
+
+		return defineFunction;
 	}
 
 	public ModelEvaluationContext getParent(){
@@ -165,12 +171,6 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	void setArguments(Map<FieldName, ?> arguments){
-		ModelEvaluationContext parent = getParent();
-
-		if(parent != null){
-			throw new IllegalStateException();
-		}
-
 		this.arguments = arguments;
 	}
 

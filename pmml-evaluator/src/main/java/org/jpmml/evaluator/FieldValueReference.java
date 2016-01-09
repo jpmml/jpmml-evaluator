@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2016 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -20,10 +20,24 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.FieldName;
 
-class VirtualEvaluationContext extends EvaluationContext {
+abstract
+class FieldValueReference {
 
-	@Override
-	protected FieldValue createFieldValue(FieldName name, Object value){
-		return FieldValueUtil.create(value);
+	private FieldName name = null;
+
+
+	public FieldValueReference(FieldName name){
+		setName(name);
+	}
+
+	abstract
+	public FieldValue get();
+
+	public FieldName getName(){
+		return this.name;
+	}
+
+	private void setName(FieldName name){
+		this.name = name;
 	}
 }

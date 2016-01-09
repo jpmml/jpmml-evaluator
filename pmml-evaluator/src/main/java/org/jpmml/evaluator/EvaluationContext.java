@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.DefineFunction;
-import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
 
 abstract
@@ -38,15 +37,7 @@ public class EvaluationContext {
 
 
 	abstract
-	public FieldValue createFieldValue(FieldName name, Object value);
-
-	public DerivedField resolveDerivedField(FieldName name){
-		return null;
-	}
-
-	public DefineFunction resolveFunction(String name){
-		return null;
-	}
+	protected FieldValue createFieldValue(FieldName name, Object value);
 
 	public FieldValue evaluate(FieldName name){
 		Map.Entry<FieldName, FieldValue> entry = getFieldEntry(name);
@@ -103,12 +94,16 @@ public class EvaluationContext {
 		return value;
 	}
 
-	void declareAll(Map<FieldName, ?> values){
+	protected void declareAll(Map<FieldName, ?> values){
 		Collection<? extends Map.Entry<FieldName, ?>> entries = values.entrySet();
 
 		for(Map.Entry<FieldName, ?> entry : entries){
 			declare(entry.getKey(), entry.getValue());
 		}
+	}
+
+	protected DefineFunction resolveDefineFunction(String name){
+		throw new UnsupportedOperationException();
 	}
 
 	public void addWarning(String warning){
