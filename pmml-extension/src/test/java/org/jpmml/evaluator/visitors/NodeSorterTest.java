@@ -19,9 +19,9 @@
 package org.jpmml.evaluator.visitors;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.dmg.pmml.Node;
+import org.dmg.pmml.TreeModel;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -37,29 +37,38 @@ public class NodeSorterTest {
 		Node root = new Node()
 			.addNodes(first, second, third);
 
-		assertEquals(Arrays.asList(first, second, third), sort(root));
+		TreeModel treeModel = new TreeModel()
+			.setNode(root);
+
+		sort(treeModel);
+
+		assertEquals(Arrays.asList(first, second, third), root.getNodes());
 
 		first.setRecordCount(100d);
 		third.setRecordCount(300d);
 
-		assertEquals(Arrays.asList(third, first, second), sort(root));
+		sort(treeModel);
+
+		assertEquals(Arrays.asList(third, first, second), root.getNodes());
 
 		second.setRecordCount(200d);
 
-		assertEquals(Arrays.asList(third, second, first), sort(root));
+		sort(treeModel);
+
+		assertEquals(Arrays.asList(third, second, first), root.getNodes());
 
 		first.setRecordCount(null);
 		second.setRecordCount(null);
 		third.setRecordCount(null);
 
-		assertEquals(Arrays.asList(third, second, first), sort(root));
+		sort(treeModel);
+
+		assertEquals(Arrays.asList(third, second, first), root.getNodes());
 	}
 
 	static
-	public List<Node> sort(Node node){
+	private void sort(TreeModel treeModel){
 		NodeSorter sorter = new NodeSorter();
-		sorter.applyTo(node);
-
-		return node.getNodes();
+		sorter.applyTo(treeModel);
 	}
 }

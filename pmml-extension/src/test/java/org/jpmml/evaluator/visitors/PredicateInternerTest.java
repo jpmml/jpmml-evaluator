@@ -22,8 +22,10 @@ import org.dmg.pmml.Array;
 import org.dmg.pmml.False;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Node;
+import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
+import org.dmg.pmml.TreeModel;
 import org.dmg.pmml.True;
 import org.junit.Test;
 
@@ -36,13 +38,11 @@ public class PredicateInternerTest {
 	public void internSimplePredicate(){
 		FieldName name = FieldName.create("x");
 
-		Node left = new Node()
-			.setPredicate(new SimplePredicate(name, SimplePredicate.Operator.EQUAL)
-				.setValue("1"));
+		Predicate left = new SimplePredicate(name, SimplePredicate.Operator.EQUAL)
+			.setValue("1");
 
-		Node right = new Node()
-			.setPredicate(new SimplePredicate(name, SimplePredicate.Operator.EQUAL)
-				.setValue("1"));
+		Predicate right = new SimplePredicate(name, SimplePredicate.Operator.EQUAL)
+			.setValue("1");
 
 		checkTree(left, right);
 	}
@@ -51,47 +51,55 @@ public class PredicateInternerTest {
 	public void internSimpleSetPredicate(){
 		FieldName name = FieldName.create("x");
 
-		Node left = new Node()
-			.setPredicate(new SimpleSetPredicate(name, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "1")));
+		Predicate left = new SimpleSetPredicate(name, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "1"));
 
-		Node right = new Node()
-			.setPredicate(new SimpleSetPredicate(name, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "\"1\"")));
+		Predicate right = new SimpleSetPredicate(name, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "\"1\""));
 
 		checkTree(left, right);
 	}
 
 	@Test
 	public void internTrue(){
-		Node left = new Node()
-			.setPredicate(new True());
-
-		Node right = new Node()
-			.setPredicate(new True());
-
-		checkTree(left, right);
+		checkTree(new True(), new True());
 	}
 
 	@Test
 	public void internFalse(){
-		Node left = new Node()
-			.setPredicate(new False());
+		checkTree(new False(), new False());
+	}
 
-		Node right = new Node()
-			.setPredicate(new False());
-
-		checkTree(left, right);
+	static
+	private void checkTree(Predicate left, Predicate right){
+		checkTree(createNode(left), createNode(right));
 	}
 
 	static
 	private void checkTree(Node left, Node right){
 		Node root = new Node()
+			.setPredicate(new True())
 			.addNodes(left, right);
+
+		TreeModel treeModel = new TreeModel()
+			.setNode(root);
 
 		assertNotSame(left.getPredicate(), right.getPredicate());
 
-		PredicateInterner interner = new PredicateInterner();
-		interner.applyTo(root);
+		intern(treeModel);
 
 		assertSame(left.getPredicate(), right.getPredicate());
+	}
+
+	static
+	private Node createNode(Predicate predicate){
+		Node node = new Node()
+			.setPredicate(predicate);
+
+		return node;
+	}
+
+	static
+	private void intern(TreeModel treeModel){
+		PredicateInterner interner = new PredicateInterner();
+		interner.applyTo(treeModel);
 	}
 }
