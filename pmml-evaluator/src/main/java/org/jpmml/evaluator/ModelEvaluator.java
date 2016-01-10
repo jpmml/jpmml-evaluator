@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import com.google.common.base.Objects;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -146,7 +147,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	@Override
 	public DataField getDataField(FieldName name){
 
-		if(name == null){
+		if(Objects.equal(TargetUtil.DEFAULT_NAME, name)){
 			return getDataField();
 		}
 
@@ -162,10 +163,10 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		MiningFunctionType miningFunction = model.getFunctionName();
 		switch(miningFunction){
 			case REGRESSION:
-				return new DataField(null, OpType.CONTINUOUS, DataType.DOUBLE);
+				return new DataField(TargetUtil.DEFAULT_NAME, OpType.CONTINUOUS, DataType.DOUBLE);
 			case CLASSIFICATION:
 			case CLUSTERING:
-				return new DataField(null, OpType.CATEGORICAL, DataType.STRING);
+				return new DataField(TargetUtil.DEFAULT_NAME, OpType.CATEGORICAL, DataType.STRING);
 			default:
 				break;
 		}

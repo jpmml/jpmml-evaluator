@@ -103,7 +103,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 		// "The definition of target fields in the MiningSchema is not required"
 		if(targetFields.size() < 1){
-			return null;
+			return TargetUtil.DEFAULT_NAME;
 		} else
 
 		if(targetFields.size() > 1){

@@ -59,6 +59,20 @@ public class TargetUtil {
 	public Map<FieldName, ?> evaluateRegression(Map<FieldName, ? extends Double> predictions, ModelEvaluationContext context){
 		ModelEvaluator<?> evaluator = context.getModelEvaluator();
 
+		if(predictions.size() == 1 && predictions.containsKey(TargetUtil.DEFAULT_NAME)){
+			Object value = predictions.get(TargetUtil.DEFAULT_NAME);
+
+			DataField dataField = evaluator.getDataField();
+
+			if(value != null){
+				value = TypeUtil.cast(dataField.getDataType(), value);
+			}
+
+			context.declare(TargetUtil.DEFAULT_NAME, FieldValueUtil.createTargetValue(dataField, null, null, value));
+
+			return Collections.singletonMap(TargetUtil.DEFAULT_NAME, value);
+		}
+
 		Map<FieldName, Object> result = new LinkedHashMap<>();
 
 		Collection<? extends Map.Entry<FieldName, ? extends Double>> entries = predictions.entrySet();
@@ -117,6 +131,20 @@ public class TargetUtil {
 	static
 	public Map<FieldName, ? extends Classification> evaluateClassification(Map<FieldName, ? extends Classification> predictions, ModelEvaluationContext context){
 		ModelEvaluator<?> evaluator = context.getModelEvaluator();
+
+		if(predictions.size() == 1 && predictions.containsKey(TargetUtil.DEFAULT_NAME)){
+			Classification value = predictions.get(TargetUtil.DEFAULT_NAME);
+
+			DataField dataField = evaluator.getDataField();
+
+			if(value != null){
+				value.computeResult(dataField.getDataType());
+			}
+
+			context.declare(TargetUtil.DEFAULT_NAME, FieldValueUtil.createTargetValue(dataField, null, null, value != null ? value.getResult() : null));
+
+			return Collections.singletonMap(TargetUtil.DEFAULT_NAME, value);
+		}
 
 		Map<FieldName, Classification> result = new LinkedHashMap<>();
 
@@ -250,4 +278,6 @@ public class TargetUtil {
 
 		return result;
 	}
+
+	public static final FieldName DEFAULT_NAME = null;
 }
