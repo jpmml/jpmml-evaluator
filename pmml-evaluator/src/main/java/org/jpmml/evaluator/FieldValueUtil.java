@@ -37,7 +37,6 @@ import com.google.common.collect.TreeRangeSet;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
-import org.dmg.pmml.FieldUsageType;
 import org.dmg.pmml.Interval;
 import org.dmg.pmml.InvalidValueTreatmentMethodType;
 import org.dmg.pmml.MiningField;
@@ -114,7 +113,7 @@ public class FieldValueUtil {
 			case AS_MISSING_VALUES:
 				{
 					if(TypeUtil.compare(DataType.DOUBLE, doubleValue, lowValue) < 0 || TypeUtil.compare(DataType.DOUBLE, doubleValue, highValue) > 0){
-						return createMissingValue(field, miningField);
+						return createMissingActiveValue(field, miningField);
 					}
 				}
 				break;
@@ -133,7 +132,7 @@ public class FieldValueUtil {
 				throw new UnsupportedFeatureException(miningField, outlierTreatmentMethod);
 		}
 
-		return create(field, miningField, value);
+		return createActiveValue(field, miningField, value);
 	}
 
 	static
@@ -142,9 +141,9 @@ public class FieldValueUtil {
 
 		switch(invalidValueTreatmentMethod){
 			case AS_IS:
-				return create(field, miningField, value);
+				return createActiveValue(field, miningField, value);
 			case AS_MISSING:
-				return createMissingValue(field, miningField);
+				return createMissingActiveValue(field, miningField);
 			case RETURN_INVALID:
 				throw new InvalidResultException(miningField);
 			default:
@@ -166,7 +165,7 @@ public class FieldValueUtil {
 			case AS_MEDIAN:
 			case AS_MODE:
 			case AS_VALUE:
-				return createMissingValue(field, miningField);
+				return createMissingActiveValue(field, miningField);
 			default:
 				throw new UnsupportedFeatureException(miningField, missingValueTreatmentMethod);
 		}
@@ -266,6 +265,51 @@ public class FieldValueUtil {
 	}
 
 	static
+	public FieldValue createActiveValue(Field field, MiningField miningField, Object value){
+
+		if(value == null){
+			return null;
+		}
+
+		DataType dataType = field.getDataType();
+		OpType opType = field.getOpType();
+
+		// "A MiningField overrides a DataField"
+		if(miningField != null){
+			opType = firstNonNull(miningField.getOpType(), opType);
+		}
+
+		return create(dataType, opType, value);
+	}
+
+	static
+	public FieldValue createMissingActiveValue(Field field, MiningField miningField){
+		return createActiveValue(field, miningField, miningField.getMissingValueReplacement());
+	}
+
+	static
+	public FieldValue createTargetValue(Field field, MiningField miningField, Target target, Object value){
+
+		if(value == null){
+			return null;
+		}
+
+		DataType dataType = field.getDataType();
+		OpType opType = field.getOpType();
+
+		// "A MiningField overrides a DataField, and a Target overrides a MiningField"
+		if(miningField != null){
+			opType = firstNonNull(miningField.getOpType(), opType);
+
+			if(target != null){
+				opType = firstNonNull(target.getOpType(), opType);
+			}
+		}
+
+		return create(dataType, opType, value);
+	}
+
+	static
 	public FieldValue create(Object value){
 		return create((DataType)null, (OpType)null, value);
 	}
@@ -294,42 +338,6 @@ public class FieldValueUtil {
 		return result;
 	}
 
-	/**
-	 * <p>
-	 * Creates a FieldValue for an active field.
-	 * </p>
-	 *
-	 * @see FieldUsageType#ACTIVE
-	 */
-	static
-	public FieldValue create(Field field, MiningField miningField, Object value){
-		return create(field, miningField, null, value);
-	}
-
-	static
-	public FieldValue createMissingValue(Field field, MiningField miningField){
-		return create(field, miningField, miningField.getMissingValueReplacement());
-	}
-
-	/**
-	 * <p>
-	 * Creates a FieldValue for a target field.
-	 * </p>
-	 *
-	 * @see FieldUsageType#TARGET
-	 * @see FieldUsageType#PREDICTED
-	 */
-	static
-	public FieldValue create(Field field, MiningField miningField, Target target, Object value){
-		DataType dataType = field.getDataType();
-		OpType opType = field.getOpType();
-
-		// "A MiningField overrides a DataField, and a Target overrides a MiningField"
-		opType = override(opType, override(miningField != null ? miningField.getOpType() : null, target != null ? target.getOpType() : null));
-
-		return create(dataType, opType, value);
-	}
-
 	static
 	public FieldValue create(DataType dataType, OpType opType, Object value){
 
@@ -338,13 +346,22 @@ public class FieldValueUtil {
 		} // End if
 
 		if(value instanceof Collection){
+			Collection<?> collection = (Collection<?>)value;
 
 			if(dataType == null){
-				dataType = DataType.STRING;
+				Object firstElement = Iterables.getFirst(collection, null);
+
+				if(firstElement != null){
+					dataType = TypeUtil.getDataType(firstElement);
+				} else
+
+				{
+					dataType = DataType.STRING;
+				}
 			} // End if
 
 			if(opType == null){
-				opType = OpType.CATEGORICAL;
+				opType = TypeUtil.getOpType(dataType);
 			}
 		} else
 
@@ -380,7 +397,7 @@ public class FieldValueUtil {
 	public FieldValue refine(Field field, FieldValue value){
 		FieldValue result = refine(field.getDataType(), field.getOpType(), value);
 
-		if(field instanceof TypeDefinitionField){
+		if((field instanceof TypeDefinitionField) && (result != value)){
 			return enhance((TypeDefinitionField)field, result);
 		}
 
@@ -394,26 +411,21 @@ public class FieldValueUtil {
 			return null;
 		}
 
-		DataType refinedDataType = null;
-		if(dataType != null && !(dataType).equals(value.getDataType())){
-			refinedDataType = dataType;
+		DataType valueDataType = value.getDataType();
+		OpType valueOpType = value.getOpType();
+
+		DataType refinedDataType = firstNonNull(dataType, valueDataType);
+		OpType refinedOpType = firstNonNull(opType, valueOpType);
+
+		if((refinedDataType).equals(valueDataType) && (refinedOpType).equals(valueOpType)){
+			return value;
 		}
 
-		OpType refinedOpType = null;
-		if(opType != null && !(opType).equals(value.getOpType())){
-			refinedOpType = opType;
-		}
-
-		boolean refined = (refinedDataType != null) || (refinedOpType != null);
-		if(refined){
-			return create(refinedDataType, refinedOpType, value.getValue());
-		}
-
-		return value;
+		return create(refinedDataType, refinedOpType, value.getValue());
 	}
 
 	static
-	public FieldValue enhance(TypeDefinitionField field, FieldValue value){
+	private FieldValue enhance(TypeDefinitionField field, FieldValue value){
 
 		if(value == null){
 			return null;
@@ -566,13 +578,13 @@ public class FieldValueUtil {
 	}
 
 	static
-	private <E> E override(E value, E overrideValue){
+	private <V> V firstNonNull(V value, V defaultValue){
 
-		if(overrideValue != null){
-			return overrideValue;
+		if(value != null){
+			return value;
 		}
 
-		return value;
+		return defaultValue;
 	}
 
 	static

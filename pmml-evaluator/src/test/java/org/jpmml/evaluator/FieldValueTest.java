@@ -32,6 +32,14 @@ import static org.junit.Assert.fail;
 public class FieldValueTest {
 
 	@Test
+	public void emptyList(){
+		FieldValue list = FieldValueUtil.create(Arrays.asList());
+
+		assertEquals(list.getDataType(), DataType.STRING);
+		assertEquals(list.getOpType(), OpType.CATEGORICAL);
+	}
+
+	@Test
 	public void categoricalString(){
 		FieldValue zero = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "0");
 		FieldValue one = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "1");
@@ -69,6 +77,14 @@ public class FieldValueTest {
 
 		assertEquals((Integer)1, one.asInteger());
 		assertEquals(Boolean.TRUE, one.asBoolean());
+	}
+
+	@Test
+	public void categoricalStringList(){
+		FieldValue list = FieldValueUtil.create(Arrays.asList("1", "2", "3"));
+
+		assertEquals(DataType.STRING, list.getDataType());
+		assertEquals(OpType.CATEGORICAL, list.getOpType());
 	}
 
 	@Test
@@ -170,6 +186,14 @@ public class FieldValueTest {
 
 		assertTrue(one.compareTo(zero) > 0);
 		assertTrue(one.compareTo(one) == 0);
+	}
+
+	@Test
+	public void continuousIntegerList(){
+		FieldValue list = FieldValueUtil.create(Arrays.asList(1, 2, 3));
+
+		assertEquals(DataType.INTEGER, list.getDataType());
+		assertEquals(OpType.CONTINUOUS, list.getOpType());
 	}
 
 	@Test
