@@ -18,12 +18,8 @@
  */
 package org.jpmml.evaluator.visitors;
 
-import java.util.Arrays;
-import java.util.HashMap;
-
 import org.dmg.pmml.Array;
 import org.dmg.pmml.False;
-import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
@@ -137,66 +133,5 @@ public class PredicateInterner extends PredicateFilterer {
 
 	private False intern(False falsePredicate){
 		return this.falsePredicateCache.intern(falsePredicate);
-	}
-
-	static
-	private class ElementKey {
-
-		private Object[] content = null;
-
-
-		private ElementKey(Object[] content){
-			setContent(content);
-		}
-
-		@Override
-		public int hashCode(){
-			Object[] content = getContent();
-
-			return Arrays.hashCode(content);
-		}
-
-		@Override
-		public boolean equals(Object object){
-
-			if(object instanceof ElementKey){
-				ElementKey that = (ElementKey)object;
-
-				return Arrays.equals(this.getContent(), that.getContent());
-			}
-
-			return false;
-		}
-
-		public Object[] getContent(){
-			return this.content;
-		}
-
-		private void setContent(Object[] content){
-			this.content = content;
-		}
-
-		public static final ElementKey EMPTY = new ElementKey(new Object[0]);
-	}
-
-	static
-	abstract
-	private class ElementHashMap<E extends PMMLObject> extends HashMap<ElementKey, E> {
-
-		abstract
-		public ElementKey createKey(E object);
-
-		public E intern(E object){
-			ElementKey key = createKey(object);
-
-			E value = get(key);
-			if(value == null){
-				value = object;
-
-				put(key, value);
-			}
-
-			return value;
-		}
 	}
 }
