@@ -63,17 +63,10 @@ public class TargetUtil {
 
 		Collection<? extends Map.Entry<FieldName, ? extends Double>> entries = predictions.entrySet();
 		for(Map.Entry<FieldName, ? extends Double> entry : entries){
-			FieldName key = entry.getKey();
+			FieldName name = entry.getKey();
 			Object value = entry.getValue();
 
-			DataField dataField = evaluator.getDataField(key);
-			if(dataField == null){
-				throw new EvaluationException();
-			}
-
-			MiningField miningField = evaluator.getMiningField(key);
-
-			Target target = evaluator.getTarget(key);
+			Target target = evaluator.getTarget(name);
 			if(target != null){
 
 				if(value == null){
@@ -83,15 +76,22 @@ public class TargetUtil {
 				if(value != null){
 					value = processValue(target, (Double)value);
 				}
+			}
+
+			DataField dataField = evaluator.getDataField(name);
+			if(dataField == null){
+				throw new EvaluationException();
 			} // End if
 
 			if(value != null){
 				value = TypeUtil.cast(dataField.getDataType(), value);
 			}
 
-			context.declare(key, FieldValueUtil.create(dataField, miningField, target, value));
+			MiningField miningField = evaluator.getMiningField(name);
 
-			result.put(key, value);
+			context.declare(name, FieldValueUtil.create(dataField, miningField, target, value));
+
+			result.put(name, value);
 		}
 
 		return result;
@@ -122,31 +122,31 @@ public class TargetUtil {
 
 		Collection<? extends Map.Entry<FieldName, ? extends Classification>> entries = predictions.entrySet();
 		for(Map.Entry<FieldName, ? extends Classification> entry : entries){
-			FieldName key = entry.getKey();
+			FieldName name = entry.getKey();
 			Classification value = entry.getValue();
 
-			DataField dataField = evaluator.getDataField(key);
-			if(dataField == null){
-				throw new EvaluationException();
-			}
-
-			MiningField miningField = evaluator.getMiningField(key);
-
-			Target target = evaluator.getTarget(key);
+			Target target = evaluator.getTarget(name);
 			if(target != null){
 
 				if(value == null){
 					value = getPriorProbabilities(target);
 				}
+			}
+
+			DataField dataField = evaluator.getDataField(name);
+			if(dataField == null){
+				throw new EvaluationException();
 			} // End if
 
 			if(value != null){
 				value.computeResult(dataField.getDataType());
 			}
 
-			context.declare(key, FieldValueUtil.create(dataField, miningField, target, value != null ? value.getResult() : null));
+			MiningField miningField = evaluator.getMiningField(name);
 
-			result.put(key, value);
+			context.declare(name, FieldValueUtil.create(dataField, miningField, target, value != null ? value.getResult() : null));
+
+			result.put(name, value);
 		}
 
 		return result;

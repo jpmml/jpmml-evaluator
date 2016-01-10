@@ -77,11 +77,11 @@ public class EvaluatorUtil {
 
 		Collection<? extends Map.Entry<FieldName, ?>> entries = map.entrySet();
 		for(Map.Entry<FieldName, ?> entry : entries){
-			FieldName key = entry.getKey();
+			FieldName name = entry.getKey();
 			Object value = entry.getValue();
 
 			try {
-				result.put(key != null ? key.getValue() : null, decode(value));
+				result.put(name != null ? name.getValue() : null, decode(value));
 			} catch(UnsupportedOperationException uoe){
 				// Ignored
 			}
