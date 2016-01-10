@@ -166,6 +166,9 @@ public class OutputUtil {
 				case PREDICTED_DISPLAY_VALUE:
 					{
 						DataField dataField = modelEvaluator.getDataField(targetField);
+						if(dataField == null){
+							throw new MissingFieldException(targetField, outputField);
+						}
 
 						Target target = modelEvaluator.getTarget(targetField);
 
@@ -359,7 +362,7 @@ public class OutputUtil {
 
 					DataField dataField = modelEvaluator.getDataField(targetField);
 					if(dataField == null){
-						throw new TypeAnalysisException(outputField);
+						throw new MissingFieldException(targetField, outputField);
 					}
 
 					return dataField.getDataType();

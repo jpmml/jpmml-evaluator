@@ -57,7 +57,7 @@ public class TargetUtil {
 	 */
 	static
 	public Map<FieldName, ?> evaluateRegression(Map<FieldName, ? extends Double> predictions, ModelEvaluationContext context){
-		Evaluator evaluator = context.getModelEvaluator();
+		ModelEvaluator<?> evaluator = context.getModelEvaluator();
 
 		Map<FieldName, Object> result = new LinkedHashMap<>();
 
@@ -80,7 +80,7 @@ public class TargetUtil {
 
 			DataField dataField = evaluator.getDataField(name);
 			if(dataField == null){
-				throw new EvaluationException();
+				throw new MissingFieldException(name);
 			} // End if
 
 			if(value != null){
@@ -116,7 +116,7 @@ public class TargetUtil {
 	 */
 	static
 	public Map<FieldName, ? extends Classification> evaluateClassification(Map<FieldName, ? extends Classification> predictions, ModelEvaluationContext context){
-		Evaluator evaluator = context.getModelEvaluator();
+		ModelEvaluator<?> evaluator = context.getModelEvaluator();
 
 		Map<FieldName, Classification> result = new LinkedHashMap<>();
 
@@ -135,7 +135,7 @@ public class TargetUtil {
 
 			DataField dataField = evaluator.getDataField(name);
 			if(dataField == null){
-				throw new EvaluationException();
+				throw new MissingFieldException(name);
 			} // End if
 
 			if(value != null){

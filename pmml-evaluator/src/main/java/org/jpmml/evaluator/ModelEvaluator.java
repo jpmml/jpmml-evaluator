@@ -230,7 +230,9 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		MiningField miningField = getMiningField(name);
 
 		if(dataField == null || miningField == null){
-			throw new EvaluationException();
+			M model = getModel();
+
+			throw new MissingFieldException(name, model);
 		}
 
 		return FieldValueUtil.prepare(dataField, miningField, value);

@@ -131,12 +131,12 @@ public class ExpressionUtil {
 
 			FieldName name = fieldRef.getField();
 
-			TypeDefinitionField typeDefField = modelEvaluator.resolveField(name);
-			if(typeDefField != null){
-				return typeDefField.getDataType();
+			TypeDefinitionField field = modelEvaluator.resolveField(name);
+			if(field == null){
+				throw new MissingFieldException(name, expression);
 			}
 
-			throw new TypeAnalysisException(expression);
+			return field.getDataType();
 		} else
 
 		if(expression instanceof NormContinuous){

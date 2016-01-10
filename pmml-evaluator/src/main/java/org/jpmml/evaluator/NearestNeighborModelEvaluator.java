@@ -153,7 +153,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		for(FieldName targetField : targetFields){
 			DataField dataField = getDataField(targetField);
 			if(dataField == null){
-				throw new EvaluationException();
+				throw new MissingFieldException(targetField, nearestNeighborModel);
 			}
 
 			Object value;
@@ -459,26 +459,27 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				continue;
 			}
 
-			TypeDefinitionField typeDefField = modelEvaluator.resolveField(name);
+			TypeDefinitionField field = modelEvaluator.resolveField(name);
+			if(field == null){
+				throw new MissingFieldException(name, instanceField);
+			} // End if
 
-			if(typeDefField instanceof DataField){
-				DataField dataField = (DataField)typeDefField;
+			if(field instanceof DataField){
+				DataField dataField = (DataField)field;
 				MiningField miningField = modelEvaluator.getMiningField(name);
 
 				fieldLoaders.add(new DataFieldLoader(name, column, dataField, miningField));
-
-				continue;
 			} else
 
-			if(typeDefField instanceof DerivedField){
-				DerivedField derivedField = (DerivedField)typeDefField;
+			if(field instanceof DerivedField){
+				DerivedField derivedField = (DerivedField)field;
 
 				fieldLoaders.add(new DerivedFieldLoader(name, column, derivedField));
+			} else
 
-				continue;
+			{
+				throw new InvalidFeatureException(instanceField);
 			}
-
-			throw new InvalidFeatureException(instanceField);
 		}
 
 		Table<Integer, FieldName, FieldValue> result = HashBasedTable.create();

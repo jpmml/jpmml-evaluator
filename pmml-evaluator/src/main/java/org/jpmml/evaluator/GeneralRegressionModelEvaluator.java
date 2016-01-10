@@ -266,6 +266,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		FieldName targetField = getTargetField();
 
 		DataField dataField = getDataField(targetField);
+		if(dataField == null){
+			throw new MissingFieldException(targetField, generalRegressionModel);
+		}
 
 		OpType opType = dataField.getOpType();
 		switch(opType){

@@ -40,7 +40,7 @@ public class PMMLEvaluationContext extends EvaluationContext {
 
 		DataField dataField = pmmlManager.getDataField(name);
 		if(dataField == null){
-			throw new EvaluationException();
+			throw new MissingFieldException(name);
 		}
 
 		return FieldValueUtil.create(dataField, value);

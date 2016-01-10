@@ -110,6 +110,9 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		}
 
 		DataField dataField = getDataField(targetField);
+		if(dataField == null){
+			throw new MissingFieldException(targetField, regressionModel);
+		}
 
 		OpType opType = dataField.getOpType();
 		switch(opType){
