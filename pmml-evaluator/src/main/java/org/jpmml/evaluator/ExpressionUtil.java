@@ -116,14 +116,7 @@ public class ExpressionUtil {
 		if(expression instanceof Constant){
 			Constant constant = (Constant)expression;
 
-			String value = constant.getValue();
-
-			DataType dataType = constant.getDataType();
-			if(dataType == null){
-				dataType = TypeUtil.getConstantDataType(value);
-			}
-
-			return dataType;
+			return getConstantDataType(constant);
 		} else
 
 		if(expression instanceof FieldRef){
@@ -181,15 +174,26 @@ public class ExpressionUtil {
 	}
 
 	static
-	public FieldValue evaluateConstant(Constant constant, EvaluationContext context){
-		String value = constant.getValue();
-
+	public DataType getConstantDataType(Constant constant){
 		DataType dataType = constant.getDataType();
+
 		if(dataType == null){
-			dataType = TypeUtil.getConstantDataType(value);
+			dataType = TypeUtil.getConstantDataType(constant.getValue());
 		}
 
-		return FieldValueUtil.create(dataType, null, value);
+		return dataType;
+	}
+
+	static
+	public FieldValue evaluateConstant(Constant constant, EvaluationContext context){
+
+		if(constant instanceof HasParsedValue){
+			HasParsedValue hasParsedValue = (HasParsedValue)constant;
+
+			return hasParsedValue.getValue(null, null);
+		}
+
+		return FieldValueUtil.create(getConstantDataType(constant), null, constant.getValue());
 	}
 
 	static

@@ -18,9 +18,11 @@
  */
 package org.jpmml.evaluator.visitors;
 
+import org.dmg.pmml.Constant;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.HasExtensions;
 import org.dmg.pmml.NormDiscrete;
+import org.jpmml.evaluator.RichConstant;
 import org.jpmml.evaluator.RichNormDiscrete;
 import org.jpmml.model.visitors.ExpressionFilterer;
 
@@ -45,6 +47,12 @@ public class ExpressionOptimizer extends ExpressionFilterer {
 	}
 
 	public Expression optimize(Expression expression){
+
+		if(expression instanceof Constant){
+			Constant constant = (Constant)expression;
+
+			return new RichConstant(constant);
+		} else
 
 		if(expression instanceof NormDiscrete){
 			NormDiscrete normDiscrete = (NormDiscrete)expression;

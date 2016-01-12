@@ -41,6 +41,11 @@ public class RichObjectFactory extends ObjectFactory {
 	}
 
 	@Override
+	public RichConstant createConstant(){
+		return new RichConstant();
+	}
+
+	@Override
 	public RichDataField createDataField(){
 		return new RichDataField();
 	}
