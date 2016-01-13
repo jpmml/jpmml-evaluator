@@ -87,14 +87,14 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	}
 
 	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
-		Double score = null;
-
 		Trail trail = new Trail();
 
 		Node node = evaluateTree(trail, context);
-		if(node != null){
-			score = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, node.getScore());
+		if(node == null){
+			return TargetUtil.evaluateRegressionDefault(context);
 		}
+
+		Double score = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, node.getScore());
 
 		Map<FieldName, ?> result = TargetUtil.evaluateRegression(score, context);
 
@@ -106,21 +106,21 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
 		TreeModel treeModel = getModel();
 
-		NodeScoreDistribution result = null;
-
 		Trail trail = new Trail();
 
 		Node node = evaluateTree(trail, context);
-		if(node != null){
-			double missingValuePenalty = 1d;
-
-			int missingLevels = trail.getMissingLevels();
-			for(int i = 0; i < missingLevels; i++){
-				missingValuePenalty *= treeModel.getMissingValuePenalty();
-			}
-
-			result = createNodeScoreDistribution(node, missingValuePenalty);
+		if(node == null){
+			return TargetUtil.evaluateClassificationDefault(context);
 		}
+
+		double missingValuePenalty = 1d;
+
+		int missingLevels = trail.getMissingLevels();
+		if(missingLevels > 0){
+			missingValuePenalty = Math.pow(treeModel.getMissingValuePenalty(), missingLevels);
+		}
+
+		NodeScoreDistribution result = createNodeScoreDistribution(node, missingValuePenalty);
 
 		return TargetUtil.evaluateClassification(result, context);
 	}
