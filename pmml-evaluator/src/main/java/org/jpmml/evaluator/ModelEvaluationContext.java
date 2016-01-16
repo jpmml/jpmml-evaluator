@@ -59,13 +59,8 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public FieldValue evaluate(FieldName name){
+	protected FieldValue resolve(FieldName name){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
-
-		Map.Entry<FieldName, FieldValue> entry = getFieldEntry(name);
-		if(entry != null){
-			return entry.getValue();
-		}
 
 		ModelEvaluationContext parent = getParent();
 

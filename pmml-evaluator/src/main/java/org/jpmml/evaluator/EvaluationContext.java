@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,11 +40,20 @@ public class EvaluationContext {
 	protected FieldValue createFieldValue(FieldName name, Object value);
 
 	public FieldValue evaluate(FieldName name){
-		Map.Entry<FieldName, FieldValue> entry = getFieldEntry(name);
-		if(entry != null){
-			return entry.getValue();
+		Map<FieldName, FieldValue> fields = getFields();
+
+		if(fields.size() > 0){
+			FieldValue value = fields.get(name);
+
+			if((value != null) || (value == null && fields.containsKey(name))){
+				return value;
+			}
 		}
 
+		return resolve(name);
+	}
+
+	protected FieldValue resolve(FieldName name){
 		throw new MissingFieldException(name);
 	}
 
@@ -53,24 +61,6 @@ public class EvaluationContext {
 		Map<FieldName, FieldValue> fields = getFields();
 
 		return fields.get(name);
-	}
-
-	public Map.Entry<FieldName, FieldValue> getFieldEntry(FieldName name){
-		Map<FieldName, FieldValue> fields = getFields();
-
-		FieldValue value = fields.get(name);
-
-		// Distinguish between "key not present" and "key present, but mapped to null value" cases
-		if(value == null){
-
-			if(!fields.containsKey(name)){
-				return null;
-			}
-		}
-
-		Map.Entry<FieldName, FieldValue> result = new AbstractMap.SimpleImmutableEntry<>(name, value);
-
-		return result;
 	}
 
 	public FieldValue declare(FieldName name, Object value){
