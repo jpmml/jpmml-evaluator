@@ -163,10 +163,11 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		MiningFunctionType miningFunction = model.getFunctionName();
 		switch(miningFunction){
 			case REGRESSION:
-				return new DataField(TargetUtil.DEFAULT_NAME, OpType.CONTINUOUS, DataType.DOUBLE);
+				return ModelEvaluator.DEFAULT_REGRESSION_TARGET;
 			case CLASSIFICATION:
+				return ModelEvaluator.DEFAULT_CLASSIFICATION_TARGET;
 			case CLUSTERING:
-				return new DataField(TargetUtil.DEFAULT_NAME, OpType.CATEGORICAL, DataType.STRING);
+				return ModelEvaluator.DEFAULT_CLUSTERING_TARGET;
 			default:
 				break;
 		}
@@ -465,6 +466,10 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		return result;
 	}
+
+	private static final DataField DEFAULT_REGRESSION_TARGET = new DataField(TargetUtil.DEFAULT_NAME, OpType.CONTINUOUS, DataType.DOUBLE);
+	private static final DataField DEFAULT_CLASSIFICATION_TARGET = new DataField(TargetUtil.DEFAULT_NAME, OpType.CATEGORICAL, DataType.STRING);
+	private static final DataField DEFAULT_CLUSTERING_TARGET = new DataField(TargetUtil.DEFAULT_NAME, OpType.CATEGORICAL, DataType.STRING);
 
 	private static final LoadingCache<DataDictionary, Map<FieldName, DataField>> dataFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<DataDictionary, Map<FieldName, DataField>>(){
 
