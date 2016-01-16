@@ -371,10 +371,10 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return CacheUtil.getValue(model, cache);
 	}
 
-	public <V> V getValue(Callable<? extends V> loader, Cache<M, V> cache){
+	public <V> V getValue(Cache<M, V> cache, Callable<? extends V> loader){
 		M model = getModel();
 
-		return CacheUtil.getValue(model, loader, cache);
+		return CacheUtil.getValue(model, cache, loader);
 	}
 
 	static

@@ -60,7 +60,7 @@ public class CacheUtil {
 	}
 
 	static
-	public <K extends PMMLObject, V> V getValue(K key, Callable<? extends V> loader, Cache<K, V> cache){
+	public <K extends PMMLObject, V> V getValue(K key, Cache<K, V> cache, Callable<? extends V> loader){
 
 		try {
 			return cache.get(key, loader);

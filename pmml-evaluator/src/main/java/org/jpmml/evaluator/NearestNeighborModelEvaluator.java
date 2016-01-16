@@ -419,7 +419,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private Table<Integer, FieldName, FieldValue> getTrainingInstances(){
-		return getValue(createTrainingInstanceLoader(this), NearestNeighborModelEvaluator.trainingInstanceCache);
+		return getValue(NearestNeighborModelEvaluator.trainingInstanceCache, createTrainingInstanceLoader(this));
 	}
 
 	static
@@ -526,7 +526,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private Map<Integer, BitSet> getInstanceFlags(){
-		return getValue(createInstanceFlagLoader(this), NearestNeighborModelEvaluator.instanceFlagCache);
+		return getValue(NearestNeighborModelEvaluator.instanceFlagCache, createInstanceFlagLoader(this));
 	}
 
 	static
@@ -544,7 +544,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Map<Integer, BitSet> loadInstanceFlags(NearestNeighborModelEvaluator modelEvaluator){
 		Map<Integer, BitSet> result = new LinkedHashMap<>();
 
-		Map<Integer, List<FieldValue>> valueMap = modelEvaluator.getValue(createInstanceValueLoader(modelEvaluator), NearestNeighborModelEvaluator.instanceValueCache);
+		Map<Integer, List<FieldValue>> valueMap = modelEvaluator.getValue(NearestNeighborModelEvaluator.instanceValueCache, createInstanceValueLoader(modelEvaluator));
 
 		Maps.EntryTransformer<Integer, List<FieldValue>, BitSet> transformer = new Maps.EntryTransformer<Integer, List<FieldValue>, BitSet>(){
 
@@ -559,7 +559,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private Map<Integer, List<FieldValue>> getInstanceValues(){
-		return getValue(createInstanceValueLoader(this), NearestNeighborModelEvaluator.instanceValueCache);
+		return getValue(NearestNeighborModelEvaluator.instanceValueCache, createInstanceValueLoader(this));
 	}
 
 	static
@@ -579,7 +579,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Map<Integer, List<FieldValue>> result = new LinkedHashMap<>();
 
-		Table<Integer, FieldName, FieldValue> table = modelEvaluator.getValue(createTrainingInstanceLoader(modelEvaluator), NearestNeighborModelEvaluator.trainingInstanceCache);
+		Table<Integer, FieldName, FieldValue> table = modelEvaluator.getValue(NearestNeighborModelEvaluator.trainingInstanceCache, createTrainingInstanceLoader(modelEvaluator));
 
 		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
 
