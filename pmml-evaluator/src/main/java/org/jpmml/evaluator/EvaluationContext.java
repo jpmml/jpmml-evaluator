@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class EvaluationContext {
 
 	private Map<FieldName, FieldValue> fields = new HashMap<>();
 
-	private List<String> warnings = new ArrayList<>();
+	private List<String> warnings = null;
 
 
 	abstract
@@ -107,9 +108,12 @@ public class EvaluationContext {
 	}
 
 	public void addWarning(String warning){
-		List<String> warnings = getWarnings();
 
-		warnings.add(warning);
+		if(this.warnings == null){
+			this.warnings = new ArrayList<>();
+		}
+
+		this.warnings.add(warning);
 	}
 
 	public Map<FieldName, FieldValue> getFields(){
@@ -117,6 +121,11 @@ public class EvaluationContext {
 	}
 
 	public List<String> getWarnings(){
+
+		if(this.warnings == null){
+			return Collections.emptyList();
+		}
+
 		return this.warnings;
 	}
 }
