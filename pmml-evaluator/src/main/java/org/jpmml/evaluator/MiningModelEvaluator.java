@@ -298,16 +298,18 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			ModelEvaluationContext segmentContext = evaluator.createContext(context);
 			segmentContext.setCompatible(segmentHandler.isCompatible());
 
-			Map<FieldName, FieldValueReference> segmentArguments = new HashMap<>();
-
 			List<FieldProxy> fieldProxies = segmentHandler.getFieldProxies();
-			for(FieldProxy fieldProxy : fieldProxies){
-				FieldValueReference fieldValueReference = fieldProxy.createFieldValueReference(segmentOutputFields, context);
+			if(fieldProxies.size() > 0){
+				Map<FieldName, FieldValueReference> segmentArguments = new HashMap<>();
 
-				segmentArguments.put(fieldValueReference.getName(), fieldValueReference);
+				for(FieldProxy fieldProxy : fieldProxies){
+					FieldValueReference fieldValueReference = fieldProxy.createFieldValueReference(segmentOutputFields, context);
+
+					segmentArguments.put(fieldValueReference.getName(), fieldValueReference);
+				}
+
+				segmentContext.setArguments(segmentArguments);
 			}
-
-			segmentContext.setArguments(segmentArguments);
 
 			Map<FieldName, ?> result;
 

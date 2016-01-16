@@ -36,7 +36,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 	private Map<FieldName, ?> arguments = Collections.emptyMap();
 
 	/*
-	 * A flag indicating if this evaluation context inherits {@link DataField data field} values from its parent evaluation context as they are (ie. without applying any new treatments).
+	 * A flag indicating if this evaluation context inherits {@link DataField data field} values from its parent evaluation context exactly as they are.
 	 */
 	private boolean compatible = false;
 
