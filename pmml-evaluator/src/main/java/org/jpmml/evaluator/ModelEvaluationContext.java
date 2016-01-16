@@ -137,10 +137,10 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	protected DefineFunction resolveDefineFunction(String name){
+	protected DefineFunction getDefineFunction(String name){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
-		DefineFunction defineFunction = modelEvaluator.getFunction(name);
+		DefineFunction defineFunction = modelEvaluator.getDefineFunction(name);
 
 		return defineFunction;
 	}

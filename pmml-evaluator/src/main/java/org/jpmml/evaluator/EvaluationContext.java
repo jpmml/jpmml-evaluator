@@ -93,7 +93,7 @@ public class EvaluationContext {
 		}
 	}
 
-	protected DefineFunction resolveDefineFunction(String name){
+	protected DefineFunction getDefineFunction(String name){
 		throw new UnsupportedOperationException();
 	}
 

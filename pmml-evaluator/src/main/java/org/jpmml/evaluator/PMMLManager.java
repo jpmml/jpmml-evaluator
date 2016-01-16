@@ -71,7 +71,7 @@ public class PMMLManager implements Serializable {
 		return null;
 	}
 
-	public DefineFunction getFunction(String name){
+	public DefineFunction getDefineFunction(String name){
 		PMML pmml = getPMML();
 
 		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();

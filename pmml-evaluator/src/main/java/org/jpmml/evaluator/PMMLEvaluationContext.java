@@ -59,10 +59,10 @@ public class PMMLEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	protected DefineFunction resolveDefineFunction(String name){
+	protected DefineFunction getDefineFunction(String name){
 		PMMLManager pmmlManager = getPmmlManager();
 
-		DefineFunction defineFunction = pmmlManager.getFunction(name);
+		DefineFunction defineFunction = pmmlManager.getDefineFunction(name);
 
 		return defineFunction;
 	}

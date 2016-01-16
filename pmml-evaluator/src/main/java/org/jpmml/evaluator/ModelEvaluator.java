@@ -82,7 +82,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	private Map<FieldName, DerivedField> derivedFields = Collections.emptyMap();
 
-	private Map<String, DefineFunction> functions = Collections.emptyMap();
+	private Map<String, DefineFunction> defineFunctions = Collections.emptyMap();
 
 	private Map<FieldName, MiningField> miningFields = Collections.emptyMap();
 
@@ -113,7 +113,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		} // End if
 
 		if(transformationDictionary != null && transformationDictionary.hasDefineFunctions()){
-			this.functions = CacheUtil.getValue(transformationDictionary, ModelEvaluator.functionCache);
+			this.defineFunctions = CacheUtil.getValue(transformationDictionary, ModelEvaluator.defineFunctionCache);
 		}
 
 		MiningSchema miningSchema = model.getMiningSchema();
@@ -181,8 +181,8 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	@Override
-	public DefineFunction getFunction(String name){
-		return this.functions.get(name);
+	public DefineFunction getDefineFunction(String name){
+		return this.defineFunctions.get(name);
 	}
 
 	@Override
@@ -487,7 +487,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 	});
 
-	private static final LoadingCache<TransformationDictionary, Map<String, DefineFunction>> functionCache = CacheUtil.buildLoadingCache(new CacheLoader<TransformationDictionary, Map<String, DefineFunction>>(){
+	private static final LoadingCache<TransformationDictionary, Map<String, DefineFunction>> defineFunctionCache = CacheUtil.buildLoadingCache(new CacheLoader<TransformationDictionary, Map<String, DefineFunction>>(){
 
 		@Override
 		public Map<String, DefineFunction> load(TransformationDictionary transformationDictionary){

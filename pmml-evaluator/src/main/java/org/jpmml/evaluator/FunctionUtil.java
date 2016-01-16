@@ -52,7 +52,7 @@ public class FunctionUtil {
 			return userDefinedFunction.evaluate(values);
 		}
 
-		DefineFunction defineFunction = context.resolveDefineFunction(name);
+		DefineFunction defineFunction = context.getDefineFunction(name);
 		if(defineFunction != null){
 			return evaluate(defineFunction, values, context);
 		}
