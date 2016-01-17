@@ -355,13 +355,21 @@ public class TypeUtilTest {
 
 	@Test
 	public void getConstantDataType(){
-		assertEquals(DataType.FLOAT, TypeUtil.getConstantDataType("1.0"));
-		assertEquals(DataType.FLOAT, TypeUtil.getConstantDataType("1.0E0"));
-		assertEquals(DataType.STRING, TypeUtil.getConstantDataType("1.0X"));
+		assertEquals(DataType.STRING, TypeUtil.getConstantDataType(""));
 
+		assertEquals(DataType.INTEGER, TypeUtil.getConstantDataType("-1"));
 		assertEquals(DataType.INTEGER, TypeUtil.getConstantDataType("1"));
+		assertEquals(DataType.INTEGER, TypeUtil.getConstantDataType("+1"));
 		assertEquals(DataType.STRING, TypeUtil.getConstantDataType("1E0"));
 		assertEquals(DataType.STRING, TypeUtil.getConstantDataType("1X"));
+
+		assertEquals(DataType.FLOAT, TypeUtil.getConstantDataType("-1.0"));
+		assertEquals(DataType.FLOAT, TypeUtil.getConstantDataType("1.0"));
+		assertEquals(DataType.FLOAT, TypeUtil.getConstantDataType("+1.0"));
+		assertEquals(DataType.FLOAT, TypeUtil.getConstantDataType("1.0E-1"));
+		assertEquals(DataType.FLOAT, TypeUtil.getConstantDataType("1.0E1"));
+		assertEquals(DataType.FLOAT, TypeUtil.getConstantDataType("1.0E+1"));
+		assertEquals(DataType.STRING, TypeUtil.getConstantDataType("1.0X"));
 	}
 
 	static

@@ -1150,7 +1150,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			public Double getMultiplicity(){
 				PPCell ppCell = getPPCell();
 
-				return Double.valueOf(ppCell.getValue());
+				return Double.parseDouble(ppCell.getValue());
 			}
 		}
 	}

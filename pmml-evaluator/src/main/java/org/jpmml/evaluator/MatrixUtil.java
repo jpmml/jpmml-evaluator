@@ -148,7 +148,7 @@ public class MatrixUtil {
 		if(matCell != null){
 			String value = matCell.getValue();
 
-			return Double.valueOf(value);
+			return Double.parseDouble(value);
 		}
 
 		return null;

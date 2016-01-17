@@ -199,7 +199,7 @@ public class ArrayUtil {
 
 		@Override
 		public Integer apply(String string){
-			return Integer.valueOf(string);
+			return Integer.parseInt(string);
 		}
 	};
 
@@ -207,7 +207,7 @@ public class ArrayUtil {
 
 		@Override
 		public Double apply(String string){
-			return Double.valueOf(string);
+			return Double.parseDouble(string);
 		}
 	};
 

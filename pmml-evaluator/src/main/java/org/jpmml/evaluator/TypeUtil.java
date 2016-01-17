@@ -141,7 +141,7 @@ public class TypeUtil {
 	private Float parseFloat(String value){
 
 		try {
-			return Float.valueOf(value);
+			return Float.parseFloat(value);
 		} catch(NumberFormatException nfe){
 
 			try {
@@ -158,7 +158,7 @@ public class TypeUtil {
 	private Double parseDouble(String value){
 
 		try {
-			return Double.valueOf(value);
+			return Double.parseDouble(value);
 		} catch(NumberFormatException nfe){
 
 			try {
@@ -473,7 +473,7 @@ public class TypeUtil {
 		if(value instanceof Boolean){
 			Boolean flag = (Boolean)value;
 
-			return Integer.valueOf(flag.booleanValue() ? INTEGER_ONE : INTEGER_ZERO);
+			return (flag.booleanValue() ? INTEGER_ONE : INTEGER_ZERO);
 		} else
 
 		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
@@ -524,7 +524,7 @@ public class TypeUtil {
 		if(value instanceof Boolean){
 			Boolean flag = (Boolean)value;
 
-			return Float.valueOf(flag.booleanValue() ? FLOAT_ONE : FLOAT_ZERO);
+			return (flag.booleanValue() ? FLOAT_ONE : FLOAT_ZERO);
 		} else
 
 		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
@@ -559,7 +559,7 @@ public class TypeUtil {
 		if(value instanceof Boolean){
 			Boolean flag = (Boolean)value;
 
-			return Double.valueOf(flag.booleanValue() ? DOUBLE_ONE : DOUBLE_ZERO);
+			return (flag.booleanValue() ? DOUBLE_ONE : DOUBLE_ZERO);
 		} else
 
 		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
@@ -711,13 +711,13 @@ public class TypeUtil {
 
 		try {
 			if(string.indexOf('.') > -1){
-				Float.parseFloat(string);
+				Double.parseDouble(string);
 
 				return DataType.FLOAT;
 			} else
 
 			{
-				Integer.parseInt(string);
+				Long.parseLong(string);
 
 				return DataType.INTEGER;
 			}
