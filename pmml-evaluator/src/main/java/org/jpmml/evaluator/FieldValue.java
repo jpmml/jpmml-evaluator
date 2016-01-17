@@ -69,7 +69,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 
 	FieldValue(DataType dataType, Object value){
 		setDataType(dataType);
-		setValue(value);
+		setValue(filterValue(value));
 	}
 
 	abstract
@@ -393,8 +393,45 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	}
 
 	static
+	private Object filterValue(Object value){
+
+		if(value instanceof Float){
+			return filterValue((Float)value);
+		} else
+
+		if(value instanceof Double){
+			return filterValue((Double)value);
+		}
+
+		return value;
+	}
+
+	static
+	private Float filterValue(Float value){
+
+		if(value.doubleValue() == 0f){
+			return FieldValue.FLOAT_ZERO;
+		}
+
+		return value;
+	}
+
+	static
+	private Double filterValue(Double value){
+
+		if(value.doubleValue() == 0d){
+			return FieldValue.DOUBLE_ZERO;
+		}
+
+		return value;
+	}
+
+	static
 	interface Scalar<V extends Comparable<V>> {
 
 		V getValue();
 	}
+
+	private static final Float FLOAT_ZERO = Float.valueOf(0f);
+	private static final Double DOUBLE_ZERO = Double.valueOf(0d);
 }

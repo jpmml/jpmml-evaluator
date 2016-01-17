@@ -32,6 +32,9 @@ public class TypeUtilTest {
 
 	@Test
 	public void parseInteger(){
+		assertEquals(0, TypeUtil.parse(DataType.INTEGER, "-0"));
+		assertEquals(0, TypeUtil.parse(DataType.INTEGER, "0"));
+
 		assertEquals(1, TypeUtil.parse(DataType.INTEGER, "1"));
 		assertEquals(1, TypeUtil.parse(DataType.INTEGER, "1.0"));
 		assertEquals(1, TypeUtil.parse(DataType.INTEGER, "1e+0"));
@@ -104,6 +107,8 @@ public class TypeUtilTest {
 			// Ignored
 		}
 
+		assertEquals(Boolean.FALSE, TypeUtil.parse(DataType.BOOLEAN, "-0"));
+		assertEquals(Boolean.FALSE, TypeUtil.parse(DataType.BOOLEAN, "-0.0"));
 		assertEquals(Boolean.FALSE, TypeUtil.parse(DataType.BOOLEAN, "0"));
 		assertEquals(Boolean.FALSE, TypeUtil.parse(DataType.BOOLEAN, "0.0"));
 	}

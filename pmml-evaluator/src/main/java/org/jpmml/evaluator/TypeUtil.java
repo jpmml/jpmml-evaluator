@@ -141,7 +141,8 @@ public class TypeUtil {
 	private Float parseFloat(String value){
 
 		try {
-			return Float.parseFloat(value);
+			// -0f + 0f = 0f
+			return (Float.parseFloat(value) + 0f);
 		} catch(NumberFormatException nfe){
 
 			try {
@@ -158,7 +159,8 @@ public class TypeUtil {
 	private Double parseDouble(String value){
 
 		try {
-			return Double.parseDouble(value);
+			// -0d + 0d = 0d
+			return (Double.parseDouble(value) + 0d);
 		} catch(NumberFormatException nfe){
 
 			try {

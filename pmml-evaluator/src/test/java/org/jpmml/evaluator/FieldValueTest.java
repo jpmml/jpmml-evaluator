@@ -129,6 +129,8 @@ public class FieldValueTest {
 		FieldValue zero = FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, 0);
 		FieldValue one = FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, 1);
 
+		assertTrue(zero.equalsString("-0"));
+		assertTrue(zero.equalsString("-0.0"));
 		assertTrue(zero.equalsString("0"));
 		assertTrue(zero.equalsString("0.0"));
 		assertTrue(zero.equalsString("false"));
@@ -147,6 +149,8 @@ public class FieldValueTest {
 
 		assertTrue(zero.compareToString("-1") > 0);
 		assertTrue(zero.compareToString("-1.5") > 0);
+		assertTrue(zero.compareToString("-0") == 0);
+		assertTrue(zero.compareToString("-0.0") == 0);
 		assertTrue(zero.compareToString("0") == 0);
 		assertTrue(zero.compareToString("0.0") == 0);
 		assertTrue(zero.compareToString("1") < 0);
@@ -200,6 +204,8 @@ public class FieldValueTest {
 	public void categoricalInteger(){
 		FieldValue zero = FieldValueUtil.create(DataType.INTEGER, OpType.CATEGORICAL, 0);
 
+		assertTrue(zero.equalsString("-0"));
+		assertTrue(zero.equalsString("-0.0"));
 		assertTrue(zero.equalsString("0"));
 		assertTrue(zero.equalsString("0.0"));
 		assertTrue(zero.equalsString("false"));
@@ -223,10 +229,70 @@ public class FieldValueTest {
 	}
 
 	@Test
+	public void continuousFloat(){
+		Float negativeZeroValue = Float.valueOf(-0f);
+		Float positiveZeroValue = Float.valueOf(+0f);
+
+		assertTrue(negativeZeroValue.floatValue() == positiveZeroValue.floatValue());
+
+		assertFalse((negativeZeroValue).equals(positiveZeroValue));
+		assertTrue((negativeZeroValue).compareTo(positiveZeroValue) < 0);
+
+		FieldValue negativeZero = FieldValueUtil.create(DataType.FLOAT, OpType.CONTINUOUS, negativeZeroValue);
+		FieldValue positiveZero = FieldValueUtil.create(DataType.FLOAT, OpType.CONTINUOUS, positiveZeroValue);
+
+		assertEquals(negativeZero, positiveZero);
+
+		assertTrue(negativeZero.equalsString("-0"));
+		assertTrue(negativeZero.equalsString("-0.0"));
+		assertTrue(negativeZero.equalsString("0"));
+		assertTrue(negativeZero.equalsString("0.0"));
+		assertTrue(negativeZero.equalsString("false"));
+
+		assertTrue(positiveZero.equalsString("-0"));
+		assertTrue(positiveZero.equalsString("-0.0"));
+
+		assertTrue(negativeZero.equalsValue(positiveZero));
+
+		assertTrue(negativeZero.compareTo(positiveZero) == 0);
+	}
+
+	@Test
+	public void continuousDouble(){
+		Double negativeZeroValue = Double.valueOf(-0d);
+		Double positiveZeroValue = Double.valueOf(+0d);
+
+		assertTrue(negativeZeroValue.doubleValue() == positiveZeroValue.doubleValue());
+
+		assertFalse((negativeZeroValue).equals(positiveZeroValue));
+		assertTrue((negativeZeroValue).compareTo(positiveZeroValue) < 0);
+
+		FieldValue negativeZero = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, negativeZeroValue);
+		FieldValue positiveZero = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, positiveZeroValue);
+
+		assertEquals(negativeZero, positiveZero);
+
+		assertTrue(negativeZero.equalsString("-0"));
+		assertTrue(negativeZero.equalsString("-0.0"));
+		assertTrue(negativeZero.equalsString("0"));
+		assertTrue(negativeZero.equalsString("0.0"));
+		assertTrue(negativeZero.equalsString("false"));
+
+		assertTrue(positiveZero.equalsString("-0"));
+		assertTrue(positiveZero.equalsString("-0.0"));
+
+		assertTrue(negativeZero.equalsValue(positiveZero));
+
+		assertTrue(negativeZero.compareTo(positiveZero) == 0);
+	}
+
+	@Test
 	public void categoricalBoolean(){
 		FieldValue zero = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
 		FieldValue one = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
 
+		assertTrue(zero.compareToString("-0") == 0);
+		assertTrue(zero.compareToString("-0.0") == 0);
 		assertTrue(zero.compareToString("0") == 0);
 		assertTrue(zero.compareToString("0.0") == 0);
 		assertTrue(zero.compareToString("1") < 0);
