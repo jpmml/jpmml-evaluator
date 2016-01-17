@@ -140,6 +140,23 @@ public class TypeUtil {
 	static
 	private Float parseFloat(String value){
 
+		if(value.length() <= 4){
+
+			switch(value){
+				case "-1":
+				case "-1.0":
+					return TypeUtil.FLOAT_MINUS_ONE;
+				case "0":
+				case "0.0":
+					return TypeUtil.FLOAT_ZERO;
+				case "1":
+				case "1.0":
+					return TypeUtil.FLOAT_ONE;
+				default:
+					break;
+			}
+		}
+
 		try {
 			// -0f + 0f = 0f
 			return (Float.parseFloat(value) + 0f);
@@ -157,6 +174,33 @@ public class TypeUtil {
 
 	static
 	private Double parseDouble(String value){
+
+		if(value.length() <= 4){
+
+			switch(value){
+				case "-1":
+				case "-1.0":
+					return TypeUtil.DOUBLE_MINUS_ONE;
+				case "-0.5":
+					return TypeUtil.DOUBLE_MINUS_ONE_HALF;
+				case "0":
+				case "0.0":
+					return TypeUtil.DOUBLE_ZERO;
+				case "0.5":
+					return TypeUtil.DOUBLE_ONE_HALF;
+				case "1":
+				case "1.0":
+					return TypeUtil.DOUBLE_ONE;
+				case "2":
+				case "2.0":
+					return TypeUtil.DOUBLE_TWO;
+				case "3":
+				case "3.0":
+					return TypeUtil.DOUBLE_THREE;
+				default:
+					break;
+			}
+		}
 
 		try {
 			// -0d + 0d = 0d
@@ -774,11 +818,17 @@ public class TypeUtil {
 	private static final Integer INTEGER_ZERO = Integer.valueOf(0);
 	private static final Integer INTEGER_ONE = Integer.valueOf(1);
 
+	private static final Float FLOAT_MINUS_ONE = Float.valueOf(-1f);
 	private static final Float FLOAT_ZERO = Float.valueOf(0f);
 	private static final Float FLOAT_ONE = Float.valueOf(1f);
 
+	private static final Double DOUBLE_MINUS_ONE = Double.valueOf(-1d);
+	private static final Double DOUBLE_MINUS_ONE_HALF = Double.valueOf(-0.5d);
 	private static final Double DOUBLE_ZERO = Double.valueOf(0d);
+	private static final Double DOUBLE_ONE_HALF = Double.valueOf(0.5d);
 	private static final Double DOUBLE_ONE = Double.valueOf(1d);
+	private static final Double DOUBLE_TWO = Double.valueOf(2d);
+	private static final Double DOUBLE_THREE = Double.valueOf(3d);
 
 	private static final LocalDate YEAR_1960 = new LocalDate(1960, 1, 1);
 	private static final LocalDate YEAR_1970 = new LocalDate(1970, 1, 1);
