@@ -68,6 +68,11 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 
 
 	FieldValue(DataType dataType, Object value){
+
+		if((dataType == null) || (value == null)){
+			throw new NullPointerException();
+		}
+
 		setDataType(dataType);
 		setValue(filterValue(value));
 	}
@@ -371,11 +376,6 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	}
 
 	private void setDataType(DataType dataType){
-
-		if(dataType == null){
-			throw new NullPointerException();
-		}
-
 		this.dataType = dataType;
 	}
 
@@ -384,11 +384,6 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	}
 
 	private void setValue(Object value){
-
-		if(value == null){
-			throw new NullPointerException();
-		}
-
 		this.value = value;
 	}
 
