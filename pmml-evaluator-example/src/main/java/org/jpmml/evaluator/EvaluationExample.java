@@ -35,6 +35,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SlidingWindowReservoir;
 import com.codahale.metrics.Timer;
 import com.google.common.base.Function;
+import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -107,6 +108,13 @@ public class EvaluationExample extends Example {
 	private int loop = 1;
 
 	@Parameter (
+		names = "--cache-builder-spec",
+		description = "CacheBuilder configuration",
+		hidden = true
+	)
+	private String cacheBuilderSpec = null;
+
+	@Parameter (
 		names = "--optimize",
 		description = "Optimize PMML class model",
 		hidden = true
@@ -176,6 +184,12 @@ public class EvaluationExample extends Example {
 		}
 
 		PMML pmml = readPMML(this.model);
+
+		if(this.cacheBuilderSpec != null){
+			CacheBuilderSpec cacheBuilderSpec = CacheBuilderSpec.parse(this.cacheBuilderSpec);
+
+			CacheUtil.setCacheBuilderSpec(cacheBuilderSpec);
+		} // End if
 
 		if(this.optimize){
 			List<? extends Visitor> optimizers = Arrays.asList(new ExpressionOptimizer(), new FieldOptimizer(), new PredicateOptimizer(), new GeneralRegressionModelOptimizer(), new NaiveBayesModelOptimizer(), new RegressionModelOptimizer());

@@ -32,6 +32,7 @@ import java.util.concurrent.ExecutionException;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
@@ -78,17 +79,39 @@ public class CacheUtil {
 
 	static
 	public <K extends PMMLObject, V> Cache<K, V> buildCache(){
-		CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
-			.weakKeys();
+		CacheBuilder<Object, Object> cacheBuilder = newCacheBuilder();
 
 		return cacheBuilder.build();
 	}
 
 	static
 	public <K extends PMMLObject, V> LoadingCache<K, V> buildLoadingCache(CacheLoader<K, V> cacheLoader){
-		CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder()
-			.weakKeys();
+		CacheBuilder<Object, Object> cacheBuilder = newCacheBuilder();
 
 		return cacheBuilder.build(cacheLoader);
 	}
+
+	static
+	private CacheBuilder<Object, Object> newCacheBuilder(){
+		CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.from(CacheUtil.cacheBuilderSpec);
+
+		return cacheBuilder;
+	}
+
+	static
+	public CacheBuilderSpec getCacheBuilderSpec(){
+		return CacheUtil.cacheBuilderSpec;
+	}
+
+	static
+	public void setCacheBuilderSpec(CacheBuilderSpec cacheBuilderSpec){
+
+		if(cacheBuilderSpec == null){
+			throw new NullPointerException();
+		}
+
+		CacheUtil.cacheBuilderSpec = cacheBuilderSpec;
+	}
+
+	private static CacheBuilderSpec cacheBuilderSpec = CacheBuilderSpec.parse("weakKeys");
 }
