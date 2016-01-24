@@ -132,10 +132,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			throw new InvalidFeatureException(treeModel);
 		}
 
-		Boolean status = evaluateNode(root, trail, context);
+		Boolean status = evaluateNode(trail, root, context);
 
 		if(status != null && status.booleanValue()){
-			NodeResult result = handleTrue(root, trail, context);
+			NodeResult result = handleTrue(trail, root, context);
 
 			Node node = result.getNode();
 			if(node != null){
@@ -153,7 +153,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return null;
 	}
 
-	private Boolean evaluateNode(Node node, Trail trail, EvaluationContext context){
+	private Boolean evaluateNode(Trail trail, Node node, EvaluationContext context){
 		EmbeddedModel embeddedModel = node.getEmbeddedModel();
 		if(embeddedModel != null){
 			throw new UnsupportedFeatureException(embeddedModel);
@@ -181,7 +181,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 	}
 
-	private NodeResult handleTrue(Node node, Trail trail, EvaluationContext context){
+	private NodeResult handleTrue(Trail trail, Node node, EvaluationContext context){
 
 		// A "true" leaf node
 		if(!node.hasNodes()){
@@ -192,10 +192,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		List<Node> children = node.getNodes();
 		for(Node child : children){
-			Boolean status = evaluateNode(child, trail, context);
+			Boolean status = evaluateNode(trail, child, context);
 
 			if(status == null){
-				NodeResult result = handleMissingValue(node, child, trail, context);
+				NodeResult result = handleMissingValue(trail, node, child, context);
 
 				if(result != null){
 					return result;
@@ -203,15 +203,15 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			} else
 
 			if(status.booleanValue()){
-				return handleTrue(child, trail, context);
+				return handleTrue(trail, child, context);
 			}
 		}
 
 		// A "true" non-leaf node
-		return handleNoTrueChild(node, trail, context);
+		return handleNoTrueChild(trail);
 	}
 
-	private NodeResult handleDefaultChild(Node node, Trail trail, EvaluationContext context){
+	private NodeResult handleDefaultChild(Trail trail, Node node, EvaluationContext context){
 
 		// "The defaultChild missing value strategy requires the presence of the defaultChild attribute in every non-leaf Node"
 		String defaultChild = node.getDefaultChild();
@@ -227,7 +227,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 			if(id != null && (id).equals(defaultChild)){
 				// The predicate of the referenced Node is not evaluated
-				return handleTrue(child, trail, context);
+				return handleTrue(trail, child, context);
 			}
 		}
 
@@ -235,7 +235,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		throw new InvalidFeatureException(node);
 	}
 
-	private NodeResult handleNoTrueChild(Node node, Trail trail, EvaluationContext context){
+	private NodeResult handleNoTrueChild(Trail trail){
 		TreeModel treeModel = getModel();
 
 		NoTrueChildStrategyType noTrueChildStrategy = treeModel.getNoTrueChildStrategy();
@@ -259,7 +259,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	 * @param parent The parent Node of the Node that evaluated to the missing value.
 	 * @param node The Node that evaluated to the missing value.
 	 */
-	private NodeResult handleMissingValue(Node parent, Node node, Trail trail, EvaluationContext context){
+	private NodeResult handleMissingValue(Trail trail, Node parent, Node node, EvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		MissingValueStrategyType missingValueStrategy = treeModel.getMissingValueStrategy();
@@ -271,7 +271,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 				return new NodeResult(lastPrediction);
 			case DEFAULT_CHILD:
-				return handleDefaultChild(parent, trail, context);
+				return handleDefaultChild(trail, parent, context);
 			case NONE:
 				return null;
 			default:
