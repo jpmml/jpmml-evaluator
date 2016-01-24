@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -244,13 +243,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			case RETURN_NULL_PREDICTION:
 				return new NodeResult(null);
 			case RETURN_LAST_PREDICTION:
-				if(trail.size() > 0){
-					Node parent = trail.getLastPrediction();
+				Node lastPrediction = trail.getLastPrediction();
 
-					// "Return the parent Node only if it specifies a score attribute"
-					if(parent.getScore() != null){
-						return new NodeResult(parent);
-					}
+				// "Return the parent Node only if it specifies a score attribute"
+				if(lastPrediction.getScore() != null){
+					return new NodeResult(lastPrediction);
 				}
 				return new NodeResult(null);
 			default:
@@ -270,11 +267,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			case NULL_PREDICTION:
 				return new NodeResult(null);
 			case LAST_PREDICTION:
-				return new NodeResult(trail.getLastPrediction());
+				Node lastPrediction = trail.getLastPrediction();
+
+				return new NodeResult(lastPrediction);
 			case DEFAULT_CHILD:
-				if(parent == null){
-					throw new EvaluationException();
-				}
 				return handleDefaultChild(parent, trail, context);
 			case NONE:
 				return null;
@@ -322,7 +318,9 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	}
 
 	static
-	private class Trail extends ArrayDeque<Node> {
+	private class Trail {
+
+		private Node lastPrediction = null;
 
 		private int missingLevels = 0;
 
@@ -330,8 +328,21 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		public Trail(){
 		}
 
+		public void push(Node node){
+			setLastPrediction(node);
+		}
+
 		public Node getLastPrediction(){
-			return getFirst();
+
+			if(this.lastPrediction == null){
+				throw new EvaluationException();
+			}
+
+			return this.lastPrediction;
+		}
+
+		private void setLastPrediction(Node lastPrediction){
+			this.lastPrediction = lastPrediction;
 		}
 
 		public void addMissingLevel(){
