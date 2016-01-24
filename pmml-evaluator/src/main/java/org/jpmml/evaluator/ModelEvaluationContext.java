@@ -24,12 +24,14 @@ import java.util.Map;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningField;
+import org.dmg.pmml.OutputField;
 
 public class ModelEvaluationContext extends EvaluationContext {
 
-	private ModelEvaluationContext parent = null;
+	private MiningModelEvaluationContext parent = null;
 
 	private ModelEvaluator<?> modelEvaluator = null;
 
@@ -41,7 +43,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 	private boolean compatible = false;
 
 
-	public ModelEvaluationContext(ModelEvaluationContext parent, ModelEvaluator<?> modelEvaluator){
+	public ModelEvaluationContext(MiningModelEvaluationContext parent, ModelEvaluator<?> modelEvaluator){
 		setParent(parent);
 		setModelEvaluator(modelEvaluator);
 	}
@@ -62,7 +64,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 	protected FieldValue resolve(FieldName name){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
-		ModelEvaluationContext parent = getParent();
+		MiningModelEvaluationContext parent = getParent();
 
 		MiningField miningField = modelEvaluator.getMiningField(name);
 
@@ -94,34 +96,27 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 		// Fields that must be referenced in the MiningSchema element
 		{
-			Map<FieldName, ?> arguments = getArguments();
-
 			DataField dataField = modelEvaluator.getDataField(name);
 			if(dataField != null){
+				Map<FieldName, ?> arguments = getArguments();
 
 				if(parent != null){
 					FieldValue value = parent.evaluate(name);
 
-					if(MiningFieldUtil.isDefault(miningField)){
-						return declare(name, value);
-					}
-
-					// Unwrap the value so that it is subjected to model-specific field value preparation logic again
-					return declare(name, FieldValueUtil.getValue(value));
+					return declare(name, performValueTreatment(dataField, miningField, value));
 				}
 
 				Object value = arguments.get(name);
 
 				return declare(name, value);
-			} else
+			} // End if
 
-			{
-				Object value = arguments.get(name);
+			if(parent != null){
+				Field field = resolveField(name, parent);
+				if(field != null){
+					FieldValue value = parent.evaluate(name);
 
-				if(value instanceof FieldValueReference){
-					FieldValueReference fieldValueReference = (FieldValueReference)value;
-
-					return declare(name, fieldValueReference.get());
+					return declare(name, performValueTreatment(field, miningField, value));
 				}
 			}
 
@@ -145,11 +140,11 @@ public class ModelEvaluationContext extends EvaluationContext {
 		return defineFunction;
 	}
 
-	public ModelEvaluationContext getParent(){
+	public MiningModelEvaluationContext getParent(){
 		return this.parent;
 	}
 
-	private void setParent(ModelEvaluationContext parent){
+	private void setParent(MiningModelEvaluationContext parent){
 		this.parent = parent;
 	}
 
@@ -174,12 +169,48 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	void setCompatible(boolean compatible){
-		ModelEvaluationContext parent = getParent();
+		MiningModelEvaluationContext parent = getParent();
 
 		if(parent == null){
 			throw new IllegalStateException();
 		}
 
 		this.compatible = compatible;
+	}
+
+	static
+	private Field resolveField(FieldName name, MiningModelEvaluationContext context){
+
+		while(context != null){
+			OutputField outputField = context.getOutputField(name);
+			if(outputField != null){
+				return outputField;
+			}
+
+			DerivedField localDerivedField = context.getLocalDerivedField(name);
+			if(localDerivedField != null){
+				return localDerivedField;
+			}
+
+			context = context.getParent();
+		}
+
+		return null;
+	}
+
+	static
+	private FieldValue performValueTreatment(Field field, MiningField miningField, FieldValue value){
+
+		if(MiningFieldUtil.isDefault(miningField)){
+			return value;
+		} // End if
+
+		if(value == null){
+			return FieldValueUtil.performMissingValueTreatment(field, miningField);
+		} else
+
+		{
+			return FieldValueUtil.performValidValueTreatment(field, miningField, FieldValueUtil.getValue(value));
+		}
 	}
 }

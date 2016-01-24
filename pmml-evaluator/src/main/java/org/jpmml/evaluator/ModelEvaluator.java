@@ -334,7 +334,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 	}
 
-	public ModelEvaluationContext createContext(ModelEvaluationContext parent){
+	public ModelEvaluationContext createContext(MiningModelEvaluationContext parent){
 		return new ModelEvaluationContext(parent, this);
 	}
 

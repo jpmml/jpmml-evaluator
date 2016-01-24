@@ -21,12 +21,18 @@ package org.jpmml.evaluator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.OutputField;
+
 public class MiningModelEvaluationContext extends ModelEvaluationContext {
 
 	private Map<String, SegmentResultMap> results = new HashMap<>();
 
+	private Map<FieldName, OutputField> outputFields = null;
 
-	public MiningModelEvaluationContext(ModelEvaluationContext parent, MiningModelEvaluator modelEvaluator){
+
+	public MiningModelEvaluationContext(MiningModelEvaluationContext parent, MiningModelEvaluator modelEvaluator){
 		super(parent, modelEvaluator);
 	}
 
@@ -41,5 +47,33 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 
 	void putResult(String id, SegmentResultMap result){
 		this.results.put(id, result);
+	}
+
+	OutputField getOutputField(FieldName name){
+
+		if(this.outputFields == null){
+			return null;
+		}
+
+		return this.outputFields.get(name);
+	}
+
+	void putOutputField(OutputField outputField){
+		putOutputField(outputField.getName(), outputField);
+	}
+
+	void putOutputField(FieldName name, OutputField outputField){
+
+		if(this.outputFields == null){
+			this.outputFields = new HashMap<>();
+		}
+
+		this.outputFields.put(name, outputField);
+	}
+
+	DerivedField getLocalDerivedField(FieldName name){
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
+
+		return modelEvaluator.getLocalDerivedField(name);
 	}
 }
