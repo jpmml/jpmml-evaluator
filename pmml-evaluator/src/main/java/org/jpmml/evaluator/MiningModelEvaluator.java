@@ -288,44 +288,43 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			SegmentHandler segmentHandler = getSegmentHandler(model);
 
-			ModelEvaluator<?> evaluator = (ModelEvaluator<?>)segmentHandler.getEvaluator();
+			ModelEvaluator<?> segmentEvaluator = (ModelEvaluator<?>)segmentHandler.getEvaluator();
 
-			ModelEvaluationContext segmentContext = evaluator.createContext(context);
+			ModelEvaluationContext segmentContext = segmentEvaluator.createContext(context);
 			segmentContext.setCompatible(segmentHandler.isCompatible());
 
-			Map<FieldName, ?> result;
+			final
+			String segmentId = EntityUtil.getId(segment, entityRegistry);
+
+			FieldName segmentTargetField = segmentEvaluator.getTargetField();
+
+			SegmentResultMap segmentResult = new SegmentResultMap(segment, segmentTargetField){
+
+				@Override
+				public String getEntityId(){
+					return segmentId;
+				}
+			};
 
 			try {
-				result = evaluator.evaluate(segmentContext);
+				Map<FieldName, ?> result = segmentEvaluator.evaluate(segmentContext);
+
+				segmentResult.putAll(result);
 			} catch(PMMLException pe){
 				pe.ensureContext(segment);
 
 				throw pe;
 			}
 
-			FieldName targetField = evaluator.getTargetField();
-
-			final
-			String entityId = EntityUtil.getId(segment, entityRegistry);
-
-			SegmentResultMap segmentResult = new SegmentResultMap(segment, targetField){
-
-				@Override
-				public String getEntityId(){
-					return entityId;
-				}
-			};
-			segmentResult.putAll(result);
-
-			context.putResult(entityId, segmentResult);
+			context.putResult(segmentId, segmentResult);
 
 			switch(multipleModelMethod){
 				case MODEL_CHAIN:
 					{
-						List<FieldName> outputFields = evaluator.getOutputFields();
+						List<FieldName> outputFields = segmentEvaluator.getOutputFields();
 						for(FieldName outputField : outputFields){
-							OutputField segmentOutputField = evaluator.getOutputField(outputField);
-							if(segmentOutputField == null){
+							OutputField segmentOutputField = segmentEvaluator.getOutputField(outputField);
+							if(outputField == null){
 								throw new MissingFieldException(outputField, segment);
 							}
 
@@ -344,9 +343,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					break;
 			}
 
-			List<String> warnings = segmentContext.getWarnings();
-			for(String warning : warnings){
-				context.addWarning(warning);
+			List<String> segmentWarnings = segmentContext.getWarnings();
+			for(String segmentWarning : segmentWarnings){
+				context.addWarning(segmentWarning);
 			}
 
 			switch(multipleModelMethod){
