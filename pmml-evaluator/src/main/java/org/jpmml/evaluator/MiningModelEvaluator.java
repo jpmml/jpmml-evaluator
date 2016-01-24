@@ -26,6 +26,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -53,12 +55,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	private ModelEvaluatorFactory evaluatorFactory = null;
 
-	/*
-	 * Caches produced by {@link CacheBuilder} are serializable.
-	 * The serialized representation of a cache includes its configuration properties, but not its contents.
-	 * Therefore, class SegmentHandlerCacheLoader must be serializable, whereas class SegmentHandler may, but need not, be serializable.
-	 */
-	private LoadingCache<Model, SegmentHandler> segmentHandlerCache = CacheUtil.buildLoadingCache(new SegmentHandlerCacheLoader());
+	private ConcurrentMap<String, SegmentHandler> segmentHandlers = new ConcurrentHashMap<>();
 
 
 	public MiningModelEvaluator(PMML pmml){
@@ -286,15 +283,20 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					break;
 			}
 
-			SegmentHandler segmentHandler = getSegmentHandler(model);
+			final
+			String segmentId = EntityUtil.getId(segment, entityRegistry);
+
+			SegmentHandler segmentHandler = this.segmentHandlers.get(segmentId);
+			if(segmentHandler == null){
+				segmentHandler = createSegmentHandler(model);
+
+				this.segmentHandlers.putIfAbsent(segmentId, segmentHandler);
+			}
 
 			ModelEvaluator<?> segmentEvaluator = (ModelEvaluator<?>)segmentHandler.getEvaluator();
 
 			ModelEvaluationContext segmentContext = segmentEvaluator.createContext(context);
 			segmentContext.setCompatible(segmentHandler.isCompatible());
-
-			final
-			String segmentId = EntityUtil.getId(segment, entityRegistry);
 
 			FieldName segmentTargetField = segmentEvaluator.getTargetField();
 
@@ -439,10 +441,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		this.evaluatorFactory = evaluatorFactory;
 	}
 
-	private SegmentHandler getSegmentHandler(Model model){
-		return CacheUtil.getValue(model, this.segmentHandlerCache);
-	}
-
 	static
 	private Double aggregateValues(Segmentation segmentation, List<SegmentResultMap> segmentResults){
 		RegressionAggregator aggregator = new RegressionAggregator();
@@ -580,16 +578,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return result.asMap();
 	}
 
-	private class SegmentHandlerCacheLoader extends CacheLoader<Model, SegmentHandler> implements Serializable {
-
-		@Override
-		public SegmentHandler load(Model model){
-			return createSegmentHandler(model);
-		}
-	}
-
 	static
-	private class SegmentHandler {
+	private class SegmentHandler implements Serializable {
 
 		private Evaluator evaluator = null;
 
