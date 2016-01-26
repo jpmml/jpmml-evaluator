@@ -56,8 +56,11 @@ public class PMMLManager implements Serializable {
 		PMML pmml = getPMML();
 
 		DataDictionary dataDictionary = pmml.getDataDictionary();
+		if(dataDictionary.hasDataFields()){
+			return IndexableUtil.find(name, dataDictionary.getDataFields());
+		}
 
-		return IndexableUtil.find(dataDictionary.getDataFields(), name);
+		return null;
 	}
 
 	public DerivedField getDerivedField(FieldName name){
@@ -65,7 +68,7 @@ public class PMMLManager implements Serializable {
 
 		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
 		if(transformationDictionary != null && transformationDictionary.hasDerivedFields()){
-			return IndexableUtil.find(transformationDictionary.getDerivedFields(), name);
+			return IndexableUtil.find(name, transformationDictionary.getDerivedFields());
 		}
 
 		return null;
@@ -76,7 +79,7 @@ public class PMMLManager implements Serializable {
 
 		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
 		if(transformationDictionary != null && transformationDictionary.hasDefineFunctions()){
-			return IndexableUtil.find(transformationDictionary.getDefineFunctions(), name);
+			return IndexableUtil.find(name, transformationDictionary.getDefineFunctions());
 		}
 
 		return null;

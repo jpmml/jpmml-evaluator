@@ -100,8 +100,11 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		M model = getModel();
 
 		MiningSchema miningSchema = model.getMiningSchema();
+		if(miningSchema.hasMiningFields()){
+			return IndexableUtil.find(name, miningSchema.getMiningFields());
+		}
 
-		return IndexableUtil.find(miningSchema.getMiningFields(), name);
+		return null;
 	}
 
 	protected List<FieldName> getMiningFields(EnumSet<FieldUsageType> fieldUsageTypes){
@@ -128,7 +131,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 		LocalTransformations localTransformations = model.getLocalTransformations();
 		if(localTransformations != null && localTransformations.hasDerivedFields()){
-			return IndexableUtil.find(localTransformations.getDerivedFields(), name);
+			return IndexableUtil.find(name, localTransformations.getDerivedFields());
 		}
 
 		return null;
@@ -139,8 +142,8 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		M model = getModel();
 
 		Targets targets = model.getTargets();
-		if(targets != null){
-			return IndexableUtil.find(targets.getTargets(), name);
+		if(targets != null && targets.hasTargets()){
+			return IndexableUtil.find(name, targets.getTargets());
 		}
 
 		return null;
@@ -151,18 +154,11 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		M model = getModel();
 
 		Output output = model.getOutput();
-		if(output == null){
-			return Collections.emptyList();
+		if(output != null && output.hasOutputFields()){
+			return IndexableUtil.keys(output.getOutputFields());
 		}
 
-		List<FieldName> result = new ArrayList<>();
-
-		List<OutputField> outputFields = output.getOutputFields();
-		for(OutputField outputField : outputFields){
-			result.add(outputField.getName());
-		}
-
-		return result;
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -170,8 +166,8 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		M model = getModel();
 
 		Output output = model.getOutput();
-		if(output != null){
-			return IndexableUtil.find(output.getOutputFields(), name);
+		if(output != null && output.hasOutputFields()){
+			return IndexableUtil.find(name, output.getOutputFields());
 		}
 
 		return null;

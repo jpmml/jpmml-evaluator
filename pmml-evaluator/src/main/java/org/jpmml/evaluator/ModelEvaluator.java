@@ -131,12 +131,12 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 
 		Targets targets = model.getTargets();
-		if(targets != null){
+		if(targets != null && targets.hasTargets()){
 			this.targets = CacheUtil.getValue(targets, ModelEvaluator.targetCache);
 		}
 
 		Output output = model.getOutput();
-		if(output != null){
+		if(output != null && output.hasOutputFields()){
 			this.outputFields = CacheUtil.getValue(output, ModelEvaluator.outputFieldCache);
 		}
 	}
