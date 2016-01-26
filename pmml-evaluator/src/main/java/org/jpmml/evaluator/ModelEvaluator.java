@@ -84,6 +84,9 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	private Map<String, DefineFunction> defineFunctions = Collections.emptyMap();
 
+	transient
+	private List<FieldName> targetFields = null;
+
 	private Map<FieldName, MiningField> miningFields = Collections.emptyMap();
 
 	private ListMultimap<EnumSet<FieldUsageType>, FieldName> miningFieldNames = ImmutableListMultimap.of();
@@ -183,6 +186,16 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	@Override
 	public DefineFunction getDefineFunction(String name){
 		return this.defineFunctions.get(name);
+	}
+
+	@Override
+	public List<FieldName> getTargetFields(){
+
+		if(this.targetFields == null){
+			this.targetFields = super.getTargetFields();
+		}
+
+		return this.targetFields;
 	}
 
 	@Override
