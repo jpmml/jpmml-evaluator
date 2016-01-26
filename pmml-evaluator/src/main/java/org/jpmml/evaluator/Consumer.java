@@ -62,8 +62,6 @@ public interface Consumer extends Serializable {
 	 * <p>
 	 * Gets the definition of a field from the {@link DataDictionary}.
 	 * </p>
-	 *
-	 * @param name The name of the field. The name of the default target field is <code>null</code>.
 	 */
 	DataField getDataField(FieldName name);
 
@@ -80,7 +78,7 @@ public interface Consumer extends Serializable {
 	 * </p>
 	 *
 	 * <p>
-	 * A model should have no more than 1 group field.
+	 * This field set is relevant for {@link MiningFunctionType#ASSOCIATION_RULES association rules} model type only.
 	 * </p>
 	 */
 	List<FieldName> getGroupFields();
@@ -91,7 +89,7 @@ public interface Consumer extends Serializable {
 	 * </p>
 	 *
 	 * <p>
-	 * This field set is relevant only for {@link MiningFunctionType#ASSOCIATION_RULES association rules} model type.
+	 * This field set is relevant for {@link MiningFunctionType#SEQUENCES sequences} and {@link MiningFunctionType#TIME_SERIES time series} model types.
 	 * </p>
 	 */
 	List<FieldName> getOrderFields();
@@ -107,41 +105,6 @@ public interface Consumer extends Serializable {
 
 	/**
 	 * <p>
-	 * Convenience method for retrieving the sole target field.
-	 * </p>
-	 *
-	 * <p>
-	 * A supervised model should, but is not required to, define a target field. An unsupervised model, by definition, does not define a target field.
-	 * If the {@link #getTargetFields() collection of target fields} is empty, then the model consumer should assume that the model defines a default target field, which is represented by <code>null</code>.
-	 * The default target field could be either "real" or "phantom". They can be distinguished from one another by looking up the definition of the field from the {@link DataDictionary}.
-	 * </p>
-	 *
-	 * <pre>
-	 * Consumer consumer = ...;
-	 *
-	 * List&lt;FieldName&gt; targetFields = consumer.getTargetFields();
-	 * if(targetFields.isEmpty()){
-	 *   FieldName targetField = consumer.getTargetField();
-	 *
-	 *   DataField dataField = consumer.getDataField(targetField);
-	 *   if(dataField != null){
-	 *     // A "real" default target field
-	 *   } else
-	 *
-	 *   {
-	 *     // A "phantom" default target field
-	 *   }
-	 * }
-	 * </pre>
-	 *
-	 * @return The sole target field.
-	 *
-	 * @throws InvalidFeatureException If the number of target fields is greater than one.
-	 */
-	FieldName getTargetField();
-
-	/**
-	 * <p>
 	 * Gets the definition of a field from the {@link MiningSchema}.
 	 * </p>
 	 *
@@ -149,6 +112,7 @@ public interface Consumer extends Serializable {
 	 *
 	 * @see #getActiveFields()
 	 * @see #getGroupFields()
+	 * @see #getOrderFields()
 	 * @see #getTargetFields()
 	 */
 	MiningField getMiningField(FieldName name);

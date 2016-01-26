@@ -186,6 +186,26 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	@Override
+	public FieldName getTargetField(){
+		M model = getModel();
+
+		List<FieldName> targetFields = getTargetFields();
+
+		// "The definition of target fields in the MiningSchema is not required"
+		if(targetFields.size() < 1){
+			return TargetUtil.DEFAULT_NAME;
+		} else
+
+		if(targetFields.size() > 1){
+			MiningSchema miningSchema = model.getMiningSchema();
+
+			throw new InvalidFeatureException("Too many target fields", miningSchema);
+		}
+
+		return targetFields.get(0);
+	}
+
+	@Override
 	public MiningField getMiningField(FieldName name){
 
 		if(name == null){

@@ -20,6 +20,8 @@ package org.jpmml.evaluator;
 
 import java.util.Map;
 
+import org.dmg.pmml.DataDictionary;
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Model;
 
@@ -113,8 +115,9 @@ public interface Evaluator extends Consumer {
 	 * After that, the value is subjected to missing value treatment, invalid value treatment and outlier treatment.
 	 * </p>
 	 *
-	 * @param name The name of the field
-	 * @param string The input value in user-supplied representation. Use <code>null</code> to represent a missing input value.
+	 * @param name The name of the field.
+	 * @param string The input value in user-supplied representation.
+	 * Use <code>null</code> to represent a missing input value.
 	 *
 	 * @throws EvaluationException If the input value preparation fails.
 	 * @throws InvalidFeatureException
@@ -124,6 +127,57 @@ public interface Evaluator extends Consumer {
 	 * @see #getMiningField(FieldName)
 	 */
 	FieldValue prepare(FieldName name, Object value);
+
+	/**
+	 * @param name The name of the field.
+	 * Use {@link TargetUtil#DEFAULT_NAME} to represent the default target field.
+	 */
+	@Override
+	public DataField getDataField(FieldName name);
+
+	/**
+	 * <p>
+	 * Convenience method for retrieving the sole target field.
+	 * </p>
+	 *
+	 * <p>
+	 * A supervised model should, but is not required to, define a target field.
+	 * An unsupervised model, by definition, does not define a target field.
+	 * If the {@link #getTargetFields() collection of target fields} is empty,
+	 * then the model consumer should assume that the model defines a default target field,
+	 * which is represented by {@link TargetUtil#DEFAULT_NAME}.
+	 * </p>
+	 *
+	 * <p>
+	 * The default target field could be either "real" or "phantom".
+	 * They can be distinguished from one another by looking up the definition of the field from the {@link DataDictionary}.
+	 * </p>
+	 *
+	 * <pre>
+	 * Consumer consumer = ...;
+	 *
+	 * List&lt;FieldName&gt; targetFields = consumer.getTargetFields();
+	 * if(targetFields.isEmpty()){
+	 *   FieldName targetField = consumer.getTargetField();
+	 *
+	 *   DataField dataField = consumer.getDataField(targetField);
+	 *   if(dataField != null){
+	 *     // A "real" default target field
+	 *   } else
+	 *
+	 *   {
+	 *     // A "phantom" default target field
+	 *   }
+	 * }
+	 * </pre>
+	 *
+	 * @return The sole target field.
+	 *
+	 * @throws InvalidFeatureException If the number of target fields is greater than one.
+	 *
+	 * @see #getTargetFields()
+	 */
+	FieldName getTargetField();
 
 	/**
 	 * <p>
