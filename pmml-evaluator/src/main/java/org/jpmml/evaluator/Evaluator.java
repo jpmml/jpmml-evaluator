@@ -130,7 +130,7 @@ public interface Evaluator extends Consumer {
 
 	/**
 	 * @param name The name of the field.
-	 * Use {@link TargetUtil#DEFAULT_NAME} to represent the default target field.
+	 * Use {@link #DEFAULT_TARGET} to represent the default target field.
 	 */
 	@Override
 	public DataField getDataField(FieldName name);
@@ -145,7 +145,7 @@ public interface Evaluator extends Consumer {
 	 * An unsupervised model, by definition, does not define a target field.
 	 * If the {@link #getTargetFields() collection of target fields} is empty,
 	 * then the model consumer should assume that the model defines a default target field,
-	 * which is represented by {@link TargetUtil#DEFAULT_NAME}.
+	 * which is represented by {@link #DEFAULT_TARGET}.
 	 * </p>
 	 *
 	 * <p>
@@ -198,9 +198,11 @@ public interface Evaluator extends Consumer {
 	 * @param arguments Map of {@link #getActiveFields() active field} values.
 	 *
 	 * @return Map of {@link #getTargetFields() target field} and {@link #getOutputFields() output field} values.
-	 * Simple values are represented using the Java equivalents of PMML data types (eg. String, Integer, Float, Double etc.).
+	 * A target field could be mapped to a complex value or a simple value.
+	 * An output field is always mapped to a simple value.
 	 * Complex values are represented as instances of {@link Computable} that return simple values.
-	 * A missing result is represented by <code>null</code>.
+	 * Simple values are represented using the Java equivalents of PMML data types (eg. String, Integer, Float, Double etc.).
+	 * A missing value is represented by <code>null</code>.
 	 *
 	 * @throws EvaluationException If the evaluation fails.
 	 * @throws InvalidFeatureException
@@ -209,4 +211,13 @@ public interface Evaluator extends Consumer {
 	 * @see Computable
 	 */
 	Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments);
+
+	/**
+	 * <p>
+	 * The name of the default target field.
+	 * </p>
+	 *
+	 * @see #getTargetField()
+	 */
+	public static final FieldName DEFAULT_TARGET = null;
 }
