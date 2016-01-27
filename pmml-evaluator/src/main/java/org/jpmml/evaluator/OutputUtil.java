@@ -88,7 +88,7 @@ public class OutputUtil {
 
 			String segmentId = outputField.getSegmentId();
 
-			SegmentResultMap segmentPredictions = null;
+			SegmentResult segmentPredictions = null;
 
 			// Load the target value of the specified segment
 			if(segmentId != null){

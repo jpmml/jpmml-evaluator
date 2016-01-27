@@ -152,7 +152,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private Map<FieldName, ?> evaluateRegression(MiningModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResultMap> segmentResults = evaluateSegmentation(context);
+		List<SegmentResult> segmentResults = evaluateSegmentation(context);
 
 		Map<FieldName, ?> predictions = getSegmentationResult(REGRESSION_METHODS, segmentResults);
 		if(predictions != null){
@@ -169,7 +169,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private Map<FieldName, ?> evaluateClassification(MiningModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResultMap> segmentResults = evaluateSegmentation(context);
+		List<SegmentResult> segmentResults = evaluateSegmentation(context);
 
 		Map<FieldName, ?> predictions = getSegmentationResult(CLASSIFICATION_METHODS, segmentResults);
 		if(predictions != null){
@@ -219,7 +219,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private Map<FieldName, ?> evaluateClustering(MiningModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResultMap> segmentResults = evaluateSegmentation(context);
+		List<SegmentResult> segmentResults = evaluateSegmentation(context);
 
 		Map<FieldName, ?> predictions = getSegmentationResult(CLUSTERING_METHODS, segmentResults);
 		if(predictions != null){
@@ -237,15 +237,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	private Map<FieldName, ?> evaluateAny(MiningModelEvaluationContext context){
-		List<SegmentResultMap> segmentResults = evaluateSegmentation(context);
+		List<SegmentResult> segmentResults = evaluateSegmentation(context);
 
 		return getSegmentationResult(Collections.<MultipleModelMethodType>emptySet(), segmentResults);
 	}
 
-	private List<SegmentResultMap> evaluateSegmentation(MiningModelEvaluationContext context){
+	private List<SegmentResult> evaluateSegmentation(MiningModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResultMap> results = new ArrayList<>();
+		List<SegmentResult> results = new ArrayList<>();
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
@@ -291,7 +291,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					break;
 			}
 
-			final
 			String segmentId = EntityUtil.getId(segment, entityRegistry);
 
 			SegmentHandler segmentHandler = this.segmentHandlers.get(segmentId);
@@ -308,18 +307,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			FieldName segmentTargetField = segmentEvaluator.getTargetField();
 
-			SegmentResultMap segmentResult = new SegmentResultMap(segment, segmentTargetField){
-
-				@Override
-				public String getEntityId(){
-					return segmentId;
-				}
-			};
+			SegmentResult segmentResult;
 
 			try {
 				Map<FieldName, ?> result = segmentEvaluator.evaluate(segmentContext);
 
-				segmentResult.putAll(result);
+				segmentResult = new SegmentResult(segment, segmentId, result, segmentTargetField);
 			} catch(PMMLException pe){
 				pe.ensureContext(segment);
 
@@ -381,7 +374,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return results;
 	}
 
-	private Map<FieldName, ?> getSegmentationResult(Set<MultipleModelMethodType> multipleModelMethods, List<SegmentResultMap> segmentResults){
+	private Map<FieldName, ?> getSegmentationResult(Set<MultipleModelMethodType> multipleModelMethods, List<SegmentResult> segmentResults){
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.getSegmentation();
@@ -450,14 +443,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	static
-	private Double aggregateValues(Segmentation segmentation, List<SegmentResultMap> segmentResults){
+	private Double aggregateValues(Segmentation segmentation, List<SegmentResult> segmentResults){
 		RegressionAggregator aggregator = new RegressionAggregator();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		double denominator = 0d;
 
-		for(SegmentResultMap segmentResult : segmentResults){
+		for(SegmentResult segmentResult : segmentResults){
 			Double value = (Double)segmentResult.getTargetValue(DataType.DOUBLE);
 
 			switch(multipleModelMethod){
@@ -494,12 +487,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	static
-	private Map<String, Double> aggregateVotes(Segmentation segmentation, List<SegmentResultMap> segmentResults){
+	private Map<String, Double> aggregateVotes(Segmentation segmentation, List<SegmentResult> segmentResults){
 		VoteAggregator<String> aggregator = new VoteAggregator<>();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
-		for(SegmentResultMap segmentResult : segmentResults){
+		for(SegmentResult segmentResult : segmentResults){
 			String key = (String)segmentResult.getTargetValue(DataType.STRING);
 
 			switch(multipleModelMethod){
@@ -518,14 +511,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	static
-	private Map<String, Double> aggregateProbabilities(Segmentation segmentation, List<SegmentResultMap> segmentResults){
+	private Map<String, Double> aggregateProbabilities(Segmentation segmentation, List<SegmentResult> segmentResults){
 		ProbabilityAggregator aggregator = new ProbabilityAggregator();
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		double denominator = 0d;
 
-		for(SegmentResultMap segmentResult : segmentResults){
+		for(SegmentResult segmentResult : segmentResults){
 			HasProbability hasProbability = segmentResult.getTargetValue(HasProbability.class);
 
 			switch(multipleModelMethod){
@@ -562,12 +555,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	static
-	private Map<FieldName, ?> selectAll(List<SegmentResultMap> segmentResults){
+	private Map<FieldName, ?> selectAll(List<SegmentResult> segmentResults){
 		ListMultimap<FieldName, Object> result = ArrayListMultimap.create();
 
 		Set<FieldName> keys = null;
 
-		for(SegmentResultMap segmentResult : segmentResults){
+		for(SegmentResult segmentResult : segmentResults){
 
 			if(keys == null){
 				keys = new LinkedHashSet<>(segmentResult.keySet());

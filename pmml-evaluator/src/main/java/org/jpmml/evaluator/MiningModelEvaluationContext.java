@@ -27,7 +27,7 @@ import org.dmg.pmml.OutputField;
 
 public class MiningModelEvaluationContext extends ModelEvaluationContext {
 
-	private Map<String, SegmentResultMap> results = new HashMap<>();
+	private Map<String, SegmentResult> results = new HashMap<>();
 
 	private Map<FieldName, OutputField> outputFields = null;
 
@@ -41,11 +41,11 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 		return (MiningModelEvaluator)super.getModelEvaluator();
 	}
 
-	SegmentResultMap getResult(String id){
+	SegmentResult getResult(String id){
 		return this.results.get(id);
 	}
 
-	void putResult(String id, SegmentResultMap result){
+	void putResult(String id, SegmentResult result){
 		this.results.put(id, result);
 	}
 

@@ -18,35 +18,54 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.LinkedHashMap;
+import java.util.Map;
 
+import com.google.common.collect.ForwardingMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Segment;
 
-abstract
-class SegmentResultMap extends LinkedHashMap<FieldName, Object> implements HasEntityId {
+class SegmentResult extends ForwardingMap<FieldName, Object> implements HasEntityId {
 
 	private Segment segment = null;
+
+	private String segmentId = null;
+
+	private Map<FieldName, ?> result = null;
 
 	private FieldName targetField = null;
 
 
-	public SegmentResultMap(Segment segment, FieldName targetField){
+	public SegmentResult(Segment segment, String segmentId, Map<FieldName, ?> result, FieldName targetField){
 		setSegment(segment);
+		setSegmentId(segmentId);
+		setResult(result);
 		setTargetField(targetField);
 	}
 
-	public String getId(){
-		Segment segment = getSegment();
+	@Override
+	public String getEntityId(){
+		return getSegmentId();
+	}
 
-		return segment.getId();
+	@Override
+	@SuppressWarnings (
+		value = {"rawtypes", "unchecked"}
+	)
+	public Map<FieldName, Object> delegate(){
+		Map<FieldName, ?> result = getResult();
+
+		return (Map)result;
 	}
 
 	public double getWeight(){
 		Segment segment = getSegment();
 
 		return segment.getWeight();
+	}
+
+	public Object getTargetValue(){
+		return get(getTargetField());
 	}
 
 	public Object getTargetValue(DataType dataType){
@@ -77,16 +96,28 @@ class SegmentResultMap extends LinkedHashMap<FieldName, Object> implements HasEn
 		this.segment = segment;
 	}
 
+	public String getSegmentId(){
+		return this.segmentId;
+	}
+
+	private void setSegmentId(String segmentId){
+		this.segmentId = segmentId;
+	}
+
+	public Map<FieldName, ?> getResult(){
+		return this.result;
+	}
+
+	private void setResult(Map<FieldName, ?> result){
+		this.result = result;
+	}
+
 	public FieldName getTargetField(){
 		return this.targetField;
 	}
 
 	private void setTargetField(FieldName targetField){
 		this.targetField = targetField;
-	}
-
-	public Object getTargetValue(){
-		return get(getTargetField());
 	}
 
 	private <E extends PMMLException> E ensureContext(E exception){
