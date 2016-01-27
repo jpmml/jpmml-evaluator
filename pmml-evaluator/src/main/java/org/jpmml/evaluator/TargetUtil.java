@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Objects;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
@@ -60,7 +61,9 @@ public class TargetUtil {
 		ModelEvaluator<?> evaluator = context.getModelEvaluator();
 
 		if(predictions.size() == 1 && predictions.containsKey(Evaluator.DEFAULT_TARGET)){
-			Object value = predictions.get(Evaluator.DEFAULT_TARGET);
+			Double doubleValue = predictions.get(Evaluator.DEFAULT_TARGET);
+
+			Object value = doubleValue;
 
 			DataField dataField = evaluator.getDataField();
 
@@ -70,10 +73,14 @@ public class TargetUtil {
 
 			context.declare(Evaluator.DEFAULT_TARGET, FieldValueUtil.createTargetValue(dataField, null, null, value));
 
-			return Collections.singletonMap(Evaluator.DEFAULT_TARGET, value);
+			if(!Objects.equal(doubleValue, value)){
+				return Collections.singletonMap(Evaluator.DEFAULT_TARGET, value);
+			}
+
+			return predictions;
 		}
 
-		Map<FieldName, Object> result = new LinkedHashMap<>();
+		Map<FieldName, Object> result = null;
 
 		Collection<? extends Map.Entry<FieldName, ? extends Double>> entries = predictions.entrySet();
 		for(Map.Entry<FieldName, ? extends Double> entry : entries){
@@ -104,6 +111,14 @@ public class TargetUtil {
 			MiningField miningField = evaluator.getMiningField(name);
 
 			context.declare(name, FieldValueUtil.createTargetValue(dataField, miningField, target, value));
+
+			if(predictions.size() == 1){
+				return Collections.singletonMap(name, value);
+			} // End if
+
+			if(result == null){
+				result = new LinkedHashMap<>();
+			}
 
 			result.put(name, value);
 		}
@@ -143,10 +158,10 @@ public class TargetUtil {
 
 			context.declare(Evaluator.DEFAULT_TARGET, FieldValueUtil.createTargetValue(dataField, null, null, value != null ? value.getResult() : null));
 
-			return Collections.singletonMap(Evaluator.DEFAULT_TARGET, value);
+			return predictions;
 		}
 
-		Map<FieldName, Classification> result = new LinkedHashMap<>();
+		Map<FieldName, Classification> result = null;
 
 		Collection<? extends Map.Entry<FieldName, ? extends Classification>> entries = predictions.entrySet();
 		for(Map.Entry<FieldName, ? extends Classification> entry : entries){
@@ -173,6 +188,14 @@ public class TargetUtil {
 			MiningField miningField = evaluator.getMiningField(name);
 
 			context.declare(name, FieldValueUtil.createTargetValue(dataField, miningField, target, value != null ? value.getResult() : null));
+
+			if(predictions.size() == 1){
+				return Collections.singletonMap(name, value);
+			} // End if
+
+			if(result == null){
+				result = new LinkedHashMap<>();
+			}
 
 			result.put(name, value);
 		}
