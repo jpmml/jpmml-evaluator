@@ -44,6 +44,10 @@ import org.dmg.pmml.Target;
 
 public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> implements HasEntityRegistry<Cluster> {
 
+	transient
+	private BiMap<String, Cluster> entityRegistry = null;
+
+
 	public ClusteringModelEvaluator(PMML pmml){
 		super(pmml, ClusteringModel.class);
 	}
@@ -67,7 +71,12 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 	@Override
 	public BiMap<String, Cluster> getEntityRegistry(){
-		return getValue(ClusteringModelEvaluator.entityCache);
+
+		if(this.entityRegistry == null){
+			this.entityRegistry = getValue(ClusteringModelEvaluator.entityCache);
+		}
+
+		return this.entityRegistry;
 	}
 
 	@Override

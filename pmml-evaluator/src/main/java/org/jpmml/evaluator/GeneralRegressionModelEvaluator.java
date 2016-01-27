@@ -69,6 +69,22 @@ import org.dmg.pmml.PredictorList;
 
 public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegressionModel> {
 
+	transient
+	private BiMap<String, Parameter> parameterRegistry = null;
+
+	transient
+	private BiMap<FieldName, Predictor> factorRegistry = null;
+
+	transient
+	private BiMap<FieldName, Predictor> covariateRegistry = null;
+
+	transient
+	private Map<String, Map<String, Row>> ppMatrixMap = null;
+
+	transient
+	private Map<String, List<PCell>> paramMatrixMap = null;
+
+
 	public GeneralRegressionModelEvaluator(PMML pmml){
 		super(pmml, GeneralRegressionModel.class);
 	}
@@ -657,15 +673,30 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	public BiMap<String, Parameter> getParameterRegistry(){
-		return getValue(GeneralRegressionModelEvaluator.parameterCache);
+
+		if(this.parameterRegistry == null){
+			this.parameterRegistry = getValue(GeneralRegressionModelEvaluator.parameterCache);
+		}
+
+		return this.parameterRegistry;
 	}
 
 	public BiMap<FieldName, Predictor> getFactorRegistry(){
-		return getValue(GeneralRegressionModelEvaluator.factorCache);
+
+		if(this.factorRegistry == null){
+			this.factorRegistry = getValue(GeneralRegressionModelEvaluator.factorCache);
+		}
+
+		return this.factorRegistry;
 	}
 
 	public BiMap<FieldName, Predictor> getCovariateRegistry(){
-		return getValue(GeneralRegressionModelEvaluator.covariateCache);
+
+		if(this.covariateRegistry == null){
+			this.covariateRegistry = getValue(GeneralRegressionModelEvaluator.covariateCache);
+		}
+
+		return this.covariateRegistry;
 	}
 
 	/**
@@ -683,14 +714,24 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	 * @return A map of predictor-to-parameter correlation matrices.
 	 */
 	private Map<String, Map<String, Row>> getPPMatrixMap(){
-		return getValue(GeneralRegressionModelEvaluator.ppMatrixCache);
+
+		if(this.ppMatrixMap == null){
+			this.ppMatrixMap = getValue(GeneralRegressionModelEvaluator.ppMatrixCache);
+		}
+
+		return this.ppMatrixMap;
 	}
 
 	/**
 	 * @return A map of parameter matrices.
 	 */
 	private Map<String, List<PCell>> getParamMatrixMap(){
-		return getValue(GeneralRegressionModelEvaluator.paramMatrixCache);
+
+		if(this.paramMatrixMap == null){
+			this.paramMatrixMap = getValue(GeneralRegressionModelEvaluator.paramMatrixCache);
+		}
+
+		return this.paramMatrixMap;
 	}
 
 	static

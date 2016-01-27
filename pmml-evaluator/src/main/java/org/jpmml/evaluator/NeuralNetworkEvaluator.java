@@ -60,6 +60,10 @@ import org.dmg.pmml.PMMLObject;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<Entity> {
 
+	transient
+	private BiMap<String, Entity> entityRegistry = null;
+
+
 	public NeuralNetworkEvaluator(PMML pmml){
 		super(pmml, NeuralNetwork.class);
 	}
@@ -75,7 +79,12 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 	@Override
 	public BiMap<String, Entity> getEntityRegistry(){
-		return getValue(NeuralNetworkEvaluator.entityCache);
+
+		if(this.entityRegistry == null){
+			this.entityRegistry = getValue(NeuralNetworkEvaluator.entityCache);
+		}
+
+		return this.entityRegistry;
 	}
 
 	@Override

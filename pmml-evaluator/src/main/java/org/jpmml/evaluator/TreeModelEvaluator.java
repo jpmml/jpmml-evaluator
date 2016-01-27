@@ -43,6 +43,10 @@ import org.dmg.pmml.TreeModel;
 
 public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements HasEntityRegistry<Node> {
 
+	transient
+	private BiMap<String, Node> entityRegistry = null;
+
+
 	public TreeModelEvaluator(PMML pmml){
 		super(pmml, TreeModel.class);
 	}
@@ -58,7 +62,12 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 	@Override
 	public BiMap<String, Node> getEntityRegistry(){
-		return getValue(TreeModelEvaluator.entityCache);
+
+		if(this.entityRegistry == null){
+			this.entityRegistry = getValue(TreeModelEvaluator.entityCache);
+		}
+
+		return this.entityRegistry;
 	}
 
 	@Override

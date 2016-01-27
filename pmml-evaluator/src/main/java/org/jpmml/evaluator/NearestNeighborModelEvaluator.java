@@ -72,6 +72,16 @@ import org.dmg.pmml.TypeDefinitionField;
 
 public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighborModel> {
 
+	transient
+	private Table<Integer, FieldName, FieldValue> trainingInstances = null;
+
+	transient
+	private Map<Integer, BitSet> instanceFlags = null;
+
+	transient
+	private Map<Integer, List<FieldValue>> instanceValues = null;
+
+
 	public NearestNeighborModelEvaluator(PMML pmml){
 		super(pmml, NearestNeighborModel.class);
 	}
@@ -419,7 +429,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private Table<Integer, FieldName, FieldValue> getTrainingInstances(){
-		return getValue(NearestNeighborModelEvaluator.trainingInstanceCache, createTrainingInstanceLoader(this));
+
+		if(this.trainingInstances == null){
+			this.trainingInstances = getValue(NearestNeighborModelEvaluator.trainingInstanceCache, createTrainingInstanceLoader(this));
+		}
+
+		return this.trainingInstances;
 	}
 
 	static
@@ -526,7 +541,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private Map<Integer, BitSet> getInstanceFlags(){
-		return getValue(NearestNeighborModelEvaluator.instanceFlagCache, createInstanceFlagLoader(this));
+
+		if(this.instanceFlags == null){
+			this.instanceFlags = getValue(NearestNeighborModelEvaluator.instanceFlagCache, createInstanceFlagLoader(this));
+		}
+
+		return this.instanceFlags;
 	}
 
 	static
@@ -559,7 +579,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private Map<Integer, List<FieldValue>> getInstanceValues(){
-		return getValue(NearestNeighborModelEvaluator.instanceValueCache, createInstanceValueLoader(this));
+
+		if(this.instanceValues == null){
+			this.instanceValues = getValue(NearestNeighborModelEvaluator.instanceValueCache, createInstanceValueLoader(this));
+		}
+
+		return this.instanceValues;
 	}
 
 	static

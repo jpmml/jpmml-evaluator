@@ -46,6 +46,19 @@ import org.dmg.pmml.Target;
 
 public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> implements HasEntityRegistry<AssociationRule> {
 
+	transient
+	private BiMap<String, AssociationRule> entityRegistry = null;
+
+	transient
+	private Map<String, Item> items = null;
+
+	transient
+	private Map<String, Itemset> itemsets = null;
+
+	transient
+	private BiMap<String, String> itemValues = null;
+
+
 	public AssociationModelEvaluator(PMML pmml){
 		super(pmml, AssociationModel.class);
 	}
@@ -69,7 +82,12 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 	@Override
 	public BiMap<String, AssociationRule> getEntityRegistry(){
-		return getValue(AssociationModelEvaluator.entityCache);
+
+		if(this.entityRegistry == null){
+			this.entityRegistry = getValue(AssociationModelEvaluator.entityCache);
+		}
+
+		return this.entityRegistry;
 	}
 
 	@Override
@@ -275,18 +293,33 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	private Map<String, Item> getItems(){
-		return getValue(AssociationModelEvaluator.itemCache);
+
+		if(this.items == null){
+			this.items = getValue(AssociationModelEvaluator.itemCache);
+		}
+
+		return this.items;
 	}
 
 	private Map<String, Itemset> getItemsets(){
-		return getValue(AssociationModelEvaluator.itemsetCache);
+
+		if(this.itemsets == null){
+			this.itemsets = getValue(AssociationModelEvaluator.itemsetCache);
+		}
+
+		return this.itemsets;
 	}
 
 	/**
 	 * @return A bidirectional map between {@link Item#getId() Item identifiers} and {@link Item#getValue() Item values}.
 	 */
 	private BiMap<String, String> getItemValues(){
-		return getValue(AssociationModelEvaluator.itemValueCache);
+
+		if(this.itemValues == null){
+			this.itemValues = getValue(AssociationModelEvaluator.itemValueCache);
+		}
+
+		return this.itemValues;
 	}
 
 	static

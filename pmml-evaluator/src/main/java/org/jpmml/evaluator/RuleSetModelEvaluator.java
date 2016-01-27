@@ -42,6 +42,10 @@ import org.dmg.pmml.SimpleRule;
 
 public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implements HasEntityRegistry<SimpleRule> {
 
+	transient
+	private BiMap<String, SimpleRule> entityRegistry = null;
+
+
 	public RuleSetModelEvaluator(PMML pmml){
 		super(pmml, RuleSetModel.class);
 	}
@@ -57,7 +61,12 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 	@Override
 	public BiMap<String, SimpleRule> getEntityRegistry(){
-		return getValue(RuleSetModelEvaluator.entityCache);
+
+		if(this.entityRegistry == null){
+			this.entityRegistry = getValue(RuleSetModelEvaluator.entityCache);
+		}
+
+		return this.entityRegistry;
 	}
 
 	@Override

@@ -59,6 +59,10 @@ import org.jpmml.model.ReflectionUtil;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
 
+	transient
+	private Map<String, double[]> vectorMap = null;
+
+
 	public SupportVectorMachineModelEvaluator(PMML pmml){
 		super(pmml, SupportVectorMachineModel.class);
 	}
@@ -349,7 +353,12 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 	}
 
 	private Map<String, double[]> getVectorMap(){
-		return getValue(SupportVectorMachineModelEvaluator.vectorCache);
+
+		if(this.vectorMap == null){
+			this.vectorMap = getValue(SupportVectorMachineModelEvaluator.vectorCache);
+		}
+
+		return this.vectorMap;
 	}
 
 	static

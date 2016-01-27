@@ -57,6 +57,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	private ConcurrentMap<String, SegmentHandler> segmentHandlers = new ConcurrentHashMap<>();
 
+	transient
+	private BiMap<String, Segment> entityRegistry = null;
+
 
 	public MiningModelEvaluator(PMML pmml){
 		super(pmml, MiningModel.class);
@@ -73,7 +76,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	@Override
 	public BiMap<String, Segment> getEntityRegistry(){
-		return getValue(MiningModelEvaluator.entityCache);
+
+		if(this.entityRegistry == null){
+			this.entityRegistry = getValue(MiningModelEvaluator.entityCache);
+		}
+
+		return this.entityRegistry;
 	}
 
 	@Override

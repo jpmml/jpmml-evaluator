@@ -61,6 +61,13 @@ import org.dmg.pmml.TargetValueStats;
 
 public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
+	transient
+	private List<BayesInput> bayesInputs = null;
+
+	transient
+	private Map<FieldName, Map<String, Double>> fieldCountSums = null;
+
+
 	public NaiveBayesModelEvaluator(PMML pmml){
 		super(pmml, NaiveBayesModel.class);
 	}
@@ -227,11 +234,21 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	}
 
 	protected List<BayesInput> getBayesInputs(){
-		return getValue(NaiveBayesModelEvaluator.bayesInputCache);
+
+		if(this.bayesInputs == null){
+			this.bayesInputs = getValue(NaiveBayesModelEvaluator.bayesInputCache);
+		}
+
+		return this.bayesInputs;
 	}
 
 	protected Map<FieldName, Map<String, Double>> getFieldCountSums(){
-		return getValue(NaiveBayesModelEvaluator.fieldCountSumCache);
+
+		if(this.fieldCountSums == null){
+			this.fieldCountSums = getValue(NaiveBayesModelEvaluator.fieldCountSumCache);
+		}
+
+		return this.fieldCountSums;
 	}
 
 	static
