@@ -85,7 +85,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	private Map<String, DefineFunction> defineFunctions = Collections.emptyMap();
 
 	transient
-	private List<FieldName> targetFields = null;
+	private List<FieldName> targetFieldNames = null;
 
 	private Map<FieldName, MiningField> miningFields = Collections.emptyMap();
 
@@ -94,6 +94,9 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	private Map<FieldName, DerivedField> localDerivedFields = Collections.emptyMap();
 
 	private Map<FieldName, Target> targets = Collections.emptyMap();
+
+	transient
+	private List<FieldName> outputFieldNames = null;
 
 	private Map<FieldName, OutputField> outputFields = Collections.emptyMap();
 
@@ -191,11 +194,11 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	@Override
 	public List<FieldName> getTargetFields(){
 
-		if(this.targetFields == null){
-			this.targetFields = super.getTargetFields();
+		if(this.targetFieldNames == null){
+			this.targetFieldNames = super.getTargetFields();
 		}
 
-		return this.targetFields;
+		return this.targetFieldNames;
 	}
 
 	@Override
@@ -252,6 +255,16 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 
 		return this.targets.get(name);
+	}
+
+	@Override
+	public List<FieldName> getOutputFields(){
+
+		if(this.outputFieldNames == null){
+			this.outputFieldNames = super.getOutputFields();
+		}
+
+		return this.outputFieldNames;
 	}
 
 	@Override
