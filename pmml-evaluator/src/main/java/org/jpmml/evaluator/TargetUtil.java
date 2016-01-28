@@ -62,8 +62,6 @@ public class TargetUtil {
 			if(value != null){
 				value = TypeUtil.cast(dataField.getDataType(), value);
 			}
-
-			context.declare(name, FieldValueUtil.createTargetValue(dataField, null, null, value));
 		} else
 
 		{
@@ -123,8 +121,6 @@ public class TargetUtil {
 			if(value != null){
 				value.computeResult(dataField.getDataType());
 			}
-
-			context.declare(name, FieldValueUtil.createTargetValue(dataField, null, null, value != null ? value.getResult() : null));
 		} else
 
 		{
