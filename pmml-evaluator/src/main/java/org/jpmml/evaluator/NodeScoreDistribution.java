@@ -30,7 +30,7 @@ import org.dmg.pmml.Node;
 
 public class NodeScoreDistribution extends EntityClassification<Node> implements HasProbability, HasConfidence {
 
-	private Map<String, Double> confidences = new LinkedHashMap<>();
+	private Map<String, Double> confidences = null;
 
 
 	protected NodeScoreDistribution(BiMap<String, Node> entityRegistry, Node node){
@@ -83,17 +83,27 @@ public class NodeScoreDistribution extends EntityClassification<Node> implements
 
 	@Override
 	public Double getConfidence(String value){
+
+		if(this.confidences == null){
+			return null;
+		}
+
 		return this.confidences.get(value);
 	}
 
 	void putConfidence(String value, Double confidence){
+
+		if(this.confidences == null){
+			this.confidences = new LinkedHashMap<>();
+		}
+
 		this.confidences.put(value, confidence);
 	}
 
 	@Override
 	protected ToStringHelper toStringHelper(){
 		ToStringHelper helper = super.toStringHelper()
-			.add(Type.CONFIDENCE.entryKey(), this.confidences.entrySet());
+			.add(Type.CONFIDENCE.entryKey(), this.confidences != null ? this.confidences.entrySet() : Collections.emptySet());
 
 		return helper;
 	}
