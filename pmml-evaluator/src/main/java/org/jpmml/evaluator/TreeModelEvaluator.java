@@ -200,7 +200,9 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		trail.push(node);
 
 		List<Node> children = node.getNodes();
-		for(Node child : children){
+		for(int i = 0, max = children.size(); i < max; i++){
+			Node child = children.get(i);
+
 			Boolean status = evaluateNode(trail, child, context);
 
 			if(status == null){
@@ -231,9 +233,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		trail.addMissingLevel();
 
 		List<Node> children = node.getNodes();
-		for(Node child : children){
-			String id = child.getId();
+		for(int i = 0, max = children.size(); i < max; i++){
+			Node child = children.get(i);
 
+			String id = child.getId();
 			if(id != null && (id).equals(defaultChild)){
 				// The predicate of the referenced Node is not evaluated
 				return handleTrue(trail, child, context);
@@ -301,18 +304,33 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		NodeScoreDistribution result = new NodeScoreDistribution(entityRegistry, node);
 
+		if(!node.hasScoreDistributions()){
+			return result;
+		}
+
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
 
 		double sum = 0;
 
-		for(ScoreDistribution scoreDistribution : scoreDistributions){
-			sum += scoreDistribution.getRecordCount();
+		for(int i = 0, max = scoreDistributions.size(); i < max; i++){
+			ScoreDistribution scoreDistribution = scoreDistributions.get(i);
+
+			Double recordCount = scoreDistribution.getRecordCount();
+			if(recordCount == null){
+				throw new InvalidFeatureException(scoreDistribution);
+			}
+
+			sum += recordCount;
 		} // End for
 
-		for(ScoreDistribution scoreDistribution : scoreDistributions){
+		for(int i = 0, max = scoreDistributions.size(); i < max; i++){
+			ScoreDistribution scoreDistribution = scoreDistributions.get(i);
+
 			Double probability = scoreDistribution.getProbability();
 			if(probability == null){
-				probability = (scoreDistribution.getRecordCount() / sum);
+				Double recordCount = scoreDistribution.getRecordCount();
+
+				probability = (recordCount / sum);
 			}
 
 			result.put(scoreDistribution.getValue(), probability);
