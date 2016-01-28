@@ -61,7 +61,12 @@ public class OrdinalValue extends FieldValue {
 
 	@Override
 	public int hashCode(){
-		return 31 * super.hashCode() + Objects.hash(getOrdering());
+		List<?> ordering = getOrdering();
+		if(ordering == null){
+			return super.hashCode();
+		}
+
+		return (31 * super.hashCode()) + ordering.hashCode();
 	}
 
 	@Override

@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.base.Objects.ToStringHelper;
@@ -337,7 +336,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	@Override
 	public int compareTo(FieldValue that){
 
-		if(!Objects.equals(this.getDataType(), that.getDataType()) || !Objects.equals(this.getOpType(), that.getOpType())){
+		if((this.getOpType() != that.getOpType()) || (this.getDataType() != that.getDataType())){
 			throw new ClassCastException();
 		}
 
@@ -346,7 +345,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 
 	@Override
 	public int hashCode(){
-		return Objects.hash(getOpType(), getDataType(), getValue());
+		return (31 * (getOpType().hashCode() ^ getDataType().hashCode())) + getValue().hashCode();
 	}
 
 	@Override
@@ -355,7 +354,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		if(object instanceof FieldValue){
 			FieldValue that = (FieldValue)object;
 
-			return Objects.equals(this.getOpType(), that.getOpType()) && Objects.equals(this.getDataType(), that.getDataType()) && Objects.equals(this.getValue(), that.getValue());
+			return (this.getOpType() == that.getOpType()) && (this.getDataType() == that.getDataType()) && (this.getValue()).equals(that.getValue());
 		}
 
 		return false;

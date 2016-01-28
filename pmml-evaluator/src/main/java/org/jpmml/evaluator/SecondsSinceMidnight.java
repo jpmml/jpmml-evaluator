@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Objects;
-
 import org.joda.time.Chronology;
 import org.joda.time.DateTimeField;
 import org.joda.time.DateTimeFieldType;
@@ -53,7 +51,7 @@ public class SecondsSinceMidnight extends SimplePeriod<SecondsSinceMidnight> {
 
 	@Override
 	public int hashCode(){
-		return Objects.hash(getSeconds());
+		return getSeconds().hashCode();
 	}
 
 	@Override
@@ -62,7 +60,7 @@ public class SecondsSinceMidnight extends SimplePeriod<SecondsSinceMidnight> {
 		if(object instanceof SecondsSinceMidnight){
 			SecondsSinceMidnight that = (SecondsSinceMidnight)object;
 
-			return Objects.equals(this.getSeconds(), that.getSeconds());
+			return (this.getSeconds()).equals(that.getSeconds());
 		}
 
 		return false;
