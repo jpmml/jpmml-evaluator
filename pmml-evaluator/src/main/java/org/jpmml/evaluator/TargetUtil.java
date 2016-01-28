@@ -18,21 +18,17 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import com.google.common.base.Objects;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningField;
-import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
-import org.dmg.pmml.Targets;
 
 public class TargetUtil {
 
@@ -46,47 +42,31 @@ public class TargetUtil {
 
 	static
 	public Map<FieldName, ?> evaluateRegression(Double value, ModelEvaluationContext context){
-		Evaluator evaluator = context.getModelEvaluator();
-
-		return evaluateRegression(Collections.singletonMap(evaluator.getTargetField(), value), context);
-	}
-
-	/**
-	 * <p>
-	 * Evaluates the {@link Targets} element for {@link MiningFunctionType#REGRESSION regression} models.
-	 * </p>
-	 */
-	static
-	public Map<FieldName, ?> evaluateRegression(Map<FieldName, ? extends Double> predictions, ModelEvaluationContext context){
 		ModelEvaluator<?> evaluator = context.getModelEvaluator();
 
-		if(predictions.size() == 1 && predictions.containsKey(Evaluator.DEFAULT_TARGET)){
-			Double doubleValue = predictions.get(Evaluator.DEFAULT_TARGET);
+		return evaluateRegression(evaluator.getTargetField(), value, context);
+	}
 
-			Object value = doubleValue;
+	static
+	public Map<FieldName, ?> evaluateRegression(FieldName name, Double value, ModelEvaluationContext context){
+		return Collections.singletonMap(name, evaluateRegressionInternal(name, value, context));
+	}
 
+	static
+	Object evaluateRegressionInternal(FieldName name, Object value, ModelEvaluationContext context){
+		ModelEvaluator<?> evaluator = context.getModelEvaluator();
+
+		if(Objects.equals(Evaluator.DEFAULT_TARGET, name)){
 			DataField dataField = evaluator.getDataField();
 
 			if(value != null){
 				value = TypeUtil.cast(dataField.getDataType(), value);
 			}
 
-			context.declare(Evaluator.DEFAULT_TARGET, FieldValueUtil.createTargetValue(dataField, null, null, value));
+			context.declare(name, FieldValueUtil.createTargetValue(dataField, null, null, value));
+		} else
 
-			if(!Objects.equal(doubleValue, value)){
-				return Collections.singletonMap(Evaluator.DEFAULT_TARGET, value);
-			}
-
-			return predictions;
-		}
-
-		Map<FieldName, Object> result = null;
-
-		Collection<? extends Map.Entry<FieldName, ? extends Double>> entries = predictions.entrySet();
-		for(Map.Entry<FieldName, ? extends Double> entry : entries){
-			FieldName name = entry.getKey();
-			Object value = entry.getValue();
-
+		{
 			Target target = evaluator.getTarget(name);
 			if(target != null){
 
@@ -111,19 +91,9 @@ public class TargetUtil {
 			MiningField miningField = evaluator.getMiningField(name);
 
 			context.declare(name, FieldValueUtil.createTargetValue(dataField, miningField, target, value));
-
-			if(predictions.size() == 1){
-				return Collections.singletonMap(name, value);
-			} // End if
-
-			if(result == null){
-				result = new LinkedHashMap<>();
-			}
-
-			result.put(name, value);
 		}
 
-		return result;
+		return value;
 	}
 
 	static
@@ -133,41 +103,31 @@ public class TargetUtil {
 
 	static
 	public Map<FieldName, ? extends Classification> evaluateClassification(Classification value, ModelEvaluationContext context){
-		Evaluator evaluator = context.getModelEvaluator();
-
-		return evaluateClassification(Collections.singletonMap(evaluator.getTargetField(), value), context);
-	}
-
-	/**
-	 * <p>
-	 * Evaluates the {@link Targets} element for {@link MiningFunctionType#CLASSIFICATION classification} models.
-	 * </p>
-	 */
-	static
-	public Map<FieldName, ? extends Classification> evaluateClassification(Map<FieldName, ? extends Classification> predictions, ModelEvaluationContext context){
 		ModelEvaluator<?> evaluator = context.getModelEvaluator();
 
-		if(predictions.size() == 1 && predictions.containsKey(Evaluator.DEFAULT_TARGET)){
-			Classification value = predictions.get(Evaluator.DEFAULT_TARGET);
+		return evaluateClassification(evaluator.getTargetField(), value, context);
+	}
 
+	static
+	public Map<FieldName, ? extends Classification> evaluateClassification(FieldName name, Classification value, ModelEvaluationContext context){
+		return Collections.singletonMap(name, evaluateClassificationInternal(name, value, context));
+	}
+
+	static
+	Classification evaluateClassificationInternal(FieldName name, Classification value, ModelEvaluationContext context){
+		ModelEvaluator<?> evaluator = context.getModelEvaluator();
+
+		if(Objects.equals(Evaluator.DEFAULT_TARGET, name)){
 			DataField dataField = evaluator.getDataField();
 
 			if(value != null){
 				value.computeResult(dataField.getDataType());
 			}
 
-			context.declare(Evaluator.DEFAULT_TARGET, FieldValueUtil.createTargetValue(dataField, null, null, value != null ? value.getResult() : null));
+			context.declare(name, FieldValueUtil.createTargetValue(dataField, null, null, value != null ? value.getResult() : null));
+		} else
 
-			return predictions;
-		}
-
-		Map<FieldName, Classification> result = null;
-
-		Collection<? extends Map.Entry<FieldName, ? extends Classification>> entries = predictions.entrySet();
-		for(Map.Entry<FieldName, ? extends Classification> entry : entries){
-			FieldName name = entry.getKey();
-			Classification value = entry.getValue();
-
+		{
 			Target target = evaluator.getTarget(name);
 			if(target != null){
 
@@ -188,19 +148,9 @@ public class TargetUtil {
 			MiningField miningField = evaluator.getMiningField(name);
 
 			context.declare(name, FieldValueUtil.createTargetValue(dataField, miningField, target, value != null ? value.getResult() : null));
-
-			if(predictions.size() == 1){
-				return Collections.singletonMap(name, value);
-			} // End if
-
-			if(result == null){
-				result = new LinkedHashMap<>();
-			}
-
-			result.put(name, value);
 		}
 
-		return result;
+		return value;
 	}
 
 	static

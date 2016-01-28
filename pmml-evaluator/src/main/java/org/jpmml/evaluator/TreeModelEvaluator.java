@@ -27,7 +27,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.Iterables;
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
@@ -104,11 +103,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		Double score = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, node.getScore());
 
-		Map<FieldName, ?> result = TargetUtil.evaluateRegression(score, context);
+		FieldName targetField = getTargetField();
 
-		Map.Entry<FieldName, ?> resultEntry = Iterables.getOnlyElement(result.entrySet());
+		NodeScore nodeScore = createNodeScore(node, TargetUtil.evaluateRegressionInternal(targetField, score, context));
 
-		return Collections.singletonMap(resultEntry.getKey(), createNodeScore(node, resultEntry.getValue()));
+		return Collections.singletonMap(targetField, nodeScore);
 	}
 
 	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){

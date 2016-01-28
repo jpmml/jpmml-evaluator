@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +97,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		result = normalizeRegressionResult(result);
 
-		return TargetUtil.evaluateRegression(Collections.singletonMap(targetField, result), context);
+		return TargetUtil.evaluateRegression(targetField, result, context);
 	}
 
 	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
@@ -174,7 +173,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		ProbabilityDistribution result = new ProbabilityDistribution();
 		result.putAll(values);
 
-		return TargetUtil.evaluateClassification(Collections.singletonMap(targetField, result), context);
+		return TargetUtil.evaluateClassification(targetField, result, context);
 	}
 
 	private Double evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){

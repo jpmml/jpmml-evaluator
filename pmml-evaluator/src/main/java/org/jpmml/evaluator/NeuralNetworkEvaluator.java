@@ -27,6 +27,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -119,7 +120,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			return TargetUtil.evaluateRegressionDefault(context);
 		}
 
-		Map<FieldName, Double> result = new LinkedHashMap<>();
+		Map<FieldName, Object> result = new LinkedHashMap<>();
 
 		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
 		if(neuralOutputs == null){
@@ -156,9 +157,17 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			}
 		}
 
-		return TargetUtil.evaluateRegression(result, context);
+		Collection<Map.Entry<FieldName, Object>> entries = result.entrySet();
+		for(Map.Entry<FieldName, Object> entry : entries){
+			entry.setValue(TargetUtil.evaluateRegressionInternal(entry.getKey(), entry.getValue(), context));
+		}
+
+		return result;
 	}
 
+	@SuppressWarnings (
+		value = {"unchecked"}
+	)
 	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
@@ -169,7 +178,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			return TargetUtil.evaluateClassificationDefault(context);
 		}
 
-		Map<FieldName, EntityProbabilityDistribution<Entity>> result = new LinkedHashMap<>();
+		Map<FieldName, Classification> result = new LinkedHashMap<>();
 
 		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
 		if(neuralOutputs == null){
@@ -188,7 +197,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 				FieldName name = normDiscrete.getField();
 
-				EntityProbabilityDistribution<Entity> values = result.get(name);
+				EntityProbabilityDistribution<Entity> values = (EntityProbabilityDistribution<Entity>)result.get(name);
 				if(values == null){
 					values = new EntityProbabilityDistribution<>(entityRegistry);
 
@@ -205,7 +214,12 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			}
 		}
 
-		return TargetUtil.evaluateClassification(result, context);
+		Collection<Map.Entry<FieldName, Classification>> entries = result.entrySet();
+		for(Map.Entry<FieldName, Classification> entry : entries){
+			entry.setValue(TargetUtil.evaluateClassificationInternal(entry.getKey(), entry.getValue(), context));
+		}
+
+		return result;
 	}
 
 	private Expression getOutputExpression(NeuralOutput neuralOutput){

@@ -35,10 +35,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import com.google.common.base.Objects;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -153,7 +153,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	@Override
 	public DataField getDataField(FieldName name){
 
-		if(Objects.equal(Evaluator.DEFAULT_TARGET, name)){
+		if(Objects.equals(Evaluator.DEFAULT_TARGET, name)){
 			return getDataField();
 		}
 

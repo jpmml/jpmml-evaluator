@@ -180,7 +180,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			throw new InvalidFeatureException(bayesOutput);
 		}
 
-		return TargetUtil.evaluateClassification(Collections.singletonMap(targetField, result), context);
+		return TargetUtil.evaluateClassification(targetField, result, context);
 	}
 
 	private void calculateContinuousProbabilities(FieldValue value, TargetValueStats targetValueStats, double threshold, Map<String, Double> probabilities){

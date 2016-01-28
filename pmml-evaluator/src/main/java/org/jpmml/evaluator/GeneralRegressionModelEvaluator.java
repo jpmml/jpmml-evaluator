@@ -483,7 +483,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new UnsupportedFeatureException(generalRegressionModel, modelType);
 		}
 
-		return TargetUtil.evaluateClassification(Collections.singletonMap(targetField, result), context);
+		return TargetUtil.evaluateClassification(targetField, result, context);
 	}
 
 	private Double computeDotProduct(EvaluationContext context){

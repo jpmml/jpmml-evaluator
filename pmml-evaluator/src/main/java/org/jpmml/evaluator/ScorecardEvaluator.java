@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import org.dmg.pmml.Attribute;
 import org.dmg.pmml.Characteristic;
@@ -174,15 +173,15 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			}
 		}
 
-		Map<FieldName, ?> result = TargetUtil.evaluateRegression(score, context);
+		FieldName targetField = getTargetField();
+
+		Object result = TargetUtil.evaluateRegressionInternal(targetField, score, context);
 
 		if(useReasonCodes){
-			Map.Entry<FieldName, ?> resultEntry = Iterables.getOnlyElement(result.entrySet());
-
-			return Collections.singletonMap(resultEntry.getKey(), createReasonCodeList(reasonCodePoints.sumMap(), resultEntry.getValue()));
+			result = createReasonCodeList(reasonCodePoints.sumMap(), result);
 		}
 
-		return result;
+		return Collections.singletonMap(targetField, result);
 	}
 
 	static
