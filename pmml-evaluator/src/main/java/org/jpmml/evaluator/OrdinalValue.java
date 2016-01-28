@@ -112,7 +112,7 @@ public class OrdinalValue extends FieldValue {
 	}
 
 	static
-	private class OrdinalString extends OrdinalValue implements Scalar<String> {
+	private class OrdinalString extends OrdinalValue implements Scalar {
 
 		OrdinalString(Object value){
 			super(DataType.STRING, value);
@@ -120,12 +120,7 @@ public class OrdinalValue extends FieldValue {
 
 		@Override
 		public String asString(){
-			return getValue();
-		}
-
-		@Override
-		public String getValue(){
-			return (String)super.getValue();
+			return (String)getValue();
 		}
 	}
 }

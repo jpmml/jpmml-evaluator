@@ -62,7 +62,7 @@ public class CategoricalValue extends FieldValue {
 	}
 
 	static
-	private class CategoricalString extends CategoricalValue implements Scalar<String> {
+	private class CategoricalString extends CategoricalValue implements Scalar {
 
 		CategoricalString(String value){
 			super(DataType.STRING, value);
@@ -70,17 +70,12 @@ public class CategoricalValue extends FieldValue {
 
 		@Override
 		public String asString(){
-			return getValue();
-		}
-
-		@Override
-		public String getValue(){
-			return (String)super.getValue();
+			return (String)getValue();
 		}
 	}
 
 	static
-	private class CategoricalBoolean extends CategoricalValue implements Scalar<Boolean> {
+	private class CategoricalBoolean extends CategoricalValue implements Scalar {
 
 		CategoricalBoolean(Boolean value){
 			super(DataType.BOOLEAN, value);
@@ -114,12 +109,7 @@ public class CategoricalValue extends FieldValue {
 
 		@Override
 		public Boolean asBoolean(){
-			return getValue();
-		}
-
-		@Override
-		public Boolean getValue(){
-			return (Boolean)super.getValue();
+			return (Boolean)getValue();
 		}
 	}
 }

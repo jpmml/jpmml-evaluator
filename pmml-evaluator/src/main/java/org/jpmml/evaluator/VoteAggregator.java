@@ -29,7 +29,7 @@ import com.google.common.base.Function;
 
 class VoteAggregator<K> extends ClassificationAggregator<K> {
 
-	public VoteAggregator(){
+	VoteAggregator(){
 	}
 
 	public Map<K, Double> sumMap(){

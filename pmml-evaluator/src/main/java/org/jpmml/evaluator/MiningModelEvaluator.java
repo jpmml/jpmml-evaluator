@@ -116,10 +116,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MiningModel miningModel = getModel();
 		if(!miningModel.isScorable()){
 			throw new InvalidResultException(miningModel);
-		}
+		} // End if
 
-		EmbeddedModel embeddedModel = Iterables.getFirst(miningModel.getEmbeddedModels(), null);
-		if(embeddedModel != null){
+		if(miningModel.hasEmbeddedModels()){
+			EmbeddedModel embeddedModel = Iterables.get(miningModel.getEmbeddedModels(), 0);
+
 			throw new UnsupportedFeatureException(embeddedModel);
 		}
 

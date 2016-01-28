@@ -422,9 +422,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	}
 
 	static
-	interface Scalar<V extends Comparable<V>> {
-
-		V getValue();
+	interface Scalar {
 	}
 
 	private static final Float FLOAT_ZERO = Float.valueOf(0f);

@@ -77,7 +77,7 @@ public class ContinuousValue extends FieldValue {
 	}
 
 	static
-	private class ContinuousInteger extends ContinuousValue implements Scalar<Integer> {
+	private class ContinuousInteger extends ContinuousValue implements Scalar {
 
 		ContinuousInteger(Integer value){
 			super(DataType.INTEGER, value);
@@ -85,22 +85,17 @@ public class ContinuousValue extends FieldValue {
 
 		@Override
 		public Integer asInteger(){
-			return getValue();
+			return (Integer)getValue();
 		}
 
 		@Override
 		public Number asNumber(){
-			return getValue();
-		}
-
-		@Override
-		public Integer getValue(){
-			return (Integer)super.getValue();
+			return (Number)getValue();
 		}
 	}
 
 	static
-	private class ContinuousFloat extends ContinuousValue implements Scalar<Float> {
+	private class ContinuousFloat extends ContinuousValue implements Scalar {
 
 		ContinuousFloat(Float value){
 			super(DataType.FLOAT, value);
@@ -108,17 +103,12 @@ public class ContinuousValue extends FieldValue {
 
 		@Override
 		public Number asNumber(){
-			return getValue();
-		}
-
-		@Override
-		public Float getValue(){
-			return (Float)super.getValue();
+			return (Number)getValue();
 		}
 	}
 
 	static
-	private class ContinuousDouble extends ContinuousValue implements Scalar<Double> {
+	private class ContinuousDouble extends ContinuousValue implements Scalar {
 
 		ContinuousDouble(Double value){
 			super(DataType.DOUBLE, value);
@@ -126,12 +116,7 @@ public class ContinuousValue extends FieldValue {
 
 		@Override
 		public Number asNumber(){
-			return getValue();
-		}
-
-		@Override
-		public Double getValue(){
-			return (Double)super.getValue();
+			return (Number)getValue();
 		}
 	}
 }
