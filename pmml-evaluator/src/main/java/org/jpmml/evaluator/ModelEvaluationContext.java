@@ -61,6 +61,15 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
+	void reset(){
+		super.reset();
+
+		this.arguments = Collections.emptyMap();
+
+		this.compatible = false;
+	}
+
+	@Override
 	protected FieldValue resolve(FieldName name){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 

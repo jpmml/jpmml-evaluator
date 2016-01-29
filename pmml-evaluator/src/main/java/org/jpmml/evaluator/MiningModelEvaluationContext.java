@@ -37,6 +37,17 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 	}
 
 	@Override
+	void reset(){
+		super.reset();
+
+		this.results.clear();
+
+		if(this.outputFields != null){
+			this.outputFields.clear();
+		}
+	}
+
+	@Override
 	public MiningModelEvaluator getModelEvaluator(){
 		return (MiningModelEvaluator)super.getModelEvaluator();
 	}

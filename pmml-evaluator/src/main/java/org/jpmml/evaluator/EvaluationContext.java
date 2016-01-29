@@ -39,6 +39,14 @@ public class EvaluationContext {
 	abstract
 	protected FieldValue createFieldValue(FieldName name, Object value);
 
+	void reset(){
+		this.fields.clear();
+
+		if(this.warnings != null){
+			this.warnings.clear();
+		}
+	}
+
 	public FieldValue evaluate(FieldName name){
 		Map<FieldName, FieldValue> fields = getFields();
 
