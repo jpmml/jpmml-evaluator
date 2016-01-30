@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.base.Objects;
@@ -82,7 +83,12 @@ public class Association implements Computable, HasRuleValues, HasEntityRegistry
 				throw new UnsupportedFeatureException();
 		}
 
-		List<AssociationRule> result = new ArrayList<>();
+		int cardinality = flags.cardinality();
+		if(cardinality == 0){
+			return Collections.emptyList();
+		}
+
+		List<AssociationRule> result = new ArrayList<>(cardinality);
 
 		for(int i = flags.nextSetBit(0); i > -1; i = flags.nextSetBit(i + 1)){
 			AssociationRule associationRule = associationRules.get(i);

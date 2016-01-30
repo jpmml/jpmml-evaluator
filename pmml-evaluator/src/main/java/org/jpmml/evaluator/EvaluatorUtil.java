@@ -150,7 +150,7 @@ public class EvaluatorUtil {
 			}
 		}
 
-		List<Map<K, Object>> resultTable = new ArrayList<>();
+		List<Map<K, Object>> resultTable = new ArrayList<>(groupedRows.size());
 
 		Collection<Map.Entry<Object, ListMultimap<K, Object>>> entries = groupedRows.entrySet();
 		for(Map.Entry<Object, ListMultimap<K, Object>> entry : entries){

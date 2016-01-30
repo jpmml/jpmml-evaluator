@@ -181,10 +181,10 @@ public class MeasureUtil {
 			throw new UnsupportedFeatureException(measure);
 		}
 
-		List<Double> distances = new ArrayList<>();
+		List<Double> distances = new ArrayList<>(comparisonFields.size());
 
 		comparisonFields:
-		for(int i = 0; i < comparisonFields.size(); i++){
+		for(int i = 0, max = comparisonFields.size(); i < max; i++){
 			ComparisonField comparisonField = comparisonFields.get(i);
 
 			FieldValue value = values.get(i);

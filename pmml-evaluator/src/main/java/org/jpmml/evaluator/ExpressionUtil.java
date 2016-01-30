@@ -274,9 +274,9 @@ public class ExpressionUtil {
 
 		List<Expression> expressions = apply.getExpressions();
 
-		Iterator<Expression> arguments = expressions.iterator();
+		List<FieldValue> values = new ArrayList<>(expressions.size());
 
-		List<FieldValue> values = new ArrayList<>();
+		Iterator<Expression> arguments = expressions.iterator();
 
 		String name = apply.getFunction();
 

@@ -690,7 +690,7 @@ public class OutputUtil {
 
 			associationRules = associationRules.subList(0, size);
 
-			List<Object> result = new ArrayList<>();
+			List<Object> result = new ArrayList<>(associationRules.size());
 
 			for(AssociationRule associationRule : associationRules){
 				result.add(getRuleFeature(hasRuleValues, associationRule, outputField));
@@ -869,15 +869,18 @@ public class OutputUtil {
 
 	static
 	private List<String> getItemValues(HasRuleValues hasRuleValues, String id){
-		List<String> result = new ArrayList<>();
-
 		Map<String, Item> items = hasRuleValues.getItems();
 		Map<String, Itemset> itemsets = hasRuleValues.getItemsets();
 
 		Itemset itemset = itemsets.get(id);
 
 		List<ItemRef> itemRefs = itemset.getItemRefs();
-		for(ItemRef itemRef : itemRefs){
+
+		List<String> result = new ArrayList<>(itemRefs.size());
+
+		for(int i = 0, max = itemRefs.size(); i < max; i++){
+			ItemRef itemRef = itemRefs.get(i);
+
 			Item item = items.get(itemRef.getItemRef());
 
 			result.add(item.getValue());

@@ -510,12 +510,14 @@ public class FieldValueUtil {
 	public List<Value> getValidValues(TypeDefinitionField field){
 
 		if(field.hasValues()){
-			List<Value> result = new ArrayList<>();
-
 			List<Value> fieldValues = field.getValues();
-			for(Value fieldValue : fieldValues){
-				Value.Property property = fieldValue.getProperty();
 
+			List<Value> result = new ArrayList<>(fieldValues.size());
+
+			for(int i = 0, max = fieldValues.size(); i < max; i++){
+				Value fieldValue = fieldValues.get(i);
+
+				Value.Property property = fieldValue.getProperty();
 				switch(property){
 					case VALID:
 						result.add(fieldValue);

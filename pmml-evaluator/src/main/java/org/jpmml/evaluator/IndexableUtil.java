@@ -47,7 +47,7 @@ public class IndexableUtil {
 
 	static
 	public <K, E extends PMMLObject & Indexable<K>> List<K> keys(List<E> elements){
-		List<K> result = new ArrayList<>();
+		List<K> result = new ArrayList<>(elements.size());
 
 		for(E element : elements){
 			result.add(ensureKey(element));

@@ -114,6 +114,10 @@ public class CsvUtil {
 		private String separator = null;
 
 
+		public Table(){
+			super(1024);
+		}
+
 		public String getSeparator(){
 			return this.separator;
 		}

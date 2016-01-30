@@ -141,7 +141,7 @@ public class BatchUtil {
 
 	static
 	public List<Map<FieldName, String>> parseRecords(List<List<String>> table, Function<String, String> function){
-		List<Map<FieldName, String>> records = new ArrayList<>();
+		List<Map<FieldName, String>> records = new ArrayList<>(table.size() - 1);
 
 		List<String> headerRow = table.get(0);
 
@@ -182,9 +182,9 @@ public class BatchUtil {
 
 	static
 	public List<List<String>> formatRecords(List<Map<FieldName, ?>> records, List<FieldName> names, Function<Object, String> function){
-		List<List<String>> table = new ArrayList<>();
+		List<List<String>> table = new ArrayList<>(1 + records.size());
 
-		List<String> headerRow = new ArrayList<>();
+		List<String> headerRow = new ArrayList<>(names.size());
 
 		for(FieldName name : names){
 			headerRow.add(name.getValue());
@@ -193,7 +193,7 @@ public class BatchUtil {
 		table.add(headerRow);
 
 		for(Map<FieldName, ?> record : records){
-			List<String> bodyRow = new ArrayList<>();
+			List<String> bodyRow = new ArrayList<>(names.size());
 
 			for(FieldName name : names){
 				bodyRow.add(function.apply(record.get(name)));

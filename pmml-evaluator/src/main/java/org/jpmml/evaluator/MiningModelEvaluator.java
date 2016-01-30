@@ -249,8 +249,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private List<SegmentResult> evaluateSegmentation(MiningModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> results = new ArrayList<>();
-
 		Segmentation segmentation = miningModel.getSegmentation();
 
 		LocalTransformations localTransformations = segmentation.getLocalTransformations();
@@ -271,7 +269,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		ModelEvaluationContext modelContext = null;
 
 		List<Segment> segments = segmentation.getSegments();
-		for(Segment segment : segments){
+
+		List<SegmentResult> results = new ArrayList<>(segments.size());
+
+		for(int i = 0, max = segments.size(); i < max; i++){
+			Segment segment = segments.get(i);
+
 			Predicate predicate = segment.getPredicate();
 			if(predicate == null){
 				throw new InvalidFeatureException(segment);

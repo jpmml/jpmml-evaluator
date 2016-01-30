@@ -235,11 +235,11 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private List<InstanceResult> evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
-		List<InstanceResult> result = new ArrayList<>();
-
 		BitSet flags = MeasureUtil.toBitSet(values);
 
 		Map<Integer, BitSet> flagMap = getInstanceFlags();
+
+		List<InstanceResult> result = new ArrayList<>(flagMap.size());
 
 		Set<Integer> rowKeys = flagMap.keySet();
 		for(Integer rowKey : rowKeys){
@@ -254,11 +254,11 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private List<InstanceResult> evaluateDistance(ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
-		List<InstanceResult> result = new ArrayList<>();
-
 		Double adjustment = MeasureUtil.calculateAdjustment(values);
 
 		Map<Integer, List<FieldValue>> valueMap = getInstanceValues();
+
+		List<InstanceResult> result = new ArrayList<>(valueMap.size());
 
 		Set<Integer> rowKeys = valueMap.keySet();
 		for(Integer rowKey : rowKeys){

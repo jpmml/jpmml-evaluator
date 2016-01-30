@@ -116,10 +116,13 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			throw new UnsupportedFeatureException(centerFields);
 		}
 
-		List<FieldValue> values = new ArrayList<>();
-
 		List<ClusteringField> clusteringFields = getCenterClusteringFields();
-		for(ClusteringField clusteringField : clusteringFields){
+
+		List<FieldValue> values = new ArrayList<>(clusteringFields.size());
+
+		for(int i = 0, max = clusteringFields.size(); i < max; i++){
+			ClusteringField clusteringField = clusteringFields.get(i);
+
 			FieldValue value = context.evaluate(clusteringField.getField());
 
 			values.add(value);
@@ -222,12 +225,14 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 	private List<ClusteringField> getCenterClusteringFields(){
 		ClusteringModel clusteringModel = getModel();
 
-		List<ClusteringField> result = new ArrayList<>();
-
 		List<ClusteringField> clusteringFields = clusteringModel.getClusteringFields();
-		for(ClusteringField clusteringField : clusteringFields){
-			ClusteringField.CenterField centerField = clusteringField.getCenterField();
 
+		List<ClusteringField> result = new ArrayList<>(clusteringFields.size());
+
+		for(int i = 0, max = clusteringFields.size(); i < max; i++){
+			ClusteringField clusteringField = clusteringFields.get(i);
+
+			ClusteringField.CenterField centerField = clusteringField.getCenterField();
 			switch(centerField){
 				case TRUE:
 					result.add(clusteringField);

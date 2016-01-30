@@ -74,7 +74,7 @@ public class PercentileFunction extends AbstractFunction {
 
 	static
 	private Double evaluate(Collection<?> values, int quantile){
-		List<Double> doubleValues = new ArrayList<>();
+		List<Double> doubleValues = new ArrayList<>(values.size());
 
 		for(Object value : values){
 			Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);

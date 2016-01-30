@@ -73,7 +73,7 @@ public class MeasureUtilTest {
 
 	static
 	private List<ClusteringField> createClusteringFields(String... names){
-		List<ClusteringField> result = new ArrayList<>();
+		List<ClusteringField> result = new ArrayList<>(names.length);
 
 		for(String name : names){
 			ClusteringField clusteringField = new ClusteringField(FieldName.create(name));
