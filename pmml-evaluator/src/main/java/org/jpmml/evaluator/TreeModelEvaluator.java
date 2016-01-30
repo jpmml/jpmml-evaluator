@@ -143,9 +143,9 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		Boolean status = evaluateNode(trail, root, context);
 
 		if(status != null && status.booleanValue()){
-			NodeResult result = handleTrue(trail, root, context);
+			trail = handleTrue(trail, root, context);
 
-			Node node = result.getNode();
+			Node node = trail.getResult();
 			if(node != null){
 				String score = node.getScore();
 
@@ -189,11 +189,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 	}
 
-	private NodeResult handleTrue(Trail trail, Node node, EvaluationContext context){
+	private Trail handleTrue(Trail trail, Node node, EvaluationContext context){
 
 		// A "true" leaf node
 		if(!node.hasNodes()){
-			return new NodeResult(node);
+			return trail.selectNode(node);
 		}
 
 		trail.push(node);
@@ -205,10 +205,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			Boolean status = evaluateNode(trail, child, context);
 
 			if(status == null){
-				NodeResult result = handleMissingValue(trail, node, child, context);
+				Trail destination = handleMissingValue(trail, node, child, context);
 
-				if(result != null){
-					return result;
+				if(destination != null){
+					return destination;
 				}
 			} else
 
@@ -221,7 +221,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return handleNoTrueChild(trail);
 	}
 
-	private NodeResult handleDefaultChild(Trail trail, Node node, EvaluationContext context){
+	private Trail handleDefaultChild(Trail trail, Node node, EvaluationContext context){
 
 		// "The defaultChild missing value strategy requires the presence of the defaultChild attribute in every non-leaf Node"
 		String defaultChild = node.getDefaultChild();
@@ -246,21 +246,21 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		throw new InvalidFeatureException(node);
 	}
 
-	private NodeResult handleNoTrueChild(Trail trail){
+	private Trail handleNoTrueChild(Trail trail){
 		TreeModel treeModel = getModel();
 
 		NoTrueChildStrategyType noTrueChildStrategy = treeModel.getNoTrueChildStrategy();
 		switch(noTrueChildStrategy){
 			case RETURN_NULL_PREDICTION:
-				return new NodeResult(null);
+				return trail.selectNull();
 			case RETURN_LAST_PREDICTION:
 				Node lastPrediction = trail.getLastPrediction();
 
 				// "Return the parent Node only if it specifies a score attribute"
 				if(lastPrediction.getScore() != null){
-					return new NodeResult(lastPrediction);
+					return trail.selectLastPrediction();
 				}
-				return new NodeResult(null);
+				return trail.selectNull();
 			default:
 				throw new UnsupportedFeatureException(treeModel, noTrueChildStrategy);
 		}
@@ -270,17 +270,15 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	 * @param parent The parent Node of the Node that evaluated to the missing value.
 	 * @param node The Node that evaluated to the missing value.
 	 */
-	private NodeResult handleMissingValue(Trail trail, Node parent, Node node, EvaluationContext context){
+	private Trail handleMissingValue(Trail trail, Node parent, Node node, EvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		MissingValueStrategyType missingValueStrategy = treeModel.getMissingValueStrategy();
 		switch(missingValueStrategy){
 			case NULL_PREDICTION:
-				return new NodeResult(null);
+				return trail.selectNull();
 			case LAST_PREDICTION:
-				Node lastPrediction = trail.getLastPrediction();
-
-				return new NodeResult(lastPrediction);
+				return trail.selectLastPrediction();
 			case DEFAULT_CHILD:
 				return handleDefaultChild(trail, parent, context);
 			case NONE:
@@ -348,6 +346,8 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		private Node lastPrediction = null;
 
+		private Node result = null;
+
 		private int missingLevels = 0;
 
 
@@ -356,6 +356,32 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		public void push(Node node){
 			setLastPrediction(node);
+		}
+
+		public Trail selectNull(){
+			setResult(null);
+
+			return this;
+		}
+
+		public Trail selectNode(Node node){
+			setResult(node);
+
+			return this;
+		}
+
+		public Trail selectLastPrediction(){
+			setResult(getLastPrediction());
+
+			return this;
+		}
+
+		public Node getResult(){
+			return this.result;
+		}
+
+		private void setResult(Node result){
+			this.result = result;
 		}
 
 		public Node getLastPrediction(){
@@ -381,25 +407,6 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		private void setMissingLevels(int missingLevels){
 			this.missingLevels = missingLevels;
-		}
-	}
-
-	static
-	private class NodeResult {
-
-		private Node node = null;
-
-
-		public NodeResult(Node node){
-			setNode(node);
-		}
-
-		public Node getNode(){
-			return this.node;
-		}
-
-		private void setNode(Node node){
-			this.node = node;
 		}
 	}
 
