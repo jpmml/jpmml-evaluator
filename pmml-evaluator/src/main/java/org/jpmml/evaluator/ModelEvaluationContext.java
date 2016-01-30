@@ -43,11 +43,11 @@ public class ModelEvaluationContext extends EvaluationContext {
 	private boolean compatible = false;
 
 
-	public ModelEvaluationContext(ModelEvaluator<?> modelEvaluator){
+	ModelEvaluationContext(ModelEvaluator<?> modelEvaluator){
 		this(null, modelEvaluator);
 	}
 
-	public ModelEvaluationContext(MiningModelEvaluationContext parent, ModelEvaluator<?> modelEvaluator){
+	ModelEvaluationContext(MiningModelEvaluationContext parent, ModelEvaluator<?> modelEvaluator){
 		setParent(parent);
 		setModelEvaluator(modelEvaluator);
 	}

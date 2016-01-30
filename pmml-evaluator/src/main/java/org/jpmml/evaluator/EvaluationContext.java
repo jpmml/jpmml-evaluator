@@ -36,6 +36,9 @@ public class EvaluationContext {
 	private List<String> warnings = null;
 
 
+	EvaluationContext(){
+	}
+
 	abstract
 	protected FieldValue createFieldValue(FieldName name, Object value);
 

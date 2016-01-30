@@ -32,11 +32,11 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 	private Map<FieldName, OutputField> outputFields = null;
 
 
-	public MiningModelEvaluationContext(MiningModelEvaluator modelEvaluator){
+	MiningModelEvaluationContext(MiningModelEvaluator modelEvaluator){
 		this(null, modelEvaluator);
 	}
 
-	public MiningModelEvaluationContext(MiningModelEvaluationContext parent, MiningModelEvaluator modelEvaluator){
+	MiningModelEvaluationContext(MiningModelEvaluationContext parent, MiningModelEvaluator modelEvaluator){
 		super(parent, modelEvaluator);
 	}
 

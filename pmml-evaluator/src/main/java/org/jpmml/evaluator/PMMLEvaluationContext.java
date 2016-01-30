@@ -28,7 +28,7 @@ public class PMMLEvaluationContext extends EvaluationContext {
 	private PMMLManager pmmlManager = null;
 
 
-	public PMMLEvaluationContext(PMMLManager pmmlManager){
+	PMMLEvaluationContext(PMMLManager pmmlManager){
 		setPmmlManager(pmmlManager);
 	}
 

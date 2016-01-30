@@ -20,7 +20,10 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.FieldName;
 
-class VirtualEvaluationContext extends EvaluationContext {
+public class VirtualEvaluationContext extends EvaluationContext {
+
+	public VirtualEvaluationContext(){
+	}
 
 	@Override
 	protected FieldValue createFieldValue(FieldName name, Object value){

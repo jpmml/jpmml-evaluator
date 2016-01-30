@@ -26,7 +26,7 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 	private EvaluationContext parent = null;
 
 
-	public DefineFunctionEvaluationContext(EvaluationContext parent){
+	DefineFunctionEvaluationContext(EvaluationContext parent){
 		setParent(parent);
 	}
 
