@@ -275,17 +275,17 @@ public class Classification implements Computable {
 
 	static
 	public enum Type implements Comparator<Double> {
-		PROBABILITY(Classification.BIGGER_IS_BETTER, Range.closed(0d, 1d)),
-		CONFIDENCE(Classification.BIGGER_IS_BETTER, Range.atLeast(0d)),
-		DISTANCE(Classification.SMALLER_IS_BETTER, Range.atLeast(0d)){
+		PROBABILITY(Classification.BIGGER_IS_BETTER, Range.closed(Values.DOUBLE_ZERO, Values.DOUBLE_ONE)),
+		CONFIDENCE(Classification.BIGGER_IS_BETTER, Range.atLeast(Values.DOUBLE_ZERO)),
+		DISTANCE(Classification.SMALLER_IS_BETTER, Range.atLeast(Values.DOUBLE_ZERO)){
 
 			@Override
-			public double getDefault(){
+			public Double getDefault(){
 				return Double.POSITIVE_INFINITY;
 			}
 		},
-		SIMILARITY(Classification.BIGGER_IS_BETTER, Range.atLeast(0d)),
-		VOTE(Classification.BIGGER_IS_BETTER, Range.atLeast(0d)),
+		SIMILARITY(Classification.BIGGER_IS_BETTER, Range.atLeast(Values.DOUBLE_ZERO)),
+		VOTE(Classification.BIGGER_IS_BETTER, Range.atLeast(Values.DOUBLE_ZERO)),
 		;
 
 		private Ordering<Double> ordering;
@@ -324,8 +324,8 @@ public class Classification implements Computable {
 		 * Gets the least optimal value in the range of valid values.
 		 * </p>
 		 */
-		public double getDefault(){
-			return 0d;
+		public Double getDefault(){
+			return Values.DOUBLE_ZERO;
 		}
 
 		public boolean isValid(Double value){

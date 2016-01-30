@@ -232,7 +232,7 @@ public class ExpressionUtil {
 				{
 					boolean equals = value.equals(normDiscrete);
 
-					return FieldValueUtil.create(equals ? 1d : 0d);
+					return FieldValueUtil.create(equals ? Values.DOUBLE_ONE : Values.DOUBLE_ZERO);
 				}
 			default:
 				throw new UnsupportedFeatureException(normDiscrete, method);

@@ -338,7 +338,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			case THRESHOLD:
 				Double threshold = neuralLayer.getThreshold();
 				if(threshold == null){
-					threshold = Double.valueOf(neuralNetwork.getThreshold());
+					threshold = neuralNetwork.getThreshold();
 				}
 				return z > threshold.doubleValue() ? 1d : 0d;
 			case LOGISTIC:

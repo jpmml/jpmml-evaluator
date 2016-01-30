@@ -209,7 +209,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			// "If the value is less than the minimum time, then cumulative hazard is 0 and predicted survival is 1"
 			if(value.compareToValue(minTimeValue) < 0){
-				return Collections.singletonMap(targetField, 0d);
+				return Collections.singletonMap(targetField, Values.DOUBLE_ZERO);
 			}
 
 			FieldValue maxTimeValue = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, maxTime);
@@ -748,7 +748,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			return offsetValue;
 		}
 
-		return 0d;
+		return Values.DOUBLE_ZERO;
 	}
 
 	static
@@ -765,7 +765,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			return trialsValue;
 		}
 
-		return 1;
+		return Values.INTEGER_ONE;
 	}
 
 	static
@@ -959,7 +959,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			// The row is empty
 			if(factorHandlers.isEmpty() && covariateHandlers.isEmpty()){
-				return 1d;
+				return Values.DOUBLE_ONE;
 			}
 
 			Double factorProduct = computeProduct(factorHandlers, arguments);
@@ -1086,7 +1086,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 				boolean equals = value.equals(ppCell);
 
-				return (equals ? 1d : 0d);
+				return (equals ? Values.DOUBLE_ONE : Values.DOUBLE_ZERO);
 			}
 
 			public String getCategory(){

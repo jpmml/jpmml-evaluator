@@ -203,8 +203,9 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			}
 
 			boolean equals = value.equals(categoricalPredictor);
-
-			result += categoricalPredictor.getCoefficient() * (equals ? 1d : 0d);
+			if(equals){
+				result += categoricalPredictor.getCoefficient();
+			}
 		}
 
 		List<PredictorTerm> predictorTerms = regressionTable.getPredictorTerms();
@@ -230,7 +231,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			result += product;
 		}
 
-		return Double.valueOf(result);
+		return result;
 	}
 
 	private Double normalizeRegressionResult(Double value){

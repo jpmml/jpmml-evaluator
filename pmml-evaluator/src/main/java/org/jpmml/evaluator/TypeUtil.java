@@ -114,14 +114,14 @@ public class TypeUtil {
 		try {
 			long result = Long.parseLong(value);
 
-			return toInt(result);
+			return toInteger(result);
 		} catch(NumberFormatException nfeInteger){
 
 			try {
 				double result = Double.parseDouble(value);
 
 				if(DoubleMath.isMathematicalInteger(result)){
-					return toInt((long)result);
+					return toInteger((long)result);
 				}
 			} catch(NumberFormatException nfeDouble){
 				// Ignored
@@ -145,13 +145,13 @@ public class TypeUtil {
 			switch(value){
 				case "-1":
 				case "-1.0":
-					return TypeUtil.FLOAT_MINUS_ONE;
+					return Values.FLOAT_MINUS_ONE;
 				case "0":
 				case "0.0":
-					return TypeUtil.FLOAT_ZERO;
+					return Values.FLOAT_ZERO;
 				case "1":
 				case "1.0":
-					return TypeUtil.FLOAT_ONE;
+					return Values.FLOAT_ONE;
 				default:
 					break;
 			}
@@ -180,23 +180,18 @@ public class TypeUtil {
 			switch(value){
 				case "-1":
 				case "-1.0":
-					return TypeUtil.DOUBLE_MINUS_ONE;
-				case "-0.5":
-					return TypeUtil.DOUBLE_MINUS_ONE_HALF;
+					return Values.DOUBLE_MINUS_ONE;
 				case "0":
 				case "0.0":
-					return TypeUtil.DOUBLE_ZERO;
+					return Values.DOUBLE_ZERO;
 				case "0.5":
-					return TypeUtil.DOUBLE_ONE_HALF;
+					return Values.DOUBLE_ONE_HALF;
 				case "1":
 				case "1.0":
-					return TypeUtil.DOUBLE_ONE;
+					return Values.DOUBLE_ONE;
 				case "2":
 				case "2.0":
-					return TypeUtil.DOUBLE_TWO;
-				case "3":
-				case "3.0":
-					return TypeUtil.DOUBLE_THREE;
+					return Values.DOUBLE_TWO;
 				default:
 					break;
 			}
@@ -500,14 +495,14 @@ public class TypeUtil {
 			Number number = (Number)value;
 
 			if(DoubleMath.isMathematicalInteger(number.doubleValue())){
-				return toInt(number.longValue());
+				return toInteger(number.longValue());
 			}
 		} else
 
 		if(value instanceof Long){
 			Long number = (Long)value;
 
-			return toInt(number.longValue());
+			return toInteger(number.longValue());
 		} else
 
 		if((value instanceof Short) || (value instanceof Byte)){
@@ -519,7 +514,7 @@ public class TypeUtil {
 		if(value instanceof Boolean){
 			Boolean flag = (Boolean)value;
 
-			return (flag.booleanValue() ? INTEGER_ONE : INTEGER_ZERO);
+			return (flag.booleanValue() ? Values.INTEGER_ONE : Values.INTEGER_ZERO);
 		} else
 
 		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
@@ -532,13 +527,13 @@ public class TypeUtil {
 	}
 
 	static
-	private int toInt(long value){
+	private Integer toInteger(long value){
 
 		if(value < Integer.MIN_VALUE || value > Integer.MAX_VALUE){
 			throw new EvaluationException();
 		}
 
-		return (int)value;
+		return Integer.valueOf((int)value);
 	}
 
 	/**
@@ -558,28 +553,46 @@ public class TypeUtil {
 		if(value instanceof Double){
 			Number number = (Number)value;
 
-			return Float.valueOf(number.floatValue());
+			return toFloat(number.floatValue());
 		} else
 
 		if((value instanceof Long) || (value instanceof Integer) || (value instanceof Short) || (value instanceof Byte)){
 			Number number = (Number)value;
 
-			return Float.valueOf(number.floatValue());
+			return toFloat(number.floatValue());
 		} else
 
 		if(value instanceof Boolean){
 			Boolean flag = (Boolean)value;
 
-			return (flag.booleanValue() ? FLOAT_ONE : FLOAT_ZERO);
+			return (flag.booleanValue() ? Values.FLOAT_ONE : Values.FLOAT_ZERO);
 		} else
 
 		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
 			Number number = (Number)value;
 
-			return Float.valueOf(number.floatValue());
+			return toFloat(number.floatValue());
 		}
 
 		throw new TypeCheckException(DataType.FLOAT, value);
+	}
+
+	static
+	private Float toFloat(float value){
+
+		if(value == -1f){
+			return Values.FLOAT_MINUS_ONE;
+		} else
+
+		if(value == 0f){
+			return Values.FLOAT_ZERO;
+		} else
+
+		if(value == 1f){
+			return Values.FLOAT_ONE;
+		}
+
+		return value;
 	}
 
 	/**
@@ -599,22 +612,48 @@ public class TypeUtil {
 		if((value instanceof Float) || (value instanceof Long) || (value instanceof Integer) || (value instanceof Short) || (value instanceof Byte)){
 			Number number = (Number)value;
 
-			return Double.valueOf(number.doubleValue());
+			return toDouble(number.doubleValue());
 		} else
 
 		if(value instanceof Boolean){
 			Boolean flag = (Boolean)value;
 
-			return (flag.booleanValue() ? DOUBLE_ONE : DOUBLE_ZERO);
+			return (flag.booleanValue() ? Values.DOUBLE_ONE : Values.DOUBLE_ZERO);
 		} else
 
 		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
 			Number number = (Number)value;
 
-			return Double.valueOf(number.doubleValue());
+			return toDouble(number.doubleValue());
 		}
 
 		throw new TypeCheckException(DataType.DOUBLE, value);
+	}
+
+	static
+	private Double toDouble(double value){
+
+		if(value == -1d){
+			return Values.DOUBLE_MINUS_ONE;
+		} else
+
+		if(value == 0d){
+			return Values.DOUBLE_ZERO;
+		} else
+
+		if(value == 0.5d){
+			return Values.DOUBLE_ONE_HALF;
+		} else
+
+		if(value == 1d){
+			return Values.DOUBLE_ONE;
+		} else
+
+		if(value == 2d){
+			return Values.DOUBLE_TWO;
+		}
+
+		return value;
 	}
 
 	/**
@@ -630,11 +669,11 @@ public class TypeUtil {
 		if((value instanceof Double) || (value instanceof Float) || (value instanceof Long) || (value instanceof Integer) || (value instanceof Short) || (value instanceof Byte)){
 			Number number = (Number)value;
 
-			if(Double.compare(1d, number.doubleValue()) == 0){
+			if(number.doubleValue() == 1d){
 				return Boolean.TRUE;
 			} else
 
-			if(Double.compare(0d, number.doubleValue()) == 0){
+			if(number.doubleValue() == 0d){
 				return Boolean.FALSE;
 			}
 		}
@@ -814,21 +853,6 @@ public class TypeUtil {
 	}
 
 	private static final DataType[] inheritanceSequence = {DataType.STRING, DataType.DOUBLE, DataType.FLOAT, DataType.INTEGER};
-
-	private static final Integer INTEGER_ZERO = Integer.valueOf(0);
-	private static final Integer INTEGER_ONE = Integer.valueOf(1);
-
-	private static final Float FLOAT_MINUS_ONE = Float.valueOf(-1f);
-	private static final Float FLOAT_ZERO = Float.valueOf(0f);
-	private static final Float FLOAT_ONE = Float.valueOf(1f);
-
-	private static final Double DOUBLE_MINUS_ONE = Double.valueOf(-1d);
-	private static final Double DOUBLE_MINUS_ONE_HALF = Double.valueOf(-0.5d);
-	private static final Double DOUBLE_ZERO = Double.valueOf(0d);
-	private static final Double DOUBLE_ONE_HALF = Double.valueOf(0.5d);
-	private static final Double DOUBLE_ONE = Double.valueOf(1d);
-	private static final Double DOUBLE_TWO = Double.valueOf(2d);
-	private static final Double DOUBLE_THREE = Double.valueOf(3d);
 
 	private static final LocalDate YEAR_1960 = new LocalDate(1960, 1, 1);
 	private static final LocalDate YEAR_1970 = new LocalDate(1970, 1, 1);

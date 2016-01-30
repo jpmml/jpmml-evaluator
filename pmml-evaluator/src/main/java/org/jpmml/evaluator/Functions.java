@@ -203,7 +203,7 @@ public class Functions {
 
 			DataType dataType = TypeUtil.getResultDataType(left.getDataType(), right.getDataType());
 
-			Integer result = ((left.asNumber()).doubleValue() > (right.asNumber()).doubleValue()) ? 1 : 0;
+			Integer result = ((left.asNumber()).doubleValue() > (right.asNumber()).doubleValue()) ? Values.INTEGER_ONE : Values.INTEGER_ZERO;
 
 			return FieldValueUtil.create(cast(dataType, result));
 		}

@@ -404,7 +404,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	private Float filterValue(Float value){
 
 		if(value.doubleValue() == 0f){
-			return FieldValue.FLOAT_ZERO;
+			return Values.FLOAT_ZERO;
 		}
 
 		return value;
@@ -414,7 +414,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	private Double filterValue(Double value){
 
 		if(value.doubleValue() == 0d){
-			return FieldValue.DOUBLE_ZERO;
+			return Values.DOUBLE_ZERO;
 		}
 
 		return value;
@@ -423,7 +423,4 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	static
 	interface Scalar {
 	}
-
-	private static final Float FLOAT_ZERO = Float.valueOf(0f);
-	private static final Double DOUBLE_ZERO = Double.valueOf(0d);
 }

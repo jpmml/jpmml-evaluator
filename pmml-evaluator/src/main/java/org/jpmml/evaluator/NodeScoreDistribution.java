@@ -74,7 +74,7 @@ public class NodeScoreDistribution extends EntityClassification<Node> implements
 			Node node = getEntity();
 
 			if(value != null && (value).equals(node.getScore())){
-				return 1d;
+				return Values.DOUBLE_ONE;
 			}
 		}
 
