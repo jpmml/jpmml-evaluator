@@ -43,6 +43,10 @@ public class ModelEvaluationContext extends EvaluationContext {
 	private boolean compatible = false;
 
 
+	public ModelEvaluationContext(ModelEvaluator<?> modelEvaluator){
+		this(null, modelEvaluator);
+	}
+
 	public ModelEvaluationContext(MiningModelEvaluationContext parent, ModelEvaluator<?> modelEvaluator){
 		setParent(parent);
 		setModelEvaluator(modelEvaluator);
@@ -67,6 +71,12 @@ public class ModelEvaluationContext extends EvaluationContext {
 		this.arguments = Collections.emptyMap();
 
 		this.compatible = false;
+	}
+
+	void reset(ModelEvaluator<?> modelEvaluator){
+		reset();
+
+		setModelEvaluator(modelEvaluator);
 	}
 
 	@Override

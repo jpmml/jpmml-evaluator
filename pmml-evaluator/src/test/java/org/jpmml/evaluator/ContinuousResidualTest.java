@@ -35,7 +35,7 @@ public class ContinuousResidualTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments(evaluator.getTargetField(), 3d);
 
-		ModelEvaluationContext context = evaluator.createContext(null);
+		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
 		context.declareAll(arguments);
 
 		Map<FieldName, ?> prediction = Collections.singletonMap(evaluator.getTargetField(), 1d);

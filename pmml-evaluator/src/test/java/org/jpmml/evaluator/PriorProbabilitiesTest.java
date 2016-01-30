@@ -37,7 +37,7 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		ModelEvaluationContext context = evaluator.createContext(null);
+		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
 
 		Map<FieldName, ? extends Classification> predictions = TargetUtil.evaluateClassificationDefault(context);
 
@@ -76,7 +76,7 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 			targetValues.clear();
 		}
 
-		ModelEvaluationContext context = evaluator.createContext(null);
+		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
 
 		Map<FieldName, ? extends Classification> predictions = TargetUtil.evaluateClassificationDefault(context);
 

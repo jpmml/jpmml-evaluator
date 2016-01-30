@@ -103,8 +103,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public MiningModelEvaluationContext createContext(MiningModelEvaluationContext parent){
-		return new MiningModelEvaluationContext(parent, this);
+	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+		ModelEvaluationContext context = new MiningModelEvaluationContext(this);
+		context.setArguments(arguments);
+
+		return evaluate(context);
 	}
 
 	@Override
@@ -263,6 +266,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		MiningFunctionType miningFunction = miningModel.getFunctionName();
 
+		MiningModelEvaluationContext miningModelContext = null;
+
+		ModelEvaluationContext modelContext = null;
+
 		List<Segment> segments = segmentation.getSegments();
 		for(Segment segment : segments){
 			Predicate predicate = segment.getPredicate();
@@ -303,15 +310,42 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			ModelEvaluator<?> segmentEvaluator = (ModelEvaluator<?>)segmentHandler.getEvaluator();
 
-			ModelEvaluationContext segmentContext = segmentEvaluator.createContext(context);
-			segmentContext.setCompatible(segmentHandler.isCompatible());
+			ModelEvaluationContext segmentContext;
 
-			FieldName segmentTargetField = segmentEvaluator.getTargetField();
+			if(segmentEvaluator instanceof MiningModelEvaluator){
+				MiningModelEvaluator segmentMiningEvaluator = (MiningModelEvaluator)segmentEvaluator;
+
+				if(miningModelContext == null){
+					miningModelContext = new MiningModelEvaluationContext(context, segmentMiningEvaluator);
+				} else
+
+				{
+					miningModelContext.reset(segmentMiningEvaluator);
+				}
+
+				segmentContext = miningModelContext;
+			} else
+
+			{
+				if(modelContext == null){
+					modelContext = new ModelEvaluationContext(context, segmentEvaluator);
+				} else
+
+				{
+					modelContext.reset(segmentEvaluator);
+				}
+
+				segmentContext = modelContext;
+			}
+
+			segmentContext.setCompatible(segmentHandler.isCompatible());
 
 			SegmentResult segmentResult;
 
 			try {
 				Map<FieldName, ?> result = segmentEvaluator.evaluate(segmentContext);
+
+				FieldName segmentTargetField = segmentEvaluator.getTargetField();
 
 				segmentResult = new SegmentResult(segment, segmentId, result, segmentTargetField);
 			} catch(PMMLException pe){

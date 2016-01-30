@@ -36,7 +36,7 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		ModelEvaluationContext context = evaluator.createContext(null);
+		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
 
 		Map<FieldName, ?> predictions = TargetUtil.evaluateRegressionDefault(context);
 
@@ -60,7 +60,7 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 			targetValues.clear();
 		}
 
-		ModelEvaluationContext context = evaluator.createContext(null);
+		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
 
 		Map<FieldName, ?> predictions = TargetUtil.evaluateRegressionDefault(context);
 

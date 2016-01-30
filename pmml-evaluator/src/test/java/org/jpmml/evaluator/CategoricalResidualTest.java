@@ -36,7 +36,7 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 		// "For some row in the test data the expected value may be Y"
 		Map<FieldName, ?> arguments = createArguments(evaluator.getTargetField(), "Y");
 
-		ModelEvaluationContext context = evaluator.createContext(null);
+		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
 		context.declareAll(arguments);
 
 		ProbabilityDistribution response = new ProbabilityDistribution();
@@ -58,7 +58,7 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 		// "For some other row the expected value may be N"
 		arguments = createArguments(evaluator.getTargetField(), "N");
 
-		context = evaluator.createContext(null);
+		context = new ModelEvaluationContext(evaluator);
 		context.declareAll(arguments);
 
 		result = OutputUtil.evaluate(prediction, context);

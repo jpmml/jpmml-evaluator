@@ -32,7 +32,7 @@ public class MiningModelEvaluationContextTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		MiningModelEvaluator evaluator = (MiningModelEvaluator)createModelEvaluator();
 
-		MiningModelEvaluationContext context = evaluator.createContext(null);
+		MiningModelEvaluationContext context = new MiningModelEvaluationContext(evaluator);
 		context.declare(FieldName.create("Age"), 35);
 
 		Map<FieldName, ?> result = evaluator.evaluate(context);

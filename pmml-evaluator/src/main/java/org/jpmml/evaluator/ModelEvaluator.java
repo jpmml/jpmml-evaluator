@@ -380,13 +380,9 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 	}
 
-	public ModelEvaluationContext createContext(MiningModelEvaluationContext parent){
-		return new ModelEvaluationContext(parent, this);
-	}
-
 	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
-		ModelEvaluationContext context = createContext(null);
+		ModelEvaluationContext context = new ModelEvaluationContext(this);
 		context.setArguments(arguments);
 
 		return evaluate(context);
