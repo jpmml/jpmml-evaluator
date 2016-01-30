@@ -18,9 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.List;
 
 import org.dmg.pmml.BinarySimilarity;
@@ -181,7 +179,7 @@ public class MeasureUtil {
 			throw new UnsupportedFeatureException(measure);
 		}
 
-		List<Double> distances = new ArrayList<>(comparisonFields.size());
+		DoubleVector distances = new DoubleVector(comparisonFields.size());
 
 		comparisonFields:
 		for(int i = 0, max = comparisonFields.size(); i < max; i++){
@@ -194,25 +192,17 @@ public class MeasureUtil {
 
 			FieldValue referenceValue = referenceValues.get(i);
 
-			Double distance = evaluateInnerFunction(comparisonMeasure, comparisonField, value, referenceValue, innerPower);
+			double distance = evaluateInnerFunction(comparisonMeasure, comparisonField, value, referenceValue, innerPower);
 
 			distances.add(distance);
 		}
 
 		if(measure instanceof Euclidean || measure instanceof SquaredEuclidean || measure instanceof CityBlock || measure instanceof Minkowski){
-			double sum = 0;
-
-			for(Double distance : distances){
-				sum += distance.doubleValue();
-			}
-
-			return Math.pow(sum * adjustment.doubleValue(), 1d / outerPower);
+			return Math.pow(distances.sum() * adjustment.doubleValue(), 1d / outerPower);
 		} else
 
 		if(measure instanceof Chebychev){
-			Double max = Collections.max(distances);
-
-			return max.doubleValue() * adjustment.doubleValue();
+			return distances.max() * adjustment.doubleValue();
 		} else
 
 		{

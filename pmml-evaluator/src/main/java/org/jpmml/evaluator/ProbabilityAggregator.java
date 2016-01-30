@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +26,11 @@ import com.google.common.base.Function;
 class ProbabilityAggregator extends ClassificationAggregator<String> {
 
 	ProbabilityAggregator(){
+		this(0);
+	}
+
+	ProbabilityAggregator(int capacity){
+		super(capacity);
 	}
 
 	public void add(HasProbability hasProbability){
@@ -40,16 +43,16 @@ class ProbabilityAggregator extends ClassificationAggregator<String> {
 		for(String category : categories){
 			Double probability = hasProbability.getProbability(category);
 
-			add(category, probability * weight);
+			add(category, probability.doubleValue() * weight);
 		}
 	}
 
 	public Map<String, Double> maxMap(){
-		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
+		Function<DoubleVector, Double> function = new Function<DoubleVector, Double>(){
 
 			@Override
-			public Double apply(List<Double> values){
-				return Collections.max(values);
+			public Double apply(DoubleVector values){
+				return values.max();
 			}
 		};
 
@@ -57,11 +60,11 @@ class ProbabilityAggregator extends ClassificationAggregator<String> {
 	}
 
 	public Map<String, Double> medianMap(){
-		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
+		Function<DoubleVector, Double> function = new Function<DoubleVector, Double>(){
 
 			@Override
-			public Double apply(List<Double> values){
-				return RegressionAggregator.median(values);
+			public Double apply(DoubleVector values){
+				return values.median();
 			}
 		};
 
@@ -69,11 +72,11 @@ class ProbabilityAggregator extends ClassificationAggregator<String> {
 	}
 
 	public Map<String, Double> averageMap(final double denominator){
-		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
+		Function<DoubleVector, Double> function = new Function<DoubleVector, Double>(){
 
 			@Override
-			public Double apply(List<Double> values){
-				return RegressionAggregator.sum(values) / denominator;
+			public Double apply(DoubleVector values){
+				return values.sum() / denominator;
 			}
 		};
 

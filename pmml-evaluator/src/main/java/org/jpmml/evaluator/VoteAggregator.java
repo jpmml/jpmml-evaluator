@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,14 +29,15 @@ import com.google.common.base.Function;
 class VoteAggregator<K> extends ClassificationAggregator<K> {
 
 	VoteAggregator(){
+		super(0);
 	}
 
 	public Map<K, Double> sumMap(){
-		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
+		Function<DoubleVector, Double> function = new Function<DoubleVector, Double>(){
 
 			@Override
-			public Double apply(List<Double> values){
-				return RegressionAggregator.sum(values);
+			public Double apply(DoubleVector values){
+				return values.sum();
 			}
 		};
 

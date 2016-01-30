@@ -18,92 +18,36 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import com.google.common.base.Function;
-import com.google.common.primitives.Doubles;
-import org.apache.commons.math3.stat.descriptive.rank.Percentile;
-
 class RegressionAggregator {
 
-	private List<Double> values = new ArrayList<>();
+	private DoubleVector values = null;
 
+
+	RegressionAggregator(){
+		this(0);
+	}
+
+	RegressionAggregator(int capacity){
+		this.values = new DoubleVector(capacity);
+	}
 
 	public int size(){
 		return this.values.size();
 	}
 
-	public void clear(){
-		this.values.clear();
-	}
-
-	public void add(Double value){
+	public void add(double value){
 		this.values.add(value);
 	}
 
-	public Double sum(){
-		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
-
-			@Override
-			public Double apply(List<Double> values){
-				return sum(values);
-			}
-		};
-
-		return transform(function);
+	public double sum(){
+		return this.values.sum();
 	}
 
-	public Double median(){
-		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
-
-			@Override
-			public Double apply(List<Double> values){
-				return median(values);
-			}
-		};
-
-		return transform(function);
+	public double average(double denominator){
+		return this.values.sum() / denominator;
 	}
 
-	public Double average(final double denominator){
-		Function<List<Double>, Double> function = new Function<List<Double>, Double>(){
-
-			@Override
-			public Double apply(List<Double> values){
-				return sum(values) / denominator;
-			}
-		};
-
-		return transform(function);
-	}
-
-	protected Double transform(Function<List<Double>, Double> function){
-		return function.apply(this.values);
-	}
-
-	static
-	double sum(List<Double> values){
-		double result = 0d;
-
-		for(Double value : values){
-			result += value.doubleValue();
-		}
-
-		return result;
-	}
-
-	static
-	double median(List<Double> values){
-		double[] data = Doubles.toArray(values);
-
-		// The data must be ordered
-		Arrays.sort(data);
-
-		Percentile percentile = new Percentile();
-		percentile.setData(data);
-
-		return percentile.evaluate(50);
+	public double median(){
+		return this.values.median();
 	}
 }

@@ -18,14 +18,12 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.primitives.Doubles;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.dmg.pmml.DataType;
+import org.jpmml.evaluator.DoubleVector;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FunctionException;
@@ -73,23 +71,15 @@ public class PercentileFunction extends AbstractFunction {
 	}
 
 	static
-	private Double evaluate(Collection<?> values, int quantile){
-		List<Double> doubleValues = new ArrayList<>(values.size());
+	private Double evaluate(Collection<?> values, int percentile){
+		DoubleVector doubleValues = new DoubleVector(values.size());
 
 		for(Object value : values){
 			Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
 
-			doubleValues.add(doubleValue);
+			doubleValues.add(doubleValue.doubleValue());
 		}
 
-		double[] data = Doubles.toArray(doubleValues);
-
-		// The data must be (at least partially) ordered
-		Arrays.sort(data);
-
-		Percentile percentile = new Percentile();
-		percentile.setData(data);
-
-		return percentile.evaluate(quantile);
+		return doubleValues.percentile(percentile);
 	}
 }

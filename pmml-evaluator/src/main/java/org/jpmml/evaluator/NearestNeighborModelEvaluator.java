@@ -275,11 +275,20 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Double calculateContinuousTarget(FieldName name, List<InstanceResult> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		RegressionAggregator aggregator = new RegressionAggregator();
+		ContinuousScoringMethodType continuousScoringMethod = nearestNeighborModel.getContinuousScoringMethod();
+
+		RegressionAggregator aggregator;
+
+		switch(continuousScoringMethod){
+			case MEDIAN:
+				aggregator = new RegressionAggregator(instanceResults.size());
+				break;
+			default:
+				aggregator = new RegressionAggregator();
+				break;
+		}
 
 		double denominator = 0d;
-
-		ContinuousScoringMethodType continuousScoringMethod = nearestNeighborModel.getContinuousScoringMethod();
 
 		for(InstanceResult instanceResult : instanceResults){
 			FieldValue value = table.get(instanceResult.getId(), name);
@@ -369,7 +378,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			aggregator.clear();
 
 			for(Object winner : winners){
-				aggregator.add(winner, (double)multiset.count(winner));
+				aggregator.add(winner, multiset.count(winner));
 			}
 
 			winners = aggregator.getWinners();

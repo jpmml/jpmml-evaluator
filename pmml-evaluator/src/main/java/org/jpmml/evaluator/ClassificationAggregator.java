@@ -18,9 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Function;
@@ -29,22 +27,24 @@ import com.google.common.collect.Maps;
 abstract
 class ClassificationAggregator<K> {
 
-	private Map<K, List<Double>> map = new LinkedHashMap<>();
+	private Map<K, DoubleVector> map = new LinkedHashMap<>();
 
+	private int capacity = 0;
+
+
+	ClassificationAggregator(int capacity){
+		this.capacity = capacity;
+	}
 
 	public int size(){
 		return this.map.size();
 	}
 
-	public void clear(){
-		this.map.clear();
-	}
-
-	public void add(K key, Double value){
-		List<Double> values = this.map.get(key);
+	public void add(K key, double value){
+		DoubleVector values = this.map.get(key);
 
 		if(values == null){
-			values = new ArrayList<>();
+			values = new DoubleVector(this.capacity);
 
 			this.map.put(key, values);
 		}
@@ -52,7 +52,11 @@ class ClassificationAggregator<K> {
 		values.add(value);
 	}
 
-	protected <V> Map<K, V> transform(Function<List<Double>, V> function){
+	public void clear(){
+		this.map.clear();
+	}
+
+	protected <V> Map<K, V> transform(Function<DoubleVector, V> function){
 		return Maps.transformValues(this.map, function);
 	}
 }

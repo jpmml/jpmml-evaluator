@@ -64,14 +64,14 @@ public class MeanFunction extends AbstractFunction {
 
 	static
 	private Double evaluate(Collection<?> values){
-		Mean mean = new Mean();
+		Mean statistic = new Mean();
 
 		for(Object value : values){
 			Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
 
-			mean.increment(doubleValue.doubleValue());
+			statistic.increment(doubleValue.doubleValue());
 		}
 
-		return mean.getResult();
+		return statistic.getResult();
 	}
 }

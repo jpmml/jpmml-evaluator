@@ -482,9 +482,18 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	static
 	private Double aggregateValues(Segmentation segmentation, List<SegmentResult> segmentResults){
-		RegressionAggregator aggregator = new RegressionAggregator();
-
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+
+		RegressionAggregator aggregator;
+
+		switch(multipleModelMethod){
+			case MEDIAN:
+				aggregator = new RegressionAggregator(segmentResults.size());
+				break;
+			default:
+				aggregator = new RegressionAggregator();
+				break;
+		}
 
 		double denominator = 0d;
 
@@ -494,16 +503,16 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			switch(multipleModelMethod){
 				case SUM:
 				case MEDIAN:
-					aggregator.add(value);
+					aggregator.add(value.doubleValue());
 					break;
 				case AVERAGE:
-					aggregator.add(value);
+					aggregator.add(value.doubleValue());
 					denominator += 1d;
 					break;
 				case WEIGHTED_AVERAGE:
 					double weight = segmentResult.getWeight();
 
-					aggregator.add(value * weight);
+					aggregator.add(value.doubleValue() * weight);
 					denominator += weight;
 					break;
 				default:
@@ -526,9 +535,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	static
 	private Map<String, Double> aggregateVotes(Segmentation segmentation, List<SegmentResult> segmentResults){
-		VoteAggregator<String> aggregator = new VoteAggregator<>();
-
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+
+		VoteAggregator<String> aggregator = new VoteAggregator<>();
 
 		for(SegmentResult segmentResult : segmentResults){
 			String key = (String)segmentResult.getTargetValue(DataType.STRING);
@@ -550,9 +559,18 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	static
 	private Map<String, Double> aggregateProbabilities(Segmentation segmentation, List<SegmentResult> segmentResults){
-		ProbabilityAggregator aggregator = new ProbabilityAggregator();
-
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+
+		ProbabilityAggregator aggregator;
+
+		switch(multipleModelMethod){
+			case MEDIAN:
+				aggregator = new ProbabilityAggregator(segmentResults.size());
+				break;
+			default:
+				aggregator = new ProbabilityAggregator();
+				break;
+		}
 
 		double denominator = 0d;
 

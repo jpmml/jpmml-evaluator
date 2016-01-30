@@ -145,7 +145,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 						throw new InvalidFeatureException(attribute);
 					}
 
-					Double difference;
+					double difference;
 
 					Scorecard.ReasonCodeAlgorithm reasonCodeAlgorithm = scorecard.getReasonCodeAlgorithm();
 					switch(reasonCodeAlgorithm){
