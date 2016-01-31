@@ -114,6 +114,16 @@
 				<artifactId>pmml-model</artifactId>
 				<version>1.2.10</version>
 			</dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-model-metro</artifactId>
+				<version>1.2.10</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-model-moxy</artifactId>
+				<version>1.2.10</version>
+			</dependency>
 
 			<dependency>
 				<groupId>com.beust</groupId>

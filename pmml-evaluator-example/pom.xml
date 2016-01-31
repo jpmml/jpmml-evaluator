@@ -31,6 +31,14 @@
 			<groupId>org.jpmml</groupId>
 			<artifactId>pmml-extension</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.jpmml</groupId>
+			<artifactId>pmml-model-metro</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jpmml</groupId>
+			<artifactId>pmml-model-moxy</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>com.beust</groupId>
@@ -40,13 +48,6 @@
 		<dependency>
 			<groupId>com.codahale.metrics</groupId>
 			<artifactId>metrics-core</artifactId>
-		</dependency>
-
-		<!-- Mirrors the one specified by the org.jpmml:pmml-evaluator/org.jpmml:pmml-model dependency -->
-		<dependency>
-			<groupId>org.glassfish.jaxb</groupId>
-			<artifactId>jaxb-runtime</artifactId>
-			<version>2.2.11</version>
 		</dependency>
 	</dependencies>
 
@@ -72,6 +73,16 @@
 						</goals>
 						<configuration>
 							<finalName>example-${project.version}</finalName>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
 						</configuration>
 					</execution>
 				</executions>
