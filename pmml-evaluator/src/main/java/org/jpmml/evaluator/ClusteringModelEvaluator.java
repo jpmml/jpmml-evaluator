@@ -186,7 +186,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 		ClusterAffinityDistribution result = new ClusterAffinityDistribution(Classification.Type.DISTANCE, entityRegistry);
 
-		Double adjustment;
+		double adjustment;
 
 		MissingValueWeights missingValueWeights = clusteringModel.getMissingValueWeights();
 		if(missingValueWeights != null){

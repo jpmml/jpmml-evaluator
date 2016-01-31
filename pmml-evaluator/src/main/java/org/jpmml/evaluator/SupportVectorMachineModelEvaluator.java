@@ -238,7 +238,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		return TargetUtil.evaluateClassification(result, context);
 	}
 
-	private Double evaluateSupportVectorMachine(SupportVectorMachine supportVectorMachine, double[] input){
+	private double evaluateSupportVectorMachine(SupportVectorMachine supportVectorMachine, double[] input){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		double result = 0d;
@@ -262,9 +262,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				throw new InvalidFeatureException(supportVector);
 			}
 
-			Double value = KernelUtil.evaluate(kernel, input, vector);
-
-			result += (coefficient.getValue() * value);
+			result += (coefficient.getValue() * KernelUtil.evaluate(kernel, input, vector));
 		}
 
 		if(coefficientIterator.hasNext() || supportVectorIterator.hasNext()){

@@ -326,7 +326,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		calculateCategoryProbabilities(values, targetCategories);
 	}
 
-	private Double normalizeClassificationResult(Double value, int classes){
+	private double normalizeClassificationResult(double value, int classes){
 		RegressionModel regressionModel = getModel();
 
 		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
@@ -367,7 +367,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new EvaluationException();
 			}
 
-			Double probability = (cumulativeProbability - offset);
+			double probability = (cumulativeProbability - offset);
 			if(probability < 0d){
 				throw new EvaluationException();
 			}

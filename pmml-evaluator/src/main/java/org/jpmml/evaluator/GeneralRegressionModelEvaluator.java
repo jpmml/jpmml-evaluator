@@ -350,12 +350,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		ProbabilityDistribution result = new ProbabilityDistribution();
 
-		Double previousValue = null;
+		double previousValue = 0d;
 
 		for(int i = 0; i < targetCategories.size(); i++){
 			String targetCategory = targetCategories.get(i);
 
-			Double value;
+			double value;
 
 			// Categories from the first category to the second-to-last category
 			if(i < (targetCategories.size() - 1)){
@@ -410,10 +410,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 						throw new UnsupportedFeatureException(generalRegressionModel, modelType);
 				}
 
-				value = computeDotProduct(parameterCells, parameterPredictorRows, arguments);
-				if(value == null){
+				Double dotProduct = computeDotProduct(parameterCells, parameterPredictorRows, arguments);
+				if(dotProduct == null){
 					return TargetUtil.evaluateClassificationDefault(context);
 				}
+
+				value = dotProduct;
 
 				switch(modelType){
 					case GENERALIZED_LINEAR:
@@ -451,18 +453,10 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			switch(modelType){
 				case GENERALIZED_LINEAR:
 				case MULTINOMIAL_LOGISTIC:
-					{
-						result.put(targetCategory, value);
-					}
+					result.put(targetCategory, value);
 					break;
 				case ORDINAL_MULTINOMIAL:
-					if(previousValue == null){
-						result.put(targetCategory, value);
-					} else
-
-					{
-						result.put(targetCategory, value - previousValue);
-					}
+					result.put(targetCategory, (value - previousValue));
 					break;
 				default:
 					throw new UnsupportedFeatureException(generalRegressionModel, modelType);
@@ -517,7 +511,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	private Double computeDotProduct(Iterable<PCell> parameterCells, Map<String, Row> parameterPredictorRows, Map<FieldName, FieldValue> arguments){
-		Double sum = null;
+		double sum = 0d;
+
+		int count = 0;
 
 		for(PCell parameterCell : parameterCells){
 			double value;
@@ -534,10 +530,16 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			// The row is empty
 			{
-				value = (1d * parameterCell.getBeta());
+				value = parameterCell.getBeta();
 			}
 
-			sum = (sum != null ? (sum + value) : value);
+			sum += value;
+
+			count++;
+		}
+
+		if(count == 0){
+			return null;
 		}
 
 		return sum;
@@ -571,7 +573,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return sum;
 	}
 
-	private Double computeLink(Double value, EvaluationContext context){
+	private double computeLink(double value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		LinkFunctionType linkFunction = generalRegressionModel.getLinkFunction();
@@ -628,7 +630,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 	}
 
-	private Double computeCumulativeLink(Double value, EvaluationContext context){
+	private double computeCumulativeLink(double value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		CumulativeLinkFunctionType cumulativeLinkFunction = generalRegressionModel.getCumulativeLinkFunction();
@@ -1188,7 +1190,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				return Math.pow((value.asNumber()).doubleValue(), getMultiplicity());
 			}
 
-			public Double getMultiplicity(){
+			public double getMultiplicity(){
 				PPCell ppCell = getPPCell();
 
 				return Double.parseDouble(ppCell.getValue());

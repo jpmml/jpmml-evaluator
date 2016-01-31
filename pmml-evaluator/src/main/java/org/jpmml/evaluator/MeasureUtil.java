@@ -48,7 +48,7 @@ public class MeasureUtil {
 	}
 
 	static
-	public Double evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<? extends ComparisonField> comparisonFields, BitSet flags, BitSet referenceFlags){
+	public double evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<? extends ComparisonField> comparisonFields, BitSet flags, BitSet referenceFlags){
 		Measure measure = comparisonMeasure.getMeasure();
 
 		double a11 = 0d;
@@ -145,7 +145,7 @@ public class MeasureUtil {
 	}
 
 	static
-	public Double evaluateDistance(ComparisonMeasure comparisonMeasure, List<? extends ComparisonField> comparisonFields, List<FieldValue> values, List<FieldValue> referenceValues, Double adjustment){
+	public double evaluateDistance(ComparisonMeasure comparisonMeasure, List<? extends ComparisonField> comparisonFields, List<FieldValue> values, List<FieldValue> referenceValues, double adjustment){
 		Measure measure = comparisonMeasure.getMeasure();
 
 		double innerPower;
@@ -198,11 +198,11 @@ public class MeasureUtil {
 		}
 
 		if(measure instanceof Euclidean || measure instanceof SquaredEuclidean || measure instanceof CityBlock || measure instanceof Minkowski){
-			return Math.pow(distances.sum() * adjustment.doubleValue(), 1d / outerPower);
+			return Math.pow(distances.sum() * adjustment, 1d / outerPower);
 		} else
 
 		if(measure instanceof Chebychev){
-			return distances.max() * adjustment.doubleValue();
+			return distances.max() * adjustment;
 		} else
 
 		{
@@ -211,7 +211,7 @@ public class MeasureUtil {
 	}
 
 	static
-	private double evaluateInnerFunction(ComparisonMeasure comparisonMeasure, ComparisonField comparisonField, FieldValue value, FieldValue referenceValue, Double power){
+	private double evaluateInnerFunction(ComparisonMeasure comparisonMeasure, ComparisonField comparisonField, FieldValue value, FieldValue referenceValue, double power){
 		CompareFunctionType compareFunction = comparisonField.getCompareFunction();
 
 		if(compareFunction == null){
@@ -274,7 +274,7 @@ public class MeasureUtil {
 				throw new UnsupportedFeatureException(comparisonField, compareFunction);
 		}
 
-		return comparisonField.getFieldWeight() * Math.pow(distance, power.doubleValue());
+		return comparisonField.getFieldWeight() * Math.pow(distance, power);
 	}
 
 	static
@@ -288,7 +288,7 @@ public class MeasureUtil {
 	}
 
 	static
-	public Double calculateAdjustment(List<FieldValue> values, List<? extends Number> adjustmentValues){
+	public double calculateAdjustment(List<FieldValue> values, List<? extends Number> adjustmentValues){
 		double sum = 0d;
 		double nonmissingSum = 0d;
 
@@ -305,7 +305,7 @@ public class MeasureUtil {
 	}
 
 	static
-	public Double calculateAdjustment(List<FieldValue> values){
+	public double calculateAdjustment(List<FieldValue> values){
 		double sum = 0d;
 		double nonmissingSum = 0d;
 

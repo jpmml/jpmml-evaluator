@@ -146,9 +146,7 @@ public class MatrixUtil {
 
 		MatCell matCell = Iterables.getFirst(Iterables.filter(matCells, filter), null);
 		if(matCell != null){
-			String value = matCell.getValue();
-
-			return Double.parseDouble(value);
+			return Double.parseDouble(matCell.getValue());
 		}
 
 		return null;

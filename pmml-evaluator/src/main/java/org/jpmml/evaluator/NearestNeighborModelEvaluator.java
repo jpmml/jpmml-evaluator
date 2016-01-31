@@ -254,11 +254,11 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private List<InstanceResult> evaluateDistance(ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
-		Double adjustment = MeasureUtil.calculateAdjustment(values);
-
 		Map<Integer, List<FieldValue>> valueMap = getInstanceValues();
 
 		List<InstanceResult> result = new ArrayList<>(valueMap.size());
+
+		double adjustment = MeasureUtil.calculateAdjustment(values);
 
 		Set<Integer> rowKeys = valueMap.keySet();
 		for(Integer rowKey : rowKeys){
