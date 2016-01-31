@@ -261,7 +261,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				return null;
 			}
 
-			result.put(neuralInput.getId(), (value.asNumber()).doubleValue());
+			result.put(neuralInput.getId(), value.asDouble());
 		}
 
 		List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();

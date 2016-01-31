@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.dmg.pmml.ContinuousDistribution;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.GaussianDistribution;
 import org.dmg.pmml.PoissonDistribution;
 
@@ -57,6 +58,8 @@ public class DistributionUtil {
 	static
 	public double probability(PoissonDistribution poissonDistribution, Number x){
 		org.apache.commons.math3.distribution.PoissonDistribution distribution = new org.apache.commons.math3.distribution.PoissonDistribution(null, poissonDistribution.getMean(), org.apache.commons.math3.distribution.PoissonDistribution.DEFAULT_EPSILON, org.apache.commons.math3.distribution.PoissonDistribution.DEFAULT_MAX_ITERATIONS);
+
+		x = (Number)TypeUtil.cast(DataType.INTEGER, x);
 
 		return distribution.probability(x.intValue());
 	}

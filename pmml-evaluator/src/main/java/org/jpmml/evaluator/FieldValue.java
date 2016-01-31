@@ -268,6 +268,27 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return (Double)getValue(DataType.DOUBLE);
 	}
 
+	/**
+	 * Getting the value of a field as {@link Double}:
+	 * <pre>
+	 * FieldValue value = ...;
+	 * Double result = value.asDouble();
+	 * </pre>
+	 *
+	 * Getting the value of a field as <code>double</code>:
+	 * <pre>
+	 * FieldValue value = ...;
+	 * double result = (value.asNumber()).doubleValue();
+	 * </pre>
+	 *
+	 * @see #asNumber()
+	 */
+	public Double asDouble(){
+		Number number = asNumber();
+
+		return number.doubleValue();
+	}
+
 	public Boolean asBoolean(){
 		return (Boolean)getValue(DataType.BOOLEAN);
 	}

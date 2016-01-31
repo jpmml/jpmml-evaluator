@@ -121,7 +121,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 						return TargetUtil.evaluateRegressionDefault(context);
 					}
 
-					partialScore = (computedValue.asNumber()).doubleValue();
+					partialScore = computedValue.asDouble();
 				} else
 
 				{

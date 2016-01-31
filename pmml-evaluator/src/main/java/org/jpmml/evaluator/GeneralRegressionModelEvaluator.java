@@ -742,7 +742,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		if(offsetVariable != null){
 			FieldValue value = getVariable(offsetVariable, context);
 
-			return (value.asNumber()).doubleValue();
+			return value.asDouble();
 		}
 
 		Double offsetValue = generalRegressionModel.getOffsetValue();

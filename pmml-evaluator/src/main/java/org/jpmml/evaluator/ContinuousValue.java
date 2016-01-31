@@ -118,5 +118,10 @@ public class ContinuousValue extends FieldValue {
 		public Number asNumber(){
 			return (Number)getValue();
 		}
+
+		@Override
+		public Double asDouble(){
+			return (Double)getValue();
+		}
 	}
 }

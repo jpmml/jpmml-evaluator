@@ -53,13 +53,13 @@ public class DiscretizationUtil {
 
 	static
 	public FieldValue discretize(Discretize discretize, FieldValue value){
-		String result = discretize(discretize, (value.asNumber()).doubleValue());
+		String result = discretize(discretize, value.asDouble());
 
 		return FieldValueUtil.create(discretize.getDataType(), null, result);
 	}
 
 	static
-	public String discretize(Discretize discretize, double value){
+	public String discretize(Discretize discretize, Double value){
 		RangeMap<Double, String> binRanges = CacheUtil.getValue(discretize, DiscretizationUtil.binRangeCache);
 
 		Map.Entry<Range<Double>, String> entry = binRanges.getEntry(value);
