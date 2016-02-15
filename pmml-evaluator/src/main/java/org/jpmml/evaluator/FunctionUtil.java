@@ -57,7 +57,7 @@ public class FunctionUtil {
 			return evaluate(defineFunction, values, context);
 		}
 
-		throw new UnsupportedFeatureException(apply, ReflectionUtil.getField(apply, "function"), name);
+		throw new UnsupportedFeatureException(apply, ReflectionUtil.getField(Apply.class, "function"), name);
 	}
 
 	static

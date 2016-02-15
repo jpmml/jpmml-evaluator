@@ -280,7 +280,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		// Older versions of several popular PMML producer software are known to omit the classificationMethod attribute.
 		// The method SupportVectorMachineModel#getSvmRepresentation() replaces a missing value with the default value "OneAgainstAll", which may lead to incorrect behaviour.
 		// The workaround is to bypass this method using Java Reflection API, and infer the correct classification method type based on evidence.
-		Field field = ReflectionUtil.getField(supportVectorMachineModel, "classificationMethod");
+		Field field = ReflectionUtil.getField(SupportVectorMachineModel.class, "classificationMethod");
 
 		SvmClassificationMethodType svmClassificationMethod = ReflectionUtil.getFieldValue(field, supportVectorMachineModel);
 		if(svmClassificationMethod != null){

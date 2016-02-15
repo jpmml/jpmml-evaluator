@@ -40,7 +40,7 @@ public class InvalidFeatureInspectorTest {
 		DataDictionary dataDictionary = new DataDictionary()
 			.setNumberOfFields(1);
 
-		Field field = ReflectionUtil.getField(dataDictionary, "dataFields");
+		Field field = ReflectionUtil.getField(DataDictionary.class, "dataFields");
 
 		assertNull(ReflectionUtil.getFieldValue(field, dataDictionary));
 
