@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.rattle;
+package org.jpmml.rattle.visitors;
 
 import org.dmg.pmml.MiningFunctionType;
 import org.dmg.pmml.MiningSchema;
