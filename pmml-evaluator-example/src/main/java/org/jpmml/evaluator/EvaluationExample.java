@@ -247,8 +247,10 @@ public class EvaluationExample extends Example {
 			try {
 				outputRecords.clear();
 
+				Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
+
 				for(Map<FieldName, ?> inputRecord : inputRecords){
-					Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
+					arguments.clear();
 
 					for(FieldName activeField : activeFields){
 						FieldValue activeValue = EvaluatorUtil.prepare(evaluator, activeField, inputRecord.get(activeField));

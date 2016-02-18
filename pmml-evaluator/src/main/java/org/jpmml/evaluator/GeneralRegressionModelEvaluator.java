@@ -1173,6 +1173,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			@Override
 			public Double evaluate(FieldValue value){
+
 				double multiplicity = getMultiplicity();
 				if(multiplicity == 1d){
 					return value.asDouble();
@@ -1184,7 +1185,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			public double getMultiplicity(){
 				PPCell ppCell = getPPCell();
 
-				return Double.parseDouble(ppCell.getValue());
+				String value = ppCell.getValue();
+				if(("1").equals(value) || ("1.0").equals(value)){
+					return 1d;
+				}
+
+				return Double.parseDouble(value);
 			}
 		}
 	}
