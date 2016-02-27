@@ -104,22 +104,22 @@
 								<artifactItem>
 									<groupId>org.jacoco</groupId>
 									<artifactId>org.jacoco.ant</artifactId>
-									<version>0.7.5.201505241946</version>
+									<version>0.7.6.201602180812</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.jacoco</groupId>
 									<artifactId>org.jacoco.agent</artifactId>
-									<version>0.7.5.201505241946</version>
+									<version>0.7.6.201602180812</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.jacoco</groupId>
 									<artifactId>org.jacoco.core</artifactId>
-									<version>0.7.5.201505241946</version>
+									<version>0.7.6.201602180812</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.jacoco</groupId>
 									<artifactId>org.jacoco.report</artifactId>
-									<version>0.7.5.201505241946</version>
+									<version>0.7.6.201602180812</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.ow2.asm</groupId>
