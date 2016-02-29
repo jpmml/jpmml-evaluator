@@ -125,9 +125,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		MiningSchema miningSchema = model.getMiningSchema();
 		if(miningSchema.hasMiningFields()){
 			this.miningFields = CacheUtil.getValue(miningSchema, ModelEvaluator.miningFieldCache);
-		} // End if
 
-		if(miningSchema.hasMiningFields()){
 			this.miningFieldNames = CacheUtil.getValue(miningSchema, ModelEvaluator.miningFieldNameCache);
 		}
 
@@ -421,7 +419,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	static
-	private <M extends Model> M selectModel(PMML pmml, Class<? extends M> clazz){
+	<M extends Model> M selectModel(PMML pmml, Class<? extends M> clazz){
 		List<Model> models = pmml.getModels();
 
 		Iterable<? extends M> filteredModels = Iterables.filter(models, clazz);

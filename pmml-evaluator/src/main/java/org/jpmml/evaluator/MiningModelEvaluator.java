@@ -62,11 +62,16 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 
 	public MiningModelEvaluator(PMML pmml){
-		super(pmml, MiningModel.class);
+		this(pmml, selectModel(pmml, MiningModel.class));
 	}
 
 	public MiningModelEvaluator(PMML pmml, MiningModel miningModel){
 		super(pmml, miningModel);
+
+		Segmentation segmentation = miningModel.getSegmentation();
+		if(segmentation == null){
+			throw new InvalidFeatureException(miningModel);
+		}
 	}
 
 	@Override
@@ -89,9 +94,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.getSegmentation();
-		if(segmentation == null){
-			return null;
-		}
 
 		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
@@ -125,11 +127,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			EmbeddedModel embeddedModel = Iterables.get(miningModel.getEmbeddedModels(), 0);
 
 			throw new UnsupportedFeatureException(embeddedModel);
-		}
-
-		Segmentation segmentation = miningModel.getSegmentation();
-		if(segmentation == null){
-			throw new InvalidFeatureException(miningModel);
 		}
 
 		Map<FieldName, ?> predictions;
@@ -182,10 +179,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
-
 		Classification result;
 
+		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
@@ -270,7 +266,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		List<Segment> segments = segmentation.getSegments();
 
-		List<SegmentResult> results = new ArrayList<>(segments.size());
+		List<SegmentResult> segmentResults = new ArrayList<>(segments.size());
 
 		for(int i = 0, max = segments.size(); i < max; i++){
 			Segment segment = segments.get(i);
@@ -393,7 +389,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				case SELECT_FIRST:
 					return Collections.singletonList(segmentResult);
 				default:
-					results.add(segmentResult);
+					segmentResults.add(segmentResult);
 					break;
 			}
 		}
@@ -409,7 +405,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				break;
 		}
 
-		return results;
+		return segmentResults;
 	}
 
 	private Map<FieldName, ?> getSegmentationResult(Set<MultipleModelMethodType> multipleModelMethods, List<SegmentResult> segmentResults){
@@ -482,10 +478,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	static
 	private Double aggregateValues(Segmentation segmentation, List<SegmentResult> segmentResults){
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
-
 		RegressionAggregator aggregator;
 
+		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case MEDIAN:
 				aggregator = new RegressionAggregator(segmentResults.size());
@@ -535,9 +530,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	static
 	private Map<String, Double> aggregateVotes(Segmentation segmentation, List<SegmentResult> segmentResults){
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
-
 		VoteAggregator<String> aggregator = new VoteAggregator<>();
+
+		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		for(SegmentResult segmentResult : segmentResults){
 			String key = (String)segmentResult.getTargetValue(DataType.STRING);
@@ -559,10 +554,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	static
 	private Map<String, Double> aggregateProbabilities(Segmentation segmentation, List<SegmentResult> segmentResults){
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
-
 		ProbabilityAggregator aggregator;
 
+		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case MEDIAN:
 				aggregator = new ProbabilityAggregator(segmentResults.size());
