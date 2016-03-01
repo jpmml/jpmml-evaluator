@@ -136,6 +136,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		switch(multipleModelMethod){
 			case SELECT_ALL:
+			case SELECT_FIRST:
+			case MODEL_CHAIN:
 				return null;
 			default:
 				return super.getDataField();
