@@ -273,8 +273,8 @@ public class EvaluationExample extends Example {
 			waitForUserInput();
 		}
 
-		List<FieldName> targetFields = evaluator.getTargetFields();
-		List<FieldName> outputFields = evaluator.getOutputFields();
+		List<FieldName> targetFields = EvaluatorUtil.getTargetFields(evaluator);
+		List<FieldName> outputFields = EvaluatorUtil.getOutputFields(evaluator);
 
 		Function<Object, String> formatFunction = new Function<Object, String>(){
 

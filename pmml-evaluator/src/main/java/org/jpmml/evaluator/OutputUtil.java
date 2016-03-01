@@ -340,8 +340,9 @@ public class OutputUtil {
 	 */
 	static
 	public DataType getDataType(OutputField outputField, ModelEvaluator<?> modelEvaluator){
-		DataType dataType = outputField.getDataType();
+		FieldName name = outputField.getName();
 
+		DataType dataType = outputField.getDataType();
 		if(dataType != null){
 			return dataType;
 		}
@@ -352,6 +353,22 @@ public class OutputUtil {
 		}
 
 		FeatureType feature = outputField.getFeature();
+		switch(feature){
+			case PREDICTED_VALUE:
+			case TRANSFORMED_VALUE:
+			case DECISION:
+				{
+					OutputField evaluatorOutputField = modelEvaluator.getOutputField(name);
+
+					if(!(outputField).equals(evaluatorOutputField)){
+						throw new TypeAnalysisException(outputField);
+					}
+				}
+				break;
+			default:
+				break;
+		} // End switch
+
 		switch(feature){
 			case PREDICTED_VALUE:
 				{

@@ -99,7 +99,7 @@ public class PMMLManagerTest {
 	}
 
 	static
-	private FieldName toFieldName(Object object){
+	FieldName toFieldName(Object object){
 
 		if(object instanceof String){
 			String string = (String)object;

@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +34,11 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
@@ -50,8 +54,14 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.Segment;
 import org.dmg.pmml.Segmentation;
+import org.dmg.pmml.True;
 
-public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
+public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements MiningModelConsumer, HasEntityRegistry<Segment> {
+
+	transient
+	private List<FieldName> nestedOutputFieldNames = null;
+
+	private Map<FieldName, OutputField> nestedOutputFields = Collections.emptyMap();
 
 	private ModelEvaluatorFactory evaluatorFactory = null;
 
@@ -72,11 +82,64 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		if(segmentation == null){
 			throw new InvalidFeatureException(miningModel);
 		}
+
+		List<Segment> segments = segmentation.getSegments();
+
+		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+		switch(multipleModelMethod){
+			case SELECT_ALL:
+				// Ignored
+				break;
+			case SELECT_FIRST:
+				this.nestedOutputFields = collectNestedOutputFields(getActiveHead(segments));
+				break;
+			case MODEL_CHAIN:
+				this.nestedOutputFields = collectNestedOutputFields(getActiveTail(segments));
+				break;
+			default:
+				break;
+		}
+	}
+
+	@Override
+	public MultipleModelMethodType getMultipleModelMethod(){
+		MiningModel miningModel = getModel();
+
+		Segmentation segmentation = miningModel.getSegmentation();
+
+		return segmentation.getMultipleModelMethod();
+	}
+
+	@Override
+	public List<FieldName> getNestedOutputFields(){
+
+		if(this.nestedOutputFieldNames == null){
+			this.nestedOutputFieldNames = ImmutableList.copyOf(this.nestedOutputFields.keySet());
+		}
+
+		return this.nestedOutputFieldNames;
+	}
+
+	@Override
+	public OutputField getNestedOutputField(FieldName name){
+		return this.nestedOutputFields.get(name);
 	}
 
 	@Override
 	public String getSummary(){
 		return "Ensemble model";
+	}
+
+	@Override
+	protected DataField getDataField(){
+		MultipleModelMethodType multipleModelMethod = getMultipleModelMethod();
+
+		switch(multipleModelMethod){
+			case SELECT_ALL:
+				return null;
+			default:
+				return super.getDataField();
+		}
 	}
 
 	@Override
@@ -87,21 +150,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 
 		return this.entityRegistry;
-	}
-
-	@Override
-	protected DataField getDataField(){
-		MiningModel miningModel = getModel();
-
-		Segmentation segmentation = miningModel.getSegmentation();
-
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
-		switch(multipleModelMethod){
-			case SELECT_ALL:
-				return null;
-			default:
-				return super.getDataField();
-		}
 	}
 
 	@Override
@@ -440,6 +488,63 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 
 		return null;
+	}
+
+	private Map<FieldName, OutputField> collectNestedOutputFields(List<Segment> segments){
+		Map<FieldName, OutputField> result = new LinkedHashMap<>();
+
+		BiMap<String, Segment> entityRegistry = getEntityRegistry();
+
+		for(int i = 0, max = segments.size(); i < max; i++){
+			Segment segment = segments.get(i);
+
+			Model model = segment.getModel();
+			if(model == null){
+				throw new InvalidFeatureException(segment);
+			}
+
+			String segmentId = EntityUtil.getId(segment, entityRegistry);
+
+			SegmentHandler segmentHandler = this.segmentHandlers.get(segmentId);
+			if(segmentHandler == null){
+				segmentHandler = createSegmentHandler(model);
+
+				this.segmentHandlers.putIfAbsent(segmentId, segmentHandler);
+			}
+
+			Evaluator evaluator = segmentHandler.getEvaluator();
+
+			List<FieldName> names = EvaluatorUtil.getOutputFields(evaluator);
+			for(FieldName name : names){
+				OutputField outputField = EvaluatorUtil.getOutputField(evaluator, name);
+
+				result.put(name, outputField);
+			}
+		}
+
+		return ImmutableMap.copyOf(result);
+	}
+
+	private List<Segment> getActiveHead(List<Segment> segments){
+
+		for(int i = 0, max = segments.size(); i < max; i++){
+			Segment segment = segments.get(i);
+
+			Predicate predicate = segment.getPredicate();
+			if(predicate == null){
+				throw new InvalidFeatureException(segment);
+			} // End if
+
+			if(predicate instanceof True){
+				return segments.subList(0, i + 1);
+			}
+		}
+
+		return segments;
+	}
+
+	private List<Segment> getActiveTail(List<Segment> segments){
+		return Lists.reverse(getActiveHead(Lists.reverse(segments)));
 	}
 
 	private SegmentHandler createSegmentHandler(Model model){

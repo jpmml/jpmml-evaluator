@@ -33,6 +33,7 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.OutputField;
 
 public class EvaluatorUtil {
 
@@ -180,6 +181,44 @@ public class EvaluatorUtil {
 		}
 
 		return targetFields;
+	}
+
+	static
+	public List<FieldName> getOutputFields(Evaluator evaluator){
+		List<FieldName> outputFields = evaluator.getOutputFields();
+
+		if(evaluator instanceof MiningModelConsumer){
+			MiningModelConsumer miningModelConsumer = (MiningModelConsumer)evaluator;
+
+			List<FieldName> nestedOutputFields = miningModelConsumer.getNestedOutputFields();
+			if(nestedOutputFields.isEmpty()){
+				return outputFields;
+			}
+
+			List<FieldName> result = new ArrayList<>(nestedOutputFields.size() + outputFields.size());
+			result.addAll(nestedOutputFields);
+			result.addAll(outputFields);
+
+			return result;
+		}
+
+		return outputFields;
+	}
+
+	static
+	public OutputField getOutputField(Evaluator evaluator, FieldName name){
+		OutputField outputField = evaluator.getOutputField(name);
+		if(outputField != null){
+			return outputField;
+		} // End if
+
+		if(evaluator instanceof MiningModelConsumer){
+			MiningModelConsumer miningModelConsumer = (MiningModelConsumer)evaluator;
+
+			return miningModelConsumer.getNestedOutputField(name);
+		}
+
+		return null;
 	}
 
 	static

@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
@@ -26,6 +27,13 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class ModelChainSimpleTest extends ModelChainTest {
+
+	@Test
+	public void getResultFields() throws Exception {
+		Evaluator evaluator = createModelEvaluator();
+
+		checkResultFields(Arrays.asList("Class", "PollenIndex"), Arrays.asList("Pollen Index"), evaluator);
+	}
 
 	@Test
 	public void evaluateSetosa() throws Exception {

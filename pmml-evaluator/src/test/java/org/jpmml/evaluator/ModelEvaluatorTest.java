@@ -19,9 +19,14 @@
 package org.jpmml.evaluator;
 
 import java.io.InputStream;
+import java.util.List;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 abstract
@@ -57,5 +62,19 @@ public class ModelEvaluatorTest extends PMMLManagerTest {
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelManager(pmml);
 
 		return modelEvaluator;
+	}
+
+	static
+	public void checkResultFields(List<?> targetFields, List<?> outputFields, Evaluator evaluator){
+		Function<Object, FieldName> function = new Function<Object, FieldName>(){
+
+			@Override
+			public FieldName apply(Object object){
+				return toFieldName(object);
+			}
+		};
+
+		assertEquals(Lists.transform(targetFields, function), EvaluatorUtil.getTargetFields(evaluator));
+		assertEquals(Lists.transform(outputFields, function), EvaluatorUtil.getOutputFields(evaluator));
 	}
 }
