@@ -107,7 +107,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return null;
 	}
 
-	protected List<FieldName> getMiningFields(EnumSet<FieldUsageType> fieldUsageTypes){
+	protected List<FieldName> getMiningFields(EnumSet<FieldUsageType> fieldUsages){
 		M model = getModel();
 
 		MiningSchema miningSchema = model.getMiningSchema();
@@ -116,9 +116,9 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 		List<MiningField> miningFields = miningSchema.getMiningFields();
 		for(MiningField miningField : miningFields){
-			FieldUsageType fieldUsageType = miningField.getUsageType();
+			FieldUsageType fieldUsage = miningField.getUsageType();
 
-			if(fieldUsageTypes.contains(fieldUsageType)){
+			if(fieldUsages.contains(fieldUsage)){
 				result.add(miningField.getName());
 			}
 		}

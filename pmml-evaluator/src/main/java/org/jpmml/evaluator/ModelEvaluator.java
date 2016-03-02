@@ -272,16 +272,36 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	@Override
 	public FieldValue prepare(FieldName name, Object value){
+		M model = getModel();
+
 		DataField dataField = getDataField(name);
-		MiningField miningField = getMiningField(name);
-
-		if(dataField == null || miningField == null){
-			M model = getModel();
-
+		if(dataField == null){
 			throw new MissingFieldException(name, model);
 		}
 
-		return FieldValueUtil.prepare(dataField, miningField, value);
+		MiningField miningField = getMiningField(name);
+		if(miningField == null){
+			throw new EvaluationException();
+		}
+
+		FieldUsageType fieldUsage = miningField.getUsageType();
+		switch(fieldUsage){
+			case ACTIVE:
+			case ORDER:
+			case GROUP:
+				{
+					return FieldValueUtil.prepareInputValue(dataField, miningField, value);
+				}
+			case PREDICTED:
+			case TARGET:
+				{
+					Target target = getTarget(name);
+
+					return FieldValueUtil.prepareTargetValue(dataField, miningField, target, value);
+				}
+			default:
+				throw new UnsupportedFeatureException(miningField, fieldUsage);
+		}
 	}
 
 	@Override

@@ -39,7 +39,7 @@ import static org.junit.Assert.fail;
 public class FieldValueUtilTest {
 
 	@Test
-	public void prepareContinuous(){
+	public void prepareContinuousInputValue(){
 		FieldName name = FieldName.create("x");
 
 		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE);
@@ -149,7 +149,7 @@ public class FieldValueUtilTest {
 	}
 
 	@Test
-	public void prepareCategorical(){
+	public void prepareCategoricalInputValue(){
 		FieldName name = FieldName.create("x");
 
 		DataField dataField = new DataField(name, OpType.CATEGORICAL, DataType.INTEGER);
@@ -176,7 +176,7 @@ public class FieldValueUtilTest {
 
 	static
 	private Object prepare(DataField dataField, MiningField miningField, Object value){
-		FieldValue result = FieldValueUtil.prepare(dataField, miningField, value);
+		FieldValue result = FieldValueUtil.prepareInputValue(dataField, miningField, value);
 
 		return FieldValueUtil.getValue(result);
 	}

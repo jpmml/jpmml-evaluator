@@ -54,7 +54,7 @@ public class FieldValueUtil {
 	}
 
 	static
-	public FieldValue prepare(DataField dataField, MiningField miningField, Object value){
+	public FieldValue prepareInputValue(DataField dataField, MiningField miningField, Object value){
 		DataType dataType = dataField.getDataType();
 		OpType opType = dataField.getOpType();
 
@@ -77,6 +77,23 @@ public class FieldValueUtil {
 		}
 
 		throw new EvaluationException();
+	}
+
+	static
+	public FieldValue prepareTargetValue(DataField dataField, MiningField miningField, Target target, Object value){
+		DataType dataType = dataField.getDataType();
+		OpType opType = dataField.getOpType();
+
+		if(dataType == null || opType == null){
+			throw new InvalidFeatureException(dataField);
+		}
+
+		String missingValueReplacement = miningField.getMissingValueReplacement();
+		if(missingValueReplacement != null){
+			throw new InvalidFeatureException(miningField);
+		}
+
+		return createTargetValue(dataField, miningField, target, value);
 	}
 
 	static
@@ -113,7 +130,7 @@ public class FieldValueUtil {
 			case AS_MISSING_VALUES:
 				{
 					if(TypeUtil.compare(DataType.DOUBLE, doubleValue, lowValue) < 0 || TypeUtil.compare(DataType.DOUBLE, doubleValue, highValue) > 0){
-						return createMissingActiveValue(field, miningField);
+						return createMissingInputValue(field, miningField);
 					}
 				}
 				break;
@@ -132,7 +149,7 @@ public class FieldValueUtil {
 				throw new UnsupportedFeatureException(miningField, outlierTreatmentMethod);
 		}
 
-		return createActiveValue(field, miningField, value);
+		return createInputValue(field, miningField, value);
 	}
 
 	static
@@ -141,9 +158,9 @@ public class FieldValueUtil {
 
 		switch(invalidValueTreatmentMethod){
 			case AS_IS:
-				return createActiveValue(field, miningField, value);
+				return createInputValue(field, miningField, value);
 			case AS_MISSING:
-				return createMissingActiveValue(field, miningField);
+				return createMissingInputValue(field, miningField);
 			case RETURN_INVALID:
 				throw new InvalidResultException(miningField);
 			default:
@@ -165,7 +182,7 @@ public class FieldValueUtil {
 			case AS_MEDIAN:
 			case AS_MODE:
 			case AS_VALUE:
-				return createMissingActiveValue(field, miningField);
+				return createMissingInputValue(field, miningField);
 			default:
 				throw new UnsupportedFeatureException(miningField, missingValueTreatmentMethod);
 		}
@@ -265,7 +282,7 @@ public class FieldValueUtil {
 	}
 
 	static
-	public FieldValue createActiveValue(Field field, MiningField miningField, Object value){
+	private FieldValue createInputValue(Field field, MiningField miningField, Object value){
 
 		if(value == null){
 			return null;
@@ -283,12 +300,12 @@ public class FieldValueUtil {
 	}
 
 	static
-	public FieldValue createMissingActiveValue(Field field, MiningField miningField){
-		return createActiveValue(field, miningField, miningField.getMissingValueReplacement());
+	private FieldValue createMissingInputValue(Field field, MiningField miningField){
+		return createInputValue(field, miningField, miningField.getMissingValueReplacement());
 	}
 
 	static
-	public FieldValue createTargetValue(Field field, MiningField miningField, Target target, Object value){
+	private FieldValue createTargetValue(Field field, MiningField miningField, Target target, Object value){
 
 		if(value == null){
 			return null;

@@ -88,7 +88,7 @@ public class TargetUtil {
 
 			MiningField miningField = evaluator.getMiningField(name);
 
-			context.declare(name, FieldValueUtil.createTargetValue(dataField, miningField, target, value));
+			context.declare(name, FieldValueUtil.prepareTargetValue(dataField, miningField, target, value));
 		}
 
 		return value;
@@ -143,7 +143,7 @@ public class TargetUtil {
 
 			MiningField miningField = evaluator.getMiningField(name);
 
-			context.declare(name, FieldValueUtil.createTargetValue(dataField, miningField, target, value != null ? value.getResult() : null));
+			context.declare(name, FieldValueUtil.prepareTargetValue(dataField, miningField, target, value != null ? value.getResult() : null));
 		}
 
 		return value;

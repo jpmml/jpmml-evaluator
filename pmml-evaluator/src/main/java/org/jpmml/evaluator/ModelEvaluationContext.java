@@ -56,11 +56,6 @@ public class ModelEvaluationContext extends EvaluationContext {
 	protected FieldValue createFieldValue(FieldName name, Object value){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
-		MiningField miningField = modelEvaluator.getMiningField(name);
-		if(miningField == null){
-			throw new EvaluationException();
-		}
-
 		return EvaluatorUtil.prepare(modelEvaluator, name, value);
 	}
 
