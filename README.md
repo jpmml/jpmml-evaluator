@@ -49,13 +49,13 @@ JPMML-Evaluator is thread safe and can easily deliver over one million scorings 
 
 JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/). Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for release announcements.
 
-The current version is **1.2.11** (1 February, 2016).
+The current version is **1.2.12** (5 March, 2016).
 
 ```xml
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.2.11</version>
+	<version>1.2.12</version>
 </dependency>
 ```
 
