@@ -44,12 +44,43 @@ public class FunctionRegistry {
 	 */
 	static
 	public Function getFunction(String name){
-		Function function = FunctionRegistry.functions.get(name);
-		if(function == null){
-			function = loadJavaFunction(name);
+
+		if(name == null){
+			return null;
+		} // End if
+
+		if(FunctionRegistry.functions.containsKey(name)){
+			Function function = FunctionRegistry.functions.get(name);
+
+			return function;
 		}
 
-		return function;
+		Class<?> functionClazz;
+
+		if(FunctionRegistry.functionClazzes.containsKey(name)){
+			functionClazz = FunctionRegistry.functionClazzes.get(name);
+		} else
+
+		{
+			functionClazz = loadFunctionClass(name);
+
+			FunctionRegistry.functionClazzes.put(name, functionClazz);
+		} // End if
+
+		if(functionClazz != null){
+			Function function;
+
+			try {
+				function = (Function)functionClazz.newInstance();
+			} catch(IllegalAccessException | InstantiationException | ExceptionInInitializerError e){
+				throw (EvaluationException)new EvaluationException()
+					.initCause(e);
+			}
+
+			return function;
+		}
+
+		return null;
 	}
 
 	/**
@@ -72,17 +103,29 @@ public class FunctionRegistry {
 		FunctionRegistry.functions.put(Objects.requireNonNull(name), function);
 	}
 
+	/**
+	 * <p>
+	 * Registers a function class.
+	 * </p>
+	 */
 	static
-	public void removeFunction(String name){
-		FunctionRegistry.functions.remove(name);
+	public void putFunction(String name, Class<? extends Function> functionClazz){
+		FunctionRegistry.functionClazzes.put(Objects.requireNonNull(name), checkClass(functionClazz));
 	}
 
 	static
-	private Function loadJavaFunction(String name){
+	public void removeFunction(String name){
+		FunctionRegistry.functions.remove(name);
+		FunctionRegistry.functionClazzes.remove(name);
+	}
+
+	static
+	private Class<?> loadFunctionClass(String name){
 		Class<?> clazz;
 
 		try {
 			ClassLoader classLoader = (Thread.currentThread()).getContextClassLoader();
+
 			if(classLoader == null){
 				classLoader = (FunctionRegistry.class).getClassLoader();
 			}
@@ -92,21 +135,20 @@ public class FunctionRegistry {
 			return null;
 		}
 
+		return checkClass(clazz);
+	}
+
+	static
+	private Class<?> checkClass(Class<?> clazz){
+
 		if(!(Function.class).isAssignableFrom(clazz)){
 			throw new TypeCheckException(Function.class, clazz);
 		}
 
-		Function function;
-
-		try {
-			function = (Function)clazz.newInstance();
-		} catch(IllegalAccessException | InstantiationException | ExceptionInInitializerError e){
-			throw (EvaluationException)new EvaluationException()
-				.initCause(e);
-		}
-
-		return function;
+		return clazz;
 	}
 
 	private static final Map<String, Function> functions = new LinkedHashMap<>();
+
+	private static final Map<String, Class<?>> functionClazzes = new LinkedHashMap<>();
 }
