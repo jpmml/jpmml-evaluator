@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2016 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -16,26 +16,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.functions;
+package org.jpmml.evaluator;
 
-import java.util.List;
+public class MaliciousThread {
 
-import org.jpmml.evaluator.FieldValue;
-
-public class EchoFunction extends AbstractFunction {
-
-	public EchoFunction(){
-		this(EchoFunction.class.getName());
+	public MaliciousThread(){
 	}
 
-	public EchoFunction(String name){
-		super(name);
-	}
-
-	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkArguments(arguments, 1);
-
-		return arguments.get(0);
+	static {
+		if(true){
+			throw new UnsupportedOperationException();
+		}
 	}
 }

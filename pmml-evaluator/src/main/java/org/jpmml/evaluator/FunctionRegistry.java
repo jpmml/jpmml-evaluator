@@ -100,8 +100,9 @@ public class FunctionRegistry {
 
 		try {
 			function = (Function)clazz.newInstance();
-		} catch(Exception e){
-			throw new EvaluationException();
+		} catch(IllegalAccessException | InstantiationException | ExceptionInInitializerError e){
+			throw (EvaluationException)new EvaluationException()
+				.initCause(e);
 		}
 
 		return function;

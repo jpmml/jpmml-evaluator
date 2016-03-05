@@ -19,23 +19,47 @@
 package org.jpmml.evaluator;
 
 import org.jpmml.evaluator.functions.EchoFunction;
+import org.jpmml.evaluator.functions.MaliciousEchoFunction;
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class FunctionRegistryTest {
 
 	@Test
-	public void loadJavaFunction(){
+	public void getFunction(){
 
 		try {
-			FunctionRegistry.getFunction(String.class.getName());
+			FunctionRegistry.getFunction(Thread.class.getName());
 
 			fail();
 		} catch(TypeCheckException tce){
 			// Ignored
 		}
 
-		FunctionRegistry.getFunction(EchoFunction.class.getName());
+		try {
+			FunctionRegistry.getFunction(MaliciousThread.class.getName());
+
+			fail();
+		} catch(TypeCheckException tce){
+			// Ignored
+		}
+
+		Function firstEcho = FunctionRegistry.getFunction(EchoFunction.class.getName());
+		Function secondEcho = FunctionRegistry.getFunction(EchoFunction.class.getName());
+
+		assertNotSame(firstEcho, secondEcho);
+
+		try {
+			FunctionRegistry.getFunction(MaliciousEchoFunction.class.getName());
+
+			fail();
+		} catch(EvaluationException ee){
+			Throwable cause = ee.getCause();
+
+			assertTrue(cause instanceof ExceptionInInitializerError);
+		}
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2016 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,24 +18,15 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.List;
+public class MaliciousEchoFunction extends EchoFunction {
 
-import org.jpmml.evaluator.FieldValue;
-
-public class EchoFunction extends AbstractFunction {
-
-	public EchoFunction(){
-		this(EchoFunction.class.getName());
+	public MaliciousEchoFunction(){
+		super(MaliciousEchoFunction.class.getName());
 	}
 
-	public EchoFunction(String name){
-		super(name);
-	}
-
-	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkArguments(arguments, 1);
-
-		return arguments.get(0);
+	static {
+		if(true){
+			throw new UnsupportedOperationException();
+		}
 	}
 }
