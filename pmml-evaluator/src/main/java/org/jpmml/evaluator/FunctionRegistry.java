@@ -73,8 +73,8 @@ public class FunctionRegistry {
 	}
 
 	static
-	public Function removeFunction(String name){
-		return FunctionRegistry.functions.remove(name);
+	public void removeFunction(String name){
+		FunctionRegistry.functions.remove(name);
 	}
 
 	static
