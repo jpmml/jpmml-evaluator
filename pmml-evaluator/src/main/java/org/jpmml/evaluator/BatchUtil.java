@@ -187,7 +187,7 @@ public class BatchUtil {
 		List<String> headerRow = new ArrayList<>(names.size());
 
 		for(FieldName name : names){
-			headerRow.add(name.getValue());
+			headerRow.add(name != null ? name.getValue() : "(null)");
 		}
 
 		table.add(headerRow);
