@@ -5,10 +5,10 @@ Java Evaluator API for Predictive Model Markup Language (PMML).
 
 # Features #
 
-JPMML-Evaluator is *de facto* the reference implementation of the PMML specification for the Java platform:
+JPMML-Evaluator is *de facto* the reference implementation of the PMML specification versions 3.0, 3.1, 3.2, 4.0, 4.1 and 4.2 for the Java platform:
 
 1. Pre-processing of active fields according to the [DataDictionary] (http://www.dmg.org/v4-2-1/DataDictionary.html) and [MiningSchema] (http://www.dmg.org/v4-2-1/MiningSchema.html) elements:
-  * Complete data type system
+  * Complete data type system.
   * Complete operational type system.
   * Treatment of outlier, missing and/or invalid values.
 2. Model evaluation:
@@ -34,20 +34,31 @@ JPMML-Evaluator is *de facto* the reference implementation of the PMML specifica
 
 For more information please see the [features.md] (https://github.com/jpmml/jpmml-evaluator/blob/master/features.md) file.
 
-JPMML-Evaluator has been tested with popular open-source PMML producer software:
-  * [R] (http://www.r-project.org/) and [Rattle] (http://rattle.togaware.com/)
-  * [KNIME] (http://www.knime.com/)
-  * [RapidMiner] (http://rapidminer.com/products/rapidminer-studio/)
+JPMML-Evaluator is interoperable with most popular statistics and data mining software:
 
-JPMML-Evaluator is thread safe and can easily deliver over one million scorings per second (on a single quad-core CPU) when working with simpler models.
+* [R] (http://www.r-project.org/) and [Rattle] (http://rattle.togaware.com/):
+  * [JPMML-R] (https://github.com/jpmml/jpmml-r) library and [`r2pmml`] (https://github.com/jpmml/r2pmml) package
+  * [`pmml`] (https://cran.r-project.org/web/packages/pmml/) package
+  * [`pmmlTransformations`] (https://cran.r-project.org/web/packages/pmmlTransformations/) package
+* [Python] (http://www.python.org/) and [Scikit-Learn] (http://scikit-learn.org/):
+  * [JPMML-SkLearn] (https://github.com/jpmml/jpmml-sklearn) library and [`sklearn2pmml`] (https://github.com/jpmml/sklearn2pmml) package
+* [XGBoost] (https://github.com/dmlc/xgboost):
+  * [JPMML-XGBoost] (https://github.com/jpmml/jpmml-xgboost) library
+* [Apache Spark] (http://spark.apache.org/)
+* [KNIME] (http://www.knime.com/)
+* [RapidMiner] (http://rapidminer.com/products/rapidminer-studio/)
+* [SAS] (http://www.sas.com/en_us/software/analytics/enterprise-miner.html)
+* [SPSS] (http://www-01.ibm.com/software/analytics/spss/)
+
+JPMML-Evaluator is fast and memory efficient. It can deliver one million scorings per second already on a desktop computer.
 
 # Prerequisites #
 
-* Java 1.7 or newer
+* Java 1.7 or newer.
 
 # Installation #
 
-JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/). Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for release announcements.
+JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/).
 
 The current version is **1.2.12** (5 March, 2016).
 
@@ -188,9 +199,11 @@ Recommended reading:
 * [Preparing arguments for evaluation] (http://openscoring.io/blog/2014/05/15/jpmml_evaluator_api_prepare_evaluate/)
 * [Testing PMML Applications] (http://openscoring.io/blog/2014/05/12/testing_pmml_applications/)
 
+Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for technical discussion.
+
 # License #
 
-JPMML-Evaluator is dual-licensed under the [GNU Affero General Public License (AGPL) version 3.0] (http://www.gnu.org/licenses/agpl-3.0.html) and a commercial license.
+JPMML-Evaluator is licensed under the [GNU Affero General Public License (AGPL) version 3.0] (http://www.gnu.org/licenses/agpl-3.0.html). Other licenses are available on request.
 
 # Additional information #
 
