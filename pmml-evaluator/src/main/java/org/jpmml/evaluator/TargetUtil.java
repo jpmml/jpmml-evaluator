@@ -167,6 +167,11 @@ public class TargetUtil {
 
 		Target.CastInteger castInteger = target.getCastInteger();
 		if(castInteger == null){
+
+			if(result == value.doubleValue()){
+				return value;
+			}
+
 			return result;
 		}
 

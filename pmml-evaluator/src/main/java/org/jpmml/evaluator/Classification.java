@@ -216,20 +216,10 @@ public class Classification implements Computable {
 
 	static
 	public <K> Double sum(Map<K, Double> map){
-		return sum(map, null);
-	}
-
-	static
-	private <K> Double sum(Map<K, Double> map, Function<Double, Double> function){
 		double sum = 0d;
 
 		Collection<Double> values = map.values();
 		for(Double value : values){
-
-			if(function != null){
-				value = function.apply(value);
-			}
-
 			sum += value;
 		}
 
@@ -238,35 +228,30 @@ public class Classification implements Computable {
 
 	static
 	public <K> void normalize(Map<K, Double> map){
-		normalize(map, null);
+		normalize(map, false);
 	}
 
 	static
 	public <K> void normalizeSoftMax(Map<K, Double> map){
-		Function<Double, Double> function = new Function<Double, Double>(){
-
-			@Override
-			public Double apply(Double value){
-				return Math.exp(value);
-			}
-		};
-
-		normalize(map, function);
+		normalize(map, true);
 	}
 
 	static
-	private <K> void normalize(Map<K, Double> map, Function<Double, Double> function){
-		double sum = sum(map, function);
-
+	private <K> void normalize(Map<K, Double> map, boolean transform){
 		Collection<Map.Entry<K, Double>> entries = map.entrySet();
+
+		double sum = 0d;
+
 		for(Map.Entry<K, Double> entry : entries){
 			Double value = entry.getValue();
 
-			if(function != null){
-				value = function.apply(value);
-			}
+			sum += (transform ? Math.exp(value) : value);
+		}
 
-			entry.setValue(value / sum);
+		for(Map.Entry<K, Double> entry : entries){
+			Double value = entry.getValue();
+
+			entry.setValue((transform ? Math.exp(value) : value) / sum);
 		}
 	}
 
