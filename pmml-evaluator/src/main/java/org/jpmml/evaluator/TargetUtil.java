@@ -151,16 +151,16 @@ public class TargetUtil {
 
 	static
 	public Double processValue(Target target, Double value){
-		double result = value.doubleValue();
+		double result = value;
 
 		Double min = target.getMin();
 		if(min != null){
-			result = Math.max(result, min.doubleValue());
+			result = Math.max(result, min);
 		}
 
 		Double max = target.getMax();
 		if(max != null){
-			result = Math.min(result, max.doubleValue());
+			result = Math.min(result, max);
 		}
 
 		result = (result * target.getRescaleFactor()) + target.getRescaleConstant();

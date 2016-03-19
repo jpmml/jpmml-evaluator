@@ -249,7 +249,7 @@ public class MeasureUtil {
 					}
 
 					double z = difference(value, referenceValue);
-					double s = similarityScale.doubleValue();
+					double s = similarityScale;
 
 					distance = Math.exp(-Math.log(2d) * Math.pow(z, 2d) / Math.pow(s, 2d));
 				}

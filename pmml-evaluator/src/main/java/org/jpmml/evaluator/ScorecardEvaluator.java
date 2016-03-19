@@ -132,7 +132,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 					throw new InvalidFeatureException(attribute);
 				}
 
-				score += partialScore.doubleValue();
+				score += partialScore;
 
 				String reasonCode = attribute.getReasonCode();
 				if(reasonCode == null){

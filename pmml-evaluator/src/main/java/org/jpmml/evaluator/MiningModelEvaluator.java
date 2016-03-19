@@ -605,16 +605,16 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			switch(multipleModelMethod){
 				case SUM:
 				case MEDIAN:
-					aggregator.add(value.doubleValue());
+					aggregator.add(value);
 					break;
 				case AVERAGE:
-					aggregator.add(value.doubleValue());
+					aggregator.add(value);
 					denominator += 1d;
 					break;
 				case WEIGHTED_AVERAGE:
 					double weight = segmentResult.getWeight();
 
-					aggregator.add(value.doubleValue() * weight);
+					aggregator.add(value * weight);
 					denominator += weight;
 					break;
 				default:

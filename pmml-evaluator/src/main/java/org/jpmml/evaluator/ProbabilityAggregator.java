@@ -43,7 +43,7 @@ class ProbabilityAggregator extends ClassificationAggregator<String> {
 		for(String category : categories){
 			Double probability = hasProbability.getProbability(category);
 
-			add(category, probability.doubleValue() * weight);
+			add(category, probability * weight);
 		}
 	}
 

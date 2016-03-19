@@ -230,7 +230,7 @@ public class Classification implements Computable {
 				value = function.apply(value);
 			}
 
-			sum += value.doubleValue();
+			sum += value;
 		}
 
 		return sum;
@@ -247,7 +247,7 @@ public class Classification implements Computable {
 
 			@Override
 			public Double apply(Double value){
-				return Math.exp(value.doubleValue());
+				return Math.exp(value);
 			}
 		};
 

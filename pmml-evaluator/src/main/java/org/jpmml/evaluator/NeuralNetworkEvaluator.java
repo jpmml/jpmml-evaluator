@@ -357,7 +357,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 					throw new InvalidFeatureException(neuralLayer);
 				}
 
-				return z > threshold.doubleValue() ? 1d : 0d;
+				return z > threshold ? 1d : 0d;
 			case LOGISTIC:
 				return 1d / (1d + Math.exp(-z));
 			case TANH:

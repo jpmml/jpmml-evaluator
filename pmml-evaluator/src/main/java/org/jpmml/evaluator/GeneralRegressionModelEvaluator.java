@@ -458,7 +458,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					return null;
 				}
 
-				value = (x.doubleValue() * parameterCell.getBeta());
+				value = (x * parameterCell.getBeta());
 			} else
 
 			// The row is empty
