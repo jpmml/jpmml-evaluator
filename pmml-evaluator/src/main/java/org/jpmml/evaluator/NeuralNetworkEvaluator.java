@@ -270,13 +270,18 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 			List<Neuron> neurons = neuralLayer.getNeurons();
 			for(Neuron neuron : neurons){
-				double z = neuron.getBias();
+				double z = 0d;
 
 				List<Connection> connections = neuron.getConnections();
 				for(Connection connection : connections){
 					double input = result.get(connection.getFrom());
 
 					z += input * connection.getWeight();
+				}
+
+				Double bias = neuron.getBias();
+				if(bias != null){
+					z += bias;
 				}
 
 				double output = activation(z, neuralLayer);
