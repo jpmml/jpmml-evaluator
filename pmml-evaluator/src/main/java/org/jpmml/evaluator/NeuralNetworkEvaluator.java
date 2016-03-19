@@ -223,7 +223,6 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	}
 
 	private Expression getOutputExpression(NeuralOutput neuralOutput){
-
 		DerivedField derivedField = neuralOutput.getDerivedField();
 		if(derivedField == null){
 			throw new InvalidFeatureException(neuralOutput);
@@ -246,7 +245,9 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	private Map<String, Double> evaluateRaw(EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
-		Map<String, Double> result = new HashMap<>();
+		BiMap<String, Entity> entityRegistry = getEntityRegistry();
+
+		Map<String, Double> result = new HashMap<>(entityRegistry.size());
 
 		NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
 		if(neuralInputs == null){
@@ -264,16 +265,22 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			result.put(neuralInput.getId(), value.asDouble());
 		}
 
+		Map<String, Double> outputs = new HashMap<>();
+
 		List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
 		for(NeuralLayer neuralLayer : neuralLayers){
-			Map<String, Double> outputs = new HashMap<>();
+			outputs.clear();
 
 			List<Neuron> neurons = neuralLayer.getNeurons();
-			for(Neuron neuron : neurons){
+			for(int i = 0; i < neurons.size(); i++){
+				Neuron neuron = neurons.get(i);
+
 				double z = 0d;
 
 				List<Connection> connections = neuron.getConnections();
-				for(Connection connection : connections){
+				for(int j = 0; j < connections.size(); j++){
+					Connection connection = connections.get(j);
+
 					double input = result.get(connection.getFrom());
 
 					z += input * connection.getWeight();
@@ -336,7 +343,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		} // End if
 
 		if(activationFunction == null){
-			throw new InvalidFeatureException(locatable);
+			throw new InvalidFeatureException(neuralLayer);
 		}
 
 		switch(activationFunction){
@@ -344,7 +351,12 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				Double threshold = neuralLayer.getThreshold();
 				if(threshold == null){
 					threshold = neuralNetwork.getThreshold();
+				} // End if
+
+				if(threshold == null){
+					throw new InvalidFeatureException(neuralLayer);
 				}
+
 				return z > threshold.doubleValue() ? 1d : 0d;
 			case LOGISTIC:
 				return 1d / (1d + Math.exp(-z));
@@ -394,7 +406,9 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			for(NeuralLayer neuralLayer : neuralLayers){
 				List<Neuron> neurons = neuralLayer.getNeurons();
 
-				for(Neuron neuron : neurons){
+				for(int i = 0; i < neurons.size(); i++){
+					Neuron neuron = neurons.get(i);
+
 					builder = EntityUtil.put(neuron, index, builder);
 				}
 			}
