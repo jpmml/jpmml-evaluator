@@ -191,6 +191,11 @@ Evaluating model `model.pmml` by loading input data records from `input.tsv` and
 java -cp target/example-1.2-SNAPSHOT.jar org.jpmml.evaluator.EvaluationExample --model model.pmml --input input.tsv --output output.tsv
 ```
 
+Getting help:
+```
+java -cp target/example-1.2-SNAPSHOT.jar org.jpmml.evaluator.EvaluationExample --help
+```
+
 # Documentation #
 
 The [Openscoring.io blog] (http://openscoring.io/blog/) contains fully worked out examples about using JPMML-Model and JPMML-Evaluator libraries.

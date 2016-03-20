@@ -30,6 +30,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamResult;
 
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import org.dmg.pmml.PMML;
 import org.jpmml.model.ImportFilter;
@@ -38,6 +39,17 @@ import org.xml.sax.InputSource;
 
 abstract
 public class Example {
+
+	@Parameter (
+		names = {"--help"},
+		description = "Show the list of configuration options and exit",
+		help = true
+	)
+	@ParameterOrder (
+		value = Integer.MAX_VALUE
+	)
+	private boolean help = false;
+
 
 	abstract
 	public void execute() throws Exception;
@@ -48,13 +60,31 @@ public class Example {
 
 		JCommander commander = new JCommander(example);
 		commander.setProgramName(clazz.getName());
+		commander.setParameterDescriptionComparator(new ParameterOrderComparator());
 
 		try {
 			commander.parse(args);
 		} catch(ParameterException pe){
-			commander.usage();
+			StringBuilder sb = new StringBuilder();
+
+			sb.append(pe.toString());
+			sb.append("\n");
+
+			commander.usage(sb);
+
+			System.err.println(sb.toString());
 
 			System.exit(-1);
+		}
+
+		if(example.help){
+			StringBuilder sb = new StringBuilder();
+
+			commander.usage(sb);
+
+			System.out.println(sb.toString());
+
+			System.exit(0);
 		}
 
 		example.execute();

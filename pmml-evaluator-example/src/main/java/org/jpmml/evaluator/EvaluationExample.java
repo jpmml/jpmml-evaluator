@@ -53,8 +53,11 @@ public class EvaluationExample extends Example {
 
 	@Parameter (
 		names = {"--model"},
-		description = "PMML file",
+		description = "Model PMML file",
 		required = true
+	)
+	@ParameterOrder (
+		value = 1
 	)
 	private File model = null;
 
@@ -63,6 +66,9 @@ public class EvaluationExample extends Example {
 		description = "Input CSV file",
 		required = true
 	)
+	@ParameterOrder (
+		value = 2
+	)
 	private File input = null;
 
 	@Parameter (
@@ -70,11 +76,17 @@ public class EvaluationExample extends Example {
 		description = "Output CSV file",
 		required = true
 	)
+	@ParameterOrder (
+		value = 3
+	)
 	private File output = null;
 
 	@Parameter (
 		names = {"--separator"},
 		description = "CSV cell separator character"
+	)
+	@ParameterOrder (
+		value = 4
 	)
 	private String separator = null;
 
@@ -82,6 +94,9 @@ public class EvaluationExample extends Example {
 		names = {"--copy-columns"},
 		description = "Copy all columns from input CSV file to output CSV file",
 		arity = 1
+	)
+	@ParameterOrder (
+		value = 5
 	)
 	private boolean copyColumns = true;
 

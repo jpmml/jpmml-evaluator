@@ -46,20 +46,29 @@ public class EnhancementExample extends Example {
 		description = "PMML file",
 		required = true
 	)
-	private File model = null;
-
-	@Parameter (
-		names = {"--data-xmlns"},
-		description = "XML namespace URI for data elements"
+	@ParameterOrder (
+		value = 1
 	)
-	private String dataURI = null;
+	private File model = null;
 
 	@Parameter (
 		names = {"--verification"},
 		description = "Verification data CSV file",
 		required = true
 	)
+	@ParameterOrder (
+		value = 2
+	)
 	private File verification = null;
+
+	@Parameter (
+		names = {"--data-xmlns"},
+		description = "XML namespace URI for data elements"
+	)
+	@ParameterOrder (
+		value = 3
+	)
+	private String dataURI = null;
 
 
 	static
