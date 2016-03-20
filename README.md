@@ -72,6 +72,8 @@ The current version is **1.2.12** (5 March, 2016).
 
 # Usage #
 
+### Loading models
+
 JPMML-Evaluator depends on the [JPMML-Model] (https://github.com/jpmml/jpmml-model) library for PMML class model.
 
 Loading a PMML schema version 3.X or 4.X document into an `org.dmg.pmml.PMML` instance:
@@ -103,21 +105,101 @@ ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelManager(pmml);
 
 Model evaluator classes follow functional programming principles and are completely thread safe.
 
-Model evaluator instances are fairly lightweight, which makes them cheap to create and destroy. Nevertheless, long-running applications should maintain a one-to-one mapping between `PMML` and `ModelEvaluator` instances for better performance.
+Model evaluator instances are fairly lightweight, which makes them cheap to create and destroy.
+Nevertheless, long-running applications should maintain a one-to-one mapping between `PMML` and `ModelEvaluator` instances for better performance.
 
 It is advisable for application code to work against the `org.jpmml.evaluator.Evaluator` interface:
 ```java
 Evaluator evaluator = (Evaluator)modelEvaluator;
 ```
 
-An evaluator instance can be queried for the definition of active (ie. independent), target (ie. primary dependent) and output (ie. secondary dependent) fields:
+### Querying the "data schema" of models
+
+The model evaluator can be queried for the list of active (ie. independent), target (ie. primary dependent) and output (ie. secondary dependent) field names.
+Field names can be resolved to field definitions, which provide data type, operational type, value domain etc. information.
+
+Querying and parsing active fields:
 ```java
 List<FieldName> activeFields = evaluator.getActiveFields();
-List<FieldName> targetFields = evaluator.getTargetFields();
-List<FieldName> outputFields = evaluator.getOutputFields();
-``` 
 
-The PMML scoring operation must be invoked with valid arguments. Otherwise, the behaviour of the model evaluator class is unspecified.
+for(FieldName activeField : activeFields){
+	MiningField miningField = evaluator.getMiningField(activeField);
+	DataField dataField = evaluator.getDataField(activeField);
+
+	DataType dataType = dataField.getDataType();
+
+	OpType opType = dataField.getOpType();
+	switch(opType){
+		case CONTINUOUS:
+			RangeSet<Double> validArgumentRanges = FieldValueUtil.getValidRanges(dataField);
+			break;
+		case CATEGORICAL:
+		case ORDINAL:
+			List<Value> validArgumentValues = FieldValueUtil.getValidValues(dataField);
+			break;
+		default:
+			break;
+	}
+}
+```
+
+Querying and parsing target fields:
+```java
+List<FieldName> targetFields = EvaluatorUtil.getTargetFields(evaluator);
+
+for(FieldName targetField : targetFields){
+	MiningField miningField = evaluator.getMiningField(targetField);
+	DataField dataField = evaluator.getDataField(targetField);
+	Target target = evaluator.getTarget(targetField);
+
+	DataType dataType = dataField.getDataType();
+
+	OpType opType = dataField.getOpType();
+
+	// The MiningField element overrides the DataField element
+	if(miningField != null && miningField.getOpType() != null){
+		opType = miningField.getOpType();
+	} // End if
+
+	// The Target element overrides the MiningField element
+	if(target != null && target.getOpType() != null){
+		opType = target.getOpType();
+	}
+
+	switch(opType){
+		case CONTINUOUS:
+			break;
+		case CATEGORICAL:
+		case ORDINAL:
+			List<Value> validResultValues = FieldValueUtil.getValidValues(dataField);
+			break;
+		default:
+			break;
+	}
+}
+```
+
+The method `EvaluatorUtil#getTargetFields(Evaluator)` is a "safe" wrapper for the `Evaluator#getTargetFields()` method.
+
+Querying and parsing output fields:
+```java
+List<FieldName> outputFields = EvaluatorUtil.getOutputFields(evaluator);
+
+for(FieldName outputField : outputFields){
+	OutputField output = EvaluatorUtil.getOutputField(evaluator, outputField);
+
+	DataType dataType = output.getDataType();
+
+	OpType opType = output.getOpType();
+}
+```
+
+Methods `EvaluatorUtil#getOutputFields(Evaluator)` and `EvaluatorUtil#getOutputField(Evaluator, FieldName)` are "safe" wrappers for methods `Evaluator#getOutputFields()` and `Evaluator#getOutputField(FieldName)`, respectively.
+
+### Evaluating models
+
+The PMML scoring operation must be invoked with valid arguments.
+Otherwise, the behaviour of the model evaluator class is unspecified.
 
 The preparation of field values:
 ```java
