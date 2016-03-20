@@ -79,6 +79,13 @@ public class EvaluationExample extends Example {
 	private String separator = null;
 
 	@Parameter (
+		names = {"--copy-columns"},
+		description = "Copy all columns from input CSV file to output CSV file",
+		arity = 1
+	)
+	private boolean copyColumns = true;
+
+	@Parameter (
 		names = {"--sparse"},
 		description = "Permit missing active field columns",
 		hidden = true
@@ -213,7 +220,7 @@ public class EvaluationExample extends Example {
 			Map<FieldName, ?> inputRecord = inputRecords.get(0);
 
 			Sets.SetView<FieldName> missingActiveFields = Sets.difference(new LinkedHashSet<>(activeFields), inputRecord.keySet());
-			if(missingActiveFields.size() > 0 && !this.sparse){
+			if((missingActiveFields.size() > 0) && !this.sparse){
 				throw new IllegalArgumentException("Missing active field(s): " + missingActiveFields.toString());
 			}
 
@@ -292,9 +299,12 @@ public class EvaluationExample extends Example {
 
 		CsvUtil.Table outputTable = new CsvUtil.Table();
 		outputTable.setSeparator(inputTable.getSeparator());
-		outputTable.addAll(BatchUtil.formatRecords(outputRecords, Lists.newArrayList(Iterables.concat(targetFields, outputFields)), formatFunction));
 
-		if(inputTable.size() == outputTable.size()){
+		List<FieldName> resultFields = Lists.newArrayList(Iterables.concat(targetFields, outputFields));
+
+		outputTable.addAll(BatchUtil.formatRecords(outputRecords, resultFields, formatFunction));
+
+		if((inputTable.size() == outputTable.size()) && this.copyColumns){
 
 			for(int i = 0; i < inputTable.size(); i++){
 				List<String> inputRow = inputTable.get(i);
