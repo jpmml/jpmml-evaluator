@@ -77,7 +77,7 @@ The current version is **1.2.13** (20 March, 2016).
 JPMML-Evaluator depends on the [JPMML-Model] (https://github.com/jpmml/jpmml-model) library for PMML class model.
 
 Loading a PMML schema version 3.X or 4.X document into an `org.dmg.pmml.PMML` instance:
-```
+```java
 PMML pmml;
 
 try(InputStream is = ...){
@@ -179,7 +179,7 @@ for(FieldName targetField : targetFields){
 }
 ```
 
-The method `EvaluatorUtil#getTargetFields(Evaluator)` is a "safe" wrapper for the `Evaluator#getTargetFields()` method.
+Method `EvaluatorUtil#getTargetFields(Evaluator)` is a "safe" wrapper for method `Evaluator#getTargetFields()`.
 
 Querying and parsing output fields:
 ```java
