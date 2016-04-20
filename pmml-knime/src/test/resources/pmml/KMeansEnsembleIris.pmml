@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2">
   <Header copyright="vfed">
-    <Application name="KNIME" version="2.11.3"/>
+    <Application name="KNIME" version="3.1.2"/>
   </Header>
   <DataDictionary numberOfFields="4">
-    <DataField dataType="double" name="Petal_Width" optype="continuous">
-      <Interval closure="closedClosed" leftMargin="0.1" rightMargin="2.5"/>
-    </DataField>
-    <DataField dataType="double" name="Petal_Length" optype="continuous">
-      <Interval closure="closedClosed" leftMargin="1.0" rightMargin="6.9"/>
-    </DataField>
     <DataField dataType="double" name="Sepal_Length" optype="continuous">
       <Interval closure="closedClosed" leftMargin="4.3" rightMargin="7.9"/>
     </DataField>
     <DataField dataType="double" name="Sepal_Width" optype="continuous">
       <Interval closure="closedClosed" leftMargin="2.0" rightMargin="4.4"/>
+    </DataField>
+    <DataField dataType="double" name="Petal_Length" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="1.0" rightMargin="6.9"/>
+    </DataField>
+    <DataField dataType="double" name="Petal_Width" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="0.1" rightMargin="2.5"/>
     </DataField>
   </DataDictionary>
   <MiningModel functionName="clustering">

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2">
   <Header copyright="vfed">
-    <Application name="KNIME" version="2.11.2"/>
+    <Application name="KNIME" version="3.1.2"/>
   </Header>
   <DataDictionary numberOfFields="8">
     <DataField dataType="double" name="mpg" optype="continuous">

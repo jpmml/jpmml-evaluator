@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2">
   <Header copyright="vfed">
-    <Application name="KNIME" version="2.11.2"/>
+    <Application name="KNIME" version="3.1.2"/>
   </Header>
   <DataDictionary numberOfFields="5">
     <DataField name="Sepal_Length" optype="continuous" dataType="double">
@@ -634,10 +634,10 @@
         <SupportVector vectorId="setosa_Row41"/>
         <SupportVector vectorId="versicolor_Row98"/>
       </SupportVectors>
-      <Coefficients numberOfCoefficients="3" absoluteValue="-1.4542992276218847">
-        <Coefficient value="-0.670424981155004"/>
-        <Coefficient value="-0.07730910882399081"/>
-        <Coefficient value="0.7477340899790095"/>
+      <Coefficients numberOfCoefficients="3" absoluteValue="-1.4496005148787394">
+        <Coefficient value="-0.6714761466022311"/>
+        <Coefficient value="-0.07657279274308158"/>
+        <Coefficient value="0.7480489393453129"/>
       </Coefficients>
     </SupportVectorMachine>
     <SupportVectorMachine targetCategory="versicolor">
@@ -737,7 +737,7 @@
         <SupportVector vectorId="virginica_Row147"/>
         <SupportVector vectorId="virginica_Row149"/>
       </SupportVectors>
-      <Coefficients numberOfCoefficients="94" absoluteValue="-5.645023845635874">
+      <Coefficients numberOfCoefficients="94" absoluteValue="-5.644311539581589">
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
@@ -750,9 +750,11 @@
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
         <Coefficient value="0.9999999999999999"/>
-        <Coefficient value="0.015664992444832517"/>
+        <Coefficient value="0.015562015705702651"/>
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
         <Coefficient value="-1.0"/>
         <Coefficient value="-1.0"/>
         <Coefficient value="-1.0"/>
@@ -779,16 +781,6 @@
         <Coefficient value="-1.0"/>
         <Coefficient value="-1.0"/>
         <Coefficient value="-1.0"/>
-        <Coefficient value="-0.9999999999999999"/>
-        <Coefficient value="-0.9999999999999999"/>
-        <Coefficient value="-0.9999999999999999"/>
-        <Coefficient value="-1.0"/>
-        <Coefficient value="-1.0"/>
-        <Coefficient value="-1.0"/>
-        <Coefficient value="-1.0"/>
-        <Coefficient value="-1.0"/>
-        <Coefficient value="-1.0"/>
-        <Coefficient value="-1.0"/>
         <Coefficient value="-1.0"/>
         <Coefficient value="-1.0"/>
         <Coefficient value="-1.0"/>
@@ -799,6 +791,18 @@
         <Coefficient value="-1.0"/>
         <Coefficient value="-1.0"/>
         <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="-1.0"/>
+        <Coefficient value="0.9999999999999999"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
@@ -810,12 +814,8 @@
         <Coefficient value="0.9999999999999999"/>
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
-        <Coefficient value="1.0"/>
-        <Coefficient value="1.0"/>
-        <Coefficient value="1.0"/>
         <Coefficient value="0.9999999999999999"/>
         <Coefficient value="1.0"/>
-        <Coefficient value="0.9999999999999999"/>
         <Coefficient value="0.9999999999999999"/>
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
@@ -825,12 +825,12 @@
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
-        <Coefficient value="0.6073678257406983"/>
+        <Coefficient value="0.6070272281533581"/>
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
-        <Coefficient value="0.3769671818144688"/>
+        <Coefficient value="0.3774107561409391"/>
         <Coefficient value="1.0"/>
       </Coefficients>
     </SupportVectorMachine>
@@ -860,29 +860,29 @@
         <SupportVector vectorId="virginica_Row147"/>
         <SupportVector vectorId="virginica_Row149"/>
       </SupportVectors>
-      <Coefficients numberOfCoefficients="23" absoluteValue="6.777096025021155">
-        <Coefficient value="1.0"/>
-        <Coefficient value="1.0"/>
-        <Coefficient value="0.9999999999999999"/>
+      <Coefficients numberOfCoefficients="23" absoluteValue="6.770019127523221">
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
-        <Coefficient value="0.24685073946149066"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="1.0"/>
+        <Coefficient value="0.245014551184837"/>
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
         <Coefficient value="1.0"/>
         <Coefficient value="-1.0"/>
+        <Coefficient value="-0.9999999999999999"/>
+        <Coefficient value="-0.9999999999999999"/>
         <Coefficient value="-1.0"/>
         <Coefficient value="-1.0"/>
+        <Coefficient value="-0.9999999999999999"/>
+        <Coefficient value="-0.43769259584995457"/>
         <Coefficient value="-1.0"/>
         <Coefficient value="-1.0"/>
-        <Coefficient value="-1.0"/>
-        <Coefficient value="-0.44426947027112335"/>
-        <Coefficient value="-1.0"/>
-        <Coefficient value="-1.0"/>
-        <Coefficient value="-0.6590105825893275"/>
-        <Coefficient value="-0.14357068660103975"/>
+        <Coefficient value="-0.6482205597066131"/>
+        <Coefficient value="-0.1591013956282696"/>
         <Coefficient value="-1.0"/>
       </Coefficients>
     </SupportVectorMachine>

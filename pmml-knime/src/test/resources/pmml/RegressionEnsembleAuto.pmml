@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2">
   <Header copyright="vfed">
-    <Application name="KNIME" version="2.11.2"/>
+    <Application name="KNIME" version="3.1.2"/>
   </Header>
   <DataDictionary numberOfFields="8">
-    <DataField dataType="integer" name="weight" optype="continuous">
-      <Interval closure="closedClosed" leftMargin="1613.0" rightMargin="5140.0"/>
+    <DataField dataType="double" name="mpg" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="9.0" rightMargin="46.6"/>
     </DataField>
     <DataField dataType="integer" name="cylinders" optype="continuous">
       <Interval closure="closedClosed" leftMargin="3.0" rightMargin="8.0"/>
     </DataField>
-    <DataField dataType="double" name="mpg" optype="continuous">
-      <Interval closure="closedClosed" leftMargin="9.0" rightMargin="46.6"/>
-    </DataField>
     <DataField dataType="double" name="displacement" optype="continuous">
       <Interval closure="closedClosed" leftMargin="68.0" rightMargin="455.0"/>
-    </DataField>
-    <DataField dataType="integer" name="origin" optype="continuous">
-      <Interval closure="closedClosed" leftMargin="1.0" rightMargin="3.0"/>
-    </DataField>
-    <DataField dataType="integer" name="model_year" optype="continuous">
-      <Interval closure="closedClosed" leftMargin="70.0" rightMargin="82.0"/>
-    </DataField>
-    <DataField dataType="double" name="acceleration" optype="continuous">
-      <Interval closure="closedClosed" leftMargin="8.0" rightMargin="24.8"/>
     </DataField>
     <DataField dataType="integer" name="horsepower" optype="continuous">
       <Interval closure="closedClosed" leftMargin="46.0" rightMargin="230.0"/>
     </DataField>
+    <DataField dataType="integer" name="weight" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="1613.0" rightMargin="5140.0"/>
+    </DataField>
+    <DataField dataType="double" name="acceleration" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="8.0" rightMargin="24.8"/>
+    </DataField>
+    <DataField dataType="integer" name="model_year" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="70.0" rightMargin="82.0"/>
+    </DataField>
+    <DataField dataType="integer" name="origin" optype="continuous">
+      <Interval closure="closedClosed" leftMargin="1.0" rightMargin="3.0"/>
+    </DataField>
   </DataDictionary>
   <MiningModel functionName="regression">
     <MiningSchema>
-      <MiningField invalidValueTreatment="asIs" name="cylinders"/>
-      <MiningField invalidValueTreatment="asIs" name="displacement"/>
-      <MiningField invalidValueTreatment="asIs" name="horsepower"/>
-      <MiningField invalidValueTreatment="asIs" name="weight"/>
-      <MiningField invalidValueTreatment="asIs" name="acceleration"/>
-      <MiningField invalidValueTreatment="asIs" name="model_year"/>
-      <MiningField invalidValueTreatment="asIs" name="origin"/>
-      <MiningField invalidValueTreatment="asIs" name="mpg" usageType="target"/>
+      <MiningField invalidValueTreatment="asIs" name="acceleration" highValue="0.0" lowValue="0.0"/>
+      <MiningField invalidValueTreatment="asIs" name="horsepower" highValue="0.0" lowValue="0.0"/>
+      <MiningField invalidValueTreatment="asIs" name="mpg" usageType="target" highValue="0.0" lowValue="0.0"/>
+      <MiningField invalidValueTreatment="asIs" name="origin" highValue="0.0" lowValue="0.0"/>
+      <MiningField invalidValueTreatment="asIs" name="weight" highValue="0.0" lowValue="0.0"/>
+      <MiningField invalidValueTreatment="asIs" name="model_year" highValue="0.0" lowValue="0.0"/>
+      <MiningField invalidValueTreatment="asIs" name="displacement" highValue="0.0" lowValue="0.0"/>
+      <MiningField invalidValueTreatment="asIs" name="cylinders" highValue="0.0" lowValue="0.0"/>
     </MiningSchema>
     <Segmentation multipleModelMethod="weightedAverage">
       <Segment>
@@ -84,14 +84,14 @@
             <PPCell parameterName="p7" predictorName="origin" value="1"/>
           </PPMatrix>
           <ParamMatrix>
-            <PCell beta="-19.931878819175868" df="1" parameterName="p0"/>
-            <PCell beta="-0.7324104296092032" df="1" parameterName="p1"/>
-            <PCell beta="0.02305523920493924" df="1" parameterName="p2"/>
-            <PCell beta="-0.01893926256577087" df="1" parameterName="p3"/>
-            <PCell beta="-0.006116777272171067" df="1" parameterName="p4"/>
-            <PCell beta="0.10929648825011089" df="1" parameterName="p5"/>
-            <PCell beta="0.7728240765335999" df="1" parameterName="p6"/>
-            <PCell beta="1.6432471797841208" df="1" parameterName="p7"/>
+            <PCell beta="-12.439432208283897" df="1" parameterName="p0"/>
+            <PCell beta="-0.8869350085931691" df="1" parameterName="p1"/>
+            <PCell beta="0.02307558380768596" df="1" parameterName="p2"/>
+            <PCell beta="-0.020007328504007608" df="1" parameterName="p3"/>
+            <PCell beta="-0.006099591588824569" df="1" parameterName="p4"/>
+            <PCell beta="-0.06304284083396461" df="1" parameterName="p5"/>
+            <PCell beta="0.7268849667904106" df="1" parameterName="p6"/>
+            <PCell beta="1.3922942154636158" df="1" parameterName="p7"/>
           </ParamMatrix>
         </GeneralRegressionModel>
       </Segment>
@@ -138,14 +138,14 @@
             <PPCell parameterName="p7" predictorName="origin" value="1"/>
           </PPMatrix>
           <ParamMatrix>
-            <PCell beta="-18.01956795029707" df="1" parameterName="p0"/>
-            <PCell beta="-0.24631391786696022" df="1" parameterName="p1"/>
-            <PCell beta="0.022957477822279478" df="1" parameterName="p2"/>
-            <PCell beta="-0.029778610830835297" df="1" parameterName="p3"/>
-            <PCell beta="-0.006905778811590067" df="1" parameterName="p4"/>
-            <PCell beta="0.11060069464011649" df="1" parameterName="p5"/>
-            <PCell beta="0.7613639966736722" df="1" parameterName="p6"/>
-            <PCell beta="1.5451530467317716" df="1" parameterName="p7"/>
+            <PCell beta="-15.918996076485449" df="1" parameterName="p0"/>
+            <PCell beta="-0.4729823637477273" df="1" parameterName="p1"/>
+            <PCell beta="0.02182050861331382" df="1" parameterName="p2"/>
+            <PCell beta="-0.019254309771860722" df="1" parameterName="p3"/>
+            <PCell beta="-0.006948916640977267" df="1" parameterName="p4"/>
+            <PCell beta="0.03558820312305995" df="1" parameterName="p5"/>
+            <PCell beta="0.7601896869811664" df="1" parameterName="p6"/>
+            <PCell beta="1.2836915949469472" df="1" parameterName="p7"/>
           </ParamMatrix>
         </GeneralRegressionModel>
       </Segment>
@@ -192,14 +192,14 @@
             <PPCell parameterName="p7" predictorName="origin" value="1"/>
           </PPMatrix>
           <ParamMatrix>
-            <PCell beta="-9.84736927686673" df="1" parameterName="p0"/>
-            <PCell beta="-0.7539191433630679" df="1" parameterName="p1"/>
-            <PCell beta="0.01979653560213079" df="1" parameterName="p2"/>
-            <PCell beta="-0.02041844172278214" df="1" parameterName="p3"/>
-            <PCell beta="-0.006227650164975851" df="1" parameterName="p4"/>
-            <PCell beta="-0.01981186391137458" df="1" parameterName="p5"/>
-            <PCell beta="0.6853045560685515" df="1" parameterName="p6"/>
-            <PCell beta="1.504121542442586" df="1" parameterName="p7"/>
+            <PCell beta="-19.45657133225124" df="1" parameterName="p0"/>
+            <PCell beta="-0.5571456561820507" df="1" parameterName="p1"/>
+            <PCell beta="0.02438096534316131" df="1" parameterName="p2"/>
+            <PCell beta="-0.021315394738372673" df="1" parameterName="p3"/>
+            <PCell beta="-0.006805733267869775" df="1" parameterName="p4"/>
+            <PCell beta="0.10369628753316609" df="1" parameterName="p5"/>
+            <PCell beta="0.7917475120573308" df="1" parameterName="p6"/>
+            <PCell beta="1.2371655987714378" df="1" parameterName="p7"/>
           </ParamMatrix>
         </GeneralRegressionModel>
       </Segment>
@@ -246,14 +246,14 @@
             <PPCell parameterName="p7" predictorName="origin" value="1"/>
           </PPMatrix>
           <ParamMatrix>
-            <PCell beta="-14.647548238265886" df="1" parameterName="p0"/>
-            <PCell beta="-0.6409012764465091" df="1" parameterName="p1"/>
-            <PCell beta="0.025803206367970472" df="1" parameterName="p2"/>
-            <PCell beta="-0.04211810966549816" df="1" parameterName="p3"/>
-            <PCell beta="-0.0059914595733450045" df="1" parameterName="p4"/>
-            <PCell beta="-0.051451892322580975" df="1" parameterName="p5"/>
-            <PCell beta="0.7561180194284639" df="1" parameterName="p6"/>
-            <PCell beta="1.3979097833294918" df="1" parameterName="p7"/>
+            <PCell beta="-20.610295178704344" df="1" parameterName="p0"/>
+            <PCell beta="-0.3519188820025994" df="1" parameterName="p1"/>
+            <PCell beta="0.02274651755962797" df="1" parameterName="p2"/>
+            <PCell beta="-0.019700931315394937" df="1" parameterName="p3"/>
+            <PCell beta="-0.0069104564563219105" df="1" parameterName="p4"/>
+            <PCell beta="0.09975835690219625" df="1" parameterName="p5"/>
+            <PCell beta="0.7978633408651994" df="1" parameterName="p6"/>
+            <PCell beta="1.3015594069815393" df="1" parameterName="p7"/>
           </ParamMatrix>
         </GeneralRegressionModel>
       </Segment>
@@ -300,14 +300,14 @@
             <PPCell parameterName="p7" predictorName="origin" value="1"/>
           </PPMatrix>
           <ParamMatrix>
-            <PCell beta="-22.024788785105663" df="1" parameterName="p0"/>
-            <PCell beta="-0.5945171909652184" df="1" parameterName="p1"/>
-            <PCell beta="0.01609374508274631" df="1" parameterName="p2"/>
-            <PCell beta="-0.010805484500770133" df="1" parameterName="p3"/>
-            <PCell beta="-0.005748140109815317" df="1" parameterName="p4"/>
-            <PCell beta="0.14350316018473402" df="1" parameterName="p5"/>
-            <PCell beta="0.7806456083787626" df="1" parameterName="p6"/>
-            <PCell beta="1.4304637045456756" df="1" parameterName="p7"/>
+            <PCell beta="-20.699028200214517" df="1" parameterName="p0"/>
+            <PCell beta="-0.4678150431091112" df="1" parameterName="p1"/>
+            <PCell beta="0.017746564856851707" df="1" parameterName="p2"/>
+            <PCell beta="-0.010428856615179036" df="1" parameterName="p3"/>
+            <PCell beta="-0.006443154001937203" df="1" parameterName="p4"/>
+            <PCell beta="0.11260156312710337" df="1" parameterName="p5"/>
+            <PCell beta="0.7836288389805104" df="1" parameterName="p6"/>
+            <PCell beta="1.560828001895141" df="1" parameterName="p7"/>
           </ParamMatrix>
         </GeneralRegressionModel>
       </Segment>
