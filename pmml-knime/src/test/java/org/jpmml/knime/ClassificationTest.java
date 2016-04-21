@@ -39,6 +39,11 @@ public class ClassificationTest extends IntegrationTest {
 	}
 
 	@Test
+	public void evaluateModelEnsembleIris() throws Exception {
+		evaluate("ModelEnsemble", "Iris");
+	}
+
+	@Test
 	public void evaluateNeuralNetworkIris() throws Exception {
 		evaluate("NeuralNetwork", "Iris");
 	}

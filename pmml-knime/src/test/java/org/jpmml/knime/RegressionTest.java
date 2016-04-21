@@ -29,8 +29,13 @@ public class RegressionTest extends IntegrationTest {
 	}
 
 	@Test
-	public void evaluateRegressionAuto() throws Exception {
-		evaluate("Regression", "Auto");
+	public void evaluateModelEnsembleAuto() throws Exception {
+		evaluate("ModelEnsemble", "Auto");
+	}
+
+	@Test
+	public void evaluatePolynomialRegressionAuto() throws Exception {
+		evaluate("PolynomialRegression", "Auto");
 	}
 
 	@Test

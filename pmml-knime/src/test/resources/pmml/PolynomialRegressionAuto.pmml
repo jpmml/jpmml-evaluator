@@ -40,14 +40,21 @@
       <MiningField name="origin" invalidValueTreatment="asIs"/>
       <MiningField name="mpg" invalidValueTreatment="asIs" usageType="target"/>
     </MiningSchema>
-    <RegressionTable intercept="-17.21843462201807">
-      <NumericPredictor name="cylinders" coefficient="-0.4933763188584754"/>
-      <NumericPredictor name="displacement" coefficient="0.019895643742016605"/>
-      <NumericPredictor name="horsepower" coefficient="-0.016951144227499194"/>
-      <NumericPredictor name="weight" coefficient="-0.00647404339744047"/>
-      <NumericPredictor name="acceleration" coefficient="0.08057583832486359"/>
-      <NumericPredictor name="model_year" coefficient="0.7507726779503178"/>
-      <NumericPredictor name="origin" coefficient="1.426140495423153"/>
+    <RegressionTable intercept="404.8308027973319">
+      <NumericPredictor name="cylinders" coefficient="0.9603052457307935"/>
+      <NumericPredictor name="cylinders" exponent="2" coefficient="-0.04654525188622616"/>
+      <NumericPredictor name="displacement" coefficient="-0.025586287889824262"/>
+      <NumericPredictor name="displacement" exponent="2" coefficient="3.713992522154567E-5"/>
+      <NumericPredictor name="horsepower" coefficient="-0.154464703186639"/>
+      <NumericPredictor name="horsepower" exponent="2" coefficient="3.4483988101789156E-4"/>
+      <NumericPredictor name="weight" coefficient="-0.01321630167904527"/>
+      <NumericPredictor name="weight" exponent="2" coefficient="1.522483762967963E-6"/>
+      <NumericPredictor name="acceleration" coefficient="-1.6772674420498714"/>
+      <NumericPredictor name="acceleration" exponent="2" coefficient="0.04518835815284874"/>
+      <NumericPredictor name="model_year" coefficient="-9.562431178622811"/>
+      <NumericPredictor name="model_year" exponent="2" coefficient="0.0680095011580718"/>
+      <NumericPredictor name="origin" coefficient="2.5338010068374346"/>
+      <NumericPredictor name="origin" exponent="2" coefficient="-0.4761695522401204"/>
     </RegressionTable>
   </RegressionModel>
 </PMML>
