@@ -43,9 +43,8 @@ public class NodeScoreDistribution extends EntityClassification<Node> implements
 	void computeResult(DataType dataType){
 		Node node = getEntity();
 
-		String score = node.getScore();
-		if(score != null){
-			Object result = TypeUtil.parseOrCast(dataType, score);
+		if(node.hasScore()){
+			Object result = TypeUtil.parseOrCast(dataType, node.getScore());
 
 			super.setResult(result);
 

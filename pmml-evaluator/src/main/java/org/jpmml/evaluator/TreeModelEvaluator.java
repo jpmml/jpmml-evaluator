@@ -146,13 +146,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			trail = handleTrue(trail, root, context);
 
 			Node node = trail.getResult();
-			if(node != null){
-				String score = node.getScore();
 
-				// "It is not possible that the scoring process ends in a Node which does not have a score attribute"
-				if(score == null){
-					throw new InvalidFeatureException(node);
-				}
+			// "It is not possible that the scoring process ends in a Node which does not have a score attribute"
+			if(node != null && !node.hasScore()){
+				throw new InvalidFeatureException(node);
 			}
 
 			return node;
@@ -257,7 +254,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 				Node lastPrediction = trail.getLastPrediction();
 
 				// "Return the parent Node only if it specifies a score attribute"
-				if(lastPrediction.getScore() != null){
+				if(lastPrediction.hasScore()){
 					return trail.selectLastPrediction();
 				}
 				return trail.selectNull();
