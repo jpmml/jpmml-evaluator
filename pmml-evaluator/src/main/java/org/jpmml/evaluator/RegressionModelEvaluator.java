@@ -190,20 +190,41 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				return null;
 			}
 
-			result += numericPredictor.getCoefficient() * Math.pow((value.asNumber()).doubleValue(), numericPredictor.getExponent());
+			int exponent = numericPredictor.getExponent();
+
+			result += numericPredictor.getCoefficient() * (exponent == 1 ? (value.asNumber()).doubleValue() : Math.pow((value.asNumber()).doubleValue(), exponent));
 		}
+
+		// A categorical field is represented by a list of CategoricalPredictor elements.
+		// The iteration over this list can be terminated right after finding the first and only match
+		FieldName matchedName = null;
 
 		List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
 		for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
-			FieldValue value = context.evaluate(categoricalPredictor.getName());
+			FieldName name = categoricalPredictor.getName();
+
+			if(matchedName != null){
+
+				if((matchedName).equals(name)){
+					continue;
+				}
+
+				matchedName = null;
+			}
+
+			FieldValue value = context.evaluate(name);
 
 			// "If the input value is missing, then the product is ignored"
 			if(value == null){
+				matchedName = name;
+
 				continue;
 			}
 
 			boolean equals = value.equals(categoricalPredictor);
 			if(equals){
+				matchedName = name;
+
 				result += categoricalPredictor.getCoefficient();
 			}
 		}
