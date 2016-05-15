@@ -129,18 +129,18 @@ public class FieldValueUtil {
 				break;
 			case AS_MISSING_VALUES:
 				{
-					if(TypeUtil.compare(DataType.DOUBLE, doubleValue, lowValue) < 0 || TypeUtil.compare(DataType.DOUBLE, doubleValue, highValue) > 0){
+					if((doubleValue).compareTo(lowValue) < 0 || (doubleValue).compareTo(highValue) > 0){
 						return createMissingInputValue(field, miningField);
 					}
 				}
 				break;
 			case AS_EXTREME_VALUES:
 				{
-					if(TypeUtil.compare(DataType.DOUBLE, doubleValue, lowValue) < 0){
+					if((doubleValue).compareTo(lowValue) < 0){
 						value = lowValue;
 					} else
 
-					if(TypeUtil.compare(DataType.DOUBLE, doubleValue, highValue) > 0){
+					if((doubleValue).compareTo(highValue) > 0){
 						value = highValue;
 					}
 				}
