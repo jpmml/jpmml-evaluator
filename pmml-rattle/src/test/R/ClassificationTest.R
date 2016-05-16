@@ -53,6 +53,15 @@ generateDecisionTreeIris = function(){
 	writeIris(classes, probabilities, "csv/DecisionTreeIris.csv")
 }
 
+generateDecisionTreeXformIris = function(){
+	rpart = rpart(irisXformFormula, irisBox$data, method = "class", control = rpart.control(maxcompete = 0, maxsurrogate = 0))
+	saveXML(pmml(rpart, dataset = irisBox$data, transform = irisBox), "pmml/DecisionTreeXformIris.pmml")
+
+	classes = predict(rpart, type = "class")
+	probabilities = predict(rpart, type = "prob")
+	writeIris(classes, probabilities, "csv/DecisionTreeXformIris.csv")
+}
+
 generateKernlabSVMIris = function(){
 	set.seed(42)
 
@@ -124,6 +133,7 @@ generateRandomForestXformIris = function(){
 }
 
 generateDecisionTreeIris()
+generateDecisionTreeXformIris()
 generateKernlabSVMIris()
 generateLibSVMIris()
 generateLogisticRegressionIris()
@@ -135,7 +145,7 @@ generateRandomForestXformIris()
 versicolorData = readCsv("csv/Versicolor.csv")
 versicolorData$Species = as.factor(versicolorData$Species)
 
-versicolorFormula = formula(Species ~ .,)
+versicolorFormula = formula(Species ~ .)
 
 writeVersicolor = function(classes, probabilities, file){
 	result = data.frame("Species" = classes, "Predicted_Species" = classes, "Probability_0" = probabilities[, 1], "Probability_1" = probabilities[, 2])

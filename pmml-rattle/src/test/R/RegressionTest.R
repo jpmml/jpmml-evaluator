@@ -34,6 +34,13 @@ generateDecisionTreeAuto = function(){
 	writeAuto(predict(rpart), "csv/DecisionTreeAuto.csv")
 }
 
+generateDecisionTreeXformAuto = function(){
+	rpart = rpart(autoXformFormula, autoBox$data, method = "anova", control = rpart.control(maxcompete = 0, maxsurrogate = 0))
+	saveXML(pmml(rpart, transform = autoBox), "pmml/DecisionTreeXformAuto.pmml")
+
+	writeAuto(predict(rpart), "csv/DecisionTreeXformAuto.csv")
+}
+
 generateGeneralRegressionAuto = function(){
 	glm = glm(autoFormula, autoData, family = gaussian)
 	saveXML(pmml(glm), "pmml/GeneralRegressionAuto.pmml")
@@ -98,6 +105,7 @@ generateRegressionXformAuto = function(){
 }
 
 generateDecisionTreeAuto()
+generateDecisionTreeXformAuto()
 generateGeneralRegressionAuto()
 generateGeneralRegressionXformAuto()
 generateKernlabSVMAuto()

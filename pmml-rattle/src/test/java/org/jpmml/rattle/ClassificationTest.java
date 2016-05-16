@@ -45,6 +45,11 @@ public class ClassificationTest extends IntegrationTest {
 	}
 
 	@Test
+	public void evaluateDecisionTreeXformIris() throws Exception {
+		evaluate("DecisionTreeXform", "Iris");
+	}
+
+	@Test
 	public void evaluateKernlabSVMIris() throws Exception {
 		evaluate("KernlabSVM", "Iris");
 	}

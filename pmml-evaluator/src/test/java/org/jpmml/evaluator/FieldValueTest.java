@@ -249,8 +249,14 @@ public class FieldValueTest {
 		assertTrue(negativeZero.equalsString("0.0"));
 		assertTrue(negativeZero.equalsString("false"));
 
+		assertTrue(negativeZero.compareToString("0") == 0);
+		assertTrue(negativeZero.compareToString("0.0") == 0);
+
 		assertTrue(positiveZero.equalsString("-0"));
 		assertTrue(positiveZero.equalsString("-0.0"));
+
+		assertTrue(positiveZero.compareToString("-0") == 0);
+		assertTrue(positiveZero.compareToString("-0.0") == 0);
 
 		assertTrue(negativeZero.equalsValue(positiveZero));
 
@@ -278,8 +284,14 @@ public class FieldValueTest {
 		assertTrue(negativeZero.equalsString("0.0"));
 		assertTrue(negativeZero.equalsString("false"));
 
+		assertTrue(negativeZero.compareToString("0") == 0);
+		assertTrue(negativeZero.compareToString("0.0") == 0);
+
 		assertTrue(positiveZero.equalsString("-0"));
 		assertTrue(positiveZero.equalsString("-0.0"));
+
+		assertTrue(positiveZero.compareToString("-0") == 0);
+		assertTrue(positiveZero.compareToString("-0.0") == 0);
 
 		assertTrue(negativeZero.equalsValue(positiveZero));
 
