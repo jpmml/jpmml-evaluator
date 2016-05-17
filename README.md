@@ -42,9 +42,11 @@ JPMML-Evaluator is interoperable with most popular statistics and data mining so
   * [`pmmlTransformations`] (https://cran.r-project.org/web/packages/pmmlTransformations/) package
 * [Python] (http://www.python.org/) and [Scikit-Learn] (http://scikit-learn.org/):
   * [JPMML-SkLearn] (https://github.com/jpmml/jpmml-sklearn) library and [`sklearn2pmml`] (https://github.com/jpmml/sklearn2pmml) package
+* [Apache Spark] (http://spark.apache.org/):
+  * [JPMML-SparkML] (https://github.com/jpmml/jpmml-sparkml) library
+  * [`mllib.pmml.PMMLExportable`] (https://spark.apache.org/docs/latest/api/java/org/apache/spark/mllib/pmml/PMMLExportable.html) interface
 * [XGBoost] (https://github.com/dmlc/xgboost):
   * [JPMML-XGBoost] (https://github.com/jpmml/jpmml-xgboost) library
-* [Apache Spark] (http://spark.apache.org/)
 * [KNIME] (http://www.knime.com/)
 * [RapidMiner] (http://rapidminer.com/products/rapidminer-studio/)
 * [SAS] (http://www.sas.com/en_us/software/analytics/enterprise-miner.html)
@@ -60,13 +62,13 @@ JPMML-Evaluator is fast and memory efficient. It can deliver one million scoring
 
 JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/).
 
-The current version is **1.2.13** (20 March, 2016).
+The current version is **1.2.14** (17 May, 2016).
 
 ```xml
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.2.13</version>
+	<version>1.2.14</version>
 </dependency>
 ```
 
