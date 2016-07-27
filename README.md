@@ -280,15 +280,15 @@ Getting help:
 java -cp target/example-1.2-SNAPSHOT.jar org.jpmml.evaluator.EvaluationExample --help
 ```
 
-# Documentation #
+# Support and Documentation #
+
+Limited public support is available via the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml).
 
 The [Openscoring.io blog] (http://openscoring.io/blog/) contains fully worked out examples about using JPMML-Model and JPMML-Evaluator libraries.
 
 Recommended reading:
 * [Preparing arguments for evaluation] (http://openscoring.io/blog/2014/05/15/jpmml_evaluator_api_prepare_evaluate/)
 * [Testing PMML Applications] (http://openscoring.io/blog/2014/05/12/testing_pmml_applications/)
-
-Please join the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml) for technical discussion.
 
 # License #
 
