@@ -112,17 +112,17 @@
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model</artifactId>
-				<version>1.2.15</version>
+				<version>1.2.17</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model-metro</artifactId>
-				<version>1.2.15</version>
+				<version>1.2.17</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model-moxy</artifactId>
-				<version>1.2.15</version>
+				<version>1.2.17</version>
 			</dependency>
 
 			<dependency>
