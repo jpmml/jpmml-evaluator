@@ -51,17 +51,41 @@ public class FieldValueUtilTest {
 		assertEquals(1d, prepare(dataField, miningField, 1f));
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 
+		try {
+			prepare(dataField, miningField, "one");
+
+			fail();
+		} catch(InvalidResultException ire){
+			// Ignored
+		}
+
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+
+		try {
+			prepare(dataField, miningField, "one");
+
+			fail();
+		} catch(NumberFormatException nfe){
+			// Ignored
+		}
+
 		Value missingValue = createValue("N/A", Property.MISSING);
 
 		dataField.addValues(missingValue);
 
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+
 		assertEquals(null, prepare(dataField, miningField, null));
 		assertEquals(null, prepare(dataField, miningField, "N/A"));
+
+		assertEquals(null, prepare(dataField, miningField, "one"));
 
 		miningField.setMissingValueReplacement("0");
 
 		assertEquals(0d, prepare(dataField, miningField, null));
 		assertEquals(0d, prepare(dataField, miningField, "N/A"));
+
+		assertEquals(0d, prepare(dataField, miningField, "one"));
 
 		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_IS)
 			.setLowValue(1d)
@@ -93,12 +117,6 @@ public class FieldValueUtilTest {
 
 		dataField.addIntervals(validInterval);
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
-
-		assertEquals(0d, prepare(dataField, miningField, -1d));
-		assertEquals(1d, prepare(dataField, miningField, 1d));
-		assertEquals(0d, prepare(dataField, miningField, 5d));
-
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.RETURN_INVALID);
 
 		try {
@@ -118,6 +136,12 @@ public class FieldValueUtilTest {
 		} catch(InvalidResultException ire){
 			// Ignored
 		}
+
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+
+		assertEquals(0d, prepare(dataField, miningField, -1d));
+		assertEquals(1d, prepare(dataField, miningField, 1d));
+		assertEquals(0d, prepare(dataField, miningField, 5d));
 
 		clearIntervalsAndValues(dataField);
 
@@ -159,19 +183,61 @@ public class FieldValueUtilTest {
 		assertEquals(1, prepare(dataField, miningField, "1"));
 		assertEquals(1, prepare(dataField, miningField, 1));
 
+		try {
+			prepare(dataField, miningField, "one");
+
+			fail();
+		} catch(InvalidResultException ire){
+			// Ignored
+		}
+
+		try {
+			prepare(dataField, miningField, 1.5d);
+
+			fail();
+		} catch(InvalidResultException ire){
+			// Ignored
+		}
+
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+
+		try {
+			prepare(dataField, miningField, "one");
+
+			fail();
+		} catch(NumberFormatException nfe){
+			// Ignored
+		}
+
+		try {
+			prepare(dataField, miningField, 1.5d);
+
+			fail();
+		} catch(TypeCheckException tce){
+			// Ignored
+		}
+
 		Value missingValue = createValue("-999", Property.MISSING);
 
 		dataField.addValues(missingValue);
 
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+
 		assertEquals(null, prepare(dataField, miningField, null));
 		assertEquals(null, prepare(dataField, miningField, "-999"));
 		assertEquals(null, prepare(dataField, miningField, -999));
+
+		assertEquals(null, prepare(dataField, miningField, "one"));
+		assertEquals(null, prepare(dataField, miningField, 1.5d));
 
 		miningField.setMissingValueReplacement("0");
 
 		assertEquals(0, prepare(dataField, miningField, null));
 		assertEquals(0, prepare(dataField, miningField, "-999"));
 		assertEquals(0, prepare(dataField, miningField, -999));
+
+		assertEquals(0, prepare(dataField, miningField, "one"));
+		assertEquals(0, prepare(dataField, miningField, 1.5d));
 	}
 
 	static

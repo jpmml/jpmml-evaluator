@@ -62,9 +62,19 @@ public class FieldValueUtil {
 			throw new InvalidFeatureException(dataField);
 		}
 
-		value = safeParseOrCast(dataType, value);
+		boolean compatible;
 
-		Value.Property status = getStatus(dataField, miningField, value);
+		try {
+			if(value != null){
+				value = TypeUtil.parseOrCast(dataType, value);
+			}
+
+			compatible = true;
+		} catch(IllegalArgumentException | TypeCheckException e){
+			compatible = false;
+		}
+
+		Value.Property status = getStatus(dataField, miningField, value, compatible);
 		switch(status){
 			case VALID:
 				return performValidValueTreatment(dataField, miningField, value);
@@ -192,7 +202,7 @@ public class FieldValueUtil {
 		value = {"fallthrough"}
 	)
 	static
-	public Value.Property getStatus(DataField dataField, MiningField miningField, Object value){
+	private Value.Property getStatus(DataField dataField, MiningField miningField, Object value, boolean compatible){
 
 		if(value == null){
 			return Value.Property.MISSING;
@@ -214,12 +224,19 @@ public class FieldValueUtil {
 			}
 
 			List<Value> fieldValues = dataField.getValues();
-			for(Value fieldValue : fieldValues){
-				Value.Property property = fieldValue.getProperty();
+			for(int i = 0, max = fieldValues.size(); i < max; i++){
+				Value fieldValue = fieldValues.get(i);
 
+				Value.Property property = fieldValue.getProperty();
 				switch(property){
 					case VALID:
-						hasValidSpace = true;
+						{
+							hasValidSpace = true;
+
+							if(!compatible){
+								continue;
+							}
+						}
 						// Falls through
 					case INVALID:
 					case MISSING:
@@ -235,41 +252,39 @@ public class FieldValueUtil {
 						throw new UnsupportedFeatureException(fieldValue, property);
 				}
 			}
-		}
+		} // End if
 
-		PMMLObject locatable = miningField;
+		if(!compatible){
+			return Value.Property.INVALID;
+		} // End if
 
-		OpType opType = miningField.getOpType();
-		if(opType == null){
-			locatable = dataField;
+		if(dataField.hasIntervals()){
+			PMMLObject locatable = miningField;
 
-			opType = dataField.getOpType();
-		}
+			OpType opType = miningField.getOpType();
+			if(opType == null){
+				locatable = dataField;
 
-		switch(opType){
-			case CONTINUOUS:
-				{
-					// "If intervals are present, then a value that is outside the intervals is considered invalid"
-					if(dataField.hasIntervals()){
+				opType = dataField.getOpType();
+			}
+
+			switch(opType){
+				case CONTINUOUS:
+					{
 						RangeSet<Double> validRanges = getValidRanges(dataField);
 
 						Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
 
+						// "If intervals are present, then a value that is outside the intervals is considered invalid"
 						return (validRanges.contains(doubleValue) ? Value.Property.VALID : Value.Property.INVALID);
 					}
-				}
-				break;
-			case CATEGORICAL:
-			case ORDINAL:
-				{
+				case CATEGORICAL:
+				case ORDINAL:
 					// "Intervals are not allowed for non-continuous fields"
-					if(dataField.hasIntervals()){
-						throw new InvalidFeatureException(dataField);
-					}
-				}
-				break;
-			default:
-				throw new UnsupportedFeatureException(locatable, opType);
+					throw new InvalidFeatureException(dataField);
+				default:
+					throw new UnsupportedFeatureException(locatable, opType);
+			}
 		}
 
 		// "If a field contains at least one Value element where the value of property is valid, then the set of Value elements completely defines the set of valid values"
@@ -470,11 +485,15 @@ public class FieldValueUtil {
 	static
 	public Value getValidValue(TypeDefinitionField field, Object value){
 
+		if(value == null){
+			return null;
+		} // End if
+
 		if(field.hasValues()){
 			DataType dataType = field.getDataType();
 			OpType opType = field.getOpType();
 
-			value = safeParseOrCast(dataType, value);
+			value = TypeUtil.parseOrCast(dataType, value);
 
 			if(field instanceof HasParsedValueMapping){
 				HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)field;
@@ -483,9 +502,10 @@ public class FieldValueUtil {
 			}
 
 			List<Value> fieldValues = field.getValues();
-			for(Value fieldValue : fieldValues){
-				Value.Property property = fieldValue.getProperty();
+			for(int i = 0, max = fieldValues.size(); i < max; i++){
+				Value fieldValue = fieldValues.get(i);
 
+				Value.Property property = fieldValue.getProperty();
 				switch(property){
 					case VALID:
 						{
@@ -514,7 +534,7 @@ public class FieldValueUtil {
 
 		try {
 			value = FieldValueUtil.create(dataType, opType, object);
-		} catch(IllegalArgumentException iae){
+		} catch(IllegalArgumentException | TypeCheckException e){
 			return null;
 		}
 
@@ -564,26 +584,11 @@ public class FieldValueUtil {
 	}
 
 	static
-	private Object safeParseOrCast(DataType dataType, Object value){
-
-		if(value != null){
-
-			try {
-				return TypeUtil.parseOrCast(dataType, value);
-			} catch(IllegalArgumentException iae){
-				// Ignored
-			}
-		}
-
-		return value;
-	}
-
-	static
 	private boolean equals(DataType dataType, Object value, String referenceValue){
 
 		try {
-			return TypeUtil.equals(dataType, value, TypeUtil.parseOrCast(dataType, referenceValue));
-		} catch(IllegalArgumentException iae){
+			return TypeUtil.equals(dataType, value, TypeUtil.parse(dataType, referenceValue));
+		} catch(IllegalArgumentException | TypeCheckException e){
 
 			// The String representation of invalid or missing values (eg. "N/A") may not be parseable to the requested representation
 			try {
@@ -592,7 +597,7 @@ public class FieldValueUtil {
 				// Ignored
 			}
 
-			throw iae;
+			throw e;
 		}
 	}
 

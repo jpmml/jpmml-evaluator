@@ -54,6 +54,10 @@ public class TypeUtil {
 		return ((Comparable)left).compareTo(right);
 	}
 
+	/**
+	 * @throws IllegalArgumentException If the value is a String, and it cannot be parsed to the requested representation.
+	 * @throws TypeCheckException If the value is an Object other than String, and it cannot be cast to the requested representation.
+	 */
 	static
 	public Object parseOrCast(DataType dataType, Object value){
 
@@ -405,6 +409,9 @@ public class TypeUtil {
 		}
 	}
 
+	/**
+	 * @throws TypeCheckException If the value cannot be cast to the requested representation.
+	 */
 	static
 	public Object cast(DataType dataType, Object value){
 
