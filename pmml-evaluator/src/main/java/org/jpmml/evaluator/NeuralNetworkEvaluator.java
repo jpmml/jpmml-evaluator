@@ -40,6 +40,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import org.dmg.pmml.ActivationFunctionType;
 import org.dmg.pmml.Connection;
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Entity;
 import org.dmg.pmml.Expression;
@@ -58,6 +59,7 @@ import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
+import org.dmg.pmml.TypeDefinitionField;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<Entity> {
 
@@ -231,6 +233,36 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		Expression expression = derivedField.getExpression();
 		if(expression == null){
 			throw new InvalidFeatureException(derivedField);
+		} // End if
+
+		if(expression instanceof FieldRef){
+			FieldRef fieldRef = (FieldRef)expression;
+
+			FieldName name = fieldRef.getField();
+
+			TypeDefinitionField field = resolveField(name);
+			if(field == null){
+				throw new MissingFieldException(name, fieldRef);
+			} // End if
+
+			if(field instanceof DataField){
+				return expression;
+			} else
+
+			if(field instanceof DerivedField){
+				DerivedField targetDerivedField = (DerivedField)field;
+
+				Expression targetExpression = targetDerivedField.getExpression();
+				if(targetExpression == null){
+					throw new InvalidFeatureException(targetDerivedField);
+				}
+
+				return targetExpression;
+			} else
+
+			{
+				throw new InvalidFeatureException(fieldRef);
+			}
 		}
 
 		return expression;
