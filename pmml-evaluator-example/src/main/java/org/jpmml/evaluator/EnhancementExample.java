@@ -53,7 +53,7 @@ public class EnhancementExample extends Example {
 
 	@Parameter (
 		names = {"--verification"},
-		description = "Verification data CSV file",
+		description = "Verification CSV file. Verification data is a combination of input and expected output data",
 		required = true
 	)
 	@ParameterOrder (

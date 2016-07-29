@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Objects;
+
 public class VerificationUtil {
 
 	private VerificationUtil(){
@@ -26,15 +28,11 @@ public class VerificationUtil {
 	static
 	public boolean acceptable(Object expected, Object actual, double precision, double zeroThreshold){
 
-		if(expected == null){
-			return (actual == null);
-		}
-
 		if(expected instanceof Number && actual instanceof Number){
 			return acceptable((Number)expected, (Number)actual, precision, zeroThreshold);
 		}
 
-		return (expected).equals(actual);
+		return Objects.equals(expected, actual);
 	}
 
 	/**
@@ -43,6 +41,10 @@ public class VerificationUtil {
 	 */
 	static
 	public boolean acceptable(Number expected, Number actual, double precision, double zeroThreshold){
+
+		if(precision < 0d || zeroThreshold < 0d){
+			throw new IllegalArgumentException();
+		} // End if
 
 		if(isZero(expected, zeroThreshold) && isZero(actual, zeroThreshold)){
 			return true;

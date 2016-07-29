@@ -34,7 +34,6 @@ import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SlidingWindowReservoir;
 import com.codahale.metrics.Timer;
-import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -160,46 +159,7 @@ public class EvaluationExample extends Example {
 
 		CsvUtil.Table inputTable = readTable(this.input, this.separator);
 
-		Function<String, String> parseFunction = new Function<String, String>(){
-
-			@Override
-			public String apply(String string){
-
-				if(("").equals(string) || ("N/A").equals(string) || ("NA").equals(string)){
-					return null;
-				}
-
-				// Remove leading and trailing quotation marks
-				string = stripQuotes(string, '\"');
-				string = stripQuotes(string, '\"');
-
-				// Standardize European-style decimal marks (',') to US-style decimal marks ('.')
-				if(string.indexOf(',') > -1){
-					String usString = string.replace(',', '.');
-
-					try {
-						Double.parseDouble(usString);
-
-						string = usString;
-					} catch(NumberFormatException nfe){
-						// Ignored
-					}
-				}
-
-				return string;
-			}
-
-			private String stripQuotes(String string, char quoteChar){
-
-				if(string.length() > 1 && ((string.charAt(0) == quoteChar) && (string.charAt(string.length() - 1) == quoteChar))){
-					return string.substring(1, string.length() - 1);
-				}
-
-				return string;
-			}
-		};
-
-		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, parseFunction);
+		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, Example.CSV_PARSER);
 
 		if(this.waitBefore){
 			waitForUserInput();
@@ -298,26 +258,12 @@ public class EvaluationExample extends Example {
 		List<FieldName> targetFields = EvaluatorUtil.getTargetFields(evaluator);
 		List<FieldName> outputFields = EvaluatorUtil.getOutputFields(evaluator);
 
-		Function<Object, String> formatFunction = new Function<Object, String>(){
-
-			@Override
-			public String apply(Object object){
-				object = EvaluatorUtil.decode(object);
-
-				if(object == null){
-					return "N/A";
-				}
-
-				return object.toString();
-			}
-		};
-
 		CsvUtil.Table outputTable = new CsvUtil.Table();
 		outputTable.setSeparator(inputTable.getSeparator());
 
 		List<FieldName> resultFields = Lists.newArrayList(Iterables.concat(targetFields, outputFields));
 
-		outputTable.addAll(BatchUtil.formatRecords(outputRecords, resultFields, formatFunction));
+		outputTable.addAll(BatchUtil.formatRecords(outputRecords, resultFields, Example.CSV_FORMATTER));
 
 		if((inputTable.size() == outputTable.size()) && this.copyColumns){
 

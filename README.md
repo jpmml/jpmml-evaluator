@@ -267,17 +267,23 @@ mvn clean install
 ```
 
 The resulting uber-JAR file `target/example-1.2-SNAPSHOT.jar` contains the following command-line applications:
-* `org.jpmml.evaluator.EvaluationExample` [(source)] (https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/EvaluationExample.java). Evaluates a PMML model using data records from a TSV or CSV file.
-* `org.jpmml.evaluator.EnhancementExample`. Enhances a PMML model with a ModelVerification element using data records from a TSV or CSV file.
+* `org.jpmml.evaluator.EvaluationExample` [(source)] (https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/EvaluationExample.java). Evaluates a PMML model with data. The predictions are stored.
+* `org.jpmml.evaluator.TestingExample`. Evaluates a PMML model with data. The predictions are verified against expected predictions data.
+* `org.jpmml.evaluator.EnhancementExample`. Enhances a PMML model with a ModelVerification element.
 
-Evaluating model `model.pmml` by loading input data records from `input.tsv` and storing output data records to `output.tsv`:
+Evaluating model `model.pmml` with data records from `input.csv`. The predictions are stored to `output.csv`:
 ```
-java -cp target/example-1.2-SNAPSHOT.jar org.jpmml.evaluator.EvaluationExample --model model.pmml --input input.tsv --output output.tsv
+java -cp target/example-1.2-SNAPSHOT.jar org.jpmml.evaluator.EvaluationExample --model model.pmml --input input.csv --output output.csv
+```
+
+Evaluating model `model.pmml` with data records from `input.csv`. The predictions are verified against data records from `expected-output.csv`:
+```
+java -cp target/example-1.2-SNAPSHOT.jar org.jpmml.evaluator.TestingExample --model model.pmml --input input.csv --expected-output expected-output.csv
 ```
 
 Getting help:
 ```
-java -cp target/example-1.2-SNAPSHOT.jar org.jpmml.evaluator.EvaluationExample --help
+java -cp target/example-1.2-SNAPSHOT.jar <application class name> --help
 ```
 
 # Support and Documentation #
