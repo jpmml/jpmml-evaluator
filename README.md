@@ -62,13 +62,13 @@ JPMML-Evaluator is fast and memory efficient. It can deliver one million scoring
 
 JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/).
 
-The current version is **1.2.14** (17 May, 2016).
+The current version is **1.2.15** (29 July, 2016).
 
 ```xml
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.2.14</version>
+	<version>1.2.15</version>
 </dependency>
 ```
 
@@ -266,24 +266,24 @@ This module can be built using [Apache Maven] (http://maven.apache.org/):
 mvn clean install
 ```
 
-The resulting uber-JAR file `target/example-1.2-SNAPSHOT.jar` contains the following command-line applications:
+The resulting uber-JAR file `target/example-1.3-SNAPSHOT.jar` contains the following command-line applications:
 * `org.jpmml.evaluator.EvaluationExample` [(source)] (https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/EvaluationExample.java). Evaluates a PMML model with data. The predictions are stored.
 * `org.jpmml.evaluator.TestingExample`. Evaluates a PMML model with data. The predictions are verified against expected predictions data.
 * `org.jpmml.evaluator.EnhancementExample`. Enhances a PMML model with a ModelVerification element.
 
 Evaluating model `model.pmml` with data records from `input.csv`. The predictions are stored to `output.csv`:
 ```
-java -cp target/example-1.2-SNAPSHOT.jar org.jpmml.evaluator.EvaluationExample --model model.pmml --input input.csv --output output.csv
+java -cp target/example-1.3-SNAPSHOT.jar org.jpmml.evaluator.EvaluationExample --model model.pmml --input input.csv --output output.csv
 ```
 
 Evaluating model `model.pmml` with data records from `input.csv`. The predictions are verified against data records from `expected-output.csv`:
 ```
-java -cp target/example-1.2-SNAPSHOT.jar org.jpmml.evaluator.TestingExample --model model.pmml --input input.csv --expected-output expected-output.csv
+java -cp target/example-1.3-SNAPSHOT.jar org.jpmml.evaluator.TestingExample --model model.pmml --input input.csv --expected-output expected-output.csv
 ```
 
 Getting help:
 ```
-java -cp target/example-1.2-SNAPSHOT.jar <application class name> --help
+java -cp target/example-1.3-SNAPSHOT.jar <application class name> --help
 ```
 
 # Support and Documentation #
