@@ -28,10 +28,11 @@
 			<groupId>org.jpmml</groupId>
 			<artifactId>pmml-evaluator</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-evaluator</artifactId>
-			<type>test-jar</type>
+			<artifactId>pmml-evaluator-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
