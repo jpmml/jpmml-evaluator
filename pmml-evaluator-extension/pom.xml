@@ -9,7 +9,7 @@
 	</parent>
 
 	<groupId>org.jpmml</groupId>
-	<artifactId>pmml-extension</artifactId>
+	<artifactId>pmml-evaluator-extension</artifactId>
 
 	<name>JPMML evaluator extensions</name>
 	<description>JPMML class model evaluator extensions</description>
