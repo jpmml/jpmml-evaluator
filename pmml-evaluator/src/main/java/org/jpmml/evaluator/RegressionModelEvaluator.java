@@ -264,6 +264,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			case SOFTMAX:
 			case LOGIT:
 				return 1d / (1d + Math.exp(-value));
+			case CLOGLOG:
+				return 1d - Math.exp(-Math.exp(value));
 			case EXP:
 				return Math.exp(value);
 			default:
