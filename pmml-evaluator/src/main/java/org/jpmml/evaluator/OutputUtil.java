@@ -26,25 +26,24 @@ import java.util.Map;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Ordering;
-import org.dmg.pmml.AssociationRule;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Expression;
-import org.dmg.pmml.FeatureType;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.Item;
-import org.dmg.pmml.ItemRef;
-import org.dmg.pmml.Itemset;
-import org.dmg.pmml.MiningModel;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMMLObject;
-import org.dmg.pmml.RuleFeatureType;
+import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.Value;
+import org.dmg.pmml.association.AssociationRule;
+import org.dmg.pmml.association.Item;
+import org.dmg.pmml.association.ItemRef;
+import org.dmg.pmml.association.Itemset;
+import org.dmg.pmml.mining.MiningModel;
 
 public class OutputUtil {
 
@@ -84,7 +83,7 @@ public class OutputUtil {
 
 			Object targetValue = null;
 
-			FeatureType feature = outputField.getFeature();
+			ResultFeature resultFeature = outputField.getResultFeature();
 
 			String segmentId = outputField.getSegmentId();
 
@@ -122,7 +121,7 @@ public class OutputUtil {
 
 			// Load the target value
 			{
-				switch(feature){
+				switch(resultFeature){
 					case ENTITY_ID:
 						{
 							// "Result feature entityId returns the id of the winning segment"
@@ -157,7 +156,7 @@ public class OutputUtil {
 			Object value;
 
 			// Perform the requested computation on the target value
-			switch(feature){
+			switch(resultFeature){
 				case PREDICTED_VALUE:
 					{
 						value = getPredictedValue(targetValue);
@@ -237,7 +236,7 @@ public class OutputUtil {
 				case ENTITY_ID:
 					{
 						if(targetValue instanceof HasRuleValues){
-							value = getRuleValue(targetValue, outputField, RuleFeatureType.RULE_ID);
+							value = getRuleValue(targetValue, outputField, OutputField.RuleFeature.RULE_ID);
 
 							break;
 						}
@@ -277,42 +276,42 @@ public class OutputUtil {
 					break;
 				case ANTECEDENT:
 					{
-						value = getRuleValue(targetValue, outputField, RuleFeatureType.ANTECEDENT);
+						value = getRuleValue(targetValue, outputField, OutputField.RuleFeature.ANTECEDENT);
 					}
 					break;
 				case CONSEQUENT:
 					{
-						value = getRuleValue(targetValue, outputField, RuleFeatureType.CONSEQUENT);
+						value = getRuleValue(targetValue, outputField, OutputField.RuleFeature.CONSEQUENT);
 					}
 					break;
 				case RULE:
 					{
-						value = getRuleValue(targetValue, outputField, RuleFeatureType.RULE);
+						value = getRuleValue(targetValue, outputField, OutputField.RuleFeature.RULE);
 					}
 					break;
 				case RULE_ID:
 					{
-						value = getRuleValue(targetValue, outputField, RuleFeatureType.RULE_ID);
+						value = getRuleValue(targetValue, outputField, OutputField.RuleFeature.RULE_ID);
 					}
 					break;
 				case CONFIDENCE:
 					{
-						value = getRuleValue(targetValue, outputField, RuleFeatureType.CONFIDENCE);
+						value = getRuleValue(targetValue, outputField, OutputField.RuleFeature.CONFIDENCE);
 					}
 					break;
 				case SUPPORT:
 					{
-						value = getRuleValue(targetValue, outputField, RuleFeatureType.SUPPORT);
+						value = getRuleValue(targetValue, outputField, OutputField.RuleFeature.SUPPORT);
 					}
 					break;
 				case LIFT:
 					{
-						value = getRuleValue(targetValue, outputField, RuleFeatureType.LIFT);
+						value = getRuleValue(targetValue, outputField, OutputField.RuleFeature.LIFT);
 					}
 					break;
 				case LEVERAGE:
 					{
-						value = getRuleValue(targetValue, outputField, RuleFeatureType.LEVERAGE);
+						value = getRuleValue(targetValue, outputField, OutputField.RuleFeature.LEVERAGE);
 					}
 					break;
 				case WARNING:
@@ -321,7 +320,7 @@ public class OutputUtil {
 					}
 					break;
 				default:
-					throw new UnsupportedFeatureException(outputField, feature);
+					throw new UnsupportedFeatureException(outputField, resultFeature);
 			}
 
 			FieldValue outputValue = FieldValueUtil.create(outputField, value);
@@ -352,8 +351,8 @@ public class OutputUtil {
 			throw new TypeAnalysisException(outputField);
 		}
 
-		FeatureType feature = outputField.getFeature();
-		switch(feature){
+		ResultFeature resultFeature = outputField.getResultFeature();
+		switch(resultFeature){
 			case PREDICTED_VALUE:
 			case TRANSFORMED_VALUE:
 			case DECISION:
@@ -369,7 +368,7 @@ public class OutputUtil {
 				break;
 		} // End switch
 
-		switch(feature){
+		switch(resultFeature){
 			case PREDICTED_VALUE:
 				{
 					FieldName targetField = outputField.getTargetField();
@@ -425,42 +424,42 @@ public class OutputUtil {
 				}
 			case ANTECEDENT:
 				{
-					return getRuleDataType(outputField, RuleFeatureType.ANTECEDENT);
+					return getRuleDataType(outputField, OutputField.RuleFeature.ANTECEDENT);
 				}
 			case CONSEQUENT:
 				{
-					return getRuleDataType(outputField, RuleFeatureType.CONSEQUENT);
+					return getRuleDataType(outputField, OutputField.RuleFeature.CONSEQUENT);
 				}
 			case RULE:
 				{
-					return getRuleDataType(outputField, RuleFeatureType.RULE);
+					return getRuleDataType(outputField, OutputField.RuleFeature.RULE);
 				}
 			case RULE_ID:
 				{
-					return getRuleDataType(outputField, RuleFeatureType.RULE_ID);
+					return getRuleDataType(outputField, OutputField.RuleFeature.RULE_ID);
 				}
 			case SUPPORT:
 				{
-					return getRuleDataType(outputField, RuleFeatureType.SUPPORT);
+					return getRuleDataType(outputField, OutputField.RuleFeature.SUPPORT);
 				}
 			case CONFIDENCE:
 				{
-					return getRuleDataType(outputField, RuleFeatureType.CONFIDENCE);
+					return getRuleDataType(outputField, OutputField.RuleFeature.CONFIDENCE);
 				}
 			case LIFT:
 				{
-					return getRuleDataType(outputField, RuleFeatureType.LIFT);
+					return getRuleDataType(outputField, OutputField.RuleFeature.LIFT);
 				}
 			case LEVERAGE:
 				{
-					return getRuleDataType(outputField, RuleFeatureType.LEVERAGE);
+					return getRuleDataType(outputField, OutputField.RuleFeature.LEVERAGE);
 				}
 			case WARNING:
 				{
 					throw new TypeAnalysisException(outputField);
 				}
 			default:
-				throw new UnsupportedFeatureException(outputField, feature);
+				throw new UnsupportedFeatureException(outputField, resultFeature);
 		}
 	}
 
@@ -640,7 +639,7 @@ public class OutputUtil {
 	}
 
 	static
-	public Object getRuleValue(Object object, OutputField outputField, RuleFeatureType ruleFeature){
+	public Object getRuleValue(Object object, OutputField outputField, OutputField.RuleFeature ruleFeature){
 		HasRuleValues hasRuleValues = TypeUtil.cast(HasRuleValues.class, object);
 
 		List<AssociationRule> associationRules = getRuleValues(hasRuleValues, outputField);
@@ -810,7 +809,7 @@ public class OutputUtil {
 		value = {"unchecked"}
 	)
 	static
-	private Object getRuleFeature(HasRuleValues hasRuleValues, AssociationRule associationRule, PMMLObject element, RuleFeatureType ruleFeature){
+	private Object getRuleFeature(HasRuleValues hasRuleValues, AssociationRule associationRule, PMMLObject element, OutputField.RuleFeature ruleFeature){
 
 		switch(ruleFeature){
 			case ANTECEDENT:
@@ -860,7 +859,7 @@ public class OutputUtil {
 	}
 
 	static
-	private DataType getRuleDataType(OutputField outputField, RuleFeatureType ruleFeature){
+	private DataType getRuleDataType(OutputField outputField, OutputField.RuleFeature ruleFeature){
 		String isMultiValued = outputField.getIsMultiValued();
 		if(!("0").equals(isMultiValued)){
 			throw new TypeAnalysisException(outputField);

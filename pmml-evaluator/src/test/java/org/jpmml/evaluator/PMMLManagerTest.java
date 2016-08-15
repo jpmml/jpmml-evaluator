@@ -22,13 +22,9 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.transform.Source;
-
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
-import org.jpmml.model.ImportFilter;
-import org.jpmml.model.JAXBUtil;
-import org.xml.sax.InputSource;
+import org.jpmml.model.PMMLUtil;
 
 abstract
 public class PMMLManagerTest {
@@ -47,7 +43,7 @@ public class PMMLManagerTest {
 
 	static
 	public PMMLManager createPMMLManager(InputStream is) throws Exception {
-		PMML pmml = loadPMML(is);
+		PMML pmml = PMMLUtil.unmarshal(is);
 
 		PMMLManager pmmlManager = new PMMLManager(pmml);
 
@@ -89,13 +85,6 @@ public class PMMLManagerTest {
 	static
 	public InputStream getInputStream(Class<? extends PMMLManagerTest> clazz){
 		return clazz.getResourceAsStream("/pmml/" + clazz.getSimpleName() + ".pmml");
-	}
-
-	static
-	public PMML loadPMML(InputStream is) throws Exception {
-		Source source = ImportFilter.apply(new InputSource(is));
-
-		return JAXBUtil.unmarshalPMML(source);
 	}
 
 	static

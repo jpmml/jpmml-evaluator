@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.FeatureType;
-
 /**
  * <p>
  * A marker interface for classification results that provide a probability distribution.
@@ -31,7 +29,7 @@ import org.dmg.pmml.FeatureType;
  * Ideally, the probability of the predicted category should approach 1.0, and the probabilities of all other categories should approach 0.0.
  * </p>
  *
- * @see FeatureType#PROBABILITY
+ * @see org.dmg.pmml.ResultFeature#PROBABILITY
  */
 public interface HasProbability extends CategoricalResultFeature {
 

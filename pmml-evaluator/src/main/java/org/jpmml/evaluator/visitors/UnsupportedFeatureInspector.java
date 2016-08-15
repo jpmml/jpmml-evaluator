@@ -18,33 +18,30 @@
  */
 package org.jpmml.evaluator.visitors;
 
-import org.dmg.pmml.ActivationFunctionType;
 import org.dmg.pmml.Aggregate;
-import org.dmg.pmml.BaselineModel;
-import org.dmg.pmml.Categories;
-import org.dmg.pmml.CenterFields;
-import org.dmg.pmml.ClusteringModel;
-import org.dmg.pmml.DecisionTree;
-import org.dmg.pmml.FeatureType;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Matrix;
-import org.dmg.pmml.MissingValueStrategyType;
-import org.dmg.pmml.NeuralLayer;
-import org.dmg.pmml.NeuralNetwork;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OutputField;
-import org.dmg.pmml.Predictor;
-import org.dmg.pmml.Regression;
-import org.dmg.pmml.Segmentation;
-import org.dmg.pmml.SequenceModel;
-import org.dmg.pmml.SupportVectorMachineModel;
-import org.dmg.pmml.SvmRepresentationType;
+import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.TableLocator;
-import org.dmg.pmml.TextModel;
-import org.dmg.pmml.TimeSeriesModel;
-import org.dmg.pmml.TreeModel;
 import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
+import org.dmg.pmml.baseline.BaselineModel;
+import org.dmg.pmml.clustering.CenterFields;
+import org.dmg.pmml.clustering.ClusteringModel;
+import org.dmg.pmml.general_regression.Categories;
+import org.dmg.pmml.general_regression.Predictor;
+import org.dmg.pmml.mining.Segmentation;
+import org.dmg.pmml.neural_network.NeuralLayer;
+import org.dmg.pmml.neural_network.NeuralNetwork;
+import org.dmg.pmml.regression.Regression;
+import org.dmg.pmml.sequence.SequenceModel;
+import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
+import org.dmg.pmml.text.TextModel;
+import org.dmg.pmml.time_series.TimeSeriesModel;
+import org.dmg.pmml.tree.DecisionTree;
+import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 
 /**
@@ -110,7 +107,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 	@Override
 	public VisitorAction visit(NeuralNetwork neuralNetwork){
-		ActivationFunctionType activationFunction = neuralNetwork.getActivationFunction();
+		NeuralNetwork.ActivationFunction activationFunction = neuralNetwork.getActivationFunction();
 
 		switch(activationFunction){
 			case RADIAL_BASIS:
@@ -125,7 +122,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 	@Override
 	public VisitorAction visit(NeuralLayer neuralLayer){
-		ActivationFunctionType activationFunction = neuralLayer.getActivationFunction();
+		NeuralNetwork.ActivationFunction activationFunction = neuralLayer.getActivationFunction();
 
 		if(activationFunction != null){
 
@@ -158,11 +155,11 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 	@Override
 	public VisitorAction visit(OutputField outputField){
-		FeatureType feature = outputField.getFeature();
+		ResultFeature resultFeature = outputField.getResultFeature();
 
-		switch(feature){
+		switch(resultFeature){
 			case STANDARD_ERROR:
-				report(new UnsupportedFeatureException(outputField, feature));
+				report(new UnsupportedFeatureException(outputField, resultFeature));
 				break;
 			default:
 				break;
@@ -213,11 +210,11 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 	@Override
 	public VisitorAction visit(SupportVectorMachineModel supportVectorMachineModel){
-		SvmRepresentationType svmRepresentation = supportVectorMachineModel.getSvmRepresentation();
+		SupportVectorMachineModel.Representation representation = supportVectorMachineModel.getRepresentation();
 
-		switch(svmRepresentation){
+		switch(representation){
 			case COEFFICIENTS:
-				report(new UnsupportedFeatureException(supportVectorMachineModel, svmRepresentation));
+				report(new UnsupportedFeatureException(supportVectorMachineModel, representation));
 				break;
 			default:
 				break;
@@ -249,7 +246,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 	@Override
 	public VisitorAction visit(TreeModel treeModel){
-		MissingValueStrategyType missingValueStrategy = treeModel.getMissingValueStrategy();
+		TreeModel.MissingValueStrategy missingValueStrategy = treeModel.getMissingValueStrategy();
 
 		switch(missingValueStrategy){
 			case AGGREGATE_NODES:

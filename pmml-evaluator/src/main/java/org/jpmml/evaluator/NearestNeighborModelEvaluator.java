@@ -48,27 +48,25 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Table;
-import org.dmg.pmml.CategoricalScoringMethodType;
 import org.dmg.pmml.ComparisonMeasure;
-import org.dmg.pmml.ContinuousScoringMethodType;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.InlineTable;
-import org.dmg.pmml.InstanceField;
-import org.dmg.pmml.InstanceFields;
-import org.dmg.pmml.KNNInput;
-import org.dmg.pmml.KNNInputs;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.MiningField;
-import org.dmg.pmml.MiningFunctionType;
-import org.dmg.pmml.NearestNeighborModel;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.TableLocator;
-import org.dmg.pmml.TrainingInstances;
 import org.dmg.pmml.TypeDefinitionField;
+import org.dmg.pmml.nearest_neighbor.InstanceField;
+import org.dmg.pmml.nearest_neighbor.InstanceFields;
+import org.dmg.pmml.nearest_neighbor.KNNInput;
+import org.dmg.pmml.nearest_neighbor.KNNInputs;
+import org.dmg.pmml.nearest_neighbor.NearestNeighborModel;
+import org.dmg.pmml.nearest_neighbor.TrainingInstances;
 
 public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighborModel> {
 
@@ -112,7 +110,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Map<FieldName, AffinityDistribution> predictions;
 
-		MiningFunctionType miningFunction = nearestNeighborModel.getFunctionName();
+		MiningFunction miningFunction = nearestNeighborModel.getMiningFunction();
 		switch(miningFunction){
 			// The model contains one or more continuous and/or categorical target(s)
 			case REGRESSION:
@@ -275,7 +273,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Double calculateContinuousTarget(FieldName name, List<InstanceResult> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		ContinuousScoringMethodType continuousScoringMethod = nearestNeighborModel.getContinuousScoringMethod();
+		NearestNeighborModel.ContinuousScoringMethod continuousScoringMethod = nearestNeighborModel.getContinuousScoringMethod();
 
 		RegressionAggregator aggregator;
 
@@ -336,7 +334,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		VoteAggregator<Object> aggregator = new VoteAggregator<>();
 
-		CategoricalScoringMethodType categoricalScoringMethod = nearestNeighborModel.getCategoricalScoringMethod();
+		NearestNeighborModel.CategoricalScoringMethod categoricalScoringMethod = nearestNeighborModel.getCategoricalScoringMethod();
 
 		for(InstanceResult instanceResult : instanceResults){
 			FieldValue value = table.get(instanceResult.getId(), name);

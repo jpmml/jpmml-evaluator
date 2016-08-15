@@ -23,7 +23,7 @@ import java.util.Map;
 import com.google.common.collect.ForwardingMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.Segment;
+import org.dmg.pmml.mining.Segment;
 
 class SegmentResult extends ForwardingMap<FieldName, Object> implements HasEntityId {
 

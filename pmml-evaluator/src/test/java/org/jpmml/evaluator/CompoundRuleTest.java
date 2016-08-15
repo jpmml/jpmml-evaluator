@@ -21,7 +21,7 @@ package org.jpmml.evaluator;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.RuleSelectionMethod;
+import org.dmg.pmml.rule_set.RuleSelectionMethod;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

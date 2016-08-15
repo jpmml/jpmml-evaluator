@@ -31,7 +31,7 @@ import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
-import org.dmg.pmml.InvalidValueTreatmentMethodType;
+import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
@@ -182,7 +182,7 @@ public class ExpressionUtilTest {
 
 		assertEquals("missing", evaluate(apply, name, null));
 
-		apply.setInvalidValueTreatment(InvalidValueTreatmentMethodType.RETURN_INVALID);
+		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.RETURN_INVALID);
 
 		try {
 			evaluate(apply, name, 1);
@@ -192,7 +192,7 @@ public class ExpressionUtilTest {
 			// Ignored
 		}
 
-		apply.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_IS);
 
 		try {
 			evaluate(apply, name, 1);
@@ -202,7 +202,7 @@ public class ExpressionUtilTest {
 			// Ignored
 		}
 
-		apply.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
 
 		assertEquals("-1", evaluate(apply, name, 1));
 	}

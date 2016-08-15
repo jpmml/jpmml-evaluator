@@ -29,16 +29,16 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
-import org.dmg.pmml.CompoundRule;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
-import org.dmg.pmml.Rule;
-import org.dmg.pmml.RuleSelectionMethod;
-import org.dmg.pmml.RuleSet;
-import org.dmg.pmml.RuleSetModel;
-import org.dmg.pmml.SimpleRule;
+import org.dmg.pmml.rule_set.CompoundRule;
+import org.dmg.pmml.rule_set.Rule;
+import org.dmg.pmml.rule_set.RuleSelectionMethod;
+import org.dmg.pmml.rule_set.RuleSet;
+import org.dmg.pmml.rule_set.RuleSetModel;
+import org.dmg.pmml.rule_set.SimpleRule;
 
 public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implements HasEntityRegistry<SimpleRule> {
 
@@ -78,7 +78,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 		Map<FieldName, ? extends Classification> predictions;
 
-		MiningFunctionType miningFunction = ruleSetModel.getFunctionName();
+		MiningFunction miningFunction = ruleSetModel.getMiningFunction();
 		switch(miningFunction){
 			case CLASSIFICATION:
 				predictions = evaluateClassification(context);

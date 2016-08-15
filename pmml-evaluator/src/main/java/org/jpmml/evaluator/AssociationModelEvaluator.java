@@ -33,16 +33,16 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
-import org.dmg.pmml.AssociationModel;
-import org.dmg.pmml.AssociationRule;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.Item;
-import org.dmg.pmml.ItemRef;
-import org.dmg.pmml.Itemset;
-import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
+import org.dmg.pmml.association.AssociationModel;
+import org.dmg.pmml.association.AssociationRule;
+import org.dmg.pmml.association.Item;
+import org.dmg.pmml.association.ItemRef;
+import org.dmg.pmml.association.Itemset;
 
 public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> implements HasEntityRegistry<AssociationRule> {
 
@@ -113,7 +113,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		Map<FieldName, Association> predictions;
 
-		MiningFunctionType miningFunction = associationModel.getFunctionName();
+		MiningFunction miningFunction = associationModel.getMiningFunction();
 		switch(miningFunction){
 			case ASSOCIATION_RULES:
 				predictions = evaluateAssociationRules(context);

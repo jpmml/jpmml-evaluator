@@ -39,7 +39,7 @@ import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
-import org.dmg.pmml.InvalidValueTreatmentMethodType;
+import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
@@ -369,7 +369,7 @@ public class ExpressionUtil {
 		try {
 			result = FunctionUtil.evaluate(apply, values, context);
 		} catch(InvalidResultException ire){
-			InvalidValueTreatmentMethodType invalidValueTreatmentMethod = apply.getInvalidValueTreatment();
+			InvalidValueTreatmentMethod invalidValueTreatmentMethod = apply.getInvalidValueTreatment();
 
 			switch(invalidValueTreatmentMethod){
 				case RETURN_INVALID:

@@ -21,9 +21,9 @@ package org.jpmml.evaluator;
 import java.util.List;
 
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MiningModel;
-import org.dmg.pmml.MultipleModelMethodType;
 import org.dmg.pmml.OutputField;
+import org.dmg.pmml.mining.MiningModel;
+import org.dmg.pmml.mining.Segmentation;
 
 public interface MiningModelConsumer extends Consumer {
 
@@ -35,13 +35,13 @@ public interface MiningModelConsumer extends Consumer {
 	 * <p>
 	 * The following {@link MiningModel} types propagate nested evaluation results to the top level:
 	 * <ul>
-	 *   <li>{@link MultipleModelMethodType#SELECT_ALL}</li>
-	 *   <li>{@link MultipleModelMethodType#SELECT_FIRST}</li>
-	 *   <li>{@link MultipleModelMethodType#MODEL_CHAIN}</li>
+	 *   <li>{@link Segmentation.MultipleModelMethod#SELECT_ALL}</li>
+	 *   <li>{@link Segmentation.MultipleModelMethod#SELECT_FIRST}</li>
+	 *   <li>{@link Segmentation.MultipleModelMethod#MODEL_CHAIN}</li>
 	 * </ul>
 	 * </p>
 	 */
-	MultipleModelMethodType getMultipleModelMethod();
+	Segmentation.MultipleModelMethod getMultipleModelMethod();
 
 	/**
 	 * <p>

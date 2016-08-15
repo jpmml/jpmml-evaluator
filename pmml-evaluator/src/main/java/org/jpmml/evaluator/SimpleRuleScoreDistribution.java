@@ -22,7 +22,7 @@ import java.util.Set;
 
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.SimpleRule;
+import org.dmg.pmml.rule_set.SimpleRule;
 
 public class SimpleRuleScoreDistribution extends EntityClassification<SimpleRule> implements HasConfidence {
 

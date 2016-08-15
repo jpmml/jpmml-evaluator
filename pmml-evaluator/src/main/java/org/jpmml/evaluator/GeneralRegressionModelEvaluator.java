@@ -41,30 +41,28 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
-import org.dmg.pmml.BaseCumHazardTables;
-import org.dmg.pmml.BaselineCell;
-import org.dmg.pmml.BaselineStratum;
-import org.dmg.pmml.Categories;
-import org.dmg.pmml.Category;
-import org.dmg.pmml.CumulativeLinkFunctionType;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.GeneralRegressionModel;
-import org.dmg.pmml.LinkFunctionType;
 import org.dmg.pmml.Matrix;
-import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.PCell;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.PPCell;
-import org.dmg.pmml.PPMatrix;
-import org.dmg.pmml.ParamMatrix;
-import org.dmg.pmml.Parameter;
-import org.dmg.pmml.ParameterCell;
-import org.dmg.pmml.ParameterList;
-import org.dmg.pmml.Predictor;
-import org.dmg.pmml.PredictorList;
+import org.dmg.pmml.general_regression.BaseCumHazardTables;
+import org.dmg.pmml.general_regression.BaselineCell;
+import org.dmg.pmml.general_regression.BaselineStratum;
+import org.dmg.pmml.general_regression.Categories;
+import org.dmg.pmml.general_regression.Category;
+import org.dmg.pmml.general_regression.GeneralRegressionModel;
+import org.dmg.pmml.general_regression.PCell;
+import org.dmg.pmml.general_regression.PPCell;
+import org.dmg.pmml.general_regression.PPMatrix;
+import org.dmg.pmml.general_regression.ParamMatrix;
+import org.dmg.pmml.general_regression.Parameter;
+import org.dmg.pmml.general_regression.ParameterCell;
+import org.dmg.pmml.general_regression.ParameterList;
+import org.dmg.pmml.general_regression.Predictor;
+import org.dmg.pmml.general_regression.PredictorList;
 
 public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegressionModel> {
 
@@ -111,7 +109,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		Map<FieldName, ?> predictions;
 
-		MiningFunctionType miningFunction = generalRegressionModel.getFunctionName();
+		MiningFunction miningFunction = generalRegressionModel.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
 				predictions = evaluateRegression(context);
@@ -509,7 +507,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private double computeLink(double value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		LinkFunctionType linkFunction = generalRegressionModel.getLinkFunction();
+		GeneralRegressionModel.LinkFunction linkFunction = generalRegressionModel.getLinkFunction();
 		if(linkFunction == null){
 			throw new InvalidFeatureException(generalRegressionModel);
 		}
@@ -566,7 +564,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private double computeCumulativeLink(double value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		CumulativeLinkFunctionType cumulativeLinkFunction = generalRegressionModel.getCumulativeLinkFunction();
+		GeneralRegressionModel.CumulativeLinkFunction cumulativeLinkFunction = generalRegressionModel.getCumulativeLinkFunction();
 		if(cumulativeLinkFunction == null){
 			throw new InvalidFeatureException(generalRegressionModel);
 		}

@@ -23,16 +23,16 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
-import org.dmg.pmml.Attribute;
-import org.dmg.pmml.Characteristic;
-import org.dmg.pmml.Characteristics;
-import org.dmg.pmml.ComplexPartialScore;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
-import org.dmg.pmml.Scorecard;
+import org.dmg.pmml.scorecard.Attribute;
+import org.dmg.pmml.scorecard.Characteristic;
+import org.dmg.pmml.scorecard.Characteristics;
+import org.dmg.pmml.scorecard.ComplexPartialScore;
+import org.dmg.pmml.scorecard.Scorecard;
 
 public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
@@ -58,7 +58,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 		Map<FieldName, ?> predictions;
 
-		MiningFunctionType miningFunction = scorecard.getFunctionName();
+		MiningFunction miningFunction = scorecard.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
 				predictions = evaluateRegression(context);

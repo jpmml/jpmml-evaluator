@@ -23,8 +23,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.google.common.collect.Ordering;
-import org.dmg.pmml.Node;
 import org.dmg.pmml.VisitorAction;
+import org.dmg.pmml.tree.Node;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 public class NodeSorter extends AbstractVisitor {

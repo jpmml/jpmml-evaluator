@@ -38,23 +38,22 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.primitives.Doubles;
 import org.dmg.pmml.Array;
-import org.dmg.pmml.Coefficient;
-import org.dmg.pmml.Coefficients;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
-import org.dmg.pmml.Kernel;
-import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.RealSparseArray;
-import org.dmg.pmml.SupportVector;
-import org.dmg.pmml.SupportVectorMachine;
-import org.dmg.pmml.SupportVectorMachineModel;
-import org.dmg.pmml.SupportVectors;
-import org.dmg.pmml.SvmClassificationMethodType;
-import org.dmg.pmml.SvmRepresentationType;
-import org.dmg.pmml.VectorDictionary;
-import org.dmg.pmml.VectorFields;
-import org.dmg.pmml.VectorInstance;
+import org.dmg.pmml.support_vector_machine.Coefficient;
+import org.dmg.pmml.support_vector_machine.Coefficients;
+import org.dmg.pmml.support_vector_machine.Kernel;
+import org.dmg.pmml.support_vector_machine.SupportVector;
+import org.dmg.pmml.support_vector_machine.SupportVectorMachine;
+import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
+import org.dmg.pmml.support_vector_machine.SupportVectors;
+import org.dmg.pmml.support_vector_machine.VectorDictionary;
+import org.dmg.pmml.support_vector_machine.VectorFields;
+import org.dmg.pmml.support_vector_machine.VectorInstance;
 import org.jpmml.model.ReflectionUtil;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
@@ -83,17 +82,17 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			throw new InvalidResultException(supportVectorMachineModel);
 		}
 
-		SvmRepresentationType svmRepresentation = supportVectorMachineModel.getSvmRepresentation();
-		switch(svmRepresentation){
+		SupportVectorMachineModel.Representation representation = supportVectorMachineModel.getRepresentation();
+		switch(representation){
 			case SUPPORT_VECTORS:
 				break;
 			default:
-				throw new UnsupportedFeatureException(supportVectorMachineModel, svmRepresentation);
+				throw new UnsupportedFeatureException(supportVectorMachineModel, representation);
 		}
 
 		Map<FieldName, ?> predictions;
 
-		MiningFunctionType miningFunction = supportVectorMachineModel.getFunctionName();
+		MiningFunction miningFunction = supportVectorMachineModel.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
 				predictions = evaluateRegression(context);
@@ -137,8 +136,8 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		Classification result;
 
-		SvmClassificationMethodType svmClassificationMethod = getClassificationMethod();
-		switch(svmClassificationMethod){
+		SupportVectorMachineModel.ClassificationMethod classificationMethod = getClassificationMethod();
+		switch(classificationMethod){
 			case ONE_AGAINST_ALL:
 				result = new Classification(Classification.Type.DISTANCE);
 				break;
@@ -146,7 +145,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				result = new VoteDistribution();
 				break;
 			default:
-				throw new UnsupportedFeatureException(supportVectorMachineModel, svmClassificationMethod);
+				throw new UnsupportedFeatureException(supportVectorMachineModel, classificationMethod);
 		}
 
 		double[] input = createInput(context);
@@ -157,7 +156,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 			Double value = evaluateSupportVectorMachine(supportVectorMachine, input);
 
-			switch(svmClassificationMethod){
+			switch(classificationMethod){
 				case ONE_AGAINST_ALL:
 					{
 						if(targetCategory == null || alternateTargetCategory != null){
@@ -274,7 +273,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		return result;
 	}
 
-	private SvmClassificationMethodType getClassificationMethod(){
+	private SupportVectorMachineModel.ClassificationMethod getClassificationMethod(){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		// Older versions of several popular PMML producer software are known to omit the classificationMethod attribute.
@@ -282,9 +281,9 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		// The workaround is to bypass this method using Java Reflection API, and infer the correct classification method type based on evidence.
 		Field field = ReflectionUtil.getField(SupportVectorMachineModel.class, "classificationMethod");
 
-		SvmClassificationMethodType svmClassificationMethod = ReflectionUtil.getFieldValue(field, supportVectorMachineModel);
-		if(svmClassificationMethod != null){
-			return svmClassificationMethod;
+		SupportVectorMachineModel.ClassificationMethod classificationMethod = ReflectionUtil.getFieldValue(field, supportVectorMachineModel);
+		if(classificationMethod != null){
+			return classificationMethod;
 		}
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
@@ -297,7 +296,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 				String targetCategory = supportVectorMachine.getTargetCategory();
 				if(targetCategory != null){
-					return SvmClassificationMethodType.ONE_AGAINST_ONE;
+					return SupportVectorMachineModel.ClassificationMethod.ONE_AGAINST_ONE;
 				}
 
 				throw new InvalidFeatureException(supportVectorMachine);
@@ -313,10 +312,10 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			if(targetCategory != null){
 
 				if(alternateTargetCategory != null){
-					return SvmClassificationMethodType.ONE_AGAINST_ONE;
+					return SupportVectorMachineModel.ClassificationMethod.ONE_AGAINST_ONE;
 				}
 
-				return SvmClassificationMethodType.ONE_AGAINST_ALL;
+				return SupportVectorMachineModel.ClassificationMethod.ONE_AGAINST_ALL;
 			}
 
 			throw new InvalidFeatureException(supportVectorMachine);
@@ -332,12 +331,12 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		VectorFields vectorFields = vectorDictionary.getVectorFields();
 
-		List<FieldRef> fieldRefs = vectorFields.getFieldRefs();
+		List<PMMLObject> content = vectorFields.getContent();
 
-		double[] result = new double[fieldRefs.size()];
+		double[] result = new double[content.size()];
 
-		for(int i = 0; i < fieldRefs.size(); i++){
-			FieldRef fieldRef = fieldRefs.get(i);
+		for(int i = 0; i < content.size(); i++){
+			FieldRef fieldRef = (FieldRef)content.get(i);
 
 			FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
 			if(value == null){
@@ -365,7 +364,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		VectorFields vectorFields = vectorDictionary.getVectorFields();
 
-		List<FieldRef> fieldRefs = vectorFields.getFieldRefs();
+		List<PMMLObject> content = vectorFields.getContent();
 
 		Map<String, double[]> result = new LinkedHashMap<>();
 
@@ -393,7 +392,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				throw new InvalidFeatureException(vectorInstance);
 			} // End if
 
-			if(fieldRefs.size() != values.size()){
+			if(content.size() != values.size()){
 				throw new InvalidFeatureException(vectorInstance);
 			}
 

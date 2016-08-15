@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.FeatureType;
-
 /**
  * <p>
  * A marker interface for classification or clustering results that provide an affinity distribution.
@@ -37,7 +35,7 @@ import org.dmg.pmml.FeatureType;
  * </ul>
  * </p>
  *
- * @see FeatureType#AFFINITY
+ * @see org.dmg.pmml.ResultFeature#AFFINITY
  */
 public interface HasAffinity extends CategoricalResultFeature {
 

@@ -21,9 +21,9 @@ package org.jpmml.evaluator.visitors;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.dmg.pmml.BayesInput;
-import org.dmg.pmml.BayesInputs;
 import org.dmg.pmml.VisitorAction;
+import org.dmg.pmml.naive_bayes.BayesInput;
+import org.dmg.pmml.naive_bayes.BayesInputs;
 import org.jpmml.evaluator.RichBayesInput;
 import org.jpmml.model.visitors.AbstractVisitor;
 

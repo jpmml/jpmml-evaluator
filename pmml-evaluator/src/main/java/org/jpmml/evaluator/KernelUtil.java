@@ -27,11 +27,11 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.Kernel;
-import org.dmg.pmml.LinearKernel;
-import org.dmg.pmml.PolynomialKernel;
-import org.dmg.pmml.RadialBasisKernel;
-import org.dmg.pmml.SigmoidKernel;
+import org.dmg.pmml.support_vector_machine.Kernel;
+import org.dmg.pmml.support_vector_machine.LinearKernel;
+import org.dmg.pmml.support_vector_machine.PolynomialKernel;
+import org.dmg.pmml.support_vector_machine.RadialBasisKernel;
+import org.dmg.pmml.support_vector_machine.SigmoidKernel;
 
 public class KernelUtil {
 

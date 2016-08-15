@@ -25,10 +25,10 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Interval;
 import org.dmg.pmml.Interval.Closure;
-import org.dmg.pmml.InvalidValueTreatmentMethodType;
+import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.OutlierTreatmentMethodType;
+import org.dmg.pmml.OutlierTreatmentMethod;
 import org.dmg.pmml.Value;
 import org.dmg.pmml.Value.Property;
 import org.junit.Test;
@@ -59,7 +59,7 @@ public class FieldValueUtilTest {
 			// Ignored
 		}
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_IS);
 
 		try {
 			prepare(dataField, miningField, "one");
@@ -73,7 +73,7 @@ public class FieldValueUtilTest {
 
 		dataField.addValues(missingValue);
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
 
 		assertEquals(null, prepare(dataField, miningField, null));
 		assertEquals(null, prepare(dataField, miningField, "N/A"));
@@ -87,7 +87,7 @@ public class FieldValueUtilTest {
 
 		assertEquals(0d, prepare(dataField, miningField, "one"));
 
-		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_IS)
+		miningField.setOutlierTreatment(OutlierTreatmentMethod.AS_IS)
 			.setLowValue(1d)
 			.setHighValue(3d);
 
@@ -95,13 +95,13 @@ public class FieldValueUtilTest {
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
 
-		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_MISSING_VALUES);
+		miningField.setOutlierTreatment(OutlierTreatmentMethod.AS_MISSING_VALUES);
 
 		assertEquals(0d, prepare(dataField, miningField, -1d));
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(0d, prepare(dataField, miningField, 5d));
 
-		miningField.setOutlierTreatment(OutlierTreatmentMethodType.AS_EXTREME_VALUES);
+		miningField.setOutlierTreatment(OutlierTreatmentMethod.AS_EXTREME_VALUES);
 
 		assertEquals(1d, prepare(dataField, miningField, -1d));
 		assertEquals(1d, prepare(dataField, miningField, 1d));
@@ -117,7 +117,7 @@ public class FieldValueUtilTest {
 
 		dataField.addIntervals(validInterval);
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.RETURN_INVALID);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.RETURN_INVALID);
 
 		try {
 			prepare(dataField, miningField, -1d);
@@ -137,7 +137,7 @@ public class FieldValueUtilTest {
 			// Ignored
 		}
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
 
 		assertEquals(0d, prepare(dataField, miningField, -1d));
 		assertEquals(1d, prepare(dataField, miningField, 1d));
@@ -147,12 +147,12 @@ public class FieldValueUtilTest {
 
 		dataField.addValues(missingValue, createValue("1", Value.Property.VALID), createValue("2", Value.Property.VALID), createValue("3", Value.Property.VALID));
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_IS);
 
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
 
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(0d, prepare(dataField, miningField, 5d));
@@ -161,12 +161,12 @@ public class FieldValueUtilTest {
 
 		dataField.addValues(missingValue, createValue("1", Value.Property.INVALID));
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_IS);
 
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
 
 		assertEquals(0d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
@@ -199,7 +199,7 @@ public class FieldValueUtilTest {
 			// Ignored
 		}
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_IS);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_IS);
 
 		try {
 			prepare(dataField, miningField, "one");
@@ -221,7 +221,7 @@ public class FieldValueUtilTest {
 
 		dataField.addValues(missingValue);
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethodType.AS_MISSING);
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
 
 		assertEquals(null, prepare(dataField, miningField, null));
 		assertEquals(null, prepare(dataField, miningField, "-999"));

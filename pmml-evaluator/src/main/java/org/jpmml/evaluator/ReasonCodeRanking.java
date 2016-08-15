@@ -23,10 +23,10 @@ import java.util.Map;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningFunction;
 
 /**
- * @see MiningFunctionType#REGRESSION
+ * @see MiningFunction#REGRESSION
  */
 public class ReasonCodeRanking implements Computable, HasReasonCodeRanking {
 

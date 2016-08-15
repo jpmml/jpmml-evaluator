@@ -20,52 +20,41 @@ package org.jpmml.evaluator;
 
 import javax.xml.bind.annotation.XmlRegistry;
 
-import org.dmg.pmml.ObjectFactory;
-
 @XmlRegistry
-public class RichObjectFactory extends ObjectFactory {
+public class RichObjectFactory {
 
-	@Override
 	public RichBaseCumHazardTables createBaseCumHazardTables(){
 		return new RichBaseCumHazardTables();
 	}
 
-	@Override
 	public RichBayesInput createBayesInput(){
 		return new RichBayesInput();
 	}
 
-	@Override
 	public RichCategoricalPredictor createCategoricalPredictor(){
 		return new RichCategoricalPredictor();
 	}
 
-	@Override
 	public RichConstant createConstant(){
 		return new RichConstant();
 	}
 
-	@Override
 	public RichDataField createDataField(){
 		return new RichDataField();
 	}
 
-	@Override
 	public RichNormDiscrete createNormDiscrete(){
 		return new RichNormDiscrete();
 	}
 
-	@Override
 	public RichPPCell createPPCell(){
 		return new RichPPCell();
 	}
 
-	@Override
 	public RichSimplePredicate createSimplePredicate(){
 		return new RichSimplePredicate();
 	}
 
-	@Override
 	public RichSimpleSetPredicate createSimpleSetPredicate(){
 		return new RichSimpleSetPredicate();
 	}

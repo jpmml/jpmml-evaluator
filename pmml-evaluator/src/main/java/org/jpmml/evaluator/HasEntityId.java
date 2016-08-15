@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import org.dmg.pmml.Entity;
-import org.dmg.pmml.FeatureType;
 
 /**
  * <p>
@@ -31,8 +30,8 @@ import org.dmg.pmml.FeatureType;
  * then the provided {@link HasEntityRegistry#getEntityRegistry() entity registry} is suitable for {@link Entity} resolution purposes.
  * </p>
  *
- * @see FeatureType#CLUSTER_ID
- * @see FeatureType#ENTITY_ID
+ * @see org.dmg.pmml.ResultFeature#CLUSTER_ID
+ * @see org.dmg.pmml.ResultFeature#ENTITY_ID
  */
 public interface HasEntityId extends ResultFeature {
 

@@ -25,18 +25,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamResult;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.google.common.base.Function;
 import org.dmg.pmml.PMML;
-import org.jpmml.model.ImportFilter;
-import org.jpmml.model.JAXBUtil;
-import org.xml.sax.InputSource;
+import org.jpmml.model.PMMLUtil;
 
 abstract
 public class Example {
@@ -95,9 +89,7 @@ public class Example {
 	public PMML readPMML(File file) throws Exception {
 
 		try(InputStream is = new FileInputStream(file)){
-			Source source = ImportFilter.apply(new InputSource(is));
-
-			return JAXBUtil.unmarshalPMML(source);
+			return PMMLUtil.unmarshal(is);
 		}
 	}
 
@@ -105,9 +97,7 @@ public class Example {
 	public void writePMML(PMML pmml, File file) throws Exception {
 
 		try(OutputStream os = new FileOutputStream(file)){
-			Result result = new StreamResult(os);
-
-			JAXBUtil.marshalPMML(pmml, result);
+			PMMLUtil.marshal(pmml, os);
 		}
 	}
 

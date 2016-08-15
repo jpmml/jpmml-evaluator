@@ -20,8 +20,8 @@ package org.jpmml.evaluator.visitors;
 
 import java.util.Arrays;
 
-import org.dmg.pmml.Node;
-import org.dmg.pmml.TreeModel;
+import org.dmg.pmml.tree.Node;
+import org.dmg.pmml.tree.TreeModel;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -35,10 +35,9 @@ import java.util.Objects;
 
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.FieldUsageType;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MiningField;
-import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.Output;
@@ -69,10 +68,10 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	}
 
 	@Override
-	public MiningFunctionType getMiningFunction(){
+	public MiningFunction getMiningFunction(){
 		Model model = getModel();
 
-		return model.getFunctionName();
+		return model.getMiningFunction();
 	}
 
 	@Override
@@ -107,7 +106,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return null;
 	}
 
-	protected List<FieldName> getMiningFields(EnumSet<FieldUsageType> fieldUsages){
+	protected List<FieldName> getMiningFields(EnumSet<MiningField.FieldUsage> fieldUsages){
 		M model = getModel();
 
 		MiningSchema miningSchema = model.getMiningSchema();
@@ -116,7 +115,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 
 		List<MiningField> miningFields = miningSchema.getMiningFields();
 		for(MiningField miningField : miningFields){
-			FieldUsageType fieldUsage = miningField.getUsageType();
+			MiningField.FieldUsage fieldUsage = miningField.getFieldUsage();
 
 			if(fieldUsages.contains(fieldUsage)){
 				result.add(miningField.getName());
@@ -181,8 +180,8 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		this.model = model;
 	}
 
-	protected static final EnumSet<FieldUsageType> ACTIVE_TYPES = EnumSet.of(FieldUsageType.ACTIVE);
-	protected static final EnumSet<FieldUsageType> GROUP_TYPES = EnumSet.of(FieldUsageType.GROUP);
-	protected static final EnumSet<FieldUsageType> ORDER_TYPES = EnumSet.of(FieldUsageType.ORDER);
-	protected static final EnumSet<FieldUsageType> TARGET_TYPES = EnumSet.of(FieldUsageType.PREDICTED, FieldUsageType.TARGET);
+	protected static final EnumSet<MiningField.FieldUsage> ACTIVE_TYPES = EnumSet.of(MiningField.FieldUsage.ACTIVE);
+	protected static final EnumSet<MiningField.FieldUsage> GROUP_TYPES = EnumSet.of(MiningField.FieldUsage.GROUP);
+	protected static final EnumSet<MiningField.FieldUsage> ORDER_TYPES = EnumSet.of(MiningField.FieldUsage.ORDER);
+	protected static final EnumSet<MiningField.FieldUsage> TARGET_TYPES = EnumSet.of(MiningField.FieldUsage.PREDICTED, MiningField.FieldUsage.TARGET);
 }

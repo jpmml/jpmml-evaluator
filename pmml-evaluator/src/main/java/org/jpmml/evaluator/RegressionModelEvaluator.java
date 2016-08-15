@@ -23,18 +23,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.dmg.pmml.CategoricalPredictor;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
-import org.dmg.pmml.MiningFunctionType;
-import org.dmg.pmml.NumericPredictor;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.PredictorTerm;
-import org.dmg.pmml.RegressionModel;
-import org.dmg.pmml.RegressionNormalizationMethodType;
-import org.dmg.pmml.RegressionTable;
+import org.dmg.pmml.regression.CategoricalPredictor;
+import org.dmg.pmml.regression.NumericPredictor;
+import org.dmg.pmml.regression.PredictorTerm;
+import org.dmg.pmml.regression.RegressionModel;
+import org.dmg.pmml.regression.RegressionTable;
 
 public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
@@ -60,7 +59,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		Map<FieldName, ?> predictions;
 
-		MiningFunctionType miningFunction = regressionModel.getFunctionName();
+		MiningFunction miningFunction = regressionModel.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
 				predictions = evaluateRegression(context);
@@ -258,8 +257,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	private Double normalizeRegressionResult(Double value){
 		RegressionModel regressionModel = getModel();
 
-		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
-		switch(regressionNormalizationMethod){
+		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
+		switch(normalizationMethod){
 			case NONE:
 				return value;
 			case SOFTMAX:
@@ -268,7 +267,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			case EXP:
 				return Math.exp(value);
 			default:
-				throw new UnsupportedFeatureException(regressionModel, regressionNormalizationMethod);
+				throw new UnsupportedFeatureException(regressionModel, normalizationMethod);
 		}
 	}
 
@@ -303,8 +302,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	private void computeMultinomialProbabilities(Map<String, Double> values){
 		RegressionModel regressionModel = getModel();
 
-		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
-		switch(regressionNormalizationMethod){
+		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
+		switch(normalizationMethod){
 			case NONE:
 				return;
 			case SIMPLEMAX:
@@ -328,8 +327,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	private void computeOrdinalProbabilities(Map<String, Double> values, List<String> targetCategories){
 		RegressionModel regressionModel = getModel();
 
-		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
-		switch(regressionNormalizationMethod){
+		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
+		switch(normalizationMethod){
 			case NONE:
 				return;
 			case SIMPLEMAX:
@@ -350,8 +349,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	private double normalizeClassificationResult(double value, int classes){
 		RegressionModel regressionModel = getModel();
 
-		RegressionNormalizationMethodType regressionNormalizationMethod = regressionModel.getNormalizationMethod();
-		switch(regressionNormalizationMethod){
+		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
+		switch(normalizationMethod){
 			case NONE:
 				return value;
 			case SIMPLEMAX:
@@ -372,7 +371,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			case CAUCHIT:
 				return 0.5d + (1d / Math.PI) * Math.atan(value);
 			default:
-				throw new UnsupportedFeatureException(regressionModel, regressionNormalizationMethod);
+				throw new UnsupportedFeatureException(regressionModel, normalizationMethod);
 		}
 	}
 

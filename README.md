@@ -5,32 +5,32 @@ Java Evaluator API for Predictive Model Markup Language (PMML).
 
 # Features #
 
-JPMML-Evaluator is *de facto* the reference implementation of the PMML specification versions 3.0, 3.1, 3.2, 4.0, 4.1 and 4.2 for the Java platform:
+JPMML-Evaluator is *de facto* the reference implementation of the PMML specification versions 3.0, 3.1, 3.2, 4.0, 4.1, 4.2 and 4.3 for the Java platform:
 
-1. Pre-processing of active fields according to the [DataDictionary] (http://www.dmg.org/v4-2-1/DataDictionary.html) and [MiningSchema] (http://www.dmg.org/v4-2-1/MiningSchema.html) elements:
+1. Pre-processing of active fields according to the [DataDictionary] (http://www.dmg.org/pmml/v4-3/DataDictionary.html) and [MiningSchema] (http://www.dmg.org/pmml/v4-3/MiningSchema.html) elements:
   * Complete data type system.
   * Complete operational type system.
   * Treatment of outlier, missing and/or invalid values.
 2. Model evaluation:
-  * [Association rules] (http://www.dmg.org/v4-2-1/AssociationRules.html)
-  * [Cluster model] (http://www.dmg.org/v4-2-1/ClusteringModel.html)
-  * [General regression] (http://www.dmg.org/v4-2-1/GeneralRegression.html)
-  * [Naive Bayes] (http://www.dmg.org/v4-2-1/NaiveBayes.html)
-  * [k-Nearest neighbors] (http://www.dmg.org/v4-2-1/KNN.html)
-  * [Neural network] (http://www.dmg.org/v4-2-1/NeuralNetwork.html)
-  * [Regression] (http://www.dmg.org/v4-2-1/Regression.html)
-  * [Rule set] (http://www.dmg.org/v4-2-1/RuleSet.html)
-  * [Scorecard] (http://www.dmg.org/v4-2-1/Scorecard.html)
-  * [Support Vector Machine] (http://www.dmg.org/v4-2-1/SupportVectorMachine.html)
-  * [Tree model] (http://www.dmg.org/v4-2-1/TreeModel.html)
-  * [Ensemble model] (http://www.dmg.org/v4-2-1/MultipleModels.html)
-3. Post-processing of target fields according to the [Targets] (http://www.dmg.org/v4-2-1/Targets.html) element:
+  * [Association rules] (http://www.dmg.org/pmml/v4-3/AssociationRules.html)
+  * [Cluster model] (http://www.dmg.org/pmml/v4-3/ClusteringModel.html)
+  * [General regression] (http://www.dmg.org/pmml/v4-3/GeneralRegression.html)
+  * [Naive Bayes] (http://www.dmg.org/pmml/v4-3/NaiveBayes.html)
+  * [k-Nearest neighbors] (http://www.dmg.org/pmml/v4-3/KNN.html)
+  * [Neural network] (http://www.dmg.org/pmml/v4-3/NeuralNetwork.html)
+  * [Regression] (http://www.dmg.org/pmml/v4-3/Regression.html)
+  * [Rule set] (http://www.dmg.org/pmml/v4-3/RuleSet.html)
+  * [Scorecard] (http://www.dmg.org/pmml/v4-3/Scorecard.html)
+  * [Support Vector Machine] (http://www.dmg.org/pmml/v4-3/SupportVectorMachine.html)
+  * [Tree model] (http://www.dmg.org/pmml/v4-3/TreeModel.html)
+  * [Ensemble model] (http://www.dmg.org/pmml/v4-3/MultipleModels.html)
+3. Post-processing of target fields according to the [Targets] (http://www.dmg.org/pmml/v4-3/Targets.html) element:
   * Rescaling and/or casting regression results.
   * Replacing a missing regression result with the default value.
   * Replacing a missing classification result with the map of prior probabilities.
-4. Calculation of auxiliary output fields according to the [Output] (http://www.dmg.org/v4-2-1/Output.html) element:
+4. Calculation of auxiliary output fields according to the [Output] (http://www.dmg.org/pmml/v4-3/Output.html) element:
   * Over 20 different result feature types.
-5. Model verification according to the [ModelVerification] (http://www.dmg.org/v4-2-1/ModelVerification.html) element.
+5. Model verification according to the [ModelVerification] (http://www.dmg.org/pmml/v4-3/ModelVerification.html) element.
 
 For more information please see the [features.md] (https://github.com/jpmml/jpmml-evaluator/blob/master/features.md) file.
 
@@ -83,9 +83,7 @@ Loading a PMML schema version 3.X or 4.X document into an `org.dmg.pmml.PMML` in
 PMML pmml;
 
 try(InputStream is = ...){
-	Source transformedSource = ImportFilter.apply(new InputSource(is));
-
-	pmml = JAXBUtil.unmarshalPMML(transformedSource);
+	pmml = org.jpmml.model.PMMLUtil.unmarshal(is);
 }
 ```
 

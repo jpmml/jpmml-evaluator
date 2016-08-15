@@ -23,14 +23,10 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.transform.Source;
-
 import com.google.common.base.Function;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
-import org.jpmml.model.ImportFilter;
-import org.jpmml.model.JAXBUtil;
-import org.xml.sax.InputSource;
+import org.jpmml.model.PMMLUtil;
 
 abstract
 public class ArchiveBatch implements Batch {
@@ -81,9 +77,7 @@ public class ArchiveBatch implements Batch {
 	private PMML loadPMML(String path) throws Exception {
 
 		try(InputStream is = open(path)){
-			Source source = ImportFilter.apply(new InputSource(is));
-
-			return JAXBUtil.unmarshalPMML(source);
+			return PMMLUtil.unmarshal(is);
 		}
 	}
 

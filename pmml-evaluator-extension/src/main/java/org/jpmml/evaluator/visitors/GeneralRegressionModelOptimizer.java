@@ -21,11 +21,11 @@ package org.jpmml.evaluator.visitors;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.dmg.pmml.BaseCumHazardTables;
-import org.dmg.pmml.GeneralRegressionModel;
-import org.dmg.pmml.PPCell;
-import org.dmg.pmml.PPMatrix;
 import org.dmg.pmml.VisitorAction;
+import org.dmg.pmml.general_regression.BaseCumHazardTables;
+import org.dmg.pmml.general_regression.GeneralRegressionModel;
+import org.dmg.pmml.general_regression.PPCell;
+import org.dmg.pmml.general_regression.PPMatrix;
 import org.jpmml.evaluator.RichBaseCumHazardTables;
 import org.jpmml.evaluator.RichPPCell;
 import org.jpmml.model.visitors.AbstractVisitor;

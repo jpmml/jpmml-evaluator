@@ -26,7 +26,7 @@ import java.util.Set;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.Node;
+import org.dmg.pmml.tree.Node;
 
 public class NodeScoreDistribution extends EntityClassification<Node> implements HasProbability, HasConfidence {
 

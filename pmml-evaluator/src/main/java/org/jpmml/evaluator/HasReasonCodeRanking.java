@@ -20,10 +20,8 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
-import org.dmg.pmml.FeatureType;
-
 /**
- * @see FeatureType#REASON_CODE
+ * @see org.dmg.pmml.ResultFeature#REASON_CODE
  */
 public interface HasReasonCodeRanking extends ResultFeature {
 

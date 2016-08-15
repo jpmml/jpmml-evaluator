@@ -21,9 +21,9 @@ package org.jpmml.evaluator;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.dmg.pmml.CategoricalPredictor;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.regression.CategoricalPredictor;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (

@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.dmg.pmml.LinearNorm;
 import org.dmg.pmml.NormContinuous;
-import org.dmg.pmml.OutlierTreatmentMethodType;
+import org.dmg.pmml.OutlierTreatmentMethod;
 
 public class NormalizationUtil {
 
@@ -75,7 +75,7 @@ public class NormalizationUtil {
 
 		// Deal with outliers
 		{
-			OutlierTreatmentMethodType outlierTreatmentMethod = normContinuous.getOutliers();
+			OutlierTreatmentMethod outlierTreatmentMethod = normContinuous.getOutliers();
 
 			switch(outlierTreatmentMethod){
 				case AS_MISSING_VALUES:

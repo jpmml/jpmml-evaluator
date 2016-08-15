@@ -21,7 +21,7 @@ package org.jpmml.evaluator;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableSet;
-import org.dmg.pmml.Node;
+import org.dmg.pmml.tree.Node;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

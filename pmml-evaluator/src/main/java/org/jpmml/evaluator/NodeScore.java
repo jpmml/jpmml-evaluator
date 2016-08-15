@@ -21,11 +21,11 @@ package org.jpmml.evaluator;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.BiMap;
-import org.dmg.pmml.MiningFunctionType;
-import org.dmg.pmml.Node;
+import org.dmg.pmml.MiningFunction;
+import org.dmg.pmml.tree.Node;
 
 /**
- * @see MiningFunctionType#REGRESSION
+ * @see MiningFunction#REGRESSION
  */
 public class NodeScore implements Computable, HasEntityId, HasEntityRegistry<Node> {
 

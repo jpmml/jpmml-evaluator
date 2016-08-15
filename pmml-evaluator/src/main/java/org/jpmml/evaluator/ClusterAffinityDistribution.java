@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.BiMap;
-import org.dmg.pmml.Cluster;
+import org.dmg.pmml.clustering.Cluster;
 
 public class ClusterAffinityDistribution extends EntityClassification<Cluster> implements HasEntityIdRanking, HasDisplayValue, HasAffinityRanking, HasEntityAffinity {
 

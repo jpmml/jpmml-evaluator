@@ -27,20 +27,20 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.AssociationModel;
-import org.dmg.pmml.ClusteringModel;
-import org.dmg.pmml.GeneralRegressionModel;
-import org.dmg.pmml.MiningModel;
 import org.dmg.pmml.Model;
-import org.dmg.pmml.NaiveBayesModel;
-import org.dmg.pmml.NearestNeighborModel;
-import org.dmg.pmml.NeuralNetwork;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.RegressionModel;
-import org.dmg.pmml.RuleSetModel;
-import org.dmg.pmml.Scorecard;
-import org.dmg.pmml.SupportVectorMachineModel;
-import org.dmg.pmml.TreeModel;
+import org.dmg.pmml.association.AssociationModel;
+import org.dmg.pmml.clustering.ClusteringModel;
+import org.dmg.pmml.general_regression.GeneralRegressionModel;
+import org.dmg.pmml.mining.MiningModel;
+import org.dmg.pmml.naive_bayes.NaiveBayesModel;
+import org.dmg.pmml.nearest_neighbor.NearestNeighborModel;
+import org.dmg.pmml.neural_network.NeuralNetwork;
+import org.dmg.pmml.regression.RegressionModel;
+import org.dmg.pmml.rule_set.RuleSetModel;
+import org.dmg.pmml.scorecard.Scorecard;
+import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
+import org.dmg.pmml.tree.TreeModel;
 
 public class ModelEvaluatorFactory extends ModelManagerFactory<ModelEvaluator<? extends Model>> {
 

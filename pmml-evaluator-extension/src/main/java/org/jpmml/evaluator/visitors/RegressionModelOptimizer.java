@@ -21,9 +21,9 @@ package org.jpmml.evaluator.visitors;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.dmg.pmml.CategoricalPredictor;
-import org.dmg.pmml.RegressionTable;
 import org.dmg.pmml.VisitorAction;
+import org.dmg.pmml.regression.CategoricalPredictor;
+import org.dmg.pmml.regression.RegressionTable;
 import org.jpmml.evaluator.RichCategoricalPredictor;
 import org.jpmml.model.visitors.AbstractVisitor;
 

@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-
 /**
  * <p>
  * A marker interface for classification results that provide a confidence distribution.

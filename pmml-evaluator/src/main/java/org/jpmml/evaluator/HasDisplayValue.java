@@ -18,10 +18,8 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.FeatureType;
-
 /**
- * @see FeatureType#PREDICTED_DISPLAY_VALUE
+ * @see org.dmg.pmml.ResultFeature#PREDICTED_DISPLAY_VALUE
  */
 public interface HasDisplayValue extends ResultFeature {
 

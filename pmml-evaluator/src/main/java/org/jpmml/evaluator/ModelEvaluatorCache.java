@@ -26,15 +26,12 @@ import java.net.URL;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.transform.sax.SAXSource;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.dmg.pmml.PMML;
-import org.jpmml.model.ImportFilter;
-import org.jpmml.model.JAXBUtil;
-import org.xml.sax.InputSource;
+import org.jpmml.model.PMMLUtil;
 import org.xml.sax.SAXException;
 
 public class ModelEvaluatorCache {
@@ -88,12 +85,7 @@ public class ModelEvaluatorCache {
 		PMML pmml;
 
 		try(InputStream is = url.openStream()){
-			InputSource source = new InputSource(is);
-
-			// Transform a PMML schema version 3.X or 4.X document to a PMML schema version 4.2 document
-			SAXSource transformedSource = ImportFilter.apply(source);
-
-			pmml = JAXBUtil.unmarshalPMML(transformedSource);
+			pmml = PMMLUtil.unmarshal(is);
 		}
 
 		pmml = process(pmml);

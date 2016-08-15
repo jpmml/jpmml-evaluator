@@ -45,16 +45,15 @@ import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MiningField;
-import org.dmg.pmml.MiningFunctionType;
-import org.dmg.pmml.MiningModel;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.Model;
-import org.dmg.pmml.MultipleModelMethodType;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
-import org.dmg.pmml.Segment;
-import org.dmg.pmml.Segmentation;
 import org.dmg.pmml.True;
+import org.dmg.pmml.mining.MiningModel;
+import org.dmg.pmml.mining.Segment;
+import org.dmg.pmml.mining.Segmentation;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements MiningModelConsumer, HasEntityRegistry<Segment> {
 
@@ -85,7 +84,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		List<Segment> segments = segmentation.getSegments();
 
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case SELECT_ALL:
 				// Ignored
@@ -102,7 +101,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public MultipleModelMethodType getMultipleModelMethod(){
+	public Segmentation.MultipleModelMethod getMultipleModelMethod(){
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.getSegmentation();
@@ -132,7 +131,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	@Override
 	protected DataField getDataField(){
-		MultipleModelMethodType multipleModelMethod = getMultipleModelMethod();
+		Segmentation.MultipleModelMethod multipleModelMethod = getMultipleModelMethod();
 
 		switch(multipleModelMethod){
 			case SELECT_ALL:
@@ -181,7 +180,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Map<FieldName, ?> predictions;
 
-		MiningFunctionType miningFunction = miningModel.getFunctionName();
+		MiningFunction miningFunction = miningModel.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
 				predictions = evaluateRegression(context);
@@ -231,7 +230,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Classification result;
 
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
@@ -289,7 +288,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private Map<FieldName, ?> evaluateAny(MiningModelEvaluationContext context){
 		List<SegmentResult> segmentResults = evaluateSegmentation(context);
 
-		return getSegmentationResult(Collections.<MultipleModelMethodType>emptySet(), segmentResults);
+		return getSegmentationResult(Collections.<Segmentation.MultipleModelMethod>emptySet(), segmentResults);
 	}
 
 	private List<SegmentResult> evaluateSegmentation(MiningModelEvaluationContext context){
@@ -304,11 +303,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		BiMap<String, Segment> entityRegistry = getEntityRegistry();
 
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		Model lastModel = null;
 
-		MiningFunctionType miningFunction = miningModel.getFunctionName();
+		MiningFunction miningFunction = miningModel.getMiningFunction();
 
 		MiningModelEvaluationContext miningModelContext = null;
 
@@ -342,7 +341,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					lastModel = model;
 					break;
 				default:
-					if(!(miningFunction).equals(model.getFunctionName())){
+					if(!(miningFunction).equals(model.getMiningFunction())){
 						throw new InvalidFeatureException(model);
 					}
 					break;
@@ -447,7 +446,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		// "The model element used inside the last Segment element executed must have the same MINING-FUNCTION"
 		switch(multipleModelMethod){
 			case MODEL_CHAIN:
-				if(lastModel != null && !(miningFunction).equals(lastModel.getFunctionName())){
+				if(lastModel != null && !(miningFunction).equals(lastModel.getMiningFunction())){
 					throw new InvalidFeatureException(lastModel);
 				}
 				break;
@@ -458,12 +457,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return segmentResults;
 	}
 
-	private Map<FieldName, ?> getSegmentationResult(Set<MultipleModelMethodType> multipleModelMethods, List<SegmentResult> segmentResults){
+	private Map<FieldName, ?> getSegmentationResult(Set<Segmentation.MultipleModelMethod> multipleModelMethods, List<SegmentResult> segmentResults){
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case SELECT_ALL:
 				return selectAll(segmentResults);
@@ -587,7 +586,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private Double aggregateValues(Segmentation segmentation, List<SegmentResult> segmentResults){
 		RegressionAggregator aggregator;
 
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case MEDIAN:
 				aggregator = new RegressionAggregator(segmentResults.size());
@@ -639,7 +638,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private Map<String, Double> aggregateVotes(Segmentation segmentation, List<SegmentResult> segmentResults){
 		VoteAggregator<String> aggregator = new VoteAggregator<>();
 
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		for(SegmentResult segmentResult : segmentResults){
 			String key = (String)segmentResult.getTargetValue(DataType.STRING);
@@ -663,7 +662,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private Map<String, Double> aggregateProbabilities(Segmentation segmentation, List<SegmentResult> segmentResults){
 		ProbabilityAggregator aggregator;
 
-		MultipleModelMethodType multipleModelMethod = segmentation.getMultipleModelMethod();
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case MEDIAN:
 				aggregator = new ProbabilityAggregator(segmentResults.size());
@@ -766,9 +765,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 	}
 
-	private static final Set<MultipleModelMethodType> REGRESSION_METHODS = EnumSet.of(MultipleModelMethodType.SUM, MultipleModelMethodType.MEDIAN, MultipleModelMethodType.AVERAGE, MultipleModelMethodType.WEIGHTED_AVERAGE);
-	private static final Set<MultipleModelMethodType> CLASSIFICATION_METHODS = EnumSet.of(MultipleModelMethodType.MAJORITY_VOTE, MultipleModelMethodType.WEIGHTED_MAJORITY_VOTE, MultipleModelMethodType.SUM, MultipleModelMethodType.MEDIAN, MultipleModelMethodType.AVERAGE, MultipleModelMethodType.WEIGHTED_AVERAGE);
-	private static final Set<MultipleModelMethodType> CLUSTERING_METHODS = EnumSet.of(MultipleModelMethodType.MAJORITY_VOTE, MultipleModelMethodType.WEIGHTED_MAJORITY_VOTE);
+	private static final Set<Segmentation.MultipleModelMethod> REGRESSION_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.SUM, Segmentation.MultipleModelMethod.MEDIAN, Segmentation.MultipleModelMethod.AVERAGE, Segmentation.MultipleModelMethod.WEIGHTED_AVERAGE);
+	private static final Set<Segmentation.MultipleModelMethod> CLASSIFICATION_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.MAJORITY_VOTE, Segmentation.MultipleModelMethod.WEIGHTED_MAJORITY_VOTE, Segmentation.MultipleModelMethod.SUM, Segmentation.MultipleModelMethod.MEDIAN, Segmentation.MultipleModelMethod.AVERAGE, Segmentation.MultipleModelMethod.WEIGHTED_AVERAGE);
+	private static final Set<Segmentation.MultipleModelMethod> CLUSTERING_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.MAJORITY_VOTE, Segmentation.MultipleModelMethod.WEIGHTED_MAJORITY_VOTE);
 
 	private static final LoadingCache<MiningModel, BiMap<String, Segment>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<MiningModel, BiMap<String, Segment>>(){
 

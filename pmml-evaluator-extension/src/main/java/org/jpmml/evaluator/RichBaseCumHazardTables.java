@@ -26,10 +26,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.collect.ImmutableMap;
-import org.dmg.pmml.BaseCumHazardTables;
-import org.dmg.pmml.BaselineStratum;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.general_regression.BaseCumHazardTables;
+import org.dmg.pmml.general_regression.BaselineStratum;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (

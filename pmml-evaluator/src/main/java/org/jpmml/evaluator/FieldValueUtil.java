@@ -38,11 +38,11 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.Interval;
-import org.dmg.pmml.InvalidValueTreatmentMethodType;
+import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MiningField;
-import org.dmg.pmml.MissingValueTreatmentMethodType;
+import org.dmg.pmml.MissingValueTreatmentMethod;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.OutlierTreatmentMethodType;
+import org.dmg.pmml.OutlierTreatmentMethod;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TypeDefinitionField;
@@ -108,7 +108,7 @@ public class FieldValueUtil {
 
 	static
 	public FieldValue performValidValueTreatment(Field field, MiningField miningField, Object value){
-		OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
+		OutlierTreatmentMethod outlierTreatmentMethod = miningField.getOutlierTreatment();
 
 		Double lowValue = miningField.getLowValue();
 		Double highValue = miningField.getHighValue();
@@ -164,7 +164,7 @@ public class FieldValueUtil {
 
 	static
 	public FieldValue performInvalidValueTreatment(Field field, MiningField miningField, Object value){
-		InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
+		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
 
 		switch(invalidValueTreatmentMethod){
 			case AS_IS:
@@ -180,10 +180,10 @@ public class FieldValueUtil {
 
 	static
 	public FieldValue performMissingValueTreatment(Field field, MiningField miningField){
-		MissingValueTreatmentMethodType missingValueTreatmentMethod = miningField.getMissingValueTreatment();
+		MissingValueTreatmentMethod missingValueTreatmentMethod = miningField.getMissingValueTreatment();
 
 		if(missingValueTreatmentMethod == null){
-			missingValueTreatmentMethod = MissingValueTreatmentMethodType.AS_IS;
+			missingValueTreatmentMethod = MissingValueTreatmentMethod.AS_IS;
 		}
 
 		switch(missingValueTreatmentMethod){

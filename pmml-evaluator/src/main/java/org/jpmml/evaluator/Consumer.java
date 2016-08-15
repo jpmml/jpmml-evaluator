@@ -34,7 +34,7 @@ import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningField;
-import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.Output;
@@ -56,7 +56,7 @@ public interface Consumer extends Serializable {
 	 * Gets the type of the {@link Model}.
 	 * </p>
 	 */
-	MiningFunctionType getMiningFunction();
+	MiningFunction getMiningFunction();
 
 	/**
 	 * <p>
@@ -78,7 +78,7 @@ public interface Consumer extends Serializable {
 	 * </p>
 	 *
 	 * <p>
-	 * This field set is relevant for {@link MiningFunctionType#ASSOCIATION_RULES association rules} model type only.
+	 * This field set is relevant for {@link MiningFunction#ASSOCIATION_RULES association rules} model type only.
 	 * </p>
 	 */
 	List<FieldName> getGroupFields();
@@ -89,7 +89,7 @@ public interface Consumer extends Serializable {
 	 * </p>
 	 *
 	 * <p>
-	 * This field set is relevant for {@link MiningFunctionType#SEQUENCES sequences} and {@link MiningFunctionType#TIME_SERIES time series} model types.
+	 * This field set is relevant for {@link MiningFunction#SEQUENCES sequences} and {@link MiningFunction#TIME_SERIES time series} model types.
 	 * </p>
 	 */
 	List<FieldName> getOrderFields();

@@ -39,9 +39,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.math3.util.Precision;
-import org.dmg.pmml.BayesInput;
-import org.dmg.pmml.BayesInputs;
-import org.dmg.pmml.BayesOutput;
 import org.dmg.pmml.ContinuousDistribution;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Discretize;
@@ -49,15 +46,19 @@ import org.dmg.pmml.Expression;
 import org.dmg.pmml.Extension;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.GaussianDistribution;
-import org.dmg.pmml.MiningFunctionType;
-import org.dmg.pmml.NaiveBayesModel;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.PairCounts;
 import org.dmg.pmml.PoissonDistribution;
-import org.dmg.pmml.TargetValueCount;
-import org.dmg.pmml.TargetValueCounts;
-import org.dmg.pmml.TargetValueStat;
-import org.dmg.pmml.TargetValueStats;
+import org.dmg.pmml.naive_bayes.BayesInput;
+import org.dmg.pmml.naive_bayes.BayesInputs;
+import org.dmg.pmml.naive_bayes.BayesOutput;
+import org.dmg.pmml.naive_bayes.NaiveBayesModel;
+import org.dmg.pmml.naive_bayes.PairCounts;
+import org.dmg.pmml.naive_bayes.TargetValueCount;
+import org.dmg.pmml.naive_bayes.TargetValueCounts;
+import org.dmg.pmml.naive_bayes.TargetValueStat;
+import org.dmg.pmml.naive_bayes.TargetValueStats;
+
 
 public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
@@ -90,7 +91,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		Map<FieldName, ? extends Classification> predictions;
 
-		MiningFunctionType miningFunction = naiveBayesModel.getFunctionName();
+		MiningFunction miningFunction = naiveBayesModel.getMiningFunction();
 		switch(miningFunction){
 			case CLASSIFICATION:
 				predictions = evaluateClassification(context);

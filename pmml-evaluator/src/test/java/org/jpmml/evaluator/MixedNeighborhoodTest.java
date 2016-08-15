@@ -30,7 +30,7 @@ package org.jpmml.evaluator;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.NearestNeighborModel;
+import org.dmg.pmml.nearest_neighbor.NearestNeighborModel;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

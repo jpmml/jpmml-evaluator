@@ -22,14 +22,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.BiMap;
-import org.dmg.pmml.AssociationRule;
-import org.dmg.pmml.FeatureType;
-import org.dmg.pmml.Item;
-import org.dmg.pmml.Itemset;
 import org.dmg.pmml.OutputField;
+import org.dmg.pmml.association.AssociationRule;
+import org.dmg.pmml.association.Item;
+import org.dmg.pmml.association.Itemset;
 
 /**
- * @see FeatureType#RULE_VALUE
+ * @see org.dmg.pmml.ResultFeature#RULE_VALUE
  */
 public interface HasRuleValues extends ResultFeature {
 

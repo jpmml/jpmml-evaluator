@@ -24,7 +24,7 @@ import java.util.List;
 import org.dmg.pmml.BinarySimilarity;
 import org.dmg.pmml.Chebychev;
 import org.dmg.pmml.CityBlock;
-import org.dmg.pmml.CompareFunctionType;
+import org.dmg.pmml.CompareFunction;
 import org.dmg.pmml.ComparisonField;
 import org.dmg.pmml.ComparisonMeasure;
 import org.dmg.pmml.DataType;
@@ -212,7 +212,7 @@ public class MeasureUtil {
 
 	static
 	private double evaluateInnerFunction(ComparisonMeasure comparisonMeasure, ComparisonField comparisonField, FieldValue value, FieldValue referenceValue, double power){
-		CompareFunctionType compareFunction = comparisonField.getCompareFunction();
+		CompareFunction compareFunction = comparisonField.getCompareFunction();
 
 		if(compareFunction == null){
 			compareFunction = comparisonMeasure.getCompareFunction();

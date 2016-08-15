@@ -20,11 +20,11 @@ package org.jpmml.evaluator.visitors;
 
 import org.dmg.pmml.Array;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.Node;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
-import org.dmg.pmml.TreeModel;
+import org.dmg.pmml.tree.Node;
+import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.HasParsedValue;
 import org.jpmml.evaluator.HasParsedValueSet;
 import org.junit.Test;

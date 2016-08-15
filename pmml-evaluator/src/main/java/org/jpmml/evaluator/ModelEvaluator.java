@@ -56,11 +56,10 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.FieldUsageType;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MiningField;
-import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.ModelVerification;
@@ -89,7 +88,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	private Map<FieldName, MiningField> miningFields = Collections.emptyMap();
 
-	private ListMultimap<EnumSet<FieldUsageType>, FieldName> miningFieldNames = ImmutableListMultimap.of();
+	private ListMultimap<EnumSet<MiningField.FieldUsage>, FieldName> miningFieldNames = ImmutableListMultimap.of();
 
 	private Map<FieldName, DerivedField> localDerivedFields = Collections.emptyMap();
 
@@ -164,7 +163,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	protected DataField getDataField(){
 		Model model = getModel();
 
-		MiningFunctionType miningFunction = model.getFunctionName();
+		MiningFunction miningFunction = model.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
 				return ModelEvaluator.DEFAULT_REGRESSION_TARGET;
@@ -230,7 +229,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	@Override
-	protected List<FieldName> getMiningFields(EnumSet<FieldUsageType> types){
+	protected List<FieldName> getMiningFields(EnumSet<MiningField.FieldUsage> types){
 		List<FieldName> result = this.miningFieldNames.get(types);
 
 		if(result != null){
@@ -284,7 +283,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			throw new EvaluationException();
 		}
 
-		FieldUsageType fieldUsage = miningField.getUsageType();
+		MiningField.FieldUsage fieldUsage = miningField.getFieldUsage();
 		switch(fieldUsage){
 			case ACTIVE:
 			case ORDER:
@@ -453,16 +452,16 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	static
-	private ListMultimap<EnumSet<FieldUsageType>, FieldName> parseMiningFieldNames(List<MiningField> miningFields){
-		Set<EnumSet<FieldUsageType>> keys = ImmutableSet.of(ModelManager.ACTIVE_TYPES, ModelManager.GROUP_TYPES, ModelManager.ORDER_TYPES, ModelManager.TARGET_TYPES);
+	private ListMultimap<EnumSet<MiningField.FieldUsage>, FieldName> parseMiningFieldNames(List<MiningField> miningFields){
+		Set<EnumSet<MiningField.FieldUsage>> keys = ImmutableSet.of(ModelManager.ACTIVE_TYPES, ModelManager.GROUP_TYPES, ModelManager.ORDER_TYPES, ModelManager.TARGET_TYPES);
 
-		ListMultimap<EnumSet<FieldUsageType>, FieldName> result = ArrayListMultimap.create();
+		ListMultimap<EnumSet<MiningField.FieldUsage>, FieldName> result = ArrayListMultimap.create();
 
 		for(MiningField miningField : miningFields){
 
-			for(EnumSet<FieldUsageType> key : keys){
+			for(EnumSet<MiningField.FieldUsage> key : keys){
 
-				if(key.contains(miningField.getUsageType())){
+				if(key.contains(miningField.getFieldUsage())){
 					result.put(key, miningField.getName());
 				}
 			}
@@ -563,10 +562,10 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 	});
 
-	private static final LoadingCache<MiningSchema, ListMultimap<EnumSet<FieldUsageType>, FieldName>> miningFieldNameCache = CacheUtil.buildLoadingCache(new CacheLoader<MiningSchema, ListMultimap<EnumSet<FieldUsageType>, FieldName>>(){
+	private static final LoadingCache<MiningSchema, ListMultimap<EnumSet<MiningField.FieldUsage>, FieldName>> miningFieldNameCache = CacheUtil.buildLoadingCache(new CacheLoader<MiningSchema, ListMultimap<EnumSet<MiningField.FieldUsage>, FieldName>>(){
 
 		@Override
-		public ListMultimap<EnumSet<FieldUsageType>, FieldName> load(MiningSchema miningSchema){
+		public ListMultimap<EnumSet<MiningField.FieldUsage>, FieldName> load(MiningSchema miningSchema){
 			return ImmutableListMultimap.copyOf(parseMiningFieldNames(miningSchema.getMiningFields()));
 		}
 	});

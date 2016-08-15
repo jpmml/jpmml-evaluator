@@ -22,8 +22,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MissingValueStrategyType;
-import org.dmg.pmml.TreeModel;
+import org.dmg.pmml.tree.TreeModel;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -35,14 +34,14 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 	public void nullPrediction() throws Exception {
 		Map<FieldName, ?> arguments = createArguments("outlook", "sunny", "temperature", null, "humidity", null);
 
-		NodeScoreDistribution targetValue = evaluate(MissingValueStrategyType.NULL_PREDICTION, arguments);
+		NodeScoreDistribution targetValue = evaluate(TreeModel.MissingValueStrategy.NULL_PREDICTION, arguments);
 
 		assertNull(targetValue);
 	}
 
 	@Test
 	public void nullPredictionDefault() throws Exception {
-		NodeScoreDistribution targetValue = evaluate(MissingValueStrategyType.NULL_PREDICTION, Collections.<FieldName, FieldValue>emptyMap());
+		NodeScoreDistribution targetValue = evaluate(TreeModel.MissingValueStrategy.NULL_PREDICTION, Collections.<FieldName, FieldValue>emptyMap());
 
 		assertNull(targetValue);
 	}
@@ -51,7 +50,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 	public void lastPrediction() throws Exception {
 		Map<FieldName, ?> arguments = createArguments("outlook", "sunny", "temperature", null, "humidity", null);
 
-		NodeScoreDistribution targetValue = evaluate(MissingValueStrategyType.LAST_PREDICTION, arguments);
+		NodeScoreDistribution targetValue = evaluate(TreeModel.MissingValueStrategy.LAST_PREDICTION, arguments);
 
 		assertEquals("2", targetValue.getEntityId());
 
@@ -62,7 +61,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void lastPredictionDefault() throws Exception {
-		NodeScoreDistribution targetValue = evaluate(MissingValueStrategyType.LAST_PREDICTION, Collections.<FieldName, FieldValue>emptyMap());
+		NodeScoreDistribution targetValue = evaluate(TreeModel.MissingValueStrategy.LAST_PREDICTION, Collections.<FieldName, FieldValue>emptyMap());
 
 		assertEquals("1", targetValue.getEntityId());
 
@@ -75,7 +74,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 	public void defaultChildSinglePenalty() throws Exception {
 		Map<FieldName, ?> arguments = createArguments("outlook", null, "temperature", 40d, "humidity", 70d);
 
-		NodeScoreDistribution targetValue = evaluate(MissingValueStrategyType.DEFAULT_CHILD, 0.8d, arguments);
+		NodeScoreDistribution targetValue = evaluate(TreeModel.MissingValueStrategy.DEFAULT_CHILD, 0.8d, arguments);
 
 		assertEquals("4", targetValue.getEntityId());
 
@@ -94,7 +93,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 	public void defaultChildMultiplePenalties() throws Exception {
 		Map<FieldName, ?> arguments = createArguments("outlook", null, "temperature", null, "humidity", 70d);
 
-		NodeScoreDistribution targetValue = evaluate(MissingValueStrategyType.DEFAULT_CHILD, 0.8d, arguments);
+		NodeScoreDistribution targetValue = evaluate(TreeModel.MissingValueStrategy.DEFAULT_CHILD, 0.8d, arguments);
 
 		assertEquals("3", targetValue.getEntityId());
 
@@ -109,11 +108,11 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 		assertEquals((Double)(0.05d * missingValuePenalty), targetValue.getConfidence("no play"));
 	}
 
-	private NodeScoreDistribution evaluate(MissingValueStrategyType missingValueStrategy, Map<FieldName, ?> arguments) throws Exception {
+	private NodeScoreDistribution evaluate(TreeModel.MissingValueStrategy missingValueStrategy, Map<FieldName, ?> arguments) throws Exception {
 		return evaluate(missingValueStrategy, null, arguments);
 	}
 
-	private NodeScoreDistribution evaluate(MissingValueStrategyType missingValueStrategy, Double missingValuePenalty, Map<FieldName, ?> arguments) throws Exception {
+	private NodeScoreDistribution evaluate(TreeModel.MissingValueStrategy missingValueStrategy, Double missingValuePenalty, Map<FieldName, ?> arguments) throws Exception {
 		TreeModelEvaluator evaluator = (TreeModelEvaluator)createModelEvaluator();
 
 		TreeModel treeModel = evaluator.getModel()

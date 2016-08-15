@@ -30,8 +30,7 @@ package org.jpmml.evaluator;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.NoTrueChildStrategyType;
-import org.dmg.pmml.TreeModel;
+import org.dmg.pmml.tree.TreeModel;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -41,36 +40,36 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void returnNullPrediction() throws Exception {
-		NodeScoreDistribution targetValue = evaluate(NoTrueChildStrategyType.RETURN_NULL_PREDICTION, 0d);
+		NodeScoreDistribution targetValue = evaluate(TreeModel.NoTrueChildStrategy.RETURN_NULL_PREDICTION, 0d);
 
 		assertNull(targetValue);
 
-		targetValue = evaluate(NoTrueChildStrategyType.RETURN_NULL_PREDICTION, 0.5d);
+		targetValue = evaluate(TreeModel.NoTrueChildStrategy.RETURN_NULL_PREDICTION, 0.5d);
 
 		assertNull(targetValue);
 
-		targetValue = evaluate(NoTrueChildStrategyType.RETURN_NULL_PREDICTION, 1d);
+		targetValue = evaluate(TreeModel.NoTrueChildStrategy.RETURN_NULL_PREDICTION, 1d);
 
 		assertEquals("3", targetValue.getEntityId());
 	}
 
 	@Test
 	public void returnLastPrediction() throws Exception {
-		NodeScoreDistribution targetValue = evaluate(NoTrueChildStrategyType.RETURN_LAST_PREDICTION, 0d);
+		NodeScoreDistribution targetValue = evaluate(TreeModel.NoTrueChildStrategy.RETURN_LAST_PREDICTION, 0d);
 
 		// The root Node evaluates to true, but it cannot be returned as a result, because it does not specify a score attribute
 		assertNull(targetValue);
 
-		targetValue = evaluate(NoTrueChildStrategyType.RETURN_LAST_PREDICTION, 0.5d);
+		targetValue = evaluate(TreeModel.NoTrueChildStrategy.RETURN_LAST_PREDICTION, 0.5d);
 
 		assertEquals("2", targetValue.getEntityId());
 
-		targetValue = evaluate(NoTrueChildStrategyType.RETURN_LAST_PREDICTION, 1d);
+		targetValue = evaluate(TreeModel.NoTrueChildStrategy.RETURN_LAST_PREDICTION, 1d);
 
 		assertEquals("3", targetValue.getEntityId());
 	}
 
-	private NodeScoreDistribution evaluate(NoTrueChildStrategyType noTrueChildStrategy, Double value) throws Exception {
+	private NodeScoreDistribution evaluate(TreeModel.NoTrueChildStrategy noTrueChildStrategy, Double value) throws Exception {
 		TreeModelEvaluator evaluator = (TreeModelEvaluator)createModelEvaluator();
 
 		TreeModel treeModel = evaluator.getModel()

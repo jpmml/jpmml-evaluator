@@ -19,10 +19,10 @@
 package org.jpmml.evaluator;
 
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.InvalidValueTreatmentMethodType;
+import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.OutlierTreatmentMethodType;
+import org.dmg.pmml.OutlierTreatmentMethod;
 
 public class MiningFieldUtil {
 
@@ -43,7 +43,7 @@ public class MiningFieldUtil {
 			return false;
 		}
 
-		OutlierTreatmentMethodType outlierTreatmentMethod = miningField.getOutlierTreatment();
+		OutlierTreatmentMethod outlierTreatmentMethod = miningField.getOutlierTreatment();
 		switch(outlierTreatmentMethod){
 			case AS_IS:
 				break;
@@ -51,7 +51,7 @@ public class MiningFieldUtil {
 				return false;
 		}
 
-		InvalidValueTreatmentMethodType invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
+		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
 		switch(invalidValueTreatmentMethod){
 			case RETURN_INVALID:
 				break;

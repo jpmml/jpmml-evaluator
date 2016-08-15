@@ -33,12 +33,12 @@ import java.util.BitSet;
 import java.util.List;
 
 import org.dmg.pmml.BinarySimilarity;
-import org.dmg.pmml.ClusteringField;
 import org.dmg.pmml.ComparisonMeasure;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Jaccard;
 import org.dmg.pmml.SimpleMatching;
 import org.dmg.pmml.Tanimoto;
+import org.dmg.pmml.clustering.ClusteringField;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

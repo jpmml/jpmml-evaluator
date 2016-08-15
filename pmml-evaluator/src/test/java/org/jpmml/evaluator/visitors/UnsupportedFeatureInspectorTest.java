@@ -20,10 +20,10 @@ package org.jpmml.evaluator.visitors;
 
 import java.util.List;
 
-import org.dmg.pmml.ClusteringModel;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.Header;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.clustering.ClusteringModel;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.junit.Test;
 

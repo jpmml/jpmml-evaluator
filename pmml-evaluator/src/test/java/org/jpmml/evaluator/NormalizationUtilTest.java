@@ -21,7 +21,7 @@ package org.jpmml.evaluator;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LinearNorm;
 import org.dmg.pmml.NormContinuous;
-import org.dmg.pmml.OutlierTreatmentMethodType;
+import org.dmg.pmml.OutlierTreatmentMethod;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -46,13 +46,13 @@ public class NormalizationUtilTest {
 		assertEquals(interpolate(-1d, BEGIN, MIDPOINT), NormalizationUtil.normalize(normContinuous, -1d), 1e-8);
 		assertEquals(interpolate(12.2d, MIDPOINT, END), NormalizationUtil.normalize(normContinuous, 12.2d), 1e-8);
 
-		normContinuous.setOutliers(OutlierTreatmentMethodType.AS_MISSING_VALUES)
+		normContinuous.setOutliers(OutlierTreatmentMethod.AS_MISSING_VALUES)
 			.setMapMissingTo(0.5d);
 
 		assertEquals(0.5d, NormalizationUtil.normalize(normContinuous, -1d), 1e-8);
 		assertEquals(0.5d, NormalizationUtil.normalize(normContinuous, 12.2d), 1e-8);
 
-		normContinuous.setOutliers(OutlierTreatmentMethodType.AS_EXTREME_VALUES);
+		normContinuous.setOutliers(OutlierTreatmentMethod.AS_EXTREME_VALUES);
 
 		assertEquals(BEGIN[1], NormalizationUtil.normalize(normContinuous, -1d), 1e-8);
 		assertEquals(END[1], NormalizationUtil.normalize(normContinuous, 12.2d), 1e-8);

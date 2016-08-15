@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.collect.ImmutableMap;
-import org.dmg.pmml.BayesInput;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.PairCounts;
-import org.dmg.pmml.TargetValueCounts;
+import org.dmg.pmml.naive_bayes.BayesInput;
+import org.dmg.pmml.naive_bayes.PairCounts;
+import org.dmg.pmml.naive_bayes.TargetValueCounts;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (

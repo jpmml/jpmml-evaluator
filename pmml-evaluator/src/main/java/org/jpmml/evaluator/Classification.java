@@ -33,11 +33,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningFunction;
 
 /**
- * @see MiningFunctionType#CLASSIFICATION
- * @see MiningFunctionType#CLUSTERING
+ * @see MiningFunction#CLASSIFICATION
+ * @see MiningFunction#CLUSTERING
  */
 public class Classification implements Computable {
 

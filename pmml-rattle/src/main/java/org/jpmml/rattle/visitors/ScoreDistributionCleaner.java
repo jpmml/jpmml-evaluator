@@ -23,12 +23,12 @@ import java.util.List;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
-import org.dmg.pmml.MiningFunctionType;
-import org.dmg.pmml.Node;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.ScoreDistribution;
-import org.dmg.pmml.TreeModel;
 import org.dmg.pmml.VisitorAction;
+import org.dmg.pmml.tree.Node;
+import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 public class ScoreDistributionCleaner extends AbstractVisitor {
@@ -37,7 +37,7 @@ public class ScoreDistributionCleaner extends AbstractVisitor {
 	public VisitorAction visit(Node node){
 		TreeModel treeModel = getTreeModel();
 
-		MiningFunctionType miningFunction = treeModel.getFunctionName();
+		MiningFunction miningFunction = treeModel.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
 				if(node.hasScoreDistributions()){

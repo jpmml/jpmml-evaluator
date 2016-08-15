@@ -31,14 +31,12 @@ import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MiningFunctionType;
-import org.dmg.pmml.MissingValueStrategyType;
-import org.dmg.pmml.NoTrueChildStrategyType;
-import org.dmg.pmml.Node;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.ScoreDistribution;
-import org.dmg.pmml.TreeModel;
+import org.dmg.pmml.tree.Node;
+import org.dmg.pmml.tree.TreeModel;
 
 public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements HasEntityRegistry<Node> {
 
@@ -78,7 +76,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		Map<FieldName, ?> predictions;
 
-		MiningFunctionType miningFunction = treeModel.getFunctionName();
+		MiningFunction miningFunction = treeModel.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
 				predictions = evaluateRegression(context);
@@ -246,7 +244,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	private Trail handleNoTrueChild(Trail trail){
 		TreeModel treeModel = getModel();
 
-		NoTrueChildStrategyType noTrueChildStrategy = treeModel.getNoTrueChildStrategy();
+		TreeModel.NoTrueChildStrategy noTrueChildStrategy = treeModel.getNoTrueChildStrategy();
 		switch(noTrueChildStrategy){
 			case RETURN_NULL_PREDICTION:
 				return trail.selectNull();
@@ -270,7 +268,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	private Trail handleMissingValue(Trail trail, Node parent, Node node, EvaluationContext context){
 		TreeModel treeModel = getModel();
 
-		MissingValueStrategyType missingValueStrategy = treeModel.getMissingValueStrategy();
+		TreeModel.MissingValueStrategy missingValueStrategy = treeModel.getMissingValueStrategy();
 		switch(missingValueStrategy){
 			case NULL_PREDICTION:
 				return trail.selectNull();

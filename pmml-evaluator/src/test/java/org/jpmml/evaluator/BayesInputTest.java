@@ -20,7 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
-import org.dmg.pmml.BayesInput;
+import org.dmg.pmml.naive_bayes.BayesInput;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

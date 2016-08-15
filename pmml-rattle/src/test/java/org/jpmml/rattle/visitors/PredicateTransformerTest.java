@@ -21,10 +21,10 @@ package org.jpmml.rattle.visitors;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.Node;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
+import org.dmg.pmml.tree.Node;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

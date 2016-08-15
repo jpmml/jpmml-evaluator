@@ -18,7 +18,7 @@
  */
 
 @XmlSchema (
-	namespace = "http://www.dmg.org/PMML-4_2",
+	namespace = "http://www.dmg.org/PMML-4_3",
 	elementFormDefault = XmlNsForm.UNQUALIFIED
 )
 package org.jpmml.evaluator;

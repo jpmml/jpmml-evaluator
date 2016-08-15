@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.PPCell;
+import org.dmg.pmml.general_regression.PPCell;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (

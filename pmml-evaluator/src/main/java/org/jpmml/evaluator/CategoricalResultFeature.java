@@ -20,8 +20,9 @@ package org.jpmml.evaluator;
 
 import java.util.Set;
 
-import org.dmg.pmml.ClusteringModel;
-import org.dmg.pmml.NearestNeighborModel;
+import org.dmg.pmml.clustering.Cluster;
+import org.dmg.pmml.clustering.ClusteringModel;
+import org.dmg.pmml.nearest_neighbor.NearestNeighborModel;
 
 /**
  * <p>

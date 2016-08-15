@@ -38,28 +38,26 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import org.dmg.pmml.ActivationFunctionType;
-import org.dmg.pmml.Connection;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Entity;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
-import org.dmg.pmml.MiningFunctionType;
-import org.dmg.pmml.NeuralInput;
-import org.dmg.pmml.NeuralInputs;
-import org.dmg.pmml.NeuralLayer;
-import org.dmg.pmml.NeuralNetwork;
-import org.dmg.pmml.NeuralOutput;
-import org.dmg.pmml.NeuralOutputs;
-import org.dmg.pmml.Neuron;
-import org.dmg.pmml.NnNormalizationMethodType;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.TypeDefinitionField;
+import org.dmg.pmml.neural_network.Connection;
+import org.dmg.pmml.neural_network.NeuralInput;
+import org.dmg.pmml.neural_network.NeuralInputs;
+import org.dmg.pmml.neural_network.NeuralLayer;
+import org.dmg.pmml.neural_network.NeuralNetwork;
+import org.dmg.pmml.neural_network.NeuralOutput;
+import org.dmg.pmml.neural_network.NeuralOutputs;
+import org.dmg.pmml.neural_network.Neuron;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<Entity> {
 
@@ -99,7 +97,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		Map<FieldName, ?> predictions;
 
-		MiningFunctionType miningFunction = neuralNetwork.getFunctionName();
+		MiningFunction miningFunction = neuralNetwork.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
 				predictions = evaluateRegression(context);
@@ -341,7 +339,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		PMMLObject locatable = neuralLayer;
 
-		NnNormalizationMethodType normalizationMethod = neuralLayer.getNormalizationMethod();
+		NeuralNetwork.NormalizationMethod normalizationMethod = neuralLayer.getNormalizationMethod();
 		if(normalizationMethod == null){
 			locatable = neuralNetwork;
 
@@ -367,7 +365,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		PMMLObject locatable = neuralLayer;
 
-		ActivationFunctionType activationFunction = neuralLayer.getActivationFunction();
+		NeuralNetwork.ActivationFunction activationFunction = neuralLayer.getActivationFunction();
 		if(activationFunction == null){
 			locatable = neuralNetwork;
 

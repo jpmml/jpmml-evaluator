@@ -29,18 +29,18 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
 import org.dmg.pmml.Array;
-import org.dmg.pmml.CenterFields;
-import org.dmg.pmml.Cluster;
-import org.dmg.pmml.ClusteringField;
-import org.dmg.pmml.ClusteringModel;
 import org.dmg.pmml.ComparisonMeasure;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Measure;
-import org.dmg.pmml.MiningFunctionType;
-import org.dmg.pmml.MissingValueWeights;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
+import org.dmg.pmml.clustering.CenterFields;
+import org.dmg.pmml.clustering.Cluster;
+import org.dmg.pmml.clustering.ClusteringField;
+import org.dmg.pmml.clustering.ClusteringModel;
+import org.dmg.pmml.clustering.MissingValueWeights;
 
 public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> implements HasEntityRegistry<Cluster> {
 
@@ -88,7 +88,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 		Map<FieldName, ClusterAffinityDistribution> predictions;
 
-		MiningFunctionType miningFunction = clusteringModel.getFunctionName();
+		MiningFunction miningFunction = clusteringModel.getMiningFunction();
 		switch(miningFunction){
 			case CLUSTERING:
 				predictions = evaluateClustering(context);

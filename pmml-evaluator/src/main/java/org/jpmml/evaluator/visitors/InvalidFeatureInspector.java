@@ -25,21 +25,21 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
-import org.dmg.pmml.AssociationModel;
-import org.dmg.pmml.ClusteringModel;
-import org.dmg.pmml.Coefficients;
 import org.dmg.pmml.DataDictionary;
-import org.dmg.pmml.Itemset;
-import org.dmg.pmml.NeuralInputs;
-import org.dmg.pmml.NeuralLayer;
-import org.dmg.pmml.NeuralNetwork;
-import org.dmg.pmml.NeuralOutputs;
 import org.dmg.pmml.PMMLObject;
-import org.dmg.pmml.SupportVectors;
-import org.dmg.pmml.VectorDictionary;
-import org.dmg.pmml.VectorFields;
 import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
+import org.dmg.pmml.association.AssociationModel;
+import org.dmg.pmml.association.Itemset;
+import org.dmg.pmml.clustering.ClusteringModel;
+import org.dmg.pmml.neural_network.NeuralInputs;
+import org.dmg.pmml.neural_network.NeuralLayer;
+import org.dmg.pmml.neural_network.NeuralNetwork;
+import org.dmg.pmml.neural_network.NeuralOutputs;
+import org.dmg.pmml.support_vector_machine.Coefficients;
+import org.dmg.pmml.support_vector_machine.SupportVectors;
+import org.dmg.pmml.support_vector_machine.VectorDictionary;
+import org.dmg.pmml.support_vector_machine.VectorFields;
 import org.jpmml.evaluator.InvalidFeatureException;
 import org.jpmml.model.ReflectionUtil;
 
@@ -329,7 +329,7 @@ public class InvalidFeatureInspector extends FeatureInspector<InvalidFeatureExce
 
 			@Override
 			public Collection<?> getCollection(){
-				return vectorFields.getFieldRefs();
+				return vectorFields.getContent();
 			}
 		});
 

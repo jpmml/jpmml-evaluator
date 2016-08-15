@@ -25,6 +25,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
+import org.jpmml.model.PMMLUtil;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -55,7 +56,7 @@ public class ModelEvaluatorTest extends PMMLManagerTest {
 
 	static
 	public ModelEvaluator<?> createModelEvaluator(InputStream is, ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
-		PMML pmml = loadPMML(is);
+		PMML pmml = PMMLUtil.unmarshal(is);
 
 		assertNull(pmml.getLocator());
 

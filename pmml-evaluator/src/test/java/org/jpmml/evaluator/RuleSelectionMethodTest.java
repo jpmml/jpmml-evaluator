@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.RuleSelectionMethod;
-import org.dmg.pmml.RuleSet;
-import org.dmg.pmml.RuleSetModel;
+import org.dmg.pmml.rule_set.RuleSelectionMethod;
+import org.dmg.pmml.rule_set.RuleSet;
+import org.dmg.pmml.rule_set.RuleSetModel;
 
 abstract
 public class RuleSelectionMethodTest extends ModelEvaluatorTest {

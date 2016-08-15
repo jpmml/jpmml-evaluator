@@ -18,12 +18,12 @@
  */
 package org.jpmml.rattle.visitors;
 
-import org.dmg.pmml.MiningFunctionType;
+import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
-import org.dmg.pmml.Node;
 import org.dmg.pmml.ScoreDistribution;
-import org.dmg.pmml.TreeModel;
 import org.dmg.pmml.True;
+import org.dmg.pmml.tree.Node;
+import org.dmg.pmml.tree.TreeModel;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -38,14 +38,14 @@ public class ScoreDistributionCleanerTest {
 			.setScore("1")
 			.addScoreDistributions(new ScoreDistribution("0", 0), new ScoreDistribution("1", 100));
 
-		TreeModel treeModel = new TreeModel(MiningFunctionType.CLASSIFICATION, new MiningSchema(), node);
+		TreeModel treeModel = new TreeModel(MiningFunction.CLASSIFICATION, new MiningSchema(), node);
 
 		ScoreDistributionCleaner cleaner = new ScoreDistributionCleaner();
 		cleaner.applyTo(treeModel);
 
 		assertTrue(node.hasScoreDistributions());
 
-		treeModel.setFunctionName(MiningFunctionType.REGRESSION);
+		treeModel.setMiningFunction(MiningFunction.REGRESSION);
 
 		cleaner.applyTo(treeModel);
 
