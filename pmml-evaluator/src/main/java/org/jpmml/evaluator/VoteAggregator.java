@@ -26,9 +26,9 @@ import java.util.Set;
 
 import com.google.common.base.Function;
 
-class VoteAggregator<K> extends ClassificationAggregator<K> {
+public class VoteAggregator<K> extends ClassificationAggregator<K> {
 
-	VoteAggregator(){
+	public VoteAggregator(){
 		super(0);
 	}
 

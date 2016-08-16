@@ -42,7 +42,7 @@ public class EvaluationContext {
 	abstract
 	protected FieldValue createFieldValue(FieldName name, Object value);
 
-	void reset(){
+	protected void reset(){
 		this.fields.clear();
 
 		if(this.warnings != null){
@@ -96,7 +96,7 @@ public class EvaluationContext {
 		return value;
 	}
 
-	protected void declareAll(Map<FieldName, ?> values){
+	public void declareAll(Map<FieldName, ?> values){
 		Collection<? extends Map.Entry<FieldName, ?>> entries = values.entrySet();
 
 		for(Map.Entry<FieldName, ?> entry : entries){

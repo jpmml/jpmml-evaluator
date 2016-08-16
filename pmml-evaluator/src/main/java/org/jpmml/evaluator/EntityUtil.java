@@ -60,7 +60,7 @@ public class EntityUtil {
 	}
 
 	static
-	<E extends Entity> ImmutableBiMap.Builder<String, E> put(E entity, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
+	public <E extends Entity> ImmutableBiMap.Builder<String, E> put(E entity, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
 		String implicitId = String.valueOf(index.getAndIncrement());
 
 		String id = entity.getId();
@@ -72,7 +72,7 @@ public class EntityUtil {
 	}
 
 	static
-	<E extends Entity> ImmutableBiMap.Builder<String, E> putAll(List<E> entities, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
+	public <E extends Entity> ImmutableBiMap.Builder<String, E> putAll(List<E> entities, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
 
 		for(E entity : entities){
 			builder = put(entity, index, builder);

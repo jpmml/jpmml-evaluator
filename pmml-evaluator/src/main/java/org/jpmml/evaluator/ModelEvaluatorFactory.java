@@ -41,6 +41,18 @@ import org.dmg.pmml.rule_set.RuleSetModel;
 import org.dmg.pmml.scorecard.Scorecard;
 import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
 import org.dmg.pmml.tree.TreeModel;
+import org.jpmml.evaluator.association.AssociationModelEvaluator;
+import org.jpmml.evaluator.clustering.ClusteringModelEvaluator;
+import org.jpmml.evaluator.general_regression.GeneralRegressionModelEvaluator;
+import org.jpmml.evaluator.mining.MiningModelEvaluator;
+import org.jpmml.evaluator.naive_bayes.NaiveBayesModelEvaluator;
+import org.jpmml.evaluator.nearest_neighbor.NearestNeighborModelEvaluator;
+import org.jpmml.evaluator.neural_network.NeuralNetworkEvaluator;
+import org.jpmml.evaluator.regression.RegressionModelEvaluator;
+import org.jpmml.evaluator.rule_set.RuleSetModelEvaluator;
+import org.jpmml.evaluator.scorecard.ScorecardEvaluator;
+import org.jpmml.evaluator.support_vector_machine.SupportVectorMachineModelEvaluator;
+import org.jpmml.evaluator.tree.TreeModelEvaluator;
 
 public class ModelEvaluatorFactory extends ModelManagerFactory<ModelEvaluator<? extends Model>> {
 

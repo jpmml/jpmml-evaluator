@@ -44,6 +44,8 @@ import org.dmg.pmml.association.Item;
 import org.dmg.pmml.association.ItemRef;
 import org.dmg.pmml.association.Itemset;
 import org.dmg.pmml.mining.MiningModel;
+import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
+import org.jpmml.evaluator.mining.SegmentResult;
 
 public class OutputUtil {
 

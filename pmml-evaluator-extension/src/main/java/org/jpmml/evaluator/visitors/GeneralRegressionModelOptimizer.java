@@ -26,8 +26,8 @@ import org.dmg.pmml.general_regression.BaseCumHazardTables;
 import org.dmg.pmml.general_regression.GeneralRegressionModel;
 import org.dmg.pmml.general_regression.PPCell;
 import org.dmg.pmml.general_regression.PPMatrix;
-import org.jpmml.evaluator.RichBaseCumHazardTables;
-import org.jpmml.evaluator.RichPPCell;
+import org.jpmml.evaluator.general_regression.RichBaseCumHazardTables;
+import org.jpmml.evaluator.general_regression.RichPPCell;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 public class GeneralRegressionModelOptimizer extends AbstractVisitor {

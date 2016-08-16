@@ -18,12 +18,17 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Map;
 import java.util.Set;
 
 public class VoteDistribution extends Classification implements HasProbability {
 
 	public VoteDistribution(){
 		super(Type.VOTE);
+	}
+
+	public VoteDistribution(Map<String, Double> votes){
+		super(Type.VOTE, votes);
 	}
 
 	@Override

@@ -24,7 +24,7 @@ import java.util.ListIterator;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.regression.CategoricalPredictor;
 import org.dmg.pmml.regression.RegressionTable;
-import org.jpmml.evaluator.RichCategoricalPredictor;
+import org.jpmml.evaluator.regression.RichCategoricalPredictor;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 public class RegressionModelOptimizer extends AbstractVisitor {

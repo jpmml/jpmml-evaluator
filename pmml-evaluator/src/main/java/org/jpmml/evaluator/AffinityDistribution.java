@@ -35,14 +35,14 @@ import org.dmg.pmml.DataType;
 
 public class AffinityDistribution extends Classification implements HasEntityIdRanking, HasAffinityRanking, HasEntityAffinity {
 
-	protected AffinityDistribution(Type type, Object result){
+	public AffinityDistribution(Type type, Object result){
 		super(AffinityDistribution.validateType(type));
 
 		setResult(result);
 	}
 
 	@Override
-	void computeResult(DataType dataType){
+	public void computeResult(DataType dataType){
 		throw new UnsupportedOperationException();
 	}
 
@@ -82,7 +82,7 @@ public class AffinityDistribution extends Classification implements HasEntityIdR
 	}
 
 	static
-	protected Type validateType(Type type){
+	public Type validateType(Type type){
 
 		switch(type){
 			case DISTANCE:

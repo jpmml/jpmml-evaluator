@@ -18,16 +18,16 @@
  */
 package org.jpmml.evaluator;
 
-class RegressionAggregator {
+public class RegressionAggregator {
 
 	private DoubleVector values = null;
 
 
-	RegressionAggregator(){
+	public RegressionAggregator(){
 		this(0);
 	}
 
-	RegressionAggregator(int capacity){
+	public RegressionAggregator(int capacity){
 		this.values = new DoubleVector(capacity);
 	}
 

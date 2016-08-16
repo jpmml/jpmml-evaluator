@@ -47,7 +47,7 @@ public class PMMLException extends RuntimeException {
 		setContext(context);
 	}
 
-	void ensureContext(PMMLObject parentContext){
+	public void ensureContext(PMMLObject parentContext){
 		PMMLObject context = getContext();
 
 		if(context == null){

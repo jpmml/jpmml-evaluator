@@ -25,7 +25,7 @@ import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.BatchUtil;
 import org.jpmml.evaluator.IntegrationTest;
-import org.jpmml.evaluator.NodeScoreDistribution;
+import org.jpmml.evaluator.tree.NodeScoreDistribution;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -24,7 +24,7 @@ import java.util.ListIterator;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.naive_bayes.BayesInput;
 import org.dmg.pmml.naive_bayes.BayesInputs;
-import org.jpmml.evaluator.RichBayesInput;
+import org.jpmml.evaluator.naive_bayes.RichBayesInput;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 public class NaiveBayesModelOptimizer extends AbstractVisitor {

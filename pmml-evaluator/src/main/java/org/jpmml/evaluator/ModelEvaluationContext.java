@@ -28,6 +28,7 @@ import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OutputField;
+import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
 
 public class ModelEvaluationContext extends EvaluationContext {
 
@@ -43,11 +44,11 @@ public class ModelEvaluationContext extends EvaluationContext {
 	private boolean compatible = false;
 
 
-	ModelEvaluationContext(ModelEvaluator<?> modelEvaluator){
+	public ModelEvaluationContext(ModelEvaluator<?> modelEvaluator){
 		this(null, modelEvaluator);
 	}
 
-	ModelEvaluationContext(MiningModelEvaluationContext parent, ModelEvaluator<?> modelEvaluator){
+	public ModelEvaluationContext(MiningModelEvaluationContext parent, ModelEvaluator<?> modelEvaluator){
 		setParent(parent);
 		setModelEvaluator(modelEvaluator);
 	}
@@ -60,7 +61,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	void reset(){
+	public void reset(){
 		super.reset();
 
 		this.arguments = Collections.emptyMap();
@@ -68,7 +69,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 		this.compatible = false;
 	}
 
-	void reset(ModelEvaluator<?> modelEvaluator){
+	public void reset(ModelEvaluator<?> modelEvaluator){
 		reset();
 
 		setModelEvaluator(modelEvaluator);
@@ -170,19 +171,19 @@ public class ModelEvaluationContext extends EvaluationContext {
 		this.modelEvaluator = modelEvaluator;
 	}
 
-	Map<FieldName, ?> getArguments(){
+	public Map<FieldName, ?> getArguments(){
 		return this.arguments;
 	}
 
-	void setArguments(Map<FieldName, ?> arguments){
+	public void setArguments(Map<FieldName, ?> arguments){
 		this.arguments = arguments;
 	}
 
-	boolean isCompatible(){
+	public boolean isCompatible(){
 		return this.compatible;
 	}
 
-	void setCompatible(boolean compatible){
+	public void setCompatible(boolean compatible){
 		MiningModelEvaluationContext parent = getParent();
 
 		if(parent == null){

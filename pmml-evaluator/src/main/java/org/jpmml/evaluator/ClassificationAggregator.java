@@ -25,14 +25,14 @@ import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
 abstract
-class ClassificationAggregator<K> {
+public class ClassificationAggregator<K> {
 
 	private Map<K, DoubleVector> map = new LinkedHashMap<>();
 
 	private int capacity = 0;
 
 
-	ClassificationAggregator(int capacity){
+	public ClassificationAggregator(int capacity){
 		this.capacity = capacity;
 	}
 

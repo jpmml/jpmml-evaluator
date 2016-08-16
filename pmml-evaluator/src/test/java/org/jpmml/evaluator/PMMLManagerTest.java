@@ -84,7 +84,13 @@ public class PMMLManagerTest {
 
 	static
 	public InputStream getInputStream(Class<? extends PMMLManagerTest> clazz){
-		return clazz.getResourceAsStream("/pmml/" + clazz.getSimpleName() + ".pmml");
+		String name = clazz.getName();
+
+		if(name.startsWith("org.jpmml.evaluator.")){
+			name = name.substring("org.jpmml.evaluator.".length());
+		}
+
+		return clazz.getResourceAsStream("/pmml/" + name.replace('.', '/') + ".pmml");
 	}
 
 	static

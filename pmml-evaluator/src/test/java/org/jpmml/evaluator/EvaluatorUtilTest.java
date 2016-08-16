@@ -28,6 +28,9 @@ import java.util.Map;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
+import org.jpmml.evaluator.association.StandardAssociationSchemaTest;
+import org.jpmml.evaluator.clustering.RankingTest;
+import org.jpmml.evaluator.nearest_neighbor.MixedNeighborhoodTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

@@ -25,7 +25,7 @@ import org.dmg.pmml.Entity;
 
 public class EntityProbabilityDistribution<E extends Entity> extends EntityClassification<E> implements HasProbability {
 
-	protected EntityProbabilityDistribution(BiMap<String, E> entityRegistry){
+	public EntityProbabilityDistribution(BiMap<String, E> entityRegistry){
 		super(Type.PROBABILITY, entityRegistry);
 	}
 

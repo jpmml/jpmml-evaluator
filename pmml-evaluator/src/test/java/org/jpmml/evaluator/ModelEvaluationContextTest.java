@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
+import org.jpmml.evaluator.mining.FieldScopeTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

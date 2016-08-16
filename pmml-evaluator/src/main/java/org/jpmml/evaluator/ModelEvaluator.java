@@ -405,7 +405,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return evaluate(context);
 	}
 
-	TypeDefinitionField resolveField(FieldName name){
+	protected TypeDefinitionField resolveField(FieldName name){
 		TypeDefinitionField result = getDataField(name);
 
 		if(result == null){
@@ -415,7 +415,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return result;
 	}
 
-	DerivedField resolveDerivedField(FieldName name){
+	protected DerivedField resolveDerivedField(FieldName name){
 		DerivedField result = getDerivedField(name);
 
 		if(result == null){
@@ -438,7 +438,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	static
-	<M extends Model> M selectModel(PMML pmml, Class<? extends M> clazz){
+	protected <M extends Model> M selectModel(PMML pmml, Class<? extends M> clazz){
 		List<Model> models = pmml.getModels();
 
 		Iterable<? extends M> filteredModels = Iterables.filter(models, clazz);

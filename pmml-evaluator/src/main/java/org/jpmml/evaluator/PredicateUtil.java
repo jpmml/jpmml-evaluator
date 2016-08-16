@@ -171,7 +171,7 @@ public class PredicateUtil {
 	}
 
 	static
-	CompoundPredicateResult evaluateCompoundPredicateInternal(CompoundPredicate compoundPredicate, EvaluationContext context){
+	public CompoundPredicateResult evaluateCompoundPredicateInternal(CompoundPredicate compoundPredicate, EvaluationContext context){
 		List<Predicate> predicates = compoundPredicate.getPredicates();
 		if(predicates.size() < 2){
 			throw new InvalidFeatureException(compoundPredicate);
@@ -291,7 +291,7 @@ public class PredicateUtil {
 	}
 
 	static
-	class CompoundPredicateResult {
+	public class CompoundPredicateResult {
 
 		private Boolean result = null;
 

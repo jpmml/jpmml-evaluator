@@ -62,7 +62,7 @@ public class EntityClassification<E extends Entity> extends Classification imple
 		return helper;
 	}
 
-	Double put(E entity, String key, Double value){
+	public Double put(E entity, String key, Double value){
 		Type type = getType();
 
 		if(this.entityValue == null || type.compare(value, this.entityValue) > 0){
@@ -78,7 +78,7 @@ public class EntityClassification<E extends Entity> extends Classification imple
 		return this.entity;
 	}
 
-	void setEntity(E entity){
+	protected void setEntity(E entity){
 		this.entity = entity;
 	}
 }

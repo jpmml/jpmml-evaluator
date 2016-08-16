@@ -41,15 +41,23 @@ import org.dmg.pmml.MiningFunction;
  */
 public class Classification implements Computable {
 
-	private Map<String, Double> map = new LinkedHashMap<>();
+	private Map<String, Double> map = null;
 
 	private Object result = null;
 
 	private Type type = null;
 
 
-	protected Classification(Type type){
+	public Classification(Type type){
 		setType(type);
+
+		this.map = new LinkedHashMap<>();
+	}
+
+	public Classification(Type type, Map<String, Double> values){
+		setType(type);
+
+		this.map = new LinkedHashMap<>(values);
 	}
 
 	@Override
@@ -62,7 +70,7 @@ public class Classification implements Computable {
 		return this.result;
 	}
 
-	void computeResult(DataType dataType){
+	public void computeResult(DataType dataType){
 		Map.Entry<String, Double> entry = getWinner();
 		if(entry == null){
 			throw new EvaluationException();
@@ -73,7 +81,7 @@ public class Classification implements Computable {
 		setResult(result);
 	}
 
-	void setResult(Object result){
+	protected void setResult(Object result){
 		this.result = result;
 	}
 
@@ -92,7 +100,7 @@ public class Classification implements Computable {
 		return helper;
 	}
 
-	Double get(String key){
+	public Double get(String key){
 		Double value = this.map.get(key);
 
 		// The specified value was not encountered during scoring
@@ -105,47 +113,43 @@ public class Classification implements Computable {
 		return value;
 	}
 
-	Double put(String key, Double value){
+	public Double put(String key, Double value){
 		return this.map.put(key, value);
 	}
 
-	void putAll(Map<String, Double> values){
-		this.map.putAll(values);
-	}
-
-	boolean isEmpty(){
+	protected boolean isEmpty(){
 		return this.map.isEmpty();
 	}
 
-	Map.Entry<String, Double> getWinner(){
+	protected Map.Entry<String, Double> getWinner(){
 		return getWinner(getType(), entrySet());
 	}
 
-	List<Map.Entry<String, Double>> getWinnerRanking(){
+	protected List<Map.Entry<String, Double>> getWinnerRanking(){
 		return getWinnerList(getType(), entrySet());
 	}
 
-	List<String> getWinnerKeys(){
+	protected List<String> getWinnerKeys(){
 		return entryKeys(getWinnerRanking());
 	}
 
-	List<Double> getWinnerValues(){
+	protected List<Double> getWinnerValues(){
 		return entryValues(getWinnerRanking());
 	}
 
-	Double sumValues(){
+	protected Double sumValues(){
 		return sum(this.map);
 	}
 
-	void normalizeValues(){
+	protected void normalizeValues(){
 		normalize(this.map);
 	}
 
-	Set<String> keySet(){
+	protected Set<String> keySet(){
 		return this.map.keySet();
 	}
 
-	Set<Map.Entry<String, Double>> entrySet(){
+	protected Set<Map.Entry<String, Double>> entrySet(){
 		return this.map.entrySet();
 	}
 
@@ -158,7 +162,7 @@ public class Classification implements Computable {
 	}
 
 	static
-	Map.Entry<String, Double> getWinner(Type type, Collection<Map.Entry<String, Double>> entries){
+	public Map.Entry<String, Double> getWinner(Type type, Collection<Map.Entry<String, Double>> entries){
 		Ordering<Map.Entry<String, Double>> ordering = createOrdering(type);
 
 		try {
@@ -169,14 +173,14 @@ public class Classification implements Computable {
 	}
 
 	static
-	List<Map.Entry<String, Double>> getWinnerList(Type type, Collection<Map.Entry<String, Double>> entries){
+	public List<Map.Entry<String, Double>> getWinnerList(Type type, Collection<Map.Entry<String, Double>> entries){
 		Ordering<Map.Entry<String, Double>> ordering = (createOrdering(type)).reverse();
 
 		return ordering.sortedCopy(entries);
 	}
 
 	static
-	Ordering<Map.Entry<String, Double>> createOrdering(final Type type){
+	protected Ordering<Map.Entry<String, Double>> createOrdering(final Type type){
 		Comparator<Map.Entry<String, Double>> comparator = new Comparator<Map.Entry<String, Double>>(){
 
 			@Override
@@ -319,7 +323,7 @@ public class Classification implements Computable {
 			return range.contains(value);
 		}
 
-		protected String entryKey(){
+		public String entryKey(){
 			String name = name();
 
 			return (name.toLowerCase() + "_entries");

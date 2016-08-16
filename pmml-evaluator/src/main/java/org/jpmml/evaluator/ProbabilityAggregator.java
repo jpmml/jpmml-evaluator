@@ -23,13 +23,13 @@ import java.util.Set;
 
 import com.google.common.base.Function;
 
-class ProbabilityAggregator extends ClassificationAggregator<String> {
+public class ProbabilityAggregator extends ClassificationAggregator<String> {
 
-	ProbabilityAggregator(){
+	public ProbabilityAggregator(){
 		this(0);
 	}
 
-	ProbabilityAggregator(int capacity){
+	public ProbabilityAggregator(int capacity){
 		super(capacity);
 	}
 

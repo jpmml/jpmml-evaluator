@@ -53,7 +53,7 @@ public class TargetUtil {
 	}
 
 	static
-	Object evaluateRegressionInternal(FieldName name, Object value, ModelEvaluationContext context){
+	public Object evaluateRegressionInternal(FieldName name, Object value, ModelEvaluationContext context){
 		ModelEvaluator<?> evaluator = context.getModelEvaluator();
 
 		if(Objects.equals(Evaluator.DEFAULT_TARGET, name)){
@@ -112,7 +112,7 @@ public class TargetUtil {
 	}
 
 	static
-	Classification evaluateClassificationInternal(FieldName name, Classification value, ModelEvaluationContext context){
+	public Classification evaluateClassificationInternal(FieldName name, Classification value, ModelEvaluationContext context){
 		ModelEvaluator<?> evaluator = context.getModelEvaluator();
 
 		if(Objects.equals(Evaluator.DEFAULT_TARGET, name)){

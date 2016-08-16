@@ -18,12 +18,17 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Map;
 import java.util.Set;
 
 public class ProbabilityDistribution extends Classification implements HasProbability {
 
-	protected ProbabilityDistribution(){
+	public ProbabilityDistribution(){
 		super(Type.PROBABILITY);
+	}
+
+	public ProbabilityDistribution(Map<String, Double> probabilities){
+		super(Type.PROBABILITY, probabilities);
 	}
 
 	@Override
@@ -34,5 +39,10 @@ public class ProbabilityDistribution extends Classification implements HasProbab
 	@Override
 	public Double getProbability(String value){
 		return get(value);
+	}
+
+	@Override
+	public void normalizeValues(){
+		super.normalizeValues();
 	}
 }

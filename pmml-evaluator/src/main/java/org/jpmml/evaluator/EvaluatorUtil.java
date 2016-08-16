@@ -34,6 +34,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutputField;
+import org.jpmml.evaluator.mining.MiningModelConsumer;
 
 public class EvaluatorUtil {
 
