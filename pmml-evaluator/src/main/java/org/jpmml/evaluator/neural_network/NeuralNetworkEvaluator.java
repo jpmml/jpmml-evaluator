@@ -427,6 +427,8 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				return z / (1d + Math.abs(z));
 			case ARCTAN:
 				return Math.atan(z);
+			case RECTIFIER:
+				return Math.max(0d, z);
 			default:
 				throw new UnsupportedFeatureException(locatable, activationFunction);
 		}
