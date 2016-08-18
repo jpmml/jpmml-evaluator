@@ -44,8 +44,20 @@ public class DoubleVector {
 		return this.size;
 	}
 
-	public void add(double value){
+	public double get(int index){
 
+		if(this.values == null){
+			throw new IllegalStateException();
+		} // End if
+
+		if(this.size <= index){
+			throw new IndexOutOfBoundsException();
+		}
+
+		return this.values[index];
+	}
+
+	public void add(double value){
 		this.sum += value;
 
 		if(Double.isNaN(this.max)){

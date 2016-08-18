@@ -30,7 +30,7 @@ import static org.junit.Assert.assertEquals;
 public class VoteAggregatorTest {
 
 	@Test
-	public void increment(){
+	public void sum(){
 		VoteAggregator<String> aggregator = new VoteAggregator<>();
 		aggregator.add("A", 1d);
 		aggregator.add("B", 1d);
@@ -40,18 +40,21 @@ public class VoteAggregatorTest {
 
 		aggregator.add("B", 0.5d);
 
+		checkValues(1d, 1d + 0.5d, 1d, aggregator.sumMap());
+
 		assertEquals(Collections.singleton("B"), aggregator.getWinners());
 
 		aggregator.add("A", 0.5d);
 
+		checkValues(1d + 0.5d, 1d + 0.5d, 1d, aggregator.sumMap());
+
 		assertEquals(new LinkedHashSet<>(Arrays.asList("A", "B")), aggregator.getWinners());
+	}
 
-		Map<String, Double> sumMap = aggregator.sumMap();
-
-		assertEquals((Double)1.5d, sumMap.get("A"));
-		assertEquals((Double)1.5d, sumMap.get("B"));
-		assertEquals((Double)1.0d, sumMap.get("C"));
-
-		assertEquals(3, aggregator.size());
+	static
+	private void checkValues(Double a, Double b, Double c, Map<String, Double> values){
+		assertEquals(a, values.get("A"));
+		assertEquals(b, values.get("B"));
+		assertEquals(c, values.get("C"));
 	}
 }

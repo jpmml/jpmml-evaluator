@@ -49,7 +49,6 @@ public class VoteAggregator<K> extends ClassificationAggregator<K> {
 
 		Map<K, Double> sumMap = sumMap();
 
-		final
 		Double max = Collections.max(sumMap.values());
 
 		Collection<Map.Entry<K, Double>> entries = sumMap.entrySet();

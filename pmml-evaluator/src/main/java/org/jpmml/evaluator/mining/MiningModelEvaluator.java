@@ -61,6 +61,7 @@ import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.FieldValue;
+import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.InvalidFeatureException;
@@ -254,7 +255,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		Classification result;
+		ProbabilityDistribution result;
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
@@ -264,21 +265,28 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					result = new ProbabilityDistribution(aggregateVotes(segmentation, segmentResults));
 
 					// Convert from votes to probabilities
-					((ProbabilityDistribution)result).normalizeValues();
+					result.normalizeValues();
 				}
 				break;
 			case MAX:
 			case MEDIAN:
 				{
-					// The max and median aggregation functions yield non-probability distributions
-					result = new Classification(Classification.Type.VOTE, aggregateProbabilities(segmentation, segmentResults));
+					FieldName targetField = getTargetField();
+
+					DataField dataField = getDataField(targetField);
+					if(dataField == null){
+						throw new MissingFieldException(targetField);
+					}
+
+					List<String> categories = FieldValueUtil.getTargetCategories(dataField);
+
+					result = new ProbabilityDistribution(aggregateProbabilities(segmentation, segmentResults, categories));
 				}
 				break;
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
 				{
-					// The average and weighted average (with weights summing to 1) aggregation functions yield probability distributions
-					result = new ProbabilityDistribution(aggregateProbabilities(segmentation, segmentResults));
+					result = new ProbabilityDistribution(aggregateProbabilities(segmentation, segmentResults, null));
 				}
 				break;
 			default:
@@ -681,11 +689,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	static
-	private Map<String, Double> aggregateProbabilities(Segmentation segmentation, List<SegmentResult> segmentResults){
+	private Map<String, Double> aggregateProbabilities(Segmentation segmentation, List<SegmentResult> segmentResults, List<String> categories){
 		ProbabilityAggregator aggregator;
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
+			case MAX:
 			case MEDIAN:
 				aggregator = new ProbabilityAggregator(segmentResults.size());
 				break;
@@ -721,9 +730,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		switch(multipleModelMethod){
 			case MAX:
-				return aggregator.maxMap();
+				return aggregator.maxMap(categories);
 			case MEDIAN:
-				return aggregator.medianMap();
+				return aggregator.medianMap(categories);
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
 				return aggregator.averageMap(denominator);

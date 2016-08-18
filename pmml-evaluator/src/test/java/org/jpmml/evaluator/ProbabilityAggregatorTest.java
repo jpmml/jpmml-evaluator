@@ -18,6 +18,9 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -27,42 +30,68 @@ import static org.junit.Assert.assertEquals;
 public class ProbabilityAggregatorTest {
 
 	@Test
-	public void add(){
+	public void max(){
+		ProbabilityAggregator aggregator = new ProbabilityAggregator(5);
+
+		assertEquals(Collections.emptyMap(), aggregator.maxMap(ProbabilityAggregatorTest.CATEGORIES));
+
+		aggregator.add(createProbabilityDistribution(0.2d, 0.6d, 0.2d));
+		aggregator.add(createProbabilityDistribution(0.6d, 0.3d, 0.1d));
+		aggregator.add(createProbabilityDistribution(0.1d, 0.6d, 0.3d));
+
+		checkValues(0.6d, 0.3d, 0.1d, aggregator.maxMap(ProbabilityAggregatorTest.CATEGORIES));
+		checkValues((0.2d + 0.1d) / 2d, (0.6d + 0.6d) / 2d, (0.2d + 0.3d) / 2d, aggregator.maxMap(Arrays.asList("B", "A", "C")));
+
+		aggregator.add(createProbabilityDistribution(0.1d, 0.1d, 0.8d));
+
+		checkValues(0.1d, 0.1d, 0.8d, aggregator.maxMap(ProbabilityAggregatorTest.CATEGORIES));
+
+		aggregator.add(createProbabilityDistribution(0.0d, 0.2d, 0.8d));
+
+		checkValues((0.1d + 0.0d) / 2d, (0.1d + 0.2d) / 2d, (0.8d + 0.8d) / 2d, aggregator.maxMap(ProbabilityAggregatorTest.CATEGORIES));
+	}
+
+	@Test
+	public void median(){
+		ProbabilityAggregator aggregator = new ProbabilityAggregator(3);
+
+		assertEquals(Collections.emptyMap(), aggregator.medianMap(ProbabilityAggregatorTest.CATEGORIES));
+
+		aggregator.add(createProbabilityDistribution(0.3d, 0.4d, 0.3d));
+		aggregator.add(createProbabilityDistribution(0.1d, 0.6d, 0.3d));
+
+		checkValues((0.3d + 0.1d) / 2d, (0.4d + 0.6d) / 2d, (0.3d + 0.3d) / 2d, aggregator.medianMap(ProbabilityAggregatorTest.CATEGORIES));
+
+		aggregator.add(createProbabilityDistribution(0.3d, 0.5d, 0.2d));
+
+		checkValues(0.3d, 0.5d, 0.2d, aggregator.medianMap(ProbabilityAggregatorTest.CATEGORIES));
+	}
+
+	@Test
+	public void weightedAverage(){
 		ProbabilityAggregator aggregator = new ProbabilityAggregator();
+		aggregator.add(createProbabilityDistribution(0.2d, 0.6d, 0.2d), 3d);
+		aggregator.add(createProbabilityDistribution(0.6d, 0.1d, 0.3d), 1d);
 
-		aggregator.add(createProbabilityDistribution(1d, 3d));
-
-		Map<String, Double> maxMap = aggregator.maxMap();
-
-		assertEquals((Double)1d, maxMap.get("A"));
-		assertEquals((Double)3d, maxMap.get("B"));
-
-		aggregator.add(createProbabilityDistribution(3d, 1d), 0.5d);
-
-		maxMap = aggregator.maxMap();
-
-		assertEquals((Double)(3d * 0.5d), maxMap.get("A"));
-		assertEquals((Double)3d, maxMap.get("B"));
-
-		double denominator = (1d + 0.5d);
-
-		Map<String, Double> averageMap = aggregator.averageMap(denominator);
-
-		double sumA = (1d + (3d * 0.5d));
-		double sumB = (3d + (1d * 0.5d));
-
-		assertEquals((Double)(sumA / denominator), averageMap.get("A"));
-		assertEquals((Double)(sumB / denominator), averageMap.get("B"));
-
-		assertEquals(2, aggregator.size());
+		checkValues((0.2 * 3d + 0.6d) / 4d, (0.6d * 3d + 0.1d) / 4d, (0.2d * 3d + 0.3d) / 4d, aggregator.averageMap(4d));
 	}
 
 	static
-	private HasProbability createProbabilityDistribution(Double a, Double b){
+	private void checkValues(Double a, Double b, Double c, Map<String, Double> values){
+		assertEquals(a, values.get("A"));
+		assertEquals(b, values.get("B"));
+		assertEquals(c, values.get("C"));
+	}
+
+	static
+	private HasProbability createProbabilityDistribution(Double a, Double b, Double c){
 		ProbabilityDistribution result = new ProbabilityDistribution();
 		result.put("A", a);
 		result.put("B", b);
+		result.put("C", c);
 
 		return result;
 	}
+
+	private static final List<String> CATEGORIES = Arrays.asList("A", "B", "C");
 }

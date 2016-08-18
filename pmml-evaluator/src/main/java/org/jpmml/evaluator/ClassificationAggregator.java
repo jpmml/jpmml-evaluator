@@ -56,6 +56,10 @@ public class ClassificationAggregator<K> {
 		this.map.clear();
 	}
 
+	protected DoubleVector get(K key){
+		return this.map.get(key);
+	}
+
 	protected <V> Map<K, V> transform(Function<DoubleVector, V> function){
 		return Maps.transformValues(this.map, function);
 	}
