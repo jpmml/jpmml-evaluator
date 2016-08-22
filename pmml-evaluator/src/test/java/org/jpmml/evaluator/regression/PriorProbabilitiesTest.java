@@ -27,13 +27,10 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.Targets;
-import org.jpmml.evaluator.Classification;
-import org.jpmml.evaluator.ModelEvaluationContext;
+import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.jpmml.evaluator.OutputUtil;
-import org.jpmml.evaluator.ProbabilityDistribution;
-import org.jpmml.evaluator.TargetUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -44,18 +41,15 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
+		Model model = evaluator.getModel();
 
-		Map<FieldName, ? extends Classification> predictions = TargetUtil.evaluateClassificationDefault(context);
+		Map<FieldName, ?> arguments = createArguments("input", null);
 
-		assertEquals(1, predictions.size());
+		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		ProbabilityDistribution response = (ProbabilityDistribution)predictions.get(evaluator.getTargetField());
+		assertEquals(5, result.size());
 
-		assertEquals((Double)0.02d, response.getProbability("YES"));
-		assertEquals((Double)0.98d, response.getProbability("NO"));
-
-		Map<FieldName, ?> result = OutputUtil.evaluate(predictions, context);
+		assertEquals("NO", getTarget(result, Evaluator.DEFAULT_TARGET));
 
 		FieldName field = FieldName.create("I_response");
 		FieldName displayField = FieldName.create("U_response");
@@ -68,13 +62,6 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		assertEquals(0.02d, getOutput(result, "P_responseYes"));
 		assertEquals(0.98d, getOutput(result, "P_responseNo"));
-	}
-
-	@Test
-	public void evaluateEmptyTarget() throws Exception {
-		ModelEvaluator<?> evaluator = createModelEvaluator();
-
-		Model model = evaluator.getModel();
 
 		Targets targets = model.getTargets();
 		for(Target target : targets){
@@ -83,14 +70,10 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 			targetValues.clear();
 		}
 
-		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
+		result = evaluator.evaluate(arguments);
 
-		Map<FieldName, ? extends Classification> predictions = TargetUtil.evaluateClassificationDefault(context);
+		assertEquals(1, result.size());
 
-		assertEquals(1, predictions.size());
-
-		Classification response = predictions.get(evaluator.getTargetField());
-
-		assertEquals(null, response);
+		assertEquals(null, getTarget(result, Evaluator.DEFAULT_TARGET));
 	}
 }

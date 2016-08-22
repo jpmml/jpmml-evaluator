@@ -56,40 +56,40 @@ public class TargetUtil {
 	public Object evaluateRegressionInternal(FieldName name, Object value, ModelEvaluationContext context){
 		ModelEvaluator<?> evaluator = context.getModelEvaluator();
 
-		if(Objects.equals(Evaluator.DEFAULT_TARGET, name)){
-			DataField dataField = evaluator.getDataField();
+		DataField dataField;
 
-			if(value != null){
-				value = TypeUtil.cast(dataField.getDataType(), value);
-			}
+		MiningField miningField = null;
+
+		if(Objects.equals(Evaluator.DEFAULT_TARGET, name)){
+			dataField = evaluator.getDataField();
 		} else
 
 		{
-			Target target = evaluator.getTarget(name);
-			if(target != null){
-
-				if(value == null){
-					value = getDefaultValue(target);
-				} // End if
-
-				if(value != null){
-					value = processValue(target, (Double)value);
-				}
-			}
-
-			DataField dataField = evaluator.getDataField(name);
+			dataField = evaluator.getDataField(name);
 			if(dataField == null){
 				throw new MissingFieldException(name);
+			}
+
+			miningField = evaluator.getMiningField(name);
+		}
+
+		Target target = evaluator.getTarget(name);
+		if(target != null){
+
+			if(value == null){
+				value = getDefaultValue(target);
 			} // End if
 
 			if(value != null){
-				value = TypeUtil.cast(dataField.getDataType(), value);
+				value = processValue(target, (Double)value);
 			}
+		} // End if
 
-			MiningField miningField = evaluator.getMiningField(name);
-
-			context.declare(name, FieldValueUtil.prepareTargetValue(dataField, miningField, target, value));
+		if(value != null){
+			value = TypeUtil.cast(dataField.getDataType(), value);
 		}
+
+		context.declare(name, FieldValueUtil.prepareTargetValue(dataField, miningField, target, value));
 
 		return value;
 	}
@@ -115,36 +115,36 @@ public class TargetUtil {
 	public Classification evaluateClassificationInternal(FieldName name, Classification value, ModelEvaluationContext context){
 		ModelEvaluator<?> evaluator = context.getModelEvaluator();
 
-		if(Objects.equals(Evaluator.DEFAULT_TARGET, name)){
-			DataField dataField = evaluator.getDataField();
+		DataField dataField;
 
-			if(value != null){
-				value.computeResult(dataField.getDataType());
-			}
+		MiningField miningField = null;
+
+		if(Objects.equals(Evaluator.DEFAULT_TARGET, name)){
+			dataField = evaluator.getDataField();
 		} else
 
 		{
-			Target target = evaluator.getTarget(name);
-			if(target != null){
-
-				if(value == null){
-					value = getPriorProbabilities(target);
-				}
-			}
-
-			DataField dataField = evaluator.getDataField(name);
+			dataField = evaluator.getDataField(name);
 			if(dataField == null){
 				throw new MissingFieldException(name);
-			} // End if
-
-			if(value != null){
-				value.computeResult(dataField.getDataType());
 			}
 
-			MiningField miningField = evaluator.getMiningField(name);
-
-			context.declare(name, FieldValueUtil.prepareTargetValue(dataField, miningField, target, value != null ? value.getResult() : null));
+			miningField = evaluator.getMiningField(name);
 		}
+
+		Target target = evaluator.getTarget(name);
+		if(target != null){
+
+			if(value == null){
+				value = getPriorProbabilities(target);
+			}
+		} // End if
+
+		if(value != null){
+			value.computeResult(dataField.getDataType());
+		}
+
+		context.declare(name, FieldValueUtil.prepareTargetValue(dataField, miningField, target, value != null ? value.getResult() : null));
 
 		return value;
 	}
@@ -163,7 +163,15 @@ public class TargetUtil {
 			result = Math.min(result, max);
 		}
 
-		result = (result * target.getRescaleFactor()) + target.getRescaleConstant();
+		Double rescaleFactor = target.getRescaleFactor();
+		if(rescaleFactor != null){
+			result *= rescaleFactor;
+		}
+
+		Double rescaleConstant = target.getRescaleConstant();
+		if(rescaleConstant != null){
+			result += rescaleConstant;
+		}
 
 		Target.CastInteger castInteger = target.getCastInteger();
 		if(castInteger == null){
@@ -204,12 +212,12 @@ public class TargetUtil {
 
 	static
 	private Double getDefaultValue(Target target){
-		List<TargetValue> values = target.getTargetValues();
 
-		if(values.isEmpty()){
+		if(!target.hasTargetValues()){
 			return null;
-		} // End if
+		}
 
+		List<TargetValue> values = target.getTargetValues();
 		if(values.size() != 1){
 			throw new InvalidFeatureException(target);
 		}
@@ -226,6 +234,11 @@ public class TargetUtil {
 
 	static
 	private ProbabilityDistribution getPriorProbabilities(Target target){
+
+		if(!target.hasTargetValues()){
+			return null;
+		}
+
 		ProbabilityDistribution result = new ProbabilityDistribution();
 
 		List<TargetValue> values = target.getTargetValues();

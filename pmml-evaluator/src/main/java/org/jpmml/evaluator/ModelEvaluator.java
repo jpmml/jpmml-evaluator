@@ -246,11 +246,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	@Override
 	public Target getTarget(FieldName name){
-
-		if(name == null){
-			return null;
-		}
-
 		return this.targets.get(name);
 	}
 
@@ -582,7 +577,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		@Override
 		public Map<FieldName, Target> load(Targets targets){
-			return IndexableUtil.buildMap(targets.getTargets());
+			return IndexableUtil.buildMap(targets.getTargets(), true);
 		}
 	});
 

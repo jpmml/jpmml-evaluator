@@ -96,11 +96,14 @@ public class FieldValueUtil {
 
 		if(dataType == null || opType == null){
 			throw new InvalidFeatureException(dataField);
-		}
+		} // End if
 
-		String missingValueReplacement = miningField.getMissingValueReplacement();
-		if(missingValueReplacement != null){
-			throw new InvalidFeatureException(miningField);
+		if(miningField != null){
+			String missingValueReplacement = miningField.getMissingValueReplacement();
+
+			if(missingValueReplacement != null){
+				throw new InvalidFeatureException(miningField);
+			}
 		}
 
 		return createTargetValue(dataField, miningField, target, value);

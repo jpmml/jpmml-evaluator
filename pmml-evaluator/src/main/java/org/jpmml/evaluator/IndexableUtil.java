@@ -19,11 +19,11 @@
 package org.jpmml.evaluator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
 import org.dmg.pmml.Indexable;
 import org.dmg.pmml.PMMLObject;
 
@@ -57,11 +57,16 @@ public class IndexableUtil {
 	}
 
 	static
-	public <K, E extends PMMLObject & Indexable<K>> ImmutableMap<K, E> buildMap(List<E> elements){
+	public <K, E extends PMMLObject & Indexable<K>> Map<K, E> buildMap(List<E> elements){
+		return buildMap(elements, false);
+	}
+
+	static
+	public <K, E extends PMMLObject & Indexable<K>> Map<K, E> buildMap(List<E> elements, boolean nullable){
 		Map<K, E> result = new LinkedHashMap<>();
 
 		for(E element : elements){
-			K key = ensureKey(element);
+			K key = ensureKey(element, nullable);
 
 			if(result.containsKey(key)){
 				throw new InvalidFeatureException(element);
@@ -70,14 +75,20 @@ public class IndexableUtil {
 			result.put(key, element);
 		}
 
-		return ImmutableMap.copyOf(result);
+		// Cannot use Guava's ImmutableMap, because it is null-hostile
+		return Collections.unmodifiableMap(result);
 	}
 
 	static
 	private <K, E extends PMMLObject & Indexable<K>> K ensureKey(E element){
+		return ensureKey(element, false);
+	}
+
+	static
+	private <K, E extends PMMLObject & Indexable<K>> K ensureKey(E element, boolean nullable){
 		K key = element.getKey();
 
-		if(key == null){
+		if(key == null && !nullable){
 			throw new InvalidFeatureException(element);
 		}
 

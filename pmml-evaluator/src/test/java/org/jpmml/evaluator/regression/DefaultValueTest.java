@@ -26,10 +26,9 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.Targets;
-import org.jpmml.evaluator.ModelEvaluationContext;
+import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.jpmml.evaluator.TargetUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -40,22 +39,15 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
-
-		Map<FieldName, ?> predictions = TargetUtil.evaluateRegressionDefault(context);
-
-		assertEquals(1, predictions.size());
-
-		Number amount = (Number)predictions.get(evaluator.getTargetField());
-
-		assertEquals(432.21d, amount);
-	}
-
-	@Test
-	public void evaluateEmptyTarget() throws Exception {
-		ModelEvaluator<?> evaluator = createModelEvaluator();
-
 		Model model = evaluator.getModel();
+
+		Map<FieldName, ?> arguments = createArguments("input", null);
+
+		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+
+		assertEquals(1, result.size());
+
+		assertEquals(432.21d, getTarget(result, Evaluator.DEFAULT_TARGET));
 
 		Targets targets = model.getTargets();
 		for(Target target : targets){
@@ -64,14 +56,10 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 			targetValues.clear();
 		}
 
-		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
+		result = evaluator.evaluate(arguments);
 
-		Map<FieldName, ?> predictions = TargetUtil.evaluateRegressionDefault(context);
+		assertEquals(1, result.size());
 
-		assertEquals(1, predictions.size());
-
-		Number amount = (Number)predictions.get(evaluator.getTargetField());
-
-		assertEquals(null, amount);
+		assertEquals(null, getTarget(result, Evaluator.DEFAULT_TARGET));
 	}
 }
