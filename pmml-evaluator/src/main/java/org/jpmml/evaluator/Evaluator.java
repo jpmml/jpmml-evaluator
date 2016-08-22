@@ -20,9 +20,9 @@ package org.jpmml.evaluator;
 
 import java.util.Map;
 
-import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 
 /**
@@ -149,25 +149,21 @@ public interface Evaluator extends Consumer {
 	 * </p>
 	 *
 	 * <p>
-	 * The default target field could be either "real" or "phantom".
-	 * They can be distinguished from one another by looking up the definition of the field from the {@link DataDictionary}.
+	 * It is possible to detect the "defaultness" of a target field by looking up its definition from the {@link MiningSchema}.
 	 * </p>
 	 *
 	 * <pre>
 	 * Consumer consumer = ...;
 	 *
-	 * List&lt;FieldName&gt; targetFields = consumer.getTargetFields();
-	 * if(targetFields.isEmpty()){
-	 *   FieldName targetField = consumer.getTargetField();
+	 * FieldName targetField = consumer.getTargetField();
 	 *
-	 *   DataField dataField = consumer.getDataField(targetField);
-	 *   if(dataField != null){
-	 *     // A "real" default target field
-	 *   } else
+	 * MiningField miningField = consumer.getMiningField(targetField);
+	 * if(miningField != null){
+	 *   // A target field
+	 * } else
 	 *
-	 *   {
-	 *     // A "phantom" default target field
-	 *   }
+	 * {
+	 *   // The default target field
 	 * }
 	 * </pre>
 	 *

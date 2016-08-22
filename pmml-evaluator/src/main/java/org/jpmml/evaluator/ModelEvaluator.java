@@ -221,7 +221,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	@Override
 	public MiningField getMiningField(FieldName name){
 
-		if(name == null){
+		if(Objects.equals(Evaluator.DEFAULT_TARGET, name)){
 			return null;
 		}
 

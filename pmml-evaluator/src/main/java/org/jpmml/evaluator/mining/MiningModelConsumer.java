@@ -50,7 +50,7 @@ public interface MiningModelConsumer extends Consumer {
 	 * </p>
 	 *
 	 * <p>
-	 * The target fields of nested models are subsets of target fields the top-level mining model.
+	 * The target fields of nested models are subsets of the target fields of the top-level mining model.
 	 * However, the output fields of nested models are disjoint sets from the output fields of the top-level mining model.
 	 * </p>
 	 */
