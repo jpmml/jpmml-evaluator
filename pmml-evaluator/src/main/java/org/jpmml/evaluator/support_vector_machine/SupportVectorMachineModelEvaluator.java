@@ -44,6 +44,7 @@ import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.RealSparseArray;
+import org.dmg.pmml.regression.CategoricalPredictor;
 import org.dmg.pmml.support_vector_machine.Coefficient;
 import org.dmg.pmml.support_vector_machine.Coefficients;
 import org.dmg.pmml.support_vector_machine.Kernel;
@@ -143,6 +144,11 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
+
+		boolean maxWins = supportVectorMachineModel.isMaxWins();
+		if(maxWins){
+			throw new UnsupportedFeatureException(supportVectorMachineModel);
+		}
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
 		if(supportVectorMachines.size() < 1){
@@ -353,14 +359,44 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		double[] result = new double[content.size()];
 
 		for(int i = 0; i < content.size(); i++){
-			FieldRef fieldRef = (FieldRef)content.get(i);
+			PMMLObject object = content.get(i);
 
-			FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
-			if(value == null){
-				throw new MissingValueException(fieldRef.getField(), vectorFields);
+			if(object instanceof FieldRef){
+				FieldRef fieldRef = (FieldRef)content.get(i);
+
+				FieldName name = fieldRef.getField();
+
+				FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
+				if(value == null){
+					throw new MissingValueException(name, vectorFields);
+				}
+
+				result[i] = (value.asNumber()).doubleValue();
+			} else
+
+			if(object instanceof CategoricalPredictor){
+				CategoricalPredictor categoricalPredictor = (CategoricalPredictor)object;
+
+				double coefficient = categoricalPredictor.getCoefficient();
+				if(coefficient != 1d){
+					throw new InvalidFeatureException(categoricalPredictor);
+				}
+
+				FieldName name = categoricalPredictor.getName();
+
+				FieldValue value = context.evaluate(name);
+				if(value == null){
+					throw new MissingValueException(name, categoricalPredictor);
+				}
+
+				boolean equals = value.equals(categoricalPredictor);
+
+				result[i] = (equals ? 1d : 0d);
+			} else
+
+			{
+				throw new UnsupportedFeatureException(object);
 			}
-
-			result[i] = (value.asNumber()).doubleValue();
 		}
 
 		return result;
