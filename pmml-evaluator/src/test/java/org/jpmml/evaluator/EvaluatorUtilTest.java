@@ -28,7 +28,7 @@ import java.util.Map;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
-import org.jpmml.evaluator.association.StandardAssociationSchemaTest;
+import org.jpmml.evaluator.association.TransactionalSchemaTest;
 import org.jpmml.evaluator.clustering.RankingTest;
 import org.jpmml.evaluator.nearest_neighbor.MixedNeighborhoodTest;
 import org.junit.Test;
@@ -80,7 +80,7 @@ public class EvaluatorUtilTest {
 
 	@Test
 	public void prepare() throws Exception {
-		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(StandardAssociationSchemaTest.class);
+		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(TransactionalSchemaTest.class);
 
 		FieldValue simple = EvaluatorUtil.prepare(evaluator, FieldName.create("item"), "Cracker");
 
@@ -123,7 +123,7 @@ public class EvaluatorUtilTest {
 
 		assertEquals(Collections.<FieldName>singletonList(null), EvaluatorUtil.getTargetFields(evaluator));
 
-		evaluator = ModelEvaluatorTest.createModelEvaluator(StandardAssociationSchemaTest.class);
+		evaluator = ModelEvaluatorTest.createModelEvaluator(TransactionalSchemaTest.class);
 
 		assertEquals(Collections.emptyList(), EvaluatorUtil.getTargetFields(evaluator));
 	}

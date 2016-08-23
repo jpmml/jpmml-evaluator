@@ -479,6 +479,12 @@ public class TypeUtil {
 			Number number = (Number)value;
 
 			return number.toString();
+		} else
+
+		if(value instanceof Boolean){
+			Boolean flag = (Boolean)value;
+
+			return (flag.booleanValue() ? "true" : "false");
 		}
 
 		throw new TypeCheckException(DataType.STRING, value);

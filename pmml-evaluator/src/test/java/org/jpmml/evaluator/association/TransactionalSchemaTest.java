@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 
-public class StandardAssociationSchemaTest extends AssociationSchemaTest {
+public class TransactionalSchemaTest extends AssociationSchemaTest {
 
 	@Override
 	public Map<FieldName, ?> createItemArguments(List<String> items){

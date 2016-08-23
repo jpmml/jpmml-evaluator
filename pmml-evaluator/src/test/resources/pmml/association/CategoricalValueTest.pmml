@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PMML xmlns="http://www.dmg.org/PMML-4_3" version="4.3">
+    <DataDictionary numberOfFields="6">
+        <DataField name="Water" optype="categorical" dataType="boolean"/>
+        <DataField name="Cracker" optype="categorical" dataType="string"/>
+        <DataField name="Bread" optype="categorical" dataType="string">
+            <Value value="false"/>
+            <Value value="true"/>
+        </DataField>
+        <DataField name="Area" optype="categorical" dataType="string">
+            <Value value="urban"/>
+            <Value value="suburban"/>
+            <Value value="rural"/>
+        </DataField>
+        <DataField name="Day" optype="categorical" dataType="string">
+            <Value value="Monday"/>
+            <Value value="Tuesday"/>
+            <Value value="Wednesday"/>
+            <Value value="Thursday"/>
+            <Value value="Friday"/>
+            <Value value="Saturday"/>
+            <Value value="Sunday"/>
+        </DataField>
+        <DataField name="Day=Weekday" optype="categorical" dataType="boolean">
+            <Value value="true"/>
+            <Value value="false"/>
+        </DataField>
+    </DataDictionary>
+    <AssociationModel functionName="associationRules" numberOfItems="14">
+        <MiningSchema>
+            <MiningField name="Water"/>
+            <MiningField name="Cracker"/>
+            <MiningField name="Bread"/>
+            <MiningField name="Area"/>
+            <MiningField name="Day"/>
+            <MiningField name="Day=Weekday"/>
+        </MiningSchema>
+        <Item id="1" value="Water"/>
+        <Item id="2" value="Cracker"/>
+        <Item id="3" value="Bread"/>
+        <Item id="4" value="Area=urban"/>
+        <Item id="5" value="Area=suburban"/>
+        <Item id="6" value="Area=rural"/>
+        <Item id="7" value="Day=Monday"/>
+        <Item id="8" value="Day=Tuesday"/>
+        <Item id="9" value="Day=Wednesday"/>
+        <Item id="10" value="Day=Thursday"/>
+        <Item id="11" value="Day=Friday"/>
+        <Item id="12" value="Day=Saturday"/>
+        <Item id="13" value="Day=Sunday"/>
+        <Item id="14" value="Day=Weekday"/>
+    </AssociationModel>
+</PMML>

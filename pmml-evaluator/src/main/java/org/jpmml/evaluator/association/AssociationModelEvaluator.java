@@ -33,9 +33,11 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.association.AssociationModel;
@@ -144,15 +146,13 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	private Map<FieldName, Association> evaluateAssociationRules(EvaluationContext context){
 		AssociationModel associationModel = getModel();
 
-		Collection<?> activeValue = getActiveValue(context);
-
-		Set<String> input = createInput(activeValue, context);
+		Set<String> activeItems = getActiveItems(context);
 
 		Map<String, Boolean> flags = new HashMap<>();
 
 		List<Itemset> itemsets = associationModel.getItemsets();
 		for(Itemset itemset : itemsets){
-			flags.put(itemset.getId(), isSubset(input, itemset));
+			flags.put(itemset.getId(), isSubset(activeItems, itemset));
 		}
 
 		List<AssociationRule> associationRules = associationModel.getAssociationRules();
@@ -199,7 +199,10 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		return Collections.singletonMap(getTargetField(), association);
 	}
 
-	public Collection<?> getActiveValue(EvaluationContext context){
+	/**
+	 * @return A set of {@link Item#getId() Item identifiers}.
+	 */
+	Set<String> getActiveItems(EvaluationContext context){
 		AssociationModel associationModel = getModel();
 
 		List<FieldName> activeFields = getActiveFields();
@@ -207,39 +210,50 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		MiningSchema miningSchema = associationModel.getMiningSchema();
 
-		// Custom IBM SPSS-style model: no group fields, one or more active fields
+		List<String> itemValues = new ArrayList<>();
+
+		// Categorical data style: no group fields, one or more active fields
 		if(groupFields.size() == 0){
 
 			if(activeFields.size() < 1){
 				throw new InvalidFeatureException("No active fields", miningSchema);
 			}
 
-			List<String> result = new ArrayList<>();
-
 			for(FieldName activeField : activeFields){
 				FieldValue value = context.evaluate(activeField);
 
 				if(value == null){
 					continue;
-				} // End if
+				}
 
-				if(value.equalsString("T")){
-					result.add(activeField.getValue());
-				} else
+				OpType opType = value.getOpType();
+				switch(opType){
+					case CATEGORICAL:
+						{
+							if((AssociationModelEvaluator.TRUE).equalsValue(value) || value.equalsString("T")){
+								// "The item values are based on field names when the field has only true/false values"
+								itemValues.add(activeField.getValue());
+							} else
 
-				if(value.equalsString("F")){
-					continue;
-				} else
+							if((AssociationModelEvaluator.FALSE).equalsValue(value) || value.equalsString("F")){
+								continue;
+							} else
 
-				{
-					throw new EvaluationException();
+							{
+								Object object = value.getValue();
+
+								// "The item values are based on field name followed by "=" and field value (category) when the field is a regular categorical field"
+								itemValues.add(activeField.getValue() + "=" + TypeUtil.format(object));
+							}
+						}
+						break;
+					default:
+						throw new EvaluationException();
 				}
 			}
-
-			return result;
 		} else
 
-		// Standard model: one group field, one active field
+		// Transactional data style: one group field, one active field
 		if(groupFields.size() == 1){
 
 			if(activeFields.size() < 1){
@@ -257,48 +271,42 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				throw new MissingValueException(activeField);
 			}
 
-			Collection<?> result = FieldValueUtil.getValue(Collection.class, value);
-
-			return result;
+			Collection<?> objects = FieldValueUtil.getValue(Collection.class, value);
+			for(Object object : objects){
+				itemValues.add(TypeUtil.format(object));
+			}
 		} else
 
 		{
 			throw new InvalidFeatureException(miningSchema);
 		}
-	}
 
-	/**
-	 * @return A set of {@link Item#getId() Item identifiers}.
-	 */
-	private Set<String> createInput(Collection<?> values, EvaluationContext context){
 		Set<String> result = new HashSet<>();
 
 		Map<String, String> valueItems = (getItemValues().inverse());
 
-		values:
-		for(Object value : values){
-			String stringValue = TypeUtil.format(value);
+		for(String itemValue : itemValues){
+			String itemId = valueItems.get(itemValue);
 
-			String id = valueItems.get(stringValue);
-			if(id == null){
-				context.addWarning("Unknown item value \"" + stringValue + "\"");
+			if(itemId == null){
+				context.addWarning("Unknown item value \"" + itemValue + "\"");
 
-				continue values;
+				continue;
 			}
 
-			result.add(id);
+			result.add(itemId);
 		}
 
 		return result;
 	}
 
 	static
-	private boolean isSubset(Set<String> input, Itemset itemset){
+	private boolean isSubset(Set<String> items, Itemset itemset){
 		boolean result = true;
 
 		List<ItemRef> itemRefs = itemset.getItemRefs();
 		for(ItemRef itemRef : itemRefs){
-			result &= input.contains(itemRef.getItemRef());
+			result &= items.contains(itemRef.getItemRef());
 
 			if(!result){
 				return false;
@@ -349,6 +357,9 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		return result;
 	}
+
+	private static final FieldValue TRUE = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
+	private static final FieldValue FALSE = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
 
 	private static final LoadingCache<AssociationModel, BiMap<String, AssociationRule>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<AssociationModel, BiMap<String, AssociationRule>>(){
 

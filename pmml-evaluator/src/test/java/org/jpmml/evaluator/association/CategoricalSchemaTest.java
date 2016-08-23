@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 
-public class CustomAssociationSchemaTest extends AssociationSchemaTest {
+public class CategoricalSchemaTest extends AssociationSchemaTest {
 
 	@Override
 	public Map<FieldName, ?> createItemArguments(List<String> items){
