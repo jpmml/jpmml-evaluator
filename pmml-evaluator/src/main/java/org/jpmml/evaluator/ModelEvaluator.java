@@ -85,12 +85,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	transient
 	private List<InputField> activeInputFields = null;
 
-	transient
-	private List<InputField> groupInputFields = null;
-
-	transient
-	private List<InputField> orderInputFields = null;
-
 	private Map<FieldName, DerivedField> localDerivedFields = Collections.emptyMap();
 
 	private Map<FieldName, Target> targets = Collections.emptyMap();
@@ -210,26 +204,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	@Override
-	public List<InputField> getGroupFields(){
-
-		if(this.groupInputFields == null){
-			this.groupInputFields = createInputFields(MiningField.FieldUsage.GROUP);
-		}
-
-		return this.groupInputFields;
-	}
-
-	@Override
-	public List<InputField> getOrderFields(){
-
-		if(this.orderInputFields == null){
-			this.orderInputFields = createInputFields(MiningField.FieldUsage.ORDER);
-		}
-
-		return this.orderInputFields;
-	}
-
-	@Override
 	public DerivedField getLocalDerivedField(FieldName name){
 		return this.localDerivedFields.get(name);
 	}
@@ -293,19 +267,14 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		VerificationBatch batch = CacheUtil.getValue(modelVerification, ModelEvaluator.batchCache);
 
-		List<Map<FieldName, Object>> records = batch.getRecords();
+		List<? extends Map<FieldName, ?>> records = batch.getRecords();
 
 		List<InputField> activeFields = getActiveFields();
-		List<InputField> groupFields = getGroupFields();
 
-		if(groupFields.size() == 1){
-			InputField groupField = groupFields.get(0);
+		if(this instanceof HasGroupFields){
+			HasGroupFields hasGroupFields = (HasGroupFields)this;
 
-			records = EvaluatorUtil.groupRows(groupField.getName(), records);
-		} else
-
-		if(groupFields.size() > 1){
-			throw new EvaluationException();
+			records = EvaluatorUtil.groupRows(hasGroupFields, records);
 		}
 
 		List<TargetField> targetFields = getTargetFields();
@@ -313,7 +282,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		SetView<FieldName> intersection = Sets.intersection(batch.keySet(), ImmutableSet.copyOf(outputFields));
 
-		for(Map<FieldName, Object> record : records){
+		for(Map<FieldName, ?> record : records){
 			Map<FieldName, Object> arguments = new HashMap<>();
 
 			for(InputField activeField : activeFields){

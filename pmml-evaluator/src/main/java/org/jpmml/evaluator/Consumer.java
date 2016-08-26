@@ -36,6 +36,10 @@ import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.Output;
 
+/**
+ * @see HasGroupFields
+ * @see HasOrderFields
+ */
 public interface Consumer extends Serializable {
 
 	/**
@@ -58,28 +62,6 @@ public interface Consumer extends Serializable {
 	 * </p>
 	 */
 	List<InputField> getActiveFields();
-
-	/**
-	 * <p>
-	 * Gets the group fields of a {@link Model} from its {@link MiningSchema}.
-	 * </p>
-	 *
-	 * <p>
-	 * This field set is relevant for {@link MiningFunction#ASSOCIATION_RULES association rules} model type only.
-	 * </p>
-	 */
-	List<InputField> getGroupFields();
-
-	/**
-	 * <p>
-	 * Gets the order fields of a {@link Model} from its {@link MiningSchema}.
-	 * </p>
-	 *
-	 * <p>
-	 * This field set is relevant for {@link MiningFunction#SEQUENCES sequences} and {@link MiningFunction#TIME_SERIES time series} model types.
-	 * </p>
-	 */
-	List<InputField> getOrderFields();
 
 	/**
 	 * <p>

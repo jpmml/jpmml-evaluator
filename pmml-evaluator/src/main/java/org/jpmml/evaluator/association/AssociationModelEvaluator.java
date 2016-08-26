@@ -35,6 +35,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.OpType;
@@ -52,6 +53,7 @@ import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasEntityRegistry;
+import org.jpmml.evaluator.HasGroupFields;
 import org.jpmml.evaluator.IndexableUtil;
 import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.InvalidFeatureException;
@@ -64,7 +66,10 @@ import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 
-public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> implements HasEntityRegistry<AssociationRule> {
+public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> implements HasGroupFields, HasEntityRegistry<AssociationRule> {
+
+	transient
+	private List<InputField> groupInputFields = null;
 
 	transient
 	private BiMap<String, AssociationRule> entityRegistry = null;
@@ -93,6 +98,21 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	@Override
+	public List<InputField> getGroupFields(){
+
+		if(this.groupInputFields == null){
+			this.groupInputFields = createInputFields(MiningField.FieldUsage.GROUP);
+		}
+
+		return this.groupInputFields;
+	}
+
+	@Override
+	public FieldName getTargetFieldName(){
+		return Consumer.DEFAULT_TARGET_NAME;
+	}
+
+	@Override
 	public BiMap<String, AssociationRule> getEntityRegistry(){
 
 		if(this.entityRegistry == null){
@@ -100,11 +120,6 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		}
 
 		return this.entityRegistry;
-	}
-
-	@Override
-	public FieldName getTargetFieldName(){
-		return Consumer.DEFAULT_TARGET_NAME;
 	}
 
 	@Override

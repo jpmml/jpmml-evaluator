@@ -125,6 +125,23 @@ public class EvaluatorUtil {
 	}
 
 	static
+	public List<? extends Map<FieldName, ?>> groupRows(HasGroupFields hasGroupFields, List<? extends Map<FieldName, ?>> table){
+		List<InputField> groupFields = hasGroupFields.getGroupFields();
+
+		if(groupFields.size() == 1){
+			InputField groupField = groupFields.get(0);
+
+			table = EvaluatorUtil.groupRows(groupField.getName(), table);
+		} else
+
+		if(groupFields.size() > 1){
+			throw new EvaluationException();
+		}
+
+		return table;
+	}
+
+	static
 	public <K> List<Map<K, Object>> groupRows(K groupKey, List<? extends Map<K, ?>> table){
 		Map<Object, ListMultimap<K, Object>> groupedRows = new LinkedHashMap<>();
 

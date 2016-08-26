@@ -22,6 +22,7 @@ import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -189,7 +190,13 @@ public class EvaluationExample extends Example {
 		evaluator.verify();
 
 		List<InputField> activeFields = evaluator.getActiveFields();
-		List<InputField> groupFields = evaluator.getGroupFields();
+		List<InputField> groupFields = Collections.emptyList();
+
+		if(evaluator instanceof HasGroupFields){
+			HasGroupFields hasGroupfields = (HasGroupFields)evaluator;
+
+			groupFields = hasGroupfields.getGroupFields();
+		} // End if
 
 		if(inputRecords.size() > 0){
 			Map<FieldName, ?> inputRecord = inputRecords.get(0);
@@ -205,14 +212,10 @@ public class EvaluationExample extends Example {
 			}
 		} // End if
 
-		if(groupFields.size() == 1){
-			InputField groupField = groupFields.get(0);
+		if(evaluator instanceof HasGroupFields){
+			HasGroupFields hasGroupfields = (HasGroupFields)evaluator;
 
-			inputRecords = EvaluatorUtil.groupRows(groupField.getName(), inputRecords);
-		} else
-
-		if(groupFields.size() > 1){
-			throw new EvaluationException();
+			inputRecords = EvaluatorUtil.groupRows(hasGroupfields, inputRecords);
 		}
 
 		List<Map<FieldName, ?>> outputRecords = new ArrayList<>(inputRecords.size());

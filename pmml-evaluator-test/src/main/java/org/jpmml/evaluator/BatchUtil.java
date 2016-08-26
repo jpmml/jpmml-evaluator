@@ -44,16 +44,10 @@ public class BatchUtil {
 		List<? extends Map<FieldName, ?>> input = batch.getInput();
 		List<? extends Map<FieldName, ?>> output = batch.getOutput();
 
-		List<InputField> groupFields = evaluator.getGroupFields();
+		if(evaluator instanceof HasGroupFields){
+			HasGroupFields hasGroupFields = (HasGroupFields)evaluator;
 
-		if(groupFields.size() == 1){
-			InputField groupField = groupFields.get(0);
-
-			input = EvaluatorUtil.groupRows(groupField.getName(), input);
-		} else
-
-		if(groupFields.size() > 1){
-			throw new EvaluationException();
+			input = EvaluatorUtil.groupRows(hasGroupFields, input);
 		}
 
 		Equivalence<Object> equivalence = new Equivalence<Object>(){
