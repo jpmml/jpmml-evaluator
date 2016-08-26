@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Iterables;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
@@ -82,13 +83,17 @@ public class EvaluatorUtilTest {
 	public void prepare() throws Exception {
 		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(TransactionalSchemaTest.class);
 
-		FieldValue simple = EvaluatorUtil.prepare(evaluator, FieldName.create("item"), "Cracker");
+		InputField activeField = Iterables.getOnlyElement(evaluator.getActiveFields());
+
+		assertEquals(FieldName.create("item"), activeField.getName());
+
+		FieldValue simple = EvaluatorUtil.prepare(activeField, "Cracker");
 
 		assertEquals("Cracker", simple.getValue());
 		assertEquals(DataType.STRING, simple.getDataType());
 		assertEquals(OpType.CATEGORICAL, simple.getOpType());
 
-		FieldValue collection = EvaluatorUtil.prepare(evaluator, FieldName.create("item"), Arrays.asList("Cracker", "Water", "Coke"));
+		FieldValue collection = EvaluatorUtil.prepare(activeField, Arrays.asList("Cracker", "Water", "Coke"));
 
 		assertEquals(Arrays.asList("Cracker", "Water", "Coke"), collection.getValue());
 		assertEquals(DataType.STRING, collection.getDataType());
@@ -117,15 +122,15 @@ public class EvaluatorUtilTest {
 	public void getTargetFields() throws Exception {
 		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(MixedNeighborhoodTest.class);
 
-		assertEquals(Arrays.asList(FieldName.create("species"), FieldName.create("species_class")), EvaluatorUtil.getTargetFields(evaluator));
+		checkFieldNames(Arrays.asList(FieldName.create("species"), FieldName.create("species_class")), EvaluatorUtil.getTargetFields(evaluator));
 
 		evaluator = ModelEvaluatorTest.createModelEvaluator(RankingTest.class);
 
-		assertEquals(Collections.<FieldName>singletonList(null), EvaluatorUtil.getTargetFields(evaluator));
+		checkFieldNames(Collections.<FieldName>singletonList(null), EvaluatorUtil.getTargetFields(evaluator));
 
 		evaluator = ModelEvaluatorTest.createModelEvaluator(TransactionalSchemaTest.class);
 
-		assertEquals(Collections.emptyList(), EvaluatorUtil.getTargetFields(evaluator));
+		checkFieldNames(Collections.<FieldName>emptyList(), EvaluatorUtil.getTargetFields(evaluator));
 	}
 
 	static
@@ -143,5 +148,10 @@ public class EvaluatorUtilTest {
 
 		assertEquals(transaction, row.get(FieldName.create("transaction")));
 		assertEquals(items, row.get(FieldName.create("item")));
+	}
+
+	static
+	private void checkFieldNames(List<FieldName> names, List<? extends ResultField> resultFields){
+		assertEquals(names, EvaluatorUtil.getNames(resultFields));
 	}
 }

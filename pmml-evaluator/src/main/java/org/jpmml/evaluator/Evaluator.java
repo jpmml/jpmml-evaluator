@@ -20,9 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.Map;
 
-import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 
 /**
@@ -42,11 +40,12 @@ import org.dmg.pmml.Model;
  * Converting an user-supplied map of arguments to a prepared map of arguments:
  * <pre>
  * Map&lt;FieldName, ?&gt; userArguments = ...;
- * Map&lt;FieldName, FieldValue&gt; arguments = new LinkedHashMap&lt;FieldName, FieldValue&gt;();
- * List&lt;FieldName&gt; activeFields = evaluator.getActiveFields();
- * for(FieldName activeField : activeFields){
- *   FieldValue activeValue = evaluator.prepare(activeField, userArguments.get(activeField));
- *   arguments.put(activeField, activeValue);
+ * Map&lt;FieldName, FieldValue&gt; arguments = new LinkedHashMap&lt;&gt;();
+ * List&lt;InputField&gt; activeFields = evaluator.getActiveFields();
+ * for(InputField activeField : activeFields){
+ *   FieldName activeFieldName = activeField.getName();
+ *   FieldValue activeFieldValue = activeField.prepare(userArguments.get(activeFieldName));
+ *   arguments.put(activeFieldName, activeFieldValue);
  * }
  * </pre>
  *
@@ -56,26 +55,30 @@ import org.dmg.pmml.Model;
  * </pre>
  *
  * <h3>Processing results</h3>
- * Retrieving the value of the {@link #getTargetField() target field} (ie. the primary result):
+ * Retrieving the values of {@link #getTargetField() target fields} (ie. primary results):
  * <pre>
- * FieldName targetField = evaluator.getTargetField();
- * Object targetValue = result.get(targetField);
+ * List&lt;TargetField&gt; targetFields = evaluator.getTargetFields();
+ * for(TargetField targetField : targetFields){
+ *   FieldName targetFieldName = targetField.getName();
+ *   Object targetFieldValue = result.get(targetFieldName);
+ * }
  * </pre>
  *
  * Decoding a {@link Computable complex value} to a Java primitive value:
  * <pre>
- * if(targetValue instanceof Computable){
- *   Computable computable = (Computable)targetValue;
+ * if(targetFieldValue instanceof Computable){
+ *   Computable computable = (Computable)targetFieldValue;
  *
- *   targetValue = computable.getResult();
+ *   targetFieldValue = computable.getResult();
  * }
  * </pre>
  *
  * Retrieving the values of {@link #getOutputFields() output fields} (ie. secondary results):
  * <pre>
- * List&lt;FieldName&gt; outputFields = evaluator.getOutputFields();
- * for(FieldName outputField : outputFields){
- *   Object outputValue = result.get(outputField);
+ * List&lt;OutputField&gt; outputFields = evaluator.getOutputFields();
+ * for(OutputField outputField : outputFields){
+ *   FieldName outputFieldName = outputField.getName();
+ *   Object outputFieldValue = result.get(outputFieldName);
  * }
  * </pre>
  *
@@ -104,76 +107,6 @@ import org.dmg.pmml.Model;
  * @see EvaluatorUtil
  */
 public interface Evaluator extends Consumer {
-
-	/**
-	 * <p>
-	 * Prepares the input value for a field.
-	 * </p>
-	 *
-	 * <p>
-	 * First, the value is converted from the user-supplied representation to internal representation.
-	 * After that, the value is subjected to missing value treatment, invalid value treatment and outlier treatment.
-	 * </p>
-	 *
-	 * @param name The name of the field.
-	 * @param string The input value in user-supplied representation.
-	 * Use <code>null</code> to represent a missing input value.
-	 *
-	 * @throws EvaluationException If the input value preparation fails.
-	 * @throws InvalidFeatureException
-	 * @throws UnsupportedFeatureException
-	 *
-	 * @see #getDataField(FieldName)
-	 * @see #getMiningField(FieldName)
-	 */
-	FieldValue prepare(FieldName name, Object value);
-
-	/**
-	 * @param name The name of the field.
-	 * Use {@link #DEFAULT_TARGET} to represent the default target field.
-	 */
-	@Override
-	public DataField getDataField(FieldName name);
-
-	/**
-	 * <p>
-	 * Convenience method for retrieving the sole target field.
-	 * </p>
-	 *
-	 * <p>
-	 * A supervised model should, but is not required to, define a target field.
-	 * An unsupervised model, by definition, does not define a target field.
-	 * If the {@link #getTargetFields() collection of target fields} is empty,
-	 * then the model consumer should assume that the model defines a default target field,
-	 * which is represented by {@link #DEFAULT_TARGET}.
-	 * </p>
-	 *
-	 * <p>
-	 * It is possible to detect the "defaultness" of a target field by looking up its definition from the {@link MiningSchema}.
-	 * </p>
-	 *
-	 * <pre>
-	 * Consumer consumer = ...;
-	 *
-	 * FieldName targetField = consumer.getTargetField();
-	 *
-	 * MiningField miningField = consumer.getMiningField(targetField);
-	 * if(miningField != null){
-	 *   // A target field
-	 * } else
-	 *
-	 * {
-	 *   // The default target field
-	 * }
-	 * </pre>
-	 *
-	 * @return The sole target field.
-	 *
-	 * @throws InvalidFeatureException If the number of target fields is greater than one.
-	 *
-	 * @see #getTargetFields()
-	 */
-	FieldName getTargetField();
 
 	/**
 	 * <p>
@@ -207,13 +140,4 @@ public interface Evaluator extends Consumer {
 	 * @see Computable
 	 */
 	Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments);
-
-	/**
-	 * <p>
-	 * The name of the default target field.
-	 * </p>
-	 *
-	 * @see #getTargetField()
-	 */
-	public static final FieldName DEFAULT_TARGET = null;
 }

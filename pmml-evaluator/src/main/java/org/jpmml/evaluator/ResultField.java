@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2016 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -16,18 +16,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.tree;
+package org.jpmml.evaluator;
 
-import org.jpmml.evaluator.Evaluator;
-import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.junit.Test;
-
-public class ScalarVerificationTest extends ModelEvaluatorTest {
-
-	@Test
-	public void verify() throws Exception {
-		Evaluator evaluator = createModelEvaluator();
-
-		evaluator.verify();
-	}
+abstract
+class ResultField extends ModelField {
 }

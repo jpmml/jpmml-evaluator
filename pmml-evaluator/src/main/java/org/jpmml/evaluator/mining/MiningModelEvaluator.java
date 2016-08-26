@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,19 +34,18 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
+import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.Model;
-import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.True;
@@ -64,20 +62,22 @@ import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasProbability;
+import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.InvalidFeatureException;
 import org.jpmml.evaluator.InvalidResultException;
 import org.jpmml.evaluator.MiningFieldUtil;
-import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
+import org.jpmml.evaluator.OutputField;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLException;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.ProbabilityAggregator;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.RegressionAggregator;
+import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.evaluator.VoteAggregator;
@@ -85,9 +85,7 @@ import org.jpmml.evaluator.VoteAggregator;
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements MiningModelConsumer, HasEntityRegistry<Segment> {
 
 	transient
-	private List<FieldName> nestedOutputFieldNames = null;
-
-	private Map<FieldName, OutputField> nestedOutputFields = Collections.emptyMap();
+	private List<OutputField> nestedOutputFields = null;
 
 	private ModelEvaluatorFactory evaluatorFactory = null;
 
@@ -108,23 +106,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		if(segmentation == null){
 			throw new InvalidFeatureException(miningModel);
 		}
-
-		List<Segment> segments = segmentation.getSegments();
-
-		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
-		switch(multipleModelMethod){
-			case SELECT_ALL:
-				// Ignored
-				break;
-			case SELECT_FIRST:
-				this.nestedOutputFields = collectNestedOutputFields(getActiveHead(segments));
-				break;
-			case MODEL_CHAIN:
-				this.nestedOutputFields = collectNestedOutputFields(getActiveTail(segments));
-				break;
-			default:
-				break;
-		}
 	}
 
 	@Override
@@ -137,18 +118,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public List<FieldName> getNestedOutputFields(){
+	public List<OutputField> getNestedOutputFields(){
 
-		if(this.nestedOutputFieldNames == null){
-			this.nestedOutputFieldNames = ImmutableList.copyOf(this.nestedOutputFields.keySet());
+		if(this.nestedOutputFields == null){
+			this.nestedOutputFields = createNestedOutputFields();
 		}
 
-		return this.nestedOutputFieldNames;
-	}
-
-	@Override
-	public OutputField getNestedOutputField(FieldName name){
-		return this.nestedOutputFields.get(name);
+		return this.nestedOutputFields;
 	}
 
 	@Override
@@ -271,12 +247,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MAX:
 			case MEDIAN:
 				{
-					FieldName targetField = getTargetField();
+					TargetField targetField = getTargetField();
 
-					DataField dataField = getDataField(targetField);
-					if(dataField == null){
-						throw new MissingFieldException(targetField);
-					}
+					DataField dataField = targetField.getDataField();
 
 					List<String> categories = FieldValueUtil.getTargetCategories(dataField);
 
@@ -312,7 +285,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		result.computeResult(DataType.STRING);
 
-		return Collections.singletonMap(getTargetField(), result);
+		return Collections.singletonMap(getTargetFieldName(), result);
 	}
 
 	private Map<FieldName, ?> evaluateAny(MiningModelEvaluationContext context){
@@ -423,7 +396,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			try {
 				Map<FieldName, ?> result = segmentEvaluator.evaluate(segmentContext);
 
-				FieldName segmentTargetField = segmentEvaluator.getTargetField();
+				TargetField segmentTargetField = segmentEvaluator.getTargetField();
 
 				segmentResult = new SegmentResult(segment, segmentId, result, segmentTargetField);
 			} catch(PMMLException pe){
@@ -437,21 +410,18 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			switch(multipleModelMethod){
 				case MODEL_CHAIN:
 					{
-						List<FieldName> outputFields = segmentEvaluator.getOutputFields();
-						for(FieldName outputField : outputFields){
-							OutputField segmentOutputField = segmentEvaluator.getOutputField(outputField);
-							if(outputField == null){
-								throw new MissingFieldException(outputField, segment);
+						List<OutputField> outputFields = segmentEvaluator.getOutputFields();
+						for(OutputField outputField : outputFields){
+							FieldName name = outputField.getName();
+
+							context.putOutputField(outputField.getOutputField());
+
+							FieldValue value = segmentContext.getField(name);
+							if(value == null){
+								throw new MissingValueException(name, segment);
 							}
 
-							context.putOutputField(segmentOutputField);
-
-							FieldValue outputValue = segmentContext.getField(outputField);
-							if(outputValue == null){
-								throw new MissingValueException(outputField, segment);
-							}
-
-							context.declare(outputField, outputValue);
+							context.declare(name, value);
 						}
 					}
 					break;
@@ -515,45 +485,33 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		// "If no segments have predicates that evaluate to true, then the result is a missing value"
 		if(segmentResults.size() == 0){
-			return Collections.singletonMap(getTargetField(), null);
+			return Collections.singletonMap(getTargetFieldName(), null);
 		}
 
 		return null;
 	}
 
-	private Map<FieldName, OutputField> collectNestedOutputFields(List<Segment> segments){
-		Map<FieldName, OutputField> result = new LinkedHashMap<>();
+	private List<OutputField> createNestedOutputFields(){
+		MiningModel miningModel = getModel();
 
-		BiMap<String, Segment> entityRegistry = getEntityRegistry();
+		Segmentation segmentation = miningModel.getSegmentation();
 
-		for(int i = 0, max = segments.size(); i < max; i++){
-			Segment segment = segments.get(i);
+		List<Segment> segments = segmentation.getSegments();
 
-			Model model = segment.getModel();
-			if(model == null){
-				throw new InvalidFeatureException(segment);
-			}
-
-			String segmentId = EntityUtil.getId(segment, entityRegistry);
-
-			SegmentHandler segmentHandler = this.segmentHandlers.get(segmentId);
-			if(segmentHandler == null){
-				segmentHandler = createSegmentHandler(model);
-
-				this.segmentHandlers.putIfAbsent(segmentId, segmentHandler);
-			}
-
-			Evaluator evaluator = segmentHandler.getEvaluator();
-
-			List<FieldName> names = EvaluatorUtil.getOutputFields(evaluator);
-			for(FieldName name : names){
-				OutputField outputField = EvaluatorUtil.getOutputField(evaluator, name);
-
-				result.put(name, outputField);
-			}
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
+		switch(multipleModelMethod){
+			case SELECT_ALL:
+				// Ignored
+				break;
+			case SELECT_FIRST:
+				return collectNestedOutputFields(getActiveHead(segments));
+			case MODEL_CHAIN:
+				return collectNestedOutputFields(getActiveTail(segments));
+			default:
+				break;
 		}
 
-		return ImmutableMap.copyOf(result);
+		return Collections.emptyList();
 	}
 
 	private List<Segment> getActiveHead(List<Segment> segments){
@@ -578,6 +536,38 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return Lists.reverse(getActiveHead(Lists.reverse(segments)));
 	}
 
+	private List<OutputField> collectNestedOutputFields(List<Segment> segments){
+		List<OutputField> result = new ArrayList<>();
+
+		BiMap<String, Segment> entityRegistry = getEntityRegistry();
+
+		for(int i = 0, max = segments.size(); i < max; i++){
+			Segment segment = segments.get(i);
+
+			Model model = segment.getModel();
+			if(model == null){
+				throw new InvalidFeatureException(segment);
+			}
+
+			String segmentId = EntityUtil.getId(segment, entityRegistry);
+
+			SegmentHandler segmentHandler = this.segmentHandlers.get(segmentId);
+			if(segmentHandler == null){
+				segmentHandler = createSegmentHandler(model);
+
+				this.segmentHandlers.putIfAbsent(segmentId, segmentHandler);
+			}
+
+			Evaluator evaluator = segmentHandler.getEvaluator();
+
+			List<OutputField> outputFields = EvaluatorUtil.getOutputFields(evaluator);
+
+			result.addAll(outputFields);
+		}
+
+		return ImmutableList.copyOf(result);
+	}
+
 	private SegmentHandler createSegmentHandler(Model model){
 		ModelEvaluatorFactory evaluatorFactory = getEvaluatorFactory();
 
@@ -589,12 +579,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		boolean compatible = true;
 
-		List<FieldName> activeFields = evaluator.getActiveFields();
-		for(FieldName activeField : activeFields){
-			MiningField miningField = evaluator.getMiningField(activeField);
+		List<InputField> activeFields = evaluator.getActiveFields();
+		for(InputField activeField : activeFields){
+			Field field = activeField.getField();
+			MiningField miningField = activeField.getMiningField();
 
-			DataField dataField = getDataField(activeField);
-			if(dataField != null){
+			if(field instanceof DataField){
 				compatible &= MiningFieldUtil.isDefault(miningField);
 			}
 		}

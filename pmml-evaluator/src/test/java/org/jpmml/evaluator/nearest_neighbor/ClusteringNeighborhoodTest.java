@@ -33,7 +33,7 @@ import java.util.Map;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.EvaluationException;
-import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
@@ -44,13 +44,13 @@ public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		Evaluator evaluator = createModelEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("marital status", "d", "dependents", 0);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		AffinityDistribution targetValue = (AffinityDistribution)result.get(evaluator.getTargetField());
+		AffinityDistribution targetValue = (AffinityDistribution)result.get(evaluator.getTargetFieldName());
 
 		try {
 			targetValue.getResult();

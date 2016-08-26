@@ -26,7 +26,7 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.Targets;
-import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.Consumer;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -44,10 +44,9 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 		Map<FieldName, ?> arguments = createArguments("input", null);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
-
 		assertEquals(1, result.size());
 
-		assertEquals(432.21d, getTarget(result, Evaluator.DEFAULT_TARGET));
+		assertEquals(432.21d, getTarget(result, Consumer.DEFAULT_TARGET_NAME));
 
 		Targets targets = model.getTargets();
 		for(Target target : targets){
@@ -60,6 +59,6 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 
 		assertEquals(1, result.size());
 
-		assertEquals(null, getTarget(result, Evaluator.DEFAULT_TARGET));
+		assertEquals(null, getTarget(result, Consumer.DEFAULT_TARGET_NAME));
 	}
 }

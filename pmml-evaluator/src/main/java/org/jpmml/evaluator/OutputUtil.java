@@ -81,7 +81,7 @@ public class OutputUtil {
 
 		outputFields:
 		for(OutputField outputField : outputFields){
-			FieldName targetField = outputField.getTargetField();
+			FieldName targetFieldName = outputField.getTargetField();
 
 			Object targetValue = null;
 
@@ -107,13 +107,13 @@ public class OutputUtil {
 					continue outputFields;
 				} // End if
 
-				if(targetField != null){
+				if(targetFieldName != null){
 
-					if(!segmentPredictions.containsKey(targetField)){
-						throw new MissingValueException(targetField, outputField);
+					if(!segmentPredictions.containsKey(targetFieldName)){
+						throw new MissingValueException(targetFieldName, outputField);
 					}
 
-					targetValue = segmentPredictions.get(targetField);
+					targetValue = segmentPredictions.get(targetFieldName);
 				} else
 
 				{
@@ -136,21 +136,21 @@ public class OutputUtil {
 						// Falls through
 					default:
 						{
-							if(targetField == null){
-								targetField = modelEvaluator.getTargetField();
+							if(targetFieldName == null){
+								targetFieldName = modelEvaluator.getTargetFieldName();
 							} // End if
 
-							if(!predictions.containsKey(targetField)){
-								throw new MissingValueException(targetField, outputField);
+							if(!predictions.containsKey(targetFieldName)){
+								throw new MissingValueException(targetFieldName, outputField);
 							}
 
-							targetValue = predictions.get(targetField);
+							targetValue = predictions.get(targetFieldName);
 						}
 						break;
 				}
 			}
 
-			// If the target value is missing, then the result delivered by this OutputField is missing
+			// "If the target value is missing, then the result delivered by this OutputField is missing"
 			if(targetValue == null){
 				continue outputFields;
 			}
@@ -166,12 +166,12 @@ public class OutputUtil {
 					break;
 				case PREDICTED_DISPLAY_VALUE:
 					{
-						DataField dataField = modelEvaluator.getDataField(targetField);
+						DataField dataField = modelEvaluator.getDataField(targetFieldName);
 						if(dataField == null){
-							throw new MissingFieldException(targetField, outputField);
+							throw new MissingFieldException(targetFieldName, outputField);
 						}
 
-						Target target = modelEvaluator.getTarget(targetField);
+						Target target = modelEvaluator.getTarget(targetFieldName);
 
 						value = getPredictedDisplayValue(targetValue, dataField, target);
 					}
@@ -210,20 +210,20 @@ public class OutputUtil {
 					break;
 				case RESIDUAL:
 					{
-						FieldValue expectedValue = context.getField(targetField);
-						if(expectedValue == null){
-							throw new MissingValueException(targetField, outputField);
+						FieldValue expectedTargetValue = context.getField(targetFieldName);
+						if(expectedTargetValue == null){
+							throw new MissingValueException(targetFieldName, outputField);
 						}
 
-						DataField dataField = modelEvaluator.getDataField(targetField);
+						DataField dataField = modelEvaluator.getDataField(targetFieldName);
 
 						OpType opType = dataField.getOpType();
 						switch(opType){
 							case CONTINUOUS:
-								value = getContinuousResidual(targetValue, expectedValue);
+								value = getContinuousResidual(targetValue, expectedTargetValue);
 								break;
 							case CATEGORICAL:
-								value = getCategoricalResidual(targetValue, expectedValue);
+								value = getCategoricalResidual(targetValue, expectedTargetValue);
 								break;
 							default:
 								throw new UnsupportedFeatureException(dataField, opType);
@@ -373,14 +373,14 @@ public class OutputUtil {
 		switch(resultFeature){
 			case PREDICTED_VALUE:
 				{
-					FieldName targetField = outputField.getTargetField();
-					if(targetField == null){
-						targetField = modelEvaluator.getTargetField();
+					FieldName targetFieldName = outputField.getTargetField();
+					if(targetFieldName == null){
+						targetFieldName = modelEvaluator.getTargetFieldName();
 					}
 
-					DataField dataField = modelEvaluator.getDataField(targetField);
+					DataField dataField = modelEvaluator.getDataField(targetFieldName);
 					if(dataField == null){
-						throw new MissingFieldException(targetField, outputField);
+						throw new MissingFieldException(targetFieldName, outputField);
 					}
 
 					return dataField.getDataType();

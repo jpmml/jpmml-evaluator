@@ -41,6 +41,7 @@ import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PredicateUtil;
+import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.evaluator.VoteAggregator;
@@ -184,7 +185,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			}
 		}
 
-		FieldName targetField = getTargetField();
+		TargetField targetField = getTargetField();
 
 		Object result = TargetUtil.evaluateRegressionInternal(targetField, score, context);
 
@@ -192,7 +193,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			result = createReasonCodeList(reasonCodePoints.sumMap(), result);
 		}
 
-		return Collections.singletonMap(targetField, result);
+		return Collections.singletonMap(targetField.getName(), result);
 	}
 
 	static

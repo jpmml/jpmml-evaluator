@@ -84,6 +84,7 @@ import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.RegressionAggregator;
+import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.evaluator.VoteAggregator;
@@ -113,12 +114,18 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return "k-Nearest neighbors model";
 	}
 
-	/**
-	 * @return <code>null</code> Always.
-	 */
 	@Override
 	protected DataField getDataField(){
-		return null;
+		MiningFunction miningFunction = getMiningFunction();
+
+		switch(miningFunction){
+			case REGRESSION:
+			case CLASSIFICATION:
+			case MIXED:
+				return null;
+			default:
+				return super.getDataField();
+		}
 	}
 
 	@Override
@@ -177,22 +184,21 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Map<FieldName, AffinityDistribution> result = new LinkedHashMap<>();
 
-		List<FieldName> targetFields = getTargetFields();
-		for(FieldName targetField : targetFields){
-			DataField dataField = getDataField(targetField);
-			if(dataField == null){
-				throw new MissingFieldException(targetField, nearestNeighborModel);
-			}
+		List<TargetField> targetFields = getTargetFields();
+		for(TargetField targetField : targetFields){
+			FieldName name = targetField.getName();
+
+			DataField dataField = targetField.getDataField();
 
 			Object value;
 
 			OpType opType = dataField.getOpType();
 			switch(opType){
 				case CONTINUOUS:
-					value = calculateContinuousTarget(targetField, nearestInstanceResults, table);
+					value = calculateContinuousTarget(name, nearestInstanceResults, table);
 					break;
 				case CATEGORICAL:
-					value = calculateCategoricalTarget(targetField, nearestInstanceResults, table);
+					value = calculateCategoricalTarget(name, nearestInstanceResults, table);
 					break;
 				default:
 					throw new UnsupportedFeatureException(dataField, opType);
@@ -200,7 +206,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			value = TypeUtil.parseOrCast(dataField.getDataType(), value);
 
-			result.put(targetField, createAffinityDistribution(instanceResults, function, value));
+			result.put(name, createAffinityDistribution(instanceResults, function, value));
 		}
 
 		return result;
@@ -220,7 +226,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Function<Integer, String> function = createIdentifierResolver(instanceIdVariable, table);
 
-		return Collections.singletonMap(getTargetField(), createAffinityDistribution(instanceResults, function, null));
+		return Collections.singletonMap(getTargetFieldName(), createAffinityDistribution(instanceResults, function, null));
 	}
 
 	private List<InstanceResult> evaluateInstanceRows(ModelEvaluationContext context){

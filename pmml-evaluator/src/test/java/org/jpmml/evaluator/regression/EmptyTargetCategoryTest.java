@@ -21,7 +21,7 @@ package org.jpmml.evaluator.regression;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
-import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.junit.Test;
@@ -32,13 +32,13 @@ public class EmptyTargetCategoryTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		Evaluator evaluator = createModelEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("x1", 3d, "x2", 3d);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		ProbabilityDistribution targetValue = (ProbabilityDistribution)result.get(evaluator.getTargetField());
+		ProbabilityDistribution targetValue = (ProbabilityDistribution)result.get(evaluator.getTargetFieldName());
 
 		assertEquals("yes", targetValue.getResult());
 

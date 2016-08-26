@@ -20,11 +20,10 @@ package org.jpmml.evaluator.mining;
 
 import java.util.List;
 
-import org.dmg.pmml.FieldName;
-import org.dmg.pmml.OutputField;
 import org.dmg.pmml.mining.MiningModel;
 import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.Consumer;
+import org.jpmml.evaluator.OutputField;
 
 public interface MiningModelConsumer extends Consumer {
 
@@ -54,14 +53,5 @@ public interface MiningModelConsumer extends Consumer {
 	 * However, the output fields of nested models are disjoint sets from the output fields of the top-level mining model.
 	 * </p>
 	 */
-	List<FieldName> getNestedOutputFields();
-
-	/**
-	 * <p>
-	 * Gets the definition of a field from the nested {@link Consumer} instance.
-	 * </p>
-	 *
-	 * @see #getNestedOutputFields()
-	 */
-	OutputField getNestedOutputField(FieldName name);
+	List<OutputField> getNestedOutputFields();
 }

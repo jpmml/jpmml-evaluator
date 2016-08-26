@@ -188,27 +188,27 @@ public class EvaluationExample extends Example {
 		// Perform self-testing
 		evaluator.verify();
 
-		List<FieldName> activeFields = evaluator.getActiveFields();
-		List<FieldName> groupFields = evaluator.getGroupFields();
+		List<InputField> activeFields = evaluator.getActiveFields();
+		List<InputField> groupFields = evaluator.getGroupFields();
 
 		if(inputRecords.size() > 0){
 			Map<FieldName, ?> inputRecord = inputRecords.get(0);
 
-			Sets.SetView<FieldName> missingActiveFields = Sets.difference(new LinkedHashSet<>(activeFields), inputRecord.keySet());
+			Sets.SetView<FieldName> missingActiveFields = Sets.difference(new LinkedHashSet<>(EvaluatorUtil.getNames(activeFields)), inputRecord.keySet());
 			if((missingActiveFields.size() > 0) && !this.sparse){
 				throw new IllegalArgumentException("Missing active field(s): " + missingActiveFields.toString());
 			}
 
-			Sets.SetView<FieldName> missingGroupFields = Sets.difference(new LinkedHashSet<>(groupFields), inputRecord.keySet());
+			Sets.SetView<FieldName> missingGroupFields = Sets.difference(new LinkedHashSet<>(EvaluatorUtil.getNames(groupFields)), inputRecord.keySet());
 			if(missingGroupFields.size() > 0){
 				throw new IllegalArgumentException("Missing group field(s): " + missingGroupFields.toString());
 			}
 		} // End if
 
 		if(groupFields.size() == 1){
-			FieldName groupField = groupFields.get(0);
+			InputField groupField = groupFields.get(0);
 
-			inputRecords = EvaluatorUtil.groupRows(groupField, inputRecords);
+			inputRecords = EvaluatorUtil.groupRows(groupField.getName(), inputRecords);
 		} else
 
 		if(groupFields.size() > 1){
@@ -234,10 +234,12 @@ public class EvaluationExample extends Example {
 				for(Map<FieldName, ?> inputRecord : inputRecords){
 					arguments.clear();
 
-					for(FieldName activeField : activeFields){
-						FieldValue activeValue = EvaluatorUtil.prepare(evaluator, activeField, inputRecord.get(activeField));
+					for(InputField activeField : activeFields){
+						FieldName name = activeField.getName();
 
-						arguments.put(activeField, activeValue);
+						FieldValue activeValue = EvaluatorUtil.prepare(activeField, inputRecord.get(name));
+
+						arguments.put(name, activeValue);
 					}
 
 					Map<FieldName, ?> result = evaluator.evaluate(arguments);
@@ -255,15 +257,15 @@ public class EvaluationExample extends Example {
 			waitForUserInput();
 		}
 
-		List<FieldName> targetFields = EvaluatorUtil.getTargetFields(evaluator);
-		List<FieldName> outputFields = EvaluatorUtil.getOutputFields(evaluator);
+		List<TargetField> targetFields = EvaluatorUtil.getTargetFields(evaluator);
+		List<OutputField> outputFields = EvaluatorUtil.getOutputFields(evaluator);
+
+		List<? extends ResultField> resultFields = Lists.newArrayList(Iterables.concat(targetFields, outputFields));
 
 		CsvUtil.Table outputTable = new CsvUtil.Table();
 		outputTable.setSeparator(inputTable.getSeparator());
 
-		List<FieldName> resultFields = Lists.newArrayList(Iterables.concat(targetFields, outputFields));
-
-		outputTable.addAll(BatchUtil.formatRecords(outputRecords, resultFields, Example.CSV_FORMATTER));
+		outputTable.addAll(BatchUtil.formatRecords(outputRecords, EvaluatorUtil.getNames(resultFields), Example.CSV_FORMATTER));
 
 		if((inputTable.size() == outputTable.size()) && this.copyColumns){
 

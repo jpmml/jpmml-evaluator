@@ -39,13 +39,13 @@ import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.Target;
 import org.dmg.pmml.association.AssociationModel;
 import org.dmg.pmml.association.AssociationRule;
 import org.dmg.pmml.association.Item;
 import org.dmg.pmml.association.ItemRef;
 import org.dmg.pmml.association.Itemset;
 import org.jpmml.evaluator.CacheUtil;
+import org.jpmml.evaluator.Consumer;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
@@ -53,12 +53,14 @@ import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.IndexableUtil;
+import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.InvalidFeatureException;
 import org.jpmml.evaluator.InvalidResultException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
+import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 
@@ -90,14 +92,6 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		return "Association rules";
 	}
 
-	/**
-	 * @return <code>null</code> Always.
-	 */
-	@Override
-	public Target getTarget(FieldName name){
-		return null;
-	}
-
 	@Override
 	public BiMap<String, AssociationRule> getEntityRegistry(){
 
@@ -109,17 +103,23 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	@Override
-	public void verify(){
-		AssociationModel associationModel = getModel();
+	public FieldName getTargetFieldName(){
+		return Consumer.DEFAULT_TARGET_NAME;
+	}
 
-		List<FieldName> targetFields = getTargetFields();
+	@Override
+	protected List<TargetField> createTargetFields(){
+		List<TargetField> targetFields = super.createTargetFields();
+
 		if(targetFields.size() > 0){
+			AssociationModel associationModel = getModel();
+
 			MiningSchema miningSchema = associationModel.getMiningSchema();
 
 			throw new InvalidFeatureException("Too many target fields", miningSchema);
 		}
 
-		super.verify();
+		return targetFields;
 	}
 
 	@Override
@@ -196,7 +196,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			}
 		};
 
-		return Collections.singletonMap(getTargetField(), association);
+		return Collections.singletonMap(Consumer.DEFAULT_TARGET_NAME, association);
 	}
 
 	/**
@@ -205,8 +205,8 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	Set<String> getActiveItems(EvaluationContext context){
 		AssociationModel associationModel = getModel();
 
-		List<FieldName> activeFields = getActiveFields();
-		List<FieldName> groupFields = getGroupFields();
+		List<InputField> activeFields = getActiveFields();
+		List<InputField> groupFields = getGroupFields();
 
 		MiningSchema miningSchema = associationModel.getMiningSchema();
 
@@ -219,8 +219,9 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				throw new InvalidFeatureException("No active fields", miningSchema);
 			}
 
-			for(FieldName activeField : activeFields){
-				FieldValue value = context.evaluate(activeField);
+			for(InputField activeField : activeFields){
+				FieldName name = activeField.getName();
+				FieldValue value = context.evaluate(name);
 
 				if(value == null){
 					continue;
@@ -232,7 +233,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 						{
 							if((AssociationModelEvaluator.TRUE).equalsValue(value) || value.equalsString("T")){
 								// "The item values are based on field names when the field has only true/false values"
-								itemValues.add(activeField.getValue());
+								itemValues.add(name.getValue());
 							} else
 
 							if((AssociationModelEvaluator.FALSE).equalsValue(value) || value.equalsString("F")){
@@ -243,7 +244,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 								Object object = value.getValue();
 
 								// "The item values are based on field name followed by "=" and field value (category) when the field is a regular categorical field"
-								itemValues.add(activeField.getValue() + "=" + TypeUtil.format(object));
+								itemValues.add(name.getValue() + "=" + TypeUtil.format(object));
 							}
 						}
 						break;
@@ -264,11 +265,13 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				throw new InvalidFeatureException("Too many active fields", miningSchema);
 			}
 
-			FieldName activeField = activeFields.get(0);
+			InputField activeField = activeFields.get(0);
 
-			FieldValue value = context.evaluate(activeField);
+			FieldName name = activeField.getName();
+
+			FieldValue value = context.evaluate(name);
 			if(value == null){
-				throw new MissingValueException(activeField);
+				throw new MissingValueException(name);
 			}
 
 			Collection<?> objects = FieldValueUtil.getValue(Collection.class, value);

@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Classification;
-import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
@@ -39,13 +39,13 @@ public class AlternateBinaryTargetCategoryTest extends ModelEvaluatorTest {
 	}
 
 	private String evaluate(double x1, double x2) throws Exception {
-		Evaluator evaluator = createModelEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("x1", x1, "x2", x2);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		Classification targetValue = (Classification)result.get(evaluator.getTargetField());
+		Classification targetValue = (Classification)result.get(evaluator.getTargetFieldName());
 
 		return (String)targetValue.getResult();
 	}

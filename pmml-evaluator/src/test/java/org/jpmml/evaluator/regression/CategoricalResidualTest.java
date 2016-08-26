@@ -38,8 +38,10 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
+		FieldName targetFieldName = evaluator.getTargetFieldName();
+
 		// "For some row in the test data the expected value may be Y"
-		Map<FieldName, ?> arguments = createArguments(evaluator.getTargetField(), "Y");
+		Map<FieldName, ?> arguments = createArguments(targetFieldName, "Y");
 
 		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
 		context.declareAll(arguments);
@@ -50,7 +52,7 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 
 		response.computeResult(DataType.STRING);
 
-		Map<FieldName, ?> prediction = Collections.singletonMap(evaluator.getTargetField(), response);
+		Map<FieldName, ?> prediction = Collections.singletonMap(targetFieldName, response);
 
 		Map<FieldName, ?> result = OutputUtil.evaluate(prediction, context);
 
@@ -61,7 +63,7 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 		assertEquals(DataType.DOUBLE, OutputUtil.getDataType(evaluator.getOutputField(field), evaluator));
 
 		// "For some other row the expected value may be N"
-		arguments = createArguments(evaluator.getTargetField(), "N");
+		arguments = createArguments(targetFieldName, "N");
 
 		context = new ModelEvaluationContext(evaluator);
 		context.declareAll(arguments);

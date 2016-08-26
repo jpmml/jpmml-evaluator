@@ -20,7 +20,6 @@ package org.jpmml.evaluator;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -29,11 +28,9 @@ import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.OutputField;
 import org.jpmml.evaluator.mining.MiningModelConsumer;
 
 public class EvaluatorUtil {
@@ -93,19 +90,19 @@ public class EvaluatorUtil {
 	}
 
 	static
-	public FieldValue prepare(Evaluator evaluator, FieldName name, Object value){
+	public FieldValue prepare(InputField inputField, Object value){
 
 		if(value instanceof Collection){
 			Collection<?> rawValues = (Collection<?>)value;
-
-			Collection<Object> preparedValues = createCollection(rawValues);
 
 			DataType dataType = null;
 
 			OpType opType = null;
 
+			Collection<Object> preparedValues = createCollection(rawValues);
+
 			for(Object rawValue : rawValues){
-				FieldValue preparedValue = evaluator.prepare(name, rawValue);
+				FieldValue preparedValue = inputField.prepare(rawValue);
 
 				if(preparedValue != null){
 
@@ -124,7 +121,7 @@ public class EvaluatorUtil {
 			return FieldValueUtil.create(dataType, opType, preparedValues);
 		}
 
-		return evaluator.prepare(name, value);
+		return inputField.prepare(value);
 	}
 
 	static
@@ -169,34 +166,27 @@ public class EvaluatorUtil {
 	}
 
 	static
-	public List<FieldName> getTargetFields(Evaluator evaluator){
-		List<FieldName> targetFields = evaluator.getTargetFields();
-
-		if(targetFields.isEmpty()){
-			FieldName targetField = evaluator.getTargetField();
-
-			DataField dataField = evaluator.getDataField(targetField);
-			if(dataField != null){
-				return Collections.singletonList(targetField);
-			}
-		}
+	public List<TargetField> getTargetFields(Evaluator evaluator){
+		List<TargetField> targetFields = evaluator.getTargetFields();
 
 		return targetFields;
 	}
 
 	static
-	public List<FieldName> getOutputFields(Evaluator evaluator){
-		List<FieldName> outputFields = evaluator.getOutputFields();
+	public List<OutputField> getOutputFields(Evaluator evaluator){
+		List<OutputField> outputFields = evaluator.getOutputFields();
 
 		if(evaluator instanceof MiningModelConsumer){
 			MiningModelConsumer miningModelConsumer = (MiningModelConsumer)evaluator;
 
-			List<FieldName> nestedOutputFields = miningModelConsumer.getNestedOutputFields();
+			List<OutputField> nestedOutputFields = miningModelConsumer.getNestedOutputFields();
 			if(nestedOutputFields.isEmpty()){
 				return outputFields;
 			}
 
-			List<FieldName> result = new ArrayList<>(nestedOutputFields.size() + outputFields.size());
+			List<OutputField> result = new ArrayList<>(nestedOutputFields.size() + outputFields.size());
+
+			// Depth-first ordering
 			result.addAll(nestedOutputFields);
 			result.addAll(outputFields);
 
@@ -207,19 +197,16 @@ public class EvaluatorUtil {
 	}
 
 	static
-	public OutputField getOutputField(Evaluator evaluator, FieldName name){
-		OutputField outputField = evaluator.getOutputField(name);
-		if(outputField != null){
-			return outputField;
-		} // End if
+	public List<FieldName> getNames(List<? extends ModelField> modelFields){
+		List<FieldName> result = new ArrayList<>(modelFields.size());
 
-		if(evaluator instanceof MiningModelConsumer){
-			MiningModelConsumer miningModelConsumer = (MiningModelConsumer)evaluator;
+		for(ModelField modelField : modelFields){
+			FieldName name = modelField.getName();
 
-			return miningModelConsumer.getNestedOutputField(name);
+			result.add(name);
 		}
 
-		return null;
+		return result;
 	}
 
 	static

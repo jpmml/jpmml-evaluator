@@ -54,34 +54,46 @@ public class FieldValueUtil {
 	}
 
 	static
-	public FieldValue prepareInputValue(DataField dataField, MiningField miningField, Object value){
-		DataType dataType = dataField.getDataType();
-		OpType opType = dataField.getOpType();
+	public FieldValue prepareInputValue(Field field, MiningField miningField, Object value){
+		DataType dataType = field.getDataType();
+		OpType opType = field.getOpType();
 
 		if(dataType == null || opType == null){
-			throw new InvalidFeatureException(dataField);
+			throw new InvalidFeatureException(field);
 		}
 
-		boolean compatible;
+		Value.Property status;
 
-		try {
-			if(value != null){
+		if(value == null){
+			status = Value.Property.MISSING;
+		} else
+
+		// XXX
+		if(value instanceof Collection){
+			status = Value.Property.VALID;
+		} else
+
+		{
+			boolean compatible;
+
+			try {
 				value = TypeUtil.parseOrCast(dataType, value);
+
+				compatible = true;
+			} catch(IllegalArgumentException | TypeCheckException e){
+				compatible = false;
 			}
 
-			compatible = true;
-		} catch(IllegalArgumentException | TypeCheckException e){
-			compatible = false;
+			status = getStatus(field, miningField, value, compatible);
 		}
 
-		Value.Property status = getStatus(dataField, miningField, value, compatible);
 		switch(status){
 			case VALID:
-				return performValidValueTreatment(dataField, miningField, value);
+				return performValidValueTreatment(field, miningField, value);
 			case INVALID:
-				return performInvalidValueTreatment(dataField, miningField, value);
+				return performInvalidValueTreatment(field, miningField, value);
 			case MISSING:
-				return performMissingValueTreatment(dataField, miningField);
+				return performMissingValueTreatment(field, miningField);
 			default:
 				break;
 		}
@@ -201,16 +213,51 @@ public class FieldValueUtil {
 		}
 	}
 
+	static
+	OpType getOpType(Field field, MiningField miningField){
+		OpType opType = field.getOpType();
+
+		// "A MiningField overrides a (Data)Field"
+		if(miningField != null){
+			opType = firstNonNull(miningField.getOpType(), opType);
+		}
+
+		return opType;
+	}
+
+	static
+	OpType getOpType(Field field, MiningField miningField, Target target){
+		OpType opType = field.getOpType();
+
+		// "A MiningField overrides a (Data)Field, and a Target overrides a MiningField"
+		if(miningField != null){
+			opType = firstNonNull(miningField.getOpType(), opType);
+
+			if(target != null){
+				opType = firstNonNull(target.getOpType(), opType);
+			}
+		}
+
+		return opType;
+	}
+
+	static
+	private Value.Property getStatus(Field field, MiningField miningField, Object value, boolean compatible){
+
+		if(field instanceof DataField){
+			DataField dataField = (DataField)field;
+
+			return getStatus(dataField, miningField, value, compatible);
+		}
+
+		return (compatible ? Value.Property.VALID : Value.Property.INVALID);
+	}
+
 	@SuppressWarnings (
 		value = {"fallthrough"}
 	)
 	static
 	private Value.Property getStatus(DataField dataField, MiningField miningField, Object value, boolean compatible){
-
-		if(value == null){
-			return Value.Property.MISSING;
-		}
-
 		boolean hasValidSpace = false;
 
 		if(dataField.hasValues()){
@@ -307,12 +354,7 @@ public class FieldValueUtil {
 		}
 
 		DataType dataType = field.getDataType();
-		OpType opType = field.getOpType();
-
-		// "A MiningField overrides a DataField"
-		if(miningField != null){
-			opType = firstNonNull(miningField.getOpType(), opType);
-		}
+		OpType opType = getOpType(field, miningField);
 
 		return create(dataType, opType, value);
 	}
@@ -330,16 +372,7 @@ public class FieldValueUtil {
 		}
 
 		DataType dataType = field.getDataType();
-		OpType opType = field.getOpType();
-
-		// "A MiningField overrides a DataField, and a Target overrides a MiningField"
-		if(miningField != null){
-			opType = firstNonNull(miningField.getOpType(), opType);
-
-			if(target != null){
-				opType = firstNonNull(target.getOpType(), opType);
-			}
-		}
+		OpType opType = getOpType(field, miningField, target);
 
 		return create(dataType, opType, value);
 	}

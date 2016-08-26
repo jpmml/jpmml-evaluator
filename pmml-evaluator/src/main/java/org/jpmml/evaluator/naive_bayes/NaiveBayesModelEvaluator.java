@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -72,6 +73,7 @@ import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
+import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.evaluator.VerificationUtil;
@@ -122,6 +124,8 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
+
+		TargetField targetField = getTargetField();
 
 		double threshold = naiveBayesModel.getThreshold();
 
@@ -193,8 +197,8 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		result.normalizeValues();
 
-		FieldName targetField = bayesOutput.getFieldName();
-		if(targetField == null){
+		FieldName targetFieldName = bayesOutput.getFieldName();
+		if(targetFieldName == null || !Objects.equals(targetField.getName(), targetFieldName)){
 			throw new InvalidFeatureException(bayesOutput);
 		}
 

@@ -66,7 +66,7 @@ public class ModelEvaluatorTest extends PMMLManagerTest {
 	}
 
 	static
-	public void checkResultFields(List<?> targetFields, List<?> outputFields, Evaluator evaluator){
+	public void checkResultFields(List<?> targetNames, List<?> outputNames, Evaluator evaluator){
 		Function<Object, FieldName> function = new Function<Object, FieldName>(){
 
 			@Override
@@ -75,7 +75,10 @@ public class ModelEvaluatorTest extends PMMLManagerTest {
 			}
 		};
 
-		assertEquals(Lists.transform(targetFields, function), EvaluatorUtil.getTargetFields(evaluator));
-		assertEquals(Lists.transform(outputFields, function), EvaluatorUtil.getOutputFields(evaluator));
+		List<TargetField> targetFields = EvaluatorUtil.getTargetFields(evaluator);
+		List<OutputField> outputFields = EvaluatorUtil.getOutputFields(evaluator);
+
+		assertEquals(Lists.transform(targetNames, function), EvaluatorUtil.getNames(targetFields));
+		assertEquals(Lists.transform(outputNames, function), EvaluatorUtil.getNames(outputFields));
 	}
 }

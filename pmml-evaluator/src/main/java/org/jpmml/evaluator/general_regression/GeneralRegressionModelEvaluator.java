@@ -73,13 +73,13 @@ import org.jpmml.evaluator.HasParsedValueMapping;
 import org.jpmml.evaluator.InvalidFeatureException;
 import org.jpmml.evaluator.InvalidResultException;
 import org.jpmml.evaluator.MatrixUtil;
-import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.NormalDistributionUtil;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
+import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.evaluator.Values;
@@ -164,8 +164,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			throw new InvalidFeatureException(generalRegressionModel);
 		}
 
-		FieldName targetField = getTargetField();
-
 		List<BaselineCell> baselineCells;
 
 		Double maxTime;
@@ -223,7 +221,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			// "If the value is less than the minimum time, then cumulative hazard is 0 and predicted survival is 1"
 			if(value.compareToValue(minTimeValue) < 0){
-				return Collections.singletonMap(targetField, Values.DOUBLE_ZERO);
+				return Collections.singletonMap(getTargetFieldName(), Values.DOUBLE_ZERO);
 			}
 
 			FieldValue maxTimeValue = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, maxTime);
@@ -264,7 +262,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		Double cumHazard = baselineCumHazard * Math.exp(r - s);
 
-		return Collections.singletonMap(targetField, cumHazard);
+		return Collections.singletonMap(getTargetFieldName(), cumHazard);
 	}
 
 	private Map<FieldName, ?> evaluateGeneralRegression(ModelEvaluationContext context){
@@ -663,12 +661,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private List<String> parseTargetCategories(){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		FieldName targetField = getTargetField();
+		TargetField targetField = getTargetField();
 
-		DataField dataField = getDataField(targetField);
-		if(dataField == null){
-			throw new MissingFieldException(targetField, generalRegressionModel);
-		}
+		DataField dataField = targetField.getDataField();
 
 		OpType opType = dataField.getOpType();
 		switch(opType){

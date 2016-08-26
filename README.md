@@ -115,27 +115,25 @@ Evaluator evaluator = (Evaluator)modelEvaluator;
 
 ### Querying the "data schema" of models
 
-The model evaluator can be queried for the list of active (ie. independent), target (ie. primary dependent) and output (ie. secondary dependent) field names.
-Field names can be resolved to field definitions, which provide data type, operational type, value domain etc. information.
+The model evaluator can be queried for the list of active (ie. independent), target (ie. primary dependent) and output (ie. secondary dependent) field definitions, which provide information about field name, data type, operational type, value domain etc. information.
 
 Querying and parsing active fields:
 ```java
-List<FieldName> activeFields = evaluator.getActiveFields();
+List<InputField> activeFields = evaluator.getActiveFields();
+for(InputField activeField : activeFields){
+	org.dmg.pmml.DataField pmmlDataField = (org.dmg.pmml.DataField)activeField.getField();
+	org.dmg.pmml.MiningField pmmlMiningField = activeField.getMiningField();
 
-for(FieldName activeField : activeFields){
-	MiningField miningField = evaluator.getMiningField(activeField);
-	DataField dataField = evaluator.getDataField(activeField);
+	org.dmg.pmml.DataType dataType = activeField.getDataType();
+	org.dmg.pmml.OpType opType = activeField.getOpType();
 
-	DataType dataType = dataField.getDataType();
-
-	OpType opType = dataField.getOpType();
 	switch(opType){
 		case CONTINUOUS:
-			RangeSet<Double> validArgumentRanges = FieldValueUtil.getValidRanges(dataField);
+			RangeSet<Double> validArgumentRanges = FieldValueUtil.getValidRanges(pmmlDataField);
 			break;
 		case CATEGORICAL:
 		case ORDINAL:
-			List<Value> validArgumentValues = FieldValueUtil.getValidValues(dataField);
+			List<Value> validArgumentValues = FieldValueUtil.getValidValues(pmmlDataField);
 			break;
 		default:
 			break;
@@ -145,33 +143,21 @@ for(FieldName activeField : activeFields){
 
 Querying and parsing target fields:
 ```java
-List<FieldName> targetFields = EvaluatorUtil.getTargetFields(evaluator);
+List<TargetField> targetFields = EvaluatorUtil.getTargetFields(evaluator);
+for(TargetField targetField : targetFields){
+	org.dmg.pmml.DataField pmmlDataField = targetField.getDataField();
+	org.dmg.pmml.MiningField pmmlMiningField = targetField.getMiningField(); // Could be null
+	org.dmg.pmml.Target pmmlTarget = targetField.getTarget(); // Could be null
 
-for(FieldName targetField : targetFields){
-	MiningField miningField = evaluator.getMiningField(targetField);
-	DataField dataField = evaluator.getDataField(targetField);
-	Target target = evaluator.getTarget(targetField);
-
-	DataType dataType = dataField.getDataType();
-
-	OpType opType = dataField.getOpType();
-
-	// The MiningField element overrides the DataField element
-	if(miningField != null && miningField.getOpType() != null){
-		opType = miningField.getOpType();
-	} // End if
-
-	// The Target element overrides the MiningField element
-	if(target != null && target.getOpType() != null){
-		opType = target.getOpType();
-	}
+	org.dmg.pmml.DataType dataType = targetField.getDataType();
+	org.dmg.pmml.OpType opType = targetField.getOpType();
 
 	switch(opType){
 		case CONTINUOUS:
 			break;
 		case CATEGORICAL:
 		case ORDINAL:
-			List<Value> validResultValues = FieldValueUtil.getValidValues(dataField);
+			List<Value> validResultValues = FieldValueUtil.getValidValues(pmmlDataField);
 			break;
 		default:
 			break;
@@ -179,81 +165,94 @@ for(FieldName targetField : targetFields){
 }
 ```
 
-Method `EvaluatorUtil#getTargetFields(Evaluator)` is a "safe" wrapper for method `Evaluator#getTargetFields()`.
-
 Querying and parsing output fields:
 ```java
-List<FieldName> outputFields = EvaluatorUtil.getOutputFields(evaluator);
+List<OutputField> outputFields = EvaluatorUtil.getOutputFields(evaluator);
+for(OutputField outputField : outputFields){
+	org.dmg.pmml.OutputField pmmlOutputField = outputField.getOutputField();
 
-for(FieldName outputField : outputFields){
-	OutputField output = EvaluatorUtil.getOutputField(evaluator, outputField);
-
-	DataType dataType = output.getDataType();
-
-	OpType opType = output.getOpType();
+	org.dmg.pmml.DataType dataType = outputField.getDataType(); // Could be null
+	org.dmg.pmml.OpType opType = outputField.getOpType(); // Could be null
 }
 ```
 
-Methods `EvaluatorUtil#getOutputFields(Evaluator)` and `EvaluatorUtil#getOutputField(Evaluator, FieldName)` are "safe" wrappers for methods `Evaluator#getOutputFields()` and `Evaluator#getOutputField(FieldName)`, respectively.
+Methods `EvaluatorUtil#getTargetFields(Evaluator)` and `EvaluatorUtil#getOutputFields(Evaluator)` are "future-proof" wrappers for methods `Evaluator#getTargetFields()` and `Evaluator#getOutputFields()`, respectively.
 
 ### Evaluating models
 
 The PMML scoring operation must be invoked with valid arguments.
 Otherwise, the behaviour of the model evaluator class is unspecified.
 
-Preparing a data record:
+Preparing the argument data record:
 ```java
 Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
 
-List<FieldName> activeFields = evaluator.getActiveFields();
-for(FieldName activeField : activeFields){
+List<InputField> activeFields = evaluator.getActiveFields();
+for(InputField activeField : activeFields){
+	FieldName activeFieldName = activeField.getName();
+
 	// The raw (ie. user-supplied) value could be any Java primitive value
 	Object rawValue = ...;
 
 	// The raw value is passed through: 1) outlier treatment, 2) missing value treatment, 3) invalid value treatment and 4) type conversion
-	FieldValue activeValue = evaluator.prepare(activeField, rawValue);
+	FieldValue activeFieldValue = activeField.prepare(rawValue);
 
-	arguments.put(activeField, activeValue);
+	arguments.put(activeFieldName, activeFieldValue);
 }
 ```
 
-Evaluating the data record:
+Performing the evaluation:
 ```java
 Map<FieldName, ?> results = evaluator.evaluate(arguments);
 ```
 
-Typically, a model has exactly one target field:
-```java
-FieldName targetName = evaluator.getTargetField();
+Extracting primary results from the result data record:
+```
+List<TargetField> targetFields = evaluator.getTargetFields();
+for(TargetField targetField : targetFields){
+	FieldName targetFieldName = targetField.getName();
 
-Object targetValue = results.get(targetName);
+	Object targetFieldValue = results.get(targetFieldName);
+}
 ```
 
 The target value is either a Java primitive value (as a wrapper object) or an instance of `org.jpmml.evaluator.Computable`:
 ```java
-if(targetValue instanceof Computable){
-	Computable computable = (Computable)targetValue;
+if(targetFieldValue instanceof Computable){
+	Computable computable = (Computable)targetFieldValue;
 
-	Object primitiveValue = computable.getResult();
+	Object unboxedTargetFieldValue = computable.getResult();
 }
 ```
 
 The target value may implement interfaces that descend from interface `org.jpmml.evaluator.ResultFeature`:
 ```java
 // Test for "entityId" result feature
-if(targetValue instanceof HasEntityId){
-	HasEntityId hasEntityId = (HasEntityId)targetValue;
+if(targetFieldValue instanceof HasEntityId){
+	HasEntityId hasEntityId = (HasEntityId)targetFieldValue;
 	HasEntityRegistry<?> hasEntityRegistry = (HasEntityRegistry<?>)evaluator;
 	BiMap<String, ? extends Entity> entities = hasEntityRegistry.getEntityRegistry();
 	Entity winner = entities.get(hasEntityId.getEntityId());
 
 	// Test for "probability" result feature
-	if(targetValue instanceof HasProbability){
-		HasProbability hasProbability = (HasProbability)targetValue;
+	if(targetFieldValue instanceof HasProbability){
+		HasProbability hasProbability = (HasProbability)targetFieldValue;
 		Double winnerProbability = hasProbability.getProbability(winner.getId());
 	}
 }
 ```
+
+Extracting secondary results from the result data record:
+```
+List<OutputField> outputFields = evaluator.getOutputFields();
+for(OutputField outputField : outputFields){
+	FieldName outputFieldName = outputField.getName();
+
+	Object outputFieldValue = results.get(outputFieldName);
+}
+```
+
+The output value is always a Java primitive value (as a wrapper object).
 
 # Example applications #
 

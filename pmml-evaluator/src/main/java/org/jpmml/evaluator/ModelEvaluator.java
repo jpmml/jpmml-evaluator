@@ -30,7 +30,6 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,11 +41,9 @@ import java.util.concurrent.Callable;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 import com.google.common.collect.Table;
@@ -55,6 +52,7 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.LocalTransformations;
@@ -65,7 +63,6 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.ModelVerification;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
-import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
@@ -83,21 +80,28 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	private Map<String, DefineFunction> defineFunctions = Collections.emptyMap();
 
-	transient
-	private List<FieldName> targetFieldNames = null;
-
 	private Map<FieldName, MiningField> miningFields = Collections.emptyMap();
 
-	private ListMultimap<EnumSet<MiningField.FieldUsage>, FieldName> miningFieldNames = ImmutableListMultimap.of();
+	transient
+	private List<InputField> activeInputFields = null;
+
+	transient
+	private List<InputField> groupInputFields = null;
+
+	transient
+	private List<InputField> orderInputFields = null;
 
 	private Map<FieldName, DerivedField> localDerivedFields = Collections.emptyMap();
 
 	private Map<FieldName, Target> targets = Collections.emptyMap();
 
 	transient
-	private List<FieldName> outputFieldNames = null;
+	private List<TargetField> targetResultFields = null;
 
-	private Map<FieldName, OutputField> outputFields = Collections.emptyMap();
+	private Map<FieldName, org.dmg.pmml.OutputField> outputFields = Collections.emptyMap();
+
+	transient
+	private List<OutputField> outputResultFields = null;
 
 
 	public ModelEvaluator(PMML pmml, Class<? extends M> clazz){
@@ -124,8 +128,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		MiningSchema miningSchema = model.getMiningSchema();
 		if(miningSchema.hasMiningFields()){
 			this.miningFields = CacheUtil.getValue(miningSchema, ModelEvaluator.miningFieldCache);
-
-			this.miningFieldNames = CacheUtil.getValue(miningSchema, ModelEvaluator.miningFieldNameCache);
 		}
 
 		LocalTransformations localTransformations = model.getLocalTransformations();
@@ -150,7 +152,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	@Override
 	public DataField getDataField(FieldName name){
 
-		if(Objects.equals(Evaluator.DEFAULT_TARGET, name)){
+		if(Objects.equals(Consumer.DEFAULT_TARGET_NAME, name)){
 			return getDataField();
 		}
 
@@ -161,9 +163,8 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	 * @return A synthetic {@link DataField} describing the default target field.
 	 */
 	protected DataField getDataField(){
-		Model model = getModel();
+		MiningFunction miningFunction = getMiningFunction();
 
-		MiningFunction miningFunction = model.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
 				return ModelEvaluator.DEFAULT_REGRESSION_TARGET;
@@ -189,39 +190,9 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	@Override
-	public List<FieldName> getTargetFields(){
-
-		if(this.targetFieldNames == null){
-			this.targetFieldNames = super.getTargetFields();
-		}
-
-		return this.targetFieldNames;
-	}
-
-	@Override
-	public FieldName getTargetField(){
-		M model = getModel();
-
-		List<FieldName> targetFields = getTargetFields();
-
-		// "The definition of target fields in the MiningSchema is not required"
-		if(targetFields.size() < 1){
-			return Evaluator.DEFAULT_TARGET;
-		} else
-
-		if(targetFields.size() > 1){
-			MiningSchema miningSchema = model.getMiningSchema();
-
-			throw new InvalidFeatureException("Too many target fields", miningSchema);
-		}
-
-		return targetFields.get(0);
-	}
-
-	@Override
 	public MiningField getMiningField(FieldName name){
 
-		if(Objects.equals(Evaluator.DEFAULT_TARGET, name)){
+		if(Objects.equals(Consumer.DEFAULT_TARGET_NAME, name)){
 			return null;
 		}
 
@@ -229,14 +200,33 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	@Override
-	protected List<FieldName> getMiningFields(EnumSet<MiningField.FieldUsage> types){
-		List<FieldName> result = this.miningFieldNames.get(types);
+	public List<InputField> getActiveFields(){
 
-		if(result != null){
-			return result;
+		if(this.activeInputFields == null){
+			this.activeInputFields = createInputFields(MiningField.FieldUsage.ACTIVE);
 		}
 
-		return super.getMiningFields(types);
+		return this.activeInputFields;
+	}
+
+	@Override
+	public List<InputField> getGroupFields(){
+
+		if(this.groupInputFields == null){
+			this.groupInputFields = createInputFields(MiningField.FieldUsage.GROUP);
+		}
+
+		return this.groupInputFields;
+	}
+
+	@Override
+	public List<InputField> getOrderFields(){
+
+		if(this.orderInputFields == null){
+			this.orderInputFields = createInputFields(MiningField.FieldUsage.ORDER);
+		}
+
+		return this.orderInputFields;
 	}
 
 	@Override
@@ -250,52 +240,46 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	@Override
-	public List<FieldName> getOutputFields(){
+	public List<TargetField> getTargetFields(){
 
-		if(this.outputFieldNames == null){
-			this.outputFieldNames = super.getOutputFields();
+		if(this.targetResultFields == null){
+			this.targetResultFields = createTargetFields();
 		}
 
-		return this.outputFieldNames;
+		return this.targetResultFields;
+	}
+
+	public TargetField getTargetField(){
+		List<TargetField> targetFields = getTargetFields();
+
+		if(targetFields.size() != 1){
+			throw new EvaluationException();
+		}
+
+		TargetField targetField = targetFields.get(0);
+
+		return targetField;
+	}
+
+	public FieldName getTargetFieldName(){
+		TargetField targetField = getTargetField();
+
+		return targetField.getName();
 	}
 
 	@Override
-	public OutputField getOutputField(FieldName name){
+	public org.dmg.pmml.OutputField getOutputField(FieldName name){
 		return this.outputFields.get(name);
 	}
 
 	@Override
-	public FieldValue prepare(FieldName name, Object value){
-		M model = getModel();
+	public List<OutputField> getOutputFields(){
 
-		DataField dataField = getDataField(name);
-		if(dataField == null){
-			throw new MissingFieldException(name, model);
+		if(this.outputResultFields == null){
+			this.outputResultFields = createOutputFields();
 		}
 
-		MiningField miningField = getMiningField(name);
-		if(miningField == null){
-			throw new EvaluationException();
-		}
-
-		MiningField.FieldUsage fieldUsage = miningField.getFieldUsage();
-		switch(fieldUsage){
-			case ACTIVE:
-			case ORDER:
-			case GROUP:
-				{
-					return FieldValueUtil.prepareInputValue(dataField, miningField, value);
-				}
-			case PREDICTED:
-			case TARGET:
-				{
-					Target target = getTarget(name);
-
-					return FieldValueUtil.prepareTargetValue(dataField, miningField, target, value);
-				}
-			default:
-				throw new UnsupportedFeatureException(miningField, fieldUsage);
-		}
+		return this.outputResultFields;
 	}
 
 	@Override
@@ -311,29 +295,33 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		List<Map<FieldName, Object>> records = batch.getRecords();
 
-		List<FieldName> activeFields = getActiveFields();
-		List<FieldName> groupFields = getGroupFields();
+		List<InputField> activeFields = getActiveFields();
+		List<InputField> groupFields = getGroupFields();
 
 		if(groupFields.size() == 1){
-			FieldName groupField = groupFields.get(0);
+			InputField groupField = groupFields.get(0);
 
-			records = EvaluatorUtil.groupRows(groupField, records);
+			records = EvaluatorUtil.groupRows(groupField.getName(), records);
 		} else
 
 		if(groupFields.size() > 1){
 			throw new EvaluationException();
 		}
 
-		List<FieldName> targetFields = getTargetFields();
-		List<FieldName> outputFields = getOutputFields();
+		List<TargetField> targetFields = getTargetFields();
+		List<OutputField> outputFields = getOutputFields();
 
 		SetView<FieldName> intersection = Sets.intersection(batch.keySet(), ImmutableSet.copyOf(outputFields));
 
 		for(Map<FieldName, Object> record : records){
 			Map<FieldName, Object> arguments = new HashMap<>();
 
-			for(FieldName activeField : activeFields){
-				arguments.put(activeField, EvaluatorUtil.prepare(this, activeField, record.get(activeField)));
+			for(InputField activeField : activeFields){
+				FieldName name = activeField.getName();
+
+				FieldValue value = EvaluatorUtil.prepare(activeField, record.get(name));
+
+				arguments.put(name, value);
 			}
 
 			Map<FieldName, ?> result = evaluate(arguments);
@@ -343,28 +331,30 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			// because they are considered to represent a dependent variable from the training data set, not an expected output"
 			if(intersection.size() > 0){
 
-				for(FieldName outputField : outputFields){
-					VerificationField verificationField = batch.get(outputField);
+				for(OutputField outputField : outputFields){
+					FieldName name = outputField.getName();
 
+					VerificationField verificationField = batch.get(name);
 					if(verificationField == null){
 						continue;
 					}
 
-					verify(record.get(outputField), result.get(outputField), verificationField.getPrecision(), verificationField.getZeroThreshold());
+					verify(record.get(name), result.get(name), verificationField.getPrecision(), verificationField.getZeroThreshold());
 				}
 			} else
 
 			// "If there are no such VerificationField elements,
 			// then any VerificationField element that refers to a MiningField element whose "usageType=target" should be considered to represent an expected output"
 			{
-				for(FieldName targetField : targetFields){
-					VerificationField verificationField = batch.get(targetField);
+				for(TargetField targetField : targetFields){
+					FieldName name = targetField.getName();
 
+					VerificationField verificationField = batch.get(name);
 					if(verificationField == null){
 						continue;
 					}
 
-					verify(record.get(targetField), EvaluatorUtil.decode(result.get(targetField)), verificationField.getPrecision(), verificationField.getZeroThreshold());
+					verify(record.get(name), EvaluatorUtil.decode(result.get(name)), verificationField.getPrecision(), verificationField.getZeroThreshold());
 				}
 			}
 		}
@@ -420,6 +410,110 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return result;
 	}
 
+	protected List<InputField> createInputFields(MiningField.FieldUsage fieldUsage){
+		M model = getModel();
+
+		MiningSchema miningSchema = model.getMiningSchema();
+
+		List<InputField> inputFields = new ArrayList<>();
+
+		if(miningSchema.hasMiningFields()){
+			List<MiningField> miningFields = miningSchema.getMiningFields();
+
+			for(MiningField miningField : miningFields){
+				FieldName name = miningField.getName();
+
+				if(!(miningField.getFieldUsage()).equals(fieldUsage)){
+					continue;
+				}
+
+				Field field = getDataField(name);
+				if(field == null){
+					field = new VariableField(name);
+				}
+
+				InputField inputField = new InputField(field, miningField);
+
+				inputFields.add(inputField);
+			}
+		}
+
+		return ImmutableList.copyOf(inputFields);
+	}
+
+	protected List<TargetField> createTargetFields(){
+		M model = getModel();
+
+		MiningSchema miningSchema = model.getMiningSchema();
+
+		List<TargetField> targetFields = new ArrayList<>();
+
+		if(miningSchema.hasMiningFields()){
+			List<MiningField> miningFields = miningSchema.getMiningFields();
+
+			for(MiningField miningField : miningFields){
+				FieldName name = miningField.getName();
+
+				MiningField.FieldUsage fieldUsage = miningField.getFieldUsage();
+				switch(fieldUsage){
+					case TARGET:
+					case PREDICTED:
+						break;
+					default:
+						continue;
+				}
+
+				DataField dataField = getDataField(name);
+				if(dataField == null){
+					throw new MissingFieldException(name, miningField);
+				}
+
+				Target target = getTarget(name);
+
+				TargetField targetField = new TargetField(dataField, miningField, target);
+
+				targetFields.add(targetField);
+			}
+		}
+
+		synthesis:
+		if(targetFields.isEmpty()){
+			DataField dataField = getDataField();
+
+			if(dataField == null){
+				break synthesis;
+			}
+
+			Target target = getTarget(dataField.getName());
+
+			TargetField targetField = new TargetField(dataField, null, target);
+
+			targetFields.add(targetField);
+		}
+
+		return ImmutableList.copyOf(targetFields);
+	}
+
+	protected List<OutputField> createOutputFields(){
+		M model = getModel();
+
+		Output output = model.getOutput();
+
+		List<OutputField> resultFields = new ArrayList<>();
+
+		if(output != null && output.hasOutputFields()){
+			List<org.dmg.pmml.OutputField> outputFields = output.getOutputFields();
+
+			for(org.dmg.pmml.OutputField outputField : outputFields){
+				OutputField resultField = new OutputField(outputField);
+
+				resultFields.add(resultField);
+			}
+		}
+
+		return ImmutableList.copyOf(resultFields);
+	}
+
 	public <V> V getValue(LoadingCache<M, V> cache){
 		M model = getModel();
 
@@ -444,25 +538,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 
 		return model;
-	}
-
-	static
-	private ListMultimap<EnumSet<MiningField.FieldUsage>, FieldName> parseMiningFieldNames(List<MiningField> miningFields){
-		Set<EnumSet<MiningField.FieldUsage>> keys = ImmutableSet.of(ModelManager.ACTIVE_TYPES, ModelManager.GROUP_TYPES, ModelManager.ORDER_TYPES, ModelManager.TARGET_TYPES);
-
-		ListMultimap<EnumSet<MiningField.FieldUsage>, FieldName> result = ArrayListMultimap.create();
-
-		for(MiningField miningField : miningFields){
-
-			for(EnumSet<MiningField.FieldUsage> key : keys){
-
-				if(key.contains(miningField.getFieldUsage())){
-					result.put(key, miningField.getName());
-				}
-			}
-		}
-
-		return result;
 	}
 
 	static
@@ -521,9 +596,9 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return result;
 	}
 
-	private static final DataField DEFAULT_REGRESSION_TARGET = new DataField(Evaluator.DEFAULT_TARGET, OpType.CONTINUOUS, DataType.DOUBLE);
-	private static final DataField DEFAULT_CLASSIFICATION_TARGET = new DataField(Evaluator.DEFAULT_TARGET, OpType.CATEGORICAL, DataType.STRING);
-	private static final DataField DEFAULT_CLUSTERING_TARGET = new DataField(Evaluator.DEFAULT_TARGET, OpType.CATEGORICAL, DataType.STRING);
+	private static final DataField DEFAULT_REGRESSION_TARGET = new DataField(Consumer.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.DOUBLE);
+	private static final DataField DEFAULT_CLASSIFICATION_TARGET = new DataField(Consumer.DEFAULT_TARGET_NAME, OpType.CATEGORICAL, DataType.STRING);
+	private static final DataField DEFAULT_CLUSTERING_TARGET = new DataField(Consumer.DEFAULT_TARGET_NAME, OpType.CATEGORICAL, DataType.STRING);
 
 	private static final LoadingCache<DataDictionary, Map<FieldName, DataField>> dataFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<DataDictionary, Map<FieldName, DataField>>(){
 
@@ -557,14 +632,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 	});
 
-	private static final LoadingCache<MiningSchema, ListMultimap<EnumSet<MiningField.FieldUsage>, FieldName>> miningFieldNameCache = CacheUtil.buildLoadingCache(new CacheLoader<MiningSchema, ListMultimap<EnumSet<MiningField.FieldUsage>, FieldName>>(){
-
-		@Override
-		public ListMultimap<EnumSet<MiningField.FieldUsage>, FieldName> load(MiningSchema miningSchema){
-			return ImmutableListMultimap.copyOf(parseMiningFieldNames(miningSchema.getMiningFields()));
-		}
-	});
-
 	private static final LoadingCache<LocalTransformations, Map<FieldName, DerivedField>> localDerivedFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<LocalTransformations, Map<FieldName, DerivedField>>(){
 
 		@Override
@@ -581,10 +648,10 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 	});
 
-	private static final LoadingCache<Output, Map<FieldName, OutputField>> outputFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<Output, Map<FieldName, OutputField>>(){
+	private static final LoadingCache<Output, Map<FieldName, org.dmg.pmml.OutputField>> outputFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<Output, Map<FieldName, org.dmg.pmml.OutputField>>(){
 
 		@Override
-		public Map<FieldName, OutputField> load(Output output){
+		public Map<FieldName, org.dmg.pmml.OutputField> load(Output output){
 			return IndexableUtil.buildMap(output.getOutputFields());
 		}
 	});

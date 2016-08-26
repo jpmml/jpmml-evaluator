@@ -49,6 +49,7 @@ import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PredicateUtil;
+import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
@@ -116,11 +117,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		Double score = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, node.getScore());
 
-		FieldName targetField = getTargetField();
+		TargetField targetField = getTargetField();
 
 		NodeScore nodeScore = createNodeScore(node, TargetUtil.evaluateRegressionInternal(targetField, score, context));
 
-		return Collections.singletonMap(targetField, nodeScore);
+		return Collections.singletonMap(targetField.getName(), nodeScore);
 	}
 
 	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){

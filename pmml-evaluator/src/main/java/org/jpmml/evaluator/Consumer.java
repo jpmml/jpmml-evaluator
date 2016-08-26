@@ -30,17 +30,11 @@ package org.jpmml.evaluator;
 import java.io.Serializable;
 import java.util.List;
 
-import org.dmg.pmml.DataDictionary;
-import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.Output;
-import org.dmg.pmml.OutputField;
-import org.dmg.pmml.Target;
-import org.dmg.pmml.Targets;
 
 public interface Consumer extends Serializable {
 
@@ -60,17 +54,10 @@ public interface Consumer extends Serializable {
 
 	/**
 	 * <p>
-	 * Gets the definition of a field from the {@link DataDictionary}.
-	 * </p>
-	 */
-	DataField getDataField(FieldName name);
-
-	/**
-	 * <p>
 	 * Gets the independent (ie. input) fields of a {@link Model} from its {@link MiningSchema}.
 	 * </p>
 	 */
-	List<FieldName> getActiveFields();
+	List<InputField> getActiveFields();
 
 	/**
 	 * <p>
@@ -81,7 +68,7 @@ public interface Consumer extends Serializable {
 	 * This field set is relevant for {@link MiningFunction#ASSOCIATION_RULES association rules} model type only.
 	 * </p>
 	 */
-	List<FieldName> getGroupFields();
+	List<InputField> getGroupFields();
 
 	/**
 	 * <p>
@@ -92,55 +79,26 @@ public interface Consumer extends Serializable {
 	 * This field set is relevant for {@link MiningFunction#SEQUENCES sequences} and {@link MiningFunction#TIME_SERIES time series} model types.
 	 * </p>
 	 */
-	List<FieldName> getOrderFields();
+	List<InputField> getOrderFields();
 
 	/**
 	 * <p>
 	 * Gets the dependent (ie. target in supervised training) fields of a {@link Model} from its {@link MiningSchema}.
 	 * </p>
-	 *
-	 * @see #getTarget(FieldName)
 	 */
-	List<FieldName> getTargetFields();
-
-	/**
-	 * <p>
-	 * Gets the definition of a field from the {@link MiningSchema}.
-	 * </p>
-	 *
-	 * @param name The name of the field.
-	 *
-	 * @see #getActiveFields()
-	 * @see #getGroupFields()
-	 * @see #getOrderFields()
-	 * @see #getTargetFields()
-	 */
-	MiningField getMiningField(FieldName name);
-
-	/**
-	 * <p>
-	 * Gets the definition of a field from the {@link Targets}.
-	 * </p>
-	 *
-	 * @see #getTargetFields()
-	 */
-	Target getTarget(FieldName name);
+	List<TargetField> getTargetFields();
 
 	/**
 	 * <p>
 	 * Gets the output fields of a {@link Model} from its {@link Output}.
 	 * </p>
-	 *
-	 * @see #getOutputField(FieldName)
 	 */
-	List<FieldName> getOutputFields();
+	List<OutputField> getOutputFields();
 
 	/**
 	 * <p>
-	 * Gets the definition of a field from the {@link Output}
+	 * The name of the default target field.
 	 * </p>
-	 *
-	 * @see #getOutputFields()
 	 */
-	OutputField getOutputField(FieldName name);
+	public static final FieldName DEFAULT_TARGET_NAME = null;
 }

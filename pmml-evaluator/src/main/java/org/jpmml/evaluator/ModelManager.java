@@ -27,10 +27,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
 import java.util.Objects;
 
 import org.dmg.pmml.DerivedField;
@@ -46,6 +42,7 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
 
+abstract
 public class ModelManager<M extends Model> extends PMMLManager implements Consumer {
 
 	private M model = null;
@@ -74,27 +71,6 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return model.getMiningFunction();
 	}
 
-	@Override
-	public List<FieldName> getActiveFields(){
-		return getMiningFields(ModelManager.ACTIVE_TYPES);
-	}
-
-	@Override
-	public List<FieldName> getGroupFields(){
-		return getMiningFields(ModelManager.GROUP_TYPES);
-	}
-
-	@Override
-	public List<FieldName> getOrderFields(){
-		return getMiningFields(ModelManager.ORDER_TYPES);
-	}
-
-	@Override
-	public List<FieldName> getTargetFields(){
-		return getMiningFields(ModelManager.TARGET_TYPES);
-	}
-
-	@Override
 	public MiningField getMiningField(FieldName name){
 		M model = getModel();
 
@@ -104,25 +80,6 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		}
 
 		return null;
-	}
-
-	protected List<FieldName> getMiningFields(EnumSet<MiningField.FieldUsage> fieldUsages){
-		M model = getModel();
-
-		MiningSchema miningSchema = model.getMiningSchema();
-
-		List<FieldName> result = new ArrayList<>();
-
-		List<MiningField> miningFields = miningSchema.getMiningFields();
-		for(MiningField miningField : miningFields){
-			MiningField.FieldUsage fieldUsage = miningField.getFieldUsage();
-
-			if(fieldUsages.contains(fieldUsage)){
-				result.add(miningField.getName());
-			}
-		}
-
-		return result;
 	}
 
 	public DerivedField getLocalDerivedField(FieldName name){
@@ -136,7 +93,6 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return null;
 	}
 
-	@Override
 	public Target getTarget(FieldName name){
 		M model = getModel();
 
@@ -148,19 +104,6 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		return null;
 	}
 
-	@Override
-	public List<FieldName> getOutputFields(){
-		M model = getModel();
-
-		Output output = model.getOutput();
-		if(output != null && output.hasOutputFields()){
-			return IndexableUtil.keys(output.getOutputFields());
-		}
-
-		return Collections.emptyList();
-	}
-
-	@Override
 	public OutputField getOutputField(FieldName name){
 		M model = getModel();
 
@@ -179,9 +122,4 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 	private void setModel(M model){
 		this.model = model;
 	}
-
-	protected static final EnumSet<MiningField.FieldUsage> ACTIVE_TYPES = EnumSet.of(MiningField.FieldUsage.ACTIVE);
-	protected static final EnumSet<MiningField.FieldUsage> GROUP_TYPES = EnumSet.of(MiningField.FieldUsage.GROUP);
-	protected static final EnumSet<MiningField.FieldUsage> ORDER_TYPES = EnumSet.of(MiningField.FieldUsage.ORDER);
-	protected static final EnumSet<MiningField.FieldUsage> TARGET_TYPES = EnumSet.of(MiningField.FieldUsage.PREDICTED, MiningField.FieldUsage.TARGET);
 }

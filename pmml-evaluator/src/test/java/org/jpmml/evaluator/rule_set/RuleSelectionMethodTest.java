@@ -26,7 +26,6 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.rule_set.RuleSelectionMethod;
 import org.dmg.pmml.rule_set.RuleSet;
 import org.dmg.pmml.rule_set.RuleSetModel;
-import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 
 abstract
@@ -54,17 +53,17 @@ public class RuleSelectionMethodTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		SimpleRuleScoreDistribution targetValue = (SimpleRuleScoreDistribution)result.get(evaluator.getTargetField());
+		SimpleRuleScoreDistribution targetValue = (SimpleRuleScoreDistribution)result.get(evaluator.getTargetFieldName());
 
 		return targetValue.getEntityId();
 	}
 
 	public String getScore(Map<FieldName, ?> arguments) throws Exception {
-		Evaluator evaluator = createModelEvaluator();
+		RuleSetModelEvaluator evaluator = (RuleSetModelEvaluator)createModelEvaluator();
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		SimpleRuleScoreDistribution targetValue = (SimpleRuleScoreDistribution)result.get(evaluator.getTargetField());
+		SimpleRuleScoreDistribution targetValue = (SimpleRuleScoreDistribution)result.get(evaluator.getTargetFieldName());
 
 		return (String)targetValue.getResult();
 	}

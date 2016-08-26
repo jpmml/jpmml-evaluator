@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
@@ -42,12 +43,12 @@ import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.InvalidFeatureException;
 import org.jpmml.evaluator.InvalidResultException;
-import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.NormalDistributionUtil;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
+import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 
@@ -93,9 +94,11 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
-		FieldName targetField = regressionModel.getTargetFieldName();
-		if(targetField == null){
-			targetField = getTargetField();
+		TargetField targetField = getTargetField();
+
+		FieldName targetFieldName = regressionModel.getTargetFieldName();
+		if(targetFieldName != null && !Objects.equals(targetField.getName(), targetFieldName)){
+			throw new InvalidFeatureException(regressionModel);
 		}
 
 		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
@@ -118,15 +121,14 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
-		FieldName targetField = regressionModel.getTargetFieldName();
-		if(targetField == null){
-			targetField = getTargetField();
+		TargetField targetField = getTargetField();
+
+		FieldName targetFieldName = regressionModel.getTargetFieldName();
+		if(targetFieldName != null && !Objects.equals(targetField.getName(), targetFieldName)){
+			throw new InvalidFeatureException(regressionModel);
 		}
 
-		DataField dataField = getDataField(targetField);
-		if(dataField == null){
-			throw new MissingFieldException(targetField, regressionModel);
-		}
+		DataField dataField = targetField.getDataField();
 
 		OpType opType = dataField.getOpType();
 		switch(opType){

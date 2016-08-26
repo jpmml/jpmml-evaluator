@@ -44,13 +44,12 @@ public class BatchUtil {
 		List<? extends Map<FieldName, ?>> input = batch.getInput();
 		List<? extends Map<FieldName, ?>> output = batch.getOutput();
 
-		List<FieldName> groupFields = evaluator.getGroupFields();
-		List<FieldName> targetFields = evaluator.getTargetFields();
+		List<InputField> groupFields = evaluator.getGroupFields();
 
 		if(groupFields.size() == 1){
-			FieldName groupField = groupFields.get(0);
+			InputField groupField = groupFields.get(0);
 
-			input = EvaluatorUtil.groupRows(groupField, input);
+			input = EvaluatorUtil.groupRows(groupField.getName(), input);
 		} else
 
 		if(groupFields.size() > 1){
@@ -85,11 +84,10 @@ public class BatchUtil {
 
 				Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-				// Delete the default target field
-				if(targetFields.size() == 0){
+				if(result.containsKey(Consumer.DEFAULT_TARGET_NAME)){
 					result = new LinkedHashMap<>(result);
 
-					result.remove(evaluator.getTargetField());
+					result.remove(Consumer.DEFAULT_TARGET_NAME);
 				} // End if
 
 				if(ignoredFields != null && ignoredFields.size() > 0){
@@ -132,11 +130,18 @@ public class BatchUtil {
 	public Object evaluateDefault(Batch batch) throws Exception {
 		Evaluator evaluator = batch.getEvaluator();
 
+		List<TargetField> targetFields = evaluator.getTargetFields();
+		if(targetFields.size() != 1){
+			throw new EvaluationException();
+		}
+
+		TargetField targetField = targetFields.get(0);
+
 		Map<FieldName, ?> arguments = Collections.emptyMap();
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		return result.get(evaluator.getTargetField());
+		return result.get(targetField.getName());
 	}
 
 	static

@@ -28,6 +28,7 @@ import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OutputField;
+import org.dmg.pmml.Target;
 import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
 
 public class ModelEvaluationContext extends EvaluationContext {
@@ -57,7 +58,41 @@ public class ModelEvaluationContext extends EvaluationContext {
 	protected FieldValue createFieldValue(FieldName name, Object value){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
-		return EvaluatorUtil.prepare(modelEvaluator, name, value);
+		DataField dataField = modelEvaluator.getDataField(name);
+		if(dataField == null){
+			throw new MissingFieldException(name);
+		}
+
+		MiningField miningField = modelEvaluator.getMiningField(name);
+		if(miningField == null){
+			throw new EvaluationException();
+		}
+
+		MiningField.FieldUsage fieldUsage = miningField.getFieldUsage();
+		switch(fieldUsage){
+			case ACTIVE:
+			case GROUP:
+			case ORDER:
+				try {
+					return FieldValueUtil.prepareInputValue(dataField, miningField, value);
+				} catch(RuntimeException re){
+					System.out.println("!!" + name.getValue() + "=" + value);
+					System.out.println("//" + dataField);
+					System.out.println("//" + miningField);
+
+					// XXX
+					throw re;
+				}
+			case PREDICTED:
+			case TARGET:
+				{
+					Target target = modelEvaluator.getTarget(name);
+
+					return FieldValueUtil.prepareTargetValue(dataField, miningField, target, value);
+				}
+			default:
+				throw new UnsupportedFeatureException(miningField, fieldUsage);
+		}
 	}
 
 	@Override

@@ -48,32 +48,16 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ?> evaluateRegression(FieldName name, Double value, ModelEvaluationContext context){
-		return Collections.singletonMap(name, evaluateRegressionInternal(name, value, context));
+	public Map<FieldName, ?> evaluateRegression(TargetField targetField, Double value, EvaluationContext context){
+		return Collections.singletonMap(targetField.getName(), evaluateRegressionInternal(targetField, value, context));
 	}
 
 	static
-	public Object evaluateRegressionInternal(FieldName name, Object value, ModelEvaluationContext context){
-		ModelEvaluator<?> evaluator = context.getModelEvaluator();
+	public Object evaluateRegressionInternal(TargetField targetField, Object value, EvaluationContext context){
+		DataField dataField = targetField.getDataField();
+		MiningField miningField = targetField.getMiningField();
+		Target target = targetField.getTarget();
 
-		DataField dataField;
-
-		MiningField miningField = null;
-
-		if(Objects.equals(Evaluator.DEFAULT_TARGET, name)){
-			dataField = evaluator.getDataField();
-		} else
-
-		{
-			dataField = evaluator.getDataField(name);
-			if(dataField == null){
-				throw new MissingFieldException(name);
-			}
-
-			miningField = evaluator.getMiningField(name);
-		}
-
-		Target target = evaluator.getTarget(name);
 		if(target != null){
 
 			if(value == null){
@@ -89,7 +73,11 @@ public class TargetUtil {
 			value = TypeUtil.cast(dataField.getDataType(), value);
 		}
 
-		context.declare(name, FieldValueUtil.prepareTargetValue(dataField, miningField, target, value));
+		FieldName name = targetField.getName();
+
+		if(!Objects.equals(Consumer.DEFAULT_TARGET_NAME, name)){
+			context.declare(name, FieldValueUtil.prepareTargetValue(dataField, miningField, target, value));
+		}
 
 		return value;
 	}
@@ -107,32 +95,16 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ? extends Classification> evaluateClassification(FieldName name, Classification value, ModelEvaluationContext context){
-		return Collections.singletonMap(name, evaluateClassificationInternal(name, value, context));
+	public Map<FieldName, ? extends Classification> evaluateClassification(TargetField targetField, Classification value, EvaluationContext context){
+		return Collections.singletonMap(targetField.getName(), evaluateClassificationInternal(targetField, value, context));
 	}
 
 	static
-	public Classification evaluateClassificationInternal(FieldName name, Classification value, ModelEvaluationContext context){
-		ModelEvaluator<?> evaluator = context.getModelEvaluator();
+	public Classification evaluateClassificationInternal(TargetField targetField, Classification value, EvaluationContext context){
+		DataField dataField = targetField.getDataField();
+		MiningField miningField = targetField.getMiningField();
+		Target target = targetField.getTarget();
 
-		DataField dataField;
-
-		MiningField miningField = null;
-
-		if(Objects.equals(Evaluator.DEFAULT_TARGET, name)){
-			dataField = evaluator.getDataField();
-		} else
-
-		{
-			dataField = evaluator.getDataField(name);
-			if(dataField == null){
-				throw new MissingFieldException(name);
-			}
-
-			miningField = evaluator.getMiningField(name);
-		}
-
-		Target target = evaluator.getTarget(name);
 		if(target != null){
 
 			if(value == null){
@@ -144,7 +116,11 @@ public class TargetUtil {
 			value.computeResult(dataField.getDataType());
 		}
 
-		context.declare(name, FieldValueUtil.prepareTargetValue(dataField, miningField, target, value != null ? value.getResult() : null));
+		FieldName name = targetField.getName();
+
+		if(!Objects.equals(Consumer.DEFAULT_TARGET_NAME, name)){
+			context.declare(name, FieldValueUtil.prepareTargetValue(dataField, miningField, target, value != null ? value.getResult() : null));
+		}
 
 		return value;
 	}

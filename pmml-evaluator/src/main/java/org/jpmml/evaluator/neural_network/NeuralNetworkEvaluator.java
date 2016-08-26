@@ -27,7 +27,6 @@
  */
 package org.jpmml.evaluator.neural_network;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -73,6 +72,7 @@ import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.NormalizationUtil;
 import org.jpmml.evaluator.OutputUtil;
+import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 
@@ -174,9 +174,11 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			}
 		}
 
-		Collection<Map.Entry<FieldName, Object>> entries = result.entrySet();
-		for(Map.Entry<FieldName, Object> entry : entries){
-			entry.setValue(TargetUtil.evaluateRegressionInternal(entry.getKey(), entry.getValue(), context));
+		List<TargetField> targetFields = getTargetFields();
+		for(TargetField targetField : targetFields){
+			FieldName name = targetField.getName();
+
+			result.put(name, TargetUtil.evaluateRegressionInternal(targetField, result.get(name), context));
 		}
 
 		return result;
@@ -231,9 +233,11 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			}
 		}
 
-		Collection<Map.Entry<FieldName, Classification>> entries = result.entrySet();
-		for(Map.Entry<FieldName, Classification> entry : entries){
-			entry.setValue(TargetUtil.evaluateClassificationInternal(entry.getKey(), entry.getValue(), context));
+		List<TargetField> targetFields = getTargetFields();
+		for(TargetField targetField : targetFields){
+			FieldName name = targetField.getName();
+
+			result.put(name, TargetUtil.evaluateClassificationInternal(targetField, result.get(name), context));
 		}
 
 		return result;

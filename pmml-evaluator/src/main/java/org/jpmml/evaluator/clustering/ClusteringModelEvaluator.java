@@ -35,7 +35,6 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.Target;
 import org.dmg.pmml.clustering.CenterFields;
 import org.dmg.pmml.clustering.Cluster;
 import org.dmg.pmml.clustering.ClusteringField;
@@ -74,14 +73,6 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 	@Override
 	public String getSummary(){
 		return "Clustering model";
-	}
-
-	/**
-	 * @return <code>null</code> Always.
-	 */
-	@Override
-	public Target getTarget(FieldName name){
-		return null;
 	}
 
 	@Override
@@ -164,7 +155,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		// "For clustering models, the identifier of the winning cluster is returned as the predictedValue"
 		result.computeResult(DataType.STRING);
 
-		return Collections.singletonMap(getTargetField(), result);
+		return Collections.singletonMap(getTargetFieldName(), result);
 	}
 
 	private ClusterAffinityDistribution evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){

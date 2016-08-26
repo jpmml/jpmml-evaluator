@@ -80,6 +80,6 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		return (NodeScoreDistribution)result.get(evaluator.getTargetField());
+		return (NodeScoreDistribution)result.get(evaluator.getTargetFieldName());
 	}
 }
