@@ -43,7 +43,7 @@ import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
 
 abstract
-public class ModelManager<M extends Model> extends PMMLManager implements Consumer {
+public class ModelManager<M extends Model> extends PMMLManager {
 
 	private M model = null;
 
@@ -59,12 +59,6 @@ public class ModelManager<M extends Model> extends PMMLManager implements Consum
 		}
 	}
 
-	@Override
-	public String getSummary(){
-		return null;
-	}
-
-	@Override
 	public MiningFunction getMiningFunction(){
 		Model model = getModel();
 

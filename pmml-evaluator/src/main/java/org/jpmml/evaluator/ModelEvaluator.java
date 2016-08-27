@@ -146,7 +146,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	@Override
 	public DataField getDataField(FieldName name){
 
-		if(Objects.equals(Consumer.DEFAULT_TARGET_NAME, name)){
+		if(Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name)){
 			return getDataField();
 		}
 
@@ -186,7 +186,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	@Override
 	public MiningField getMiningField(FieldName name){
 
-		if(Objects.equals(Consumer.DEFAULT_TARGET_NAME, name)){
+		if(Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name)){
 			return null;
 		}
 
@@ -565,9 +565,9 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return result;
 	}
 
-	private static final DataField DEFAULT_REGRESSION_TARGET = new DataField(Consumer.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.DOUBLE);
-	private static final DataField DEFAULT_CLASSIFICATION_TARGET = new DataField(Consumer.DEFAULT_TARGET_NAME, OpType.CATEGORICAL, DataType.STRING);
-	private static final DataField DEFAULT_CLUSTERING_TARGET = new DataField(Consumer.DEFAULT_TARGET_NAME, OpType.CATEGORICAL, DataType.STRING);
+	private static final DataField DEFAULT_REGRESSION_TARGET = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.DOUBLE);
+	private static final DataField DEFAULT_CLASSIFICATION_TARGET = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CATEGORICAL, DataType.STRING);
+	private static final DataField DEFAULT_CLUSTERING_TARGET = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CATEGORICAL, DataType.STRING);
 
 	private static final LoadingCache<DataDictionary, Map<FieldName, DataField>> dataFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<DataDictionary, Map<FieldName, DataField>>(){
 

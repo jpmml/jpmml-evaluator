@@ -81,7 +81,7 @@ import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.evaluator.VoteAggregator;
 
-public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements MiningModelConsumer, HasEntityRegistry<Segment> {
+public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 
 	private ModelEvaluatorFactory evaluatorFactory = null;
 
@@ -105,23 +105,17 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public Segmentation.MultipleModelMethod getMultipleModelMethod(){
-		MiningModel miningModel = getModel();
-
-		Segmentation segmentation = miningModel.getSegmentation();
-
-		return segmentation.getMultipleModelMethod();
-	}
-
-	@Override
 	public String getSummary(){
 		return "Ensemble model";
 	}
 
 	@Override
 	protected DataField getDataField(){
-		Segmentation.MultipleModelMethod multipleModelMethod = getMultipleModelMethod();
+		MiningModel miningModel = getModel();
 
+		Segmentation segmentation = miningModel.getSegmentation();
+
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case SELECT_ALL:
 			case SELECT_FIRST:

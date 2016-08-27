@@ -27,7 +27,7 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.Targets;
-import org.jpmml.evaluator.Consumer;
+import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.jpmml.evaluator.OutputUtil;
@@ -49,7 +49,7 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		assertEquals(5, result.size());
 
-		assertEquals("NO", getTarget(result, Consumer.DEFAULT_TARGET_NAME));
+		assertEquals("NO", getTarget(result, Evaluator.DEFAULT_TARGET_NAME));
 
 		FieldName field = FieldName.create("I_response");
 		FieldName displayField = FieldName.create("U_response");
@@ -74,6 +74,6 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		assertEquals(1, result.size());
 
-		assertEquals(null, getTarget(result, Consumer.DEFAULT_TARGET_NAME));
+		assertEquals(null, getTarget(result, Evaluator.DEFAULT_TARGET_NAME));
 	}
 }

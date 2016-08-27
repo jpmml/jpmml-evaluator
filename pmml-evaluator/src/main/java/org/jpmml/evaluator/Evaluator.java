@@ -18,10 +18,15 @@
  */
 package org.jpmml.evaluator;
 
+import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MiningFunction;
+import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
+import org.dmg.pmml.Output;
 
 /**
  * <p>
@@ -105,8 +110,46 @@ import org.dmg.pmml.Model;
  * </pre>
  *
  * @see EvaluatorUtil
+ *
+ * @see HasGroupFields
+ * @see HasOrderFields
  */
-public interface Evaluator extends Consumer {
+public interface Evaluator extends Serializable {
+
+	/**
+	 * <p>
+	 * Gets a short description of the {@link Model}.
+	 * </p>
+	 */
+	String getSummary();
+
+	/**
+	 * <p>
+	 * Gets the type of the {@link Model}.
+	 * </p>
+	 */
+	MiningFunction getMiningFunction();
+
+	/**
+	 * <p>
+	 * Gets the independent (ie. input) fields of a {@link Model} from its {@link MiningSchema}.
+	 * </p>
+	 */
+	List<InputField> getActiveFields();
+
+	/**
+	 * <p>
+	 * Gets the dependent (ie. target in supervised training) fields of a {@link Model} from its {@link MiningSchema}.
+	 * </p>
+	 */
+	List<TargetField> getTargetFields();
+
+	/**
+	 * <p>
+	 * Gets the output fields of a {@link Model} from its {@link Output}.
+	 * </p>
+	 */
+	List<OutputField> getOutputFields();
 
 	/**
 	 * <p>
@@ -140,4 +183,11 @@ public interface Evaluator extends Consumer {
 	 * @see Computable
 	 */
 	Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments);
+
+	/**
+	 * <p>
+	 * The name of the default target field.
+	 * </p>
+	 */
+	public static final FieldName DEFAULT_TARGET_NAME = null;
 }

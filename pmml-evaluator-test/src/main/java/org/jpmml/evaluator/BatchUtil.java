@@ -78,10 +78,10 @@ public class BatchUtil {
 
 				Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-				if(result.containsKey(Consumer.DEFAULT_TARGET_NAME)){
+				if(result.containsKey(Evaluator.DEFAULT_TARGET_NAME)){
 					result = new LinkedHashMap<>(result);
 
-					result.remove(Consumer.DEFAULT_TARGET_NAME);
+					result.remove(Evaluator.DEFAULT_TARGET_NAME);
 				} // End if
 
 				if(ignoredFields != null && ignoredFields.size() > 0){

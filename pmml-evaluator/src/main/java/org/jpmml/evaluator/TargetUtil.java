@@ -75,7 +75,7 @@ public class TargetUtil {
 
 		FieldName name = targetField.getName();
 
-		if(!Objects.equals(Consumer.DEFAULT_TARGET_NAME, name)){
+		if(!Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name)){
 			context.declare(name, FieldValueUtil.prepareTargetValue(dataField, miningField, target, value));
 		}
 
@@ -118,7 +118,7 @@ public class TargetUtil {
 
 		FieldName name = targetField.getName();
 
-		if(!Objects.equals(Consumer.DEFAULT_TARGET_NAME, name)){
+		if(!Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name)){
 			context.declare(name, FieldValueUtil.prepareTargetValue(dataField, miningField, target, value != null ? value.getResult() : null));
 		}
 

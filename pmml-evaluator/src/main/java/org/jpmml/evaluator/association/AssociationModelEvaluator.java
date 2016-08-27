@@ -46,10 +46,10 @@ import org.dmg.pmml.association.Item;
 import org.dmg.pmml.association.ItemRef;
 import org.dmg.pmml.association.Itemset;
 import org.jpmml.evaluator.CacheUtil;
-import org.jpmml.evaluator.Consumer;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
+import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasEntityRegistry;
@@ -109,7 +109,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 	@Override
 	public FieldName getTargetFieldName(){
-		return Consumer.DEFAULT_TARGET_NAME;
+		return Evaluator.DEFAULT_TARGET_NAME;
 	}
 
 	@Override
@@ -211,7 +211,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			}
 		};
 
-		return Collections.singletonMap(Consumer.DEFAULT_TARGET_NAME, association);
+		return Collections.singletonMap(getTargetFieldName(), association);
 	}
 
 	/**
