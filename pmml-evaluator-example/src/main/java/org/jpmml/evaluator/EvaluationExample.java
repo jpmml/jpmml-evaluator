@@ -260,8 +260,8 @@ public class EvaluationExample extends Example {
 			waitForUserInput();
 		}
 
-		List<TargetField> targetFields = EvaluatorUtil.getTargetFields(evaluator);
-		List<OutputField> outputFields = EvaluatorUtil.getOutputFields(evaluator);
+		List<TargetField> targetFields = evaluator.getTargetFields();
+		List<OutputField> outputFields = evaluator.getOutputFields();
 
 		List<? extends ResultField> resultFields = Lists.newArrayList(Iterables.concat(targetFields, outputFields));
 

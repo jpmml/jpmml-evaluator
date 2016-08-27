@@ -57,7 +57,6 @@ import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
-import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasEntityRegistry;
@@ -83,9 +82,6 @@ import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.evaluator.VoteAggregator;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements MiningModelConsumer, HasEntityRegistry<Segment> {
-
-	transient
-	private List<OutputField> nestedOutputFields = null;
 
 	private ModelEvaluatorFactory evaluatorFactory = null;
 
@@ -118,16 +114,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public List<OutputField> getNestedOutputFields(){
-
-		if(this.nestedOutputFields == null){
-			this.nestedOutputFields = createNestedOutputFields();
-		}
-
-		return this.nestedOutputFields;
-	}
-
-	@Override
 	public String getSummary(){
 		return "Ensemble model";
 	}
@@ -154,6 +140,19 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 
 		return this.entityRegistry;
+	}
+
+	@Override
+	protected List<OutputField> createOutputFields(){
+		List<OutputField> outputFields = super.createOutputFields();
+
+		List<OutputField> nestedOutputFields = createNestedOutputFields();
+		if(nestedOutputFields.size() > 0){
+			// Depth-first ordering
+			return ImmutableList.copyOf(Iterables.concat(nestedOutputFields, outputFields));
+		}
+
+		return outputFields;
 	}
 
 	@Override
@@ -414,6 +413,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 						for(OutputField outputField : outputFields){
 							FieldName name = outputField.getName();
 
+							int depth = outputField.getDepth();
+							if(depth > 0){
+								continue;
+							}
+
 							context.putOutputField(outputField.getOutputField());
 
 							FieldValue value = segmentContext.getField(name);
@@ -491,29 +495,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return null;
 	}
 
-	private List<OutputField> createNestedOutputFields(){
-		MiningModel miningModel = getModel();
-
-		Segmentation segmentation = miningModel.getSegmentation();
-
-		List<Segment> segments = segmentation.getSegments();
-
-		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
-		switch(multipleModelMethod){
-			case SELECT_ALL:
-				// Ignored
-				break;
-			case SELECT_FIRST:
-				return collectNestedOutputFields(getActiveHead(segments));
-			case MODEL_CHAIN:
-				return collectNestedOutputFields(getActiveTail(segments));
-			default:
-				break;
-		}
-
-		return Collections.emptyList();
-	}
-
 	private List<Segment> getActiveHead(List<Segment> segments){
 
 		for(int i = 0, max = segments.size(); i < max; i++){
@@ -536,7 +517,30 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return Lists.reverse(getActiveHead(Lists.reverse(segments)));
 	}
 
-	private List<OutputField> collectNestedOutputFields(List<Segment> segments){
+	private List<OutputField> createNestedOutputFields(){
+		MiningModel miningModel = getModel();
+
+		Segmentation segmentation = miningModel.getSegmentation();
+
+		List<Segment> segments = segmentation.getSegments();
+
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
+		switch(multipleModelMethod){
+			case SELECT_ALL:
+				// Ignored
+				break;
+			case SELECT_FIRST:
+				return createNestedOutputFields(getActiveHead(segments));
+			case MODEL_CHAIN:
+				return createNestedOutputFields(getActiveTail(segments));
+			default:
+				break;
+		}
+
+		return Collections.emptyList();
+	}
+
+	private List<OutputField> createNestedOutputFields(List<Segment> segments){
 		List<OutputField> result = new ArrayList<>();
 
 		BiMap<String, Segment> entityRegistry = getEntityRegistry();
@@ -560,9 +564,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			Evaluator evaluator = segmentHandler.getEvaluator();
 
-			List<OutputField> outputFields = EvaluatorUtil.getOutputFields(evaluator);
+			List<OutputField> outputFields = evaluator.getOutputFields();
+			for(OutputField outputField : outputFields){
+				OutputField nestedOutputField = new OutputField(outputField);
 
-			result.addAll(outputFields);
+				result.add(nestedOutputField);
+			}
 		}
 
 		return ImmutableList.copyOf(result);

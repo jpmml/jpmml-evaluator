@@ -75,8 +75,8 @@ public class ModelEvaluatorTest extends PMMLManagerTest {
 			}
 		};
 
-		List<TargetField> targetFields = EvaluatorUtil.getTargetFields(evaluator);
-		List<OutputField> outputFields = EvaluatorUtil.getOutputFields(evaluator);
+		List<TargetField> targetFields = evaluator.getTargetFields();
+		List<OutputField> outputFields = evaluator.getOutputFields();
 
 		assertEquals(Lists.transform(targetNames, function), EvaluatorUtil.getNames(targetFields));
 		assertEquals(Lists.transform(outputNames, function), EvaluatorUtil.getNames(outputFields));

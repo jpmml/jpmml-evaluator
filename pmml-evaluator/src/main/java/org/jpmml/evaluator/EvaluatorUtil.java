@@ -31,7 +31,6 @@ import com.google.common.collect.ListMultimap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
-import org.jpmml.evaluator.mining.MiningModelConsumer;
 
 public class EvaluatorUtil {
 
@@ -180,37 +179,6 @@ public class EvaluatorUtil {
 		}
 
 		return resultTable;
-	}
-
-	static
-	public List<TargetField> getTargetFields(Evaluator evaluator){
-		List<TargetField> targetFields = evaluator.getTargetFields();
-
-		return targetFields;
-	}
-
-	static
-	public List<OutputField> getOutputFields(Evaluator evaluator){
-		List<OutputField> outputFields = evaluator.getOutputFields();
-
-		if(evaluator instanceof MiningModelConsumer){
-			MiningModelConsumer miningModelConsumer = (MiningModelConsumer)evaluator;
-
-			List<OutputField> nestedOutputFields = miningModelConsumer.getNestedOutputFields();
-			if(nestedOutputFields.isEmpty()){
-				return outputFields;
-			}
-
-			List<OutputField> result = new ArrayList<>(nestedOutputFields.size() + outputFields.size());
-
-			// Depth-first ordering
-			result.addAll(nestedOutputFields);
-			result.addAll(outputFields);
-
-			return result;
-		}
-
-		return outputFields;
 	}
 
 	static

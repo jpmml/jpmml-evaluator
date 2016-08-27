@@ -28,9 +28,25 @@ public class OutputField extends ResultField {
 
 	private org.dmg.pmml.OutputField outputField = null;
 
+	private int depth = 0;
+
+
+	public OutputField(OutputField outputField){
+		this(outputField.getOutputField(), outputField.getDepth() + 1);
+	}
 
 	public OutputField(org.dmg.pmml.OutputField outputField){
+		this(outputField, 0);
+	}
+
+	public OutputField(org.dmg.pmml.OutputField outputField, int depth){
 		setOutputField(Objects.requireNonNull(outputField));
+
+		if(depth < 0){
+			throw new IllegalArgumentException();
+		}
+
+		setDepth(depth);
 	}
 
 	@Override
@@ -60,5 +76,13 @@ public class OutputField extends ResultField {
 
 	private void setOutputField(org.dmg.pmml.OutputField outputField){
 		this.outputField = outputField;
+	}
+
+	public int getDepth(){
+		return this.depth;
+	}
+
+	private void setDepth(int depth){
+		this.depth = depth;
 	}
 }

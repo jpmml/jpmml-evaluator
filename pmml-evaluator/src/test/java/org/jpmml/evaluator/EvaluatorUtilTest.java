@@ -122,15 +122,15 @@ public class EvaluatorUtilTest {
 	public void getTargetFields() throws Exception {
 		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(MixedNeighborhoodTest.class);
 
-		checkFieldNames(Arrays.asList(FieldName.create("species"), FieldName.create("species_class")), EvaluatorUtil.getTargetFields(evaluator));
+		checkFieldNames(Arrays.asList(FieldName.create("species"), FieldName.create("species_class")), evaluator.getTargetFields());
 
 		evaluator = ModelEvaluatorTest.createModelEvaluator(RankingTest.class);
 
-		checkFieldNames(Collections.<FieldName>singletonList(null), EvaluatorUtil.getTargetFields(evaluator));
+		checkFieldNames(Collections.<FieldName>singletonList(null), evaluator.getTargetFields());
 
 		evaluator = ModelEvaluatorTest.createModelEvaluator(TransactionalSchemaTest.class);
 
-		checkFieldNames(Collections.<FieldName>emptyList(), EvaluatorUtil.getTargetFields(evaluator));
+		checkFieldNames(Collections.<FieldName>emptyList(), evaluator.getTargetFields());
 	}
 
 	static

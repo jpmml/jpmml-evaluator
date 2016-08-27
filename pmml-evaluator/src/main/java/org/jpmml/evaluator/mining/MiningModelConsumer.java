@@ -18,12 +18,9 @@
  */
 package org.jpmml.evaluator.mining;
 
-import java.util.List;
-
 import org.dmg.pmml.mining.MiningModel;
 import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.Consumer;
-import org.jpmml.evaluator.OutputField;
 
 public interface MiningModelConsumer extends Consumer {
 
@@ -42,16 +39,4 @@ public interface MiningModelConsumer extends Consumer {
 	 * </p>
 	 */
 	Segmentation.MultipleModelMethod getMultipleModelMethod();
-
-	/**
-	 * <p>
-	 * Gets the output fields of nested {@link Consumer} instances.
-	 * </p>
-	 *
-	 * <p>
-	 * The target fields of nested models are subsets of the target fields of the top-level mining model.
-	 * However, the output fields of nested models are disjoint sets from the output fields of the top-level mining model.
-	 * </p>
-	 */
-	List<OutputField> getNestedOutputFields();
 }

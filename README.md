@@ -117,7 +117,7 @@ Evaluator evaluator = (Evaluator)modelEvaluator;
 
 The model evaluator can be queried for the list of active (ie. independent), target (ie. primary dependent) and output (ie. secondary dependent) field definitions, which provide information about field name, data type, operational type, value domain etc. information.
 
-Querying and parsing active fields:
+Querying and analyzing active fields:
 ```java
 List<InputField> activeFields = evaluator.getActiveFields();
 for(InputField activeField : activeFields){
@@ -141,9 +141,9 @@ for(InputField activeField : activeFields){
 }
 ```
 
-Querying and parsing target fields:
+Querying and analyzing target fields:
 ```java
-List<TargetField> targetFields = EvaluatorUtil.getTargetFields(evaluator);
+List<TargetField> targetFields = evaluator.getTargetFields();
 for(TargetField targetField : targetFields){
 	org.dmg.pmml.DataField pmmlDataField = targetField.getDataField();
 	org.dmg.pmml.MiningField pmmlMiningField = targetField.getMiningField(); // Could be null
@@ -165,18 +165,21 @@ for(TargetField targetField : targetFields){
 }
 ```
 
-Querying and parsing output fields:
+Querying and analyzing output fields:
 ```java
-List<OutputField> outputFields = EvaluatorUtil.getOutputFields(evaluator);
+List<OutputField> outputFields = evaluator.getOutputFields();
 for(OutputField outputField : outputFields){
 	org.dmg.pmml.OutputField pmmlOutputField = outputField.getOutputField();
 
 	org.dmg.pmml.DataType dataType = outputField.getDataType(); // Could be null
 	org.dmg.pmml.OpType opType = outputField.getOpType(); // Could be null
+
+	int depth = outputField.getDepth();
+	if(depth > 0){
+		continue;
+	}
 }
 ```
-
-Methods `EvaluatorUtil#getTargetFields(Evaluator)` and `EvaluatorUtil#getOutputFields(Evaluator)` are "future-proof" wrappers for methods `Evaluator#getTargetFields()` and `Evaluator#getOutputFields()`, respectively.
 
 ### Evaluating models
 
