@@ -36,28 +36,28 @@ public class FunctionUtil {
 
 	static
 	public FieldValue evaluate(Apply apply, List<FieldValue> values, EvaluationContext context){
-		String name = apply.getFunction();
+		String function = apply.getFunction();
 
-		if(name == null){
+		if(function == null){
 			throw new InvalidFeatureException(apply);
 		}
 
-		Function builtInFunction = getFunction(name);
+		Function builtInFunction = getFunction(function);
 		if(builtInFunction != null){
 			return builtInFunction.evaluate(values);
 		}
 
-		Function userDefinedFunction = FunctionRegistry.getFunction(name);
+		Function userDefinedFunction = FunctionRegistry.getFunction(function);
 		if(userDefinedFunction != null){
 			return userDefinedFunction.evaluate(values);
 		}
 
-		DefineFunction defineFunction = context.getDefineFunction(name);
+		DefineFunction defineFunction = context.getDefineFunction(function);
 		if(defineFunction != null){
 			return evaluate(defineFunction, values, context);
 		}
 
-		throw new UnsupportedFeatureException(apply, ReflectionUtil.getField(Apply.class, "function"), name);
+		throw new UnsupportedFeatureException(apply, ReflectionUtil.getField(Apply.class, "function"), function);
 	}
 
 	static

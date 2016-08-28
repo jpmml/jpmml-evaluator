@@ -278,10 +278,10 @@ public class ExpressionUtil {
 
 		Iterator<Expression> arguments = expressions.iterator();
 
-		String name = apply.getFunction();
+		String function = apply.getFunction();
 
 		condition:
-		if(("if").equals(name)){
+		if(("if").equals(function)){
 
 			if(arguments.hasNext()){
 				FieldValue flag = evaluate(arguments.next(), context);
