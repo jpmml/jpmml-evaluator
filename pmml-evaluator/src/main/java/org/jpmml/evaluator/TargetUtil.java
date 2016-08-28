@@ -193,19 +193,19 @@ public class TargetUtil {
 			return null;
 		}
 
-		List<TargetValue> values = target.getTargetValues();
-		if(values.size() != 1){
+		List<TargetValue> targetValues = target.getTargetValues();
+		if(targetValues.size() != 1){
 			throw new InvalidFeatureException(target);
 		}
 
-		TargetValue value = values.get(0);
+		TargetValue targetValue = targetValues.get(0);
 
 		// "The value and priorProbability attributes are used only if the optype of the field is categorical or ordinal"
-		if(value.getValue() != null || value.getPriorProbability() != null){
-			throw new InvalidFeatureException(value);
+		if(targetValue.getValue() != null || targetValue.getPriorProbability() != null){
+			throw new InvalidFeatureException(targetValue);
 		}
 
-		return value.getDefaultValue();
+		return targetValue.getDefaultValue();
 	}
 
 	static
@@ -217,16 +217,16 @@ public class TargetUtil {
 
 		ProbabilityDistribution result = new ProbabilityDistribution();
 
-		List<TargetValue> values = target.getTargetValues();
-		for(TargetValue value : values){
+		List<TargetValue> targetValues = target.getTargetValues();
+		for(TargetValue targetValue : targetValues){
 
 			// "The defaultValue attribute is used only if the optype of the field is continuous"
-			if(value.getDefaultValue() != null){
-				throw new InvalidFeatureException(value);
+			if(targetValue.getDefaultValue() != null){
+				throw new InvalidFeatureException(targetValue);
 			}
 
-			String targetCategory = value.getValue();
-			Double probability = value.getPriorProbability();
+			String targetCategory = targetValue.getValue();
+			Double probability = targetValue.getPriorProbability();
 
 			if(targetCategory == null || probability == null){
 				continue;
