@@ -49,7 +49,7 @@ import org.jpmml.evaluator.VoteAggregator;
 public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 	public ScorecardEvaluator(PMML pmml){
-		super(pmml, Scorecard.class);
+		this(pmml, selectModel(pmml, Scorecard.class));
 	}
 
 	public ScorecardEvaluator(PMML pmml, Scorecard scorecard){

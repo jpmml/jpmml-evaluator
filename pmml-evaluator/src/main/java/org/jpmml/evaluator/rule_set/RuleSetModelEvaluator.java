@@ -60,7 +60,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 
 	public RuleSetModelEvaluator(PMML pmml){
-		super(pmml, RuleSetModel.class);
+		this(pmml, selectModel(pmml, RuleSetModel.class));
 	}
 
 	public RuleSetModelEvaluator(PMML pmml, RuleSetModel ruleSetModel){

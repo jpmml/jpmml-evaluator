@@ -83,7 +83,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 
 	public NeuralNetworkEvaluator(PMML pmml){
-		super(pmml, NeuralNetwork.class);
+		this(pmml, selectModel(pmml, NeuralNetwork.class));
 	}
 
 	public NeuralNetworkEvaluator(PMML pmml, NeuralNetwork neuralNetwork){

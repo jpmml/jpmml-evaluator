@@ -85,7 +85,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 
 	public AssociationModelEvaluator(PMML pmml){
-		super(pmml, AssociationModel.class);
+		this(pmml, selectModel(pmml, AssociationModel.class));
 	}
 
 	public AssociationModelEvaluator(PMML pmml, AssociationModel associationModel){

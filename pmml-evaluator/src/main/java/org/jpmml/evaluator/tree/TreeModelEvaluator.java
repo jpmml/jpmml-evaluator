@@ -61,7 +61,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 
 	public TreeModelEvaluator(PMML pmml){
-		super(pmml, TreeModel.class);
+		this(pmml, selectModel(pmml, TreeModel.class));
 	}
 
 	public TreeModelEvaluator(PMML pmml, TreeModel treeModel){

@@ -100,7 +100,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 
 	public GeneralRegressionModelEvaluator(PMML pmml){
-		super(pmml, GeneralRegressionModel.class);
+		this(pmml, selectModel(pmml, GeneralRegressionModel.class));
 	}
 
 	public GeneralRegressionModelEvaluator(PMML pmml, GeneralRegressionModel generalRegressionModel){

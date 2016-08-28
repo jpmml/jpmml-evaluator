@@ -102,7 +102,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 
 	public NearestNeighborModelEvaluator(PMML pmml){
-		super(pmml, NearestNeighborModel.class);
+		this(pmml, selectModel(pmml, NearestNeighborModel.class));
 	}
 
 	public NearestNeighborModelEvaluator(PMML pmml, NearestNeighborModel nearestNeighborModel){

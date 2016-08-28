@@ -94,10 +94,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 	private List<OutputField> outputResultFields = null;
 
 
-	protected ModelEvaluator(PMML pmml, Class<? extends M> clazz){
-		this(pmml, selectModel(pmml, clazz));
-	}
-
 	protected ModelEvaluator(PMML pmml, M model){
 		setPMML(Objects.requireNonNull(pmml));
 		setModel(Objects.requireNonNull(model));
@@ -518,6 +514,11 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 	static
 	protected <M extends Model> M selectModel(PMML pmml, Class<? extends M> clazz){
+
+		if(!pmml.hasModels()){
+			throw new InvalidFeatureException(pmml);
+		}
+
 		List<Model> models = pmml.getModels();
 
 		Iterable<? extends M> filteredModels = Iterables.filter(models, clazz);

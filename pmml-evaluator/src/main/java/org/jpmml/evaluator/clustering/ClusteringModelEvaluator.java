@@ -63,7 +63,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 
 	public ClusteringModelEvaluator(PMML pmml){
-		super(pmml, ClusteringModel.class);
+		this(pmml, selectModel(pmml, ClusteringModel.class));
 	}
 
 	public ClusteringModelEvaluator(PMML pmml, ClusteringModel clusteringModel){

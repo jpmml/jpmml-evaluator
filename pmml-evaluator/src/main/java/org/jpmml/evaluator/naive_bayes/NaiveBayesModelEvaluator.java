@@ -89,7 +89,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 
 	public NaiveBayesModelEvaluator(PMML pmml){
-		super(pmml, NaiveBayesModel.class);
+		this(pmml, selectModel(pmml, NaiveBayesModel.class));
 	}
 
 	public NaiveBayesModelEvaluator(PMML pmml, NaiveBayesModel naiveBayesModel){

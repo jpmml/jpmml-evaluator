@@ -81,7 +81,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 
 	public SupportVectorMachineModelEvaluator(PMML pmml){
-		super(pmml, SupportVectorMachineModel.class);
+		this(pmml, selectModel(pmml, SupportVectorMachineModel.class));
 	}
 
 	public SupportVectorMachineModelEvaluator(PMML pmml, SupportVectorMachineModel supportVectorMachineModel){

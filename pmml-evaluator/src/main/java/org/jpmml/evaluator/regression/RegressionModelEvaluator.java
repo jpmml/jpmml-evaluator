@@ -55,7 +55,7 @@ import org.jpmml.evaluator.UnsupportedFeatureException;
 public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 	public RegressionModelEvaluator(PMML pmml){
-		super(pmml, RegressionModel.class);
+		this(pmml, selectModel(pmml, RegressionModel.class));
 	}
 
 	public RegressionModelEvaluator(PMML pmml, RegressionModel regressionModel){
