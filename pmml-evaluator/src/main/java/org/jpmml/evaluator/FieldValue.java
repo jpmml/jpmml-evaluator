@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.base.Objects.ToStringHelper;
@@ -67,13 +68,8 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 
 
 	FieldValue(DataType dataType, Object value){
-
-		if((dataType == null) || (value == null)){
-			throw new NullPointerException();
-		}
-
-		setDataType(dataType);
-		setValue(filterValue(value));
+		setDataType(Objects.requireNonNull(dataType));
+		setValue(filterValue(Objects.requireNonNull(value)));
 	}
 
 	abstract

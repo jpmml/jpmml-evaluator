@@ -27,6 +27,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
@@ -105,12 +106,7 @@ public class CacheUtil {
 
 	static
 	public void setCacheBuilderSpec(CacheBuilderSpec cacheBuilderSpec){
-
-		if(cacheBuilderSpec == null){
-			throw new NullPointerException();
-		}
-
-		CacheUtil.cacheBuilderSpec = cacheBuilderSpec;
+		CacheUtil.cacheBuilderSpec = Objects.requireNonNull(cacheBuilderSpec);
 	}
 
 	private static CacheBuilderSpec cacheBuilderSpec = CacheBuilderSpec.parse("weakKeys");
