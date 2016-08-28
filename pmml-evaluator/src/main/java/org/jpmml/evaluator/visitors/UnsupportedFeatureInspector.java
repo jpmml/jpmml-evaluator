@@ -19,17 +19,22 @@
 package org.jpmml.evaluator.visitors;
 
 import org.dmg.pmml.Aggregate;
+import org.dmg.pmml.Apply;
+import org.dmg.pmml.Lag;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Matrix;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.TableLocator;
+import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.baseline.BaselineModel;
+import org.dmg.pmml.bayesian_network.BayesianNetworkModel;
 import org.dmg.pmml.clustering.CenterFields;
 import org.dmg.pmml.clustering.ClusteringModel;
+import org.dmg.pmml.gaussian_process.GaussianProcessModel;
 import org.dmg.pmml.general_regression.Categories;
 import org.dmg.pmml.general_regression.Predictor;
 import org.dmg.pmml.mining.Segmentation;
@@ -43,6 +48,7 @@ import org.dmg.pmml.time_series.TimeSeriesModel;
 import org.dmg.pmml.tree.DecisionTree;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.model.ReflectionUtil;
 
 /**
  * <p>
@@ -70,8 +76,36 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 	}
 
 	@Override
+	public VisitorAction visit(Apply apply){
+		String function = apply.getFunction();
+
+		switch(function){
+			case "erf":
+			case "normalCDF":
+			case "normalIDF":
+			case "normalPDF":
+			case "stdNormalCDF":
+			case "stdNormalIDF":
+			case "stdNormalPDF":
+				report(new UnsupportedFeatureException(apply, ReflectionUtil.getField(Apply.class, "function"), function));
+				break;
+			default:
+				break;
+		}
+
+		return super.visit(apply);
+	}
+
+	@Override
 	public VisitorAction visit(BaselineModel baselineModel){
 		report(new UnsupportedFeatureException(baselineModel));
+
+		return VisitorAction.SKIP;
+	}
+
+	@Override
+	public VisitorAction visit(BayesianNetworkModel bayesianNetworkModel){
+		report(new UnsupportedFeatureException(bayesianNetworkModel));
 
 		return VisitorAction.SKIP;
 	}
@@ -101,6 +135,20 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 	@Override
 	public VisitorAction visit(DecisionTree decisionTree){
 		report(new UnsupportedFeatureException(decisionTree));
+
+		return VisitorAction.SKIP;
+	}
+
+	@Override
+	public VisitorAction visit(GaussianProcessModel gaussianProcessModel){
+		report(new UnsupportedFeatureException(gaussianProcessModel));
+
+		return VisitorAction.SKIP;
+	}
+
+	@Override
+	public VisitorAction visit(Lag lag){
+		report(new UnsupportedFeatureException(lag));
 
 		return VisitorAction.SKIP;
 	}
@@ -210,8 +258,12 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 	@Override
 	public VisitorAction visit(SupportVectorMachineModel supportVectorMachineModel){
-		SupportVectorMachineModel.Representation representation = supportVectorMachineModel.getRepresentation();
+		boolean maxWins = supportVectorMachineModel.isMaxWins();
+		if(maxWins){
+			report(new UnsupportedFeatureException(supportVectorMachineModel, ReflectionUtil.getField(SupportVectorMachineModel.class, "maxWins"), true));
+		}
 
+		SupportVectorMachineModel.Representation representation = supportVectorMachineModel.getRepresentation();
 		switch(representation){
 			case COEFFICIENTS:
 				report(new UnsupportedFeatureException(supportVectorMachineModel, representation));
@@ -226,6 +278,13 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 	@Override
 	public VisitorAction visit(TableLocator tableLocator){
 		report(new UnsupportedFeatureException(tableLocator));
+
+		return VisitorAction.SKIP;
+	}
+
+	@Override
+	public VisitorAction visit(TextIndex textIndex){
+		report(new UnsupportedFeatureException(textIndex));
 
 		return VisitorAction.SKIP;
 	}
