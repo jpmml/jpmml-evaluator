@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -114,7 +113,7 @@ import org.dmg.pmml.Output;
  * @see HasGroupFields
  * @see HasOrderFields
  */
-public interface Evaluator extends Serializable {
+public interface Evaluator {
 
 	/**
 	 * <p>

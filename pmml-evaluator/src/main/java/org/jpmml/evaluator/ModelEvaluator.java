@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -63,7 +64,7 @@ import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
 
 abstract
-public class ModelEvaluator<M extends Model> implements Evaluator {
+public class ModelEvaluator<M extends Model> implements Evaluator, Serializable {
 
 	private PMML pmml = null;
 
@@ -93,11 +94,11 @@ public class ModelEvaluator<M extends Model> implements Evaluator {
 	private List<OutputField> outputResultFields = null;
 
 
-	public ModelEvaluator(PMML pmml, Class<? extends M> clazz){
+	protected ModelEvaluator(PMML pmml, Class<? extends M> clazz){
 		this(pmml, selectModel(pmml, clazz));
 	}
 
-	public ModelEvaluator(PMML pmml, M model){
+	protected ModelEvaluator(PMML pmml, M model){
 		setPMML(Objects.requireNonNull(pmml));
 		setModel(Objects.requireNonNull(model));
 
