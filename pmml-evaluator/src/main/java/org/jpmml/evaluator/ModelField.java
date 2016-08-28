@@ -26,6 +26,11 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
 
+/**
+ * <p>
+ * A common superclass for all model fields.
+ * </p>
+ */
 abstract
 class ModelField implements Serializable {
 

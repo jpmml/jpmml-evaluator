@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.Objects;
 
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
@@ -48,7 +49,7 @@ public class InputField extends ModelField {
 	 * </p>
 	 *
 	 * <p>
-	 * First, the value is converted from the user-supplied representation to internal representation.
+	 * First, the value is converted from the user-supplied representation to PMML representation.
 	 * After that, the value is subjected to missing value treatment, invalid value treatment and outlier treatment.
 	 * </p>
 	 *
@@ -63,22 +64,29 @@ public class InputField extends ModelField {
 		return FieldValueUtil.prepareInputValue(getField(), getMiningField(), value);
 	}
 
+	@Override
 	public FieldName getName(){
 		Field field = getField();
 
 		return field.getName();
 	}
 
+	@Override
 	public DataType getDataType(){
 		Field field = getField();
 
 		return field.getDataType();
 	}
 
+	@Override
 	public OpType getOpType(){
 		return FieldValueUtil.getOpType(getField(), getMiningField());
 	}
 
+	/**
+	 * @return the backing {@link Field} element.
+	 * For top-level models, this is always the {@link DataField} element.
+	 */
 	public Field getField(){
 		return this.field;
 	}
@@ -87,6 +95,9 @@ public class InputField extends ModelField {
 		this.field = field;
 	}
 
+	/**
+	 * @return the backing {@link MiningField} element.
+	 */
 	public MiningField getMiningField(){
 		return this.miningField;
 	}

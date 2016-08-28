@@ -42,6 +42,11 @@ public class TargetField extends ResultField {
 		setTarget(target);
 	}
 
+	/**
+	 * @return the name, or <code>null</code> (in the form of the constant {@link Evaluator#DEFAULT_TARGET_NAME}) if this is a synthetic target field.
+	 *
+	 * @see #isSynthetic()
+	 */
 	@Override
 	public FieldName getName(){
 		DataField dataField = getDataField();
@@ -67,6 +72,9 @@ public class TargetField extends ResultField {
 		return (miningField == null);
 	}
 
+	/**
+	 * @return the backing {@link DataField} element.
+	 */
 	public DataField getDataField(){
 		return this.dataField;
 	}
@@ -75,6 +83,11 @@ public class TargetField extends ResultField {
 		this.dataField = dataField;
 	}
 
+	/**
+	 * @return the backing {@link MiningField} element, or <code>null</code> if this a synthetic target field.
+	 *
+	 * @see #isSynthetic()
+	 */
 	public MiningField getMiningField(){
 		return this.miningField;
 	}
@@ -83,6 +96,9 @@ public class TargetField extends ResultField {
 		this.miningField = miningField;
 	}
 
+	/**
+	 * @return the backing {@link Target} element, or <code>null</code>.
+	 */
 	public Target getTarget(){
 		return this.target;
 	}

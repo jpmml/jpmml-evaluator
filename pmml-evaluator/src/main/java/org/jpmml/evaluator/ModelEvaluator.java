@@ -161,7 +161,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 	}
 
 	/**
-	 * @return A synthetic {@link DataField} describing the default target field.
+	 * @return A synthetic {@link DataField} element describing the default target field.
 	 */
 	protected DataField getDataField(){
 		MiningFunction miningFunction = getMiningFunction();
