@@ -98,9 +98,26 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	public MiningModelEvaluator(PMML pmml, MiningModel miningModel){
 		super(pmml, miningModel);
 
+		if(miningModel.hasEmbeddedModels()){
+			List<EmbeddedModel> embeddedModels = miningModel.getEmbeddedModels();
+
+			EmbeddedModel embeddedModel = Iterables.get(embeddedModels, 0);
+
+			throw new UnsupportedFeatureException(embeddedModel);
+		}
+
 		Segmentation segmentation = miningModel.getSegmentation();
 		if(segmentation == null){
 			throw new InvalidFeatureException(miningModel);
+		} // End if
+
+		if(!segmentation.hasSegments()){
+			throw new InvalidFeatureException(segmentation);
+		}
+
+		LocalTransformations localTransformations = segmentation.getLocalTransformations();
+		if(localTransformations != null){
+			throw new UnsupportedFeatureException(localTransformations);
 		}
 	}
 
@@ -166,12 +183,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MiningModel miningModel = getModel();
 		if(!miningModel.isScorable()){
 			throw new InvalidResultException(miningModel);
-		} // End if
-
-		if(miningModel.hasEmbeddedModels()){
-			EmbeddedModel embeddedModel = Iterables.get(miningModel.getEmbeddedModels(), 0);
-
-			throw new UnsupportedFeatureException(embeddedModel);
 		}
 
 		Map<FieldName, ?> predictions;
@@ -290,20 +301,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private List<SegmentResult> evaluateSegmentation(MiningModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		Segmentation segmentation = miningModel.getSegmentation();
-
-		LocalTransformations localTransformations = segmentation.getLocalTransformations();
-		if(localTransformations != null){
-			throw new UnsupportedFeatureException(localTransformations);
-		}
-
 		BiMap<String, Segment> entityRegistry = getEntityRegistry();
+
+		MiningFunction miningFunction = miningModel.getMiningFunction();
+
+		Segmentation segmentation = miningModel.getSegmentation();
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		Model lastModel = null;
-
-		MiningFunction miningFunction = miningModel.getMiningFunction();
 
 		MiningModelEvaluationContext miningModelContext = null;
 

@@ -54,6 +54,15 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 	public ScorecardEvaluator(PMML pmml, Scorecard scorecard){
 		super(pmml, scorecard);
+
+		Characteristics characteristics = scorecard.getCharacteristics();
+		if(characteristics == null){
+			throw new InvalidFeatureException(scorecard);
+		} // End if
+
+		if(!characteristics.hasCharacteristics()){
+			throw new InvalidFeatureException(characteristics);
+		}
 	}
 
 	@Override

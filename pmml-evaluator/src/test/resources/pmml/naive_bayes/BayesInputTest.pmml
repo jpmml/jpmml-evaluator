@@ -15,6 +15,10 @@
                 </PairCounts>
             </BayesInput>
         </BayesInputs>
-        <BayesOutput/>
+        <BayesOutput>
+            <TargetValueCounts>
+                <TargetValueCount/>
+            </TargetValueCounts>
+        </BayesOutput>
     </NaiveBayesModel>
 </PMML>

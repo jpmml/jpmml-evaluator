@@ -94,6 +94,29 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 	public NaiveBayesModelEvaluator(PMML pmml, NaiveBayesModel naiveBayesModel){
 		super(pmml, naiveBayesModel);
+
+		BayesInputs bayesInputs = naiveBayesModel.getBayesInputs();
+		if(bayesInputs == null){
+			throw new InvalidFeatureException(naiveBayesModel);
+		} // End if
+
+		if(!bayesInputs.hasBayesInputs() && !bayesInputs.hasExtensions()){
+			throw new InvalidFeatureException(bayesInputs);
+		}
+
+		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
+		if(bayesOutput == null){
+			throw new InvalidFeatureException(naiveBayesModel);
+		}
+
+		TargetValueCounts targetValueCounts = bayesOutput.getTargetValueCounts();
+		if(targetValueCounts == null){
+			throw new InvalidFeatureException(bayesOutput);
+		} // End if
+
+		if(!targetValueCounts.hasTargetValueCounts()){
+			throw new InvalidFeatureException(targetValueCounts);
+		}
 	}
 
 	@Override

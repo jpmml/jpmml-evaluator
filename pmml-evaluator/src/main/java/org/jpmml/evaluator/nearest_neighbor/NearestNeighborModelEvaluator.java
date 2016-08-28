@@ -107,6 +107,34 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 	public NearestNeighborModelEvaluator(PMML pmml, NearestNeighborModel nearestNeighborModel){
 		super(pmml, nearestNeighborModel);
+
+		ComparisonMeasure comparisoonMeasure = nearestNeighborModel.getComparisonMeasure();
+		if(comparisoonMeasure == null){
+			throw new InvalidFeatureException(nearestNeighborModel);
+		}
+
+		TrainingInstances trainingInstances = nearestNeighborModel.getTrainingInstances();
+		if(trainingInstances == null){
+			throw new InvalidFeatureException(nearestNeighborModel);
+		}
+
+		InstanceFields instanceFields = trainingInstances.getInstanceFields();
+		if(instanceFields == null){
+			throw new InvalidFeatureException(trainingInstances);
+		} // End if
+
+		if(!instanceFields.hasInstanceFields()){
+			throw new InvalidFeatureException(instanceFields);
+		}
+
+		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
+		if(knnInputs == null){
+			throw new InvalidFeatureException(nearestNeighborModel);
+		} // End if
+
+		if(!knnInputs.hasKNNInputs()){
+			throw new InvalidFeatureException(knnInputs);
+		}
 	}
 
 	@Override

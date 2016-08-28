@@ -35,6 +35,8 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.Target;
+import org.dmg.pmml.Targets;
 import org.dmg.pmml.clustering.CenterFields;
 import org.dmg.pmml.clustering.Cluster;
 import org.dmg.pmml.clustering.ClusteringField;
@@ -68,11 +70,50 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 	public ClusteringModelEvaluator(PMML pmml, ClusteringModel clusteringModel){
 		super(pmml, clusteringModel);
+
+		ComparisonMeasure comparisonMeasure = clusteringModel.getComparisonMeasure();
+		if(comparisonMeasure == null){
+			throw new InvalidFeatureException(clusteringModel);
+		}
+
+		ClusteringModel.ModelClass modelClass = clusteringModel.getModelClass();
+		switch(modelClass){
+			case CENTER_BASED:
+				break;
+			default:
+				throw new UnsupportedFeatureException(clusteringModel, modelClass);
+		}
+
+		CenterFields centerFields = clusteringModel.getCenterFields();
+		if(centerFields != null){
+			throw new UnsupportedFeatureException(centerFields);
+		}
+
+		if(!clusteringModel.hasClusteringFields()){
+			throw new InvalidFeatureException(clusteringModel);
+		} // End if
+
+		if(!clusteringModel.hasClusters()){
+			throw new InvalidFeatureException(clusteringModel);
+		}
+
+		Targets targets = clusteringModel.getTargets();
+		if(targets != null){
+			throw new InvalidFeatureException(targets);
+		}
 	}
 
 	@Override
 	public String getSummary(){
 		return "Clustering model";
+	}
+
+	/**
+	 * @return <code>null</code> Always.
+	 */
+	@Override
+	public Target getTarget(FieldName name){
+		return null;
 	}
 
 	@Override
@@ -108,19 +149,6 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 	private Map<FieldName, ClusterAffinityDistribution> evaluateClustering(EvaluationContext context){
 		ClusteringModel clusteringModel = getModel();
-
-		ClusteringModel.ModelClass modelClass = clusteringModel.getModelClass();
-		switch(modelClass){
-			case CENTER_BASED:
-				break;
-			default:
-				throw new UnsupportedFeatureException(clusteringModel, modelClass);
-		}
-
-		CenterFields centerFields = clusteringModel.getCenterFields();
-		if(centerFields != null){
-			throw new UnsupportedFeatureException(centerFields);
-		}
 
 		List<ClusteringField> clusteringFields = getCenterClusteringFields();
 

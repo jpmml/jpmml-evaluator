@@ -40,6 +40,8 @@ import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.Target;
+import org.dmg.pmml.Targets;
 import org.dmg.pmml.association.AssociationModel;
 import org.dmg.pmml.association.AssociationRule;
 import org.dmg.pmml.association.Item;
@@ -90,6 +92,11 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 	public AssociationModelEvaluator(PMML pmml, AssociationModel associationModel){
 		super(pmml, associationModel);
+
+		Targets targets = associationModel.getTargets();
+		if(targets != null){
+			throw new InvalidFeatureException(targets);
+		}
 	}
 
 	@Override
@@ -105,6 +112,14 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		}
 
 		return this.groupInputFields;
+	}
+
+	/**
+	 * @return <code>null</code> Always.
+	 */
+	@Override
+	public Target getTarget(FieldName name){
+		return null;
 	}
 
 	@Override

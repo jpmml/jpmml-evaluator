@@ -66,6 +66,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 	public TreeModelEvaluator(PMML pmml, TreeModel treeModel){
 		super(pmml, treeModel);
+
+		Node root = treeModel.getNode();
+		if(root == null){
+			throw new InvalidFeatureException(treeModel);
+		}
 	}
 
 	@Override
@@ -150,9 +155,6 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		TreeModel treeModel = getModel();
 
 		Node root = treeModel.getNode();
-		if(root == null){
-			throw new InvalidFeatureException(treeModel);
-		}
 
 		Boolean status = evaluateNode(trail, root, context);
 

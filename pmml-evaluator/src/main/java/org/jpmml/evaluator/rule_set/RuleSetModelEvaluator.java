@@ -65,6 +65,15 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 	public RuleSetModelEvaluator(PMML pmml, RuleSetModel ruleSetModel){
 		super(pmml, ruleSetModel);
+
+		RuleSet ruleSet = ruleSetModel.getRuleSet();
+		if(ruleSet == null){
+			throw new InvalidFeatureException(ruleSetModel);
+		} // End if
+
+		if(!ruleSet.hasRuleSelectionMethods()){
+			throw new InvalidFeatureException(ruleSet);
+		}
 	}
 
 	@Override

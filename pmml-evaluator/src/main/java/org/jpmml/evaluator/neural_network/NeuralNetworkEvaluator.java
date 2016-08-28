@@ -88,6 +88,28 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 	public NeuralNetworkEvaluator(PMML pmml, NeuralNetwork neuralNetwork){
 		super(pmml, neuralNetwork);
+
+		NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
+		if(neuralInputs == null){
+			throw new InvalidFeatureException(neuralNetwork);
+		} // End if
+
+		if(!neuralInputs.hasNeuralInputs()){
+			throw new InvalidFeatureException(neuralInputs);
+		} // End if
+
+		if(!neuralNetwork.hasNeuralLayers()){
+			throw new InvalidFeatureException(neuralNetwork);
+		}
+
+		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
+		if(neuralOutputs == null){
+			throw new InvalidFeatureException(neuralNetwork);
+		} // End if
+
+		if(!neuralOutputs.hasNeuralOutputs()){
+			throw new InvalidFeatureException(neuralOutputs);
+		}
 	}
 
 	@Override
@@ -140,10 +162,6 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		Map<FieldName, Object> result = new LinkedHashMap<>();
 
 		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
-		if(neuralOutputs == null){
-			throw new InvalidFeatureException(neuralNetwork);
-		}
-
 		for(NeuralOutput neuralOutput : neuralOutputs){
 			String id = neuralOutput.getOutputNeuron();
 
@@ -200,10 +218,6 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		Map<FieldName, Classification> result = new LinkedHashMap<>();
 
 		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
-		if(neuralOutputs == null){
-			throw new InvalidFeatureException(neuralNetwork);
-		}
-
 		for(NeuralOutput neuralOutput : neuralOutputs){
 			String id = neuralOutput.getOutputNeuron();
 
@@ -301,10 +315,6 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		Map<String, Double> result = new HashMap<>(entityRegistry.size());
 
 		NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
-		if(neuralInputs == null){
-			throw new InvalidFeatureException(neuralNetwork);
-		}
-
 		for(NeuralInput neuralInput : neuralInputs){
 			DerivedField derivedField = neuralInput.getDerivedField();
 
@@ -447,10 +457,6 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			AtomicInteger index = new AtomicInteger(1);
 
 			NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
-			if(neuralInputs == null){
-				throw new InvalidFeatureException(neuralNetwork);
-			}
-
 			for(NeuralInput neuralInput : neuralInputs){
 				builder = EntityUtil.put(neuralInput, index, builder);
 			}

@@ -105,6 +105,21 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 	public GeneralRegressionModelEvaluator(PMML pmml, GeneralRegressionModel generalRegressionModel){
 		super(pmml, generalRegressionModel);
+
+		ParameterList parameterList = generalRegressionModel.getParameterList();
+		if(parameterList == null){
+			throw new InvalidFeatureException(generalRegressionModel);
+		}
+
+		PPMatrix ppMatrix = generalRegressionModel.getPPMatrix();
+		if(ppMatrix == null){
+			throw new InvalidFeatureException(generalRegressionModel);
+		}
+
+		ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
+		if(paramMatrix == null){
+			throw new InvalidFeatureException(generalRegressionModel);
+		}
 	}
 
 	@Override
@@ -323,7 +338,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					} // End if
 
 					if(parameterPredictorRows == null){
-						throw new InvalidFeatureException(generalRegressionModel.getPPMatrix());
+						PPMatrix ppMatrix = generalRegressionModel.getPPMatrix();
+
+						throw new InvalidFeatureException(ppMatrix);
 					}
 				}
 
@@ -339,20 +356,26 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 						} // End if
 
 						if(parameterCells == null){
-							throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
+							ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
+
+							throw new InvalidFeatureException(paramMatrix);
 						}
 						break;
 					case ORDINAL_MULTINOMIAL:
 						// "ParamMatrix specifies different values for the intercept parameter: one for each target category except one"
 						List<PCell> interceptCells = paramMatrixMap.get(targetCategory);
 						if(interceptCells == null || interceptCells.size() != 1){
-							throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
+							ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
+
+							throw new InvalidFeatureException(paramMatrix);
 						}
 
 						// "Values for all other parameters are constant across all target variable values"
 						parameterCells = paramMatrixMap.get(null);
 						if(parameterCells == null){
-							throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
+							ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
+
+							throw new InvalidFeatureException(paramMatrix);
 						}
 
 						parameterCells = Iterables.concat(interceptCells, parameterCells);
@@ -445,13 +468,17 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		{
 			parameterPredictorRows = ppMatrixMap.get(null);
 			if(parameterPredictorRows == null){
-				throw new InvalidFeatureException(generalRegressionModel.getPPMatrix());
+				PPMatrix ppMatrix = generalRegressionModel.getPPMatrix();
+
+				throw new InvalidFeatureException(ppMatrix);
 			}
 		}
 
 		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
 		if(paramMatrixMap.size() != 1 || !paramMatrixMap.containsKey(null)){
-			throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
+			ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
+
+			throw new InvalidFeatureException(paramMatrix);
 		}
 
 		List<PCell> parameterCells = paramMatrixMap.get(null);
@@ -501,7 +528,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
 		if(paramMatrixMap.size() != 1 || !paramMatrixMap.containsKey(null)){
-			throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
+			ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
+
+			throw new InvalidFeatureException(paramMatrix);
 		}
 
 		Iterable<PCell> parameterCells = paramMatrixMap.get(null);
@@ -702,7 +731,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					// "The reference category is the one from DataDictionary that does not appear in the ParamMatrix"
 					Set<String> targetReferenceCategories = Sets.newLinkedHashSet(Iterables.filter(targetCategories, filter));
 					if(targetReferenceCategories.size() != 1){
-						throw new InvalidFeatureException(generalRegressionModel.getParamMatrix());
+						ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
+
+						throw new InvalidFeatureException(paramMatrix);
 					}
 
 					targetReferenceCategory = Iterables.getOnlyElement(targetReferenceCategories);

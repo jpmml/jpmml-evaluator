@@ -60,6 +60,10 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 	public RegressionModelEvaluator(PMML pmml, RegressionModel regressionModel){
 		super(pmml, regressionModel);
+
+		if(!regressionModel.hasRegressionTables()){
+			throw new InvalidFeatureException(regressionModel);
+		}
 	}
 
 	@Override
@@ -142,9 +146,6 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		}
 
 		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
-		if(regressionTables.size() < 1){
-			throw new InvalidFeatureException(regressionModel);
-		}
 
 		List<String> targetCategories = FieldValueUtil.getTargetCategories(dataField);
 		if(targetCategories.size() > 0 && targetCategories.size() != regressionTables.size()){
