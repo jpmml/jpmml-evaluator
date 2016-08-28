@@ -7,6 +7,14 @@
         <DataField name="State" optype="categorical" dataType="string"/>
         <DataField name="Value" optype="continuous" dataType="double"/>
     </DataDictionary>
+    <RegressionModel functionName="regression">
+        <MiningSchema>
+            <MiningField name="Modifier"/>
+            <MiningField name="StartTime"/>
+            <MiningField name="State"/>
+            <MiningField name="Value"/>
+        </MiningSchema>
+    </RegressionModel>
     <TransformationDictionary>
         <DefineFunction name="AMPM" optype="categorical" dataType="string">
             <ParameterField name="TimeVal" optype="continuous" dataType="integer"/>

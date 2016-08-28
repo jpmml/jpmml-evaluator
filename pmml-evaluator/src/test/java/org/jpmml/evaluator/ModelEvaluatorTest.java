@@ -19,7 +19,9 @@
 package org.jpmml.evaluator;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -31,7 +33,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 abstract
-public class ModelEvaluatorTest extends PMMLManagerTest {
+public class ModelEvaluatorTest {
 
 	public ModelEvaluator<?> createModelEvaluator() throws Exception {
 		return createModelEvaluator(getClass());
@@ -60,9 +62,64 @@ public class ModelEvaluatorTest extends PMMLManagerTest {
 
 		assertNull(pmml.getLocator());
 
-		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelManager(pmml);
+		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
 
 		return modelEvaluator;
+	}
+
+	static
+	public InputStream getInputStream(Class<? extends ModelEvaluatorTest> clazz){
+		String name = clazz.getName();
+
+		if(name.startsWith("org.jpmml.evaluator.")){
+			name = name.substring("org.jpmml.evaluator.".length());
+		}
+
+		return clazz.getResourceAsStream("/pmml/" + name.replace('.', '/') + ".pmml");
+	}
+
+	static
+	public Map<FieldName, ?> createArguments(Object... objects){
+		Map<FieldName, Object> result = new HashMap<>();
+
+		if(objects.length % 2 != 0){
+			throw new IllegalArgumentException();
+		}
+
+		for(int i = 0; i < objects.length / 2; i++){
+			Object key = objects[i * 2];
+			Object value = objects[i * 2 + 1];
+
+			result.put(toFieldName(key), value);
+		}
+
+		return result;
+	}
+
+	static
+	public FieldName toFieldName(Object object){
+
+		if(object instanceof String){
+			String string = (String)object;
+
+			return FieldName.create(string);
+		}
+
+		return (FieldName)object;
+	}
+
+	static
+	public Object getTarget(Map<FieldName, ?> result, Object name){
+		Object value = result.get(toFieldName(name));
+
+		return EvaluatorUtil.decode(value);
+	}
+
+	static
+	public Object getOutput(Map<FieldName, ?> result, Object name){
+		Object value = result.get(toFieldName(name));
+
+		return value;
 	}
 
 	static

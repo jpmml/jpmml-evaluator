@@ -576,7 +576,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			evaluatorFactory = ModelEvaluatorFactory.newInstance();
 		}
 
-		ModelEvaluator<?> evaluator = evaluatorFactory.newModelManager(getPMML(), model);
+		ModelEvaluator<?> evaluator = evaluatorFactory.newModelEvaluator(getPMML(), model);
 
 		boolean compatible = true;
 

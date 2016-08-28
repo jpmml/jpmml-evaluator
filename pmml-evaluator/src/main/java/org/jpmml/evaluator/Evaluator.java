@@ -37,7 +37,7 @@ import org.dmg.pmml.Output;
  * <pre>
  * PMML pmml = ...;
  * ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
- * Evaluator evaluator = (Evaluator)modelEvaluatorFactory.newModelManager(pmml);
+ * Evaluator evaluator = (Evaluator)modelEvaluatorFactory.newModelEvaluator(pmml);
  * evaluator.verify();
  * </pre>
  *

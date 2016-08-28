@@ -16,16 +16,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.regression;
 
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
+import org.jpmml.evaluator.FieldValue;
+import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.ModelEvaluationContext;
+import org.jpmml.evaluator.ModelEvaluator;
+import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class PMMLEvaluationContextTest extends PMMLManagerTest {
+public class TransformationDictionaryTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluateAmPm() throws Exception {
@@ -65,10 +70,10 @@ public class PMMLEvaluationContextTest extends PMMLManagerTest {
 	}
 
 	private FieldValue evaluate(FieldName name, Map<FieldName, ?> arguments) throws Exception {
-		PMMLManager pmmlManager = createPMMLManager();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		PMMLEvaluationContext context = new PMMLEvaluationContext(pmmlManager);
-		context.declareAll(arguments);
+		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
+		context.setArguments(arguments);
 
 		return context.evaluate(name);
 	}

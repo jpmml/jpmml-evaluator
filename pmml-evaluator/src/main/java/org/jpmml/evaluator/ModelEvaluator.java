@@ -1,29 +1,20 @@
 /*
- * Copyright (c) 2013 KNIME.com AG, Zurich, Switzerland
- * All rights reserved.
+ * Copyright (c) 2016 Villu Ruusmann
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * This file is part of JPMML-Evaluator
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of its contributors
- *    may be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ * JPMML-Evaluator is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * JPMML-Evaluator is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.jpmml.evaluator;
 
@@ -72,7 +63,11 @@ import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
 
 abstract
-public class ModelEvaluator<M extends Model> extends ModelManager<M> implements Evaluator {
+public class ModelEvaluator<M extends Model> implements Evaluator {
+
+	private PMML pmml = null;
+
+	private M model = null;
 
 	private Map<FieldName, DataField> dataFields = Collections.emptyMap();
 
@@ -103,9 +98,14 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	public ModelEvaluator(PMML pmml, M model){
-		super(pmml, model);
+		setPMML(Objects.requireNonNull(pmml));
+		setModel(Objects.requireNonNull(model));
 
 		DataDictionary dataDictionary = pmml.getDataDictionary();
+		if(dataDictionary == null){
+			throw new InvalidFeatureException(pmml);
+		} // End if
+
 		if(dataDictionary.hasDataFields()){
 			this.dataFields = CacheUtil.getValue(dataDictionary, ModelEvaluator.dataFieldCache);
 		}
@@ -120,6 +120,10 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 
 		MiningSchema miningSchema = model.getMiningSchema();
+		if(miningSchema == null){
+			throw new InvalidFeatureException(model);
+		} // End if
+
 		if(miningSchema.hasMiningFields()){
 			this.miningFields = CacheUtil.getValue(miningSchema, ModelEvaluator.miningFieldCache);
 		}
@@ -144,6 +148,12 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context);
 
 	@Override
+	public MiningFunction getMiningFunction(){
+		M model = getModel();
+
+		return model.getMiningFunction();
+	}
+
 	public DataField getDataField(FieldName name){
 
 		if(Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name)){
@@ -173,17 +183,14 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return null;
 	}
 
-	@Override
 	public DerivedField getDerivedField(FieldName name){
 		return this.derivedFields.get(name);
 	}
 
-	@Override
 	public DefineFunction getDefineFunction(String name){
 		return this.defineFunctions.get(name);
 	}
 
-	@Override
 	public MiningField getMiningField(FieldName name){
 
 		if(Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name)){
@@ -203,12 +210,10 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return this.activeInputFields;
 	}
 
-	@Override
 	public DerivedField getLocalDerivedField(FieldName name){
 		return this.localDerivedFields.get(name);
 	}
 
-	@Override
 	public Target getTarget(FieldName name){
 		return this.targets.get(name);
 	}
@@ -241,7 +246,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return targetField.getName();
 	}
 
-	@Override
 	public org.dmg.pmml.OutputField getOutputField(FieldName name){
 		return this.outputFields.get(name);
 	}
@@ -493,6 +497,22 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		M model = getModel();
 
 		return CacheUtil.getValue(model, cache, loader);
+	}
+
+	public PMML getPMML(){
+		return this.pmml;
+	}
+
+	private void setPMML(PMML pmml){
+		this.pmml = pmml;
+	}
+
+	public M getModel(){
+		return this.model;
+	}
+
+	private void setModel(M model){
+		this.model = model;
 	}
 
 	static

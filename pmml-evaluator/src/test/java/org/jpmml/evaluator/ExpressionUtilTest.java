@@ -313,7 +313,7 @@ public class ExpressionUtilTest {
 
 	static
 	private Object evaluate(Expression expression, Object... objects){
-		Map<FieldName, ?> arguments = PMMLManagerTest.createArguments(objects);
+		Map<FieldName, ?> arguments = ModelEvaluatorTest.createArguments(objects);
 
 		return evaluate(expression, arguments);
 	}

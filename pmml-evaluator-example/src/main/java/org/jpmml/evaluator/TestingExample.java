@@ -104,7 +104,7 @@ public class TestingExample extends Example {
 
 		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
 
-		Evaluator evaluator = modelEvaluatorFactory.newModelManager(pmml);
+		Evaluator evaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
 
 		// Perform self-testing
 		evaluator.verify();
