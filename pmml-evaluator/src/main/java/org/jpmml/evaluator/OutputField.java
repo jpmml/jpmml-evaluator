@@ -79,9 +79,43 @@ public class OutputField extends ResultField {
 		return outputField.getOpType();
 	}
 
+	/**
+	 * <p>
+	 * Returns the "finality" (as decided by the PMML producer) of this output field.
+	 * Final values are suitable for displaying to the end user.
+	 * Non-final values correspond to intermediate states of the prediction
+	 * (eg. value transformations, value transfers between models) and are not suitable for displaying to the end user.
+	 * </p>
+	 *
+	 * <p>
+	 * Typically, final values are always available in the result data record,
+	 * whereas non-final values may or may not be available depending on the "evaluation path" of a particular argument data record.
+	 * </p>
+	 *
+	 * <p>
+	 * Filtering output fields based on their "finality":
+	 * <pre>
+	 * List&lt;OutputField&gt; outputFields = evaluator.getOutputFields();
+	 * for(OutputField outputField : outputFields){
+	 *   boolean finalResult = outputField.isFinalResult();
+	 *
+	 *   if(!finalResult){
+	 *     continue;
+	 *   }
+	 * }
+	 * </pre>
+	 * </p>
+	 */
+	public boolean isFinalResult(){
+		org.dmg.pmml.OutputField outputField = getOutputField();
+
+		return outputField.isFinalResult();
+	}
+
 	@Override
 	protected ToStringHelper toStringHelper(){
 		ToStringHelper helper = super.toStringHelper()
+			.add("finalResult", isFinalResult())
 			.add("depth", getDepth());
 
 		return helper;
@@ -106,7 +140,6 @@ public class OutputField extends ResultField {
 	 * <p>
 	 * Filtering output fields based on their origin:
 	 * <pre>
-	 * Evaluator evaluator = ...;
 	 * List&lt;OutputField&gt; outputFields = evaluator.getOutputFields();
 	 * for(OutputField outputField : outputFields){
 	 *   int depth = outputField.getDepth();
