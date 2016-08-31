@@ -63,4 +63,19 @@ public class DistributionUtil {
 
 		return distribution.probability(x.intValue());
 	}
+
+	static
+	public boolean isNoOp(ContinuousDistribution distribution){
+
+		if(distribution instanceof GaussianDistribution){
+			return isNoOp((GaussianDistribution)distribution);
+		}
+
+		return true;
+	}
+
+	static
+	public boolean isNoOp(GaussianDistribution gaussianDistribution){
+		return (gaussianDistribution.getVariance() <= 0d);
+	}
 }

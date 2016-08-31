@@ -24,6 +24,7 @@ import org.dmg.pmml.PoissonDistribution;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class DistributionUtilTest {
 
@@ -45,5 +46,12 @@ public class DistributionUtilTest {
 		assertEquals(0.17546737d, DistributionUtil.probability(distribution, 5), 1e-6);
 		assertEquals(0.10444486d, DistributionUtil.probability(distribution, 7), 1e-6);
 		assertEquals(0.03626558d, DistributionUtil.probability(distribution, 9), 1e-6);
+	}
+
+	@Test
+	public void isNoOp(){
+		ContinuousDistribution distribution = new GaussianDistribution();
+
+		assertTrue(DistributionUtil.isNoOp(distribution));
 	}
 }
