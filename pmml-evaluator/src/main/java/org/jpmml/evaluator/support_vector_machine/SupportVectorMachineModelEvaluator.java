@@ -279,16 +279,16 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		Kernel kernel = supportVectorMachineModel.getKernel();
 
 		Coefficients coefficients = supportVectorMachine.getCoefficients();
-		Iterator<Coefficient> coefficientIterator = coefficients.iterator();
+		Iterator<Coefficient> coefficientIt = coefficients.iterator();
 
 		SupportVectors supportVectors = supportVectorMachine.getSupportVectors();
-		Iterator<SupportVector> supportVectorIterator = supportVectors.iterator();
+		Iterator<SupportVector> supportVectorIt = supportVectors.iterator();
 
 		Map<String, double[]> vectorMap = getVectorMap();
 
-		while(coefficientIterator.hasNext() && supportVectorIterator.hasNext()){
-			Coefficient coefficient = coefficientIterator.next();
-			SupportVector supportVector = supportVectorIterator.next();
+		while(coefficientIt.hasNext() && supportVectorIt.hasNext()){
+			Coefficient coefficient = coefficientIt.next();
+			SupportVector supportVector = supportVectorIt.next();
 
 			double[] vector = vectorMap.get(supportVector.getVectorId());
 			if(vector == null){
@@ -298,7 +298,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			result += (coefficient.getValue() * KernelUtil.evaluate(kernel, input, vector));
 		}
 
-		if(coefficientIterator.hasNext() || supportVectorIterator.hasNext()){
+		if(coefficientIt.hasNext() || supportVectorIt.hasNext()){
 			throw new InvalidFeatureException(supportVectorMachine);
 		}
 
