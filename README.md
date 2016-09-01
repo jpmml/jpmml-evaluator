@@ -174,8 +174,8 @@ for(OutputField outputField : outputFields){
 	org.dmg.pmml.DataType dataType = outputField.getDataType(); // Could be null
 	org.dmg.pmml.OpType opType = outputField.getOpType(); // Could be null
 
-	int depth = outputField.getDepth();
-	if(depth > 0){
+	boolean finalResult = outputField.isFinalResult();
+	if(!finalResult){
 		continue;
 	}
 }
