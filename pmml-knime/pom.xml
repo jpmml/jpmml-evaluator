@@ -26,6 +26,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.jpmml</groupId>
+			<artifactId>pmml-evaluator</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jpmml</groupId>
 			<artifactId>pmml-evaluator-test</artifactId>
 			<scope>test</scope>
 		</dependency>

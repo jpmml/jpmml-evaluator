@@ -33,7 +33,7 @@ import static org.junit.Assert.assertTrue;
 public class ExpressionCorrectorTest {
 
 	@Test
-	public void filter(){
+	public void correct(){
 		Apply apply = new Apply("substring")
 			.addExpressions(new FieldRef(FieldName.create("AnyCInput")), new Constant("1"), new Constant("FMTWIDTH"));
 
