@@ -73,15 +73,8 @@ public class ModelEvaluationContext extends EvaluationContext {
 			case ACTIVE:
 			case GROUP:
 			case ORDER:
-				try {
+				{
 					return FieldValueUtil.prepareInputValue(dataField, miningField, value);
-				} catch(RuntimeException re){
-					System.out.println("!!" + name.getValue() + "=" + value);
-					System.out.println("//" + dataField);
-					System.out.println("//" + miningField);
-
-					// XXX
-					throw re;
 				}
 			case PREDICTED:
 			case TARGET:
