@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PMML xmlns="http://www.dmg.org/PMML-4_3" version="4.3">
+    <Header/>
+    <DataDictionary>
+        <DataField name="input" optype="continuous" dataType="double"/>
+    </DataDictionary>
+    <MiningModel functionName="regression">
+        <MiningSchema>
+            <MiningField name="input"/>
+        </MiningSchema>
+        <Segmentation multipleModelMethod="modelChain">
+            <Segment>
+                <True/>
+                <RegressionModel functionName="regression">
+                    <MiningSchema>
+                        <MiningField name="input"/>
+                    </MiningSchema>
+                    <RegressionTable intercept="0.0">
+                        <NumericPredictor name="input" coefficient="2.0"/>
+                    </RegressionTable>
+                </RegressionModel>
+            </Segment>
+        </Segmentation>
+    </MiningModel>
+</PMML>

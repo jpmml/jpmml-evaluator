@@ -27,7 +27,6 @@ import org.dmg.pmml.mining.Segment;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasEntityId;
 import org.jpmml.evaluator.PMMLException;
-import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeCheckException;
 import org.jpmml.evaluator.TypeUtil;
 
@@ -39,14 +38,14 @@ public class SegmentResult extends ForwardingMap<FieldName, Object> implements H
 
 	private Map<FieldName, ?> result = null;
 
-	private TargetField targetField = null;
+	private FieldName targetFieldName = null;
 
 
-	public SegmentResult(Segment segment, String segmentId, Map<FieldName, ?> result, TargetField targetField){
+	public SegmentResult(Segment segment, String segmentId, Map<FieldName, ?> result, FieldName targetFieldName){
 		setSegment(segment);
 		setSegmentId(segmentId);
 		setResult(result);
-		setTargetField(targetField);
+		setTargetFieldName(targetFieldName);
 	}
 
 	@Override
@@ -71,9 +70,9 @@ public class SegmentResult extends ForwardingMap<FieldName, Object> implements H
 	}
 
 	public Object getTargetValue(){
-		TargetField targetField = getTargetField();
+		FieldName targetFieldName = getTargetFieldName();
 
-		return get(targetField.getName());
+		return get(targetFieldName);
 	}
 
 	public Object getTargetValue(DataType dataType){
@@ -120,12 +119,12 @@ public class SegmentResult extends ForwardingMap<FieldName, Object> implements H
 		this.result = result;
 	}
 
-	public TargetField getTargetField(){
-		return this.targetField;
+	public FieldName getTargetFieldName(){
+		return this.targetFieldName;
 	}
 
-	private void setTargetField(TargetField targetField){
-		this.targetField = targetField;
+	private void setTargetFieldName(FieldName targetFieldName){
+		this.targetFieldName = targetFieldName;
 	}
 
 	private <E extends PMMLException> E ensureContext(E exception){

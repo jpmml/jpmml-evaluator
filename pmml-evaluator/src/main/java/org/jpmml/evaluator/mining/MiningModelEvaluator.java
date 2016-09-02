@@ -144,6 +144,17 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
+	public FieldName getTargetFieldName(){
+		List<TargetField> targetFields = super.getTargetFields();
+
+		if(targetFields.size() == 0){
+			return Evaluator.DEFAULT_TARGET_NAME;
+		}
+
+		return super.getTargetFieldName();
+	}
+
+	@Override
 	public BiMap<String, Segment> getEntityRegistry(){
 
 		if(this.entityRegistry == null){
@@ -395,9 +406,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			try {
 				Map<FieldName, ?> result = segmentEvaluator.evaluate(segmentContext);
 
-				TargetField segmentTargetField = segmentEvaluator.getTargetField();
+				FieldName segmentTargetFieldName = segmentEvaluator.getTargetFieldName();
 
-				segmentResult = new SegmentResult(segment, segmentId, result, segmentTargetField);
+				segmentResult = new SegmentResult(segment, segmentId, result, segmentTargetFieldName);
 			} catch(PMMLException pe){
 				pe.ensureContext(segment);
 
