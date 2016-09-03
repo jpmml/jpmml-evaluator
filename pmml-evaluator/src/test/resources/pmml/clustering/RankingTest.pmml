@@ -2,11 +2,11 @@
 <PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
     <Header/>
     <DataDictionary numberOfFields="1">
-        <DataField name="x" optype="continuous" dataType="double"/>
+        <DataField name="input" optype="continuous" dataType="double"/>
     </DataDictionary>
     <ClusteringModel functionName="clustering" modelClass="centerBased" numberOfClusters="3">
         <MiningSchema>
-            <MiningField name="x"/>
+            <MiningField name="input"/>
         </MiningSchema>
         <Output>
             <OutputField name="predictedValue" feature="predictedValue"/>
@@ -20,7 +20,7 @@
         <ComparisonMeasure kind="distance">
             <squaredEuclidean/>
         </ComparisonMeasure>
-        <ClusteringField field="x" compareFunction="absDiff"/>
+        <ClusteringField field="input" compareFunction="absDiff"/>
         <Cluster name="negative">
             <Array type="real">-3</Array>
         </Cluster>

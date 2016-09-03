@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
@@ -73,12 +72,6 @@ public class TargetUtil {
 			value = TypeUtil.cast(dataField.getDataType(), value);
 		}
 
-		FieldName name = targetField.getName();
-
-		if(!Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name)){
-			context.declare(name, FieldValueUtil.prepareTargetValue(dataField, miningField, target, value));
-		}
-
 		return value;
 	}
 
@@ -114,12 +107,6 @@ public class TargetUtil {
 
 		if(value != null){
 			value.computeResult(dataField.getDataType());
-		}
-
-		FieldName name = targetField.getName();
-
-		if(!Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name)){
-			context.declare(name, FieldValueUtil.prepareTargetValue(dataField, miningField, target, value != null ? value.getResult() : null));
 		}
 
 		return value;

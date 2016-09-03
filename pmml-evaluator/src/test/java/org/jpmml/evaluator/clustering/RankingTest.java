@@ -33,7 +33,7 @@ public class RankingTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("x", 1d);
+		Map<FieldName, ?> arguments = createArguments("input", 1d);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 

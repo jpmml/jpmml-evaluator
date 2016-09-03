@@ -37,7 +37,7 @@ public class ClassificationOutputTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		assertEquals("0", getOutput(result, "output_target"));
+		assertEquals("0", getTarget(result, "result"));
 
 		assertEquals("0", getOutput(result, "output_predictedValue"));
 		assertEquals("zero", getOutput(result, "output_predictedDisplayValue"));

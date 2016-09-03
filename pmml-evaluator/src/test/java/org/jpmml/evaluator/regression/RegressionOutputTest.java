@@ -33,11 +33,11 @@ public class RegressionOutputTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("x", 8d);
+		Map<FieldName, ?> arguments = createArguments("input", 4d);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		assertEquals(8d, getOutput(result, "TargetResult"));
+		assertEquals(8d, getTarget(result, "result"));
 
 		assertEquals(8d, getOutput(result, "RawResult"));
 		assertEquals(8, getOutput(result, "RawIntegerResult"));

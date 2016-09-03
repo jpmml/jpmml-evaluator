@@ -2,18 +2,15 @@
 <PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
     <Header copyright="DMG.org"/>
     <DataDictionary>
-        <DataField name="x" optype="continuous" dataType="double"/>
+        <DataField name="input" optype="continuous" dataType="double"/>
         <DataField name="result" optype="continuous" dataType="double"/>
     </DataDictionary>
     <RegressionModel functionName="regression" targetFieldName="result">
         <MiningSchema>
-            <MiningField name="x"/>
+            <MiningField name="input"/>
             <MiningField name="result" usageType="predicted"/>
         </MiningSchema>
         <Output>
-            <OutputField name="TargetResult" feature="transformedValue">
-                <FieldRef field="result"/>
-            </OutputField>
             <OutputField name="RawResult" optype="continuous" dataType="double" feature="predictedValue"/>
             <OutputField name="RawIntegerResult" optype="continuous" dataType="integer" feature="predictedValue"/>
             <OutputField name="FinalResult" optype="continuous" dataType="double" feature="transformedValue">
@@ -47,7 +44,7 @@
             </OutputField>
         </Output>
         <RegressionTable intercept="0.0">
-            <NumericPredictor name="x" coefficient="1"/>
+            <NumericPredictor name="input" coefficient="2.0"/>
         </RegressionTable>
     </RegressionModel>
 </PMML>

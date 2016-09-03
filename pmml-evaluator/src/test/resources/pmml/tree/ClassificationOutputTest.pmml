@@ -13,9 +13,6 @@
             <MiningField name="result" usageType="target"/>
         </MiningSchema>
         <Output>
-            <OutputField name="output_target" feature="transformedValue">
-                <FieldRef field="result"/>
-            </OutputField>
             <OutputField name="output_predictedValue" feature="predictedValue"/>
             <OutputField name="output_predictedDisplayValue" feature="predictedDisplayValue"/>
             <OutputField name="output_probability" feature="probability"/>
