@@ -18,22 +18,44 @@
  */
 package org.jpmml.evaluator.regression;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Iterables;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
+import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.jpmml.evaluator.OutputUtil;
+import org.jpmml.evaluator.TargetReferenceField;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ContinuousResidualTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
+
+		List<InputField> activeFields = evaluator.getActiveFields();
+
+		assertEquals(1, activeFields.size());
+
+		List<InputField> inputFields = new ArrayList<>(evaluator.getInputFields());
+
+		assertEquals(2, inputFields.size());
+
+		inputFields.removeAll(activeFields);
+
+		assertEquals(1, inputFields.size());
+
+		InputField inputField = Iterables.getOnlyElement(inputFields);
+
+		assertTrue(inputField instanceof TargetReferenceField);
 
 		Map<FieldName, ?> arguments = createArguments("input", 0.8d, "target", 3d);
 

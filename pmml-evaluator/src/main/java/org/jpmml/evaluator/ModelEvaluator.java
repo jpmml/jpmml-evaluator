@@ -55,6 +55,7 @@ import org.dmg.pmml.ModelVerification;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.TransformationDictionary;
@@ -76,6 +77,9 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 	private Map<String, DefineFunction> defineFunctions = Collections.emptyMap();
 
 	private Map<FieldName, MiningField> miningFields = Collections.emptyMap();
+
+	transient
+	private List<InputField> inputFields = null;
 
 	transient
 	private List<InputField> activeInputFields = null;
@@ -198,7 +202,12 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 	@Override
 	public List<InputField> getInputFields(){
-		return getActiveFields();
+
+		if(this.inputFields == null){
+			this.inputFields = createInputFields();
+		}
+
+		return this.inputFields;
 	}
 
 	@Override
@@ -382,6 +391,59 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		}
 
 		return result;
+	}
+
+	protected List<InputField> createInputFields(){
+		List<InputField> inputFields = getActiveFields();
+
+		List<OutputField> outputFields = getOutputFields();
+		if(outputFields.size() > 0){
+			List<TargetReferenceField> targetReferenceFields = null;
+
+			for(OutputField outputField : outputFields){
+				org.dmg.pmml.OutputField pmmlOutputField = outputField.getOutputField();
+;
+				if(!(pmmlOutputField.getResultFeature()).equals(ResultFeature.RESIDUAL)){
+					continue;
+				}
+
+				int depth = outputField.getDepth();
+				if(depth > 0){
+					throw new UnsupportedFeatureException(pmmlOutputField);
+				}
+
+				FieldName targetFieldName = pmmlOutputField.getTargetField();
+				if(targetFieldName == null){
+					targetFieldName = getTargetFieldName();
+				}
+
+				DataField dataField = getDataField(targetFieldName);
+				if(dataField == null){
+					throw new MissingFieldException(targetFieldName, pmmlOutputField);
+				}
+
+				MiningField miningField = getMiningField(targetFieldName);
+				if(miningField == null){
+					throw new EvaluationException();
+				}
+
+				Target target = getTarget(targetFieldName);
+
+				TargetReferenceField targetReferenceField = new TargetReferenceField(dataField, miningField, target);
+
+				if(targetReferenceFields == null){
+					targetReferenceFields = new ArrayList<>();
+				}
+
+				targetReferenceFields.add(targetReferenceField);
+			}
+
+			if(targetReferenceFields != null && targetReferenceFields.size() > 0){
+				inputFields = ImmutableList.copyOf(Iterables.concat(inputFields, targetReferenceFields));
+			}
+		}
+
+		return inputFields;
 	}
 
 	protected List<InputField> createInputFields(MiningField.FieldUsage fieldUsage){
