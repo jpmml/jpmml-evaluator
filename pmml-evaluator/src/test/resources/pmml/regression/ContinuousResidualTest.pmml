@@ -2,15 +2,19 @@
 <PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
     <Header copyright="DMG.org"/>
     <DataDictionary>
-        <DataField name="amount" optype="continuous" dataType="double"/>
+        <DataField name="input" optype="continuous" dataType="double"/>
+        <DataField name="target" optype="continuous" dataType="double"/>
     </DataDictionary>
-    <RegressionModel functionName="regression" targetFieldName="amount">
+    <RegressionModel functionName="regression">
         <MiningSchema>
-            <MiningField name="amount" usageType="predicted"/>
+            <MiningField name="input"/>
+            <MiningField name="target" usageType="predicted"/>
         </MiningSchema>
         <Output>
-            <OutputField name="Residual" optype="continuous" feature="residual"/>
+            <OutputField name="residual" optype="continuous" feature="residual"/>
         </Output>
-        <RegressionTable intercept="0.0"/>
+        <RegressionTable intercept="0.0">
+            <NumericPredictor name="input" coefficient="0.5"/>
+        </RegressionTable>
     </RegressionModel>
 </PMML>

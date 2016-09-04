@@ -18,12 +18,10 @@
  */
 package org.jpmml.evaluator.regression;
 
-import java.util.Collections;
 import java.util.Map;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
-import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.jpmml.evaluator.OutputUtil;
@@ -37,20 +35,13 @@ public class ContinuousResidualTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		FieldName targetFieldName = evaluator.getTargetFieldName();
+		Map<FieldName, ?> arguments = createArguments("input", 0.8d, "target", 3d);
 
-		Map<FieldName, ?> arguments = createArguments(targetFieldName, 3d);
+		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
-		context.declareAll(arguments);
+		FieldName field = FieldName.create("residual");
 
-		Map<FieldName, ?> prediction = Collections.singletonMap(targetFieldName, 1d);
-
-		Map<FieldName, ?> result = OutputUtil.evaluate(prediction, context);
-
-		FieldName field = FieldName.create("Residual");
-
-		assertEquals(2d, (Double)getOutput(result, field), 1e-8);
+		assertEquals(2.6d, (Double)getOutput(result, field), 1e-8);
 
 		assertEquals(DataType.DOUBLE, OutputUtil.getDataType(evaluator.getOutputField(field), evaluator));
 	}

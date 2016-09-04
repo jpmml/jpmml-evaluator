@@ -210,7 +210,7 @@ public class OutputUtil {
 					break;
 				case RESIDUAL:
 					{
-						FieldValue expectedTargetValue = context.getField(targetFieldName);
+						FieldValue expectedTargetValue = context.evaluate(targetFieldName);
 						if(expectedTargetValue == null){
 							throw new MissingValueException(targetFieldName, outputField);
 						}
