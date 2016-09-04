@@ -7,7 +7,7 @@ Java Evaluator API for Predictive Model Markup Language (PMML).
 
 JPMML-Evaluator is *de facto* the reference implementation of the PMML specification versions 3.0, 3.1, 3.2, 4.0, 4.1, 4.2 and 4.3 for the Java platform:
 
-1. Pre-processing of active fields according to the [DataDictionary] (http://www.dmg.org/pmml/v4-3/DataDictionary.html) and [MiningSchema] (http://www.dmg.org/pmml/v4-3/MiningSchema.html) elements:
+1. Pre-processing of input fields according to the [DataDictionary] (http://www.dmg.org/pmml/v4-3/DataDictionary.html) and [MiningSchema] (http://www.dmg.org/pmml/v4-3/MiningSchema.html) elements:
   * Complete data type system.
   * Complete operational type system.
   * Treatment of outlier, missing and/or invalid values.
@@ -115,17 +115,17 @@ Evaluator evaluator = (Evaluator)modelEvaluator;
 
 ### Querying the "data schema" of models
 
-The model evaluator can be queried for the list of active (ie. independent), target (ie. primary dependent) and output (ie. secondary dependent) field definitions, which provide information about field name, data type, operational type, value domain etc. information.
+The model evaluator can be queried for the list of input (ie. independent), target (ie. primary dependent) and output (ie. secondary dependent) field definitions, which provide information about field name, data type, operational type, value domain etc. information.
 
-Querying and analyzing active fields:
+Querying and analyzing input fields:
 ```java
-List<InputField> activeFields = evaluator.getActiveFields();
-for(InputField activeField : activeFields){
-	org.dmg.pmml.DataField pmmlDataField = (org.dmg.pmml.DataField)activeField.getField();
-	org.dmg.pmml.MiningField pmmlMiningField = activeField.getMiningField();
+List<InputField> inputFields = evaluator.getInputFields();
+for(InputField inputField : inputFields){
+	org.dmg.pmml.DataField pmmlDataField = (org.dmg.pmml.DataField)inputField.getField();
+	org.dmg.pmml.MiningField pmmlMiningField = inputField.getMiningField();
 
-	org.dmg.pmml.DataType dataType = activeField.getDataType();
-	org.dmg.pmml.OpType opType = activeField.getOpType();
+	org.dmg.pmml.DataType dataType = inputField.getDataType();
+	org.dmg.pmml.OpType opType = inputField.getOpType();
 
 	switch(opType){
 		case CONTINUOUS:
@@ -190,17 +190,17 @@ Preparing the argument data record:
 ```java
 Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
 
-List<InputField> activeFields = evaluator.getActiveFields();
-for(InputField activeField : activeFields){
-	FieldName activeFieldName = activeField.getName();
+List<InputField> inputFields = evaluator.getInputFields();
+for(InputField inputField : inputFields){
+	FieldName inputFieldName = inputField.getName();
 
 	// The raw (ie. user-supplied) value could be any Java primitive value
 	Object rawValue = ...;
 
 	// The raw value is passed through: 1) outlier treatment, 2) missing value treatment, 3) invalid value treatment and 4) type conversion
-	FieldValue activeFieldValue = activeField.prepare(rawValue);
+	FieldValue inputFieldValue = inputField.prepare(rawValue);
 
-	arguments.put(activeFieldName, activeFieldValue);
+	arguments.put(inputFieldName, inputFieldValue);
 }
 ```
 

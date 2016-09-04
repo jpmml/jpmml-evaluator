@@ -102,7 +102,7 @@ public class EvaluationExample extends Example {
 
 	@Parameter (
 		names = {"--sparse"},
-		description = "Permit missing active field columns",
+		description = "Permit missing input field columns",
 		hidden = true
 	)
 	private boolean sparse = false;
@@ -189,7 +189,7 @@ public class EvaluationExample extends Example {
 		// Perform self-testing
 		evaluator.verify();
 
-		List<InputField> activeFields = evaluator.getActiveFields();
+		List<InputField> inputFields = evaluator.getInputFields();
 		List<InputField> groupFields = Collections.emptyList();
 
 		if(evaluator instanceof HasGroupFields){
@@ -201,9 +201,9 @@ public class EvaluationExample extends Example {
 		if(inputRecords.size() > 0){
 			Map<FieldName, ?> inputRecord = inputRecords.get(0);
 
-			Sets.SetView<FieldName> missingActiveFields = Sets.difference(new LinkedHashSet<>(EvaluatorUtil.getNames(activeFields)), inputRecord.keySet());
-			if((missingActiveFields.size() > 0) && !this.sparse){
-				throw new IllegalArgumentException("Missing active field(s): " + missingActiveFields.toString());
+			Sets.SetView<FieldName> missingInputFields = Sets.difference(new LinkedHashSet<>(EvaluatorUtil.getNames(inputFields)), inputRecord.keySet());
+			if((missingInputFields.size() > 0) && !this.sparse){
+				throw new IllegalArgumentException("Missing input field(s): " + missingInputFields.toString());
 			}
 
 			Sets.SetView<FieldName> missingGroupFields = Sets.difference(new LinkedHashSet<>(EvaluatorUtil.getNames(groupFields)), inputRecord.keySet());
@@ -213,9 +213,9 @@ public class EvaluationExample extends Example {
 		} // End if
 
 		if(evaluator instanceof HasGroupFields){
-			HasGroupFields hasGroupfields = (HasGroupFields)evaluator;
+			HasGroupFields hasGroupFields = (HasGroupFields)evaluator;
 
-			inputRecords = EvaluatorUtil.groupRows(hasGroupfields, inputRecords);
+			inputRecords = EvaluatorUtil.groupRows(hasGroupFields, inputRecords);
 		}
 
 		List<Map<FieldName, ?>> outputRecords = new ArrayList<>(inputRecords.size());
@@ -237,12 +237,12 @@ public class EvaluationExample extends Example {
 				for(Map<FieldName, ?> inputRecord : inputRecords){
 					arguments.clear();
 
-					for(InputField activeField : activeFields){
-						FieldName name = activeField.getName();
+					for(InputField inputField : inputFields){
+						FieldName name = inputField.getName();
 
-						FieldValue activeValue = EvaluatorUtil.prepare(activeField, inputRecord.get(name));
+						FieldValue value = EvaluatorUtil.prepare(inputField, inputRecord.get(name));
 
-						arguments.put(name, activeValue);
+						arguments.put(name, value);
 					}
 
 					Map<FieldName, ?> result = evaluator.evaluate(arguments);

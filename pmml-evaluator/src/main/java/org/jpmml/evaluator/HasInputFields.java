@@ -18,5 +18,9 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.List;
+
 public interface HasInputFields extends HasActiveFields {
+
+	List<InputField> getInputFields();
 }

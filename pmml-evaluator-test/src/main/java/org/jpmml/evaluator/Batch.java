@@ -32,7 +32,7 @@ public interface Batch extends AutoCloseable {
 	 * Input data records.
 	 * </p>
 	 *
-	 * @see Evaluator#getActiveFields()
+	 * @see Evaluator#getInputFields()
 	 * @see Evaluator#getGroupFields()
 	 */
 	List<? extends Map<FieldName, ?>> getInput() throws Exception;

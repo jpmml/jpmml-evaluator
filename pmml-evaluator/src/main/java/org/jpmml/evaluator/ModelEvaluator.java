@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -198,6 +197,11 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 	}
 
 	@Override
+	public List<InputField> getInputFields(){
+		return getActiveFields();
+	}
+
+	@Override
 	public List<InputField> getActiveFields(){
 
 		if(this.activeInputFields == null){
@@ -270,7 +274,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 		List<? extends Map<FieldName, ?>> records = batch.getRecords();
 
-		List<InputField> activeFields = getActiveFields();
+		List<InputField> inputFields = getInputFields();
 
 		if(this instanceof HasGroupFields){
 			HasGroupFields hasGroupFields = (HasGroupFields)this;
@@ -284,12 +288,12 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		SetView<FieldName> intersection = Sets.intersection(batch.keySet(), new LinkedHashSet<>(EvaluatorUtil.getNames(outputFields)));
 
 		for(Map<FieldName, ?> record : records){
-			Map<FieldName, Object> arguments = new HashMap<>();
+			Map<FieldName, Object> arguments = new LinkedHashMap<>();
 
-			for(InputField activeField : activeFields){
-				FieldName name = activeField.getName();
+			for(InputField inputField : inputFields){
+				FieldName name = inputField.getName();
 
-				FieldValue value = EvaluatorUtil.prepare(activeField, record.get(name));
+				FieldValue value = EvaluatorUtil.prepare(inputField, record.get(name));
 
 				arguments.put(name, value);
 			}

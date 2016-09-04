@@ -42,11 +42,11 @@ import org.dmg.pmml.Model;
  * <pre>
  * Map&lt;FieldName, ?&gt; userArguments = ...;
  * Map&lt;FieldName, FieldValue&gt; arguments = new LinkedHashMap&lt;&gt;();
- * List&lt;InputField&gt; activeFields = evaluator.getActiveFields();
- * for(InputField activeField : activeFields){
- *   FieldName activeFieldName = activeField.getName();
- *   FieldValue activeFieldValue = activeField.prepare(userArguments.get(activeFieldName));
- *   arguments.put(activeFieldName, activeFieldValue);
+ * List&lt;InputField&gt; inputFields = evaluator.getInputFields();
+ * for(InputField inputField : inputFields){
+ *   FieldName inputFieldName = inputField.getName();
+ *   FieldValue inputFieldValue = inputField.prepare(userArguments.get(inputFieldName));
+ *   arguments.put(inputFieldName, inputFieldValue);
  * }
  * </pre>
  *
@@ -142,7 +142,7 @@ public interface Evaluator extends HasInputFields, HasResultFields {
 	 * Evaluates the model with the specified arguments.
 	 * </p>
 	 *
-	 * @param arguments Map of {@link #getActiveFields() active field} values.
+	 * @param arguments Map of {@link #getInputFields() input field} values.
 	 *
 	 * @return Map of {@link #getTargetFields() target field} and {@link #getOutputFields() output field} values.
 	 * A target field could be mapped to a complex value or a simple value.

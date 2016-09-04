@@ -597,10 +597,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		boolean compatible = true;
 
-		List<InputField> activeFields = evaluator.getActiveFields();
-		for(InputField activeField : activeFields){
-			Field field = activeField.getField();
-			MiningField miningField = activeField.getMiningField();
+		List<InputField> inputFields = evaluator.getInputFields();
+		for(InputField inputField : inputFields){
+			Field field = inputField.getField();
+			MiningField miningField = inputField.getMiningField();
 
 			if(field instanceof DataField){
 				compatible &= MiningFieldUtil.isDefault(miningField);

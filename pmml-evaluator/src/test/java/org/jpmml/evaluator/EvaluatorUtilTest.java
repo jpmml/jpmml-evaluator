@@ -83,17 +83,17 @@ public class EvaluatorUtilTest {
 	public void prepare() throws Exception {
 		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(TransactionalSchemaTest.class);
 
-		InputField activeField = Iterables.getOnlyElement(evaluator.getActiveFields());
+		InputField inputField = Iterables.getOnlyElement(evaluator.getInputFields());
 
-		assertEquals(FieldName.create("item"), activeField.getName());
+		assertEquals(FieldName.create("item"), inputField.getName());
 
-		FieldValue simple = EvaluatorUtil.prepare(activeField, "Cracker");
+		FieldValue simple = EvaluatorUtil.prepare(inputField, "Cracker");
 
 		assertEquals("Cracker", simple.getValue());
 		assertEquals(DataType.STRING, simple.getDataType());
 		assertEquals(OpType.CATEGORICAL, simple.getOpType());
 
-		FieldValue collection = EvaluatorUtil.prepare(activeField, Arrays.asList("Cracker", "Water", "Coke"));
+		FieldValue collection = EvaluatorUtil.prepare(inputField, Arrays.asList("Cracker", "Water", "Coke"));
 
 		assertEquals(Arrays.asList("Cracker", "Water", "Coke"), collection.getValue());
 		assertEquals(DataType.STRING, collection.getDataType());
