@@ -20,27 +20,15 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
-import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 
-/**
- * <p>
- * A marker interface for models that expect the application to group and order
- * many scalar-valued data records to a single ordered collection-type data record.
- * The grouping and ordering are applied to {@link #getActiveFields() active field} values.
- * </p>
- */
-public interface HasOrderFields extends HasActiveFields {
+public interface HasActiveFields {
 
 	/**
 	 * <p>
-	 * Gets the order fields of a {@link Model} from its {@link MiningSchema}.
-	 * </p>
-	 *
-	 * <p>
-	 * This field set is relevant for {@link MiningFunction#SEQUENCES sequences} and {@link MiningFunction#TIME_SERIES time series} model types.
+	 * Gets the independent (ie. input) fields of a {@link Model} from its {@link MiningSchema}.
 	 * </p>
 	 */
-	List<InputField> getOrderFields();
+	List<InputField> getActiveFields();
 }

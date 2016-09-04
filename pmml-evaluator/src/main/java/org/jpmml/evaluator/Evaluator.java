@@ -18,14 +18,11 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningFunction;
-import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
-import org.dmg.pmml.Output;
 
 /**
  * <p>
@@ -113,7 +110,7 @@ import org.dmg.pmml.Output;
  * @see HasGroupFields
  * @see HasOrderFields
  */
-public interface Evaluator {
+public interface Evaluator extends HasInputFields, HasResultFields {
 
 	/**
 	 * <p>
@@ -128,27 +125,6 @@ public interface Evaluator {
 	 * </p>
 	 */
 	MiningFunction getMiningFunction();
-
-	/**
-	 * <p>
-	 * Gets the independent (ie. input) fields of a {@link Model} from its {@link MiningSchema}.
-	 * </p>
-	 */
-	List<InputField> getActiveFields();
-
-	/**
-	 * <p>
-	 * Gets the dependent (ie. target in supervised training) fields of a {@link Model} from its {@link MiningSchema}.
-	 * </p>
-	 */
-	List<TargetField> getTargetFields();
-
-	/**
-	 * <p>
-	 * Gets the output fields of a {@link Model} from its {@link Output}.
-	 * </p>
-	 */
-	List<OutputField> getOutputFields();
 
 	/**
 	 * <p>

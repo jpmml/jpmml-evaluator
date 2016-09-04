@@ -25,9 +25,27 @@ import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 
 /**
+ * <p>
+ * A marker interface for models that expect the application to group
+ * many scalar-valued data records to a single collection-valued data record.
+ * The grouping is applied to {@link #getActiveFields() active field} values.
+ * </p>
+ *
+ * <p>
+ * Aggregating data records:
+ * <pre>
+ * Evaluator evaluator = ...;
+ * List&lt;? extends Map&lt;FieldName, ?&gt;&gt; preparedRecords = ...;
+ * if(evaluator instanceof HasGroupFields){
+ *   HasGroupFields hasGroupFields = (HasGroupFields)evaluator;
+ *   preparedRecords = EvaluatorUtil.groupRows(hasGroupFields, preparedRecords);
+ * }
+ * </pre>
+ * </p>
+ *
  * @see EvaluatorUtil#groupRows(HasGroupFields, List)
  */
-public interface HasGroupFields {
+public interface HasGroupFields extends HasActiveFields {
 
 	/**
 	 * <p>
