@@ -61,12 +61,21 @@ public class TestingExample extends Example {
 	private File output = null;
 
 	@Parameter (
+		names = {"--separator"},
+		description = "CSV cell separator character"
+	)
+	@ParameterOrder (
+		value = 4
+	)
+	private String separator = null;
+
+	@Parameter (
 		names = {"--ignored-fields"},
 		description = "Ignored Model fields",
 		converter = FieldNameConverter.class
 	)
 	@ParameterOrder (
-		value = 4
+		value = 5
 	)
 	private List<FieldName> ignoredFields = new ArrayList<>();
 
@@ -75,7 +84,7 @@ public class TestingExample extends Example {
 		description = "Relative error"
 	)
 	@ParameterOrder (
-		value = 5
+		value = 6
 	)
 	private double precision = 1e-9;
 
@@ -84,7 +93,7 @@ public class TestingExample extends Example {
 		description = "Absolute error near zero"
 	)
 	@ParameterOrder (
-		value = 6
+		value = 7
 	)
 	private double zeroThreshold = 1e-9;
 
@@ -98,9 +107,9 @@ public class TestingExample extends Example {
 	public void execute() throws Exception {
 		PMML pmml = readPMML(this.model);
 
-		CsvUtil.Table inputTable = readTable(this.input, null);
+		CsvUtil.Table inputTable = readTable(this.input, this.separator);
 
-		CsvUtil.Table outputTable = readTable(this.output, null);
+		CsvUtil.Table outputTable = readTable(this.output, this.separator);
 
 		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
 
