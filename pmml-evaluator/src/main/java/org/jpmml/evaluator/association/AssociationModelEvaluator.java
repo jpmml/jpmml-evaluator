@@ -108,7 +108,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	public List<InputField> getGroupFields(){
 
 		if(this.groupInputFields == null){
-			this.groupInputFields = createInputFields(MiningField.FieldUsage.GROUP);
+			this.groupInputFields = createInputFields(MiningField.UsageType.GROUP);
 		}
 
 		return this.groupInputFields;

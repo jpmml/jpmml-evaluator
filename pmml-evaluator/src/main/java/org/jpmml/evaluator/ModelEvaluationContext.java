@@ -68,8 +68,8 @@ public class ModelEvaluationContext extends EvaluationContext {
 			throw new EvaluationException();
 		}
 
-		MiningField.FieldUsage fieldUsage = miningField.getFieldUsage();
-		switch(fieldUsage){
+		MiningField.UsageType usageType = miningField.getUsageType();
+		switch(usageType){
 			case ACTIVE:
 			case GROUP:
 			case ORDER:
@@ -84,7 +84,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 					return FieldValueUtil.prepareTargetValue(dataField, miningField, target, value);
 				}
 			default:
-				throw new UnsupportedFeatureException(miningField, fieldUsage);
+				throw new UnsupportedFeatureException(miningField, usageType);
 		}
 	}
 

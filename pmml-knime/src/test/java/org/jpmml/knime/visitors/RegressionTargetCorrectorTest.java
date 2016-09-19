@@ -50,7 +50,7 @@ public class RegressionTargetCorrectorTest {
 			.addDataFields(dataField);
 
 		MiningField miningField = new MiningField(name)
-			.setFieldUsage(MiningField.FieldUsage.PREDICTED);
+			.setUsageType(MiningField.UsageType.PREDICTED);
 
 		MiningSchema miningSchema = new MiningSchema()
 			.addMiningFields(miningField);

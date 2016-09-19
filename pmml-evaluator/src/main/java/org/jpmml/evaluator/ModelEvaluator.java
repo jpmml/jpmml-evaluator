@@ -214,7 +214,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 	public List<InputField> getActiveFields(){
 
 		if(this.activeInputFields == null){
-			this.activeInputFields = createInputFields(MiningField.FieldUsage.ACTIVE);
+			this.activeInputFields = createInputFields(MiningField.UsageType.ACTIVE);
 		}
 
 		return this.activeInputFields;
@@ -446,7 +446,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		return inputFields;
 	}
 
-	protected List<InputField> createInputFields(MiningField.FieldUsage fieldUsage){
+	protected List<InputField> createInputFields(MiningField.UsageType usageType){
 		M model = getModel();
 
 		MiningSchema miningSchema = model.getMiningSchema();
@@ -459,7 +459,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 			for(MiningField miningField : miningFields){
 				FieldName name = miningField.getName();
 
-				if(!(miningField.getFieldUsage()).equals(fieldUsage)){
+				if(!(miningField.getUsageType()).equals(usageType)){
 					continue;
 				}
 
@@ -490,8 +490,8 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 			for(MiningField miningField : miningFields){
 				FieldName name = miningField.getName();
 
-				MiningField.FieldUsage fieldUsage = miningField.getFieldUsage();
-				switch(fieldUsage){
+				MiningField.UsageType usageType = miningField.getUsageType();
+				switch(usageType){
 					case TARGET:
 					case PREDICTED:
 						break;

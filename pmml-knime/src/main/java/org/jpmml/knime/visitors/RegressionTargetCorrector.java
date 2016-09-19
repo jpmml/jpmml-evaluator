@@ -155,9 +155,9 @@ public class RegressionTargetCorrector extends AbstractModelVisitor {
 
 		List<MiningField> miningFields = miningSchema.getMiningFields();
 		for(MiningField miningField : miningFields){
-			MiningField.FieldUsage fieldUsage = miningField.getFieldUsage();
+			MiningField.UsageType usageType = miningField.getUsageType();
 
-			switch(fieldUsage){
+			switch(usageType){
 				case TARGET:
 				case PREDICTED:
 					if(result != null){
