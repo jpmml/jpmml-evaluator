@@ -34,6 +34,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.MiningFunction;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
@@ -289,7 +290,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 			List<? extends Number> values = ArrayUtil.asNumberList(array);
 
-			return ImmutableList.copyOf(FieldValueUtil.createAll(values));
+			return ImmutableList.copyOf(FieldValueUtil.createAll(null, OpType.CONTINUOUS, values));
 		}
 	});
 

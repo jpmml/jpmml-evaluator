@@ -31,9 +31,9 @@ import static org.junit.Assert.fail;
 
 public class FieldValueTest {
 
-	@Test
+ 	@Test
 	public void emptyList(){
-		FieldValue list = FieldValueUtil.create(Arrays.asList());
+		FieldValue list = FieldValueUtil.create(null, null, Arrays.asList());
 
 		assertEquals(list.getDataType(), DataType.STRING);
 		assertEquals(list.getOpType(), OpType.CATEGORICAL);
@@ -81,7 +81,7 @@ public class FieldValueTest {
 
 	@Test
 	public void categoricalStringList(){
-		FieldValue list = FieldValueUtil.create(Arrays.asList("1", "2", "3"));
+		FieldValue list = FieldValueUtil.create(null, null, Arrays.asList("1", "2", "3"));
 
 		assertEquals(DataType.STRING, list.getDataType());
 		assertEquals(OpType.CATEGORICAL, list.getOpType());
@@ -194,7 +194,7 @@ public class FieldValueTest {
 
 	@Test
 	public void continuousIntegerList(){
-		FieldValue list = FieldValueUtil.create(Arrays.asList(1, 2, 3));
+		FieldValue list = FieldValueUtil.create(null, null, Arrays.asList(1, 2, 3));
 
 		assertEquals(DataType.INTEGER, list.getDataType());
 		assertEquals(OpType.CONTINUOUS, list.getOpType());
@@ -264,6 +264,14 @@ public class FieldValueTest {
 	}
 
 	@Test
+	public void continuousFloatList(){
+		FieldValue list = FieldValueUtil.create(null, null, Arrays.asList(1f, 2f, 3f));
+
+		assertEquals(DataType.FLOAT, list.getDataType());
+		assertEquals(OpType.CONTINUOUS, list.getOpType());
+	}
+
+	@Test
 	public void continuousDouble(){
 		Double negativeZeroValue = Double.valueOf(-0d);
 		Double positiveZeroValue = Double.valueOf(+0d);
@@ -296,6 +304,14 @@ public class FieldValueTest {
 		assertTrue(negativeZero.equalsValue(positiveZero));
 
 		assertTrue(negativeZero.compareTo(positiveZero) == 0);
+	}
+
+	@Test
+	public void continuousDoubleList(){
+		FieldValue list = FieldValueUtil.create(null, null, Arrays.asList(1d, 2d, 3d));
+
+		assertEquals(DataType.DOUBLE, list.getDataType());
+		assertEquals(OpType.CONTINUOUS, list.getOpType());
 	}
 
 	@Test

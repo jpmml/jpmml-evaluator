@@ -21,6 +21,7 @@ package org.jpmml.evaluator.functions;
 import java.util.List;
 
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.InvalidResultException;
@@ -58,6 +59,6 @@ public class ArithmeticFunction extends AbstractFunction {
 			throw new InvalidResultException(null);
 		}
 
-		return FieldValueUtil.create(cast(dataType, result));
+		return FieldValueUtil.create(dataType, OpType.CONTINUOUS, cast(dataType, result));
 	}
 }

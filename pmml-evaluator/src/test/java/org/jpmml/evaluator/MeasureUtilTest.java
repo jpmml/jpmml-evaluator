@@ -86,6 +86,6 @@ public class MeasureUtilTest {
 
 	static
 	private BitSet createFlags(List<Integer> values){
-		return MeasureUtil.toBitSet(FieldValueUtil.createAll(values));
+		return MeasureUtil.toBitSet(FieldValueUtil.createAll(null, null, values));
 	}
 }

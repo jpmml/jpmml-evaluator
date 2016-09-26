@@ -43,6 +43,7 @@ import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.TypeDefinitionField;
 
 public class ExpressionUtil {
@@ -201,7 +202,7 @@ public class ExpressionUtil {
 		FieldValue value = context.evaluate(fieldRef.getField());
 
 		if(value == null){
-			return FieldValueUtil.create(fieldRef.getMapMissingTo());
+			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, fieldRef.getMapMissingTo());
 		}
 
 		return value;
@@ -212,7 +213,7 @@ public class ExpressionUtil {
 		FieldValue value = context.evaluate(normContinuous.getField());
 
 		if(value == null){
-			return FieldValueUtil.create(normContinuous.getMapMissingTo());
+			return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, normContinuous.getMapMissingTo());
 		}
 
 		return NormalizationUtil.normalize(normContinuous, value);
@@ -223,7 +224,7 @@ public class ExpressionUtil {
 		FieldValue value = context.evaluate(normDiscrete.getField());
 
 		if(value == null){
-			return FieldValueUtil.create(normDiscrete.getMapMissingTo());
+			return FieldValueUtil.create(DataType.DOUBLE, OpType.CATEGORICAL, normDiscrete.getMapMissingTo());
 		}
 
 		NormDiscrete.Method method = normDiscrete.getMethod();
@@ -232,7 +233,7 @@ public class ExpressionUtil {
 				{
 					boolean equals = value.equals(normDiscrete);
 
-					return FieldValueUtil.create(equals ? Values.DOUBLE_ONE : Values.DOUBLE_ZERO);
+					return FieldValueUtil.create(DataType.DOUBLE, OpType.CATEGORICAL, equals ? Values.DOUBLE_ONE : Values.DOUBLE_ZERO);
 				}
 			default:
 				throw new UnsupportedFeatureException(normDiscrete, method);
@@ -287,7 +288,7 @@ public class ExpressionUtil {
 				FieldValue flag = evaluate(arguments.next(), context);
 
 				if(flag == null && mapMissingTo != null){
-					return FieldValueUtil.create(mapMissingTo);
+					return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, mapMissingTo);
 				}
 
 				values.add(flag);
@@ -317,7 +318,7 @@ public class ExpressionUtil {
 						FieldValue trueValue = evaluate(arguments.next(), context);
 
 						if(trueValue == null && mapMissingTo != null){
-							return FieldValueUtil.create(mapMissingTo);
+							return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, mapMissingTo);
 						}
 
 						values.add(trueValue);
@@ -341,7 +342,7 @@ public class ExpressionUtil {
 							FieldValue falseValue = evaluate(arguments.next(), context);
 
 							if(falseValue == null && mapMissingTo != null){
-								return FieldValueUtil.create(mapMissingTo);
+								return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, mapMissingTo);
 							}
 
 							values.add(falseValue);
@@ -356,7 +357,7 @@ public class ExpressionUtil {
 
 			// "If a mapMissingTo value is specified and any of the input values of the function are missing, then the function is not applied at all and the mapMissingTo value is returned instead"
 			if(value == null && mapMissingTo != null){
-				return FieldValueUtil.create(mapMissingTo);
+				return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, mapMissingTo);
 			}
 
 			values.add(value);
@@ -378,7 +379,7 @@ public class ExpressionUtil {
 					// Re-throw the given InvalidResultException instance
 					throw ire;
 				case AS_MISSING:
-					return FieldValueUtil.create(defaultValue);
+					return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, defaultValue);
 				default:
 					throw new UnsupportedFeatureException(apply, invalidValueTreatmentMethod);
 			}
@@ -386,7 +387,7 @@ public class ExpressionUtil {
 
 		// "If a defaultValue value is specified and the function produced a missing value, then the defaultValue is returned"
 		if(result == null && defaultValue != null){
-			return FieldValueUtil.create(defaultValue);
+			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, defaultValue);
 		}
 
 		return result;
@@ -417,15 +418,15 @@ public class ExpressionUtil {
 		Aggregate.Function function = aggregate.getFunction();
 		switch(function){
 			case COUNT:
-				return FieldValueUtil.create(values.size());
+				return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, values.size());
 			case SUM:
-				return Functions.SUM.evaluate(FieldValueUtil.createAll((List<?>)values));
+				return Functions.SUM.evaluate(FieldValueUtil.createAll(null, null, (List<?>)values));
 			case AVERAGE:
-				return Functions.AVG.evaluate(FieldValueUtil.createAll((List<?>)values));
+				return Functions.AVG.evaluate(FieldValueUtil.createAll(null, null, (List<?>)values));
 			case MIN:
-				return FieldValueUtil.create(Collections.min((List<Comparable>)values));
+				return FieldValueUtil.create(null, null, Collections.min((List<Comparable>)values));
 			case MAX:
-				return FieldValueUtil.create(Collections.max((List<Comparable>)values));
+				return FieldValueUtil.create(null, null, Collections.max((List<Comparable>)values));
 			default:
 				throw new UnsupportedFeatureException(aggregate, function);
 		}

@@ -378,24 +378,6 @@ public class FieldValueUtil {
 	}
 
 	static
-	public FieldValue create(Object value){
-		return create((DataType)null, (OpType)null, value);
-	}
-
-	static
-	public List<FieldValue> createAll(List<?> values){
-		Function<Object, FieldValue> function = new Function<Object, FieldValue>(){
-
-			@Override
-			public FieldValue apply(Object value){
-				return create(value);
-			}
-		};
-
-		return Lists.transform(values, function);
-	}
-
-	static
 	public FieldValue create(Field field, Object value){
 		FieldValue result = create(field.getDataType(), field.getOpType(), value);
 
@@ -406,6 +388,11 @@ public class FieldValueUtil {
 		return result;
 	}
 
+	/**
+	 * @param dataType The data type. If <code>null</code>, then the PMML data type will be derived from the Java data type of the value.
+	 * @param opType The operational type. If <code>null</code>, then the operational type will be derived from the data type.
+	 * @param value The value.
+	 */
 	static
 	public FieldValue create(DataType dataType, OpType opType, Object value){
 
@@ -414,19 +401,18 @@ public class FieldValueUtil {
 		} // End if
 
 		if(value instanceof Collection){
-			Collection<?> collection = (Collection<?>)value;
 
 			if(dataType == null){
-				Object firstElement = Iterables.getFirst(collection, null);
+				Collection<?> values = (Collection<?>)value;
 
-				if(firstElement != null){
-					dataType = TypeUtil.getDataType(firstElement);
-				} else
-
-				{
-					dataType = DataType.STRING;
+				if(values.size() > 0){
+					dataType = TypeUtil.getDataType(values);
 				}
 			} // End if
+
+			if(dataType == null){
+				dataType = DataType.STRING;
+			}
 
 			if(opType == null){
 				opType = TypeUtil.getOpType(dataType);
@@ -459,6 +445,19 @@ public class FieldValueUtil {
 		}
 
 		throw new EvaluationException();
+	}
+
+	static
+	public List<FieldValue> createAll(final DataType dataType, final OpType opType, List<?> values){
+		Function<Object, FieldValue> function = new Function<Object, FieldValue>(){
+
+			@Override
+			public FieldValue apply(Object value){
+				return create(dataType, opType, value);
+			}
+		};
+
+		return Lists.transform(values, function);
 	}
 
 	static

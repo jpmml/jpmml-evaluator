@@ -20,6 +20,8 @@ package org.jpmml.evaluator.functions;
 
 import java.util.List;
 
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 
@@ -42,6 +44,6 @@ public class EqualityFunction extends AbstractFunction {
 
 		Boolean result = evaluate((left).equalsValue(right));
 
-		return FieldValueUtil.create(result);
+		return FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, result);
 	}
 }

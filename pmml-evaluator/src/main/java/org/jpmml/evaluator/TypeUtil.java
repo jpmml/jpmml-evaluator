@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Collection;
+
 import com.google.common.math.DoubleMath;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
@@ -355,6 +357,31 @@ public class TypeUtil {
 		}
 
 		throw new EvaluationException();
+	}
+
+	static
+	public DataType getDataType(Collection<?> values){
+		DataType result = null;
+
+		for(Object value : values){
+			DataType dataType = getDataType(value);
+
+			if(result == null){
+				result = dataType;
+			} else
+
+			{
+				if(!(result).equals(dataType)){
+					throw new EvaluationException();
+				}
+			}
+		}
+
+		if(result == null){
+			throw new EvaluationException();
+		}
+
+		return result;
 	}
 
 	/**

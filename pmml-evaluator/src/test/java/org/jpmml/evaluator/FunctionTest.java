@@ -289,7 +289,7 @@ public class FunctionTest {
 
 	static
 	private void assertEquals(Object expected, FieldValue actual){
-		Assert.assertEquals(FieldValueUtil.create(expected), actual);
+		Assert.assertEquals(FieldValueUtil.create(null, null, expected), actual);
 	}
 
 	static
@@ -299,6 +299,6 @@ public class FunctionTest {
 
 	static
 	private FieldValue evaluate(Function function, List<?> arguments){
-		return function.evaluate(FieldValueUtil.createAll(arguments));
+		return function.evaluate(FieldValueUtil.createAll(null, null, arguments));
 	}
 }

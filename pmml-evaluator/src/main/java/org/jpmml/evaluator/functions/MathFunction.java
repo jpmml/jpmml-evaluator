@@ -21,6 +21,7 @@ package org.jpmml.evaluator.functions;
 import java.util.List;
 
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 
@@ -44,8 +45,10 @@ public class MathFunction extends AbstractFunction {
 
 		FieldValue value = arguments.get(0);
 
-		Number result = cast(getResultType(value.getDataType()), evaluate(value.asNumber()));
+		DataType resultDataType = getResultType(value.getDataType());
 
-		return FieldValueUtil.create(result);
+		Number result = cast(resultDataType, evaluate(value.asNumber()));
+
+		return FieldValueUtil.create(resultDataType, OpType.CONTINUOUS, result);
 	}
 }

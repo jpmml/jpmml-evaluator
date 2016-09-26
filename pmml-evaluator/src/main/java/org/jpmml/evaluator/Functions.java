@@ -31,6 +31,7 @@ import org.apache.commons.math3.stat.descriptive.rank.Min;
 import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
@@ -188,7 +189,7 @@ public class Functions {
 
 			Double result = Math.pow((left.asNumber()).doubleValue(), (right.asNumber()).doubleValue());
 
-			return FieldValueUtil.create(cast(dataType, result));
+			return FieldValueUtil.create(dataType, OpType.CONTINUOUS, cast(dataType, result));
 		}
 	};
 
@@ -205,7 +206,7 @@ public class Functions {
 
 			Integer result = ((left.asNumber()).doubleValue() > (right.asNumber()).doubleValue()) ? Values.INTEGER_ONE : Values.INTEGER_ZERO;
 
-			return FieldValueUtil.create(cast(dataType, result));
+			return FieldValueUtil.create(dataType, OpType.CONTINUOUS, cast(dataType, result));
 		}
 	};
 
@@ -417,7 +418,7 @@ public class Functions {
 			// This expression must never throw a StringIndexOutOfBoundsException
 			String result = string.substring(javaPosition, javaPosition + javaLength);
 
-			return FieldValueUtil.create(result);
+			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, result);
 		}
 	};
 
@@ -444,7 +445,7 @@ public class Functions {
 				sb.append(string);
 			}
 
-			return FieldValueUtil.create(sb.toString());
+			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, sb.toString());
 		}
 	};
 
@@ -462,7 +463,7 @@ public class Functions {
 
 			String result = matcher.replaceAll(replacement);
 
-			return FieldValueUtil.create(result);
+			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, result);
 		}
 	};
 
@@ -480,7 +481,7 @@ public class Functions {
 			// "The string is considered to match the pattern if any substring matches the pattern"
 			Boolean result = Boolean.valueOf(matcher.find());
 
-			return FieldValueUtil.create(result);
+			return FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, result);
 		}
 	};
 
@@ -503,7 +504,7 @@ public class Functions {
 				throw new FunctionException(this, formatMessage("Invalid format value \"" + pattern.asString() + "\"", ife));
 			}
 
-			return FieldValueUtil.create(result);
+			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, result);
 		}
 	};
 
@@ -524,7 +525,7 @@ public class Functions {
 				throw new FunctionException(this, formatMessage("Invalid format value \"" + pattern.asString() + "\"", ife));
 			}
 
-			return FieldValueUtil.create(result);
+			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, result);
 		}
 
 		private String translatePattern(String pattern){
@@ -561,7 +562,7 @@ public class Functions {
 
 			DaysSinceDate period = new DaysSinceDate(year, instant);
 
-			return FieldValueUtil.create(period.intValue());
+			return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, period.intValue());
 		}
 	};
 
@@ -577,7 +578,7 @@ public class Functions {
 
 			SecondsSinceMidnight period = new SecondsSinceMidnight(seconds);
 
-			return FieldValueUtil.create(period.intValue());
+			return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, period.intValue());
 		}
 	};
 
@@ -593,7 +594,7 @@ public class Functions {
 
 			SecondsSinceDate period = new SecondsSinceDate(year, instant);
 
-			return FieldValueUtil.create(period.intValue());
+			return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, period.intValue());
 		}
 	};
 

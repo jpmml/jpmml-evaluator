@@ -24,6 +24,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.InvalidResultException;
@@ -67,8 +68,10 @@ public class AggregateFunction extends AbstractFunction {
 			throw new InvalidResultException(null);
 		}
 
-		Object result = cast(getResultType(dataType), statistic.getResult());
+		DataType resultDataType = getResultType(dataType);
 
-		return FieldValueUtil.create(result);
+		Number result = cast(resultDataType, statistic.getResult());
+
+		return FieldValueUtil.create(resultDataType, OpType.CONTINUOUS, result);
 	}
 }

@@ -55,7 +55,7 @@ public class StandardDeviationFunctionTest {
 	private Number evaluate(List<Double> values, boolean flag){
 		Function standardDeviation = new StandardDeviationFunction();
 
-		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, values), FieldValueUtil.create(flag));
+		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, values), FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, flag));
 
 		return (standardDeviation.evaluate(arguments)).asNumber();
 	}

@@ -20,6 +20,8 @@ package org.jpmml.evaluator.functions;
 
 import java.util.List;
 
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 
@@ -41,6 +43,6 @@ public class StringFunction extends AbstractFunction {
 
 		String result = evaluate(value.asString());
 
-		return FieldValueUtil.create(result);
+		return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, result);
 	}
 }
