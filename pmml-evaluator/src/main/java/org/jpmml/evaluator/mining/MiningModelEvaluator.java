@@ -259,8 +259,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					result.normalizeValues();
 				}
 				break;
-			case MAX:
+			case AVERAGE:
+			case WEIGHTED_AVERAGE:
+				{
+					result = new ProbabilityDistribution(aggregateProbabilities(segmentation, segmentResults, null));
+				}
+				break;
 			case MEDIAN:
+			case MAX:
 				{
 					TargetField targetField = getTargetField();
 
@@ -269,12 +275,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					List<String> categories = FieldValueUtil.getTargetCategories(dataField);
 
 					result = new ProbabilityDistribution(aggregateProbabilities(segmentation, segmentResults, categories));
-				}
-				break;
-			case AVERAGE:
-			case WEIGHTED_AVERAGE:
-				{
-					result = new ProbabilityDistribution(aggregateProbabilities(segmentation, segmentResults, null));
 				}
 				break;
 			default:
@@ -640,10 +640,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			Double value = (Double)segmentResult.getTargetValue(DataType.DOUBLE);
 
 			switch(multipleModelMethod){
-				case SUM:
-				case MEDIAN:
-					aggregator.add(value);
-					break;
 				case AVERAGE:
 					aggregator.add(value);
 					denominator += 1d;
@@ -654,19 +650,23 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					aggregator.add(value * weight);
 					denominator += weight;
 					break;
+				case MEDIAN:
+				case SUM:
+					aggregator.add(value);
+					break;
 				default:
 					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 			}
 		}
 
 		switch(multipleModelMethod){
-			case SUM:
-				return aggregator.sum();
-			case MEDIAN:
-				return aggregator.median();
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
 				return aggregator.average(denominator);
+			case MEDIAN:
+				return aggregator.median();
+			case SUM:
+				return aggregator.sum();
 			default:
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 		}
@@ -702,8 +702,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
-			case MAX:
 			case MEDIAN:
+			case MAX:
 				aggregator = new ProbabilityAggregator(segmentResults.size());
 				break;
 			default:
@@ -717,10 +717,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			HasProbability hasProbability = segmentResult.getTargetValue(HasProbability.class);
 
 			switch(multipleModelMethod){
-				case MAX:
-				case MEDIAN:
-					aggregator.add(hasProbability);
-					break;
 				case AVERAGE:
 					aggregator.add(hasProbability);
 					denominator += 1d;
@@ -731,19 +727,23 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					aggregator.add(hasProbability, weight);
 					denominator += weight;
 					break;
+				case MEDIAN:
+				case MAX:
+					aggregator.add(hasProbability);
+					break;
 				default:
 					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 			}
 		}
 
 		switch(multipleModelMethod){
-			case MAX:
-				return aggregator.maxMap(categories);
-			case MEDIAN:
-				return aggregator.medianMap(categories);
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
 				return aggregator.averageMap(denominator);
+			case MEDIAN:
+				return aggregator.medianMap(categories);
+			case MAX:
+				return aggregator.maxMap(categories);
 			default:
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 		}
@@ -804,8 +804,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 	}
 
-	private static final Set<Segmentation.MultipleModelMethod> REGRESSION_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.SUM, Segmentation.MultipleModelMethod.MEDIAN, Segmentation.MultipleModelMethod.AVERAGE, Segmentation.MultipleModelMethod.WEIGHTED_AVERAGE);
-	private static final Set<Segmentation.MultipleModelMethod> CLASSIFICATION_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.MAJORITY_VOTE, Segmentation.MultipleModelMethod.WEIGHTED_MAJORITY_VOTE, Segmentation.MultipleModelMethod.SUM, Segmentation.MultipleModelMethod.MEDIAN, Segmentation.MultipleModelMethod.AVERAGE, Segmentation.MultipleModelMethod.WEIGHTED_AVERAGE);
+	private static final Set<Segmentation.MultipleModelMethod> REGRESSION_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.AVERAGE, Segmentation.MultipleModelMethod.WEIGHTED_AVERAGE, Segmentation.MultipleModelMethod.MEDIAN, Segmentation.MultipleModelMethod.SUM);
+	private static final Set<Segmentation.MultipleModelMethod> CLASSIFICATION_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.MAJORITY_VOTE, Segmentation.MultipleModelMethod.WEIGHTED_MAJORITY_VOTE, Segmentation.MultipleModelMethod.AVERAGE, Segmentation.MultipleModelMethod.WEIGHTED_AVERAGE, Segmentation.MultipleModelMethod.MEDIAN, Segmentation.MultipleModelMethod.MAX);
 	private static final Set<Segmentation.MultipleModelMethod> CLUSTERING_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.MAJORITY_VOTE, Segmentation.MultipleModelMethod.WEIGHTED_MAJORITY_VOTE);
 
 	private static final LoadingCache<MiningModel, BiMap<String, Segment>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<MiningModel, BiMap<String, Segment>>(){
