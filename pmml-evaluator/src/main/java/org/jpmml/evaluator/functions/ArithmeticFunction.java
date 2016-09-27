@@ -59,6 +59,6 @@ public class ArithmeticFunction extends AbstractFunction {
 			throw new InvalidResultException(null);
 		}
 
-		return FieldValueUtil.create(dataType, OpType.CONTINUOUS, cast(dataType, result));
+		return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
 	}
 }

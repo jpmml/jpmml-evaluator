@@ -45,10 +45,10 @@ public class MathFunction extends AbstractFunction {
 
 		FieldValue value = arguments.get(0);
 
-		DataType resultDataType = getResultType(value.getDataType());
+		DataType dataType = value.getDataType();
 
-		Number result = cast(resultDataType, evaluate(value.asNumber()));
+		Number result = evaluate(value.asNumber());
 
-		return FieldValueUtil.create(resultDataType, OpType.CONTINUOUS, result);
+		return FieldValueUtil.create(getResultType(dataType), OpType.CONTINUOUS, result);
 	}
 }

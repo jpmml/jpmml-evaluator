@@ -68,10 +68,8 @@ public class AggregateFunction extends AbstractFunction {
 			throw new InvalidResultException(null);
 		}
 
-		DataType resultDataType = getResultType(dataType);
+		Double result = statistic.getResult();
 
-		Number result = cast(resultDataType, statistic.getResult());
-
-		return FieldValueUtil.create(resultDataType, OpType.CONTINUOUS, result);
+		return FieldValueUtil.create(getResultType(dataType), OpType.CONTINUOUS, result);
 	}
 }

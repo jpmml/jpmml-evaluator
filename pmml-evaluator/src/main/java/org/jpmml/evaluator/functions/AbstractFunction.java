@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.dmg.pmml.DataType;
-import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.Function;
 import org.jpmml.evaluator.FunctionException;
@@ -94,32 +93,6 @@ public class AbstractFunction implements Function {
 
 	private void setName(String name){
 		this.name = name;
-	}
-
-	static
-	protected Number cast(DataType dataType, Number number){
-
-		switch(dataType){
-			case INTEGER:
-				if(number instanceof Integer){
-					return number;
-				}
-				return Integer.valueOf(number.intValue());
-			case FLOAT:
-				if(number instanceof Float){
-					return number;
-				}
-				return Float.valueOf(number.floatValue());
-			case DOUBLE:
-				if(number instanceof Double){
-					return number;
-				}
-				return Double.valueOf(number.doubleValue());
-			default:
-				break;
-		}
-
-		throw new EvaluationException();
 	}
 
 	static

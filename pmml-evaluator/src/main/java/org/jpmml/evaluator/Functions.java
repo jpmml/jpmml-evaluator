@@ -189,7 +189,7 @@ public class Functions {
 
 			Double result = Math.pow((left.asNumber()).doubleValue(), (right.asNumber()).doubleValue());
 
-			return FieldValueUtil.create(dataType, OpType.CONTINUOUS, cast(dataType, result));
+			return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
 		}
 	};
 
@@ -206,7 +206,7 @@ public class Functions {
 
 			Integer result = ((left.asNumber()).doubleValue() > (right.asNumber()).doubleValue()) ? Values.INTEGER_ONE : Values.INTEGER_ZERO;
 
-			return FieldValueUtil.create(dataType, OpType.CONTINUOUS, cast(dataType, result));
+			return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
 		}
 	};
 
