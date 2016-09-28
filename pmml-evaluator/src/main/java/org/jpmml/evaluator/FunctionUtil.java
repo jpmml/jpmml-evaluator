@@ -100,6 +100,8 @@ public class FunctionUtil {
 	private static final Map<String, Function> builtInFunctions;
 
 	static {
+		ImmutableMap.Builder<String, Function> builder = new ImmutableMap.Builder<>();
+
 		List<? extends Function> functions = Arrays.asList(
 			Functions.PLUS, Functions.MINUS, Functions.MULTIPLY, Functions.DIVIDE,
 			Functions.MIN, Functions.MAX, Functions.AVG, Functions.SUM, Functions.PRODUCT,
@@ -118,10 +120,20 @@ public class FunctionUtil {
 			Functions.DATE_DAYS_SINCE_YEAR, Functions.DATE_SECONDS_SINCE_MIDNIGHT, Functions.DATE_SECONDS_SINCE_YEAR
 		);
 
-		ImmutableMap.Builder<String, Function> builder = new ImmutableMap.Builder<>();
-
 		for(Function function : functions){
 			builder.put(function.getName(), function);
+		}
+
+		List<? extends Function> extensionFunctions = Arrays.asList(
+			Functions.HYPOT,
+			Functions.SIN, Functions.COS, Functions.TAN,
+			Functions.ASIN, Functions.ACOS, Functions.ATAN,
+			Functions.ATAN2,
+			Functions.SINH, Functions.COSH, Functions.TANH
+		);
+
+		for(Function extensionFunction : extensionFunctions){
+			builder.put(extensionFunction.getName(), extensionFunction);
 		}
 
 		builtInFunctions = builder.build();

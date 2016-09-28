@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.Arrays;
 import java.util.List;
 
+import org.dmg.pmml.OpType;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
@@ -287,9 +288,39 @@ public class FunctionTest {
 		assertEquals(185403, evaluate(Functions.DATE_SECONDS_SINCE_YEAR, new LocalDateTime(1960, 1, 3, 3, 30, 3), 1960));
 	}
 
+	@Test
+	public void evaluateTrigonometricFunctions(){
+		Double angle = Math.toRadians(30);
+
+		assertEquals(0.5d, evaluate(Functions.SIN, angle), 1e-6);
+		assertEquals(angle, evaluate(Functions.ASIN, 0.5d), 1e-6);
+		assertEquals(0.54785347d, evaluate(Functions.SINH, angle), 1e-6);
+
+		assertEquals(0.8660254d, evaluate(Functions.COS, angle), 1e-6);
+		assertEquals(angle, evaluate(Functions.ACOS, 0.8660254d), 1e-6);
+		assertEquals(1.14023832d, evaluate(Functions.COSH, angle), 1e-6);
+
+		assertEquals(0.57735027d, evaluate(Functions.TAN, angle), 1e-6);
+		assertEquals(angle, evaluate(Functions.ATAN, 0.57735027d), 1e-6);
+		assertEquals(0.48047278d, evaluate(Functions.TANH, angle), 1e-6);
+
+		try {
+			evaluate(Functions.ASIN, 2d);
+
+			fail();
+		} catch(InvalidResultException ire){
+			// Ignored
+		}
+	}
+
 	static
 	private void assertEquals(Object expected, FieldValue actual){
 		Assert.assertEquals(FieldValueUtil.create(null, null, expected), actual);
+	}
+
+	static
+	private void assertEquals(Number expected, FieldValue actual, double delta){
+		Assert.assertEquals(FieldValueUtil.create(null, OpType.CONTINUOUS, expected).asDouble(), actual.asDouble(), delta);
 	}
 
 	static

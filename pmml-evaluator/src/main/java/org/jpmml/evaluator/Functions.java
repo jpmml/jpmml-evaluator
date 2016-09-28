@@ -45,6 +45,7 @@ import org.jpmml.evaluator.functions.EqualityFunction;
 import org.jpmml.evaluator.functions.FpMathFunction;
 import org.jpmml.evaluator.functions.MathFunction;
 import org.jpmml.evaluator.functions.StringFunction;
+import org.jpmml.evaluator.functions.TrigonometricFunction;
 import org.jpmml.evaluator.functions.UnaryBooleanFunction;
 import org.jpmml.evaluator.functions.ValueFunction;
 import org.jpmml.evaluator.functions.ValueListFunction;
@@ -595,6 +596,111 @@ public class Functions {
 			SecondsSinceDate period = new SecondsSinceDate(year, instant);
 
 			return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, period.intValue());
+		}
+	};
+
+	public static final AbstractFunction HYPOT = new AbstractFunction("x-hypot"){
+
+		@Override
+		public FieldValue evaluate(List<FieldValue> arguments){
+			checkArguments(arguments, 2);
+
+			Number x = (arguments.get(0)).asNumber();
+			Number y = (arguments.get(1)).asNumber();
+
+			Double result = Math.hypot(x.doubleValue(), y.doubleValue());
+
+			return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, result);
+		}
+	};
+
+	public static final TrigonometricFunction SIN = new TrigonometricFunction("x-sin"){
+
+		@Override
+		public Double evaluate(Number value){
+			return Math.sin(value.doubleValue());
+		}
+	};
+
+	public static final TrigonometricFunction COS = new TrigonometricFunction("x-cos"){
+
+		@Override
+		public Double evaluate(Number value){
+			return Math.cos(value.doubleValue());
+		}
+	};
+
+	public static final TrigonometricFunction TAN = new TrigonometricFunction("x-tan"){
+
+		@Override
+		public Double evaluate(Number value){
+			return Math.tan(value.doubleValue());
+		}
+	};
+
+	public static final TrigonometricFunction ASIN = new TrigonometricFunction("x-asin"){
+
+		@Override
+		public Double evaluate(Number value){
+			return Math.asin(value.doubleValue());
+		}
+	};
+
+	public static final TrigonometricFunction ACOS = new TrigonometricFunction("x-acos"){
+
+		@Override
+		public Double evaluate(Number value){
+			return Math.acos(value.doubleValue());
+		}
+	};
+
+	public static final TrigonometricFunction ATAN = new TrigonometricFunction("x-atan"){
+
+		@Override
+		public Double evaluate(Number value){
+			return Math.atan(value.doubleValue());
+		}
+	};
+
+	public static final AbstractFunction ATAN2 = new AbstractFunction("x-atan2"){
+
+		@Override
+		public FieldValue evaluate(List<FieldValue> arguments){
+			checkArguments(arguments, 2);
+
+			Number y = (arguments.get(0)).asNumber();
+			Number x = (arguments.get(1)).asNumber();
+
+			Double result = Math.atan2(y.doubleValue(), x.doubleValue());
+			if(result.isNaN()){
+				throw new InvalidResultException(null);
+			}
+
+			return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, result);
+		}
+	};
+
+	public static final TrigonometricFunction SINH = new TrigonometricFunction("x-sinh"){
+
+		@Override
+		public Double evaluate(Number value){
+			return Math.sinh(value.doubleValue());
+		}
+	};
+
+	public static final TrigonometricFunction COSH = new TrigonometricFunction("x-cosh"){
+
+		@Override
+		public Double evaluate(Number value){
+			return Math.cosh(value.doubleValue());
+		}
+	};
+
+	public static final TrigonometricFunction TANH = new TrigonometricFunction("x-tanh"){
+
+		@Override
+		public Double evaluate(Number value){
+			return Math.tanh(value.doubleValue());
 		}
 	};
 
