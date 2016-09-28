@@ -33,6 +33,8 @@ public class ProbabilityAggregator extends ClassificationAggregator<String> {
 
 	private List<HasProbability> hasProbabilities = null;
 
+	private DoubleVector weights = null;
+
 
 	public ProbabilityAggregator(){
 		this(0);
@@ -44,6 +46,8 @@ public class ProbabilityAggregator extends ClassificationAggregator<String> {
 		if(capacity > 0){
 			this.hasProbabilities = new ArrayList<>(capacity);
 		}
+
+		this.weights = new DoubleVector(0);
 	}
 
 	public void add(HasProbability hasProbability){
@@ -51,6 +55,10 @@ public class ProbabilityAggregator extends ClassificationAggregator<String> {
 	}
 
 	public void add(HasProbability hasProbability, double weight){
+
+		if(weight < 0d){
+			throw new IllegalArgumentException();
+		} // End if
 
 		if(this.hasProbabilities != null){
 			this.hasProbabilities.add(hasProbability);
@@ -62,6 +70,27 @@ public class ProbabilityAggregator extends ClassificationAggregator<String> {
 
 			add(category, weight != 1d ? (probability * weight) : probability);
 		}
+
+		this.weights.add(weight);
+	}
+
+	public Map<String, Double> averageMap(){
+		return weightedAverageMap();
+	}
+
+	public Map<String, Double> weightedAverageMap(){
+		Function<DoubleVector, Double> function = new Function<DoubleVector, Double>(){
+
+			private double denominator = ProbabilityAggregator.this.weights.sum();
+
+
+			@Override
+			public Double apply(DoubleVector values){
+				return values.sum() / this.denominator;
+			}
+		};
+
+		return transform(function);
 	}
 
 	public Map<String, Double> maxMap(Collection<String> categories){
@@ -159,18 +188,6 @@ public class ProbabilityAggregator extends ClassificationAggregator<String> {
 		return averageMap(contributors);
 	}
 
-	public Map<String, Double> averageMap(final double denominator){
-		Function<DoubleVector, Double> function = new Function<DoubleVector, Double>(){
-
-			@Override
-			public Double apply(DoubleVector values){
-				return values.sum() / denominator;
-			}
-		};
-
-		return transform(function);
-	}
-
 	static
 	private Map.Entry<String, Double> getWinner(Map<String, Double> values, Collection<String> categories){
 
@@ -220,7 +237,7 @@ public class ProbabilityAggregator extends ClassificationAggregator<String> {
 				aggregator.add(hasProbability);
 			}
 
-			return aggregator.averageMap(hasProbabilities.size());
+			return aggregator.averageMap();
 		}
 	}
 }

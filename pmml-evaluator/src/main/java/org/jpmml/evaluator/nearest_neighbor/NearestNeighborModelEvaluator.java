@@ -340,8 +340,6 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				break;
 		}
 
-		double denominator = 0d;
-
 		for(InstanceResult instanceResult : instanceResults){
 			FieldValue value = table.get(instanceResult.getId(), name);
 			if(value == null){
@@ -352,17 +350,13 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			switch(continuousScoringMethod){
 				case MEDIAN:
-					aggregator.add(number.doubleValue());
-					break;
 				case AVERAGE:
 					aggregator.add(number.doubleValue());
-					denominator += 1d;
 					break;
 				case WEIGHTED_AVERAGE:
 					double weight = instanceResult.getWeight(nearestNeighborModel.getThreshold());
 
-					aggregator.add(number.doubleValue() * weight);
-					denominator += weight;
+					aggregator.add(number.doubleValue(), weight);
 					break;
 				default:
 					throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
@@ -373,8 +367,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			case MEDIAN:
 				return aggregator.median();
 			case AVERAGE:
+				return aggregator.average();
 			case WEIGHTED_AVERAGE:
-				return aggregator.average(denominator);
+				return aggregator.weightedAverage();
 			default:
 				throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
 		}

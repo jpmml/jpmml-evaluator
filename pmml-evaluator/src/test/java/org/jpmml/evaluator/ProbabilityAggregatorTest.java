@@ -73,7 +73,7 @@ public class ProbabilityAggregatorTest {
 		aggregator.add(createProbabilityDistribution(0.2d, 0.6d, 0.2d), 3d);
 		aggregator.add(createProbabilityDistribution(0.6d, 0.1d, 0.3d), 1d);
 
-		checkValues((0.2 * 3d + 0.6d) / 4d, (0.6d * 3d + 0.1d) / 4d, (0.2d * 3d + 0.3d) / 4d, aggregator.averageMap(4d));
+		checkValues((0.2 * 3d + 0.6d) / 4d, (0.6d * 3d + 0.1d) / 4d, (0.2d * 3d + 0.3d) / 4d, aggregator.weightedAverageMap());
 	}
 
 	static

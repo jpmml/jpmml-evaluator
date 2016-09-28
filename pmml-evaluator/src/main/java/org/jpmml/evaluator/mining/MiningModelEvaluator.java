@@ -627,6 +627,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case MEDIAN:
+			case WEIGHTED_MEDIAN:
 				aggregator = new RegressionAggregator(segmentResults.size());
 				break;
 			default:
@@ -634,25 +635,21 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				break;
 		}
 
-		double denominator = 0d;
-
 		for(SegmentResult segmentResult : segmentResults){
 			Double value = (Double)segmentResult.getTargetValue(DataType.DOUBLE);
 
 			switch(multipleModelMethod){
 				case AVERAGE:
-					aggregator.add(value);
-					denominator += 1d;
-					break;
-				case WEIGHTED_AVERAGE:
-					double weight = segmentResult.getWeight();
-
-					aggregator.add(value * weight);
-					denominator += weight;
-					break;
 				case MEDIAN:
 				case SUM:
 					aggregator.add(value);
+					break;
+				case WEIGHTED_AVERAGE:
+				case WEIGHTED_MEDIAN:
+				case WEIGHTED_SUM:
+					double weight = segmentResult.getWeight();
+
+					aggregator.add(value, weight);
 					break;
 				default:
 					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
@@ -661,12 +658,17 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		switch(multipleModelMethod){
 			case AVERAGE:
+				return aggregator.average();
 			case WEIGHTED_AVERAGE:
-				return aggregator.average(denominator);
+				return aggregator.weightedAverage();
 			case MEDIAN:
 				return aggregator.median();
+			case WEIGHTED_MEDIAN:
+				return aggregator.weightedMedian();
 			case SUM:
 				return aggregator.sum();
+			case WEIGHTED_SUM:
+				return aggregator.weightedSum();
 			default:
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 		}
@@ -711,21 +713,17 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				break;
 		}
 
-		double denominator = 0d;
-
 		for(SegmentResult segmentResult : segmentResults){
 			HasProbability hasProbability = segmentResult.getTargetValue(HasProbability.class);
 
 			switch(multipleModelMethod){
 				case AVERAGE:
 					aggregator.add(hasProbability);
-					denominator += 1d;
 					break;
 				case WEIGHTED_AVERAGE:
 					double weight = segmentResult.getWeight();
 
 					aggregator.add(hasProbability, weight);
-					denominator += weight;
 					break;
 				case MEDIAN:
 				case MAX:
@@ -738,8 +736,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		switch(multipleModelMethod){
 			case AVERAGE:
+				return aggregator.averageMap();
 			case WEIGHTED_AVERAGE:
-				return aggregator.averageMap(denominator);
+				return aggregator.weightedAverageMap();
 			case MEDIAN:
 				return aggregator.medianMap(categories);
 			case MAX:
