@@ -153,11 +153,27 @@ public class Functions {
 		}
 	};
 
+	public static final FpMathFunction LN1P = new FpMathFunction("x-ln1p"){
+
+		@Override
+		public Double evaluate(Number value){
+			return Math.log1p(value.doubleValue());
+		}
+	};
+
 	public static final FpMathFunction EXP = new FpMathFunction("exp"){
 
 		@Override
 		public Double evaluate(Number value){
 			return Math.exp(value.doubleValue());
+		}
+	};
+
+	public static final FpMathFunction EXPM1 = new FpMathFunction("x-expm1"){
+
+		@Override
+		public Double evaluate(Number value){
+			return Math.expm1(value.doubleValue());
 		}
 	};
 
@@ -232,6 +248,14 @@ public class Functions {
 		@Override
 		public Double evaluate(Number number){
 			return (double)Math.round(number.doubleValue());
+		}
+	};
+
+	public static final MathFunction RINT = new MathFunction("x-rint"){
+
+		@Override
+		public Double evaluate(Number number){
+			return Math.rint(number.doubleValue());
 		}
 	};
 
