@@ -32,7 +32,7 @@ import org.dmg.pmml.OpType;
  * </p>
  */
 abstract
-class ModelField implements Serializable {
+public class ModelField implements Serializable {
 
 	abstract
 	public FieldName getName();

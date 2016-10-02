@@ -19,5 +19,5 @@
 package org.jpmml.evaluator;
 
 abstract
-class ResultField extends ModelField {
+public class ResultField extends ModelField {
 }
