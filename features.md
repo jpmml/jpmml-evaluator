@@ -30,7 +30,7 @@ The JPMML-Evaluator library is hardwired to perform thorough "sanity" checking. 
 ##### Data manipulation #####
 
 * [Transformations] (http://www.dmg.org/pmml/v4-3/Transformations.html):
-  * Except for `Lag` and `TextIndex` elements.
+  * Except for the `Lag` element.
 * [PMML built-in functions] (http://www.dmg.org/pmml/v4-3/BuiltinFunctions.html):
   * Except for `erf`, `normalCDF`, `normalIDF`, `normalPDF`, `stdNormalCDF`, `stdNormalIDF` and `stdNormalPDF` functions.
 * [PMML user-defined functions] (http://www.dmg.org/pmml/v4-3/Functions.html).

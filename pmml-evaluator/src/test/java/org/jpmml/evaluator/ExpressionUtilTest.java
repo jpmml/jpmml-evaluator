@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.PatternSyntaxException;
 
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
@@ -35,10 +36,13 @@ import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
+import org.dmg.pmml.TextIndex;
+import org.dmg.pmml.TextIndex.CountHits;
 import org.jpmml.evaluator.functions.EchoFunction;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ExpressionUtilTest {
@@ -163,6 +167,81 @@ public class ExpressionUtilTest {
 		mapValues.setDefaultValue("Default");
 
 		assertEquals("Default", evaluate(mapValues, name, "3"));
+	}
+
+	@Test
+	public void evaluateTextIndex(){
+		FieldName name = FieldName.create("x");
+
+		TextIndex textIndex = new TextIndex(name)
+			.setWordSeparatorCharacterRE("[")
+			.setExpression(new Constant("Hello World"));
+
+		String text = "Hello World!";
+
+		try {
+			evaluate(textIndex, name, text);
+
+			fail();
+		} catch(InvalidFeatureException ive){
+			Throwable cause = ive.getCause();
+
+			assertTrue(cause instanceof PatternSyntaxException);
+		}
+
+		textIndex = new TextIndex(name)
+			.setWordSeparatorCharacterRE("[\\s\\-]")
+			.setExpression(new Constant("user friendly"));
+
+		assertEquals(DataType.INTEGER, getDataType(textIndex));
+
+		assertEquals(1, evaluate(textIndex, name, "user friendly"));
+		assertEquals(1, evaluate(textIndex, name, "user-friendly"));
+
+		textIndex = new TextIndex(name)
+			.setExpression(new Constant("brown fox"));
+
+		text = "The quick browny foxy jumps over the lazy dog. The brown fox runs away and to be with another brown foxy.";
+
+		textIndex.setMaxLevenshteinDistance(0);
+
+		assertEquals(1, evaluate(textIndex, name, text));
+
+		textIndex.setMaxLevenshteinDistance(1);
+
+		assertEquals(2, evaluate(textIndex, name, text));
+
+		textIndex.setMaxLevenshteinDistance(2);
+
+		assertEquals(3, evaluate(textIndex, name, text));
+
+		textIndex = new TextIndex(name)
+			.setMaxLevenshteinDistance(1)
+			.setExpression(new Constant("dog"));
+
+		text = "I have a doog. My dog is white. The doog is friendly.";
+
+		textIndex.setCountHits(CountHits.ALL_HITS);
+
+		assertEquals(3, evaluate(textIndex, name, text));
+
+		textIndex.setCountHits(CountHits.BEST_HITS);
+
+		assertEquals(1, evaluate(textIndex, name, text));
+
+		textIndex = new TextIndex(name)
+			.setIsCaseSensitive(false)
+			.setExpression(new Constant("sun"));
+
+		text = "The Sun was setting while the captain's son reached the bounty island, minutes after their ship had sunk to the bottom of the ocean.";
+
+		textIndex.setMaxLevenshteinDistance(0);
+
+		assertEquals(1, evaluate(textIndex, name, text));
+
+		textIndex.setMaxLevenshteinDistance(1);
+
+		assertEquals(3, evaluate(textIndex, name, text));
 	}
 
 	@Test

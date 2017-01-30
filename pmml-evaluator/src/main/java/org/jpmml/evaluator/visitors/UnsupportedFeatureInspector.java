@@ -28,6 +28,7 @@ import org.dmg.pmml.OutputField;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.TableLocator;
 import org.dmg.pmml.TextIndex;
+import org.dmg.pmml.TextIndexNormalization;
 import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.baseline.BaselineModel;
@@ -284,7 +285,26 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 	@Override
 	public VisitorAction visit(TextIndex textIndex){
-		report(new UnsupportedFeatureException(textIndex));
+		boolean tokenize = textIndex.isTokenize();
+		if(!tokenize){
+			report(new UnsupportedFeatureException(textIndex, ReflectionUtil.getField(TextIndex.class, "tokenize"), false));
+		}
+
+		TextIndex.LocalTermWeights localTermWeights = textIndex.getLocalTermWeights();
+		switch(localTermWeights){
+			case AUGMENTED_NORMALIZED_TERM_FREQUENCY:
+				report(new UnsupportedFeatureException(textIndex, localTermWeights));
+				break;
+			default:
+				break;
+		}
+
+		return super.visit(textIndex);
+	}
+
+	@Override
+	public VisitorAction visit(TextIndexNormalization textIndexNormalization){
+		report(new UnsupportedFeatureException(textIndexNormalization));
 
 		return VisitorAction.SKIP;
 	}

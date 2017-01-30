@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
@@ -44,7 +46,10 @@ import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.TextIndex;
+import org.dmg.pmml.TextIndexNormalization;
 import org.dmg.pmml.TypeDefinitionField;
+import org.jpmml.model.ReflectionUtil;
 
 public class ExpressionUtil {
 
@@ -95,6 +100,10 @@ public class ExpressionUtil {
 
 		if(expression instanceof MapValues){
 			return evaluateMapValues((MapValues)expression, context);
+		} else
+
+		if(expression instanceof TextIndex){
+			return evaluateTextIndex((TextIndex)expression, context);
 		} else
 
 		if(expression instanceof Apply){
@@ -163,6 +172,12 @@ public class ExpressionUtil {
 			return dataType;
 		} else
 
+		if(expression instanceof TextIndex){
+			TextIndex textIndex = (TextIndex)expression;
+
+			return getTextIndexDataType(textIndex);
+		} else
+
 		if(expression instanceof Apply){
 			throw new TypeAnalysisException(expression);
 		} else
@@ -183,6 +198,21 @@ public class ExpressionUtil {
 		}
 
 		return dataType;
+	}
+
+	static
+	public DataType getTextIndexDataType(TextIndex textIndex){
+		TextIndex.LocalTermWeights localTermWeights = textIndex.getLocalTermWeights();
+
+		switch(localTermWeights){
+			case BINARY:
+			case TERM_FREQUENCY:
+				return DataType.INTEGER;
+			case LOGARITHMIC:
+				return DataType.DOUBLE;
+			default:
+				throw new UnsupportedFeatureException(textIndex, localTermWeights);
+		}
 	}
 
 	static
@@ -267,6 +297,105 @@ public class ExpressionUtil {
 		}
 
 		return DiscretizationUtil.mapValue(mapValues, values);
+	}
+
+	static
+	public FieldValue evaluateTextIndex(TextIndex textIndex, EvaluationContext context){
+		FieldValue textValue = context.evaluate(textIndex.getTextField());
+
+		Expression expression = textIndex.getExpression();
+		if(expression == null){
+			throw new InvalidFeatureException(textIndex);
+		}
+
+		FieldValue termValue = ExpressionUtil.evaluate(expression, context);
+
+		// XXX
+		if(textValue == null || termValue == null){
+			return null;
+		}
+
+		String textString = textValue.asString();
+		String termString = termValue.asString();
+
+		boolean isCaseSensitive = textIndex.isIsCaseSensitive();
+		if(!isCaseSensitive){
+			textString = textString.toLowerCase();
+			termString = termString.toLowerCase();
+		} // End if
+
+		if(textIndex.hasTextIndexNormalizations()){
+			List<TextIndexNormalization> textIndexNormalizations = textIndex.getTextIndexNormalizations();
+
+			TextIndexNormalization textIndexNormalization = textIndexNormalizations.get(0);
+
+			throw new UnsupportedFeatureException(textIndexNormalization);
+		}
+
+		boolean tokenize = textIndex.isTokenize();
+		if(!tokenize){
+			throw new UnsupportedFeatureException(textIndex, ReflectionUtil.getField(TextIndex.class, "tokenize"), tokenize);
+		}
+
+		Pattern pattern;
+
+		try {
+			pattern = Pattern.compile(textIndex.getWordSeparatorCharacterRE());
+		} catch(PatternSyntaxException pse){
+			Throwable throwable = new InvalidFeatureException(textIndex)
+				.initCause(pse);
+
+			throw (PMMLException)throwable;
+		}
+
+		TextTokenizer tokenizer = new TextTokenizer(pattern);
+
+		List<String> textTokens = tokenizer.tokenize(textString);
+		List<String> termTokens = tokenizer.tokenize(termString);
+
+		int maxLevenshteinDistance = textIndex.getMaxLevenshteinDistance();
+		if(maxLevenshteinDistance < 0){
+			throw new InvalidFeatureException(textIndex, ReflectionUtil.getField(TextIndex.class, "maxLevenshteinDistance"), maxLevenshteinDistance);
+		}
+
+		boolean bestHits;
+
+		TextIndex.CountHits countHits = textIndex.getCountHits();
+		switch(countHits){
+			case BEST_HITS:
+				bestHits = true;
+				break;
+			case ALL_HITS:
+				bestHits = false;
+				break;
+			default:
+				throw new UnsupportedFeatureException(textIndex, countHits);
+		}
+
+		int termFrequency;
+
+		TextIndex.LocalTermWeights localTermWeights = textIndex.getLocalTermWeights();
+		switch(localTermWeights){
+			case BINARY:
+				termFrequency = TextUtil.frequency(textTokens, termTokens, maxLevenshteinDistance, bestHits, 1);
+				break;
+			case TERM_FREQUENCY:
+			case LOGARITHMIC:
+				termFrequency = TextUtil.frequency(textTokens, termTokens, maxLevenshteinDistance, bestHits, Integer.MAX_VALUE);
+				break;
+			default:
+				throw new UnsupportedFeatureException(textIndex, localTermWeights);
+		} // End switch
+
+		switch(localTermWeights){
+			case BINARY:
+			case TERM_FREQUENCY:
+				return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, termFrequency);
+			case LOGARITHMIC:
+				return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Math.log10(1d + termFrequency));
+			default:
+				throw new UnsupportedFeatureException(textIndex, localTermWeights);
+		}
 	}
 
 	static

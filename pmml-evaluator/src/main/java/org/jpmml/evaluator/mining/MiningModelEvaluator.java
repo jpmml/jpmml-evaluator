@@ -101,7 +101,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		if(miningModel.hasEmbeddedModels()){
 			List<EmbeddedModel> embeddedModels = miningModel.getEmbeddedModels();
 
-			EmbeddedModel embeddedModel = Iterables.get(embeddedModels, 0);
+			EmbeddedModel embeddedModel = embeddedModels.get(0);
 
 			throw new UnsupportedFeatureException(embeddedModel);
 		}
