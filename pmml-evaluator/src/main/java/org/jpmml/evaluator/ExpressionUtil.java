@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
@@ -49,7 +47,6 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.TextIndexNormalization;
 import org.dmg.pmml.TypeDefinitionField;
-import org.jpmml.model.ReflectionUtil;
 
 public class ExpressionUtil {
 
@@ -318,75 +315,17 @@ public class ExpressionUtil {
 		String textString = textValue.asString();
 		String termString = termValue.asString();
 
-		boolean isCaseSensitive = textIndex.isIsCaseSensitive();
-		if(!isCaseSensitive){
-			textString = textString.toLowerCase();
-			termString = termString.toLowerCase();
-		} // End if
-
 		if(textIndex.hasTextIndexNormalizations()){
 			List<TextIndexNormalization> textIndexNormalizations = textIndex.getTextIndexNormalizations();
 
-			TextIndexNormalization textIndexNormalization = textIndexNormalizations.get(0);
-
-			throw new UnsupportedFeatureException(textIndexNormalization);
+			for(TextIndexNormalization textIndexNormalization : textIndexNormalizations){
+				textString = TextUtil.normalize(textIndex, textIndexNormalization, textString);
+			}
 		}
 
-		boolean tokenize = textIndex.isTokenize();
-		if(!tokenize){
-			throw new UnsupportedFeatureException(textIndex, ReflectionUtil.getField(TextIndex.class, "tokenize"), tokenize);
-		}
-
-		Pattern pattern;
-
-		try {
-			pattern = Pattern.compile(textIndex.getWordSeparatorCharacterRE());
-		} catch(PatternSyntaxException pse){
-			Throwable throwable = new InvalidFeatureException(textIndex)
-				.initCause(pse);
-
-			throw (PMMLException)throwable;
-		}
-
-		TextTokenizer tokenizer = new TextTokenizer(pattern);
-
-		List<String> textTokens = tokenizer.tokenize(textString);
-		List<String> termTokens = tokenizer.tokenize(termString);
-
-		int maxLevenshteinDistance = textIndex.getMaxLevenshteinDistance();
-		if(maxLevenshteinDistance < 0){
-			throw new InvalidFeatureException(textIndex, ReflectionUtil.getField(TextIndex.class, "maxLevenshteinDistance"), maxLevenshteinDistance);
-		}
-
-		boolean bestHits;
-
-		TextIndex.CountHits countHits = textIndex.getCountHits();
-		switch(countHits){
-			case BEST_HITS:
-				bestHits = true;
-				break;
-			case ALL_HITS:
-				bestHits = false;
-				break;
-			default:
-				throw new UnsupportedFeatureException(textIndex, countHits);
-		}
-
-		int termFrequency;
+		int termFrequency = TextUtil.termFrequency(textIndex, textString, termString);
 
 		TextIndex.LocalTermWeights localTermWeights = textIndex.getLocalTermWeights();
-		switch(localTermWeights){
-			case BINARY:
-				termFrequency = TextUtil.frequency(textTokens, termTokens, maxLevenshteinDistance, bestHits, 1);
-				break;
-			case TERM_FREQUENCY:
-			case LOGARITHMIC:
-				termFrequency = TextUtil.frequency(textTokens, termTokens, maxLevenshteinDistance, bestHits, Integer.MAX_VALUE);
-				break;
-			default:
-				throw new UnsupportedFeatureException(textIndex, localTermWeights);
-		} // End switch
-
 		switch(localTermWeights){
 			case BINARY:
 			case TERM_FREQUENCY:

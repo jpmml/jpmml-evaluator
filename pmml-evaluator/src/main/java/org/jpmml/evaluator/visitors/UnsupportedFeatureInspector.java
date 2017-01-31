@@ -28,7 +28,6 @@ import org.dmg.pmml.OutputField;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.TableLocator;
 import org.dmg.pmml.TextIndex;
-import org.dmg.pmml.TextIndexNormalization;
 import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.baseline.BaselineModel;
@@ -300,13 +299,6 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 		}
 
 		return super.visit(textIndex);
-	}
-
-	@Override
-	public VisitorAction visit(TextIndexNormalization textIndexNormalization){
-		report(new UnsupportedFeatureException(textIndexNormalization));
-
-		return VisitorAction.SKIP;
 	}
 
 	@Override

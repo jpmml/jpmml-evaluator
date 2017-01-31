@@ -18,7 +18,14 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -27,6 +34,7 @@ import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.Row;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class InlineTableUtil {
@@ -59,6 +67,51 @@ public class InlineTableUtil {
 			}
 
 			rowKey += 1;
+		}
+
+		return result;
+	}
+
+	static
+	InlineTable format(Table<Integer, String, String> table){
+		InlineTable result = new InlineTable();
+
+		Map<Integer, Map<String, String>> tableRows = table.rowMap();
+
+		int minRow = Collections.min(tableRows.keySet());
+		int maxRow = Collections.max(tableRows.keySet());
+
+		if(minRow != 1 || maxRow != tableRows.size()){
+			throw new IllegalArgumentException();
+		}
+
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		documentBuilderFactory.setNamespaceAware(true);
+
+		DocumentBuilder documentBuilder;
+
+		try {
+			documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		} catch(ParserConfigurationException pce){
+			throw new RuntimeException(pce);
+		}
+
+		for(int i = minRow; i <= maxRow; i++){
+			Map<String, String> tableRow = tableRows.get(i);
+
+			Row row = new Row();
+
+			Document document = documentBuilder.newDocument();
+
+			Collection<String> columns = tableRow.keySet();
+			for(String column : columns){
+				Element cell = document.createElement(column);
+				cell.setTextContent(tableRow.get(column));
+
+				row.addContent(cell);
+			}
+
+			result.addRows(row);
 		}
 
 		return result;

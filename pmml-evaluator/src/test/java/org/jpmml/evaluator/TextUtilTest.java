@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.Arrays;
 import java.util.List;
 
+import org.dmg.pmml.InlineTable;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -28,51 +29,158 @@ import static org.junit.Assert.assertEquals;
 public class TextUtilTest {
 
 	@Test
-	public void frequency(){
-		List<String> text = Arrays.asList("x", "x", "x", "x");
+	public void normalize(){
+		List<List<String>> regexRows = Arrays.asList(
+			Arrays.asList("[\u00c0|\u00c1|\u00c2|\u00c3|\u00c4|\u00c5]", "A", "true")
+		);
 
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("x", "x", "x", "x", "x"), 0, false, Integer.MAX_VALUE));
-		assertEquals(1, TextUtil.frequency(text, Arrays.asList("x", "x", "x", "x"), 0, false, Integer.MAX_VALUE));
-		assertEquals(2, TextUtil.frequency(text, Arrays.asList("x", "x", "x"), 0, false, Integer.MAX_VALUE));
-		assertEquals(3, TextUtil.frequency(text, Arrays.asList("x", "x"), 0, false, Integer.MAX_VALUE));
-		assertEquals(4, TextUtil.frequency(text, Arrays.asList("x"), 0, false, Integer.MAX_VALUE));
+		List<List<String>> noRegexRows = Arrays.asList(
+			Arrays.asList("\u00c0", "A", null),
+			Arrays.asList("\u00c1", "A", null),
+			Arrays.asList("\u00c2", "A", null),
+			Arrays.asList("\u00c3", "A", "false"),
+			Arrays.asList("\u00c4", "A", "false"),
+			Arrays.asList("\u00c5", "A", "false")
+		);
 
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("x", "X", "x", "x"), 0, false, Integer.MAX_VALUE));
-		assertEquals(1, TextUtil.frequency(text, Arrays.asList("x", "X", "x", "x"), 1, false, 1));
-		assertEquals(1, TextUtil.frequency(text, Arrays.asList("x", "X", "x", "x"), 1, false, Integer.MAX_VALUE));
+		for(List<List<String>> rows : Arrays.asList(regexRows, noRegexRows)){
+			String text = "\u00c0BC";
 
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("x", "X", "x"), 0, false, Integer.MAX_VALUE));
-		assertEquals(1, TextUtil.frequency(text, Arrays.asList("x", "X", "x"), 1, false, 1));
-		assertEquals(2, TextUtil.frequency(text, Arrays.asList("x", "X", "x"), 1, false, Integer.MAX_VALUE));
+			assertEquals("ABC", normalize(rows, text, null, true, 0));
 
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("x", "X"), 0, false, Integer.MAX_VALUE));
-		assertEquals(1, TextUtil.frequency(text, Arrays.asList("x", "X"), 1, false, 1));
-		assertEquals(3, TextUtil.frequency(text, Arrays.asList("x", "X"), 1, false, Integer.MAX_VALUE));
+			text = text.toLowerCase();
 
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("X"), 0, false, Integer.MAX_VALUE));
-		assertEquals(1, TextUtil.frequency(text, Arrays.asList("X"), 1, false, 1));
-		assertEquals(4, TextUtil.frequency(text, Arrays.asList("X"), 1, false, Integer.MAX_VALUE));
+			assertEquals(text, normalize(rows, text, null, true, 0));
+			assertEquals("Abc", normalize(rows, text, null, false, 0));
 
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("x", "X", "X", "x"), 0, false, Integer.MAX_VALUE));
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("x", "X", "X", "x"), 1, false, Integer.MAX_VALUE));
-		assertEquals(1, TextUtil.frequency(text, Arrays.asList("x", "X", "X", "x"), 2, false, Integer.MAX_VALUE));
+			text = "\u00c0\u00c2\u00c4";
 
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("x", "X", "X"), 0, false, Integer.MAX_VALUE));
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("x", "X", "X"), 1, false, Integer.MAX_VALUE));
-		assertEquals(2, TextUtil.frequency(text, Arrays.asList("x", "X", "X"), 2, false, Integer.MAX_VALUE));
+			assertEquals("AAA", normalize(rows, text, null, true, 0));
 
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("X", "X"), 0, false, Integer.MAX_VALUE));
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("X", "X"), 1, false, Integer.MAX_VALUE));
-		assertEquals(3, TextUtil.frequency(text, Arrays.asList("X", "X"), 2, false, Integer.MAX_VALUE));
+			text = text.toLowerCase();
 
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("x", "X", "X", "X"), 0, false, Integer.MAX_VALUE));
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("x", "X", "X", "X"), 1, false, Integer.MAX_VALUE));
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("x", "X", "X", "X"), 2, false, Integer.MAX_VALUE));
-		assertEquals(1, TextUtil.frequency(text, Arrays.asList("x", "X", "X", "X"), 3, false, Integer.MAX_VALUE));
+			assertEquals(text, normalize(rows, text, null, true, 0));
+			assertEquals("AAA", normalize(rows, text, null, false, 0));
+		}
+	}
 
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("X", "X", "X"), 0, false, Integer.MAX_VALUE));
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("X", "X", "X"), 1, false, Integer.MAX_VALUE));
-		assertEquals(0, TextUtil.frequency(text, Arrays.asList("X", "X", "X"), 2, false, Integer.MAX_VALUE));
-		assertEquals(2, TextUtil.frequency(text, Arrays.asList("X", "X", "X"), 3, false, Integer.MAX_VALUE));
+	@Test
+	public void termFrequency(){
+		List<String> textTokens = Arrays.asList("x", "x", "x", "x");
+		List<String> termTokens;
+
+		assertEquals(0, termFrequency(textTokens, Arrays.asList("x", "x", "x", "x", "x"), true, 0, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, Arrays.asList("x", "x", "x", "x"), true, 0, false, Integer.MAX_VALUE));
+		assertEquals(2, termFrequency(textTokens, Arrays.asList("x", "x", "x"), true, 0, false, Integer.MAX_VALUE));
+		assertEquals(3, termFrequency(textTokens, Arrays.asList("x", "x"), true, 0, false, Integer.MAX_VALUE));
+		assertEquals(4, termFrequency(textTokens, Arrays.asList("x"), true, 0, false, Integer.MAX_VALUE));
+
+		termTokens = Arrays.asList("x", "X", "x", "x");
+
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, termTokens, true, 1, false, 1));
+		assertEquals(1, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
+
+		termTokens = Arrays.asList("x", "Y", "x", "x");
+
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
+		assertEquals(0, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
+
+		termTokens = Arrays.asList("x", "X", "x");
+
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
+		assertEquals(2, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, termTokens, true, 1, false, 1));
+		assertEquals(2, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
+
+		termTokens = Arrays.asList("x", "X");
+
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
+		assertEquals(3, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, termTokens, true, 1, false, 1));
+		assertEquals(3, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
+
+		termTokens = Arrays.asList("X");
+
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
+		assertEquals(4, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, termTokens, true, 1, false, 1));
+		assertEquals(4, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
+
+		termTokens = Arrays.asList("x", "X", "X", "x");
+
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, termTokens, true, 2, false, Integer.MAX_VALUE));
+
+		termTokens = Arrays.asList("x", "Y", "Y", "x");
+
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
+		assertEquals(0, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, termTokens, true, 2, false, Integer.MAX_VALUE));
+
+		termTokens = Arrays.asList("x", "X", "X");
+
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
+		assertEquals(2, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
+		assertEquals(2, termFrequency(textTokens, termTokens, true, 2, false, Integer.MAX_VALUE));
+
+		termTokens = Arrays.asList("X", "X");
+
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
+		assertEquals(3, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
+		assertEquals(3, termFrequency(textTokens, termTokens, true, 2, false, Integer.MAX_VALUE));
+
+		termTokens = Arrays.asList("x", "X", "X", "X");
+
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 2, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, termTokens, true, 3, false, Integer.MAX_VALUE));
+
+		termTokens = Arrays.asList("x", "Y", "Y", "Y");
+
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
+		assertEquals(0, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, termTokens, true, 3, false, Integer.MAX_VALUE));
+
+		termTokens = Arrays.asList("X", "X", "X");
+
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
+		assertEquals(2, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 2, false, Integer.MAX_VALUE));
+		assertEquals(2, termFrequency(textTokens, termTokens, true, 3, false, Integer.MAX_VALUE));
+
+		termTokens = Arrays.asList("X", "X", "X", "X");
+
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
+
+		termTokens = Arrays.asList("Y", "Y", "Y", "Y");
+
+		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
+		assertEquals(0, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, termTokens, true, 4, false, Integer.MAX_VALUE));
+	}
+
+	static
+	private String normalize(List<List<String>> rows, String text, TextTokenizer tokenizer, boolean caseSensitive, int maxLevenshteinDistance){
+		List<String> columns = Arrays.asList("string", "stem", "regex");
+
+		InlineTable inlineTable = ExpressionUtilTest.createInlineTable(rows, columns);
+
+		return TextUtil.normalize(inlineTable, text, columns.get(0), columns.get(1), columns.get(2), tokenizer, caseSensitive, maxLevenshteinDistance);
+	}
+
+	static
+	private int termFrequency(List<String> textTokens, List<String> termTokens, boolean caseSensitive, int maxLevenshteinDistance, boolean bestHits, int maxFrequency){
+		return TextUtil.termFrequency(textTokens, termTokens, caseSensitive, maxLevenshteinDistance, bestHits, maxFrequency);
 	}
 }

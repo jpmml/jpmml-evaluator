@@ -18,11 +18,13 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.PatternSyntaxException;
 
+import com.google.common.collect.ArrayTable;
+import com.google.common.collect.Table;
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.Constant;
@@ -32,17 +34,18 @@ import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
+import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.TextIndex.CountHits;
+import org.dmg.pmml.TextIndexNormalization;
 import org.jpmml.evaluator.functions.EchoFunction;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ExpressionUtilTest {
@@ -174,24 +177,10 @@ public class ExpressionUtilTest {
 		FieldName name = FieldName.create("x");
 
 		TextIndex textIndex = new TextIndex(name)
-			.setWordSeparatorCharacterRE("[")
-			.setExpression(new Constant("Hello World"));
-
-		String text = "Hello World!";
-
-		try {
-			evaluate(textIndex, name, text);
-
-			fail();
-		} catch(InvalidFeatureException ive){
-			Throwable cause = ive.getCause();
-
-			assertTrue(cause instanceof PatternSyntaxException);
-		}
-
-		textIndex = new TextIndex(name)
 			.setWordSeparatorCharacterRE("[\\s\\-]")
 			.setExpression(new Constant("user friendly"));
+
+		String text;
 
 		assertEquals(DataType.INTEGER, getDataType(textIndex));
 
@@ -242,6 +231,39 @@ public class ExpressionUtilTest {
 		textIndex.setMaxLevenshteinDistance(1);
 
 		assertEquals(3, evaluate(textIndex, name, text));
+	}
+
+	@Test
+	public void evaluateTextIndexNormalization(){
+		FieldName name = FieldName.create("x");
+
+		TextIndexNormalization stepOne = new TextIndexNormalization();
+
+		List<List<String>> cells = Arrays.asList(
+			Arrays.asList("interfaces?", "interface", "true"),
+			Arrays.asList("is|are|seem(ed|s?)|were", "be", "true"),
+			Arrays.asList("user friendl(y|iness)", "user_friendly", "true")
+		);
+
+		stepOne.setInlineTable(createInlineTable(cells, stepOne));
+
+		TextIndexNormalization stepTwo = new TextIndexNormalization()
+			.setInField("re")
+			.setOutField("feature");
+
+		cells = Arrays.asList(
+			Arrays.asList("interface be (user_friendly|well designed|excellent)", "ui_good", "true")
+		);
+
+		stepTwo.setInlineTable(createInlineTable(cells, stepTwo));
+
+		TextIndex textIndex = new TextIndex(name)
+			.setLocalTermWeights(TextIndex.LocalTermWeights.BINARY)
+			.setIsCaseSensitive(false)
+			.addTextIndexNormalizations(stepOne, stepTwo)
+			.setExpression(new Constant("ui_good"));
+
+		assertEquals(1, evaluate(textIndex, name, "Testing the app for a few days convinced me the interfaces are excellent!"));
 	}
 
 	@Test
@@ -388,6 +410,39 @@ public class ExpressionUtilTest {
 		aggregate.setFunction(Aggregate.Function.MAX);
 
 		assertEquals(values.get(2), evaluate(aggregate, name, values));
+	}
+
+	static
+	InlineTable createInlineTable(List<List<String>> rows, TextIndexNormalization textIndexNormalization){
+		return createInlineTable(rows, Arrays.asList(textIndexNormalization.getInField(), textIndexNormalization.getOutField(), textIndexNormalization.getRegexField()));
+	}
+
+	static
+	InlineTable createInlineTable(List<List<String>> rows, List<String> columns){
+		List<Integer> rowKeys = new ArrayList<>();
+
+		for(int i = 0; i < rows.size(); i++){
+			rowKeys.add(i + 1);
+		}
+
+		Table<Integer, String, String> table = ArrayTable.create(rowKeys, columns);
+
+		for(int i = 0; i < rows.size(); i++){
+			List<String> row = rows.get(i);
+
+			for(int j = 0; j < columns.size(); j++){
+				String column = columns.get(j);
+				String value = row.get(j);
+
+				if(value == null){
+					continue;
+				}
+
+				table.put(rowKeys.get(i), column, value);
+			}
+		}
+
+		return InlineTableUtil.format(table);
 	}
 
 	static

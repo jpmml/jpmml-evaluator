@@ -481,10 +481,12 @@ public class Functions {
 			checkArguments(arguments, 3);
 
 			String input = (arguments.get(0)).asString();
-			String pattern = (arguments.get(1)).asString();
+			String regex = (arguments.get(1)).asString();
 			String replacement = (arguments.get(2)).asString();
 
-			Matcher matcher = Pattern.compile(pattern).matcher(input);
+			Pattern pattern = RegExUtil.compile(regex, null);
+
+			Matcher matcher = pattern.matcher(input);
 
 			String result = matcher.replaceAll(replacement);
 
