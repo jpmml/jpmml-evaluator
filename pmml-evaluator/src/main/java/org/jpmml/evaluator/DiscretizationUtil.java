@@ -44,7 +44,6 @@ import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.Interval;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.TableLocator;
 
 public class DiscretizationUtil {
 
@@ -74,12 +73,7 @@ public class DiscretizationUtil {
 	public FieldValue mapValue(MapValues mapValues, Map<String, FieldValue> values){
 		DataType dataType = mapValues.getDataType();
 
-		TableLocator tableLocator = mapValues.getTableLocator();
-		if(tableLocator != null){
-			throw new UnsupportedFeatureException(tableLocator);
-		}
-
-		InlineTable inlineTable = mapValues.getInlineTable();
+		InlineTable inlineTable = InlineTableUtil.getInlineTable(mapValues);
 		if(inlineTable != null){
 			String outputColumn = mapValues.getOutputColumn();
 

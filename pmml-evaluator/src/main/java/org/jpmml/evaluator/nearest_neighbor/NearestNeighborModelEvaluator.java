@@ -59,7 +59,6 @@ import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.TableLocator;
 import org.dmg.pmml.TypeDefinitionField;
 import org.dmg.pmml.nearest_neighbor.InstanceField;
 import org.dmg.pmml.nearest_neighbor.InstanceFields;
@@ -508,14 +507,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Table<Integer, FieldName, FieldValue> parseTrainingInstances(NearestNeighborModelEvaluator modelEvaluator){
 		NearestNeighborModel nearestNeighborModel = modelEvaluator.getModel();
 
-		TrainingInstances trainingInstances = nearestNeighborModel.getTrainingInstances();
-
-		TableLocator tableLocator = trainingInstances.getTableLocator();
-		if(tableLocator != null){
-			throw new UnsupportedFeatureException(tableLocator);
-		}
-
 		FieldName instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
+
+		TrainingInstances trainingInstances = nearestNeighborModel.getTrainingInstances();
 
 		List<FieldLoader> fieldLoaders = new ArrayList<>();
 
@@ -555,7 +549,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Table<Integer, FieldName, FieldValue> result = HashBasedTable.create();
 
-		InlineTable inlineTable = trainingInstances.getInlineTable();
+		InlineTable inlineTable = InlineTableUtil.getInlineTable(trainingInstances);
 		if(inlineTable != null){
 			Table<Integer, String, String> table = InlineTableUtil.getContent(inlineTable);
 

@@ -32,14 +32,29 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
+import org.dmg.pmml.HasTable;
 import org.dmg.pmml.InlineTable;
+import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Row;
+import org.dmg.pmml.TableLocator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class InlineTableUtil {
 
 	private InlineTableUtil(){
+	}
+
+	static
+	public <E extends PMMLObject & HasTable<E>> InlineTable getInlineTable(E object){
+		InlineTable inlineTable = object.getInlineTable();
+
+		TableLocator tableLocator = object.getTableLocator();
+		if(tableLocator != null){
+			throw new UnsupportedFeatureException(tableLocator);
+		}
+
+		return inlineTable;
 	}
 
 	static

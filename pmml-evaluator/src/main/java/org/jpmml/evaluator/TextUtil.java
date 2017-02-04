@@ -26,7 +26,6 @@ import com.google.common.collect.Table;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Row;
-import org.dmg.pmml.TableLocator;
 import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.TextIndexNormalization;
 import org.jpmml.model.ReflectionUtil;
@@ -78,12 +77,7 @@ public class TextUtil {
 			throw new InvalidFeatureException(locatable, ReflectionUtil.getField(locatable.getClass(), "maxLevenshteinDistance"), maxLevenshteinDistance);
 		}
 
-		TableLocator tableLocator = textIndexNormalization.getTableLocator();
-		if(tableLocator != null){
-			throw new UnsupportedFeatureException(tableLocator);
-		}
-
-		InlineTable inlineTable = textIndexNormalization.getInlineTable();
+		InlineTable inlineTable = InlineTableUtil.getInlineTable(textIndexNormalization);
 		if(inlineTable != null){
 
 			normalization:
