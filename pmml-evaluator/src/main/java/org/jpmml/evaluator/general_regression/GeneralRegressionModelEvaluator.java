@@ -570,8 +570,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				return (1d - Math.exp(-Math.exp(value + a))) * b;
 			case IDENTITY:
 				return (value + a) * b;
-			case INVERSE:
-				return (1d / (value + a)) * b;
 			case LOG:
 				return Math.exp(value + a) * b;
 			case LOGC:
@@ -605,8 +603,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				return Math.exp(value + a) * b;
 			case PROBIT:
 				return NormalDistributionUtil.cumulativeProbability(value + a) * b;
-			case SQRT:
-				return Math.sqrt(value + a) * b;
 			default:
 				throw new UnsupportedFeatureException(generalRegressionModel, linkFunction);
 		}

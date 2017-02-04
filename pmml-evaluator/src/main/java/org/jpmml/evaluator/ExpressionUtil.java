@@ -216,7 +216,7 @@ public class ExpressionUtil {
 	public FieldValue evaluateConstant(Constant constant, EvaluationContext context){
 
 		if(constant instanceof HasParsedValue){
-			HasParsedValue hasParsedValue = (HasParsedValue)constant;
+			HasParsedValue<?> hasParsedValue = (HasParsedValue<?>)constant;
 
 			return hasParsedValue.getValue(null, null);
 		}

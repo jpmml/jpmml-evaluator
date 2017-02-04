@@ -60,9 +60,9 @@ public class TextUtil {
 			tokenizer = new TextTokenizer(pattern);
 		}
 
-		Boolean caseSensitive = textIndexNormalization.isIsCaseSensitive();
+		Boolean caseSensitive = textIndexNormalization.isCaseSensitive();
 		if(caseSensitive == null){
-			caseSensitive = textIndex.isIsCaseSensitive();
+			caseSensitive = textIndex.isCaseSensitive();
 		}
 
 		PMMLObject locatable = textIndexNormalization;
@@ -177,7 +177,7 @@ public class TextUtil {
 			tokenizer = new TextTokenizer(pattern);
 		}
 
-		boolean caseSensitive = textIndex.isIsCaseSensitive();
+		boolean caseSensitive = textIndex.isCaseSensitive();
 
 		int maxLevenshteinDistance = textIndex.getMaxLevenshteinDistance();
 		if(maxLevenshteinDistance < 0){

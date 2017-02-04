@@ -26,6 +26,7 @@ import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.True;
 import org.dmg.pmml.Visitable;
 import org.jpmml.evaluator.ArrayUtil;
+import org.jpmml.evaluator.ExtensionUtil;
 import org.jpmml.model.visitors.PredicateFilterer;
 
 /**
@@ -91,7 +92,7 @@ public class PredicateInterner extends PredicateFilterer {
 	@Override
 	public Predicate filter(Predicate predicate){
 
-		if(predicate == null || predicate.hasExtensions()){
+		if(predicate == null || ExtensionUtil.hasExtensions(predicate)){
 			return predicate;
 		}
 

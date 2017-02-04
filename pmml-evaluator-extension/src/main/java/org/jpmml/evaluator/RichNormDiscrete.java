@@ -29,7 +29,7 @@ import org.jpmml.model.ReflectionUtil;
 @XmlRootElement (
 	name = "NormDiscrete"
 )
-public class RichNormDiscrete extends NormDiscrete implements HasParsedValue {
+public class RichNormDiscrete extends NormDiscrete implements HasParsedValue<NormDiscrete> {
 
 	@XmlTransient
 	private FieldValue parsedValue = null;

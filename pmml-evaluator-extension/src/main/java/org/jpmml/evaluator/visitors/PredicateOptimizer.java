@@ -21,6 +21,7 @@ package org.jpmml.evaluator.visitors;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
+import org.jpmml.evaluator.ExtensionUtil;
 import org.jpmml.evaluator.RichSimplePredicate;
 import org.jpmml.evaluator.RichSimpleSetPredicate;
 import org.jpmml.model.visitors.PredicateFilterer;
@@ -30,7 +31,7 @@ public class PredicateOptimizer extends PredicateFilterer {
 	@Override
 	public Predicate filter(Predicate predicate){
 
-		if(predicate == null || predicate.hasExtensions()){
+		if(predicate == null || ExtensionUtil.hasExtensions(predicate)){
 			return predicate;
 		}
 

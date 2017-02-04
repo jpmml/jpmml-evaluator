@@ -80,10 +80,10 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	 * Checks if this value is equal to the reference value.
 	 * </p>
 	 */
-	public boolean equals(HasValue hasValue){
+	public boolean equals(HasValue<?> hasValue){
 
 		if(hasValue instanceof HasParsedValue){
-			HasParsedValue hasParsedValue = (HasParsedValue)hasValue;
+			HasParsedValue<?> hasParsedValue = (HasParsedValue<?>)hasValue;
 
 			return equals(hasParsedValue);
 		}
@@ -91,7 +91,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return equalsString(hasValue.getValue());
 	}
 
-	public boolean equals(HasParsedValue hasParsedValue){
+	public boolean equals(HasParsedValue<?> hasParsedValue){
 		FieldValue value = hasParsedValue.getValue(getDataType(), getOpType());
 
 		return this.equals(value);
@@ -102,10 +102,10 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	 * Checks if this value is contained in the set of reference values.
 	 * </p>
 	 */
-	public boolean isIn(HasValueSet hasValueSet){
+	public boolean isIn(HasValueSet<?> hasValueSet){
 
 		if(hasValueSet instanceof HasParsedValueSet){
-			HasParsedValueSet hasParsedValueSet = (HasParsedValueSet)hasValueSet;
+			HasParsedValueSet<?> hasParsedValueSet = (HasParsedValueSet<?>)hasValueSet;
 
 			return isIn(hasParsedValueSet);
 		}
@@ -117,7 +117,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return indexInStrings(content) > -1;
 	}
 
-	public boolean isIn(HasParsedValueSet hasParsedValueSet){
+	public boolean isIn(HasParsedValueSet<?> hasParsedValueSet){
 		Set<FieldValue> values = hasParsedValueSet.getValueSet(getDataType(), getOpType());
 
 		return values.contains(this);
@@ -128,10 +128,10 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	 * Calculates the order between this value and the reference value.
 	 * </p>
 	 */
-	public int compareTo(HasValue hasValue){
+	public int compareTo(HasValue<?> hasValue){
 
 		if(hasValue instanceof HasParsedValue){
-			HasParsedValue hasParsedValue = (HasParsedValue)hasValue;
+			HasParsedValue<?> hasParsedValue = (HasParsedValue<?>)hasValue;
 
 			return compareTo(hasParsedValue);
 		}
@@ -139,7 +139,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return compareToString(hasValue.getValue());
 	}
 
-	public int compareTo(HasParsedValue hasParsedValue){
+	public int compareTo(HasParsedValue<?> hasParsedValue){
 		FieldValue value = hasParsedValue.getValue(getDataType(), getOpType());
 
 		return this.compareTo(value);

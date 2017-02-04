@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Villu Ruusmann
+ * Copyright (c) 2017 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,14 +18,23 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Set;
-
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.HasValueSet;
-import org.dmg.pmml.OpType;
+import org.dmg.pmml.HasExtensions;
 import org.dmg.pmml.PMMLObject;
 
-public interface HasParsedValueSet<E extends PMMLObject & HasValueSet<E>> extends HasValueSet<E> {
+public class ExtensionUtil {
 
-	Set<FieldValue> getValueSet(DataType dataType, OpType opType);
+	private ExtensionUtil(){
+	}
+
+	static
+	public boolean hasExtensions(PMMLObject object){
+
+		if(object instanceof HasExtensions){
+			HasExtensions<?> hasExtensions = (HasExtensions<?>)object;
+
+			return hasExtensions.hasExtensions();
+		}
+
+		return false;
+	}
 }

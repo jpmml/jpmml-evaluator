@@ -30,7 +30,7 @@ import org.jpmml.model.ReflectionUtil;
 @XmlRootElement (
 	name = "Constant"
 )
-public class RichConstant extends Constant implements HasParsedValue {
+public class RichConstant extends Constant implements HasParsedValue<RichConstant> {
 
 	@XmlTransient
 	private FieldValue parsedValue = null;

@@ -32,7 +32,7 @@ import org.jpmml.model.ReflectionUtil;
 @XmlRootElement (
 	name = "CategoricalPredictor"
 )
-public class RichCategoricalPredictor extends CategoricalPredictor implements HasParsedValue {
+public class RichCategoricalPredictor extends CategoricalPredictor implements HasParsedValue<CategoricalPredictor> {
 
 	@XmlTransient
 	private FieldValue parsedValue = null;

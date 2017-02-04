@@ -219,7 +219,7 @@ public class ExpressionUtilTest {
 		assertEquals(1, evaluate(textIndex, name, text));
 
 		textIndex = new TextIndex(name)
-			.setIsCaseSensitive(false)
+			.setCaseSensitive(false)
 			.setExpression(new Constant("sun"));
 
 		text = "The Sun was setting while the captain's son reached the bounty island, minutes after their ship had sunk to the bottom of the ocean.";
@@ -259,7 +259,7 @@ public class ExpressionUtilTest {
 
 		TextIndex textIndex = new TextIndex(name)
 			.setLocalTermWeights(TextIndex.LocalTermWeights.BINARY)
-			.setIsCaseSensitive(false)
+			.setCaseSensitive(false)
 			.addTextIndexNormalizations(stepOne, stepTwo)
 			.setExpression(new Constant("ui_good"));
 

@@ -29,7 +29,7 @@ import org.jpmml.model.ReflectionUtil;
 @XmlRootElement (
 	name = "SimplePredicate"
 )
-public class RichSimplePredicate extends SimplePredicate implements HasParsedValue {
+public class RichSimplePredicate extends SimplePredicate implements HasParsedValue<SimplePredicate> {
 
 	@XmlTransient
 	private FieldValue parsedValue = null;

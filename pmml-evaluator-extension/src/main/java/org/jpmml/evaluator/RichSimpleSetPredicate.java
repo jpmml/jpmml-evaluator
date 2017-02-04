@@ -36,7 +36,7 @@ import org.jpmml.model.ReflectionUtil;
 @XmlRootElement (
 	name = "SimpleSetPredicate"
 )
-public class RichSimpleSetPredicate extends SimpleSetPredicate implements HasParsedValueSet {
+public class RichSimpleSetPredicate extends SimpleSetPredicate implements HasParsedValueSet<SimpleSetPredicate> {
 
 	@XmlTransient
 	private Set<FieldValue> parsedValueSet = null;

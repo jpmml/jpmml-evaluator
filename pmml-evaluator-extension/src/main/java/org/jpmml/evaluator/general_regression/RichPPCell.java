@@ -32,7 +32,7 @@ import org.jpmml.model.ReflectionUtil;
 @XmlRootElement (
 	name = "PPCell"
 )
-public class RichPPCell extends PPCell implements HasParsedValue {
+public class RichPPCell extends PPCell implements HasParsedValue<PPCell> {
 
 	@XmlTransient
 	private FieldValue parsedValue = null;
