@@ -19,9 +19,12 @@
 package org.jpmml.evaluator;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.cache.Cache;
 import com.google.common.collect.Table;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.PMMLObject;
@@ -36,7 +39,21 @@ public class TextUtil {
 	}
 
 	static
-	public String normalize(TextIndex textIndex, TextIndexNormalization textIndexNormalization, String text){
+	public String normalize(TextIndex textIndex, String string){
+
+		if(textIndex.hasTextIndexNormalizations()){
+			List<TextIndexNormalization> textIndexNormalizations = textIndex.getTextIndexNormalizations();
+
+			for(TextIndexNormalization textIndexNormalization : textIndexNormalizations){
+				string = TextUtil.normalize(textIndex, textIndexNormalization, string);
+			}
+		}
+
+		return string;
+	}
+
+	static
+	public String normalize(TextIndex textIndex, TextIndexNormalization textIndexNormalization, String string){
 		TextTokenizer tokenizer = null;
 
 		Boolean tokenize = textIndexNormalization.isTokenize();
@@ -82,10 +99,10 @@ public class TextUtil {
 
 			normalization:
 			while(true){
-				String normalizedText;
+				String normalizedString;
 
 				try {
-					normalizedText = normalize(inlineTable, text, textIndexNormalization.getInField(), textIndexNormalization.getOutField(), textIndexNormalization.getRegexField(), tokenizer, caseSensitive, maxLevenshteinDistance);
+					normalizedString = normalize(inlineTable, textIndexNormalization.getInField(), textIndexNormalization.getOutField(), textIndexNormalization.getRegexField(), string, tokenizer, caseSensitive, maxLevenshteinDistance);
 				} catch(PMMLException pe){
 					pe.ensureContext(textIndexNormalization);
 
@@ -95,22 +112,22 @@ public class TextUtil {
 				// "If the recursive flag is set to true, the normalization table is reapplied until none of its rows causes a change to the input text."
 				if(textIndexNormalization.isRecursive()){
 
-					if(!(normalizedText).equals(text)){
-						text = normalizedText;
+					if(!(normalizedString).equals(string)){
+						string = normalizedString;
 
 						continue normalization;
 					}
 				}
 
-				return normalizedText;
+				return normalizedString;
 			}
 		}
 
-		return text;
+		return string;
 	}
 
 	static
-	String normalize(InlineTable inlineTable, String text, String inColumn, String outColumn, String regexColumn, TextTokenizer tokenizer, boolean caseSensitive, int maxLevenshteinDistance){
+	String normalize(InlineTable inlineTable, String inColumn, String outColumn, String regexColumn, String string, TextTokenizer tokenizer, boolean caseSensitive, int maxLevenshteinDistance){
 		Table<Integer, String, String> table = InlineTableUtil.getContent(inlineTable);
 
 		int regexFlags = (caseSensitive ? 0 : (Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE));
@@ -132,9 +149,9 @@ public class TextUtil {
 			if(regex){
 				Pattern pattern = RegExUtil.compile(inValue, regexFlags, row);
 
-				Matcher matcher = pattern.matcher(text);
+				Matcher matcher = pattern.matcher(string);
 
-				text = matcher.replaceAll(outValue);
+				string = matcher.replaceAll(outValue);
 			} else
 
 			{
@@ -144,22 +161,18 @@ public class TextUtil {
 
 				Pattern pattern = RegExUtil.compile(Pattern.quote(inValue), regexFlags, row);
 
-				Matcher matcher = pattern.matcher(text);
+				Matcher matcher = pattern.matcher(string);
 
-				text = matcher.replaceAll(outValue);
+				string = matcher.replaceAll(outValue);
 			}
 		}
 
-		return text;
+		return string;
 	}
 
+
 	static
-	public int termFrequency(TextIndex textIndex, String text, String term){
-
-		if(("").equals(text)){
-			return 0;
-		}
-
+	public List<String> tokenize(TextIndex textIndex, String text){
 		TextTokenizer tokenizer = null;
 
 		boolean tokenize = textIndex.isTokenize();
@@ -169,6 +182,20 @@ public class TextUtil {
 			Pattern pattern = RegExUtil.compile(wordSeparatorCharacterRE, textIndex);
 
 			tokenizer = new TextTokenizer(pattern);
+		} else
+
+		{
+			throw new UnsupportedFeatureException(textIndex, ReflectionUtil.getField(TextIndex.class, "tokenize"), tokenize);
+		}
+
+		return tokenizer.tokenize(text);
+	}
+
+	static
+	public int termFrequency(TextIndex textIndex, List<String> textTokens, List<String> termTokens){
+
+		if(textTokens.isEmpty() || termTokens.isEmpty()){
+			return 0;
 		}
 
 		boolean caseSensitive = textIndex.isCaseSensitive();
@@ -208,25 +235,12 @@ public class TextUtil {
 		}
 
 		try {
-			return termFrequency(text, term, tokenizer, caseSensitive, maxLevenshteinDistance, bestHits, maxFrequency);
+			return termFrequency(textTokens, termTokens, caseSensitive, maxLevenshteinDistance, bestHits, maxFrequency);
 		} catch(PMMLException pe){
 			pe.ensureContext(textIndex);
 
 			throw pe;
 		}
-	}
-
-	static
-	int termFrequency(String text, String term, TextTokenizer tokenizer, boolean caseSensitive, int maxLevenshteinDistance, boolean bestHits, int maxFrequency){
-
-		if(tokenizer == null){
-			throw new UnsupportedFeatureException();
-		}
-
-		List<String> textTokens = tokenizer.tokenize(text);
-		List<String> termTokens = tokenizer.tokenize(term);
-
-		return termFrequency(textTokens, termTokens, caseSensitive, maxLevenshteinDistance, bestHits, maxFrequency);
 	}
 
 	static
@@ -308,4 +322,112 @@ public class TextUtil {
 
 		return Math.min(maxFrequency, frequency);
 	}
+
+	static
+	abstract
+	class StringProcessor {
+
+		private TextIndex textIndex = null;
+
+		private FieldValue value = null;
+
+
+		public StringProcessor(TextIndex textIndex, FieldValue value){
+			setTextIndex(Objects.requireNonNull(textIndex));
+			setValue(Objects.requireNonNull(value));
+		}
+
+		abstract
+		public List<String> process();
+
+		public TextIndex getTextIndex(){
+			return this.textIndex;
+		}
+
+		private void setTextIndex(TextIndex textIndex){
+			this.textIndex = textIndex;
+		}
+
+		public FieldValue getValue(){
+			return this.value;
+		}
+
+		private void setValue(FieldValue value){
+			this.value = value;
+		}
+	}
+
+	static
+	class TextProcessor extends StringProcessor {
+
+		TextProcessor(TextIndex textIndex, FieldValue value){
+			super(textIndex, value);
+		}
+
+		@Override
+		public List<String> process(){
+			TextIndex textIndex = getTextIndex();
+			FieldValue value = getValue();
+
+			Cache<FieldValue, List<String>> textTokenCache = CacheUtil.getValue(textIndex, TextUtil.textTokenCaches, TextUtil.textTokenCacheLoader);
+
+			List<String> tokens = textTokenCache.getIfPresent(value);
+			if(tokens == null){
+				String string = TextUtil.normalize(textIndex, value.asString());
+
+				tokens = TextUtil.tokenize(textIndex, string);
+
+				textTokenCache.put(value, tokens);
+			}
+
+			return tokens;
+		}
+	}
+
+	static
+	class TermProcessor extends StringProcessor {
+
+		TermProcessor(TextIndex textIndex, FieldValue value){
+			super(textIndex, value);
+		}
+
+		@Override
+		public List<String> process(){
+			TextIndex textIndex = getTextIndex();
+			FieldValue value = getValue();
+
+			Cache<FieldValue, List<String>> termTokenCache = CacheUtil.getValue(textIndex, TextUtil.termTokenCaches, TextUtil.termTokenCacheLoader);
+
+			List<String> tokens = termTokenCache.getIfPresent(value);
+			if(tokens == null){
+				String string = value.asString();
+
+				tokens = TextUtil.tokenize(textIndex, string);
+
+				termTokenCache.put(value, tokens);
+			}
+
+			return tokens;
+		}
+	}
+
+	private static final Cache<TextIndex, Cache<FieldValue, List<String>>> textTokenCaches = CacheUtil.buildCache();
+
+	private static final Callable<Cache<FieldValue, List<String>>> textTokenCacheLoader = new Callable<Cache<FieldValue, List<String>>>(){
+
+		@Override
+		public Cache<FieldValue, List<String>> call(){
+			return CacheUtil.buildCache();
+		}
+	};
+
+	private static final Cache<TextIndex, Cache<FieldValue, List<String>>> termTokenCaches = CacheUtil.buildCache();
+
+	private static final Callable<Cache<FieldValue, List<String>>> termTokenCacheLoader = new Callable<Cache<FieldValue, List<String>>>(){
+
+		@Override
+		public Cache<FieldValue, List<String>> call(){
+			return CacheUtil.buildCache();
+		}
+	};
 }

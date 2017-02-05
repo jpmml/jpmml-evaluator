@@ -176,7 +176,7 @@ public class TextUtilTest {
 
 		InlineTable inlineTable = ExpressionUtilTest.createInlineTable(rows, columns);
 
-		return TextUtil.normalize(inlineTable, text, columns.get(0), columns.get(1), columns.get(2), tokenizer, caseSensitive, maxLevenshteinDistance);
+		return TextUtil.normalize(inlineTable, columns.get(0), columns.get(1), columns.get(2), text, tokenizer, caseSensitive, maxLevenshteinDistance);
 	}
 
 	static

@@ -45,7 +45,6 @@ import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.TextIndex;
-import org.dmg.pmml.TextIndexNormalization;
 import org.dmg.pmml.TypeDefinitionField;
 
 public class ExpressionUtil {
@@ -307,23 +306,20 @@ public class ExpressionUtil {
 
 		FieldValue termValue = ExpressionUtil.evaluate(expression, context);
 
-		// XXX
+		// See http://mantis.dmg.org/view.php?id=171
 		if(textValue == null || termValue == null){
 			return null;
 		}
 
-		String textString = textValue.asString();
-		String termString = termValue.asString();
+		TextUtil.TextProcessor textProcessor = new TextUtil.TextProcessor(textIndex, textValue);
 
-		if(textIndex.hasTextIndexNormalizations()){
-			List<TextIndexNormalization> textIndexNormalizations = textIndex.getTextIndexNormalizations();
+		List<String> textTokens = textProcessor.process();
 
-			for(TextIndexNormalization textIndexNormalization : textIndexNormalizations){
-				textString = TextUtil.normalize(textIndex, textIndexNormalization, textString);
-			}
-		}
+		TextUtil.TermProcessor termProcessor = new TextUtil.TermProcessor(textIndex, termValue);
 
-		int termFrequency = TextUtil.termFrequency(textIndex, textString, termString);
+		List<String> termTokens = termProcessor.process();
+
+		int termFrequency = TextUtil.termFrequency(textIndex, textTokens, termTokens);
 
 		TextIndex.LocalTermWeights localTermWeights = textIndex.getLocalTermWeights();
 		switch(localTermWeights){

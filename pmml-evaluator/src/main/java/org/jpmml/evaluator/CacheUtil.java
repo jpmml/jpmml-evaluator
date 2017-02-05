@@ -79,14 +79,14 @@ public class CacheUtil {
 	}
 
 	static
-	public <K extends PMMLObject, V> Cache<K, V> buildCache(){
+	public <K, V> Cache<K, V> buildCache(){
 		CacheBuilder<Object, Object> cacheBuilder = newCacheBuilder();
 
 		return cacheBuilder.build();
 	}
 
 	static
-	public <K extends PMMLObject, V> LoadingCache<K, V> buildLoadingCache(CacheLoader<K, V> cacheLoader){
+	public <K, V> LoadingCache<K, V> buildLoadingCache(CacheLoader<K, V> cacheLoader){
 		CacheBuilder<Object, Object> cacheBuilder = newCacheBuilder();
 
 		return cacheBuilder.build(cacheLoader);
