@@ -21,9 +21,18 @@ package org.jpmml.evaluator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import com.google.common.io.ByteStreams;
+import org.dmg.pmml.Application;
+import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.PMMLObject;
+import org.dmg.pmml.Visitor;
+import org.dmg.pmml.VisitorAction;
+import org.jpmml.evaluator.visitors.InvalidFeatureInspector;
+import org.jpmml.evaluator.visitors.UnsupportedFeatureInspector;
 import org.jpmml.model.visitors.LocatorTransformer;
 
 abstract
@@ -86,10 +95,44 @@ public class IntegrationTestBatch extends ArchiveBatch {
 	}
 
 	static
-	private void ensureSerializability(Evaluator evaluator) throws IOException {
+	protected void ensureValidity(PMMLObject object){
+		List<Visitor> visitors = Arrays.<Visitor>asList(
+			new UnsupportedFeatureInspector(),
+			new InvalidFeatureInspector(){
+
+				@Override
+				public VisitorAction visit(Application application){
+					String name = application.getName();
+
+					if(name == null){
+						return VisitorAction.SKIP;
+					}
+
+					return super.visit(application);
+				}
+
+				@Override
+				public VisitorAction visit(MiningSchema miningSchema){
+
+					if(!miningSchema.hasMiningFields()){
+						return VisitorAction.SKIP;
+					}
+
+					return super.visit(miningSchema);
+				}
+			}
+		);
+
+		for(Visitor visitor : visitors){
+			visitor.applyTo(object);
+		}
+	}
+
+	static
+	protected void ensureSerializability(Object object) throws IOException {
 
 		try(ObjectOutputStream oos = new ObjectOutputStream(ByteStreams.nullOutputStream())){
-			oos.writeObject(evaluator);
+			oos.writeObject(object);
 		}
 	}
 }
