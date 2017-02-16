@@ -402,7 +402,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 			for(OutputField outputField : outputFields){
 				org.dmg.pmml.OutputField pmmlOutputField = outputField.getOutputField();
-;
+
 				if(!(pmmlOutputField.getResultFeature()).equals(ResultFeature.RESIDUAL)){
 					continue;
 				}
