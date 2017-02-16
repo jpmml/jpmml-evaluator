@@ -51,7 +51,7 @@ Supported model types:
 * [Regression] (http://www.dmg.org/pmml/v4-3/Regression.html) (regression, classification).
 * [Rule set] (http://www.dmg.org/pmml/v4-3/RuleSet.html) (classification).
 * [Scorecard] (http://www.dmg.org/pmml/v4-3/Scorecard.html) (regression).
-* [Tree model] (http://www.dmg.org/pmml/v4-3/TreeModel.html) (classification):
+* [Tree model] (http://www.dmg.org/pmml/v4-3/TreeModel.html) (regression, classification):
   * Except for `aggregateNodes` and `weightedConfidence` values of the `missingValueStrategy` attribute.
 * [Support Vector Machine (SVM)] (http://www.dmg.org/pmml/v4-3/SupportVectorMachine.html) (regression, classification):
   * Except for the `Coefficients` value of the `svmRepresentation` attribute.
