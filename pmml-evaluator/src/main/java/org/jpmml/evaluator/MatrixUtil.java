@@ -140,7 +140,7 @@ public class MatrixUtil {
 
 			@Override
 			public boolean apply(MatCell matCell){
-				return (getRow(matCell) == row) && (getColumn(matCell) == column);
+				return (matCell.getRow() == row) && (matCell.getCol() == column);
 			}
 		};
 
@@ -192,7 +192,7 @@ public class MatrixUtil {
 					if(matCells.size() > 0){
 						MatCell matCell = Collections.max(matCells, MatrixUtil.rowComparator);
 
-						return getRow(matCell);
+						return matCell.getRow();
 					}
 				}
 				break;
@@ -245,7 +245,7 @@ public class MatrixUtil {
 					if(matCells.size() > 0){
 						MatCell matCell = Collections.max(matCells, MatrixUtil.columnComparator);
 
-						return getColumn(matCell);
+						return matCell.getCol();
 					}
 				}
 				break;
@@ -256,31 +256,11 @@ public class MatrixUtil {
 		throw new InvalidFeatureException(matrix);
 	}
 
-	static
-	private int getRow(MatCell matCell){
-		Integer row = matCell.getRow();
-		if(row == null){
-			throw new InvalidFeatureException(matCell);
-		}
-
-		return row.intValue();
-	}
-
-	static
-	private int getColumn(MatCell matCell){
-		Integer column = matCell.getCol();
-		if(column == null){
-			throw new InvalidFeatureException(matCell);
-		}
-
-		return column.intValue();
-	}
-
 	private static final Comparator<MatCell> rowComparator = new Comparator<MatCell>(){
 
 		@Override
 		public int compare(MatCell left, MatCell right){
-			return (getRow(left) - getRow(right));
+			return (left.getRow() - right.getRow());
 		}
 	};
 
@@ -288,7 +268,7 @@ public class MatrixUtil {
 
 		@Override
 		public int compare(MatCell left, MatCell right){
-			return (getColumn(left) - getColumn(right));
+			return (left.getCol() - right.getCol());
 		}
 	};
 }

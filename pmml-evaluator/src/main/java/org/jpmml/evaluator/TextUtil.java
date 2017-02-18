@@ -133,8 +133,10 @@ public class TextUtil {
 		int regexFlags = (caseSensitive ? 0 : (Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE));
 
 		List<Row> rows = inlineTable.getRows();
-		for(int rowKey = 1; rowKey <= rows.size(); rowKey++){
-			Row row = rows.get(rowKey - 1);
+		for(int i = 0; i < rows.size(); i++){
+			Row row = rows.get(i);
+
+			Integer rowKey = (i + 1);
 
 			String inValue = table.get(rowKey, inColumn);
 			String outValue = table.get(rowKey, outColumn);

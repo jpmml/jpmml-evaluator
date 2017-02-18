@@ -325,10 +325,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		for(int i = 0, max = scoreDistributions.size(); i < max; i++){
 			ScoreDistribution scoreDistribution = scoreDistributions.get(i);
 
-			Double recordCount = scoreDistribution.getRecordCount();
-			if(recordCount == null){
-				throw new InvalidFeatureException(scoreDistribution);
-			}
+			double recordCount = scoreDistribution.getRecordCount();
 
 			sum += recordCount;
 		} // End for
@@ -338,7 +335,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 			Double probability = scoreDistribution.getProbability();
 			if(probability == null){
-				Double recordCount = scoreDistribution.getRecordCount();
+				double recordCount = scoreDistribution.getRecordCount();
 
 				probability = (recordCount / sum);
 			}
