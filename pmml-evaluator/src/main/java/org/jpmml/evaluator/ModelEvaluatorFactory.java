@@ -117,6 +117,10 @@ public class ModelEvaluatorFactory implements Serializable {
 
 		if(model instanceof TreeModel){
 			return new TreeModelEvaluator(pmml, (TreeModel)model);
+		} // End if
+
+		if(model instanceof JavaModel){
+			return new JavaModelEvaluator(pmml, (JavaModel)model);
 		}
 
 		throw new UnsupportedFeatureException(model);
