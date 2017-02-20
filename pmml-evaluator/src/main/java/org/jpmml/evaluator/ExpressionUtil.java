@@ -75,7 +75,7 @@ public class ExpressionUtil {
 	FieldValue evaluateExpression(Expression expression, EvaluationContext context){
 
 		if(expression instanceof Constant){
-			return evaluateConstant((Constant)expression, context);
+			return evaluateConstant((Constant)expression);
 		} else
 
 		if(expression instanceof FieldRef){
@@ -108,6 +108,10 @@ public class ExpressionUtil {
 
 		if(expression instanceof Aggregate){
 			return evaluateAggregate((Aggregate)expression, context);
+		} // End if
+
+		if(expression instanceof JavaExpression){
+			return evaluateJavaExpression((JavaExpression)expression, context);
 		}
 
 		throw new UnsupportedFeatureException(expression);
@@ -212,7 +216,7 @@ public class ExpressionUtil {
 	}
 
 	static
-	public FieldValue evaluateConstant(Constant constant, EvaluationContext context){
+	public FieldValue evaluateConstant(Constant constant){
 
 		if(constant instanceof HasParsedValue){
 			HasParsedValue<?> hasParsedValue = (HasParsedValue<?>)constant;
@@ -494,5 +498,12 @@ public class ExpressionUtil {
 			default:
 				throw new UnsupportedFeatureException(aggregate, function);
 		}
+	}
+
+	static
+	public FieldValue evaluateJavaExpression(JavaExpression javaExpression, EvaluationContext context){
+		FieldValue value = javaExpression.evaluate(context);
+
+		return value;
 	}
 }
