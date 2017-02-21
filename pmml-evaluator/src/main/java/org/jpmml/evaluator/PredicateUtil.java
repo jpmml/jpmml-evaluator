@@ -77,6 +77,10 @@ public class PredicateUtil {
 
 		if(predicate instanceof False){
 			return evaluateFalse((False)predicate);
+		} // End if
+
+		if(predicate instanceof JavaPredicate){
+			return evaluateJavaPredicate((JavaPredicate)predicate, context);
 		}
 
 		throw new UnsupportedFeatureException(predicate);
@@ -230,6 +234,13 @@ public class PredicateUtil {
 	static
 	public Boolean evaluateFalse(False falsePredicate){
 		return Boolean.FALSE;
+	}
+
+	static
+	public Boolean evaluateJavaPredicate(JavaPredicate javaPredicate, EvaluationContext context){
+		Boolean result = javaPredicate.evaluate(context);
+
+		return result;
 	}
 
 	static
