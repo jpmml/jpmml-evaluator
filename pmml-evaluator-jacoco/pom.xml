@@ -109,27 +109,27 @@
 								<artifactItem>
 									<groupId>org.jacoco</groupId>
 									<artifactId>org.jacoco.ant</artifactId>
-									<version>0.7.8</version>
+									<version>0.7.9</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.jacoco</groupId>
 									<artifactId>org.jacoco.agent</artifactId>
-									<version>0.7.8</version>
+									<version>0.7.9</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.jacoco</groupId>
 									<artifactId>org.jacoco.core</artifactId>
-									<version>0.7.8</version>
+									<version>0.7.9</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.jacoco</groupId>
 									<artifactId>org.jacoco.report</artifactId>
-									<version>0.7.8</version>
+									<version>0.7.9</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.ow2.asm</groupId>
 									<artifactId>asm-debug-all</artifactId>
-									<version>5.0.1</version>
+									<version>5.2</version>
 								</artifactItem>
 							</artifactItems>
 							<outputDirectory>${basedir}/target/jacoco-libs</outputDirectory>
