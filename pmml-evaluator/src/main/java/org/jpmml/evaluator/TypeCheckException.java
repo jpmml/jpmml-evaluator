@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.Field;
 
 /**
  * <p>
@@ -27,6 +28,10 @@ import org.dmg.pmml.DataType;
  * </p>
  */
 public class TypeCheckException extends EvaluationException {
+
+	public TypeCheckException(Field field, Object value){
+		this(field.getDataType(), value);
+	}
 
 	public TypeCheckException(DataType expected, Object value){
 		this(formatDataType(expected), formatDataType(getDataType(value)), value);

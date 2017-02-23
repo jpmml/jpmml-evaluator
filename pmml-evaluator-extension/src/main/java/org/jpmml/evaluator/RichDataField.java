@@ -48,6 +48,10 @@ public class RichDataField extends DataField implements HasParsedValueMapping<Va
 		ReflectionUtil.copyState(dataField, this);
 	}
 
+	public Map<FieldValue, Value> getValueMapping(){
+		return getValueMapping(getDataType(), getOpType());
+	}
+
 	@Override
 	public Map<FieldValue, Value> getValueMapping(DataType dataType, OpType opType){
 
@@ -61,23 +65,34 @@ public class RichDataField extends DataField implements HasParsedValueMapping<Va
 	private Map<FieldValue, Value> parseValues(DataType dataType, OpType opType){
 		Map<FieldValue, Value> result = new LinkedHashMap<>();
 
-		List<Value> fieldValues = getValues();
-		for(Value fieldValue : fieldValues){
-			Value.Property property = fieldValue.getProperty();
+		List<Value> pmmlValues = getValues();
+		for(Value pmmlValue : pmmlValues){
+			Value.Property property = pmmlValue.getProperty();
 
 			switch(property){
 				case VALID:
 					{
-						FieldValue value = FieldValueUtil.create(dataType, opType, fieldValue.getValue());
+						FieldValue value = FieldValueUtil.create(dataType, opType, pmmlValue.getValue());
 
-						result.put(value, fieldValue);
+						result.put(value, pmmlValue);
 					}
 					break;
 				case INVALID:
 				case MISSING:
+					{
+						FieldValue value;
+
+						try {
+							value = FieldValueUtil.create(dataType, opType, pmmlValue.getValue());
+						} catch(IllegalArgumentException | TypeCheckException e){
+							continue;
+						}
+
+						result.put(value, pmmlValue);
+					}
 					break;
 				default:
-					throw new UnsupportedFeatureException(fieldValue, property);
+					throw new UnsupportedFeatureException(pmmlValue, property);
 			}
 		}
 

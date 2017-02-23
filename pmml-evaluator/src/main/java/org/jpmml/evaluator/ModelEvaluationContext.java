@@ -253,7 +253,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 		} else
 
 		{
-			return FieldValueUtil.performValidValueTreatment(field, miningField, FieldValueUtil.getValue(value));
+			return FieldValueUtil.performValidValueTreatment(field, miningField, value);
 		}
 	}
 }

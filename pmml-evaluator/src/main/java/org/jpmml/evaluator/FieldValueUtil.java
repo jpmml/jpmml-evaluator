@@ -60,45 +60,40 @@ public class FieldValueUtil {
 
 		if(dataType == null || opType == null){
 			throw new InvalidFeatureException(field);
-		}
-
-		Value.Property status;
+		} // End if
 
 		if(value == null){
-			status = Value.Property.MISSING;
+			return performMissingValueTreatment(field, miningField);
 		} else
 
 		// XXX
 		if(value instanceof Collection){
-			status = Value.Property.VALID;
+			return createInputValue(field, miningField, value);
 		} else
 
 		{
 			boolean compatible;
 
 			try {
-				value = TypeUtil.parseOrCast(dataType, value);
+				value = createInputValue(field, miningField, value);
 
 				compatible = true;
 			} catch(IllegalArgumentException | TypeCheckException e){
 				compatible = false;
 			}
 
-			status = getStatus(field, miningField, value, compatible);
+			Value.Property status = getStatus(field, miningField, value, compatible);
+			switch(status){
+				case VALID:
+					return performValidValueTreatment(field, miningField, (FieldValue)value);
+				case INVALID:
+					return performInvalidValueTreatment(field, miningField, value);
+				case MISSING:
+					return performMissingValueTreatment(field, miningField);
+				default:
+					throw new EvaluationException();
+			}
 		}
-
-		switch(status){
-			case VALID:
-				return performValidValueTreatment(field, miningField, value);
-			case INVALID:
-				return performInvalidValueTreatment(field, miningField, value);
-			case MISSING:
-				return performMissingValueTreatment(field, miningField);
-			default:
-				break;
-		}
-
-		throw new EvaluationException();
 	}
 
 	static
@@ -122,52 +117,49 @@ public class FieldValueUtil {
 	}
 
 	static
-	public FieldValue performValidValueTreatment(Field field, MiningField miningField, Object value){
+	public FieldValue performValidValueTreatment(Field field, MiningField miningField, FieldValue value){
 		OutlierTreatmentMethod outlierTreatmentMethod = miningField.getOutlierTreatment();
+
+		switch(outlierTreatmentMethod){
+			case AS_IS:
+				return createInputValue(field, miningField, value);
+			case AS_MISSING_VALUES:
+			case AS_EXTREME_VALUES:
+				break;
+			default:
+				throw new UnsupportedFeatureException(miningField, outlierTreatmentMethod);
+		}
 
 		Double lowValue = miningField.getLowValue();
 		Double highValue = miningField.getHighValue();
 
-		Double doubleValue = null;
+		if(lowValue == null || highValue == null){
+			throw new InvalidFeatureException(miningField);
+		} // End if
+
+		if((lowValue).compareTo(highValue) > 0){
+			throw new InvalidFeatureException(miningField);
+		} // End if
+
+		if(value == null){
+			throw new TypeCheckException(Number.class, null);
+		}
+
+		Number numberValue = value.asNumber();
 
 		switch(outlierTreatmentMethod){
 			case AS_MISSING_VALUES:
-			case AS_EXTREME_VALUES:
-				{
-					if(lowValue == null || highValue == null){
-						throw new InvalidFeatureException(miningField);
-					} // End if
-
-					if((lowValue).compareTo(highValue) > 0){
-						throw new InvalidFeatureException(miningField);
-					}
-
-					doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
-				}
-				break;
-			default:
-				break;
-		} // End switch
-
-		switch(outlierTreatmentMethod){
-			case AS_IS:
-				break;
-			case AS_MISSING_VALUES:
-				{
-					if((doubleValue).compareTo(lowValue) < 0 || (doubleValue).compareTo(highValue) > 0){
-						return createMissingInputValue(field, miningField);
-					}
+				if((numberValue.doubleValue() < lowValue) || (numberValue.doubleValue() > highValue)){
+					return createMissingInputValue(field, miningField);
 				}
 				break;
 			case AS_EXTREME_VALUES:
-				{
-					if((doubleValue).compareTo(lowValue) < 0){
-						value = lowValue;
-					} else
+				if(numberValue.doubleValue() < lowValue){
+					return createInputValue(field, miningField, lowValue);
+				} else
 
-					if((doubleValue).compareTo(highValue) > 0){
-						value = highValue;
-					}
+				if(numberValue.doubleValue() > highValue){
+					return createInputValue(field, miningField, highValue);
 				}
 				break;
 			default:
@@ -253,9 +245,6 @@ public class FieldValueUtil {
 		return (compatible ? Value.Property.VALID : Value.Property.INVALID);
 	}
 
-	@SuppressWarnings (
-		value = {"fallthrough"}
-	)
 	static
 	private Value.Property getStatus(DataField dataField, MiningField miningField, Object value, boolean compatible){
 		boolean hasValidSpace = false;
@@ -267,17 +256,19 @@ public class FieldValueUtil {
 			if(dataField instanceof HasParsedValueMapping){
 				HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)dataField;
 
-				Value fieldValue = getValidValue(hasParsedValueMapping, dataType, opType, value);
-				if(fieldValue != null){
-					return Value.Property.VALID;
+				Value pmmlValue = getValue(hasParsedValueMapping, dataType, opType, value);
+				if(pmmlValue != null){
+					return pmmlValue.getProperty();
 				}
 			}
 
-			List<Value> fieldValues = dataField.getValues();
-			for(int i = 0, max = fieldValues.size(); i < max; i++){
-				Value fieldValue = fieldValues.get(i);
+			List<Value> pmmlValues = dataField.getValues();
+			for(int i = 0, max = pmmlValues.size(); i < max; i++){
+				Value pmmlValue = pmmlValues.get(i);
 
-				Value.Property property = fieldValue.getProperty();
+				boolean equals;
+
+				Value.Property property = pmmlValue.getProperty();
 				switch(property){
 					case VALID:
 						{
@@ -285,21 +276,39 @@ public class FieldValueUtil {
 
 							if(!compatible){
 								continue;
+							} // End if
+
+							if(value instanceof FieldValue){
+								FieldValue fieldValue = (FieldValue)value;
+
+								equals = fieldValue.equalsString(pmmlValue.getValue());
+							} else
+
+							{
+								equals = equals(dataType, value, pmmlValue.getValue());
 							}
 						}
-						// Falls through
+						break;
 					case INVALID:
 					case MISSING:
 						{
-							boolean equals = equals(dataType, value, fieldValue.getValue());
+							if(value instanceof FieldValue){
+								FieldValue fieldValue = (FieldValue)value;
 
-							if(equals){
-								return property;
+								equals = equals(dataType, FieldValueUtil.getValue(fieldValue), pmmlValue.getValue());
+							} else
+
+							{
+								equals = equals(dataType, value, pmmlValue.getValue());
 							}
 						}
 						break;
 					default:
-						throw new UnsupportedFeatureException(fieldValue, property);
+						throw new UnsupportedFeatureException(pmmlValue, property);
+				}
+
+				if(equals){
+					return property;
 				}
 			}
 		} // End if
@@ -323,7 +332,17 @@ public class FieldValueUtil {
 					{
 						RangeSet<Double> validRanges = getValidRanges(dataField);
 
-						Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
+						Double doubleValue;
+
+						if(value instanceof FieldValue){
+							FieldValue fieldValue = (FieldValue)value;
+
+							doubleValue = fieldValue.asDouble();
+						} else
+
+						{
+							throw new EvaluationException();
+						}
 
 						// "If intervals are present, then a value that is outside the intervals is considered invalid"
 						return (validRanges.contains(doubleValue) ? Value.Property.VALID : Value.Property.INVALID);
@@ -356,7 +375,13 @@ public class FieldValueUtil {
 		DataType dataType = field.getDataType();
 		OpType opType = getOpType(field, miningField);
 
-		return create(dataType, opType, value);
+		FieldValue fieldValue = createOrRefine(dataType, opType, value);
+
+		if(field instanceof TypeDefinitionField){
+			return enhance((TypeDefinitionField)field, fieldValue);
+		}
+
+		return fieldValue;
 	}
 
 	static
@@ -374,7 +399,13 @@ public class FieldValueUtil {
 		DataType dataType = field.getDataType();
 		OpType opType = getOpType(field, miningField, target);
 
-		return create(dataType, opType, value);
+		FieldValue fieldValue = createOrRefine(dataType, opType, value);
+
+		if(field instanceof TypeDefinitionField){
+			return enhance((TypeDefinitionField)field, fieldValue);
+		}
+
+		return fieldValue;
 	}
 
 	static
@@ -433,18 +464,7 @@ public class FieldValueUtil {
 			}
 		}
 
-		switch(opType){
-			case CONTINUOUS:
-				return ContinuousValue.create(dataType, value);
-			case CATEGORICAL:
-				return CategoricalValue.create(dataType, value);
-			case ORDINAL:
-				return OrdinalValue.create(dataType, value);
-			default:
-				break;
-		}
-
-		throw new EvaluationException();
+		return createInternal(dataType, opType, value);
 	}
 
 	static
@@ -484,19 +504,38 @@ public class FieldValueUtil {
 		DataType refinedDataType = firstNonNull(dataType, valueDataType);
 		OpType refinedOpType = firstNonNull(opType, valueOpType);
 
-		if((refinedDataType).equals(valueDataType) && (refinedOpType).equals(valueOpType)){
-			return value;
+		if((refinedDataType).equals(valueDataType)){
+
+			if((refinedOpType).equals(valueOpType)){
+				return value;
+			}
+
+			return createInternal(refinedDataType, refinedOpType, value.getValue());
 		}
 
 		return create(refinedDataType, refinedOpType, value.getValue());
 	}
 
 	static
-	private FieldValue enhance(TypeDefinitionField field, FieldValue value){
+	private FieldValue createOrRefine(DataType dataType, OpType opType, Object value){
 
 		if(value == null){
 			return null;
 		} // End if
+
+		if(value instanceof FieldValue){
+			FieldValue fieldValue = (FieldValue)value;
+
+			return refine(dataType, opType, fieldValue);
+		} else
+
+		{
+			return create(dataType, opType, value);
+		}
+	}
+
+	static
+	private FieldValue enhance(TypeDefinitionField field, FieldValue value){
 
 		if(value instanceof OrdinalValue){
 			OrdinalValue ordinalValue = (OrdinalValue)value;
@@ -505,6 +544,21 @@ public class FieldValueUtil {
 		}
 
 		return value;
+	}
+
+	static
+	private FieldValue createInternal(DataType dataType, OpType opType, Object value){
+
+		switch(opType){
+			case CONTINUOUS:
+				return ContinuousValue.create(dataType, value);
+			case CATEGORICAL:
+				return CategoricalValue.create(dataType, value);
+			case ORDINAL:
+				return OrdinalValue.create(dataType, value);
+			default:
+				throw new EvaluationException();
+		}
 	}
 
 	static
@@ -533,21 +587,28 @@ public class FieldValueUtil {
 			if(field instanceof HasParsedValueMapping){
 				HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)field;
 
-				return getValidValue(hasParsedValueMapping, dataType, opType, value);
+				FieldValue fieldValue = createInternal(dataType, opType, value);
+
+				Value pmmlValue = getValue(hasParsedValueMapping, dataType, opType, fieldValue);
+				if(pmmlValue != null && (Value.Property.VALID).equals(pmmlValue.getProperty())){
+					return pmmlValue;
+				}
+
+				return null;
 			}
 
-			List<Value> fieldValues = field.getValues();
-			for(int i = 0, max = fieldValues.size(); i < max; i++){
-				Value fieldValue = fieldValues.get(i);
+			List<Value> pmmlValues = field.getValues();
+			for(int i = 0, max = pmmlValues.size(); i < max; i++){
+				Value pmmlValue = pmmlValues.get(i);
 
-				Value.Property property = fieldValue.getProperty();
+				Value.Property property = pmmlValue.getProperty();
 				switch(property){
 					case VALID:
 						{
-							boolean equals = equals(dataType, value, fieldValue.getValue());
+							boolean equals = equals(dataType, value, pmmlValue.getValue());
 
 							if(equals){
-								return fieldValue;
+								return pmmlValue;
 							}
 						}
 						break;
@@ -555,7 +616,7 @@ public class FieldValueUtil {
 					case MISSING:
 						break;
 					default:
-						throw new UnsupportedFeatureException(fieldValue, property);
+						throw new UnsupportedFeatureException(pmmlValue, property);
 				}
 			}
 		}
@@ -564,11 +625,11 @@ public class FieldValueUtil {
 	}
 
 	static
-	private Value getValidValue(HasParsedValueMapping<?> hasParsedValueMapping, DataType dataType, OpType opType, Object object){
-		FieldValue value;
+	private Value getValue(HasParsedValueMapping<?> hasParsedValueMapping, DataType dataType, OpType opType, Object value){
+		FieldValue fieldValue;
 
 		try {
-			value = FieldValueUtil.create(dataType, opType, object);
+			fieldValue = createOrRefine(dataType, opType, value);
 		} catch(IllegalArgumentException | TypeCheckException e){
 			return null;
 		}
@@ -582,23 +643,23 @@ public class FieldValueUtil {
 	public List<Value> getValidValues(TypeDefinitionField field){
 
 		if(field.hasValues()){
-			List<Value> fieldValues = field.getValues();
+			List<Value> pmmlValues = field.getValues();
 
-			List<Value> result = new ArrayList<>(fieldValues.size());
+			List<Value> result = new ArrayList<>(pmmlValues.size());
 
-			for(int i = 0, max = fieldValues.size(); i < max; i++){
-				Value fieldValue = fieldValues.get(i);
+			for(int i = 0, max = pmmlValues.size(); i < max; i++){
+				Value pmmlValue = pmmlValues.get(i);
 
-				Value.Property property = fieldValue.getProperty();
+				Value.Property property = pmmlValue.getProperty();
 				switch(property){
 					case VALID:
-						result.add(fieldValue);
+						result.add(pmmlValue);
 						break;
 					case INVALID:
 					case MISSING:
 						break;
 					default:
-						throw new UnsupportedFeatureException(fieldValue, property);
+						throw new UnsupportedFeatureException(pmmlValue, property);
 				}
 			}
 
