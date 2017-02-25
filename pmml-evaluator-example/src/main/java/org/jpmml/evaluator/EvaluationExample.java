@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.io.Console;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -82,11 +83,20 @@ public class EvaluationExample extends Example {
 	private File output = null;
 
 	@Parameter (
+		names = {"--factory-class"},
+		description = "The name of ModelEvaluatorFactory implementation class"
+	)
+	@ParameterOrder (
+		value = 4
+	)
+	private String factoryClazz = ModelEvaluatorFactory.class.getName();
+
+	@Parameter (
 		names = {"--separator"},
 		description = "CSV cell separator character"
 	)
 	@ParameterOrder (
-		value = 4
+		value = 5
 	)
 	private String separator = null;
 
@@ -96,7 +106,7 @@ public class EvaluationExample extends Example {
 		arity = 1
 	)
 	@ParameterOrder (
-		value = 5
+		value = 6
 	)
 	private boolean copyColumns = true;
 
@@ -182,7 +192,11 @@ public class EvaluationExample extends Example {
 			}
 		}
 
-		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
+		Class<?> factoryClazz = Class.forName(this.factoryClazz);
+
+		Method newInstanceMethod = factoryClazz.getDeclaredMethod("newInstance");
+
+		ModelEvaluatorFactory modelEvaluatorFactory = (ModelEvaluatorFactory)newInstanceMethod.invoke(null);
 
 		Evaluator evaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
 
