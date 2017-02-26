@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -115,6 +116,15 @@ public class Example {
 		try(OutputStream os = new FileOutputStream(file)){
 			CsvUtil.writeTable(table, os);
 		}
+	}
+
+	static
+	public ModelEvaluatorFactory newModelEvaluatorFactory(Class<?> factoryClazz) throws ReflectiveOperationException {
+		Method newInstanceMethod = factoryClazz.getDeclaredMethod("newInstance");
+
+		ModelEvaluatorFactory modelEvaluatorFactory = (ModelEvaluatorFactory)newInstanceMethod.invoke(null);
+
+		return modelEvaluatorFactory;
 	}
 
 	public static final Function<String, String> CSV_PARSER = new Function<String, String>(){

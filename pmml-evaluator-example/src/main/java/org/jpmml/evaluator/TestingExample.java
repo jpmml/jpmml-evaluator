@@ -61,11 +61,20 @@ public class TestingExample extends Example {
 	private File output = null;
 
 	@Parameter (
+		names = "--factory-class",
+		description = "Name of ModelEvaluatorFactory class"
+	)
+	@ParameterOrder (
+		value = 4
+	)
+	private String factoryClazz = ModelEvaluatorFactory.class.getName();
+
+	@Parameter (
 		names = {"--separator"},
 		description = "CSV cell separator character"
 	)
 	@ParameterOrder (
-		value = 4
+		value = 5
 	)
 	private String separator = null;
 
@@ -75,7 +84,7 @@ public class TestingExample extends Example {
 		converter = FieldNameConverter.class
 	)
 	@ParameterOrder (
-		value = 5
+		value = 6
 	)
 	private List<FieldName> ignoredFields = new ArrayList<>();
 
@@ -84,7 +93,7 @@ public class TestingExample extends Example {
 		description = "Relative error"
 	)
 	@ParameterOrder (
-		value = 6
+		value = 7
 	)
 	private double precision = 1e-9;
 
@@ -93,7 +102,7 @@ public class TestingExample extends Example {
 		description = "Absolute error near zero"
 	)
 	@ParameterOrder (
-		value = 7
+		value = 8
 	)
 	private double zeroThreshold = 1e-9;
 
@@ -111,7 +120,7 @@ public class TestingExample extends Example {
 
 		CsvUtil.Table outputTable = readTable(this.output, this.separator);
 
-		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
+		ModelEvaluatorFactory modelEvaluatorFactory = newModelEvaluatorFactory(Class.forName(this.factoryClazz));
 
 		Evaluator evaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
 

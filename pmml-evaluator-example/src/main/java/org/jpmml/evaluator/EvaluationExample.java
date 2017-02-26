@@ -20,7 +20,6 @@ package org.jpmml.evaluator;
 
 import java.io.Console;
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -84,7 +83,7 @@ public class EvaluationExample extends Example {
 
 	@Parameter (
 		names = {"--factory-class"},
-		description = "The name of ModelEvaluatorFactory implementation class"
+		description = "Name of ModelEvaluatorFactory class"
 	)
 	@ParameterOrder (
 		value = 4
@@ -192,11 +191,7 @@ public class EvaluationExample extends Example {
 			}
 		}
 
-		Class<?> factoryClazz = Class.forName(this.factoryClazz);
-
-		Method newInstanceMethod = factoryClazz.getDeclaredMethod("newInstance");
-
-		ModelEvaluatorFactory modelEvaluatorFactory = (ModelEvaluatorFactory)newInstanceMethod.invoke(null);
+		ModelEvaluatorFactory modelEvaluatorFactory = newModelEvaluatorFactory(Class.forName(this.factoryClazz));
 
 		Evaluator evaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
 
