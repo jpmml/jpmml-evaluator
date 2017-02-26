@@ -34,16 +34,15 @@ public class TextTokenizerTest {
 
 		TextTokenizer tokenizer = new TextTokenizer(pattern);
 
-		assertEquals(Collections.<String>emptyList(), tokenizer.tokenize(""));
+		assertEquals(Collections.emptyList(), tokenizer.tokenize(""));
 
-		assertEquals(Arrays.asList("", ""), tokenizer.tokenize(" "));
-		assertEquals(Arrays.asList("", ""), tokenizer.tokenize("\t\t\t"));
+		assertEquals(Collections.emptyList(), tokenizer.tokenize(" "));
+		assertEquals(Collections.emptyList(), tokenizer.tokenize("\t\t\t"));
 
-		assertEquals(Arrays.asList(""), tokenizer.tokenize(","));
-		assertEquals(Arrays.asList(""), tokenizer.tokenize(",,"));
-
-		assertEquals(Arrays.asList("", ""), tokenizer.tokenize(", ,"));
-		assertEquals(Arrays.asList("", "", "", ""), tokenizer.tokenize(" , , "));
+		assertEquals(Collections.emptyList(), tokenizer.tokenize(","));
+		assertEquals(Collections.emptyList(), tokenizer.tokenize(",,"));
+		assertEquals(Collections.emptyList(), tokenizer.tokenize(", ,"));
+		assertEquals(Collections.emptyList(), tokenizer.tokenize(" , , "));
 
 		assertEquals(Arrays.asList("one", "two", "three"), tokenizer.tokenize("one two three"));
 		assertEquals(Arrays.asList("one", "two", "three"), tokenizer.tokenize("one!, \u00BFtwo?, three."));

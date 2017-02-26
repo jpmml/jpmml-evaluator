@@ -40,8 +40,10 @@ public class TextTokenizer {
 			return Collections.<String>emptyList();
 		}
 
+		int count = 0;
+
 		String[] tokens = pattern.split(string, -1);
-		for(int i = 0; i < tokens.length; i++){
+		for(int i = 0, max = tokens.length; i < max; i++){
 			String token = tokens[i];
 
 			int begin = 0;
@@ -71,9 +73,21 @@ public class TextTokenizer {
 
 			if(begin > 0 || end < token.length()){
 				token = token.substring(begin, end);
+			} // End if
 
-				tokens[i] = token;
+			if(token.length() > 0){
+				tokens[count] = token;
+
+				count++;
 			}
+		}
+
+		if(count < tokens.length){
+			String[] tmpTokens = new String[count];
+
+			System.arraycopy(tokens, 0, tmpTokens, 0, count);
+
+			tokens = tmpTokens;
 		}
 
 		return ImmutableList.copyOf(tokens);
