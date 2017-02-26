@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.jpmml</groupId>
 		<artifactId>jpmml-evaluator</artifactId>
-		<version>1.3-SNAPSHOT</version>
+		<version>1.3.5</version>
 	</parent>
 
 	<groupId>org.jpmml</groupId>
@@ -69,7 +69,7 @@
 								<report>
 									<executionData>
 										<fileset file="${rootdir}/pmml-evaluator/target/jacoco.exec" />
-										<fileset file="${rootdir}/pmml-evaluator-extension/target/jacoco.exec"/>
+										<fileset file="${rootdir}/pmml-evaluator-extension/target/jacoco.exec" />
 										<fileset file="${rootdir}/pmml-knime/target/jacoco.exec" />
 										<fileset file="${rootdir}/pmml-rapidminer/target/jacoco.exec" />
 										<fileset file="${rootdir}/pmml-rattle/target/jacoco.exec" />
