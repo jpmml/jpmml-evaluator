@@ -100,43 +100,30 @@ public class EvaluationExample extends Example {
 	private String separator = null;
 
 	@Parameter (
+		names = {"--sparse"},
+		description = "Permit missing input field columns"
+	)
+	@ParameterOrder (
+		value = 6
+	)
+	private boolean sparse = false;
+
+	@Parameter (
 		names = {"--copy-columns"},
 		description = "Copy all columns from input CSV file to output CSV file",
 		arity = 1
 	)
 	@ParameterOrder (
-		value = 6
+		value = 7
 	)
 	private boolean copyColumns = true;
 
 	@Parameter (
-		names = {"--sparse"},
-		description = "Permit missing input field columns",
+		names = {"--wait-before-init"},
+		description = "Pause before initializing the JPMML stack",
 		hidden = true
 	)
-	private boolean sparse = false;
-
-	@Parameter (
-		names = {"--wait-before"},
-		description = "Pause before starting the work",
-		hidden = true
-	)
-	private boolean waitBefore = false;
-
-	@Parameter (
-		names = {"--wait-after"},
-		description = "Pause after completing the work",
-		hidden = true
-	)
-	private boolean waitAfter = false;
-
-	@Parameter (
-		names = "--loop",
-		description = "The number of repetitions",
-		hidden = true,
-		validateWith = PositiveInteger.class
-	)
-	private int loop = 1;
+	private boolean waitBeforeInit = false;
 
 	@Parameter (
 		names = "--cache-builder-spec",
@@ -151,6 +138,28 @@ public class EvaluationExample extends Example {
 		hidden = true
 	)
 	private boolean optimize = false;
+
+	@Parameter (
+		names = "--loop",
+		description = "The number of repetitions",
+		hidden = true,
+		validateWith = PositiveInteger.class
+	)
+	private int loop = 1;
+
+	@Parameter (
+		names = {"--wait-before-loop"},
+		description = "Pause before entering the main evaluation loop",
+		hidden = true
+	)
+	private boolean waitBeforeLoop = false;
+
+	@Parameter (
+		names = {"--wait-after-loop"},
+		description = "Pause after exiting the main evaluation loop",
+		hidden = true
+	)
+	private boolean waitAfterLoop = false;
 
 
 	static
@@ -171,7 +180,7 @@ public class EvaluationExample extends Example {
 
 		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, Example.CSV_PARSER);
 
-		if(this.waitBefore){
+		if(this.waitBeforeInit){
 			waitForUserInput();
 		}
 
@@ -233,9 +242,11 @@ public class EvaluationExample extends Example {
 
 		metricRegistry.register("main", timer);
 
-		int epoch = 0;
+		if(this.waitBeforeLoop){
+			waitForUserInput();
+		}
 
-		do {
+		for(int i = 0; i < this.loop; i++){
 			Timer.Context context = timer.time();
 
 			try {
@@ -261,11 +272,9 @@ public class EvaluationExample extends Example {
 			} finally {
 				context.close();
 			}
+		}
 
-			epoch++;
-		} while(epoch < this.loop);
-
-		if(this.waitAfter){
+		if(this.waitAfterLoop){
 			waitForUserInput();
 		}
 
