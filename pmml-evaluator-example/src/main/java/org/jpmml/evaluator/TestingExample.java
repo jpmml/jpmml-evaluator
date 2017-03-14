@@ -71,7 +71,8 @@ public class TestingExample extends Example {
 
 	@Parameter (
 		names = {"--separator"},
-		description = "CSV cell separator character"
+		description = "CSV cell separator character",
+		converter = SeparatorConverter.class
 	)
 	@ParameterOrder (
 		value = 5
