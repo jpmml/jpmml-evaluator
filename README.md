@@ -7,52 +7,52 @@ Java Evaluator API for Predictive Model Markup Language (PMML).
 
 JPMML-Evaluator is *de facto* the reference implementation of the PMML specification versions 3.0, 3.1, 3.2, 4.0, 4.1, 4.2 and 4.3 for the Java platform:
 
-1. Pre-processing of input fields according to the [DataDictionary] (http://www.dmg.org/pmml/v4-3/DataDictionary.html) and [MiningSchema] (http://www.dmg.org/pmml/v4-3/MiningSchema.html) elements:
+1. Pre-processing of input fields according to the [DataDictionary](http://www.dmg.org/pmml/v4-3/DataDictionary.html) and [MiningSchema](http://www.dmg.org/pmml/v4-3/MiningSchema.html) elements:
   * Complete data type system.
   * Complete operational type system.
   * Treatment of outlier, missing and/or invalid values.
 2. Model evaluation:
-  * [Association rules] (http://www.dmg.org/pmml/v4-3/AssociationRules.html)
-  * [Cluster model] (http://www.dmg.org/pmml/v4-3/ClusteringModel.html)
-  * [General regression] (http://www.dmg.org/pmml/v4-3/GeneralRegression.html)
-  * [Naive Bayes] (http://www.dmg.org/pmml/v4-3/NaiveBayes.html)
-  * [k-Nearest neighbors] (http://www.dmg.org/pmml/v4-3/KNN.html)
-  * [Neural network] (http://www.dmg.org/pmml/v4-3/NeuralNetwork.html)
-  * [Regression] (http://www.dmg.org/pmml/v4-3/Regression.html)
-  * [Rule set] (http://www.dmg.org/pmml/v4-3/RuleSet.html)
-  * [Scorecard] (http://www.dmg.org/pmml/v4-3/Scorecard.html)
-  * [Support Vector Machine] (http://www.dmg.org/pmml/v4-3/SupportVectorMachine.html)
-  * [Tree model] (http://www.dmg.org/pmml/v4-3/TreeModel.html)
-  * [Ensemble model] (http://www.dmg.org/pmml/v4-3/MultipleModels.html)
-3. Post-processing of target fields according to the [Targets] (http://www.dmg.org/pmml/v4-3/Targets.html) element:
+  * [Association rules](http://www.dmg.org/pmml/v4-3/AssociationRules.html)
+  * [Cluster model](http://www.dmg.org/pmml/v4-3/ClusteringModel.html)
+  * [General regression](http://www.dmg.org/pmml/v4-3/GeneralRegression.html)
+  * [Naive Bayes](http://www.dmg.org/pmml/v4-3/NaiveBayes.html)
+  * [k-Nearest neighbors](http://www.dmg.org/pmml/v4-3/KNN.html)
+  * [Neural network](http://www.dmg.org/pmml/v4-3/NeuralNetwork.html)
+  * [Regression](http://www.dmg.org/pmml/v4-3/Regression.html)
+  * [Rule set](http://www.dmg.org/pmml/v4-3/RuleSet.html)
+  * [Scorecard](http://www.dmg.org/pmml/v4-3/Scorecard.html)
+  * [Support Vector Machine](http://www.dmg.org/pmml/v4-3/SupportVectorMachine.html)
+  * [Tree model](http://www.dmg.org/pmml/v4-3/TreeModel.html)
+  * [Ensemble model](http://www.dmg.org/pmml/v4-3/MultipleModels.html)
+3. Post-processing of target fields according to the [Targets](http://www.dmg.org/pmml/v4-3/Targets.html) element:
   * Rescaling and/or casting regression results.
   * Replacing a missing regression result with the default value.
   * Replacing a missing classification result with the map of prior probabilities.
-4. Calculation of auxiliary output fields according to the [Output] (http://www.dmg.org/pmml/v4-3/Output.html) element:
+4. Calculation of auxiliary output fields according to the [Output](http://www.dmg.org/pmml/v4-3/Output.html) element:
   * Over 20 different result feature types.
-5. Model verification according to the [ModelVerification] (http://www.dmg.org/pmml/v4-3/ModelVerification.html) element.
+5. Model verification according to the [ModelVerification](http://www.dmg.org/pmml/v4-3/ModelVerification.html) element.
 
-For more information please see the [features.md] (https://github.com/jpmml/jpmml-evaluator/blob/master/features.md) file.
+For more information please see the [features.md](https://github.com/jpmml/jpmml-evaluator/blob/master/features.md) file.
 
 JPMML-Evaluator is interoperable with most popular statistics and data mining software:
 
-* [R] (http://www.r-project.org/) and [Rattle] (http://rattle.togaware.com/):
-  * [JPMML-R] (https://github.com/jpmml/jpmml-r) library and [`r2pmml`] (https://github.com/jpmml/r2pmml) package
-  * [`pmml`] (https://cran.r-project.org/web/packages/pmml/) package
-  * [`pmmlTransformations`] (https://cran.r-project.org/web/packages/pmmlTransformations/) package
-* [Python] (http://www.python.org/) and [Scikit-Learn] (http://scikit-learn.org/):
-  * [JPMML-SkLearn] (https://github.com/jpmml/jpmml-sklearn) library and [`sklearn2pmml`] (https://github.com/jpmml/sklearn2pmml) package
-* [Apache Spark] (http://spark.apache.org/):
-  * [JPMML-SparkML] (https://github.com/jpmml/jpmml-sparkml) library
-  * [`mllib.pmml.PMMLExportable`] (https://spark.apache.org/docs/latest/api/java/org/apache/spark/mllib/pmml/PMMLExportable.html) interface
-* [XGBoost] (https://github.com/dmlc/xgboost):
-  * [JPMML-XGBoost] (https://github.com/jpmml/jpmml-xgboost) library
-* [LightGBM] (https://github.com/Microsoft/LightGBM):
-  * [JPMML-LightGBM] (https://github.com/jpmml/jpmml-lightgbm) library
-* [KNIME] (http://www.knime.com/)
-* [RapidMiner] (http://rapidminer.com/products/rapidminer-studio/)
-* [SAS] (http://www.sas.com/en_us/software/analytics/enterprise-miner.html)
-* [SPSS] (http://www-01.ibm.com/software/analytics/spss/)
+* [R](http://www.r-project.org/) and [Rattle](http://rattle.togaware.com/):
+  * [JPMML-R](https://github.com/jpmml/jpmml-r) library and [`r2pmml`](https://github.com/jpmml/r2pmml) package
+  * [`pmml`](https://cran.r-project.org/web/packages/pmml/) package
+  * [`pmmlTransformations`](https://cran.r-project.org/web/packages/pmmlTransformations/) package
+* [Python](http://www.python.org/) and [Scikit-Learn](http://scikit-learn.org/):
+  * [JPMML-SkLearn](https://github.com/jpmml/jpmml-sklearn) library and [`sklearn2pmml`](https://github.com/jpmml/sklearn2pmml) package
+* [Apache Spark](http://spark.apache.org/):
+  * [JPMML-SparkML](https://github.com/jpmml/jpmml-sparkml) library
+  * [`mllib.pmml.PMMLExportable`](https://spark.apache.org/docs/latest/api/java/org/apache/spark/mllib/pmml/PMMLExportable.html) interface
+* [XGBoost](https://github.com/dmlc/xgboost):
+  * [JPMML-XGBoost](https://github.com/jpmml/jpmml-xgboost) library
+* [LightGBM](https://github.com/Microsoft/LightGBM):
+  * [JPMML-LightGBM](https://github.com/jpmml/jpmml-lightgbm) library
+* [KNIME](http://www.knime.com/)
+* [RapidMiner](http://rapidminer.com/products/rapidminer-studio/)
+* [SAS](http://www.sas.com/en_us/software/analytics/enterprise-miner.html)
+* [SPSS](http://www-01.ibm.com/software/analytics/spss/)
 
 JPMML-Evaluator is fast and memory efficient. It can deliver one million scorings per second already on a desktop computer.
 
@@ -62,7 +62,7 @@ JPMML-Evaluator is fast and memory efficient. It can deliver one million scoring
 
 # Installation #
 
-JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository] (http://repo1.maven.org/maven2/org/jpmml/).
+JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository](http://repo1.maven.org/maven2/org/jpmml/).
 
 The current version is **1.3.5** (26 February, 2017).
 
@@ -78,7 +78,7 @@ The current version is **1.3.5** (26 February, 2017).
 
 ### Loading models
 
-JPMML-Evaluator depends on the [JPMML-Model] (https://github.com/jpmml/jpmml-model) library for PMML class model.
+JPMML-Evaluator depends on the [JPMML-Model](https://github.com/jpmml/jpmml-model) library for PMML class model.
 
 Loading a PMML schema version 3.X or 4.X document into an `org.dmg.pmml.PMML` instance:
 ```java
@@ -263,13 +263,13 @@ The output value is always a Java primitive value (as a wrapper object).
 
 Module `pmml-evaluator-example` exemplifies the use of the JPMML-Evaluator library.
 
-This module can be built using [Apache Maven] (http://maven.apache.org/):
+This module can be built using [Apache Maven](http://maven.apache.org/):
 ```
 mvn clean install
 ```
 
 The resulting uber-JAR file `target/example-1.3-SNAPSHOT.jar` contains the following command-line applications:
-* `org.jpmml.evaluator.EvaluationExample` [(source)] (https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/EvaluationExample.java). Evaluates a PMML model with data. The predictions are stored.
+* `org.jpmml.evaluator.EvaluationExample` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/EvaluationExample.java). Evaluates a PMML model with data. The predictions are stored.
 * `org.jpmml.evaluator.TestingExample`. Evaluates a PMML model with data. The predictions are verified against expected predictions data.
 * `org.jpmml.evaluator.EnhancementExample`. Enhances a PMML model with a ModelVerification element.
 
@@ -290,18 +290,18 @@ java -cp target/example-1.3-SNAPSHOT.jar <application class name> --help
 
 # Support and Documentation #
 
-Limited public support is available via the [JPMML mailing list] (https://groups.google.com/forum/#!forum/jpmml).
+Limited public support is available via the [JPMML mailing list](https://groups.google.com/forum/#!forum/jpmml).
 
-The [Openscoring.io blog] (http://openscoring.io/blog/) contains fully worked out examples about using JPMML-Model and JPMML-Evaluator libraries.
+The [Openscoring.io blog](http://openscoring.io/blog/) contains fully worked out examples about using JPMML-Model and JPMML-Evaluator libraries.
 
 Recommended reading:
-* [Preparing arguments for evaluation] (http://openscoring.io/blog/2014/05/15/jpmml_evaluator_api_prepare_evaluate/)
-* [Testing PMML Applications] (http://openscoring.io/blog/2014/05/12/testing_pmml_applications/)
+* [Preparing arguments for evaluation](http://openscoring.io/blog/2014/05/15/jpmml_evaluator_api_prepare_evaluate/)
+* [Testing PMML Applications](http://openscoring.io/blog/2014/05/12/testing_pmml_applications/)
 
 # License #
 
-JPMML-Evaluator is licensed under the [GNU Affero General Public License (AGPL) version 3.0] (http://www.gnu.org/licenses/agpl-3.0.html). Other licenses are available on request.
+JPMML-Evaluator is licensed under the [GNU Affero General Public License (AGPL) version 3.0](http://www.gnu.org/licenses/agpl-3.0.html). Other licenses are available on request.
 
 # Additional information #
 
-Please contact [info@openscoring.io] (mailto:info@openscoring.io)
+Please contact [info@openscoring.io](mailto:info@openscoring.io)
