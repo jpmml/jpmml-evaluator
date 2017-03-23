@@ -342,7 +342,10 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				for(int j = 0; j < connections.size(); j++){
 					Connection connection = connections.get(j);
 
-					double input = result.get(connection.getFrom());
+					Double input = result.get(connection.getFrom());
+					if(input == null){
+						throw new InvalidFeatureException(connection);
+					}
 
 					z += input * connection.getWeight();
 				}
