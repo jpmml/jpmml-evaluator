@@ -74,14 +74,14 @@ public class ArchiveBatch implements Batch {
 	public void close() throws Exception {
 	}
 
-	private PMML loadPMML(String path) throws Exception {
+	protected PMML loadPMML(String path) throws Exception {
 
 		try(InputStream is = open(path)){
 			return PMMLUtil.unmarshal(is);
 		}
 	}
 
-	private List<Map<FieldName, String>> loadRecords(String path) throws IOException {
+	protected List<Map<FieldName, String>> loadRecords(String path) throws IOException {
 		List<List<String>> table;
 
 		try(InputStream is = open(path)){
