@@ -49,6 +49,8 @@ JPMML-Evaluator is interoperable with most popular statistics and data mining so
   * [JPMML-XGBoost](https://github.com/jpmml/jpmml-xgboost) library
 * [LightGBM](https://github.com/Microsoft/LightGBM):
   * [JPMML-LightGBM](https://github.com/jpmml/jpmml-lightgbm) library
+* [TensorFlow](http://tensorflow.org):
+  * [JPMML-TensorFlow](https://github.com/jpmml/jpmml-tensorflow) library
 * [KNIME](http://www.knime.com/)
 * [RapidMiner](http://rapidminer.com/products/rapidminer-studio/)
 * [SAS](http://www.sas.com/en_us/software/analytics/enterprise-miner.html)
