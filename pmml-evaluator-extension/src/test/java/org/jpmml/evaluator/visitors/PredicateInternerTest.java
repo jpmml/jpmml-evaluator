@@ -74,19 +74,19 @@ public class PredicateInternerTest {
 	}
 
 	static
-	private void checkTree(Node left, Node right){
+	private void checkTree(Node leftChild, Node rightChild){
 		Node root = new Node()
 			.setPredicate(new True())
-			.addNodes(left, right);
+			.addNodes(leftChild, rightChild);
 
 		TreeModel treeModel = new TreeModel()
 			.setNode(root);
 
-		assertNotSame(left.getPredicate(), right.getPredicate());
+		assertNotSame(leftChild.getPredicate(), rightChild.getPredicate());
 
 		intern(treeModel);
 
-		assertSame(left.getPredicate(), right.getPredicate());
+		assertSame(leftChild.getPredicate(), rightChild.getPredicate());
 	}
 
 	static

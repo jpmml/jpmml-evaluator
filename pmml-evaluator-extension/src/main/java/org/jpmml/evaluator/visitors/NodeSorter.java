@@ -27,6 +27,11 @@ import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.tree.Node;
 import org.jpmml.model.visitors.AbstractVisitor;
 
+/**
+ * <p>
+ * A Visitor that orders {@link Node} elements by their "hit" probability.
+ * </p>
+ */
 public class NodeSorter extends AbstractVisitor {
 
 	@Override
