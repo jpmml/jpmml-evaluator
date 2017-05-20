@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
-<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_2 http://www.dmg.org/v4-2/pmml-4-2.xsd">
- <Header copyright="Copyright (c) 2015 vfed" description="CoxPH Survival Regression Model">
+<PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_3 http://www.dmg.org/pmml/v4-3/pmml-4-3.xsd">
+ <Header copyright="Copyright (c) 2017 vfed" description="CoxPH Survival Regression Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2015-08-09 17:44:58</Timestamp>
+  <Timestamp>2017-05-21 00:29:19</Timestamp>
  </Header>
  <DataDictionary numberOfFields="6">
-  <DataField name="hazard" optype="continuous" dataType="double"/>
+  <DataField name="survival" optype="continuous" dataType="double"/>
   <DataField name="age" optype="continuous" dataType="double"/>
   <DataField name="ph.ecog" optype="categorical" dataType="string"/>
   <DataField name="time" optype="continuous" dataType="double"/>
@@ -15,7 +15,7 @@
  </DataDictionary>
  <GeneralRegressionModel modelType="CoxRegression" modelName="CoxPH_Survival_Regression_Model" functionName="regression" algorithmName="coxph" endTimeVariable="time" statusVariable="status" baselineStrataVariable="inst">
   <MiningSchema>
-   <MiningField name="hazard" usageType="predicted"/>
+   <MiningField name="survival" usageType="predicted"/>
    <MiningField name="age" usageType="active"/>
    <MiningField name="ph.ecog" usageType="active"/>
    <MiningField name="time" usageType="active"/>
@@ -68,7 +68,7 @@
     <BaselineCell time="65" cumHazard="0.204511489888434"/>
     <BaselineCell time="93" cumHazard="0.239121254326367"/>
     <BaselineCell time="116" cumHazard="0.276648311125734"/>
-    <BaselineCell time="122" cumHazard="0.315821417315802"/>
+    <BaselineCell time="122" cumHazard="0.315821417315803"/>
     <BaselineCell time="144" cumHazard="0.358082681101803"/>
     <BaselineCell time="145" cumHazard="0.402158422321888"/>
     <BaselineCell time="163" cumHazard="0.447812411895076"/>
@@ -236,12 +236,12 @@
     <BaselineCell time="202" cumHazard="0.286610991798118"/>
     <BaselineCell time="208" cumHazard="0.354674819043354"/>
     <BaselineCell time="266" cumHazard="0.354674819043354"/>
-    <BaselineCell time="270" cumHazard="0.437717070918453"/>
+    <BaselineCell time="270" cumHazard="0.437717070918454"/>
     <BaselineCell time="288" cumHazard="0.528712481999942"/>
-    <BaselineCell time="350" cumHazard="0.639761497846663"/>
-    <BaselineCell time="353" cumHazard="0.760598031169672"/>
-    <BaselineCell time="382" cumHazard="0.760598031169672"/>
-    <BaselineCell time="551" cumHazard="0.760598031169672"/>
+    <BaselineCell time="350" cumHazard="0.639761497846664"/>
+    <BaselineCell time="353" cumHazard="0.760598031169673"/>
+    <BaselineCell time="382" cumHazard="0.760598031169673"/>
+    <BaselineCell time="551" cumHazard="0.760598031169673"/>
     <BaselineCell time="654" cumHazard="0.97687281332033"/>
     <BaselineCell time="707" cumHazard="1.36494832816966"/>
     <BaselineCell time="806" cumHazard="1.36494832816966"/>
@@ -252,7 +252,7 @@
     <BaselineCell time="147" cumHazard="0.25446922145765"/>
     <BaselineCell time="167" cumHazard="0.351154697533092"/>
     <BaselineCell time="175" cumHazard="0.454669195821602"/>
-    <BaselineCell time="183" cumHazard="0.571062398924163"/>
+    <BaselineCell time="183" cumHazard="0.571062398924164"/>
     <BaselineCell time="201" cumHazard="0.73042990531067"/>
     <BaselineCell time="226" cumHazard="0.976543490064464"/>
     <BaselineCell time="237" cumHazard="0.976543490064464"/>

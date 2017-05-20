@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_2 http://www.dmg.org/v4-2/pmml-4-2.xsd">
- <Header copyright="Copyright (c) 2015 vfed" description="NaiveBayes Model">
+<PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_3 http://www.dmg.org/pmml/v4-3/pmml-4-3.xsd">
+ <Header copyright="Copyright (c) 2017 vfed" description="NaiveBayes Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2015-08-09 17:44:24</Timestamp>
+  <Timestamp>2017-05-20 21:29:10</Timestamp>
  </Header>
  <DataDictionary numberOfFields="5">
   <DataField name="Species" optype="categorical" dataType="string">
