@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2">
   <Header copyright="vfed">
-    <Application name="KNIME" version="3.1.2"/>
+    <Application name="KNIME" version="3.3.2"/>
   </Header>
   <DataDictionary numberOfFields="5">
     <DataField name="Sepal_Length" optype="continuous" dataType="double">
@@ -40,13 +40,13 @@
     <ClusteringField field="Petal_Length" compareFunction="absDiff"/>
     <ClusteringField field="Petal_Width" compareFunction="absDiff"/>
     <Cluster name="cluster_0">
-      <Array n="4" type="real">5.003965960554441 3.414088859956231 1.4828155306848176 0.25354631661751414</Array>
+      <Array n="4" type="real">6.775011201088795 3.0523822644483998 5.646781753679158 2.0535466476459625</Array>
     </Cluster>
     <Cluster name="cluster_1">
-      <Array n="4" type="real">5.888932336829097 2.761069354636032 4.363951608377156 1.397315022791719</Array>
+      <Array n="4" type="real">5.003965960566494 3.4140888597062578 1.4828155310924336 0.2535463168002767</Array>
     </Cluster>
     <Cluster name="cluster_2">
-      <Array n="4" type="real">6.775011194983686 3.0523822626718164 5.646781746072098 2.05354664471113</Array>
+      <Array n="4" type="real">5.888932341875632 2.7610693564543465 4.363951615752759 1.3973150265937389</Array>
     </Cluster>
   </ClusteringModel>
 </PMML>
