@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<process version="6.0.008">
+<?xml version="1.0" encoding="UTF-8"?><process version="7.5.001">
   <context>
     <input/>
     <output/>
     <macros/>
   </context>
-  <operator activated="true" class="process" compatibility="6.0.008" expanded="true" name="Process">
+  <operator activated="true" class="process" compatibility="7.5.001" expanded="true" name="Process">
     <parameter key="logverbosity" value="init"/>
     <parameter key="random_seed" value="2001"/>
     <parameter key="send_mail" value="never"/>
@@ -13,7 +12,7 @@
     <parameter key="process_duration_for_mail" value="30"/>
     <parameter key="encoding" value="SYSTEM"/>
     <process expanded="true">
-      <operator activated="true" class="read_csv" compatibility="6.0.008" expanded="true" height="60" name="Read CSV" width="90" x="45" y="165">
+      <operator activated="true" class="read_csv" compatibility="7.5.001" expanded="true" height="68" name="Read CSV" width="90" x="45" y="165">
         <parameter key="csv_file" value="/home/vfed/Workspace/jpmml-evaluator/pmml-rapidminer/src/test/resources/csv/Iris.csv"/>
         <parameter key="column_separators" value=","/>
         <parameter key="trim_lines" value="false"/>
@@ -43,9 +42,10 @@
         </list>
         <parameter key="read_not_matching_values_as_missings" value="true"/>
         <parameter key="datamanagement" value="double_array"/>
+        <parameter key="data_management" value="auto"/>
       </operator>
-      <operator activated="true" class="multiply" compatibility="6.0.008" expanded="true" height="94" name="Multiply (2)" width="90" x="179" y="165"/>
-      <operator activated="true" class="k_means" compatibility="6.0.008" expanded="true" height="76" name="Clustering" width="90" x="313" y="120">
+      <operator activated="true" class="multiply" compatibility="7.5.001" expanded="true" height="103" name="Multiply (2)" width="90" x="179" y="165"/>
+      <operator activated="true" class="k_means" compatibility="7.5.001" expanded="true" height="82" name="Clustering" width="90" x="313" y="120">
         <parameter key="add_cluster_attribute" value="false"/>
         <parameter key="add_as_label" value="false"/>
         <parameter key="remove_unlabeled" value="false"/>
@@ -70,11 +70,11 @@
         <parameter key="use_local_random_seed" value="false"/>
         <parameter key="local_random_seed" value="1992"/>
       </operator>
-      <operator activated="true" class="apply_model" compatibility="6.0.008" expanded="true" height="76" name="Apply Model" width="90" x="447" y="165">
+      <operator activated="true" class="apply_model" compatibility="7.1.001" expanded="true" height="82" name="Apply Model" width="90" x="447" y="165">
         <list key="application_parameters"/>
         <parameter key="create_view" value="false"/>
       </operator>
-      <operator activated="true" class="select_attributes" compatibility="6.0.008" expanded="true" height="76" name="Select Attributes" width="90" x="581" y="120">
+      <operator activated="true" class="select_attributes" compatibility="7.5.001" expanded="true" height="82" name="Select Attributes" width="90" x="581" y="120">
         <parameter key="attribute_filter_type" value="subset"/>
         <parameter key="attribute" value=""/>
         <parameter key="attributes" value="Petal_Length|Petal_Width|Sepal_Length|Sepal_Width"/>
@@ -88,7 +88,7 @@
         <parameter key="invert_selection" value="true"/>
         <parameter key="include_special_attributes" value="false"/>
       </operator>
-      <operator activated="true" class="write_csv" compatibility="6.0.008" expanded="true" height="76" name="Write CSV" width="90" x="715" y="120">
+      <operator activated="true" class="write_csv" compatibility="7.5.001" expanded="true" height="82" name="Write CSV" width="90" x="715" y="120">
         <parameter key="csv_file" value="/home/vfed/Workspace/jpmml-evaluator/pmml-rapidminer/src/test/resources/csv/KMeansIris.csv"/>
         <parameter key="column_separator" value=","/>
         <parameter key="write_attribute_names" value="true"/>
@@ -97,7 +97,7 @@
         <parameter key="append_to_file" value="false"/>
         <parameter key="encoding" value="SYSTEM"/>
       </operator>
-      <operator activated="true" class="pmml:write_pmml" compatibility="5.3.000" expanded="true" height="60" name="Write PMML" width="90" x="581" y="210">
+      <operator activated="true" class="pmml:write_pmml" compatibility="7.3.000" expanded="true" height="68" name="Write PMML" width="90" x="581" y="210">
         <parameter key="file" value="/home/vfed/Workspace/jpmml-evaluator/pmml-rapidminer/src/test/resources/pmml/KMeansIris.pmml"/>
         <parameter key="version" value="3.2"/>
       </operator>

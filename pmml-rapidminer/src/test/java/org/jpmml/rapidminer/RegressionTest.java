@@ -24,7 +24,7 @@ import org.junit.Test;
 public class RegressionTest extends IntegrationTest {
 
 	@Test
-	public void evaluateRegressionOzone() throws Exception {
-		evaluate("Regression", "Ozone");
+	public void evaluateRegressionAuto() throws Exception {
+		evaluate("Regression", "Auto");
 	}
 }
