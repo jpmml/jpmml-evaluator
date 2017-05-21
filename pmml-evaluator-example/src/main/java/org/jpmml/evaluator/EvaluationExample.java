@@ -45,9 +45,17 @@ import org.dmg.pmml.Visitor;
 import org.jpmml.evaluator.visitors.ExpressionOptimizer;
 import org.jpmml.evaluator.visitors.FieldOptimizer;
 import org.jpmml.evaluator.visitors.GeneralRegressionModelOptimizer;
+import org.jpmml.evaluator.visitors.MiningFieldInterner;
 import org.jpmml.evaluator.visitors.NaiveBayesModelOptimizer;
+import org.jpmml.evaluator.visitors.PredicateInterner;
 import org.jpmml.evaluator.visitors.PredicateOptimizer;
 import org.jpmml.evaluator.visitors.RegressionModelOptimizer;
+import org.jpmml.evaluator.visitors.ScoreDistributionInterner;
+import org.jpmml.model.visitors.ArrayListOptimizer;
+import org.jpmml.model.visitors.ArrayListTransformer;
+import org.jpmml.model.visitors.DoubleInterner;
+import org.jpmml.model.visitors.IntegerInterner;
+import org.jpmml.model.visitors.StringInterner;
 
 public class EvaluationExample extends Example {
 
@@ -141,6 +149,13 @@ public class EvaluationExample extends Example {
 	private boolean optimize = false;
 
 	@Parameter (
+		names = "--intern",
+		description = "Intern PMML class model",
+		hidden = true
+	)
+	private boolean intern = false;
+
+	@Parameter (
 		names = "--loop",
 		description = "The number of repetitions",
 		hidden = true,
@@ -194,11 +209,27 @@ public class EvaluationExample extends Example {
 		} // End if
 
 		if(this.optimize){
-			List<? extends Visitor> optimizers = Arrays.asList(new ExpressionOptimizer(), new FieldOptimizer(), new PredicateOptimizer(), new GeneralRegressionModelOptimizer(), new NaiveBayesModelOptimizer(), new RegressionModelOptimizer());
+			List<? extends Visitor> optimizers = Arrays.asList(new ArrayListOptimizer(), new ExpressionOptimizer(), new FieldOptimizer(), new PredicateOptimizer(), new GeneralRegressionModelOptimizer(), new NaiveBayesModelOptimizer(), new RegressionModelOptimizer());
 
 			for(Visitor optimizer : optimizers){
 				optimizer.applyTo(pmml);
 			}
+		} // End if
+
+		// Optimize first, intern second.
+		// The goal is to intern optimized elements (keeps one copy), not optimize interned elements (expands one copy to multiple copies).
+		if(this.intern){
+			List<? extends Visitor> interners = Arrays.asList(new DoubleInterner(), new IntegerInterner(), new StringInterner(), new MiningFieldInterner(), new PredicateInterner(), new ScoreDistributionInterner());
+
+			for(Visitor interner : interners){
+				interner.applyTo(pmml);
+			}
+		} // End if
+
+		if(this.optimize || this.intern){
+			Visitor transformer = new ArrayListTransformer();
+
+			transformer.applyTo(pmml);
 		}
 
 		ModelEvaluatorFactory modelEvaluatorFactory = newModelEvaluatorFactory(Class.forName(this.factoryClazz));
