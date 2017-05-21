@@ -1,0 +1,803 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2">
+  <Header copyright="vfed">
+    <Application name="KNIME" version="3.3.2"/>
+  </Header>
+  <DataDictionary numberOfFields="8">
+    <DataField name="cylinders" optype="continuous" dataType="integer">
+      <Interval closure="closedClosed" leftMargin="3.0" rightMargin="8.0"/>
+    </DataField>
+    <DataField name="displacement" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="68.0" rightMargin="455.0"/>
+    </DataField>
+    <DataField name="horsepower" optype="continuous" dataType="integer">
+      <Interval closure="closedClosed" leftMargin="46.0" rightMargin="230.0"/>
+    </DataField>
+    <DataField name="weight" optype="continuous" dataType="integer">
+      <Interval closure="closedClosed" leftMargin="1613.0" rightMargin="5140.0"/>
+    </DataField>
+    <DataField name="acceleration" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="8.0" rightMargin="24.8"/>
+    </DataField>
+    <DataField name="model_year" optype="continuous" dataType="integer">
+      <Interval closure="closedClosed" leftMargin="70.0" rightMargin="82.0"/>
+    </DataField>
+    <DataField name="origin" optype="continuous" dataType="integer">
+      <Interval closure="closedClosed" leftMargin="1.0" rightMargin="3.0"/>
+    </DataField>
+    <DataField name="mpg" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="9.0" rightMargin="46.6"/>
+    </DataField>
+  </DataDictionary>
+  <TreeModel modelName="DecisionTree" functionName="regression" splitCharacteristic="binarySplit" missingValueStrategy="none" noTrueChildStrategy="returnLastPrediction">
+    <MiningSchema>
+      <MiningField name="cylinders" invalidValueTreatment="asIs"/>
+      <MiningField name="displacement" invalidValueTreatment="asIs"/>
+      <MiningField name="horsepower" invalidValueTreatment="asIs"/>
+      <MiningField name="weight" invalidValueTreatment="asIs"/>
+      <MiningField name="acceleration" invalidValueTreatment="asIs"/>
+      <MiningField name="model_year" invalidValueTreatment="asIs"/>
+      <MiningField name="origin" invalidValueTreatment="asIs"/>
+      <MiningField name="mpg" invalidValueTreatment="asIs" usageType="target"/>
+    </MiningSchema>
+    <Node id="0" score="23.445918367346938">
+      <True/>
+      <Node id="1" score="28.64234234234233">
+        <CompoundPredicate booleanOperator="or">
+          <SimplePredicate field="displacement" value="190.5" operator="lessOrEqual"/>
+          <SimplePredicate field="displacement" operator="isMissing"/>
+        </CompoundPredicate>
+        <Node id="2" score="33.666197183098596">
+          <SimplePredicate field="horsepower" value="70.5" operator="lessOrEqual"/>
+          <Node id="3" score="29.75">
+            <SimplePredicate field="model_year" value="77.5" operator="lessOrEqual"/>
+            <Node id="4" score="28.0">
+              <CompoundPredicate booleanOperator="or">
+                <SimplePredicate field="origin" value="2.5" operator="lessOrEqual"/>
+                <SimplePredicate field="origin" operator="isMissing"/>
+              </CompoundPredicate>
+              <Node id="5" score="36.0">
+                <SimplePredicate field="weight" value="1829.5" operator="lessOrEqual"/>
+              </Node>
+              <Node id="6" score="27.466666666666665">
+                <CompoundPredicate booleanOperator="or">
+                  <SimplePredicate field="weight" value="1829.5" operator="greaterThan"/>
+                  <SimplePredicate field="weight" operator="isMissing"/>
+                </CompoundPredicate>
+                <Node id="7" score="28.208333333333332">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="weight" value="2119.0" operator="lessOrEqual"/>
+                    <SimplePredicate field="weight" operator="isMissing"/>
+                  </CompoundPredicate>
+                  <Node id="8" score="27.249999999999996">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="weight" value="1981.5" operator="lessOrEqual"/>
+                      <SimplePredicate field="weight" operator="isMissing"/>
+                    </CompoundPredicate>
+                  </Node>
+                  <Node id="9" score="30.125">
+                    <SimplePredicate field="weight" value="1981.5" operator="greaterThan"/>
+                  </Node>
+                </Node>
+                <Node id="10" score="24.5">
+                  <SimplePredicate field="weight" value="2119.0" operator="greaterThan"/>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="11" score="32.08333333333333">
+              <SimplePredicate field="origin" value="2.5" operator="greaterThan"/>
+              <Node id="12" score="35.0">
+                <SimplePredicate field="weight" value="1631.0" operator="lessOrEqual"/>
+              </Node>
+              <Node id="13" score="31.818181818181817">
+                <CompoundPredicate booleanOperator="or">
+                  <SimplePredicate field="weight" value="1631.0" operator="greaterThan"/>
+                  <SimplePredicate field="weight" operator="isMissing"/>
+                </CompoundPredicate>
+                <Node id="14" score="30.5">
+                  <SimplePredicate field="acceleration" value="16.649999618530273" operator="lessOrEqual"/>
+                </Node>
+                <Node id="15" score="32.111111111111114">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="acceleration" value="16.649999618530273" operator="greaterThan"/>
+                    <SimplePredicate field="acceleration" operator="isMissing"/>
+                  </CompoundPredicate>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+          <Node id="16" score="36.21627906976745">
+            <CompoundPredicate booleanOperator="or">
+              <SimplePredicate field="model_year" value="77.5" operator="greaterThan"/>
+              <SimplePredicate field="model_year" operator="isMissing"/>
+            </CompoundPredicate>
+            <Node id="17" score="43.6">
+              <SimplePredicate field="horsepower" value="50.0" operator="lessOrEqual"/>
+            </Node>
+            <Node id="18" score="35.6625">
+              <CompoundPredicate booleanOperator="or">
+                <SimplePredicate field="horsepower" value="50.0" operator="greaterThan"/>
+                <SimplePredicate field="horsepower" operator="isMissing"/>
+              </CompoundPredicate>
+              <Node id="19" score="36.65">
+                <CompoundPredicate booleanOperator="or">
+                  <SimplePredicate field="weight" value="2132.5" operator="lessOrEqual"/>
+                  <SimplePredicate field="weight" operator="isMissing"/>
+                </CompoundPredicate>
+                <Node id="20" score="35.695454545454545">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="weight" value="2067.5" operator="lessOrEqual"/>
+                    <SimplePredicate field="weight" operator="isMissing"/>
+                  </CompoundPredicate>
+                  <Node id="21" score="44.6">
+                    <SimplePredicate field="acceleration" value="14.099999904632568" operator="lessOrEqual"/>
+                  </Node>
+                  <Node id="22" score="35.27142857142857">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="acceleration" value="14.099999904632568" operator="greaterThan"/>
+                      <SimplePredicate field="acceleration" operator="isMissing"/>
+                    </CompoundPredicate>
+                    <Node id="23" score="39.1">
+                      <SimplePredicate field="weight" value="1757.5" operator="lessOrEqual"/>
+                    </Node>
+                    <Node id="24" score="35.08">
+                      <CompoundPredicate booleanOperator="or">
+                        <SimplePredicate field="weight" value="1757.5" operator="greaterThan"/>
+                        <SimplePredicate field="weight" operator="isMissing"/>
+                      </CompoundPredicate>
+                      <Node id="25" score="34.016666666666666">
+                        <SimplePredicate field="acceleration" value="16.050000190734863" operator="lessOrEqual"/>
+                      </Node>
+                      <Node id="26" score="35.535714285714285">
+                        <CompoundPredicate booleanOperator="or">
+                          <SimplePredicate field="acceleration" value="16.050000190734863" operator="greaterThan"/>
+                          <SimplePredicate field="acceleration" operator="isMissing"/>
+                        </CompoundPredicate>
+                        <Node id="27" score="36.78571428571429">
+                          <CompoundPredicate booleanOperator="or">
+                            <SimplePredicate field="acceleration" value="17.449999809265137" operator="lessOrEqual"/>
+                            <SimplePredicate field="acceleration" operator="isMissing"/>
+                          </CompoundPredicate>
+                        </Node>
+                        <Node id="28" score="34.285714285714285">
+                          <SimplePredicate field="acceleration" value="17.449999809265137" operator="greaterThan"/>
+                        </Node>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="29" score="39.275">
+                  <SimplePredicate field="weight" value="2067.5" operator="greaterThan"/>
+                </Node>
+              </Node>
+              <Node id="30" score="32.7">
+                <SimplePredicate field="weight" value="2132.5" operator="greaterThan"/>
+                <Node id="31" score="30.8">
+                  <SimplePredicate field="displacement" value="101.5" operator="lessOrEqual"/>
+                </Node>
+                <Node id="32" score="33.96666666666666">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="displacement" value="101.5" operator="greaterThan"/>
+                    <SimplePredicate field="displacement" operator="isMissing"/>
+                  </CompoundPredicate>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </Node>
+        <Node id="33" score="26.28013245033113">
+          <CompoundPredicate booleanOperator="or">
+            <SimplePredicate field="horsepower" value="70.5" operator="greaterThan"/>
+            <SimplePredicate field="horsepower" operator="isMissing"/>
+          </CompoundPredicate>
+          <Node id="34" score="24.120212765957444">
+            <CompoundPredicate booleanOperator="or">
+              <SimplePredicate field="model_year" value="78.5" operator="lessOrEqual"/>
+              <SimplePredicate field="model_year" operator="isMissing"/>
+            </CompoundPredicate>
+            <Node id="35" score="26.70769230769231">
+              <SimplePredicate field="weight" value="2305.0" operator="lessOrEqual"/>
+              <Node id="36" score="30.7">
+                <SimplePredicate field="weight" value="2087.5" operator="lessOrEqual"/>
+              </Node>
+              <Node id="37" score="26.120588235294115">
+                <CompoundPredicate booleanOperator="or">
+                  <SimplePredicate field="weight" value="2087.5" operator="greaterThan"/>
+                  <SimplePredicate field="weight" operator="isMissing"/>
+                </CompoundPredicate>
+                <Node id="38" score="18.0">
+                  <SimplePredicate field="cylinders" value="3.5" operator="lessOrEqual"/>
+                </Node>
+                <Node id="39" score="26.366666666666656">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="cylinders" value="3.5" operator="greaterThan"/>
+                    <SimplePredicate field="cylinders" operator="isMissing"/>
+                  </CompoundPredicate>
+                  <Node id="40" score="26.565625000000004">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="acceleration" value="18.600000381469727" operator="lessOrEqual"/>
+                      <SimplePredicate field="acceleration" operator="isMissing"/>
+                    </CompoundPredicate>
+                    <Node id="41" score="27.37">
+                      <CompoundPredicate booleanOperator="or">
+                        <SimplePredicate field="displacement" value="112.0" operator="lessOrEqual"/>
+                        <SimplePredicate field="displacement" operator="isMissing"/>
+                      </CompoundPredicate>
+                      <Node id="42" score="27.027777777777782">
+                        <CompoundPredicate booleanOperator="or">
+                          <SimplePredicate field="displacement" value="103.0" operator="lessOrEqual"/>
+                          <SimplePredicate field="displacement" operator="isMissing"/>
+                        </CompoundPredicate>
+                        <Node id="43" score="30.5">
+                          <SimplePredicate field="acceleration" value="14.300000190734863" operator="lessOrEqual"/>
+                        </Node>
+                        <Node id="44" score="26.82352941176471">
+                          <CompoundPredicate booleanOperator="or">
+                            <SimplePredicate field="acceleration" value="14.300000190734863" operator="greaterThan"/>
+                            <SimplePredicate field="acceleration" operator="isMissing"/>
+                          </CompoundPredicate>
+                          <Node id="45" score="25.666666666666668">
+                            <SimplePredicate field="displacement" value="93.5" operator="lessOrEqual"/>
+                          </Node>
+                          <Node id="46" score="27.071428571428573">
+                            <CompoundPredicate booleanOperator="or">
+                              <SimplePredicate field="displacement" value="93.5" operator="greaterThan"/>
+                              <SimplePredicate field="displacement" operator="isMissing"/>
+                            </CompoundPredicate>
+                            <Node id="47" score="27.4">
+                              <CompoundPredicate booleanOperator="or">
+                                <SimplePredicate field="acceleration" value="16.75" operator="lessOrEqual"/>
+                                <SimplePredicate field="acceleration" operator="isMissing"/>
+                              </CompoundPredicate>
+                              <Node id="48" score="27.75">
+                                <CompoundPredicate booleanOperator="or">
+                                  <SimplePredicate field="weight" value="2242.0" operator="lessOrEqual"/>
+                                  <SimplePredicate field="weight" operator="isMissing"/>
+                                </CompoundPredicate>
+                              </Node>
+                              <Node id="49" score="26.0">
+                                <SimplePredicate field="weight" value="2242.0" operator="greaterThan"/>
+                              </Node>
+                            </Node>
+                            <Node id="50" score="26.25">
+                              <SimplePredicate field="acceleration" value="16.75" operator="greaterThan"/>
+                            </Node>
+                          </Node>
+                        </Node>
+                      </Node>
+                      <Node id="51" score="30.45">
+                        <SimplePredicate field="displacement" value="103.0" operator="greaterThan"/>
+                      </Node>
+                    </Node>
+                    <Node id="52" score="25.225">
+                      <SimplePredicate field="displacement" value="112.0" operator="greaterThan"/>
+                      <Node id="53" score="23.8">
+                        <SimplePredicate field="horsepower" value="88.0" operator="lessOrEqual"/>
+                      </Node>
+                      <Node id="54" score="26.242857142857144">
+                        <CompoundPredicate booleanOperator="or">
+                          <SimplePredicate field="horsepower" value="88.0" operator="greaterThan"/>
+                          <SimplePredicate field="horsepower" operator="isMissing"/>
+                        </CompoundPredicate>
+                      </Node>
+                    </Node>
+                  </Node>
+                  <Node id="55" score="20.0">
+                    <SimplePredicate field="acceleration" value="18.600000381469727" operator="greaterThan"/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="56" score="22.285454545454545">
+              <CompoundPredicate booleanOperator="or">
+                <SimplePredicate field="weight" value="2305.0" operator="greaterThan"/>
+                <SimplePredicate field="weight" operator="isMissing"/>
+              </CompoundPredicate>
+              <Node id="57" score="23.186046511627907">
+                <CompoundPredicate booleanOperator="or">
+                  <SimplePredicate field="weight" value="2861.5" operator="lessOrEqual"/>
+                  <SimplePredicate field="weight" operator="isMissing"/>
+                </CompoundPredicate>
+                <Node id="58" score="21.941176470588236">
+                  <SimplePredicate field="model_year" value="73.5" operator="lessOrEqual"/>
+                  <Node id="59" score="24.5">
+                    <SimplePredicate field="model_year" value="70.5" operator="lessOrEqual"/>
+                  </Node>
+                  <Node id="60" score="21.153846153846153">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="model_year" value="70.5" operator="greaterThan"/>
+                      <SimplePredicate field="model_year" operator="isMissing"/>
+                    </CompoundPredicate>
+                    <Node id="61" score="19.0">
+                      <SimplePredicate field="weight" value="2354.5" operator="lessOrEqual"/>
+                    </Node>
+                    <Node id="62" score="21.545454545454543">
+                      <CompoundPredicate booleanOperator="or">
+                        <SimplePredicate field="weight" value="2354.5" operator="greaterThan"/>
+                        <SimplePredicate field="weight" operator="isMissing"/>
+                      </CompoundPredicate>
+                      <Node id="63" score="22.166666666666668">
+                        <CompoundPredicate booleanOperator="or">
+                          <SimplePredicate field="displacement" value="131.0" operator="lessOrEqual"/>
+                          <SimplePredicate field="displacement" operator="isMissing"/>
+                        </CompoundPredicate>
+                      </Node>
+                      <Node id="64" score="20.8">
+                        <SimplePredicate field="displacement" value="131.0" operator="greaterThan"/>
+                      </Node>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="65" score="24.0">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="model_year" value="73.5" operator="greaterThan"/>
+                    <SimplePredicate field="model_year" operator="isMissing"/>
+                  </CompoundPredicate>
+                  <Node id="66" score="25.116666666666667">
+                    <SimplePredicate field="horsepower" value="94.0" operator="lessOrEqual"/>
+                    <Node id="67" score="25.825">
+                      <CompoundPredicate booleanOperator="or">
+                        <SimplePredicate field="acceleration" value="16.75" operator="lessOrEqual"/>
+                        <SimplePredicate field="acceleration" operator="isMissing"/>
+                      </CompoundPredicate>
+                    </Node>
+                    <Node id="68" score="23.7">
+                      <SimplePredicate field="acceleration" value="16.75" operator="greaterThan"/>
+                    </Node>
+                  </Node>
+                  <Node id="69" score="23.042857142857144">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="horsepower" value="94.0" operator="greaterThan"/>
+                      <SimplePredicate field="horsepower" operator="isMissing"/>
+                    </CompoundPredicate>
+                    <Node id="70" score="23.77777777777778">
+                      <CompoundPredicate booleanOperator="or">
+                        <SimplePredicate field="weight" value="2711.0" operator="lessOrEqual"/>
+                        <SimplePredicate field="weight" operator="isMissing"/>
+                      </CompoundPredicate>
+                    </Node>
+                    <Node id="71" score="21.720000000000002">
+                      <SimplePredicate field="weight" value="2711.0" operator="greaterThan"/>
+                    </Node>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="72" score="19.058333333333334">
+                <SimplePredicate field="weight" value="2861.5" operator="greaterThan"/>
+                <Node id="73" score="20.124999999999996">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="displacement" value="159.5" operator="lessOrEqual"/>
+                    <SimplePredicate field="displacement" operator="isMissing"/>
+                  </CompoundPredicate>
+                </Node>
+                <Node id="74" score="16.925">
+                  <SimplePredicate field="displacement" value="159.5" operator="greaterThan"/>
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+          <Node id="75" score="29.842105263157897">
+            <SimplePredicate field="model_year" value="78.5" operator="greaterThan"/>
+            <Node id="76" score="33.11666666666666">
+              <SimplePredicate field="weight" value="2580.0" operator="lessOrEqual"/>
+              <Node id="77" score="33.52608695652174">
+                <CompoundPredicate booleanOperator="or">
+                  <SimplePredicate field="horsepower" value="96.0" operator="lessOrEqual"/>
+                  <SimplePredicate field="horsepower" operator="isMissing"/>
+                </CompoundPredicate>
+                <Node id="78" score="34.63333333333333">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="acceleration" value="15.5" operator="lessOrEqual"/>
+                    <SimplePredicate field="acceleration" operator="isMissing"/>
+                  </CompoundPredicate>
+                  <Node id="79" score="32.733333333333334">
+                    <SimplePredicate field="acceleration" value="14.299999713897705" operator="lessOrEqual"/>
+                  </Node>
+                  <Node id="80" score="35.900000000000006">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="acceleration" value="14.299999713897705" operator="greaterThan"/>
+                      <SimplePredicate field="acceleration" operator="isMissing"/>
+                    </CompoundPredicate>
+                  </Node>
+                </Node>
+                <Node id="81" score="31.450000000000003">
+                  <SimplePredicate field="acceleration" value="15.5" operator="greaterThan"/>
+                </Node>
+              </Node>
+              <Node id="82" score="23.7">
+                <SimplePredicate field="horsepower" value="96.0" operator="greaterThan"/>
+              </Node>
+            </Node>
+            <Node id="83" score="27.46060606060606">
+              <CompoundPredicate booleanOperator="or">
+                <SimplePredicate field="weight" value="2580.0" operator="greaterThan"/>
+                <SimplePredicate field="weight" operator="isMissing"/>
+              </CompoundPredicate>
+              <Node id="84" score="26.83076923076923">
+                <CompoundPredicate booleanOperator="or">
+                  <SimplePredicate field="origin" value="2.5" operator="lessOrEqual"/>
+                  <SimplePredicate field="origin" operator="isMissing"/>
+                </CompoundPredicate>
+                <Node id="85" score="28.257142857142856">
+                  <SimplePredicate field="horsepower" value="83.0" operator="lessOrEqual"/>
+                </Node>
+                <Node id="86" score="26.30526315789474">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="horsepower" value="83.0" operator="greaterThan"/>
+                    <SimplePredicate field="horsepower" operator="isMissing"/>
+                  </CompoundPredicate>
+                  <Node id="87" score="26.984615384615385">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="weight" value="2832.5" operator="lessOrEqual"/>
+                      <SimplePredicate field="weight" operator="isMissing"/>
+                    </CompoundPredicate>
+                    <Node id="88" score="27.98">
+                      <SimplePredicate field="model_year" value="80.5" operator="lessOrEqual"/>
+                    </Node>
+                    <Node id="89" score="26.362499999999997">
+                      <CompoundPredicate booleanOperator="or">
+                        <SimplePredicate field="model_year" value="80.5" operator="greaterThan"/>
+                        <SimplePredicate field="model_year" operator="isMissing"/>
+                      </CompoundPredicate>
+                    </Node>
+                  </Node>
+                  <Node id="90" score="24.833333333333332">
+                    <SimplePredicate field="weight" value="2832.5" operator="greaterThan"/>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="91" score="29.8">
+                <SimplePredicate field="origin" value="2.5" operator="greaterThan"/>
+              </Node>
+            </Node>
+          </Node>
+        </Node>
+      </Node>
+      <Node id="92" score="16.66">
+        <SimplePredicate field="displacement" value="190.5" operator="greaterThan"/>
+        <Node id="93" score="19.43783783783783">
+          <SimplePredicate field="horsepower" value="127.0" operator="lessOrEqual"/>
+          <Node id="94" score="19.14444444444443">
+            <CompoundPredicate booleanOperator="or">
+              <SimplePredicate field="model_year" value="81.5" operator="lessOrEqual"/>
+              <SimplePredicate field="model_year" operator="isMissing"/>
+            </CompoundPredicate>
+            <Node id="95" score="18.166666666666664">
+              <CompoundPredicate booleanOperator="or">
+                <SimplePredicate field="model_year" value="75.5" operator="lessOrEqual"/>
+                <SimplePredicate field="model_year" operator="isMissing"/>
+              </CompoundPredicate>
+              <Node id="96" score="19.04">
+                <CompoundPredicate booleanOperator="or">
+                  <SimplePredicate field="acceleration" value="16.75" operator="lessOrEqual"/>
+                  <SimplePredicate field="acceleration" operator="isMissing"/>
+                </CompoundPredicate>
+                <Node id="97" score="20.833333333333332">
+                  <SimplePredicate field="displacement" value="212.5" operator="lessOrEqual"/>
+                </Node>
+                <Node id="98" score="18.47368421052632">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="displacement" value="212.5" operator="greaterThan"/>
+                    <SimplePredicate field="displacement" operator="isMissing"/>
+                  </CompoundPredicate>
+                  <Node id="99" score="18.071428571428573">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="model_year" value="74.5" operator="lessOrEqual"/>
+                      <SimplePredicate field="model_year" operator="isMissing"/>
+                    </CompoundPredicate>
+                    <Node id="100" score="18.363636363636363">
+                      <CompoundPredicate booleanOperator="or">
+                        <SimplePredicate field="weight" value="3315.5" operator="lessOrEqual"/>
+                        <SimplePredicate field="weight" operator="isMissing"/>
+                      </CompoundPredicate>
+                      <Node id="101" score="19.0">
+                        <SimplePredicate field="weight" value="2711.5" operator="lessOrEqual"/>
+                      </Node>
+                      <Node id="102" score="18.3">
+                        <CompoundPredicate booleanOperator="or">
+                          <SimplePredicate field="weight" value="2711.5" operator="greaterThan"/>
+                          <SimplePredicate field="weight" operator="isMissing"/>
+                        </CompoundPredicate>
+                        <Node id="103" score="18.142857142857142">
+                          <CompoundPredicate booleanOperator="or">
+                            <SimplePredicate field="weight" value="3210.5" operator="lessOrEqual"/>
+                            <SimplePredicate field="weight" operator="isMissing"/>
+                          </CompoundPredicate>
+                        </Node>
+                        <Node id="104" score="18.666666666666668">
+                          <SimplePredicate field="weight" value="3210.5" operator="greaterThan"/>
+                        </Node>
+                      </Node>
+                    </Node>
+                    <Node id="105" score="17.0">
+                      <SimplePredicate field="weight" value="3315.5" operator="greaterThan"/>
+                    </Node>
+                  </Node>
+                  <Node id="106" score="19.6">
+                    <SimplePredicate field="model_year" value="74.5" operator="greaterThan"/>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="107" score="16.18181818181818">
+                <SimplePredicate field="acceleration" value="16.75" operator="greaterThan"/>
+                <Node id="108" score="18.0">
+                  <SimplePredicate field="displacement" value="241.0" operator="lessOrEqual"/>
+                </Node>
+                <Node id="109" score="15.499999999999998">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="displacement" value="241.0" operator="greaterThan"/>
+                    <SimplePredicate field="displacement" operator="isMissing"/>
+                  </CompoundPredicate>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="110" score="20.122222222222224">
+              <SimplePredicate field="model_year" value="75.5" operator="greaterThan"/>
+              <Node id="111" score="19.847058823529412">
+                <CompoundPredicate booleanOperator="or">
+                  <SimplePredicate field="displacement" value="327.0" operator="lessOrEqual"/>
+                  <SimplePredicate field="displacement" operator="isMissing"/>
+                </CompoundPredicate>
+                <Node id="112" score="20.73636363636364">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="weight" value="3447.5" operator="lessOrEqual"/>
+                    <SimplePredicate field="weight" operator="isMissing"/>
+                  </CompoundPredicate>
+                  <Node id="113" score="24.0">
+                    <SimplePredicate field="horsepower" value="83.0" operator="lessOrEqual"/>
+                  </Node>
+                  <Node id="114" score="20.580952380952386">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="horsepower" value="83.0" operator="greaterThan"/>
+                      <SimplePredicate field="horsepower" operator="isMissing"/>
+                    </CompoundPredicate>
+                    <Node id="115" score="20.415000000000006">
+                      <CompoundPredicate booleanOperator="or">
+                        <SimplePredicate field="acceleration" value="20.450000762939453" operator="lessOrEqual"/>
+                        <SimplePredicate field="acceleration" operator="isMissing"/>
+                      </CompoundPredicate>
+                      <Node id="116" score="20.752941176470593">
+                        <CompoundPredicate booleanOperator="or">
+                          <SimplePredicate field="displacement" value="254.0" operator="lessOrEqual"/>
+                          <SimplePredicate field="displacement" operator="isMissing"/>
+                        </CompoundPredicate>
+                        <Node id="117" score="22.166666666666668">
+                          <SimplePredicate field="model_year" value="76.5" operator="lessOrEqual"/>
+                        </Node>
+                        <Node id="118" score="20.450000000000003">
+                          <CompoundPredicate booleanOperator="or">
+                            <SimplePredicate field="model_year" value="76.5" operator="greaterThan"/>
+                            <SimplePredicate field="model_year" operator="isMissing"/>
+                          </CompoundPredicate>
+                          <Node id="119" score="20.163636363636364">
+                            <CompoundPredicate booleanOperator="or">
+                              <SimplePredicate field="horsepower" value="107.5" operator="lessOrEqual"/>
+                              <SimplePredicate field="horsepower" operator="isMissing"/>
+                            </CompoundPredicate>
+                            <Node id="120" score="20.269999999999996">
+                              <CompoundPredicate booleanOperator="or">
+                                <SimplePredicate field="acceleration" value="18.450000762939453" operator="lessOrEqual"/>
+                                <SimplePredicate field="acceleration" operator="isMissing"/>
+                              </CompoundPredicate>
+                              <Node id="121" score="20.3875">
+                                <CompoundPredicate booleanOperator="or">
+                                  <SimplePredicate field="displacement" value="231.5" operator="lessOrEqual"/>
+                                  <SimplePredicate field="displacement" operator="isMissing"/>
+                                </CompoundPredicate>
+                              </Node>
+                              <Node id="122" score="19.799999999999997">
+                                <SimplePredicate field="displacement" value="231.5" operator="greaterThan"/>
+                              </Node>
+                            </Node>
+                            <Node id="123" score="19.1">
+                              <SimplePredicate field="acceleration" value="18.450000762939453" operator="greaterThan"/>
+                            </Node>
+                          </Node>
+                          <Node id="124" score="21.5">
+                            <SimplePredicate field="horsepower" value="107.5" operator="greaterThan"/>
+                          </Node>
+                        </Node>
+                      </Node>
+                      <Node id="125" score="18.5">
+                        <SimplePredicate field="displacement" value="254.0" operator="greaterThan"/>
+                      </Node>
+                    </Node>
+                    <Node id="126" score="23.9">
+                      <SimplePredicate field="acceleration" value="20.450000762939453" operator="greaterThan"/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="127" score="18.21666666666667">
+                  <SimplePredicate field="weight" value="3447.5" operator="greaterThan"/>
+                  <Node id="128" score="18.61">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="weight" value="3806.5" operator="lessOrEqual"/>
+                      <SimplePredicate field="weight" operator="isMissing"/>
+                    </CompoundPredicate>
+                    <Node id="129" score="17.55">
+                      <SimplePredicate field="weight" value="3522.5" operator="lessOrEqual"/>
+                    </Node>
+                    <Node id="130" score="18.875">
+                      <CompoundPredicate booleanOperator="or">
+                        <SimplePredicate field="weight" value="3522.5" operator="greaterThan"/>
+                        <SimplePredicate field="weight" operator="isMissing"/>
+                      </CompoundPredicate>
+                    </Node>
+                  </Node>
+                  <Node id="131" score="16.25">
+                    <SimplePredicate field="weight" value="3806.5" operator="greaterThan"/>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="132" score="24.8">
+                <SimplePredicate field="displacement" value="327.0" operator="greaterThan"/>
+              </Node>
+            </Node>
+          </Node>
+          <Node id="133" score="30.0">
+            <SimplePredicate field="model_year" value="81.5" operator="greaterThan"/>
+          </Node>
+        </Node>
+        <Node id="134" score="14.518749999999997">
+          <CompoundPredicate booleanOperator="or">
+            <SimplePredicate field="horsepower" value="127.0" operator="greaterThan"/>
+            <SimplePredicate field="horsepower" operator="isMissing"/>
+          </CompoundPredicate>
+          <Node id="135" score="13.82236842105263">
+            <CompoundPredicate booleanOperator="or">
+              <SimplePredicate field="model_year" value="76.5" operator="lessOrEqual"/>
+              <SimplePredicate field="model_year" operator="isMissing"/>
+            </CompoundPredicate>
+            <Node id="136" score="14.488888888888889">
+              <CompoundPredicate booleanOperator="or">
+                <SimplePredicate field="weight" value="4358.5" operator="lessOrEqual"/>
+                <SimplePredicate field="weight" operator="isMissing"/>
+              </CompoundPredicate>
+              <Node id="137" score="15.857142857142858">
+                <SimplePredicate field="weight" value="3533.5" operator="lessOrEqual"/>
+              </Node>
+              <Node id="138" score="14.236842105263158">
+                <CompoundPredicate booleanOperator="or">
+                  <SimplePredicate field="weight" value="3533.5" operator="greaterThan"/>
+                  <SimplePredicate field="weight" operator="isMissing"/>
+                </CompoundPredicate>
+                <Node id="139" score="13.956521739130434">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="weight" value="4132.0" operator="lessOrEqual"/>
+                    <SimplePredicate field="weight" operator="isMissing"/>
+                  </CompoundPredicate>
+                  <Node id="140" score="14.636363636363637">
+                    <SimplePredicate field="model_year" value="72.5" operator="lessOrEqual"/>
+                    <Node id="141" score="15.142857142857144">
+                      <CompoundPredicate booleanOperator="or">
+                        <SimplePredicate field="weight" value="3984.5" operator="lessOrEqual"/>
+                        <SimplePredicate field="weight" operator="isMissing"/>
+                      </CompoundPredicate>
+                    </Node>
+                    <Node id="142" score="13.75">
+                      <SimplePredicate field="weight" value="3984.5" operator="greaterThan"/>
+                    </Node>
+                  </Node>
+                  <Node id="143" score="13.333333333333334">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="model_year" value="72.5" operator="greaterThan"/>
+                      <SimplePredicate field="model_year" operator="isMissing"/>
+                    </CompoundPredicate>
+                    <Node id="144" score="13.545454545454545">
+                      <CompoundPredicate booleanOperator="or">
+                        <SimplePredicate field="horsepower" value="177.5" operator="lessOrEqual"/>
+                        <SimplePredicate field="horsepower" operator="isMissing"/>
+                      </CompoundPredicate>
+                      <Node id="145" score="13.857142857142858">
+                        <CompoundPredicate booleanOperator="or">
+                          <SimplePredicate field="model_year" value="74.5" operator="lessOrEqual"/>
+                          <SimplePredicate field="model_year" operator="isMissing"/>
+                        </CompoundPredicate>
+                      </Node>
+                      <Node id="146" score="13.0">
+                        <SimplePredicate field="model_year" value="74.5" operator="greaterThan"/>
+                      </Node>
+                    </Node>
+                    <Node id="147" score="11.0">
+                      <SimplePredicate field="horsepower" value="177.5" operator="greaterThan"/>
+                    </Node>
+                  </Node>
+                </Node>
+                <Node id="148" score="14.666666666666668">
+                  <SimplePredicate field="weight" value="4132.0" operator="greaterThan"/>
+                  <Node id="149" score="13.999999999999998">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="model_year" value="72.5" operator="lessOrEqual"/>
+                      <SimplePredicate field="model_year" operator="isMissing"/>
+                    </CompoundPredicate>
+                  </Node>
+                  <Node id="150" score="15.428571428571429">
+                    <SimplePredicate field="model_year" value="72.5" operator="greaterThan"/>
+                  </Node>
+                </Node>
+              </Node>
+            </Node>
+            <Node id="151" score="12.85483870967742">
+              <SimplePredicate field="weight" value="4358.5" operator="greaterThan"/>
+              <Node id="152" score="12.346153846153845">
+                <CompoundPredicate booleanOperator="or">
+                  <SimplePredicate field="model_year" value="74.5" operator="lessOrEqual"/>
+                  <SimplePredicate field="model_year" operator="isMissing"/>
+                </CompoundPredicate>
+                <Node id="153" score="10.8">
+                  <SimplePredicate field="model_year" value="70.5" operator="lessOrEqual"/>
+                </Node>
+                <Node id="154" score="12.714285714285715">
+                  <CompoundPredicate booleanOperator="or">
+                    <SimplePredicate field="model_year" value="70.5" operator="greaterThan"/>
+                    <SimplePredicate field="model_year" operator="isMissing"/>
+                  </CompoundPredicate>
+                  <Node id="155" score="12.999999999999998">
+                    <CompoundPredicate booleanOperator="or">
+                      <SimplePredicate field="weight" value="4826.0" operator="lessOrEqual"/>
+                      <SimplePredicate field="weight" operator="isMissing"/>
+                    </CompoundPredicate>
+                    <Node id="156" score="13.272727272727272">
+                      <CompoundPredicate booleanOperator="or">
+                        <SimplePredicate field="horsepower" value="177.5" operator="lessOrEqual"/>
+                        <SimplePredicate field="horsepower" operator="isMissing"/>
+                      </CompoundPredicate>
+                      <Node id="157" score="14.0">
+                        <SimplePredicate field="displacement" value="334.0" operator="lessOrEqual"/>
+                      </Node>
+                      <Node id="158" score="13.11111111111111">
+                        <CompoundPredicate booleanOperator="or">
+                          <SimplePredicate field="displacement" value="334.0" operator="greaterThan"/>
+                          <SimplePredicate field="displacement" operator="isMissing"/>
+                        </CompoundPredicate>
+                      </Node>
+                    </Node>
+                    <Node id="159" score="12.25">
+                      <SimplePredicate field="horsepower" value="177.5" operator="greaterThan"/>
+                    </Node>
+                  </Node>
+                  <Node id="160" score="12.0">
+                    <SimplePredicate field="weight" value="4826.0" operator="greaterThan"/>
+                  </Node>
+                </Node>
+              </Node>
+              <Node id="161" score="15.5">
+                <SimplePredicate field="model_year" value="74.5" operator="greaterThan"/>
+              </Node>
+            </Node>
+          </Node>
+          <Node id="162" score="17.165">
+            <SimplePredicate field="model_year" value="76.5" operator="greaterThan"/>
+            <Node id="163" score="18.34">
+              <CompoundPredicate booleanOperator="or">
+                <SimplePredicate field="weight" value="3947.5" operator="lessOrEqual"/>
+                <SimplePredicate field="weight" operator="isMissing"/>
+              </CompoundPredicate>
+              <Node id="164" score="18.81666666666667">
+                <CompoundPredicate booleanOperator="or">
+                  <SimplePredicate field="acceleration" value="13.299999713897705" operator="lessOrEqual"/>
+                  <SimplePredicate field="acceleration" operator="isMissing"/>
+                </CompoundPredicate>
+              </Node>
+              <Node id="165" score="17.625">
+                <SimplePredicate field="acceleration" value="13.299999713897705" operator="greaterThan"/>
+              </Node>
+            </Node>
+            <Node id="166" score="15.99">
+              <SimplePredicate field="weight" value="3947.5" operator="greaterThan"/>
+              <Node id="167" score="15.583333333333334">
+                <CompoundPredicate booleanOperator="or">
+                  <SimplePredicate field="model_year" value="77.5" operator="lessOrEqual"/>
+                  <SimplePredicate field="model_year" operator="isMissing"/>
+                </CompoundPredicate>
+              </Node>
+              <Node id="168" score="16.6">
+                <SimplePredicate field="model_year" value="77.5" operator="greaterThan"/>
+              </Node>
+            </Node>
+          </Node>
+        </Node>
+      </Node>
+    </Node>
+  </TreeModel>
+</PMML>

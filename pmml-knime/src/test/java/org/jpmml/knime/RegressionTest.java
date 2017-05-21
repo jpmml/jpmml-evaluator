@@ -24,6 +24,11 @@ import org.junit.Test;
 public class RegressionTest extends IntegrationTest {
 
 	@Test
+	public void evaluateDecisionTreeAuto() throws Exception {
+		evaluate("DecisionTree", "Auto");
+	}
+
+	@Test
 	public void evaluateGeneralRegressionAuto() throws Exception {
 		evaluate("GeneralRegression", "Auto");
 	}
