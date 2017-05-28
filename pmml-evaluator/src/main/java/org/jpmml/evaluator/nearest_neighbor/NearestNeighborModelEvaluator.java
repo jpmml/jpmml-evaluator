@@ -54,6 +54,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.InlineTable;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
@@ -160,6 +161,14 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		NearestNeighborModel nearestNeighborModel = getModel();
 		if(!nearestNeighborModel.isScorable()){
 			throw new InvalidResultException(nearestNeighborModel);
+		}
+
+		MathContext mathContext = nearestNeighborModel.getMathContext();
+		switch(mathContext){
+			case DOUBLE:
+				break;
+			default:
+				throw new UnsupportedFeatureException(nearestNeighborModel, mathContext);
 		}
 
 		Map<FieldName, AffinityDistribution> predictions;

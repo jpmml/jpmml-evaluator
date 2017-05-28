@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
@@ -47,6 +48,8 @@ public class JavaModel extends Model {
 	private String algorithmName = null;
 
 	private Boolean scorable = null;
+
+	private MathContext mathContext = null;
 
 	private MiningSchema miningSchema = null;
 
@@ -115,6 +118,23 @@ public class JavaModel extends Model {
 	@Override
 	public JavaModel setScorable(@Property("scorable") Boolean scorable){
 		this.scorable = scorable;
+
+		return this;
+	}
+
+	@Override
+	public MathContext getMathContext(){
+
+		if(this.mathContext == null){
+			return MathContext.DOUBLE;
+		}
+
+		return this.mathContext;
+	}
+
+	@Override
+	public JavaModel setMathContext(MathContext mathContext){
+		this.mathContext = mathContext;
 
 		return this;
 	}

@@ -32,6 +32,7 @@ import org.dmg.pmml.Array;
 import org.dmg.pmml.ComparisonMeasure;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OpType;
@@ -132,6 +133,14 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		ClusteringModel clusteringModel = getModel();
 		if(!clusteringModel.isScorable()){
 			throw new InvalidResultException(clusteringModel);
+		}
+
+		MathContext mathContext = clusteringModel.getMathContext();
+		switch(mathContext){
+			case DOUBLE:
+				break;
+			default:
+				throw new UnsupportedFeatureException(clusteringModel, mathContext);
 		}
 
 		Map<FieldName, ClusterAffinityDistribution> predictions;

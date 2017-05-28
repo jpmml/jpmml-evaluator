@@ -35,6 +35,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
@@ -157,6 +158,14 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		AssociationModel associationModel = getModel();
 		if(!associationModel.isScorable()){
 			throw new InvalidResultException(associationModel);
+		}
+
+		MathContext mathContext = associationModel.getMathContext();
+		switch(mathContext){
+			case DOUBLE:
+				break;
+			default:
+				throw new UnsupportedFeatureException(associationModel, mathContext);
 		}
 
 		Map<FieldName, Association> predictions;

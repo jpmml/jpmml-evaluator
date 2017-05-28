@@ -44,6 +44,7 @@ import com.google.common.collect.Sets;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.Matrix;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OpType;
@@ -140,6 +141,14 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		GeneralRegressionModel generalRegressionModel = getModel();
 		if(!generalRegressionModel.isScorable()){
 			throw new InvalidResultException(generalRegressionModel);
+		}
+
+		MathContext mathContext = generalRegressionModel.getMathContext();
+		switch(mathContext){
+			case DOUBLE:
+				break;
+			default:
+				throw new UnsupportedFeatureException(generalRegressionModel, mathContext);
 		}
 
 		Map<FieldName, ?> predictions;

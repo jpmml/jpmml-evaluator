@@ -27,6 +27,7 @@ import java.util.Objects;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
@@ -76,6 +77,14 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		RegressionModel regressionModel = getModel();
 		if(!regressionModel.isScorable()){
 			throw new InvalidResultException(regressionModel);
+		}
+
+		MathContext mathContext = regressionModel.getMathContext();
+		switch(mathContext){
+			case DOUBLE:
+				break;
+			default:
+				throw new UnsupportedFeatureException(regressionModel, mathContext);
 		}
 
 		Map<FieldName, ?> predictions;

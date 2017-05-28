@@ -31,6 +31,7 @@ import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
@@ -93,6 +94,14 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		TreeModel treeModel = getModel();
 		if(!treeModel.isScorable()){
 			throw new InvalidResultException(treeModel);
+		}
+
+		MathContext mathContext = treeModel.getMathContext();
+		switch(mathContext){
+			case DOUBLE:
+				break;
+			default:
+				throw new UnsupportedFeatureException(treeModel, mathContext);
 		}
 
 		Map<FieldName, ?> predictions;

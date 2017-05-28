@@ -47,6 +47,7 @@ import org.dmg.pmml.Expression;
 import org.dmg.pmml.Extension;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.GaussianDistribution;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PoissonDistribution;
@@ -129,6 +130,14 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		NaiveBayesModel naiveBayesModel = getModel();
 		if(!naiveBayesModel.isScorable()){
 			throw new InvalidResultException(naiveBayesModel);
+		}
+
+		MathContext mathContext = naiveBayesModel.getMathContext();
+		switch(mathContext){
+			case DOUBLE:
+				break;
+			default:
+				throw new UnsupportedFeatureException(naiveBayesModel, mathContext);
 		}
 
 		Map<FieldName, ? extends Classification> predictions;

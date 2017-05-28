@@ -30,6 +30,7 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
@@ -96,6 +97,14 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		RuleSetModel ruleSetModel = getModel();
 		if(!ruleSetModel.isScorable()){
 			throw new InvalidResultException(ruleSetModel);
+		}
+
+		MathContext mathContext = ruleSetModel.getMathContext();
+		switch(mathContext){
+			case DOUBLE:
+				break;
+			default:
+				throw new UnsupportedFeatureException(ruleSetModel, mathContext);
 		}
 
 		Map<FieldName, ? extends Classification> predictions;

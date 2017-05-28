@@ -40,6 +40,7 @@ import com.google.common.primitives.Doubles;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
@@ -125,6 +126,14 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 		if(!supportVectorMachineModel.isScorable()){
 			throw new InvalidResultException(supportVectorMachineModel);
+		}
+
+		MathContext mathContext = supportVectorMachineModel.getMathContext();
+		switch(mathContext){
+			case DOUBLE:
+				break;
+			default:
+				throw new UnsupportedFeatureException(supportVectorMachineModel, mathContext);
 		}
 
 		Map<FieldName, ?> predictions;

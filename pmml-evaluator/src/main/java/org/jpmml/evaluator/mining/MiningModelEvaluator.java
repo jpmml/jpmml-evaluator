@@ -43,6 +43,7 @@ import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.Model;
@@ -194,6 +195,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MiningModel miningModel = getModel();
 		if(!miningModel.isScorable()){
 			throw new InvalidResultException(miningModel);
+		}
+
+		MathContext mathContext = miningModel.getMathContext();
+		switch(mathContext){
+			case DOUBLE:
+				break;
+			default:
+				throw new UnsupportedFeatureException(miningModel, mathContext);
 		}
 
 		Map<FieldName, ?> predictions;

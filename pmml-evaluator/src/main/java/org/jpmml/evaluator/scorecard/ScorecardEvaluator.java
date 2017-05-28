@@ -25,6 +25,7 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
@@ -75,6 +76,14 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		Scorecard scorecard = getModel();
 		if(!scorecard.isScorable()){
 			throw new InvalidResultException(scorecard);
+		}
+
+		MathContext mathContext = scorecard.getMathContext();
+		switch(mathContext){
+			case DOUBLE:
+				break;
+			default:
+				throw new UnsupportedFeatureException(scorecard, mathContext);
 		}
 
 		Map<FieldName, ?> predictions;

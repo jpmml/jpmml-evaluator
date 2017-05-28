@@ -43,6 +43,7 @@ import org.dmg.pmml.Entity;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
@@ -132,6 +133,14 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		NeuralNetwork neuralNetwork = getModel();
 		if(!neuralNetwork.isScorable()){
 			throw new InvalidResultException(neuralNetwork);
+		}
+
+		MathContext mathContext = neuralNetwork.getMathContext();
+		switch(mathContext){
+			case DOUBLE:
+				break;
+			default:
+				throw new UnsupportedFeatureException(neuralNetwork, mathContext);
 		}
 
 		Map<FieldName, ?> predictions;
