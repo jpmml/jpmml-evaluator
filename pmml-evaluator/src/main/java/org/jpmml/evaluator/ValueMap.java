@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2017 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -16,29 +16,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.regression;
+package org.jpmml.evaluator;
 
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
-import org.junit.Test;
+public class ValueMap extends LinkedHashMap<String, Value<?>> implements Iterable<Value<?>> {
 
-import static org.junit.Assert.assertEquals;
-
-public class RegressionModelEvaluatorTest {
-
-	@Test
-	public void calculateCategoryProbabilities(){
-		Map<String, Double> values = new LinkedHashMap<>();
-		values.put("loud", 0.2d);
-		values.put("louder", 0.7d);
-		values.put("insane", 1d);
-
-		RegressionModelEvaluator.calculateCategoryProbabilities(values, Arrays.asList("loud", "louder", "insane"));
-
-		assertEquals((Double)(0.2d - 0d), values.get("loud"));
-		assertEquals((Double)(0.7d - 0.2d), values.get("louder"));
-		assertEquals((Double)(1d - 0.7d), values.get("insane"));
+	public Iterator<Value<?>> iterator(){
+		return values().iterator();
 	}
 }

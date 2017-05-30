@@ -205,7 +205,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		for(TargetField targetField : targetFields){
 			FieldName name = targetField.getName();
 
-			result.put(name, TargetUtil.evaluateRegressionInternal(targetField, result.get(name), context));
+			result.put(name, TargetUtil.evaluateRegressionInternal(targetField, (Double)result.get(name), context));
 		}
 
 		return result;

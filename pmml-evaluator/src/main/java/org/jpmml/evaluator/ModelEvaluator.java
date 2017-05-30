@@ -47,6 +47,7 @@ import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.LocalTransformations;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
@@ -152,6 +153,12 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		M model = getModel();
 
 		return model.getMiningFunction();
+	}
+
+	public MathContext getMathContext(){
+		M model = getModel();
+
+		return model.getMathContext();
 	}
 
 	public DataField getDataField(FieldName name){
@@ -371,6 +378,12 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		context.setArguments(arguments);
 
 		return evaluate(context);
+	}
+
+	protected ValueFactory<?> getValueFactory(){
+		MathContext mathContext = getMathContext();
+
+		return ValueFactory.getInstance(mathContext);
 	}
 
 	protected TypeDefinitionField resolveField(FieldName name){

@@ -36,14 +36,29 @@ public class TargetUtil {
 
 	static
 	public Map<FieldName, ?> evaluateRegressionDefault(ModelEvaluationContext context){
-		return evaluateRegression((Double)null, context);
+		ModelEvaluator<?> evaluator = context.getModelEvaluator();
+
+		TargetField targetField = evaluator.getTargetField();
+
+		Target target = targetField.getTarget();
+		if(target != null){
+			Double value = getDefaultValue(target);
+
+			if(value != null){
+				return evaluateRegression(targetField, value, context);
+			}
+		}
+
+		return Collections.singletonMap(targetField.getName(), null);
 	}
 
 	static
 	public Map<FieldName, ?> evaluateRegression(Double value, ModelEvaluationContext context){
 		ModelEvaluator<?> evaluator = context.getModelEvaluator();
 
-		return evaluateRegression(evaluator.getTargetField(), value, context);
+		TargetField targetField = evaluator.getTargetField();
+
+		return evaluateRegression(targetField, value, context);
 	}
 
 	static
@@ -52,39 +67,61 @@ public class TargetUtil {
 	}
 
 	static
-	public Object evaluateRegressionInternal(TargetField targetField, Object value, EvaluationContext context){
+	public Map<FieldName, ?> evaluateRegression(TargetField targetField, Value<?> value, EvaluationContext context){
+		return Collections.singletonMap(targetField.getName(), evaluateRegressionInternal(targetField, value, context));
+	}
+
+	static
+	public Object evaluateRegressionInternal(TargetField targetField, Double value, EvaluationContext context){
 		DataField dataField = targetField.getDataField();
 		MiningField miningField = targetField.getMiningField();
 		Target target = targetField.getTarget();
 
 		if(target != null){
-
-			if(value == null){
-				value = getDefaultValue(target);
-			} // End if
-
-			if(value != null){
-				value = processValue(target, (Double)value);
-			}
-		} // End if
-
-		if(value != null){
-			value = TypeUtil.cast(dataField.getDataType(), value);
+			value = processValue(target, value);
 		}
 
-		return value;
+		return TypeUtil.cast(dataField.getDataType(), value);
+	}
+
+	static
+	public Object evaluateRegressionInternal(TargetField targetField, Value<?> value, EvaluationContext context){
+		DataField dataField = targetField.getDataField();
+		MiningField miningField = targetField.getMiningField();
+		Target target = targetField.getTarget();
+
+		if(target != null){
+			value = processValue(target, value);
+		}
+
+		return TypeUtil.cast(dataField.getDataType(), value.getValue());
 	}
 
 	static
 	public Map<FieldName, ? extends Classification> evaluateClassificationDefault(ModelEvaluationContext context){
-		return evaluateClassification((Classification)null, context);
+		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
+
+		TargetField targetField = modelEvaluator.getTargetField();
+
+		Target target = targetField.getTarget();
+		if(target != null){
+			ProbabilityDistribution value = getPriorProbabilities(target);
+
+			if(value != null){
+				return evaluateClassification(targetField, value, context);
+			}
+		}
+
+		return Collections.singletonMap(targetField.getName(), null);
 	}
 
 	static
 	public Map<FieldName, ? extends Classification> evaluateClassification(Classification value, ModelEvaluationContext context){
 		ModelEvaluator<?> evaluator = context.getModelEvaluator();
 
-		return evaluateClassification(evaluator.getTargetField(), value, context);
+		TargetField targetField = evaluator.getTargetField();
+
+		return evaluateClassification(targetField, value, context);
 	}
 
 	static
@@ -95,26 +132,15 @@ public class TargetUtil {
 	static
 	public Classification evaluateClassificationInternal(TargetField targetField, Classification value, EvaluationContext context){
 		DataField dataField = targetField.getDataField();
-		MiningField miningField = targetField.getMiningField();
-		Target target = targetField.getTarget();
 
-		if(target != null){
-
-			if(value == null){
-				value = getPriorProbabilities(target);
-			}
-		} // End if
-
-		if(value != null){
-			value.computeResult(dataField.getDataType());
-		}
+		value.computeResult(dataField.getDataType());
 
 		return value;
 	}
 
 	static
 	public Double processValue(Target target, Double value){
-		double result = value;
+		double result = value.doubleValue();
 
 		Double min = target.getMin();
 		if(min != null){
@@ -153,6 +179,47 @@ public class TargetUtil {
 				return Math.ceil(result);
 			case FLOOR:
 				return Math.floor(result);
+			default:
+				throw new UnsupportedFeatureException(target, castInteger);
+		}
+	}
+
+	static
+	public Value<?> processValue(Target target, Value<?> value){
+		double result = value.doubleValue();
+
+		Double min = target.getMin();
+		if(min != null){
+			value.restrict(min, Double.MAX_VALUE);
+		}
+
+		Double max = target.getMax();
+		if(max != null){
+			value.restrict(-Double.MAX_VALUE, max);
+		}
+
+		Double rescaleFactor = target.getRescaleFactor();
+		if(rescaleFactor != null){
+			value.multiply(rescaleFactor);
+		}
+
+		Double rescaleConstant = target.getRescaleConstant();
+		if(rescaleConstant != null){
+			value.add(rescaleConstant);
+		}
+
+		Target.CastInteger castInteger = target.getCastInteger();
+		if(castInteger == null){
+			return value;
+		}
+
+		switch(castInteger){
+			case ROUND:
+				return value.round();
+			case CEILING:
+				return value.ceiling();
+			case FLOOR:
+				return value.floor();
 			default:
 				throw new UnsupportedFeatureException(target, castInteger);
 		}

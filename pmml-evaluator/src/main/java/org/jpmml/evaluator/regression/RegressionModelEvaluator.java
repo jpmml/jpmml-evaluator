@@ -18,8 +18,7 @@
  */
 package org.jpmml.evaluator.regression;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -38,7 +37,6 @@ import org.dmg.pmml.regression.RegressionModel;
 import org.dmg.pmml.regression.RegressionTable;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationContext;
-import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
@@ -46,12 +44,14 @@ import org.jpmml.evaluator.InvalidFeatureException;
 import org.jpmml.evaluator.InvalidResultException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.NormalDistributionUtil;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.evaluator.ValueMap;
 
 public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
@@ -81,6 +81,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		MathContext mathContext = regressionModel.getMathContext();
 		switch(mathContext){
+			case FLOAT:
 			case DOUBLE:
 				break;
 			default:
@@ -121,12 +122,28 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		RegressionTable regressionTable = regressionTables.get(0);
 
-		Double result = evaluateRegressionTable(regressionTable, context);
+		Value<?> result = evaluateRegressionTable(regressionTable, context);
 		if(result == null){
 			return TargetUtil.evaluateRegressionDefault(context);
 		}
 
-		result = normalizeRegressionResult(result);
+		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
+		switch(normalizationMethod){
+			case NONE:
+			case SOFTMAX:
+			case LOGIT:
+			case EXP:
+			case PROBIT:
+			case CLOGLOG:
+			case LOGLOG:
+			case CAUCHIT:
+				RegressionModelUtil.normalizeRegressionResult(result, normalizationMethod);
+				break;
+			case SIMPLEMAX:
+				throw new InvalidFeatureException(regressionModel);
+			default:
+				throw new UnsupportedFeatureException(regressionModel, normalizationMethod);
+		}
 
 		return TargetUtil.evaluateRegression(targetField, result, context);
 	}
@@ -155,21 +172,29 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		}
 
 		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
+		if(regressionTables.size() < 2){
+			throw new InvalidFeatureException(regressionModel);
+		}
 
 		List<String> targetCategories = FieldValueUtil.getTargetCategories(dataField);
 		if(targetCategories.size() > 0 && targetCategories.size() != regressionTables.size()){
-			throw new InvalidFeatureException(dataField);
+			throw new InvalidFeatureException(regressionModel);
 		}
 
-		Map<String, Double> values = new LinkedHashMap<>();
+		ValueMap values = new ValueMap();
 
 		for(RegressionTable regressionTable : regressionTables){
 			String targetCategory = regressionTable.getTargetCategory();
+
 			if(targetCategory == null){
+				throw new InvalidFeatureException(regressionTable);
+			} // End if
+
+			if(targetCategories.size() > 0 && targetCategories.indexOf(targetCategory) < 0){
 				throw new InvalidFeatureException(regressionTable);
 			}
 
-			Double value = evaluateRegressionTable(regressionTable, context);
+			Value<?> value = evaluateRegressionTable(regressionTable, context);
 
 			// "If one or more RegressionTable elements cannot be evaluated, then the predictions are defined by the priorProbability values of the Target element"
 			if(value == null){
@@ -179,22 +204,58 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			values.put(targetCategory, value);
 		}
 
-		switch(opType){
-			case CATEGORICAL:
-				// "The binary logistic regression is a special case"
-				if(regressionTables.size() == 2){
-					computeBinomialProbabilities(values);
+		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
+		switch(normalizationMethod){
+			case NONE:
+				if((OpType.CATEGORICAL).equals(opType)){
+
+					if(values.size() == 2){
+						RegressionModelUtil.computeBinomialProbabilities(values, normalizationMethod);
+					} else
+
+					{
+						RegressionModelUtil.computeMultinomialProbabilities(values, normalizationMethod);
+					}
 				} else
 
 				{
-					computeMultinomialProbabilities(values);
+					RegressionModelUtil.computeOrdinalProbabilities(values, normalizationMethod);
 				}
 				break;
-			case ORDINAL:
-				computeOrdinalProbabilities(values, targetCategories);
+			case SIMPLEMAX:
+			case SOFTMAX:
+				if((OpType.CATEGORICAL).equals(opType)){
+					RegressionModelUtil.computeMultinomialProbabilities(values, normalizationMethod);
+				} else
+
+				{
+					throw new InvalidFeatureException(regressionModel);
+				}
 				break;
+			case LOGIT:
+			case PROBIT:
+			case CLOGLOG:
+			case LOGLOG:
+			case CAUCHIT:
+				if((OpType.CATEGORICAL).equals(opType)){
+
+					if(values.size() == 2){
+						RegressionModelUtil.computeBinomialProbabilities(values, normalizationMethod);
+					} else
+
+					{
+						throw new InvalidFeatureException(regressionModel);
+					}
+				} else
+
+				{
+					RegressionModelUtil.computeOrdinalProbabilities(values, normalizationMethod);
+				}
+				break;
+			case EXP:
+				throw new InvalidFeatureException(regressionModel);
 			default:
-				throw new UnsupportedFeatureException(dataField, opType);
+				throw new UnsupportedFeatureException(regressionModel, normalizationMethod);
 		}
 
 		ProbabilityDistribution result = new ProbabilityDistribution(values);
@@ -202,232 +263,84 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		return TargetUtil.evaluateClassification(targetField, result, context);
 	}
 
-	private Double evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){
-		double result = 0d;
+	private Value<?> evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){
+		ValueFactory<?> valueFactory = getValueFactory();
 
-		result += regressionTable.getIntercept();
+		Value<?> result = valueFactory.newValue(regressionTable.getIntercept());
 
-		List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
-		for(NumericPredictor numericPredictor : numericPredictors){
-			FieldValue value = context.evaluate(numericPredictor.getName());
-
-			// "If the input value is missing, then the result evaluates to a missing value"
-			if(value == null){
-				return null;
-			}
-
-			int exponent = numericPredictor.getExponent();
-
-			result += numericPredictor.getCoefficient() * (exponent == 1 ? (value.asNumber()).doubleValue() : Math.pow((value.asNumber()).doubleValue(), exponent));
-		}
-
-		// A categorical field is represented by a list of CategoricalPredictor elements.
-		// The iteration over this list can be terminated right after finding the first and only match
-		FieldName matchedName = null;
-
-		List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
-		for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
-			FieldName name = categoricalPredictor.getName();
-
-			if(matchedName != null){
-
-				if((matchedName).equals(name)){
-					continue;
-				}
-
-				matchedName = null;
-			}
-
-			FieldValue value = context.evaluate(name);
-
-			// "If the input value is missing, then the product is ignored"
-			if(value == null){
-				matchedName = name;
-
-				continue;
-			}
-
-			boolean equals = value.equals(categoricalPredictor);
-			if(equals){
-				matchedName = name;
-
-				result += categoricalPredictor.getCoefficient();
-			}
-		}
-
-		List<PredictorTerm> predictorTerms = regressionTable.getPredictorTerms();
-		for(PredictorTerm predictorTerm : predictorTerms){
-			double product = predictorTerm.getCoefficient();
-
-			List<FieldRef> fieldRefs = predictorTerm.getFieldRefs();
-			if(fieldRefs.size() < 1){
-				throw new InvalidFeatureException(predictorTerm);
-			}
-
-			for(FieldRef fieldRef : fieldRefs){
-				FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
+		if(regressionTable.hasNumericPredictors()){
+			List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
+			for(NumericPredictor numericPredictor : numericPredictors){
+				FieldValue value = context.evaluate(numericPredictor.getName());
 
 				// "If the input value is missing, then the result evaluates to a missing value"
 				if(value == null){
 					return null;
 				}
 
-				product *= (value.asNumber()).doubleValue();
+				result.add(value.asNumber(), numericPredictor.getExponent(), numericPredictor.getCoefficient());
 			}
+		} // End if
 
-			result += product;
+		if(regressionTable.hasCategoricalPredictors()){
+			// A categorical field is represented by a list of CategoricalPredictor elements.
+			// The iteration over this list can be terminated right after finding the first and only match
+			FieldName matchedName = null;
+
+			List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
+			for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
+				FieldName name = categoricalPredictor.getName();
+
+				if(matchedName != null){
+
+					if((matchedName).equals(name)){
+						continue;
+					}
+
+					matchedName = null;
+				}
+
+				FieldValue value = context.evaluate(name);
+
+				// "If the input value is missing, then the categorical field is ignored"
+				if(value == null){
+					matchedName = name;
+
+					continue;
+				}
+
+				boolean equals = value.equals(categoricalPredictor);
+				if(equals){
+					matchedName = name;
+
+					result.add(categoricalPredictor.getCoefficient());
+				}
+			}
+		} // End if
+
+		if(regressionTable.hasPredictorTerms()){
+			List<Number> factors = new ArrayList<>();
+
+			List<PredictorTerm> predictorTerms = regressionTable.getPredictorTerms();
+			for(PredictorTerm predictorTerm : predictorTerms){
+				factors.clear();
+
+				List<FieldRef> fieldRefs = predictorTerm.getFieldRefs();
+				for(FieldRef fieldRef : fieldRefs){
+					FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
+
+					// "If the input value is missing, then the result evaluates to a missing value"
+					if(value == null){
+						return null;
+					}
+
+					factors.add(value.asNumber());
+				}
+
+				result.add(factors, predictorTerm.getCoefficient());
+			}
 		}
 
 		return result;
-	}
-
-	private Double normalizeRegressionResult(Double value){
-		RegressionModel regressionModel = getModel();
-
-		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
-		switch(normalizationMethod){
-			case NONE:
-				return value;
-			case SOFTMAX:
-			case LOGIT:
-				return 1d / (1d + Math.exp(-value));
-			case EXP:
-				return Math.exp(value);
-			default:
-				throw new UnsupportedFeatureException(regressionModel, normalizationMethod);
-		}
-	}
-
-	private void computeBinomialProbabilities(Map<String, Double> values){
-		Double probability = 0d;
-
-		int i = 0;
-
-		Collection<Map.Entry<String, Double>> entries = values.entrySet();
-		for(Map.Entry<String, Double> entry : entries){
-
-			// The probability of the first category is calculated
-			if(i == 0){
-				probability = normalizeClassificationResult(entry.getValue(), 2);
-
-				entry.setValue(probability);
-			} else
-
-			// The probability of the second category is obtained by subtracting the probability of the first category from 1.0
-			if(i == 1){
-				entry.setValue(1d - probability);
-			} else
-
-			{
-				throw new EvaluationException();
-			}
-
-			i++;
-		}
-	}
-
-	private void computeMultinomialProbabilities(Map<String, Double> values){
-		RegressionModel regressionModel = getModel();
-
-		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
-		switch(normalizationMethod){
-			case NONE:
-				return;
-			case SIMPLEMAX:
-				Classification.normalize(values);
-				return;
-			case SOFTMAX:
-				Classification.normalizeSoftMax(values);
-				return;
-			default:
-				break;
-		}
-
-		Collection<Map.Entry<String, Double>> entries = values.entrySet();
-		for(Map.Entry<String, Double> entry : entries){
-			entry.setValue(normalizeClassificationResult(entry.getValue(), values.size()));
-		}
-
-		Classification.normalize(values);
-	}
-
-	private void computeOrdinalProbabilities(Map<String, Double> values, List<String> targetCategories){
-		RegressionModel regressionModel = getModel();
-
-		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
-		switch(normalizationMethod){
-			case NONE:
-				return;
-			case SIMPLEMAX:
-			case SOFTMAX:
-				throw new InvalidFeatureException(regressionModel);
-			default:
-				break;
-		}
-
-		Collection<Map.Entry<String, Double>> entries = values.entrySet();
-		for(Map.Entry<String, Double> entry : entries){
-			entry.setValue(normalizeClassificationResult(entry.getValue(), values.size()));
-		}
-
-		calculateCategoryProbabilities(values, targetCategories);
-	}
-
-	private double normalizeClassificationResult(double value, int classes){
-		RegressionModel regressionModel = getModel();
-
-		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
-		switch(normalizationMethod){
-			case NONE:
-				return value;
-			case SIMPLEMAX:
-				throw new InvalidFeatureException(regressionModel);
-			case SOFTMAX:
-				if(classes != 2){
-					throw new InvalidFeatureException(regressionModel);
-				}
-				// Falls through
-			case LOGIT:
-				return 1d / (1d + Math.exp(-value));
-			case PROBIT:
-				return NormalDistributionUtil.cumulativeProbability(value);
-			case CLOGLOG:
-				return 1d - Math.exp(-Math.exp(value));
-			case LOGLOG:
-				return Math.exp(-Math.exp(-value));
-			case CAUCHIT:
-				return 0.5d + (1d / Math.PI) * Math.atan(value);
-			default:
-				throw new UnsupportedFeatureException(regressionModel, normalizationMethod);
-		}
-	}
-
-	static
-	public void calculateCategoryProbabilities(Map<String, Double> map, List<String> categories){
-		double offset = 0d;
-
-		for(int i = 0; i < categories.size() - 1; i++){
-			String category = categories.get(i);
-
-			Double cumulativeProbability = map.get(category);
-			if(cumulativeProbability == null || cumulativeProbability > 1d){
-				throw new EvaluationException();
-			}
-
-			double probability = (cumulativeProbability - offset);
-			if(probability < 0d){
-				throw new EvaluationException();
-			}
-
-			map.put(category, probability);
-
-			offset = cumulativeProbability;
-		}
-
-		if(categories.size() > 1){
-			String category = categories.get(categories.size() - 1);
-
-			map.put(category, 1d - offset);
-		}
 	}
 }
