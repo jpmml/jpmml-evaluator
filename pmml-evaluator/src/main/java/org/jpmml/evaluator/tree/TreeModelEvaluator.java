@@ -28,7 +28,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import org.dmg.pmml.CompoundPredicate;
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MathContext;
@@ -52,8 +51,9 @@ import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueFactory;
 
 public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements HasEntityRegistry<Node> {
 
@@ -98,6 +98,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		MathContext mathContext = treeModel.getMathContext();
 		switch(mathContext){
+			case FLOAT:
 			case DOUBLE:
 				break;
 			default:
@@ -129,11 +130,13 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			return TargetUtil.evaluateRegressionDefault(context);
 		}
 
-		Double score = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, node.getScore());
+		ValueFactory<?> valueFactory = ValueFactory.getInstance(getMathContext());
+
+		Value<?> value = valueFactory.newValue(node.getScore());
 
 		TargetField targetField = getTargetField();
 
-		NodeScore nodeScore = createNodeScore(node, TargetUtil.evaluateRegressionInternal(targetField, score, context));
+		NodeScore nodeScore = createNodeScore(node, TargetUtil.evaluateRegressionInternal(targetField, value, context));
 
 		return Collections.singletonMap(targetField.getName(), nodeScore);
 	}
@@ -329,31 +332,64 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
 
-		double sum = 0;
+		ValueFactory<?> valueFactory = ValueFactory.getInstance(getMathContext());
 
-		for(int i = 0, max = scoreDistributions.size(); i < max; i++){
-			ScoreDistribution scoreDistribution = scoreDistributions.get(i);
+		Value<?> sum = valueFactory.newValue(0d);
 
-			double recordCount = scoreDistribution.getRecordCount();
-
-			sum += recordCount;
-		} // End for
+		boolean hasProbabilities = false;
 
 		for(int i = 0, max = scoreDistributions.size(); i < max; i++){
 			ScoreDistribution scoreDistribution = scoreDistributions.get(i);
 
 			Double probability = scoreDistribution.getProbability();
-			if(probability == null){
-				double recordCount = scoreDistribution.getRecordCount();
 
-				probability = (recordCount / sum);
+			hasProbabilities |= (probability != null);
+
+			// "If the predicted probability is defined for any class label, it must be defined for all"
+			if(hasProbabilities && probability == null){
+				throw new InvalidFeatureException(scoreDistribution);
+			} // End if
+
+			if(hasProbabilities){
+				sum.add(probability);
+			} else
+
+			{
+				sum.add(scoreDistribution.getRecordCount());
+			}
+		}
+
+		// "The predicted probabilities must sum to 1"
+		if(hasProbabilities && sum.doubleValue() != 1d){
+			throw new InvalidFeatureException(node);
+		}
+
+		for(int i = 0, max = scoreDistributions.size(); i < max; i++){
+			ScoreDistribution scoreDistribution = scoreDistributions.get(i);
+
+			Value<?> value;
+
+			if(hasProbabilities){
+				Double probability = scoreDistribution.getProbability();
+
+				value = valueFactory.newValue(probability);
+			} else
+
+			{
+				value = valueFactory.newValue(scoreDistribution.getRecordCount()).divide(sum);
 			}
 
-			result.put(scoreDistribution.getValue(), probability);
+			result.put(scoreDistribution.getValue(), value.doubleValue());
 
 			Double confidence = scoreDistribution.getConfidence();
 			if(confidence != null){
-				result.putConfidence(scoreDistribution.getValue(), confidence * missingValuePenalty);
+				value = valueFactory.newValue(confidence);
+
+				if(missingValuePenalty != 1d){
+					value.multiply(missingValuePenalty);
+				}
+
+				result.putConfidence(scoreDistribution.getValue(), value.doubleValue());
 			}
 		}
 

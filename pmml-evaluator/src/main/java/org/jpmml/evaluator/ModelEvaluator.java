@@ -380,12 +380,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		return evaluate(context);
 	}
 
-	protected ValueFactory<?> getValueFactory(){
-		MathContext mathContext = getMathContext();
-
-		return ValueFactory.getInstance(mathContext);
-	}
-
 	protected TypeDefinitionField resolveField(FieldName name){
 		TypeDefinitionField result = getDataField(name);
 

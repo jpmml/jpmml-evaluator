@@ -264,7 +264,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	}
 
 	private Value<?> evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){
-		ValueFactory<?> valueFactory = getValueFactory();
+		ValueFactory<?> valueFactory = ValueFactory.getInstance(getMathContext());
 
 		Value<?> result = valueFactory.newValue(regressionTable.getIntercept());
 
