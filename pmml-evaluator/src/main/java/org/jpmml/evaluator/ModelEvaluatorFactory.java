@@ -81,10 +81,10 @@ public class ModelEvaluatorFactory implements Serializable {
 		} else
 
 		if(model instanceof MiningModel){
-			MiningModelEvaluator evaluator = new MiningModelEvaluator(pmml, (MiningModel)model);
-			evaluator.setEvaluatorFactory(this);
+			MiningModelEvaluator miningModelEvaluator = new MiningModelEvaluator(pmml, (MiningModel)model);
+			miningModelEvaluator.setEvaluatorFactory(this);
 
-			return evaluator;
+			return miningModelEvaluator;
 		} else
 
 		if(model instanceof NaiveBayesModel){

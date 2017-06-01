@@ -77,13 +77,13 @@ public class SelectAllTest extends ModelEvaluatorTest {
 
 		@Override
 		public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml, Model model){
-			ModelEvaluator<?> result = super.newModelEvaluator(pmml, model);
+			ModelEvaluator<?> modelEvaluator = super.newModelEvaluator(pmml, model);
 
-			if(result instanceof MiningModelEvaluator){
+			if(modelEvaluator instanceof MiningModelEvaluator){
 				this.miningModelCount++;
 			} else
 
-			if(result instanceof TreeModelEvaluator){
+			if(modelEvaluator instanceof TreeModelEvaluator){
 				this.treeModelCount++;
 			} else
 
@@ -91,7 +91,7 @@ public class SelectAllTest extends ModelEvaluatorTest {
 				throw new AssertionError();
 			}
 
-			return result;
+			return modelEvaluator;
 		}
 
 		public int getMiningModelCount(){

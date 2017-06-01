@@ -62,9 +62,7 @@ public class ModelEvaluatorTest {
 
 		assertNull(pmml.getLocator());
 
-		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
-
-		return modelEvaluator;
+		return modelEvaluatorFactory.newModelEvaluator(pmml);
 	}
 
 	static

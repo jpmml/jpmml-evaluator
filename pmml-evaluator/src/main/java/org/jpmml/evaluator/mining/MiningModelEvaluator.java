@@ -378,19 +378,19 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				this.segmentHandlers.putIfAbsent(segmentId, segmentHandler);
 			}
 
-			ModelEvaluator<?> segmentEvaluator = (ModelEvaluator<?>)segmentHandler.getEvaluator();
+			ModelEvaluator<?> segmentModelEvaluator = (ModelEvaluator<?>)segmentHandler.getEvaluator();
 
 			ModelEvaluationContext segmentContext;
 
-			if(segmentEvaluator instanceof MiningModelEvaluator){
-				MiningModelEvaluator segmentMiningEvaluator = (MiningModelEvaluator)segmentEvaluator;
+			if(segmentModelEvaluator instanceof MiningModelEvaluator){
+				MiningModelEvaluator segmentMiningModelEvaluator = (MiningModelEvaluator)segmentModelEvaluator;
 
 				if(miningModelContext == null){
-					miningModelContext = new MiningModelEvaluationContext(context, segmentMiningEvaluator);
+					miningModelContext = new MiningModelEvaluationContext(context, segmentMiningModelEvaluator);
 				} else
 
 				{
-					miningModelContext.reset(segmentMiningEvaluator);
+					miningModelContext.reset(segmentMiningModelEvaluator);
 				}
 
 				segmentContext = miningModelContext;
@@ -398,11 +398,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			{
 				if(modelContext == null){
-					modelContext = new ModelEvaluationContext(context, segmentEvaluator);
+					modelContext = new ModelEvaluationContext(context, segmentModelEvaluator);
 				} else
 
 				{
-					modelContext.reset(segmentEvaluator);
+					modelContext.reset(segmentModelEvaluator);
 				}
 
 				segmentContext = modelContext;
@@ -413,9 +413,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			SegmentResult segmentResult;
 
 			try {
-				Map<FieldName, ?> result = segmentEvaluator.evaluate(segmentContext);
+				Map<FieldName, ?> result = segmentModelEvaluator.evaluate(segmentContext);
 
-				FieldName segmentTargetFieldName = segmentEvaluator.getTargetFieldName();
+				FieldName segmentTargetFieldName = segmentModelEvaluator.getTargetFieldName();
 
 				segmentResult = new SegmentResult(segment, segmentId, result, segmentTargetFieldName);
 			} catch(PMMLException pe){
@@ -429,7 +429,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			switch(multipleModelMethod){
 				case MODEL_CHAIN:
 					{
-						List<OutputField> outputFields = segmentEvaluator.getOutputFields();
+						List<OutputField> outputFields = segmentModelEvaluator.getOutputFields();
 						for(OutputField outputField : outputFields){
 							FieldName name = outputField.getName();
 
@@ -602,7 +602,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			evaluatorFactory = ModelEvaluatorFactory.newInstance();
 		}
 
-		ModelEvaluator<?> evaluator = evaluatorFactory.newModelEvaluator(getPMML(), model);
+		Evaluator evaluator = evaluatorFactory.newModelEvaluator(getPMML(), model);
 
 		boolean compatible = true;
 
