@@ -64,6 +64,7 @@ import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.DiscretizationUtil;
 import org.jpmml.evaluator.DistributionUtil;
+import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
@@ -154,7 +155,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(EvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -234,7 +235,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			throw new InvalidFeatureException(bayesOutput);
 		}
 
-		return TargetUtil.evaluateClassification(targetField, result, context);
+		return TargetUtil.evaluateClassification(targetField, result);
 	}
 
 	private void calculateContinuousProbabilities(FieldValue value, TargetValueStats targetValueStats, double threshold, Map<String, Double> probabilities){

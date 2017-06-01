@@ -153,7 +153,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
@@ -167,10 +167,10 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		Double result = evaluateSupportVectorMachine(supportVectorMachine, input);
 
-		return TargetUtil.evaluateRegression(result, context);
+		return TargetUtil.evaluateRegression(getTargetField(), result);
 	}
 
-	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(EvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
@@ -277,7 +277,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			}
 		}
 
-		return TargetUtil.evaluateClassification(result, context);
+		return TargetUtil.evaluateClassification(getTargetField(), result);
 	}
 
 	private double evaluateSupportVectorMachine(SupportVectorMachine supportVectorMachine, double[] input){

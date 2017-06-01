@@ -51,6 +51,7 @@ import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PredicateUtil;
+import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 
@@ -121,7 +122,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(EvaluationContext context){
 		RuleSetModel ruleSetModel = getModel();
 
 		RuleSet ruleSet = ruleSetModel.getRuleSet();
@@ -130,6 +131,8 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		if(ruleSelectionMethods.size() < 1){
 			throw new InvalidFeatureException(ruleSet);
 		}
+
+		TargetField targetField = getTargetField();
 
 		// "If more than one method is included, the first method is used as the default method for scoring"
 		RuleSelectionMethod ruleSelectionMethod = ruleSelectionMethods.get(0);
@@ -149,7 +152,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 			result.put(new SimpleRule(score), score, ruleSet.getDefaultConfidence());
 
-			return TargetUtil.evaluateClassification(result, context);
+			return TargetUtil.evaluateClassification(targetField, result);
 		}
 
 		RuleSelectionMethod.Criterion criterion = ruleSelectionMethod.getCriterion();
@@ -208,7 +211,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 			}
 		}
 
-		return TargetUtil.evaluateClassification(result, context);
+		return TargetUtil.evaluateClassification(targetField, result);
 	}
 
 	static

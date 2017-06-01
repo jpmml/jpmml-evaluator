@@ -168,7 +168,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
@@ -180,7 +180,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 	}
 
-	private Map<FieldName, ? extends Double> evaluateCoxRegression(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Double> evaluateCoxRegression(EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		BaseCumHazardTables baseCumHazardTables = generalRegressionModel.getBaseCumHazardTables();
@@ -289,12 +289,14 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return Collections.singletonMap(getTargetFieldName(), cumHazard);
 	}
 
-	private Map<FieldName, ?> evaluateGeneralRegression(ModelEvaluationContext context){
+	private Map<FieldName, ?> evaluateGeneralRegression(EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
+
+		TargetField targetField = getTargetField();
 
 		Double result = computeDotProduct(context);
 		if(result == null){
-			return TargetUtil.evaluateRegressionDefault(context);
+			return TargetUtil.evaluateRegressionDefault(targetField, getMathContext());
 		}
 
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
@@ -309,11 +311,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new UnsupportedFeatureException(generalRegressionModel, modelType);
 		}
 
-		return TargetUtil.evaluateRegression(result, context);
+		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
-	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
+
+		TargetField targetField = getTargetField();
 
 		List<String> targetCategories = getTargetCategories();
 
@@ -395,7 +399,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 				Double dotProduct = computeDotProduct(parameterCells, parameterPredictorRows, context);
 				if(dotProduct == null){
-					return TargetUtil.evaluateClassificationDefault(context);
+					return TargetUtil.evaluateClassificationDefault(targetField, getMathContext());
 				}
 
 				value = dotProduct;
@@ -460,7 +464,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new UnsupportedFeatureException(generalRegressionModel, modelType);
 		}
 
-		return TargetUtil.evaluateClassification(result, context);
+		return TargetUtil.evaluateClassification(targetField, result);
 	}
 
 	private Double computeDotProduct(EvaluationContext context){

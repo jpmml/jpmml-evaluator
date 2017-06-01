@@ -71,7 +71,7 @@ public class OutputUtil {
 		Model model = modelEvaluator.getModel();
 
 		Output output = model.getOutput();
-		if(output == null){
+		if(output == null || !output.hasOutputFields()){
 			return predictions;
 		}
 

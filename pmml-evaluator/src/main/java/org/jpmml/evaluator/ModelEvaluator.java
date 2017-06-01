@@ -178,16 +178,20 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 		switch(miningFunction){
 			case REGRESSION:
-				return ModelEvaluator.DEFAULT_REGRESSION_TARGET;
-			case CLASSIFICATION:
-				return ModelEvaluator.DEFAULT_CLASSIFICATION_TARGET;
-			case CLUSTERING:
-				return ModelEvaluator.DEFAULT_CLUSTERING_TARGET;
-			default:
-				break;
-		}
+				MathContext mathContext = getMathContext();
 
-		return null;
+				switch(mathContext){
+					case FLOAT:
+						return ModelEvaluator.DEFAULT_TARGET_CONTINUOUS_FLOAT;
+					default:
+						return ModelEvaluator.DEFAULT_TARGET_CONTINUOUS_DOUBLE;
+				}
+			case CLASSIFICATION:
+			case CLUSTERING:
+				return ModelEvaluator.DEFAULT_TARGET_CATEGORICAL_STRING;
+			default:
+				return null;
+		}
 	}
 
 	public DerivedField getDerivedField(FieldName name){
@@ -660,9 +664,9 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		return result;
 	}
 
-	private static final DataField DEFAULT_REGRESSION_TARGET = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.DOUBLE);
-	private static final DataField DEFAULT_CLASSIFICATION_TARGET = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CATEGORICAL, DataType.STRING);
-	private static final DataField DEFAULT_CLUSTERING_TARGET = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CATEGORICAL, DataType.STRING);
+	private static final DataField DEFAULT_TARGET_CONTINUOUS_FLOAT = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.FLOAT);
+	private static final DataField DEFAULT_TARGET_CONTINUOUS_DOUBLE = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.DOUBLE);
+	private static final DataField DEFAULT_TARGET_CATEGORICAL_STRING = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CATEGORICAL, DataType.STRING);
 
 	private static final LoadingCache<DataDictionary, Map<FieldName, DataField>> dataFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<DataDictionary, Map<FieldName, DataField>>(){
 

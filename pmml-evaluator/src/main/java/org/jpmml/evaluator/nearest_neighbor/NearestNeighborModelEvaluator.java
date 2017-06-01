@@ -70,6 +70,7 @@ import org.dmg.pmml.nearest_neighbor.TrainingInstances;
 import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
+import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
@@ -192,7 +193,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, AffinityDistribution> evaluateMixed(ModelEvaluationContext context){
+	private Map<FieldName, AffinityDistribution> evaluateMixed(EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
@@ -248,7 +249,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return result;
 	}
 
-	private Map<FieldName, AffinityDistribution> evaluateClustering(ModelEvaluationContext context){
+	private Map<FieldName, AffinityDistribution> evaluateClustering(EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
@@ -265,7 +266,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return Collections.singletonMap(getTargetFieldName(), createAffinityDistribution(instanceResults, function, null));
 	}
 
-	private List<InstanceResult> evaluateInstanceRows(ModelEvaluationContext context){
+	private List<InstanceResult> evaluateInstanceRows(EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		List<FieldValue> values = new ArrayList<>();

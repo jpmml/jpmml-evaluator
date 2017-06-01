@@ -25,6 +25,7 @@ import org.dmg.pmml.Header;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.clustering.ClusteringModel;
 import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.schema.Version;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -34,12 +35,11 @@ public class UnsupportedFeatureInspectorTest {
 
 	@Test
 	public void inspect(){
-		PMML pmml = new PMML("4.2", new Header(), new DataDictionary());
-
-		ClusteringModel model = new ClusteringModel()
+		ClusteringModel clusteringModel = new ClusteringModel()
 			.setModelClass(ClusteringModel.ModelClass.DISTRIBUTION_BASED);
 
-		pmml.addModels(model);
+		PMML pmml = new PMML(Version.PMML_4_3.getVersion(), new Header(), new DataDictionary())
+			.addModels(clusteringModel);
 
 		UnsupportedFeatureInspector inspector = new UnsupportedFeatureInspector();
 

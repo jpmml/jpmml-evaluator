@@ -25,7 +25,7 @@ import java.util.Map;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MiningField;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 
@@ -35,17 +35,14 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ?> evaluateRegressionDefault(ModelEvaluationContext context){
-		ModelEvaluator<?> evaluator = context.getModelEvaluator();
-
-		TargetField targetField = evaluator.getTargetField();
-
+	public Map<FieldName, ?> evaluateRegressionDefault(TargetField targetField, MathContext mathContext){
 		Target target = targetField.getTarget();
-		if(target != null){
-			Double value = getDefaultValue(target);
+
+		if(target != null && target.hasTargetValues()){
+			Value<?> value = getDefaultValue(target, mathContext);
 
 			if(value != null){
-				return evaluateRegression(targetField, value, context);
+				return evaluateRegression(targetField, value);
 			}
 		}
 
@@ -53,28 +50,18 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ?> evaluateRegression(Double value, ModelEvaluationContext context){
-		ModelEvaluator<?> evaluator = context.getModelEvaluator();
-
-		TargetField targetField = evaluator.getTargetField();
-
-		return evaluateRegression(targetField, value, context);
+	public Map<FieldName, ?> evaluateRegression(TargetField targetField, Double value){
+		return Collections.singletonMap(targetField.getName(), evaluateRegressionInternal(targetField, value));
 	}
 
 	static
-	public Map<FieldName, ?> evaluateRegression(TargetField targetField, Double value, EvaluationContext context){
-		return Collections.singletonMap(targetField.getName(), evaluateRegressionInternal(targetField, value, context));
+	public Map<FieldName, ?> evaluateRegression(TargetField targetField, Value<?> value){
+		return Collections.singletonMap(targetField.getName(), evaluateRegressionInternal(targetField, value));
 	}
 
 	static
-	public Map<FieldName, ?> evaluateRegression(TargetField targetField, Value<?> value, EvaluationContext context){
-		return Collections.singletonMap(targetField.getName(), evaluateRegressionInternal(targetField, value, context));
-	}
-
-	static
-	public Object evaluateRegressionInternal(TargetField targetField, Double value, EvaluationContext context){
+	public Object evaluateRegressionInternal(TargetField targetField, Double value){
 		DataField dataField = targetField.getDataField();
-		MiningField miningField = targetField.getMiningField();
 		Target target = targetField.getTarget();
 
 		if(target != null){
@@ -85,9 +72,8 @@ public class TargetUtil {
 	}
 
 	static
-	public Object evaluateRegressionInternal(TargetField targetField, Value<?> value, EvaluationContext context){
+	public Object evaluateRegressionInternal(TargetField targetField, Value<?> value){
 		DataField dataField = targetField.getDataField();
-		MiningField miningField = targetField.getMiningField();
 		Target target = targetField.getTarget();
 
 		if(target != null){
@@ -98,17 +84,14 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ? extends Classification> evaluateClassificationDefault(ModelEvaluationContext context){
-		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
-
-		TargetField targetField = modelEvaluator.getTargetField();
-
+	public Map<FieldName, ? extends Classification> evaluateClassificationDefault(TargetField targetField, MathContext mathContext){
 		Target target = targetField.getTarget();
-		if(target != null){
-			ProbabilityDistribution value = getPriorProbabilities(target);
 
-			if(value != null){
-				return evaluateClassification(targetField, value, context);
+		if(target != null && target.hasTargetValues()){
+			ProbabilityDistribution result = getPriorProbabilities(target, mathContext);
+
+			if(result != null){
+				return evaluateClassification(targetField, result);
 			}
 		}
 
@@ -116,21 +99,12 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ? extends Classification> evaluateClassification(Classification value, ModelEvaluationContext context){
-		ModelEvaluator<?> evaluator = context.getModelEvaluator();
-
-		TargetField targetField = evaluator.getTargetField();
-
-		return evaluateClassification(targetField, value, context);
+	public Map<FieldName, ? extends Classification> evaluateClassification(TargetField targetField, Classification value){
+		return Collections.singletonMap(targetField.getName(), evaluateClassificationInternal(targetField, value));
 	}
 
 	static
-	public Map<FieldName, ? extends Classification> evaluateClassification(TargetField targetField, Classification value, EvaluationContext context){
-		return Collections.singletonMap(targetField.getName(), evaluateClassificationInternal(targetField, value, context));
-	}
-
-	static
-	public Classification evaluateClassificationInternal(TargetField targetField, Classification value, EvaluationContext context){
+	public Classification evaluateClassificationInternal(TargetField targetField, Classification value){
 		DataField dataField = targetField.getDataField();
 
 		value.computeResult(dataField.getDataType());
@@ -241,7 +215,7 @@ public class TargetUtil {
 	}
 
 	static
-	private Double getDefaultValue(Target target){
+	private Value<?> getDefaultValue(Target target, MathContext mathContext){
 
 		if(!target.hasTargetValues()){
 			return null;
@@ -259,17 +233,28 @@ public class TargetUtil {
 			throw new InvalidFeatureException(targetValue);
 		}
 
-		return targetValue.getDefaultValue();
+		Double defaultValue = targetValue.getDefaultValue();
+		if(defaultValue == null){
+			return null;
+		}
+
+		ValueFactory<?> valueFactory = ValueFactory.getInstance(mathContext);
+
+		return valueFactory.newValue(defaultValue);
 	}
 
 	static
-	private ProbabilityDistribution getPriorProbabilities(Target target){
+	private ProbabilityDistribution getPriorProbabilities(Target target, MathContext mathContext){
 
 		if(!target.hasTargetValues()){
 			return null;
 		}
 
 		ProbabilityDistribution result = new ProbabilityDistribution();
+
+		ValueFactory<?> valueFactory = ValueFactory.getInstance(mathContext);
+
+		Value<?> sum = valueFactory.newValue(0d);
 
 		List<TargetValue> targetValues = target.getTargetValues();
 		for(TargetValue targetValue : targetValues){
@@ -283,14 +268,18 @@ public class TargetUtil {
 			Double probability = targetValue.getPriorProbability();
 
 			if(targetCategory == null || probability == null){
-				continue;
+				throw new InvalidFeatureException(targetValue);
 			}
 
-			result.put(targetCategory, probability);
+			Value<?> value = valueFactory.newValue(probability);
+
+			sum.add(value);
+
+			result.put(targetCategory, value.doubleValue());
 		}
 
-		if(result.isEmpty()){
-			return null;
+		if(sum.doubleValue() != 1d){
+			throw new InvalidFeatureException(target);
 		}
 
 		return result;

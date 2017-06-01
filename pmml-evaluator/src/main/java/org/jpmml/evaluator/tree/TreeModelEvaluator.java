@@ -122,33 +122,35 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
+		TargetField targetField = getTargetField();
+
 		Trail trail = new Trail();
 
 		Node node = evaluateTree(trail, context);
 		if(node == null){
-			return TargetUtil.evaluateRegressionDefault(context);
+			return TargetUtil.evaluateRegressionDefault(targetField, getMathContext());
 		}
 
 		ValueFactory<?> valueFactory = ValueFactory.getInstance(getMathContext());
 
 		Value<?> value = valueFactory.newValue(node.getScore());
 
-		TargetField targetField = getTargetField();
-
-		NodeScore nodeScore = createNodeScore(node, TargetUtil.evaluateRegressionInternal(targetField, value, context));
+		NodeScore nodeScore = createNodeScore(node, TargetUtil.evaluateRegressionInternal(targetField, value));
 
 		return Collections.singletonMap(targetField.getName(), nodeScore);
 	}
 
-	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(EvaluationContext context){
 		TreeModel treeModel = getModel();
+
+		TargetField targetField = getTargetField();
 
 		Trail trail = new Trail();
 
 		Node node = evaluateTree(trail, context);
 		if(node == null){
-			return TargetUtil.evaluateClassificationDefault(context);
+			return TargetUtil.evaluateClassificationDefault(targetField, getMathContext());
 		}
 
 		double missingValuePenalty = 1d;
@@ -160,7 +162,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		NodeScoreDistribution result = createNodeScoreDistribution(node, missingValuePenalty);
 
-		return TargetUtil.evaluateClassification(result, context);
+		return TargetUtil.evaluateClassification(targetField, result);
 	}
 
 	private Node evaluateTree(Trail trail, EvaluationContext context){

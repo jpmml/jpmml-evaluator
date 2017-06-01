@@ -160,12 +160,12 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
 		Map<String, Double> entityOutputs = evaluateRaw(context);
 		if(entityOutputs == null){
-			return TargetUtil.evaluateRegressionDefault(context);
+			return TargetUtil.evaluateRegressionDefault(getTargetField(), getMathContext());
 		}
 
 		Map<FieldName, Object> result = new LinkedHashMap<>();
@@ -205,7 +205,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		for(TargetField targetField : targetFields){
 			FieldName name = targetField.getName();
 
-			result.put(name, TargetUtil.evaluateRegressionInternal(targetField, (Double)result.get(name), context));
+			result.put(name, TargetUtil.evaluateRegressionInternal(targetField, (Double)result.get(name)));
 		}
 
 		return result;
@@ -214,14 +214,14 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	@SuppressWarnings (
 		value = {"unchecked"}
 	)
-	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
 		BiMap<String, Entity> entityRegistry = getEntityRegistry();
 
 		Map<String, Double> entityOutputs = evaluateRaw(context);
 		if(entityOutputs == null){
-			return TargetUtil.evaluateClassificationDefault(context);
+			return TargetUtil.evaluateClassificationDefault(getTargetField(), getMathContext());
 		}
 
 		Map<FieldName, Classification> result = new LinkedHashMap<>();
@@ -260,7 +260,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		for(TargetField targetField : targetFields){
 			FieldName name = targetField.getName();
 
-			result.put(name, TargetUtil.evaluateClassificationInternal(targetField, result.get(name), context));
+			result.put(name, TargetUtil.evaluateClassificationInternal(targetField, result.get(name)));
 		}
 
 		return result;

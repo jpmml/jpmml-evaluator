@@ -34,6 +34,7 @@ import org.dmg.pmml.scorecard.Characteristic;
 import org.dmg.pmml.scorecard.Characteristics;
 import org.dmg.pmml.scorecard.ComplexPartialScore;
 import org.dmg.pmml.scorecard.Scorecard;
+import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.InvalidFeatureException;
@@ -100,8 +101,10 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
 		Scorecard scorecard = getModel();
+
+		TargetField targetField = getTargetField();
 
 		double score = scorecard.getInitialScore();
 
@@ -148,7 +151,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 					FieldValue computedValue = ExpressionUtil.evaluate(expression, context);
 					if(computedValue == null){
-						return TargetUtil.evaluateRegressionDefault(context);
+						return TargetUtil.evaluateRegressionDefault(targetField, getMathContext());
 					}
 
 					partialScore = computedValue.asDouble();
@@ -203,9 +206,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			}
 		}
 
-		TargetField targetField = getTargetField();
-
-		Object result = TargetUtil.evaluateRegressionInternal(targetField, score, context);
+		Object result = TargetUtil.evaluateRegressionInternal(targetField, score);
 
 		if(useReasonCodes){
 			result = createReasonCodeList(reasonCodePoints.sumMap(), result);

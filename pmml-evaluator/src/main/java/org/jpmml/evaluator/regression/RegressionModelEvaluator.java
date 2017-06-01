@@ -105,7 +105,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -124,7 +124,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		Value<?> result = evaluateRegressionTable(regressionTable, context);
 		if(result == null){
-			return TargetUtil.evaluateRegressionDefault(context);
+			return TargetUtil.evaluateRegressionDefault(targetField, getMathContext());
 		}
 
 		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
@@ -145,10 +145,10 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new UnsupportedFeatureException(regressionModel, normalizationMethod);
 		}
 
-		return TargetUtil.evaluateRegression(targetField, result, context);
+		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
-	private Map<FieldName, ? extends Classification> evaluateClassification(ModelEvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -198,7 +198,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 			// "If one or more RegressionTable elements cannot be evaluated, then the predictions are defined by the priorProbability values of the Target element"
 			if(value == null){
-				return TargetUtil.evaluateClassificationDefault(context);
+				return TargetUtil.evaluateClassificationDefault(targetField, getMathContext());
 			}
 
 			values.put(targetCategory, value);
@@ -260,7 +260,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		ProbabilityDistribution result = new ProbabilityDistribution(values);
 
-		return TargetUtil.evaluateClassification(targetField, result, context);
+		return TargetUtil.evaluateClassification(targetField, result);
 	}
 
 	private Value<?> evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){

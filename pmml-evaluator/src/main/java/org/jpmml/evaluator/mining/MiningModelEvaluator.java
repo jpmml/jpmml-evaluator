@@ -240,7 +240,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Double result = aggregateValues(segmentation, segmentResults);
 
-		return TargetUtil.evaluateRegression(result, context);
+		return TargetUtil.evaluateRegression(getTargetField(), result);
 	}
 
 	private Map<FieldName, ?> evaluateClassification(MiningModelEvaluationContext context){
@@ -252,6 +252,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		if(predictions != null){
 			return predictions;
 		}
+
+		TargetField targetField = getTargetField();
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
@@ -277,8 +279,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MEDIAN:
 			case MAX:
 				{
-					TargetField targetField = getTargetField();
-
 					DataField dataField = targetField.getDataField();
 
 					List<String> categories = FieldValueUtil.getTargetCategories(dataField);
@@ -290,7 +290,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
 		}
 
-		return TargetUtil.evaluateClassification(result, context);
+		return TargetUtil.evaluateClassification(targetField, result);
 	}
 
 	private Map<FieldName, ?> evaluateClustering(MiningModelEvaluationContext context){
