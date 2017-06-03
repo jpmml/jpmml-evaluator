@@ -19,9 +19,14 @@
 package org.jpmml.rapidminer;
 
 import org.jpmml.evaluator.IntegrationTest;
+import org.jpmml.evaluator.PMMLEquivalence;
 import org.junit.Test;
 
 public class RegressionTest extends IntegrationTest {
+
+	public RegressionTest(){
+		super(new PMMLEquivalence(1e-13, 1e-13));
+	}
 
 	@Test
 	public void evaluateRegressionAuto() throws Exception {

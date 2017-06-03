@@ -28,22 +28,26 @@ import org.dmg.pmml.FieldName;
 abstract
 public class IntegrationTest extends BatchTest {
 
-	public IntegrationTest(){
-		super();
-	}
-
 	public IntegrationTest(Equivalence<Object> equivalence){
 		super(equivalence);
 	}
 
 	public void evaluate(String name, String dataset) throws Exception {
-		evaluate(name, dataset, Predicates.<FieldName>alwaysTrue());
+		evaluate(name, dataset, Predicates.<FieldName>alwaysTrue(), null);
+	}
+
+	public void evaluate(String name, String dataset, Equivalence<Object> equivalence) throws Exception {
+		evaluate(name, dataset, Predicates.<FieldName>alwaysTrue(), equivalence);
 	}
 
 	public void evaluate(String name, String dataset, Predicate<FieldName> predicate) throws Exception {
+		evaluate(name, dataset, predicate, null);
+	}
+
+	public void evaluate(String name, String dataset, Predicate<FieldName> predicate, Equivalence<Object> equivalence) throws Exception {
 
 		try(Batch batch = createBatch(name, dataset, predicate)){
-			evaluate(batch);
+			evaluate(batch, equivalence);
 		}
 	}
 

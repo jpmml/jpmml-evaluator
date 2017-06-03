@@ -19,9 +19,14 @@
 package org.jpmml.rattle;
 
 import org.jpmml.evaluator.IntegrationTest;
+import org.jpmml.evaluator.PMMLEquivalence;
 import org.junit.Test;
 
 public class CoxRegressionTest extends IntegrationTest {
+
+	public CoxRegressionTest(){
+		super(new PMMLEquivalence(1e-13, 1e-13));
+	}
 
 	@Test
 	public void evaluateCoxRegressionLung() throws Exception {

@@ -19,14 +19,16 @@
 package org.jpmml.rattle;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import org.dmg.pmml.FieldName;
-import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.IntegrationTest;
 import org.jpmml.evaluator.PMMLEquivalence;
 import org.junit.Test;
 
 public class RegressionTest extends IntegrationTest {
+
+	public RegressionTest(){
+		super(new PMMLEquivalence(1e-13, 1e-13));
+	}
 
 	@Test
 	public void evaluateDecisionTreeAuto() throws Exception {
@@ -57,17 +59,12 @@ public class RegressionTest extends IntegrationTest {
 	public void evaluateLibSVMAuto() throws Exception {
 		Predicate<FieldName> predicate = excludeFields(FieldName.create("mpg"), FieldName.create("predictedValue"));
 
-		try(Batch batch = createBatch("LibSVM", "Auto", predicate)){
-			evaluate(batch, new PMMLEquivalence(1e-7, 1e-7));
-		}
+		evaluate("LibSVM", "Auto", predicate, new PMMLEquivalence(1e-7, 1e-7));
 	}
 
 	@Test
 	public void evaluateNeuralNetworkAuto() throws Exception {
-
-		try(Batch batch = createBatch("NeuralNetwork", "Auto", Predicates.<FieldName>alwaysTrue())){
-			evaluate(batch, new PMMLEquivalence(1e-6, 1e-6));
-		}
+		evaluate("NeuralNetwork", "Auto", new PMMLEquivalence(1e-6, 1e-6));
 	}
 
 	@Test

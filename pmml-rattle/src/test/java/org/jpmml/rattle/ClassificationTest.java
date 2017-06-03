@@ -18,14 +18,15 @@
  */
 package org.jpmml.rattle;
 
-import com.google.common.base.Predicates;
-import org.dmg.pmml.FieldName;
-import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.IntegrationTest;
 import org.jpmml.evaluator.PMMLEquivalence;
 import org.junit.Test;
 
 public class ClassificationTest extends IntegrationTest {
+
+	public ClassificationTest(){
+		super(new PMMLEquivalence(1e-13, 1e-13));
+	}
 
 	@Test
 	public void evaluateDecisionTreeIris() throws Exception {
@@ -49,7 +50,7 @@ public class ClassificationTest extends IntegrationTest {
 
 	@Test
 	public void evaluateLogisticRegressionIris() throws Exception {
-		evaluate("LogisticRegression", "Iris");
+		evaluate("LogisticRegression", "Iris", new PMMLEquivalence(1e-11, 1e-11));
 	}
 
 	@Test
@@ -59,10 +60,7 @@ public class ClassificationTest extends IntegrationTest {
 
 	@Test
 	public void evaluateNeuralNetworkIris() throws Exception {
-
-		try(Batch batch = createBatch("NeuralNetwork", "Iris", Predicates.<FieldName>alwaysTrue())){
-			evaluate(batch, new PMMLEquivalence(1e-6, 1e-6));
-		}
+		evaluate("NeuralNetwork", "Iris", new PMMLEquivalence(1e-6, 1e-6));
 	}
 
 	@Test
@@ -102,7 +100,7 @@ public class ClassificationTest extends IntegrationTest {
 
 	@Test
 	public void evaluateLogisticRegressionAudit() throws Exception {
-		evaluate("LogisticRegression", "Audit");
+		evaluate("LogisticRegression", "Audit", new PMMLEquivalence(1e-10, 1e-10));
 	}
 
 	@Test
@@ -112,10 +110,7 @@ public class ClassificationTest extends IntegrationTest {
 
 	@Test
 	public void evaluateNeuralNetworkAudit() throws Exception {
-
-		try(Batch batch = createBatch("NeuralNetwork", "Audit", Predicates.<FieldName>alwaysTrue())){
-			evaluate(batch, new PMMLEquivalence(1e-5, 1e-5));
-		}
+		evaluate("NeuralNetwork", "Audit", new PMMLEquivalence(1e-5, 1e-5));
 	}
 
 	@Test

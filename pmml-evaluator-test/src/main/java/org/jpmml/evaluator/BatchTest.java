@@ -22,7 +22,6 @@ import java.util.List;
 
 import com.google.common.base.Equivalence;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 abstract
@@ -31,16 +30,8 @@ public class BatchTest {
 	private Equivalence<Object> equivalence = null;
 
 
-	public BatchTest(){
-		this(new PMMLEquivalence(BatchTest.precision, BatchTest.zeroThreshold));
-	}
-
 	public BatchTest(Equivalence<Object> equivalence){
 		setEquivalence(equivalence);
-	}
-
-	public void evaluate(Batch batch) throws Exception {
-		evaluate(batch, null);
 	}
 
 	public void evaluate(Batch batch, Equivalence<Object> equivalence) throws Exception {
@@ -76,13 +67,4 @@ public class BatchTest {
 
 		this.equivalence = equivalence;
 	}
-
-	// One part per billion parts
-	private static final double precision = 1d / (1000L * 1000L * 1000L);
-
-	static {
-		assertTrue(Double.compare(precision, 1e-9) <= 0);
-	}
-
-	private static final double zeroThreshold = precision;
 }

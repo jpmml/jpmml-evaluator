@@ -40,6 +40,10 @@ import org.junit.Test;
 
 public class ClassificationTest extends IntegrationTest {
 
+	public ClassificationTest(){
+		super(new PMMLEquivalence(1e-5, 1e-5));
+	}
+
 	@Test
 	public void evaluateLogisticRegressionAudit() throws Exception {
 		evaluateAudit("LogisticRegression", "Audit");
@@ -53,7 +57,7 @@ public class ClassificationTest extends IntegrationTest {
 	private void evaluateAudit(String name, String dataset) throws Exception {
 
 		try(Batch batch = createFilterBatch(name, dataset, ClassificationTest.AUDIT_COLUMNS)){
-			evaluate(batch, new PMMLEquivalence(1e-5, 1e-5));
+			evaluate(batch, getEquivalence());
 		}
 	}
 
@@ -65,7 +69,7 @@ public class ClassificationTest extends IntegrationTest {
 	private void evaluateIris(String name, String dataset) throws Exception {
 
 		try(Batch batch = createFilterBatch(name, dataset, ClassificationTest.IRIS_COLUMNS)){
-			evaluate(batch, new PMMLEquivalence(1e-5, 1e-5));
+			evaluate(batch, getEquivalence());
 		}
 	}
 

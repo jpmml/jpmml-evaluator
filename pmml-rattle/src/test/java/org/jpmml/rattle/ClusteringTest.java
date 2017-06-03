@@ -19,9 +19,14 @@
 package org.jpmml.rattle;
 
 import org.jpmml.evaluator.IntegrationTest;
+import org.jpmml.evaluator.PMMLEquivalence;
 import org.junit.Test;
 
 public class ClusteringTest extends IntegrationTest {
+
+	public ClusteringTest(){
+		super(new PMMLEquivalence(1e-13, 1e-13));
+	}
 
 	@Test
 	public void evaluateHierarchicalClusteringIris() throws Exception {

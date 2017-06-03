@@ -19,9 +19,14 @@
 package org.jpmml.knime;
 
 import org.jpmml.evaluator.IntegrationTest;
+import org.jpmml.evaluator.PMMLEquivalence;
 import org.junit.Test;
 
 public class RegressionTest extends IntegrationTest {
+
+	public RegressionTest(){
+		super(new PMMLEquivalence(1e-15, 1e-15));
+	}
 
 	@Test
 	public void evaluateDecisionTreeAuto() throws Exception {

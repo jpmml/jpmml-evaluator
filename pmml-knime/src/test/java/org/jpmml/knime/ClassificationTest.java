@@ -19,9 +19,14 @@
 package org.jpmml.knime;
 
 import org.jpmml.evaluator.IntegrationTest;
+import org.jpmml.evaluator.PMMLEquivalence;
 import org.junit.Test;
 
 public class ClassificationTest extends IntegrationTest {
+
+	public ClassificationTest(){
+		super(new PMMLEquivalence(1e-15, 1e-15));
+	}
 
 	@Test
 	public void evaluateDecisionTreeIris() throws Exception {
