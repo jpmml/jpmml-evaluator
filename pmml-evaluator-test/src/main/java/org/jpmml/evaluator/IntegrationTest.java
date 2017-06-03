@@ -18,18 +18,37 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Arrays;
+
+import com.google.common.base.Equivalence;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import org.dmg.pmml.FieldName;
+
 abstract
 public class IntegrationTest extends BatchTest {
 
-	public void evaluate(String name, String dataset) throws Exception {
+	public IntegrationTest(){
+		super();
+	}
 
-		try(Batch batch = createBatch(name, dataset)){
+	public IntegrationTest(Equivalence<Object> equivalence){
+		super(equivalence);
+	}
+
+	public void evaluate(String name, String dataset) throws Exception {
+		evaluate(name, dataset, Predicates.<FieldName>alwaysTrue());
+	}
+
+	public void evaluate(String name, String dataset, Predicate<FieldName> predicate) throws Exception {
+
+		try(Batch batch = createBatch(name, dataset, predicate)){
 			evaluate(batch);
 		}
 	}
 
-	protected Batch createBatch(String name, String dataset){
-		Batch result = new IntegrationTestBatch(name, dataset){
+	protected Batch createBatch(String name, String dataset, Predicate<FieldName> predicate){
+		Batch result = new IntegrationTestBatch(name, dataset, predicate){
 
 			@Override
 			public IntegrationTest getIntegrationTest(){
@@ -38,5 +57,10 @@ public class IntegrationTest extends BatchTest {
 		};
 
 		return result;
+	}
+
+	static
+	public Predicate<FieldName> excludeFields(FieldName... names){
+		return Predicates.not(Predicates.in(Arrays.asList(names)));
 	}
 }

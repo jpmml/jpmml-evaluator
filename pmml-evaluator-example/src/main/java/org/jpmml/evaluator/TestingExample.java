@@ -20,11 +20,12 @@ package org.jpmml.evaluator;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import com.beust.jcommander.Parameter;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 
@@ -128,14 +129,20 @@ public class TestingExample extends Example {
 		// Perform self-testing
 		evaluator.verify();
 
+		Predicate<FieldName> predicate = Predicates.alwaysTrue();
+
+		if(this.ignoredFields != null && this.ignoredFields.size() > 0){
+			predicate = Predicates.not(Predicates.in(this.ignoredFields));
+		}
+
 		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, Example.CSV_PARSER);
 
 		List<? extends Map<FieldName, ?>> outputRecords = BatchUtil.parseRecords(outputTable, Example.CSV_PARSER);
 
 		List<Conflict> conflicts;
 
-		try(Batch batch = createBatch(evaluator, inputRecords, outputRecords)){
-			conflicts = BatchUtil.evaluate(batch, new HashSet<>(this.ignoredFields), this.precision, this.zeroThreshold);
+		try(Batch batch = createBatch(evaluator, inputRecords, outputRecords, predicate)){
+			conflicts = BatchUtil.evaluate(batch, new PMMLEquivalence(this.precision, this.zeroThreshold));
 		}
 
 		for(Conflict conflict : conflicts){
@@ -144,7 +151,7 @@ public class TestingExample extends Example {
 	}
 
 	static
-	private Batch createBatch(final Evaluator evaluator, final List<? extends Map<FieldName, ?>> input, final List<? extends Map<FieldName, ?>> output){
+	private Batch createBatch(final Evaluator evaluator, final List<? extends Map<FieldName, ?>> input, final List<? extends Map<FieldName, ?>> output, final Predicate<FieldName> predicate){
 		Batch batch = new Batch(){
 
 			@Override
@@ -160,6 +167,11 @@ public class TestingExample extends Example {
 			@Override
 			public List<? extends Map<FieldName, ?>> getOutput(){
 				return output;
+			}
+
+			@Override
+			public Predicate<FieldName> getPredicate(){
+				return predicate;
 			}
 
 			@Override

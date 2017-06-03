@@ -18,30 +18,18 @@
  */
 package org.jpmml.rattle;
 
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
+import com.google.common.base.Predicates;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Batch;
-import org.jpmml.evaluator.BatchUtil;
 import org.jpmml.evaluator.IntegrationTest;
-import org.jpmml.evaluator.tree.NodeScoreDistribution;
+import org.jpmml.evaluator.PMMLEquivalence;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class ClassificationTest extends IntegrationTest {
 
 	@Test
 	public void evaluateDecisionTreeIris() throws Exception {
-
-		try(Batch batch = createBatch("DecisionTree", "Iris")){
-			NodeScoreDistribution targetValue = (NodeScoreDistribution)BatchUtil.evaluateDefault(batch);
-
-			assertEquals("7", targetValue.getEntityId());
-
-			evaluate(batch);
-		}
+		evaluate("DecisionTree", "Iris");
 	}
 
 	@Test
@@ -61,12 +49,7 @@ public class ClassificationTest extends IntegrationTest {
 
 	@Test
 	public void evaluateLogisticRegressionIris() throws Exception {
-
-		try(Batch batch = createBatch("LogisticRegression", "Iris")){
-			assertEquals(null, BatchUtil.evaluateDefault(batch));
-
-			evaluate(batch);
-		}
+		evaluate("LogisticRegression", "Iris");
 	}
 
 	@Test
@@ -77,10 +60,8 @@ public class ClassificationTest extends IntegrationTest {
 	@Test
 	public void evaluateNeuralNetworkIris() throws Exception {
 
-		try(Batch batch = createBatch("NeuralNetwork", "Iris")){
-			assertEquals(null, BatchUtil.evaluateDefault(batch));
-
-			evaluate(batch, null, 1e-6, 1e-6);
+		try(Batch batch = createBatch("NeuralNetwork", "Iris", Predicates.<FieldName>alwaysTrue())){
+			evaluate(batch, new PMMLEquivalence(1e-6, 1e-6));
 		}
 	}
 
@@ -96,34 +77,17 @@ public class ClassificationTest extends IntegrationTest {
 
 	@Test
 	public void evaluateGeneralRegressionVersicolor() throws Exception {
-
-		try(Batch batch = createBatch("GeneralRegression", "Versicolor")){
-			assertEquals(null, BatchUtil.evaluateDefault(batch));
-
-			evaluate(batch);
-		}
+		evaluate("GeneralRegression", "Versicolor");
 	}
 
 	@Test
 	public void evaluateDecisionTreeAudit() throws Exception {
-
-		try(Batch batch = createBatch("DecisionTree", "Audit")){
-			NodeScoreDistribution targetValue = (NodeScoreDistribution)BatchUtil.evaluateDefault(batch);
-
-			assertEquals("2", targetValue.getEntityId());
-
-			evaluate(batch);
-		}
+		evaluate("DecisionTree", "Audit");
 	}
 
 	@Test
 	public void evaluateGeneralRegressionAudit() throws Exception {
-
-		try(Batch batch = createBatch("GeneralRegression", "Audit")){
-			assertEquals(null, BatchUtil.evaluateDefault(batch));
-
-			evaluate(batch);
-		}
+		evaluate("GeneralRegression", "Audit");
 	}
 
 	@Test
@@ -149,12 +113,8 @@ public class ClassificationTest extends IntegrationTest {
 	@Test
 	public void evaluateNeuralNetworkAudit() throws Exception {
 
-		try(Batch batch = createBatch("NeuralNetwork", "Audit")){
-			assertEquals(null, BatchUtil.evaluateDefault(batch));
-
-			Set<FieldName> ignoredFields = ImmutableSet.of(FieldName.create("Probability_0"), FieldName.create("Probability_1"));
-
-			evaluate(batch, ignoredFields);
+		try(Batch batch = createBatch("NeuralNetwork", "Audit", Predicates.<FieldName>alwaysTrue())){
+			evaluate(batch, new PMMLEquivalence(1e-5, 1e-5));
 		}
 	}
 

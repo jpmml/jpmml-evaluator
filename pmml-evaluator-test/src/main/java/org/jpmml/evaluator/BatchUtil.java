@@ -28,6 +28,8 @@ import java.util.Set;
 
 import com.google.common.base.Equivalence;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import org.dmg.pmml.FieldName;
@@ -37,8 +39,12 @@ public class BatchUtil {
 	private BatchUtil(){
 	}
 
+	/**
+	 * @see PMMLEquivalence
+	 * @see RealNumberEquivalence
+	 */
 	static
-	public List<Conflict> evaluate(Batch batch, Set<FieldName> ignoredFields, final double precision, final double zeroThreshold) throws Exception {
+	public List<Conflict> evaluate(Batch batch, Equivalence<Object> equivalence) throws Exception {
 		Evaluator evaluator = batch.getEvaluator();
 
 		List<? extends Map<FieldName, ?>> input = batch.getInput();
@@ -48,94 +54,34 @@ public class BatchUtil {
 			HasGroupFields hasGroupFields = (HasGroupFields)evaluator;
 
 			input = EvaluatorUtil.groupRows(hasGroupFields, input);
-		}
+		} // End if
 
-		Equivalence<Object> equivalence = new Equivalence<Object>(){
-
-			@Override
-			public boolean doEquivalent(Object expected, Object actual){
-				actual = EvaluatorUtil.decode(actual);
-
-				return VerificationUtil.acceptable(TypeUtil.parseOrCast(TypeUtil.getDataType(actual), expected), actual, precision, zeroThreshold);
-			}
-
-			@Override
-			public int doHash(Object object){
-				return object.hashCode();
-			}
-		};
-
-		if(output.size() > 0){
-
-			if(input.size() != output.size()){
-				throw new EvaluationException();
-			}
-
-			List<Conflict> conflicts = new ArrayList<>();
-
-			for(int i = 0; i < input.size(); i++){
-				Map<FieldName, ?> arguments = input.get(i);
-
-				Map<FieldName, ?> result = evaluator.evaluate(arguments);
-
-				if(result.containsKey(Evaluator.DEFAULT_TARGET_NAME)){
-					result = new LinkedHashMap<>(result);
-
-					result.remove(Evaluator.DEFAULT_TARGET_NAME);
-				} // End if
-
-				if(ignoredFields != null && ignoredFields.size() > 0){
-					result = new LinkedHashMap<>(result);
-
-					Set<FieldName> fields = result.keySet();
-					fields.removeAll(ignoredFields);
-				}
-
-				MapDifference<FieldName, ?> difference = Maps.<FieldName, Object>difference(output.get(i), result, equivalence);
-				if(!difference.areEqual()){
-					Conflict conflict = new Conflict(i, arguments, difference);
-
-					conflicts.add(conflict);
-				}
-			}
-
-			return conflicts;
-		} else
-
-		{
-			for(int i = 0; i < input.size(); i++){
-				Map<FieldName, ?> arguments = input.get(i);
-
-				evaluator.evaluate(arguments);
-			}
-
-			return Collections.emptyList();
-		}
-	}
-
-	/**
-	 * <p>
-	 * Evaluates the model using empty arguments.
-	 * </p>
-	 *
-	 * @return The value of the target field.
-	 */
-	static
-	public Object evaluateDefault(Batch batch) throws Exception {
-		Evaluator evaluator = batch.getEvaluator();
-
-		List<TargetField> targetFields = evaluator.getTargetFields();
-		if(targetFields.size() != 1){
+		if(input.size() != output.size()){
 			throw new EvaluationException();
 		}
 
-		TargetField targetField = targetFields.get(0);
+		Predicate<FieldName> predicate = Predicates.and(Predicates.not(Predicates.equalTo(Evaluator.DEFAULT_TARGET_NAME)), batch.getPredicate());
 
-		Map<FieldName, ?> arguments = Collections.emptyMap();
+		List<Conflict> conflicts = new ArrayList<>();
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		for(int i = 0; i < input.size(); i++){
+			Map<FieldName, ?> arguments = input.get(i);
 
-		return result.get(targetField.getName());
+			Map<FieldName, ?> expectedResult = output.get(i);
+			expectedResult = Maps.filterKeys(expectedResult, predicate);
+
+			Map<FieldName, ?> actualResult = evaluator.evaluate(arguments);
+			actualResult = Maps.filterKeys(actualResult, predicate);
+
+			MapDifference<FieldName, ?> difference = Maps.<FieldName, Object>difference(expectedResult, actualResult, equivalence);
+			if(!difference.areEqual()){
+				Conflict conflict = new Conflict(i, arguments, difference);
+
+				conflicts.add(conflict);
+			}
+		}
+
+		return conflicts;
 	}
 
 	static
@@ -145,32 +91,36 @@ public class BatchUtil {
 		List<String> headerRow = table.get(0);
 
 		Set<String> uniqueHeaderRow = new LinkedHashSet<>(headerRow);
-
 		if(uniqueHeaderRow.size() < headerRow.size()){
-			List<String> duplicateCells = new ArrayList<>();
+			Set<String> duplicateHeaderCells = new LinkedHashSet<>();
 
-			for(int j = 0; j < headerRow.size(); j++){
-				String cell = headerRow.get(j);
+			for(int column = 0; column < headerRow.size(); column++){
+				String headerCell = headerRow.get(column);
 
-				if(Collections.frequency(headerRow, cell) != 1){
-					duplicateCells.add(cell);
+				if(Collections.frequency(headerRow, headerCell) != 1){
+					duplicateHeaderCells.add(headerCell);
 				}
 			}
 
-			throw new IllegalArgumentException("Expected unique cell names, but got non-unique cell name(s) " + duplicateCells);
+			if(duplicateHeaderCells.size() > 0){
+				throw new IllegalArgumentException("Expected unique cell names, but got non-unique cell name(s) " + duplicateHeaderCells);
+			}
 		}
 
-		for(int i = 1; i < table.size(); i++){
-			List<String> bodyRow = table.get(i);
+		for(int row = 1; row < table.size(); row++){
+			List<String> bodyRow = table.get(row);
 
 			if(headerRow.size() != bodyRow.size()){
-				throw new IllegalArgumentException("Expected " + headerRow.size() + " cells, but got " + bodyRow.size() + " cells (data record " + (i - 1) + ")");
+				throw new IllegalArgumentException("Expected " + headerRow.size() + " cells, but got " + bodyRow.size() + " cells (data record " + (row - 1) + ")");
 			}
 
 			Map<FieldName, String> record = new LinkedHashMap<>();
 
-			for(int j = 0; j < headerRow.size(); j++){
-				record.put(FieldName.create(headerRow.get(j)), function.apply(bodyRow.get(j)));
+			for(int column = 0; column < headerRow.size(); column++){
+				FieldName name = FieldName.create(headerRow.get(column));
+				String value = function.apply(bodyRow.get(column));
+
+				record.put(name, value);
 			}
 
 			records.add(record);

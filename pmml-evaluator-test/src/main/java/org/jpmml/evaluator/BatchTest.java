@@ -19,34 +19,62 @@
 package org.jpmml.evaluator;
 
 import java.util.List;
-import java.util.Set;
 
-import org.dmg.pmml.FieldName;
+import com.google.common.base.Equivalence;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 abstract
 public class BatchTest {
+
+	private Equivalence<Object> equivalence = null;
+
+
+	public BatchTest(){
+		this(new PMMLEquivalence(BatchTest.precision, BatchTest.zeroThreshold));
+	}
+
+	public BatchTest(Equivalence<Object> equivalence){
+		setEquivalence(equivalence);
+	}
 
 	public void evaluate(Batch batch) throws Exception {
 		evaluate(batch, null);
 	}
 
-	public void evaluate(Batch batch, Set<FieldName> ignoredFields) throws Exception {
-		evaluate(batch, ignoredFields, BatchTest.precision, BatchTest.zeroThreshold);
-	}
+	public void evaluate(Batch batch, Equivalence<Object> equivalence) throws Exception {
 
-	public void evaluate(Batch batch, Set<FieldName> ignoredFields, double precision, double zeroThreshold) throws Exception {
-		List<Conflict> conflicts = BatchUtil.evaluate(batch, ignoredFields, precision, zeroThreshold);
-		for(Conflict conflict : conflicts){
-			log(conflict);
+		if(equivalence == null){
+			equivalence = getEquivalence();
 		}
 
-		assertTrue("Found " + conflicts.size() + " conflict(s)", conflicts.isEmpty());
+		List<Conflict> conflicts = BatchUtil.evaluate(batch, equivalence);
+		if(conflicts.size() > 0){
+
+			for(Conflict conflict : conflicts){
+				log(conflict);
+			}
+
+			fail("Found " + conflicts.size() + " conflict(s)");
+		}
 	}
 
 	public void log(Conflict conflict){
 		System.err.println(conflict);
+	}
+
+	public Equivalence<Object> getEquivalence(){
+		return this.equivalence;
+	}
+
+	private void setEquivalence(Equivalence<Object> equivalence){
+
+		if(equivalence == null){
+			throw new IllegalArgumentException();
+		}
+
+		this.equivalence = equivalence;
 	}
 
 	// One part per billion parts

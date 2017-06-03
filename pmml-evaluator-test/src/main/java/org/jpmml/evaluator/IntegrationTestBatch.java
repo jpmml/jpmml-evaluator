@@ -24,8 +24,10 @@ import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.base.Predicate;
 import com.google.common.io.ByteStreams;
 import org.dmg.pmml.Application;
+import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
@@ -41,8 +43,8 @@ public class IntegrationTestBatch extends ArchiveBatch {
 	private Evaluator evaluator = null;
 
 
-	public IntegrationTestBatch(String name, String dataset){
-		super(name, dataset);
+	public IntegrationTestBatch(String name, String dataset, Predicate<FieldName> predicate){
+		super(name, dataset, predicate);
 	}
 
 	abstract

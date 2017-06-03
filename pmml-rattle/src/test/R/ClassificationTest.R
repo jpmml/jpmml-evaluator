@@ -255,7 +255,9 @@ generateNeuralNetworkAudit = function(){
 	saveXML(pmml(nnet), "pmml/NeuralNetworkAudit.pmml")
 
 	classes = predict(nnet, type = "class")
-	writeAudit(classes, NULL, "csv/NeuralNetworkAudit.csv")
+	probabilities = predict(nnet, type = "raw")
+	probabilities = data.frame("Probability_0" = 1 - probabilities, "Probability_1" = probabilities)
+	writeAudit(classes, probabilities, "csv/NeuralNetworkAudit.csv")
 }
 
 generateRandomForestAudit = function(){

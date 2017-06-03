@@ -18,30 +18,19 @@
  */
 package org.jpmml.rattle;
 
-import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Batch;
-import org.jpmml.evaluator.BatchUtil;
 import org.jpmml.evaluator.IntegrationTest;
-import org.jpmml.evaluator.tree.NodeScore;
+import org.jpmml.evaluator.PMMLEquivalence;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class RegressionTest extends IntegrationTest {
 
 	@Test
 	public void evaluateDecisionTreeAuto() throws Exception {
-
-		try(Batch batch = createBatch("DecisionTree", "Auto")){
-			NodeScore targetValue = (NodeScore)BatchUtil.evaluateDefault(batch);
-
-			assertEquals("14", targetValue.getEntityId());
-
-			evaluate(batch);
-		}
+		evaluate("DecisionTree", "Auto");
 	}
 
 	@Test
@@ -51,12 +40,7 @@ public class RegressionTest extends IntegrationTest {
 
 	@Test
 	public void evaluateGeneralRegressionAuto() throws Exception {
-
-		try(Batch batch = createBatch("GeneralRegression", "Auto")){
-			assertEquals(null, BatchUtil.evaluateDefault(batch));
-
-			evaluate(batch);
-		}
+		evaluate("GeneralRegression", "Auto");
 	}
 
 	@Test
@@ -71,21 +55,18 @@ public class RegressionTest extends IntegrationTest {
 
 	@Test
 	public void evaluateLibSVMAuto() throws Exception {
+		Predicate<FieldName> predicate = excludeFields(FieldName.create("mpg"), FieldName.create("predictedValue"));
 
-		try(Batch batch = createBatch("LibSVM", "Auto")){
-			Set<FieldName> ignoredFields = ImmutableSet.of(FieldName.create("mpg"), FieldName.create("predictedValue"));
-
-			evaluate(batch, ignoredFields, 1e-7, 1e-7);
+		try(Batch batch = createBatch("LibSVM", "Auto", predicate)){
+			evaluate(batch, new PMMLEquivalence(1e-7, 1e-7));
 		}
 	}
 
 	@Test
 	public void evaluateNeuralNetworkAuto() throws Exception {
 
-		try(Batch batch = createBatch("NeuralNetwork", "Auto")){
-			assertEquals(null, BatchUtil.evaluateDefault(batch));
-
-			evaluate(batch, null, 1e-6, 1e-6);
+		try(Batch batch = createBatch("NeuralNetwork", "Auto", Predicates.<FieldName>alwaysTrue())){
+			evaluate(batch, new PMMLEquivalence(1e-6, 1e-6));
 		}
 	}
 
@@ -96,12 +77,7 @@ public class RegressionTest extends IntegrationTest {
 
 	@Test
 	public void evaluateRegressionAuto() throws Exception {
-
-		try(Batch batch = createBatch("Regression", "Auto")){
-			assertEquals(null, BatchUtil.evaluateDefault(batch));
-
-			evaluate(batch);
-		}
+		evaluate("Regression", "Auto");
 	}
 
 	@Test

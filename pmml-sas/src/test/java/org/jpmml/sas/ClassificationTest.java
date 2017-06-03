@@ -22,11 +22,11 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
@@ -34,6 +34,7 @@ import org.jpmml.evaluator.Batch;
 import org.jpmml.evaluator.FilterBatch;
 import org.jpmml.evaluator.IntegrationTest;
 import org.jpmml.evaluator.IntegrationTestBatch;
+import org.jpmml.evaluator.PMMLEquivalence;
 import org.jpmml.sas.visitors.ExpressionCorrector;
 import org.junit.Test;
 
@@ -52,9 +53,7 @@ public class ClassificationTest extends IntegrationTest {
 	private void evaluateAudit(String name, String dataset) throws Exception {
 
 		try(Batch batch = createFilterBatch(name, dataset, ClassificationTest.AUDIT_COLUMNS)){
-			Set<FieldName> ignoredFields = ImmutableSet.of(FieldName.create("I_Adjusted"), FieldName.create("U_Adjusted"), FieldName.create("P_Adjusted0"));
-
-			evaluate(batch, ignoredFields, 1e-5, 1e-5);
+			evaluate(batch, new PMMLEquivalence(1e-5, 1e-5));
 		}
 	}
 
@@ -66,14 +65,12 @@ public class ClassificationTest extends IntegrationTest {
 	private void evaluateIris(String name, String dataset) throws Exception {
 
 		try(Batch batch = createFilterBatch(name, dataset, ClassificationTest.IRIS_COLUMNS)){
-			Set<FieldName> ignoredFields = ImmutableSet.of(FieldName.create("I_Species"), FieldName.create("P_Speciessetosa"), FieldName.create("P_Speciesversicolor"), FieldName.create("P_Speciesvirginica"));
-
-			evaluate(batch, ignoredFields, 1e-5, 1e-5);
+			evaluate(batch, new PMMLEquivalence(1e-5, 1e-5));
 		}
 	}
 
 	protected Batch createFilterBatch(String name, String dataset, final Map<FieldName, FieldName> columns){
-		Batch result = new FilterBatch(createBatch(name, dataset)){
+		Batch result = new FilterBatch(createBatch(name, dataset, Predicates.in(columns.values()))){
 
 			@Override
 			public List<? extends Map<FieldName, ?>> getOutput() throws Exception {
@@ -100,8 +97,8 @@ public class ClassificationTest extends IntegrationTest {
 	}
 
 	@Override
-	protected Batch createBatch(String name, String dataset){
-		Batch result = new IntegrationTestBatch(name, dataset){
+	protected Batch createBatch(String name, String dataset, Predicate<FieldName> predicate){
+		Batch result = new IntegrationTestBatch(name, dataset, predicate){
 
 			@Override
 			public ClassificationTest getIntegrationTest(){

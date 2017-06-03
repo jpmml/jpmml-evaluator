@@ -739,7 +739,7 @@
     <Con from="53" weight="0.0190082612525336"/>
    </Neuron>
   </NeuralLayer>
-  <NeuralLayer numberOfNeurons="2" activationFunction="threshold" threshold="0.5">
+  <NeuralLayer numberOfNeurons="2" activationFunction="identity">
    <Neuron id="55" bias="1.0">
     <Con from="54" weight="-1.0"/>
    </Neuron>

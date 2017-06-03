@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.jpmml.model.PMMLUtil;
@@ -35,10 +36,13 @@ public class ArchiveBatch implements Batch {
 
 	private String dataset = null;
 
+	private Predicate<FieldName> predicate = null;
 
-	public ArchiveBatch(String name, String dataset){
+
+	public ArchiveBatch(String name, String dataset, Predicate<FieldName> predicate){
 		setName(name);
 		setDataset(dataset);
+		setPredicate(predicate);
 	}
 
 	abstract
@@ -118,5 +122,19 @@ public class ArchiveBatch implements Batch {
 
 	private void setDataset(String dataset){
 		this.dataset = dataset;
+	}
+
+	@Override
+	public Predicate<FieldName> getPredicate(){
+		return this.predicate;
+	}
+
+	private void setPredicate(Predicate<FieldName> predicate){
+
+		if(predicate == null){
+			throw new IllegalArgumentException();
+		}
+
+		this.predicate = predicate;
 	}
 }

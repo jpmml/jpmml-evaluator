@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.base.Predicate;
 import org.dmg.pmml.FieldName;
 
 public interface Batch extends AutoCloseable {
@@ -46,4 +47,12 @@ public interface Batch extends AutoCloseable {
 	 * @see Evaluator#getOutputFields()
 	 */
 	List<? extends Map<FieldName, ?>> getOutput() throws Exception;
+
+	/**
+	 * <p>
+	 * Predicate for selecting columns that will be checked for equivalence
+	 * (between expected and actual output data records).
+	 * </p>
+	 */
+	Predicate<FieldName> getPredicate();
 }
