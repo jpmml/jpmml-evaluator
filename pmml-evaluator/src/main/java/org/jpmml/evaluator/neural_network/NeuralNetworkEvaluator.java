@@ -1,33 +1,25 @@
 /*
- * Copyright (c) 2012 University of Tartu
- * All rights reserved.
+ * Copyright (c) 2017 Villu Ruusmann
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * This file is part of JPMML-Evaluator
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of its contributors
- *    may be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ * JPMML-Evaluator is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * JPMML-Evaluator is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.jpmml.evaluator.neural_network;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,8 +27,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ListMultimap;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Entity;
@@ -60,7 +54,6 @@ import org.dmg.pmml.neural_network.NeuralOutputs;
 import org.dmg.pmml.neural_network.Neuron;
 import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
-import org.jpmml.evaluator.EntityProbabilityDistribution;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
@@ -76,8 +69,14 @@ import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.evaluator.ValueMap;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<Entity> {
+
+	transient
+	private Map<FieldName, List<NeuralOutput>> neuralOutputMap = null;
 
 	transient
 	private BiMap<String, Entity> entityRegistry = null;
@@ -137,6 +136,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		MathContext mathContext = neuralNetwork.getMathContext();
 		switch(mathContext){
+			case FLOAT:
 			case DOUBLE:
 				break;
 			default:
@@ -163,107 +163,159 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
-		Map<String, Double> entityOutputs = evaluateRaw(context);
-		if(entityOutputs == null){
-			return TargetUtil.evaluateRegressionDefault(getTargetField(), getMathContext());
+		List<TargetField> targetFields = getTargetFields();
+
+		ValueMap values = evaluateRaw(context);
+		if(values == null){
+			MathContext mathContext = getMathContext();
+
+			if(targetFields.size() == 1){
+				TargetField targetField = targetFields.get(0);
+
+				return TargetUtil.evaluateRegressionDefault(targetField, mathContext);
+			}
+
+			Map<FieldName, Object> results = new LinkedHashMap<>();
+
+			for(TargetField targetField : targetFields){
+				results.putAll(TargetUtil.evaluateRegressionDefault(targetField, mathContext));
+			}
+
+			return results;
 		}
 
-		Map<FieldName, Object> result = new LinkedHashMap<>();
+		Map<FieldName, List<NeuralOutput>> neuralOutputMap = getNeuralOutputMap();
 
-		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
-		for(NeuralOutput neuralOutput : neuralOutputs){
+		Map<FieldName, Object> results = null;
+
+		for(TargetField targetField : targetFields){
+			List<NeuralOutput> neuralOutputs = neuralOutputMap.get(targetField.getName());
+			if(neuralOutputs == null || neuralOutputs.size() != 1){
+				throw new InvalidFeatureException(neuralNetwork);
+			}
+
+			NeuralOutput neuralOutput = neuralOutputs.get(0);
+
 			String id = neuralOutput.getOutputNeuron();
+
+			Value<?> value = values.get(id);
+			if(value == null){
+				throw new InvalidFeatureException(neuralOutput);
+			}
+
+			value = value.copy();
 
 			Expression expression = getOutputExpression(neuralOutput);
 
 			if(expression instanceof FieldRef){
-				FieldRef fieldRef = (FieldRef)expression;
-
-				FieldName name = fieldRef.getField();
-
-				Double value = entityOutputs.get(id);
-
-				result.put(name, value);
+				// Ignored
 			} else
 
 			if(expression instanceof NormContinuous){
 				NormContinuous normContinuous = (NormContinuous)expression;
 
-				FieldName name = normContinuous.getField();
-
-				Double value = NormalizationUtil.denormalize(normContinuous, entityOutputs.get(id));
-
-				result.put(name, value);
+				NormalizationUtil.denormalize(normContinuous, value);
 			} else
 
 			{
 				throw new UnsupportedFeatureException(expression);
+			} // End if
+
+			if(targetFields.size() == 1){
+				return TargetUtil.evaluateRegression(targetField, value);
+			} // End if
+
+			if(results == null){
+				results = new LinkedHashMap<>();
 			}
+
+			results.putAll(TargetUtil.evaluateRegression(targetField, value));
 		}
 
-		List<TargetField> targetFields = getTargetFields();
-		for(TargetField targetField : targetFields){
-			FieldName name = targetField.getName();
-
-			result.put(name, TargetUtil.evaluateRegressionInternal(targetField, (Double)result.get(name)));
-		}
-
-		return result;
+		return results;
 	}
 
-	@SuppressWarnings (
-		value = {"unchecked"}
-	)
 	private Map<FieldName, ? extends Classification> evaluateClassification(EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
+		List<TargetField> targetFields = getTargetFields();
+
+		ValueMap values = evaluateRaw(context);
+		if(values == null){
+			MathContext mathContext = getMathContext();
+
+			if(targetFields.size() == 1){
+				TargetField targetField = targetFields.get(0);
+
+				return TargetUtil.evaluateClassificationDefault(targetField, mathContext);
+			}
+
+			Map<FieldName, Classification> results = new LinkedHashMap<>();
+
+			for(TargetField targetField : targetFields){
+				results.putAll(TargetUtil.evaluateClassificationDefault(targetField, mathContext));
+			}
+
+			return results;
+		}
+
+		Map<FieldName, List<NeuralOutput>> neuralOutputMap = getNeuralOutputMap();
+
 		BiMap<String, Entity> entityRegistry = getEntityRegistry();
 
-		Map<String, Double> entityOutputs = evaluateRaw(context);
-		if(entityOutputs == null){
-			return TargetUtil.evaluateClassificationDefault(getTargetField(), getMathContext());
-		}
+		Map<FieldName, Classification> results = null;
 
-		Map<FieldName, Classification> result = new LinkedHashMap<>();
+		for(TargetField targetField : targetFields){
+			List<NeuralOutput> neuralOutputs = neuralOutputMap.get(targetField.getName());
+			if(neuralOutputs == null){
+				throw new InvalidFeatureException(neuralNetwork);
+			}
 
-		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
-		for(NeuralOutput neuralOutput : neuralOutputs){
-			String id = neuralOutput.getOutputNeuron();
+			NeuronProbabilityDistribution result = new NeuronProbabilityDistribution(entityRegistry);
 
-			Entity entity = entityRegistry.get(id);
+			for(NeuralOutput neuralOutput : neuralOutputs){
+				String id = neuralOutput.getOutputNeuron();
 
-			Expression expression = getOutputExpression(neuralOutput);
-
-			if(expression instanceof NormDiscrete){
-				NormDiscrete normDiscrete = (NormDiscrete)expression;
-
-				FieldName name = normDiscrete.getField();
-
-				EntityProbabilityDistribution<Entity> values = (EntityProbabilityDistribution<Entity>)result.get(name);
-				if(values == null){
-					values = new EntityProbabilityDistribution<>(entityRegistry);
-
-					result.put(name, values);
+				Entity entity = entityRegistry.get(id);
+				if(entity == null){
+					throw new InvalidFeatureException(neuralOutput);
 				}
 
-				Double value = entityOutputs.get(id);
+				Value<?> value = values.get(id);
+				if(value == null){
+					throw new InvalidFeatureException(neuralOutput);
+				}
 
-				values.put(entity, normDiscrete.getValue(), value);
-			} else
+				Expression expression = getOutputExpression(neuralOutput);
 
-			{
-				throw new UnsupportedFeatureException(expression);
+				if(expression instanceof NormDiscrete){
+					NormDiscrete normDiscrete = (NormDiscrete)expression;
+
+					String targetCategory = normDiscrete.getValue();
+					if(targetCategory == null){
+						throw new InvalidFeatureException(normDiscrete);
+					}
+
+					result.put(entity, targetCategory, value.doubleValue());
+				} else
+
+				{
+					throw new UnsupportedFeatureException(expression);
+				}
 			}
+
+			if(targetFields.size() == 1){
+				return TargetUtil.evaluateClassification(targetField, result);
+			} // End if
+
+			if(results == null){
+				results = new LinkedHashMap<>();
+			}
+
+			results.putAll(TargetUtil.evaluateClassification(targetField, result));
 		}
 
-		List<TargetField> targetFields = getTargetFields();
-		for(TargetField targetField : targetFields){
-			FieldName name = targetField.getName();
-
-			result.put(name, TargetUtil.evaluateClassificationInternal(targetField, result.get(name)));
-		}
-
-		return result;
+		return results;
 	}
 
 	private Expression getOutputExpression(NeuralOutput neuralOutput){
@@ -310,18 +362,14 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return expression;
 	}
 
-	/**
-	 * @return A map between {@link Entity#getId() Entity identifiers} and their outputs.
-	 *
-	 * @see NeuralInput#getId()
-	 * @see Neuron#getId()
-	 */
-	private Map<String, Double> evaluateRaw(EvaluationContext context){
+	private ValueMap evaluateRaw(EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
+
+		ValueFactory<?> valueFactory = ValueFactory.getInstance(getMathContext());
 
 		BiMap<String, Entity> entityRegistry = getEntityRegistry();
 
-		Map<String, Double> result = new HashMap<>(entityRegistry.size());
+		ValueMap result = new ValueMap(2 * entityRegistry.size());
 
 		NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
 		for(NeuralInput neuralInput : neuralInputs){
@@ -332,132 +380,164 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				return null;
 			}
 
-			result.put(neuralInput.getId(), value.asDouble());
+			Value<?> output = valueFactory.newValue(value.asNumber());
+
+			result.put(neuralInput.getId(), output);
 		}
 
-		Map<String, Double> outputs = new HashMap<>();
+		List<Value<?>> outputs = new ArrayList<>();
 
 		List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
 		for(NeuralLayer neuralLayer : neuralLayers){
 			outputs.clear();
 
+			PMMLObject locatable = neuralLayer;
+
+			NeuralNetwork.ActivationFunction activationFunction = neuralLayer.getActivationFunction();
+			if(activationFunction == null){
+				locatable = neuralNetwork;
+
+				activationFunction = neuralNetwork.getActivationFunction();
+			} // End if
+
+			if(activationFunction == null){
+				throw new InvalidFeatureException(neuralLayer);
+			}
+
+			Double threshold = neuralLayer.getThreshold();
+			if(threshold == null){
+				threshold = neuralNetwork.getThreshold();
+			}
+
 			List<Neuron> neurons = neuralLayer.getNeurons();
 			for(int i = 0; i < neurons.size(); i++){
 				Neuron neuron = neurons.get(i);
 
-				double z = 0d;
+				Value<?> output = valueFactory.newValue(0d);
 
 				List<Connection> connections = neuron.getConnections();
 				for(int j = 0; j < connections.size(); j++){
 					Connection connection = connections.get(j);
 
-					Double input = result.get(connection.getFrom());
+					Value<?> input = result.get(connection.getFrom());
 					if(input == null){
 						throw new InvalidFeatureException(connection);
 					}
 
-					z += input * connection.getWeight();
+					output.add(input, 1, connection.getWeight());
 				}
 
 				Double bias = neuron.getBias();
 				if(bias != null){
-					z += bias;
+					output.add(bias);
 				}
 
-				double output = activation(z, neuralLayer);
+				switch(activationFunction){
+					case THRESHOLD:
+						if(threshold == null){
+							throw new InvalidFeatureException(neuralLayer);
+						}
+						// Falls through
+					case LOGISTIC:
+					case TANH:
+					case IDENTITY:
+					case EXPONENTIAL:
+					case RECIPROCAL:
+					case SQUARE:
+					case GAUSS:
+					case SINE:
+					case COSINE:
+					case ELLIOTT:
+					case ARCTAN:
+					case RECTIFIER:
+						NeuralNetworkUtil.activateNeuronOutput(output, threshold, activationFunction);
+						break;
+					default:
+						throw new UnsupportedFeatureException(locatable, activationFunction);
+				}
 
-				outputs.put(neuron.getId(), output);
+				result.put(neuron.getId(), output);
+
+				outputs.add(output);
 			}
 
-			normalizeNeuronOutputs(neuralLayer, outputs);
+			locatable = neuralLayer;
 
-			result.putAll(outputs);
+			NeuralNetwork.NormalizationMethod normalizationMethod = neuralLayer.getNormalizationMethod();
+			if(normalizationMethod == null){
+				locatable = neuralNetwork;
+
+				normalizationMethod = neuralNetwork.getNormalizationMethod();
+			}
+
+			switch(normalizationMethod){
+				case NONE:
+				case SIMPLEMAX:
+				case SOFTMAX:
+					NeuralNetworkUtil.normalizeNeuralLayerOutputs(outputs, normalizationMethod);
+					break;
+				default:
+					throw new UnsupportedFeatureException(locatable, normalizationMethod);
+			}
 		}
 
 		return result;
 	}
 
-	private void normalizeNeuronOutputs(NeuralLayer neuralLayer, Map<String, Double> values){
-		NeuralNetwork neuralNetwork = getModel();
+	private Map<FieldName, List<NeuralOutput>> getNeuralOutputMap(){
 
-		PMMLObject locatable = neuralLayer;
-
-		NeuralNetwork.NormalizationMethod normalizationMethod = neuralLayer.getNormalizationMethod();
-		if(normalizationMethod == null){
-			locatable = neuralNetwork;
-
-			normalizationMethod = neuralNetwork.getNormalizationMethod();
+		if(this.neuralOutputMap == null){
+			this.neuralOutputMap = parseNeuralOutputs();
 		}
 
-		switch(normalizationMethod){
-			case NONE:
-				break;
-			case SIMPLEMAX:
-				Classification.normalize(values);
-				break;
-			case SOFTMAX:
-				Classification.normalizeSoftMax(values);
-				break;
-			default:
-				throw new UnsupportedFeatureException(locatable, normalizationMethod);
-		}
+		return this.neuralOutputMap;
 	}
 
-	private double activation(double z, NeuralLayer neuralLayer){
+	private Map<FieldName, List<NeuralOutput>> parseNeuralOutputs(){
 		NeuralNetwork neuralNetwork = getModel();
 
-		PMMLObject locatable = neuralLayer;
-
-		NeuralNetwork.ActivationFunction activationFunction = neuralLayer.getActivationFunction();
-		if(activationFunction == null){
-			locatable = neuralNetwork;
-
-			activationFunction = neuralNetwork.getActivationFunction();
-		} // End if
-
-		if(activationFunction == null){
-			throw new InvalidFeatureException(neuralLayer);
+		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
+		if(neuralOutputs == null){
+			return Collections.<FieldName, List<NeuralOutput>>emptyMap();
 		}
 
-		switch(activationFunction){
-			case THRESHOLD:
-				Double threshold = neuralLayer.getThreshold();
-				if(threshold == null){
-					threshold = neuralNetwork.getThreshold();
-				} // End if
+		ListMultimap<FieldName, NeuralOutput> result = ArrayListMultimap.create();
 
-				if(threshold == null){
-					throw new InvalidFeatureException(neuralLayer);
-				}
+		for(NeuralOutput neuralOutput : neuralOutputs){
+			FieldName name;
 
-				return z > threshold ? 1d : 0d;
-			case LOGISTIC:
-				return 1d / (1d + Math.exp(-z));
-			case TANH:
-				return Math.tanh(z);
-			case IDENTITY:
-				return z;
-			case EXPONENTIAL:
-				return Math.exp(z);
-			case RECIPROCAL:
-				return 1d / z;
-			case SQUARE:
-				return z * z;
-			case GAUSS:
-				return Math.exp(-(z * z));
-			case SINE:
-				return Math.sin(z);
-			case COSINE:
-				return Math.cos(z);
-			case ELLIOTT:
-				return z / (1d + Math.abs(z));
-			case ARCTAN:
-				return Math.atan(z);
-			case RECTIFIER:
-				return Math.max(0d, z);
-			default:
-				throw new UnsupportedFeatureException(locatable, activationFunction);
+			Expression expression = getOutputExpression(neuralOutput);
+
+			if(expression instanceof FieldRef){
+				FieldRef fieldRef = (FieldRef)expression;
+
+				name = fieldRef.getField();
+			} else
+
+			if(expression instanceof NormContinuous){
+				NormContinuous normContinuous = (NormContinuous)expression;
+
+				name = normContinuous.getField();
+			} else
+
+			if(expression instanceof NormDiscrete){
+				NormDiscrete normDiscrete = (NormDiscrete)expression;
+
+				name = normDiscrete.getField();
+			} else
+
+			{
+				throw new UnsupportedFeatureException(expression);
+			} // End if
+
+			if(name == null){
+				throw new InvalidFeatureException(expression);
+			}
+
+			result.put(name, neuralOutput);
 		}
+
+		return (Map)result.asMap();
 	}
 
 	private static final LoadingCache<NeuralNetwork, BiMap<String, Entity>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<NeuralNetwork, BiMap<String, Entity>>(){

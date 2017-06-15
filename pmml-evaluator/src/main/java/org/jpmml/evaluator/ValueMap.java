@@ -23,6 +23,14 @@ import java.util.LinkedHashMap;
 
 public class ValueMap extends LinkedHashMap<String, Value<?>> implements Iterable<Value<?>> {
 
+	public ValueMap(){
+	}
+
+	public ValueMap(int size){
+		super(size);
+	}
+
+	@Override
 	public Iterator<Value<?>> iterator(){
 		return values().iterator();
 	}

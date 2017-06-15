@@ -38,7 +38,7 @@ public class NodeScoreDistribution extends EntityClassification<Node> implements
 	private Map<String, Double> confidences = null;
 
 
-	protected NodeScoreDistribution(BiMap<String, Node> entityRegistry, Node node){
+	NodeScoreDistribution(BiMap<String, Node> entityRegistry, Node node){
 		super(Type.PROBABILITY, entityRegistry);
 
 		setEntity(node);

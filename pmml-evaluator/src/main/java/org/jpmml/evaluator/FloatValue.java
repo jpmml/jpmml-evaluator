@@ -81,6 +81,21 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
+	public FloatValue add(Value<?> factor, int exponent, double coefficient){
+		float product = factor.floatValue();
+
+		if(exponent != 1){
+			product = (float)Math.pow(product, exponent);
+		}
+
+		product *= (float)coefficient;
+
+		this.value += product;
+
+		return this;
+	}
+
+	@Override
 	public FloatValue add(List<? extends Number> factors, double coefficient){
 		float product = (float)coefficient;
 
@@ -209,6 +224,83 @@ public class FloatValue extends Value<Float> {
 	@Override
 	public FloatValue residual(Value<?> value){
 		this.value = 1f - value.floatValue();
+
+		return this;
+	}
+
+	@Override
+	public FloatValue threshold(double value){
+		this.value = (this.value > (float)value ? 1f : 0f);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue tanh(){
+		this.value = (float)Math.tanh(this.value);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue reciprocal(){
+		this.value = 1f / this.value;
+
+		return this;
+	}
+
+	@Override
+	public FloatValue square(){
+		this.value *= this.value;
+
+		return this;
+	}
+
+	@Override
+	public FloatValue gauss(){
+		this.value = (float)Math.exp(-(this.value * this.value));
+
+		return this;
+	}
+
+	@Override
+	public FloatValue sin(){
+		this.value = (float)Math.sin(this.value);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue cos(){
+		this.value = (float)Math.cos(this.value);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue elliott(){
+		this.value /= (1f + Math.abs(this.value));
+
+		return this;
+	}
+
+	@Override
+	public FloatValue atan(){
+		this.value = (float)Math.atan(this.value);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue relu(){
+		this.value = Math.max(this.value, 0);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue denormalize(double leftOrig, double leftNorm, double rightOrig, double rightNorm){
+		this.value = ((this.value - (float)leftNorm) / ((float)rightNorm - (float)leftNorm)) * ((float)rightOrig - (float)leftOrig) + (float)leftOrig;
 
 		return this;
 	}

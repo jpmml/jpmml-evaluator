@@ -30,6 +30,9 @@ public class ValueFactory<V extends Number> {
 	public Value<V> newValue(double value);
 
 	abstract
+	public Value<V> newValue(Number number);
+
+	abstract
 	public Value<V> newValue(String string);
 
 	static
@@ -53,6 +56,11 @@ public class ValueFactory<V extends Number> {
 		}
 
 		@Override
+		public FloatValue newValue(Number value){
+			return new FloatValue(value.floatValue());
+		}
+
+		@Override
 		public FloatValue newValue(String string){
 			return new FloatValue(Float.parseFloat(string));
 		}
@@ -63,6 +71,11 @@ public class ValueFactory<V extends Number> {
 		@Override
 		public DoubleValue newValue(double value){
 			return new DoubleValue(value);
+		}
+
+		@Override
+		public DoubleValue newValue(Number value){
+			return new DoubleValue(value.doubleValue());
 		}
 
 		@Override

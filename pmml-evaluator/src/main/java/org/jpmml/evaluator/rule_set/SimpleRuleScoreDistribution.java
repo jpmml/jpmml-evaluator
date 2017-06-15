@@ -30,7 +30,7 @@ import org.jpmml.evaluator.TypeUtil;
 
 public class SimpleRuleScoreDistribution extends EntityClassification<SimpleRule> implements HasConfidence {
 
-	protected SimpleRuleScoreDistribution(BiMap<String, SimpleRule> entityRegistry){
+	SimpleRuleScoreDistribution(BiMap<String, SimpleRule> entityRegistry){
 		super(Type.CONFIDENCE, entityRegistry);
 	}
 

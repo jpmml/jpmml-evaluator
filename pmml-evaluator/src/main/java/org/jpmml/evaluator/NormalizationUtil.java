@@ -116,6 +116,15 @@ public class NormalizationUtil {
 
 	static
 	public double denormalize(NormContinuous normContinuous, double value){
+		DoubleValue doubleValue = new DoubleValue(value);
+
+		denormalize(normContinuous, doubleValue);
+
+		return doubleValue.doubleValue();
+	}
+
+	static
+	public Value<?> denormalize(NormContinuous normContinuous, Value<?> value){
 		List<LinearNorm> linearNorms = normContinuous.getLinearNorms();
 		if(linearNorms.size() < 2){
 			throw new InvalidFeatureException(normContinuous);
@@ -127,21 +136,18 @@ public class NormalizationUtil {
 		for(int i = 1; i < linearNorms.size() - 1; i++){
 			LinearNorm linearNorm = linearNorms.get(i);
 
-			if(value >= linearNorm.getNorm()){
+			if(value.doubleValue() >= linearNorm.getNorm()){
 				rangeStart = linearNorm;
 			} else
 
-			if(value <= linearNorm.getNorm()){
+			if(value.doubleValue() <= linearNorm.getNorm()){
 				rangeEnd = linearNorm;
 
 				break;
 			}
 		}
 
-		double origRange = rangeEnd.getOrig() - rangeStart.getOrig();
-		double normRange = rangeEnd.getNorm() - rangeStart.getNorm();
-
-		return (value - rangeStart.getNorm()) / normRange * origRange + rangeStart.getOrig();
+		return value.denormalize(rangeStart.getOrig(), rangeStart.getNorm(), rangeEnd.getOrig(), rangeEnd.getNorm());
 	}
 
 }

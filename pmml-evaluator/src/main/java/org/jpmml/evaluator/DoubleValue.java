@@ -83,6 +83,21 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
+	public DoubleValue add(Value<?> factor, int exponent, double coefficient){
+		double product = factor.doubleValue();
+
+		if(exponent != 1){
+			product = Math.pow(product, exponent);
+		}
+
+		product *= coefficient;
+
+		this.value += product;
+
+		return this;
+	}
+
+	@Override
 	public DoubleValue add(List<? extends Number> factors, double coefficient){
 		double product = coefficient;
 
@@ -213,6 +228,83 @@ public class DoubleValue extends Value<Double> {
 	@Override
 	public DoubleValue residual(Value<?> value){
 		this.value = 1d - value.doubleValue();
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue threshold(double value){
+		this.value = (this.value > value ? 1d : 0d);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue tanh(){
+		this.value = Math.tanh(this.value);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue reciprocal(){
+		this.value = 1d / this.value;
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue square(){
+		this.value *= this.value;
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue gauss(){
+		this.value = Math.exp(-(this.value * this.value));
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue sin(){
+		this.value = Math.sin(this.value);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue cos(){
+		this.value = Math.cos(this.value);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue elliott(){
+		this.value /= (1d + Math.abs(this.value));
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue atan(){
+		this.value = Math.atan(this.value);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue relu(){
+		this.value = Math.max(this.value, 0);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue denormalize(double leftOrig, double leftNorm, double rightOrig, double rightNorm){
+		this.value = ((this.value - leftNorm) / (rightNorm - leftNorm)) * (rightOrig - leftOrig) + leftOrig;
 
 		return this;
 	}

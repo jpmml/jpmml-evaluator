@@ -16,16 +16,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.neural_network;
 
 import java.util.Set;
 
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.Entity;
+import org.jpmml.evaluator.EntityClassification;
+import org.jpmml.evaluator.HasProbability;
 
-public class EntityProbabilityDistribution<E extends Entity> extends EntityClassification<E> implements HasProbability {
+public class NeuronProbabilityDistribution extends EntityClassification<Entity> implements HasProbability {
 
-	public EntityProbabilityDistribution(BiMap<String, E> entityRegistry){
+	NeuronProbabilityDistribution(BiMap<String, Entity> entityRegistry){
 		super(Type.PROBABILITY, entityRegistry);
 	}
 

@@ -100,16 +100,11 @@ public class TargetUtil {
 
 	static
 	public Map<FieldName, ? extends Classification> evaluateClassification(TargetField targetField, Classification value){
-		return Collections.singletonMap(targetField.getName(), evaluateClassificationInternal(targetField, value));
-	}
-
-	static
-	public Classification evaluateClassificationInternal(TargetField targetField, Classification value){
 		DataField dataField = targetField.getDataField();
 
 		value.computeResult(dataField.getDataType());
 
-		return value;
+		return Collections.singletonMap(targetField.getName(), value);
 	}
 
 	static

@@ -36,6 +36,9 @@ public class Value<V extends Number> {
 	public Value<V> add(Number factor, int exponent, double coefficient);
 
 	abstract
+	public Value<V> add(Value<?> factor, int exponent, double coefficient);
+
+	abstract
 	public Value<V> add(List<? extends Number> factors, double coefficient);
 
 	abstract
@@ -88,6 +91,39 @@ public class Value<V extends Number> {
 
 	abstract
 	public Value<V> residual(Value<?> value);
+
+	abstract
+	public Value<V> threshold(double value);
+
+	abstract
+	public Value<V> tanh();
+
+	abstract
+	public Value<V> reciprocal();
+
+	abstract
+	public Value<V> square();
+
+	abstract
+	public Value<V> gauss();
+
+	abstract
+	public Value<V> sin();
+
+	abstract
+	public Value<V> cos();
+
+	abstract
+	public Value<V> elliott();
+
+	abstract
+	public Value<V> atan();
+
+	abstract
+	public Value<V> relu();
+
+	abstract
+	public Value<V> denormalize(double leftOrig, double leftNorm, double rightOrig, double rightNorm);
 
 	abstract
 	public float floatValue();
