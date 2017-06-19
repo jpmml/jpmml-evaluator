@@ -26,36 +26,39 @@ import java.util.Set;
 
 import com.google.common.base.Function;
 
-public class VoteAggregator<K> extends ClassificationAggregator<K> {
+abstract
+public class VoteAggregator<K, V extends Number> extends ClassificationAggregator<K, V> {
 
 	public VoteAggregator(){
 		super(0);
 	}
 
-	public Map<K, Double> sumMap(){
-		Function<DoubleVector, Double> function = new Function<DoubleVector, Double>(){
+	public ValueMap<K, V> sumMap(){
+		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
 
 			@Override
-			public Double apply(DoubleVector values){
+			public Value<V> apply(Vector<V> values){
 				return values.sum();
 			}
 		};
 
-		return transform(function);
+		return new ValueMap<>(asTransformedMap(function));
 	}
 
 	public Set<K> getWinners(){
 		Set<K> result = new LinkedHashSet<>();
 
-		Map<K, Double> sumMap = sumMap();
+		Map<K, Value<V>> sumMap = sumMap();
 
-		Double max = Collections.max(sumMap.values());
+		Value<V> maxValue = Collections.max(sumMap.values());
 
-		Collection<Map.Entry<K, Double>> entries = sumMap.entrySet();
-		for(Map.Entry<K, Double> entry : entries){
+		Collection<Map.Entry<K, Value<V>>> entries = sumMap.entrySet();
+		for(Map.Entry<K, Value<V>> entry : entries){
+			K key = entry.getKey();
+			Value<V> value = entry.getValue();
 
-			if((entry.getValue()).equals(max)){
-				result.add(entry.getKey());
+			if((maxValue).compareTo(value) == 0){
+				result.add(key);
 			}
 		}
 

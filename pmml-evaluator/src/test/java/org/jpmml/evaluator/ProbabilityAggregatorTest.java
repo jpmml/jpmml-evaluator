@@ -19,9 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Test;
 
@@ -31,9 +29,15 @@ public class ProbabilityAggregatorTest {
 
 	@Test
 	public void max(){
-		ProbabilityAggregator aggregator = new ProbabilityAggregator(5);
+		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(5){
 
-		assertEquals(Collections.emptyMap(), aggregator.maxMap(ProbabilityAggregatorTest.CATEGORIES));
+			@Override
+			public ValueFactory<Double> getValueFactory(){
+				return ValueFactory.DOUBLE;
+			}
+		};
+
+		assertEquals(new ValueMap<>(), aggregator.maxMap(ProbabilityAggregatorTest.CATEGORIES));
 
 		aggregator.add(createProbabilityDistribution(0.2d, 0.6d, 0.2d));
 		aggregator.add(createProbabilityDistribution(0.6d, 0.3d, 0.1d));
@@ -53,9 +57,15 @@ public class ProbabilityAggregatorTest {
 
 	@Test
 	public void median(){
-		ProbabilityAggregator aggregator = new ProbabilityAggregator(3);
+		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(3){
 
-		assertEquals(Collections.emptyMap(), aggregator.medianMap(ProbabilityAggregatorTest.CATEGORIES));
+			@Override
+			public ValueFactory<Double> getValueFactory(){
+				return ValueFactory.DOUBLE;
+			}
+		};
+
+		assertEquals(new ValueMap<>(), aggregator.medianMap(ProbabilityAggregatorTest.CATEGORIES));
 
 		aggregator.add(createProbabilityDistribution(0.3d, 0.4d, 0.3d));
 		aggregator.add(createProbabilityDistribution(0.1d, 0.6d, 0.3d));
@@ -69,7 +79,16 @@ public class ProbabilityAggregatorTest {
 
 	@Test
 	public void weightedAverage(){
-		ProbabilityAggregator aggregator = new ProbabilityAggregator();
+		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(0, ValueFactory.DOUBLE.newVector(0)){
+
+			@Override
+			public ValueFactory<Double> getValueFactory(){
+				return ValueFactory.DOUBLE;
+			}
+		};
+
+		assertEquals(new ValueMap<>(), aggregator.weightedAverageMap());
+
 		aggregator.add(createProbabilityDistribution(0.2d, 0.6d, 0.2d), 3d);
 		aggregator.add(createProbabilityDistribution(0.6d, 0.1d, 0.3d), 1d);
 
@@ -77,10 +96,10 @@ public class ProbabilityAggregatorTest {
 	}
 
 	static
-	private void checkValues(Double a, Double b, Double c, Map<String, Double> values){
-		assertEquals(a, values.get("A"));
-		assertEquals(b, values.get("B"));
-		assertEquals(c, values.get("C"));
+	private void checkValues(double a, double b, double c, ValueMap<String, Double> values){
+		assertEquals(new DoubleValue(a), values.get("A"));
+		assertEquals(new DoubleValue(b), values.get("B"));
+		assertEquals(new DoubleValue(c), values.get("C"));
 	}
 
 	static

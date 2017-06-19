@@ -30,6 +30,16 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
+	public int compareTo(Value<Double> that){
+		return Double.compare(this.doubleValue(), that.doubleValue());
+	}
+
+	@Override
+	public String toString(){
+		return Double.toString(this.value);
+	}
+
+	@Override
 	public int hashCode(){
 		long bits = Double.doubleToLongBits(this.value);
 

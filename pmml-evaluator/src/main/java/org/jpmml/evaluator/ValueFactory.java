@@ -35,6 +35,9 @@ public class ValueFactory<V extends Number> {
 	abstract
 	public Value<V> newValue(String string);
 
+	abstract
+	public Vector<V> newVector(int capacity);
+
 	static
 	public ValueFactory<?> getInstance(MathContext mathContext){
 
@@ -64,6 +67,11 @@ public class ValueFactory<V extends Number> {
 		public FloatValue newValue(String string){
 			return new FloatValue(Float.parseFloat(string));
 		}
+
+		@Override
+		public Vector<Float> newVector(int capacity){
+			return (capacity > 0 ? new ComplexFloatVector(capacity) : new SimpleFloatVector());
+		}
 	};
 
 	public static final ValueFactory<Double> DOUBLE = new ValueFactory<Double>(){
@@ -81,6 +89,11 @@ public class ValueFactory<V extends Number> {
 		@Override
 		public DoubleValue newValue(String string){
 			return new DoubleValue(Double.parseDouble(string));
+		}
+
+		@Override
+		public Vector<Double> newVector(int capacity){
+			return (capacity > 0 ? new ComplexDoubleVector(capacity) : new SimpleDoubleVector());
 		}
 	};
 }

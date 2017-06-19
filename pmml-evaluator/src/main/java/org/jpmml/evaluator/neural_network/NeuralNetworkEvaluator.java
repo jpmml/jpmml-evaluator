@@ -134,10 +134,13 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			throw new InvalidResultException(neuralNetwork);
 		}
 
+		ValueFactory<?> valueFactory;
+
 		MathContext mathContext = neuralNetwork.getMathContext();
 		switch(mathContext){
 			case FLOAT:
 			case DOUBLE:
+				valueFactory = ValueFactory.getInstance(mathContext);
 				break;
 			default:
 				throw new UnsupportedFeatureException(neuralNetwork, mathContext);
@@ -148,10 +151,10 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		MiningFunction miningFunction = neuralNetwork.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
-				predictions = evaluateRegression(context);
+				predictions = evaluateRegression(valueFactory, context);
 				break;
 			case CLASSIFICATION:
-				predictions = evaluateClassification(context);
+				predictions = evaluateClassification(valueFactory, context);
 				break;
 			default:
 				throw new UnsupportedFeatureException(neuralNetwork, miningFunction);
@@ -160,25 +163,24 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
+	private <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
 		List<TargetField> targetFields = getTargetFields();
 
-		ValueMap values = evaluateRaw(context);
+		ValueMap<String, V> values = evaluateRaw(valueFactory, context);
 		if(values == null){
-			MathContext mathContext = getMathContext();
 
 			if(targetFields.size() == 1){
 				TargetField targetField = targetFields.get(0);
 
-				return TargetUtil.evaluateRegressionDefault(targetField, mathContext);
+				return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 			}
 
 			Map<FieldName, Object> results = new LinkedHashMap<>();
 
 			for(TargetField targetField : targetFields){
-				results.putAll(TargetUtil.evaluateRegressionDefault(targetField, mathContext));
+				results.putAll(TargetUtil.evaluateRegressionDefault(valueFactory, targetField));
 			}
 
 			return results;
@@ -198,7 +200,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 			String id = neuralOutput.getOutputNeuron();
 
-			Value<?> value = values.get(id);
+			Value<V> value = values.get(id);
 			if(value == null){
 				throw new InvalidFeatureException(neuralOutput);
 			}
@@ -235,25 +237,24 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return results;
 	}
 
-	private Map<FieldName, ? extends Classification> evaluateClassification(EvaluationContext context){
+	private <V extends Number> Map<FieldName, ? extends Classification> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
 		List<TargetField> targetFields = getTargetFields();
 
-		ValueMap values = evaluateRaw(context);
+		ValueMap<String, V> values = evaluateRaw(valueFactory, context);
 		if(values == null){
-			MathContext mathContext = getMathContext();
 
 			if(targetFields.size() == 1){
 				TargetField targetField = targetFields.get(0);
 
-				return TargetUtil.evaluateClassificationDefault(targetField, mathContext);
+				return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 			}
 
 			Map<FieldName, Classification> results = new LinkedHashMap<>();
 
 			for(TargetField targetField : targetFields){
-				results.putAll(TargetUtil.evaluateClassificationDefault(targetField, mathContext));
+				results.putAll(TargetUtil.evaluateClassificationDefault(valueFactory, targetField));
 			}
 
 			return results;
@@ -281,7 +282,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 					throw new InvalidFeatureException(neuralOutput);
 				}
 
-				Value<?> value = values.get(id);
+				Value<V> value = values.get(id);
 				if(value == null){
 					throw new InvalidFeatureException(neuralOutput);
 				}
@@ -362,14 +363,12 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return expression;
 	}
 
-	private ValueMap evaluateRaw(EvaluationContext context){
+	private <V extends Number> ValueMap<String, V> evaluateRaw(ValueFactory<V> valueFactory, EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
-
-		ValueFactory<?> valueFactory = ValueFactory.getInstance(getMathContext());
 
 		BiMap<String, Entity> entityRegistry = getEntityRegistry();
 
-		ValueMap result = new ValueMap(2 * entityRegistry.size());
+		ValueMap<String, V> result = new ValueMap<>(2 * entityRegistry.size());
 
 		NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
 		for(NeuralInput neuralInput : neuralInputs){
@@ -380,12 +379,12 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				return null;
 			}
 
-			Value<?> output = valueFactory.newValue(value.asNumber());
+			Value<V> output = valueFactory.newValue(value.asNumber());
 
 			result.put(neuralInput.getId(), output);
 		}
 
-		List<Value<?>> outputs = new ArrayList<>();
+		List<Value<V>> outputs = new ArrayList<>();
 
 		List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
 		for(NeuralLayer neuralLayer : neuralLayers){
@@ -413,13 +412,13 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			for(int i = 0; i < neurons.size(); i++){
 				Neuron neuron = neurons.get(i);
 
-				Value<?> output = valueFactory.newValue(0d);
+				Value<V> output = valueFactory.newValue(0d);
 
 				List<Connection> connections = neuron.getConnections();
 				for(int j = 0; j < connections.size(); j++){
 					Connection connection = connections.get(j);
 
-					Value<?> input = result.get(connection.getFrom());
+					Value<V> input = result.get(connection.getFrom());
 					if(input == null){
 						throw new InvalidFeatureException(connection);
 					}

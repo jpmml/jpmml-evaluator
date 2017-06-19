@@ -179,7 +179,7 @@ public class MeasureUtil {
 			throw new UnsupportedFeatureException(measure);
 		}
 
-		DoubleVector distances = new DoubleVector(comparisonFields.size());
+		DoubleVector distances = new SimpleDoubleVector();
 
 		comparisonFields:
 		for(int i = 0, max = comparisonFields.size(); i < max; i++){
@@ -198,11 +198,11 @@ public class MeasureUtil {
 		}
 
 		if(measure instanceof Euclidean || measure instanceof SquaredEuclidean || measure instanceof CityBlock || measure instanceof Minkowski){
-			return Math.pow(distances.sum() * adjustment, 1d / outerPower);
+			return Math.pow(distances.doubleSum() * adjustment, 1d / outerPower);
 		} else
 
 		if(measure instanceof Chebychev){
-			return distances.max() * adjustment;
+			return distances.doubleMax() * adjustment;
 		} else
 
 		{

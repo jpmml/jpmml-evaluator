@@ -70,6 +70,7 @@ import org.dmg.pmml.nearest_neighbor.TrainingInstances;
 import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
+import org.jpmml.evaluator.ComplexDoubleVector;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.ExpressionUtil;
@@ -85,9 +86,11 @@ import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.RegressionAggregator;
+import org.jpmml.evaluator.SimpleDoubleVector;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.VoteAggregator;
 
 public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighborModel> {
@@ -338,15 +341,20 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		NearestNeighborModel.ContinuousScoringMethod continuousScoringMethod = nearestNeighborModel.getContinuousScoringMethod();
 
-		RegressionAggregator aggregator;
+		RegressionAggregator<Double> aggregator;
 
 		switch(continuousScoringMethod){
 			case MEDIAN:
-				aggregator = new RegressionAggregator(instanceResults.size());
+				aggregator = new RegressionAggregator<>(new ComplexDoubleVector(instanceResults.size()));
+				break;
+			case AVERAGE:
+				aggregator = new RegressionAggregator<>(new SimpleDoubleVector());
+				break;
+			case WEIGHTED_AVERAGE:
+				aggregator = new RegressionAggregator<>(new SimpleDoubleVector(), new SimpleDoubleVector());
 				break;
 			default:
-				aggregator = new RegressionAggregator();
-				break;
+				throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
 		}
 
 		for(InstanceResult instanceResult : instanceResults){
@@ -360,12 +368,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			switch(continuousScoringMethod){
 				case MEDIAN:
 				case AVERAGE:
-					aggregator.add(number.doubleValue());
+					aggregator.add(number);
 					break;
 				case WEIGHTED_AVERAGE:
 					double weight = instanceResult.getWeight(nearestNeighborModel.getThreshold());
 
-					aggregator.add(number.doubleValue(), weight);
+					aggregator.add(number, weight);
 					break;
 				default:
 					throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
@@ -374,11 +382,11 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		switch(continuousScoringMethod){
 			case MEDIAN:
-				return aggregator.median();
+				return (aggregator.median()).getValue();
 			case AVERAGE:
-				return aggregator.average();
+				return (aggregator.average()).getValue();
 			case WEIGHTED_AVERAGE:
-				return aggregator.weightedAverage();
+				return (aggregator.weightedAverage()).getValue();
 			default:
 				throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
 		}
@@ -390,7 +398,13 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Object calculateCategoricalTarget(FieldName name, List<InstanceResult> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		VoteAggregator<Object> aggregator = new VoteAggregator<>();
+		VoteAggregator<Object, Double> aggregator = new VoteAggregator<Object, Double>(){
+
+			@Override
+			public ValueFactory getValueFactory(){
+				return ValueFactory.DOUBLE;
+			}
+		};
 
 		NearestNeighborModel.CategoricalScoringMethod categoricalScoringMethod = nearestNeighborModel.getCategoricalScoringMethod();
 
@@ -404,10 +418,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			switch(categoricalScoringMethod){
 				case MAJORITY_VOTE:
-					aggregator.add(object, 1d);
+					aggregator.add(object);
 					break;
 				case WEIGHTED_MAJORITY_VOTE:
-					aggregator.add(object, instanceResult.getWeight(nearestNeighborModel.getThreshold()));
+					double weight = instanceResult.getWeight(nearestNeighborModel.getThreshold());
+
+					aggregator.add(object, weight);
 					break;
 				default:
 					throw new UnsupportedFeatureException(nearestNeighborModel, categoricalScoringMethod);

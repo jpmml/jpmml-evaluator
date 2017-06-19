@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,18 +29,6 @@ public class ProbabilityDistribution extends Classification implements HasProbab
 
 	public ProbabilityDistribution(Map<String, Double> probabilities){
 		super(Type.PROBABILITY, probabilities);
-	}
-
-	public ProbabilityDistribution(ValueMap values){
-		super(Type.PROBABILITY);
-
-		Collection<Map.Entry<String, Value<?>>> entries = values.entrySet();
-		for(Map.Entry<String, Value<?>> entry : entries){
-			String key = entry.getKey();
-			Value<?> value = entry.getValue();
-
-			put(key, value.doubleValue());
-		}
 	}
 
 	@Override

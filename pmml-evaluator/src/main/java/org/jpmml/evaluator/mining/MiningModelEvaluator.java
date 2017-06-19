@@ -61,7 +61,6 @@ import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasEntityRegistry;
-import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.InvalidFeatureException;
 import org.jpmml.evaluator.InvalidResultException;
@@ -74,13 +73,14 @@ import org.jpmml.evaluator.OutputField;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLException;
 import org.jpmml.evaluator.PredicateUtil;
-import org.jpmml.evaluator.ProbabilityAggregator;
 import org.jpmml.evaluator.ProbabilityDistribution;
-import org.jpmml.evaluator.RegressionAggregator;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
-import org.jpmml.evaluator.VoteAggregator;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.evaluator.ValueMap;
+import org.jpmml.evaluator.ValueUtil;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 
@@ -197,9 +197,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			throw new InvalidResultException(miningModel);
 		}
 
+		ValueFactory<?> valueFactory;
+
 		MathContext mathContext = miningModel.getMathContext();
 		switch(mathContext){
+			case FLOAT:
 			case DOUBLE:
+				valueFactory = ValueFactory.getInstance(mathContext);
 				break;
 			default:
 				throw new UnsupportedFeatureException(miningModel, mathContext);
@@ -210,13 +214,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MiningFunction miningFunction = miningModel.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
-				predictions = evaluateRegression(context);
+				predictions = evaluateRegression(valueFactory, context);
 				break;
 			case CLASSIFICATION:
-				predictions = evaluateClassification(context);
+				predictions = evaluateClassification(valueFactory, context);
 				break;
 			case CLUSTERING:
-				predictions = evaluateClustering(context);
+				predictions = evaluateClustering(valueFactory, context);
 				break;
 			default:
 				predictions = evaluateAny(context);
@@ -226,7 +230,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(MiningModelEvaluationContext context){
+	private <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, MiningModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
 		List<SegmentResult> segmentResults = evaluateSegmentation(context);
@@ -238,12 +242,26 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		Double result = aggregateValues(segmentation, segmentResults);
+		Value<V> result;
+
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
+		switch(multipleModelMethod){
+			case AVERAGE:
+			case WEIGHTED_AVERAGE:
+			case MEDIAN:
+			case WEIGHTED_MEDIAN:
+			case SUM:
+			case WEIGHTED_SUM:
+				result = MiningModelUtil.aggregateValues(valueFactory, segmentResults, multipleModelMethod);
+				break;
+			default:
+				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+		}
 
 		return TargetUtil.evaluateRegression(getTargetField(), result);
 	}
 
-	private Map<FieldName, ?> evaluateClassification(MiningModelEvaluationContext context){
+	private <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, MiningModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
 		List<SegmentResult> segmentResults = evaluateSegmentation(context);
@@ -264,18 +282,16 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 				{
-					result = new ProbabilityDistribution(aggregateVotes(segmentation, segmentResults));
+					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, segmentResults, multipleModelMethod);
 
 					// Convert from votes to probabilities
-					result.normalizeValues();
+					ValueUtil.normalize(values);
+
+					result = new ProbabilityDistribution(values.asDoubleMap());
 				}
 				break;
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
-				{
-					result = new ProbabilityDistribution(aggregateProbabilities(segmentation, segmentResults, null));
-				}
-				break;
 			case MEDIAN:
 			case MAX:
 				{
@@ -283,7 +299,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 					List<String> categories = FieldValueUtil.getTargetCategories(dataField);
 
-					result = new ProbabilityDistribution(aggregateProbabilities(segmentation, segmentResults, categories));
+					ValueMap<String, V> values = MiningModelUtil.aggregateProbabilities(valueFactory, segmentResults, categories, multipleModelMethod);
+
+					result = new ProbabilityDistribution(values.asDoubleMap());
 				}
 				break;
 			default:
@@ -293,7 +311,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
 
-	private Map<FieldName, ?> evaluateClustering(MiningModelEvaluationContext context){
+	private <V extends Number> Map<FieldName, ?> evaluateClustering(ValueFactory<V> valueFactory, MiningModelEvaluationContext context){
 		MiningModel miningModel = getModel();
 
 		List<SegmentResult> segmentResults = evaluateSegmentation(context);
@@ -305,7 +323,21 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		Classification result = new Classification(Classification.Type.VOTE, aggregateVotes(segmentation, segmentResults));
+		Classification result;
+
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
+		switch(multipleModelMethod){
+			case MAJORITY_VOTE:
+			case WEIGHTED_MAJORITY_VOTE:
+				{
+					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, segmentResults, multipleModelMethod);
+
+					result = new Classification(Classification.Type.VOTE, values.asDoubleMap());
+				}
+				break;
+			default:
+				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+		}
 
 		result.computeResult(DataType.STRING);
 
@@ -627,134 +659,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	public void setEvaluatorFactory(ModelEvaluatorFactory evaluatorFactory){
 		this.evaluatorFactory = evaluatorFactory;
-	}
-
-	static
-	private Double aggregateValues(Segmentation segmentation, List<SegmentResult> segmentResults){
-		RegressionAggregator aggregator;
-
-		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
-		switch(multipleModelMethod){
-			case MEDIAN:
-			case WEIGHTED_MEDIAN:
-				aggregator = new RegressionAggregator(segmentResults.size());
-				break;
-			default:
-				aggregator = new RegressionAggregator();
-				break;
-		}
-
-		for(SegmentResult segmentResult : segmentResults){
-			Double value = (Double)segmentResult.getTargetValue(DataType.DOUBLE);
-
-			switch(multipleModelMethod){
-				case AVERAGE:
-				case MEDIAN:
-				case SUM:
-					aggregator.add(value);
-					break;
-				case WEIGHTED_AVERAGE:
-				case WEIGHTED_MEDIAN:
-				case WEIGHTED_SUM:
-					double weight = segmentResult.getWeight();
-
-					aggregator.add(value, weight);
-					break;
-				default:
-					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
-			}
-		}
-
-		switch(multipleModelMethod){
-			case AVERAGE:
-				return aggregator.average();
-			case WEIGHTED_AVERAGE:
-				return aggregator.weightedAverage();
-			case MEDIAN:
-				return aggregator.median();
-			case WEIGHTED_MEDIAN:
-				return aggregator.weightedMedian();
-			case SUM:
-				return aggregator.sum();
-			case WEIGHTED_SUM:
-				return aggregator.weightedSum();
-			default:
-				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
-		}
-	}
-
-	static
-	private Map<String, Double> aggregateVotes(Segmentation segmentation, List<SegmentResult> segmentResults){
-		VoteAggregator<String> aggregator = new VoteAggregator<>();
-
-		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
-
-		for(SegmentResult segmentResult : segmentResults){
-			String key = (String)segmentResult.getTargetValue(DataType.STRING);
-
-			switch(multipleModelMethod){
-				case MAJORITY_VOTE:
-					aggregator.add(key, 1d);
-					break;
-				case WEIGHTED_MAJORITY_VOTE:
-					aggregator.add(key, segmentResult.getWeight());
-					break;
-				default:
-					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
-			}
-		}
-
-		return aggregator.sumMap();
-	}
-
-	static
-	private Map<String, Double> aggregateProbabilities(Segmentation segmentation, List<SegmentResult> segmentResults, List<String> categories){
-		ProbabilityAggregator aggregator;
-
-		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
-		switch(multipleModelMethod){
-			case MEDIAN:
-			case MAX:
-				aggregator = new ProbabilityAggregator(segmentResults.size());
-				break;
-			default:
-				aggregator = new ProbabilityAggregator();
-				break;
-		}
-
-		for(SegmentResult segmentResult : segmentResults){
-			HasProbability hasProbability = segmentResult.getTargetValue(HasProbability.class);
-
-			switch(multipleModelMethod){
-				case AVERAGE:
-					aggregator.add(hasProbability);
-					break;
-				case WEIGHTED_AVERAGE:
-					double weight = segmentResult.getWeight();
-
-					aggregator.add(hasProbability, weight);
-					break;
-				case MEDIAN:
-				case MAX:
-					aggregator.add(hasProbability);
-					break;
-				default:
-					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
-			}
-		}
-
-		switch(multipleModelMethod){
-			case AVERAGE:
-				return aggregator.averageMap();
-			case WEIGHTED_AVERAGE:
-				return aggregator.weightedAverageMap();
-			case MEDIAN:
-				return aggregator.medianMap(categories);
-			case MAX:
-				return aggregator.maxMap(categories);
-			default:
-				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
-		}
 	}
 
 	static

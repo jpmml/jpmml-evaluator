@@ -30,6 +30,16 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
+	public int compareTo(Value<Float> that){
+		return Float.compare(this.floatValue(), that.floatValue());
+	}
+
+	@Override
+	public String toString(){
+		return Float.toString(this.value);
+	}
+
+	@Override
 	public int hashCode(){
 		return Float.floatToIntBits(this.value);
 	}

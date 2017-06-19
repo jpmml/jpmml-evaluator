@@ -18,40 +18,55 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+public class SimpleFloatVector extends FloatVector {
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
+	private int size = 0;
 
-public class ValueMap<K, V extends Number> extends LinkedHashMap<K, Value<V>> implements Iterable<Value<V>> {
+	private float sum = 0f;
 
-	public ValueMap(){
-	}
+	private float max = -Float.MAX_VALUE;
 
-	public ValueMap(int initialCapacity){
-		super(initialCapacity);
-	}
 
-	public ValueMap(Map<K, Value<V>> map){
-		super(map);
+	public SimpleFloatVector(){
 	}
 
 	@Override
-	public Iterator<Value<V>> iterator(){
-		return values().iterator();
+	public int size(){
+		return this.size;
 	}
 
-	public Map<K, Double> asDoubleMap(){
-		Function<Value<V>, Double> function = new Function<Value<V>, Double>(){
+	@Override
+	public Vector<Float> add(double value){
+		this.sum += (float)value;
+		this.max = Math.max(this.max, (float)value);
 
-			@Override
-			public Double apply(Value<V> value){
-				return value.doubleValue();
-			}
-		};
+		this.size++;
 
-		return Maps.transformValues(this, function);
+		return this;
+	}
+
+	@Override
+	public float floatValue(int index){
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public float floatSum(){
+		return this.sum;
+	}
+
+	@Override
+	public float floatMax(){
+
+		if(this.size == 0){
+			throw new IllegalStateException();
+		}
+
+		return this.max;
+	}
+
+	@Override
+	public float floatMedian(){
+		throw new UnsupportedOperationException();
 	}
 }

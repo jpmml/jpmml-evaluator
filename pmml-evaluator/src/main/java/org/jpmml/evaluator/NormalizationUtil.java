@@ -124,7 +124,7 @@ public class NormalizationUtil {
 	}
 
 	static
-	public Value<?> denormalize(NormContinuous normContinuous, Value<?> value){
+	public <V extends Number> Value<V> denormalize(NormContinuous normContinuous, Value<V> value){
 		List<LinearNorm> linearNorms = normContinuous.getLinearNorms();
 		if(linearNorms.size() < 2){
 			throw new InvalidFeatureException(normContinuous);

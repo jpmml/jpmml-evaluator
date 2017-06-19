@@ -18,40 +18,30 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+abstract
+public class Vector<V extends Number> {
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
+	abstract
+	public int size();
 
-public class ValueMap<K, V extends Number> extends LinkedHashMap<K, Value<V>> implements Iterable<Value<V>> {
+	abstract
+	public Vector<V> add(double value);
 
-	public ValueMap(){
-	}
+	abstract
+	public Vector<V> add(Number value);
 
-	public ValueMap(int initialCapacity){
-		super(initialCapacity);
-	}
+	abstract
+	public Vector<V> add(Number factor, double coefficient);
 
-	public ValueMap(Map<K, Value<V>> map){
-		super(map);
-	}
+	abstract
+	public Value<V> get(int index);
 
-	@Override
-	public Iterator<Value<V>> iterator(){
-		return values().iterator();
-	}
+	abstract
+	public Value<V> max();
 
-	public Map<K, Double> asDoubleMap(){
-		Function<Value<V>, Double> function = new Function<Value<V>, Double>(){
+	abstract
+	public Value<V> sum();
 
-			@Override
-			public Double apply(Value<V> value){
-				return value.doubleValue();
-			}
-		};
-
-		return Maps.transformValues(this, function);
-	}
+	abstract
+	public Value<V> median();
 }

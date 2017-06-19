@@ -83,6 +83,7 @@ import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.Values;
 
 public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegressionModel> {
@@ -296,7 +297,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		Double result = computeDotProduct(context);
 		if(result == null){
-			return TargetUtil.evaluateRegressionDefault(targetField, getMathContext());
+			return TargetUtil.evaluateRegressionDefault(ValueFactory.DOUBLE, targetField);
 		}
 
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
@@ -399,7 +400,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 				Double dotProduct = computeDotProduct(parameterCells, parameterPredictorRows, context);
 				if(dotProduct == null){
-					return TargetUtil.evaluateClassificationDefault(targetField, getMathContext());
+					return TargetUtil.evaluateClassificationDefault(ValueFactory.DOUBLE, targetField);
 				}
 
 				value = dotProduct;

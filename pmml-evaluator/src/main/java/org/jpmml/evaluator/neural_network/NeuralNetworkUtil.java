@@ -23,6 +23,7 @@ import java.util.Collection;
 import org.dmg.pmml.neural_network.NeuralNetwork;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueUtil;
 
 public class NeuralNetworkUtil {
 
@@ -68,34 +69,19 @@ public class NeuralNetworkUtil {
 	}
 
 	static
-	public Collection<Value<?>> normalizeNeuralLayerOutputs(Collection<Value<?>> values, NeuralNetwork.NormalizationMethod normalizationMethod){
+	public <V extends Number> Collection<Value<V>> normalizeNeuralLayerOutputs(Collection<Value<V>> values, NeuralNetwork.NormalizationMethod normalizationMethod){
 
 		switch(normalizationMethod){
 			case NONE:
 				break;
 			case SIMPLEMAX:
+				{
+					ValueUtil.normalize(values);
+				}
+				break;
 			case SOFTMAX:
 				{
-					Value<?> sum = null;
-
-					for(Value<?> value : values){
-
-						if((NeuralNetwork.NormalizationMethod.SOFTMAX).equals(normalizationMethod)){
-							value.exp();
-						} // End if
-
-						if(sum == null){
-							sum = value.copy();
-						} else
-
-						{
-							sum.add(value);
-						}
-					} // End for
-
-					for(Value<?> value : values){
-						value.divide(sum);
-					}
+					ValueUtil.normalize(values, true);
 				}
 				break;
 			default:

@@ -22,68 +22,101 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RegressionAggregator {
+public class RegressionAggregator<V extends Number> {
 
-	private DoubleVector values = null;
+	private Vector<V> values = null;
 
-	private DoubleVector weights = null;
-
-	private DoubleVector weightedValues = null;
+	private Vector<V> weights = null;
 
 
-	public RegressionAggregator(){
-		this(0);
+	public RegressionAggregator(Vector<V> values){
+		this(values, null);
 	}
 
-	public RegressionAggregator(int capacity){
-		this.values = new DoubleVector(capacity);
-		this.weights = new DoubleVector(capacity);
-
-		this.weightedValues = new DoubleVector(0);
+	public RegressionAggregator(Vector<V> values, Vector<V> weights){
+		this.values = values;
+		this.weights = weights;
 	}
 
 	public int size(){
-		return this.weightedValues.size();
+		return this.values.size();
 	}
 
-	public void add(double value){
-		add(value, 1d);
+	public void add(Number value){
+
+		if(this.weights != null){
+			throw new IllegalStateException();
+		}
+
+		this.values.add(value);
 	}
 
-	public void add(double value, double weight){
+	public void add(Number value, double weight){
+
+		if(this.weights == null){
+			throw new IllegalStateException();
+		} // End if
 
 		if(weight < 0d){
 			throw new IllegalArgumentException();
 		}
 
-		this.values.add(value);
+		this.values.add(value, weight);
 		this.weights.add(weight);
-
-		this.weightedValues.add(value * weight);
 	}
 
-	public double average(){
-		return this.values.sum() / this.weights.sum();
+	public Value<V> average(){
+
+		if(this.weights != null){
+			throw new IllegalStateException();
+		}
+
+		return (this.values.sum()).divide(this.values.size());
 	}
 
-	public double weightedAverage(){
-		return this.weightedValues.sum() / this.weights.sum();
+	public Value<V> weightedAverage(){
+
+		if(this.weights == null){
+			throw new IllegalStateException();
+		}
+
+		return (this.values.sum()).divide((this.weights.sum()).doubleValue());
 	}
 
-	public double sum(){
+	public Value<V> sum(){
+
+		if(this.weights != null){
+			throw new IllegalStateException();
+		}
+
 		return this.values.sum();
 	}
 
-	public double weightedSum(){
-		return this.weightedValues.sum();
+	public Value<V> weightedSum(){
+
+		if(this.weights == null){
+			throw new IllegalArgumentException();
+		}
+
+		return this.values.sum();
 	}
 
-	public double median(){
+	public Value<V> median(){
+
+		if(this.weights != null){
+			throw new IllegalStateException();
+		}
+
 		return this.values.median();
 	}
 
-	public double weightedMedian(){
-		int size = size();
+	public Value<V> weightedMedian(){
+
+		if(this.weights == null){
+			throw new IllegalStateException();
+		}
+
+		int size = this.values.size();
 
 		List<Entry> entries = new ArrayList<>(size);
 
@@ -95,7 +128,7 @@ public class RegressionAggregator {
 
 		Collections.sort(entries);
 
-		double weightSumThreshold = 0.5d * this.weights.sum();
+		double weightSumThreshold = 0.5d * (this.weights.sum()).doubleValue();
 
 		double weightSum = 0d;
 
@@ -104,7 +137,7 @@ public class RegressionAggregator {
 		// and that the calculation may be performed using the "whole median" approach
 		// (as opposed to the "split median" approach).
 		for(Entry entry : entries){
-			weightSum += entry.weight;
+			weightSum += (entry.weight).doubleValue();
 
 			if(weightSum >= weightSumThreshold){
 				return entry.value;
@@ -114,26 +147,21 @@ public class RegressionAggregator {
 		throw new EvaluationException();
 	}
 
-	static
 	private class Entry implements Comparable<Entry> {
 
-		private double value;
+		private Value<V> value;
 
-		private double weight;
+		private Value<V> weight;
 
 
-		private Entry(double value){
-			this(value, 1d);
-		}
-
-		private Entry(double value, double weight){
+		private Entry(Value<V> value, Value<V> weight){
 			this.value = value;
 			this.weight = weight;
 		}
 
 		@Override
 		public int compareTo(Entry that){
-			return Double.compare(this.value, that.value);
+			return (this.value).compareTo(that.value);
 		}
 	}
 }

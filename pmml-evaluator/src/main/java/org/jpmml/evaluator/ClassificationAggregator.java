@@ -25,9 +25,9 @@ import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
 abstract
-public class ClassificationAggregator<K> {
+public class ClassificationAggregator<K, V extends Number> {
 
-	private Map<K, DoubleVector> map = new LinkedHashMap<>();
+	private Map<K, Vector<V>> map = new LinkedHashMap<>();
 
 	private int capacity = 0;
 
@@ -36,31 +36,52 @@ public class ClassificationAggregator<K> {
 		this.capacity = capacity;
 	}
 
+	abstract
+	public ValueFactory<V> getValueFactory();
+
 	public int size(){
 		return this.map.size();
 	}
 
+	public void add(K key){
+		add(key, 1d);
+	}
+
 	public void add(K key, double value){
-		DoubleVector values = this.map.get(key);
-
-		if(values == null){
-			values = new DoubleVector(this.capacity);
-
-			this.map.put(key, values);
-		}
+		Vector<V> values = ensureVector(key);
 
 		values.add(value);
+	}
+
+	public void add(K key, Number factor, double coefficient){
+		Vector<V> values = ensureVector(key);
+
+		values.add(factor, coefficient);
 	}
 
 	public void clear(){
 		this.map.clear();
 	}
 
-	protected DoubleVector get(K key){
+	protected Vector<V> get(K key){
 		return this.map.get(key);
 	}
 
-	protected <V> Map<K, V> transform(Function<DoubleVector, V> function){
+	protected Map<K, Value<V>> asTransformedMap(Function<Vector<V>, Value<V>> function){
 		return Maps.transformValues(this.map, function);
+	}
+
+	private Vector<V> ensureVector(K key){
+		Vector<V> values = this.map.get(key);
+
+		if(values == null){
+			ValueFactory<V> valueFactory = getValueFactory();
+
+			values = valueFactory.newVector(this.capacity);
+
+			this.map.put(key, values);
+		}
+
+		return values;
 	}
 }

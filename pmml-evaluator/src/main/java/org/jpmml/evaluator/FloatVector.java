@@ -18,40 +18,48 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+abstract
+public class FloatVector extends Vector<Float> {
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
+	abstract
+	public float floatValue(int index);
 
-public class ValueMap<K, V extends Number> extends LinkedHashMap<K, Value<V>> implements Iterable<Value<V>> {
+	abstract
+	public float floatSum();
 
-	public ValueMap(){
-	}
+	abstract
+	public float floatMax();
 
-	public ValueMap(int initialCapacity){
-		super(initialCapacity);
-	}
+	abstract
+	public float floatMedian();
 
-	public ValueMap(Map<K, Value<V>> map){
-		super(map);
+	@Override
+	public Vector<Float> add(Number value){
+		return add(value.floatValue());
 	}
 
 	@Override
-	public Iterator<Value<V>> iterator(){
-		return values().iterator();
+	public Vector<Float> add(Number factor, double coefficient){
+		return add(factor.floatValue() * (float)coefficient);
 	}
 
-	public Map<K, Double> asDoubleMap(){
-		Function<Value<V>, Double> function = new Function<Value<V>, Double>(){
+	@Override
+	public Value<Float> get(int index){
+		return new FloatValue(floatValue(index));
+	}
 
-			@Override
-			public Double apply(Value<V> value){
-				return value.doubleValue();
-			}
-		};
+	@Override
+	public Value<Float> sum(){
+		return new FloatValue(floatSum());
+	}
 
-		return Maps.transformValues(this, function);
+	@Override
+	public Value<Float> max(){
+		return new FloatValue(floatMax());
+	}
+
+	@Override
+	public Value<Float> median(){
+		return new FloatValue(floatMedian());
 	}
 }

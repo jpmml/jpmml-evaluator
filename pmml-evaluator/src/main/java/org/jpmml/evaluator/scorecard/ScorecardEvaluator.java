@@ -18,11 +18,12 @@
  */
 package org.jpmml.evaluator.scorecard;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MathContext;
@@ -46,6 +47,8 @@ import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.VoteAggregator;
 
 public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
@@ -110,7 +113,13 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 		boolean useReasonCodes = scorecard.isUseReasonCodes();
 
-		VoteAggregator<String> reasonCodePoints = new VoteAggregator<>();
+		VoteAggregator<String, Double> reasonCodePoints = new VoteAggregator<String, Double>(){
+
+			@Override
+			public ValueFactory<Double> getValueFactory(){
+				return ValueFactory.DOUBLE;
+			}
+		};
 
 		Characteristics characteristics = scorecard.getCharacteristics();
 		for(Characteristic characteristic : characteristics){
@@ -151,7 +160,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 					FieldValue computedValue = ExpressionUtil.evaluate(expression, context);
 					if(computedValue == null){
-						return TargetUtil.evaluateRegressionDefault(targetField, getMathContext());
+						return TargetUtil.evaluateRegressionDefault(ValueFactory.DOUBLE, targetField);
 					}
 
 					partialScore = computedValue.asDouble();
@@ -216,16 +225,18 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 	}
 
 	static
-	private ReasonCodeRanking createReasonCodeList(Map<String, Double> reasonCodes, Object value){
-		com.google.common.base.Predicate<Map.Entry<String, Double>> predicate = new com.google.common.base.Predicate<Map.Entry<String, Double>>(){
+	private ReasonCodeRanking createReasonCodeList(Map<String, Value<Double>> reasonCodes, Object value){
+		Map<String, Double> meaningfulReasonCodes = new LinkedHashMap<>();
 
-			@Override
-			public boolean apply(Map.Entry<String, Double> entry){
-				return Double.compare(entry.getValue(), 0) >= 0;
+		Collection<Map.Entry<String, Value<Double>>> entrySet = reasonCodes.entrySet();
+		for(Map.Entry<String, Value<Double>> entry : entrySet){
+			String reasonCode = entry.getKey();
+			Value<Double> points = entry.getValue();
+
+			if(points.doubleValue() >= 0d){
+				meaningfulReasonCodes.put(reasonCode, points.doubleValue());
 			}
-		};
-
-		Map<String, Double> meaningfulReasonCodes = Maps.filterEntries(reasonCodes, predicate);
+		}
 
 		ReasonCodeRanking result = new ReasonCodeRanking(value, meaningfulReasonCodes);
 

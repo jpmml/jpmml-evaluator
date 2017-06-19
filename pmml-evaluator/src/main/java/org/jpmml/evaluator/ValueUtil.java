@@ -18,40 +18,41 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+public class ValueUtil {
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
-
-public class ValueMap<K, V extends Number> extends LinkedHashMap<K, Value<V>> implements Iterable<Value<V>> {
-
-	public ValueMap(){
+	private ValueUtil(){
 	}
 
-	public ValueMap(int initialCapacity){
-		super(initialCapacity);
+	static
+	public <V extends Number> void normalize(Iterable<Value<V>> values){
+		normalize(values, false);
 	}
 
-	public ValueMap(Map<K, Value<V>> map){
-		super(map);
-	}
+	static
+	public <V extends Number> void normalize(Iterable<Value<V>> values, boolean exp){
+		Value<V> sum = null;
 
-	@Override
-	public Iterator<Value<V>> iterator(){
-		return values().iterator();
-	}
+		for(Value<V> value : values){
 
-	public Map<K, Double> asDoubleMap(){
-		Function<Value<V>, Double> function = new Function<Value<V>, Double>(){
+			if(exp){
+				value = value.exp();
+			} // End if
 
-			@Override
-			public Double apply(Value<V> value){
-				return value.doubleValue();
+			if(sum == null){
+				sum = value.copy();
+			} else
+
+			{
+				sum.add(value);
 			}
-		};
+		}
 
-		return Maps.transformValues(this, function);
+		if(sum != null && sum.doubleValue() == 1d){
+			return;
+		}
+
+		for(Value<V> value : values){
+			value.divide(sum);
+		}
 	}
 }

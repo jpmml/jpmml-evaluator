@@ -96,10 +96,13 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			throw new InvalidResultException(treeModel);
 		}
 
+		ValueFactory<?> valueFactory;
+
 		MathContext mathContext = treeModel.getMathContext();
 		switch(mathContext){
 			case FLOAT:
 			case DOUBLE:
+				valueFactory = ValueFactory.getInstance(mathContext);
 				break;
 			default:
 				throw new UnsupportedFeatureException(treeModel, mathContext);
@@ -110,10 +113,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		MiningFunction miningFunction = treeModel.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
-				predictions = evaluateRegression(context);
+				predictions = evaluateRegression(valueFactory, context);
 				break;
 			case CLASSIFICATION:
-				predictions = evaluateClassification(context);
+				predictions = evaluateClassification(valueFactory, context);
 				break;
 			default:
 				throw new UnsupportedFeatureException(treeModel, miningFunction);
@@ -122,26 +125,24 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
+	private <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		TargetField targetField = getTargetField();
 
 		Trail trail = new Trail();
 
 		Node node = evaluateTree(trail, context);
 		if(node == null){
-			return TargetUtil.evaluateRegressionDefault(targetField, getMathContext());
+			return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 		}
 
-		ValueFactory<?> valueFactory = ValueFactory.getInstance(getMathContext());
-
-		Value<?> value = valueFactory.newValue(node.getScore());
+		Value<V> value = valueFactory.newValue(node.getScore());
 
 		NodeScore nodeScore = createNodeScore(node, TargetUtil.evaluateRegressionInternal(targetField, value));
 
 		return Collections.singletonMap(targetField.getName(), nodeScore);
 	}
 
-	private Map<FieldName, ? extends Classification> evaluateClassification(EvaluationContext context){
+	private <V extends Number> Map<FieldName, ? extends Classification> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -150,7 +151,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		Node node = evaluateTree(trail, context);
 		if(node == null){
-			return TargetUtil.evaluateClassificationDefault(targetField, getMathContext());
+			return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 		}
 
 		double missingValuePenalty = 1d;
@@ -160,7 +161,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			missingValuePenalty = Math.pow(treeModel.getMissingValuePenalty(), missingLevels);
 		}
 
-		NodeScoreDistribution result = createNodeScoreDistribution(node, missingValuePenalty);
+		NodeScoreDistribution result = createNodeScoreDistribution(valueFactory, node, missingValuePenalty);
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
@@ -323,7 +324,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return result;
 	}
 
-	private NodeScoreDistribution createNodeScoreDistribution(Node node, double missingValuePenalty){
+	private <V extends Number> NodeScoreDistribution createNodeScoreDistribution(ValueFactory<V> valueFactory, Node node, double missingValuePenalty){
 		BiMap<String, Node> entityRegistry = getEntityRegistry();
 
 		NodeScoreDistribution result = new NodeScoreDistribution(entityRegistry, node);
@@ -334,9 +335,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
 
-		ValueFactory<?> valueFactory = ValueFactory.getInstance(getMathContext());
-
-		Value<?> sum = valueFactory.newValue(0d);
+		Value<V> sum = valueFactory.newValue(0d);
 
 		boolean hasProbabilities = false;
 
@@ -369,7 +368,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		for(int i = 0, max = scoreDistributions.size(); i < max; i++){
 			ScoreDistribution scoreDistribution = scoreDistributions.get(i);
 
-			Value<?> value;
+			Value<V> value;
 
 			if(hasProbabilities){
 				Double probability = scoreDistribution.getProbability();

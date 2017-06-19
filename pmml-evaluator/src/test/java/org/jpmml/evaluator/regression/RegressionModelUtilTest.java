@@ -29,7 +29,7 @@ public class RegressionModelUtilTest {
 
 	@Test
 	public void computeBinomialProbabilities(){
-		ValueMap values = new ValueMap();
+		ValueMap<String, Float> values = new ValueMap<>();
 		values.put("yes", new FloatValue(0.3f));
 		values.put("no", new FloatValue(Float.MAX_VALUE));
 
@@ -41,7 +41,7 @@ public class RegressionModelUtilTest {
 
 	@Test
 	public void computeMultinomialProbabilities(){
-		ValueMap values = new ValueMap();
+		ValueMap<String, Float> values = new ValueMap<>();
 		values.put("red", new FloatValue(0.3f));
 		values.put("yellow", new FloatValue(0.5f));
 		values.put("green", new FloatValue(Float.MAX_VALUE));
@@ -55,7 +55,7 @@ public class RegressionModelUtilTest {
 
 	@Test
 	public void computeOrdinalProbabilities(){
-		ValueMap values = new ValueMap();
+		ValueMap<String, Float> values = new ValueMap<>();
 		values.put("loud", new FloatValue(0.2f));
 		values.put("louder", new FloatValue(0.7f));
 		values.put("insane", new FloatValue(1f));

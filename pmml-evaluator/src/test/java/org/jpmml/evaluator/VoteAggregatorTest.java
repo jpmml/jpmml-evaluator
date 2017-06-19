@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.Map;
 
 import org.junit.Test;
 
@@ -31,7 +30,13 @@ public class VoteAggregatorTest {
 
 	@Test
 	public void sum(){
-		VoteAggregator<String> aggregator = new VoteAggregator<>();
+		VoteAggregator<String, Double> aggregator = new VoteAggregator<String, Double>(){
+
+			@Override
+			public ValueFactory<Double> getValueFactory(){
+				return ValueFactory.DOUBLE;
+			}
+		};
 		aggregator.add("A", 1d);
 		aggregator.add("B", 1d);
 		aggregator.add("C", 1d);
@@ -52,9 +57,9 @@ public class VoteAggregatorTest {
 	}
 
 	static
-	private void checkValues(Double a, Double b, Double c, Map<String, Double> values){
-		assertEquals(a, values.get("A"));
-		assertEquals(b, values.get("B"));
-		assertEquals(c, values.get("C"));
+	private void checkValues(double a, double b, double c, ValueMap<String, Double> values){
+		assertEquals(new DoubleValue(a), values.get("A"));
+		assertEquals(new DoubleValue(b), values.get("B"));
+		assertEquals(new DoubleValue(c), values.get("C"));
 	}
 }

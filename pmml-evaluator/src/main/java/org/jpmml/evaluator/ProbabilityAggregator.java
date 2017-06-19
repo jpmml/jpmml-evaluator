@@ -21,40 +21,57 @@ package org.jpmml.evaluator;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
 
-public class ProbabilityAggregator extends ClassificationAggregator<String> {
+abstract
+public class ProbabilityAggregator<V extends Number> extends ClassificationAggregator<String, V> {
 
 	private List<HasProbability> hasProbabilities = null;
 
-	private DoubleVector weights = null;
+	private Vector<V> weights = null;
 
-
-	public ProbabilityAggregator(){
-		this(0);
-	}
 
 	public ProbabilityAggregator(int capacity){
+		this(capacity, null);
+	}
+
+	public ProbabilityAggregator(int capacity, Vector<V> weights){
 		super(capacity);
 
 		if(capacity > 0){
 			this.hasProbabilities = new ArrayList<>(capacity);
 		}
 
-		this.weights = new DoubleVector(0);
+		this.weights = weights;
 	}
 
 	public void add(HasProbability hasProbability){
-		add(hasProbability, 1d);
+
+		if(this.weights != null){
+			throw new IllegalStateException();
+		} // End if
+
+		if(this.hasProbabilities != null){
+			this.hasProbabilities.add(hasProbability);
+		}
+
+		Set<String> categories = hasProbability.getCategoryValues();
+		for(String category : categories){
+			Double probability = hasProbability.getProbability(category);
+
+			add(category, probability);
+		}
 	}
 
 	public void add(HasProbability hasProbability, double weight){
+
+		if(this.weights == null){
+			throw new IllegalStateException();
+		} // End if
 
 		if(weight < 0d){
 			throw new IllegalArgumentException();
@@ -68,62 +85,85 @@ public class ProbabilityAggregator extends ClassificationAggregator<String> {
 		for(String category : categories){
 			Double probability = hasProbability.getProbability(category);
 
-			add(category, weight != 1d ? (probability * weight) : probability);
+			add(category, probability, weight);
 		}
 
 		this.weights.add(weight);
 	}
 
-	public Map<String, Double> averageMap(){
-		return weightedAverageMap();
-	}
+	public ValueMap<String, V> averageMap(){
 
-	public Map<String, Double> weightedAverageMap(){
-		Function<DoubleVector, Double> function = new Function<DoubleVector, Double>(){
-
-			private double denominator = ProbabilityAggregator.this.weights.sum();
-
-
-			@Override
-			public Double apply(DoubleVector values){
-				return values.sum() / this.denominator;
-			}
-		};
-
-		return transform(function);
-	}
-
-	public Map<String, Double> maxMap(Collection<String> categories){
-
-		if(this.hasProbabilities == null){
+		if(this.weights != null){
 			throw new IllegalStateException();
 		}
 
-		Function<DoubleVector, Double> function = new Function<DoubleVector, Double>(){
+		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
 
 			@Override
-			public Double apply(DoubleVector values){
+			public Value<V> apply(Vector<V> values){
+				return (values.sum()).divide(values.size());
+			}
+		};
+
+		return new ValueMap<>(asTransformedMap(function));
+	}
+
+	public ValueMap<String, V> weightedAverageMap(){
+
+		if(this.weights == null){
+			throw new IllegalStateException();
+		}
+
+		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
+
+			private double denominator = (ProbabilityAggregator.this.weights.sum()).doubleValue();
+
+
+			@Override
+			public Value<V> apply(Vector<V> values){
+				return (values.sum()).divide(this.denominator);
+			}
+		};
+
+		return new ValueMap<>(asTransformedMap(function));
+	}
+
+	public ValueMap<String, V> maxMap(Collection<String> categories){
+
+		if(this.hasProbabilities == null){
+			throw new IllegalStateException();
+		} // End if
+
+		if(this.weights != null){
+			throw new IllegalStateException();
+		}
+
+		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
+
+			@Override
+			public Value<V> apply(Vector<V> values){
 				return values.max();
 			}
 		};
 
-		Map<String, Double> maxValues = transform(function);
+		Map<String, Value<V>> maxMap = asTransformedMap(function);
 
-		Map.Entry<String, Double> maxMaxValue = getWinner(maxValues, categories);
-		if(maxMaxValue == null){
-			return Collections.emptyMap();
+		Map.Entry<String, Value<V>> winnerEntry = getWinner(maxMap, categories);
+		if(winnerEntry == null){
+			return new ValueMap<>();
 		}
 
-		String category = maxMaxValue.getKey();
-		double maxProbability = maxMaxValue.getValue();
+		String category = winnerEntry.getKey();
+		Value<V> maxProbability = winnerEntry.getValue();
 
 		List<HasProbability> contributors = new ArrayList<>();
 
-		DoubleVector values = get(category);
-		for(int i = 0; i < values.size(); i++){
-			double probability = values.get(i);
+		Vector<V> values = get(category);
 
-			if(probability == maxProbability){
+		for(int i = 0, max = values.size(); i < max; i++){
+			Value<V> probability = values.get(i);
+
+			if((maxProbability).compareTo(probability) == 0){
 				HasProbability contributor = this.hasProbabilities.get(i);
 
 				contributors.add(contributor);
@@ -133,44 +173,49 @@ public class ProbabilityAggregator extends ClassificationAggregator<String> {
 		return averageMap(contributors);
 	}
 
-	public Map<String, Double> medianMap(Collection<String> categories){
+	public ValueMap<String, V> medianMap(Collection<String> categories){
 
 		if(this.hasProbabilities == null){
 			throw new IllegalStateException();
+		} // End if
+
+		if(this.weights != null){
+			throw new IllegalStateException();
 		}
 
-		Function<DoubleVector, Double> function = new Function<DoubleVector, Double>(){
+		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
 
 			@Override
-			public Double apply(DoubleVector values){
+			public Value<V> apply(Vector<V> values){
 				return values.median();
 			}
 		};
 
-		Map<String, Double> medianValues = transform(function);
+		Map<String, Value<V>> medianMap = asTransformedMap(function);
 
-		Map.Entry<String, Double> maxMedianValue = getWinner(medianValues, categories);
-		if(maxMedianValue == null){
-			return Collections.emptyMap();
+		Map.Entry<String, Value<V>> winnerEntry = getWinner(medianMap, categories);
+		if(winnerEntry == null){
+			return new ValueMap<>();
 		}
 
-		String category = maxMedianValue.getKey();
-		double medianProbability = maxMedianValue.getValue();
+		String category = winnerEntry.getKey();
+		Value<V> medianProbability = winnerEntry.getValue();
 
 		List<HasProbability> contributors = new ArrayList<>();
 
 		double minDifference = Double.MAX_VALUE;
 
-		DoubleVector values = get(category);
-		for(int i = 0; i < values.size(); i++){
-			double probability = values.get(i);
+		Vector<V> values = get(category);
+
+		for(int i = 0, max = values.size(); i < max; i++){
+			Value<V> probability = values.get(i);
 
 			// Choose models whose probability is closest to the calculated median probability.
 			// If the number of models is odd (the calculated median probability equals that of the middle model),
 			// then all the chosen models will have the same probability (ie. difference == 0).
 			// If the number of models is even (the calculated median probability equals the average of two middle-most models),
 			// then some of the chosen models will have lower probabilies (ie. difference > 0), whereas the others will have higher probabilities (ie. difference < 0).
-			double difference = Math.abs(medianProbability - probability);
+			double difference = Math.abs(medianProbability.doubleValue() - probability.doubleValue());
 
 			if(difference < minDifference){
 				contributors.clear();
@@ -188,17 +233,59 @@ public class ProbabilityAggregator extends ClassificationAggregator<String> {
 		return averageMap(contributors);
 	}
 
+	private ValueMap<String, V> averageMap(List<HasProbability> hasProbabilities){
+
+		if(hasProbabilities.size() == 1){
+			HasProbability hasProbability = hasProbabilities.get(0);
+
+			ValueFactory<V> valueFactory = getValueFactory();
+
+			ValueMap<String, V> result = new ValueMap<>();
+
+			Set<String> categories = hasProbability.getCategoryValues();
+			for(String category : categories){
+				Double probability = hasProbability.getProbability(category);
+
+				Value<V> value = valueFactory.newValue(probability);
+
+				result.put(category, value);
+			}
+
+			return result;
+		} else
+
+		if(hasProbabilities.size() > 1){
+			ProbabilityAggregator<V> aggregator = new ProbabilityAggregator<V>(0){
+
+				@Override
+				public ValueFactory<V> getValueFactory(){
+					return ProbabilityAggregator.this.getValueFactory();
+				}
+			};
+
+			for(HasProbability hasProbability : hasProbabilities){
+				aggregator.add(hasProbability);
+			}
+
+			return aggregator.averageMap();
+		} else
+
+		{
+			throw new EvaluationException();
+		}
+	}
+
 	static
-	private Map.Entry<String, Double> getWinner(Map<String, Double> values, Collection<String> categories){
+	private <V extends Number> Map.Entry<String, Value<V>> getWinner(Map<String, Value<V>> values, Collection<String> categories){
 
 		if(categories == null || categories.isEmpty()){
 			throw new EvaluationException();
 		}
 
-		Map.Entry<String, Double> maxEntry = null;
+		Map.Entry<String, Value<V>> maxEntry = null;
 
 		for(String category : categories){
-			Double value = values.get(category);
+			Value<V> value = values.get(category);
 
 			if(value == null){
 				continue;
@@ -210,34 +297,5 @@ public class ProbabilityAggregator extends ClassificationAggregator<String> {
 		}
 
 		return maxEntry;
-	}
-
-	static
-	private Map<String, Double> averageMap(List<HasProbability> hasProbabilities){
-
-		if(hasProbabilities.size() == 1){
-			HasProbability hasProbability = hasProbabilities.get(0);
-
-			Map<String, Double> result = new LinkedHashMap<>();
-
-			Set<String> categories = hasProbability.getCategoryValues();
-			for(String category : categories){
-				Double probability = hasProbability.getProbability(category);
-
-				result.put(category, probability);
-			}
-
-			return result;
-		} else
-
-		{
-			ProbabilityAggregator aggregator = new ProbabilityAggregator();
-
-			for(HasProbability hasProbability : hasProbabilities){
-				aggregator.add(hasProbability);
-			}
-
-			return aggregator.averageMap();
-		}
 	}
 }

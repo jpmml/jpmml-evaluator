@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
+import org.jpmml.evaluator.ComplexDoubleVector;
 import org.jpmml.evaluator.DoubleVector;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
@@ -73,7 +74,7 @@ public class PercentileFunction extends AbstractFunction {
 
 	static
 	private Double evaluate(Collection<?> values, int percentile){
-		DoubleVector doubleValues = new DoubleVector(values.size());
+		DoubleVector doubleValues = new ComplexDoubleVector(values.size());
 
 		for(Object value : values){
 			Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
@@ -81,6 +82,6 @@ public class PercentileFunction extends AbstractFunction {
 			doubleValues.add(doubleValue.doubleValue());
 		}
 
-		return doubleValues.percentile(percentile);
+		return doubleValues.doublePercentile(percentile);
 	}
 }

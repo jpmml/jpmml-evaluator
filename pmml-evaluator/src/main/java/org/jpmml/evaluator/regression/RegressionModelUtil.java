@@ -24,6 +24,7 @@ import org.dmg.pmml.regression.RegressionModel;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
+import org.jpmml.evaluator.ValueUtil;
 
 public class RegressionModelUtil {
 
@@ -31,20 +32,20 @@ public class RegressionModelUtil {
 	}
 
 	static
-	public ValueMap computeBinomialProbabilities(ValueMap values, RegressionModel.NormalizationMethod normalizationMethod){
+	public <K, V extends Number> ValueMap<K, V> computeBinomialProbabilities(ValueMap<K, V> values, RegressionModel.NormalizationMethod normalizationMethod){
 
 		if(values.size() != 2){
 			throw new EvaluationException();
 		}
 
-		Iterator<Value<?>> valueIt = values.iterator();
+		Iterator<Value<V>> valueIt = values.iterator();
 
-		Value<?> firstValue = valueIt.next();
+		Value<V> firstValue = valueIt.next();
 
 		// The probability of the first category is calculated
 		normalizeBinaryLogisticClassificationResult(firstValue, normalizationMethod);
 
-		Value<?> secondValue = valueIt.next();
+		Value<V> secondValue = valueIt.next();
 
 		// The probability of the second category is obtained by subtracting the probability of the first category from 1.0
 		secondValue.residual(firstValue);
@@ -53,7 +54,7 @@ public class RegressionModelUtil {
 	}
 
 	static
-	public ValueMap computeMultinomialProbabilities(ValueMap values, RegressionModel.NormalizationMethod normalizationMethod){
+	public <K, V extends Number> ValueMap<K, V> computeMultinomialProbabilities(ValueMap<K, V> values, RegressionModel.NormalizationMethod normalizationMethod){
 
 		if(values.size() < 2){
 			throw new EvaluationException();
@@ -62,11 +63,11 @@ public class RegressionModelUtil {
 		switch(normalizationMethod){
 			case NONE:
 				{
-					Value<?> sum = null;
+					Value<V> sum = null;
 
-					Iterator<Value<?>> valueIt = values.iterator();
+					Iterator<Value<V>> valueIt = values.iterator();
 					for(int i = 0, max = values.size() - 1; i < max; i++){
-						Value<?> value = valueIt.next();
+						Value<V> value = valueIt.next();
 
 						if(sum == null){
 							sum = value.copy();
@@ -77,34 +78,19 @@ public class RegressionModelUtil {
 						}
 					}
 
-					Value<?> lastValue = valueIt.next();
+					Value<V> lastValue = valueIt.next();
 
 					lastValue.residual(sum);
 				}
 				break;
 			case SIMPLEMAX:
+				{
+					ValueUtil.normalize(values);
+				}
+				break;
 			case SOFTMAX:
 				{
-					Value<?> sum = null;
-
-					for(Value<?> value : values){
-
-						if((RegressionModel.NormalizationMethod.SOFTMAX).equals(normalizationMethod)){
-							value.exp();
-						} // End if
-
-						if(sum == null){
-							sum = value.copy();
-						} else
-
-						{
-							sum.add(value);
-						}
-					} // End for
-
-					for(Value<?> value : values){
-						value.divide(sum);
-					}
+					ValueUtil.normalize(values, true);
 				}
 				break;
 			default:
@@ -115,7 +101,7 @@ public class RegressionModelUtil {
 	}
 
 	static
-	public ValueMap computeOrdinalProbabilities(ValueMap values, RegressionModel.NormalizationMethod normalizationMethod){
+	public <K, V extends Number> ValueMap computeOrdinalProbabilities(ValueMap<K, V> values, RegressionModel.NormalizationMethod normalizationMethod){
 
 		if(values.size() < 2){
 			throw new EvaluationException();
@@ -129,11 +115,11 @@ public class RegressionModelUtil {
 			case LOGLOG:
 			case CAUCHIT:
 				{
-					Value<?> sum = null;
+					Value<V> sum = null;
 
-					Iterator<Value<?>> valueIt = values.iterator();
+					Iterator<Value<V>> valueIt = values.iterator();
 					for(int i = 0, max = values.size() - 1; i < max; i++){
-						Value<?> value = valueIt.next();
+						Value<V> value = valueIt.next();
 
 						normalizeBinaryLogisticClassificationResult(value, normalizationMethod);
 
@@ -148,7 +134,7 @@ public class RegressionModelUtil {
 						}
 					}
 
-					Value<?> lastValue = valueIt.next();
+					Value<V> lastValue = valueIt.next();
 
 					lastValue.residual(sum);
 				}

@@ -25,7 +25,6 @@ import java.util.Map;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MathContext;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 
@@ -35,11 +34,11 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ?> evaluateRegressionDefault(TargetField targetField, MathContext mathContext){
+	public <V extends Number> Map<FieldName, ?> evaluateRegressionDefault(ValueFactory<V> valueFactory, TargetField targetField){
 		Target target = targetField.getTarget();
 
 		if(target != null && target.hasTargetValues()){
-			Value<?> value = getDefaultValue(target, mathContext);
+			Value<V> value = getDefaultValue(valueFactory, target);
 
 			if(value != null){
 				return evaluateRegression(targetField, value);
@@ -55,7 +54,7 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ?> evaluateRegression(TargetField targetField, Value<?> value){
+	public <V extends Number> Map<FieldName, ?> evaluateRegression(TargetField targetField, Value<V> value){
 		return Collections.singletonMap(targetField.getName(), evaluateRegressionInternal(targetField, value));
 	}
 
@@ -72,7 +71,7 @@ public class TargetUtil {
 	}
 
 	static
-	public Object evaluateRegressionInternal(TargetField targetField, Value<?> value){
+	public <V extends Number> Object evaluateRegressionInternal(TargetField targetField, Value<V> value){
 		DataField dataField = targetField.getDataField();
 		Target target = targetField.getTarget();
 
@@ -84,11 +83,11 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ? extends Classification> evaluateClassificationDefault(TargetField targetField, MathContext mathContext){
+	public <V extends Number> Map<FieldName, ? extends Classification> evaluateClassificationDefault(ValueFactory<V> valueFactory, TargetField targetField){
 		Target target = targetField.getTarget();
 
 		if(target != null && target.hasTargetValues()){
-			ProbabilityDistribution result = getPriorProbabilities(target, mathContext);
+			ProbabilityDistribution result = getPriorProbabilities(valueFactory, target);
 
 			if(result != null){
 				return evaluateClassification(targetField, result);
@@ -154,7 +153,7 @@ public class TargetUtil {
 	}
 
 	static
-	public Value<?> processValue(Target target, Value<?> value){
+	public <V extends Number> Value<V> processValue(Target target, Value<V> value){
 		double result = value.doubleValue();
 
 		Double min = target.getMin();
@@ -210,7 +209,7 @@ public class TargetUtil {
 	}
 
 	static
-	private Value<?> getDefaultValue(Target target, MathContext mathContext){
+	private <V extends Number> Value<V> getDefaultValue(ValueFactory<V> valueFactory, Target target){
 
 		if(!target.hasTargetValues()){
 			return null;
@@ -233,13 +232,11 @@ public class TargetUtil {
 			return null;
 		}
 
-		ValueFactory<?> valueFactory = ValueFactory.getInstance(mathContext);
-
 		return valueFactory.newValue(defaultValue);
 	}
 
 	static
-	private ProbabilityDistribution getPriorProbabilities(Target target, MathContext mathContext){
+	private <V extends Number> ProbabilityDistribution getPriorProbabilities(ValueFactory<V> valueFactory, Target target){
 
 		if(!target.hasTargetValues()){
 			return null;
@@ -247,9 +244,7 @@ public class TargetUtil {
 
 		ProbabilityDistribution result = new ProbabilityDistribution();
 
-		ValueFactory<?> valueFactory = ValueFactory.getInstance(mathContext);
-
-		Value<?> sum = valueFactory.newValue(0d);
+		Value<V> sum = valueFactory.newValue(0d);
 
 		List<TargetValue> targetValues = target.getTargetValues();
 		for(TargetValue targetValue : targetValues){
@@ -266,7 +261,7 @@ public class TargetUtil {
 				throw new InvalidFeatureException(targetValue);
 			}
 
-			Value<?> value = valueFactory.newValue(probability);
+			Value<V> value = valueFactory.newValue(probability);
 
 			sum.add(value);
 

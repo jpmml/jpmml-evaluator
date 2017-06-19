@@ -79,10 +79,13 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			throw new InvalidResultException(regressionModel);
 		}
 
+		ValueFactory<?> valueFactory;
+
 		MathContext mathContext = regressionModel.getMathContext();
 		switch(mathContext){
 			case FLOAT:
 			case DOUBLE:
+				valueFactory = ValueFactory.getInstance(mathContext);
 				break;
 			default:
 				throw new UnsupportedFeatureException(regressionModel, mathContext);
@@ -93,10 +96,10 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		MiningFunction miningFunction = regressionModel.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
-				predictions = evaluateRegression(context);
+				predictions = evaluateRegression(valueFactory, context);
 				break;
 			case CLASSIFICATION:
-				predictions = evaluateClassification(context);
+				predictions = evaluateClassification(valueFactory, context);
 				break;
 			default:
 				throw new UnsupportedFeatureException(regressionModel, miningFunction);
@@ -105,7 +108,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
+	private <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -122,9 +125,9 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		RegressionTable regressionTable = regressionTables.get(0);
 
-		Value<?> result = evaluateRegressionTable(regressionTable, context);
+		Value<V> result = evaluateRegressionTable(valueFactory, regressionTable, context);
 		if(result == null){
-			return TargetUtil.evaluateRegressionDefault(targetField, getMathContext());
+			return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 		}
 
 		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
@@ -148,7 +151,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
-	private Map<FieldName, ? extends Classification> evaluateClassification(EvaluationContext context){
+	private <V extends Number> Map<FieldName, ? extends Classification> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -181,7 +184,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			throw new InvalidFeatureException(regressionModel);
 		}
 
-		ValueMap values = new ValueMap();
+		ValueMap<String, V> values = new ValueMap<>(2 * regressionTables.size());
 
 		for(RegressionTable regressionTable : regressionTables){
 			String targetCategory = regressionTable.getTargetCategory();
@@ -194,11 +197,11 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new InvalidFeatureException(regressionTable);
 			}
 
-			Value<?> value = evaluateRegressionTable(regressionTable, context);
+			Value<V> value = evaluateRegressionTable(valueFactory, regressionTable, context);
 
 			// "If one or more RegressionTable elements cannot be evaluated, then the predictions are defined by the priorProbability values of the Target element"
 			if(value == null){
-				return TargetUtil.evaluateClassificationDefault(targetField, getMathContext());
+				return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 			}
 
 			values.put(targetCategory, value);
@@ -258,15 +261,13 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new UnsupportedFeatureException(regressionModel, normalizationMethod);
 		}
 
-		ProbabilityDistribution result = new ProbabilityDistribution(values);
+		ProbabilityDistribution result = new ProbabilityDistribution(values.asDoubleMap());
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
 
-	private Value<?> evaluateRegressionTable(RegressionTable regressionTable, EvaluationContext context){
-		ValueFactory<?> valueFactory = ValueFactory.getInstance(getMathContext());
-
-		Value<?> result = valueFactory.newValue(regressionTable.getIntercept());
+	private <V extends Number> Value<V> evaluateRegressionTable(ValueFactory<V> valueFactory, RegressionTable regressionTable, EvaluationContext context){
+		Value<V> result = valueFactory.newValue(regressionTable.getIntercept());
 
 		if(regressionTable.hasNumericPredictors()){
 			List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();

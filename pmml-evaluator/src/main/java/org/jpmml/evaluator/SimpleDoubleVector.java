@@ -18,51 +18,60 @@
  */
 package org.jpmml.evaluator;
 
-abstract
-public class DoubleVector extends Vector<Double> {
+public class SimpleDoubleVector extends DoubleVector {
 
-	abstract
-	public double doubleValue(int index);
+	private int size = 0;
 
-	abstract
-	public double doubleSum();
+	private double sum = 0d;
 
-	abstract
-	public double doubleMax();
+	private double max = -Double.MAX_VALUE;
 
-	abstract
-	public double doubleMedian();
 
-	abstract
-	public double doublePercentile(int percentile);
-
-	@Override
-	public Vector<Double> add(Number value){
-		return add(value.doubleValue());
+	public SimpleDoubleVector(){
 	}
 
 	@Override
-	public Vector<Double> add(Number factor, double coefficient){
-		return add(factor.doubleValue() * coefficient);
+	public int size(){
+		return this.size;
 	}
 
 	@Override
-	public Value<Double> get(int index){
-		return new DoubleValue(doubleValue(index));
+	public Vector<Double> add(double value){
+		this.sum += value;
+		this.max = Math.max(this.max, value);
+
+		this.size++;
+
+		return this;
 	}
 
 	@Override
-	public Value<Double> sum(){
-		return new DoubleValue(doubleSum());
+	public double doubleValue(int index){
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Value<Double> max(){
-		return new DoubleValue(doubleMax());
+	public double doubleSum(){
+		return this.sum;
 	}
 
 	@Override
-	public Value<Double> median(){
-		return new DoubleValue(doubleMedian());
+	public double doubleMax(){
+
+		if(this.size == 0){
+			throw new IllegalStateException();
+		}
+
+		return this.max;
+	}
+
+	@Override
+	public double doubleMedian(){
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public double doublePercentile(int percentile){
+		throw new UnsupportedOperationException();
 	}
 }

@@ -21,7 +21,7 @@ package org.jpmml.evaluator;
 import java.util.List;
 
 abstract
-public class Value<V extends Number> {
+public class Value<V extends Number> implements Comparable<Value<V>> {
 
 	abstract
 	public Value<V> copy();
