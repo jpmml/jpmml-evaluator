@@ -263,7 +263,7 @@ public class ExpressionUtil {
 				{
 					boolean equals = value.equals(normDiscrete);
 
-					return FieldValueUtil.create(DataType.DOUBLE, OpType.CATEGORICAL, equals ? Numbers.DOUBLE_ONE : Numbers.DOUBLE_ZERO);
+					return (equals ? FieldValues.CATEGORICAL_DOUBLE_ONE : FieldValues.CATEGORICAL_DOUBLE_ZERO);
 				}
 			default:
 				throw new UnsupportedFeatureException(normDiscrete, method);

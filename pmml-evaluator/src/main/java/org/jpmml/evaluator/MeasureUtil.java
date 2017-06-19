@@ -27,12 +27,10 @@ import org.dmg.pmml.CityBlock;
 import org.dmg.pmml.CompareFunction;
 import org.dmg.pmml.ComparisonField;
 import org.dmg.pmml.ComparisonMeasure;
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.Euclidean;
 import org.dmg.pmml.Jaccard;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.Minkowski;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.SimpleMatching;
 import org.dmg.pmml.SquaredEuclidean;
 import org.dmg.pmml.Tanimoto;
@@ -123,11 +121,11 @@ public class MeasureUtil {
 		for(int i = 0; i < values.size(); i++){
 			FieldValue value = values.get(i);
 
-			if((MeasureUtil.ZERO).equalsValue(value)){
+			if((FieldValues.CONTINUOUS_DOUBLE_ZERO).equalsValue(value)){
 				result.set(i, false);
 			} else
 
-			if((MeasureUtil.ONE).equalsValue(value)){
+			if((FieldValues.CONTINUOUS_DOUBLE_ONE).equalsValue(value)){
 				result.set(i, true);
 			} else
 
@@ -318,7 +316,4 @@ public class MeasureUtil {
 
 		return (sum / nonmissingSum);
 	}
-
-	private static final FieldValue ZERO = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Numbers.DOUBLE_ZERO);
-	private static final FieldValue ONE = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Numbers.DOUBLE_ONE);
 }
