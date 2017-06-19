@@ -221,7 +221,7 @@ public class Functions {
 
 			DataType dataType = TypeUtil.getResultDataType(left.getDataType(), right.getDataType());
 
-			Integer result = ((left.asNumber()).doubleValue() > (right.asNumber()).doubleValue()) ? Values.INTEGER_ONE : Values.INTEGER_ZERO;
+			Integer result = ((left.asNumber()).doubleValue() > (right.asNumber()).doubleValue()) ? Numbers.INTEGER_ONE : Numbers.INTEGER_ZERO;
 
 			return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
 		}

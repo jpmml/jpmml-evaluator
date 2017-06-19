@@ -319,6 +319,6 @@ public class MeasureUtil {
 		return (sum / nonmissingSum);
 	}
 
-	private static final FieldValue ZERO = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Values.DOUBLE_ZERO);
-	private static final FieldValue ONE = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Values.DOUBLE_ONE);
+	private static final FieldValue ZERO = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Numbers.DOUBLE_ZERO);
+	private static final FieldValue ONE = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Numbers.DOUBLE_ONE);
 }

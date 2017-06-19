@@ -151,13 +151,13 @@ public class TypeUtil {
 			switch(value){
 				case "-1":
 				case "-1.0":
-					return Values.FLOAT_MINUS_ONE;
+					return Numbers.FLOAT_MINUS_ONE;
 				case "0":
 				case "0.0":
-					return Values.FLOAT_ZERO;
+					return Numbers.FLOAT_ZERO;
 				case "1":
 				case "1.0":
-					return Values.FLOAT_ONE;
+					return Numbers.FLOAT_ONE;
 				default:
 					break;
 			}
@@ -186,18 +186,18 @@ public class TypeUtil {
 			switch(value){
 				case "-1":
 				case "-1.0":
-					return Values.DOUBLE_MINUS_ONE;
+					return Numbers.DOUBLE_MINUS_ONE;
 				case "0":
 				case "0.0":
-					return Values.DOUBLE_ZERO;
+					return Numbers.DOUBLE_ZERO;
 				case "0.5":
-					return Values.DOUBLE_ONE_HALF;
+					return Numbers.DOUBLE_ONE_HALF;
 				case "1":
 				case "1.0":
-					return Values.DOUBLE_ONE;
+					return Numbers.DOUBLE_ONE;
 				case "2":
 				case "2.0":
-					return Values.DOUBLE_TWO;
+					return Numbers.DOUBLE_TWO;
 				default:
 					break;
 			}
@@ -554,7 +554,7 @@ public class TypeUtil {
 		if(value instanceof Boolean){
 			Boolean flag = (Boolean)value;
 
-			return (flag.booleanValue() ? Values.INTEGER_ONE : Values.INTEGER_ZERO);
+			return (flag.booleanValue() ? Numbers.INTEGER_ONE : Numbers.INTEGER_ZERO);
 		} else
 
 		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
@@ -605,7 +605,7 @@ public class TypeUtil {
 		if(value instanceof Boolean){
 			Boolean flag = (Boolean)value;
 
-			return (flag.booleanValue() ? Values.FLOAT_ONE : Values.FLOAT_ZERO);
+			return (flag.booleanValue() ? Numbers.FLOAT_ONE : Numbers.FLOAT_ZERO);
 		} else
 
 		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
@@ -621,15 +621,15 @@ public class TypeUtil {
 	private Float toFloat(float value){
 
 		if(value == -1f){
-			return Values.FLOAT_MINUS_ONE;
+			return Numbers.FLOAT_MINUS_ONE;
 		} else
 
 		if(value == 0f){
-			return Values.FLOAT_ZERO;
+			return Numbers.FLOAT_ZERO;
 		} else
 
 		if(value == 1f){
-			return Values.FLOAT_ONE;
+			return Numbers.FLOAT_ONE;
 		}
 
 		return value;
@@ -658,7 +658,7 @@ public class TypeUtil {
 		if(value instanceof Boolean){
 			Boolean flag = (Boolean)value;
 
-			return (flag.booleanValue() ? Values.DOUBLE_ONE : Values.DOUBLE_ZERO);
+			return (flag.booleanValue() ? Numbers.DOUBLE_ONE : Numbers.DOUBLE_ZERO);
 		} else
 
 		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
@@ -674,23 +674,23 @@ public class TypeUtil {
 	private Double toDouble(double value){
 
 		if(value == -1d){
-			return Values.DOUBLE_MINUS_ONE;
+			return Numbers.DOUBLE_MINUS_ONE;
 		} else
 
 		if(value == 0d){
-			return Values.DOUBLE_ZERO;
+			return Numbers.DOUBLE_ZERO;
 		} else
 
 		if(value == 0.5d){
-			return Values.DOUBLE_ONE_HALF;
+			return Numbers.DOUBLE_ONE_HALF;
 		} else
 
 		if(value == 1d){
-			return Values.DOUBLE_ONE;
+			return Numbers.DOUBLE_ONE;
 		} else
 
 		if(value == 2d){
-			return Values.DOUBLE_TWO;
+			return Numbers.DOUBLE_TWO;
 		}
 
 		return value;

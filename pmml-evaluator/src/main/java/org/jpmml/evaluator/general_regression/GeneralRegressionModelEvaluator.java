@@ -84,7 +84,7 @@ import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.evaluator.ValueFactory;
-import org.jpmml.evaluator.Values;
+import org.jpmml.evaluator.Numbers;
 
 public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegressionModel> {
 
@@ -246,7 +246,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			// "If the value is less than the minimum time, then cumulative hazard is 0 and predicted survival is 1"
 			if(value.compareToValue(minTimeValue) < 0){
-				return Collections.singletonMap(getTargetFieldName(), Values.DOUBLE_ZERO);
+				return Collections.singletonMap(getTargetFieldName(), Numbers.DOUBLE_ZERO);
 			}
 
 			FieldValue maxTimeValue = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, maxTime);
@@ -785,7 +785,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			return offsetValue;
 		}
 
-		return Values.DOUBLE_ZERO;
+		return Numbers.DOUBLE_ZERO;
 	}
 
 	static
@@ -802,7 +802,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			return trialsValue;
 		}
 
-		return Values.INTEGER_ONE;
+		return Numbers.INTEGER_ONE;
 	}
 
 	static
@@ -996,7 +996,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			// The row is empty
 			if(factorHandlers.isEmpty() && covariateHandlers.isEmpty()){
-				return Values.DOUBLE_ONE;
+				return Numbers.DOUBLE_ONE;
 			}
 
 			Double factorProduct = computeProduct(factorHandlers, context);
@@ -1128,7 +1128,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 				boolean equals = value.equals(ppCell);
 
-				return (equals ? Values.DOUBLE_ONE : Values.DOUBLE_ZERO);
+				return (equals ? Numbers.DOUBLE_ONE : Numbers.DOUBLE_ZERO);
 			}
 
 			public String getCategory(){

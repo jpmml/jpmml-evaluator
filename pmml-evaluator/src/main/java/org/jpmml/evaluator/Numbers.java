@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-public interface Values {
+public interface Numbers {
 
 	Integer INTEGER_ZERO = Integer.valueOf(0);
 	Integer INTEGER_ONE = Integer.valueOf(1);

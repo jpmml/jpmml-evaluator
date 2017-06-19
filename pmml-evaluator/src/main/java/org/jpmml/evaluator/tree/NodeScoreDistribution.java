@@ -31,7 +31,7 @@ import org.jpmml.evaluator.EntityClassification;
 import org.jpmml.evaluator.HasConfidence;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.TypeUtil;
-import org.jpmml.evaluator.Values;
+import org.jpmml.evaluator.Numbers;
 
 public class NodeScoreDistribution extends EntityClassification<Node> implements HasProbability, HasConfidence {
 
@@ -83,7 +83,7 @@ public class NodeScoreDistribution extends EntityClassification<Node> implements
 			Node node = getEntity();
 
 			if(value != null && (value).equals(node.getScore())){
-				return Values.DOUBLE_ONE;
+				return Numbers.DOUBLE_ONE;
 			}
 		}
 
