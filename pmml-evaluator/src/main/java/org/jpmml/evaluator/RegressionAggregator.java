@@ -28,23 +28,27 @@ public class RegressionAggregator<V extends Number> {
 
 	private Vector<V> weights = null;
 
+	private Vector<V> weightedValues = null;
+
 
 	public RegressionAggregator(Vector<V> values){
 		this(values, null);
 	}
 
 	public RegressionAggregator(Vector<V> values, Vector<V> weights){
-		this.values = values;
-		this.weights = weights;
+		this(values, weights, null);
 	}
 
-	public int size(){
-		return this.values.size();
+	public RegressionAggregator(Vector<V> values, Vector<V> weights, Vector<V> weightedValues){
+		this.values = values;
+		this.weights = weights;
+
+		this.weightedValues = weightedValues;
 	}
 
 	public void add(Number value){
 
-		if(this.weights != null){
+		if(this.weights != null || this.weightedValues != null){
 			throw new IllegalStateException();
 		}
 
@@ -61,8 +65,12 @@ public class RegressionAggregator<V extends Number> {
 			throw new IllegalArgumentException();
 		}
 
-		this.values.add(value, weight);
+		this.values.add(value);
 		this.weights.add(weight);
+
+		if(this.weightedValues != null){
+			this.weightedValues.add(value, weight);
+		}
 	}
 
 	public Value<V> average(){
@@ -76,11 +84,11 @@ public class RegressionAggregator<V extends Number> {
 
 	public Value<V> weightedAverage(){
 
-		if(this.weights == null){
+		if(this.weights == null || this.weightedValues == null){
 			throw new IllegalStateException();
 		}
 
-		return (this.values.sum()).divide((this.weights.sum()).doubleValue());
+		return (this.weightedValues.sum()).divide((this.weights.sum()).doubleValue());
 	}
 
 	public Value<V> sum(){
@@ -94,11 +102,11 @@ public class RegressionAggregator<V extends Number> {
 
 	public Value<V> weightedSum(){
 
-		if(this.weights == null){
+		if(this.weights == null || this.weightedValues == null){
 			throw new IllegalArgumentException();
 		}
 
-		return this.values.sum();
+		return this.weightedValues.sum();
 	}
 
 	public Value<V> median(){

@@ -344,14 +344,14 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		RegressionAggregator<Double> aggregator;
 
 		switch(continuousScoringMethod){
-			case MEDIAN:
-				aggregator = new RegressionAggregator<>(new ComplexDoubleVector(instanceResults.size()));
-				break;
 			case AVERAGE:
 				aggregator = new RegressionAggregator<>(new SimpleDoubleVector());
 				break;
 			case WEIGHTED_AVERAGE:
-				aggregator = new RegressionAggregator<>(new SimpleDoubleVector(), new SimpleDoubleVector());
+				aggregator = new RegressionAggregator<>(new SimpleDoubleVector(), new SimpleDoubleVector(), new SimpleDoubleVector());
+				break;
+			case MEDIAN:
+				aggregator = new RegressionAggregator<>(new ComplexDoubleVector(instanceResults.size()));
 				break;
 			default:
 				throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
@@ -366,8 +366,8 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			Number number = value.asNumber();
 
 			switch(continuousScoringMethod){
-				case MEDIAN:
 				case AVERAGE:
+				case MEDIAN:
 					aggregator.add(number);
 					break;
 				case WEIGHTED_AVERAGE:
@@ -381,12 +381,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 
 		switch(continuousScoringMethod){
-			case MEDIAN:
-				return (aggregator.median()).getValue();
 			case AVERAGE:
 				return (aggregator.average()).getValue();
 			case WEIGHTED_AVERAGE:
 				return (aggregator.weightedAverage()).getValue();
+			case MEDIAN:
+				return (aggregator.median()).getValue();
 			default:
 				throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
 		}

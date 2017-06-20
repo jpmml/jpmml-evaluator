@@ -40,22 +40,20 @@ public class MiningModelUtil {
 	public <V extends Number> Value<V> aggregateValues(final ValueFactory<V> valueFactory, List<SegmentResult> segmentResults, Segmentation.MultipleModelMethod multipleModelMethod){
 		RegressionAggregator<V> aggregator;
 
-		int capacity = segmentResults.size();
-
 		switch(multipleModelMethod){
 			case AVERAGE:
 			case SUM:
-				capacity = 0;
-				// Falls through
+				aggregator = new RegressionAggregator<>(valueFactory.newVector(0));
+				break;
 			case MEDIAN:
-				aggregator = new RegressionAggregator<>(valueFactory.newVector(capacity));
+				aggregator = new RegressionAggregator<>(valueFactory.newVector(segmentResults.size()));
 				break;
 			case WEIGHTED_AVERAGE:
 			case WEIGHTED_SUM:
-				capacity = 0;
-				// Falls through
+				aggregator = new RegressionAggregator<>(valueFactory.newVector(0), valueFactory.newVector(0), valueFactory.newVector(0));
+				break;
 			case WEIGHTED_MEDIAN:
-				aggregator = new RegressionAggregator<>(valueFactory.newVector(capacity), valueFactory.newVector(capacity));
+				aggregator = new RegressionAggregator<>(valueFactory.newVector(segmentResults.size()), valueFactory.newVector(segmentResults.size()));
 				break;
 			default:
 				throw new EvaluationException();

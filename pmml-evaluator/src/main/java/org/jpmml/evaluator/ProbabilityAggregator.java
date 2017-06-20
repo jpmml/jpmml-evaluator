@@ -32,6 +32,8 @@ public class ProbabilityAggregator<V extends Number> extends ClassificationAggre
 
 	private List<HasProbability> hasProbabilities = null;
 
+	private int size = 0;
+
 	private Vector<V> weights = null;
 
 
@@ -65,6 +67,8 @@ public class ProbabilityAggregator<V extends Number> extends ClassificationAggre
 
 			add(category, probability);
 		}
+
+		this.size++;
 	}
 
 	public void add(HasProbability hasProbability, double weight){
@@ -88,6 +92,8 @@ public class ProbabilityAggregator<V extends Number> extends ClassificationAggre
 			add(category, probability, weight);
 		}
 
+		this.size++;
+
 		this.weights.add(weight);
 	}
 
@@ -99,9 +105,12 @@ public class ProbabilityAggregator<V extends Number> extends ClassificationAggre
 
 		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
 
+			private double denominator = ProbabilityAggregator.this.size;
+
+
 			@Override
 			public Value<V> apply(Vector<V> values){
-				return (values.sum()).divide(values.size());
+				return (values.sum()).divide(this.denominator);
 			}
 		};
 

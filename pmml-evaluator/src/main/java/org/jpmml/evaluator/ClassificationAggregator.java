@@ -39,10 +39,6 @@ public class ClassificationAggregator<K, V extends Number> {
 	abstract
 	public ValueFactory<V> getValueFactory();
 
-	public int size(){
-		return this.map.size();
-	}
-
 	public void add(K key){
 		add(key, 1d);
 	}

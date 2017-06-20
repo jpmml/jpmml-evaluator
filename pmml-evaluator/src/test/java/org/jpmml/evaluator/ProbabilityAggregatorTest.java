@@ -28,6 +28,60 @@ import static org.junit.Assert.assertEquals;
 public class ProbabilityAggregatorTest {
 
 	@Test
+	public void average(){
+		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(0){
+
+			@Override
+			public ValueFactory<Double> getValueFactory(){
+				return ValueFactory.DOUBLE;
+			}
+		};
+
+		aggregator.add(createProbabilityDistribution(0.2d, null, 0.8d));
+		aggregator.add(createProbabilityDistribution(null, 1.0d, null));
+
+		checkValues(0.2d / 2d, 1.0d / 2d, 0.8d / 2d, aggregator.averageMap());
+	}
+
+	@Test
+	public void weightedAverage(){
+		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(0, ValueFactory.DOUBLE.newVector(0)){
+
+			@Override
+			public ValueFactory<Double> getValueFactory(){
+				return ValueFactory.DOUBLE;
+			}
+		};
+
+		aggregator.add(createProbabilityDistribution(0.2d, 0.6d, 0.2d), 3d);
+		aggregator.add(createProbabilityDistribution(0.6d, 0.1d, 0.3d), 1d);
+
+		checkValues((0.2 * 3d + 0.6d) / 4d, (0.6d * 3d + 0.1d) / 4d, (0.2d * 3d + 0.3d) / 4d, aggregator.weightedAverageMap());
+	}
+
+	@Test
+	public void median(){
+		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(3){
+
+			@Override
+			public ValueFactory<Double> getValueFactory(){
+				return ValueFactory.DOUBLE;
+			}
+		};
+
+		assertEquals(new ValueMap<>(), aggregator.medianMap(ProbabilityAggregatorTest.CATEGORIES));
+
+		aggregator.add(createProbabilityDistribution(0.3d, 0.4d, 0.3d));
+		aggregator.add(createProbabilityDistribution(0.1d, 0.6d, 0.3d));
+
+		checkValues((0.3d + 0.1d) / 2d, (0.4d + 0.6d) / 2d, (0.3d + 0.3d) / 2d, aggregator.medianMap(ProbabilityAggregatorTest.CATEGORIES));
+
+		aggregator.add(createProbabilityDistribution(0.3d, 0.5d, 0.2d));
+
+		checkValues(0.3d, 0.5d, 0.2d, aggregator.medianMap(ProbabilityAggregatorTest.CATEGORIES));
+	}
+
+	@Test
 	public void max(){
 		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(5){
 
@@ -55,46 +109,6 @@ public class ProbabilityAggregatorTest {
 		checkValues((0.1d + 0.0d) / 2d, (0.1d + 0.2d) / 2d, (0.8d + 0.8d) / 2d, aggregator.maxMap(ProbabilityAggregatorTest.CATEGORIES));
 	}
 
-	@Test
-	public void median(){
-		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(3){
-
-			@Override
-			public ValueFactory<Double> getValueFactory(){
-				return ValueFactory.DOUBLE;
-			}
-		};
-
-		assertEquals(new ValueMap<>(), aggregator.medianMap(ProbabilityAggregatorTest.CATEGORIES));
-
-		aggregator.add(createProbabilityDistribution(0.3d, 0.4d, 0.3d));
-		aggregator.add(createProbabilityDistribution(0.1d, 0.6d, 0.3d));
-
-		checkValues((0.3d + 0.1d) / 2d, (0.4d + 0.6d) / 2d, (0.3d + 0.3d) / 2d, aggregator.medianMap(ProbabilityAggregatorTest.CATEGORIES));
-
-		aggregator.add(createProbabilityDistribution(0.3d, 0.5d, 0.2d));
-
-		checkValues(0.3d, 0.5d, 0.2d, aggregator.medianMap(ProbabilityAggregatorTest.CATEGORIES));
-	}
-
-	@Test
-	public void weightedAverage(){
-		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(0, ValueFactory.DOUBLE.newVector(0)){
-
-			@Override
-			public ValueFactory<Double> getValueFactory(){
-				return ValueFactory.DOUBLE;
-			}
-		};
-
-		assertEquals(new ValueMap<>(), aggregator.weightedAverageMap());
-
-		aggregator.add(createProbabilityDistribution(0.2d, 0.6d, 0.2d), 3d);
-		aggregator.add(createProbabilityDistribution(0.6d, 0.1d, 0.3d), 1d);
-
-		checkValues((0.2 * 3d + 0.6d) / 4d, (0.6d * 3d + 0.1d) / 4d, (0.2d * 3d + 0.3d) / 4d, aggregator.weightedAverageMap());
-	}
-
 	static
 	private void checkValues(double a, double b, double c, ValueMap<String, Double> values){
 		assertEquals(new DoubleValue(a), values.get("A"));
@@ -105,9 +119,18 @@ public class ProbabilityAggregatorTest {
 	static
 	private HasProbability createProbabilityDistribution(Double a, Double b, Double c){
 		ProbabilityDistribution result = new ProbabilityDistribution();
-		result.put("A", a);
-		result.put("B", b);
-		result.put("C", c);
+
+		if(a != null){
+			result.put("A", a);
+		} // End if
+
+		if(b != null){
+			result.put("B", b);
+		} // End if
+
+		if(c != null){
+			result.put("C", c);
+		}
 
 		return result;
 	}
