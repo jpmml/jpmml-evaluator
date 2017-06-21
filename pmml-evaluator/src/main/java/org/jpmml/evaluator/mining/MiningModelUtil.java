@@ -25,7 +25,7 @@ import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.ProbabilityAggregator;
-import org.jpmml.evaluator.RegressionAggregator;
+import org.jpmml.evaluator.ValueAggregator;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
@@ -38,22 +38,22 @@ public class MiningModelUtil {
 
 	static
 	public <V extends Number> Value<V> aggregateValues(final ValueFactory<V> valueFactory, List<SegmentResult> segmentResults, Segmentation.MultipleModelMethod multipleModelMethod){
-		RegressionAggregator<V> aggregator;
+		ValueAggregator<V> aggregator;
 
 		switch(multipleModelMethod){
 			case AVERAGE:
 			case SUM:
-				aggregator = new RegressionAggregator<>(valueFactory.newVector(0));
+				aggregator = new ValueAggregator<>(valueFactory.newVector(0));
 				break;
 			case MEDIAN:
-				aggregator = new RegressionAggregator<>(valueFactory.newVector(segmentResults.size()));
+				aggregator = new ValueAggregator<>(valueFactory.newVector(segmentResults.size()));
 				break;
 			case WEIGHTED_AVERAGE:
 			case WEIGHTED_SUM:
-				aggregator = new RegressionAggregator<>(valueFactory.newVector(0), valueFactory.newVector(0), valueFactory.newVector(0));
+				aggregator = new ValueAggregator<>(valueFactory.newVector(0), valueFactory.newVector(0), valueFactory.newVector(0));
 				break;
 			case WEIGHTED_MEDIAN:
-				aggregator = new RegressionAggregator<>(valueFactory.newVector(segmentResults.size()), valueFactory.newVector(segmentResults.size()));
+				aggregator = new ValueAggregator<>(valueFactory.newVector(segmentResults.size()), valueFactory.newVector(segmentResults.size()));
 				break;
 			default:
 				throw new EvaluationException();

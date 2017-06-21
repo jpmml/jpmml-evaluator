@@ -28,7 +28,7 @@ import java.util.Set;
 import com.google.common.base.Function;
 
 abstract
-public class ProbabilityAggregator<V extends Number> extends ClassificationAggregator<String, V> {
+public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<String, V> {
 
 	private List<HasProbability> hasProbabilities = null;
 

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RegressionAggregator<V extends Number> {
+public class ValueAggregator<V extends Number> {
 
 	private Vector<V> values = null;
 
@@ -31,15 +31,15 @@ public class RegressionAggregator<V extends Number> {
 	private Vector<V> weightedValues = null;
 
 
-	public RegressionAggregator(Vector<V> values){
+	public ValueAggregator(Vector<V> values){
 		this(values, null);
 	}
 
-	public RegressionAggregator(Vector<V> values, Vector<V> weights){
+	public ValueAggregator(Vector<V> values, Vector<V> weights){
 		this(values, weights, null);
 	}
 
-	public RegressionAggregator(Vector<V> values, Vector<V> weights, Vector<V> weightedValues){
+	public ValueAggregator(Vector<V> values, Vector<V> weights, Vector<V> weightedValues){
 		this.values = values;
 		this.weights = weights;
 

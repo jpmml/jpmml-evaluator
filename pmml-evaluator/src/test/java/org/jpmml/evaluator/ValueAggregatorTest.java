@@ -22,11 +22,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class RegressorAggregatorTest {
+public class ValueAggregatorTest {
 
 	@Test
 	public void sumAndAverage(){
-		RegressionAggregator<Double> aggregator = new RegressionAggregator<>(ValueFactory.DOUBLE.newVector(0));
+		ValueAggregator<Double> aggregator = new ValueAggregator<>(ValueFactory.DOUBLE.newVector(0));
 
 		aggregator.add(2d);
 		aggregator.add(3d);
@@ -41,7 +41,7 @@ public class RegressorAggregatorTest {
 	public void weightedSumAndAverage(){
 		ValueFactory<Double> valueFactory = ValueFactory.DOUBLE;
 
-		RegressionAggregator<Double> aggregator = new RegressionAggregator<>(valueFactory.newVector(0), valueFactory.newVector(0), valueFactory.newVector(0));
+		ValueAggregator<Double> aggregator = new ValueAggregator<>(valueFactory.newVector(0), valueFactory.newVector(0), valueFactory.newVector(0));
 
 		aggregator.add(2d, 1d / 3d);
 		aggregator.add(3d, 2d / 3d);
@@ -56,7 +56,7 @@ public class RegressorAggregatorTest {
 	public void weightedMedian(){
 		ValueFactory<Double> valueFactory = ValueFactory.DOUBLE;
 
-		RegressionAggregator<Double> aggregator = new RegressionAggregator<>(valueFactory.newVector(3), valueFactory.newVector(3), valueFactory.newVector(3));
+		ValueAggregator<Double> aggregator = new ValueAggregator<>(valueFactory.newVector(3), valueFactory.newVector(3), valueFactory.newVector(3));
 
 		aggregator.add(1d, 3d);
 		aggregator.add(5d, 7d);

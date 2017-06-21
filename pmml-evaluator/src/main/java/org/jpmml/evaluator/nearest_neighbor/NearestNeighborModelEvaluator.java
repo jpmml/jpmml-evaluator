@@ -85,7 +85,7 @@ import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
-import org.jpmml.evaluator.RegressionAggregator;
+import org.jpmml.evaluator.ValueAggregator;
 import org.jpmml.evaluator.SimpleDoubleVector;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
@@ -341,17 +341,17 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		NearestNeighborModel.ContinuousScoringMethod continuousScoringMethod = nearestNeighborModel.getContinuousScoringMethod();
 
-		RegressionAggregator<Double> aggregator;
+		ValueAggregator<Double> aggregator;
 
 		switch(continuousScoringMethod){
 			case AVERAGE:
-				aggregator = new RegressionAggregator<>(new SimpleDoubleVector());
+				aggregator = new ValueAggregator<>(new SimpleDoubleVector());
 				break;
 			case WEIGHTED_AVERAGE:
-				aggregator = new RegressionAggregator<>(new SimpleDoubleVector(), new SimpleDoubleVector(), new SimpleDoubleVector());
+				aggregator = new ValueAggregator<>(new SimpleDoubleVector(), new SimpleDoubleVector(), new SimpleDoubleVector());
 				break;
 			case MEDIAN:
-				aggregator = new RegressionAggregator<>(new ComplexDoubleVector(instanceResults.size()));
+				aggregator = new ValueAggregator<>(new ComplexDoubleVector(instanceResults.size()));
 				break;
 			default:
 				throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
