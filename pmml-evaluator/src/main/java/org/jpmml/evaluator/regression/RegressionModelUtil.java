@@ -83,6 +83,14 @@ public class RegressionModelUtil {
 					lastValue.residual(sum);
 				}
 				break;
+			// XXX: Non-standard behaviour
+			case LOGIT:
+				{
+					for(Value<V> value : values){
+						value.logit();
+					}
+				}
+				// Falls through
 			case SIMPLEMAX:
 				{
 					ValueUtil.normalize(values);

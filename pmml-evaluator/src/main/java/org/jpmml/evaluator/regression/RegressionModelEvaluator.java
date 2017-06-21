@@ -228,7 +228,15 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			case SIMPLEMAX:
 			case SOFTMAX:
 				if((OpType.CATEGORICAL).equals(opType)){
-					RegressionModelUtil.computeMultinomialProbabilities(values, normalizationMethod);
+
+					// XXX: Non-standard behaviour
+					if((values.size() == 2 && isDefault(regressionTables.get(1)) && (RegressionModel.NormalizationMethod.SOFTMAX).equals(normalizationMethod))){
+						RegressionModelUtil.computeBinomialProbabilities(values, RegressionModel.NormalizationMethod.LOGIT);
+					} else
+
+					{
+						RegressionModelUtil.computeMultinomialProbabilities(values, normalizationMethod);
+					}
 				} else
 
 				{
@@ -244,6 +252,11 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 					if(values.size() == 2){
 						RegressionModelUtil.computeBinomialProbabilities(values, normalizationMethod);
+					} else
+
+					// XXX: Non-standard behaviour
+					if(values.size() > 2 && (RegressionModel.NormalizationMethod.LOGIT).equals(normalizationMethod)){
+						RegressionModelUtil.computeMultinomialProbabilities(values, normalizationMethod);
 					} else
 
 					{
@@ -343,5 +356,19 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		}
 
 		return result;
+	}
+
+	static
+	private boolean isDefault(RegressionTable regressionTable){
+
+		if(regressionTable.hasExtensions()){
+			return false;
+		} // End if
+
+		if(regressionTable.hasNumericPredictors() || regressionTable.hasCategoricalPredictors() || regressionTable.hasPredictorTerms()){
+			return false;
+		}
+
+		return (regressionTable.getIntercept() == 0d);
 	}
 }
