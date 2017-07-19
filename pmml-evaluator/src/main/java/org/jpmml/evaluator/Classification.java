@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -246,16 +247,18 @@ public class Classification implements Computable {
 
 		double sum = 0d;
 
+		double max = Collections.max(map.values());
+
 		for(Map.Entry<K, Double> entry : entries){
 			Double value = entry.getValue();
 
-			sum += (transform ? Math.exp(value) : value);
+			sum += (transform ? Math.exp(value - max) : value);
 		}
 
 		for(Map.Entry<K, Double> entry : entries){
 			Double value = entry.getValue();
 
-			entry.setValue((transform ? Math.exp(value) : value) / sum);
+			entry.setValue((transform ? Math.exp(value - max) : value) / sum);
 		}
 	}
 
