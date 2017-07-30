@@ -40,12 +40,12 @@ public class RegressionTest extends IntegrationTest {
 
 	@Test
 	public void evaluateModelEnsembleAuto() throws Exception {
-		evaluate("ModelEnsemble", "Auto");
+		evaluate("ModelEnsemble", "Auto", new PMMLEquivalence(1e-14, 1e-14));
 	}
 
 	@Test
 	public void evaluatePolynomialRegressionAuto() throws Exception {
-		evaluate("PolynomialRegression", "Auto");
+		evaluate("PolynomialRegression", "Auto", new PMMLEquivalence(1e-14, 1e-14));
 	}
 
 	@Test

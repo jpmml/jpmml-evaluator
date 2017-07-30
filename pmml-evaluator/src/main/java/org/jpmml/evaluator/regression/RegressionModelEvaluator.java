@@ -280,7 +280,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	}
 
 	private <V extends Number> Value<V> evaluateRegressionTable(ValueFactory<V> valueFactory, RegressionTable regressionTable, EvaluationContext context){
-		Value<V> result = valueFactory.newValue(regressionTable.getIntercept());
+		Value<V> result = valueFactory.newValue(0d);
 
 		if(regressionTable.hasNumericPredictors()){
 			List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
@@ -354,6 +354,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				result.add(factors, predictorTerm.getCoefficient());
 			}
 		}
+
+		result.add(regressionTable.getIntercept());
 
 		return result;
 	}
