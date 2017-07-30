@@ -230,7 +230,7 @@ public class DoubleValue extends Value<Double> {
 
 	@Override
 	public DoubleValue cauchit(){
-		this.value = 0.5d + (1d / Math.PI) * Math.atan(this.value);
+		this.value = 0.5d + (1d / DoubleValue.PI) * Math.atan(this.value);
 
 		return this;
 	}
@@ -333,4 +333,8 @@ public class DoubleValue extends Value<Double> {
 	public Double getValue(){
 		return this.value;
 	}
+
+	public static final double E = Math.E;
+
+	public static final double PI = Math.PI;
 }

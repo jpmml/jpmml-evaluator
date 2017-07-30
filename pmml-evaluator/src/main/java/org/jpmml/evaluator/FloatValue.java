@@ -193,7 +193,7 @@ public class FloatValue extends Value<Float> {
 
 	@Override
 	public FloatValue logit(){
-		this.value = 1f / (1f + (float)Math.exp(-this.value));
+		this.value = 1f / (1f + FloatValue.exp(-this.value));
 
 		return this;
 	}
@@ -205,28 +205,28 @@ public class FloatValue extends Value<Float> {
 
 	@Override
 	public FloatValue exp(){
-		this.value = (float)Math.exp(this.value);
+		this.value = FloatValue.exp(this.value);
 
 		return this;
 	}
 
 	@Override
 	public FloatValue cloglog(){
-		this.value = 1f - (float)Math.exp(-(float)Math.exp(this.value));
+		this.value = 1f - FloatValue.exp(-FloatValue.exp(this.value));
 
 		return this;
 	}
 
 	@Override
 	public FloatValue loglog(){
-		this.value = (float)Math.exp(-(float)Math.exp(-this.value));
+		this.value = FloatValue.exp(-FloatValue.exp(-this.value));
 
 		return this;
 	}
 
 	@Override
 	public FloatValue cauchit(){
-		this.value = 0.5f + (1f / (float)Math.PI) * (float)Math.atan(this.value);
+		this.value = 0.5f + (1f / (float)FloatValue.PI) * (float)Math.atan(this.value);
 
 		return this;
 	}
@@ -268,7 +268,7 @@ public class FloatValue extends Value<Float> {
 
 	@Override
 	public FloatValue gauss(){
-		this.value = (float)Math.exp(-(this.value * this.value));
+		this.value = FloatValue.exp(-(this.value * this.value));
 
 		return this;
 	}
@@ -329,4 +329,24 @@ public class FloatValue extends Value<Float> {
 	public Float getValue(){
 		return this.value;
 	}
+
+	/**
+	 * <p>
+	 * Computes <code>exp(float)</code>.
+	 * </p>
+	 *
+	 * The function <code>exp(float)</code> can be reasonably emulated as <code>(float)Math#pow(2.7182817d, double)</code>.
+	 *
+	 * The constant <code>2.7182817d</code> has to be hard-coded as double literal, because a float value,
+	 * which could be either hard-coded as float literal or computed as <code>(float)Math#E</code>,
+	 * would be promoted to a double value <code>2.7182817459106445d</code> (via a widening primitive conversion) by the method invocation expression.
+	 */
+	static
+	public float exp(float value){
+		return (float)Math.pow(FloatValue.E, value);
+	}
+
+	public static final double E = 2.7182817d;
+
+	public static final double PI = 3.1415927d;
 }
