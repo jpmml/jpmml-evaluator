@@ -54,6 +54,12 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> multiply(Value<?> value);
 
 	abstract
+	public Value<V> multiply(Number factor, double exponent);
+
+	abstract
+	public Value<V> multiply(Value<?> factor, double exponent);
+
+	abstract
 	public Value<V> divide(double value);
 
 	abstract
@@ -88,6 +94,18 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 
 	abstract
 	public Value<V> cauchit();
+
+	abstract
+	public Value<V> logc();
+
+	abstract
+	public Value<V> negbin(double value);
+
+	abstract
+	public Value<V> oddspower(double value);
+
+	abstract
+	public Value<V> power(double value);
 
 	abstract
 	public Value<V> residual(Value<?> value);

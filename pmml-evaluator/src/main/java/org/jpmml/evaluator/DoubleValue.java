@@ -151,6 +151,32 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
+	public DoubleValue multiply(Number factor, double exponent){
+		double value = factor.doubleValue();
+
+		if(exponent != 1d){
+			value = Math.pow(value, exponent);
+		}
+
+		this.value *= value;
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue multiply(Value<?> factor, double exponent){
+		double value = factor.doubleValue();
+
+		if(exponent != 1d){
+			value = Math.pow(value, exponent);
+		}
+
+		this.value *= value;
+
+		return this;
+	}
+
+	@Override
 	public DoubleValue divide(double value){
 		this.value /= value;
 
@@ -231,6 +257,48 @@ public class DoubleValue extends Value<Double> {
 	@Override
 	public DoubleValue cauchit(){
 		this.value = 0.5d + (1d / DoubleValue.PI) * Math.atan(this.value);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue logc(){
+		this.value = 1d - Math.exp(this.value);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue negbin(double value){
+		this.value = 1d / (value * (Math.exp(-this.value) - 1d));
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue oddspower(double value){
+
+		if(value < 0d || value > 0d){
+			this.value = 1d / (1d + Math.pow(1d + (value * this.value), -(1d / value)));
+		} else
+
+		{
+			this.value = 1d / (1d + Math.exp(-this.value));
+		}
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue power(double value){
+
+		if(value < 0d || value > 0d){
+			this.value = Math.pow(this.value, 1d / value);
+		} else
+
+		{
+			this.value = Math.exp(this.value);
+		}
 
 		return this;
 	}

@@ -80,7 +80,7 @@ public class FloatValue extends Value<Float> {
 		float product = factor.floatValue();
 
 		if(exponent != 1){
-			product = (float)Math.pow(product, exponent);
+			product = FloatValue.pow(product, exponent);
 		}
 
 		product *= (float)coefficient;
@@ -95,7 +95,7 @@ public class FloatValue extends Value<Float> {
 		float product = factor.floatValue();
 
 		if(exponent != 1){
-			product = (float)Math.pow(product, exponent);
+			product = FloatValue.pow(product, exponent);
 		}
 
 		product *= (float)coefficient;
@@ -137,6 +137,32 @@ public class FloatValue extends Value<Float> {
 	@Override
 	public FloatValue multiply(double value){
 		this.value *= (float)value;
+
+		return this;
+	}
+
+	@Override
+	public FloatValue multiply(Number factor, double exponent){
+		float value = factor.floatValue();
+
+		if(exponent != 1d){
+			value = FloatValue.pow(value, (float)exponent);
+		}
+
+		this.value *= value;
+
+		return this;
+	}
+
+	@Override
+	public FloatValue multiply(Value<?> factor, double exponent){
+		float value = factor.floatValue();
+
+		if(exponent != 1d){
+			value = FloatValue.pow(value, (float)exponent);
+		}
+
+		this.value *= value;
 
 		return this;
 	}
@@ -227,6 +253,48 @@ public class FloatValue extends Value<Float> {
 	@Override
 	public FloatValue cauchit(){
 		this.value = 0.5f + (1f / (float)FloatValue.PI) * (float)Math.atan(this.value);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue logc(){
+		this.value = 1f - FloatValue.exp(this.value);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue negbin(double value){
+		this.value = 1f / ((float)value * (FloatValue.exp(-this.value) - 1f));
+
+		return this;
+	}
+
+	@Override
+	public FloatValue oddspower(double value){
+
+		if(value < 0d || value > 0d){
+			this.value = 1f / (1f + FloatValue.pow(1f + ((float)value * this.value), -(1f / (float)value)));
+		} else
+
+		{
+			this.value = 1f / (1f + FloatValue.exp(-this.value));
+		}
+
+		return this;
+	}
+
+	@Override
+	public FloatValue power(double value){
+
+		if(value < 0d || value > 0d){
+			this.value = FloatValue.pow(this.value, 1f / (float)value);
+		} else
+
+		{
+			this.value = FloatValue.exp(this.value);
+		}
 
 		return this;
 	}
@@ -344,6 +412,11 @@ public class FloatValue extends Value<Float> {
 	static
 	public float exp(float value){
 		return (float)Math.pow(FloatValue.E, value);
+	}
+
+	static
+	public float pow(float value, float power){
+		return (float)Math.pow(value, power);
 	}
 
 	public static final double E = 2.7182817d;

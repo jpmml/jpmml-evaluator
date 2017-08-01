@@ -77,14 +77,15 @@ import org.jpmml.evaluator.MatrixUtil;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.NormalDistributionUtil;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
-import org.jpmml.evaluator.Numbers;
+import org.jpmml.evaluator.ValueMap;
+import org.jpmml.evaluator.ValueUtil;
 
 public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegressionModel> {
 
@@ -144,9 +145,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			throw new InvalidResultException(generalRegressionModel);
 		}
 
+		ValueFactory<?> valueFactory;
+
 		MathContext mathContext = generalRegressionModel.getMathContext();
 		switch(mathContext){
+			case FLOAT:
 			case DOUBLE:
+				valueFactory = ValueFactory.getInstance(mathContext);
 				break;
 			default:
 				throw new UnsupportedFeatureException(generalRegressionModel, mathContext);
@@ -157,10 +162,10 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		MiningFunction miningFunction = generalRegressionModel.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
-				predictions = evaluateRegression(context);
+				predictions = evaluateRegression(valueFactory, context);
 				break;
 			case CLASSIFICATION:
-				predictions = evaluateClassification(context);
+				predictions = evaluateClassification(valueFactory, context);
 				break;
 			default:
 				throw new UnsupportedFeatureException(generalRegressionModel, miningFunction);
@@ -169,19 +174,19 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
+	private <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
 		switch(modelType){
 			case COX_REGRESSION:
-				return evaluateCoxRegression(context);
+				return evaluateCoxRegression(valueFactory, context);
 			default:
-				return evaluateGeneralRegression(context);
+				return evaluateGeneralRegression(valueFactory, context);
 		}
 	}
 
-	private Map<FieldName, ? extends Double> evaluateCoxRegression(EvaluationContext context){
+	private <V extends Number> Map<FieldName, V> evaluateCoxRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		BaseCumHazardTables baseCumHazardTables = generalRegressionModel.getBaseCumHazardTables();
@@ -246,7 +251,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			// "If the value is less than the minimum time, then cumulative hazard is 0 and predicted survival is 1"
 			if(value.compareToValue(minTimeValue) < 0){
-				return Collections.singletonMap(getTargetFieldName(), Numbers.DOUBLE_ZERO);
+				Value<V> cumHazard = valueFactory.newValue(0d);
+
+				return Collections.singletonMap(getTargetFieldName(), cumHazard.getValue());
 			}
 
 			FieldValue maxTimeValue = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, maxTime);
@@ -277,27 +284,27 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			throw new InvalidFeatureException(generalRegressionModel);
 		}
 
-		Double r = computeDotProduct(context);
+		Value<V> r = computeDotProduct(valueFactory, context);
 
-		Double s = computeReferencePoint();
+		Value<V> s = computeReferencePoint(valueFactory);
 
 		if(r == null || s == null){
 			return null;
 		}
 
-		Double cumHazard = baselineCumHazard * Math.exp(r - s);
+		Value<V> cumHazard = ((r.subtract(s)).exp()).multiply(baselineCumHazard);
 
-		return Collections.singletonMap(getTargetFieldName(), cumHazard);
+		return Collections.singletonMap(getTargetFieldName(), cumHazard.getValue());
 	}
 
-	private Map<FieldName, ?> evaluateGeneralRegression(EvaluationContext context){
+	private <V extends Number> Map<FieldName, ?> evaluateGeneralRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		TargetField targetField = getTargetField();
 
-		Double result = computeDotProduct(context);
+		Value<V> result = computeDotProduct(valueFactory, context);
 		if(result == null){
-			return TargetUtil.evaluateRegressionDefault(ValueFactory.DOUBLE, targetField);
+			return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 		}
 
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
@@ -315,7 +322,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
-	private Map<FieldName, ? extends Classification> evaluateClassification(EvaluationContext context){
+	private <V extends Number> Map<FieldName, ? extends Classification> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -328,14 +335,14 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
 
-		ProbabilityDistribution result = new ProbabilityDistribution();
+		ValueMap<String, V> values = new ValueMap<>(2 * targetCategories.size());
 
-		double previousValue = 0d;
+		Value<V> previousValue = null;
 
 		for(int i = 0; i < targetCategories.size(); i++){
 			String targetCategory = targetCategories.get(i);
 
-			double value;
+			Value<V> value;
 
 			// Categories from the first category to the second-to-last category
 			if(i < (targetCategories.size() - 1)){
@@ -398,19 +405,17 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 						throw new UnsupportedFeatureException(generalRegressionModel, modelType);
 				}
 
-				Double dotProduct = computeDotProduct(parameterCells, parameterPredictorRows, context);
-				if(dotProduct == null){
-					return TargetUtil.evaluateClassificationDefault(ValueFactory.DOUBLE, targetField);
+				value = computeDotProduct(valueFactory, parameterCells, parameterPredictorRows, context);
+				if(value == null){
+					return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 				}
-
-				value = dotProduct;
 
 				switch(modelType){
 					case GENERALIZED_LINEAR:
 						value = computeLink(value, context);
 						break;
 					case MULTINOMIAL_LOGISTIC:
-						value = Math.exp(value);
+						value.exp();
 						break;
 					case ORDINAL_MULTINOMIAL:
 						value = computeCumulativeLink(value, context);
@@ -424,14 +429,16 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			{
 				switch(modelType){
 					case GENERALIZED_LINEAR:
-						value = (1d - previousValue);
+						value = valueFactory.newValue(1d);
+						value.subtract(previousValue);
 						break;
 					case MULTINOMIAL_LOGISTIC:
 						// "By convention, the vector of Parameter estimates for the last category is 0"
-						value = Math.exp(0d);
+						value = valueFactory.newValue(0d);
+						value.exp();
 						break;
 					case ORDINAL_MULTINOMIAL:
-						value = 1d;
+						value = valueFactory.newValue(1d);
 						break;
 					default:
 						throw new UnsupportedFeatureException(generalRegressionModel, modelType);
@@ -441,14 +448,15 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			switch(modelType){
 				case GENERALIZED_LINEAR:
 				case MULTINOMIAL_LOGISTIC:
-					result.put(targetCategory, value);
 					break;
 				case ORDINAL_MULTINOMIAL:
-					result.put(targetCategory, (value - previousValue));
+					value.subtract(previousValue);
 					break;
 				default:
 					throw new UnsupportedFeatureException(generalRegressionModel, modelType);
 			}
+
+			values.put(targetCategory, value);
 
 			previousValue = value;
 		}
@@ -457,7 +465,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			case GENERALIZED_LINEAR:
 				break;
 			case MULTINOMIAL_LOGISTIC:
-				result.normalizeValues();
+				ValueUtil.normalize(values);
 				break;
 			case ORDINAL_MULTINOMIAL:
 				break;
@@ -465,10 +473,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new UnsupportedFeatureException(generalRegressionModel, modelType);
 		}
 
+		ProbabilityDistribution result = new ProbabilityDistribution(values.asDoubleMap());
+
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
 
-	private Double computeDotProduct(EvaluationContext context){
+	private <V extends Number> Value<V> computeDotProduct(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		Map<String, Map<String, Row>> ppMatrixMap = getPPMatrixMap();
@@ -489,83 +499,83 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
-		if(paramMatrixMap.size() != 1 || !paramMatrixMap.containsKey(null)){
+
+		List<PCell> parameterCells = paramMatrixMap.get(null);
+
+		if(paramMatrixMap.size() != 1 || parameterCells == null){
 			ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
 
 			throw new InvalidFeatureException(paramMatrix);
 		}
 
-		List<PCell> parameterCells = paramMatrixMap.get(null);
-
-		return computeDotProduct(parameterCells, parameterPredictorRows, context);
+		return computeDotProduct(valueFactory, parameterCells, parameterPredictorRows, context);
 	}
 
-	private Double computeDotProduct(Iterable<PCell> parameterCells, Map<String, Row> parameterPredictorRows, EvaluationContext context){
-		double sum = 0d;
-
-		int count = 0;
+	private <V extends Number> Value<V> computeDotProduct(ValueFactory<V> valueFactory, Iterable<PCell> parameterCells, Map<String, Row> parameterPredictorRows, EvaluationContext context){
+		Value<V> result = null;
 
 		for(PCell parameterCell : parameterCells){
-			double value;
-
 			Row parameterPredictorRow = parameterPredictorRows.get(parameterCell.getParameterName());
+
+			if(result == null){
+				result = valueFactory.newValue(0d);
+			} // End if
+
 			if(parameterPredictorRow != null){
-				Double x = parameterPredictorRow.evaluate(context);
+				Value<V> x = parameterPredictorRow.evaluate(valueFactory, context);
+
 				if(x == null){
 					return null;
 				}
 
-				value = (x * parameterCell.getBeta());
+				result.add(x, 1, parameterCell.getBeta());
 			} else
 
-			// The row is empty
 			{
-				value = parameterCell.getBeta();
+				result.add(parameterCell.getBeta());
 			}
-
-			sum += value;
-
-			count++;
 		}
 
-		if(count == 0){
-			return null;
-		}
-
-		return sum;
+		return result;
 	}
 
-	private Double computeReferencePoint(){
+	private <V extends Number> Value<V> computeReferencePoint(ValueFactory<V> valueFactory){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		BiMap<String, Parameter> parameters = getParameterRegistry();
 
 		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
-		if(paramMatrixMap.size() != 1 || !paramMatrixMap.containsKey(null)){
+
+		Iterable<PCell> parameterCells = paramMatrixMap.get(null);
+
+		if(paramMatrixMap.size() != 1 || parameterCells == null){
 			ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
 
 			throw new InvalidFeatureException(paramMatrix);
 		}
 
-		Iterable<PCell> parameterCells = paramMatrixMap.get(null);
-
-		Double sum = null;
+		Value<V> result = null;
 
 		for(PCell parameterCell : parameterCells){
 			Parameter parameter = parameters.get(parameterCell.getParameterName());
-			if(parameter == null){
+
+			if(result == null){
+				result = valueFactory.newValue(0d);
+			} // End if
+
+			if(parameter != null){
+				result.add(parameter.getReferencePoint(), 1, parameterCell.getBeta());
+			} else
+
+			{
 				return null;
 			}
-
-			double value = (parameter.getReferencePoint() * parameterCell.getBeta());
-
-			sum = (sum != null ? (sum + value) : value);
 		}
 
-		return sum;
+		return result;
 	}
 
-	private double computeLink(double value, EvaluationContext context){
+	private <V extends Number> Value<V> computeLink(Value<V> value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		GeneralRegressionModel.LinkFunction linkFunction = generalRegressionModel.getLinkFunction();
@@ -573,56 +583,67 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			throw new InvalidFeatureException(generalRegressionModel);
 		}
 
-		Double a = getOffset(generalRegressionModel, context);
-		Integer b = getTrials(generalRegressionModel, context);
-
-		Double c = generalRegressionModel.getDistParameter();
-		Double d = generalRegressionModel.getLinkParameter();
+		Double distParameter = generalRegressionModel.getDistParameter();
+		Double linkParameter = generalRegressionModel.getLinkParameter();
 
 		switch(linkFunction){
 			case CLOGLOG:
-				return (1d - Math.exp(-Math.exp(value + a))) * b;
 			case IDENTITY:
-				return (value + a) * b;
 			case LOG:
-				return Math.exp(value + a) * b;
 			case LOGC:
-				return (1d - Math.exp(value + a)) * b;
 			case LOGIT:
-				return (1d / (1d + Math.exp(-(value + a)))) * b;
 			case LOGLOG:
-				return Math.exp(-Math.exp(-(value + a))) * b;
-			case NEGBIN:
-				if(c == null){
-					throw new InvalidFeatureException(generalRegressionModel);
-				}
-				return (1d / (c * (Math.exp(-(value + a)) - 1d))) * b;
-			case ODDSPOWER:
-				if(d == null){
-					throw new InvalidFeatureException(generalRegressionModel);
-				} // End if
-
-				if(d < 0d || d > 0d){
-					return (1d / (1d + Math.pow(1d + d * (value + a), -(1d / d)))) * b;
-				}
-				return (1d / (1d + Math.exp(-(value + a)))) * b;
-			case POWER:
-				if(d == null){
-					throw new InvalidFeatureException(generalRegressionModel);
-				} // End if
-
-				if(d < 0d || d > 0d){
-					return Math.pow(value + a, 1d / d) * b;
-				}
-				return Math.exp(value + a) * b;
 			case PROBIT:
-				return NormalDistributionUtil.cumulativeProbability(value + a) * b;
+				if(distParameter != null || linkParameter != null){
+					throw new InvalidFeatureException(generalRegressionModel);
+				}
+				break;
+			case NEGBIN:
+				if(distParameter == null || linkParameter != null){
+					throw new InvalidFeatureException(generalRegressionModel);
+				}
+				break;
+			case ODDSPOWER:
+			case POWER:
+				if(distParameter != null || linkParameter == null){
+					throw new InvalidFeatureException(generalRegressionModel);
+				}
+				break;
 			default:
 				throw new UnsupportedFeatureException(generalRegressionModel, linkFunction);
 		}
+
+		Double offset = getOffset(generalRegressionModel, context);
+		if(offset != null){
+			value.add(offset);
+		}
+
+		switch(linkFunction){
+			case CLOGLOG:
+			case IDENTITY:
+			case LOG:
+			case LOGC:
+			case LOGIT:
+			case LOGLOG:
+			case NEGBIN:
+			case ODDSPOWER:
+			case POWER:
+			case PROBIT:
+				GeneralRegressionModelUtil.computeLink(value, distParameter, linkParameter, linkFunction);
+				break;
+			default:
+				throw new UnsupportedFeatureException(generalRegressionModel, linkFunction);
+		}
+
+		Integer trials = getTrials(generalRegressionModel, context);
+		if(trials != null){
+			value.multiply(trials.doubleValue());
+		}
+
+		return value;
 	}
 
-	private double computeCumulativeLink(double value, EvaluationContext context){
+	private <V extends Number> Value<V> computeCumulativeLink(Value<V> value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		GeneralRegressionModel.CumulativeLinkFunction cumulativeLinkFunction = generalRegressionModel.getCumulativeLinkFunction();
@@ -630,22 +651,24 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			throw new InvalidFeatureException(generalRegressionModel);
 		}
 
-		Double a = getOffset(generalRegressionModel, context);
+		Double offset = getOffset(generalRegressionModel, context);
+		if(offset != null){
+			value.add(offset.doubleValue());
+		}
 
 		switch(cumulativeLinkFunction){
 			case LOGIT:
-				return 1d / (1d + Math.exp(-(value + a)));
 			case PROBIT:
-				return NormalDistributionUtil.cumulativeProbability(value + a);
 			case CLOGLOG:
-				return 1d - Math.exp(-Math.exp(value + a));
 			case LOGLOG:
-				return Math.exp(-Math.exp(-(value + a)));
 			case CAUCHIT:
-				return 0.5d + (1d / Math.PI) * Math.atan(value + a);
+				GeneralRegressionModelUtil.computeCumulativeLink(value, cumulativeLinkFunction);
+				break;
 			default:
 				throw new UnsupportedFeatureException(generalRegressionModel, cumulativeLinkFunction);
 		}
+
+		return value;
 	}
 
 	public BiMap<String, Parameter> getParameterRegistry(){
@@ -774,40 +797,33 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	static
 	private Double getOffset(GeneralRegressionModel generalRegressionModel, EvaluationContext context){
 		FieldName offsetVariable = generalRegressionModel.getOffsetVariable();
+
 		if(offsetVariable != null){
 			FieldValue value = getVariable(offsetVariable, context);
 
 			return value.asDouble();
 		}
 
-		Double offsetValue = generalRegressionModel.getOffsetValue();
-		if(offsetValue != null){
-			return offsetValue;
-		}
-
-		return Numbers.DOUBLE_ZERO;
+		return generalRegressionModel.getOffsetValue();
 	}
 
 	static
 	private Integer getTrials(GeneralRegressionModel generalRegressionModel, EvaluationContext context){
 		FieldName trialsVariable = generalRegressionModel.getTrialsVariable();
+
 		if(trialsVariable != null){
 			FieldValue value = getVariable(trialsVariable, context);
 
 			return value.asInteger();
 		}
 
-		Integer trialsValue = generalRegressionModel.getTrialsValue();
-		if(trialsValue != null){
-			return trialsValue;
-		}
-
-		return Numbers.INTEGER_ONE;
+		return generalRegressionModel.getTrialsValue();
 	}
 
 	static
 	private FieldValue getVariable(FieldName name, EvaluationContext context){
 		FieldValue value = context.evaluate(name);
+
 		if(value == null){
 			throw new MissingValueException(name);
 		}
@@ -990,33 +1006,38 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		private List<CovariateHandler> covariateHandlers = new ArrayList<>();
 
 
-		public Double evaluate(EvaluationContext context){
+		public <V extends Number> Value<V> evaluate(ValueFactory<V> valueFactory, EvaluationContext context){
+			Value<V> result = valueFactory.newValue(1d);
+
 			List<FactorHandler> factorHandlers = getFactorHandlers();
-			List<CovariateHandler> covariateHandlers = getCovariateHandlers();
+			for(int i = 0, max = factorHandlers.size(); i < max; i++){
+				FactorHandler factorHandler = factorHandlers.get(i);
 
-			// The row is empty
-			if(factorHandlers.isEmpty() && covariateHandlers.isEmpty()){
-				return Numbers.DOUBLE_ONE;
-			}
-
-			Double factorProduct = computeProduct(factorHandlers, context);
-			Double covariateProduct = computeProduct(covariateHandlers, context);
-
-			if(covariateHandlers.isEmpty()){
-				return factorProduct;
-			} else
-
-			if(factorHandlers.isEmpty()){
-				return covariateProduct;
-			} else
-
-			{
-				if(factorProduct != null && covariateProduct != null){
-					return (factorProduct * covariateProduct);
+				FieldValue value = context.evaluate(factorHandler.getPredictorName());
+				if(value == null){
+					return null;
 				}
 
-				return null;
+				factorHandler.updateProduct(result, value);
 			}
+
+			if(result.doubleValue() == 0d){
+				return result;
+			}
+
+			List<CovariateHandler> covariateHandlers = getCovariateHandlers();
+			for(int i = 0, max = covariateHandlers.size(); i < max; i++){
+				CovariateHandler covariateHandler = covariateHandlers.get(i);
+
+				FieldValue value = context.evaluate(covariateHandler.getPredictorName());
+				if(value == null){
+					return null;
+				}
+
+				covariateHandler.updateProduct(result, value);
+			}
+
+			return result;
 		}
 
 		public void addFactor(PPCell ppCell, Predictor predictor){
@@ -1061,33 +1082,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			return this.covariateHandlers;
 		}
 
-		static
-		private Double computeProduct(List<? extends PredictorHandler> predictorHandlers, EvaluationContext context){
-
-			if(predictorHandlers.isEmpty()){
-				return null;
-			}
-
-			double product = 1d;
-
-			for(int i = 0, max = predictorHandlers.size(); i < max; i++){
-				PredictorHandler predictorHandler = predictorHandlers.get(i);
-
-				FieldValue value = context.evaluate(predictorHandler.getPredictorName());
-				if(value == null){
-					return null;
-				} // End if
-
-				if(max == 1){
-					return predictorHandler.evaluate(value);
-				}
-
-				product = product * predictorHandler.evaluate(value);
-			}
-
-			return product;
-		}
-
 		abstract
 		private class PredictorHandler {
 
@@ -1099,7 +1093,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 
 			abstract
-			public Double evaluate(FieldValue value);
+			public <V extends Number> Value<V> updateProduct(Value<V> product, FieldValue value);
 
 			public FieldName getPredictorName(){
 				PPCell ppCell = getPPCell();
@@ -1118,23 +1112,35 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		private class FactorHandler extends PredictorHandler {
 
+			private String category = null;
+
+
 			private FactorHandler(PPCell ppCell){
 				super(ppCell);
+
+				String value = ppCell.getValue();
+				if(value == null){
+					throw new InvalidFeatureException(ppCell);
+				}
+
+				setCategory(value);
 			}
 
 			@Override
-			public Double evaluate(FieldValue value){
+			public <V extends Number> Value<V> updateProduct(Value<V> product, FieldValue value){
 				PPCell ppCell = getPPCell();
 
 				boolean equals = value.equals(ppCell);
 
-				return (equals ? Numbers.DOUBLE_ONE : Numbers.DOUBLE_ZERO);
+				return product.multiply(equals ? 1d : 0d);
 			}
 
 			public String getCategory(){
-				PPCell ppCell = getPPCell();
+				return this.category;
+			}
 
-				return ppCell.getValue();
+			private void setCategory(String category){
+				this.category = category;
 			}
 		}
 
@@ -1155,7 +1161,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 
 			@Override
-			public Double evaluate(FieldValue value){
+			public <V extends Number> Value<V> updateProduct(Value<V> product, FieldValue value){
 				Matrix matrix = getMatrix();
 
 				int row = getIndex(value);
@@ -1168,13 +1174,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				Number result = MatrixUtil.getElementAt(matrix, row + 1, column + 1);
 				if(result == null){
 					throw new EvaluationException();
-				} // End if
-
-				if(result instanceof Double){
-					return (Double)result;
 				}
 
-				return result.doubleValue();
+				return product.multiply(result.doubleValue());
 			}
 
 			public int getIndex(FieldValue value){
@@ -1225,30 +1227,33 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		private class CovariateHandler extends PredictorHandler {
 
+			private double power = 1d;
+
+
 			private CovariateHandler(PPCell ppCell){
 				super(ppCell);
+
+				String value = ppCell.getValue();
+				if(value == null){
+					throw new InvalidFeatureException(ppCell);
+				}
+
+				setPower(Double.parseDouble(value));
 			}
 
 			@Override
-			public Double evaluate(FieldValue value){
+			public <V extends Number> Value<V> updateProduct(Value<V> product, FieldValue value){
+				double power = getPower();
 
-				double multiplicity = getMultiplicity();
-				if(multiplicity == 1d){
-					return value.asDouble();
-				}
-
-				return Math.pow((value.asNumber()).doubleValue(), multiplicity);
+				return product.multiply(value.asNumber(), power);
 			}
 
-			public double getMultiplicity(){
-				PPCell ppCell = getPPCell();
+			public double getPower(){
+				return this.power;
+			}
 
-				String value = ppCell.getValue();
-				if(("1").equals(value) || ("1.0").equals(value)){
-					return 1d;
-				}
-
-				return Double.parseDouble(value);
+			private void setPower(double power){
+				this.power = power;
 			}
 		}
 	}

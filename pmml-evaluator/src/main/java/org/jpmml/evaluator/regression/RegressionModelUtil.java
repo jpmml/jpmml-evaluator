@@ -109,7 +109,7 @@ public class RegressionModelUtil {
 	}
 
 	static
-	public <K, V extends Number> ValueMap computeOrdinalProbabilities(ValueMap<K, V> values, RegressionModel.NormalizationMethod normalizationMethod){
+	public <K, V extends Number> ValueMap<K, V> computeOrdinalProbabilities(ValueMap<K, V> values, RegressionModel.NormalizationMethod normalizationMethod){
 
 		if(values.size() < 2){
 			throw new EvaluationException();

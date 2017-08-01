@@ -408,6 +408,29 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				threshold = neuralNetwork.getThreshold();
 			}
 
+			switch(activationFunction){
+				case THRESHOLD:
+					if(threshold == null){
+						throw new InvalidFeatureException(neuralLayer);
+					}
+					break;
+				case LOGISTIC:
+				case TANH:
+				case IDENTITY:
+				case EXPONENTIAL:
+				case RECIPROCAL:
+				case SQUARE:
+				case GAUSS:
+				case SINE:
+				case COSINE:
+				case ELLIOTT:
+				case ARCTAN:
+				case RECTIFIER:
+					break;
+				default:
+					throw new UnsupportedFeatureException(locatable, activationFunction);
+			}
+
 			List<Neuron> neurons = neuralLayer.getNeurons();
 			for(int i = 0; i < neurons.size(); i++){
 				Neuron neuron = neurons.get(i);
@@ -433,10 +456,6 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 				switch(activationFunction){
 					case THRESHOLD:
-						if(threshold == null){
-							throw new InvalidFeatureException(neuralLayer);
-						}
-						// Falls through
 					case LOGISTIC:
 					case TANH:
 					case IDENTITY:
