@@ -220,14 +220,14 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue logit(){
+	public DoubleValue inverseLogit(){
 		this.value = 1d / (1d + Math.exp(-this.value));
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue probit(){
+	public DoubleValue inverseProbit(){
 		this.value = NormalDistributionUtil.cumulativeProbability(this.value);
 
 		return this;
@@ -241,42 +241,42 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue cloglog(){
+	public DoubleValue inverseCloglog(){
 		this.value = 1d - Math.exp(-Math.exp(this.value));
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue loglog(){
+	public DoubleValue inverseLoglog(){
 		this.value = Math.exp(-Math.exp(-this.value));
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue cauchit(){
+	public DoubleValue inverseCauchit(){
 		this.value = 0.5d + (1d / DoubleValue.PI) * Math.atan(this.value);
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue logc(){
+	public DoubleValue inverseLogc(){
 		this.value = 1d - Math.exp(this.value);
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue negbin(double value){
+	public DoubleValue inverseNegbin(double value){
 		this.value = 1d / (value * (Math.exp(-this.value) - 1d));
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue oddspower(double value){
+	public DoubleValue inverseOddspower(double value){
 
 		if(value < 0d || value > 0d){
 			this.value = 1d / (1d + Math.pow(1d + (value * this.value), -(1d / value)));
@@ -290,7 +290,7 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue power(double value){
+	public DoubleValue inversePower(double value){
 
 		if(value < 0d || value > 0d){
 			this.value = Math.pow(this.value, 1d / value);

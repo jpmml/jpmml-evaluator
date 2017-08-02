@@ -218,14 +218,14 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue logit(){
+	public FloatValue inverseLogit(){
 		this.value = 1f / (1f + FloatValue.exp(-this.value));
 
 		return this;
 	}
 
 	@Override
-	public FloatValue probit(){
+	public FloatValue inverseProbit(){
 		throw new EvaluationException();
 	}
 
@@ -237,42 +237,42 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue cloglog(){
+	public FloatValue inverseCloglog(){
 		this.value = 1f - FloatValue.exp(-FloatValue.exp(this.value));
 
 		return this;
 	}
 
 	@Override
-	public FloatValue loglog(){
+	public FloatValue inverseLoglog(){
 		this.value = FloatValue.exp(-FloatValue.exp(-this.value));
 
 		return this;
 	}
 
 	@Override
-	public FloatValue cauchit(){
+	public FloatValue inverseCauchit(){
 		this.value = 0.5f + (1f / (float)FloatValue.PI) * (float)Math.atan(this.value);
 
 		return this;
 	}
 
 	@Override
-	public FloatValue logc(){
+	public FloatValue inverseLogc(){
 		this.value = 1f - FloatValue.exp(this.value);
 
 		return this;
 	}
 
 	@Override
-	public FloatValue negbin(double value){
+	public FloatValue inverseNegbin(double value){
 		this.value = 1f / ((float)value * (FloatValue.exp(-this.value) - 1f));
 
 		return this;
 	}
 
 	@Override
-	public FloatValue oddspower(double value){
+	public FloatValue inverseOddspower(double value){
 
 		if(value < 0d || value > 0d){
 			this.value = 1f / (1f + FloatValue.pow(1f + ((float)value * this.value), -(1f / (float)value)));
@@ -286,7 +286,7 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue power(double value){
+	public FloatValue inversePower(double value){
 
 		if(value < 0d || value > 0d){
 			this.value = FloatValue.pow(this.value, 1f / (float)value);

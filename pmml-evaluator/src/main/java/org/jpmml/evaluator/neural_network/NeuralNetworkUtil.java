@@ -40,7 +40,7 @@ public class NeuralNetworkUtil {
 				}
 				return value.threshold(threshold);
 			case LOGISTIC:
-				return value.logit();
+				return value.inverseLogit();
 			case TANH:
 				return value.tanh();
 			case IDENTITY:

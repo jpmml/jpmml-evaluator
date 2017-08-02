@@ -32,34 +32,34 @@ public class GeneralRegressionModelUtil {
 
 		switch(linkFunction){
 			case CLOGLOG:
-				return value.cloglog();
+				return value.inverseCloglog();
 			case IDENTITY:
 				return value;
 			case LOG:
 				return value.exp();
 			case LOGC:
-				return value.logc();
+				return value.inverseLogc();
 			case LOGIT:
-				return value.logit();
+				return value.inverseLogit();
 			case LOGLOG:
-				return value.loglog();
+				return value.inverseLoglog();
 			case NEGBIN:
 				if(distParameter == null){
 					throw new EvaluationException();
 				}
-				return value.negbin(distParameter);
+				return value.inverseNegbin(distParameter);
 			case ODDSPOWER:
 				if(linkParameter == null){
 					throw new EvaluationException();
 				}
-				return value.oddspower(linkParameter);
+				return value.inverseOddspower(linkParameter);
 			case POWER:
 				if(linkParameter == null){
 					throw new EvaluationException();
 				}
-				return value.power(linkParameter);
+				return value.inversePower(linkParameter);
 			case PROBIT:
-				return value.probit();
+				return value.inverseProbit();
 			default:
 				throw new EvaluationException();
 		}
@@ -70,15 +70,15 @@ public class GeneralRegressionModelUtil {
 
 		switch(cumulativeLinkFunction){
 			case LOGIT:
-				return value.logit();
+				return value.inverseLogit();
 			case PROBIT:
-				return value.probit();
+				return value.inverseProbit();
 			case CLOGLOG:
-				return value.cloglog();
+				return value.inverseCloglog();
 			case LOGLOG:
-				return value.loglog();
+				return value.inverseLoglog();
 			case CAUCHIT:
-				return value.cauchit();
+				return value.inverseCauchit();
 			default:
 				throw new EvaluationException();
 		}

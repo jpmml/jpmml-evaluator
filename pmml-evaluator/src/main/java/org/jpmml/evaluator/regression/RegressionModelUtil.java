@@ -87,7 +87,7 @@ public class RegressionModelUtil {
 			case LOGIT:
 				{
 					for(Value<V> value : values){
-						value.logit();
+						value.inverseLogit();
 					}
 				}
 				// Falls through
@@ -162,17 +162,17 @@ public class RegressionModelUtil {
 				return value;
 			case SOFTMAX:
 			case LOGIT:
-				return value.logit();
+				return value.inverseLogit();
 			case EXP:
 				return value.exp();
 			case PROBIT:
-				return value.probit();
+				return value.inverseProbit();
 			case CLOGLOG:
-				return value.cloglog();
+				return value.inverseCloglog();
 			case LOGLOG:
-				return value.loglog();
+				return value.inverseLoglog();
 			case CAUCHIT:
-				return value.cauchit();
+				return value.inverseCauchit();
 			default:
 				throw new EvaluationException();
 		}
@@ -185,15 +185,15 @@ public class RegressionModelUtil {
 			case NONE:
 				return value.restrict(0d, 1d);
 			case LOGIT:
-				return value.logit();
+				return value.inverseLogit();
 			case PROBIT:
-				return value.probit();
+				return value.inverseProbit();
 			case CLOGLOG:
-				return value.cloglog();
+				return value.inverseCloglog();
 			case LOGLOG:
-				return value.loglog();
+				return value.inverseLoglog();
 			case CAUCHIT:
-				return value.cauchit();
+				return value.inverseCauchit();
 			default:
 				throw new EvaluationException();
 		}

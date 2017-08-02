@@ -78,34 +78,34 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> floor();
 
 	abstract
-	public Value<V> logit();
+	public Value<V> inverseLogit();
 
 	abstract
-	public Value<V> probit();
+	public Value<V> inverseProbit();
 
 	abstract
 	public Value<V> exp();
 
 	abstract
-	public Value<V> cloglog();
+	public Value<V> inverseCloglog();
 
 	abstract
-	public Value<V> loglog();
+	public Value<V> inverseLoglog();
 
 	abstract
-	public Value<V> cauchit();
+	public Value<V> inverseCauchit();
 
 	abstract
-	public Value<V> logc();
+	public Value<V> inverseLogc();
 
 	abstract
-	public Value<V> negbin(double value);
+	public Value<V> inverseNegbin(double value);
 
 	abstract
-	public Value<V> oddspower(double value);
+	public Value<V> inverseOddspower(double value);
 
 	abstract
-	public Value<V> power(double value);
+	public Value<V> inversePower(double value);
 
 	abstract
 	public Value<V> residual(Value<?> value);
