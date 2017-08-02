@@ -528,7 +528,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					return null;
 				}
 
-				result.add(x, 1, parameterCell.getBeta());
+				result.add(parameterCell.getBeta(), x, 1);
 			} else
 
 			{
@@ -564,7 +564,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			} // End if
 
 			if(parameter != null){
-				result.add(parameter.getReferencePoint(), 1, parameterCell.getBeta());
+				result.add(parameterCell.getBeta(), parameter.getReferencePoint(), 1);
 			} else
 
 			{

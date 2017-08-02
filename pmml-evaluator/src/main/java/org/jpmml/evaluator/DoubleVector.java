@@ -42,8 +42,8 @@ public class DoubleVector extends Vector<Double> {
 	}
 
 	@Override
-	public Vector<Double> add(Number factor, double coefficient){
-		return add(factor.doubleValue() * coefficient);
+	public Vector<Double> add(double coefficient, Number factor){
+		return add(coefficient * factor.doubleValue());
 	}
 
 	@Override

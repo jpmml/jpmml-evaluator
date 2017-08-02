@@ -78,46 +78,46 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue add(Number factor, int exponent, double coefficient){
-		double product = factor.doubleValue();
+	public DoubleValue add(double coefficient, Number factor, int exponent){
+		double value = factor.doubleValue();
 
 		if(exponent != 1){
-			product = Math.pow(product, exponent);
+			value = Math.pow(value, exponent);
 		}
 
-		product *= coefficient;
+		value *= coefficient;
 
-		this.value += product;
+		this.value += value;
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue add(Value<?> factor, int exponent, double coefficient){
-		double product = factor.doubleValue();
+	public DoubleValue add(double coefficient, Value<?> factor, int exponent){
+		double value = factor.doubleValue();
 
 		if(exponent != 1){
-			product = Math.pow(product, exponent);
+			value = Math.pow(value, exponent);
 		}
 
-		product *= coefficient;
+		value *= coefficient;
 
-		this.value += product;
+		this.value += value;
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue add(List<? extends Number> factors, double coefficient){
-		double product = coefficient;
+	public DoubleValue add(double coefficient, List<? extends Number> factors){
+		double value = coefficient;
 
 		for(int i = 0; i < factors.size(); i++){
 			Number factor = factors.get(i);
 
-			product *= factor.doubleValue();
+			value *= factor.doubleValue();
 		}
 
-		this.value += product;
+		this.value += value;
 
 		return this;
 	}

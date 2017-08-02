@@ -69,7 +69,7 @@ public class ValueAggregator<V extends Number> {
 		this.weights.add(weight);
 
 		if(this.weightedValues != null){
-			this.weightedValues.add(value, weight);
+			this.weightedValues.add(weight, value);
 		}
 	}
 

@@ -89,7 +89,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 		for(String category : categories){
 			Double probability = hasProbability.getProbability(category);
 
-			add(category, probability, weight);
+			add(category, weight, probability);
 		}
 
 		this.size++;

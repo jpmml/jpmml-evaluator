@@ -76,46 +76,46 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue add(Number factor, int exponent, double coefficient){
-		float product = factor.floatValue();
+	public FloatValue add(double coefficient, Number factor, int exponent){
+		float value = factor.floatValue();
 
 		if(exponent != 1){
-			product = FloatValue.pow(product, exponent);
+			value = FloatValue.pow(value, exponent);
 		}
 
-		product *= (float)coefficient;
+		value *= (float)coefficient;
 
-		this.value += product;
+		this.value += value;
 
 		return this;
 	}
 
 	@Override
-	public FloatValue add(Value<?> factor, int exponent, double coefficient){
-		float product = factor.floatValue();
+	public FloatValue add(double coefficient, Value<?> factor, int exponent){
+		float value = factor.floatValue();
 
 		if(exponent != 1){
-			product = FloatValue.pow(product, exponent);
+			value = FloatValue.pow(value, exponent);
 		}
 
-		product *= (float)coefficient;
+		value *= (float)coefficient;
 
-		this.value += product;
+		this.value += value;
 
 		return this;
 	}
 
 	@Override
-	public FloatValue add(List<? extends Number> factors, double coefficient){
-		float product = (float)coefficient;
+	public FloatValue add(double coefficient, List<? extends Number> factors){
+		float value = (float)coefficient;
 
 		for(int i = 0; i < factors.size(); i++){
 			Number factor = factors.get(i);
 
-			product *= factor.floatValue();
+			value *= factor.floatValue();
 		}
 
-		this.value += product;
+		this.value += value;
 
 		return this;
 	}

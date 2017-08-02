@@ -446,7 +446,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 						throw new InvalidFeatureException(connection);
 					}
 
-					output.add(input, 1, connection.getWeight());
+					output.add(connection.getWeight(), input, 1);
 				}
 
 				Double bias = neuron.getBias();

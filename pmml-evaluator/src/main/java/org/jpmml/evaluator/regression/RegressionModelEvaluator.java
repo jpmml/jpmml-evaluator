@@ -292,7 +292,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 					return null;
 				}
 
-				result.add(value.asNumber(), numericPredictor.getExponent(), numericPredictor.getCoefficient());
+				result.add(numericPredictor.getCoefficient(), value.asNumber(), numericPredictor.getExponent());
 			}
 		} // End if
 
@@ -351,7 +351,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 					factors.add(value.asNumber());
 				}
 
-				result.add(factors, predictorTerm.getCoefficient());
+				result.add(predictorTerm.getCoefficient(), factors);
 			}
 		}
 

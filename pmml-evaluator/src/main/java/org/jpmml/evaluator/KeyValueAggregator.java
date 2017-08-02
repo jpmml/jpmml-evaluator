@@ -49,10 +49,10 @@ public class KeyValueAggregator<K, V extends Number> {
 		values.add(value);
 	}
 
-	public void add(K key, Number factor, double coefficient){
+	public void add(K key, double coefficient, Number factor){
 		Vector<V> values = ensureVector(key);
 
-		values.add(factor, coefficient);
+		values.add(coefficient, factor);
 	}
 
 	public void clear(){

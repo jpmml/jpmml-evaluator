@@ -39,8 +39,8 @@ public class FloatVector extends Vector<Float> {
 	}
 
 	@Override
-	public Vector<Float> add(Number factor, double coefficient){
-		return add(factor.floatValue() * (float)coefficient);
+	public Vector<Float> add(double coefficient, Number factor){
+		return add((float)coefficient * factor.floatValue());
 	}
 
 	@Override

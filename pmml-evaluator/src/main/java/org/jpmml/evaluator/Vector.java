@@ -30,8 +30,13 @@ public class Vector<V extends Number> {
 	abstract
 	public Vector<V> add(Number value);
 
+	/**
+	 * <p>
+	 * Adds <code>coefficient * factor</code>.
+	 * </p>
+	 */
 	abstract
-	public Vector<V> add(Number factor, double coefficient);
+	public Vector<V> add(double coefficient, Number factor);
 
 	abstract
 	public Value<V> get(int index);

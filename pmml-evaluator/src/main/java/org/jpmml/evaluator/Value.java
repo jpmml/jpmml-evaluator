@@ -32,14 +32,24 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	abstract
 	public Value<V> add(Value<?> value);
 
+	/**
+	 * <p>
+	 * Adds <code>coefficient * (factor ^ exponent)</code>.
+	 * </p>
+	 */
 	abstract
-	public Value<V> add(Number factor, int exponent, double coefficient);
+	public Value<V> add(double coefficient, Number factor, int exponent);
 
 	abstract
-	public Value<V> add(Value<?> factor, int exponent, double coefficient);
+	public Value<V> add(double coefficient, Value<?> factor, int exponent);
 
+	/**
+	 * <p>
+	 * Adds <code>coefficient * product(factors)</code>.
+	 * </p>
+	 */
 	abstract
-	public Value<V> add(List<? extends Number> factors, double coefficient);
+	public Value<V> add(double coefficient, List<? extends Number> factors);
 
 	abstract
 	public Value<V> subtract(double value);
@@ -53,6 +63,11 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	abstract
 	public Value<V> multiply(Value<?> value);
 
+	/**
+	 * <p>
+	 * Multiplies by <code>factor ^ exponent</code>.
+	 * </p>
+	 */
 	abstract
 	public Value<V> multiply(Number factor, double exponent);
 
