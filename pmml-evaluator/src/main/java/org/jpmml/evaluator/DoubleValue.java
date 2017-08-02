@@ -191,44 +191,29 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue restrict(double lowValue, double highValue){
-		this.value = Math.max(this.value, lowValue);
-		this.value = Math.min(this.value, highValue);
+	public DoubleValue residual(Value<?> value){
+		this.value = 1d - value.doubleValue();
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue round(){
-		this.value = Math.round(this.value);
+	public DoubleValue square(){
+		this.value *= this.value;
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue ceiling(){
-		this.value = Math.ceil(this.value);
+	public DoubleValue reciprocal(){
+		this.value = 1d / this.value;
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue floor(){
-		this.value = Math.floor(this.value);
-
-		return this;
-	}
-
-	@Override
-	public DoubleValue inverseLogit(){
-		this.value = 1d / (1d + Math.exp(-this.value));
-
-		return this;
-	}
-
-	@Override
-	public DoubleValue inverseProbit(){
-		this.value = NormalDistributionUtil.cumulativeProbability(this.value);
+	public DoubleValue elliott(){
+		this.value /= (1d + Math.abs(this.value));
 
 		return this;
 	}
@@ -236,6 +221,20 @@ public class DoubleValue extends Value<Double> {
 	@Override
 	public DoubleValue exp(){
 		this.value = Math.exp(this.value);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue gauss(){
+		this.value = Math.exp(-(this.value * this.value));
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue inverseLogit(){
+		this.value = 1d / (1d + Math.exp(-this.value));
 
 		return this;
 	}
@@ -250,13 +249,6 @@ public class DoubleValue extends Value<Double> {
 	@Override
 	public DoubleValue inverseLoglog(){
 		this.value = Math.exp(-Math.exp(-this.value));
-
-		return this;
-	}
-
-	@Override
-	public DoubleValue inverseCauchit(){
-		this.value = 0.5d + (1d / DoubleValue.PI) * Math.atan(this.value);
 
 		return this;
 	}
@@ -304,43 +296,15 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue residual(Value<?> value){
-		this.value = 1d - value.doubleValue();
+	public DoubleValue inverseCauchit(){
+		this.value = 0.5d + (1d / DoubleValue.PI) * Math.atan(this.value);
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue threshold(double value){
-		this.value = (this.value > value ? 1d : 0d);
-
-		return this;
-	}
-
-	@Override
-	public DoubleValue tanh(){
-		this.value = Math.tanh(this.value);
-
-		return this;
-	}
-
-	@Override
-	public DoubleValue reciprocal(){
-		this.value = 1d / this.value;
-
-		return this;
-	}
-
-	@Override
-	public DoubleValue square(){
-		this.value *= this.value;
-
-		return this;
-	}
-
-	@Override
-	public DoubleValue gauss(){
-		this.value = Math.exp(-(this.value * this.value));
+	public DoubleValue inverseProbit(){
+		this.value = NormalDistributionUtil.cumulativeProbability(this.value);
 
 		return this;
 	}
@@ -360,13 +324,6 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue elliott(){
-		this.value /= (1d + Math.abs(this.value));
-
-		return this;
-	}
-
-	@Override
 	public DoubleValue atan(){
 		this.value = Math.atan(this.value);
 
@@ -374,8 +331,51 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
+	public DoubleValue tanh(){
+		this.value = Math.tanh(this.value);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue threshold(double value){
+		this.value = (this.value > value ? 1d : 0d);
+
+		return this;
+	}
+
+	@Override
 	public DoubleValue relu(){
 		this.value = Math.max(this.value, 0);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue restrict(double lowValue, double highValue){
+		this.value = Math.max(this.value, lowValue);
+		this.value = Math.min(this.value, highValue);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue round(){
+		this.value = Math.round(this.value);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue ceiling(){
+		this.value = Math.ceil(this.value);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue floor(){
+		this.value = Math.floor(this.value);
 
 		return this;
 	}

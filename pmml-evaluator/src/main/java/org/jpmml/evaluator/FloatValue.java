@@ -189,30 +189,43 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue restrict(double lowValue, double highValue){
-		this.value = Math.max(this.value, (float)lowValue);
-		this.value = Math.min(this.value, (float)highValue);
+	public FloatValue residual(Value<?> value){
+		this.value = 1f - value.floatValue();
 
 		return this;
 	}
 
 	@Override
-	public FloatValue round(){
-		this.value = Math.round(this.value);
+	public FloatValue square(){
+		this.value *= this.value;
 
 		return this;
 	}
 
 	@Override
-	public FloatValue ceiling(){
-		this.value = (float)Math.ceil(this.value);
+	public FloatValue reciprocal(){
+		this.value = 1f / this.value;
 
 		return this;
 	}
 
 	@Override
-	public FloatValue floor(){
-		this.value = (float)Math.floor(this.value);
+	public FloatValue elliott(){
+		this.value /= (1f + Math.abs(this.value));
+
+		return this;
+	}
+
+	@Override
+	public FloatValue exp(){
+		this.value = FloatValue.exp(this.value);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue gauss(){
+		this.value = FloatValue.exp(-(this.value * this.value));
 
 		return this;
 	}
@@ -220,18 +233,6 @@ public class FloatValue extends Value<Float> {
 	@Override
 	public FloatValue inverseLogit(){
 		this.value = 1f / (1f + FloatValue.exp(-this.value));
-
-		return this;
-	}
-
-	@Override
-	public FloatValue inverseProbit(){
-		throw new EvaluationException();
-	}
-
-	@Override
-	public FloatValue exp(){
-		this.value = FloatValue.exp(this.value);
 
 		return this;
 	}
@@ -246,13 +247,6 @@ public class FloatValue extends Value<Float> {
 	@Override
 	public FloatValue inverseLoglog(){
 		this.value = FloatValue.exp(-FloatValue.exp(-this.value));
-
-		return this;
-	}
-
-	@Override
-	public FloatValue inverseCauchit(){
-		this.value = 0.5f + (1f / (float)FloatValue.PI) * (float)Math.atan(this.value);
 
 		return this;
 	}
@@ -300,45 +294,15 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue residual(Value<?> value){
-		this.value = 1f - value.floatValue();
+	public FloatValue inverseCauchit(){
+		this.value = 0.5f + (1f / (float)FloatValue.PI) * (float)Math.atan(this.value);
 
 		return this;
 	}
 
 	@Override
-	public FloatValue threshold(double value){
-		this.value = (this.value > (float)value ? 1f : 0f);
-
-		return this;
-	}
-
-	@Override
-	public FloatValue tanh(){
-		this.value = (float)Math.tanh(this.value);
-
-		return this;
-	}
-
-	@Override
-	public FloatValue reciprocal(){
-		this.value = 1f / this.value;
-
-		return this;
-	}
-
-	@Override
-	public FloatValue square(){
-		this.value *= this.value;
-
-		return this;
-	}
-
-	@Override
-	public FloatValue gauss(){
-		this.value = FloatValue.exp(-(this.value * this.value));
-
-		return this;
+	public FloatValue inverseProbit(){
+		throw new EvaluationException();
 	}
 
 	@Override
@@ -356,13 +320,6 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue elliott(){
-		this.value /= (1f + Math.abs(this.value));
-
-		return this;
-	}
-
-	@Override
 	public FloatValue atan(){
 		this.value = (float)Math.atan(this.value);
 
@@ -370,8 +327,51 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
+	public FloatValue tanh(){
+		this.value = (float)Math.tanh(this.value);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue threshold(double value){
+		this.value = (this.value > (float)value ? 1f : 0f);
+
+		return this;
+	}
+
+	@Override
 	public FloatValue relu(){
 		this.value = Math.max(this.value, 0);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue restrict(double lowValue, double highValue){
+		this.value = Math.max(this.value, (float)lowValue);
+		this.value = Math.min(this.value, (float)highValue);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue round(){
+		this.value = Math.round(this.value);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue ceiling(){
+		this.value = (float)Math.ceil(this.value);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue floor(){
+		this.value = (float)Math.floor(this.value);
 
 		return this;
 	}

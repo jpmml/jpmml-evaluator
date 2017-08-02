@@ -66,34 +66,31 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> divide(Value<?> value);
 
 	abstract
-	public Value<V> restrict(double lowValue, double highValue);
+	public Value<V> residual(Value<?> value);
 
 	abstract
-	public Value<V> round();
+	public Value<V> square();
 
 	abstract
-	public Value<V> ceiling();
+	public Value<V> reciprocal();
 
 	abstract
-	public Value<V> floor();
-
-	abstract
-	public Value<V> inverseLogit();
-
-	abstract
-	public Value<V> inverseProbit();
+	public Value<V> elliott();
 
 	abstract
 	public Value<V> exp();
+
+	abstract
+	public Value<V> gauss();
+
+	abstract
+	public Value<V> inverseLogit();
 
 	abstract
 	public Value<V> inverseCloglog();
 
 	abstract
 	public Value<V> inverseLoglog();
-
-	abstract
-	public Value<V> inverseCauchit();
 
 	abstract
 	public Value<V> inverseLogc();
@@ -108,22 +105,10 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> inversePower(double value);
 
 	abstract
-	public Value<V> residual(Value<?> value);
+	public Value<V> inverseCauchit();
 
 	abstract
-	public Value<V> threshold(double value);
-
-	abstract
-	public Value<V> tanh();
-
-	abstract
-	public Value<V> reciprocal();
-
-	abstract
-	public Value<V> square();
-
-	abstract
-	public Value<V> gauss();
+	public Value<V> inverseProbit();
 
 	abstract
 	public Value<V> sin();
@@ -132,13 +117,28 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> cos();
 
 	abstract
-	public Value<V> elliott();
-
-	abstract
 	public Value<V> atan();
 
 	abstract
+	public Value<V> tanh();
+
+	abstract
+	public Value<V> threshold(double value);
+
+	abstract
 	public Value<V> relu();
+
+	abstract
+	public Value<V> restrict(double lowValue, double highValue);
+
+	abstract
+	public Value<V> round();
+
+	abstract
+	public Value<V> ceiling();
+
+	abstract
+	public Value<V> floor();
 
 	abstract
 	public Value<V> denormalize(double leftOrig, double leftNorm, double rightOrig, double rightNorm);
