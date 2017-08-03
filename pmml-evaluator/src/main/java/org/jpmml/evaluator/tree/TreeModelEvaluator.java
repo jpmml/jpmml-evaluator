@@ -346,7 +346,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 			hasProbabilities |= (probability != null);
 
-			// "If the predicted probability is defined for any class label, it must be defined for all"
+			// "If the predicted probability is defined for any class label, then it must be defined for all"
 			if(hasProbabilities && probability == null){
 				throw new InvalidFeatureException(scoreDistribution);
 			} // End if

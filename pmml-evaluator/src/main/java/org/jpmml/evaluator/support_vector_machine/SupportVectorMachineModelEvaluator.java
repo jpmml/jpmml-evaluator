@@ -255,7 +255,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 						String label;
 
-						// "If the numeric prediction is smaller than the threshold, it corresponds to the targetCategory attribute"
+						// "If the numeric prediction is smaller than the threshold, then it corresponds to the targetCategory attribute"
 						if((value).compareTo(threshold) < 0){
 							label = targetCategory;
 						} else

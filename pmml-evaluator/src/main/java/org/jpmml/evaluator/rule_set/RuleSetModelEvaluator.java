@@ -134,7 +134,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 		TargetField targetField = getTargetField();
 
-		// "If more than one method is included, the first method is used as the default method for scoring"
+		// "If more than one method is included, then the first method is used as the default method for scoring"
 		RuleSelectionMethod ruleSelectionMethod = ruleSelectionMethods.get(0);
 
 		// Both the ordering of keys and values is significant

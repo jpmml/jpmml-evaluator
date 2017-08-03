@@ -109,7 +109,7 @@ public class TextUtil {
 					throw pe;
 				}
 
-				// "If the recursive flag is set to true, the normalization table is reapplied until none of its rows causes a change to the input text."
+				// "If the recursive flag is set to true, then the normalization table is reapplied until none of its rows causes a change to the input text."
 				if(textIndexNormalization.isRecursive()){
 
 					if(!(normalizedString).equals(string)){
@@ -146,7 +146,7 @@ public class TextUtil {
 
 			String regexValue = table.get(rowKey, regexColumn);
 
-			// "If there is a regexField column and its value for that row is true, the string in the inField column should be treated as a PCRE regular expression"
+			// "If there is a regexField column and its value for that row is true, then the string in the inField column should be treated as a PCRE regular expression"
 			boolean regex = ("true").equalsIgnoreCase(regexValue);
 			if(regex){
 				Pattern pattern = RegExUtil.compile(inValue, regexFlags, row);

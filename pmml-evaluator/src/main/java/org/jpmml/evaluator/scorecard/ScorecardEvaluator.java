@@ -213,7 +213,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 				break;
 			}
 
-			// "If not even a single Attribute evaluates to "true" for a given Characteristic, the scorecard as a whole returns an invalid value"
+			// "If not even a single Attribute evaluates to "true" for a given Characteristic, then the scorecard as a whole returns an invalid value"
 			if(partialScore == null){
 				throw new InvalidResultException(characteristic);
 			}
