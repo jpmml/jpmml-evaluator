@@ -82,9 +82,13 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			throw new InvalidResultException(scorecard);
 		}
 
+		ValueFactory<?> valueFactory;
+
 		MathContext mathContext = scorecard.getMathContext();
 		switch(mathContext){
+			case FLOAT:
 			case DOUBLE:
+				valueFactory = ValueFactory.getInstance(mathContext);
 				break;
 			default:
 				throw new UnsupportedFeatureException(scorecard, mathContext);
@@ -95,7 +99,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		MiningFunction miningFunction = scorecard.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
-				predictions = evaluateRegression(context);
+				predictions = evaluateRegression(valueFactory, context);
 				break;
 			default:
 				throw new UnsupportedFeatureException(scorecard, miningFunction);
@@ -104,38 +108,43 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
+	private <V extends Number> Map<FieldName, ?> evaluateRegression(final ValueFactory<V> valueFactory, EvaluationContext context){
 		Scorecard scorecard = getModel();
-
-		TargetField targetField = getTargetField();
-
-		double score = scorecard.getInitialScore();
 
 		boolean useReasonCodes = scorecard.isUseReasonCodes();
 
-		VoteAggregator<String, Double> reasonCodePoints = new VoteAggregator<String, Double>(){
+		TargetField targetField = getTargetField();
 
-			@Override
-			public ValueFactory<Double> getValueFactory(){
-				return ValueFactory.DOUBLE;
-			}
-		};
+		Value<V> score = valueFactory.newValue(scorecard.getInitialScore());
+
+		VoteAggregator<String, V> reasonCodePoints = null;
+
+		if(useReasonCodes){
+			reasonCodePoints = new VoteAggregator<String, V>(){
+
+				@Override
+				public ValueFactory<V> getValueFactory(){
+					return valueFactory;
+				}
+			};
+		}
 
 		Characteristics characteristics = scorecard.getCharacteristics();
 		for(Characteristic characteristic : characteristics){
-			Double baselineScore = characteristic.getBaselineScore();
-			if(baselineScore == null){
-				baselineScore = scorecard.getBaselineScore();
-			} // End if
+			Double baselineScore = null;
 
 			if(useReasonCodes){
+				baselineScore = characteristic.getBaselineScore();
+				if(baselineScore == null){
+					baselineScore = scorecard.getBaselineScore();
+				} // End if
 
 				if(baselineScore == null){
 					throw new InvalidFeatureException(characteristic);
 				}
 			}
 
-			boolean hasTrueAttribute = false;
+			Double partialScore = null;
 
 			List<Attribute> attributes = characteristic.getAttributes();
 			for(Attribute attribute : attributes){
@@ -149,8 +158,6 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 					continue;
 				}
 
-				Double partialScore = null;
-
 				ComplexPartialScore complexPartialScore = attribute.getComplexPartialScore();
 				if(complexPartialScore != null){
 					Expression expression = complexPartialScore.getExpression();
@@ -160,7 +167,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 					FieldValue computedValue = ExpressionUtil.evaluate(expression, context);
 					if(computedValue == null){
-						return TargetUtil.evaluateRegressionDefault(ValueFactory.DOUBLE, targetField);
+						return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 					}
 
 					partialScore = computedValue.asDouble();
@@ -168,20 +175,19 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 				{
 					partialScore = attribute.getPartialScore();
-				} // End if
 
-				if(partialScore == null){
-					throw new InvalidFeatureException(attribute);
+					if(partialScore == null){
+						throw new InvalidFeatureException(attribute);
+					}
 				}
 
-				score += partialScore;
-
-				String reasonCode = attribute.getReasonCode();
-				if(reasonCode == null){
-					reasonCode = characteristic.getReasonCode();
-				} // End if
+				score.add(partialScore);
 
 				if(useReasonCodes){
+					String reasonCode = attribute.getReasonCode();
+					if(reasonCode == null){
+						reasonCode = characteristic.getReasonCode();
+					} // End if
 
 					if(reasonCode == null){
 						throw new InvalidFeatureException(attribute);
@@ -204,13 +210,11 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 					reasonCodePoints.add(reasonCode, difference);
 				}
 
-				hasTrueAttribute = true;
-
 				break;
 			}
 
 			// "If not even a single Attribute evaluates to "true" for a given Characteristic, the scorecard as a whole returns an invalid value"
-			if(!hasTrueAttribute){
+			if(partialScore == null){
 				throw new InvalidResultException(characteristic);
 			}
 		}
@@ -225,13 +229,13 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 	}
 
 	static
-	private ReasonCodeRanking createReasonCodeList(Map<String, Value<Double>> reasonCodes, Object value){
+	private <V extends Number> ReasonCodeRanking createReasonCodeList(Map<String, Value<V>> reasonCodes, Object value){
 		Map<String, Double> meaningfulReasonCodes = new LinkedHashMap<>();
 
-		Collection<Map.Entry<String, Value<Double>>> entrySet = reasonCodes.entrySet();
-		for(Map.Entry<String, Value<Double>> entry : entrySet){
+		Collection<Map.Entry<String, Value<V>>> entrySet = reasonCodes.entrySet();
+		for(Map.Entry<String, Value<V>> entry : entrySet){
 			String reasonCode = entry.getKey();
-			Value<Double> points = entry.getValue();
+			Value<V> points = entry.getValue();
 
 			if(points.doubleValue() >= 0d){
 				meaningfulReasonCodes.put(reasonCode, points.doubleValue());
