@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import com.google.common.collect.Ordering;
+
 public class ValueUtil {
 
 	private ValueUtil(){
@@ -32,10 +34,12 @@ public class ValueUtil {
 	public <V extends Number> void normalize(Iterable<Value<V>> values, boolean exp){
 		Value<V> sum = null;
 
+		Value<V> max = Ordering.natural().max(values).copy();
+
 		for(Value<V> value : values){
 
 			if(exp){
-				value = value.exp();
+				value = value.subtract(max).exp();
 			} // End if
 
 			if(sum == null){
