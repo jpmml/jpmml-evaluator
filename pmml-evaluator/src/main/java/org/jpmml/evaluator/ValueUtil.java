@@ -24,19 +24,10 @@ public class ValueUtil {
 	}
 
 	static
-	public <V extends Number> void normalize(Iterable<Value<V>> values){
-		normalize(values, false);
-	}
-
-	static
-	public <V extends Number> void normalize(Iterable<Value<V>> values, boolean exp){
+	public <V extends Number> void normalizeSimpleMax(Iterable<Value<V>> values){
 		Value<V> sum = null;
 
 		for(Value<V> value : values){
-
-			if(exp){
-				value = value.exp();
-			} // End if
 
 			if(sum == null){
 				sum = value.copy();
@@ -47,7 +38,49 @@ public class ValueUtil {
 			}
 		}
 
-		if(sum != null && sum.doubleValue() == 1d){
+		if((sum == null) || (sum != null && sum.doubleValue() == 1d)){
+			return;
+		}
+
+		for(Value<V> value : values){
+			value.divide(sum);
+		}
+	}
+
+	static
+	public <V extends Number> void normalizeSoftMax(Iterable<Value<V>> values){
+		Value<V> max = null;
+
+		for(Value<V> value : values){
+
+			if(max == null || (max).compareTo(value) < 0){
+				max = value;
+			}
+		}
+
+		if(max == null){
+			return;
+		} else
+
+		{
+			max = max.copy();
+		}
+
+		Value<V> sum = null;
+
+		for(Value<V> value : values){
+			value = (value.subtract(max)).exp();
+
+			if(sum == null){
+				sum = value.copy();
+			} else
+
+			{
+				sum.add(value);
+			}
+		}
+
+		if((sum == null) || (sum != null && sum.doubleValue() == 1d)){
 			return;
 		}
 

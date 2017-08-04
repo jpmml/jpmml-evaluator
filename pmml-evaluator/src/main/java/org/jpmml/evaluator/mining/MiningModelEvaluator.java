@@ -285,7 +285,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, segmentResults, multipleModelMethod);
 
 					// Convert from votes to probabilities
-					ValueUtil.normalize(values);
+					ValueUtil.normalizeSimpleMax(values);
 
 					result = new ProbabilityDistribution(values.asDoubleMap());
 				}

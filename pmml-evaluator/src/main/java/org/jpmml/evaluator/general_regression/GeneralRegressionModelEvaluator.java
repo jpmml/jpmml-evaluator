@@ -465,7 +465,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			case GENERALIZED_LINEAR:
 				break;
 			case MULTINOMIAL_LOGISTIC:
-				ValueUtil.normalize(values);
+				ValueUtil.normalizeSimpleMax(values);
 				break;
 			case ORDINAL_MULTINOMIAL:
 				break;

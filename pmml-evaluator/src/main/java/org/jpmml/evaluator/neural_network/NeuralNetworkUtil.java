@@ -75,14 +75,10 @@ public class NeuralNetworkUtil {
 			case NONE:
 				break;
 			case SIMPLEMAX:
-				{
-					ValueUtil.normalize(values);
-				}
+				ValueUtil.normalizeSimpleMax(values);
 				break;
 			case SOFTMAX:
-				{
-					ValueUtil.normalize(values, true);
-				}
+				ValueUtil.normalizeSoftMax(values);
 				break;
 			default:
 				throw new EvaluationException();

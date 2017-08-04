@@ -93,12 +93,12 @@ public class RegressionModelUtil {
 				// Falls through
 			case SIMPLEMAX:
 				{
-					ValueUtil.normalize(values);
+					ValueUtil.normalizeSimpleMax(values);
 				}
 				break;
 			case SOFTMAX:
 				{
-					ValueUtil.normalize(values, true);
+					ValueUtil.normalizeSoftMax(values);
 				}
 				break;
 			default:
