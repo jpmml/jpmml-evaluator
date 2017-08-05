@@ -28,8 +28,6 @@
 package org.jpmml.evaluator.naive_bayes;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,8 +76,10 @@ import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.evaluator.ValueUtil;
 import org.jpmml.evaluator.VerificationUtil;
-
 
 public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
@@ -133,9 +133,12 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			throw new InvalidResultException(naiveBayesModel);
 		}
 
+		ValueFactory<Double> valueFactory;
+
 		MathContext mathContext = naiveBayesModel.getMathContext();
 		switch(mathContext){
 			case DOUBLE:
+				valueFactory = ValueFactory.DOUBLE;
 				break;
 			default:
 				throw new UnsupportedFeatureException(naiveBayesModel, mathContext);
@@ -146,7 +149,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		MiningFunction miningFunction = naiveBayesModel.getMiningFunction();
 		switch(miningFunction){
 			case CLASSIFICATION:
-				predictions = evaluateClassification(context);
+				predictions = evaluateClassification(valueFactory, context);
 				break;
 			default:
 				throw new UnsupportedFeatureException(naiveBayesModel, miningFunction);
@@ -155,17 +158,30 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends Classification> evaluateClassification(EvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(final ValueFactory<Double> valueFactory, EvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 
 		TargetField targetField = getTargetField();
 
 		double threshold = naiveBayesModel.getThreshold();
 
-		// Probability calculations use logarithmic scale for greater numerical stability
-		Map<String, Double> probabilities = new LinkedHashMap<>();
-
 		Map<FieldName, Map<String, Double>> fieldCountSums = getFieldCountSums();
+
+		// Probability calculations use logarithmic scale for greater numerical stability
+		ProbabilityMap<String, Double> probabilities = new ProbabilityMap<String, Double>(){
+
+			@Override
+			public ValueFactory<Double> getValueFactory(){
+				return valueFactory;
+			}
+
+			@Override
+			public void multiply(String key, double probability){
+				Value<Double> value = ensureValue(key);
+
+				value.add(Math.log(probability));
+			}
+		};
 
 		List<BayesInput> bayesInputs = getBayesInputs();
 		for(BayesInput bayesInput : bayesInputs){
@@ -180,7 +196,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			TargetValueStats targetValueStats = getTargetValueStats(bayesInput);
 			if(targetValueStats != null){
-				calculateContinuousProbabilities(value, targetValueStats, threshold, probabilities);
+				calculateContinuousProbabilities(probabilities, targetValueStats, threshold, value);
 
 				continue;
 			}
@@ -210,25 +226,18 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			TargetValueCounts targetValueCounts = getTargetValueCounts(bayesInput, value);
 			if(targetValueCounts != null){
-				calculateDiscreteProbabilities(countSums, targetValueCounts, threshold, probabilities);
+				calculateDiscreteProbabilities(probabilities, targetValueCounts, threshold, countSums);
 			}
 		}
 
 		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
 
-		calculatePriorProbabilities(bayesOutput.getTargetValueCounts(), probabilities);
-
-		final Double max = Collections.max(probabilities.values());
+		calculatePriorProbabilities(probabilities, bayesOutput.getTargetValueCounts());
 
 		// Convert from logarithmic scale to normal scale
-		Collection<Map.Entry<String, Double>> entries = probabilities.entrySet();
-		for(Map.Entry<String, Double> entry : entries){
-			entry.setValue(Math.exp(entry.getValue() - max));
-		}
+		ValueUtil.normalizeSoftMax(probabilities);
 
-		ProbabilityDistribution result = new ProbabilityDistribution(probabilities);
-
-		result.normalizeValues();
+		ProbabilityDistribution result = new ProbabilityDistribution(probabilities.asDoubleMap());
 
 		FieldName targetFieldName = bayesOutput.getFieldName();
 		if(targetFieldName == null || !Objects.equals(targetField.getName(), targetFieldName)){
@@ -238,11 +247,14 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
 
-	private void calculateContinuousProbabilities(FieldValue value, TargetValueStats targetValueStats, double threshold, Map<String, Double> probabilities){
+	private void calculateContinuousProbabilities(ProbabilityMap<String, Double> probabilities, TargetValueStats targetValueStats, double threshold, FieldValue value){
 		Number x = value.asNumber();
 
 		for(TargetValueStat targetValueStat : targetValueStats){
-			String targetValue = targetValueStat.getValue();
+			String targetCategory = targetValueStat.getValue();
+			if(targetCategory == null){
+				throw new InvalidFeatureException(targetValueStat);
+			}
 
 			ContinuousDistribution distribution = targetValueStat.getContinuousDistribution();
 
@@ -260,35 +272,47 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			// The calculated probability cannot fall below the default probability
 			probability = Math.max(probability, threshold);
 
-			updateSum(targetValue, Math.log(probability), probabilities);
+			probabilities.multiply(targetCategory, probability);
 		}
 	}
 
-	private void calculateDiscreteProbabilities(Map<String, Double> countSums, TargetValueCounts targetValueCounts, double threshold, Map<String, Double> probabilities){
+	private void calculateDiscreteProbabilities(ProbabilityMap<String, Double> probabilities, TargetValueCounts targetValueCounts, double threshold, Map<String, Double> countSums){
 
 		for(TargetValueCount targetValueCount : targetValueCounts){
-			String targetValue = targetValueCount.getValue();
+			String targetCategory = targetValueCount.getValue();
+			if(targetCategory == null){
+				throw new InvalidFeatureException(targetCategory);
+			}
 
-			Double countSum = countSums.get(targetValue);
-
-			double probability = targetValueCount.getCount() / countSum;
+			double probability;
 
 			// The calculated probability can fall below the default probability
 			// However, a count of zero represents a special case, which needs adjustment
 			if(VerificationUtil.isZero(targetValueCount.getCount(), Precision.EPSILON)){
 				probability = threshold;
+			} else
+
+			{
+				Double countSum = countSums.get(targetCategory);
+
+				probability = targetValueCount.getCount() / countSum;
 			}
 
-			updateSum(targetValue, Math.log(probability), probabilities);
+			probabilities.multiply(targetCategory, probability);
 		}
 	}
 
-	private void calculatePriorProbabilities(TargetValueCounts targetValueCounts, Map<String, Double> probabilities){
+	private void calculatePriorProbabilities(ProbabilityMap<String, Double> probabilities, TargetValueCounts targetValueCounts){
 
 		for(TargetValueCount targetValueCount : targetValueCounts){
-			String targetValue = targetValueCount.getValue();
+			String targetCategory = targetValueCount.getValue();
+			if(targetCategory == null){
+				throw new InvalidFeatureException(targetValueCount);
+			}
 
-			updateSum(targetValue, Math.log(targetValueCount.getCount()), probabilities);
+			double probability = targetValueCount.getCount();
+
+			probabilities.multiply(targetCategory, probability);
 		}
 	}
 
@@ -325,7 +349,13 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
 
 				for(TargetValueCount targetValueCount : targetValueCounts){
-					updateSum(targetValueCount.getValue(), targetValueCount.getCount(), counts);
+					Double count = counts.get(targetValueCount.getValue());
+
+					if(count == null){
+						count = 0d;
+					}
+
+					counts.put(targetValueCount.getValue(), count + targetValueCount.getCount());
 				}
 			}
 
@@ -373,16 +403,6 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 
 		return result;
-	}
-
-	static
-	private void updateSum(String key, Double value, Map<String, Double> counts){
-		Double count = counts.get(key);
-		if(count == null){
-			count = 0d;
-		}
-
-		counts.put(key, count + value);
 	}
 
 	static
