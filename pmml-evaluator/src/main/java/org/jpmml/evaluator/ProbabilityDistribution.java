@@ -40,9 +40,4 @@ public class ProbabilityDistribution extends Classification implements HasProbab
 	public Double getProbability(String value){
 		return get(value);
 	}
-
-	@Override
-	public void normalizeValues(){
-		super.normalizeValues();
-	}
 }

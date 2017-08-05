@@ -137,16 +137,12 @@ public class Classification implements Computable {
 		return entryValues(getWinnerRanking());
 	}
 
-	protected Double sumValues(){
-		return sum(this.map);
-	}
-
-	protected void normalizeValues(){
-		normalize(this.map);
-	}
-
 	protected Set<String> keySet(){
 		return this.map.keySet();
+	}
+
+	protected Collection<Double> values(){
+		return this.map.values();
 	}
 
 	protected Set<Map.Entry<String, Double>> entrySet(){
@@ -216,47 +212,6 @@ public class Classification implements Computable {
 		};
 
 		return Lists.transform(entries, function);
-	}
-
-	static
-	public <K> Double sum(Map<K, Double> map){
-		double sum = 0d;
-
-		Collection<Double> values = map.values();
-		for(Double value : values){
-			sum += value;
-		}
-
-		return sum;
-	}
-
-	static
-	public <K> void normalize(Map<K, Double> map){
-		normalize(map, false);
-	}
-
-	static
-	public <K> void normalizeSoftMax(Map<K, Double> map){
-		normalize(map, true);
-	}
-
-	static
-	private <K> void normalize(Map<K, Double> map, boolean transform){
-		Collection<Map.Entry<K, Double>> entries = map.entrySet();
-
-		double sum = 0d;
-
-		for(Map.Entry<K, Double> entry : entries){
-			Double value = entry.getValue();
-
-			sum += (transform ? Math.exp(value) : value);
-		}
-
-		for(Map.Entry<K, Double> entry : entries){
-			Double value = entry.getValue();
-
-			entry.setValue((transform ? Math.exp(value) : value) / sum);
-		}
 	}
 
 	private static final Ordering<Double> BIGGER_IS_BETTER = Ordering.<Double>natural();

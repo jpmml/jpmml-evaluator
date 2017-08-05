@@ -18,10 +18,16 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.dmg.pmml.DataType;
+
 public class VoteDistribution extends Classification implements HasProbability {
+
+	private Double sum = null;
+
 
 	public VoteDistribution(){
 		super(Type.VOTE);
@@ -32,12 +38,31 @@ public class VoteDistribution extends Classification implements HasProbability {
 	}
 
 	@Override
+	public void computeResult(DataType dataType){
+		super.computeResult(dataType);
+
+		double sum = 0;
+
+		Collection<Double> values = values();
+		for(Double value : values){
+			sum += value;
+		}
+
+		this.sum = sum;
+	}
+
+	@Override
 	public Set<String> getCategoryValues(){
 		return keySet();
 	}
 
 	@Override
 	public Double getProbability(String value){
-		return get(value) / sumValues();
+
+		if(this.sum == null){
+			throw new EvaluationException();
+		}
+
+		return get(value) / this.sum;
 	}
 }
