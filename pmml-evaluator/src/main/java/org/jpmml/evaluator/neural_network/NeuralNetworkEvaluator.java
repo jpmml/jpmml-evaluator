@@ -373,6 +373,9 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
 		for(NeuralInput neuralInput : neuralInputs){
 			DerivedField derivedField = neuralInput.getDerivedField();
+			if(derivedField == null){
+				throw new InvalidFeatureException(neuralInput);
+			}
 
 			FieldValue value = ExpressionUtil.evaluate(derivedField, context);
 			if(value == null){

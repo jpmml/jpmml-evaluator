@@ -71,17 +71,17 @@ public class DiscretizationUtil {
 
 	static
 	public FieldValue mapValue(MapValues mapValues, Map<String, FieldValue> values){
+		String outputColumn = mapValues.getOutputColumn();
+		if(outputColumn == null){
+			throw new InvalidFeatureException(mapValues);
+		}
+
 		DataType dataType = mapValues.getDataType();
 
 		InlineTable inlineTable = InlineTableUtil.getInlineTable(mapValues);
 		if(inlineTable != null){
-			String outputColumn = mapValues.getOutputColumn();
-
-			if(outputColumn == null){
-				throw new InvalidFeatureException(mapValues);
-			}
-
 			Map<String, String> row = match(inlineTable, values);
+
 			if(row != null){
 				String result = row.get(outputColumn);
 

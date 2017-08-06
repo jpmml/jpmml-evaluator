@@ -37,7 +37,6 @@ public class FunctionUtil {
 	static
 	public FieldValue evaluate(Apply apply, List<FieldValue> values, EvaluationContext context){
 		String function = apply.getFunction();
-
 		if(function == null){
 			throw new InvalidFeatureException(apply);
 		}
@@ -63,10 +62,6 @@ public class FunctionUtil {
 	static
 	public FieldValue evaluate(DefineFunction defineFunction, List<FieldValue> values, EvaluationContext context){
 		List<ParameterField> parameterFields = defineFunction.getParameterFields();
-
-		if(parameterFields.size() < 1){
-			throw new InvalidFeatureException(defineFunction);
-		} // End if
 
 		if(parameterFields.size() != values.size()){
 			throw new EvaluationException();

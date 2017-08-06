@@ -208,18 +208,20 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 					throw new InvalidFeatureException(derivedField);
 				} // End if
 
-				if(!(expression instanceof Discretize)){
+				if(expression instanceof Discretize){
+					Discretize discretize = (Discretize)expression;
+
+					value = DiscretizationUtil.discretize(discretize, value);
+					if(value == null){
+						throw new EvaluationException();
+					}
+
+					value = FieldValueUtil.refine(derivedField, value);
+				} else
+
+				{
 					throw new UnsupportedFeatureException(expression);
 				}
-
-				Discretize discretize = (Discretize)expression;
-
-				value = DiscretizationUtil.discretize(discretize, value);
-				if(value == null){
-					throw new EvaluationException();
-				}
-
-				value = FieldValueUtil.refine(derivedField, value);
 			}
 
 			Map<String, Double> countSums = fieldCountSums.get(name);
@@ -284,18 +286,20 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				throw new InvalidFeatureException(targetCategory);
 			}
 
+			double count = targetValueCount.getCount();
+
 			double probability;
 
 			// The calculated probability can fall below the default probability
 			// However, a count of zero represents a special case, which needs adjustment
-			if(VerificationUtil.isZero(targetValueCount.getCount(), Precision.EPSILON)){
+			if(VerificationUtil.isZero(count, Precision.EPSILON)){
 				probability = threshold;
 			} else
 
 			{
 				Double countSum = countSums.get(targetCategory);
 
-				probability = targetValueCount.getCount() / countSum;
+				probability = count / countSum;
 			}
 
 			probabilities.multiply(targetCategory, probability);
@@ -424,7 +428,6 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			if(value.equalsString(pairCount.getValue())){
 				TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
-
 				if(targetValueCounts == null){
 					throw new InvalidFeatureException(pairCount);
 				}

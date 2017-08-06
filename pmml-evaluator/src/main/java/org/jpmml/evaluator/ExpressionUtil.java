@@ -54,7 +54,12 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluate(DerivedField derivedField, EvaluationContext context){
-		FieldValue value = evaluate(derivedField.getExpression(), context);
+		Expression expression = derivedField.getExpression();
+		if(expression == null){
+			throw new InvalidFeatureException(derivedField);
+		}
+
+		FieldValue value = evaluate(expression, context);
 
 		return FieldValueUtil.refine(derivedField, value);
 	}

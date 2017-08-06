@@ -175,22 +175,21 @@ public class TextUtil {
 
 	static
 	public List<String> tokenize(TextIndex textIndex, String text){
-		TextTokenizer tokenizer = null;
-
 		boolean tokenize = textIndex.isTokenize();
+
 		if(tokenize){
 			String wordSeparatorCharacterRE = textIndex.getWordSeparatorCharacterRE();
 
 			Pattern pattern = RegExUtil.compile(wordSeparatorCharacterRE, textIndex);
 
-			tokenizer = new TextTokenizer(pattern);
+			TextTokenizer tokenizer = new TextTokenizer(pattern);
+
+			return tokenizer.tokenize(text);
 		} else
 
 		{
 			throw new UnsupportedFeatureException(textIndex, ReflectionUtil.getField(TextIndex.class, "tokenize"), tokenize);
 		}
-
-		return tokenizer.tokenize(text);
 	}
 
 	static

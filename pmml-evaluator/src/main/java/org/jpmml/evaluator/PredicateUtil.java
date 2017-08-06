@@ -88,9 +88,13 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, EvaluationContext context){
+		SimplePredicate.Operator operator = simplePredicate.getOperator();
+		if(operator == null){
+			throw new InvalidFeatureException(simplePredicate);
+		}
+
 		String stringValue = simplePredicate.getValue();
 
-		SimplePredicate.Operator operator = simplePredicate.getOperator();
 		switch(operator){
 			case IS_MISSING:
 			case IS_NOT_MISSING:
@@ -150,13 +154,16 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext context){
-		FieldValue value = context.evaluate(simpleSetPredicate.getField());
+		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.getBooleanOperator();
+		if(booleanOperator == null){
+			throw new InvalidFeatureException(simpleSetPredicate);
+		}
 
+		FieldValue value = context.evaluate(simpleSetPredicate.getField());
 		if(value == null){
 			return null;
 		}
 
-		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.getBooleanOperator();
 		switch(booleanOperator){
 			case IS_IN:
 				return value.isIn(simpleSetPredicate);
@@ -176,6 +183,11 @@ public class PredicateUtil {
 
 	static
 	public CompoundPredicateResult evaluateCompoundPredicateInternal(CompoundPredicate compoundPredicate, EvaluationContext context){
+		CompoundPredicate.BooleanOperator booleanOperator = compoundPredicate.getBooleanOperator();
+		if(booleanOperator == null){
+			throw new InvalidFeatureException(compoundPredicate);
+		}
+
 		List<Predicate> predicates = compoundPredicate.getPredicates();
 		if(predicates.size() < 2){
 			throw new InvalidFeatureException(compoundPredicate);
@@ -183,7 +195,6 @@ public class PredicateUtil {
 
 		Boolean result = evaluate(predicates.get(0), context);
 
-		CompoundPredicate.BooleanOperator booleanOperator = compoundPredicate.getBooleanOperator();
 		switch(booleanOperator){
 			case AND:
 			case OR:

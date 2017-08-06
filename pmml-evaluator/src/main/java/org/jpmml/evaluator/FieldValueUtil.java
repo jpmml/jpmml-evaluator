@@ -133,11 +133,7 @@ public class FieldValueUtil {
 		Double lowValue = miningField.getLowValue();
 		Double highValue = miningField.getHighValue();
 
-		if(lowValue == null || highValue == null){
-			throw new InvalidFeatureException(miningField);
-		} // End if
-
-		if((lowValue).compareTo(highValue) > 0){
+		if(lowValue == null || highValue == null || (lowValue).compareTo(highValue) > 0){
 			throw new InvalidFeatureException(miningField);
 		} // End if
 
