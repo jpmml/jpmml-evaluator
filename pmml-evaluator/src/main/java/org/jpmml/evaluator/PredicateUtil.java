@@ -193,7 +193,9 @@ public class PredicateUtil {
 			throw new InvalidFeatureException(compoundPredicate);
 		}
 
-		Boolean result = evaluate(predicates.get(0), context);
+		Predicate predicate = predicates.get(0);
+
+		Boolean result = evaluate(predicate, context);
 
 		switch(booleanOperator){
 			case AND:
@@ -209,9 +211,9 @@ public class PredicateUtil {
 				throw new UnsupportedFeatureException(compoundPredicate, booleanOperator);
 		}
 
-		predicates = predicates.subList(1, predicates.size());
+		for(int i = 1, max = predicates.size(); i < max; i++){
+			predicate = predicates.get(i);
 
-		for(Predicate predicate : predicates){
 			Boolean value = evaluate(predicate, context);
 
 			switch(booleanOperator){
