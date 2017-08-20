@@ -69,7 +69,14 @@ public class ValueAggregator<V extends Number> {
 		this.weights.add(weight);
 
 		if(this.weightedValues != null){
-			this.weightedValues.add(weight, value);
+
+			if(weight != 1d){
+				this.weightedValues.add(weight, value);
+			} else
+
+			{
+				this.weightedValues.add(value);
+			}
 		}
 	}
 
@@ -88,7 +95,7 @@ public class ValueAggregator<V extends Number> {
 			throw new IllegalStateException();
 		}
 
-		return (this.weightedValues.sum()).divide((this.weights.sum()).doubleValue());
+		return (this.weightedValues.sum()).divide(this.weights.sum());
 	}
 
 	public Value<V> sum(){

@@ -292,7 +292,14 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 					return null;
 				}
 
-				result.add(numericPredictor.getCoefficient(), value.asNumber(), numericPredictor.getExponent());
+				int exponent = numericPredictor.getExponent();
+				if(exponent != 1){
+					result.add(numericPredictor.getCoefficient(), value.asNumber(), exponent);
+				} else
+
+				{
+					result.add(numericPredictor.getCoefficient(), value.asNumber());
+				}
 			}
 		} // End if
 

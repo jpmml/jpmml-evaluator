@@ -71,38 +71,22 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue add(Value<?> value){
+	public DoubleValue add(Value<? extends Number> value){
 		this.value += value.doubleValue();
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue add(double coefficient, Number factor, int exponent){
-		double value = factor.doubleValue();
-
-		if(exponent != 1){
-			value = Math.pow(value, exponent);
-		}
-
-		value *= coefficient;
-
-		this.value += value;
+	public DoubleValue add(double coefficient, Number factor){
+		this.value += coefficient * factor.doubleValue();
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue add(double coefficient, Value<?> factor, int exponent){
-		double value = factor.doubleValue();
-
-		if(exponent != 1){
-			value = Math.pow(value, exponent);
-		}
-
-		value *= coefficient;
-
-		this.value += value;
+	public DoubleValue add(double coefficient, Number factor, int exponent){
+		this.value += coefficient * Math.pow(factor.doubleValue(), exponent);
 
 		return this;
 	}
@@ -130,7 +114,7 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue subtract(Value<?> value){
+	public DoubleValue subtract(Value<? extends Number> value){
 		this.value -= value.doubleValue();
 
 		return this;
@@ -144,7 +128,7 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue multiply(Value<?> value){
+	public DoubleValue multiply(Value<? extends Number> value){
 		this.value *= value.doubleValue();
 
 		return this;
@@ -152,26 +136,7 @@ public class DoubleValue extends Value<Double> {
 
 	@Override
 	public DoubleValue multiply(Number factor, double exponent){
-		double value = factor.doubleValue();
-
-		if(exponent != 1d){
-			value = Math.pow(value, exponent);
-		}
-
-		this.value *= value;
-
-		return this;
-	}
-
-	@Override
-	public DoubleValue multiply(Value<?> factor, double exponent){
-		double value = factor.doubleValue();
-
-		if(exponent != 1d){
-			value = Math.pow(value, exponent);
-		}
-
-		this.value *= value;
+		this.value *= Math.pow(factor.doubleValue(), exponent);
 
 		return this;
 	}
@@ -184,14 +149,14 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue divide(Value<?> value){
+	public DoubleValue divide(Value<? extends Number> value){
 		this.value /= value.doubleValue();
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue residual(Value<?> value){
+	public DoubleValue residual(Value<? extends Number> value){
 		this.value = 1d - value.doubleValue();
 
 		return this;

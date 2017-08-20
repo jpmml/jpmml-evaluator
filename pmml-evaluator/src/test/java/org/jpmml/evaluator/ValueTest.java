@@ -22,8 +22,30 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ValueTest {
+
+	@Test
+	public void restrict(){
+		FloatValue floatValue = new FloatValue(0f);
+		DoubleValue doubleValue = new DoubleValue(0d);
+
+		assertTrue(Double.NEGATIVE_INFINITY < -Double.MAX_VALUE);
+		assertTrue(Double.POSITIVE_INFINITY > Double.MAX_VALUE);
+
+		floatValue.restrict(2d, Double.POSITIVE_INFINITY);
+		doubleValue.restrict(2d, Double.POSITIVE_INFINITY);
+
+		assertEquals((Float)2f, floatValue.getValue());
+		assertEquals((Double)2d, doubleValue.getValue());
+
+		floatValue.restrict(Double.NEGATIVE_INFINITY, -2d);
+		doubleValue.restrict(Double.NEGATIVE_INFINITY, -2d);
+
+		assertEquals((Float)(-2f), floatValue.getValue());
+		assertEquals((Double)(-2d), doubleValue.getValue());
+	}
 
 	@Test
 	public void classConstants(){

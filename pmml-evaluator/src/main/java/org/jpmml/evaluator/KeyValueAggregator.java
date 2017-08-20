@@ -52,7 +52,13 @@ public class KeyValueAggregator<K, V extends Number> {
 	public void add(K key, double coefficient, Number factor){
 		Vector<V> values = ensureVector(key);
 
-		values.add(coefficient, factor);
+		if(coefficient != 1d){
+			values.add(coefficient, factor);
+		} else
+
+		{
+			values.add(factor);
+		}
 	}
 
 	public void clear(){

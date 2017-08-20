@@ -154,16 +154,11 @@ public class TargetUtil {
 
 	static
 	public <V extends Number> Value<V> processValue(Target target, Value<V> value){
-		double result = value.doubleValue();
-
 		Double min = target.getMin();
-		if(min != null){
-			value.restrict(min, Double.MAX_VALUE);
-		}
-
 		Double max = target.getMax();
-		if(max != null){
-			value.restrict(-Double.MAX_VALUE, max);
+
+		if(min != null || max != null){
+			value.restrict((min != null ? min : Double.NEGATIVE_INFINITY), (max != null ? max : Double.POSITIVE_INFINITY));
 		}
 
 		Double rescaleFactor = target.getRescaleFactor();

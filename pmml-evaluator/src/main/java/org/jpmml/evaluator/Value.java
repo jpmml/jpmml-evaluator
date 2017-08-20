@@ -30,7 +30,15 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> add(double value);
 
 	abstract
-	public Value<V> add(Value<?> value);
+	public Value<V> add(Value<? extends Number> value);
+
+	/**
+	 * <p>
+	 * Adds <code>coefficient * factor</code>.
+	 * </p>
+	 */
+	abstract
+	public Value<V> add(double coefficient, Number factor);
 
 	/**
 	 * <p>
@@ -39,9 +47,6 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	 */
 	abstract
 	public Value<V> add(double coefficient, Number factor, int exponent);
-
-	abstract
-	public Value<V> add(double coefficient, Value<?> factor, int exponent);
 
 	/**
 	 * <p>
@@ -55,13 +60,13 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> subtract(double value);
 
 	abstract
-	public Value<V> subtract(Value<?> value);
+	public Value<V> subtract(Value<? extends Number> value);
 
 	abstract
 	public Value<V> multiply(double value);
 
 	abstract
-	public Value<V> multiply(Value<?> value);
+	public Value<V> multiply(Value<? extends Number> value);
 
 	/**
 	 * <p>
@@ -72,16 +77,13 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> multiply(Number factor, double exponent);
 
 	abstract
-	public Value<V> multiply(Value<?> factor, double exponent);
-
-	abstract
 	public Value<V> divide(double value);
 
 	abstract
-	public Value<V> divide(Value<?> value);
+	public Value<V> divide(Value<? extends Number> value);
 
 	abstract
-	public Value<V> residual(Value<?> value);
+	public Value<V> residual(Value<? extends Number> value);
 
 	abstract
 	public Value<V> square();

@@ -528,7 +528,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					return null;
 				}
 
-				result.add(parameterCell.getBeta(), x, 1);
+				result.add(parameterCell.getBeta(), x.getValue());
 			} else
 
 			{
@@ -564,7 +564,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			} // End if
 
 			if(parameter != null){
-				result.add(parameterCell.getBeta(), parameter.getReferencePoint(), 1);
+				result.add(parameterCell.getBeta(), parameter.getReferencePoint());
 			} else
 
 			{
@@ -1227,7 +1227,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		private class CovariateHandler extends PredictorHandler {
 
-			private double power = 1d;
+			private double exponent = 1d;
 
 
 			private CovariateHandler(PPCell ppCell){
@@ -1238,22 +1238,28 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					throw new InvalidFeatureException(ppCell);
 				}
 
-				setPower(Double.parseDouble(value));
+				setExponent(Double.parseDouble(value));
 			}
 
 			@Override
 			public <V extends Number> Value<V> updateProduct(Value<V> product, FieldValue value){
-				double power = getPower();
+				double exponent = getExponent();
 
-				return product.multiply(value.asNumber(), power);
+				if(exponent != 1d){
+					return product.multiply(value.asNumber(), exponent);
+				} else
+
+				{
+					return product.multiply((value.asNumber()).doubleValue());
+				}
 			}
 
-			public double getPower(){
-				return this.power;
+			public double getExponent(){
+				return this.exponent;
 			}
 
-			private void setPower(double power){
-				this.power = power;
+			private void setExponent(double exponent){
+				this.exponent = exponent;
 			}
 		}
 	}

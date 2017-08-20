@@ -69,38 +69,22 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue add(Value<?> value){
+	public FloatValue add(Value<? extends Number> value){
 		this.value += value.floatValue();
 
 		return this;
 	}
 
 	@Override
-	public FloatValue add(double coefficient, Number factor, int exponent){
-		float value = factor.floatValue();
-
-		if(exponent != 1){
-			value = FloatValue.pow(value, exponent);
-		}
-
-		value *= (float)coefficient;
-
-		this.value += value;
+	public FloatValue add(double coefficient, Number factor){
+		this.value += (float)coefficient * factor.floatValue();
 
 		return this;
 	}
 
 	@Override
-	public FloatValue add(double coefficient, Value<?> factor, int exponent){
-		float value = factor.floatValue();
-
-		if(exponent != 1){
-			value = FloatValue.pow(value, exponent);
-		}
-
-		value *= (float)coefficient;
-
-		this.value += value;
+	public FloatValue add(double coefficient, Number factor, int exponent){
+		this.value += (float)coefficient * FloatValue.pow(factor.floatValue(), exponent);
 
 		return this;
 	}
@@ -128,7 +112,7 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue subtract(Value<?> value){
+	public FloatValue subtract(Value<? extends Number> value){
 		this.value -= value.floatValue();
 
 		return this;
@@ -142,34 +126,15 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue multiply(Number factor, double exponent){
-		float value = factor.floatValue();
-
-		if(exponent != 1d){
-			value = FloatValue.pow(value, (float)exponent);
-		}
-
-		this.value *= value;
-
-		return this;
-	}
-
-	@Override
-	public FloatValue multiply(Value<?> factor, double exponent){
-		float value = factor.floatValue();
-
-		if(exponent != 1d){
-			value = FloatValue.pow(value, (float)exponent);
-		}
-
-		this.value *= value;
-
-		return this;
-	}
-
-	@Override
-	public FloatValue multiply(Value<?> value){
+	public FloatValue multiply(Value<? extends Number> value){
 		this.value *= value.floatValue();
+
+		return this;
+	}
+
+	@Override
+	public FloatValue multiply(Number factor, double exponent){
+		this.value *= FloatValue.pow(factor.floatValue(), (float)exponent);
 
 		return this;
 	}
@@ -182,14 +147,14 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue divide(Value<?> value){
+	public FloatValue divide(Value<? extends Number> value){
 		this.value /= value.floatValue();
 
 		return this;
 	}
 
 	@Override
-	public FloatValue residual(Value<?> value){
+	public FloatValue residual(Value<? extends Number> value){
 		this.value = 1f - value.floatValue();
 
 		return this;
