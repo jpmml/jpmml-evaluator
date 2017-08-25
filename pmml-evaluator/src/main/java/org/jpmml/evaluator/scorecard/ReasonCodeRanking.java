@@ -21,6 +21,10 @@ package org.jpmml.evaluator.scorecard;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import org.dmg.pmml.MiningFunction;
@@ -75,4 +79,25 @@ public class ReasonCodeRanking implements Computable, HasReasonCodeRanking {
 	private void setReasonCodes(Map<String, Double> reasonCodes){
 		this.reasonCodes = reasonCodes;
 	}
+
+  @Override
+  public String toJson() {
+    return this.toJsonHelper().toString();
+  }
+
+  //TODO
+  protected JsonElement toJsonHelper() {
+    JsonObject obj = new JsonObject();
+    JsonArray reasonCodeRankingArray = new JsonArray();
+
+    for (String reasonCode : this.getReasonCodeRanking()) {
+      reasonCodeRankingArray.add(reasonCode);
+    }
+
+    obj.addProperty("class", "ReasonCodeRanking");
+    obj.addProperty("result", this.getResult().toString());
+    obj.add("reason_code_ranking", reasonCodeRankingArray);
+
+    return obj;
+  }
 }

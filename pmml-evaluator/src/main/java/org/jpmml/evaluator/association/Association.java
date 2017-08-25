@@ -23,6 +23,9 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.BiMap;
@@ -140,4 +143,20 @@ public class Association implements Computable, HasRuleValues, HasEntityRegistry
 	private void setConsequentFlags(BitSet consequentFlags){
 		this.consequentFlags = consequentFlags;
 	}
+
+  @Override
+  public String toJson() {
+    return this.toJsonHelper().toString();
+  }
+
+  //TODO
+  protected JsonElement toJsonHelper() {
+    JsonObject obj = new JsonObject();
+
+    obj.addProperty("class", "Association");
+    obj.addProperty("antecedent_flags", this.antecedentFlags.toString());
+    obj.addProperty("consequent_flags", this.consequentFlags.toString());
+
+    return obj;
+  }
 }

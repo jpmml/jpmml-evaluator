@@ -20,6 +20,9 @@ package org.jpmml.evaluator.neural_network;
 
 import java.util.Set;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.Entity;
 import org.jpmml.evaluator.EntityClassification;
@@ -40,4 +43,20 @@ public class NeuronProbabilityDistribution extends EntityClassification<Entity> 
 	public Double getProbability(String value){
 		return get(value);
 	}
+
+  @Override
+  protected JsonElement toJsonHelper() {
+    JsonObject obj = new JsonObject();
+    JsonObject probabilities = new JsonObject();
+
+    for(String k : this.getCategoryValues()) {
+      probabilities.addProperty(k, this.getProbability(k));
+    }
+
+    obj.addProperty("class", "NeuronProbabilityDistribution");
+    obj.addProperty("result", this.getResult().toString());
+    obj.add("probability_entries", probabilities);
+
+    return obj;
+  }
 }
