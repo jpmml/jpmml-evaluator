@@ -37,16 +37,6 @@ public class DoubleVector extends Vector<Double> {
 	public double doublePercentile(int percentile);
 
 	@Override
-	public Vector<Double> add(Number value){
-		return add(value.doubleValue());
-	}
-
-	@Override
-	public Vector<Double> add(double coefficient, Number factor){
-		return add(coefficient * factor.doubleValue());
-	}
-
-	@Override
 	public Value<Double> get(int index){
 		return new DoubleValue(doubleValue(index));
 	}

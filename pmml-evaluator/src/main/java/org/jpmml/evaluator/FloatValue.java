@@ -25,6 +25,9 @@ public class FloatValue extends Value<Float> {
 	protected float value = 0f;
 
 
+	@Operation (
+		value = "${0}"
+	)
 	public FloatValue(float value){
 		this.value = value;
 	}

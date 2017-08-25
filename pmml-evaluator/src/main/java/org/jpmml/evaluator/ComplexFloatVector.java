@@ -35,8 +35,22 @@ public class ComplexFloatVector extends FloatVector {
 	}
 
 	@Override
-	public Vector<Float> add(double value){
-		this.values[this.size] = (float)value;
+	public FloatVector add(double value){
+		return addInternal((float)value);
+	}
+
+	@Override
+	public FloatVector add(Number value){
+		return addInternal(value.floatValue());
+	}
+
+	@Override
+	public FloatVector add(double coefficient, Number factor){
+		return addInternal((float)coefficient * factor.floatValue());
+	}
+
+	private FloatVector addInternal(float value){
+		this.values[this.size] = value;
 
 		this.size++;
 

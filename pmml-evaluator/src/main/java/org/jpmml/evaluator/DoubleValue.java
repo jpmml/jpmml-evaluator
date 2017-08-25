@@ -25,6 +25,9 @@ public class DoubleValue extends Value<Double> {
 	protected double value = 0d;
 
 
+	@Operation (
+		value = "${0}"
+	)
 	public DoubleValue(double value){
 		this.value = value;
 	}

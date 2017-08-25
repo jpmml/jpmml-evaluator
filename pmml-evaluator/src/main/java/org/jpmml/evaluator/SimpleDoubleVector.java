@@ -36,7 +36,21 @@ public class SimpleDoubleVector extends DoubleVector {
 	}
 
 	@Override
-	public Vector<Double> add(double value){
+	public DoubleVector add(double value){
+		return addInternal(value);
+	}
+
+	@Override
+	public DoubleVector add(Number value){
+		return addInternal(value.doubleValue());
+	}
+
+	@Override
+	public DoubleVector add(double coefficient, Number factor){
+		return addInternal(coefficient * factor.doubleValue());
+	}
+
+	private DoubleVector addInternal(double value){
 		this.sum += value;
 		this.max = Math.max(this.max, value);
 

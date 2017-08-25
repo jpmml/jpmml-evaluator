@@ -24,9 +24,15 @@ public class Vector<V extends Number> {
 	abstract
 	public int size();
 
+	@Operation (
+		value = "${this}${0}"
+	)
 	abstract
 	public Vector<V> add(double value);
 
+	@Operation (
+		value = "${this}${0}"
+	)
 	abstract
 	public Vector<V> add(Number value);
 
@@ -35,6 +41,9 @@ public class Vector<V extends Number> {
 	 * Adds <code>coefficient * factor</code>.
 	 * </p>
 	 */
+	@Operation (
+		value = "${this}<apply><times/>${0}${1}</apply>"
+	)
 	abstract
 	public Vector<V> add(double coefficient, Number factor);
 

@@ -38,6 +38,11 @@
 	</contributors>
 
 	<modules>
+		<!-- 
+		The pmml-evaluator module has compile-time (but not run-time) dependence on the pmml-evaluator-processor module.
+		The reactor is informed about it by ordering their <module> elements appropriately.
+		-->
+		<module>pmml-evaluator-processor</module>
 		<module>pmml-evaluator</module>
 		<module>pmml-evaluator-example</module>
 		<module>pmml-evaluator-extension</module>
@@ -80,6 +85,11 @@
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-jacoco</artifactId>
+				<version>1.3-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-evaluator-processor</artifactId>
 				<version>1.3-SNAPSHOT</version>
 			</dependency>
 			<dependency>
@@ -172,6 +182,7 @@
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
+					<useIncrementalCompilation>false</useIncrementalCompilation>
 				</configuration>
 			</plugin>
 			<plugin>

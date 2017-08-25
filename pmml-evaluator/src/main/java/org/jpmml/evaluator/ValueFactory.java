@@ -30,10 +30,10 @@ public class ValueFactory<V extends Number> {
 	public Value<V> newValue(double value);
 
 	abstract
-	public Value<V> newValue(Number number);
+	public Value<V> newValue(Number value);
 
 	abstract
-	public Value<V> newValue(String string);
+	public Value<V> newValue(String value);
 
 	abstract
 	public Vector<V> newVector(int capacity);
@@ -64,13 +64,18 @@ public class ValueFactory<V extends Number> {
 		}
 
 		@Override
-		public FloatValue newValue(String string){
-			return new FloatValue(Float.parseFloat(string));
+		public FloatValue newValue(String value){
+			return new FloatValue(Float.parseFloat(value));
 		}
 
 		@Override
 		public Vector<Float> newVector(int capacity){
-			return (capacity > 0 ? new ComplexFloatVector(capacity) : new SimpleFloatVector());
+
+			if(capacity > 0){
+				return new ComplexFloatVector(capacity);
+			}
+
+			return new SimpleFloatVector();
 		}
 	};
 
@@ -87,13 +92,18 @@ public class ValueFactory<V extends Number> {
 		}
 
 		@Override
-		public DoubleValue newValue(String string){
-			return new DoubleValue(Double.parseDouble(string));
+		public DoubleValue newValue(String value){
+			return new DoubleValue(Double.parseDouble(value));
 		}
 
 		@Override
 		public Vector<Double> newVector(int capacity){
-			return (capacity > 0 ? new ComplexDoubleVector(capacity) : new SimpleDoubleVector());
+
+			if(capacity > 0){
+				return new ComplexDoubleVector(capacity);
+			}
+
+			return new SimpleDoubleVector();
 		}
 	};
 }

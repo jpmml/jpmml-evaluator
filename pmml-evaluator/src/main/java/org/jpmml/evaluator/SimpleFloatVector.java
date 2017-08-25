@@ -36,9 +36,23 @@ public class SimpleFloatVector extends FloatVector {
 	}
 
 	@Override
-	public Vector<Float> add(double value){
-		this.sum += (float)value;
-		this.max = Math.max(this.max, (float)value);
+	public FloatVector add(double value){
+		return addInternal((float)value);
+	}
+
+	@Override
+	public FloatVector add(Number value){
+		return addInternal(value.floatValue());
+	}
+
+	@Override
+	public FloatVector add(double coefficient, Number factor){
+		return addInternal((float)coefficient * factor.floatValue());
+	}
+
+	private FloatVector addInternal(float value){
+		this.sum += value;
+		this.max = Math.max(this.max, value);
 
 		this.size++;
 

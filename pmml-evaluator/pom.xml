@@ -49,4 +49,65 @@
 			<artifactId>junit</artifactId>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>target/generated-sources/apt</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>process-annotations</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<configuration>
+							<annotationProcessorPaths>
+								<path>
+									<groupId>org.jpmml</groupId>
+									<artifactId>pmml-evaluator-processor</artifactId>
+									<version>1.3-SNAPSHOT</version>
+								</path>
+							</annotationProcessorPaths>
+							<includes>
+								<include>org/jpmml/evaluator/DoubleValue.java</include>
+								<include>org/jpmml/evaluator/*DoubleVector.java</include>
+								<include>org/jpmml/evaluator/FloatValue.java</include>
+								<include>org/jpmml/evaluator/*FloatVector.java</include>
+								<include>org/jpmml/evaluator/Value.java</include>
+								<include>org/jpmml/evaluator/Vector.java</include>
+							</includes>
+							<fork>true</fork>
+						</configuration>
+					</execution>
+					<execution>
+						<id>default-compile</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

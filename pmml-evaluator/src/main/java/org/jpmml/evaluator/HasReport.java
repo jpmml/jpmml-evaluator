@@ -18,38 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-abstract
-public class FloatVector extends Vector<Float> {
+public interface HasReport {
 
-	abstract
-	public float floatValue(int index);
-
-	abstract
-	public float floatSum();
-
-	abstract
-	public float floatMax();
-
-	abstract
-	public float floatMedian();
-
-	@Override
-	public Value<Float> get(int index){
-		return new FloatValue(floatValue(index));
-	}
-
-	@Override
-	public Value<Float> sum(){
-		return new FloatValue(floatSum());
-	}
-
-	@Override
-	public Value<Float> max(){
-		return new FloatValue(floatMax());
-	}
-
-	@Override
-	public Value<Float> median(){
-		return new FloatValue(floatMedian());
-	}
+	String getReport();
 }
