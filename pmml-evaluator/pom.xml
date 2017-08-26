@@ -81,6 +81,9 @@
 							<goal>compile</goal>
 						</goals>
 						<configuration>
+							<annotationProcessors>
+								<annotationProcessor>org.jpmml.evaluator.OperationProcessor</annotationProcessor>
+							</annotationProcessors>
 							<annotationProcessorPaths>
 								<path>
 									<groupId>org.jpmml</groupId>
