@@ -138,7 +138,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		MathContext mathContext = naiveBayesModel.getMathContext();
 		switch(mathContext){
 			case DOUBLE:
-				valueFactory = ValueFactory.DOUBLE;
+				valueFactory = (ValueFactory)getValueFactory();
 				break;
 			default:
 				throw new UnsupportedFeatureException(naiveBayesModel, mathContext);

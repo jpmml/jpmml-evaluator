@@ -151,7 +151,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		switch(mathContext){
 			case FLOAT:
 			case DOUBLE:
-				valueFactory = ValueFactory.getInstance(mathContext);
+				valueFactory = getValueFactory();
 				break;
 			default:
 				throw new UnsupportedFeatureException(generalRegressionModel, mathContext);

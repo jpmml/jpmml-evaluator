@@ -71,6 +71,9 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 	private M model = null;
 
+	transient
+	private ValueFactory<?> valueFactory = null;
+
 	private Map<FieldName, DataField> dataFields = Collections.emptyMap();
 
 	private Map<FieldName, DerivedField> derivedFields = Collections.emptyMap();
@@ -159,6 +162,21 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		M model = getModel();
 
 		return model.getMathContext();
+	}
+
+	public ValueFactory<?> getValueFactory(){
+
+		if(this.valueFactory == null){
+			this.valueFactory = createValueFactory();
+		}
+
+		return this.valueFactory;
+	}
+
+	protected ValueFactory<?> createValueFactory(){
+		MathContext mathContext = getMathContext();
+
+		return ValueFactory.getInstance(mathContext);
 	}
 
 	public DataField getDataField(FieldName name){

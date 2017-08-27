@@ -85,7 +85,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		switch(mathContext){
 			case FLOAT:
 			case DOUBLE:
-				valueFactory = ValueFactory.getInstance(mathContext);
+				valueFactory = getValueFactory();
 				break;
 			default:
 				throw new UnsupportedFeatureException(regressionModel, mathContext);

@@ -102,7 +102,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		switch(mathContext){
 			case FLOAT:
 			case DOUBLE:
-				valueFactory = ValueFactory.getInstance(mathContext);
+				valueFactory = getValueFactory();
 				break;
 			default:
 				throw new UnsupportedFeatureException(treeModel, mathContext);

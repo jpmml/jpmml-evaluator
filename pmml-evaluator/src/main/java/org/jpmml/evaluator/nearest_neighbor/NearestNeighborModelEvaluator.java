@@ -85,11 +85,11 @@ import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
-import org.jpmml.evaluator.ValueAggregator;
 import org.jpmml.evaluator.SimpleDoubleVector;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.ValueAggregator;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.VoteAggregator;
 
@@ -401,8 +401,8 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		VoteAggregator<Object, Double> aggregator = new VoteAggregator<Object, Double>(){
 
 			@Override
-			public ValueFactory getValueFactory(){
-				return ValueFactory.DOUBLE;
+			public ValueFactory<Double> getValueFactory(){
+				return (ValueFactory)NearestNeighborModelEvaluator.this.getValueFactory();
 			}
 		};
 
