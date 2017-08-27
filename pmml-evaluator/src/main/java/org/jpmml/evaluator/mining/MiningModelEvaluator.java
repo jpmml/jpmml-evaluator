@@ -84,7 +84,7 @@ import org.jpmml.evaluator.ValueUtil;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 
-	private ModelEvaluatorFactory evaluatorFactory = null;
+	private ModelEvaluatorFactory modelEvaluatorFactory = null;
 
 	private ConcurrentMap<String, SegmentHandler> segmentHandlers = new ConcurrentHashMap<>();
 
@@ -628,13 +628,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	private SegmentHandler createSegmentHandler(Model model){
-		ModelEvaluatorFactory evaluatorFactory = getEvaluatorFactory();
+		ModelEvaluatorFactory modelEvaluatorFactory = getModelEvaluatorFactory();
 
-		if(evaluatorFactory == null){
-			evaluatorFactory = ModelEvaluatorFactory.newInstance();
+		if(modelEvaluatorFactory == null){
+			modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
 		}
 
-		Evaluator evaluator = evaluatorFactory.newModelEvaluator(getPMML(), model);
+		Evaluator evaluator = modelEvaluatorFactory.newModelEvaluator(getPMML(), model);
 
 		boolean compatible = true;
 
@@ -653,12 +653,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return result;
 	}
 
-	public ModelEvaluatorFactory getEvaluatorFactory(){
-		return this.evaluatorFactory;
+	public ModelEvaluatorFactory getModelEvaluatorFactory(){
+		return this.modelEvaluatorFactory;
 	}
 
-	public void setEvaluatorFactory(ModelEvaluatorFactory evaluatorFactory){
-		this.evaluatorFactory = evaluatorFactory;
+	public void setModelEvaluatorFactory(ModelEvaluatorFactory modelEvaluatorFactory){
+		this.modelEvaluatorFactory = modelEvaluatorFactory;
 	}
 
 	static
