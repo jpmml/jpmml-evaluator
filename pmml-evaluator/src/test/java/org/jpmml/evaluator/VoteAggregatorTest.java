@@ -28,13 +28,16 @@ import static org.junit.Assert.assertEquals;
 
 public class VoteAggregatorTest {
 
+	private ValueFactory<Double> valueFactory = ValueFactoryFactory.DoubleValueFactory.INSTANCE;
+
+
 	@Test
 	public void sum(){
 		VoteAggregator<String, Double> aggregator = new VoteAggregator<String, Double>(){
 
 			@Override
 			public ValueFactory<Double> getValueFactory(){
-				return ValueFactory.DOUBLE;
+				return VoteAggregatorTest.this.valueFactory;
 			}
 		};
 		aggregator.add("A", 1d);

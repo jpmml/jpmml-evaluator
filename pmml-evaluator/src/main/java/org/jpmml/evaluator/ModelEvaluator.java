@@ -71,7 +71,8 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 	private M model = null;
 
-	transient
+	private ValueFactoryFactory valueFactoryFactory = ValueFactoryFactory.newInstance();
+
 	private ValueFactory<?> valueFactory = null;
 
 	private Map<FieldName, DataField> dataFields = Collections.emptyMap();
@@ -174,9 +175,10 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 	}
 
 	protected ValueFactory<?> createValueFactory(){
+		ValueFactoryFactory valueFactoryFactory = getValueFactoryFactory();
 		MathContext mathContext = getMathContext();
 
-		return ValueFactory.getInstance(mathContext);
+		return valueFactoryFactory.newValueFactory(mathContext);
 	}
 
 	public DataField getDataField(FieldName name){
@@ -589,6 +591,14 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		M model = getModel();
 
 		return CacheUtil.getValue(model, cache, loader);
+	}
+
+	public ValueFactoryFactory getValueFactoryFactory(){
+		return this.valueFactoryFactory;
+	}
+
+	void setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
+		this.valueFactoryFactory = Objects.requireNonNull(valueFactoryFactory);
 	}
 
 	public PMML getPMML(){

@@ -27,13 +27,16 @@ import static org.junit.Assert.assertEquals;
 
 public class ProbabilityAggregatorTest {
 
+	private ValueFactory<Double> valueFactory = ValueFactoryFactory.DoubleValueFactory.INSTANCE;
+
+
 	@Test
 	public void average(){
 		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(0){
 
 			@Override
 			public ValueFactory<Double> getValueFactory(){
-				return ValueFactory.DOUBLE;
+				return ProbabilityAggregatorTest.this.valueFactory;
 			}
 		};
 
@@ -45,11 +48,11 @@ public class ProbabilityAggregatorTest {
 
 	@Test
 	public void weightedAverage(){
-		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(0, ValueFactory.DOUBLE.newVector(0)){
+		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(0, this.valueFactory.newVector(0)){
 
 			@Override
 			public ValueFactory<Double> getValueFactory(){
-				return ValueFactory.DOUBLE;
+				return ProbabilityAggregatorTest.this.valueFactory;
 			}
 		};
 
@@ -65,7 +68,7 @@ public class ProbabilityAggregatorTest {
 
 			@Override
 			public ValueFactory<Double> getValueFactory(){
-				return ValueFactory.DOUBLE;
+				return ProbabilityAggregatorTest.this.valueFactory;
 			}
 		};
 
@@ -87,7 +90,7 @@ public class ProbabilityAggregatorTest {
 
 			@Override
 			public ValueFactory<Double> getValueFactory(){
-				return ValueFactory.DOUBLE;
+				return ProbabilityAggregatorTest.this.valueFactory;
 			}
 		};
 

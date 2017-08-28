@@ -18,13 +18,10 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.MathContext;
+import java.io.Serializable;
 
 abstract
-public class ValueFactory<V extends Number> {
-
-	protected ValueFactory(){
-	}
+public class ValueFactory<V extends Number> implements Serializable {
 
 	abstract
 	public Value<V> newValue(double value);
@@ -37,73 +34,4 @@ public class ValueFactory<V extends Number> {
 
 	abstract
 	public Vector<V> newVector(int capacity);
-
-	static
-	public ValueFactory<?> getInstance(MathContext mathContext){
-
-		switch(mathContext){
-			case FLOAT:
-				return ValueFactory.FLOAT;
-			case DOUBLE:
-				return ValueFactory.DOUBLE;
-			default:
-				throw new IllegalArgumentException();
-		}
-	}
-
-	public static final ValueFactory<Float> FLOAT = new ValueFactory<Float>(){
-
-		@Override
-		public FloatValue newValue(double value){
-			return new FloatValue((float)value);
-		}
-
-		@Override
-		public FloatValue newValue(Number value){
-			return new FloatValue(value.floatValue());
-		}
-
-		@Override
-		public FloatValue newValue(String value){
-			return new FloatValue(Float.parseFloat(value));
-		}
-
-		@Override
-		public Vector<Float> newVector(int capacity){
-
-			if(capacity > 0){
-				return new ComplexFloatVector(capacity);
-			}
-
-			return new SimpleFloatVector();
-		}
-	};
-
-	public static final ValueFactory<Double> DOUBLE = new ValueFactory<Double>(){
-
-		@Override
-		public DoubleValue newValue(double value){
-			return new DoubleValue(value);
-		}
-
-		@Override
-		public DoubleValue newValue(Number value){
-			return new DoubleValue(value.doubleValue());
-		}
-
-		@Override
-		public DoubleValue newValue(String value){
-			return new DoubleValue(Double.parseDouble(value));
-		}
-
-		@Override
-		public Vector<Double> newVector(int capacity){
-
-			if(capacity > 0){
-				return new ComplexDoubleVector(capacity);
-			}
-
-			return new SimpleDoubleVector();
-		}
-	};
 }

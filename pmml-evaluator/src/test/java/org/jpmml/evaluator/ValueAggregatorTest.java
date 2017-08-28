@@ -24,9 +24,12 @@ import static org.junit.Assert.assertEquals;
 
 public class ValueAggregatorTest {
 
+	private ValueFactory<Double> valueFactory = ValueFactoryFactory.DoubleValueFactory.INSTANCE;
+
+
 	@Test
 	public void sumAndAverage(){
-		ValueAggregator<Double> aggregator = new ValueAggregator<>(ValueFactory.DOUBLE.newVector(0));
+		ValueAggregator<Double> aggregator = new ValueAggregator<>(this.valueFactory.newVector(0));
 
 		aggregator.add(2d);
 		aggregator.add(3d);
@@ -39,9 +42,7 @@ public class ValueAggregatorTest {
 
 	@Test
 	public void weightedSumAndAverage(){
-		ValueFactory<Double> valueFactory = ValueFactory.DOUBLE;
-
-		ValueAggregator<Double> aggregator = new ValueAggregator<>(valueFactory.newVector(0), valueFactory.newVector(0), valueFactory.newVector(0));
+		ValueAggregator<Double> aggregator = new ValueAggregator<>(this.valueFactory.newVector(0), this.valueFactory.newVector(0), this.valueFactory.newVector(0));
 
 		aggregator.add(2d, 1d / 3d);
 		aggregator.add(3d, 2d / 3d);
@@ -54,9 +55,7 @@ public class ValueAggregatorTest {
 
 	@Test
 	public void weightedMedian(){
-		ValueFactory<Double> valueFactory = ValueFactory.DOUBLE;
-
-		ValueAggregator<Double> aggregator = new ValueAggregator<>(valueFactory.newVector(3), valueFactory.newVector(3), valueFactory.newVector(3));
+		ValueAggregator<Double> aggregator = new ValueAggregator<>(this.valueFactory.newVector(3), this.valueFactory.newVector(3), this.valueFactory.newVector(3));
 
 		aggregator.add(1d, 3d);
 		aggregator.add(5d, 7d);
