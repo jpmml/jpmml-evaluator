@@ -119,12 +119,10 @@ public class Example {
 	}
 
 	static
-	public ModelEvaluatorFactory newModelEvaluatorFactory(Class<?> factoryClazz) throws ReflectiveOperationException {
-		Method newInstanceMethod = factoryClazz.getDeclaredMethod("newInstance");
+	public Object newInstance(Class<?> clazz) throws ReflectiveOperationException {
+		Method newInstanceMethod = clazz.getDeclaredMethod("newInstance");
 
-		ModelEvaluatorFactory modelEvaluatorFactory = (ModelEvaluatorFactory)newInstanceMethod.invoke(null);
-
-		return modelEvaluatorFactory;
+		return newInstanceMethod.invoke(null);
 	}
 
 	public static final Function<String, String> CSV_PARSER = new Function<String, String>(){

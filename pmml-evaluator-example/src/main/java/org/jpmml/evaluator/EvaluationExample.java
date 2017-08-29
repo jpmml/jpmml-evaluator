@@ -90,21 +90,12 @@ public class EvaluationExample extends Example {
 	private File output = null;
 
 	@Parameter (
-		names = {"--factory-class"},
-		description = "Name of ModelEvaluatorFactory class"
-	)
-	@ParameterOrder (
-		value = 4
-	)
-	private String factoryClazz = ModelEvaluatorFactory.class.getName();
-
-	@Parameter (
 		names = {"--separator"},
 		description = "CSV cell separator character",
 		converter = SeparatorConverter.class
 	)
 	@ParameterOrder (
-		value = 5
+		value = 4
 	)
 	private String separator = null;
 
@@ -113,7 +104,7 @@ public class EvaluationExample extends Example {
 		description = "Permit missing input field columns"
 	)
 	@ParameterOrder (
-		value = 6
+		value = 5
 	)
 	private boolean sparse = false;
 
@@ -123,7 +114,7 @@ public class EvaluationExample extends Example {
 		arity = 1
 	)
 	@ParameterOrder (
-		value = 7
+		value = 6
 	)
 	private boolean copyColumns = true;
 
@@ -140,6 +131,21 @@ public class EvaluationExample extends Example {
 		hidden = true
 	)
 	private String cacheBuilderSpec = null;
+
+	@Parameter (
+		names = {"--factory-class", "--modelevaluatorfactory-class"},
+		description = "Name of ModelEvaluatorFactory class",
+		hidden = true
+	)
+	private String modelEvaluatorFactoryClazz = ModelEvaluatorFactory.class.getName();
+
+	@Parameter (
+		names = {"--valuefactoryfactory-class"},
+		description = "Name of ValueFactoryFactory class",
+		hidden = true
+	)
+	private String valueFactoryFactoryClazz = ValueFactoryFactory.class.getName();
+
 
 	@Parameter (
 		names = "--optimize",
@@ -232,7 +238,10 @@ public class EvaluationExample extends Example {
 			transformer.applyTo(pmml);
 		}
 
-		ModelEvaluatorFactory modelEvaluatorFactory = newModelEvaluatorFactory(Class.forName(this.factoryClazz));
+		ModelEvaluatorFactory modelEvaluatorFactory = (ModelEvaluatorFactory)newInstance(Class.forName(this.modelEvaluatorFactoryClazz));
+
+		ValueFactoryFactory valueFactoryFactory = (ValueFactoryFactory)newInstance(Class.forName(this.valueFactoryFactoryClazz));
+		modelEvaluatorFactory.setValueFactoryFactory(valueFactoryFactory);
 
 		Evaluator evaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
 

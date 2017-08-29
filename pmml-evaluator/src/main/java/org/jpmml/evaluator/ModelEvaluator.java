@@ -71,7 +71,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 	private M model = null;
 
-	private ValueFactoryFactory valueFactoryFactory = ValueFactoryFactory.newInstance();
+	private ValueFactoryFactory valueFactoryFactory = null;
 
 	private ValueFactory<?> valueFactory = null;
 
@@ -153,6 +153,9 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context);
 
 	protected void configure(ModelEvaluatorFactory modelEvaluatorFactory){
+		ValueFactoryFactory valueFactoryFactory = modelEvaluatorFactory.getValueFactoryFactory();
+
+		setValueFactoryFactory(valueFactoryFactory);
 	}
 
 	@Override
@@ -179,6 +182,11 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 	protected ValueFactory<?> createValueFactory(){
 		ValueFactoryFactory valueFactoryFactory = getValueFactoryFactory();
+
+		if(valueFactoryFactory == null){
+			valueFactoryFactory = ValueFactoryFactory.newInstance();
+		}
+
 		MathContext mathContext = getMathContext();
 
 		return valueFactoryFactory.newValueFactory(mathContext);
@@ -596,14 +604,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		return CacheUtil.getValue(model, cache, loader);
 	}
 
-	public ValueFactoryFactory getValueFactoryFactory(){
-		return this.valueFactoryFactory;
-	}
-
-	void setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
-		this.valueFactoryFactory = Objects.requireNonNull(valueFactoryFactory);
-	}
-
 	public PMML getPMML(){
 		return this.pmml;
 	}
@@ -618,6 +618,14 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 	private void setModel(M model){
 		this.model = model;
+	}
+
+	public ValueFactoryFactory getValueFactoryFactory(){
+		return this.valueFactoryFactory;
+	}
+
+	private void setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
+		this.valueFactoryFactory = valueFactoryFactory;
 	}
 
 	static
