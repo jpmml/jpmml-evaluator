@@ -67,6 +67,13 @@ public class ModelEvaluatorFactory implements Serializable {
 	}
 
 	public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml, Model model){
+		ModelEvaluator<?> modelEvaluator = createModelEvaluator(pmml, model);
+		modelEvaluator.configure(this);
+
+		return modelEvaluator;
+	}
+
+	private ModelEvaluator<? extends Model> createModelEvaluator(PMML pmml, Model model){
 
 		if(model instanceof AssociationModel){
 			return new AssociationModelEvaluator(pmml, (AssociationModel)model);
@@ -81,10 +88,7 @@ public class ModelEvaluatorFactory implements Serializable {
 		} else
 
 		if(model instanceof MiningModel){
-			MiningModelEvaluator miningModelEvaluator = new MiningModelEvaluator(pmml, (MiningModel)model);
-			miningModelEvaluator.setModelEvaluatorFactory(this);
-
-			return miningModelEvaluator;
+			return new MiningModelEvaluator(pmml, (MiningModel)model);
 		} else
 
 		if(model instanceof NaiveBayesModel){

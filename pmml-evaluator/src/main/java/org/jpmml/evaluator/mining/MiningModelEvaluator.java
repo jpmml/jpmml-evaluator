@@ -123,6 +123,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
+	protected void configure(ModelEvaluatorFactory modelEvaluatorFactory){
+		super.configure(modelEvaluatorFactory);
+
+		setModelEvaluatorFactory(modelEvaluatorFactory);
+	}
+
+	@Override
 	public String getSummary(){
 		return "Ensemble model";
 	}
@@ -657,7 +664,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return this.modelEvaluatorFactory;
 	}
 
-	public void setModelEvaluatorFactory(ModelEvaluatorFactory modelEvaluatorFactory){
+	private void setModelEvaluatorFactory(ModelEvaluatorFactory modelEvaluatorFactory){
 		this.modelEvaluatorFactory = modelEvaluatorFactory;
 	}
 

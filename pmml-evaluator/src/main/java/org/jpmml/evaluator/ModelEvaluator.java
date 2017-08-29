@@ -152,6 +152,9 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 	abstract
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context);
 
+	protected void configure(ModelEvaluatorFactory modelEvaluatorFactory){
+	}
+
 	@Override
 	public MiningFunction getMiningFunction(){
 		M model = getModel();
