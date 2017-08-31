@@ -18,7 +18,33 @@
  */
 package org.jpmml.evaluator;
 
-public interface HasReport {
+import java.util.ArrayList;
+import java.util.List;
 
-	Report getReport();
+public class ComplexReport extends Report {
+
+	private List<Entry> entries = new ArrayList<>();
+
+
+	@Override
+	public ComplexReport copy(){
+		ComplexReport result = new ComplexReport();
+		result.setEntries(new ArrayList<>(getEntries()));
+
+		return result;
+	}
+
+	@Override
+	public void add(Entry entry){
+		this.entries.add(entry);
+	}
+
+	@Override
+	public List<Entry> getEntries(){
+		return this.entries;
+	}
+
+	private void setEntries(List<Entry> entries){
+		this.entries = entries;
+	}
 }

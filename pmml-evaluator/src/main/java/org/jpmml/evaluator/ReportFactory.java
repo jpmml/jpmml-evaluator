@@ -18,7 +18,9 @@
  */
 package org.jpmml.evaluator;
 
-public interface HasReport {
+abstract
+public class ReportFactory {
 
-	Report getReport();
+	abstract
+	public Report newReport();
 }

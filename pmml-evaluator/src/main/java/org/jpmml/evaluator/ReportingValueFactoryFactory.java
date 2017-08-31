@@ -22,20 +22,32 @@ import org.dmg.pmml.MathContext;
 
 public class ReportingValueFactoryFactory extends ValueFactoryFactory {
 
+	private ReportFactory reportFactory = null;
+
+
 	protected ReportingValueFactoryFactory(){
 	}
 
 	@Override
 	public ReportingValueFactory<?> newValueFactory(MathContext mathContext){
+		ReportFactory reportFactory = getReportFactory();
 
 		switch(mathContext){
 			case FLOAT:
-				return ReportingFloatValueFactory.INSTANCE;
+				return new ReportingFloatValueFactory(reportFactory);
 			case DOUBLE:
-				return ReportingDoubleValueFactory.INSTANCE;
+				return new ReportingDoubleValueFactory(reportFactory);
 			default:
 				throw new IllegalArgumentException();
 		}
+	}
+
+	public ReportFactory getReportFactory(){
+		return this.reportFactory;
+	}
+
+	public void setReportFactory(ReportFactory reportFactory){
+		this.reportFactory = reportFactory;
 	}
 
 	static
@@ -46,62 +58,90 @@ public class ReportingValueFactoryFactory extends ValueFactoryFactory {
 	static
 	protected class ReportingFloatValueFactory extends ReportingValueFactory<Float> {
 
+		protected ReportingFloatValueFactory(ReportFactory reportFactory){
+			super(reportFactory);
+		}
+
 		@Override
 		public Value<Float> newValue(double value){
-			return new ReportingFloatValue((float)value);
+			return new ReportingFloatValue((float)value, newReport());
 		}
 
 		@Override
 		public Value<Float> newValue(Number value){
-			return new ReportingFloatValue(value.floatValue());
+			return new ReportingFloatValue(value.floatValue(), newReport());
 		}
 
 		@Override
 		public Value<Float> newValue(String value){
-			return new ReportingFloatValue(Float.parseFloat(value));
+			return new ReportingFloatValue(Float.parseFloat(value), newReport());
 		}
 
 		@Override
 		public Vector<Float> newVector(int capacity){
 
 			if(capacity > 0){
-				return new ReportingComplexFloatVector(capacity);
+				return new ReportingComplexFloatVector(capacity){
+
+					@Override
+					protected Report newReport(){
+						return ReportingFloatValueFactory.this.newReport();
+					}
+				};
 			}
 
-			return new ReportingSimpleFloatVector();
-		}
+			return new ReportingSimpleFloatVector(){
 
-		public static final ReportingFloatValueFactory INSTANCE = new ReportingFloatValueFactory();
+				@Override
+				protected Report newReport(){
+					return ReportingFloatValueFactory.this.newReport();
+				}
+			};
+		}
 	}
 
 	static
 	protected class ReportingDoubleValueFactory extends ReportingValueFactory<Double> {
 
+		protected ReportingDoubleValueFactory(ReportFactory reportFactory){
+			super(reportFactory);
+		}
+
 		@Override
 		public Value<Double> newValue(double value){
-			return new ReportingDoubleValue(value);
+			return new ReportingDoubleValue(value, newReport());
 		}
 
 		@Override
 		public Value<Double> newValue(Number value){
-			return new ReportingDoubleValue(value.doubleValue());
+			return new ReportingDoubleValue(value.doubleValue(), newReport());
 		}
 
 		@Override
 		public Value<Double> newValue(String value){
-			return new ReportingDoubleValue(Double.parseDouble(value));
+			return new ReportingDoubleValue(Double.parseDouble(value), newReport());
 		}
 
 		@Override
 		public Vector<Double> newVector(int capacity){
 
 			if(capacity > 0){
-				return new ReportingComplexDoubleVector(capacity);
+				return new ReportingComplexDoubleVector(capacity){
+
+					@Override
+					protected  Report newReport(){
+						return ReportingDoubleValueFactory.this.newReport();
+					}
+				};
 			}
 
-			return new ReportingSimpleDoubleVector();
-		}
+			return new ReportingSimpleDoubleVector(){
 
-		public static final ReportingDoubleValueFactory INSTANCE = new ReportingDoubleValueFactory();
+				@Override
+				protected  Report newReport(){
+					return ReportingDoubleValueFactory.this.newReport();
+				}
+			};
+		}
 	}
 }

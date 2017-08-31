@@ -18,7 +18,43 @@
  */
 package org.jpmml.evaluator;
 
-public interface HasReport {
+import java.util.Collections;
+import java.util.List;
 
-	Report getReport();
+public class SimpleReport extends Report {
+
+	private Entry entry = null;
+
+
+	@Override
+	public SimpleReport copy(){
+		SimpleReport result = new SimpleReport();
+		result.setEntry(getEntry());
+
+		return result;
+	}
+
+	@Override
+	public void add(Entry entry){
+		setEntry(entry);
+	}
+
+	@Override
+	public List<Entry> getEntries(){
+		Entry entry = getEntry();
+
+		if(entry != null){
+			return Collections.singletonList(entry);
+		}
+
+		return Collections.emptyList();
+	}
+
+	public Entry getEntry(){
+		return this.entry;
+	}
+
+	private void setEntry(Entry entry){
+		this.entry = entry;
+	}
 }

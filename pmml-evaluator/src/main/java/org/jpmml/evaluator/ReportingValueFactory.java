@@ -20,4 +20,29 @@ package org.jpmml.evaluator;
 
 abstract
 public class ReportingValueFactory<V extends Number> extends ValueFactory<V> {
+
+	private ReportFactory reportFactory = null;
+
+
+	public ReportingValueFactory(ReportFactory reportFactory){
+		setReportFactory(reportFactory);
+	}
+
+	protected Report newReport(){
+		ReportFactory reportFactory = getReportFactory();
+
+		if(reportFactory == null){
+			return new SimpleReport();
+		}
+
+		return reportFactory.newReport();
+	}
+
+	public ReportFactory getReportFactory(){
+		return this.reportFactory;
+	}
+
+	private void setReportFactory(ReportFactory reportFactory){
+		this.reportFactory = reportFactory;
+	}
 }
