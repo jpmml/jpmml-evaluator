@@ -438,7 +438,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			for(int i = 0; i < neurons.size(); i++){
 				Neuron neuron = neurons.get(i);
 
-				Value<V> output = valueFactory.newValue(0d);
+				Value<V> output = valueFactory.newValue();
 
 				List<Connection> connections = neuron.getConnections();
 				for(int j = 0; j < connections.size(); j++){

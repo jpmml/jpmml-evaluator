@@ -240,7 +240,7 @@ public class TargetUtil {
 
 		ProbabilityDistribution result = new ProbabilityDistribution();
 
-		Value<V> sum = valueFactory.newValue(0d);
+		Value<V> sum = valueFactory.newValue();
 
 		List<TargetValue> targetValues = target.getTargetValues();
 		for(TargetValue targetValue : targetValues){

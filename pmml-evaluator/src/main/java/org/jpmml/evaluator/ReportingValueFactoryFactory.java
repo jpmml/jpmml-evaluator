@@ -63,6 +63,11 @@ public class ReportingValueFactoryFactory extends ValueFactoryFactory {
 		}
 
 		@Override
+		public Value<Float> newValue(){
+			return new ReportingFloatValue(0f, newReport(), null);
+		}
+
+		@Override
 		public Value<Float> newValue(double value){
 			return new ReportingFloatValue((float)value, newReport());
 		}
@@ -105,6 +110,11 @@ public class ReportingValueFactoryFactory extends ValueFactoryFactory {
 
 		protected ReportingDoubleValueFactory(ReportFactory reportFactory){
 			super(reportFactory);
+		}
+
+		@Override
+		public Value<Double> newValue(){
+			return new ReportingDoubleValue(0d, newReport(), null);
 		}
 
 		@Override

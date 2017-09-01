@@ -335,7 +335,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
 
-		Value<V> sum = valueFactory.newValue(0d);
+		Value<V> sum = valueFactory.newValue();
 
 		boolean hasProbabilities = false;
 

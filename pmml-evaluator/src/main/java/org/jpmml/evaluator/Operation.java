@@ -27,4 +27,6 @@ import java.lang.annotation.Target;
 public @interface Operation {
 
 	String value();
+
+	String initialValue() default "";
 }

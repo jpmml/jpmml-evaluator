@@ -23,6 +23,19 @@ import java.io.Serializable;
 abstract
 public class ValueFactory<V extends Number> implements Serializable {
 
+	/**
+	 * <p>
+	 * Creates a value, which is "silently" set to the zero value.
+	 * </p>
+	 */
+	abstract
+	public Value<V> newValue();
+
+	/**
+	 * <p>
+	 * Creates a value, which is "vocally" set to the specified value.
+	 * </p>
+	 */
 	abstract
 	public Value<V> newValue(double value);
 

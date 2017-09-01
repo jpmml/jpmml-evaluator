@@ -518,7 +518,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			Row parameterPredictorRow = parameterPredictorRows.get(parameterCell.getParameterName());
 
 			if(result == null){
-				result = valueFactory.newValue(0d);
+				result = valueFactory.newValue();
 			} // End if
 
 			if(parameterPredictorRow != null){
@@ -560,7 +560,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			Parameter parameter = parameters.get(parameterCell.getParameterName());
 
 			if(result == null){
-				result = valueFactory.newValue(0d);
+				result = valueFactory.newValue();
 			} // End if
 
 			if(parameter != null){

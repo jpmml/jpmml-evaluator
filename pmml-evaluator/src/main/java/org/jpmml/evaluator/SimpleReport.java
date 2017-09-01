@@ -40,6 +40,13 @@ public class SimpleReport extends Report {
 	}
 
 	@Override
+	public boolean hasEntries(){
+		Entry entry = getEntry();
+
+		return (entry != null);
+	}
+
+	@Override
 	public List<Entry> getEntries(){
 		Entry entry = getEntry();
 

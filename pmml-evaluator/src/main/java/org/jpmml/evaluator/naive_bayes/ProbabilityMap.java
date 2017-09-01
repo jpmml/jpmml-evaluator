@@ -34,7 +34,7 @@ class ProbabilityMap<K, V extends Number> extends ValueMap<K, V> {
 		if(value == null){
 			ValueFactory<V> valueFactory = getValueFactory();
 
-			value = valueFactory.newValue(0d);
+			value = valueFactory.newValue();
 
 			put(key, value);
 		}

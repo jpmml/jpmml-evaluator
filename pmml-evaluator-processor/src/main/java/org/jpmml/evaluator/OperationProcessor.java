@@ -49,6 +49,7 @@ import com.sun.codemodel.JBlock;
 import com.sun.codemodel.JClass;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JCodeModel;
+import com.sun.codemodel.JConditional;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JExpr;
 import com.sun.codemodel.JExpression;
@@ -124,7 +125,7 @@ public class OperationProcessor extends AbstractProcessor {
 		createCopyMethod(clazz);
 		createOperationMethods(clazz, name, type);
 		createReportMethod(clazz);
-		createExpressionMethod(clazz);
+		createExpressionMethods(clazz);
 		createAccessorMethods(clazz, reportField);
 		createFormatMethod(clazz, type);
 	}
@@ -150,7 +151,8 @@ public class OperationProcessor extends AbstractProcessor {
 
 		DeclaredType operationType = types.getDeclaredType(operationElement);
 
-		ExecutableElement valueElement = getValueMethod(operationElement);
+		ExecutableElement valueMethod = getMethod(operationElement, "value");
+		ExecutableElement initialValueMethod = getMethod(operationElement, "initialValue");
 
 		TypeElement clazzElement = elements.getTypeElement("org.jpmml.evaluator." + name);
 
@@ -169,18 +171,19 @@ public class OperationProcessor extends AbstractProcessor {
 					if(annotationMirror != null){
 						Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues = annotationMirror.getElementValues();
 
-						AnnotationValue elementValue = elementValues.get(valueElement);
-						if(elementValue == null){
+						AnnotationValue valueAttribute = elementValues.get(valueMethod);
+						AnnotationValue initialValueAttribute = elementValues.get(initialValueMethod);
+						if(valueAttribute == null){
 							throw new RuntimeException();
 						}
 
 						switch(kind){
 							case CONSTRUCTOR:
-								createReportingConstructor(clazz, executableElement, (String)elementValue.getValue(), type);
+								createReportingConstructor(clazz, executableElement, (String)valueAttribute.getValue(), (initialValueAttribute != null ? (String)initialValueAttribute.getValue() : null), type);
 								createConstructor(clazz, executableElement, true);
 								break;
 							case METHOD:
-								createReportingMethod(clazz, executableElement, (String)elementValue.getValue(), type);
+								createReportingMethod(clazz, executableElement, (String)valueAttribute.getValue(), (initialValueAttribute != null ? (String)initialValueAttribute.getValue() : null), type);
 								break;
 							default:
 								break;
@@ -216,12 +219,12 @@ public class OperationProcessor extends AbstractProcessor {
 		}
 	}
 
-	private ExecutableElement getValueMethod(TypeElement element){
+	private ExecutableElement getMethod(TypeElement element, String name){
 		List<? extends Element> enclosedElements = element.getEnclosedElements();
 
 		for(Element enclosedElement : enclosedElements){
 
-			if(("value").equals(String.valueOf(enclosedElement.getSimpleName()))){
+			if((name).equals(String.valueOf(enclosedElement.getSimpleName()))){
 				return (ExecutableElement)enclosedElement;
 			}
 		}
@@ -244,7 +247,7 @@ public class OperationProcessor extends AbstractProcessor {
 	}
 
 	static
-	private void createReportingConstructor(JDefinedClass clazz, ExecutableElement executableElement, String operation, JPrimitiveType type){
+	private void createReportingConstructor(JDefinedClass clazz, ExecutableElement executableElement, String operation, String initialOperation, JPrimitiveType type){
 		JCodeModel codeModel = clazz.owner();
 
 		JMethod constructor = clazz.constructor(JMod.PUBLIC);
@@ -264,6 +267,10 @@ public class OperationProcessor extends AbstractProcessor {
 			JVar reportParameter = constructor.param(reportClazz, "report");
 
 			body.add(JExpr.invoke("setReport").arg(reportParameter));
+		} // End if
+
+		if(initialOperation != null){
+			throw new RuntimeException();
 		}
 
 		body.add(JExpr.invoke("report").arg(createReportInvocation(clazz, operation, constructor.params(), type)));
@@ -300,7 +307,7 @@ public class OperationProcessor extends AbstractProcessor {
 	}
 
 	static
-	private void createReportingMethod(JDefinedClass clazz, ExecutableElement executableElement, String operation, JPrimitiveType type){
+	private void createReportingMethod(JDefinedClass clazz, ExecutableElement executableElement, String operation, String initialOperation, JPrimitiveType type){
 		JCodeModel codeModel = clazz.owner();
 
 		JMethod method = clazz.method(JMod.PUBLIC, clazz, String.valueOf(executableElement.getSimpleName()));
@@ -315,7 +322,21 @@ public class OperationProcessor extends AbstractProcessor {
 
 		JVar resultVariable = body.decl(clazz, "result", JExpr.cast(clazz, createSuperInvocation(clazz, method)));
 
-		body.add(JExpr.invoke("report").arg(createReportInvocation(clazz, operation, method.params(), type)));
+		if(initialOperation != null){
+			JConditional ifStatement = body._if(JExpr.invoke("hasExpression"));
+
+			JBlock trueBlock = ifStatement._then();
+
+			trueBlock.add(JExpr.invoke("report").arg(createReportInvocation(clazz, operation, method.params(), type)));
+
+			JBlock falseBlock = ifStatement._else();
+
+			falseBlock.add(JExpr.invoke("report").arg(createReportInvocation(clazz, initialOperation, method.params(), type)));
+		} else
+
+		{
+			body.add(JExpr.invoke("report").arg(createReportInvocation(clazz, operation, method.params(), type)));
+		}
 
 		body._return(resultVariable);
 	}
@@ -337,21 +358,33 @@ public class OperationProcessor extends AbstractProcessor {
 	}
 
 	static
-	private void createExpressionMethod(JDefinedClass clazz){
+	private void createExpressionMethods(JDefinedClass clazz){
 		JCodeModel codeModel = clazz.owner();
 
 		JClass reportClazz = codeModel.ref("org.jpmml.evaluator.Report");
 		JClass reportEntryClazz = codeModel.ref("org.jpmml.evaluator.Report.Entry");
 
-		JMethod method = clazz.method(JMod.PRIVATE, String.class, "getExpression");
+		if(true){
+			JMethod method = clazz.method(JMod.PRIVATE, boolean.class, "hasExpression");
 
-		JBlock body = method.body();
+			JBlock body = method.body();
 
-		JVar reportVariable = body.decl(reportClazz, "report", JExpr.invoke("getReport"));
+			JVar reportVariable = body.decl(reportClazz, "report", JExpr.invoke("getReport"));
 
-		JVar entryVariable = body.decl(reportEntryClazz, "entry", reportVariable.invoke("tailEntry"));
+			body._return(reportVariable.invoke("hasEntries"));
+		} // End if
 
-		body._return(entryVariable.invoke("getExpression"));
+		if(true){
+			JMethod method = clazz.method(JMod.PRIVATE, String.class, "getExpression");
+
+			JBlock body = method.body();
+
+			JVar reportVariable = body.decl(reportClazz, "report", JExpr.invoke("getReport"));
+
+			JVar entryVariable = body.decl(reportEntryClazz, "entry", reportVariable.invoke("tailEntry"));
+
+			body._return(entryVariable.invoke("getExpression"));
+		}
 	}
 
 	static
@@ -482,6 +515,10 @@ public class OperationProcessor extends AbstractProcessor {
 
 		if(true){
 			JMethod getterMethod = clazz.method(JMod.PUBLIC, field.type(), "get" + capitalize(field.name()));
+
+			if((clazz.name()).endsWith("Value")){
+				getterMethod.annotate(Override.class);
+			}
 
 			JBlock body = getterMethod.body();
 

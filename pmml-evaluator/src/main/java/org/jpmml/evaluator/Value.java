@@ -27,13 +27,15 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> copy();
 
 	@Operation (
-		value = "<apply><plus/>${this}${0}</apply>"
+		value = "<apply><plus/>${this}${0}</apply>",
+		initialValue = "${0}"
 	)
 	abstract
 	public Value<V> add(double value);
 
 	@Operation (
-		value = "<apply><plus/>${this}${0}</apply>"
+		value = "<apply><plus/>${this}${0}</apply>",
+		initialValue = "${0}"
 	)
 	abstract
 	public Value<V> add(Value<? extends Number> value);
@@ -44,7 +46,8 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	 * </p>
 	 */
 	@Operation (
-		value = "<apply><plus/>${this}<apply><times/>${0}${1}</apply></apply>"
+		value = "<apply><plus/>${this}<apply><times/>${0}${1}</apply></apply>",
+		initialValue = "<apply><times/>${0}${1}</apply>"
 	)
 	abstract
 	public Value<V> add(double coefficient, Number factor);
@@ -55,7 +58,8 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	 * </p>
 	 */
 	@Operation (
-		value = "<apply><plus/>${this}<apply><times/>${0}<apply><power/>${1}${2}</apply></apply></apply>"
+		value = "<apply><plus/>${this}<apply><times/>${0}<apply><power/>${1}${2}</apply></apply></apply>",
+		initialValue = "<apply><times/>${0}<apply><power/>${1}${2}</apply></apply>"
 	)
 	abstract
 	public Value<V> add(double coefficient, Number factor, int exponent);
@@ -66,19 +70,22 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	 * </p>
 	 */
 	@Operation (
-		value = "<apply><plus/>${this}<apply><times/>${0}${1}</apply></apply>"
+		value = "<apply><plus/>${this}<apply><times/>${0}${1}</apply></apply>",
+		initialValue = "<apply><times/>${0}${1}</apply>"
 	)
 	abstract
 	public Value<V> add(double coefficient, List<? extends Number> factors);
 
 	@Operation (
-		value = "<apply><minus/>${this}${0}</apply>"
+		value = "<apply><minus/>${this}${0}</apply>",
+		initialValue = "<apply><minus/>${0}</apply>"
 	)
 	abstract
 	public Value<V> subtract(double value);
 
 	@Operation (
-		value = "<apply><minus/>${this}${0}</apply>"
+		value = "<apply><minus/>${this}${0}</apply>",
+		initialValue = "<apply><minus/>${0}</apply>"
 	)
 	abstract
 	public Value<V> subtract(Value<? extends Number> value);

@@ -48,6 +48,11 @@ public class ValueFactoryFactory implements Serializable {
 	protected class FloatValueFactory extends ValueFactory<Float> {
 
 		@Override
+		public Value<Float> newValue(){
+			return new FloatValue(0f);
+		}
+
+		@Override
 		public Value<Float> newValue(double value){
 			return new FloatValue((float)value);
 		}
@@ -77,6 +82,11 @@ public class ValueFactoryFactory implements Serializable {
 
 	static
 	protected class DoubleValueFactory extends ValueFactory<Double> {
+
+		@Override
+		public Value<Double> newValue(){
+			return new DoubleValue(0d);
+		}
 
 		@Override
 		public Value<Double> newValue(double value){

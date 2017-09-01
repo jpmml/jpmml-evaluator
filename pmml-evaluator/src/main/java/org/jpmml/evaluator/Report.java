@@ -43,6 +43,12 @@ public class Report {
 		return helper.toString();
 	}
 
+	public boolean hasEntries(){
+		List<Entry> entries = getEntries();
+
+		return (entries.size() > 0);
+	}
+
 	Entry headEntry(){
 		List<Entry> entries = getEntries();
 
