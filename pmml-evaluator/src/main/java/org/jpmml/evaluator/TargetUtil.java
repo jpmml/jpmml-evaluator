@@ -120,13 +120,13 @@ public class TargetUtil {
 			result = Math.min(result, max);
 		}
 
-		Double rescaleFactor = target.getRescaleFactor();
-		if(rescaleFactor != null){
+		double rescaleFactor = target.getRescaleFactor();
+		if(rescaleFactor != 1d){
 			result *= rescaleFactor;
 		}
 
-		Double rescaleConstant = target.getRescaleConstant();
-		if(rescaleConstant != null){
+		double rescaleConstant = target.getRescaleConstant();
+		if(rescaleConstant != 0d){
 			result += rescaleConstant;
 		}
 
@@ -161,13 +161,13 @@ public class TargetUtil {
 			value.restrict((min != null ? min : Double.NEGATIVE_INFINITY), (max != null ? max : Double.POSITIVE_INFINITY));
 		}
 
-		Double rescaleFactor = target.getRescaleFactor();
-		if(rescaleFactor != null){
+		double rescaleFactor = target.getRescaleFactor();
+		if(rescaleFactor != 1d){
 			value.multiply(rescaleFactor);
 		}
 
-		Double rescaleConstant = target.getRescaleConstant();
-		if(rescaleConstant != null){
+		double rescaleConstant = target.getRescaleConstant();
+		if(rescaleConstant != 0d){
 			value.add(rescaleConstant);
 		}
 
