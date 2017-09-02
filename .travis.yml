@@ -3,4 +3,4 @@ script: mvn clean package
 jdk:
   - oraclejdk8
 # - openjdk7
-  - oraclejdk7
+# - oraclejdk7
