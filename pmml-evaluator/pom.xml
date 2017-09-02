@@ -88,7 +88,7 @@
 								<path>
 									<groupId>org.jpmml</groupId>
 									<artifactId>pmml-evaluator-processor</artifactId>
-									<version>1.3-SNAPSHOT</version>
+									<version>${project.version}</version>
 								</path>
 							</annotationProcessorPaths>
 							<includes>
@@ -99,6 +99,8 @@
 								<include>org/jpmml/evaluator/Value.java</include>
 								<include>org/jpmml/evaluator/Vector.java</include>
 							</includes>
+							<generatedSourcesDirectory>target/generated-sources/apt</generatedSourcesDirectory>
+							<proc>only</proc>
 							<fork>true</fork>
 						</configuration>
 					</execution>
@@ -108,6 +110,10 @@
 						<goals>
 							<goal>compile</goal>
 						</goals>
+						<configuration>
+							<proc>none</proc>
+							<fork>true</fork>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

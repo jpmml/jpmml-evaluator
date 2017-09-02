@@ -18,8 +18,9 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.File;
+import java.io.Closeable;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.AnnotationMirror;
@@ -42,6 +44,7 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
+import javax.tools.JavaFileObject;
 
 import com.sun.codemodel.ClassType;
 import com.sun.codemodel.CodeWriter;
@@ -62,8 +65,6 @@ import com.sun.codemodel.JPackage;
 import com.sun.codemodel.JPrimitiveType;
 import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
-import com.sun.codemodel.writer.FileCodeWriter;
-import com.sun.codemodel.writer.FilterCodeWriter;
 
 @SupportedAnnotationTypes (
 	value = {"org.jpmml.evaluator.Operation"}
@@ -84,12 +85,23 @@ public class OperationProcessor extends AbstractProcessor {
 			createReportingVectorClass(codeModel, "SimpleDoubleVector", codeModel.DOUBLE);
 			createReportingVectorClass(codeModel, "SimpleFloatVector", codeModel.FLOAT);
 
-			File outputDir = new File(System.getProperty("basedir"), "target/generated-sources/apt");
-			if(!outputDir.exists()){
-				outputDir.mkdirs();
-			}
+			CodeWriter codeWriter = new CodeWriter(){
 
-			CodeWriter codeWriter = new FilterCodeWriter(new FileCodeWriter(outputDir, "UTF-8")){
+				private Filer filer = null;
+
+
+				@Override
+				public OutputStream openBinary(JPackage pkg, String fileName) throws IOException {
+					this.filer = OperationProcessor.super.processingEnv.getFiler();
+
+					if(fileName.endsWith(".java")){
+						fileName = fileName.substring(0, fileName.length() - ".java".length());
+					}
+
+					JavaFileObject sourceFile = this.filer.createSourceFile(pkg.name() + "." + fileName);
+
+					return sourceFile.openOutputStream();
+				}
 
 				@Override
 				public Writer openSource(JPackage pkg, String fileName) throws IOException {
@@ -98,6 +110,18 @@ public class OperationProcessor extends AbstractProcessor {
 					writer.write(OperationProcessor.LICENSE);
 
 					return writer;
+				}
+
+				@Override
+				public void close() throws IOException {
+
+					if(this.filer instanceof Closeable){
+						Closeable closeable = (Closeable)this.filer;
+
+						closeable.close();
+					}
+
+					this.filer = null;
 				}
 			};
 
