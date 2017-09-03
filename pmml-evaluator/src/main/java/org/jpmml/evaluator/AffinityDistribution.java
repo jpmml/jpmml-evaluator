@@ -27,6 +27,9 @@
  */
 package org.jpmml.evaluator;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -80,6 +83,21 @@ public class AffinityDistribution extends Classification implements HasEntityIdR
 	public Double getEntityAffinity(){
 		return getAffinity(getEntityId());
 	}
+
+  //TODO add?
+  @Override
+  protected JsonElement toJsonHelper(){
+    JsonObject obj    = new JsonObject();
+    JsonObject winner = new JsonObject();
+    String winnerId   = this.getEntityId();
+
+    winner.addProperty(winnerId, this.getAffinity(winnerId));
+
+    obj.addProperty("class", "AffinityDistribution");
+    obj.add("winner", winner);
+
+    return obj;
+  }
 
 	static
 	public Type validateType(Type type){

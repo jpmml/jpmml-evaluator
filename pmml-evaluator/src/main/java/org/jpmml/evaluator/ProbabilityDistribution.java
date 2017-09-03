@@ -18,6 +18,9 @@
  */
 package org.jpmml.evaluator;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -40,4 +43,20 @@ public class ProbabilityDistribution extends Classification implements HasProbab
 	public Double getProbability(String value){
 		return get(value);
 	}
+  @Override
+  protected JsonElement toJsonHelper(){
+    JsonObject obj = new JsonObject();
+    JsonObject probabilities = new JsonObject();
+
+    for(String k : this.getCategoryValues()) {
+      probabilities.addProperty(k, this.getProbability(k));
+    }
+
+    obj.addProperty("class", "ProbabilityDistribution");
+    obj.addProperty("result", this.getResult().toString());
+    obj.add("probability_entries", probabilities);
+
+    return obj;
+  }
+
 }

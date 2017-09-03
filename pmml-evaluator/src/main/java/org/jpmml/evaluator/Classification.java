@@ -26,6 +26,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -46,7 +49,6 @@ public class Classification implements Computable {
 	private Object result = null;
 
 	private Type type = null;
-
 
 	public Classification(Type type){
 		setType(type);
@@ -217,6 +219,26 @@ public class Classification implements Computable {
 	private static final Ordering<Double> BIGGER_IS_BETTER = Ordering.<Double>natural();
 	private static final Ordering<Double> SMALLER_IS_BETTER = Ordering.<Double>natural().reverse();
 
+  @Override
+  public String toJson() {
+    return this.toJsonHelper().toString();
+  }
+
+  //TODO necessary?
+  protected JsonElement toJsonHelper() {
+    JsonObject obj = new JsonObject();
+    JsonObject entries = new JsonObject();
+
+    for (Map.Entry<String, Double> entry : this.entrySet()){
+      entries.addProperty(entry.getKey(), entry.getValue());
+    }
+
+    obj.addProperty("class", "Classification");
+    obj.addProperty("result", this.getResult().toString());
+    obj.add(this.getType().entryKey(), entries);
+    return obj;
+  }
+
 	static
 	public enum Type implements Comparator<Double> {
 		PROBABILITY(Classification.BIGGER_IS_BETTER, Range.closed(Numbers.DOUBLE_ZERO, Numbers.DOUBLE_ONE)),
@@ -299,5 +321,7 @@ public class Classification implements Computable {
 		private void setRange(Range<Double> range){
 			this.range = range;
 		}
+
+
 	}
 }

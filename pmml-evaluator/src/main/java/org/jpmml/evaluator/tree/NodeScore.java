@@ -18,6 +18,9 @@
  */
 package org.jpmml.evaluator.tree;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.BiMap;
@@ -79,6 +82,21 @@ public class NodeScore implements Computable, HasEntityId, HasEntityRegistry<Nod
 
 		return helper.toString();
 	}
+
+  @Override
+  public String toJson() {
+    return this.toJsonHelper().toString();
+  }
+
+  //TODO
+  protected JsonElement toJsonHelper() {
+    JsonObject obj = new JsonObject();
+    obj.addProperty("class", "NodeScore");
+    obj.addProperty("result", this.getResult().toString());
+    obj.addProperty("entity_id", this.getEntityId());
+
+    return obj;
+  }
 
 	public Node getNode(){
 		return this.node;

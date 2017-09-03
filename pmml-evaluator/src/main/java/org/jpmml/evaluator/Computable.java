@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import com.google.gson.JsonElement;
+
 /**
  * @see ResultFeature
  */
@@ -27,4 +29,5 @@ public interface Computable {
 	 * @throws UnsupportedOperationException If this object cannot be represented as a Java primitive value.
 	 */
 	Object getResult();
+  String toJson();
 }

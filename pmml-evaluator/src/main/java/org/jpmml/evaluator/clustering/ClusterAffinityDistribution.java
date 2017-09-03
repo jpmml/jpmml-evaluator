@@ -21,6 +21,9 @@ package org.jpmml.evaluator.clustering;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.clustering.Cluster;
 import org.jpmml.evaluator.AffinityDistribution;
@@ -67,4 +70,23 @@ public class ClusterAffinityDistribution extends EntityClassification<Cluster> i
 	public Double getEntityAffinity(){
 		return getAffinity(getEntityId());
 	}
+
+  @Override
+  protected JsonElement toJsonHelper() {
+    JsonObject obj = new JsonObject();
+    JsonObject affinities = new JsonObject();
+
+    for(String k : this.getCategoryValues()) {
+      affinities.addProperty(k, this.getAffinity(k));
+    }
+
+    obj.addProperty("class", "ClusterAffinityDistribution");
+    obj.addProperty("result", this.getResult().toString());
+    obj.addProperty("display_value", this.getDisplayValue());
+    obj.addProperty("entity_affinity", this.getEntityAffinity());
+    obj.add("affinity_entries", affinities);
+
+    return obj;
+  }
+
 }

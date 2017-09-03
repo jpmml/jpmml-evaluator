@@ -20,6 +20,9 @@ package org.jpmml.evaluator.rule_set;
 
 import java.util.Set;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.rule_set.SimpleRule;
@@ -68,4 +71,21 @@ public class SimpleRuleScoreDistribution extends EntityClassification<SimpleRule
 	protected void setEntity(SimpleRule simpleRule){
 		super.setEntity(simpleRule);
 	}
+
+  @Override
+  protected JsonElement toJsonHelper() {
+    JsonObject obj = new JsonObject();
+    JsonObject confidences = new JsonObject();
+
+    for(String k : this.getCategoryValues()) {
+      confidences.addProperty(k, this.getConfidence(k));
+    }
+
+    obj.addProperty("class", "SimpleRuleScoreDistribution");
+    obj.addProperty("result", this.getResult().toString());
+    obj.add("confidence_entries", confidences);
+
+    return obj;
+  }
+
 }

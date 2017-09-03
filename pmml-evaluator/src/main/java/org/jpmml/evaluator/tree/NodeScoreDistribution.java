@@ -23,6 +23,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.DataType;
@@ -116,4 +119,24 @@ public class NodeScoreDistribution extends EntityClassification<Node> implements
 
 		return helper;
 	}
+
+  @Override
+  protected JsonElement toJsonHelper() {
+    JsonObject obj = new JsonObject();
+    JsonObject probabilities = new JsonObject();
+    JsonObject confidences = new JsonObject();
+
+    for(String k : this.getCategoryValues()) {
+      probabilities.addProperty(k, this.getProbability(k));
+      confidences.addProperty(k, this.getConfidence(k));
+    }
+
+    obj.addProperty("class", "NodeScoreDistribution");
+    obj.addProperty("result", this.getResult().toString());
+    obj.add("probability_entries", probabilities);
+    obj.add("confidence_entries", confidences);
+
+    return obj;
+  }
+
 }
