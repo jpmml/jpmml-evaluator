@@ -37,6 +37,7 @@ import org.dmg.pmml.Entity;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
+import org.dmg.pmml.HasField;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.NormContinuous;
@@ -529,22 +530,10 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 			Expression expression = getOutputExpression(neuralOutput);
 
-			if(expression instanceof FieldRef){
-				FieldRef fieldRef = (FieldRef)expression;
+			if(expression instanceof HasField){
+				HasField<?> hasField = (HasField<?>)expression;
 
-				name = fieldRef.getField();
-			} else
-
-			if(expression instanceof NormContinuous){
-				NormContinuous normContinuous = (NormContinuous)expression;
-
-				name = normContinuous.getField();
-			} else
-
-			if(expression instanceof NormDiscrete){
-				NormDiscrete normDiscrete = (NormDiscrete)expression;
-
-				name = normDiscrete.getField();
+				name = hasField.getField();
 			} else
 
 			{
