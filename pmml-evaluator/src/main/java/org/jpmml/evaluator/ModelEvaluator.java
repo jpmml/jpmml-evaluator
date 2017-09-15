@@ -312,6 +312,10 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		return this.outputResultFields;
 	}
 
+	public boolean isPrimitive(){
+		return this.localDerivedFields.isEmpty() && this.outputFields.isEmpty();
+	}
+
 	@Override
 	public void verify(){
 		M model = getModel();

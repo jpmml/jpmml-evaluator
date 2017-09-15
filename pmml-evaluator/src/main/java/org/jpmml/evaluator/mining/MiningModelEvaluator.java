@@ -186,6 +186,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
+	public boolean isPrimitive(){
+		return false;
+	}
+
+	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
 		MiningModelEvaluationContext context = new MiningModelEvaluationContext(this);
 		context.setArguments(arguments);
@@ -370,6 +375,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Model lastModel = null;
 
+		boolean purge = false;
+
 		MiningModelEvaluationContext miningModelContext = null;
 
 		ModelEvaluationContext modelContext = null;
@@ -417,7 +424,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				this.segmentHandlers.putIfAbsent(segmentId, segmentHandler);
 			}
 
-			ModelEvaluator<?> segmentModelEvaluator = (ModelEvaluator<?>)segmentHandler.getEvaluator();
+			ModelEvaluator<?> segmentModelEvaluator = segmentHandler.getModelEvaluator();
+
+			purge |= !(segmentHandler.isCompatible() && segmentModelEvaluator.isPrimitive());
 
 			ModelEvaluationContext segmentContext;
 
@@ -429,7 +438,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				} else
 
 				{
-					miningModelContext.reset(segmentMiningModelEvaluator);
+					miningModelContext.reset(segmentMiningModelEvaluator, purge);
 				}
 
 				segmentContext = miningModelContext;
@@ -441,7 +450,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				} else
 
 				{
-					modelContext.reset(segmentModelEvaluator);
+					modelContext.reset(segmentModelEvaluator, purge);
 				}
 
 				segmentContext = modelContext;
@@ -493,8 +502,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			}
 
 			List<String> segmentWarnings = segmentContext.getWarnings();
-			for(String segmentWarning : segmentWarnings){
-				context.addWarning(segmentWarning);
+			if(segmentWarnings.size() > 0){
+
+				for(String segmentWarning : segmentWarnings){
+					context.addWarning(segmentWarning);
+				}
 			}
 
 			switch(multipleModelMethod){
@@ -621,9 +633,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				this.segmentHandlers.putIfAbsent(segmentId, segmentHandler);
 			}
 
-			Evaluator evaluator = segmentHandler.getEvaluator();
+			ModelEvaluator<?> modelEvaluator = segmentHandler.getModelEvaluator();
 
-			List<OutputField> outputFields = evaluator.getOutputFields();
+			List<OutputField> outputFields = modelEvaluator.getOutputFields();
 			for(OutputField outputField : outputFields){
 				OutputField nestedOutputField = new OutputField(outputField);
 
@@ -641,23 +653,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
 		}
 
-		Evaluator evaluator = modelEvaluatorFactory.newModelEvaluator(getPMML(), model);
+		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(getPMML(), model);
 
-		boolean compatible = true;
-
-		List<InputField> inputFields = evaluator.getInputFields();
-		for(InputField inputField : inputFields){
-			Field field = inputField.getField();
-			MiningField miningField = inputField.getMiningField();
-
-			if(field instanceof DataField){
-				compatible &= MiningFieldUtil.isDefault(miningField);
-			}
-		}
-
-		SegmentHandler result = new SegmentHandler(evaluator, compatible);
-
-		return result;
+		return new SegmentHandler(modelEvaluator);
 	}
 
 	public ModelEvaluatorFactory getModelEvaluatorFactory(){
@@ -696,22 +694,36 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	static
 	private class SegmentHandler implements Serializable {
 
-		private Evaluator evaluator = null;
+		private ModelEvaluator<?> modelEvaluator = null;
 
 		private boolean compatible = false;
 
 
-		private SegmentHandler(Evaluator evaluator, boolean compatible){
-			setEvaluator(evaluator);
+		private SegmentHandler(ModelEvaluator<?> modelEvaluator){
+			setModelEvaluator(modelEvaluator);
+
+			boolean compatible = true;
+
+			List<InputField> inputFields = modelEvaluator.getInputFields();
+			for(InputField inputField : inputFields){
+				Field field = inputField.getField();
+
+				if(field instanceof DataField){
+					MiningField miningField = inputField.getMiningField();
+
+					compatible &= MiningFieldUtil.isDefault(miningField);
+				}
+			}
+
 			setCompatible(compatible);
 		}
 
-		public Evaluator getEvaluator(){
-			return this.evaluator;
+		public ModelEvaluator<?> getModelEvaluator(){
+			return this.modelEvaluator;
 		}
 
-		private void setEvaluator(Evaluator evaluator){
-			this.evaluator = evaluator;
+		private void setModelEvaluator(ModelEvaluator<?> modelEvaluator){
+			this.modelEvaluator = modelEvaluator;
 		}
 
 		public boolean isCompatible(){

@@ -89,16 +89,16 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public void reset(){
-		super.reset();
+	public void reset(boolean purge){
+		super.reset(purge);
 
 		this.arguments = Collections.emptyMap();
 
 		this.compatible = false;
 	}
 
-	public void reset(ModelEvaluator<?> modelEvaluator){
-		reset();
+	public void reset(ModelEvaluator<?> modelEvaluator, boolean purge){
+		reset(purge);
 
 		setModelEvaluator(modelEvaluator);
 	}

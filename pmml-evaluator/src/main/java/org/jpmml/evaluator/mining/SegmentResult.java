@@ -21,14 +21,9 @@ package org.jpmml.evaluator.mining;
 import java.util.Map;
 
 import com.google.common.collect.ForwardingMap;
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.mining.Segment;
-import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasEntityId;
-import org.jpmml.evaluator.PMMLException;
-import org.jpmml.evaluator.TypeCheckException;
-import org.jpmml.evaluator.TypeUtil;
 
 public class SegmentResult extends ForwardingMap<FieldName, Object> implements HasEntityId {
 
@@ -75,26 +70,6 @@ public class SegmentResult extends ForwardingMap<FieldName, Object> implements H
 		return get(targetFieldName);
 	}
 
-	public Object getTargetValue(DataType dataType){
-		Object targetValue = EvaluatorUtil.decode(getTargetValue());
-
-		try {
-			return TypeUtil.cast(dataType, targetValue);
-		} catch(TypeCheckException tce){
-			throw ensureContext(tce);
-		}
-	}
-
-	public <V> V getTargetValue(Class<V> clazz){
-		Object targetValue = getTargetValue();
-
-		try {
-			return TypeUtil.cast(clazz, targetValue);
-		} catch(TypeCheckException tce){
-			throw ensureContext(tce);
-		}
-	}
-
 	public Segment getSegment(){
 		return this.segment;
 	}
@@ -125,13 +100,5 @@ public class SegmentResult extends ForwardingMap<FieldName, Object> implements H
 
 	private void setTargetFieldName(FieldName targetFieldName){
 		this.targetFieldName = targetFieldName;
-	}
-
-	private <E extends PMMLException> E ensureContext(E exception){
-		Segment segment = getSegment();
-
-		exception.ensureContext(segment);
-
-		return exception;
 	}
 }

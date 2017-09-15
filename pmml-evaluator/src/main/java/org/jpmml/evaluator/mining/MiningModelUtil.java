@@ -23,10 +23,13 @@ import java.util.List;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.EvaluationException;
+import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.ProbabilityAggregator;
-import org.jpmml.evaluator.ValueAggregator;
+import org.jpmml.evaluator.TypeCheckException;
+import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueAggregator;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.VoteAggregator;
@@ -60,7 +63,23 @@ public class MiningModelUtil {
 		}
 
 		for(SegmentResult segmentResult : segmentResults){
-			Double value = (Double)segmentResult.getTargetValue(DataType.DOUBLE);
+			Number value;
+
+			try {
+				Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
+
+				if(targetValue instanceof Number){
+					value = (Number)targetValue;
+				} else
+
+				{
+					value = (Double)TypeUtil.cast(DataType.DOUBLE, targetValue);
+				}
+			} catch(TypeCheckException tce){
+				tce.ensureContext(segmentResult.getSegment());
+
+				throw tce;
+			}
 
 			switch(multipleModelMethod){
 				case AVERAGE:
@@ -109,7 +128,17 @@ public class MiningModelUtil {
 		};
 
 		for(SegmentResult segmentResult : segmentResults){
-			String key = (String)segmentResult.getTargetValue(DataType.STRING);
+			String key;
+
+			try {
+				Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
+
+				key = (String)TypeUtil.cast(DataType.STRING, targetValue);
+			} catch(TypeCheckException tce){
+				tce.ensureContext(segmentResult.getSegment());
+
+				throw tce;
+			}
 
 			switch(multipleModelMethod){
 				case MAJORITY_VOTE:
@@ -166,7 +195,17 @@ public class MiningModelUtil {
 		}
 
 		for(SegmentResult segmentResult : segmentResults){
-			HasProbability hasProbability = segmentResult.getTargetValue(HasProbability.class);
+			HasProbability hasProbability;
+
+			try {
+				Object targetValue = segmentResult.getTargetValue();
+
+				hasProbability = TypeUtil.cast(HasProbability.class, targetValue);
+			} catch(TypeCheckException tce){
+				tce.ensureContext(segmentResult.getSegment());
+
+				throw tce;
+			}
 
 			switch(multipleModelMethod){
 				case AVERAGE:

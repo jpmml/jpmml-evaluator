@@ -21,34 +21,42 @@ package org.jpmml.evaluator.mining;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.BiMap;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OutputField;
+import org.dmg.pmml.mining.Segment;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 
 public class MiningModelEvaluationContext extends ModelEvaluationContext {
 
-	private Map<String, SegmentResult> results = new HashMap<>();
+	private Map<String, SegmentResult> results = null;
 
 	private Map<FieldName, OutputField> outputFields = null;
 
 
-	public MiningModelEvaluationContext(MiningModelEvaluator modelEvaluator){
-		this(null, modelEvaluator);
+	public MiningModelEvaluationContext(MiningModelEvaluator miningModelEvaluator){
+		this(null, miningModelEvaluator);
 	}
 
-	public MiningModelEvaluationContext(MiningModelEvaluationContext parent, MiningModelEvaluator modelEvaluator){
-		super(parent, modelEvaluator);
+	public MiningModelEvaluationContext(MiningModelEvaluationContext parent, MiningModelEvaluator miningModelEvaluator){
+		super(parent, miningModelEvaluator);
+
+		BiMap<String, Segment> entityRegistry = miningModelEvaluator.getEntityRegistry();
+
+		this.results = new HashMap<>(2 * entityRegistry.size());
 	}
 
 	@Override
-	public void reset(){
-		super.reset();
+	public void reset(boolean purge){
+		super.reset(purge);
 
-		this.results.clear();
+		if(!this.results.isEmpty()){
+			this.results.clear();
+		} // End if
 
-		if(this.outputFields != null){
+		if(this.outputFields != null && !this.outputFields.isEmpty()){
 			this.outputFields.clear();
 		}
 	}

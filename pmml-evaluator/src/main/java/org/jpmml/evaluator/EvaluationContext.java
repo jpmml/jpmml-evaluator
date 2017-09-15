@@ -42,10 +42,13 @@ public class EvaluationContext {
 	abstract
 	protected FieldValue createFieldValue(FieldName name, Object value);
 
-	protected void reset(){
-		this.fields.clear();
+	protected void reset(boolean purge){
 
-		if(this.warnings != null){
+		if(purge && !this.fields.isEmpty()){
+			this.fields.clear();
+		} // End if
+
+		if(this.warnings != null && !this.warnings.isEmpty()){
 			this.warnings.clear();
 		}
 	}
