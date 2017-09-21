@@ -84,13 +84,13 @@ public class ContinuousValue extends FieldValue {
 		}
 
 		@Override
-		public Integer asInteger(){
-			return (Integer)getValue();
+		public Number asNumber(){
+			return (Number)getValue();
 		}
 
 		@Override
-		public Number asNumber(){
-			return (Number)getValue();
+		public Integer asInteger(){
+			return (Integer)getValue();
 		}
 	}
 

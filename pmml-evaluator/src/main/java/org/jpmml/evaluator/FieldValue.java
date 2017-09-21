@@ -250,10 +250,6 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return (String)getValue(DataType.STRING);
 	}
 
-	public Integer asInteger(){
-		return (Integer)getValue(DataType.INTEGER);
-	}
-
 	public Number asNumber(){
 		Object value = getValue();
 
@@ -262,6 +258,10 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		}
 
 		return (Double)getValue(DataType.DOUBLE);
+	}
+
+	public Integer asInteger(){
+		return (Integer)getValue(DataType.INTEGER);
 	}
 
 	/**
