@@ -105,6 +105,11 @@ public class ContinuousValue extends FieldValue {
 		public Number asNumber(){
 			return (Number)getValue();
 		}
+
+		@Override
+		public Float asFloat(){
+			return (Float)getValue();
+		}
 	}
 
 	static

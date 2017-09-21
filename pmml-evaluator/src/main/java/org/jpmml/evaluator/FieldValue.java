@@ -264,6 +264,12 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return (Integer)getValue(DataType.INTEGER);
 	}
 
+	public Float asFloat(){
+		Number number = asNumber();
+
+		return number.floatValue();
+	}
+
 	/**
 	 * Getting the value of a field as {@link Double}:
 	 * <pre>
