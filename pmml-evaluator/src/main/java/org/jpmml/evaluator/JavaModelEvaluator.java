@@ -39,7 +39,19 @@ public class JavaModelEvaluator extends ModelEvaluator<JavaModel> {
 	}
 
 	@Override
+	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+		JavaModelEvaluationContext context = new JavaModelEvaluationContext(this);
+		context.setArguments(arguments);
+
+		return evaluate(context);
+	}
+
+	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
+		return evaluate((JavaModelEvaluationContext)context);
+	}
+
+	public Map<FieldName, ?> evaluate(JavaModelEvaluationContext context){
 		JavaModel javaModel = getModel();
 		if(!javaModel.isScorable()){
 			throw new InvalidResultException(javaModel);
