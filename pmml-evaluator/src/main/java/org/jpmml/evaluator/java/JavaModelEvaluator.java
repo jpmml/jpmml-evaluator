@@ -16,12 +16,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.java;
 
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
+import org.jpmml.evaluator.InvalidResultException;
+import org.jpmml.evaluator.JavaModel;
+import org.jpmml.evaluator.ModelEvaluationContext;
+import org.jpmml.evaluator.ModelEvaluator;
 
 public class JavaModelEvaluator extends ModelEvaluator<JavaModel> {
 
