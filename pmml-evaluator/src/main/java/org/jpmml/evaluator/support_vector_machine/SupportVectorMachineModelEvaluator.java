@@ -72,6 +72,9 @@ import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.SparseArrayUtil;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.VoteDistribution;
 import org.jpmml.model.ReflectionUtil;
 
@@ -128,9 +131,12 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			throw new InvalidResultException(supportVectorMachineModel);
 		}
 
+		ValueFactory<Double> valueFactory;
+
 		MathContext mathContext = supportVectorMachineModel.getMathContext();
 		switch(mathContext){
 			case DOUBLE:
+				valueFactory = (ValueFactory)getValueFactory();
 				break;
 			default:
 				throw new UnsupportedFeatureException(supportVectorMachineModel, mathContext);
@@ -141,10 +147,10 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		MiningFunction miningFunction = supportVectorMachineModel.getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
-				predictions = evaluateRegression(context);
+				predictions = evaluateRegression(valueFactory, context);
 				break;
 			case CLASSIFICATION:
-				predictions = evaluateClassification(context);
+				predictions = evaluateClassification(valueFactory, context);
 				break;
 			default:
 				throw new UnsupportedFeatureException(supportVectorMachineModel, miningFunction);
@@ -153,7 +159,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ?> evaluateRegression(EvaluationContext context){
+	private Map<FieldName, ?> evaluateRegression(ValueFactory<Double> valueFactory, EvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
@@ -165,27 +171,33 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		double[] input = createInput(context);
 
-		Double result = evaluateSupportVectorMachine(supportVectorMachine, input);
+		Value<Double> result = evaluateSupportVectorMachine(valueFactory, supportVectorMachine, input);
 
 		return TargetUtil.evaluateRegression(getTargetField(), result);
 	}
 
-	private Map<FieldName, ? extends Classification> evaluateClassification(EvaluationContext context){
+	private Map<FieldName, ? extends Classification> evaluateClassification(final ValueFactory<Double> valueFactory, EvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
 
 		String alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
 
-		Classification result;
+		ValueMap<String, Double> values;
 
 		SupportVectorMachineModel.ClassificationMethod classificationMethod = getClassificationMethod();
 		switch(classificationMethod){
 			case ONE_AGAINST_ALL:
-				result = new Classification(Classification.Type.DISTANCE);
+				values = new ValueMap<>(2 * supportVectorMachines.size());
 				break;
 			case ONE_AGAINST_ONE:
-				result = new VoteDistribution();
+				values = new VoteMap<String, Double>(2 * supportVectorMachines.size()){
+
+					@Override
+					public ValueFactory<Double> getValueFactory(){
+						return valueFactory;
+					}
+				};
 				break;
 			default:
 				throw new UnsupportedFeatureException(supportVectorMachineModel, classificationMethod);
@@ -197,7 +209,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			String targetCategory = supportVectorMachine.getTargetCategory();
 			String alternateTargetCategory = supportVectorMachine.getAlternateTargetCategory();
 
-			Double value = evaluateSupportVectorMachine(supportVectorMachine, input);
+			Value<Double> value = evaluateSupportVectorMachine(valueFactory, supportVectorMachine, input);
 
 			switch(classificationMethod){
 				case ONE_AGAINST_ALL:
@@ -206,7 +218,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 							throw new InvalidFeatureException(supportVectorMachine);
 						}
 
-						result.put(targetCategory, value);
+						values.put(targetCategory, value);
 					}
 					break;
 				case ONE_AGAINST_ONE:
@@ -218,15 +230,15 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 						String label;
 
-						long roundedValue = Math.round(value);
+						value.round();
 
 						// "A rounded value of 1 corresponds to the targetCategory attribute of the SupportVectorMachine element"
-						if(roundedValue == 1){
+						if(value.doubleValue() == 1d){
 							label = targetCategory;
 						} else
 
 						// "A rounded value of 0 corresponds to the alternateBinaryTargetCategory attribute of the SupportVectorMachineModel element"
-						if(roundedValue == 0){
+						if(value.doubleValue() == 0d){
 							label = alternateBinaryTargetCategory;
 						} else
 
@@ -235,12 +247,9 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 							throw new EvaluationException("Invalid numeric prediction " + value);
 						}
 
-						Double vote = result.get(label);
-						if(vote == null){
-							vote = 0d;
-						}
+						VoteMap<String, Double> votes = (VoteMap<String, Double>)values;
 
-						result.put(label, (vote + 1d));
+						votes.increment(label);
 					} else
 
 					{
@@ -256,7 +265,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 						String label;
 
 						// "If the numeric prediction is smaller than the threshold, then it corresponds to the targetCategory attribute"
-						if((value).compareTo(threshold) < 0){
+						if(Double.compare(value.doubleValue(), threshold) < 0){
 							label = targetCategory;
 						} else
 
@@ -264,12 +273,9 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 							label = alternateTargetCategory;
 						}
 
-						Double vote = result.get(label);
-						if(vote == null){
-							vote = 0d;
-						}
+						VoteMap<String, Double> votes = (VoteMap<String, Double>)values;
 
-						result.put(label, (vote + 1d));
+						votes.increment(label);
 					}
 					break;
 				default:
@@ -277,13 +283,26 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			}
 		}
 
+		Classification result;
+
+		switch(classificationMethod){
+			case ONE_AGAINST_ALL:
+				result = new Classification(Classification.Type.DISTANCE, values.asDoubleMap());
+				break;
+			case ONE_AGAINST_ONE:
+				result = new VoteDistribution(values.asDoubleMap());
+				break;
+			default:
+				throw new UnsupportedFeatureException(supportVectorMachineModel, classificationMethod);
+		}
+
 		return TargetUtil.evaluateClassification(getTargetField(), result);
 	}
 
-	private double evaluateSupportVectorMachine(SupportVectorMachine supportVectorMachine, double[] input){
+	private Value<Double> evaluateSupportVectorMachine(ValueFactory<Double> valueFactory, SupportVectorMachine supportVectorMachine, double[] input){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
-		double result = 0d;
+		Value<Double> result = valueFactory.newValue();
 
 		Kernel kernel = supportVectorMachineModel.getKernel();
 
@@ -304,14 +323,14 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				throw new InvalidFeatureException(supportVector);
 			}
 
-			result += (coefficient.getValue() * KernelUtil.evaluate(kernel, input, vector));
+			result.add(coefficient.getValue(), KernelUtil.evaluate(kernel, input, vector));
 		}
 
 		if(coefficientIt.hasNext() || supportVectorIt.hasNext()){
 			throw new InvalidFeatureException(supportVectorMachine);
 		}
 
-		result += coefficients.getAbsoluteValue();
+		result.add(coefficients.getAbsoluteValue());
 
 		return result;
 	}

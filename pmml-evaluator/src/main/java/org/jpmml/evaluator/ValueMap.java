@@ -28,6 +28,7 @@ import com.google.common.collect.Maps;
 public class ValueMap<K, V extends Number> extends LinkedHashMap<K, Value<V>> implements Iterable<Value<V>> {
 
 	public ValueMap(){
+		super();
 	}
 
 	public ValueMap(int initialCapacity){
@@ -53,5 +54,23 @@ public class ValueMap<K, V extends Number> extends LinkedHashMap<K, Value<V>> im
 		};
 
 		return Maps.transformValues(this, function);
+	}
+
+	protected ValueFactory<V> getValueFactory(){
+		throw new UnsupportedOperationException();
+	}
+
+	protected Value<V> ensureValue(K key){
+		Value<V> value = get(key);
+
+		if(value == null){
+			ValueFactory<V> valueFactory = getValueFactory();
+
+			value = valueFactory.newValue();
+
+			put(key, value);
+		}
+
+		return value;
 	}
 }

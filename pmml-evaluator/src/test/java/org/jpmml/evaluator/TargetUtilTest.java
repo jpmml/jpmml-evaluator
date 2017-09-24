@@ -128,8 +128,6 @@ public class TargetUtilTest {
 			.setRescaleFactor(3.14d)
 			.setRescaleConstant(10d);
 
-		assertEquals((Double)((8d * 3.14d) + 10d), TargetUtil.processValue(target, 8d));
-
 		FloatValue floatValue = new FloatValue((8f * 3.14f) + 10f);
 		DoubleValue doubleValue = new DoubleValue((8d * 3.14d) + 10d);
 
@@ -143,8 +141,8 @@ public class TargetUtilTest {
 			.setMin(-10d)
 			.setMax(10.5d);
 
-		assertEquals((Double)35d, TargetUtil.processValue(target, 8d));
-		assertEquals((Double)43d, TargetUtil.processValue(target, 12.97d));
+		assertEquals(new FloatValue(35f), TargetUtil.processValue(target, new FloatValue(8f)));
+		assertEquals(new DoubleValue(35d), TargetUtil.processValue(target, new DoubleValue(8d)));
 
 		assertEquals(new FloatValue(43f), TargetUtil.processValue(target, new FloatValue(12.97f)));
 		assertEquals(new DoubleValue(43d), TargetUtil.processValue(target, new DoubleValue(12.97d)));

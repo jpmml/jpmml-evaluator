@@ -16,25 +16,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.naive_bayes;
+package org.jpmml.evaluator.support_vector_machine;
 
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 
 abstract
-class ProbabilityMap<K, V extends Number> extends ValueMap<K, V> {
+class VoteMap<K, V extends Number> extends ValueMap<K, V> {
 
-	public ProbabilityMap(){
+	public VoteMap(){
 		super();
 	}
 
-	public ProbabilityMap(int capacity){
+	public VoteMap(int capacity){
 		super(capacity);
 	}
 
-	public void multiply(K key, double probability){
+	public void increment(K key){
 		Value<V> value = ensureValue(key);
 
-		value.multiply(probability);
+		value.add(1d);
 	}
 }

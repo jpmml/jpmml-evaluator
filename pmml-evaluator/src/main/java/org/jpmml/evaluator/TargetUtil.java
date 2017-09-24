@@ -49,25 +49,8 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ?> evaluateRegression(TargetField targetField, Double value){
-		return Collections.singletonMap(targetField.getName(), evaluateRegressionInternal(targetField, value));
-	}
-
-	static
 	public <V extends Number> Map<FieldName, ?> evaluateRegression(TargetField targetField, Value<V> value){
 		return Collections.singletonMap(targetField.getName(), evaluateRegressionInternal(targetField, value));
-	}
-
-	static
-	public Object evaluateRegressionInternal(TargetField targetField, Double value){
-		DataField dataField = targetField.getDataField();
-		Target target = targetField.getTarget();
-
-		if(target != null){
-			value = processValue(target, value);
-		}
-
-		return TypeUtil.cast(dataField.getDataType(), value);
 	}
 
 	static
@@ -104,52 +87,6 @@ public class TargetUtil {
 		value.computeResult(dataField.getDataType());
 
 		return Collections.singletonMap(targetField.getName(), value);
-	}
-
-	static
-	public Double processValue(Target target, Double value){
-		double result = value.doubleValue();
-
-		Double min = target.getMin();
-		if(min != null){
-			result = Math.max(result, min);
-		}
-
-		Double max = target.getMax();
-		if(max != null){
-			result = Math.min(result, max);
-		}
-
-		double rescaleFactor = target.getRescaleFactor();
-		if(rescaleFactor != 1d){
-			result *= rescaleFactor;
-		}
-
-		double rescaleConstant = target.getRescaleConstant();
-		if(rescaleConstant != 0d){
-			result += rescaleConstant;
-		}
-
-		Target.CastInteger castInteger = target.getCastInteger();
-		if(castInteger == null){
-
-			if(result == value.doubleValue()){
-				return value;
-			}
-
-			return result;
-		}
-
-		switch(castInteger){
-			case ROUND:
-				return (double)Math.round(result);
-			case CEILING:
-				return Math.ceil(result);
-			case FLOOR:
-				return Math.floor(result);
-			default:
-				throw new UnsupportedFeatureException(target, castInteger);
-		}
 	}
 
 	static
