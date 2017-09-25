@@ -20,7 +20,7 @@ package org.jpmml.evaluator.scorecard;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +49,7 @@ import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.VoteAggregator;
 
 public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
@@ -222,28 +223,25 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		Object result = TargetUtil.evaluateRegressionInternal(targetField, score);
 
 		if(useReasonCodes){
-			result = createReasonCodeList(reasonCodePoints.sumMap(), result);
+			result = createReasonCodeRanking(result, reasonCodePoints.sumMap());
 		}
 
 		return Collections.singletonMap(targetField.getName(), result);
 	}
 
 	static
-	private <V extends Number> ReasonCodeRanking createReasonCodeList(Map<String, Value<V>> reasonCodes, Object value){
-		Map<String, Double> meaningfulReasonCodes = new LinkedHashMap<>();
+	private <V extends Number> ReasonCodeRanking<V> createReasonCodeRanking(Object result, ValueMap<String, V> reasonCodePoints){
 
-		Collection<Map.Entry<String, Value<V>>> entrySet = reasonCodes.entrySet();
-		for(Map.Entry<String, Value<V>> entry : entrySet){
-			String reasonCode = entry.getKey();
-			Value<V> points = entry.getValue();
+		Collection<Map.Entry<String, Value<V>>> entrySet = reasonCodePoints.entrySet();
+		for(Iterator<Map.Entry<String, Value<V>>> it = entrySet.iterator(); it.hasNext(); ){
+			Map.Entry<String, Value<V>> entry = it.next();
 
-			if(points.doubleValue() >= 0d){
-				meaningfulReasonCodes.put(reasonCode, points.doubleValue());
+			Value<V> value = entry.getValue();
+			if(value.doubleValue() < 0d){
+				it.remove();
 			}
 		}
 
-		ReasonCodeRanking result = new ReasonCodeRanking(value, meaningfulReasonCodes);
-
-		return result;
+		return new ReasonCodeRanking<>(result, reasonCodePoints);
 	}
 }

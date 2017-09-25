@@ -144,7 +144,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				throw new UnsupportedFeatureException(naiveBayesModel, mathContext);
 		}
 
-		Map<FieldName, ? extends Classification> predictions;
+		Map<FieldName, ? extends Classification<Double>> predictions;
 
 		MiningFunction miningFunction = naiveBayesModel.getMiningFunction();
 		switch(miningFunction){
@@ -158,7 +158,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends Classification> evaluateClassification(final ValueFactory<Double> valueFactory, EvaluationContext context){
+	private Map<FieldName, ? extends Classification<Double>> evaluateClassification(final ValueFactory<Double> valueFactory, EvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -239,7 +239,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		// Convert from logarithmic scale to normal scale
 		ValueUtil.normalizeSoftMax(probabilities);
 
-		ProbabilityDistribution result = new ProbabilityDistribution(probabilities.asDoubleMap());
+		ProbabilityDistribution<Double> result = new ProbabilityDistribution<>(probabilities);
 
 		FieldName targetFieldName = bayesOutput.getFieldName();
 		if(targetFieldName == null || !Objects.equals(targetField.getName(), targetFieldName)){

@@ -20,7 +20,6 @@ package org.jpmml.evaluator;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -39,25 +38,29 @@ import org.dmg.pmml.MiningFunction;
  * @see MiningFunction#CLASSIFICATION
  * @see MiningFunction#CLUSTERING
  */
-public class Classification implements Computable {
+public class Classification<V extends Number> implements Computable {
 
-	private Map<String, Double> map = null;
+	private Type type = null;
 
 	private Object result = null;
 
-	private Type type = null;
+	protected ValueMap<String, V> values = null;
 
 
 	public Classification(Type type){
 		setType(type);
 
-		this.map = new LinkedHashMap<>();
+		this.values = new ValueMap<>();
 	}
 
-	public Classification(Type type, Map<String, Double> values){
+	public Classification(Type type, ValueMap<String, V> values){
 		setType(type);
 
-		this.map = new LinkedHashMap<>(values);
+		if(values == null){
+			throw new IllegalArgumentException();
+		}
+
+		this.values = values;
 	}
 
 	@Override
@@ -70,8 +73,12 @@ public class Classification implements Computable {
 		return this.result;
 	}
 
+	protected void setResult(Object result){
+		this.result = result;
+	}
+
 	public void computeResult(DataType dataType){
-		Map.Entry<String, Double> entry = getWinner();
+		Map.Entry<String, Value<V>> entry = getWinner();
 		if(entry == null){
 			throw new EvaluationException();
 		}
@@ -81,8 +88,12 @@ public class Classification implements Computable {
 		setResult(result);
 	}
 
-	protected void setResult(Object result){
-		this.result = result;
+	public void put(String key, Value<V> value){
+		Value<V> previousValue = this.values.put(key, value);
+
+		if(previousValue != null){
+			throw new EvaluationException();
+		}
 	}
 
 	@Override
@@ -100,32 +111,23 @@ public class Classification implements Computable {
 		return helper;
 	}
 
-	public Double get(String key){
-		Double value = this.map.get(key);
+	public Double getValue(String key){
+		Type type = getType();
 
-		// The specified value was not encountered during scoring
-		if(value == null){
-			Type type = getType();
+		Value<V> value = this.values.get(key);
 
-			return type.getDefault();
-		}
-
-		return value;
-	}
-
-	public Double put(String key, Double value){
-		return this.map.put(key, value);
+		return type.getValue(value);
 	}
 
 	protected boolean isEmpty(){
-		return this.map.isEmpty();
+		return this.values.isEmpty();
 	}
 
-	protected Map.Entry<String, Double> getWinner(){
+	protected Map.Entry<String, Value<V>> getWinner(){
 		return getWinner(getType(), entrySet());
 	}
 
-	protected List<Map.Entry<String, Double>> getWinnerRanking(){
+	protected List<Map.Entry<String, Value<V>>> getWinnerRanking(){
 		return getWinnerList(getType(), entrySet());
 	}
 
@@ -134,19 +136,23 @@ public class Classification implements Computable {
 	}
 
 	protected List<Double> getWinnerValues(){
-		return entryValues(getWinnerRanking());
+		Function<Value<V>, Double> function = new Function<Value<V>, Double>(){
+
+			@Override
+			public Double apply(Value<V> value){
+				return value.doubleValue();
+			}
+		};
+
+		return Lists.transform(entryValues(getWinnerRanking()), function);
 	}
 
 	protected Set<String> keySet(){
-		return this.map.keySet();
+		return this.values.keySet();
 	}
 
-	protected Collection<Double> values(){
-		return this.map.values();
-	}
-
-	protected Set<Map.Entry<String, Double>> entrySet(){
-		return this.map.entrySet();
+	protected Set<Map.Entry<String, Value<V>>> entrySet(){
+		return this.values.entrySet();
 	}
 
 	public Type getType(){
@@ -158,8 +164,8 @@ public class Classification implements Computable {
 	}
 
 	static
-	public Map.Entry<String, Double> getWinner(Type type, Collection<Map.Entry<String, Double>> entries){
-		Ordering<Map.Entry<String, Double>> ordering = createOrdering(type);
+	public <V extends Number> Map.Entry<String, Value<V>> getWinner(Type type, Collection<Map.Entry<String, Value<V>>> entries){
+		Ordering<Map.Entry<String, Value<V>>> ordering = Classification.<V>createOrdering(type);
 
 		try {
 			return ordering.max(entries);
@@ -169,19 +175,19 @@ public class Classification implements Computable {
 	}
 
 	static
-	public List<Map.Entry<String, Double>> getWinnerList(Type type, Collection<Map.Entry<String, Double>> entries){
-		Ordering<Map.Entry<String, Double>> ordering = (createOrdering(type)).reverse();
+	public <V extends Number> List<Map.Entry<String, Value<V>>> getWinnerList(Type type, Collection<Map.Entry<String, Value<V>>> entries){
+		Ordering<Map.Entry<String, Value<V>>> ordering = (Classification.<V>createOrdering(type)).reverse();
 
 		return ordering.sortedCopy(entries);
 	}
 
 	static
-	protected Ordering<Map.Entry<String, Double>> createOrdering(final Type type){
-		Comparator<Map.Entry<String, Double>> comparator = new Comparator<Map.Entry<String, Double>>(){
+	protected <V extends Number> Ordering<Map.Entry<String, Value<V>>> createOrdering(final Type type){
+		Comparator<Map.Entry<String, Value<V>>> comparator = new Comparator<Map.Entry<String, Value<V>>>(){
 
 			@Override
-			public int compare(Map.Entry<String, Double> left, Map.Entry<String, Double> right){
-				return type.compare(left.getValue(), right.getValue());
+			public int compare(Map.Entry<String, Value<V>> left, Map.Entry<String, Value<V>> right){
+				return type.compareValues(left.getValue(), right.getValue());
 			}
 		};
 
@@ -214,53 +220,57 @@ public class Classification implements Computable {
 		return Lists.transform(entries, function);
 	}
 
-	private static final Ordering<Double> BIGGER_IS_BETTER = Ordering.<Double>natural();
-	private static final Ordering<Double> SMALLER_IS_BETTER = Ordering.<Double>natural().reverse();
-
 	static
-	public enum Type implements Comparator<Double> {
-		PROBABILITY(Classification.BIGGER_IS_BETTER, Range.closed(Numbers.DOUBLE_ZERO, Numbers.DOUBLE_ONE)),
-		CONFIDENCE(Classification.BIGGER_IS_BETTER, Range.atLeast(Numbers.DOUBLE_ZERO)),
-		DISTANCE(Classification.SMALLER_IS_BETTER, Range.atLeast(Numbers.DOUBLE_ZERO)){
+	public enum Type {
+		PROBABILITY(true, Range.closed(Numbers.DOUBLE_ZERO, Numbers.DOUBLE_ONE)),
+		CONFIDENCE(true, Range.atLeast(Numbers.DOUBLE_ZERO)),
+		DISTANCE(false, Range.atLeast(Numbers.DOUBLE_ZERO)){
 
 			@Override
-			public Double getDefault(){
+			public Double getDefaultValue(){
 				return Double.POSITIVE_INFINITY;
 			}
 		},
-		SIMILARITY(Classification.BIGGER_IS_BETTER, Range.atLeast(Numbers.DOUBLE_ZERO)),
-		VOTE(Classification.BIGGER_IS_BETTER, Range.atLeast(Numbers.DOUBLE_ZERO)),
+		SIMILARITY(true, Range.atLeast(Numbers.DOUBLE_ZERO)),
+		VOTE(true, Range.atLeast(Numbers.DOUBLE_ZERO)),
 		;
 
-		private Ordering<Double> ordering;
+		private boolean ordering;
 
 		private Range<Double> range;
 
 
-		private Type(Ordering<Double> ordering, Range<Double> range){
+		private Type(boolean ordering, Range<Double> range){
 			setOrdering(ordering);
 			setRange(range);
 		}
 
-		/**
-		 * <p>
-		 * Calculates the order between arguments.
-		 * </p>
-		 *
-		 * @param left A value
-		 * @param right The reference value
-		 */
-		@Override
-		public int compare(Double left, Double right){
+		public <V extends Number> Double getValue(Value<V> value){
 
-			// The behaviour of missing values in comparison operations is not defined
+			// The specified value was not encountered during scoring
+			if(value == null){
+				return getDefaultValue();
+			}
+
+			return value.doubleValue();
+		}
+
+		public <V extends Number> int compareValues(Value<V> left, Value<V> right){
+			boolean ordering = getOrdering();
+
 			if(left == null || right == null){
 				throw new EvaluationException();
 			}
 
-			Ordering<Double> ordering = getOrdering();
+			int result = (left).compareTo(right);
 
-			return ordering.compare(left, right);
+			return (ordering ? result : -result);
+		}
+
+		public <V extends Number> boolean isValidValue(Value<V> value){
+			Range<Double> range = getRange();
+
+			return range.contains(value.doubleValue());
 		}
 
 		/**
@@ -268,14 +278,8 @@ public class Classification implements Computable {
 		 * Gets the least optimal value in the range of valid values.
 		 * </p>
 		 */
-		public Double getDefault(){
+		public Double getDefaultValue(){
 			return Numbers.DOUBLE_ZERO;
-		}
-
-		public boolean isValid(Double value){
-			Range<Double> range = getRange();
-
-			return range.contains(value);
 		}
 
 		public String entryKey(){
@@ -284,11 +288,11 @@ public class Classification implements Computable {
 			return (name.toLowerCase() + "_entries");
 		}
 
-		public Ordering<Double> getOrdering(){
+		public boolean getOrdering(){
 			return this.ordering;
 		}
 
-		private void setOrdering(Ordering<Double> ordering){
+		private void setOrdering(boolean ordering){
 			this.ordering = ordering;
 		}
 

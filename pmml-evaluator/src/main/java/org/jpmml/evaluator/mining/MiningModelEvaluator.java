@@ -287,7 +287,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		ProbabilityDistribution result;
+		ProbabilityDistribution<V> result;
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
@@ -299,7 +299,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					// Convert from votes to probabilities
 					ValueUtil.normalizeSimpleMax(values);
 
-					result = new ProbabilityDistribution(values.asDoubleMap());
+					result = new ProbabilityDistribution<>(values);
 				}
 				break;
 			case AVERAGE:
@@ -313,7 +313,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 					ValueMap<String, V> values = MiningModelUtil.aggregateProbabilities(valueFactory, segmentResults, categories, multipleModelMethod);
 
-					result = new ProbabilityDistribution(values.asDoubleMap());
+					result = new ProbabilityDistribution<>(values);
 				}
 				break;
 			default:
@@ -335,7 +335,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		Classification result;
+		Classification<V> result;
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
@@ -344,7 +344,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				{
 					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, segmentResults, multipleModelMethod);
 
-					result = new Classification(Classification.Type.VOTE, values.asDoubleMap());
+					result = new Classification<>(Classification.Type.VOTE, values);
 				}
 				break;
 			default:

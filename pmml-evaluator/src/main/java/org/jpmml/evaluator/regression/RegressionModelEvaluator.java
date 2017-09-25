@@ -151,7 +151,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
-	private <V extends Number> Map<FieldName, ? extends Classification> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	private <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -274,7 +274,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new UnsupportedFeatureException(regressionModel, normalizationMethod);
 		}
 
-		ProbabilityDistribution result = new ProbabilityDistribution(values.asDoubleMap());
+		ProbabilityDistribution<V> result = new ProbabilityDistribution<>(values);
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}

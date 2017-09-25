@@ -238,7 +238,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return results;
 	}
 
-	private <V extends Number> Map<FieldName, ? extends Classification> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	private <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
 		List<TargetField> targetFields = getTargetFields();
@@ -252,7 +252,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 			}
 
-			Map<FieldName, Classification> results = new LinkedHashMap<>();
+			Map<FieldName, Classification<V>> results = new LinkedHashMap<>();
 
 			for(TargetField targetField : targetFields){
 				results.putAll(TargetUtil.evaluateClassificationDefault(valueFactory, targetField));
@@ -265,7 +265,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		BiMap<String, Entity> entityRegistry = getEntityRegistry();
 
-		Map<FieldName, Classification> results = null;
+		Map<FieldName, Classification<V>> results = null;
 
 		for(TargetField targetField : targetFields){
 			List<NeuralOutput> neuralOutputs = neuralOutputMap.get(targetField.getName());
@@ -273,7 +273,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				throw new InvalidFeatureException(neuralNetwork);
 			}
 
-			NeuronProbabilityDistribution result = new NeuronProbabilityDistribution(entityRegistry);
+			NeuronProbabilityDistribution<V> result = new NeuronProbabilityDistribution<>(entityRegistry);
 
 			for(NeuralOutput neuralOutput : neuralOutputs){
 				String id = neuralOutput.getOutputNeuron();
@@ -298,7 +298,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 						throw new InvalidFeatureException(normDiscrete);
 					}
 
-					result.put(entity, targetCategory, value.doubleValue());
+					result.put(entity, targetCategory, value);
 				} else
 
 				{

@@ -19,8 +19,6 @@
 package org.jpmml.evaluator.tree;
 
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Objects.ToStringHelper;
@@ -30,23 +28,20 @@ import org.dmg.pmml.tree.Node;
 import org.jpmml.evaluator.EntityClassification;
 import org.jpmml.evaluator.HasConfidence;
 import org.jpmml.evaluator.HasProbability;
-import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.Numbers;
+import org.jpmml.evaluator.TypeUtil;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueMap;
 
-public class NodeScoreDistribution extends EntityClassification<Node> implements HasProbability, HasConfidence {
+public class NodeScoreDistribution<V extends Number> extends EntityClassification<Node, V> implements HasProbability, HasConfidence {
 
-	private Map<String, Double> confidences = null;
+	private ValueMap<String, V> confidences = null;
 
 
 	NodeScoreDistribution(BiMap<String, Node> entityRegistry, Node node){
 		super(Type.PROBABILITY, entityRegistry);
 
 		setEntity(node);
-	}
-
-	@Override
-	protected boolean isEmpty(){
-		return super.isEmpty();
 	}
 
 	@Override
@@ -87,26 +82,28 @@ public class NodeScoreDistribution extends EntityClassification<Node> implements
 			}
 		}
 
-		return get(value);
+		return getValue(value);
 	}
 
 	@Override
 	public Double getConfidence(String value){
+		Value<V> confidence = (this.confidences != null ? this.confidences.get(value) : null);
 
-		if(this.confidences == null){
-			return null;
-		}
-
-		return this.confidences.get(value);
+		return Type.CONFIDENCE.getValue(confidence);
 	}
 
-	void putConfidence(String value, Double confidence){
+	void putConfidence(String value, Value<V> confidence){
 
 		if(this.confidences == null){
-			this.confidences = new LinkedHashMap<>();
+			this.confidences = new ValueMap<>();
 		}
 
 		this.confidences.put(value, confidence);
+	}
+
+	@Override
+	protected boolean isEmpty(){
+		return super.isEmpty();
 	}
 
 	@Override

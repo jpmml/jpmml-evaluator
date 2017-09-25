@@ -30,7 +30,7 @@ import org.jpmml.evaluator.HasDisplayValue;
 import org.jpmml.evaluator.HasEntityAffinity;
 import org.jpmml.evaluator.HasEntityIdRanking;
 
-public class ClusterAffinityDistribution extends EntityClassification<Cluster> implements HasEntityIdRanking, HasDisplayValue, HasAffinityRanking, HasEntityAffinity {
+public class ClusterAffinityDistribution<V extends Number> extends EntityClassification<Cluster, V> implements HasEntityIdRanking, HasDisplayValue, HasAffinityRanking, HasEntityAffinity {
 
 	ClusterAffinityDistribution(Type type, BiMap<String, Cluster> entityRegistry){
 		super(AffinityDistribution.validateType(type), entityRegistry);
@@ -55,7 +55,7 @@ public class ClusterAffinityDistribution extends EntityClassification<Cluster> i
 
 	@Override
 	public Double getAffinity(String value){
-		return get(value);
+		return getValue(value);
 	}
 
 	@Override

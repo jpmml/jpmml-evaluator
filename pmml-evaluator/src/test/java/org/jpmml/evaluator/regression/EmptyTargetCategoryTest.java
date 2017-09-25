@@ -38,7 +38,7 @@ public class EmptyTargetCategoryTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		ProbabilityDistribution targetValue = (ProbabilityDistribution)result.get(evaluator.getTargetFieldName());
+		ProbabilityDistribution<?> targetValue = (ProbabilityDistribution<?>)result.get(evaluator.getTargetFieldName());
 
 		assertEquals("yes", targetValue.getResult());
 

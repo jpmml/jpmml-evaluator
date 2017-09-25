@@ -322,7 +322,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
-	private <V extends Number> Map<FieldName, ? extends Classification> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	private <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -473,7 +473,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new UnsupportedFeatureException(generalRegressionModel, modelType);
 		}
 
-		ProbabilityDistribution result = new ProbabilityDistribution(values.asDoubleMap());
+		ProbabilityDistribution<V> result = new ProbabilityDistribution<>(values);
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}

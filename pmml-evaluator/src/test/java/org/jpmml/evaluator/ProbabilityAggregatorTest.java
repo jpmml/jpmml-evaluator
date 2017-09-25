@@ -121,18 +121,18 @@ public class ProbabilityAggregatorTest {
 
 	static
 	private HasProbability createProbabilityDistribution(Double a, Double b, Double c){
-		ProbabilityDistribution result = new ProbabilityDistribution();
+		ProbabilityDistribution<Double> result = new ProbabilityDistribution<>();
 
 		if(a != null){
-			result.put("A", a);
+			result.put("A", new DoubleValue(a));
 		} // End if
 
 		if(b != null){
-			result.put("B", b);
+			result.put("B", new DoubleValue(b));
 		} // End if
 
 		if(c != null){
-			result.put("C", c);
+			result.put("C", new DoubleValue(c));
 		}
 
 		return result;

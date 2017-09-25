@@ -57,7 +57,7 @@ public class TargetValueCountsTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		Classification targetValue = (Classification)result.get(evaluator.getTargetFieldName());
+		Classification<?> targetValue = (Classification<?>)result.get(evaluator.getTargetFieldName());
 
 		double l0 = 8723d * 0.001d * 4273d / 8598d * 225d / 8561d * 830d / 8008d;
 		double l1 = 2557d * probability(24.936, 0.516, 24) * 1321d / 2533d * 10d / 2436d * 182d / 2266d;
@@ -67,11 +67,11 @@ public class TargetValueCountsTest extends ModelEvaluatorTest {
 
 		double denominator = (l0 + l1 + l2 + l3 + l4);
 
-		assertEquals(l0 / denominator, targetValue.get("100"), 1e-8);
-		assertEquals(l1 / denominator, targetValue.get("500"), 1e-8);
-		assertEquals(l2 / denominator, targetValue.get("1000"), 1e-8);
-		assertEquals(l3 / denominator, targetValue.get("5000"), 1e-8);
-		assertEquals(l4 / denominator, targetValue.get("10000"), 1e-8);
+		assertEquals(l0 / denominator, targetValue.getValue("100"), 1e-8);
+		assertEquals(l1 / denominator, targetValue.getValue("500"), 1e-8);
+		assertEquals(l2 / denominator, targetValue.getValue("1000"), 1e-8);
+		assertEquals(l3 / denominator, targetValue.getValue("5000"), 1e-8);
+		assertEquals(l4 / denominator, targetValue.getValue("10000"), 1e-8);
 	}
 
 	static

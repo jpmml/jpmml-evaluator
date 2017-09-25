@@ -38,35 +38,43 @@ public class ClassificationTest {
 	public void measureSimilarity(){
 		Classification.Type type = Classification.Type.SIMILARITY;
 
-		assertTrue(type.compare(0.5d, 0d) > 0);
-		assertTrue(type.compare(0d, 0.5d) < 0);
+		DoubleValue doubleZero = new DoubleValue(Numbers.DOUBLE_ZERO);
+		DoubleValue doubleOneHalf = new DoubleValue(Numbers.DOUBLE_ONE_HALF);
+		DoubleValue doubleOne = new DoubleValue(Numbers.DOUBLE_ONE);
 
-		assertTrue(type.compare(0.5d, 0.5d) == 0);
+		assertTrue(type.compareValues(doubleOneHalf, doubleZero) > 0);
+		assertTrue(type.compareValues(doubleZero, doubleOneHalf) < 0);
 
-		assertTrue(type.compare(1d, 0.5d) > 0);
-		assertTrue(type.compare(0.5d, 1d) < 0);
+		assertTrue(type.compareValues(doubleOneHalf, doubleOneHalf) == 0);
 
-		assertFalse(type.isValid(-0d));
+		assertTrue(type.compareValues(doubleOne, doubleOneHalf) > 0);
+		assertTrue(type.compareValues(doubleOneHalf, doubleOne) < 0);
 
-		assertTrue(type.isValid(0d));
-		assertTrue(type.isValid(Double.POSITIVE_INFINITY));
+		assertFalse(type.isValidValue(new DoubleValue(-0d)));
+
+		assertTrue(type.isValidValue(new DoubleValue(0d)));
+		assertTrue(type.isValidValue(new DoubleValue(Double.POSITIVE_INFINITY)));
 	}
 
 	@Test
 	public void measureDistance(){
 		Classification.Type type = Classification.Type.DISTANCE;
 
-		assertTrue(type.compare(0.5d, 0d) < 0);
-		assertTrue(type.compare(0d, 0.5d) > 0);
+		FloatValue floatZero = new FloatValue(Numbers.FLOAT_ZERO);
+		FloatValue floatOneHalf = new FloatValue(0.5f);
+		FloatValue floatOne = new FloatValue(Numbers.FLOAT_ONE);
 
-		assertTrue(type.compare(0.5d, 0.5d) == 0);
+		assertTrue(type.compareValues(floatOneHalf, floatZero) < 0);
+		assertTrue(type.compareValues(floatZero, floatOneHalf) > 0);
 
-		assertTrue(type.compare(1d, 0.5d) < 0);
-		assertTrue(type.compare(0.5d, 1d) > 0);
+		assertTrue(type.compareValues(floatOneHalf, floatOneHalf) == 0);
 
-		assertFalse(type.isValid(-0d));
+		assertTrue(type.compareValues(floatOne, floatOneHalf) < 0);
+		assertTrue(type.compareValues(floatOneHalf, floatOne) > 0);
 
-		assertTrue(type.isValid(0d));
-		assertTrue(type.isValid(Double.POSITIVE_INFINITY));
+		assertFalse(type.isValidValue(new FloatValue(-0f)));
+
+		assertTrue(type.isValidValue(new FloatValue(0f)));
+		assertTrue(type.isValidValue(new FloatValue(Float.POSITIVE_INFINITY)));
 	}
 }

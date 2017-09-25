@@ -22,9 +22,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
-
 public class ValueMap<K, V extends Number> extends LinkedHashMap<K, Value<V>> implements Iterable<Value<V>> {
 
 	public ValueMap(){
@@ -42,18 +39,6 @@ public class ValueMap<K, V extends Number> extends LinkedHashMap<K, Value<V>> im
 	@Override
 	public Iterator<Value<V>> iterator(){
 		return values().iterator();
-	}
-
-	public Map<K, Double> asDoubleMap(){
-		Function<Value<V>, Double> function = new Function<Value<V>, Double>(){
-
-			@Override
-			public Double apply(Value<V> value){
-				return value.doubleValue();
-			}
-		};
-
-		return Maps.transformValues(this, function);
 	}
 
 	protected ValueFactory<V> getValueFactory(){

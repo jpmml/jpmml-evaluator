@@ -19,7 +19,6 @@
 package org.jpmml.evaluator.scorecard;
 
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
@@ -27,20 +26,21 @@ import org.dmg.pmml.MiningFunction;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.Computable;
 import org.jpmml.evaluator.HasReasonCodeRanking;
+import org.jpmml.evaluator.ValueMap;
 
 /**
  * @see MiningFunction#REGRESSION
  */
-public class ReasonCodeRanking implements Computable, HasReasonCodeRanking {
+public class ReasonCodeRanking<V extends Number> implements Computable, HasReasonCodeRanking {
 
 	private Object result = null;
 
-	private Map<String, Double> reasonCodes = null;
+	private ValueMap<String, V> reasonCodePoints = null;
 
 
-	ReasonCodeRanking(Object result, Map<String, Double> reasonCodes){
+	ReasonCodeRanking(Object result, ValueMap<String, V> reasonCodePoints){
 		setResult(result);
-		setReasonCodes(reasonCodes);
+		setReasonCodePoints(reasonCodePoints);
 	}
 
 	@Override
@@ -54,9 +54,9 @@ public class ReasonCodeRanking implements Computable, HasReasonCodeRanking {
 
 	@Override
 	public List<String> getReasonCodeRanking(){
-		Map<String, Double> reasonCodes = getReasonCodes();
+		ValueMap<String, V> reasonCodePoints = getReasonCodePoints();
 
-		return Classification.entryKeys(Classification.getWinnerList(Classification.Type.VOTE, reasonCodes.entrySet()));
+		return Classification.entryKeys(Classification.getWinnerList(Classification.Type.VOTE, reasonCodePoints.entrySet()));
 	}
 
 	@Override
@@ -68,11 +68,11 @@ public class ReasonCodeRanking implements Computable, HasReasonCodeRanking {
 		return helper.toString();
 	}
 
-	public Map<String, Double> getReasonCodes(){
-		return this.reasonCodes;
+	public ValueMap<String, V> getReasonCodePoints(){
+		return this.reasonCodePoints;
 	}
 
-	private void setReasonCodes(Map<String, Double> reasonCodes){
-		this.reasonCodes = reasonCodes;
+	private void setReasonCodePoints(ValueMap<String, V> reasonCodePoints){
+		this.reasonCodePoints = reasonCodePoints;
 	}
 }

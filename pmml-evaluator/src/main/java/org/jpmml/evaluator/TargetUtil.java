@@ -66,11 +66,11 @@ public class TargetUtil {
 	}
 
 	static
-	public <V extends Number> Map<FieldName, ? extends Classification> evaluateClassificationDefault(ValueFactory<V> valueFactory, TargetField targetField){
+	public <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassificationDefault(ValueFactory<V> valueFactory, TargetField targetField){
 		Target target = targetField.getTarget();
 
 		if(target != null && target.hasTargetValues()){
-			ProbabilityDistribution result = getPriorProbabilities(valueFactory, target);
+			ProbabilityDistribution<V> result = getPriorProbabilities(valueFactory, target);
 
 			if(result != null){
 				return evaluateClassification(targetField, result);
@@ -81,7 +81,7 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ? extends Classification> evaluateClassification(TargetField targetField, Classification value){
+	public <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(TargetField targetField, Classification<V> value){
 		DataField dataField = targetField.getDataField();
 
 		value.computeResult(dataField.getDataType());
@@ -169,13 +169,13 @@ public class TargetUtil {
 	}
 
 	static
-	private <V extends Number> ProbabilityDistribution getPriorProbabilities(ValueFactory<V> valueFactory, Target target){
+	private <V extends Number> ProbabilityDistribution<V> getPriorProbabilities(ValueFactory<V> valueFactory, Target target){
 
 		if(!target.hasTargetValues()){
 			return null;
 		}
 
-		ProbabilityDistribution result = new ProbabilityDistribution();
+		ProbabilityDistribution<V> result = new ProbabilityDistribution<>();
 
 		Value<V> sum = valueFactory.newValue();
 
@@ -197,7 +197,7 @@ public class TargetUtil {
 
 			sum.add(value);
 
-			result.put(targetCategory, value.doubleValue());
+			result.put(targetCategory, value);
 		}
 
 		if(sum.doubleValue() != 1d){

@@ -23,13 +23,13 @@ import com.google.common.collect.BiMap;
 import org.dmg.pmml.Entity;
 
 abstract
-public class EntityClassification<E extends Entity> extends Classification implements HasEntityId, HasEntityRegistry<E> {
+public class EntityClassification<E extends Entity, V extends Number> extends Classification<V> implements HasEntityId, HasEntityRegistry<E> {
 
 	private BiMap<String, E> entityRegistry = null;
 
 	private E entity = null;
 
-	private Double entityValue = null;
+	private Value<V> entityValue = null;
 
 
 	protected EntityClassification(Type type, BiMap<String, E> entityRegistry){
@@ -54,24 +54,24 @@ public class EntityClassification<E extends Entity> extends Classification imple
 		this.entityRegistry = entityRegistry;
 	}
 
+	public void put(E entity, String key, Value<V> value){
+		Type type = getType();
+
+		if(this.entityValue == null || type.compareValues(value, this.entityValue) > 0){
+			this.entityValue = value;
+
+			setEntity(entity);
+		}
+
+		put(key, value);
+	}
+
 	@Override
 	protected ToStringHelper toStringHelper(){
 		ToStringHelper helper = super.toStringHelper()
 			.add("entityId", getEntityId());
 
 		return helper;
-	}
-
-	public Double put(E entity, String key, Double value){
-		Type type = getType();
-
-		if(this.entityValue == null || type.compare(value, this.entityValue) > 0){
-			this.entityValue = value;
-
-			setEntity(entity);
-		}
-
-		return put(key, value);
 	}
 
 	public E getEntity(){

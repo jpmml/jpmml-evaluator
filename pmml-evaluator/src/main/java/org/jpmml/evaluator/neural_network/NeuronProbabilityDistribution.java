@@ -25,7 +25,7 @@ import org.dmg.pmml.Entity;
 import org.jpmml.evaluator.EntityClassification;
 import org.jpmml.evaluator.HasProbability;
 
-public class NeuronProbabilityDistribution extends EntityClassification<Entity> implements HasProbability {
+public class NeuronProbabilityDistribution<V extends Number> extends EntityClassification<Entity, V> implements HasProbability {
 
 	NeuronProbabilityDistribution(BiMap<String, Entity> entityRegistry){
 		super(Type.PROBABILITY, entityRegistry);
@@ -38,6 +38,6 @@ public class NeuronProbabilityDistribution extends EntityClassification<Entity> 
 
 	@Override
 	public Double getProbability(String value){
-		return get(value);
+		return getValue(value);
 	}
 }

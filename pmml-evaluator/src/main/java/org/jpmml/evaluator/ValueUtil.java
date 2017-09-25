@@ -24,7 +24,7 @@ public class ValueUtil {
 	}
 
 	static
-	public <V extends Number> void normalizeSimpleMax(Iterable<Value<V>> values){
+	public <V extends Number> Value<V> sum(Iterable<Value<V>> values){
 		Value<V> sum = null;
 
 		for(Value<V> value : values){
@@ -37,6 +37,13 @@ public class ValueUtil {
 				sum.add(value);
 			}
 		}
+
+		return sum;
+	}
+
+	static
+	public <V extends Number> void normalizeSimpleMax(Iterable<Value<V>> values){
+		Value<V> sum = sum(values);
 
 		if((sum == null) || (sum != null && sum.doubleValue() == 1d)){
 			return;

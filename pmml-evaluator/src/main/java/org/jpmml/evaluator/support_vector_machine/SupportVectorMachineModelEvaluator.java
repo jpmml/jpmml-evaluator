@@ -75,7 +75,6 @@ import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
-import org.jpmml.evaluator.VoteDistribution;
 import org.jpmml.model.ReflectionUtil;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
@@ -176,7 +175,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		return TargetUtil.evaluateRegression(getTargetField(), result);
 	}
 
-	private Map<FieldName, ? extends Classification> evaluateClassification(final ValueFactory<Double> valueFactory, EvaluationContext context){
+	private Map<FieldName, ? extends Classification<Double>> evaluateClassification(final ValueFactory<Double> valueFactory, EvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
@@ -222,55 +221,51 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 					}
 					break;
 				case ONE_AGAINST_ONE:
-					if(alternateBinaryTargetCategory != null){
-
-						if(targetCategory == null || alternateTargetCategory != null){
-							throw new InvalidFeatureException(supportVectorMachine);
-						}
-
-						String label;
-
-						value.round();
-
-						// "A rounded value of 1 corresponds to the targetCategory attribute of the SupportVectorMachine element"
-						if(value.doubleValue() == 1d){
-							label = targetCategory;
-						} else
-
-						// "A rounded value of 0 corresponds to the alternateBinaryTargetCategory attribute of the SupportVectorMachineModel element"
-						if(value.doubleValue() == 0d){
-							label = alternateBinaryTargetCategory;
-						} else
-
-						// "The numeric prediction must be between 0 and 1"
-						{
-							throw new EvaluationException("Invalid numeric prediction " + value);
-						}
-
-						VoteMap<String, Double> votes = (VoteMap<String, Double>)values;
-
-						votes.increment(label);
-					} else
-
 					{
-						if(targetCategory == null || alternateTargetCategory == null){
-							throw new InvalidFeatureException(supportVectorMachine);
-						}
-
-						Double threshold = supportVectorMachine.getThreshold();
-						if(threshold == null){
-							threshold = supportVectorMachineModel.getThreshold();
-						}
-
 						String label;
 
-						// "If the numeric prediction is smaller than the threshold, then it corresponds to the targetCategory attribute"
-						if(Double.compare(value.doubleValue(), threshold) < 0){
-							label = targetCategory;
+						if(alternateBinaryTargetCategory != null){
+
+							if(targetCategory == null || alternateTargetCategory != null){
+								throw new InvalidFeatureException(supportVectorMachine);
+							}
+
+							value.round();
+
+							// "A rounded value of 1 corresponds to the targetCategory attribute of the SupportVectorMachine element"
+							if(value.doubleValue() == 1d){
+								label = targetCategory;
+							} else
+
+							// "A rounded value of 0 corresponds to the alternateBinaryTargetCategory attribute of the SupportVectorMachineModel element"
+							if(value.doubleValue() == 0d){
+								label = alternateBinaryTargetCategory;
+							} else
+
+							// "The numeric prediction must be between 0 and 1"
+							{
+								throw new EvaluationException("Invalid numeric prediction " + value);
+							}
 						} else
 
 						{
-							label = alternateTargetCategory;
+							if(targetCategory == null || alternateTargetCategory == null){
+								throw new InvalidFeatureException(supportVectorMachine);
+							}
+
+							Double threshold = supportVectorMachine.getThreshold();
+							if(threshold == null){
+								threshold = supportVectorMachineModel.getThreshold();
+							} // End if
+
+							// "If the numeric prediction is smaller than the threshold, then it corresponds to the targetCategory attribute"
+							if(Double.compare(value.doubleValue(), threshold) < 0){
+								label = targetCategory;
+							} else
+
+							{
+								label = alternateTargetCategory;
+							}
 						}
 
 						VoteMap<String, Double> votes = (VoteMap<String, Double>)values;
@@ -283,14 +278,14 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			}
 		}
 
-		Classification result;
+		Classification<Double> result;
 
 		switch(classificationMethod){
 			case ONE_AGAINST_ALL:
-				result = new Classification(Classification.Type.DISTANCE, values.asDoubleMap());
+				result = new Classification<>(Classification.Type.DISTANCE, values);
 				break;
 			case ONE_AGAINST_ONE:
-				result = new VoteDistribution(values.asDoubleMap());
+				result = new VoteDistribution<>(values);
 				break;
 			default:
 				throw new UnsupportedFeatureException(supportVectorMachineModel, classificationMethod);

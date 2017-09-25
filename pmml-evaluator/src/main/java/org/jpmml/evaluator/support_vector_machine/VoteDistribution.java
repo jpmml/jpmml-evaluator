@@ -16,24 +16,28 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.support_vector_machine;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 
 import org.dmg.pmml.DataType;
+import org.jpmml.evaluator.Classification;
+import org.jpmml.evaluator.EvaluationException;
+import org.jpmml.evaluator.HasProbability;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueMap;
+import org.jpmml.evaluator.ValueUtil;
 
-public class VoteDistribution extends Classification implements HasProbability {
+public class VoteDistribution<V extends Number> extends Classification<V> implements HasProbability {
 
-	private Double sum = null;
+	private Value<V> sum = null;
 
 
-	public VoteDistribution(){
+	VoteDistribution(){
 		super(Type.VOTE);
 	}
 
-	public VoteDistribution(Map<String, Double> votes){
+	VoteDistribution(ValueMap<String, V> votes){
 		super(Type.VOTE, votes);
 	}
 
@@ -41,14 +45,7 @@ public class VoteDistribution extends Classification implements HasProbability {
 	public void computeResult(DataType dataType){
 		super.computeResult(dataType);
 
-		double sum = 0;
-
-		Collection<Double> values = values();
-		for(Double value : values){
-			sum += value;
-		}
-
-		this.sum = sum;
+		this.sum = ValueUtil.sum(super.values);
 	}
 
 	@Override
@@ -63,6 +60,14 @@ public class VoteDistribution extends Classification implements HasProbability {
 			throw new EvaluationException();
 		}
 
-		return get(value) / this.sum;
+		Value<V> probability = super.values.get(value);
+
+		if(probability != null){
+			probability = probability.copy();
+
+			probability.divide(this.sum);
+		}
+
+		return Type.PROBABILITY.getValue(probability);
 	}
 }

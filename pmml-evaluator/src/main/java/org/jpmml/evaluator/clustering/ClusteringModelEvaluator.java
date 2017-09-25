@@ -47,6 +47,7 @@ import org.dmg.pmml.clustering.MissingValueWeights;
 import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
+import org.jpmml.evaluator.DoubleValue;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.FieldValue;
@@ -143,7 +144,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 				throw new UnsupportedFeatureException(clusteringModel, mathContext);
 		}
 
-		Map<FieldName, ClusterAffinityDistribution> predictions;
+		Map<FieldName, ClusterAffinityDistribution<Double>> predictions;
 
 		MiningFunction miningFunction = clusteringModel.getMiningFunction();
 		switch(miningFunction){
@@ -157,7 +158,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ClusterAffinityDistribution> evaluateClustering(EvaluationContext context){
+	private Map<FieldName, ClusterAffinityDistribution<Double>> evaluateClustering(EvaluationContext context){
 		ClusteringModel clusteringModel = getModel();
 
 		List<ClusteringField> clusteringFields = getCenterClusteringFields();
@@ -172,7 +173,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			values.add(value);
 		}
 
-		ClusterAffinityDistribution result;
+		ClusterAffinityDistribution<Double> result;
 
 		ComparisonMeasure comparisonMeasure = clusteringModel.getComparisonMeasure();
 
@@ -196,12 +197,12 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		return Collections.singletonMap(getTargetFieldName(), result);
 	}
 
-	private ClusterAffinityDistribution evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
+	private ClusterAffinityDistribution<Double> evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
 		ClusteringModel clusteringModel = getModel();
 
 		BiMap<String, Cluster> entityRegistry = getEntityRegistry();
 
-		ClusterAffinityDistribution result = new ClusterAffinityDistribution(Classification.Type.SIMILARITY, entityRegistry);
+		ClusterAffinityDistribution<Double> result = new ClusterAffinityDistribution<>(Classification.Type.SIMILARITY, entityRegistry);
 
 		BitSet flags = MeasureUtil.toBitSet(values);
 
@@ -217,18 +218,18 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 			Double similarity = MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, clusterFlags);
 
-			result.put(cluster, id, similarity);
+			result.put(cluster, id, new DoubleValue(similarity));
 		}
 
 		return result;
 	}
 
-	private ClusterAffinityDistribution evaluateDistance(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
+	private ClusterAffinityDistribution<Double> evaluateDistance(ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
 		ClusteringModel clusteringModel = getModel();
 
 		BiMap<String, Cluster> entityRegistry = getEntityRegistry();
 
-		ClusterAffinityDistribution result = new ClusterAffinityDistribution(Classification.Type.DISTANCE, entityRegistry);
+		ClusterAffinityDistribution<Double> result = new ClusterAffinityDistribution<>(Classification.Type.DISTANCE, entityRegistry);
 
 		double adjustment;
 
@@ -260,7 +261,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 			Double distance = MeasureUtil.evaluateDistance(comparisonMeasure, clusteringFields, values, clusterValues, adjustment);
 
-			result.put(cluster, id, distance);
+			result.put(cluster, id, new DoubleValue(distance));
 		}
 
 		return result;

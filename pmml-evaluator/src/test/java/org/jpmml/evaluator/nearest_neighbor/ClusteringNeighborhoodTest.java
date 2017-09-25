@@ -50,7 +50,7 @@ public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		AffinityDistribution targetValue = (AffinityDistribution)result.get(evaluator.getTargetFieldName());
+		AffinityDistribution<?> targetValue = (AffinityDistribution<?>)result.get(evaluator.getTargetFieldName());
 
 		try {
 			targetValue.getResult();

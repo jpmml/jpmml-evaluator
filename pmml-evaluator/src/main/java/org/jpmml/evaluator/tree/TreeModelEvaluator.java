@@ -142,7 +142,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return Collections.singletonMap(targetField.getName(), nodeScore);
 	}
 
-	private <V extends Number> Map<FieldName, ? extends Classification> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	private <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -161,7 +161,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			missingValuePenalty = Math.pow(treeModel.getMissingValuePenalty(), missingLevels);
 		}
 
-		NodeScoreDistribution result = createNodeScoreDistribution(valueFactory, node, missingValuePenalty);
+		NodeScoreDistribution<V> result = createNodeScoreDistribution(valueFactory, node, missingValuePenalty);
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
@@ -324,10 +324,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return result;
 	}
 
-	private <V extends Number> NodeScoreDistribution createNodeScoreDistribution(ValueFactory<V> valueFactory, Node node, double missingValuePenalty){
+	private <V extends Number> NodeScoreDistribution<V> createNodeScoreDistribution(ValueFactory<V> valueFactory, Node node, double missingValuePenalty){
 		BiMap<String, Node> entityRegistry = getEntityRegistry();
 
-		NodeScoreDistribution result = new NodeScoreDistribution(entityRegistry, node);
+		NodeScoreDistribution<V> result = new NodeScoreDistribution<>(entityRegistry, node);
 
 		if(!node.hasScoreDistributions()){
 			return result;
@@ -380,7 +380,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 				value = valueFactory.newValue(scoreDistribution.getRecordCount()).divide(sum);
 			}
 
-			result.put(scoreDistribution.getValue(), value.doubleValue());
+			result.put(scoreDistribution.getValue(), value);
 
 			Double confidence = scoreDistribution.getConfidence();
 			if(confidence != null){
@@ -390,7 +390,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 					value.multiply(missingValuePenalty);
 				}
 
-				result.putConfidence(scoreDistribution.getValue(), value.doubleValue());
+				result.putConfidence(scoreDistribution.getValue(), value);
 			}
 		}
 

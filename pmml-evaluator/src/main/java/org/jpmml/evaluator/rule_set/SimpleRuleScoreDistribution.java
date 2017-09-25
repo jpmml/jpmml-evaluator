@@ -28,7 +28,7 @@ import org.jpmml.evaluator.HasConfidence;
 import org.jpmml.evaluator.InvalidFeatureException;
 import org.jpmml.evaluator.TypeUtil;
 
-public class SimpleRuleScoreDistribution extends EntityClassification<SimpleRule> implements HasConfidence {
+public class SimpleRuleScoreDistribution<V extends Number> extends EntityClassification<SimpleRule, V> implements HasConfidence {
 
 	SimpleRuleScoreDistribution(BiMap<String, SimpleRule> entityRegistry){
 		super(Type.CONFIDENCE, entityRegistry);
@@ -61,7 +61,7 @@ public class SimpleRuleScoreDistribution extends EntityClassification<SimpleRule
 
 	@Override
 	public Double getConfidence(String value){
-		return get(value);
+		return getValue(value);
 	}
 
 	@Override

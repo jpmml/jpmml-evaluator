@@ -71,6 +71,7 @@ import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.ComplexDoubleVector;
+import org.jpmml.evaluator.DoubleValue;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.ExpressionUtil;
@@ -175,7 +176,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				throw new UnsupportedFeatureException(nearestNeighborModel, mathContext);
 		}
 
-		Map<FieldName, AffinityDistribution> predictions;
+		Map<FieldName, AffinityDistribution<Double>> predictions;
 
 		MiningFunction miningFunction = nearestNeighborModel.getMiningFunction();
 		switch(miningFunction){
@@ -196,7 +197,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, AffinityDistribution> evaluateMixed(EvaluationContext context){
+	private Map<FieldName, AffinityDistribution<Double>> evaluateMixed(EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
@@ -222,7 +223,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			function = createIdentifierResolver(instanceIdVariable, table);
 		}
 
-		Map<FieldName, AffinityDistribution> result = new LinkedHashMap<>();
+		Map<FieldName, AffinityDistribution<Double>> result = new LinkedHashMap<>();
 
 		List<TargetField> targetFields = getTargetFields();
 		for(TargetField targetField : targetFields){
@@ -252,7 +253,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return result;
 	}
 
-	private Map<FieldName, AffinityDistribution> evaluateClustering(EvaluationContext context){
+	private Map<FieldName, AffinityDistribution<Double>> evaluateClustering(EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
@@ -481,21 +482,21 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return function;
 	}
 
-	private AffinityDistribution createAffinityDistribution(List<InstanceResult> instanceResults, Function<Integer, String> function, Object value){
+	private AffinityDistribution<Double> createAffinityDistribution(List<InstanceResult> instanceResults, Function<Integer, String> function, Object value){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		AffinityDistribution result;
+		AffinityDistribution<Double> result;
 
 		ComparisonMeasure comparisonMeasure = nearestNeighborModel.getComparisonMeasure();
 
 		Measure measure = comparisonMeasure.getMeasure();
 
 		if(MeasureUtil.isSimilarity(measure)){
-			result = new AffinityDistribution(Classification.Type.SIMILARITY, value);
+			result = new AffinityDistribution<>(Classification.Type.SIMILARITY, value);
 		} else
 
 		if(MeasureUtil.isDistance(measure)){
-			result = new AffinityDistribution(Classification.Type.DISTANCE, value);
+			result = new AffinityDistribution<>(Classification.Type.DISTANCE, value);
 		} else
 
 		{
@@ -503,7 +504,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 
 		for(InstanceResult instanceResult : instanceResults){
-			result.put(function.apply(instanceResult.getId()), instanceResult.getValue());
+			result.put(function.apply(instanceResult.getId()), new DoubleValue(instanceResult.getValue()));
 		}
 
 		return result;
@@ -862,7 +863,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			public int compareTo(InstanceResult that){
 
 				if(that instanceof Similarity){
-					return Classification.Type.SIMILARITY.compare(this.getValue(), that.getValue());
+					return Classification.Type.SIMILARITY.compareValues(new DoubleValue(this.getValue()), new DoubleValue(that.getValue()));
 				}
 
 				throw new ClassCastException();
@@ -885,7 +886,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			public int compareTo(InstanceResult that){
 
 				if(that instanceof Distance){
-					return Classification.Type.DISTANCE.compare(this.getValue(), that.getValue());
+					return Classification.Type.DISTANCE.compareValues(new DoubleValue(this.getValue()), new DoubleValue(that.getValue()));
 				}
 
 				throw new ClassCastException();
