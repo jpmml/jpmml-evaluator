@@ -54,13 +54,13 @@ public class VoteDistribution<V extends Number> extends Classification<V> implem
 	}
 
 	@Override
-	public Double getProbability(String value){
+	public Double getProbability(String category){
 
 		if(this.sum == null){
 			throw new EvaluationException();
 		}
 
-		Value<V> probability = super.values.get(value);
+		Value<V> probability = super.values.get(category);
 
 		if(probability != null){
 			probability = probability.copy();

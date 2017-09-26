@@ -67,8 +67,8 @@ public class AffinityDistribution<V extends Number> extends Classification<V> im
 	}
 
 	@Override
-	public Double getAffinity(String id){
-		return getValue(id);
+	public Double getAffinity(String category){
+		return getValue(category);
 	}
 
 	@Override

@@ -60,8 +60,8 @@ public class SimpleRuleScoreDistribution<V extends Number> extends EntityClassif
 	}
 
 	@Override
-	public Double getConfidence(String value){
-		return getValue(value);
+	public Double getConfidence(String category){
+		return getValue(category);
 	}
 
 	@Override

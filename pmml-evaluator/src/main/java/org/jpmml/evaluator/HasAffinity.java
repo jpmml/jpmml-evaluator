@@ -49,5 +49,5 @@ public interface HasAffinity extends CategoricalResultFeature {
 	 *
 	 * @see #getCategoryValues()
 	 */
-	Double getAffinity(String value);
+	Double getAffinity(String category);
 }

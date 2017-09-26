@@ -36,7 +36,7 @@ public class ProbabilityDistribution<V extends Number> extends Classification<V>
 	}
 
 	@Override
-	public Double getProbability(String value){
-		return getValue(value);
+	public Double getProbability(String category){
+		return getValue(category);
 	}
 }

@@ -72,33 +72,33 @@ public class NodeScoreDistribution<V extends Number> extends EntityClassificatio
 	}
 
 	@Override
-	public Double getProbability(String value){
+	public Double getProbability(String category){
 
 		if(isEmpty()){
 			Node node = getEntity();
 
-			if(value != null && (value).equals(node.getScore())){
+			if(category != null && (category).equals(node.getScore())){
 				return Numbers.DOUBLE_ONE;
 			}
 		}
 
-		return getValue(value);
+		return getValue(category);
 	}
 
 	@Override
-	public Double getConfidence(String value){
-		Value<V> confidence = (this.confidences != null ? this.confidences.get(value) : null);
+	public Double getConfidence(String category){
+		Value<V> confidence = (this.confidences != null ? this.confidences.get(category) : null);
 
 		return Type.CONFIDENCE.getValue(confidence);
 	}
 
-	void putConfidence(String value, Value<V> confidence){
+	void putConfidence(String category, Value<V> confidence){
 
 		if(this.confidences == null){
 			this.confidences = new ValueMap<>();
 		}
 
-		this.confidences.put(value, confidence);
+		this.confidences.put(category, confidence);
 	}
 
 	@Override

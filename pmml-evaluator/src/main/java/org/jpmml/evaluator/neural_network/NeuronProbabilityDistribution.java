@@ -37,7 +37,7 @@ public class NeuronProbabilityDistribution<V extends Number> extends EntityClass
 	}
 
 	@Override
-	public Double getProbability(String value){
-		return getValue(value);
+	public Double getProbability(String category){
+		return getValue(category);
 	}
 }

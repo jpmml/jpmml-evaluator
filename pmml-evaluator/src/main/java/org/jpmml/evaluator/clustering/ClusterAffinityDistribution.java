@@ -54,8 +54,8 @@ public class ClusterAffinityDistribution<V extends Number> extends EntityClassif
 	}
 
 	@Override
-	public Double getAffinity(String value){
-		return getValue(value);
+	public Double getAffinity(String category){
+		return getValue(category);
 	}
 
 	@Override

@@ -40,5 +40,5 @@ public interface HasConfidence extends CategoricalResultFeature {
 	 *
 	 * @see #getCategoryValues()
 	 */
-	Double getConfidence(String value);
+	Double getConfidence(String category);
 }
