@@ -58,9 +58,9 @@ public class EntityClassification<E extends Entity, V extends Number> extends Cl
 		Type type = getType();
 
 		if(this.entityValue == null || type.compareValues(value, this.entityValue) > 0){
-			this.entityValue = value;
-
 			setEntity(entity);
+
+			this.entityValue = value;
 		}
 
 		put(key, value);

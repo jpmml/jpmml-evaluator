@@ -42,7 +42,6 @@ import org.dmg.pmml.rule_set.RuleSetModel;
 import org.dmg.pmml.rule_set.SimpleRule;
 import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
-import org.jpmml.evaluator.DoubleValue;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.HasEntityRegistry;
@@ -55,6 +54,8 @@ import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueFactory;
 
 public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implements HasEntityRegistry<SimpleRule> {
 
@@ -101,20 +102,24 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 			throw new InvalidResultException(ruleSetModel);
 		}
 
+		ValueFactory<?> valueFactory;
+
 		MathContext mathContext = ruleSetModel.getMathContext();
 		switch(mathContext){
+			case FLOAT:
 			case DOUBLE:
+				valueFactory = getValueFactory();
 				break;
 			default:
 				throw new UnsupportedFeatureException(ruleSetModel, mathContext);
 		}
 
-		Map<FieldName, ? extends Classification<Double>> predictions;
+		Map<FieldName, ? extends Classification<?>> predictions;
 
 		MiningFunction miningFunction = ruleSetModel.getMiningFunction();
 		switch(miningFunction){
 			case CLASSIFICATION:
-				predictions = evaluateClassification(context);
+				predictions = evaluateClassification(valueFactory, context);
 				break;
 			default:
 				throw new UnsupportedFeatureException(ruleSetModel, miningFunction);
@@ -123,7 +128,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends Classification<Double>> evaluateClassification(EvaluationContext context){
+	private <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		RuleSetModel ruleSetModel = getModel();
 
 		RuleSet ruleSet = ruleSetModel.getRuleSet();
@@ -145,13 +150,20 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 		BiMap<String, SimpleRule> entityRegistry = getEntityRegistry();
 
-		SimpleRuleScoreDistribution<Double> result = new SimpleRuleScoreDistribution<>(entityRegistry);
+		SimpleRuleScoreDistribution<V> result = new SimpleRuleScoreDistribution<>(entityRegistry);
 
 		// Return the default prediction when no rules in the ruleset fire
 		if(firedRules.size() == 0){
-			String score = ruleSet.getDefaultScore();
+			String defaultScore = ruleSet.getDefaultScore();
+			Double defaultConfidence = ruleSet.getDefaultConfidence();
 
-			result.put(new SimpleRule(score), score, new DoubleValue(ruleSet.getDefaultConfidence()));
+			if(defaultScore == null || defaultConfidence == null){
+				throw new InvalidFeatureException(ruleSet);
+			}
+
+			Value<V> value = valueFactory.newValue(defaultConfidence);
+
+			result.put(new SimpleRule(defaultScore), defaultScore, value);
 
 			return TargetUtil.evaluateClassification(targetField, result);
 		}
@@ -172,14 +184,16 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 							result.setEntity(winner);
 						}
 
-						result.put(key, new DoubleValue(winner.getConfidence()));
+						Value<V> value = valueFactory.newValue(winner.getConfidence());
+
+						result.put(key, value);
 					}
 					break;
 				case WEIGHTED_SUM:
 					{
 						SimpleRule winner = null;
 
-						double totalWeight = 0;
+						Value<V> totalWeight = valueFactory.newValue();
 
 						for(SimpleRule keyRule : keyRules){
 
@@ -187,10 +201,12 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 								winner = keyRule;
 							}
 
-							totalWeight += keyRule.getWeight();
+							totalWeight.add(keyRule.getWeight());
 						}
 
-						result.put(winner, key, new DoubleValue(totalWeight / firedRules.size()));
+						Value<V> value = totalWeight.divide(firedRules.size());
+
+						result.put(winner, key, value);
 					}
 					break;
 				case WEIGHTED_MAX:
@@ -204,7 +220,9 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 							}
 						}
 
-						result.put(winner, key, new DoubleValue(winner.getConfidence()));
+						Value<V> value = valueFactory.newValue(winner.getConfidence());
+
+						result.put(winner, key, value);
 					}
 					break;
 				default:
