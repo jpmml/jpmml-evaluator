@@ -636,8 +636,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		Integer trials = getTrials(generalRegressionModel, context);
-		if(trials != null){
-			value.multiply(trials.doubleValue());
+		if(trials != null && trials != 1){
+			value.multiply(trials);
 		}
 
 		return value;
@@ -1132,7 +1132,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 				boolean equals = value.equals(ppCell);
 
-				return product.multiply(equals ? 1d : 0d);
+				return (equals ? product : product.multiply(0d));
 			}
 
 			public String getCategory(){
