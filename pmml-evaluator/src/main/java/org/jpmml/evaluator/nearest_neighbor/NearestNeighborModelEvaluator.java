@@ -71,7 +71,6 @@ import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.ComplexDoubleVector;
-import org.jpmml.evaluator.DoubleValue;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.ExpressionUtil;
@@ -90,6 +89,7 @@ import org.jpmml.evaluator.SimpleDoubleVector;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueAggregator;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.VoteAggregator;
@@ -168,9 +168,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			throw new InvalidResultException(nearestNeighborModel);
 		}
 
+		ValueFactory<Double> valueFactory;
+
 		MathContext mathContext = nearestNeighborModel.getMathContext();
 		switch(mathContext){
 			case DOUBLE:
+				valueFactory = (ValueFactory)getValueFactory();
 				break;
 			default:
 				throw new UnsupportedFeatureException(nearestNeighborModel, mathContext);
@@ -184,11 +187,11 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			case REGRESSION:
 			case CLASSIFICATION:
 			case MIXED:
-				predictions = evaluateMixed(context);
+				predictions = evaluateMixed(valueFactory, context);
 				break;
 			// The model does not contain targets
 			case CLUSTERING:
-				predictions = evaluateClustering(context);
+				predictions = evaluateClustering(valueFactory, context);
 				break;
 			default:
 				throw new UnsupportedFeatureException(nearestNeighborModel, miningFunction);
@@ -197,12 +200,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, AffinityDistribution<Double>> evaluateMixed(EvaluationContext context){
+	private Map<FieldName, AffinityDistribution<Double>> evaluateMixed(ValueFactory<Double> valueFactory, EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
 
-		List<InstanceResult> instanceResults = evaluateInstanceRows(context);
+		List<InstanceResult> instanceResults = evaluateInstanceRows(valueFactory, context);
 
 		Ordering<InstanceResult> ordering = (Ordering.natural()).reverse();
 
@@ -253,12 +256,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return result;
 	}
 
-	private Map<FieldName, AffinityDistribution<Double>> evaluateClustering(EvaluationContext context){
+	private Map<FieldName, AffinityDistribution<Double>> evaluateClustering(ValueFactory<Double> valueFactory, EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
 
-		List<InstanceResult> instanceResults = evaluateInstanceRows(context);
+		List<InstanceResult> instanceResults = evaluateInstanceRows(valueFactory, context);
 
 		FieldName instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
 		if(instanceIdVariable == null){
@@ -270,8 +273,10 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return Collections.singletonMap(getTargetFieldName(), createAffinityDistribution(instanceResults, function, null));
 	}
 
-	private List<InstanceResult> evaluateInstanceRows(EvaluationContext context){
+	private List<InstanceResult> evaluateInstanceRows(ValueFactory<Double> valueFactory, EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
+
+		ComparisonMeasure comparisonMeasure = nearestNeighborModel.getComparisonMeasure();
 
 		List<FieldValue> values = new ArrayList<>();
 
@@ -282,16 +287,14 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			values.add(value);
 		}
 
-		ComparisonMeasure comparisonMeasure = nearestNeighborModel.getComparisonMeasure();
-
 		Measure measure = comparisonMeasure.getMeasure();
 
 		if(MeasureUtil.isSimilarity(measure)){
-			return evaluateSimilarity(comparisonMeasure, knnInputs.getKNNInputs(), values);
+			return evaluateSimilarity(valueFactory, comparisonMeasure, knnInputs.getKNNInputs(), values);
 		} else
 
 		if(MeasureUtil.isDistance(measure)){
-			return evaluateDistance(comparisonMeasure, knnInputs.getKNNInputs(), values);
+			return evaluateDistance(valueFactory, comparisonMeasure, knnInputs.getKNNInputs(), values);
 		} else
 
 		{
@@ -299,7 +302,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 	}
 
-	private List<InstanceResult> evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
+	private List<InstanceResult> evaluateSimilarity(ValueFactory<Double> valueFactory, ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
 		BitSet flags = MeasureUtil.toBitSet(values);
 
 		Map<Integer, BitSet> flagMap = getInstanceFlags();
@@ -310,7 +313,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		for(Integer rowKey : rowKeys){
 			BitSet instanceFlags = flagMap.get(rowKey);
 
-			Double similarity = MeasureUtil.evaluateSimilarity(comparisonMeasure, knnInputs, flags, instanceFlags);
+			Value<Double> similarity = MeasureUtil.evaluateSimilarity(valueFactory, comparisonMeasure, knnInputs, flags, instanceFlags);
 
 			result.add(new InstanceResult.Similarity(rowKey, similarity));
 		}
@@ -318,18 +321,18 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return result;
 	}
 
-	private List<InstanceResult> evaluateDistance(ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
+	private List<InstanceResult> evaluateDistance(ValueFactory<Double> valueFactory, ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
 		Map<Integer, List<FieldValue>> valueMap = getInstanceValues();
 
 		List<InstanceResult> result = new ArrayList<>(valueMap.size());
 
-		double adjustment = MeasureUtil.calculateAdjustment(values);
+		Value<Double> adjustment = MeasureUtil.calculateAdjustment(valueFactory, values);
 
 		Set<Integer> rowKeys = valueMap.keySet();
 		for(Integer rowKey : rowKeys){
 			List<FieldValue> instanceValues = valueMap.get(rowKey);
 
-			Double distance = MeasureUtil.evaluateDistance(comparisonMeasure, knnInputs, values, instanceValues, adjustment);
+			Value<Double> distance = MeasureUtil.evaluateDistance(valueFactory, comparisonMeasure, knnInputs, values, instanceValues, adjustment);
 
 			result.add(new InstanceResult.Distance(rowKey, distance));
 		}
@@ -504,7 +507,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 
 		for(InstanceResult instanceResult : instanceResults){
-			result.put(function.apply(instanceResult.getId()), new DoubleValue(instanceResult.getValue()));
+			result.put(function.apply(instanceResult.getId()), instanceResult.getValue());
 		}
 
 		return result;
@@ -825,10 +828,10 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		private Integer id = null;
 
-		private Double value = null;
+		private Value<Double> value = null;
 
 
-		private InstanceResult(Integer id, Double value){
+		private InstanceResult(Integer id, Value<Double> value){
 			setId(id);
 			setValue(value);
 		}
@@ -844,18 +847,18 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			this.id = id;
 		}
 
-		public Double getValue(){
+		public Value<Double> getValue(){
 			return this.value;
 		}
 
-		private void setValue(Double value){
+		private void setValue(Value<Double> value){
 			this.value = value;
 		}
 
 		static
 		private class Similarity extends InstanceResult {
 
-			private Similarity(Integer id, Double value){
+			private Similarity(Integer id, Value<Double> value){
 				super(id, value);
 			}
 
@@ -863,7 +866,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			public int compareTo(InstanceResult that){
 
 				if(that instanceof Similarity){
-					return Classification.Type.SIMILARITY.compareValues(new DoubleValue(this.getValue()), new DoubleValue(that.getValue()));
+					return Classification.Type.SIMILARITY.compareValues(this.getValue(), that.getValue());
 				}
 
 				throw new ClassCastException();
@@ -878,7 +881,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		static
 		private class Distance extends InstanceResult {
 
-			private Distance(Integer id, Double value){
+			private Distance(Integer id, Value<Double> value){
 				super(id, value);
 			}
 
@@ -886,7 +889,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			public int compareTo(InstanceResult that){
 
 				if(that instanceof Distance){
-					return Classification.Type.DISTANCE.compareValues(new DoubleValue(this.getValue()), new DoubleValue(that.getValue()));
+					return Classification.Type.DISTANCE.compareValues(this.getValue(), that.getValue());
 				}
 
 				throw new ClassCastException();
@@ -894,7 +897,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			@Override
 			public double getWeight(double threshold){
-				return 1d / (getValue() + threshold);
+				Value<Double> value = getValue();
+
+				return 1d / (value.doubleValue() + threshold);
 			}
 		}
 	}

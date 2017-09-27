@@ -171,6 +171,13 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
+	public FloatValue power(double value){
+		this.value = FloatValue.pow(this.value, (float)value);
+
+		return this;
+	}
+
+	@Override
 	public FloatValue reciprocal(){
 		this.value = 1f / this.value;
 
@@ -311,6 +318,20 @@ public class FloatValue extends Value<Float> {
 	@Override
 	public FloatValue relu(){
 		this.value = Math.max(this.value, 0);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue abs(){
+		this.value = Math.abs(this.value);
+
+		return this;
+	}
+
+	@Override
+	public FloatValue gaussSim(double value){
+		this.value = FloatValue.exp((-(float)Math.log(2f) * this.value * this.value) / ((float)value * (float)value));
 
 		return this;
 	}

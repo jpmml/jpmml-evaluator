@@ -46,72 +46,72 @@ public class MeasureUtil {
 	}
 
 	static
-	public double evaluateSimilarity(ComparisonMeasure comparisonMeasure, List<? extends ComparisonField> comparisonFields, BitSet flags, BitSet referenceFlags){
+	public <V extends Number> Value<V> evaluateSimilarity(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, List<? extends ComparisonField> comparisonFields, BitSet flags, BitSet referenceFlags){
 		Measure measure = comparisonMeasure.getMeasure();
 
-		double a11 = 0d;
-		double a10 = 0d;
-		double a01 = 0d;
-		double a00 = 0d;
+		int a11 = 0;
+		int a10 = 0;
+		int a01 = 0;
+		int a00 = 0;
 
 		for(int i = 0; i < comparisonFields.size(); i++){
 
 			if(flags.get(i)){
 
 				if(referenceFlags.get(i)){
-					a11 += 1d;
+					a11 += 1;
 				} else
 
 				{
-					a10 += 1d;
+					a10 += 1;
 				}
 			} else
 
 			{
 				if(referenceFlags.get(i)){
-					a01 += 1d;
+					a01 += 1;
 				} else
 
 				{
-					a00 += 1d;
+					a00 += 1;
 				}
 			}
 		}
 
-		double numerator;
-		double denominator;
+		Value<V> numerator = valueFactory.newValue();
+		Value<V> denominator = valueFactory.newValue();
 
 		if(measure instanceof SimpleMatching){
-			numerator = (a11 + a00);
-			denominator = (a11 + a10 + a01 + a00);
+			numerator.add(a11 + a00);
+			denominator.add(a11 + a10 + a01 + a00);
 		} else
 
 		if(measure instanceof Jaccard){
-			numerator = (a11);
-			denominator = (a11 + a10 + a01);
+			numerator.add(a11);
+			denominator.add(a11 + a10 + a01);
 		} else
 
 		if(measure instanceof Tanimoto){
-			numerator = (a11 + a00);
-			denominator = (a11 + 2d * (a10 + a01) + a00);
+			numerator.add(a11 + a00);
+			denominator.add(a11).add(2d, (a10 + a01)).add(a00);
 		} else
 
 		if(measure instanceof BinarySimilarity){
 			BinarySimilarity binarySimilarity = (BinarySimilarity)measure;
 
-			numerator = (binarySimilarity.getC11Parameter() * a11 + binarySimilarity.getC10Parameter() * a10 + binarySimilarity.getC01Parameter() * a01 + binarySimilarity.getC00Parameter() * a00);
-			denominator = (binarySimilarity.getD11Parameter() * a11 + binarySimilarity.getD10Parameter() * a10 + binarySimilarity.getD01Parameter() * a01 + binarySimilarity.getD00Parameter() * a00);
+			numerator.add(binarySimilarity.getC11Parameter(), a11).add(binarySimilarity.getC10Parameter(), a10).add(binarySimilarity.getC01Parameter(), a01).add(binarySimilarity.getC00Parameter(), a00);
+			denominator.add(binarySimilarity.getD11Parameter(), a11).add(binarySimilarity.getD10Parameter(), a10).add(binarySimilarity.getD01Parameter(), a01).add(binarySimilarity.getD00Parameter(), a00);
 		} else
 
 		{
 			throw new UnsupportedFeatureException(measure);
-		}
+		} // End if
 
-		try {
-			return (numerator / denominator);
-		} catch(ArithmeticException ae){
+		if(denominator.doubleValue() == 0d){
 			throw new InvalidResultException(null);
 		}
+
+		return numerator.divide(denominator);
 	}
 
 	static
@@ -143,30 +143,30 @@ public class MeasureUtil {
 	}
 
 	static
-	public double evaluateDistance(ComparisonMeasure comparisonMeasure, List<? extends ComparisonField> comparisonFields, List<FieldValue> values, List<FieldValue> referenceValues, double adjustment){
+	public <V extends Number> Value<V> evaluateDistance(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, List<? extends ComparisonField> comparisonFields, List<FieldValue> values, List<FieldValue> referenceValues, Value<V> adjustment){
 		Measure measure = comparisonMeasure.getMeasure();
 
 		double innerPower;
 		double outerPower;
 
 		if(measure instanceof Euclidean){
-			innerPower = outerPower = 2;
+			innerPower = outerPower = 2d;
 		} else
 
 		if(measure instanceof SquaredEuclidean){
-			innerPower = 2;
-			outerPower = 1;
+			innerPower = 2d;
+			outerPower = 1d;
 		} else
 
 		if(measure instanceof Chebychev || measure instanceof CityBlock){
-			innerPower = outerPower = 1;
+			innerPower = outerPower = 1d;
 		} else
 
 		if(measure instanceof Minkowski){
 			Minkowski minkowski = (Minkowski)measure;
 
 			double p = minkowski.getPParameter();
-			if(p < 0){
+			if(p < 0d){
 				throw new InvalidFeatureException(minkowski);
 			}
 
@@ -177,30 +177,45 @@ public class MeasureUtil {
 			throw new UnsupportedFeatureException(measure);
 		}
 
-		DoubleVector distances = new SimpleDoubleVector();
+		Vector<V> distances = valueFactory.newVector(0);
 
-		comparisonFields:
 		for(int i = 0, max = comparisonFields.size(); i < max; i++){
 			ComparisonField comparisonField = comparisonFields.get(i);
 
 			FieldValue value = values.get(i);
 			if(value == null){
-				continue comparisonFields;
+				continue;
 			}
 
 			FieldValue referenceValue = referenceValues.get(i);
 
-			double distance = evaluateInnerFunction(comparisonMeasure, comparisonField, value, referenceValue, innerPower);
+			Value<V> distance = evaluateInnerFunction(valueFactory, comparisonMeasure, comparisonField, value, referenceValue, innerPower);
 
-			distances.add(distance);
+			distances.add(distance.doubleValue());
 		}
 
 		if(measure instanceof Euclidean || measure instanceof SquaredEuclidean || measure instanceof CityBlock || measure instanceof Minkowski){
-			return Math.pow(distances.doubleSum() * adjustment, 1d / outerPower);
+			Value<V> result = distances.sum();
+
+			if(adjustment.doubleValue() != 1d){
+				result.multiply(adjustment);
+			} // End if
+
+			if(outerPower != 1d){
+				result.inversePower(outerPower);
+			}
+
+			return result;
 		} else
 
 		if(measure instanceof Chebychev){
-			return distances.doubleMax() * adjustment;
+			Value<V> result = distances.max();
+
+			if(adjustment.doubleValue() != 1d){
+				result.multiply(adjustment);
+			}
+
+			return result;
 		} else
 
 		{
@@ -209,7 +224,7 @@ public class MeasureUtil {
 	}
 
 	static
-	private double evaluateInnerFunction(ComparisonMeasure comparisonMeasure, ComparisonField comparisonField, FieldValue value, FieldValue referenceValue, double power){
+	private <V extends Number> Value<V> evaluateInnerFunction(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, ComparisonField comparisonField, FieldValue value, FieldValue referenceValue, double power){
 		CompareFunction compareFunction = comparisonField.getCompareFunction();
 
 		if(compareFunction == null){
@@ -229,14 +244,14 @@ public class MeasureUtil {
 			}
 		}
 
-		double distance;
+		Value<V> distance;
 
 		switch(compareFunction){
 			case ABS_DIFF:
 				{
-					double z = difference(value, referenceValue);
+					distance = valueFactory.newValue((value.asNumber()).doubleValue()).subtract((referenceValue.asNumber()).doubleValue());
 
-					distance = Math.abs(z);
+					distance.abs();
 				}
 				break;
 			case GAUSS_SIM:
@@ -246,24 +261,23 @@ public class MeasureUtil {
 						throw new InvalidFeatureException(comparisonField);
 					}
 
-					double z = difference(value, referenceValue);
-					double s = similarityScale;
+					distance = valueFactory.newValue((value.asNumber()).doubleValue()).subtract((referenceValue.asNumber()).doubleValue());
 
-					distance = Math.exp(-Math.log(2d) * Math.pow(z, 2d) / Math.pow(s, 2d));
+					distance.gaussSim(similarityScale);
 				}
 				break;
 			case DELTA:
 				{
-					boolean equals = equals(value, referenceValue);
+					boolean equals = (value).equalsValue(referenceValue);
 
-					distance = (equals ? 0d : 1d);
+					distance = valueFactory.newValue(equals ? 0d : 1d);
 				}
 				break;
 			case EQUAL:
 				{
-					boolean equals = equals(value, referenceValue);
+					boolean equals = (value).equalsValue(referenceValue);
 
-					distance = (equals ? 1d : 0d);
+					distance = valueFactory.newValue(equals ? 1d : 0d);
 				}
 				break;
 			case TABLE:
@@ -272,48 +286,39 @@ public class MeasureUtil {
 				throw new UnsupportedFeatureException(comparisonField, compareFunction);
 		}
 
-		return comparisonField.getFieldWeight() * Math.pow(distance, power);
+		if(power != 1d){
+			distance.power(power);
+		}
+
+		Double fieldWeight = comparisonField.getFieldWeight();
+		if(fieldWeight != null && fieldWeight != 1d){
+			distance.multiply(fieldWeight);
+		}
+
+		return distance;
 	}
 
 	static
-	private double difference(FieldValue x, FieldValue y){
-		return ((x.asNumber()).doubleValue() - (y.asNumber()).doubleValue());
+	public <V extends Number> Value<V> calculateAdjustment(ValueFactory<V> valueFactory, List<FieldValue> values){
+		return calculateAdjustment(valueFactory, values, null);
 	}
 
 	static
-	private boolean equals(FieldValue x, FieldValue y){
-		return (x).equalsValue(y);
-	}
-
-	static
-	public double calculateAdjustment(List<FieldValue> values, List<? extends Number> adjustmentValues){
-		double sum = 0d;
-		double nonmissingSum = 0d;
+	public <V extends Number> Value<V> calculateAdjustment(ValueFactory<V> valueFactory, List<FieldValue> values, List<? extends Number> adjustmentValues){
+		Value<V> sum = valueFactory.newValue();
+		Value<V> nonmissingSum = valueFactory.newValue();
 
 		for(int i = 0; i < values.size(); i++){
 			FieldValue value = values.get(i);
+			Number adjustmentValue = (adjustmentValues != null ? adjustmentValues.get(i) : Numbers.DOUBLE_ONE);
 
-			Number adjustmentValue = adjustmentValues.get(i);
+			sum.add(adjustmentValue.doubleValue());
 
-			sum += adjustmentValue.doubleValue();
-			nonmissingSum += (value != null ? adjustmentValue.doubleValue() : 0d);
+			if(value != null){
+				nonmissingSum.add(adjustmentValue.doubleValue());
+			}
 		}
 
-		return (sum / nonmissingSum);
-	}
-
-	static
-	public double calculateAdjustment(List<FieldValue> values){
-		double sum = 0d;
-		double nonmissingSum = 0d;
-
-		for(int i = 0; i < values.size(); i++){
-			FieldValue value = values.get(i);
-
-			sum += 1d;
-			nonmissingSum += (value != null ? 1d : 0d);
-		}
-
-		return (sum / nonmissingSum);
+		return sum.divide(nonmissingSum);
 	}
 }

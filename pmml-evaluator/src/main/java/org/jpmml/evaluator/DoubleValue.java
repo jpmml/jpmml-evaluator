@@ -173,6 +173,13 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
+	public DoubleValue power(double value){
+		this.value = Math.pow(this.value, value);
+
+		return this;
+	}
+
+	@Override
 	public DoubleValue reciprocal(){
 		this.value = 1d / this.value;
 
@@ -315,6 +322,20 @@ public class DoubleValue extends Value<Double> {
 	@Override
 	public DoubleValue relu(){
 		this.value = Math.max(this.value, 0);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue abs(){
+		this.value = Math.abs(this.value);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue gaussSim(double value){
+		this.value = Math.exp((-Math.log(2d) * this.value * this.value) / (value * value));
 
 		return this;
 	}

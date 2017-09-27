@@ -138,6 +138,12 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> square();
 
 	@Operation (
+		value = "<apply><power/>${this}{0}</apply>"
+	)
+	abstract
+	public Value<V> power(double value);
+
+	@Operation (
 		value = "<apply><divide/><cn>1</cn>${this}</apply>"
 	)
 	abstract
@@ -250,6 +256,18 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	)
 	abstract
 	public Value<V> relu();
+
+	@Operation (
+		value = "<apply><abs/>${this}</apply>"
+	)
+	abstract
+	public Value<V> abs();
+
+	@Operation (
+		value = "<apply><ci>gaussSim</ci>${this}${0}</apply>"
+	)
+	abstract
+	public Value<V> gaussSim(double value);
 
 	@Operation (
 		value = "<apply><max/>${0}<apply><min/>${1}${this}</apply></apply>"

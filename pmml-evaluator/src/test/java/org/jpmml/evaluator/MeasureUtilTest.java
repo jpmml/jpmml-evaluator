@@ -36,6 +36,7 @@ import org.dmg.pmml.BinarySimilarity;
 import org.dmg.pmml.ComparisonMeasure;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Jaccard;
+import org.dmg.pmml.MathContext;
 import org.dmg.pmml.SimpleMatching;
 import org.dmg.pmml.Tanimoto;
 import org.dmg.pmml.clustering.ClusteringField;
@@ -56,19 +57,21 @@ public class MeasureUtilTest {
 
 		comparisonMeasure.setMeasure(new SimpleMatching());
 
-		assertEquals((2d / 4d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags), 1e-8);
+		ValueFactory<?> valueFactory = MeasureUtilTest.valueFactoryFactory.newValueFactory(MathContext.DOUBLE);
+
+		assertEquals(valueFactory.newValue(2d / 4d), MeasureUtil.evaluateSimilarity(valueFactory, comparisonMeasure, clusteringFields, flags, referenceFlags));
 
 		comparisonMeasure.setMeasure(new Jaccard());
 
-		assertEquals((1d / 3d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags), 1e-8);
+		assertEquals(valueFactory.newValue(1d / 3d), MeasureUtil.evaluateSimilarity(valueFactory, comparisonMeasure, clusteringFields, flags, referenceFlags));
 
 		comparisonMeasure.setMeasure(new Tanimoto());
 
-		assertEquals((2d / (1d + 2 * 2d + 1d)), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags), 1e-8);
+		assertEquals(valueFactory.newValue(2d / (1d + 2 * 2d + 1d)), MeasureUtil.evaluateSimilarity(valueFactory, comparisonMeasure, clusteringFields, flags, referenceFlags));
 
 		comparisonMeasure.setMeasure(new BinarySimilarity(0.5d, 0.5d, 0.5d, 0.5d, 1d, 1d, 1d, 1d));
 
-		assertEquals((2d / 4d), MeasureUtil.evaluateSimilarity(comparisonMeasure, clusteringFields, flags, referenceFlags), 1e-8);
+		assertEquals(valueFactory.newValue(2d / 4d), MeasureUtil.evaluateSimilarity(valueFactory, comparisonMeasure, clusteringFields, flags, referenceFlags));
 	}
 
 	static
@@ -88,4 +91,6 @@ public class MeasureUtilTest {
 	private BitSet createFlags(List<Integer> values){
 		return MeasureUtil.toBitSet(FieldValueUtil.createAll(null, null, values));
 	}
+
+	private static ValueFactoryFactory valueFactoryFactory = ValueFactoryFactory.newInstance();
 }
