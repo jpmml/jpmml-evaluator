@@ -70,7 +70,6 @@ import org.dmg.pmml.nearest_neighbor.TrainingInstances;
 import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
-import org.jpmml.evaluator.ComplexDoubleVector;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.ExpressionUtil;
@@ -85,7 +84,6 @@ import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
-import org.jpmml.evaluator.SimpleDoubleVector;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
@@ -168,18 +166,19 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			throw new InvalidResultException(nearestNeighborModel);
 		}
 
-		ValueFactory<Double> valueFactory;
+		ValueFactory<?> valueFactory;
 
 		MathContext mathContext = nearestNeighborModel.getMathContext();
 		switch(mathContext){
+			case FLOAT:
 			case DOUBLE:
-				valueFactory = (ValueFactory)getValueFactory();
+				valueFactory = getValueFactory();
 				break;
 			default:
 				throw new UnsupportedFeatureException(nearestNeighborModel, mathContext);
 		}
 
-		Map<FieldName, AffinityDistribution<Double>> predictions;
+		Map<FieldName, ? extends AffinityDistribution<?>> predictions;
 
 		MiningFunction miningFunction = nearestNeighborModel.getMiningFunction();
 		switch(miningFunction){
@@ -200,16 +199,16 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, AffinityDistribution<Double>> evaluateMixed(ValueFactory<Double> valueFactory, EvaluationContext context){
+	private <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
 
-		List<InstanceResult> instanceResults = evaluateInstanceRows(valueFactory, context);
+		List<InstanceResult<V>> instanceResults = evaluateInstanceRows(valueFactory, context);
 
-		Ordering<InstanceResult> ordering = (Ordering.natural()).reverse();
+		Ordering<InstanceResult<V>> ordering = (Ordering.natural()).reverse();
 
-		List<InstanceResult> nearestInstanceResults = ordering.sortedCopy(instanceResults);
+		List<InstanceResult<V>> nearestInstanceResults = ordering.sortedCopy(instanceResults);
 
 		nearestInstanceResults = nearestInstanceResults.subList(0, nearestNeighborModel.getNumberOfNeighbors());
 
@@ -226,7 +225,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			function = createIdentifierResolver(instanceIdVariable, table);
 		}
 
-		Map<FieldName, AffinityDistribution<Double>> result = new LinkedHashMap<>();
+		Map<FieldName, AffinityDistribution<V>> result = new LinkedHashMap<>();
 
 		List<TargetField> targetFields = getTargetFields();
 		for(TargetField targetField : targetFields){
@@ -239,10 +238,10 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			OpType opType = dataField.getOpType();
 			switch(opType){
 				case CONTINUOUS:
-					value = calculateContinuousTarget(name, nearestInstanceResults, table);
+					value = calculateContinuousTarget(valueFactory, name, nearestInstanceResults, table);
 					break;
 				case CATEGORICAL:
-					value = calculateCategoricalTarget(name, nearestInstanceResults, table);
+					value = calculateCategoricalTarget(valueFactory, name, nearestInstanceResults, table);
 					break;
 				default:
 					throw new UnsupportedFeatureException(dataField, opType);
@@ -256,12 +255,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return result;
 	}
 
-	private Map<FieldName, AffinityDistribution<Double>> evaluateClustering(ValueFactory<Double> valueFactory, EvaluationContext context){
+	private <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
 
-		List<InstanceResult> instanceResults = evaluateInstanceRows(valueFactory, context);
+		List<InstanceResult<V>> instanceResults = evaluateInstanceRows(valueFactory, context);
 
 		FieldName instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
 		if(instanceIdVariable == null){
@@ -273,7 +272,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return Collections.singletonMap(getTargetFieldName(), createAffinityDistribution(instanceResults, function, null));
 	}
 
-	private List<InstanceResult> evaluateInstanceRows(ValueFactory<Double> valueFactory, EvaluationContext context){
+	private <V extends Number> List<InstanceResult<V>> evaluateInstanceRows(ValueFactory<V> valueFactory, EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		ComparisonMeasure comparisonMeasure = nearestNeighborModel.getComparisonMeasure();
@@ -302,66 +301,66 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 	}
 
-	private List<InstanceResult> evaluateSimilarity(ValueFactory<Double> valueFactory, ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
+	private <V extends Number> List<InstanceResult<V>> evaluateSimilarity(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
 		BitSet flags = MeasureUtil.toBitSet(values);
 
 		Map<Integer, BitSet> flagMap = getInstanceFlags();
 
-		List<InstanceResult> result = new ArrayList<>(flagMap.size());
+		List<InstanceResult<V>> result = new ArrayList<>(flagMap.size());
 
 		Set<Integer> rowKeys = flagMap.keySet();
 		for(Integer rowKey : rowKeys){
 			BitSet instanceFlags = flagMap.get(rowKey);
 
-			Value<Double> similarity = MeasureUtil.evaluateSimilarity(valueFactory, comparisonMeasure, knnInputs, flags, instanceFlags);
+			Value<V> similarity = MeasureUtil.evaluateSimilarity(valueFactory, comparisonMeasure, knnInputs, flags, instanceFlags);
 
-			result.add(new InstanceResult.Similarity(rowKey, similarity));
+			result.add(new InstanceResult.Similarity<>(rowKey, similarity));
 		}
 
 		return result;
 	}
 
-	private List<InstanceResult> evaluateDistance(ValueFactory<Double> valueFactory, ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
+	private <V extends Number> List<InstanceResult<V>> evaluateDistance(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
 		Map<Integer, List<FieldValue>> valueMap = getInstanceValues();
 
-		List<InstanceResult> result = new ArrayList<>(valueMap.size());
+		List<InstanceResult<V>> result = new ArrayList<>(valueMap.size());
 
-		Value<Double> adjustment = MeasureUtil.calculateAdjustment(valueFactory, values);
+		Value<V> adjustment = MeasureUtil.calculateAdjustment(valueFactory, values);
 
 		Set<Integer> rowKeys = valueMap.keySet();
 		for(Integer rowKey : rowKeys){
 			List<FieldValue> instanceValues = valueMap.get(rowKey);
 
-			Value<Double> distance = MeasureUtil.evaluateDistance(valueFactory, comparisonMeasure, knnInputs, values, instanceValues, adjustment);
+			Value<V> distance = MeasureUtil.evaluateDistance(valueFactory, comparisonMeasure, knnInputs, values, instanceValues, adjustment);
 
-			result.add(new InstanceResult.Distance(rowKey, distance));
+			result.add(new InstanceResult.Distance<>(rowKey, distance));
 		}
 
 		return result;
 	}
 
-	private Double calculateContinuousTarget(FieldName name, List<InstanceResult> instanceResults, Table<Integer, FieldName, FieldValue> table){
+	private <V extends Number> V calculateContinuousTarget(final ValueFactory<V> valueFactory, FieldName name, List<InstanceResult<V>> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		NearestNeighborModel.ContinuousScoringMethod continuousScoringMethod = nearestNeighborModel.getContinuousScoringMethod();
 
-		ValueAggregator<Double> aggregator;
+		ValueAggregator<V> aggregator;
 
 		switch(continuousScoringMethod){
 			case AVERAGE:
-				aggregator = new ValueAggregator<>(new SimpleDoubleVector());
+				aggregator = new ValueAggregator<>(valueFactory.newVector(0));
 				break;
 			case WEIGHTED_AVERAGE:
-				aggregator = new ValueAggregator<>(new SimpleDoubleVector(), new SimpleDoubleVector(), new SimpleDoubleVector());
+				aggregator = new ValueAggregator<>(valueFactory.newVector(0), valueFactory.newVector(0), valueFactory.newVector(0));
 				break;
 			case MEDIAN:
-				aggregator = new ValueAggregator<>(new ComplexDoubleVector(instanceResults.size()));
+				aggregator = new ValueAggregator<>(valueFactory.newVector(instanceResults.size()));
 				break;
 			default:
 				throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
 		}
 
-		for(InstanceResult instanceResult : instanceResults){
+		for(InstanceResult<V> instanceResult : instanceResults){
 			FieldValue value = table.get(instanceResult.getId(), name);
 			if(value == null){
 				throw new MissingValueException(name);
@@ -375,9 +374,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 					aggregator.add(number);
 					break;
 				case WEIGHTED_AVERAGE:
-					double weight = instanceResult.getWeight(nearestNeighborModel.getThreshold());
+					Value<V> weight = instanceResult.getWeight(nearestNeighborModel.getThreshold());
 
-					aggregator.add(number, weight);
+					aggregator.add(number, weight.doubleValue());
 					break;
 				default:
 					throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
@@ -399,20 +398,20 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	@SuppressWarnings (
 		value = {"rawtypes", "unchecked"}
 	)
-	private Object calculateCategoricalTarget(FieldName name, List<InstanceResult> instanceResults, Table<Integer, FieldName, FieldValue> table){
+	private <V extends Number> Object calculateCategoricalTarget(final ValueFactory<V> valueFactory, FieldName name, List<InstanceResult<V>> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		VoteAggregator<Object, Double> aggregator = new VoteAggregator<Object, Double>(){
+		VoteAggregator<Object, V> aggregator = new VoteAggregator<Object, V>(){
 
 			@Override
-			public ValueFactory<Double> getValueFactory(){
-				return (ValueFactory)NearestNeighborModelEvaluator.this.getValueFactory();
+			public ValueFactory<V> getValueFactory(){
+				return valueFactory;
 			}
 		};
 
 		NearestNeighborModel.CategoricalScoringMethod categoricalScoringMethod = nearestNeighborModel.getCategoricalScoringMethod();
 
-		for(InstanceResult instanceResult : instanceResults){
+		for(InstanceResult<V> instanceResult : instanceResults){
 			FieldValue value = table.get(instanceResult.getId(), name);
 			if(value == null){
 				throw new MissingValueException(name);
@@ -425,9 +424,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 					aggregator.add(object);
 					break;
 				case WEIGHTED_MAJORITY_VOTE:
-					double weight = instanceResult.getWeight(nearestNeighborModel.getThreshold());
+					Value<V> weight = instanceResult.getWeight(nearestNeighborModel.getThreshold());
 
-					aggregator.add(object, weight);
+					aggregator.add(object, weight.doubleValue());
 					break;
 				default:
 					throw new UnsupportedFeatureException(nearestNeighborModel, categoricalScoringMethod);
@@ -485,12 +484,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return function;
 	}
 
-	private AffinityDistribution<Double> createAffinityDistribution(List<InstanceResult> instanceResults, Function<Integer, String> function, Object value){
+	private <V extends Number> AffinityDistribution<V> createAffinityDistribution(List<InstanceResult<V>> instanceResults, Function<Integer, String> function, Object value){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		AffinityDistribution<Double> result;
-
 		ComparisonMeasure comparisonMeasure = nearestNeighborModel.getComparisonMeasure();
+
+		AffinityDistribution<V> result;
 
 		Measure measure = comparisonMeasure.getMeasure();
 
@@ -506,7 +505,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			throw new UnsupportedFeatureException(measure);
 		}
 
-		for(InstanceResult instanceResult : instanceResults){
+		for(InstanceResult<V> instanceResult : instanceResults){
 			result.put(function.apply(instanceResult.getId()), instanceResult.getValue());
 		}
 
@@ -824,20 +823,20 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 	static
 	abstract
-	private class InstanceResult implements Comparable<InstanceResult> {
+	private class InstanceResult<V extends Number> implements Comparable<InstanceResult<V>> {
 
 		private Integer id = null;
 
-		private Value<Double> value = null;
+		private Value<V> value = null;
 
 
-		private InstanceResult(Integer id, Value<Double> value){
+		private InstanceResult(Integer id, Value<V> value){
 			setId(id);
 			setValue(value);
 		}
 
 		abstract
-		public double getWeight(double threshold);
+		public Value<V> getWeight(double threshold);
 
 		public Integer getId(){
 			return this.id;
@@ -847,23 +846,23 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			this.id = id;
 		}
 
-		public Value<Double> getValue(){
+		public Value<V> getValue(){
 			return this.value;
 		}
 
-		private void setValue(Value<Double> value){
+		private void setValue(Value<V> value){
 			this.value = value;
 		}
 
 		static
-		private class Similarity extends InstanceResult {
+		private class Similarity<V extends Number> extends InstanceResult<V> {
 
-			private Similarity(Integer id, Value<Double> value){
+			private Similarity(Integer id, Value<V> value){
 				super(id, value);
 			}
 
 			@Override
-			public int compareTo(InstanceResult that){
+			public int compareTo(InstanceResult<V> that){
 
 				if(that instanceof Similarity){
 					return Classification.Type.SIMILARITY.compareValues(this.getValue(), that.getValue());
@@ -873,20 +872,20 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			}
 
 			@Override
-			public double getWeight(double threshold){
+			public Value<V> getWeight(double threshold){
 				throw new EvaluationException();
 			}
 		}
 
 		static
-		private class Distance extends InstanceResult {
+		private class Distance<V extends Number> extends InstanceResult<V> {
 
-			private Distance(Integer id, Value<Double> value){
+			private Distance(Integer id, Value<V> value){
 				super(id, value);
 			}
 
 			@Override
-			public int compareTo(InstanceResult that){
+			public int compareTo(InstanceResult<V> that){
 
 				if(that instanceof Distance){
 					return Classification.Type.DISTANCE.compareValues(this.getValue(), that.getValue());
@@ -896,10 +895,16 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			}
 
 			@Override
-			public double getWeight(double threshold){
-				Value<Double> value = getValue();
+			public Value<V> getWeight(double threshold){
+				Value<V> value = getValue();
 
-				return 1d / (value.doubleValue() + threshold);
+				value = value.copy();
+
+				if(threshold != 0d){
+					value.add(threshold);
+				}
+
+				return value.reciprocal();
 			}
 		}
 	}
