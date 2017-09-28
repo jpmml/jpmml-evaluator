@@ -60,7 +60,7 @@ public class NeuralNetworkUtil {
 			case ELLIOTT:
 				return value.elliott();
 			case ARCTAN:
-				return value.atan();
+				return value.arctan();
 			case RECTIFIER:
 				return value.relu();
 			default:

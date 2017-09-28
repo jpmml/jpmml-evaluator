@@ -295,8 +295,8 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue atan(){
-		this.value = (float)Math.atan(this.value);
+	public FloatValue arctan(){
+		this.value = (2f * (float)Math.atan(this.value)) / (float)FloatValue.PI;
 
 		return this;
 	}

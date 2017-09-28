@@ -299,8 +299,8 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue atan(){
-		this.value = Math.atan(this.value);
+	public DoubleValue arctan(){
+		this.value = (2d * Math.atan(this.value)) / DoubleValue.PI;
 
 		return this;
 	}

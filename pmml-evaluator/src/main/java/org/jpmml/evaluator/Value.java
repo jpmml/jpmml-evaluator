@@ -234,10 +234,10 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> cos();
 
 	@Operation (
-		value = "<apply><arctan/>${this}</apply>"
+		value = "<apply><divide/><apply><times/><cn>2</cn><apply><arctan/>${this}</apply></apply><pi/></apply>"
 	)
 	abstract
-	public Value<V> atan();
+	public Value<V> arctan();
 
 	@Operation (
 		value = "<apply><tanh/>${this}</apply>"
