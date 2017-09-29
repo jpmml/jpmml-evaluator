@@ -69,11 +69,25 @@ public class FieldValueUtilTest {
 			// Ignored
 		}
 
+		miningField.setInvalidValueReplacement("0");
+
+		assertEquals(0d, prepare(dataField, miningField, "one"));
+
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
+
+		try {
+			prepare(dataField, miningField, "one");
+
+			fail();
+		} catch(InvalidFeatureException ife){
+			// Ignored
+		}
+
+		miningField.setInvalidValueReplacement(null);
+
 		Value missingValue = createValue("N/A", Property.MISSING);
 
 		dataField.addValues(missingValue);
-
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
 
 		assertEquals(null, prepare(dataField, miningField, null));
 		assertEquals(null, prepare(dataField, miningField, "N/A"));
@@ -152,6 +166,12 @@ public class FieldValueUtilTest {
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
 
+		miningField.setInvalidValueReplacement("3");
+
+		assertEquals(3d, prepare(dataField, miningField, 5d));
+
+		miningField.setInvalidValueReplacement(null);
+
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
 
 		assertEquals(1d, prepare(dataField, miningField, 1d));
@@ -165,6 +185,12 @@ public class FieldValueUtilTest {
 
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(5d, prepare(dataField, miningField, 5d));
+
+		miningField.setInvalidValueReplacement("0");
+
+		assertEquals(0d, prepare(dataField, miningField, 1d));
+
+		miningField.setInvalidValueReplacement(null);
 
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
 
@@ -217,11 +243,26 @@ public class FieldValueUtilTest {
 			// Ignored
 		}
 
+		miningField.setInvalidValueReplacement("0");
+
+		assertEquals(0, prepare(dataField, miningField, "one"));
+		assertEquals(0, prepare(dataField, miningField, 1.5d));
+
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
+
+		try {
+			prepare(dataField, miningField, "one");
+
+			fail();
+		} catch(InvalidFeatureException ife){
+			// Ignored
+		}
+
+		miningField.setInvalidValueReplacement(null);
+
 		Value missingValue = createValue("-999", Property.MISSING);
 
 		dataField.addValues(missingValue);
-
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
 
 		assertEquals(null, prepare(dataField, miningField, null));
 		assertEquals(null, prepare(dataField, miningField, "-999"));

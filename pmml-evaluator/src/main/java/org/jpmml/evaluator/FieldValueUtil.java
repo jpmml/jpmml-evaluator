@@ -106,9 +106,10 @@ public class FieldValueUtil {
 		} // End if
 
 		if(miningField != null){
+			String invalidValueReplacement = miningField.getInvalidValueReplacement();
 			String missingValueReplacement = miningField.getMissingValueReplacement();
 
-			if(missingValueReplacement != null){
+			if(invalidValueReplacement != null || missingValueReplacement != null){
 				throw new InvalidFeatureException(miningField);
 			}
 		}
@@ -168,9 +169,26 @@ public class FieldValueUtil {
 	static
 	public FieldValue performInvalidValueTreatment(Field field, MiningField miningField, Object value){
 		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
+		String invalidValueReplacement = miningField.getInvalidValueReplacement();
 
 		switch(invalidValueTreatmentMethod){
 			case AS_IS:
+				break;
+			case AS_MISSING:
+			case RETURN_INVALID:
+				if(invalidValueReplacement != null){
+					throw new InvalidFeatureException(miningField);
+				}
+				break;
+			default:
+				throw new UnsupportedFeatureException(miningField, invalidValueTreatmentMethod);
+		}
+
+		switch(invalidValueTreatmentMethod){
+			case AS_IS:
+				if(invalidValueReplacement != null){
+					return createInputValue(field, miningField, invalidValueReplacement);
+				}
 				return createInputValue(field, miningField, value);
 			case AS_MISSING:
 				return createMissingInputValue(field, miningField);
@@ -382,7 +400,9 @@ public class FieldValueUtil {
 
 	static
 	private FieldValue createMissingInputValue(Field field, MiningField miningField){
-		return createInputValue(field, miningField, miningField.getMissingValueReplacement());
+		String missingValueReplacement = miningField.getMissingValueReplacement();
+
+		return createInputValue(field, miningField, missingValueReplacement);
 	}
 
 	static

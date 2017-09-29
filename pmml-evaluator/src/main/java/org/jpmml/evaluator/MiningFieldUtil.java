@@ -38,6 +38,20 @@ public class MiningFieldUtil {
 			return false;
 		}
 
+		String invalidValueReplacement = miningField.getInvalidValueReplacement();
+		if(invalidValueReplacement != null){
+			return false;
+		}
+
+		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
+		switch(invalidValueTreatmentMethod){
+			case AS_IS: // XXX
+			case RETURN_INVALID:
+				break;
+			default:
+				return false;
+		}
+
 		String missingValueReplacement = miningField.getMissingValueReplacement();
 		if(missingValueReplacement != null){
 			return false;
@@ -46,15 +60,6 @@ public class MiningFieldUtil {
 		OutlierTreatmentMethod outlierTreatmentMethod = miningField.getOutlierTreatment();
 		switch(outlierTreatmentMethod){
 			case AS_IS:
-				break;
-			default:
-				return false;
-		}
-
-		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
-		switch(invalidValueTreatmentMethod){
-			case AS_IS: // XXX
-			case RETURN_INVALID:
 				break;
 			default:
 				return false;
