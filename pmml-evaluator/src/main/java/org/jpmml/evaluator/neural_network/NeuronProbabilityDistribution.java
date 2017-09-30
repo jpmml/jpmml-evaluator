@@ -24,11 +24,13 @@ import com.google.common.collect.BiMap;
 import org.dmg.pmml.Entity;
 import org.jpmml.evaluator.EntityClassification;
 import org.jpmml.evaluator.HasProbability;
+import org.jpmml.evaluator.Report;
+import org.jpmml.evaluator.ValueMap;
 
 public class NeuronProbabilityDistribution<V extends Number> extends EntityClassification<Entity, V> implements HasProbability {
 
-	NeuronProbabilityDistribution(BiMap<String, Entity> entityRegistry){
-		super(Type.PROBABILITY, entityRegistry);
+	NeuronProbabilityDistribution(ValueMap<String, V> probabilities, BiMap<String, Entity> entityRegistry){
+		super(Type.PROBABILITY, probabilities, entityRegistry);
 	}
 
 	@Override
@@ -39,5 +41,10 @@ public class NeuronProbabilityDistribution<V extends Number> extends EntityClass
 	@Override
 	public Double getProbability(String category){
 		return getValue(category);
+	}
+
+	@Override
+	public Report getProbabilityReport(String category){
+		return getValueReport(category);
 	}
 }

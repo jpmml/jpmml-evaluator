@@ -316,6 +316,21 @@ public class OutputUtil {
 						value = getRuleValue(targetValue, outputField, OutputField.RuleFeature.LEVERAGE);
 					}
 					break;
+				case REPORT:
+					{
+						FieldName reportFieldName = outputField.getReportField();
+						if(reportFieldName == null){
+							throw new InvalidFeatureException(outputField);
+						}
+
+						OutputField reportOutputField = modelEvaluator.getOutputField(reportFieldName);
+						if(reportOutputField == null){
+							throw new MissingFieldException(reportFieldName);
+						}
+
+						value = getReport(targetValue, reportOutputField);
+					}
+					break;
 				case WARNING:
 					{
 						value = context.getWarnings();
@@ -455,6 +470,10 @@ public class OutputUtil {
 			case LEVERAGE:
 				{
 					return getRuleDataType(outputField, OutputField.RuleFeature.LEVERAGE);
+				}
+			case REPORT:
+				{
+					return DataType.STRING;
 				}
 			case WARNING:
 				{
@@ -720,6 +739,50 @@ public class OutputUtil {
 		{
 			throw new InvalidFeatureException(outputField);
 		}
+	}
+
+	static
+	public String getReport(Object object, OutputField outputField){
+		Report report = null;
+
+		ResultFeature resultFeature = outputField.getResultFeature();
+		switch(resultFeature){
+			case PREDICTED_VALUE:
+				{
+					HasPrediction hasPrediction;
+
+					try {
+						hasPrediction = TypeUtil.cast(HasPrediction.class, object);
+					} catch(TypeCheckException tce){
+						return null;
+					}
+
+					report = hasPrediction.getPredictionReport();
+				}
+				break;
+			case PROBABILITY:
+				{
+					HasProbability hasProbability = TypeUtil.cast(HasProbability.class, object);
+
+					String value = getCategoryValue(object, outputField);
+
+					report = hasProbability.getProbabilityReport(value);
+				}
+				break;
+			case AFFINITY:
+				{
+					HasAffinity hasAffinity = TypeUtil.cast(HasAffinity.class, object);
+
+					String value = getCategoryValue(object, outputField);
+
+					report = hasAffinity.getAffinityReport(value);
+				}
+				break;
+			default:
+				break;
+		}
+
+		return ReportUtil.format(report);
 	}
 
 	static

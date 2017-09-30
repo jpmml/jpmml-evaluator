@@ -186,7 +186,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 	}
 
-	private <V extends Number> Map<FieldName, V> evaluateCoxRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	private <V extends Number> Map<FieldName, ?> evaluateCoxRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		BaseCumHazardTables baseCumHazardTables = generalRegressionModel.getBaseCumHazardTables();
@@ -253,7 +253,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			if(value.compareToValue(minTimeValue) < 0){
 				Value<V> cumHazard = valueFactory.newValue(0d);
 
-				return Collections.singletonMap(getTargetFieldName(), cumHazard.getValue());
+				return TargetUtil.evaluateRegression(getTargetField(), cumHazard);
 			}
 
 			FieldValue maxTimeValue = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, maxTime);
@@ -294,7 +294,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		Value<V> cumHazard = ((r.subtract(s)).exp()).multiply(baselineCumHazard);
 
-		return Collections.singletonMap(getTargetFieldName(), cumHazard.getValue());
+		return TargetUtil.evaluateRegression(getTargetField(), cumHazard);
 	}
 
 	private <V extends Number> Map<FieldName, ?> evaluateGeneralRegression(ValueFactory<V> valueFactory, EvaluationContext context){

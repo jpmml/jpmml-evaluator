@@ -29,6 +29,8 @@ import org.jpmml.evaluator.EntityClassification;
 import org.jpmml.evaluator.HasConfidence;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.Numbers;
+import org.jpmml.evaluator.Report;
+import org.jpmml.evaluator.ReportUtil;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
@@ -38,14 +40,14 @@ public class NodeScoreDistribution<V extends Number> extends EntityClassificatio
 	private ValueMap<String, V> confidences = null;
 
 
-	NodeScoreDistribution(BiMap<String, Node> entityRegistry, Node node){
-		super(Type.PROBABILITY, entityRegistry);
+	NodeScoreDistribution(ValueMap<String, V> probabilities, BiMap<String, Node> entityRegistry, Node node){
+		super(Type.PROBABILITY, probabilities, entityRegistry);
 
 		setEntity(node);
 	}
 
 	@Override
-	public void computeResult(DataType dataType){
+	protected void computeResult(DataType dataType){
 		Node node = getEntity();
 
 		if(node.hasScore()){
@@ -57,6 +59,22 @@ public class NodeScoreDistribution<V extends Number> extends EntityClassificatio
 		}
 
 		super.computeResult(dataType);
+	}
+
+	@Override
+	protected ToStringHelper toStringHelper(){
+		ValueMap<String, V> confidences = getConfidences();
+
+		ToStringHelper helper = super.toStringHelper()
+			.add(Type.CONFIDENCE.entryKey(), confidences != null ? confidences.entrySet() : Collections.emptySet());
+
+		return helper;
+	}
+
+	public boolean isEmpty(){
+		ValueMap<String, V> values = getValues();
+
+		return values.isEmpty();
 	}
 
 	@Override
@@ -80,37 +98,63 @@ public class NodeScoreDistribution<V extends Number> extends EntityClassificatio
 			if(category != null && (category).equals(node.getScore())){
 				return Numbers.DOUBLE_ONE;
 			}
+
+			return Numbers.DOUBLE_ZERO;
 		}
 
 		return getValue(category);
 	}
 
 	@Override
+	public Report getProbabilityReport(String category){
+
+		if(isEmpty()){
+			return null;
+		}
+
+		return getValueReport(category);
+	}
+
+	@Override
 	public Double getConfidence(String category){
-		Value<V> confidence = (this.confidences != null ? this.confidences.get(category) : null);
+		ValueMap<String, V> confidences = getConfidences();
+
+		Value<V> confidence = (confidences != null ? confidences.get(category) : null);
 
 		return Type.CONFIDENCE.getValue(confidence);
 	}
 
-	void putConfidence(String category, Value<V> confidence){
+	@Override
+	public Report getConfidenceReport(String category){
+		ValueMap<String, V> confidences = getConfidences();
 
-		if(this.confidences == null){
-			this.confidences = new ValueMap<>();
+		Value<V> confidence = (confidences != null ? confidences.get(category) : null);
+
+		return ReportUtil.getReport(confidence);
+	}
+
+	void putConfidence(String category, Value<V> confidence){
+		ValueMap<String, V> confidences = getConfidences();
+
+		if(confidences == null){
+			confidences = new ValueMap<>();
+
+			setConfidences(confidences);
 		}
 
-		this.confidences.put(category, confidence);
+		confidences.put(category, confidence);
 	}
 
-	@Override
-	protected boolean isEmpty(){
-		return super.isEmpty();
+	private ValueMap<String, V> getConfidences(){
+		return this.confidences;
 	}
 
-	@Override
-	protected ToStringHelper toStringHelper(){
-		ToStringHelper helper = super.toStringHelper()
-			.add(Type.CONFIDENCE.entryKey(), this.confidences != null ? this.confidences.entrySet() : Collections.emptySet());
+	private void setConfidences(ValueMap<String, V> confidences){
 
-		return helper;
+		if(confidences == null){
+			throw new IllegalArgumentException();
+		}
+
+		this.confidences = confidences;
 	}
 }

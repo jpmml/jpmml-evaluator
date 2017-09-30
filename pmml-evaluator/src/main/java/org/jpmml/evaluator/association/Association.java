@@ -47,7 +47,7 @@ public class Association implements Computable, HasRuleValues, HasEntityRegistry
 	private BitSet consequentFlags = null;
 
 
-	Association(List<AssociationRule> associationRules, BitSet antecedentFlags, BitSet consequentFlags){
+	protected Association(List<AssociationRule> associationRules, BitSet antecedentFlags, BitSet consequentFlags){
 		setAssociationRules(associationRules);
 
 		setAntecedentFlags(antecedentFlags);
@@ -60,6 +60,21 @@ public class Association implements Computable, HasRuleValues, HasEntityRegistry
 	@Override
 	public Object getResult(){
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String toString(){
+		ToStringHelper helper = toStringHelper();
+
+		return helper.toString();
+	}
+
+	protected ToStringHelper toStringHelper(){
+		ToStringHelper helper = Objects.toStringHelper(this)
+			.add("antecedentFlags", getAntecedentFlags())
+			.add("consequentFlags", getConsequentFlags());
+
+		return helper;
 	}
 
 	@Override
@@ -108,20 +123,16 @@ public class Association implements Computable, HasRuleValues, HasEntityRegistry
 		return getAssociationRuleRegistry();
 	}
 
-	@Override
-	public String toString(){
-		ToStringHelper helper = Objects.toStringHelper(this)
-			.add("antecedentFlags", getAntecedentFlags())
-			.add("consequentFlags", getConsequentFlags());
-
-		return helper.toString();
-	}
-
 	public List<AssociationRule> getAssociationRules(){
 		return this.associationRules;
 	}
 
 	private void setAssociationRules(List<AssociationRule> associationRules){
+
+		if(associationRules == null){
+			throw new IllegalArgumentException();
+		}
+
 		this.associationRules = associationRules;
 	}
 
@@ -130,6 +141,11 @@ public class Association implements Computable, HasRuleValues, HasEntityRegistry
 	}
 
 	private void setAntecedentFlags(BitSet antecedentFlags){
+
+		if(antecedentFlags == null){
+			throw new IllegalArgumentException();
+		}
+
 		this.antecedentFlags = antecedentFlags;
 	}
 
@@ -138,6 +154,11 @@ public class Association implements Computable, HasRuleValues, HasEntityRegistry
 	}
 
 	private void setConsequentFlags(BitSet consequentFlags){
+
+		if(consequentFlags == null){
+			throw new IllegalArgumentException();
+		}
+
 		this.consequentFlags = consequentFlags;
 	}
 }

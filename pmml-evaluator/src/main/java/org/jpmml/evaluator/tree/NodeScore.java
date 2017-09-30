@@ -18,41 +18,35 @@
  */
 package org.jpmml.evaluator.tree;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.BiMap;
-import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.tree.Node;
-import org.jpmml.evaluator.Computable;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.HasEntityId;
 import org.jpmml.evaluator.HasEntityRegistry;
+import org.jpmml.evaluator.Regression;
+import org.jpmml.evaluator.Value;
 
-/**
- * @see MiningFunction#REGRESSION
- */
-public class NodeScore implements Computable, HasEntityId, HasEntityRegistry<Node> {
+public class NodeScore<V extends Number> extends Regression<V> implements HasEntityId, HasEntityRegistry<Node> {
 
 	private BiMap<String, Node> entityRegistry = null;
 
 	private Node node = null;
 
-	private Object result = null;
 
+	NodeScore(Value<V> value, BiMap<String, Node> entityRegistry, Node node){
+		super(value);
 
-	NodeScore(BiMap<String, Node> entityRegistry, Node node, Object result){
 		setEntityRegistry(entityRegistry);
 		setNode(node);
-		setResult(result);
 	}
 
 	@Override
-	public Object getResult(){
-		return this.result;
-	}
+	protected ToStringHelper toStringHelper(){
+		ToStringHelper helper = super.toStringHelper()
+			.add("entityId", getEntityId());
 
-	private void setResult(Object result){
-		this.result = result;
+		return helper;
 	}
 
 	@Override
@@ -69,15 +63,6 @@ public class NodeScore implements Computable, HasEntityId, HasEntityRegistry<Nod
 
 	private void setEntityRegistry(BiMap<String, Node> entityRegistry){
 		this.entityRegistry = entityRegistry;
-	}
-
-	@Override
-	public String toString(){
-		ToStringHelper helper = Objects.toStringHelper(this)
-			.add("result", getResult())
-			.add("entityId", getEntityId());
-
-		return helper.toString();
 	}
 
 	public Node getNode(){

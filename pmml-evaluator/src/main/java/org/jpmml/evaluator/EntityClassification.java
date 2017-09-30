@@ -32,26 +32,26 @@ public class EntityClassification<E extends Entity, V extends Number> extends Cl
 	private Value<V> entityValue = null;
 
 
-	protected EntityClassification(Type type, BiMap<String, E> entityRegistry){
-		super(type);
+	protected EntityClassification(Type type, ValueMap<String, V> values, BiMap<String, E> entityRegistry){
+		super(type, values);
 
 		setEntityRegistry(entityRegistry);
 	}
 
 	@Override
-	public String getEntityId(){
-		E entity = getEntity();
+	protected ToStringHelper toStringHelper(){
+		ToStringHelper helper = super.toStringHelper()
+			.add("entityId", getEntityId());
 
-		return EntityUtil.getId(entity, this);
+		return helper;
 	}
 
-	@Override
-	public BiMap<String, E> getEntityRegistry(){
-		return this.entityRegistry;
-	}
+	public void put(E entity, Value<V> value){
+		BiMap<String, E> entityRegistry = getEntityRegistry();
 
-	private void setEntityRegistry(BiMap<String, E> entityRegistry){
-		this.entityRegistry = entityRegistry;
+		String id = EntityUtil.getId(entity, entityRegistry);
+
+		put(entity, id, value);
 	}
 
 	public void put(E entity, String key, Value<V> value){
@@ -67,11 +67,24 @@ public class EntityClassification<E extends Entity, V extends Number> extends Cl
 	}
 
 	@Override
-	protected ToStringHelper toStringHelper(){
-		ToStringHelper helper = super.toStringHelper()
-			.add("entityId", getEntityId());
+	public String getEntityId(){
+		E entity = getEntity();
 
-		return helper;
+		return EntityUtil.getId(entity, this);
+	}
+
+	@Override
+	public BiMap<String, E> getEntityRegistry(){
+		return this.entityRegistry;
+	}
+
+	private void setEntityRegistry(BiMap<String, E> entityRegistry){
+
+		if(entityRegistry == null){
+			throw new IllegalArgumentException();
+		}
+
+		this.entityRegistry = entityRegistry;
 	}
 
 	public E getEntity(){
@@ -79,6 +92,11 @@ public class EntityClassification<E extends Entity, V extends Number> extends Cl
 	}
 
 	protected void setEntity(E entity){
+
+		if(entity == null){
+			throw new IllegalArgumentException();
+		}
+
 		this.entity = entity;
 	}
 }

@@ -45,7 +45,21 @@ public class ModelEvaluatorTest {
 
 	static
 	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz) throws Exception {
-		return createModelEvaluator(clazz, ModelEvaluatorFactory.newInstance());
+		ReportFactory reportFactory = new ReportFactory(){
+
+			@Override
+			public Report newReport(){
+				return new ComplexReport();
+			}
+		};
+
+		ReportingValueFactoryFactory valueFactoryFactory = ReportingValueFactoryFactory.newInstance();
+		valueFactoryFactory.setReportFactory(reportFactory);
+
+		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
+		modelEvaluatorFactory.setValueFactoryFactory(valueFactoryFactory);
+
+		return createModelEvaluator(clazz, modelEvaluatorFactory);
 	}
 
 	static

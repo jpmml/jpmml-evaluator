@@ -26,16 +26,18 @@ import org.dmg.pmml.rule_set.SimpleRule;
 import org.jpmml.evaluator.EntityClassification;
 import org.jpmml.evaluator.HasConfidence;
 import org.jpmml.evaluator.InvalidFeatureException;
+import org.jpmml.evaluator.Report;
 import org.jpmml.evaluator.TypeUtil;
+import org.jpmml.evaluator.ValueMap;
 
 public class SimpleRuleScoreDistribution<V extends Number> extends EntityClassification<SimpleRule, V> implements HasConfidence {
 
-	SimpleRuleScoreDistribution(BiMap<String, SimpleRule> entityRegistry){
-		super(Type.CONFIDENCE, entityRegistry);
+	SimpleRuleScoreDistribution(ValueMap<String, V> confidences, BiMap<String, SimpleRule> entityRegistry){
+		super(Type.CONFIDENCE, confidences, entityRegistry);
 	}
 
 	@Override
-	public void computeResult(DataType dataType){
+	protected void computeResult(DataType dataType){
 		SimpleRule simpleRule = getEntity();
 
 		if(simpleRule != null){
@@ -62,6 +64,11 @@ public class SimpleRuleScoreDistribution<V extends Number> extends EntityClassif
 	@Override
 	public Double getConfidence(String category){
 		return getValue(category);
+	}
+
+	@Override
+	public Report getConfidenceReport(String category){
+		return getValueReport(category);
 	}
 
 	@Override

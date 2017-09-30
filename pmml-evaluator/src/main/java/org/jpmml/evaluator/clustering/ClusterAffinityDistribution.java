@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.BiMap;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.clustering.Cluster;
 import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.EntityClassification;
@@ -29,11 +30,18 @@ import org.jpmml.evaluator.HasAffinityRanking;
 import org.jpmml.evaluator.HasDisplayValue;
 import org.jpmml.evaluator.HasEntityAffinity;
 import org.jpmml.evaluator.HasEntityIdRanking;
+import org.jpmml.evaluator.Report;
+import org.jpmml.evaluator.ValueMap;
 
 public class ClusterAffinityDistribution<V extends Number> extends EntityClassification<Cluster, V> implements HasEntityIdRanking, HasDisplayValue, HasAffinityRanking, HasEntityAffinity {
 
-	ClusterAffinityDistribution(Type type, BiMap<String, Cluster> entityRegistry){
-		super(AffinityDistribution.validateType(type), entityRegistry);
+	ClusterAffinityDistribution(Type type, ValueMap<String, V> affinities, BiMap<String, Cluster> entityRegistry){
+		super(AffinityDistribution.validateType(type), affinities, entityRegistry);
+	}
+
+	@Override
+	protected void computeResult(DataType dataType){
+		super.computeResult(dataType);
 	}
 
 	@Override
@@ -56,6 +64,11 @@ public class ClusterAffinityDistribution<V extends Number> extends EntityClassif
 	@Override
 	public Double getAffinity(String category){
 		return getValue(category);
+	}
+
+	@Override
+	public Report getAffinityReport(String category){
+		return getValueReport(category);
 	}
 
 	@Override

@@ -282,7 +282,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		switch(classificationMethod){
 			case ONE_AGAINST_ALL:
-				result = new Classification<>(Classification.Type.DISTANCE, values);
+				result = new DistanceDistribution<>(values);
 				break;
 			case ONE_AGAINST_ONE:
 				result = new VoteDistribution<>(values);

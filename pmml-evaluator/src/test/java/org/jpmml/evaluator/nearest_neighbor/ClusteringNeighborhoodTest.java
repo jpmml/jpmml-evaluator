@@ -28,6 +28,7 @@
 package org.jpmml.evaluator.nearest_neighbor;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
@@ -38,6 +39,7 @@ import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
@@ -58,6 +60,17 @@ public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
 			fail();
 		} catch(EvaluationException ee){
 			// Ignored
+		}
+
+		assertNotNull(targetValue.getPredictionReport());
+
+		Collection<String> categories = targetValue.getCategoryValues();
+
+		assertEquals(5, categories.size());
+
+		for(String category : categories){
+			assertNotNull(targetValue.getAffinity(category));
+			assertNotNull(targetValue.getAffinityReport(category));
 		}
 
 		assertEquals(Arrays.asList("3", "1", "4"), (targetValue.getEntityIdRanking()).subList(0, 3));

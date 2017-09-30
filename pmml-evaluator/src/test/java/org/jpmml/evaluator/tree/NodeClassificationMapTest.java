@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableSet;
 import org.dmg.pmml.tree.Node;
 import org.jpmml.evaluator.DoubleValue;
+import org.jpmml.evaluator.ValueMap;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -38,7 +39,7 @@ public class NodeClassificationMapTest {
 
 		BiMap<String, Node> entityRegistry = ImmutableBiMap.of("1", node);
 
-		NodeScoreDistribution<Double> classification = new NodeScoreDistribution<>(entityRegistry, node);
+		NodeScoreDistribution<Double> classification = new NodeScoreDistribution<>(new ValueMap<String, Double>(), entityRegistry, node);
 
 		assertEquals("1", classification.getEntityId());
 

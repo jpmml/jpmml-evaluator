@@ -50,19 +50,39 @@ public class TargetUtil {
 
 	static
 	public <V extends Number> Map<FieldName, ?> evaluateRegression(TargetField targetField, Value<V> value){
-		return Collections.singletonMap(targetField.getName(), evaluateRegressionInternal(targetField, value));
+		DataField dataField = targetField.getDataField();
+
+		value = evaluateRegressionInternal(targetField, value);
+
+		if(value instanceof HasReport){
+			Regression<V> result = new Regression<>(value);
+
+			return evaluateRegression(targetField, result);
+		}
+
+		Object result = TypeUtil.cast(dataField.getDataType(), value.getValue());
+
+		return Collections.singletonMap(targetField.getName(), result);
 	}
 
 	static
-	public <V extends Number> Object evaluateRegressionInternal(TargetField targetField, Value<V> value){
+	public <V extends Number> Map<FieldName, ? extends Regression<V>> evaluateRegression(TargetField targetField, Regression<V> regression){
 		DataField dataField = targetField.getDataField();
+
+		regression.computeResult(dataField.getDataType());
+
+		return Collections.singletonMap(targetField.getName(), regression);
+	}
+
+	static
+	public <V extends Number> Value<V> evaluateRegressionInternal(TargetField targetField, Value<V> value){
 		Target target = targetField.getTarget();
 
 		if(target != null){
-			value = processValue(target, value);
+			return processValue(target, value);
 		}
 
-		return TypeUtil.cast(dataField.getDataType(), value.getValue());
+		return value;
 	}
 
 	static
@@ -81,12 +101,12 @@ public class TargetUtil {
 	}
 
 	static
-	public <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(TargetField targetField, Classification<V> value){
+	public <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(TargetField targetField, Classification<V> classification){
 		DataField dataField = targetField.getDataField();
 
-		value.computeResult(dataField.getDataType());
+		classification.computeResult(dataField.getDataType());
 
-		return Collections.singletonMap(targetField.getName(), value);
+		return Collections.singletonMap(targetField.getName(), classification);
 	}
 
 	static
@@ -175,7 +195,7 @@ public class TargetUtil {
 			return null;
 		}
 
-		ProbabilityDistribution<V> result = new ProbabilityDistribution<>();
+		ValueMap<String, V> values = new ValueMap<>();
 
 		Value<V> sum = valueFactory.newValue();
 
@@ -195,15 +215,15 @@ public class TargetUtil {
 
 			Value<V> value = valueFactory.newValue(probability);
 
-			sum.add(value);
+			values.put(targetCategory, value);
 
-			result.put(targetCategory, value);
+			sum.add(value);
 		}
 
 		if(sum.doubleValue() != 1d){
 			throw new InvalidFeatureException(target);
 		}
 
-		return result;
+		return new ProbabilityDistribution<>(values);
 	}
 }

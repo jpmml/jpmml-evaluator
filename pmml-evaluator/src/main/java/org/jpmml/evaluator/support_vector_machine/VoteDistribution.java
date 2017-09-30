@@ -24,6 +24,8 @@ import org.dmg.pmml.DataType;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.HasProbability;
+import org.jpmml.evaluator.Report;
+import org.jpmml.evaluator.ReportUtil;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.ValueUtil;
@@ -33,19 +35,17 @@ public class VoteDistribution<V extends Number> extends Classification<V> implem
 	private Value<V> sum = null;
 
 
-	VoteDistribution(){
-		super(Type.VOTE);
-	}
-
 	VoteDistribution(ValueMap<String, V> votes){
 		super(Type.VOTE, votes);
 	}
 
 	@Override
-	public void computeResult(DataType dataType){
+	protected void computeResult(DataType dataType){
+		ValueMap<String, V> values = getValues();
+
 		super.computeResult(dataType);
 
-		this.sum = ValueUtil.sum(super.values);
+		this.sum = ValueUtil.sum(values);
 	}
 
 	@Override
@@ -55,12 +55,26 @@ public class VoteDistribution<V extends Number> extends Classification<V> implem
 
 	@Override
 	public Double getProbability(String category){
+		Value<V> probability = computeProbability(category);
+
+		return Type.PROBABILITY.getValue(probability);
+	}
+
+	@Override
+	public Report getProbabilityReport(String category){
+		Value<V> probability = computeProbability(category);
+
+		return ReportUtil.getReport(probability);
+	}
+
+	private Value<V> computeProbability(String category){
+		ValueMap<String, V> values = getValues();
 
 		if(this.sum == null){
 			throw new EvaluationException();
 		}
 
-		Value<V> probability = super.values.get(category);
+		Value<V> probability = values.get(category);
 
 		if(probability != null){
 			probability = probability.copy();
@@ -68,6 +82,6 @@ public class VoteDistribution<V extends Number> extends Classification<V> implem
 			probability.divide(this.sum);
 		}
 
-		return Type.PROBABILITY.getValue(probability);
+		return probability;
 	}
 }

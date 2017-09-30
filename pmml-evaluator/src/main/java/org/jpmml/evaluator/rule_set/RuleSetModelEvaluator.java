@@ -56,6 +56,7 @@ import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.evaluator.ValueMap;
 
 public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implements HasEntityRegistry<SimpleRule> {
 
@@ -150,7 +151,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 		BiMap<String, SimpleRule> entityRegistry = getEntityRegistry();
 
-		SimpleRuleScoreDistribution<V> result = new SimpleRuleScoreDistribution<>(entityRegistry);
+		SimpleRuleScoreDistribution<V> result = new SimpleRuleScoreDistribution<>(new ValueMap<String, V>(2 * firedRules.size()), entityRegistry);
 
 		// Return the default prediction when no rules in the ruleset fire
 		if(firedRules.size() == 0){

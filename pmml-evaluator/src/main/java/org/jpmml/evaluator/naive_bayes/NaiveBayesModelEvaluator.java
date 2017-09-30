@@ -234,17 +234,17 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
 
+		FieldName targetFieldName = bayesOutput.getFieldName();
+		if(targetFieldName == null || !Objects.equals(targetField.getName(), targetFieldName)){
+			throw new InvalidFeatureException(bayesOutput);
+		}
+
 		calculatePriorProbabilities(probabilities, bayesOutput.getTargetValueCounts());
 
 		// Convert from logarithmic scale to normal scale
 		ValueUtil.normalizeSoftMax(probabilities);
 
 		ProbabilityDistribution<Double> result = new ProbabilityDistribution<>(probabilities);
-
-		FieldName targetFieldName = bayesOutput.getFieldName();
-		if(targetFieldName == null || !Objects.equals(targetField.getName(), targetFieldName)){
-			throw new InvalidFeatureException(bayesOutput);
-		}
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}

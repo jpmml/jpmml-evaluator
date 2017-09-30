@@ -273,7 +273,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				throw new InvalidFeatureException(neuralNetwork);
 			}
 
-			NeuronProbabilityDistribution<V> result = new NeuronProbabilityDistribution<>(entityRegistry);
+			NeuronProbabilityDistribution<V> result = new NeuronProbabilityDistribution<>(new ValueMap<String, V>(2 * neuralOutputs.size()), entityRegistry);
 
 			for(NeuralOutput neuralOutput : neuralOutputs){
 				String id = neuralOutput.getOutputNeuron();

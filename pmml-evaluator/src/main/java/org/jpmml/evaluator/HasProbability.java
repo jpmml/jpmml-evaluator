@@ -44,4 +44,9 @@ public interface HasProbability extends CategoricalResultFeature {
 	 * @see #getCategoryValues()
 	 */
 	Double getProbability(String category);
+
+	/**
+	 * @see #getCategoryValues()
+	 */
+	Report getProbabilityReport(String category);
 }

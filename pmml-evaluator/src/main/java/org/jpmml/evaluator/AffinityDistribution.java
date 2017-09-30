@@ -35,8 +35,8 @@ import org.dmg.pmml.DataType;
 
 public class AffinityDistribution<V extends Number> extends Classification<V> implements HasEntityIdRanking, HasAffinityRanking, HasEntityAffinity {
 
-	public AffinityDistribution(Type type, Object result){
-		super(AffinityDistribution.validateType(type));
+	public AffinityDistribution(Type type, ValueMap<String, V> values, Object result){
+		super(AffinityDistribution.validateType(type), values);
 
 		setResult(result);
 	}
@@ -54,6 +54,7 @@ public class AffinityDistribution<V extends Number> extends Classification<V> im
 	@Override
 	public String getEntityId(){
 		Map.Entry<String, Value<V>> entry = getWinner();
+
 		if(entry == null){
 			return null;
 		}
@@ -69,6 +70,11 @@ public class AffinityDistribution<V extends Number> extends Classification<V> im
 	@Override
 	public Double getAffinity(String category){
 		return getValue(category);
+	}
+
+	@Override
+	public Report getAffinityReport(String category){
+		return getValueReport(category);
 	}
 
 	@Override

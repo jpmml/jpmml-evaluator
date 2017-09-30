@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator.tree;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -54,6 +53,7 @@ import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.evaluator.ValueMap;
 
 public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements HasEntityRegistry<Node> {
 
@@ -135,11 +135,9 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 		}
 
-		Value<V> value = valueFactory.newValue(node.getScore());
+		NodeScore<V> result = createNodeScore(valueFactory, targetField, node);
 
-		NodeScore nodeScore = createNodeScore(node, TargetUtil.evaluateRegressionInternal(targetField, value));
-
-		return Collections.singletonMap(targetField.getName(), nodeScore);
+		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
 	private <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
@@ -161,7 +159,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			missingValuePenalty = Math.pow(treeModel.getMissingValuePenalty(), missingLevels);
 		}
 
-		NodeScoreDistribution<V> result = createNodeScoreDistribution(valueFactory, node, missingValuePenalty);
+		NodeScoreDistribution<V> result = createNodeScoreDistribution(valueFactory, targetField, node, missingValuePenalty);
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
@@ -316,21 +314,21 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 	}
 
-	private NodeScore createNodeScore(Node node, Object value){
+	private <V extends Number> NodeScore<V> createNodeScore(ValueFactory<V> valueFactory, TargetField targetField, Node node){
 		BiMap<String, Node> entityRegistry = getEntityRegistry();
 
-		NodeScore result = new NodeScore(entityRegistry, node, value);
+		Value<V> value = valueFactory.newValue(node.getScore());
 
-		return result;
+		value = TargetUtil.evaluateRegressionInternal(targetField, value);
+
+		return new NodeScore<>(value, entityRegistry, node);
 	}
 
-	private <V extends Number> NodeScoreDistribution<V> createNodeScoreDistribution(ValueFactory<V> valueFactory, Node node, double missingValuePenalty){
+	private <V extends Number> NodeScoreDistribution<V> createNodeScoreDistribution(ValueFactory<V> valueFactory, TargetField targetField, Node node, double missingValuePenalty){
 		BiMap<String, Node> entityRegistry = getEntityRegistry();
 
-		NodeScoreDistribution<V> result = new NodeScoreDistribution<>(entityRegistry, node);
-
 		if(!node.hasScoreDistributions()){
-			return result;
+			return new NodeScoreDistribution<>(new ValueMap<String, V>(0), entityRegistry, node);
 		}
 
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
@@ -364,6 +362,8 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		if(hasProbabilities && sum.doubleValue() != 1d){
 			throw new InvalidFeatureException(node);
 		}
+
+		NodeScoreDistribution<V> result = new NodeScoreDistribution<>(new ValueMap<String, V>(2 * scoreDistributions.size()), entityRegistry, node);
 
 		for(int i = 0, max = scoreDistributions.size(); i < max; i++){
 			ScoreDistribution scoreDistribution = scoreDistributions.get(i);

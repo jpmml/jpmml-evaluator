@@ -54,7 +54,6 @@ import org.dmg.pmml.mining.MiningModel;
 import org.dmg.pmml.mining.Segment;
 import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.CacheUtil;
-import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
@@ -335,7 +334,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		Classification<V> result;
+		VoteDistribution<V> result;
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
@@ -344,7 +343,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				{
 					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, segmentResults, multipleModelMethod);
 
-					result = new Classification<>(Classification.Type.VOTE, values);
+					result = new VoteDistribution<>(values);
 				}
 				break;
 			default:

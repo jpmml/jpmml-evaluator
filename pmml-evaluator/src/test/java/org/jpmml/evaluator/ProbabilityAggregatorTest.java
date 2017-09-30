@@ -121,21 +121,21 @@ public class ProbabilityAggregatorTest {
 
 	static
 	private HasProbability createProbabilityDistribution(Double a, Double b, Double c){
-		ProbabilityDistribution<Double> result = new ProbabilityDistribution<>();
+		ValueMap<String, Double> values = new ValueMap<>();
 
 		if(a != null){
-			result.put("A", new DoubleValue(a));
+			values.put("A", new DoubleValue(a));
 		} // End if
 
 		if(b != null){
-			result.put("B", new DoubleValue(b));
+			values.put("B", new DoubleValue(b));
 		} // End if
 
 		if(c != null){
-			result.put("C", new DoubleValue(c));
+			values.put("C", new DoubleValue(c));
 		}
 
-		return result;
+		return new ProbabilityDistribution<>(values);
 	}
 
 	private static final List<String> CATEGORIES = Arrays.asList("A", "B", "C");

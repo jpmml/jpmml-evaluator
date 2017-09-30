@@ -16,25 +16,34 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.support_vector_machine;
+package org.jpmml.evaluator;
 
-import org.jpmml.evaluator.Value;
-import org.jpmml.evaluator.ValueMap;
+public class ReportUtil {
 
-abstract
-class VoteMap<K, V extends Number> extends ValueMap<K, V> {
-
-	public VoteMap(){
-		super();
+	private ReportUtil(){
 	}
 
-	public VoteMap(int initialCapacity){
-		super(initialCapacity);
+	static
+	public Report getReport(Value<?> value){
+
+		if(value instanceof HasReport){
+			HasReport hasReport = (HasReport)value;
+
+			return hasReport.getReport();
+		}
+
+		return null;
 	}
 
-	public void increment(K key){
-		Value<V> value = ensureValue(key);
+	static
+	public String format(Report report){
 
-		value.add(1d);
+		if(report == null || !report.hasEntries()){
+			return null;
+		}
+
+		Report.Entry entry = report.tailEntry();
+
+		return "<math xmlns=\"http://www.w3.org/1998/Math/MathML\">" + entry.getExpression() + "</math>";
 	}
 }

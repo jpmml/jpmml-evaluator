@@ -38,29 +38,18 @@ import org.dmg.pmml.MiningFunction;
  * @see MiningFunction#CLASSIFICATION
  * @see MiningFunction#CLUSTERING
  */
-public class Classification<V extends Number> implements Computable {
+public class Classification<V extends Number> implements Computable, HasPrediction {
 
 	private Type type = null;
 
+	private ValueMap<String, V> values = null;
+
 	private Object result = null;
 
-	protected ValueMap<String, V> values = null;
 
-
-	public Classification(Type type){
+	protected Classification(Type type, ValueMap<String, V> values){
 		setType(type);
-
-		this.values = new ValueMap<>();
-	}
-
-	public Classification(Type type, ValueMap<String, V> values){
-		setType(type);
-
-		if(values == null){
-			throw new IllegalArgumentException();
-		}
-
-		this.values = values;
+		setValues(values);
 	}
 
 	@Override
@@ -77,23 +66,38 @@ public class Classification<V extends Number> implements Computable {
 		this.result = result;
 	}
 
-	public void computeResult(DataType dataType){
+	protected void computeResult(DataType dataType){
 		Map.Entry<String, Value<V>> entry = getWinner();
+
 		if(entry == null){
 			throw new EvaluationException();
 		}
 
-		Object result = TypeUtil.parseOrCast(dataType, entry.getKey());
+		String key = entry.getKey();
+		Value<V> value = entry.getValue();
+
+		Object result = TypeUtil.parseOrCast(dataType, key);
 
 		setResult(result);
 	}
 
-	public void put(String key, Value<V> value){
-		Value<V> previousValue = this.values.put(key, value);
+	@Override
+	public Object getPrediction(){
+		return getResult();
+	}
 
-		if(previousValue != null){
-			throw new EvaluationException();
+	@Override
+	public Report getPredictionReport(){
+		Map.Entry<String, Value<V>> entry = getWinner();
+
+		if(entry == null){
+			return null;
 		}
+
+		String key = entry.getKey();
+		Value<V> value = entry.getValue();
+
+		return ReportUtil.getReport(value);
 	}
 
 	@Override
@@ -104,23 +108,40 @@ public class Classification<V extends Number> implements Computable {
 	}
 
 	protected ToStringHelper toStringHelper(){
+		Type type = getType();
+		ValueMap<String, V> values = getValues();
+
 		ToStringHelper helper = Objects.toStringHelper(this)
 			.add("result", getResult())
-			.add(getType().entryKey(), entrySet());
+			.add(type.entryKey(), values.entrySet());
 
 		return helper;
 	}
 
+	public void put(String key, Value<V> value){
+		ValueMap<String, V> values = getValues();
+
+		Value<V> previousValue = values.put(key, value);
+		if(previousValue != null){
+			throw new EvaluationException();
+		}
+	}
+
 	public Double getValue(String key){
 		Type type = getType();
+		ValueMap<String, V> values = getValues();
 
-		Value<V> value = this.values.get(key);
+		Value<V> value = values.get(key);
 
 		return type.getValue(value);
 	}
 
-	protected boolean isEmpty(){
-		return this.values.isEmpty();
+	public Report getValueReport(String key){
+		ValueMap<String, V> values = getValues();
+
+		Value<V> value = values.get(key);
+
+		return ReportUtil.getReport(value);
 	}
 
 	protected Map.Entry<String, Value<V>> getWinner(){
@@ -148,11 +169,15 @@ public class Classification<V extends Number> implements Computable {
 	}
 
 	protected Set<String> keySet(){
-		return this.values.keySet();
+		ValueMap<String, V> values = getValues();
+
+		return values.keySet();
 	}
 
 	protected Set<Map.Entry<String, Value<V>>> entrySet(){
-		return this.values.entrySet();
+		ValueMap<String, V> values = getValues();
+
+		return values.entrySet();
 	}
 
 	public Type getType(){
@@ -160,7 +185,25 @@ public class Classification<V extends Number> implements Computable {
 	}
 
 	private void setType(Type type){
+
+		if(type == null){
+			throw new IllegalArgumentException();
+		}
+
 		this.type = type;
+	}
+
+	public ValueMap<String, V> getValues(){
+		return this.values;
+	}
+
+	private void setValues(ValueMap<String, V> values){
+
+		if(values == null){
+			throw new IllegalArgumentException();
+		}
+
+		this.values = values;
 	}
 
 	static

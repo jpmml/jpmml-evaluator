@@ -20,36 +20,34 @@ package org.jpmml.evaluator.scorecard;
 
 import java.util.List;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import org.dmg.pmml.MiningFunction;
 import org.jpmml.evaluator.Classification;
-import org.jpmml.evaluator.Computable;
+import org.jpmml.evaluator.Classification.Type;
 import org.jpmml.evaluator.HasReasonCodeRanking;
+import org.jpmml.evaluator.Regression;
+import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 
-/**
- * @see MiningFunction#REGRESSION
- */
-public class ReasonCodeRanking<V extends Number> implements Computable, HasReasonCodeRanking {
-
-	private Object result = null;
+public class ReasonCodeRanking<V extends Number> extends Regression<V> implements HasReasonCodeRanking {
 
 	private ValueMap<String, V> reasonCodePoints = null;
 
 
-	ReasonCodeRanking(Object result, ValueMap<String, V> reasonCodePoints){
-		setResult(result);
+	ReasonCodeRanking(Value<V> value, ValueMap<String, V> reasonCodePoints){
+		super(value);
+
 		setReasonCodePoints(reasonCodePoints);
 	}
 
 	@Override
-	public Object getResult(){
-		return this.result;
-	}
+	protected ToStringHelper toStringHelper(){
+		ValueMap<String, V> reasonCodePoints = getReasonCodePoints();
 
-	private void setResult(Object result){
-		this.result = result;
+		ToStringHelper helper = super.toStringHelper()
+			.add(Type.VOTE.entryKey(), reasonCodePoints.entrySet())
+			.add("reasonCodeRanking", getReasonCodeRanking());
+
+		return helper;
 	}
 
 	@Override
@@ -59,20 +57,16 @@ public class ReasonCodeRanking<V extends Number> implements Computable, HasReaso
 		return Classification.entryKeys(Classification.getWinnerList(Classification.Type.VOTE, reasonCodePoints.entrySet()));
 	}
 
-	@Override
-	public String toString(){
-		ToStringHelper helper = Objects.toStringHelper(this)
-			.add("result", getResult())
-			.add("reasonCodeRanking", getReasonCodeRanking());
-
-		return helper.toString();
-	}
-
 	public ValueMap<String, V> getReasonCodePoints(){
 		return this.reasonCodePoints;
 	}
 
 	private void setReasonCodePoints(ValueMap<String, V> reasonCodePoints){
+
+		if(reasonCodePoints == null){
+			throw new IllegalArgumentException();
+		}
+
 		this.reasonCodePoints = reasonCodePoints;
 	}
 }

@@ -90,6 +90,7 @@ import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueAggregator;
 import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.VoteAggregator;
 
 public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighborModel> {
@@ -225,7 +226,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			function = createIdentifierResolver(instanceIdVariable, table);
 		}
 
-		Map<FieldName, AffinityDistribution<V>> result = new LinkedHashMap<>();
+		Map<FieldName, AffinityDistribution<V>> results = new LinkedHashMap<>();
 
 		List<TargetField> targetFields = getTargetFields();
 		for(TargetField targetField : targetFields){
@@ -249,10 +250,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			value = TypeUtil.parseOrCast(dataField.getDataType(), value);
 
-			result.put(name, createAffinityDistribution(instanceResults, function, value));
+			AffinityDistribution<V> result = createAffinityDistribution(instanceResults, function, value);
+
+			results.put(name, result);
 		}
 
-		return result;
+		return results;
 	}
 
 	private <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
@@ -269,7 +272,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Function<Integer, String> function = createIdentifierResolver(instanceIdVariable, table);
 
-		return Collections.singletonMap(getTargetFieldName(), createAffinityDistribution(instanceResults, function, null));
+		AffinityDistribution<V> result = createAffinityDistribution(instanceResults, function, null);
+
+		return Collections.singletonMap(getTargetFieldName(), result);
 	}
 
 	private <V extends Number> List<InstanceResult<V>> evaluateInstanceRows(ValueFactory<V> valueFactory, EvaluationContext context){
@@ -484,32 +489,30 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return function;
 	}
 
-	private <V extends Number> AffinityDistribution<V> createAffinityDistribution(List<InstanceResult<V>> instanceResults, Function<Integer, String> function, Object value){
+	private <V extends Number> AffinityDistribution<V> createAffinityDistribution(List<InstanceResult<V>> instanceResults, Function<Integer, String> function, Object result){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		ComparisonMeasure comparisonMeasure = nearestNeighborModel.getComparisonMeasure();
 
-		AffinityDistribution<V> result;
+		ValueMap<String, V> values = new ValueMap<>(2 * instanceResults.size());
+
+		for(InstanceResult<V> instanceResult : instanceResults){
+			values.put(function.apply(instanceResult.getId()), instanceResult.getValue());
+		}
 
 		Measure measure = comparisonMeasure.getMeasure();
 
 		if(MeasureUtil.isSimilarity(measure)){
-			result = new AffinityDistribution<>(Classification.Type.SIMILARITY, value);
+			return new AffinityDistribution<>(Classification.Type.SIMILARITY, values, result);
 		} else
 
 		if(MeasureUtil.isDistance(measure)){
-			result = new AffinityDistribution<>(Classification.Type.DISTANCE, value);
+			return new AffinityDistribution<>(Classification.Type.DISTANCE, values, result);
 		} else
 
 		{
 			throw new UnsupportedFeatureException(measure);
 		}
-
-		for(InstanceResult<V> instanceResult : instanceResults){
-			result.put(function.apply(instanceResult.getId()), instanceResult.getValue());
-		}
-
-		return result;
 	}
 
 	private Table<Integer, FieldName, FieldValue> getTrainingInstances(){

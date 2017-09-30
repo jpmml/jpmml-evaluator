@@ -22,10 +22,6 @@ import java.util.Set;
 
 public class ProbabilityDistribution<V extends Number> extends Classification<V> implements HasProbability {
 
-	public ProbabilityDistribution(){
-		super(Type.PROBABILITY);
-	}
-
 	public ProbabilityDistribution(ValueMap<String, V> probabilities){
 		super(Type.PROBABILITY, probabilities);
 	}
@@ -38,5 +34,10 @@ public class ProbabilityDistribution<V extends Number> extends Classification<V>
 	@Override
 	public Double getProbability(String category){
 		return getValue(category);
+	}
+
+	@Override
+	public Report getProbabilityReport(String category){
+		return getValueReport(category);
 	}
 }

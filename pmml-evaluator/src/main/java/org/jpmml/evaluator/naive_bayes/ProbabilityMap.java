@@ -28,8 +28,8 @@ class ProbabilityMap<K, V extends Number> extends ValueMap<K, V> {
 		super();
 	}
 
-	public ProbabilityMap(int capacity){
-		super(capacity);
+	public ProbabilityMap(int initialCapacity){
+		super(initialCapacity);
 	}
 
 	public void multiply(K key, double probability){

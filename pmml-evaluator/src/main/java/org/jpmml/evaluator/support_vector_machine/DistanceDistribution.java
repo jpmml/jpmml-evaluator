@@ -18,23 +18,12 @@
  */
 package org.jpmml.evaluator.support_vector_machine;
 
-import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.ValueMap;
 
-abstract
-class VoteMap<K, V extends Number> extends ValueMap<K, V> {
+public class DistanceDistribution<V extends Number> extends Classification<V> {
 
-	public VoteMap(){
-		super();
-	}
-
-	public VoteMap(int initialCapacity){
-		super(initialCapacity);
-	}
-
-	public void increment(K key){
-		Value<V> value = ensureValue(key);
-
-		value.add(1d);
+	DistanceDistribution(ValueMap<String, V> distances){
+		super(Type.DISTANCE, distances);
 	}
 }

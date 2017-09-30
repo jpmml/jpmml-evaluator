@@ -61,6 +61,7 @@ import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.UnsupportedFeatureException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.evaluator.ValueMap;
 
 public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> implements HasEntityRegistry<Cluster> {
 
@@ -205,13 +206,14 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 	private <V extends Number> ClusterAffinityDistribution<V> evaluateSimilarity(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
 		ClusteringModel clusteringModel = getModel();
 
+		List<Cluster> clusters = clusteringModel.getClusters();
+
 		BiMap<String, Cluster> entityRegistry = getEntityRegistry();
 
-		ClusterAffinityDistribution<V> result = new ClusterAffinityDistribution<>(Classification.Type.SIMILARITY, entityRegistry);
+		ClusterAffinityDistribution<V> result = new ClusterAffinityDistribution<>(Classification.Type.SIMILARITY, new ValueMap<String, V>(2 * clusters.size()), entityRegistry);
 
 		BitSet flags = MeasureUtil.toBitSet(values);
 
-		List<Cluster> clusters = clusteringModel.getClusters();
 		for(Cluster cluster : clusters){
 			BitSet clusterFlags = CacheUtil.getValue(cluster, ClusteringModelEvaluator.clusterFlagCache);
 
@@ -219,11 +221,9 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 				throw new InvalidFeatureException(cluster);
 			}
 
-			String id = EntityUtil.getId(cluster, entityRegistry);
-
 			Value<V> similarity = MeasureUtil.evaluateSimilarity(valueFactory, comparisonMeasure, clusteringFields, flags, clusterFlags);
 
-			result.put(cluster, id, similarity);
+			result.put(cluster, similarity);
 		}
 
 		return result;
@@ -231,6 +231,8 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 	private <V extends Number> ClusterAffinityDistribution<V> evaluateDistance(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
 		ClusteringModel clusteringModel = getModel();
+
+		List<Cluster> clusters = clusteringModel.getClusters();
 
 		BiMap<String, Cluster> entityRegistry = getEntityRegistry();
 
@@ -252,9 +254,8 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			adjustment = MeasureUtil.calculateAdjustment(valueFactory, values);
 		}
 
-		ClusterAffinityDistribution<V> result = new ClusterAffinityDistribution<>(Classification.Type.DISTANCE, entityRegistry);
+		ClusterAffinityDistribution<V> result = new ClusterAffinityDistribution<>(Classification.Type.DISTANCE, new ValueMap<String, V>(2 * clusters.size()), entityRegistry);
 
-		List<Cluster> clusters = clusteringModel.getClusters();
 		for(Cluster cluster : clusters){
 			List<FieldValue> clusterValues = CacheUtil.getValue(cluster, ClusteringModelEvaluator.clusterValueCache);
 
@@ -262,11 +263,9 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 				throw new InvalidFeatureException(cluster);
 			}
 
-			String id = EntityUtil.getId(cluster, entityRegistry);
-
 			Value<V> distance = MeasureUtil.evaluateDistance(valueFactory, comparisonMeasure, clusteringFields, values, clusterValues, adjustment);
 
-			result.put(cluster, id, distance);
+			result.put(cluster, distance);
 		}
 
 		return result;

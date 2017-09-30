@@ -19,7 +19,6 @@
 package org.jpmml.evaluator.scorecard;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -220,17 +219,18 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			}
 		}
 
-		Object result = TargetUtil.evaluateRegressionInternal(targetField, score);
-
 		if(useReasonCodes){
-			result = createReasonCodeRanking(result, reasonCodePoints.sumMap());
+			ReasonCodeRanking<V> result = createReasonCodeRanking(targetField, score, reasonCodePoints.sumMap());
+
+			return TargetUtil.evaluateRegression(targetField, result);
 		}
 
-		return Collections.singletonMap(targetField.getName(), result);
+		return TargetUtil.evaluateRegression(targetField, score);
 	}
 
 	static
-	private <V extends Number> ReasonCodeRanking<V> createReasonCodeRanking(Object result, ValueMap<String, V> reasonCodePoints){
+	private <V extends Number> ReasonCodeRanking<V> createReasonCodeRanking(TargetField targetField, Value<V> score, ValueMap<String, V> reasonCodePoints){
+		score = TargetUtil.evaluateRegressionInternal(targetField, score);
 
 		Collection<Map.Entry<String, Value<V>>> entrySet = reasonCodePoints.entrySet();
 		for(Iterator<Map.Entry<String, Value<V>>> it = entrySet.iterator(); it.hasNext(); ){
@@ -242,6 +242,6 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			}
 		}
 
-		return new ReasonCodeRanking<>(result, reasonCodePoints);
+		return new ReasonCodeRanking<>(score, reasonCodePoints);
 	}
 }

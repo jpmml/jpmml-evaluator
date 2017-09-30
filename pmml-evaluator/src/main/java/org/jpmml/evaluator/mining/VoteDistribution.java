@@ -16,25 +16,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.support_vector_machine;
+package org.jpmml.evaluator.mining;
 
-import org.jpmml.evaluator.Value;
+import org.dmg.pmml.DataType;
+import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.ValueMap;
 
-abstract
-class VoteMap<K, V extends Number> extends ValueMap<K, V> {
+public class VoteDistribution<V extends Number> extends Classification<V> {
 
-	public VoteMap(){
-		super();
+	VoteDistribution(ValueMap<String, V> votes){
+		super(Type.VOTE, votes);
 	}
 
-	public VoteMap(int initialCapacity){
-		super(initialCapacity);
-	}
-
-	public void increment(K key){
-		Value<V> value = ensureValue(key);
-
-		value.add(1d);
+	@Override
+	protected void computeResult(DataType dataType){
+		super.computeResult(dataType);
 	}
 }

@@ -50,4 +50,9 @@ public interface HasAffinity extends CategoricalResultFeature {
 	 * @see #getCategoryValues()
 	 */
 	Double getAffinity(String category);
+
+	/**
+	 * @see #getCategoryValues()
+	 */
+	Report getAffinityReport(String category);
 }

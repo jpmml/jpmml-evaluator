@@ -16,25 +16,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.support_vector_machine;
+package org.jpmml.evaluator;
 
-import org.jpmml.evaluator.Value;
-import org.jpmml.evaluator.ValueMap;
+/**
+ * @see org.dmg.pmml.ResultFeature#PREDICTED_VALUE
+ */
+public interface HasPrediction extends ResultFeature {
 
-abstract
-class VoteMap<K, V extends Number> extends ValueMap<K, V> {
+	Object getPrediction();
 
-	public VoteMap(){
-		super();
-	}
-
-	public VoteMap(int initialCapacity){
-		super(initialCapacity);
-	}
-
-	public void increment(K key){
-		Value<V> value = ensureValue(key);
-
-		value.add(1d);
-	}
+	Report getPredictionReport();
 }
