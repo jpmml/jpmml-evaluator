@@ -292,17 +292,17 @@ public class FunctionTest {
 	public void evaluateTrigonometricFunctions(){
 		Double angle = Math.toRadians(30);
 
-		assertEquals(0.5d, evaluate(Functions.SIN, angle), 1e-6);
-		assertEquals(angle, evaluate(Functions.ASIN, 0.5d), 1e-6);
-		assertEquals(0.54785347d, evaluate(Functions.SINH, angle), 1e-6);
+		assertEquals(0.5d, evaluate(Functions.SIN, angle), 1e-8);
+		assertEquals(angle, evaluate(Functions.ASIN, 0.5d), 1e-8);
+		assertEquals(0.54785347d, evaluate(Functions.SINH, angle), 1e-8);
 
-		assertEquals(0.8660254d, evaluate(Functions.COS, angle), 1e-6);
-		assertEquals(angle, evaluate(Functions.ACOS, 0.8660254d), 1e-6);
-		assertEquals(1.14023832d, evaluate(Functions.COSH, angle), 1e-6);
+		assertEquals(0.8660254d, evaluate(Functions.COS, angle), 1e-8);
+		assertEquals(angle, evaluate(Functions.ACOS, 0.8660254d), 1e-8);
+		assertEquals(1.14023832d, evaluate(Functions.COSH, angle), 1e-8);
 
-		assertEquals(0.57735027d, evaluate(Functions.TAN, angle), 1e-6);
-		assertEquals(angle, evaluate(Functions.ATAN, 0.57735027d), 1e-6);
-		assertEquals(0.48047278d, evaluate(Functions.TANH, angle), 1e-6);
+		assertEquals(0.57735027d, evaluate(Functions.TAN, angle), 1e-8);
+		assertEquals(angle, evaluate(Functions.ATAN, 0.57735027d), 1e-8);
+		assertEquals(0.48047278d, evaluate(Functions.TANH, angle), 1e-8);
 
 		try {
 			evaluate(Functions.ASIN, 2d);

@@ -42,8 +42,8 @@ public class DefaultChildTest extends ModelEvaluatorTest {
 		assertEquals("Result1", targetValue.getResult());
 		assertEquals("10", targetValue.getEntityId());
 
-		assertEquals(21d / 42d, targetValue.getProbability("Result1"), 1.e-8);
-		assertEquals(15d / 42d, targetValue.getProbability("Result2"), 1.e-8);
-		assertEquals(6d / 42d, targetValue.getProbability("Result3"), 1.e-8);
+		assertEquals(21d / 42d, targetValue.getProbability("Result1"), 1e-8);
+		assertEquals(15d / 42d, targetValue.getProbability("Result2"), 1e-8);
+		assertEquals(6d / 42d, targetValue.getProbability("Result3"), 1e-8);
 	}
 }

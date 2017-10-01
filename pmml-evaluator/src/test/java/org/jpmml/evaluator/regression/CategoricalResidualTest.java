@@ -41,7 +41,7 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 
 		FieldName field = FieldName.create("residual");
 
-		assertEquals(0.2d, (Double)getOutput(result, field), 1.e-8);
+		assertEquals(0.2d, (Double)getOutput(result, field), 1e-8);
 
 		assertEquals(DataType.DOUBLE, OutputUtil.getDataType(evaluator.getOutputField(field), evaluator));
 
@@ -49,6 +49,6 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 
 		result = evaluator.evaluate(arguments);
 
-		assertEquals(-0.8d, (Double)getOutput(result, field), 1.e-8);
+		assertEquals(-0.8d, (Double)getOutput(result, field), 1e-8);
 	}
 }
