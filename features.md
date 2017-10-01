@@ -13,17 +13,17 @@ The JPMML-Evaluator library is hardwired to perform thorough "sanity" checking. 
 
 ##### Data flow #####
 
-1. Pre-processing of active fields (aka independent variables) according to the [DataDictionary](http://www.dmg.org/pmml/v4-3/DataDictionary.html) and [MiningSchema](http://www.dmg.org/pmml/v4-3/MiningSchema.html) elements:
+* Pre-processing of active fields (aka independent variables) according to the [DataDictionary](http://www.dmg.org/pmml/v4-3/DataDictionary.html) and [MiningSchema](http://www.dmg.org/pmml/v4-3/MiningSchema.html) elements:
   * Strict data type system:
     * Except for `dateDaysSince[0]` and `dateTimeSecondsSince[0]` data types.
   * Strict operational type system.
   * Treatment of outlier, missing and/or invalid values.
-2. Model evaluation.
-3. Post-processing of target fields (aka dependent variables) according to the [Targets](http://www.dmg.org/pmml/v4-3/Targets.html) element:
+* Model evaluation.
+* Post-processing of target fields (aka dependent variables) according to the [Targets](http://www.dmg.org/pmml/v4-3/Targets.html) element:
   * Rescaling and/or casting regression results.
   * Replacing a missing regression result with the default value.
   * Replacing a missing classification result with the map of prior probabilities.
-4. Calculation of auxiliary output fields according to the [Output](http://www.dmg.org/pmml/v4-3/Output.html) element:
+* Calculation of auxiliary output fields according to the [Output](http://www.dmg.org/pmml/v4-3/Output.html) element:
   * Over 20 different result feature types:
     * Except for the `standardError` result feature.
 
