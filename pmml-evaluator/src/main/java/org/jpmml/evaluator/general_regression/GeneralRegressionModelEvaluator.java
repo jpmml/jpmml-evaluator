@@ -430,7 +430,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				switch(modelType){
 					case GENERALIZED_LINEAR:
 						value = valueFactory.newValue(1d);
-						value.subtract(previousValue);
+						if(previousValue != null){
+							value.subtract(previousValue);
+						}
 						break;
 					case MULTINOMIAL_LOGISTIC:
 						// "By convention, the vector of Parameter estimates for the last category is 0"
@@ -450,7 +452,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				case MULTINOMIAL_LOGISTIC:
 					break;
 				case ORDINAL_MULTINOMIAL:
-					value.subtract(previousValue);
+					if(previousValue != null){
+						value.subtract(previousValue);
+					}
 					break;
 				default:
 					throw new UnsupportedFeatureException(generalRegressionModel, modelType);
