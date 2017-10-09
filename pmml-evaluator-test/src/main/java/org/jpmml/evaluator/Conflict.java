@@ -33,6 +33,8 @@ public class Conflict {
 
 	private MapDifference<FieldName, ?> difference = null;
 
+	private Exception exception = null;
+
 
 	public Conflict(Integer id, Map<FieldName, ?> arguments, MapDifference<FieldName, ?> difference){
 		setId(id);
@@ -40,12 +42,27 @@ public class Conflict {
 		setDifference(difference);
 	}
 
+	public Conflict(Integer id, Map<FieldName, ?> arguments, Exception exception){
+		setId(id);
+		setArguments(arguments);
+		setException(exception);
+	}
+
 	@Override
 	public String toString(){
 		ToStringHelper helper = Objects.toStringHelper(this)
 			.add("id", getId())
-			.add("arguments", getArguments())
-			.add("difference", getDifference());
+			.add("arguments", getArguments());
+
+		MapDifference<FieldName, ?> difference = getDifference();
+		if(difference != null){
+			helper.add("difference", getDifference());
+		}
+
+		Exception exception = getException();
+		if(exception != null){
+			helper.add("exception", exception);
+		}
 
 		return helper.toString();
 	}
@@ -72,5 +89,13 @@ public class Conflict {
 
 	private void setDifference(MapDifference<FieldName, ?> difference){
 		this.difference = difference;
+	}
+
+	public Exception getException(){
+		return this.exception;
+	}
+
+	private void setException(Exception exception){
+		this.exception = exception;
 	}
 }
