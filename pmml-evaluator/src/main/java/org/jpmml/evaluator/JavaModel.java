@@ -66,6 +66,29 @@ public class JavaModel extends Model {
 	private ModelVerification modelVerification = null;
 
 
+	public JavaModel(){
+	}
+
+	public JavaModel(MiningFunction miningFunction, MiningSchema miningSchema){
+		setMiningFunction(miningFunction);
+		setMiningSchema(miningSchema);
+	}
+
+	public JavaModel(Model model){
+		setModelName(model.getModelName());
+		setMiningFunction(model.getMiningFunction());
+		setAlgorithmName(model.getAlgorithmName());
+		setScorable(model.isScorable());
+		setMathContext(model.getMathContext());
+		setMiningSchema(model.getMiningSchema());
+		setLocalTransformations(model.getLocalTransformations());
+		setTargets(model.getTargets());
+		setOutput(model.getOutput());
+		setModelStats(model.getModelStats());
+		setModelExplanation(model.getModelExplanation());
+		setModelVerification(model.getModelVerification());
+	}
+
 	abstract
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context);
 
