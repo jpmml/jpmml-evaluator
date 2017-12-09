@@ -8,6 +8,7 @@
         <DataField name="sepal width" optype="continuous" dataType="double"/>
         <DataField name="species" optype="continuous" dataType="double"/>
         <DataField name="species_class" optype="categorical" dataType="string"/>
+        <DataField name="flag" optype="categorical" dataType="boolean"/>
     </DataDictionary>
     <NearestNeighborModel modelName="KNN" functionName="mixed" numberOfNeighbors="3" continuousScoringMethod="average" categoricalScoringMethod="majorityVote">
         <MiningSchema>
@@ -30,6 +31,7 @@
                 <InstanceField field="sepal width" column="sepal_width"/>
                 <InstanceField field="species" column="target_species"/>
                 <InstanceField field="species_class" column="target_class"/>
+                <InstanceField field="flag" column="flag"/>
             </InstanceFields>
             <InlineTable>
                 <row>
@@ -39,6 +41,7 @@
                     <petal_width>0.2</petal_width>
                     <target_species>10</target_species>
                     <target_class>Iris-setosa</target_class>
+                    <flag>false</flag>
                 </row>
                 <row>
                     <sepal_length>4.9</sepal_length>
@@ -439,6 +442,7 @@
                     <petal_width>1.4</petal_width>
                     <target_species>20</target_species>
                     <target_class>Iris-versicolor</target_class>
+                    <flag>false</flag>
                 </row>
                 <row>
                     <sepal_length>6.4</sepal_length>
@@ -839,6 +843,7 @@
                     <petal_width>2.5</petal_width>
                     <target_species>30</target_species>
                     <target_class>Iris-virginica</target_class>
+                    <flag>false</flag>
                 </row>
                 <row>
                     <sepal_length>5.8</sepal_length>

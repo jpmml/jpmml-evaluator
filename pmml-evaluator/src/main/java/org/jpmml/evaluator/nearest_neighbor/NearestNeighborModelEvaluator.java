@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,6 +93,7 @@ import org.jpmml.evaluator.ValueAggregator;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.VoteAggregator;
+import org.jpmml.model.visitors.FieldReferenceFinder;
 
 public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighborModel> {
 
@@ -541,6 +543,18 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		FieldName instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
 
+		Set<FieldName> fieldNames = new HashSet<>();
+
+		FieldReferenceFinder variableFinder = new FieldReferenceFinder();
+		variableFinder.applyTo(nearestNeighborModel);
+
+		fieldNames.addAll(variableFinder.getFieldNames());
+
+		List<TargetField> targetFields = modelEvaluator.getTargetFields();
+		for(TargetField targetField : targetFields){
+			fieldNames.add(targetField.getName());
+		}
+
 		TrainingInstances trainingInstances = nearestNeighborModel.getTrainingInstances();
 
 		List<FieldLoader> fieldLoaders = new ArrayList<>();
@@ -554,6 +568,10 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				fieldLoaders.add(new IdentifierLoader(name, column));
 
 				continue;
+			} // End if
+
+			if(!fieldNames.contains(name)){
+				continue;
 			}
 
 			TypeDefinitionField field = modelEvaluator.resolveField(name);
@@ -564,6 +582,10 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			if(field instanceof DataField){
 				DataField dataField = (DataField)field;
 				MiningField miningField = modelEvaluator.getMiningField(name);
+
+				if(miningField == null){
+					throw new InvalidFeatureException(instanceField);
+				}
 
 				fieldLoaders.add(new DataFieldLoader(name, column, dataField, miningField));
 			} else
