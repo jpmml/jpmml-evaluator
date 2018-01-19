@@ -53,6 +53,6 @@ public class CategoricalValueTest extends ModelEvaluatorTest {
 		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
 		context.setArguments(arguments);
 
-		assertEquals(items, evaluator.getActiveItems(context));
+		assertEquals(items, evaluator.getActiveItemIds(context));
 	}
 }
