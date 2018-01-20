@@ -1,0 +1,571 @@
+<?xml version="1.0"?>
+<PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_3 http://www.dmg.org/pmml/v4-3/pmml-4-3.xsd">
+ <Header copyright="Copyright (c) 2018 vfed" description="Generalized Boosted Tree Model">
+  <Extension name="user" value="vfed" extender="R/PMML"/>
+  <Application name="R/PMML" version="1.4"/>
+  <Timestamp>2018-01-20 12:35:31</Timestamp>
+ </Header>
+ <DataDictionary numberOfFields="8">
+  <DataField name="mpg" optype="continuous" dataType="double"/>
+  <DataField name="cylinders" optype="categorical" dataType="string">
+   <Value value="3"/>
+   <Value value="4"/>
+   <Value value="5"/>
+   <Value value="6"/>
+   <Value value="8"/>
+  </DataField>
+  <DataField name="displacement" optype="continuous" dataType="double"/>
+  <DataField name="horsepower" optype="continuous" dataType="double"/>
+  <DataField name="weight" optype="continuous" dataType="double"/>
+  <DataField name="acceleration" optype="continuous" dataType="double"/>
+  <DataField name="model_year" optype="categorical" dataType="string">
+   <Value value="70"/>
+   <Value value="71"/>
+   <Value value="72"/>
+   <Value value="73"/>
+   <Value value="74"/>
+   <Value value="75"/>
+   <Value value="76"/>
+   <Value value="77"/>
+   <Value value="78"/>
+   <Value value="79"/>
+   <Value value="80"/>
+   <Value value="81"/>
+   <Value value="82"/>
+  </DataField>
+  <DataField name="origin" optype="categorical" dataType="string">
+   <Value value="1"/>
+   <Value value="2"/>
+   <Value value="3"/>
+  </DataField>
+ </DataDictionary>
+ <MiningModel modelName="gbm_Model" functionName="regression">
+  <MiningSchema>
+   <MiningField name="mpg" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="cylinders" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="displacement" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="horsepower" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="weight" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="acceleration" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="model_year" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="origin" usageType="active" invalidValueTreatment="returnInvalid"/>
+  </MiningSchema>
+  <Output>
+   <OutputField name="Predicted_mpg" feature="predictedValue"/>
+   <OutputField name="GaussianPrediction" feature="transformedValue">
+    <Apply function="+">
+     <FieldRef field="Predicted_mpg"/>
+     <Constant>23.4459183673469</Constant>
+    </Apply>
+   </OutputField>
+  </Output>
+  <Segmentation multipleModelMethod="sum">
+   <Segment id="1">
+    <True/>
+    <TreeModel modelName="gbm_Model" functionName="regression" algorithmName="gbm" splitCharacteristic="multiSplit">
+     <MiningSchema>
+      <MiningField name="mpg" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="cylinders" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="displacement" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="horsepower" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="weight" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="acceleration" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="model_year" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="origin" usageType="active" invalidValueTreatment="returnInvalid"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="-0.633722271517302">
+       <SimpleSetPredicate field="cylinders" booleanOperator="isIn">
+        <Array n="4" type="string">&quot;3&quot;   &quot;5&quot;   &quot;6&quot;   &quot;8&quot;</Array>
+       </SimpleSetPredicate>
+       <Node id="3" score="-0.361765749778172">
+        <SimplePredicate field="horsepower" operator="lessThan" value="127"/>
+       </Node>
+       <Node id="4" score="-0.905678793256432">
+        <SimplePredicate field="horsepower" operator="greaterOrEqual" value="127"/>
+       </Node>
+       <Node id="5" score="-0.633722271517302">
+        <SimplePredicate field="horsepower" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="6" score="0.625504317111459">
+       <SimpleSetPredicate field="cylinders" booleanOperator="isIn">
+        <Array n="1" type="string">&quot;4&quot;</Array>
+       </SimpleSetPredicate>
+       <Node id="7" score="1.02311649659864">
+        <SimplePredicate field="weight" operator="lessThan" value="2149.5"/>
+       </Node>
+       <Node id="8" score="0.284693877551019">
+        <SimplePredicate field="weight" operator="greaterOrEqual" value="2149.5"/>
+       </Node>
+       <Node id="9" score="0.625504317111459">
+        <SimplePredicate field="weight" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="10" score="0.0344387755102038">
+       <SimplePredicate field="cylinders" operator="isMissing"/>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="2">
+    <True/>
+    <TreeModel modelName="gbm_Model" functionName="regression" algorithmName="gbm" splitCharacteristic="multiSplit">
+     <MiningSchema>
+      <MiningField name="mpg" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="cylinders" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="displacement" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="horsepower" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="weight" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="acceleration" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="model_year" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="origin" usageType="active" invalidValueTreatment="returnInvalid"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="-0.556760504976852">
+       <SimpleSetPredicate field="cylinders" booleanOperator="isIn">
+        <Array n="3" type="string">&quot;3&quot;   &quot;6&quot;   &quot;8&quot;</Array>
+       </SimpleSetPredicate>
+       <Node id="3" score="-0.337630479148182">
+        <SimplePredicate field="horsepower" operator="lessThan" value="142.5"/>
+       </Node>
+       <Node id="4" score="-0.877438591555394">
+        <SimplePredicate field="horsepower" operator="greaterOrEqual" value="142.5"/>
+       </Node>
+       <Node id="5" score="-0.556760504976852">
+        <SimplePredicate field="horsepower" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="6" score="0.48227712546117">
+       <SimpleSetPredicate field="cylinders" booleanOperator="isIn">
+        <Array n="2" type="string">&quot;4&quot;   &quot;5&quot;</Array>
+       </SimpleSetPredicate>
+       <Node id="7" score="0.301693263725979">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="11" type="string">&quot;70&quot;   &quot;71&quot;   &quot;72&quot;   &quot;73&quot;   &quot;74&quot;   &quot;75&quot;   &quot;76&quot;   &quot;77&quot;   &quot;78&quot;   &quot;79&quot;   &quot;81&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="8" score="1.08148721212794">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="2" type="string">&quot;80&quot;   &quot;82&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="9" score="0.48227712546117">
+        <SimplePredicate field="model_year" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="10" score="-0.0531453269584232">
+       <SimplePredicate field="cylinders" operator="isMissing"/>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="3">
+    <True/>
+    <TreeModel modelName="gbm_Model" functionName="regression" algorithmName="gbm" splitCharacteristic="multiSplit">
+     <MiningSchema>
+      <MiningField name="mpg" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="cylinders" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="displacement" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="horsepower" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="weight" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="acceleration" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="model_year" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="origin" usageType="active" invalidValueTreatment="returnInvalid"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="0.362578326982273">
+       <SimplePredicate field="weight" operator="lessThan" value="3027"/>
+       <Node id="3" score="0.15658200701267">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="10" type="string">&quot;70&quot;   &quot;71&quot;   &quot;72&quot;   &quot;73&quot;   &quot;74&quot;   &quot;75&quot;   &quot;76&quot;   &quot;77&quot;   &quot;78&quot;   &quot;79&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="4" score="0.843236406911345">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="3" type="string">&quot;80&quot;   &quot;81&quot;   &quot;82&quot;</Array>
+        </SimpleSetPredicate>
+        <Node id="5" score="1.29916415350333">
+         <SimplePredicate field="weight" operator="lessThan" value="2240"/>
+        </Node>
+        <Node id="6" score="0.463296618084691">
+         <SimplePredicate field="weight" operator="greaterOrEqual" value="2240"/>
+        </Node>
+        <Node id="7" score="0.843236406911345">
+         <SimplePredicate field="weight" operator="isMissing"/>
+        </Node>
+       </Node>
+       <Node id="8" score="0.362578326982273">
+        <SimplePredicate field="model_year" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="9" score="-0.555089254861238">
+       <SimplePredicate field="weight" operator="greaterOrEqual" value="3027"/>
+      </Node>
+      <Node id="10" score="-0.0400717344388595">
+       <SimplePredicate field="weight" operator="isMissing"/>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="4">
+    <True/>
+    <TreeModel modelName="gbm_Model" functionName="regression" algorithmName="gbm" splitCharacteristic="multiSplit">
+     <MiningSchema>
+      <MiningField name="mpg" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="cylinders" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="displacement" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="horsepower" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="weight" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="acceleration" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="model_year" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="origin" usageType="active" invalidValueTreatment="returnInvalid"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="0.420197925775768">
+       <SimplePredicate field="displacement" operator="lessThan" value="198.5"/>
+       <Node id="3" score="0.772854078570448">
+        <SimplePredicate field="weight" operator="lessThan" value="2201"/>
+       </Node>
+       <Node id="4" score="0.151222893983215">
+        <SimplePredicate field="weight" operator="greaterOrEqual" value="2201"/>
+       </Node>
+       <Node id="5" score="0.420197925775768">
+        <SimplePredicate field="weight" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="6" score="-0.483069492742741">
+       <SimplePredicate field="displacement" operator="greaterOrEqual" value="198.5"/>
+       <Node id="7" score="-0.278310245065223">
+        <SimplePredicate field="weight" operator="lessThan" value="3657.5"/>
+       </Node>
+       <Node id="8" score="-0.670765469780466">
+        <SimplePredicate field="weight" operator="greaterOrEqual" value="3657.5"/>
+       </Node>
+       <Node id="9" score="-0.483069492742741">
+        <SimplePredicate field="weight" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="10" score="-0.00378474005945058">
+       <SimplePredicate field="displacement" operator="isMissing"/>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="5">
+    <True/>
+    <TreeModel modelName="gbm_Model" functionName="regression" algorithmName="gbm" splitCharacteristic="multiSplit">
+     <MiningSchema>
+      <MiningField name="mpg" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="cylinders" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="displacement" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="horsepower" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="weight" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="acceleration" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="model_year" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="origin" usageType="active" invalidValueTreatment="returnInvalid"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="0.619931377196011">
+       <SimplePredicate field="horsepower" operator="lessThan" value="85.5"/>
+       <Node id="3" score="0.255271661783491">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="8" type="string">&quot;70&quot;   &quot;71&quot;   &quot;72&quot;   &quot;73&quot;   &quot;74&quot;   &quot;75&quot;   &quot;76&quot;   &quot;77&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="4" score="0.830623657212134">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="5" type="string">&quot;78&quot;   &quot;79&quot;   &quot;80&quot;   &quot;81&quot;   &quot;82&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="5" score="0.619931377196011">
+        <SimplePredicate field="model_year" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="6" score="-0.314234772865677">
+       <SimplePredicate field="horsepower" operator="greaterOrEqual" value="85.5"/>
+       <Node id="7" score="-0.0472003627681322">
+        <SimplePredicate field="displacement" operator="lessThan" value="241"/>
+       </Node>
+       <Node id="8" score="-0.577030541533102">
+        <SimplePredicate field="displacement" operator="greaterOrEqual" value="241"/>
+       </Node>
+       <Node id="9" score="-0.314234772865677">
+        <SimplePredicate field="displacement" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="10" score="0.0241621488403426">
+       <SimplePredicate field="horsepower" operator="isMissing"/>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="6">
+    <True/>
+    <TreeModel modelName="gbm_Model" functionName="regression" algorithmName="gbm" splitCharacteristic="multiSplit">
+     <MiningSchema>
+      <MiningField name="mpg" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="cylinders" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="displacement" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="horsepower" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="weight" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="acceleration" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="model_year" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="origin" usageType="active" invalidValueTreatment="returnInvalid"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="0.563038087740294">
+       <SimplePredicate field="horsepower" operator="lessThan" value="84.5"/>
+       <Node id="3" score="0.205355648291061">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="6" type="string">&quot;71&quot;   &quot;72&quot;   &quot;73&quot;   &quot;74&quot;   &quot;75&quot;   &quot;76&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="4" score="0.787629386929347">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="7" type="string">&quot;70&quot;   &quot;77&quot;   &quot;78&quot;   &quot;79&quot;   &quot;80&quot;   &quot;81&quot;   &quot;82&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="5" score="0.563038087740294">
+        <SimplePredicate field="model_year" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="6" score="-0.254344738627098">
+       <SimplePredicate field="horsepower" operator="greaterOrEqual" value="84.5"/>
+       <Node id="7" score="-0.341878130337027">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="10" type="string">&quot;70&quot;   &quot;71&quot;   &quot;72&quot;   &quot;73&quot;   &quot;74&quot;   &quot;75&quot;   &quot;76&quot;   &quot;77&quot;   &quot;78&quot;   &quot;79&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="8" score="0.306898772924798">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="3" type="string">&quot;80&quot;   &quot;81&quot;   &quot;82&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="9" score="-0.254344738627098">
+        <SimplePredicate field="model_year" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="10" score="0.0375776993612561">
+       <SimplePredicate field="horsepower" operator="isMissing"/>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="7">
+    <True/>
+    <TreeModel modelName="gbm_Model" functionName="regression" algorithmName="gbm" splitCharacteristic="multiSplit">
+     <MiningSchema>
+      <MiningField name="mpg" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="cylinders" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="displacement" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="horsepower" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="weight" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="acceleration" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="model_year" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="origin" usageType="active" invalidValueTreatment="returnInvalid"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="-0.343524210689404">
+       <SimpleSetPredicate field="cylinders" booleanOperator="isIn">
+        <Array n="3" type="string">&quot;3&quot;   &quot;6&quot;   &quot;8&quot;</Array>
+       </SimpleSetPredicate>
+      </Node>
+      <Node id="3" score="0.319841764230414">
+       <SimpleSetPredicate field="cylinders" booleanOperator="isIn">
+        <Array n="2" type="string">&quot;4&quot;   &quot;5&quot;</Array>
+       </SimpleSetPredicate>
+       <Node id="4" score="0.854487733706224">
+        <SimplePredicate field="displacement" operator="lessThan" value="87.5"/>
+       </Node>
+       <Node id="5" score="0.235740151054444">
+        <SimplePredicate field="displacement" operator="greaterOrEqual" value="87.5"/>
+        <Node id="6" score="0.029322638482236">
+         <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+          <Array n="7" type="string">&quot;70&quot;   &quot;71&quot;   &quot;72&quot;   &quot;73&quot;   &quot;74&quot;   &quot;75&quot;   &quot;77&quot;</Array>
+         </SimpleSetPredicate>
+        </Node>
+        <Node id="7" score="0.375948272801604">
+         <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+          <Array n="6" type="string">&quot;76&quot;   &quot;78&quot;   &quot;79&quot;   &quot;80&quot;   &quot;81&quot;   &quot;82&quot;</Array>
+         </SimpleSetPredicate>
+        </Node>
+        <Node id="8" score="0.235740151054444">
+         <SimplePredicate field="model_year" operator="isMissing"/>
+        </Node>
+       </Node>
+       <Node id="9" score="0.319841764230414">
+        <SimplePredicate field="displacement" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="10" score="0.00508137817152067">
+       <SimplePredicate field="cylinders" operator="isMissing"/>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="8">
+    <True/>
+    <TreeModel modelName="gbm_Model" functionName="regression" algorithmName="gbm" splitCharacteristic="multiSplit">
+     <MiningSchema>
+      <MiningField name="mpg" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="cylinders" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="displacement" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="horsepower" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="weight" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="acceleration" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="model_year" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="origin" usageType="active" invalidValueTreatment="returnInvalid"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="0.248184535972974">
+       <SimplePredicate field="weight" operator="lessThan" value="3085.5"/>
+       <Node id="3" score="0.0543017082771515">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="8" type="string">&quot;70&quot;   &quot;71&quot;   &quot;72&quot;   &quot;73&quot;   &quot;74&quot;   &quot;75&quot;   &quot;76&quot;   &quot;78&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="4" score="0.493281695512977">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="5" type="string">&quot;77&quot;   &quot;79&quot;   &quot;80&quot;   &quot;81&quot;   &quot;82&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="5" score="0.248184535972974">
+        <SimplePredicate field="model_year" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="6" score="-0.374490711652352">
+       <SimplePredicate field="weight" operator="greaterOrEqual" value="3085.5"/>
+       <Node id="7" score="-0.528866310150671">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="6" type="string">&quot;70&quot;   &quot;71&quot;   &quot;72&quot;   &quot;73&quot;   &quot;74&quot;   &quot;75&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="8" score="-0.183791442919135">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="7" type="string">&quot;76&quot;   &quot;77&quot;   &quot;78&quot;   &quot;79&quot;   &quot;80&quot;   &quot;81&quot;   &quot;82&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="9" score="-0.374490711652352">
+        <SimplePredicate field="model_year" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="10" score="0.00673903179172534">
+       <SimplePredicate field="weight" operator="isMissing"/>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="9">
+    <True/>
+    <TreeModel modelName="gbm_Model" functionName="regression" algorithmName="gbm" splitCharacteristic="multiSplit">
+     <MiningSchema>
+      <MiningField name="mpg" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="cylinders" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="displacement" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="horsepower" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="weight" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="acceleration" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="model_year" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="origin" usageType="active" invalidValueTreatment="returnInvalid"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="0.211224782260927">
+       <SimplePredicate field="displacement" operator="lessThan" value="198.5"/>
+       <Node id="3" score="-0.0538567736415105">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="7" type="string">&quot;70&quot;   &quot;72&quot;   &quot;73&quot;   &quot;74&quot;   &quot;75&quot;   &quot;76&quot;   &quot;78&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="4" score="0.382748141962505">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="6" type="string">&quot;71&quot;   &quot;77&quot;   &quot;79&quot;   &quot;80&quot;   &quot;81&quot;   &quot;82&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="5" score="0.211224782260927">
+        <SimplePredicate field="model_year" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="6" score="-0.318100752978841">
+       <SimplePredicate field="displacement" operator="greaterOrEqual" value="198.5"/>
+       <Node id="7" score="-0.210242493952866">
+        <SimplePredicate field="horsepower" operator="lessThan" value="146.5"/>
+       </Node>
+       <Node id="8" score="-0.493370423896049">
+        <SimplePredicate field="horsepower" operator="greaterOrEqual" value="146.5"/>
+       </Node>
+       <Node id="9" score="-0.318100752978841">
+        <SimplePredicate field="horsepower" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="10" score="-0.0156290185561161">
+       <SimplePredicate field="displacement" operator="isMissing"/>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+   <Segment id="10">
+    <True/>
+    <TreeModel modelName="gbm_Model" functionName="regression" algorithmName="gbm" splitCharacteristic="multiSplit">
+     <MiningSchema>
+      <MiningField name="mpg" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="cylinders" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="displacement" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="horsepower" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="weight" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="acceleration" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="model_year" usageType="active" invalidValueTreatment="returnInvalid"/>
+      <MiningField name="origin" usageType="active" invalidValueTreatment="returnInvalid"/>
+     </MiningSchema>
+     <Node id="1">
+      <True/>
+      <Node id="2" score="0.280456785172904">
+       <SimplePredicate field="weight" operator="lessThan" value="2722.5"/>
+       <Node id="3" score="0.0193202515924665">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="6" type="string">&quot;70&quot;   &quot;71&quot;   &quot;72&quot;   &quot;73&quot;   &quot;75&quot;   &quot;77&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="4" score="0.443132002813176">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="7" type="string">&quot;74&quot;   &quot;76&quot;   &quot;78&quot;   &quot;79&quot;   &quot;80&quot;   &quot;81&quot;   &quot;82&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="5" score="0.280456785172904">
+        <SimplePredicate field="model_year" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="6" score="-0.245442628552887">
+       <SimplePredicate field="weight" operator="greaterOrEqual" value="2722.5"/>
+       <Node id="7" score="-0.377180228077916">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="7" type="string">&quot;70&quot;   &quot;71&quot;   &quot;72&quot;   &quot;73&quot;   &quot;74&quot;   &quot;75&quot;   &quot;76&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="8" score="-0.0729291053653493">
+        <SimpleSetPredicate field="model_year" booleanOperator="isIn">
+         <Array n="6" type="string">&quot;77&quot;   &quot;78&quot;   &quot;79&quot;   &quot;80&quot;   &quot;81&quot;   &quot;82&quot;</Array>
+        </SimpleSetPredicate>
+       </Node>
+       <Node id="9" score="-0.245442628552887">
+        <SimplePredicate field="model_year" operator="isMissing"/>
+       </Node>
+      </Node>
+      <Node id="10" score="0.0201902385841194">
+       <SimplePredicate field="weight" operator="isMissing"/>
+      </Node>
+     </Node>
+    </TreeModel>
+   </Segment>
+  </Segmentation>
+ </MiningModel>
+</PMML>

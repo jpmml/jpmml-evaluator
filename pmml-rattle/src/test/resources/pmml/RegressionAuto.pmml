@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_3 http://www.dmg.org/pmml/v4-3/pmml-4-3.xsd">
- <Header copyright="Copyright (c) 2017 vfed" description="Linear Regression Model">
+ <Header copyright="Copyright (c) 2018 vfed" description="Linear Regression Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2017-05-20 21:32:05</Timestamp>
+  <Timestamp>2018-01-20 10:49:48</Timestamp>
  </Header>
  <DataDictionary numberOfFields="8">
   <DataField name="mpg" optype="continuous" dataType="double"/>
@@ -41,14 +41,14 @@
  </DataDictionary>
  <RegressionModel modelName="Linear_Regression_Model" functionName="regression" algorithmName="least squares">
   <MiningSchema>
-   <MiningField name="mpg" usageType="predicted"/>
-   <MiningField name="cylinders" usageType="active"/>
-   <MiningField name="displacement" usageType="active"/>
-   <MiningField name="horsepower" usageType="active"/>
-   <MiningField name="weight" usageType="active"/>
-   <MiningField name="acceleration" usageType="active"/>
-   <MiningField name="model_year" usageType="active"/>
-   <MiningField name="origin" usageType="active"/>
+   <MiningField name="mpg" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="cylinders" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="displacement" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="horsepower" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="weight" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="acceleration" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="model_year" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="origin" usageType="active" invalidValueTreatment="returnInvalid"/>
   </MiningSchema>
   <Output>
    <OutputField name="Predicted_mpg" feature="predictedValue"/>

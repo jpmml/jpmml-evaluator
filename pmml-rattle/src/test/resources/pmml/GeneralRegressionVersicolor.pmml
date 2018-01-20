@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_3 http://www.dmg.org/pmml/v4-3/pmml-4-3.xsd">
- <Header copyright="Copyright (c) 2017 vfed" description="Generalized Linear Regression Model">
+ <Header copyright="Copyright (c) 2018 vfed" description="Generalized Linear Regression Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2017-05-20 21:29:10</Timestamp>
+  <Timestamp>2018-01-20 10:50:04</Timestamp>
  </Header>
  <DataDictionary numberOfFields="5">
   <DataField name="Species" optype="categorical" dataType="string">
@@ -17,11 +17,11 @@
  </DataDictionary>
  <GeneralRegressionModel modelName="General_Regression_Model" modelType="generalizedLinear" functionName="classification" algorithmName="glm" distribution="binomial" linkFunction="probit">
   <MiningSchema>
-   <MiningField name="Species" usageType="predicted"/>
-   <MiningField name="Sepal_Length" usageType="active"/>
-   <MiningField name="Sepal_Width" usageType="active"/>
-   <MiningField name="Petal_Length" usageType="active"/>
-   <MiningField name="Petal_Width" usageType="active"/>
+   <MiningField name="Species" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Sepal_Length" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Sepal_Width" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Petal_Length" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Petal_Width" usageType="active" invalidValueTreatment="returnInvalid"/>
   </MiningSchema>
   <Output>
    <OutputField name="Probability_1" targetField="Species" feature="probability" value="1"/>

@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_3 http://www.dmg.org/pmml/v4-3/pmml-4-3.xsd">
- <Header copyright="Copyright (c) 2017 vfed" description="CoxPH Survival Regression Model">
+ <Header copyright="Copyright (c) 2018 vfed" description="CoxPH Survival Regression Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2017-05-21 00:29:19</Timestamp>
+  <Timestamp>2018-01-20 10:49:32</Timestamp>
  </Header>
  <DataDictionary numberOfFields="6">
   <DataField name="survival" optype="continuous" dataType="double"/>
@@ -15,12 +15,12 @@
  </DataDictionary>
  <GeneralRegressionModel modelType="CoxRegression" modelName="CoxPH_Survival_Regression_Model" functionName="regression" algorithmName="coxph" endTimeVariable="time" statusVariable="status" baselineStrataVariable="inst">
   <MiningSchema>
-   <MiningField name="survival" usageType="predicted"/>
-   <MiningField name="age" usageType="active"/>
-   <MiningField name="ph.ecog" usageType="active"/>
-   <MiningField name="time" usageType="active"/>
-   <MiningField name="status" usageType="active"/>
-   <MiningField name="inst" usageType="active"/>
+   <MiningField name="survival" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="age" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="ph.ecog" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="time" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="status" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="inst" usageType="active" invalidValueTreatment="returnInvalid"/>
   </MiningSchema>
   <Output>
    <OutputField name="Predicted_hazard" feature="predictedValue"/>

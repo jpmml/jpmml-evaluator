@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_3 http://www.dmg.org/pmml/v4-3/pmml-4-3.xsd">
- <Header copyright="Copyright (c) 2017 vfed" description="Random Forest Tree Model">
+ <Header copyright="Copyright (c) 2018 vfed" description="Random Forest Tree Model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2017-05-20 21:29:26</Timestamp>
+  <Timestamp>2018-01-20 10:50:18</Timestamp>
  </Header>
  <DataDictionary numberOfFields="10">
   <DataField name="Adjusted" optype="categorical" dataType="string">
@@ -22,16 +22,16 @@
  </DataDictionary>
  <MiningModel modelName="randomForest_Model" algorithmName="randomForest" functionName="classification">
   <MiningSchema>
-   <MiningField name="Adjusted" usageType="predicted"/>
-   <MiningField name="Age" usageType="active"/>
-   <MiningField name="Employment" usageType="active"/>
-   <MiningField name="Education" usageType="active"/>
-   <MiningField name="Marital" usageType="active"/>
-   <MiningField name="Occupation" usageType="active"/>
-   <MiningField name="Income" usageType="active"/>
-   <MiningField name="Gender" usageType="active"/>
-   <MiningField name="Deductions" usageType="active"/>
-   <MiningField name="Hours" usageType="active"/>
+   <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Age" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Employment" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Education" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Marital" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Occupation" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Income" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Gender" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Deductions" usageType="active" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Hours" usageType="active" invalidValueTreatment="returnInvalid"/>
   </MiningSchema>
   <Output>
    <OutputField name="Predicted_Adjusted" feature="predictedValue"/>
@@ -43,16 +43,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>
@@ -997,16 +997,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>
@@ -1917,16 +1917,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>
@@ -2793,16 +2793,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>
@@ -3639,16 +3639,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>
@@ -4489,16 +4489,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>
@@ -5345,16 +5345,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>
@@ -6233,16 +6233,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>
@@ -7033,16 +7033,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>
@@ -7787,16 +7787,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>
@@ -8639,16 +8639,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>
@@ -9495,16 +9495,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>
@@ -10373,16 +10373,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>
@@ -11281,16 +11281,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>
@@ -12119,16 +12119,16 @@
     <True/>
     <TreeModel modelName="randomForest_Model" functionName="classification" algorithmName="randomForest" splitCharacteristic="binarySplit">
      <MiningSchema>
-      <MiningField name="Adjusted" usageType="predicted"/>
-      <MiningField name="Age" usageType="active"/>
-      <MiningField name="Employment" usageType="active"/>
-      <MiningField name="Education" usageType="active"/>
-      <MiningField name="Marital" usageType="active"/>
-      <MiningField name="Occupation" usageType="active"/>
-      <MiningField name="Income" usageType="active"/>
-      <MiningField name="Gender" usageType="active"/>
-      <MiningField name="Deductions" usageType="active"/>
-      <MiningField name="Hours" usageType="active"/>
+      <MiningField name="Adjusted" usageType="predicted" invalidValueTreatment="asIs"/>
+      <MiningField name="Age" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" usageType="active" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" usageType="active" invalidValueTreatment="asIs"/>
      </MiningSchema>
      <Node id="1">
       <True/>

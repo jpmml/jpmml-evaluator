@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dmg.org/PMML-4_3 http://www.dmg.org/pmml/v4-3/pmml-4-3.xsd">
- <Header copyright="Copyright (c) 2017 vfed" description="KMeans cluster model">
+ <Header copyright="Copyright (c) 2018 vfed" description="KMeans cluster model">
   <Extension name="user" value="vfed" extender="Rattle/PMML"/>
   <Application name="Rattle/PMML" version="1.4"/>
-  <Timestamp>2017-05-20 21:31:27</Timestamp>
+  <Timestamp>2018-01-20 10:49:19</Timestamp>
  </Header>
  <DataDictionary numberOfFields="4">
   <DataField name="Sepal_Length" optype="continuous" dataType="double"/>
@@ -13,10 +13,10 @@
  </DataDictionary>
  <ClusteringModel modelName="KMeans_Model" functionName="clustering" algorithmName="KMeans: Hartigan and Wong" modelClass="centerBased" numberOfClusters="3">
   <MiningSchema>
-   <MiningField name="Sepal_Length"/>
-   <MiningField name="Sepal_Width"/>
-   <MiningField name="Petal_Length"/>
-   <MiningField name="Petal_Width"/>
+   <MiningField name="Sepal_Length" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Sepal_Width" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Petal_Length" invalidValueTreatment="returnInvalid"/>
+   <MiningField name="Petal_Width" invalidValueTreatment="returnInvalid"/>
   </MiningSchema>
   <Output>
    <OutputField name="predictedValue" feature="predictedValue"/>

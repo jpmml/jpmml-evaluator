@@ -41,6 +41,13 @@ public class RegressionTest extends IntegrationTest {
 	}
 
 	@Test
+	public void evaluateGBMAuto() throws Exception {
+		Predicate<FieldName> predicate = excludeFields(FieldName.create("mpg"), FieldName.create("Predicted_mpg"));
+
+		evaluate("GBM", "Auto", predicate, new PMMLEquivalence(1e-7, 1e-7));
+	}
+
+	@Test
 	public void evaluateGeneralRegressionAuto() throws Exception {
 		evaluate("GeneralRegression", "Auto");
 	}

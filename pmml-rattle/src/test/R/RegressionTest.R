@@ -1,3 +1,4 @@
+library("gbm")
 library("e1071")
 library("kernlab")
 library("nnet")
@@ -39,6 +40,17 @@ generateDecisionTreeXformAuto = function(){
 	saveXML(pmml(rpart, transform = autoBox), "pmml/DecisionTreeXformAuto.pmml")
 
 	writeAuto(predict(rpart), "csv/DecisionTreeXformAuto.csv")
+}
+
+generateGBMAuto = function(){
+	set.seed(42)
+
+	gbm = gbm(autoFormula, autoData, distribution = "gaussian", interaction.depth = 3, shrinkage = 0.1, n.trees = 10)
+	saveXML(pmml(gbm), "pmml/GBMAuto.pmml")
+
+	mpg = predict(gbm, n.trees = 10)
+
+	writeCsv(data.frame("GaussianPrediction" = mpg), "csv/GBMAuto.csv")
 }
 
 generateGeneralRegressionAuto = function(){
@@ -106,6 +118,7 @@ generateRegressionXformAuto = function(){
 
 generateDecisionTreeAuto()
 generateDecisionTreeXformAuto()
+generateGBMAuto()
 generateGeneralRegressionAuto()
 generateGeneralRegressionXformAuto()
 generateKernlabSVMAuto()
