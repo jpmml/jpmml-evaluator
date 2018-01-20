@@ -34,6 +34,11 @@ public class RegressionTest extends IntegrationTest {
 	}
 
 	@Test
+	public void evaluateGBTAuto() throws Exception {
+		evaluate("GBT", "Auto");
+	}
+
+	@Test
 	public void evaluateGeneralRegressionAuto() throws Exception {
 		evaluate("GeneralRegression", "Auto");
 	}

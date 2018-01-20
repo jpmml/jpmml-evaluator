@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2">
+  <Header copyright="vfed">
+    <Application name="KNIME" version="3.5.1"/>
+  </Header>
+  <DataDictionary numberOfFields="10">
+    <DataField name="Age" optype="continuous" dataType="integer">
+      <Interval closure="closedClosed" leftMargin="17.0" rightMargin="83.0"/>
+    </DataField>
+    <DataField name="Employment" optype="categorical" dataType="string">
+      <Value value="Private"/>
+      <Value value="Consultant"/>
+      <Value value="SelfEmp"/>
+      <Value value="PSLocal"/>
+      <Value value="PSState"/>
+      <Value value="PSFederal"/>
+      <Value value="Volunteer"/>
+    </DataField>
+    <DataField name="Education" optype="categorical" dataType="string">
+      <Value value="College"/>
+      <Value value="Associate"/>
+      <Value value="HSgrad"/>
+      <Value value="Bachelor"/>
+      <Value value="Yr12"/>
+      <Value value="Vocational"/>
+      <Value value="Master"/>
+      <Value value="Yr11"/>
+      <Value value="Yr10"/>
+      <Value value="Doctorate"/>
+      <Value value="Yr9"/>
+      <Value value="Yr5t6"/>
+      <Value value="Professional"/>
+      <Value value="Yr7t8"/>
+      <Value value="Preschool"/>
+      <Value value="Yr1t4"/>
+    </DataField>
+    <DataField name="Marital" optype="categorical" dataType="string">
+      <Value value="Unmarried"/>
+      <Value value="Absent"/>
+      <Value value="Divorced"/>
+      <Value value="Married"/>
+      <Value value="Widowed"/>
+      <Value value="Married-spouse-absent"/>
+    </DataField>
+    <DataField name="Occupation" optype="categorical" dataType="string">
+      <Value value="Service"/>
+      <Value value="Transport"/>
+      <Value value="Clerical"/>
+      <Value value="Repair"/>
+      <Value value="Executive"/>
+      <Value value="Machinist"/>
+      <Value value="Sales"/>
+      <Value value="Professional"/>
+      <Value value="Support"/>
+      <Value value="Cleaner"/>
+      <Value value="Farming"/>
+      <Value value="Protective"/>
+      <Value value="Home"/>
+      <Value value="Military"/>
+    </DataField>
+    <DataField name="Income" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="609.72" rightMargin="481259.5"/>
+    </DataField>
+    <DataField name="Gender" optype="categorical" dataType="string">
+      <Value value="Female"/>
+      <Value value="Male"/>
+    </DataField>
+    <DataField name="Deductions" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="0.0" rightMargin="2824.0"/>
+    </DataField>
+    <DataField name="Hours" optype="continuous" dataType="integer">
+      <Interval closure="closedClosed" leftMargin="1.0" rightMargin="99.0"/>
+    </DataField>
+    <DataField name="Adjusted" optype="categorical" dataType="string">
+      <Value value="0"/>
+      <Value value="1"/>
+    </DataField>
+  </DataDictionary>
+  <RuleSetModel functionName="classification" algorithmName="RuleSet">
+    <MiningSchema>
+      <MiningField name="Age" invalidValueTreatment="asIs"/>
+      <MiningField name="Employment" invalidValueTreatment="asIs"/>
+      <MiningField name="Education" invalidValueTreatment="asIs"/>
+      <MiningField name="Marital" invalidValueTreatment="asIs"/>
+      <MiningField name="Occupation" invalidValueTreatment="asIs"/>
+      <MiningField name="Income" invalidValueTreatment="asIs"/>
+      <MiningField name="Gender" invalidValueTreatment="asIs"/>
+      <MiningField name="Deductions" invalidValueTreatment="asIs"/>
+      <MiningField name="Hours" invalidValueTreatment="asIs"/>
+      <MiningField name="Adjusted" invalidValueTreatment="asIs" usageType="target"/>
+    </MiningSchema>
+    <RuleSet>
+      <RuleSelectionMethod criterion="firstHit"/>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Marital" value="Unmarried"/>
+          <True/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Marital" value="Absent"/>
+          <True/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="College"/>
+          <SimplePredicate operator="equal" field="Marital" value="Divorced"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Associate"/>
+          <SimplePredicate operator="equal" field="Marital" value="Divorced"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Divorced"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Bachelor"/>
+          <SimplePredicate operator="equal" field="Marital" value="Divorced"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Vocational"/>
+          <SimplePredicate operator="equal" field="Marital" value="Divorced"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Master"/>
+          <SimplePredicate operator="equal" field="Marital" value="Divorced"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Yr11"/>
+          <SimplePredicate operator="equal" field="Marital" value="Divorced"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Yr10"/>
+          <SimplePredicate operator="equal" field="Marital" value="Divorced"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Doctorate"/>
+          <SimplePredicate operator="equal" field="Marital" value="Divorced"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Yr9"/>
+          <SimplePredicate operator="equal" field="Marital" value="Divorced"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Professional"/>
+          <SimplePredicate operator="equal" field="Marital" value="Divorced"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Yr7t8"/>
+          <SimplePredicate operator="equal" field="Marital" value="Divorced"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Service"/>
+          <SimplePredicate operator="equal" field="Education" value="College"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Transport"/>
+          <SimplePredicate operator="equal" field="Education" value="College"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Clerical"/>
+          <SimplePredicate operator="equal" field="Education" value="College"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Repair"/>
+          <SimplePredicate operator="equal" field="Education" value="College"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Executive"/>
+          <SimplePredicate operator="equal" field="Education" value="College"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Machinist"/>
+          <SimplePredicate operator="equal" field="Education" value="College"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Sales"/>
+          <SimplePredicate operator="equal" field="Education" value="College"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Professional"/>
+          <SimplePredicate operator="equal" field="Education" value="College"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Support"/>
+          <SimplePredicate operator="equal" field="Education" value="College"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Cleaner"/>
+          <SimplePredicate operator="equal" field="Education" value="College"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Protective"/>
+          <SimplePredicate operator="equal" field="Education" value="College"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Associate"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Service"/>
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Transport"/>
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Clerical"/>
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="lessOrEqual" field="Income" value="43812.33"/>
+          <SimplePredicate operator="equal" field="Occupation" value="Repair"/>
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="greaterThan" field="Income" value="43812.33"/>
+          <SimplePredicate operator="equal" field="Occupation" value="Repair"/>
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="lessOrEqual" field="Income" value="34287.57"/>
+          <SimplePredicate operator="equal" field="Occupation" value="Executive"/>
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="greaterThan" field="Income" value="34287.57"/>
+          <SimplePredicate operator="equal" field="Occupation" value="Executive"/>
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Machinist"/>
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Sales"/>
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Professional"/>
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Support"/>
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Cleaner"/>
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Farming"/>
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Protective"/>
+          <SimplePredicate operator="equal" field="Education" value="HSgrad"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Service"/>
+          <SimplePredicate operator="equal" field="Education" value="Bachelor"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Transport"/>
+          <SimplePredicate operator="equal" field="Education" value="Bachelor"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Clerical"/>
+          <SimplePredicate operator="equal" field="Education" value="Bachelor"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Repair"/>
+          <SimplePredicate operator="equal" field="Education" value="Bachelor"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Executive"/>
+          <SimplePredicate operator="equal" field="Education" value="Bachelor"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Machinist"/>
+          <SimplePredicate operator="equal" field="Education" value="Bachelor"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Sales"/>
+          <SimplePredicate operator="equal" field="Education" value="Bachelor"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Professional"/>
+          <SimplePredicate operator="equal" field="Education" value="Bachelor"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Support"/>
+          <SimplePredicate operator="equal" field="Education" value="Bachelor"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Cleaner"/>
+          <SimplePredicate operator="equal" field="Education" value="Bachelor"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Farming"/>
+          <SimplePredicate operator="equal" field="Education" value="Bachelor"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Occupation" value="Protective"/>
+          <SimplePredicate operator="equal" field="Education" value="Bachelor"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Yr12"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Vocational"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Master"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Yr11"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Yr10"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Doctorate"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Yr9"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Yr5t6"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="1">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Professional"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Yr7t8"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Preschool"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Education" value="Yr1t4"/>
+          <SimplePredicate operator="equal" field="Marital" value="Married"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Marital" value="Widowed"/>
+          <True/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="0">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="equal" field="Marital" value="Married-spouse-absent"/>
+          <True/>
+        </CompoundPredicate>
+      </SimpleRule>
+    </RuleSet>
+  </RuleSetModel>
+</PMML>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2">
   <Header copyright="vfed">
-    <Application name="KNIME" version="3.3.2"/>
+    <Application name="KNIME" version="3.5.1"/>
   </Header>
   <DataDictionary numberOfFields="5">
     <DataField name="Sepal_Length" optype="continuous" dataType="double">
@@ -56,16 +56,16 @@
       <PPCell value="1" predictorName="Petal_Width" parameterName="p4"/>
     </PPMatrix>
     <ParamMatrix>
-      <PCell targetCategory="setosa" parameterName="p0" beta="7.430331542382543" df="1"/>
-      <PCell targetCategory="versicolor" parameterName="p0" beta="42.63780381306037" df="1"/>
-      <PCell targetCategory="setosa" parameterName="p1" beta="21.990743877775962" df="1"/>
-      <PCell targetCategory="versicolor" parameterName="p1" beta="2.465220195186241" df="1"/>
-      <PCell targetCategory="setosa" parameterName="p2" beta="13.752956741758041" df="1"/>
-      <PCell targetCategory="versicolor" parameterName="p2" beta="6.680887014081854" df="1"/>
-      <PCell targetCategory="setosa" parameterName="p3" beta="-36.651960636191134" df="1"/>
-      <PCell targetCategory="versicolor" parameterName="p3" beta="-9.429385153932007" df="1"/>
-      <PCell targetCategory="setosa" parameterName="p4" beta="-43.10172410199148" df="1"/>
-      <PCell targetCategory="versicolor" parameterName="p4" beta="-18.286136887862256" df="1"/>
+      <PCell targetCategory="setosa" parameterName="p0" beta="8.733611762326483" df="1"/>
+      <PCell targetCategory="versicolor" parameterName="p0" beta="42.637799557489046" df="1"/>
+      <PCell targetCategory="setosa" parameterName="p1" beta="19.51606692623389" df="1"/>
+      <PCell targetCategory="versicolor" parameterName="p1" beta="2.465220896482663" df="1"/>
+      <PCell targetCategory="setosa" parameterName="p2" beta="23.07937360390957" df="1"/>
+      <PCell targetCategory="versicolor" parameterName="p2" beta="6.680887337886705" df="1"/>
+      <PCell targetCategory="setosa" parameterName="p3" beta="-46.92007920929987" df="1"/>
+      <PCell targetCategory="versicolor" parameterName="p3" beta="-9.429386398275563" df="1"/>
+      <PCell targetCategory="setosa" parameterName="p4" beta="-28.388670863161323" df="1"/>
+      <PCell targetCategory="versicolor" parameterName="p4" beta="-18.28613360437873" df="1"/>
     </ParamMatrix>
   </GeneralRegressionModel>
 </PMML>

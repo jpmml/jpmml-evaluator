@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PMML version="4.2" xmlns="http://www.dmg.org/PMML-4_2">
+  <Header copyright="vfed">
+    <Application name="KNIME" version="3.5.1"/>
+  </Header>
+  <DataDictionary numberOfFields="5">
+    <DataField name="Sepal_Length" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="4.3" rightMargin="7.9"/>
+    </DataField>
+    <DataField name="Sepal_Width" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="2.0" rightMargin="4.4"/>
+    </DataField>
+    <DataField name="Petal_Length" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="1.0" rightMargin="6.9"/>
+    </DataField>
+    <DataField name="Petal_Width" optype="continuous" dataType="double">
+      <Interval closure="closedClosed" leftMargin="0.1" rightMargin="2.5"/>
+    </DataField>
+    <DataField name="Species" optype="categorical" dataType="string">
+      <Value value="setosa"/>
+      <Value value="versicolor"/>
+      <Value value="virginica"/>
+    </DataField>
+  </DataDictionary>
+  <RuleSetModel functionName="classification" algorithmName="RuleSet">
+    <MiningSchema>
+      <MiningField name="Sepal_Length" invalidValueTreatment="asIs"/>
+      <MiningField name="Sepal_Width" invalidValueTreatment="asIs"/>
+      <MiningField name="Petal_Length" invalidValueTreatment="asIs"/>
+      <MiningField name="Petal_Width" invalidValueTreatment="asIs"/>
+      <MiningField name="Species" invalidValueTreatment="asIs" usageType="target"/>
+    </MiningSchema>
+    <RuleSet>
+      <RuleSelectionMethod criterion="firstHit"/>
+      <SimpleRule score="setosa">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="lessOrEqual" field="Petal_Width" value="0.8"/>
+          <True/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="versicolor">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="lessOrEqual" field="Petal_Length" value="4.95"/>
+          <SimplePredicate operator="lessOrEqual" field="Petal_Width" value="1.75"/>
+          <SimplePredicate operator="greaterThan" field="Petal_Width" value="0.8"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="virginica">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="lessOrEqual" field="Petal_Width" value="1.55"/>
+          <SimplePredicate operator="greaterThan" field="Petal_Length" value="4.95"/>
+          <SimplePredicate operator="lessOrEqual" field="Petal_Width" value="1.75"/>
+          <SimplePredicate operator="greaterThan" field="Petal_Width" value="0.8"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="versicolor">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="greaterThan" field="Petal_Width" value="1.55"/>
+          <SimplePredicate operator="greaterThan" field="Petal_Length" value="4.95"/>
+          <SimplePredicate operator="lessOrEqual" field="Petal_Width" value="1.75"/>
+          <SimplePredicate operator="greaterThan" field="Petal_Width" value="0.8"/>
+        </CompoundPredicate>
+      </SimpleRule>
+      <SimpleRule score="virginica">
+        <CompoundPredicate booleanOperator="and">
+          <SimplePredicate operator="greaterThan" field="Petal_Width" value="1.75"/>
+          <SimplePredicate operator="greaterThan" field="Petal_Width" value="0.8"/>
+        </CompoundPredicate>
+      </SimpleRule>
+    </RuleSet>
+  </RuleSetModel>
+</PMML>

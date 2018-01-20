@@ -54,6 +54,11 @@ public class ClassificationTest extends IntegrationTest {
 	}
 
 	@Test
+	public void evaluateRuleSetIris() throws Exception {
+		evaluate("RuleSet", "Iris");
+	}
+
+	@Test
 	public void evaluateSupportVectorMachineIris() throws Exception {
 		evaluate("SupportVectorMachine", "Iris");
 	}
@@ -71,5 +76,10 @@ public class ClassificationTest extends IntegrationTest {
 	@Test
 	public void evaluateGeneralRegressionAudit() throws Exception {
 		evaluate("GeneralRegression", "Audit");
+	}
+
+	@Test
+	public void evaluateRuleSetAudit() throws Exception {
+		evaluate("RuleSet", "Audit");
 	}
 }
