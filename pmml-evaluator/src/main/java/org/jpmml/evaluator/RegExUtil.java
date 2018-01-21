@@ -39,10 +39,10 @@ public class RegExUtil {
 		try {
 			return Pattern.compile(regex, flags);
 		} catch(PatternSyntaxException pse){
-			Throwable throwable = (context != null ? new InvalidFeatureException(context) : new InvalidFeatureException())
-				.initCause(pse);
+			String message = "Regex pattern could not be compiled";
 
-			throw (PMMLException)throwable;
+			throw (context != null ? new EvaluationException(message, context) : new EvaluationException(message))
+				.initCause(pse);
 		}
 	}
 }

@@ -73,7 +73,7 @@ public class DiscretizationUtil {
 	public FieldValue mapValue(MapValues mapValues, Map<String, FieldValue> values){
 		String outputColumn = mapValues.getOutputColumn();
 		if(outputColumn == null){
-			throw new InvalidFeatureException(mapValues);
+			throw new MissingAttributeException(mapValues, PMMLAttributes.MAPVALUES_OUTPUTCOLUMN);
 		}
 
 		DataType dataType = mapValues.getDataType();
@@ -86,7 +86,7 @@ public class DiscretizationUtil {
 				String result = row.get(outputColumn);
 
 				if(result == null){
-					throw new InvalidFeatureException(inlineTable);
+					throw new InvalidElementException(inlineTable);
 				}
 
 				return FieldValueUtil.create(dataType, null, result);
@@ -103,14 +103,18 @@ public class DiscretizationUtil {
 
 		// "The leftMargin and rightMargin attributes are optional, but at least one value must be defined"
 		if(leftMargin == null && rightMargin == null){
-			throw new InvalidFeatureException(interval);
+			throw new MissingAttributeException(interval, PMMLAttributes.INTERVAL_LEFTMARGIN);
 		} // End if
 
 		if(leftMargin != null && rightMargin != null && (leftMargin).compareTo(rightMargin) > 0){
-			throw new InvalidFeatureException(interval);
+			throw new InvalidElementException(interval);
 		}
 
 		Interval.Closure closure = interval.getClosure();
+		if(closure == null){
+			throw new MissingAttributeException(interval, PMMLAttributes.INTERVAL_CLOSURE);
+		}
+
 		switch(closure){
 			case OPEN_OPEN:
 				{
@@ -161,7 +165,7 @@ public class DiscretizationUtil {
 					return Range.closed(leftMargin, rightMargin);
 				}
 			default:
-				throw new UnsupportedFeatureException(interval, closure);
+				throw new UnsupportedAttributeException(interval, closure);
 		}
 	}
 
@@ -178,7 +182,7 @@ public class DiscretizationUtil {
 
 			RowFilter rowFilter = rowFilters.get(key);
 			if(rowFilter == null){
-				throw new InvalidFeatureException(inlineTable);
+				throw new InvalidElementException(inlineTable);
 			}
 
 			Map<FieldValue, Set<Integer>> columnRowMap = rowFilter.getValueMapping(value.getDataType(), value.getOpType());
@@ -210,7 +214,7 @@ public class DiscretizationUtil {
 
 			// "It is an error if the table entries used for matching are not unique"
 			if(rows.size() != 1){
-				throw new EvaluationException();
+				throw new InvalidElementException(inlineTable);
 			}
 
 			Integer row = Iterables.getOnlyElement(rows);
@@ -228,13 +232,16 @@ public class DiscretizationUtil {
 		List<DiscretizeBin> discretizeBins = discretize.getDiscretizeBins();
 		for(DiscretizeBin discretizeBin : discretizeBins){
 			Interval interval = discretizeBin.getInterval();
-			String binValue = discretizeBin.getBinValue();
-
-			if(interval == null || binValue == null){
-				throw new InvalidFeatureException(discretizeBin);
+			if(interval == null){
+				throw new MissingAttributeException(discretizeBin, PMMLAttributes.DISCRETIZEBIN_INTERVAL);
 			}
 
 			Range<Double> range = toRange(interval);
+
+			String binValue = discretizeBin.getBinValue();
+			if(binValue == null){
+				throw new MissingAttributeException(discretizeBin, PMMLAttributes.DISCRETIZEBIN_BINVALUE);
+			}
 
 			result.put(range, binValue);
 		}

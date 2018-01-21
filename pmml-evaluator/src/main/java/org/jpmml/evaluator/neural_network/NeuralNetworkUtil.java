@@ -21,7 +21,6 @@ package org.jpmml.evaluator.neural_network;
 import java.util.Collection;
 
 import org.dmg.pmml.neural_network.NeuralNetwork;
-import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueUtil;
 
@@ -36,7 +35,7 @@ public class NeuralNetworkUtil {
 		switch(activationFunction){
 			case THRESHOLD:
 				if(threshold == null){
-					throw new EvaluationException();
+					throw new IllegalArgumentException();
 				}
 				return value.threshold(threshold);
 			case LOGISTIC:
@@ -64,7 +63,7 @@ public class NeuralNetworkUtil {
 			case RECTIFIER:
 				return value.relu();
 			default:
-				throw new EvaluationException();
+				throw new IllegalArgumentException();
 		}
 	}
 
@@ -81,7 +80,7 @@ public class NeuralNetworkUtil {
 				ValueUtil.normalizeSoftMax(values);
 				break;
 			default:
-				throw new EvaluationException();
+				throw new IllegalArgumentException();
 		}
 
 		return values;

@@ -21,10 +21,6 @@ package org.jpmml.evaluator;
 import java.lang.reflect.Field;
 
 import org.dmg.pmml.DataField;
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.FieldName;
-import org.dmg.pmml.OpType;
-import org.dmg.pmml.Value;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -33,20 +29,21 @@ public class XPathUtilTest {
 
 	@Test
 	public void formatXPath() throws Exception {
-		DataField dataField = new DataField(FieldName.create("x"), OpType.CATEGORICAL, DataType.DOUBLE)
-			.addValues(new Value("0"), new Value("1"));
+		Class<? extends DataField> dataFieldClazz = DataField.class;
 
-		assertEquals("DataField", XPathUtil.formatXPath(dataField));
+		assertEquals("DataField", XPathUtil.formatElement(dataFieldClazz));
 
-		Field valuesField = DataField.class.getDeclaredField("values");
+		Field nameField = dataFieldClazz.getDeclaredField("name");
 
-		assertEquals("DataField/Value", XPathUtil.formatXPath(dataField, valuesField));
+		assertEquals("DataField@name", XPathUtil.formatElementOrAttribute(nameField));
 
-		Field isCyclicField = DataField.class.getDeclaredField("cyclic");
+		Field valuesField = dataFieldClazz.getDeclaredField("values");
 
-		assertEquals("DataField@isCyclic", XPathUtil.formatXPath(dataField, isCyclicField));
+		assertEquals("DataField/Value", XPathUtil.formatElementOrAttribute(valuesField));
 
-		assertEquals("DataField@isCyclic", XPathUtil.formatXPath(dataField, isCyclicField, null));
-		assertEquals("DataField@isCyclic=0", XPathUtil.formatXPath(dataField, isCyclicField, "0"));
+		Field isCyclicField = dataFieldClazz.getDeclaredField("cyclic");
+
+		assertEquals("DataField@isCyclic", XPathUtil.formatAttribute(isCyclicField, null));
+		assertEquals("DataField@isCyclic=0", XPathUtil.formatAttribute(isCyclicField, "0"));
 	}
 }

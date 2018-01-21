@@ -45,7 +45,7 @@ public class DistributionUtil {
 			return probability((PoissonDistribution)distribution, x);
 		}
 
-		throw new UnsupportedFeatureException(distribution);
+		throw new UnsupportedElementException(distribution);
 	}
 
 	static

@@ -28,4 +28,7 @@ public interface FieldValues {
 
 	public static final FieldValue CATEGORICAL_DOUBLE_ZERO = FieldValueUtil.create(DataType.DOUBLE, OpType.CATEGORICAL, Numbers.DOUBLE_ZERO);
 	public static final FieldValue CATEGORICAL_DOUBLE_ONE = FieldValueUtil.create(DataType.DOUBLE, OpType.CATEGORICAL, Numbers.DOUBLE_ONE);
+
+	public static final FieldValue CATEGORICAL_BOOLEAN_TRUE = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
+	public static final FieldValue CATEGORICAL_BOOLEAN_FALSE = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
 }

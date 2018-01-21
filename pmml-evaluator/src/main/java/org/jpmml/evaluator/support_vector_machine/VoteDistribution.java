@@ -71,7 +71,7 @@ public class VoteDistribution<V extends Number> extends Classification<V> implem
 		ValueMap<String, V> values = getValues();
 
 		if(this.sum == null){
-			throw new EvaluationException();
+			throw new EvaluationException("Vote distribution result has not been computed");
 		}
 
 		Value<V> probability = values.get(category);

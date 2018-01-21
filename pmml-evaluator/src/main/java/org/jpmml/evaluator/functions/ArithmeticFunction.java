@@ -24,8 +24,8 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.InvalidResultException;
 import org.jpmml.evaluator.TypeUtil;
+import org.jpmml.evaluator.UndefinedResultException;
 
 abstract
 public class ArithmeticFunction extends AbstractFunction {
@@ -56,7 +56,8 @@ public class ArithmeticFunction extends AbstractFunction {
 		try {
 			result = evaluate(left.asNumber(), right.asNumber());
 		} catch(ArithmeticException ae){
-			throw new InvalidResultException(null);
+			throw new UndefinedResultException()
+				.initCause(ae);
 		}
 
 		return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);

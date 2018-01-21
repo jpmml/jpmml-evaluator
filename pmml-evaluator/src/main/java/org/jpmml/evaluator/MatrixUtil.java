@@ -119,10 +119,10 @@ public class MatrixUtil {
 				}
 				break;
 			default:
-				throw new UnsupportedFeatureException(matrix, kind);
+				throw new UnsupportedAttributeException(matrix, kind);
 		}
 
-		throw new InvalidFeatureException(matrix);
+		throw new InvalidElementException(matrix);
 	}
 
 	static
@@ -197,10 +197,10 @@ public class MatrixUtil {
 				}
 				break;
 			default:
-				throw new UnsupportedFeatureException(matrix, kind);
+				throw new UnsupportedAttributeException(matrix, kind);
 		}
 
-		throw new InvalidFeatureException(matrix);
+		throw new InvalidElementException(matrix);
 	}
 
 	/**
@@ -250,10 +250,10 @@ public class MatrixUtil {
 				}
 				break;
 			default:
-				throw new UnsupportedFeatureException(matrix, kind);
+				throw new UnsupportedAttributeException(matrix, kind);
 		}
 
-		throw new InvalidFeatureException(matrix);
+		throw new InvalidElementException(matrix);
 	}
 
 	private static final Comparator<MatCell> rowComparator = new Comparator<MatCell>(){

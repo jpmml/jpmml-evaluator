@@ -25,9 +25,7 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.DefineFunction;
-import org.dmg.pmml.Expression;
 import org.dmg.pmml.ParameterField;
-import org.jpmml.model.ReflectionUtil;
 
 public class FunctionUtil {
 
@@ -38,7 +36,7 @@ public class FunctionUtil {
 	public FieldValue evaluate(Apply apply, List<FieldValue> values, EvaluationContext context){
 		String function = apply.getFunction();
 		if(function == null){
-			throw new InvalidFeatureException(apply);
+			throw new MissingAttributeException(apply, PMMLAttributes.APPLY_FUNCTION);
 		}
 
 		Function builtInFunction = getFunction(function);
@@ -56,7 +54,7 @@ public class FunctionUtil {
 			return evaluate(defineFunction, values, context);
 		}
 
-		throw new UnsupportedFeatureException(apply, ReflectionUtil.getField(Apply.class, "function"), function);
+		throw new EvaluationException("Function " + PMMLException.formatKey(function) + " is not defined", apply);
 	}
 
 	static
@@ -64,7 +62,7 @@ public class FunctionUtil {
 		List<ParameterField> parameterFields = defineFunction.getParameterFields();
 
 		if(parameterFields.size() != values.size()){
-			throw new EvaluationException();
+			throw new EvaluationException("Function " + PMMLException.formatKey(defineFunction.getName()) + " expects " + parameterFields.size() + " arguments, got " + values.size() + " arguments");
 		}
 
 		DefineFunctionEvaluationContext functionContext = new DefineFunctionEvaluationContext(context);
@@ -77,12 +75,7 @@ public class FunctionUtil {
 			functionContext.declare(parameterField.getName(), value);
 		}
 
-		Expression expression = defineFunction.getExpression();
-		if(expression == null){
-			throw new InvalidFeatureException(defineFunction);
-		}
-
-		FieldValue result = ExpressionUtil.evaluate(expression, functionContext);
+		FieldValue result = ExpressionUtil.evaluateExpressionContainer(defineFunction, functionContext);
 
 		return FieldValueUtil.refine(defineFunction.getDataType(), defineFunction.getOpType(), result);
 	}

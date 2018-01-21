@@ -41,6 +41,16 @@ public class MeasureUtil {
 	}
 
 	static
+	public Measure ensureMeasure(ComparisonMeasure comparisonMeasure){
+		Measure measure = comparisonMeasure.getMeasure();
+		if(measure == null){
+			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(comparisonMeasure.getClass()) + "/<Measure>"), comparisonMeasure);
+		}
+
+		return measure;
+	}
+
+	static
 	public boolean isSimilarity(Measure measure){
 		return (measure instanceof SimpleMatching || measure instanceof Jaccard || measure instanceof Tanimoto || measure instanceof BinarySimilarity);
 	}
@@ -104,11 +114,11 @@ public class MeasureUtil {
 		} else
 
 		{
-			throw new UnsupportedFeatureException(measure);
+			throw new UnsupportedElementException(measure);
 		} // End if
 
 		if(denominator.doubleValue() == 0d){
-			throw new InvalidResultException(null);
+			throw new UndefinedResultException();
 		}
 
 		return numerator.divide(denominator);
@@ -130,7 +140,7 @@ public class MeasureUtil {
 			} else
 
 			{
-				throw new EvaluationException();
+				throw new EvaluationException("Expected " + PMMLException.formatValue(FieldValues.CONTINUOUS_DOUBLE_ZERO) + " or " + PMMLException.formatValue(FieldValues.CONTINUOUS_DOUBLE_ONE) + ", got " + PMMLException.formatValue(value));
 			}
 		}
 
@@ -167,14 +177,14 @@ public class MeasureUtil {
 
 			double p = minkowski.getPParameter();
 			if(p < 0d){
-				throw new InvalidFeatureException(minkowski);
+				throw new InvalidAttributeException(minkowski, PMMLAttributes.MINKOWSKI_PPARAMETER, p);
 			}
 
 			innerPower = outerPower = p;
 		} else
 
 		{
-			throw new UnsupportedFeatureException(measure);
+			throw new UnsupportedElementException(measure);
 		}
 
 		Vector<V> distances = valueFactory.newVector(0);
@@ -219,7 +229,7 @@ public class MeasureUtil {
 		} else
 
 		{
-			throw new UnsupportedFeatureException(measure);
+			throw new UnsupportedElementException(measure);
 		}
 	}
 
@@ -238,9 +248,9 @@ public class MeasureUtil {
 					break;
 				case GAUSS_SIM:
 				case TABLE:
-					throw new InvalidFeatureException(comparisonMeasure);
+					throw new InvalidAttributeException(comparisonMeasure, compareFunction);
 				default:
-					throw new UnsupportedFeatureException(comparisonMeasure, compareFunction);
+					throw new UnsupportedAttributeException(comparisonMeasure, compareFunction);
 			}
 		}
 
@@ -258,7 +268,7 @@ public class MeasureUtil {
 				{
 					Double similarityScale = comparisonField.getSimilarityScale();
 					if(similarityScale == null){
-						throw new InvalidFeatureException(comparisonField);
+						throw new InvalidElementException(comparisonField);
 					}
 
 					distance = valueFactory.newValue((value.asNumber()).doubleValue()).subtract((referenceValue.asNumber()).doubleValue());
@@ -281,9 +291,9 @@ public class MeasureUtil {
 				}
 				break;
 			case TABLE:
-				throw new UnsupportedFeatureException(comparisonField, compareFunction);
+				throw new UnsupportedAttributeException(comparisonField, compareFunction);
 			default:
-				throw new UnsupportedFeatureException(comparisonField, compareFunction);
+				throw new UnsupportedAttributeException(comparisonField, compareFunction);
 		}
 
 		if(power != 1d){

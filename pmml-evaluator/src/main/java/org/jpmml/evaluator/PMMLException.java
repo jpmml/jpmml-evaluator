@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMMLObject;
 import org.xml.sax.Locator;
 
@@ -27,18 +28,8 @@ public class PMMLException extends RuntimeException {
 	private PMMLObject context = null;
 
 
-	public PMMLException(){
-		super();
-	}
-
 	public PMMLException(String message){
 		super(message);
-	}
-
-	public PMMLException(PMMLObject context){
-		super();
-
-		setContext(context);
 	}
 
 	public PMMLException(String message, PMMLObject context){
@@ -47,12 +38,20 @@ public class PMMLException extends RuntimeException {
 		setContext(context);
 	}
 
-	public void ensureContext(PMMLObject parentContext){
+	@Override
+	synchronized
+	public PMMLException initCause(Throwable throwable){
+		return (PMMLException)super.initCause(throwable);
+	}
+
+	public PMMLException ensureContext(PMMLObject parentContext){
 		PMMLObject context = getContext();
 
 		if(context == null){
 			setContext(parentContext);
 		}
+
+		return this;
 	}
 
 	@Override
@@ -72,7 +71,7 @@ public class PMMLException extends RuntimeException {
 			} // End if
 
 			if(lineNumber != -1){
-				sb.append(" ").append("(at or around line ").append(lineNumber).append(")");
+				sb.append(" ").append("(at or around line ").append(lineNumber).append(" of the PMML document)");
 			}
 		}
 
@@ -92,5 +91,41 @@ public class PMMLException extends RuntimeException {
 
 	private void setContext(PMMLObject context){
 		this.context = context;
+	}
+
+	static
+	public String formatKey(Object object){
+
+		if(object instanceof FieldName){
+			FieldName name = (FieldName)object;
+
+			object = name.getValue();
+		} // End if
+
+		return format(object);
+	}
+
+	static
+	public String formatValue(Object object){
+
+		if(object instanceof FieldValue){
+			FieldValue value = (FieldValue)object;
+
+			object = FieldValueUtil.getValue(value);
+		}
+
+		return format(object);
+	}
+
+	static
+	public String format(Object object){
+
+		if(object instanceof String){
+			String string = (String)object;
+
+			return "\"" + string + "\"";
+		}
+
+		return (object != null ? String.valueOf(object) : null);
 	}
 }

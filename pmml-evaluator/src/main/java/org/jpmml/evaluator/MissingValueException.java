@@ -29,10 +29,15 @@ import org.dmg.pmml.PMMLObject;
 public class MissingValueException extends EvaluationException {
 
 	public MissingValueException(FieldName name){
-		super(name.getValue());
+		super(formatMessage(name));
 	}
 
 	public MissingValueException(FieldName name, PMMLObject context){
-		super(name.getValue(), context);
+		super(formatMessage(name), context);
+	}
+
+	static
+	private String formatMessage(FieldName name){
+		return "The value for field " + formatKey(name) + " is not defined";
 	}
 }

@@ -33,7 +33,6 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.Predicate;
 import org.dmg.pmml.rule_set.CompoundRule;
 import org.dmg.pmml.rule_set.Rule;
 import org.dmg.pmml.rule_set.RuleSelectionMethod;
@@ -45,15 +44,19 @@ import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.HasEntityRegistry;
-import org.jpmml.evaluator.InvalidFeatureException;
-import org.jpmml.evaluator.InvalidResultException;
+import org.jpmml.evaluator.InvalidAttributeException;
+import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
+import org.jpmml.evaluator.PMMLAttributes;
+import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.UnsupportedAttributeException;
+import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
@@ -73,11 +76,11 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 		RuleSet ruleSet = ruleSetModel.getRuleSet();
 		if(ruleSet == null){
-			throw new InvalidFeatureException(ruleSetModel);
+			throw new MissingElementException(ruleSetModel, PMMLElements.RULESETMODEL_RULESET);
 		} // End if
 
 		if(!ruleSet.hasRuleSelectionMethods()){
-			throw new InvalidFeatureException(ruleSet);
+			throw new MissingElementException(ruleSet, PMMLElements.RULESET_RULESELECTIONMETHODS);
 		}
 	}
 
@@ -98,10 +101,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		RuleSetModel ruleSetModel = getModel();
-		if(!ruleSetModel.isScorable()){
-			throw new InvalidResultException(ruleSetModel);
-		}
+		RuleSetModel ruleSetModel = ensureScorableModel();
 
 		ValueFactory<?> valueFactory;
 
@@ -112,7 +112,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 				valueFactory = getValueFactory();
 				break;
 			default:
-				throw new UnsupportedFeatureException(ruleSetModel, mathContext);
+				throw new UnsupportedAttributeException(ruleSetModel, mathContext);
 		}
 
 		Map<FieldName, ? extends Classification<?>> predictions;
@@ -122,8 +122,15 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 			case CLASSIFICATION:
 				predictions = evaluateClassification(valueFactory, context);
 				break;
+			case ASSOCIATION_RULES:
+			case SEQUENCES:
+			case REGRESSION:
+			case CLUSTERING:
+			case TIME_SERIES:
+			case MIXED:
+				throw new InvalidAttributeException(ruleSetModel, miningFunction);
 			default:
-				throw new UnsupportedFeatureException(ruleSetModel, miningFunction);
+				throw new UnsupportedAttributeException(ruleSetModel, miningFunction);
 		}
 
 		return OutputUtil.evaluate(predictions, context);
@@ -134,12 +141,9 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 		RuleSet ruleSet = ruleSetModel.getRuleSet();
 
-		List<RuleSelectionMethod> ruleSelectionMethods = ruleSet.getRuleSelectionMethods();
-		if(ruleSelectionMethods.size() < 1){
-			throw new InvalidFeatureException(ruleSet);
-		}
-
 		TargetField targetField = getTargetField();
+
+		List<RuleSelectionMethod> ruleSelectionMethods = ruleSet.getRuleSelectionMethods();
 
 		// "If more than one method is included, then the first method is used as the default method for scoring"
 		RuleSelectionMethod ruleSelectionMethod = ruleSelectionMethods.get(0);
@@ -156,10 +160,13 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		// Return the default prediction when no rules in the ruleset fire
 		if(firedRules.size() == 0){
 			String defaultScore = ruleSet.getDefaultScore();
-			Double defaultConfidence = ruleSet.getDefaultConfidence();
+			if(defaultScore == null){
+				throw new MissingAttributeException(ruleSet, PMMLAttributes.RULESET_DEFAULTSCORE);
+			}
 
-			if(defaultScore == null || defaultConfidence == null){
-				throw new InvalidFeatureException(ruleSet);
+			Double defaultConfidence = ruleSet.getDefaultConfidence();
+			if(defaultConfidence == null){
+				throw new MissingAttributeException(ruleSet, PMMLAttributes.RULESET_DEFAULTCONFIDENCE);
 			}
 
 			Value<V> value = valueFactory.newValue(defaultConfidence);
@@ -170,6 +177,9 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		}
 
 		RuleSelectionMethod.Criterion criterion = ruleSelectionMethod.getCriterion();
+		if(criterion == null){
+			throw new MissingAttributeException(ruleSelectionMethod, PMMLAttributes.RULESELECTIONMETHOD_CRITERION);
+		}
 
 		Set<String> keys = firedRules.keySet();
 		for(String key : keys){
@@ -227,7 +237,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 					}
 					break;
 				default:
-					throw new UnsupportedFeatureException(ruleSelectionMethod, criterion);
+					throw new UnsupportedAttributeException(ruleSelectionMethod, criterion);
 			}
 		}
 
@@ -235,19 +245,23 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 	}
 
 	static
-	private void evaluateRule(Rule rule, ListMultimap<String, SimpleRule> firedRules, EvaluationContext context){
-		Predicate predicate = rule.getPredicate();
-		if(predicate == null){
-			throw new InvalidFeatureException(rule);
-		}
+	private void evaluateRules(List<Rule> rules, ListMultimap<String, SimpleRule> firedRules, EvaluationContext context){
 
-		Boolean status = PredicateUtil.evaluate(predicate, context);
-		if(status == null || !status.booleanValue()){
-			return;
-		} // End if
+		for(Rule rule : rules){
+			evaluateRule(rule, firedRules, context);
+		}
+	}
+
+	static
+	private void evaluateRule(Rule rule, ListMultimap<String, SimpleRule> firedRules, EvaluationContext context){
 
 		if(rule instanceof SimpleRule){
 			SimpleRule simpleRule = (SimpleRule)rule;
+
+			Boolean status = PredicateUtil.evaluatePredicateContainer(simpleRule, context);
+			if(status == null || !status.booleanValue()){
+				return;
+			}
 
 			firedRules.put(simpleRule.getScore(), simpleRule);
 		} else
@@ -255,19 +269,16 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		if(rule instanceof CompoundRule){
 			CompoundRule compoundRule = (CompoundRule)rule;
 
+			Boolean status = PredicateUtil.evaluatePredicateContainer(compoundRule, context);
+			if(status == null || !status.booleanValue()){
+				return;
+			}
+
 			evaluateRules(compoundRule.getRules(), firedRules, context);
 		} else
 
 		{
-			throw new UnsupportedFeatureException(rule);
-		}
-	}
-
-	static
-	private void evaluateRules(List<Rule> rules, ListMultimap<String, SimpleRule> firedRules, EvaluationContext context){
-
-		for(Rule rule : rules){
-			evaluateRule(rule, firedRules, context);
+			throw new UnsupportedElementException(rule);
 		}
 	}
 
@@ -299,7 +310,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 			} else
 
 			{
-				throw new UnsupportedFeatureException(rule);
+				throw new UnsupportedElementException(rule);
 			}
 
 			return builder;

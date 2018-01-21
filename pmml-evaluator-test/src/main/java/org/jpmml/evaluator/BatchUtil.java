@@ -57,7 +57,7 @@ public class BatchUtil {
 		} // End if
 
 		if(input.size() != output.size()){
-			throw new EvaluationException();
+			throw new IllegalArgumentException("Expected the same number of data rows, got " + input.size() + " input data rows and " + output.size() + " expected output data rows");
 		}
 
 		Predicate<FieldName> predicate = Predicates.and(Predicates.not(Predicates.equalTo(Evaluator.DEFAULT_TARGET_NAME)), batch.getPredicate());
@@ -109,7 +109,7 @@ public class BatchUtil {
 			}
 
 			if(duplicateHeaderCells.size() > 0){
-				throw new IllegalArgumentException("Expected unique cell names, but got non-unique cell name(s) " + duplicateHeaderCells);
+				throw new IllegalArgumentException("Expected unique cell names, got non-unique cell name(s) " + duplicateHeaderCells);
 			}
 		}
 
@@ -117,7 +117,7 @@ public class BatchUtil {
 			List<String> bodyRow = table.get(row);
 
 			if(headerRow.size() != bodyRow.size()){
-				throw new IllegalArgumentException("Expected " + headerRow.size() + " cells, but got " + bodyRow.size() + " cells (data record " + (row - 1) + ")");
+				throw new IllegalArgumentException("Expected " + headerRow.size() + " cells, got " + bodyRow.size() + " cells (data record " + (row - 1) + ")");
 			}
 
 			Map<FieldName, String> record = new LinkedHashMap<>();

@@ -47,8 +47,10 @@ import org.dmg.pmml.text.TextModel;
 import org.dmg.pmml.time_series.TimeSeriesModel;
 import org.dmg.pmml.tree.DecisionTree;
 import org.dmg.pmml.tree.TreeModel;
+import org.jpmml.evaluator.PMMLAttributes;
+import org.jpmml.evaluator.UnsupportedAttributeException;
+import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.UnsupportedFeatureException;
-import org.jpmml.model.ReflectionUtil;
 
 /**
  * <p>
@@ -66,7 +68,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 		switch(function){
 			case MULTISET:
-				report(new UnsupportedFeatureException(aggregate, function));
+				report(new UnsupportedAttributeException(aggregate, function));
 				break;
 			default:
 				break;
@@ -87,7 +89,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 			case "stdNormalCDF":
 			case "stdNormalIDF":
 			case "stdNormalPDF":
-				report(new UnsupportedFeatureException(apply, ReflectionUtil.getField(Apply.class, "function"), function));
+				report(new UnsupportedAttributeException(apply, PMMLAttributes.APPLY_FUNCTION, function));
 				break;
 			default:
 				break;
@@ -98,21 +100,21 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 	@Override
 	public VisitorAction visit(BaselineModel baselineModel){
-		report(new UnsupportedFeatureException(baselineModel));
+		report(new UnsupportedElementException(baselineModel));
 
 		return VisitorAction.SKIP;
 	}
 
 	@Override
 	public VisitorAction visit(BayesianNetworkModel bayesianNetworkModel){
-		report(new UnsupportedFeatureException(bayesianNetworkModel));
+		report(new UnsupportedElementException(bayesianNetworkModel));
 
 		return VisitorAction.SKIP;
 	}
 
 	@Override
 	public VisitorAction visit(CenterFields centerFields){
-		report(new UnsupportedFeatureException(centerFields));
+		report(new UnsupportedElementException(centerFields));
 
 		return VisitorAction.SKIP;
 	}
@@ -123,7 +125,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 		switch(modelClass){
 			case DISTRIBUTION_BASED:
-				report(new UnsupportedFeatureException(clusteringModel, modelClass));
+				report(new UnsupportedAttributeException(clusteringModel, modelClass));
 				break;
 			default:
 				break;
@@ -134,21 +136,21 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 	@Override
 	public VisitorAction visit(DecisionTree decisionTree){
-		report(new UnsupportedFeatureException(decisionTree));
+		report(new UnsupportedElementException(decisionTree));
 
 		return VisitorAction.SKIP;
 	}
 
 	@Override
 	public VisitorAction visit(GaussianProcessModel gaussianProcessModel){
-		report(new UnsupportedFeatureException(gaussianProcessModel));
+		report(new UnsupportedElementException(gaussianProcessModel));
 
 		return VisitorAction.SKIP;
 	}
 
 	@Override
 	public VisitorAction visit(Lag lag){
-		report(new UnsupportedFeatureException(lag));
+		report(new UnsupportedElementException(lag));
 
 		return VisitorAction.SKIP;
 	}
@@ -159,7 +161,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 		switch(activationFunction){
 			case RADIAL_BASIS:
-				report(new UnsupportedFeatureException(neuralNetwork, activationFunction));
+				report(new UnsupportedAttributeException(neuralNetwork, activationFunction));
 				break;
 			default:
 				break;
@@ -176,7 +178,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 			switch(activationFunction){
 				case RADIAL_BASIS:
-					report(new UnsupportedFeatureException(neuralLayer, activationFunction));
+					report(new UnsupportedAttributeException(neuralLayer, activationFunction));
 					break;
 				default:
 					break;
@@ -192,7 +194,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 		switch(method){
 			case THERMOMETER:
-				report(new UnsupportedFeatureException(normDiscrete, method));
+				report(new UnsupportedAttributeException(normDiscrete, method));
 				break;
 			default:
 				break;
@@ -207,7 +209,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 		switch(resultFeature){
 			case STANDARD_ERROR:
-				report(new UnsupportedFeatureException(outputField, resultFeature));
+				report(new UnsupportedAttributeException(outputField, resultFeature));
 				break;
 			default:
 				break;
@@ -224,7 +226,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 			Categories categories = predictor.getCategories();
 
 			if(categories == null){
-				report(new UnsupportedFeatureException(predictor));
+				report(new UnsupportedElementException(predictor));
 			}
 		}
 
@@ -233,7 +235,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 	@Override
 	public VisitorAction visit(Regression regression){
-		report(new UnsupportedFeatureException(regression));
+		report(new UnsupportedElementException(regression));
 
 		return VisitorAction.SKIP;
 	}
@@ -243,7 +245,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 		LocalTransformations localTransformations = segmentation.getLocalTransformations();
 
 		if(localTransformations != null){
-			report(new UnsupportedFeatureException(localTransformations));
+			report(new UnsupportedElementException(localTransformations));
 		}
 
 		return super.visit(segmentation);
@@ -251,7 +253,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 	@Override
 	public VisitorAction visit(SequenceModel sequenceModel){
-		report(new UnsupportedFeatureException(sequenceModel));
+		report(new UnsupportedElementException(sequenceModel));
 
 		return VisitorAction.SKIP;
 	}
@@ -260,13 +262,13 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 	public VisitorAction visit(SupportVectorMachineModel supportVectorMachineModel){
 		boolean maxWins = supportVectorMachineModel.isMaxWins();
 		if(maxWins){
-			report(new UnsupportedFeatureException(supportVectorMachineModel, ReflectionUtil.getField(SupportVectorMachineModel.class, "maxWins"), true));
+			report(new UnsupportedAttributeException(supportVectorMachineModel, PMMLAttributes.SUPPORTVECTORMACHINEMODEL_MAXWINS, true));
 		}
 
 		SupportVectorMachineModel.Representation representation = supportVectorMachineModel.getRepresentation();
 		switch(representation){
 			case COEFFICIENTS:
-				report(new UnsupportedFeatureException(supportVectorMachineModel, representation));
+				report(new UnsupportedAttributeException(supportVectorMachineModel, representation));
 				break;
 			default:
 				break;
@@ -277,7 +279,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 	@Override
 	public VisitorAction visit(TableLocator tableLocator){
-		report(new UnsupportedFeatureException(tableLocator));
+		report(new UnsupportedElementException(tableLocator));
 
 		return VisitorAction.SKIP;
 	}
@@ -286,13 +288,13 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 	public VisitorAction visit(TextIndex textIndex){
 		boolean tokenize = textIndex.isTokenize();
 		if(!tokenize){
-			report(new UnsupportedFeatureException(textIndex, ReflectionUtil.getField(TextIndex.class, "tokenize"), false));
+			report(new UnsupportedAttributeException(textIndex, PMMLAttributes.TEXTINDEX_TOKENIZE, false));
 		}
 
 		TextIndex.LocalTermWeights localTermWeights = textIndex.getLocalTermWeights();
 		switch(localTermWeights){
 			case AUGMENTED_NORMALIZED_TERM_FREQUENCY:
-				report(new UnsupportedFeatureException(textIndex, localTermWeights));
+				report(new UnsupportedAttributeException(textIndex, localTermWeights));
 				break;
 			default:
 				break;
@@ -303,14 +305,14 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 
 	@Override
 	public VisitorAction visit(TextModel textModel){
-		report(new UnsupportedFeatureException(textModel));
+		report(new UnsupportedElementException(textModel));
 
 		return VisitorAction.SKIP;
 	}
 
 	@Override
 	public VisitorAction visit(TimeSeriesModel timeSeriesModel){
-		report(new UnsupportedFeatureException(timeSeriesModel));
+		report(new UnsupportedElementException(timeSeriesModel));
 
 		return VisitorAction.SKIP;
 	}
@@ -322,7 +324,7 @@ public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFea
 		switch(missingValueStrategy){
 			case AGGREGATE_NODES:
 			case WEIGHTED_CONFIDENCE:
-				report(new UnsupportedFeatureException(treeModel, missingValueStrategy));
+				report(new UnsupportedAttributeException(treeModel, missingValueStrategy));
 				break;
 			default:
 				break;

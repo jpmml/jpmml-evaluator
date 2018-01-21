@@ -134,7 +134,9 @@ public class EvaluatorUtil {
 		} else
 
 		if(groupFields.size() > 1){
-			throw new EvaluationException();
+			ModelEvaluator<?> modelEvaluator = (ModelEvaluator<?>)hasGroupFields; // XXX
+
+			throw modelEvaluator.createMiningSchemaException("Expected 0 or 1 group field(s), got " + groupFields.size()  + " group fields");
 		}
 
 		return table;

@@ -95,6 +95,8 @@ public class TypeUtil {
 				return parseTime(value);
 			case DATE_TIME:
 				return parseDateTime(value);
+			case DATE_DAYS_SINCE_0:
+				throw new NotImplementedException();
 			case DATE_DAYS_SINCE_1960:
 				return new DaysSinceDate(YEAR_1960, parseDate(value));
 			case DATE_DAYS_SINCE_1970:
@@ -103,6 +105,8 @@ public class TypeUtil {
 				return new DaysSinceDate(YEAR_1980, parseDate(value));
 			case TIME_SECONDS:
 				return new SecondsSinceMidnight(parseSeconds(value));
+			case DATE_TIME_SECONDS_SINCE_0:
+				throw new NotImplementedException();
 			case DATE_TIME_SECONDS_SINCE_1960:
 				return new SecondsSinceDate(YEAR_1960, parseDateTime(value));
 			case DATE_TIME_SECONDS_SINCE_1970:
@@ -110,7 +114,7 @@ public class TypeUtil {
 			case DATE_TIME_SECONDS_SINCE_1980:
 				return new SecondsSinceDate(YEAR_1980, parseDateTime(value));
 			default:
-				throw new UnsupportedFeatureException();
+				throw new IllegalArgumentException();
 		}
 	}
 
@@ -288,20 +292,6 @@ public class TypeUtil {
 		throw new IllegalArgumentException(value);
 	}
 
-	static
-	public String format(Object value){
-
-		if(value instanceof String){
-			return (String)value;
-		} // End if
-
-		if(value != null){
-			return String.valueOf(value);
-		}
-
-		throw new EvaluationException();
-	}
-
 	/**
 	 * @return The data type of the value.
 	 */
@@ -356,7 +346,7 @@ public class TypeUtil {
 			return getSecondsDataType(period.getEpoch());
 		}
 
-		throw new EvaluationException();
+		throw new EvaluationException("No PMML data type for Java data type " + (value != null ? (value.getClass()).getName() : null));
 	}
 
 	static
@@ -372,13 +362,9 @@ public class TypeUtil {
 
 			{
 				if(!(result).equals(dataType)){
-					throw new EvaluationException();
+					throw new TypeCheckException(result, value);
 				}
 			}
-		}
-
-		if(result == null){
-			throw new EvaluationException();
 		}
 
 		return result;
@@ -403,7 +389,7 @@ public class TypeUtil {
 			}
 		}
 
-		throw new EvaluationException();
+		throw new EvaluationException("No PMML data type for the intersection of PMML data types " + left.value() + " and " + right.value());
 	}
 
 	static
@@ -432,7 +418,7 @@ public class TypeUtil {
 			case DATE_TIME_SECONDS_SINCE_1980:
 				return OpType.ORDINAL;
 			default:
-				throw new UnsupportedFeatureException();
+				throw new IllegalArgumentException();
 		}
 	}
 
@@ -459,6 +445,8 @@ public class TypeUtil {
 				return toTime(value);
 			case DATE_TIME:
 				return toDateTime(value);
+			case DATE_DAYS_SINCE_0:
+				throw new NotImplementedException();
 			case DATE_DAYS_SINCE_1960:
 				return toDaysSinceDate(value, YEAR_1960);
 			case DATE_DAYS_SINCE_1970:
@@ -467,6 +455,8 @@ public class TypeUtil {
 				return toDaysSinceDate(value, YEAR_1980);
 			case TIME_SECONDS:
 				return toSecondsSinceMidnight(value);
+			case DATE_TIME_SECONDS_SINCE_0:
+				throw new NotImplementedException();
 			case DATE_TIME_SECONDS_SINCE_1960:
 				return toSecondsSinceDate(value, YEAR_1960);
 			case DATE_TIME_SECONDS_SINCE_1970:
@@ -474,7 +464,7 @@ public class TypeUtil {
 			case DATE_TIME_SECONDS_SINCE_1980:
 				return toSecondsSinceDate(value, YEAR_1980);
 			default:
-				throw new UnsupportedFeatureException();
+				throw new IllegalArgumentException();
 		}
 	}
 
@@ -570,7 +560,7 @@ public class TypeUtil {
 	private Integer toInteger(long value){
 
 		if(value < Integer.MIN_VALUE || value > Integer.MAX_VALUE){
-			throw new EvaluationException();
+			throw new UndefinedResultException();
 		}
 
 		return Integer.valueOf((int)value);
@@ -866,7 +856,7 @@ public class TypeUtil {
 			return DataType.DATE_DAYS_SINCE_1980;
 		}
 
-		throw new EvaluationException();
+		throw new EvaluationException("Non-standard epoch " + epoch);
 	}
 
 	static
@@ -884,7 +874,7 @@ public class TypeUtil {
 			return DataType.DATE_TIME_SECONDS_SINCE_1980;
 		}
 
-		throw new EvaluationException();
+		throw new EvaluationException("Non-standard epoch " + epoch);
 	}
 
 	static

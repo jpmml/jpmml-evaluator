@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
-import org.jpmml.evaluator.InvalidResultException;
 import org.jpmml.evaluator.JavaModel;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
@@ -56,10 +55,7 @@ public class JavaModelEvaluator extends ModelEvaluator<JavaModel> {
 	}
 
 	public Map<FieldName, ?> evaluate(JavaModelEvaluationContext context){
-		JavaModel javaModel = getModel();
-		if(!javaModel.isScorable()){
-			throw new InvalidResultException(javaModel);
-		}
+		JavaModel javaModel = ensureScorableModel();
 
 		return javaModel.evaluate(context);
 	}

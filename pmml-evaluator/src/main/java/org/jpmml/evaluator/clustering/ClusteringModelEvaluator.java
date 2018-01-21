@@ -52,13 +52,19 @@ import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasEntityRegistry;
-import org.jpmml.evaluator.InvalidFeatureException;
-import org.jpmml.evaluator.InvalidResultException;
+import org.jpmml.evaluator.InvalidAttributeException;
+import org.jpmml.evaluator.InvalidElementException;
 import org.jpmml.evaluator.MeasureUtil;
+import org.jpmml.evaluator.MisplacedElementException;
+import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
-import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.PMMLAttributes;
+import org.jpmml.evaluator.PMMLElements;
+import org.jpmml.evaluator.UnsupportedAttributeException;
+import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
@@ -78,7 +84,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 		ComparisonMeasure comparisonMeasure = clusteringModel.getComparisonMeasure();
 		if(comparisonMeasure == null){
-			throw new InvalidFeatureException(clusteringModel);
+			throw new MissingElementException(clusteringModel, PMMLElements.CLUSTERINGMODEL_COMPARISONMEASURE);
 		}
 
 		ClusteringModel.ModelClass modelClass = clusteringModel.getModelClass();
@@ -86,25 +92,25 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			case CENTER_BASED:
 				break;
 			default:
-				throw new UnsupportedFeatureException(clusteringModel, modelClass);
+				throw new UnsupportedAttributeException(clusteringModel, modelClass);
 		}
 
 		CenterFields centerFields = clusteringModel.getCenterFields();
 		if(centerFields != null){
-			throw new UnsupportedFeatureException(centerFields);
+			throw new UnsupportedElementException(centerFields);
 		}
 
 		if(!clusteringModel.hasClusteringFields()){
-			throw new InvalidFeatureException(clusteringModel);
+			throw new MissingElementException(clusteringModel, PMMLElements.CLUSTERINGMODEL_CLUSTERINGFIELDS);
 		} // End if
 
 		if(!clusteringModel.hasClusters()){
-			throw new InvalidFeatureException(clusteringModel);
+			throw new MissingElementException(clusteringModel, PMMLElements.CLUSTERINGMODEL_CLUSTERS);
 		}
 
 		Targets targets = clusteringModel.getTargets();
 		if(targets != null){
-			throw new InvalidFeatureException(targets);
+			throw new MisplacedElementException(targets);
 		}
 	}
 
@@ -133,10 +139,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		ClusteringModel clusteringModel = getModel();
-		if(!clusteringModel.isScorable()){
-			throw new InvalidResultException(clusteringModel);
-		}
+		ClusteringModel clusteringModel = ensureScorableModel();
 
 		ValueFactory<?> valueFactory;
 
@@ -147,7 +150,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 				valueFactory = getValueFactory();
 				break;
 			default:
-				throw new UnsupportedFeatureException(clusteringModel, mathContext);
+				throw new UnsupportedAttributeException(clusteringModel, mathContext);
 		}
 
 		Map<FieldName, ? extends ClusterAffinityDistribution<?>> predictions;
@@ -157,8 +160,15 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			case CLUSTERING:
 				predictions = evaluateClustering(valueFactory, context);
 				break;
+			case ASSOCIATION_RULES:
+			case SEQUENCES:
+			case CLASSIFICATION:
+			case REGRESSION:
+			case TIME_SERIES:
+			case MIXED:
+				throw new InvalidAttributeException(clusteringModel, miningFunction);
 			default:
-				throw new UnsupportedFeatureException(clusteringModel, miningFunction);
+				throw new UnsupportedAttributeException(clusteringModel, miningFunction);
 		}
 
 		return OutputUtil.evaluate(predictions, context);
@@ -176,14 +186,19 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		for(int i = 0, max = clusteringFields.size(); i < max; i++){
 			ClusteringField clusteringField = clusteringFields.get(i);
 
-			FieldValue value = context.evaluate(clusteringField.getField());
+			FieldName name = clusteringField.getField();
+			if(name == null){
+				throw new MissingAttributeException(clusteringField, PMMLAttributes.CLUSTERINGFIELD_FIELD);
+			}
+
+			FieldValue value = context.evaluate(name);
 
 			values.add(value);
 		}
 
 		ClusterAffinityDistribution<V> result;
 
-		Measure measure = comparisonMeasure.getMeasure();
+		Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
 
 		if(MeasureUtil.isSimilarity(measure)){
 			result = evaluateSimilarity(valueFactory, comparisonMeasure, clusteringFields, values);
@@ -194,7 +209,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		} else
 
 		{
-			throw new UnsupportedFeatureException(measure);
+			throw new UnsupportedElementException(measure);
 		}
 
 		// "For clustering models, the identifier of the winning cluster is returned as the predictedValue"
@@ -218,7 +233,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			BitSet clusterFlags = CacheUtil.getValue(cluster, ClusteringModelEvaluator.clusterFlagCache);
 
 			if(flags.size() != clusterFlags.size()){
-				throw new InvalidFeatureException(cluster);
+				throw new InvalidElementException(cluster);
 			}
 
 			Value<V> similarity = MeasureUtil.evaluateSimilarity(valueFactory, comparisonMeasure, clusteringFields, flags, clusterFlags);
@@ -244,7 +259,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 			List<? extends Number> adjustmentValues = ArrayUtil.asNumberList(array);
 			if(values.size() != adjustmentValues.size()){
-				throw new InvalidFeatureException(missingValueWeights);
+				throw new InvalidElementException(missingValueWeights);
 			}
 
 			adjustment = MeasureUtil.calculateAdjustment(valueFactory, values, adjustmentValues);
@@ -260,7 +275,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			List<FieldValue> clusterValues = CacheUtil.getValue(cluster, ClusteringModelEvaluator.clusterValueCache);
 
 			if(values.size() != clusterValues.size()){
-				throw new InvalidFeatureException(cluster);
+				throw new InvalidElementException(cluster);
 			}
 
 			Value<V> distance = MeasureUtil.evaluateDistance(valueFactory, comparisonMeasure, clusteringFields, values, clusterValues, adjustment);
@@ -289,7 +304,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 				case FALSE:
 					break;
 				default:
-					throw new UnsupportedFeatureException(clusteringField, centerField);
+					throw new UnsupportedAttributeException(clusteringField, centerField);
 			}
 		}
 

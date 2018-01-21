@@ -69,7 +69,7 @@ public class IndexableUtil {
 			K key = ensureKey(element, nullable);
 
 			if(result.containsKey(key)){
-				throw new InvalidFeatureException(element);
+				throw new InvalidElementException(element);
 			}
 
 			result.put(key, element);
@@ -89,7 +89,7 @@ public class IndexableUtil {
 		K key = element.getKey();
 
 		if(key == null && !nullable){
-			throw new InvalidFeatureException(element);
+			throw new InvalidElementException(element);
 		}
 
 		return key;

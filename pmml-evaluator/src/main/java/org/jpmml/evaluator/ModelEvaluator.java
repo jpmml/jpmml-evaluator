@@ -108,7 +108,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 		DataDictionary dataDictionary = pmml.getDataDictionary();
 		if(dataDictionary == null){
-			throw new InvalidFeatureException(pmml);
+			throw new MissingElementException(pmml, PMMLElements.PMML_DATADICTIONARY);
 		} // End if
 
 		if(dataDictionary.hasDataFields()){
@@ -124,9 +124,14 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 			this.defineFunctions = CacheUtil.getValue(transformationDictionary, ModelEvaluator.defineFunctionCache);
 		}
 
+		MiningFunction miningFunction = model.getMiningFunction();
+		if(miningFunction == null){
+			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@miningFunction"), model);
+		}
+
 		MiningSchema miningSchema = model.getMiningSchema();
 		if(miningSchema == null){
-			throw new InvalidFeatureException(model);
+			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(model.getClass()) + "/" + XPathUtil.formatElement(MiningSchema.class)), model);
 		} // End if
 
 		if(miningSchema.hasMiningFields()){
@@ -284,7 +289,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		List<TargetField> targetFields = getTargetFields();
 
 		if(targetFields.size() != 1){
-			throw new EvaluationException();
+			throw createMiningSchemaException("Expected 1 target field, got " + targetFields.size() + " target fields");
 		}
 
 		TargetField targetField = targetFields.get(0);
@@ -310,6 +315,14 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		}
 
 		return this.outputResultFields;
+	}
+
+	protected EvaluationException createMiningSchemaException(String message){
+		M model = getModel();
+
+		MiningSchema miningSchema = model.getMiningSchema();
+
+		return new EvaluationException(message, miningSchema);
 	}
 
 	public boolean isPrimitive(){
@@ -389,10 +402,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		}
 	}
 
-	/**
-	 * @param expected A string or a collection of strings representing the expected value
-	 * @param actual The actual value
-	 */
 	private void verify(Object expected, Object actual, double precision, double zeroThreshold){
 
 		if(expected == null){
@@ -407,7 +416,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 		boolean acceptable = VerificationUtil.acceptable(expected, actual, precision, zeroThreshold);
 		if(!acceptable){
-			throw new EvaluationException();
+			throw new EvaluationException("Values " + PMMLException.formatValue(expected) + " and " + PMMLException.formatValue(actual) + " do not match");
 		}
 	}
 
@@ -455,7 +464,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 				int depth = outputField.getDepth();
 				if(depth > 0){
-					throw new UnsupportedFeatureException(pmmlOutputField);
+					throw new UnsupportedElementException(pmmlOutputField);
 				}
 
 				FieldName targetFieldName = pmmlOutputField.getTargetField();
@@ -470,7 +479,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 				MiningField miningField = getMiningField(targetFieldName);
 				if(miningField == null){
-					throw new EvaluationException();
+					throw new InvisibleFieldException(targetFieldName, pmmlOutputField);
 				}
 
 				Target target = getTarget(targetFieldName);
@@ -596,6 +605,16 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		return ImmutableList.copyOf(resultFields);
 	}
 
+	protected M ensureScorableModel(){
+		M model = getModel();
+
+		if(!model.isScorable()){
+			throw new EvaluationException("Model is not scorable", model);
+		}
+
+		return model;
+	}
+
 	public <V> V getValue(LoadingCache<M, V> cache){
 		M model = getModel();
 
@@ -636,7 +655,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 	protected <M extends Model> M selectModel(PMML pmml, Class<? extends M> clazz){
 
 		if(!pmml.hasModels()){
-			throw new InvalidFeatureException(pmml);
+			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(pmml.getClass()) + "/" + XPathUtil.formatElement(clazz)), pmml);
 		}
 
 		List<Model> models = pmml.getModels();
@@ -645,7 +664,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 		M model = Iterables.getFirst(filteredModels, null);
 		if(model == null){
-			throw new InvalidFeatureException(pmml);
+			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(pmml.getClass()) + "/" + XPathUtil.formatElement(clazz)), pmml);
 		}
 
 		return model;
@@ -657,7 +676,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 		VerificationFields verificationFields = modelVerification.getVerificationFields();
 		if(verificationFields == null){
-			throw new InvalidFeatureException(modelVerification);
+			throw new MissingElementException(modelVerification, PMMLElements.MODELVERIFICATION_VERIFICATIONFIELDS);
 		}
 
 		for(VerificationField verificationField : verificationFields){
@@ -666,7 +685,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 		InlineTable inlineTable = modelVerification.getInlineTable();
 		if(inlineTable == null){
-			throw new InvalidFeatureException(modelVerification);
+			throw new MissingElementException(modelVerification, PMMLElements.MODELVERIFICATION_INLINETABLE);
 		}
 
 		Table<Integer, String, String> table = InlineTableUtil.getContent(inlineTable);
@@ -699,7 +718,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 		Integer recordCount = modelVerification.getRecordCount();
 		if(recordCount != null && recordCount.intValue() != records.size()){
-			throw new InvalidFeatureException(inlineTable);
+			throw new InvalidElementException(modelVerification);
 		}
 
 		result.setRecords(records);

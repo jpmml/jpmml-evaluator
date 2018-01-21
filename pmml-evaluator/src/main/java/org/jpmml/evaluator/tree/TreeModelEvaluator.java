@@ -42,15 +42,20 @@ import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.HasEntityRegistry;
-import org.jpmml.evaluator.InvalidFeatureException;
-import org.jpmml.evaluator.InvalidResultException;
+import org.jpmml.evaluator.InvalidAttributeException;
+import org.jpmml.evaluator.InvalidElementException;
+import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
+import org.jpmml.evaluator.PMMLAttributes;
+import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.UnsupportedAttributeException;
+import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
@@ -70,7 +75,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		Node root = treeModel.getNode();
 		if(root == null){
-			throw new InvalidFeatureException(treeModel);
+			throw new MissingElementException(treeModel, PMMLElements.TREEMODEL_NODE);
 		}
 	}
 
@@ -91,10 +96,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		TreeModel treeModel = getModel();
-		if(!treeModel.isScorable()){
-			throw new InvalidResultException(treeModel);
-		}
+		TreeModel treeModel = ensureScorableModel();
 
 		ValueFactory<?> valueFactory;
 
@@ -105,7 +107,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 				valueFactory = getValueFactory();
 				break;
 			default:
-				throw new UnsupportedFeatureException(treeModel, mathContext);
+				throw new UnsupportedAttributeException(treeModel, mathContext);
 		}
 
 		Map<FieldName, ?> predictions;
@@ -118,8 +120,14 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			case CLASSIFICATION:
 				predictions = evaluateClassification(valueFactory, context);
 				break;
+			case ASSOCIATION_RULES:
+			case SEQUENCES:
+			case CLUSTERING:
+			case TIME_SERIES:
+			case MIXED:
+				throw new InvalidAttributeException(treeModel, miningFunction);
 			default:
-				throw new UnsupportedFeatureException(treeModel, miningFunction);
+				throw new UnsupportedAttributeException(treeModel, miningFunction);
 		}
 
 		return OutputUtil.evaluate(predictions, context);
@@ -178,7 +186,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 			// "It is not possible that the scoring process ends in a Node which does not have a score attribute"
 			if(node != null && !node.hasScore()){
-				throw new InvalidFeatureException(node);
+				throw new MissingAttributeException(node, PMMLAttributes.NODE_SCORE);
 			}
 
 			return node;
@@ -190,13 +198,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	private Boolean evaluateNode(Trail trail, Node node, EvaluationContext context){
 		EmbeddedModel embeddedModel = node.getEmbeddedModel();
 		if(embeddedModel != null){
-			throw new UnsupportedFeatureException(embeddedModel);
+			throw new UnsupportedElementException(embeddedModel);
 		}
 
-		Predicate predicate = node.getPredicate();
-		if(predicate == null){
-			throw new InvalidFeatureException(node);
-		} // End if
+		Predicate predicate = PredicateUtil.ensurePredicate(node);
 
 		// A compound predicate whose boolean operator is "surrogate" represents a special case
 		if(predicate instanceof CompoundPredicate){
@@ -252,7 +257,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		// "The defaultChild missing value strategy requires the presence of the defaultChild attribute in every non-leaf Node"
 		String defaultChild = node.getDefaultChild();
 		if(defaultChild == null){
-			throw new InvalidFeatureException(node);
+			throw new MissingAttributeException(node, PMMLAttributes.NODE_DEFAULTCHILD);
 		}
 
 		trail.addMissingLevel();
@@ -269,7 +274,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 
 		// "Only Nodes which are immediate children of the respective Node can be referenced"
-		throw new InvalidFeatureException(node);
+		throw new InvalidAttributeException(node, PMMLAttributes.NODE_DEFAULTCHILD, defaultChild);
 	}
 
 	private Trail handleNoTrueChild(Trail trail){
@@ -288,7 +293,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 				}
 				return trail.selectNull();
 			default:
-				throw new UnsupportedFeatureException(treeModel, noTrueChildStrategy);
+				throw new UnsupportedAttributeException(treeModel, noTrueChildStrategy);
 		}
 	}
 
@@ -310,7 +315,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			case NONE:
 				return null;
 			default:
-				throw new UnsupportedFeatureException(treeModel, missingValueStrategy);
+				throw new UnsupportedAttributeException(treeModel, missingValueStrategy);
 		}
 	}
 
@@ -346,7 +351,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 			// "If the predicted probability is defined for any class label, then it must be defined for all"
 			if(hasProbabilities && probability == null){
-				throw new InvalidFeatureException(scoreDistribution);
+				throw new MissingAttributeException(scoreDistribution, PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY);
 			} // End if
 
 			if(hasProbabilities){
@@ -360,7 +365,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		// "The predicted probabilities must sum to 1"
 		if(hasProbabilities && sum.doubleValue() != 1d){
-			throw new InvalidFeatureException(node);
+			throw new InvalidElementException(node);
 		}
 
 		NodeScoreDistribution<V> result = new NodeScoreDistribution<>(new ValueMap<String, V>(2 * scoreDistributions.size()), entityRegistry, node);
@@ -443,7 +448,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		public Node getLastPrediction(){
 
 			if(this.lastPrediction == null){
-				throw new EvaluationException();
+				throw new EvaluationException("Empty trail");
 			}
 
 			return this.lastPrediction;

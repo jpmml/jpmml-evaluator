@@ -27,8 +27,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.lang.reflect.Field;
-
 import org.dmg.pmml.PMMLObject;
 
 /**
@@ -38,29 +36,14 @@ import org.dmg.pmml.PMMLObject;
  *
  * @see UnsupportedFeatureException
  */
+abstract
 public class InvalidFeatureException extends PMMLException {
-
-	public InvalidFeatureException(){
-		super();
-	}
 
 	public InvalidFeatureException(String message){
 		super(message);
 	}
 
-	public InvalidFeatureException(PMMLObject object){
-		this(XPathUtil.formatXPath(object), object);
-	}
-
-	public InvalidFeatureException(PMMLObject object, Field field){
-		this(XPathUtil.formatXPath(object, field), object);
-	}
-
-	public InvalidFeatureException(PMMLObject object, Field field, Object value){
-		this(XPathUtil.formatXPath(object, field, value), object);
-	}
-
-	public InvalidFeatureException(String message, PMMLObject object){
-		super(message, object);
+	public InvalidFeatureException(String message, PMMLObject context){
+		super(message, context);
 	}
 }

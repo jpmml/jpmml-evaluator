@@ -29,10 +29,15 @@ import org.dmg.pmml.PMMLObject;
 public class DuplicateValueException extends EvaluationException {
 
 	public DuplicateValueException(FieldName name){
-		super(name.getValue());
+		super(formatMessage(name));
 	}
 
 	public DuplicateValueException(FieldName name, PMMLObject context){
-		super(name.getValue(), context);
+		super(formatMessage(name), context);
+	}
+
+	static
+	private String formatMessage(FieldName name){
+		return "The value for field " + formatKey(name) + " has already been defined";
 	}
 }

@@ -40,7 +40,10 @@ import org.dmg.pmml.support_vector_machine.Coefficients;
 import org.dmg.pmml.support_vector_machine.SupportVectors;
 import org.dmg.pmml.support_vector_machine.VectorDictionary;
 import org.dmg.pmml.support_vector_machine.VectorFields;
+import org.jpmml.evaluator.InvalidElementException;
 import org.jpmml.evaluator.InvalidFeatureException;
+import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.model.ReflectionUtil;
 
 /**
@@ -76,12 +79,12 @@ public class InvalidFeatureInspector extends FeatureInspector<InvalidFeatureExce
 
 			XmlElement element = field.getAnnotation(XmlElement.class);
 			if(element != null && element.required()){
-				report(new InvalidFeatureException(object, field));
+				report(new MissingElementException(object, field));
 			}
 
 			XmlAttribute attribute = field.getAnnotation(XmlAttribute.class);
 			if(attribute != null && attribute.required()){
-				report(new InvalidFeatureException(object, field));
+				report(new MissingAttributeException(object, field));
 			}
 		}
 
@@ -342,13 +345,7 @@ public class InvalidFeatureInspector extends FeatureInspector<InvalidFeatureExce
 		if(!result){
 			PMMLObject object = condition.getObject();
 
-			if(object != null){
-				report(new InvalidFeatureException(object));
-			} else
-
-			{
-				report(new InvalidFeatureException());
-			}
+			report(new InvalidElementException(object));
 		}
 	}
 
@@ -370,6 +367,11 @@ public class InvalidFeatureInspector extends FeatureInspector<InvalidFeatureExce
 		}
 
 		private void setObject(PMMLObject object){
+
+			if(object == null){
+				throw new IllegalArgumentException();
+			}
+
 			this.object = object;
 		}
 	}

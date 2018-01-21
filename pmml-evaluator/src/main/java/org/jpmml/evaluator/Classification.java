@@ -56,7 +56,7 @@ public class Classification<V extends Number> implements Computable, HasPredicti
 	public Object getResult(){
 
 		if(this.result == null){
-			throw new EvaluationException();
+			throw new EvaluationException("Classification result has not been computed");
 		}
 
 		return this.result;
@@ -70,7 +70,7 @@ public class Classification<V extends Number> implements Computable, HasPredicti
 		Map.Entry<String, Value<V>> entry = getWinner();
 
 		if(entry == null){
-			throw new EvaluationException();
+			throw new EvaluationException("Empty classification");
 		}
 
 		String key = entry.getKey();
@@ -121,10 +121,11 @@ public class Classification<V extends Number> implements Computable, HasPredicti
 	public void put(String key, Value<V> value){
 		ValueMap<String, V> values = getValues();
 
-		Value<V> previousValue = values.put(key, value);
-		if(previousValue != null){
-			throw new EvaluationException();
+		if(values.containsKey(key)){
+			throw new EvaluationException("Value for key " + PMMLException.formatKey(key) + " has already been defined");
 		}
+
+		values.put(key, value);
 	}
 
 	public Double getValue(String key){
@@ -300,10 +301,6 @@ public class Classification<V extends Number> implements Computable, HasPredicti
 
 		public <V extends Number> int compareValues(Value<V> left, Value<V> right){
 			boolean ordering = getOrdering();
-
-			if(left == null || right == null){
-				throw new EvaluationException();
-			}
 
 			int result = (left).compareTo(right);
 

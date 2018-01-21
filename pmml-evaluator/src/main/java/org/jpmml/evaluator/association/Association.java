@@ -32,7 +32,6 @@ import org.dmg.pmml.association.AssociationRule;
 import org.jpmml.evaluator.Computable;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasRuleValues;
-import org.jpmml.evaluator.UnsupportedFeatureException;
 
 /**
  * @see MiningFunction#ASSOCIATION_RULES
@@ -99,7 +98,7 @@ public class Association implements Computable, HasRuleValues, HasEntityRegistry
 				flags.and(getConsequentFlags());
 				break;
 			default:
-				throw new UnsupportedFeatureException();
+				throw new IllegalArgumentException();
 		}
 
 		int cardinality = flags.cardinality();

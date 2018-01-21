@@ -263,7 +263,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			return result;
 		} else
 
-		if(hasProbabilities.size() > 1){
+		{
 			ProbabilityAggregator<V> aggregator = new ProbabilityAggregator<V>(0){
 
 				@Override
@@ -277,20 +277,11 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			}
 
 			return aggregator.averageMap();
-		} else
-
-		{
-			throw new EvaluationException();
 		}
 	}
 
 	static
 	private <V extends Number> Map.Entry<String, Value<V>> getWinner(Map<String, Value<V>> values, Collection<String> categories){
-
-		if(categories == null || categories.isEmpty()){
-			throw new EvaluationException();
-		}
-
 		Map.Entry<String, Value<V>> maxEntry = null;
 
 		for(String category : categories){

@@ -110,7 +110,7 @@ public class OrdinalValue extends FieldValue {
 		int rightIndex = ordering.indexOf(right);
 
 		if((leftIndex | rightIndex) < 0){
-			throw new EvaluationException();
+			throw new EvaluationException("Values " + PMMLException.formatValue(left) + " and " + PMMLException.formatValue(right) + " cannot be ordered");
 		}
 
 		return (leftIndex - rightIndex);

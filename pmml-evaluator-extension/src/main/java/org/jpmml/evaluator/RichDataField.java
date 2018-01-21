@@ -92,7 +92,7 @@ public class RichDataField extends DataField implements HasParsedValueMapping<Va
 					}
 					break;
 				default:
-					throw new UnsupportedFeatureException(pmmlValue, property);
+					throw new UnsupportedAttributeException(pmmlValue, property);
 			}
 		}
 

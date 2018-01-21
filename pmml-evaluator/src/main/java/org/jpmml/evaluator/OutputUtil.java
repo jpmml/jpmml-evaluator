@@ -34,7 +34,6 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.OutputField;
-import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
@@ -95,7 +94,7 @@ public class OutputUtil {
 			if(segmentId != null){
 
 				if(!(model instanceof MiningModel)){
-					throw new InvalidFeatureException(outputField);
+					throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_SEGMENTID, segmentId);
 				}
 
 				MiningModelEvaluationContext miningModelContext = (MiningModelEvaluationContext)context;
@@ -182,12 +181,12 @@ public class OutputUtil {
 						if(segmentId != null){
 							String name = outputField.getValue();
 							if(name == null){
-								throw new InvalidFeatureException(outputField);
+								throw new MissingAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_VALUE);
 							}
 
 							Expression expression = outputField.getExpression();
 							if(expression != null){
-								throw new InvalidFeatureException(outputField);
+								throw new MisplacedElementException(expression);
 							}
 
 							value = segmentPredictions.get(FieldName.create(name));
@@ -195,12 +194,7 @@ public class OutputUtil {
 							break;
 						}
 
-						Expression expression = outputField.getExpression();
-						if(expression == null){
-							throw new InvalidFeatureException(outputField);
-						}
-
-						value = FieldValueUtil.getValue(ExpressionUtil.evaluate(expression, context));
+						value = FieldValueUtil.getValue(ExpressionUtil.evaluateExpressionContainer(outputField, context));
 					}
 					break;
 				case PROBABILITY:
@@ -226,7 +220,7 @@ public class OutputUtil {
 								value = getCategoricalResidual(targetValue, expectedTargetValue);
 								break;
 							default:
-								throw new UnsupportedFeatureException(dataField, opType);
+								throw new UnsupportedElementException(outputField);
 						}
 					}
 					break;
@@ -320,7 +314,7 @@ public class OutputUtil {
 					{
 						FieldName reportFieldName = outputField.getReportField();
 						if(reportFieldName == null){
-							throw new InvalidFeatureException(outputField);
+							throw new MissingAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_REPORTFIELD);
 						}
 
 						OutputField reportOutputField = modelEvaluator.getOutputField(reportFieldName);
@@ -337,7 +331,7 @@ public class OutputUtil {
 					}
 					break;
 				default:
-					throw new UnsupportedFeatureException(outputField, resultFeature);
+					throw new UnsupportedAttributeException(outputField, resultFeature);
 			}
 
 			FieldValue outputValue = FieldValueUtil.create(outputField, value);
@@ -407,10 +401,7 @@ public class OutputUtil {
 			case TRANSFORMED_VALUE:
 			case DECISION:
 				{
-					Expression expression = outputField.getExpression();
-					if(expression == null){
-						throw new InvalidFeatureException(outputField);
-					}
+					Expression expression = ExpressionUtil.ensureExpression(outputField);
 
 					return ExpressionUtil.getDataType(expression, modelEvaluator);
 				}
@@ -480,7 +471,7 @@ public class OutputUtil {
 					throw new TypeAnalysisException(outputField);
 				}
 			default:
-				throw new UnsupportedFeatureException(outputField, resultFeature);
+				throw new UnsupportedAttributeException(outputField, resultFeature);
 		}
 	}
 
@@ -531,7 +522,7 @@ public class OutputUtil {
 				}
 				break;
 			default:
-				throw new UnsupportedFeatureException(dataField, opType);
+				throw new UnsupportedAttributeException(dataField, opType);
 		}
 
 		// "If the display value is not specified explicitly, then the raw predicted value is used by default"
@@ -553,7 +544,7 @@ public class OutputUtil {
 
 		// "If the value attribute is not specified, then the predicted categorical value should be returned as a result"
 		if(value == null){
-			return TypeUtil.format(getPredictedValue(object));
+			return (String)TypeUtil.cast(DataType.STRING, getPredictedValue(object));
 		}
 
 		return value;
@@ -571,8 +562,8 @@ public class OutputUtil {
 	public Double getCategoricalResidual(Object object, FieldValue expectedObject){
 		HasProbability hasProbability = TypeUtil.cast(HasProbability.class, object);
 
-		String value = TypeUtil.format(getPredictedValue(object));
-		String expectedValue = TypeUtil.format(FieldValueUtil.getValue(expectedObject));
+		String value = (String)TypeUtil.cast(DataType.STRING, getPredictedValue(object));
+		String expectedValue = (String)TypeUtil.cast(DataType.STRING, FieldValueUtil.getValue(expectedObject));
 
 		boolean equals = TypeUtil.equals(DataType.STRING, value, expectedValue);
 
@@ -592,8 +583,8 @@ public class OutputUtil {
 
 		int rank = outputField.getRank();
 		if(rank <= 0){
-			throw new InvalidFeatureException(outputField);
-		}
+			throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_RANK, rank);
+		} // End if
 
 		if(rank > 1){
 			HasEntityIdRanking hasEntityIdRanking = TypeUtil.cast(HasEntityIdRanking.class, object);
@@ -603,7 +594,7 @@ public class OutputUtil {
 				case DESCENDING:
 					break;
 				default:
-					throw new UnsupportedFeatureException(outputField, rankOrder);
+					throw new UnsupportedAttributeException(outputField, rankOrder);
 			}
 
 			return getElement(hasEntityIdRanking.getEntityIdRanking(), rank);
@@ -618,8 +609,8 @@ public class OutputUtil {
 
 		int rank = outputField.getRank();
 		if(rank <= 0){
-			throw new InvalidFeatureException(outputField);
-		}
+			throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_RANK, rank);
+		} // End if
 
 		if(rank > 1){
 			HasAffinityRanking hasAffinityRanking = TypeUtil.cast(HasAffinityRanking.class, object);
@@ -629,7 +620,7 @@ public class OutputUtil {
 				case DESCENDING:
 					break;
 				default:
-					throw new UnsupportedFeatureException(outputField, rankOrder);
+					throw new UnsupportedAttributeException(outputField, rankOrder);
 			}
 
 			return getElement(hasAffinityRanking.getAffinityRanking(), rank);
@@ -653,38 +644,19 @@ public class OutputUtil {
 
 		int rank = outputField.getRank();
 		if(rank <= 0){
-			throw new InvalidFeatureException(outputField);
+			throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_RANK, rank);
 		}
 
 		return getElement(hasReasonCodeRanking.getReasonCodeRanking(), rank);
 	}
 
 	static
-	public Object getRuleValue(Object object, OutputField outputField, OutputField.RuleFeature ruleFeature){
-		HasRuleValues hasRuleValues = TypeUtil.cast(HasRuleValues.class, object);
-
-		List<AssociationRule> associationRules = getRuleValues(hasRuleValues, outputField);
-
-		String isMultiValued = outputField.getIsMultiValued();
-		if(!("0").equals(isMultiValued)){
-			throw new UnsupportedFeatureException(outputField);
-		}
-
-		int rank = outputField.getRank();
-		if(rank <= 0){
-			throw new InvalidFeatureException(outputField);
-		}
-
-		AssociationRule associationRule = getElement(associationRules, rank);
-		if(associationRule != null){
-			return getRuleFeature(hasRuleValues, associationRule, outputField, ruleFeature);
-		}
-
-		return null;
+	public Object getRuleValue(Object object, OutputField outputField){
+		return getRuleValue(object, outputField, outputField.getRuleFeature());
 	}
 
 	static
-	public Object getRuleValue(Object object, OutputField outputField){
+	public Object getRuleValue(Object object, OutputField outputField, OutputField.RuleFeature ruleFeature){
 		HasRuleValues hasRuleValues = TypeUtil.cast(HasRuleValues.class, object);
 
 		List<AssociationRule> associationRules = getRuleValues(hasRuleValues, outputField);
@@ -695,12 +667,12 @@ public class OutputUtil {
 		if(("0").equals(isMultiValued)){
 			int rank = outputField.getRank();
 			if(rank <= 0){
-				throw new InvalidFeatureException(outputField);
+				throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_RANK, rank);
 			}
 
 			AssociationRule associationRule = getElement(associationRules, rank);
 			if(associationRule != null){
-				return getRuleFeature(hasRuleValues, associationRule, outputField);
+				return getRuleFeature(hasRuleValues, associationRule, outputField, ruleFeature);
 			}
 
 			return null;
@@ -712,7 +684,7 @@ public class OutputUtil {
 
 			int rank = outputField.getRank();
 			if(rank < 0){
-				throw new InvalidFeatureException(outputField);
+				throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_RANK, rank);
 			} else
 
 			// "A zero value indicates that all output values are to be returned"
@@ -730,14 +702,14 @@ public class OutputUtil {
 			List<Object> result = new ArrayList<>(associationRules.size());
 
 			for(AssociationRule associationRule : associationRules){
-				result.add(getRuleFeature(hasRuleValues, associationRule, outputField));
+				result.add(getRuleFeature(hasRuleValues, associationRule, outputField, ruleFeature));
 			}
 
 			return result;
 		} else
 
 		{
-			throw new InvalidFeatureException(outputField);
+			throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_ISMULTIVALUED, isMultiValued);
 		}
 	}
 
@@ -787,7 +759,18 @@ public class OutputUtil {
 
 	static
 	private List<AssociationRule> getRuleValues(HasRuleValues hasRuleValues, final OutputField outputField){
-		List<AssociationRule> associationRules = hasRuleValues.getRuleValues(outputField.getAlgorithm());
+		List<AssociationRule> associationRules;
+
+		OutputField.Algorithm algorithm = outputField.getAlgorithm();
+		switch(algorithm){
+			case RECOMMENDATION:
+			case EXCLUSIVE_RECOMMENDATION:
+			case RULE_ASSOCIATION:
+				associationRules = hasRuleValues.getRuleValues(algorithm);
+				break;
+			default:
+				throw new UnsupportedAttributeException(outputField, algorithm);
+		}
 
 		Comparator<AssociationRule> comparator = new Comparator<AssociationRule>(){
 
@@ -817,7 +800,7 @@ public class OutputUtil {
 						order = (getAffinity(left)).compareTo(getAffinity(right));
 						break;
 					default:
-						throw new UnsupportedFeatureException(outputField, this.rankBasis);
+						throw new UnsupportedAttributeException(outputField, this.rankBasis);
 				} // End switch
 
 				switch(this.rankOrder){
@@ -826,37 +809,43 @@ public class OutputUtil {
 					case DESCENDING:
 						return -order;
 					default:
-						throw new UnsupportedFeatureException(outputField, this.rankOrder);
+						throw new UnsupportedAttributeException(outputField, this.rankOrder);
 				}
 			}
 
-			private Double getConfidence(AssociationRule rule){
-				return checkRuleFeature(rule, rule.getConfidence());
+			private Double getConfidence(AssociationRule associationRule){
+				return associationRule.getConfidence();
 			}
 
-			private Double getSupport(AssociationRule rule){
-				return checkRuleFeature(rule, rule.getSupport());
+			private Double getSupport(AssociationRule associationRule){
+				return associationRule.getSupport();
 			}
 
-			private Double getLift(AssociationRule rule){
-				return checkRuleFeature(rule, rule.getLift());
-			}
-
-			private Double getLeverage(AssociationRule rule){
-				return checkRuleFeature(rule, rule.getLeverage());
-			}
-
-			private Double getAffinity(AssociationRule rule){
-				return checkRuleFeature(rule, rule.getAffinity());
-			}
-
-			private <V> V checkRuleFeature(AssociationRule rule, V value){
-
-				if(value == null){
-					throw new InvalidFeatureException(rule);
+			private Double getLift(AssociationRule associationRule){
+				Double lift = associationRule.getLift();
+				if(lift == null){
+					throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_LIFT);
 				}
 
-				return value;
+				return lift;
+			}
+
+			private Double getLeverage(AssociationRule associationRule){
+				Double leverage = associationRule.getLeverage();
+				if(leverage == null){
+					throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_LEVERAGE);
+				}
+
+				return leverage;
+			}
+
+			private Double getAffinity(AssociationRule associationRule){
+				Double affinity = associationRule.getAffinity();
+				if(affinity == null){
+					throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_AFFINITY);
+				}
+
+				return affinity;
 			}
 		};
 
@@ -865,16 +854,11 @@ public class OutputUtil {
 		return ordering.sortedCopy(associationRules);
 	}
 
-	static
-	private Object getRuleFeature(HasRuleValues hasRuleValues, AssociationRule associationRule, OutputField outputField){
-		return getRuleFeature(hasRuleValues, associationRule, outputField, outputField.getRuleFeature());
-	}
-
 	@SuppressWarnings (
 		value = {"unchecked"}
 	)
 	static
-	private Object getRuleFeature(HasRuleValues hasRuleValues, AssociationRule associationRule, PMMLObject element, OutputField.RuleFeature ruleFeature){
+	private Object getRuleFeature(HasRuleValues hasRuleValues, AssociationRule associationRule, OutputField outputField, OutputField.RuleFeature ruleFeature){
 
 		switch(ruleFeature){
 			case ANTECEDENT:
@@ -914,7 +898,7 @@ public class OutputUtil {
 			case AFFINITY:
 				return associationRule.getAffinity();
 			default:
-				throw new UnsupportedFeatureException(element, ruleFeature);
+				throw new UnsupportedAttributeException(outputField, ruleFeature);
 		}
 	}
 
@@ -944,7 +928,7 @@ public class OutputUtil {
 			case AFFINITY:
 				return DataType.DOUBLE;
 			default:
-				throw new UnsupportedFeatureException(outputField, ruleFeature);
+				throw new UnsupportedAttributeException(outputField, ruleFeature);
 		}
 	}
 

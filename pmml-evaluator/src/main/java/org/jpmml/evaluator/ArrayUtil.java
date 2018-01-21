@@ -66,15 +66,19 @@ public class ArrayUtil {
 		List<String> content = getContent(array);
 
 		Array.Type type = array.getType();
+		if(type == null){
+			throw new MissingAttributeException(array, PMMLAttributes.ARRAY_TYPE);
+		}
+
 		switch(type){
 			case INT:
 				return Lists.transform(content, INT_PARSER);
 			case REAL:
 				return Lists.transform(content, REAL_PARSER);
 			case STRING:
-				throw new InvalidFeatureException(array);
+				throw new InvalidElementException(array);
 			default:
-				throw new UnsupportedFeatureException(array, type);
+				throw new UnsupportedAttributeException(array, type);
 		}
 	}
 
@@ -83,6 +87,10 @@ public class ArrayUtil {
 		List<String> result;
 
 		Array.Type type = array.getType();
+		if(type == null){
+			throw new MissingAttributeException(array, PMMLAttributes.ARRAY_TYPE);
+		}
+
 		switch(type){
 			case INT:
 			case REAL:
@@ -92,12 +100,12 @@ public class ArrayUtil {
 				result = tokenize(array.getValue(), true);
 				break;
 			default:
-				throw new UnsupportedFeatureException(array, type);
+				throw new UnsupportedAttributeException(array, type);
 		}
 
 		Integer n = array.getN();
 		if(n != null && n.intValue() != result.size()){
-			throw new InvalidFeatureException(array);
+			throw new InvalidElementException(array);
 		}
 
 		return result;

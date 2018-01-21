@@ -19,7 +19,6 @@
 package org.jpmml.evaluator.general_regression;
 
 import org.dmg.pmml.general_regression.GeneralRegressionModel;
-import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Value;
 
 public class GeneralRegressionModelUtil {
@@ -45,23 +44,23 @@ public class GeneralRegressionModelUtil {
 				return value.inverseLoglog();
 			case NEGBIN:
 				if(distParameter == null){
-					throw new EvaluationException();
+					throw new IllegalArgumentException();
 				}
 				return value.inverseNegbin(distParameter);
 			case ODDSPOWER:
 				if(linkParameter == null){
-					throw new EvaluationException();
+					throw new IllegalArgumentException();
 				}
 				return value.inverseOddspower(linkParameter);
 			case POWER:
 				if(linkParameter == null){
-					throw new EvaluationException();
+					throw new IllegalArgumentException();
 				}
 				return value.inversePower(linkParameter);
 			case PROBIT:
 				return value.inverseProbit();
 			default:
-				throw new EvaluationException();
+				throw new IllegalArgumentException();
 		}
 	}
 
@@ -80,7 +79,7 @@ public class GeneralRegressionModelUtil {
 			case CAUCHIT:
 				return value.inverseCauchit();
 			default:
-				throw new EvaluationException();
+				throw new IllegalArgumentException();
 		}
 	}
 }

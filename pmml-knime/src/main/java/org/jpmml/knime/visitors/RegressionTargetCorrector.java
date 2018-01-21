@@ -37,7 +37,8 @@ import org.dmg.pmml.Targets;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.evaluator.IndexableUtil;
 import org.jpmml.evaluator.MissingFieldException;
-import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.UnsupportedAttributeException;
+import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.model.visitors.AbstractModelVisitor;
 
 public class RegressionTargetCorrector extends AbstractModelVisitor {
@@ -93,7 +94,7 @@ public class RegressionTargetCorrector extends AbstractModelVisitor {
 			case DOUBLE:
 				return;
 			default:
-				throw new UnsupportedFeatureException(dataField, dataType);
+				throw new UnsupportedAttributeException(dataField, dataType);
 		}
 
 		Targets targets = model.getTargets();
@@ -161,7 +162,7 @@ public class RegressionTargetCorrector extends AbstractModelVisitor {
 				case TARGET:
 				case PREDICTED:
 					if(result != null){
-						throw new UnsupportedFeatureException(miningSchema);
+						throw new UnsupportedElementException(miningSchema);
 					}
 					result = miningField;
 					break;

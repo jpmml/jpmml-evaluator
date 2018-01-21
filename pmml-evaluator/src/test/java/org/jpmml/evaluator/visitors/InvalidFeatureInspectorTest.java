@@ -31,6 +31,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class InvalidFeatureInspectorTest {
@@ -67,10 +68,14 @@ public class InvalidFeatureInspectorTest {
 			for(int i = 0; i < exceptions.size(); i++){
 				InvalidFeatureException exception = exceptions.get(i);
 
-				assertEquals(features[i], exception.getMessage());
+				String message = exception.getMessage();
+
+				assertTrue(message.contains(features[i]));
 			}
 
-			assertEquals("PMML@version", ife.getMessage());
+			String message = ife.getMessage();
+
+			assertTrue(message.contains("PMML@version"));
 		}
 	}
 }

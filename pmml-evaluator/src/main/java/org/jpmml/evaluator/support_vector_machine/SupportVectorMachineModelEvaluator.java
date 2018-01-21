@@ -27,7 +27,6 @@
  */
 package org.jpmml.evaluator.support_vector_machine;
 
-import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -63,18 +62,27 @@ import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.InvalidFeatureException;
-import org.jpmml.evaluator.InvalidResultException;
+import org.jpmml.evaluator.InvalidAttributeException;
+import org.jpmml.evaluator.InvalidElementException;
+import org.jpmml.evaluator.InvalidElementListException;
+import org.jpmml.evaluator.MisplacedAttributeException;
+import org.jpmml.evaluator.MisplacedElementException;
+import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
+import org.jpmml.evaluator.PMMLAttributes;
+import org.jpmml.evaluator.PMMLElements;
+import org.jpmml.evaluator.PMMLException;
 import org.jpmml.evaluator.SparseArrayUtil;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
+import org.jpmml.evaluator.XPathUtil;
 import org.jpmml.model.ReflectionUtil;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
@@ -92,7 +100,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		boolean maxWins = supportVectorMachineModel.isMaxWins();
 		if(maxWins){
-			throw new UnsupportedFeatureException(supportVectorMachineModel);
+			throw new UnsupportedAttributeException(supportVectorMachineModel, PMMLAttributes.SUPPORTVECTORMACHINEMODEL_MAXWINS, maxWins);
 		}
 
 		SupportVectorMachineModel.Representation representation = supportVectorMachineModel.getRepresentation();
@@ -100,21 +108,21 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			case SUPPORT_VECTORS:
 				break;
 			default:
-				throw new UnsupportedFeatureException(supportVectorMachineModel, representation);
+				throw new UnsupportedAttributeException(supportVectorMachineModel, representation);
 		}
 
 		VectorDictionary vectorDictionary = supportVectorMachineModel.getVectorDictionary();
 		if(vectorDictionary == null){
-			throw new InvalidFeatureException(supportVectorMachineModel);
+			throw new MissingElementException(supportVectorMachineModel, PMMLElements.SUPPORTVECTORMACHINEMODEL_VECTORDICTIONARY);
 		}
 
 		VectorFields vectorFields = vectorDictionary.getVectorFields();
 		if(vectorFields == null){
-			throw new InvalidFeatureException(vectorDictionary);
+			throw new MissingElementException(vectorDictionary, PMMLElements.VECTORDICTIONARY_VECTORFIELDS);
 		} // End if
 
 		if(!supportVectorMachineModel.hasSupportVectorMachines()){
-			throw new InvalidFeatureException(supportVectorMachineModel);
+			throw new MissingElementException(supportVectorMachineModel, PMMLElements.SUPPORTVECTORMACHINEMODEL_SUPPORTVECTORMACHINES);
 		}
 	}
 
@@ -125,10 +133,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		SupportVectorMachineModel supportVectorMachineModel = getModel();
-		if(!supportVectorMachineModel.isScorable()){
-			throw new InvalidResultException(supportVectorMachineModel);
-		}
+		SupportVectorMachineModel supportVectorMachineModel = ensureScorableModel();
 
 		ValueFactory<Double> valueFactory;
 
@@ -138,7 +143,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				valueFactory = (ValueFactory)getValueFactory();
 				break;
 			default:
-				throw new UnsupportedFeatureException(supportVectorMachineModel, mathContext);
+				throw new UnsupportedAttributeException(supportVectorMachineModel, mathContext);
 		}
 
 		Map<FieldName, ?> predictions;
@@ -151,8 +156,14 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			case CLASSIFICATION:
 				predictions = evaluateClassification(valueFactory, context);
 				break;
+			case ASSOCIATION_RULES:
+			case SEQUENCES:
+			case CLUSTERING:
+			case TIME_SERIES:
+			case MIXED:
+				throw new InvalidAttributeException(supportVectorMachineModel, miningFunction);
 			default:
-				throw new UnsupportedFeatureException(supportVectorMachineModel, miningFunction);
+				throw new UnsupportedAttributeException(supportVectorMachineModel, miningFunction);
 		}
 
 		return OutputUtil.evaluate(predictions, context);
@@ -163,7 +174,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
 		if(supportVectorMachines.size() != 1){
-			throw new InvalidFeatureException(supportVectorMachineModel);
+			throw new InvalidElementListException(supportVectorMachines);
 		}
 
 		SupportVectorMachine supportVectorMachine = supportVectorMachines.get(0);
@@ -199,13 +210,17 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				};
 				break;
 			default:
-				throw new UnsupportedFeatureException(supportVectorMachineModel, classificationMethod);
+				throw new UnsupportedAttributeException(supportVectorMachineModel, classificationMethod);
 		}
 
 		double[] input = createInput(context);
 
 		for(SupportVectorMachine supportVectorMachine : supportVectorMachines){
 			String targetCategory = supportVectorMachine.getTargetCategory();
+			if(targetCategory == null){
+				throw new MissingAttributeException(supportVectorMachine, PMMLAttributes.SUPPORTVECTORMACHINE_TARGETCATEGORY);
+			}
+
 			String alternateTargetCategory = supportVectorMachine.getAlternateTargetCategory();
 
 			Value<Double> value = evaluateSupportVectorMachine(valueFactory, supportVectorMachine, input);
@@ -213,8 +228,8 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			switch(classificationMethod){
 				case ONE_AGAINST_ALL:
 					{
-						if(targetCategory == null || alternateTargetCategory != null){
-							throw new InvalidFeatureException(supportVectorMachine);
+						if(alternateTargetCategory != null){
+							throw new MisplacedAttributeException(supportVectorMachine, PMMLAttributes.SUPPORTVECTORMACHINE_ALTERNATETARGETCATEGORY, alternateTargetCategory);
 						}
 
 						values.put(targetCategory, value);
@@ -226,8 +241,8 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 						if(alternateBinaryTargetCategory != null){
 
-							if(targetCategory == null || alternateTargetCategory != null){
-								throw new InvalidFeatureException(supportVectorMachine);
+							if(alternateTargetCategory != null){
+								throw new MisplacedAttributeException(supportVectorMachine, PMMLAttributes.SUPPORTVECTORMACHINE_ALTERNATETARGETCATEGORY, alternateTargetCategory);
 							}
 
 							value.round();
@@ -244,13 +259,13 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 							// "The numeric prediction must be between 0 and 1"
 							{
-								throw new EvaluationException("Invalid numeric prediction " + value);
+								throw new EvaluationException("Expected " + PMMLException.formatValue(0d) + " or " + PMMLException.formatValue(1d) + ", got " + PMMLException.formatValue(value.getValue()));
 							}
 						} else
 
 						{
-							if(targetCategory == null || alternateTargetCategory == null){
-								throw new InvalidFeatureException(supportVectorMachine);
+							if(alternateTargetCategory == null){
+								throw new MissingAttributeException(supportVectorMachine, PMMLAttributes.SUPPORTVECTORMACHINE_ALTERNATETARGETCATEGORY);
 							}
 
 							Double threshold = supportVectorMachine.getThreshold();
@@ -288,7 +303,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				result = new VoteDistribution<>(values);
 				break;
 			default:
-				throw new UnsupportedFeatureException(supportVectorMachineModel, classificationMethod);
+				throw new UnsupportedAttributeException(supportVectorMachineModel, classificationMethod);
 		}
 
 		return TargetUtil.evaluateClassification(getTargetField(), result);
@@ -300,6 +315,9 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		Value<Double> result = valueFactory.newValue();
 
 		Kernel kernel = supportVectorMachineModel.getKernel();
+		if(kernel == null){
+			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(supportVectorMachineModel.getClass()) + "/<Kernel>"), supportVectorMachine);
+		}
 
 		Coefficients coefficients = supportVectorMachine.getCoefficients();
 		Iterator<Coefficient> coefficientIt = coefficients.iterator();
@@ -313,16 +331,21 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			Coefficient coefficient = coefficientIt.next();
 			SupportVector supportVector = supportVectorIt.next();
 
-			double[] vector = vectorMap.get(supportVector.getVectorId());
+			String vectorId = supportVector.getVectorId();
+			if(vectorId == null){
+				throw new MissingAttributeException(supportVector, PMMLAttributes.SUPPORTVECTOR_VECTORID);
+			}
+
+			double[] vector = vectorMap.get(vectorId);
 			if(vector == null){
-				throw new InvalidFeatureException(supportVector);
+				throw new InvalidAttributeException(supportVector, PMMLAttributes.SUPPORTVECTOR_VECTORID, vectorId);
 			}
 
 			result.add(coefficient.getValue(), KernelUtil.evaluate(kernel, input, vector));
 		}
 
 		if(coefficientIt.hasNext() || supportVectorIt.hasNext()){
-			throw new InvalidFeatureException(supportVectorMachine);
+			throw new InvalidElementException(supportVectorMachine);
 		}
 
 		result.add(coefficients.getAbsoluteValue());
@@ -336,9 +359,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		// Older versions of several popular PMML producer software are known to omit the classificationMethod attribute.
 		// The method SupportVectorMachineModel#getRepresentation() replaces a missing value with the default value "OneAgainstAll", which may lead to incorrect behaviour.
 		// The workaround is to bypass this method using Java Reflection API, and infer the correct classification method type based on evidence.
-		Field field = ReflectionUtil.getField(SupportVectorMachineModel.class, "classificationMethod");
-
-		SupportVectorMachineModel.ClassificationMethod classificationMethod = ReflectionUtil.getFieldValue(field, supportVectorMachineModel);
+		SupportVectorMachineModel.ClassificationMethod classificationMethod = ReflectionUtil.getFieldValue(PMMLAttributes.SUPPORTVECTORMACHINEMODEL_CLASSIFICATIONMETHOD, supportVectorMachineModel);
 		if(classificationMethod != null){
 			return classificationMethod;
 		}
@@ -356,10 +377,10 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 					return SupportVectorMachineModel.ClassificationMethod.ONE_AGAINST_ONE;
 				}
 
-				throw new InvalidFeatureException(supportVectorMachine);
+				throw new InvalidElementException(supportVectorMachine);
 			}
 
-			throw new InvalidFeatureException(supportVectorMachineModel);
+			throw new InvalidElementException(supportVectorMachineModel);
 		}
 
 		for(SupportVectorMachine supportVectorMachine : supportVectorMachines){
@@ -375,10 +396,10 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				return SupportVectorMachineModel.ClassificationMethod.ONE_AGAINST_ALL;
 			}
 
-			throw new InvalidFeatureException(supportVectorMachine);
+			throw new InvalidElementException(supportVectorMachine);
 		}
 
-		throw new InvalidFeatureException(supportVectorMachineModel);
+		throw new InvalidElementException(supportVectorMachineModel);
 	}
 
 	private double[] createInput(EvaluationContext context){
@@ -411,16 +432,19 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			if(object instanceof CategoricalPredictor){
 				CategoricalPredictor categoricalPredictor = (CategoricalPredictor)object;
 
-				double coefficient = categoricalPredictor.getCoefficient();
-				if(coefficient != 1d){
-					throw new InvalidFeatureException(categoricalPredictor);
-				}
-
 				FieldName name = categoricalPredictor.getName();
+				if(name == null){
+					throw new MissingAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_NAME);
+				}
 
 				FieldValue value = context.evaluate(name);
 				if(value == null){
 					throw new MissingValueException(name, categoricalPredictor);
+				}
+
+				double coefficient = categoricalPredictor.getCoefficient();
+				if(coefficient != 1d){
+					throw new InvalidAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_COEFFICIENT, coefficient);
 				}
 
 				boolean equals = value.equals(categoricalPredictor);
@@ -429,7 +453,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			} else
 
 			{
-				throw new UnsupportedFeatureException(object);
+				throw new MisplacedElementException(object);
 			}
 		}
 
@@ -459,7 +483,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		for(VectorInstance vectorInstance : vectorInstances){
 			String id = vectorInstance.getId();
 			if(id == null){
-				throw new InvalidFeatureException(vectorInstance);
+				throw new MissingAttributeException(vectorInstance, PMMLAttributes.VECTORINSTANCE_ID);
 			}
 
 			Array array = vectorInstance.getArray();
@@ -476,11 +500,11 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			} else
 
 			{
-				throw new InvalidFeatureException(vectorInstance);
+				throw new InvalidElementException(vectorInstance);
 			} // End if
 
 			if(content.size() != values.size()){
-				throw new InvalidFeatureException(vectorInstance);
+				throw new InvalidElementException(vectorInstance);
 			}
 
 			double[] vector = Doubles.toArray(values);

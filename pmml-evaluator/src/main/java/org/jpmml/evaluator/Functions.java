@@ -369,7 +369,7 @@ public class Functions {
 		public FieldValue evaluate(List<FieldValue> arguments){
 
 			if((arguments.size() < 2 || arguments.size() > 3)){
-				throw new FunctionException(this, "Expected 2 or 3 arguments, but got " + arguments.size() + " arguments");
+				throw new FunctionException(this, "Expected 2 or 3 arguments, got " + arguments.size() + " arguments");
 			}
 
 			FieldValue flag = arguments.get(0);
@@ -528,7 +528,8 @@ public class Functions {
 			try {
 				result = String.format(pattern.asString(), value.asNumber());
 			} catch(IllegalFormatException ife){
-				throw new FunctionException(this, formatMessage("Invalid format value \"" + pattern.asString() + "\"", ife));
+				throw new FunctionException(this, "Invalid format value")
+					.initCause(ife);
 			}
 
 			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, result);
@@ -549,7 +550,8 @@ public class Functions {
 			try {
 				result = String.format(translatePattern(pattern.asString()), (value.asDateTime()).toDate());
 			} catch(IllegalFormatException ife){
-				throw new FunctionException(this, formatMessage("Invalid format value \"" + pattern.asString() + "\"", ife));
+				throw new FunctionException(this, "Invalid format value")
+					.initCause(ife);
 			}
 
 			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, result);
@@ -699,7 +701,7 @@ public class Functions {
 
 			Double result = Math.atan2(y.doubleValue(), x.doubleValue());
 			if(result.isNaN()){
-				throw new InvalidResultException(null);
+				throw new NaNResultException();
 			}
 
 			return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, result);
@@ -729,15 +731,4 @@ public class Functions {
 			return Math.tanh(value.doubleValue());
 		}
 	};
-
-	static
-	private String formatMessage(String message, Exception cause){
-		String causeMessage = cause.getMessage();
-
-		if(causeMessage != null){
-			message += " (" + causeMessage + ")";
-		}
-
-		return message;
-	}
 }

@@ -60,7 +60,7 @@ public class ModelEvaluatorFactory implements Serializable {
 	public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml){
 
 		if(!pmml.hasModels()){
-			throw new InvalidFeatureException(pmml);
+			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(pmml.getClass()) + "/<Model>"), pmml);
 		}
 
 		List<Model> models = pmml.getModels();
@@ -131,7 +131,7 @@ public class ModelEvaluatorFactory implements Serializable {
 			return new JavaModelEvaluator(pmml, (JavaModel)model);
 		}
 
-		throw new UnsupportedFeatureException(model);
+		throw new UnsupportedElementException(model);
 	}
 
 	public ValueFactoryFactory getValueFactoryFactory(){

@@ -35,48 +35,58 @@ public class XPathUtil {
 	}
 
 	static
-	public String formatXPath(PMMLObject object){
-		Class<?> clazz = object.getClass();
-
-		return getElementName(clazz);
+	public String formatElement(Class<? extends PMMLObject> elementClazz){
+		return getElementName(elementClazz);
 	}
 
 	static
-	public String formatXPath(PMMLObject object, Field field){
-		XmlElement element = field.getAnnotation(XmlElement.class);
-		if(element != null){
-			Class<?> elementClazz = field.getType();
+	public String formatElementOrAttribute(Field field){
+		return formatElementOrAttribute((Class)field.getDeclaringClass(), field);
+	}
 
-			if(List.class.isAssignableFrom(elementClazz)){
+	static
+	public String formatElementOrAttribute(Class<? extends PMMLObject> elementClazz, Field field){
+		XmlElement element = field.getAnnotation(XmlElement.class);
+		XmlAttribute attribute = field.getAnnotation(XmlAttribute.class);
+
+		if(element != null){
+			Class<?> childElementClazz = field.getType();
+
+			if(List.class.isAssignableFrom(childElementClazz)){
 				ParameterizedType listType = (ParameterizedType)field.getGenericType();
 
 				Type[] typeArguments = listType.getActualTypeArguments();
 				if(typeArguments.length != 1){
-					throw new RuntimeException();
+					throw new IllegalArgumentException();
 				}
 
-				elementClazz = (Class<?>)typeArguments[0];
+				childElementClazz = (Class<?>)typeArguments[0];
 			}
 
-			return formatXPath(object) + "/" + getElementName(elementClazz);
-		}
+			return getElementName(elementClazz) + "/" + getElementName(childElementClazz);
+		} else
 
-		XmlAttribute attribute = field.getAnnotation(XmlAttribute.class);
 		if(attribute != null){
-			return formatXPath(object) + "@" + attribute.name();
+			return getElementName(elementClazz) + "@" + attribute.name();
 		}
 
-		throw new RuntimeException();
+		throw new IllegalArgumentException();
 	}
 
 	static
-	public String formatXPath(PMMLObject object, Field field, Object value){
+	public String formatAttribute(Field field, Object value){
+		return formatAttribute((Class)field.getDeclaringClass(), field, value);
+	}
+
+	static
+	public String formatAttribute(Class<? extends PMMLObject> elementClazz, Field field, Object value){
 		XmlAttribute attribute = field.getAnnotation(XmlAttribute.class);
+
 		if(attribute != null){
-			return formatXPath(object, field) + (value != null ? ("=" + String.valueOf(value)) : "");
+			return formatElementOrAttribute(elementClazz, field) + (value != null ? ("=" + String.valueOf(value)) : "");
 		}
 
-		throw new RuntimeException();
+		throw new IllegalArgumentException();
 	}
 
 	static
@@ -92,6 +102,6 @@ public class XPathUtil {
 			clazz = clazz.getSuperclass();
 		}
 
-		throw new RuntimeException();
+		throw new IllegalArgumentException();
 	}
 }

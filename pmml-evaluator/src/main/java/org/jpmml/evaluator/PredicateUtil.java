@@ -31,6 +31,9 @@ import java.util.List;
 
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.False;
+import org.dmg.pmml.FieldName;
+import org.dmg.pmml.HasPredicate;
+import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
@@ -39,6 +42,21 @@ import org.dmg.pmml.True;
 public class PredicateUtil {
 
 	private PredicateUtil(){
+	}
+
+	static
+	public <E extends PMMLObject & HasPredicate<E>> Predicate ensurePredicate(E hasPredicate){
+		Predicate predicate = hasPredicate.getPredicate();
+		if(predicate == null){
+			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(hasPredicate.getClass()) + "/<Predicate>"), hasPredicate);
+		}
+
+		return predicate;
+	}
+
+	static
+	public <E extends PMMLObject & HasPredicate<E>> Boolean evaluatePredicateContainer(E hasPredicate, EvaluationContext context){
+		return evaluate(ensurePredicate(hasPredicate), context);
 	}
 
 	/**
@@ -50,9 +68,7 @@ public class PredicateUtil {
 		try {
 			return evaluatePredicate(predicate, context);
 		} catch(PMMLException pe){
-			pe.ensureContext(predicate);
-
-			throw pe;
+			throw pe.ensureContext(predicate);
 		}
 	}
 
@@ -83,14 +99,19 @@ public class PredicateUtil {
 			return evaluateJavaPredicate((JavaPredicate)predicate, context);
 		}
 
-		throw new UnsupportedFeatureException(predicate);
+		throw new UnsupportedElementException(predicate);
 	}
 
 	static
 	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, EvaluationContext context){
+		FieldName name = simplePredicate.getField();
+		if(name == null){
+			throw new MissingAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_FIELD);
+		}
+
 		SimplePredicate.Operator operator = simplePredicate.getOperator();
 		if(operator == null){
-			throw new InvalidFeatureException(simplePredicate);
+			throw new MissingAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_OPERATOR);
 		}
 
 		String stringValue = simplePredicate.getValue();
@@ -100,18 +121,18 @@ public class PredicateUtil {
 			case IS_NOT_MISSING:
 				// "If the operator is isMissing or isNotMissing, then the value attribute must not appear"
 				if(stringValue != null){
-					throw new InvalidFeatureException(simplePredicate);
+					throw new MisplacedAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_VALUE, stringValue);
 				}
 				break;
 			default:
 				// "With all other operators, however, the value attribute is required"
 				if(stringValue == null){
-					throw new InvalidFeatureException(simplePredicate);
+					throw new MissingAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_VALUE);
 				}
 				break;
 		}
 
-		FieldValue value = context.evaluate(simplePredicate.getField());
+		FieldValue value = context.evaluate(name);
 
 		switch(operator){
 			case IS_MISSING:
@@ -148,18 +169,23 @@ public class PredicateUtil {
 			case GREATER_THAN:
 				return Boolean.valueOf(order > 0);
 			default:
-				throw new UnsupportedFeatureException(simplePredicate, operator);
+				throw new UnsupportedAttributeException(simplePredicate, operator);
 		}
 	}
 
 	static
 	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext context){
-		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.getBooleanOperator();
-		if(booleanOperator == null){
-			throw new InvalidFeatureException(simpleSetPredicate);
+		FieldName name = simpleSetPredicate.getField();
+		if(name == null){
+			throw new MissingAttributeException(simpleSetPredicate, PMMLAttributes.SIMPLESETPREDICATE_FIELD);
 		}
 
-		FieldValue value = context.evaluate(simpleSetPredicate.getField());
+		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.getBooleanOperator();
+		if(booleanOperator == null){
+			throw new MissingAttributeException(simpleSetPredicate, PMMLAttributes.SIMPLESETPREDICATE_BOOLEANOPERATOR);
+		}
+
+		FieldValue value = context.evaluate(name);
 		if(value == null){
 			return null;
 		}
@@ -170,7 +196,7 @@ public class PredicateUtil {
 			case IS_NOT_IN:
 				return !value.isIn(simpleSetPredicate);
 			default:
-				throw new UnsupportedFeatureException(simpleSetPredicate, booleanOperator);
+				throw new UnsupportedAttributeException(simpleSetPredicate, booleanOperator);
 		}
 	}
 
@@ -185,12 +211,16 @@ public class PredicateUtil {
 	public CompoundPredicateResult evaluateCompoundPredicateInternal(CompoundPredicate compoundPredicate, EvaluationContext context){
 		CompoundPredicate.BooleanOperator booleanOperator = compoundPredicate.getBooleanOperator();
 		if(booleanOperator == null){
-			throw new InvalidFeatureException(compoundPredicate);
+			throw new MissingAttributeException(compoundPredicate, PMMLAttributes.COMPOUNDPREDICATE_BOOLEANOPERATOR);
+		} // End if
+
+		if(!compoundPredicate.hasPredicates()){
+			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(compoundPredicate.getClass()) + "/<Predicate>"), compoundPredicate);
 		}
 
 		List<Predicate> predicates = compoundPredicate.getPredicates();
 		if(predicates.size() < 2){
-			throw new InvalidFeatureException(compoundPredicate);
+			throw new InvalidElementListException(predicates);
 		}
 
 		Predicate predicate = predicates.get(0);
@@ -208,7 +238,7 @@ public class PredicateUtil {
 				}
 				break;
 			default:
-				throw new UnsupportedFeatureException(compoundPredicate, booleanOperator);
+				throw new UnsupportedAttributeException(compoundPredicate, booleanOperator);
 		}
 
 		for(int i = 1, max = predicates.size(); i < max; i++){
@@ -232,7 +262,7 @@ public class PredicateUtil {
 					}
 					break;
 				default:
-					throw new UnsupportedFeatureException(compoundPredicate, booleanOperator);
+					throw new UnsupportedAttributeException(compoundPredicate, booleanOperator);
 			}
 		}
 

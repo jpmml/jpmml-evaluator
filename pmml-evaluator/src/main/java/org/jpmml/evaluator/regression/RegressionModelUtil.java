@@ -21,7 +21,6 @@ package org.jpmml.evaluator.regression;
 import java.util.Iterator;
 
 import org.dmg.pmml.regression.RegressionModel;
-import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.ValueUtil;
@@ -35,7 +34,7 @@ public class RegressionModelUtil {
 	public <K, V extends Number> ValueMap<K, V> computeBinomialProbabilities(ValueMap<K, V> values, RegressionModel.NormalizationMethod normalizationMethod){
 
 		if(values.size() != 2){
-			throw new EvaluationException();
+			throw new IllegalArgumentException();
 		}
 
 		Iterator<Value<V>> valueIt = values.iterator();
@@ -57,7 +56,7 @@ public class RegressionModelUtil {
 	public <K, V extends Number> ValueMap<K, V> computeMultinomialProbabilities(ValueMap<K, V> values, RegressionModel.NormalizationMethod normalizationMethod){
 
 		if(values.size() < 2){
-			throw new EvaluationException();
+			throw new IllegalArgumentException();
 		}
 
 		switch(normalizationMethod){
@@ -102,7 +101,7 @@ public class RegressionModelUtil {
 				}
 				break;
 			default:
-				throw new EvaluationException();
+				throw new IllegalArgumentException();
 		}
 
 		return values;
@@ -112,7 +111,7 @@ public class RegressionModelUtil {
 	public <K, V extends Number> ValueMap<K, V> computeOrdinalProbabilities(ValueMap<K, V> values, RegressionModel.NormalizationMethod normalizationMethod){
 
 		if(values.size() < 2){
-			throw new EvaluationException();
+			throw new IllegalArgumentException();
 		}
 
 		switch(normalizationMethod){
@@ -148,7 +147,7 @@ public class RegressionModelUtil {
 				}
 				break;
 			default:
-				throw new EvaluationException();
+				throw new IllegalArgumentException();
 		}
 
 		return values;
@@ -174,7 +173,7 @@ public class RegressionModelUtil {
 			case CAUCHIT:
 				return value.inverseCauchit();
 			default:
-				throw new EvaluationException();
+				throw new IllegalArgumentException();
 		}
 	}
 
@@ -195,7 +194,7 @@ public class RegressionModelUtil {
 			case CAUCHIT:
 				return value.inverseCauchit();
 			default:
-				throw new EvaluationException();
+				throw new IllegalArgumentException();
 		}
 	}
 }

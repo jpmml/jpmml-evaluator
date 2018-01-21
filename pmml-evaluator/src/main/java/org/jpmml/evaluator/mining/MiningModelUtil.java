@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.mining.Segmentation;
-import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.ProbabilityAggregator;
@@ -59,7 +58,7 @@ public class MiningModelUtil {
 				aggregator = new ValueAggregator<>(valueFactory.newVector(segmentResults.size()), valueFactory.newVector(segmentResults.size()));
 				break;
 			default:
-				throw new EvaluationException();
+				throw new IllegalArgumentException();
 		}
 
 		for(SegmentResult segmentResult : segmentResults){
@@ -76,9 +75,7 @@ public class MiningModelUtil {
 					value = (Double)TypeUtil.cast(DataType.DOUBLE, targetValue);
 				}
 			} catch(TypeCheckException tce){
-				tce.ensureContext(segmentResult.getSegment());
-
-				throw tce;
+				throw tce.ensureContext(segmentResult.getSegment());
 			}
 
 			switch(multipleModelMethod){
@@ -95,7 +92,7 @@ public class MiningModelUtil {
 					aggregator.add(value, weight);
 					break;
 				default:
-					throw new EvaluationException();
+					throw new IllegalArgumentException();
 			}
 		}
 
@@ -113,7 +110,7 @@ public class MiningModelUtil {
 			case WEIGHTED_MEDIAN:
 				return aggregator.weightedMedian();
 			default:
-				throw new EvaluationException();
+				throw new IllegalArgumentException();
 		}
 	}
 
@@ -135,9 +132,7 @@ public class MiningModelUtil {
 
 				key = (String)TypeUtil.cast(DataType.STRING, targetValue);
 			} catch(TypeCheckException tce){
-				tce.ensureContext(segmentResult.getSegment());
-
-				throw tce;
+				throw tce.ensureContext(segmentResult.getSegment());
 			}
 
 			switch(multipleModelMethod){
@@ -150,7 +145,7 @@ public class MiningModelUtil {
 					aggregator.add(key, weight);
 					break;
 				default:
-					throw new EvaluationException();
+					throw new IllegalArgumentException();
 			}
 		}
 
@@ -191,7 +186,7 @@ public class MiningModelUtil {
 				};
 				break;
 			default:
-				throw new EvaluationException();
+				throw new IllegalArgumentException();
 		}
 
 		for(SegmentResult segmentResult : segmentResults){
@@ -202,9 +197,7 @@ public class MiningModelUtil {
 
 				hasProbability = TypeUtil.cast(HasProbability.class, targetValue);
 			} catch(TypeCheckException tce){
-				tce.ensureContext(segmentResult.getSegment());
-
-				throw tce;
+				throw tce.ensureContext(segmentResult.getSegment());
 			}
 
 			switch(multipleModelMethod){
@@ -219,7 +212,7 @@ public class MiningModelUtil {
 					aggregator.add(hasProbability, weight);
 					break;
 				default:
-					throw new EvaluationException();
+					throw new IllegalArgumentException();
 			}
 		}
 
@@ -233,7 +226,7 @@ public class MiningModelUtil {
 			case MAX:
 				return aggregator.maxMap(categories);
 			default:
-				throw new EvaluationException();
+				throw new IllegalArgumentException();
 		}
 	}
 }

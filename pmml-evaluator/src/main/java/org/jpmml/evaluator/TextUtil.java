@@ -31,7 +31,6 @@ import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Row;
 import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.TextIndexNormalization;
-import org.jpmml.model.ReflectionUtil;
 
 public class TextUtil {
 
@@ -81,32 +80,35 @@ public class TextUtil {
 			caseSensitive = textIndex.isCaseSensitive();
 		}
 
-		PMMLObject locatable = textIndexNormalization;
-
 		Integer maxLevenshteinDistance = textIndexNormalization.getMaxLevenshteinDistance();
 		if(maxLevenshteinDistance == null){
-			locatable = textIndex;
-
 			maxLevenshteinDistance = textIndex.getMaxLevenshteinDistance();
-		} // End if
 
-		if(maxLevenshteinDistance < 0){
-			throw new InvalidFeatureException(locatable, ReflectionUtil.getField(locatable.getClass(), "maxLevenshteinDistance"), maxLevenshteinDistance);
+			if(maxLevenshteinDistance < 0){
+				throw new InvalidAttributeException(textIndex, PMMLAttributes.TEXTINDEX_MAXLEVENSHTEINDISTANCE, maxLevenshteinDistance);
+			}
+		} else
+
+		{
+			if(maxLevenshteinDistance < 0){
+				throw new InvalidAttributeException(textIndexNormalization, PMMLAttributes.TEXTINDEXNORMALIZATION_MAXLEVENSHTEINDISTANCE, maxLevenshteinDistance);
+			}
 		}
 
 		InlineTable inlineTable = InlineTableUtil.getInlineTable(textIndexNormalization);
 		if(inlineTable != null){
+			String inField = textIndexNormalization.getInField();
+			String outField = textIndexNormalization.getOutField();
+			String regexField = textIndexNormalization.getRegexField();
 
 			normalization:
 			while(true){
 				String normalizedString;
 
 				try {
-					normalizedString = normalize(inlineTable, textIndexNormalization.getInField(), textIndexNormalization.getOutField(), textIndexNormalization.getRegexField(), string, tokenizer, caseSensitive, maxLevenshteinDistance);
+					normalizedString = normalize(inlineTable, inField, outField, regexField, string, tokenizer, caseSensitive, maxLevenshteinDistance);
 				} catch(PMMLException pe){
-					pe.ensureContext(textIndexNormalization);
-
-					throw pe;
+					throw pe.ensureContext(textIndexNormalization);
 				}
 
 				// "If the recursive flag is set to true, then the normalization table is reapplied until none of its rows causes a change to the input text."
@@ -139,9 +141,13 @@ public class TextUtil {
 			Integer rowKey = (i + 1);
 
 			String inValue = table.get(rowKey, inColumn);
+			if(inValue == null){
+				throw new InvalidElementException("Cell " + PMMLException.formatKey(inColumn) + " is not defined", row);
+			}
+
 			String outValue = table.get(rowKey, outColumn);
-			if(inValue == null || outValue == null){
-				throw new InvalidFeatureException(row);
+			if(outValue == null){
+				throw new InvalidElementException("Cell " + PMMLException.formatKey(outColumn) + " is not defined", row);
 			}
 
 			String regexValue = table.get(rowKey, regexColumn);
@@ -157,10 +163,6 @@ public class TextUtil {
 			} else
 
 			{
-				if(tokenizer != null){
-					throw new UnsupportedFeatureException(row);
-				}
-
 				Pattern pattern = RegExUtil.compile(Pattern.quote(inValue), regexFlags, row);
 
 				Matcher matcher = pattern.matcher(string);
@@ -188,7 +190,7 @@ public class TextUtil {
 		} else
 
 		{
-			throw new UnsupportedFeatureException(textIndex, ReflectionUtil.getField(TextIndex.class, "tokenize"), tokenize);
+			throw new UnsupportedAttributeException(textIndex, PMMLAttributes.TEXTINDEX_TOKENIZE, tokenize);
 		}
 	}
 
@@ -203,7 +205,7 @@ public class TextUtil {
 
 		int maxLevenshteinDistance = textIndex.getMaxLevenshteinDistance();
 		if(maxLevenshteinDistance < 0){
-			throw new InvalidFeatureException(textIndex, ReflectionUtil.getField(TextIndex.class, "maxLevenshteinDistance"), maxLevenshteinDistance);
+			throw new InvalidAttributeException(textIndex, PMMLAttributes.TEXTINDEX_MAXLEVENSHTEINDISTANCE, maxLevenshteinDistance);
 		}
 
 		boolean bestHits;
@@ -217,7 +219,7 @@ public class TextUtil {
 				bestHits = false;
 				break;
 			default:
-				throw new UnsupportedFeatureException(textIndex, countHits);
+				throw new UnsupportedAttributeException(textIndex, countHits);
 		}
 
 		int maxFrequency;
@@ -232,15 +234,13 @@ public class TextUtil {
 				maxFrequency = Integer.MAX_VALUE;
 				break;
 			default:
-				throw new UnsupportedFeatureException(textIndex, localTermWeights);
+				throw new UnsupportedAttributeException(textIndex, localTermWeights);
 		}
 
 		try {
 			return termFrequency(textTokens, termTokens, caseSensitive, maxLevenshteinDistance, bestHits, maxFrequency);
 		} catch(PMMLException pe){
-			pe.ensureContext(textIndex);
-
-			throw pe;
+			throw pe.ensureContext(textIndex);
 		}
 	}
 

@@ -34,7 +34,8 @@ import org.dmg.pmml.naive_bayes.TargetValueCounts;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasParsedValueMapping;
-import org.jpmml.evaluator.InvalidFeatureException;
+import org.jpmml.evaluator.MissingElementException;
+import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (
@@ -72,7 +73,7 @@ public class RichBayesInput extends BayesInput implements HasParsedValueMapping<
 
 			TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
 			if(targetValueCounts == null){
-				throw new InvalidFeatureException(pairCount);
+				throw new MissingElementException(pairCount, PMMLElements.PAIRCOUNTS_TARGETVALUECOUNTS);
 			}
 
 			result.put(value, targetValueCounts);

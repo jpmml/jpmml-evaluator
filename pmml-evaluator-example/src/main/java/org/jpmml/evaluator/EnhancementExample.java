@@ -90,7 +90,7 @@ public class EnhancementExample extends Example {
 
 		ModelVerification modelVerification = model.getModelVerification();
 		if(modelVerification != null){
-			throw new InvalidFeatureException(modelVerification);
+			throw new IllegalArgumentException("Model verification data is already defined");
 		}
 
 		modelVerification = new ModelVerification();

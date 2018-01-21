@@ -159,7 +159,7 @@ public class ValueAggregator<V extends Number> {
 			}
 		}
 
-		throw new EvaluationException();
+		throw new NotImplementedException();
 	}
 
 	private class Entry implements Comparable<Entry> {

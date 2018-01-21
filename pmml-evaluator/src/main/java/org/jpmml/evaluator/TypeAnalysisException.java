@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import org.dmg.pmml.Expression;
+import org.dmg.pmml.Field;
 import org.dmg.pmml.PMMLObject;
 
 /**
@@ -27,19 +29,19 @@ import org.dmg.pmml.PMMLObject;
  */
 public class TypeAnalysisException extends PMMLException {
 
-	public TypeAnalysisException(){
-		super();
-	}
-
 	public TypeAnalysisException(String message){
 		super(message);
 	}
 
-	public TypeAnalysisException(PMMLObject context){
-		super(context);
-	}
-
 	public TypeAnalysisException(String message, PMMLObject context){
 		super(message, context);
+	}
+
+	public TypeAnalysisException(Field field){
+		this("Field type is not statically defined", field);
+	}
+
+	public TypeAnalysisException(Expression expression){
+		this("Expression type is not statically defined", expression);
 	}
 }

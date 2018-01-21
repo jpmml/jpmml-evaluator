@@ -156,7 +156,7 @@ public class ExpressionUtilTest {
 		FieldName name = FieldName.create("x");
 
 		MapValues mapValues = new MapValues("y")
-			.addFieldColumnPairs(new FieldColumnPair(name, null));
+			.addFieldColumnPairs(new FieldColumnPair(name, "column"));
 
 		assertEquals(DataType.STRING, getDataType(mapValues));
 

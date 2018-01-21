@@ -23,12 +23,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.Predicate;
 import org.dmg.pmml.scorecard.Attribute;
 import org.dmg.pmml.scorecard.Characteristic;
 import org.dmg.pmml.scorecard.Characteristics;
@@ -37,15 +35,19 @@ import org.dmg.pmml.scorecard.Scorecard;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.InvalidFeatureException;
-import org.jpmml.evaluator.InvalidResultException;
+import org.jpmml.evaluator.InvalidAttributeException;
+import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
+import org.jpmml.evaluator.PMMLAttributes;
+import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.UndefinedResultException;
+import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
@@ -62,11 +64,11 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 		Characteristics characteristics = scorecard.getCharacteristics();
 		if(characteristics == null){
-			throw new InvalidFeatureException(scorecard);
+			throw new MissingElementException(scorecard, PMMLElements.SCORECARD_CHARACTERISTICS);
 		} // End if
 
 		if(!characteristics.hasCharacteristics()){
-			throw new InvalidFeatureException(characteristics);
+			throw new MissingElementException(characteristics, PMMLElements.CHARACTERISTICS_CHARACTERISTICS);
 		}
 	}
 
@@ -77,10 +79,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		Scorecard scorecard = getModel();
-		if(!scorecard.isScorable()){
-			throw new InvalidResultException(scorecard);
-		}
+		Scorecard scorecard = ensureScorableModel();
 
 		ValueFactory<?> valueFactory;
 
@@ -91,7 +90,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 				valueFactory = getValueFactory();
 				break;
 			default:
-				throw new UnsupportedFeatureException(scorecard, mathContext);
+				throw new UnsupportedAttributeException(scorecard, mathContext);
 		}
 
 		Map<FieldName, ?> predictions;
@@ -101,8 +100,15 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			case REGRESSION:
 				predictions = evaluateRegression(valueFactory, context);
 				break;
+			case ASSOCIATION_RULES:
+			case SEQUENCES:
+			case CLASSIFICATION:
+			case CLUSTERING:
+			case TIME_SERIES:
+			case MIXED:
+				throw new InvalidAttributeException(scorecard, miningFunction);
 			default:
-				throw new UnsupportedFeatureException(scorecard, miningFunction);
+				throw new UnsupportedAttributeException(scorecard, miningFunction);
 		}
 
 		return OutputUtil.evaluate(predictions, context);
@@ -140,7 +146,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 				} // End if
 
 				if(baselineScore == null){
-					throw new InvalidFeatureException(characteristic);
+					throw new MissingAttributeException(characteristic, PMMLAttributes.CHARACTERISTIC_BASELINESCORE);
 				}
 			}
 
@@ -148,24 +154,14 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 			List<Attribute> attributes = characteristic.getAttributes();
 			for(Attribute attribute : attributes){
-				Predicate predicate = attribute.getPredicate();
-				if(predicate == null){
-					throw new InvalidFeatureException(attribute);
-				}
-
-				Boolean status = PredicateUtil.evaluate(predicate, context);
+				Boolean status = PredicateUtil.evaluatePredicateContainer(attribute, context);
 				if(status == null || !status.booleanValue()){
 					continue;
 				}
 
 				ComplexPartialScore complexPartialScore = attribute.getComplexPartialScore();
 				if(complexPartialScore != null){
-					Expression expression = complexPartialScore.getExpression();
-					if(expression == null){
-						throw new InvalidFeatureException(complexPartialScore);
-					}
-
-					FieldValue computedValue = ExpressionUtil.evaluate(expression, context);
+					FieldValue computedValue = ExpressionUtil.evaluateExpressionContainer(complexPartialScore, context);
 					if(computedValue == null){
 						return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 					}
@@ -175,9 +171,8 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 				{
 					partialScore = attribute.getPartialScore();
-
 					if(partialScore == null){
-						throw new InvalidFeatureException(attribute);
+						throw new MissingAttributeException(attribute, PMMLAttributes.ATTRIBUTE_PARTIALSCORE);
 					}
 				}
 
@@ -190,7 +185,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 					} // End if
 
 					if(reasonCode == null){
-						throw new InvalidFeatureException(attribute);
+						throw new MissingAttributeException(attribute, PMMLAttributes.ATTRIBUTE_REASONCODE);
 					}
 
 					double difference;
@@ -204,7 +199,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 							difference = (baselineScore - partialScore);
 							break;
 						default:
-							throw new UnsupportedFeatureException(scorecard, reasonCodeAlgorithm);
+							throw new UnsupportedAttributeException(scorecard, reasonCodeAlgorithm);
 					}
 
 					reasonCodePoints.add(reasonCode, difference);
@@ -215,7 +210,8 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 			// "If not even a single Attribute evaluates to "true" for a given Characteristic, then the scorecard as a whole returns an invalid value"
 			if(partialScore == null){
-				throw new InvalidResultException(characteristic);
+				throw new UndefinedResultException()
+					.ensureContext(characteristic);
 			}
 		}
 

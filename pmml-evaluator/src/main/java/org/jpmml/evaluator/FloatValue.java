@@ -277,7 +277,7 @@ public class FloatValue extends Value<Float> {
 
 	@Override
 	public FloatValue inverseProbit(){
-		throw new EvaluationException();
+		throw new NotImplementedException();
 	}
 
 	@Override

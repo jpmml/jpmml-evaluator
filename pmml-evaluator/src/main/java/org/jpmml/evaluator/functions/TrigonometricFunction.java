@@ -24,7 +24,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.InvalidResultException;
+import org.jpmml.evaluator.NaNResultException;
 
 abstract
 public class TrigonometricFunction extends AbstractFunction {
@@ -45,7 +45,7 @@ public class TrigonometricFunction extends AbstractFunction {
 
 		Double result = evaluate(angle);
 		if(result.isNaN()){
-			throw new InvalidResultException(null);
+			throw new NaNResultException();
 		}
 
 		return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, result);

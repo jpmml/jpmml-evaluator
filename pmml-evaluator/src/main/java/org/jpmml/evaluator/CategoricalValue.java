@@ -36,12 +36,12 @@ public class CategoricalValue extends FieldValue {
 
 	@Override
 	public int compareToString(String string){
-		throw new EvaluationException();
+		throw new EvaluationException("Categorical value cannot be used in comparison operations");
 	}
 
 	@Override
 	public int compareToValue(FieldValue value){
-		throw new EvaluationException();
+		throw new EvaluationException("Categorical value cannot be used in comparison operations");
 	}
 
 	static

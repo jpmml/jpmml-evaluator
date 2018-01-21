@@ -105,7 +105,7 @@ public class SparseArrayUtil {
 
 		// "Both arrays must have the same length"
 		if(indices.size() != entries.size()){
-			throw new InvalidFeatureException(sparseArray);
+			throw new InvalidElementException(sparseArray);
 		}
 
 		Integer n = sparseArray.getN();
@@ -115,14 +115,14 @@ public class SparseArrayUtil {
 			E entry = entries.get(i);
 
 			if((index < 1) || (n != null && index > n.intValue())){
-				throw new InvalidFeatureException(sparseArray);
+				throw new InvalidElementException(sparseArray);
 			}
 
 			result.put(index, entry);
 		}
 
 		if(n != null && n.intValue() < result.size()){
-			throw new InvalidFeatureException(sparseArray);
+			throw new InvalidElementException(sparseArray);
 		}
 
 		return result;

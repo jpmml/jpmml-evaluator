@@ -34,13 +34,10 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
-import org.dmg.pmml.MiningSchema;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
@@ -57,18 +54,22 @@ import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasGroupFields;
 import org.jpmml.evaluator.IndexableUtil;
 import org.jpmml.evaluator.InputField;
-import org.jpmml.evaluator.InvalidFeatureException;
-import org.jpmml.evaluator.InvalidResultException;
+import org.jpmml.evaluator.InvalidAttributeException;
+import org.jpmml.evaluator.MisplacedElementException;
+import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
+import org.jpmml.evaluator.PMMLAttributes;
+import org.jpmml.evaluator.PMMLException;
 import org.jpmml.evaluator.TargetField;
-import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.UnsupportedAttributeException;
 
 public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> implements HasGroupFields, HasEntityRegistry<AssociationRule> {
 
@@ -97,7 +98,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		Targets targets = associationModel.getTargets();
 		if(targets != null){
-			throw new InvalidFeatureException(targets);
+			throw new MisplacedElementException(targets);
 		}
 	}
 
@@ -144,11 +145,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		List<TargetField> targetFields = super.createTargetFields();
 
 		if(targetFields.size() > 0){
-			AssociationModel associationModel = getModel();
-
-			MiningSchema miningSchema = associationModel.getMiningSchema();
-
-			throw new InvalidFeatureException("Too many target fields", miningSchema);
+			throw createMiningSchemaException("Expected 0 target fields, got " + targetFields.size() + " target fields");
 		}
 
 		return targetFields;
@@ -156,17 +153,14 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		AssociationModel associationModel = getModel();
-		if(!associationModel.isScorable()){
-			throw new InvalidResultException(associationModel);
-		}
+		AssociationModel associationModel = ensureScorableModel();
 
 		MathContext mathContext = associationModel.getMathContext();
 		switch(mathContext){
 			case DOUBLE:
 				break;
 			default:
-				throw new UnsupportedFeatureException(associationModel, mathContext);
+				throw new UnsupportedAttributeException(associationModel, mathContext);
 		}
 
 		Map<FieldName, Association> predictions;
@@ -176,8 +170,15 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			case ASSOCIATION_RULES:
 				predictions = evaluateAssociationRules(context);
 				break;
+			case SEQUENCES:
+			case CLASSIFICATION:
+			case REGRESSION:
+			case CLUSTERING:
+			case TIME_SERIES:
+			case MIXED:
+				throw new InvalidAttributeException(associationModel, miningFunction);
 			default:
-				throw new UnsupportedFeatureException(associationModel, miningFunction);
+				throw new UnsupportedAttributeException(associationModel, miningFunction);
 		}
 
 		return OutputUtil.evaluate(predictions, context);
@@ -203,16 +204,26 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		for(int i = 0; i < associationRules.size(); i++){
 			AssociationRule associationRule = associationRules.get(i);
 
-			Boolean antecedentFlag = flags.get(associationRule.getAntecedent());
+			String antecedent = associationRule.getAntecedent();
+			if(antecedent == null){
+				throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_ANTECEDENT);
+			}
+
+			Boolean antecedentFlag = flags.get(antecedent);
 			if(antecedentFlag == null){
-				throw new InvalidFeatureException(associationRule);
+				throw new InvalidAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_ANTECEDENT, antecedent);
 			}
 
 			antecedentFlags.set(i, antecedentFlag);
 
-			Boolean consequentFlag = flags.get(associationRule.getConsequent());
+			String consequent = associationRule.getConsequent();
+			if(consequent == null){
+				throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_CONSEQUENT);
+			}
+
+			Boolean consequentFlag = flags.get(consequent);
 			if(consequentFlag == null){
-				throw new InvalidFeatureException(associationRule);
+				throw new InvalidAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_CONSEQUENT, consequent);
 			}
 
 			consequentFlags.set(i, consequentFlag);
@@ -245,8 +256,6 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	Set<String> getActiveItemIds(EvaluationContext context){
 		AssociationModel associationModel = getModel();
 
-		MiningSchema miningSchema = associationModel.getMiningSchema();
-
 		List<InputField> activeFields = getActiveFields();
 		List<InputField> groupFields = getGroupFields();
 
@@ -271,16 +280,16 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				// "The item values are based on field names when the field has only true/false values"
 				if(category == null){
 
-					if((AssociationModelEvaluator.TRUE).equalsValue(value) || value.equalsString("T")){
+					if((FieldValues.CATEGORICAL_BOOLEAN_TRUE).equalsValue(value) || value.equalsString("T")){
 						result.add(id);
 					} else
 
-					if((AssociationModelEvaluator.FALSE).equalsValue(value) || value.equalsString("F")){
+					if((FieldValues.CATEGORICAL_BOOLEAN_FALSE).equalsValue(value) || value.equalsString("F")){
 						// Ignored
 					} else
 
 					{
-						throw new EvaluationException();
+						throw new EvaluationException("Expected " + PMMLException.formatValue(FieldValues.CATEGORICAL_BOOLEAN_FALSE) + " or " + PMMLException.formatValue(FieldValues.CATEGORICAL_BOOLEAN_TRUE) + ", got " + PMMLException.formatValue(value));
 					}
 				} else
 
@@ -312,7 +321,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				} // End if
 
 				if(category == null){
-					throw new EvaluationException();
+					throw new IllegalStateException();
 				} else
 
 				{
@@ -325,7 +334,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			} else
 
 			{
-				throw new InvalidFeatureException(miningSchema);
+				throw createMiningSchemaException("Expected 0 or 1 group field(s), got " + groupFields.size() + " group fields");
 			}
 		}
 
@@ -390,8 +399,6 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	private List<ItemValue> parseItemValues(AssociationModelEvaluator modelEvaluator){
 		AssociationModel associationModel = modelEvaluator.getModel();
 
-		MiningSchema miningSchema = associationModel.getMiningSchema();
-
 		List<InputField> activeFields = modelEvaluator.getActiveFields();
 		List<InputField> groupFields = modelEvaluator.getGroupFields();
 
@@ -400,10 +407,13 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		List<Item> items = associationModel.getItems();
 		for(Item item : items){
 			String id = item.getId();
-			String value = item.getValue();
+			if(id == null){
+				throw new MissingAttributeException(item, PMMLAttributes.ITEM_ID);
+			}
 
+			String value = item.getValue();
 			if(value == null){
-				throw new InvalidFeatureException(item);
+				throw new MissingAttributeException(item, PMMLAttributes.ITEM_VALUE);
 			}
 
 			FieldName name = item.getField();
@@ -416,7 +426,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				if(groupFields.size() == 0){
 
 					if(activeFields.size() < 1){
-						throw new InvalidFeatureException("No active fields", miningSchema);
+						throw modelEvaluator.createMiningSchemaException("Expected 1 or more active field(s), got " + activeFields.size() + " active fields");
 					}
 
 					name = FieldName.create(value);
@@ -438,18 +448,14 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 						}
 					}
 
-					throw new InvalidFeatureException(item);
+					throw new InvalidAttributeException(item, PMMLAttributes.ITEM_VALUE, value);
 				} else
 
 				// Transactional data style: one group field, one active field
 				if(groupFields.size() == 1){
 
-					if(activeFields.size() < 1){
-						throw new InvalidFeatureException("No active fields", miningSchema);
-					} else
-
-					if(activeFields.size() > 1){
-						throw new InvalidFeatureException("Too many active fields", miningSchema);
+					if(activeFields.size() != 1){
+						throw modelEvaluator.createMiningSchemaException("Expected 1 active field, got " + activeFields.size() + " active fields");
 					}
 
 					InputField activeField = activeFields.get(0);
@@ -459,7 +465,20 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				} else
 
 				{
-					throw new InvalidFeatureException(miningSchema);
+					throw modelEvaluator.createMiningSchemaException("Expected 0 or 1 group field(s), got " + groupFields.size() + " group fields");
+				}
+			} else
+
+			{
+				if(groupFields.size() == 1){
+
+					if(category != null){
+						break parser;
+					}
+				} // End if
+
+				if(category == null){
+					throw new MissingAttributeException(item, PMMLAttributes.ITEM_CATEGORY);
 				}
 			}
 
@@ -511,9 +530,6 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			this.category = category;
 		}
 	}
-
-	private static final FieldValue TRUE = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
-	private static final FieldValue FALSE = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
 
 	private static final LoadingCache<AssociationModel, BiMap<String, AssociationRule>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<AssociationModel, BiMap<String, AssociationRule>>(){
 

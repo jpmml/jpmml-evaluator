@@ -65,7 +65,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 		MiningField miningField = modelEvaluator.getMiningField(name);
 		if(miningField == null){
-			throw new EvaluationException();
+			throw new InvisibleFieldException(name);
 		}
 
 		MiningField.UsageType usageType = miningField.getUsageType();
@@ -84,7 +84,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 					return FieldValueUtil.prepareTargetValue(dataField, miningField, target, value);
 				}
 			default:
-				throw new UnsupportedFeatureException(miningField, usageType);
+				throw new UnsupportedAttributeException(miningField, usageType);
 		}
 	}
 
@@ -115,7 +115,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 		if(miningField == null){
 			DerivedField localDerivedField = modelEvaluator.getLocalDerivedField(name);
 			if(localDerivedField != null){
-				FieldValue value = ExpressionUtil.evaluate(localDerivedField, this);
+				FieldValue value = ExpressionUtil.evaluateDerivedField(localDerivedField, this);
 
 				return declare(name, value);
 			}
@@ -130,7 +130,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 				} else
 
 				{
-					value = ExpressionUtil.evaluate(derivedField, this);
+					value = ExpressionUtil.evaluateDerivedField(derivedField, this);
 				}
 
 				return declare(name, value);
@@ -161,13 +161,6 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 					return declare(name, performValueTreatment(field, miningField, value));
 				}
-			}
-
-			DerivedField localDerivedField = modelEvaluator.getLocalDerivedField(name);
-			DerivedField derivedField = modelEvaluator.getDerivedField(name);
-
-			if(localDerivedField != null || derivedField != null){
-				throw new InvalidFeatureException(miningField);
 			}
 		}
 

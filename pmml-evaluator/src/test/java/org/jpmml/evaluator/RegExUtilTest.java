@@ -37,10 +37,10 @@ public class RegExUtilTest {
 			RegExUtil.compile(regex, null);
 
 			fail();
-		} catch(InvalidFeatureException ife){
-			Throwable cause = ife.getCause();
+		} catch(EvaluationException ee){
+			Throwable cause = ee.getCause();
 
-			assertEquals(null, ife.getContext());
+			assertEquals(null, ee.getContext());
 			assertTrue(cause instanceof PatternSyntaxException);
 		}
 
@@ -50,10 +50,10 @@ public class RegExUtilTest {
 			RegExUtil.compile("[", textIndex);
 
 			fail();
-		} catch(InvalidFeatureException ife){
-			Throwable cause = ife.getCause();
+		} catch(EvaluationException ee){
+			Throwable cause = ee.getCause();
 
-			assertEquals(textIndex, ife.getContext());
+			assertEquals(textIndex, ee.getContext());
 			assertTrue(cause instanceof PatternSyntaxException);
 		}
 	}

@@ -49,10 +49,7 @@ public class NormalizationUtil {
 
 	static
 	public double normalize(NormContinuous normContinuous, double value){
-		List<LinearNorm> linearNorms = normContinuous.getLinearNorms();
-		if(linearNorms.size() < 2){
-			throw new InvalidFeatureException(normContinuous);
-		}
+		List<LinearNorm> linearNorms = ensureLinearNorms(normContinuous);
 
 		LinearNorm rangeStart = linearNorms.get(0);
 		LinearNorm rangeEnd = linearNorms.get(linearNorms.size() - 1);
@@ -83,7 +80,7 @@ public class NormalizationUtil {
 				case AS_MISSING_VALUES:
 					Double missing = normContinuous.getMapMissingTo();
 					if(missing == null){
-						throw new InvalidFeatureException(normContinuous);
+						throw new MissingAttributeException(normContinuous, PMMLAttributes.NORMCONTINUOUS_MAPMISSINGTO);
 					}
 					return missing;
 				case AS_IS:
@@ -104,7 +101,7 @@ public class NormalizationUtil {
 						return rangeEnd.getNorm();
 					}
 				default:
-					throw new UnsupportedFeatureException(normContinuous, outlierTreatmentMethod);
+					throw new UnsupportedAttributeException(normContinuous, outlierTreatmentMethod);
 			}
 		}
 
@@ -125,10 +122,7 @@ public class NormalizationUtil {
 
 	static
 	public <V extends Number> Value<V> denormalize(NormContinuous normContinuous, Value<V> value){
-		List<LinearNorm> linearNorms = normContinuous.getLinearNorms();
-		if(linearNorms.size() < 2){
-			throw new InvalidFeatureException(normContinuous);
-		}
+		List<LinearNorm> linearNorms = ensureLinearNorms(normContinuous);
 
 		LinearNorm rangeStart = linearNorms.get(0);
 		LinearNorm rangeEnd = linearNorms.get(linearNorms.size() - 1);
@@ -150,4 +144,18 @@ public class NormalizationUtil {
 		return value.denormalize(rangeStart.getOrig(), rangeStart.getNorm(), rangeEnd.getOrig(), rangeEnd.getNorm());
 	}
 
+	static
+	private List<LinearNorm> ensureLinearNorms(NormContinuous normContinuous){
+
+		if(!normContinuous.hasLinearNorms()){
+			throw new MissingElementException(normContinuous, PMMLElements.NORMCONTINUOUS_LINEARNORMS);
+		}
+
+		List<LinearNorm> linearNorms = normContinuous.getLinearNorms();
+		if(linearNorms.size() < 2){
+			throw new InvalidElementListException(linearNorms);
+		}
+
+		return linearNorms;
+	}
 }

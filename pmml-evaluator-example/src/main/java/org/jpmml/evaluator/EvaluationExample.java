@@ -262,12 +262,12 @@ public class EvaluationExample extends Example {
 
 			Sets.SetView<FieldName> missingInputFields = Sets.difference(new LinkedHashSet<>(EvaluatorUtil.getNames(inputFields)), inputRecord.keySet());
 			if((missingInputFields.size() > 0) && !this.sparse){
-				throw new IllegalArgumentException("Missing input field(s): " + missingInputFields.toString());
+				throw new IllegalArgumentException("Missing input field(s): " + missingInputFields);
 			}
 
 			Sets.SetView<FieldName> missingGroupFields = Sets.difference(new LinkedHashSet<>(EvaluatorUtil.getNames(groupFields)), inputRecord.keySet());
 			if(missingGroupFields.size() > 0){
-				throw new IllegalArgumentException("Missing group field(s): " + missingGroupFields.toString());
+				throw new IllegalArgumentException("Missing group field(s): " + missingGroupFields);
 			}
 		} // End if
 

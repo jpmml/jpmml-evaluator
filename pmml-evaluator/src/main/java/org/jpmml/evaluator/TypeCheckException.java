@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.Field;
 
 /**
  * <p>
@@ -29,31 +28,21 @@ import org.dmg.pmml.Field;
  */
 public class TypeCheckException extends EvaluationException {
 
-	public TypeCheckException(Field field, Object value){
-		this(field.getDataType(), value);
+	public TypeCheckException(String message){
+		super(message);
 	}
 
-	public TypeCheckException(DataType expected, Object value){
-		this(formatDataType(expected), formatDataType(getDataType(value)), value);
+	public TypeCheckException(DataType expected, Object actual){
+		this(formatMessage(formatDataType(expected), formatDataType(getDataType(actual)), actual));
 	}
 
-	public TypeCheckException(Class<?> expected, Object value){
-		this(formatClass(expected), formatClass(getClass(value)), value);
-	}
-
-	private TypeCheckException(String expected, String actual, Object value){
-		super(formatMessage(expected, actual, value));
+	public TypeCheckException(Class<?> expected, Object actual){
+		this(formatMessage(formatClass(expected), formatClass(getClass(actual)), actual));
 	}
 
 	static
 	private String formatMessage(String expected, String actual, Object value){
-		String message = "Expected " + expected + ", but got " + actual;
-
-		if(value != null){
-			message += (" (" + String.valueOf(value) + ")");
-		}
-
-		return message;
+		return "Expected " + (expected + " value") + ", got " + (value != null ? (actual + " value") : "missing value (null)");
 	}
 
 	static
@@ -73,7 +62,7 @@ public class TypeCheckException extends EvaluationException {
 
 	static
 	private String formatDataType(DataType dataType){
-		return String.valueOf(dataType);
+		return (dataType != null ? dataType.value() : null);
 	}
 
 	static
@@ -88,6 +77,6 @@ public class TypeCheckException extends EvaluationException {
 
 	static
 	private String formatClass(Class<?> clazz){
-		return String.valueOf(clazz != null ? clazz.getName() : null);
+		return (clazz != null ? clazz.getName() : null);
 	}
 }

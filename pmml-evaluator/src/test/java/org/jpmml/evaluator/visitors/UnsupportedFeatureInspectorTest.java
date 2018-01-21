@@ -29,6 +29,7 @@ import org.jpmml.schema.Version;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class UnsupportedFeatureInspectorTest {
@@ -52,7 +53,9 @@ public class UnsupportedFeatureInspectorTest {
 
 			assertEquals(1, exceptions.size());
 
-			assertEquals("ClusteringModel@modelClass=distributionBased", ufe.getMessage());
+			String message = ufe.getMessage();
+
+			assertTrue(message.contains("ClusteringModel@modelClass=distributionBased"));
 		}
 	}
 }

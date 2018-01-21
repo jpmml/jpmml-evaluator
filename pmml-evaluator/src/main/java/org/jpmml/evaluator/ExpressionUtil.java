@@ -39,11 +39,14 @@ import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
+import org.dmg.pmml.HasExpression;
+import org.dmg.pmml.HasField;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.TypeDefinitionField;
 
@@ -53,15 +56,35 @@ public class ExpressionUtil {
 	}
 
 	static
-	public FieldValue evaluate(DerivedField derivedField, EvaluationContext context){
-		Expression expression = derivedField.getExpression();
-		if(expression == null){
-			throw new InvalidFeatureException(derivedField);
+	public <E extends Expression & HasField<E>> FieldName ensureField(E hasField){
+		FieldName name = hasField.getField();
+		if(name == null){
+			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(hasField.getClass()) + "@field"), hasField);
 		}
 
-		FieldValue value = evaluate(expression, context);
+		return name;
+	}
+
+	static
+	public <E extends PMMLObject & HasExpression<E>> Expression ensureExpression(E hasExpression){
+		Expression expression = hasExpression.getExpression();
+		if(expression == null){
+			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(hasExpression.getClass()) + "/<Expression>"), hasExpression);
+		}
+
+		return expression;
+	}
+
+	static
+	public FieldValue evaluateDerivedField(DerivedField derivedField, EvaluationContext context){
+		FieldValue value = evaluateExpressionContainer(derivedField, context);
 
 		return FieldValueUtil.refine(derivedField, value);
+	}
+
+	static
+	public <E extends PMMLObject & HasExpression<E>> FieldValue evaluateExpressionContainer(E hasExpression, EvaluationContext context){
+		return evaluate(ensureExpression(hasExpression), context);
 	}
 
 	static
@@ -70,9 +93,7 @@ public class ExpressionUtil {
 		try {
 			return evaluateExpression(expression, context);
 		} catch(PMMLException pe){
-			pe.ensureContext(expression);
-
-			throw pe;
+			throw pe.ensureContext(expression);
 		}
 	}
 
@@ -119,7 +140,7 @@ public class ExpressionUtil {
 			return evaluateJavaExpression((JavaExpression)expression, context);
 		}
 
-		throw new UnsupportedFeatureException(expression);
+		throw new UnsupportedElementException(expression);
 	}
 
 	/**
@@ -137,7 +158,7 @@ public class ExpressionUtil {
 		if(expression instanceof FieldRef){
 			FieldRef fieldRef = (FieldRef)expression;
 
-			FieldName name = fieldRef.getField();
+			FieldName name = ensureField(fieldRef);
 
 			TypeDefinitionField field = modelEvaluator.resolveField(name);
 			if(field == null){
@@ -189,9 +210,13 @@ public class ExpressionUtil {
 
 		if(expression instanceof Aggregate){
 			throw new TypeAnalysisException(expression);
+		} // End if
+
+		if(expression instanceof JavaExpression){
+			throw new TypeAnalysisException(expression);
 		}
 
-		throw new UnsupportedFeatureException(expression);
+		throw new UnsupportedElementException(expression);
 	}
 
 	static
@@ -216,7 +241,7 @@ public class ExpressionUtil {
 			case LOGARITHMIC:
 				return DataType.DOUBLE;
 			default:
-				throw new UnsupportedFeatureException(textIndex, localTermWeights);
+				throw new UnsupportedAttributeException(textIndex, localTermWeights);
 		}
 	}
 
@@ -234,7 +259,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateFieldRef(FieldRef fieldRef, EvaluationContext context){
-		FieldValue value = context.evaluate(fieldRef.getField());
+		FieldValue value = context.evaluate(ensureField(fieldRef));
 
 		if(value == null){
 			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, fieldRef.getMapMissingTo());
@@ -245,7 +270,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateNormContinuous(NormContinuous normContinuous, EvaluationContext context){
-		FieldValue value = context.evaluate(normContinuous.getField());
+		FieldValue value = context.evaluate(ensureField(normContinuous));
 
 		if(value == null){
 			return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, normContinuous.getMapMissingTo());
@@ -256,7 +281,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateNormDiscrete(NormDiscrete normDiscrete, EvaluationContext context){
-		FieldValue value = context.evaluate(normDiscrete.getField());
+		FieldValue value = context.evaluate(ensureField(normDiscrete));
 
 		if(value == null){
 			return FieldValueUtil.create(DataType.DOUBLE, OpType.CATEGORICAL, normDiscrete.getMapMissingTo());
@@ -271,13 +296,13 @@ public class ExpressionUtil {
 					return (equals ? FieldValues.CATEGORICAL_DOUBLE_ONE : FieldValues.CATEGORICAL_DOUBLE_ZERO);
 				}
 			default:
-				throw new UnsupportedFeatureException(normDiscrete, method);
+				throw new UnsupportedAttributeException(normDiscrete, method);
 		}
 	}
 
 	static
 	public FieldValue evaluateDiscretize(Discretize discretize, EvaluationContext context){
-		FieldValue value = context.evaluate(discretize.getField());
+		FieldValue value = context.evaluate(ensureField(discretize));
 
 		if(value == null){
 			return FieldValueUtil.create(discretize.getDataType(), null, discretize.getMapMissingTo());
@@ -292,13 +317,22 @@ public class ExpressionUtil {
 
 		List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
 		for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
-			FieldValue value = context.evaluate(fieldColumnPair.getField());
+			FieldName name = fieldColumnPair.getField();
+			if(name == null){
+				throw new MissingAttributeException(fieldColumnPair, PMMLAttributes.FIELDCOLUMNPAIR_FIELD);
+			}
 
+			String column = fieldColumnPair.getColumn();
+			if(column == null){
+				throw new MissingAttributeException(fieldColumnPair, PMMLAttributes.FIELDCOLUMNPAIR_COLUMN);
+			}
+
+			FieldValue value = context.evaluate(name);
 			if(value == null){
 				return FieldValueUtil.create(mapValues.getDataType(), null, mapValues.getMapMissingTo());
 			}
 
-			values.put(fieldColumnPair.getColumn(), value);
+			values.put(column, value);
 		}
 
 		return DiscretizationUtil.mapValue(mapValues, values);
@@ -306,14 +340,14 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateTextIndex(TextIndex textIndex, EvaluationContext context){
-		FieldValue textValue = context.evaluate(textIndex.getTextField());
-
-		Expression expression = textIndex.getExpression();
-		if(expression == null){
-			throw new InvalidFeatureException(textIndex);
+		FieldName textName = textIndex.getTextField();
+		if(textName == null){
+			throw new MissingAttributeException(textIndex, PMMLAttributes.TEXTINDEX_TEXTFIELD);
 		}
 
-		FieldValue termValue = ExpressionUtil.evaluate(expression, context);
+		FieldValue textValue = context.evaluate(textName);
+
+		FieldValue termValue = ExpressionUtil.evaluateExpressionContainer(textIndex, context);
 
 		// See http://mantis.dmg.org/view.php?id=171
 		if(textValue == null || termValue == null){
@@ -338,7 +372,7 @@ public class ExpressionUtil {
 			case LOGARITHMIC:
 				return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Math.log10(1d + termFrequency));
 			default:
-				throw new UnsupportedFeatureException(textIndex, localTermWeights);
+				throw new UnsupportedAttributeException(textIndex, localTermWeights);
 		}
 	}
 
@@ -447,14 +481,15 @@ public class ExpressionUtil {
 
 			switch(invalidValueTreatmentMethod){
 				case RETURN_INVALID:
-					throw new InvalidResultException(apply);
+					throw new InvalidResultException("Function application yielded an invalid result", apply)
+						.initCause(ire);
 				case AS_IS:
 					// Re-throw the given InvalidResultException instance
 					throw ire;
 				case AS_MISSING:
 					return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, defaultValue);
 				default:
-					throw new UnsupportedFeatureException(apply, invalidValueTreatmentMethod);
+					throw new UnsupportedAttributeException(apply, invalidValueTreatmentMethod);
 			}
 		}
 
@@ -471,7 +506,7 @@ public class ExpressionUtil {
 	)
 	static
 	public FieldValue evaluateAggregate(Aggregate aggregate, EvaluationContext context){
-		FieldValue value = context.evaluate(aggregate.getField());
+		FieldValue value = context.evaluate(ensureField(aggregate));
 
 		// The JPMML library operates with single records, so it's impossible to implement "proper" aggregation over multiple records.
 		// It is assumed that application developers have performed the aggregation beforehand
@@ -489,6 +524,10 @@ public class ExpressionUtil {
 		values = Lists.newArrayList(Iterables.filter(values, Predicates.notNull()));
 
 		Aggregate.Function function = aggregate.getFunction();
+		if(function == null){
+			throw new MissingAttributeException(aggregate, PMMLAttributes.AGGREGATE_FUNCTION);
+		}
+
 		switch(function){
 			case COUNT:
 				return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, values.size());
@@ -501,7 +540,7 @@ public class ExpressionUtil {
 			case MAX:
 				return FieldValueUtil.create(null, null, Collections.max((List<Comparable>)values));
 			default:
-				throw new UnsupportedFeatureException(aggregate, function);
+				throw new UnsupportedAttributeException(aggregate, function);
 		}
 	}
 

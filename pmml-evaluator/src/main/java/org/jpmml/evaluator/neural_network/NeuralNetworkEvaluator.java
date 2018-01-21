@@ -19,7 +19,6 @@
 package org.jpmml.evaluator.neural_network;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,19 +59,26 @@ import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.HasEntityRegistry;
-import org.jpmml.evaluator.InvalidFeatureException;
-import org.jpmml.evaluator.InvalidResultException;
+import org.jpmml.evaluator.InvalidAttributeException;
+import org.jpmml.evaluator.InvalidElementException;
+import org.jpmml.evaluator.InvalidElementListException;
+import org.jpmml.evaluator.MisplacedElementException;
+import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.NormalizationUtil;
 import org.jpmml.evaluator.OutputUtil;
+import org.jpmml.evaluator.PMMLAttributes;
+import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
+import org.jpmml.evaluator.XPathUtil;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<Entity> {
 
@@ -92,24 +98,24 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
 		if(neuralInputs == null){
-			throw new InvalidFeatureException(neuralNetwork);
+			throw new MissingElementException(neuralNetwork, PMMLElements.NEURALNETWORK_NEURALINPUTS);
 		} // End if
 
 		if(!neuralInputs.hasNeuralInputs()){
-			throw new InvalidFeatureException(neuralInputs);
+			throw new MissingElementException(neuralInputs, PMMLElements.NEURALINPUTS_NEURALINPUTS);
 		} // End if
 
 		if(!neuralNetwork.hasNeuralLayers()){
-			throw new InvalidFeatureException(neuralNetwork);
+			throw new MissingElementException(neuralNetwork, PMMLElements.NEURALNETWORK_NEURALLAYERS);
 		}
 
 		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
 		if(neuralOutputs == null){
-			throw new InvalidFeatureException(neuralNetwork);
+			throw new MissingElementException(neuralNetwork, PMMLElements.NEURALNETWORK_NEURALOUTPUTS);
 		} // End if
 
 		if(!neuralOutputs.hasNeuralOutputs()){
-			throw new InvalidFeatureException(neuralOutputs);
+			throw new MissingElementException(neuralOutputs, PMMLElements.NEURALOUTPUTS_NEURALOUTPUTS);
 		}
 	}
 
@@ -130,10 +136,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		NeuralNetwork neuralNetwork = getModel();
-		if(!neuralNetwork.isScorable()){
-			throw new InvalidResultException(neuralNetwork);
-		}
+		NeuralNetwork neuralNetwork = ensureScorableModel();
 
 		ValueFactory<?> valueFactory;
 
@@ -144,7 +147,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				valueFactory = getValueFactory();
 				break;
 			default:
-				throw new UnsupportedFeatureException(neuralNetwork, mathContext);
+				throw new UnsupportedAttributeException(neuralNetwork, mathContext);
 		}
 
 		Map<FieldName, ?> predictions;
@@ -157,8 +160,14 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			case CLASSIFICATION:
 				predictions = evaluateClassification(valueFactory, context);
 				break;
+			case ASSOCIATION_RULES:
+			case SEQUENCES:
+			case CLUSTERING:
+			case TIME_SERIES:
+			case MIXED:
+				throw new InvalidAttributeException(neuralNetwork, miningFunction);
 			default:
-				throw new UnsupportedFeatureException(neuralNetwork, miningFunction);
+				throw new UnsupportedAttributeException(neuralNetwork, miningFunction);
 		}
 
 		return OutputUtil.evaluate(predictions, context);
@@ -192,18 +201,27 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		Map<FieldName, Object> results = null;
 
 		for(TargetField targetField : targetFields){
-			List<NeuralOutput> neuralOutputs = neuralOutputMap.get(targetField.getName());
-			if(neuralOutputs == null || neuralOutputs.size() != 1){
-				throw new InvalidFeatureException(neuralNetwork);
+			FieldName name = targetField.getName();
+
+			List<NeuralOutput> neuralOutputs = neuralOutputMap.get(name);
+			if(neuralOutputs == null){
+				throw new InvalidElementException(neuralNetwork);
+			} else
+
+			if(neuralOutputs.size() != 1){
+				throw new InvalidElementListException(neuralOutputs);
 			}
 
 			NeuralOutput neuralOutput = neuralOutputs.get(0);
 
 			String id = neuralOutput.getOutputNeuron();
+			if(id == null){
+				throw new MissingAttributeException(neuralOutput, PMMLAttributes.NEURALOUTPUT_OUTPUTNEURON);
+			}
 
 			Value<V> value = values.get(id);
 			if(value == null){
-				throw new InvalidFeatureException(neuralOutput);
+				throw new InvalidAttributeException(neuralOutput, PMMLAttributes.NEURALOUTPUT_OUTPUTNEURON, id);
 			}
 
 			value = value.copy();
@@ -221,7 +239,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			} else
 
 			{
-				throw new UnsupportedFeatureException(expression);
+				throw new MisplacedElementException(expression);
 			} // End if
 
 			if(targetFields.size() == 1){
@@ -268,24 +286,29 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		Map<FieldName, Classification<V>> results = null;
 
 		for(TargetField targetField : targetFields){
-			List<NeuralOutput> neuralOutputs = neuralOutputMap.get(targetField.getName());
+			FieldName name = targetField.getName();
+
+			List<NeuralOutput> neuralOutputs = neuralOutputMap.get(name);
 			if(neuralOutputs == null){
-				throw new InvalidFeatureException(neuralNetwork);
+				throw new InvalidElementException(neuralNetwork);
 			}
 
 			NeuronProbabilityDistribution<V> result = new NeuronProbabilityDistribution<>(new ValueMap<String, V>(2 * neuralOutputs.size()), entityRegistry);
 
 			for(NeuralOutput neuralOutput : neuralOutputs){
 				String id = neuralOutput.getOutputNeuron();
+				if(id == null){
+					throw new MissingAttributeException(neuralOutput, PMMLAttributes.NEURALOUTPUT_OUTPUTNEURON);
+				}
 
 				Entity entity = entityRegistry.get(id);
 				if(entity == null){
-					throw new InvalidFeatureException(neuralOutput);
+					throw new InvalidAttributeException(neuralOutput, PMMLAttributes.NEURALOUTPUT_OUTPUTNEURON, id);
 				}
 
 				Value<V> value = values.get(id);
 				if(value == null){
-					throw new InvalidFeatureException(neuralOutput);
+					throw new InvalidAttributeException(neuralOutput, PMMLAttributes.NEURALOUTPUT_OUTPUTNEURON, id);
 				}
 
 				Expression expression = getOutputExpression(neuralOutput);
@@ -295,14 +318,14 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 					String targetCategory = normDiscrete.getValue();
 					if(targetCategory == null){
-						throw new InvalidFeatureException(normDiscrete);
+						throw new MissingAttributeException(normDiscrete, PMMLAttributes.NORMDISCRETE_VALUE);
 					}
 
 					result.put(entity, targetCategory, value);
 				} else
 
 				{
-					throw new UnsupportedFeatureException(expression);
+					throw new MisplacedElementException(expression);
 				}
 			}
 
@@ -323,18 +346,18 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	private Expression getOutputExpression(NeuralOutput neuralOutput){
 		DerivedField derivedField = neuralOutput.getDerivedField();
 		if(derivedField == null){
-			throw new InvalidFeatureException(neuralOutput);
+			throw new MissingElementException(neuralOutput, PMMLElements.NEURALOUTPUT_DERIVEDFIELD);
 		}
 
-		Expression expression = derivedField.getExpression();
-		if(expression == null){
-			throw new InvalidFeatureException(derivedField);
-		} // End if
+		Expression expression = ExpressionUtil.ensureExpression(derivedField);
 
 		if(expression instanceof FieldRef){
 			FieldRef fieldRef = (FieldRef)expression;
 
 			FieldName name = fieldRef.getField();
+			if(name == null){
+				throw new MissingAttributeException(fieldRef, PMMLAttributes.FIELDREF_FIELD);
+			}
 
 			TypeDefinitionField field = resolveField(name);
 			if(field == null){
@@ -348,16 +371,13 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			if(field instanceof DerivedField){
 				DerivedField targetDerivedField = (DerivedField)field;
 
-				Expression targetExpression = targetDerivedField.getExpression();
-				if(targetExpression == null){
-					throw new InvalidFeatureException(targetDerivedField);
-				}
+				Expression targetExpression = ExpressionUtil.ensureExpression(targetDerivedField);
 
 				return targetExpression;
 			} else
 
 			{
-				throw new InvalidFeatureException(fieldRef);
+				throw new InvalidAttributeException(fieldRef, PMMLAttributes.FIELDREF_FIELD, name);
 			}
 		}
 
@@ -375,10 +395,10 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		for(NeuralInput neuralInput : neuralInputs){
 			DerivedField derivedField = neuralInput.getDerivedField();
 			if(derivedField == null){
-				throw new InvalidFeatureException(neuralInput);
+				throw new MissingElementException(neuralInput, PMMLElements.NEURALINPUT_DERIVEDFIELD);
 			}
 
-			FieldValue value = ExpressionUtil.evaluate(derivedField, context);
+			FieldValue value = ExpressionUtil.evaluateDerivedField(derivedField, context);
 			if(value == null){
 				return null;
 			}
@@ -404,7 +424,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			} // End if
 
 			if(activationFunction == null){
-				throw new InvalidFeatureException(neuralLayer);
+				throw new MissingAttributeException(neuralNetwork, PMMLAttributes.NEURALNETWORK_ACTIVATIONFUNCTION);
 			}
 
 			Double threshold = neuralLayer.getThreshold();
@@ -415,7 +435,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			switch(activationFunction){
 				case THRESHOLD:
 					if(threshold == null){
-						throw new InvalidFeatureException(neuralLayer);
+						throw new MissingAttributeException(neuralNetwork, PMMLAttributes.NEURALNETWORK_THRESHOLD);
 					}
 					break;
 				case LOGISTIC:
@@ -432,7 +452,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				case RECTIFIER:
 					break;
 				default:
-					throw new UnsupportedFeatureException(locatable, activationFunction);
+					throw new UnsupportedAttributeException(locatable, activationFunction);
 			}
 
 			List<Neuron> neurons = neuralLayer.getNeurons();
@@ -445,9 +465,14 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				for(int j = 0; j < connections.size(); j++){
 					Connection connection = connections.get(j);
 
-					Value<V> input = result.get(connection.getFrom());
+					String id = connection.getFrom();
+					if(id == null){
+						throw new MissingAttributeException(connection, PMMLAttributes.CONNECTION_FROM);
+					}
+
+					Value<V> input = result.get(id);
 					if(input == null){
-						throw new InvalidFeatureException(connection);
+						throw new InvalidAttributeException(connection, PMMLAttributes.CONNECTION_FROM, id);
 					}
 
 					output.add(connection.getWeight(), input.getValue());
@@ -475,7 +500,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 						NeuralNetworkUtil.activateNeuronOutput(output, threshold, activationFunction);
 						break;
 					default:
-						throw new UnsupportedFeatureException(locatable, activationFunction);
+						throw new UnsupportedAttributeException(locatable, activationFunction);
 				}
 
 				result.put(neuron.getId(), output);
@@ -499,7 +524,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 					NeuralNetworkUtil.normalizeNeuralLayerOutputs(outputs, normalizationMethod);
 					break;
 				default:
-					throw new UnsupportedFeatureException(locatable, normalizationMethod);
+					throw new UnsupportedAttributeException(locatable, normalizationMethod);
 			}
 		}
 
@@ -518,13 +543,9 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	private Map<FieldName, List<NeuralOutput>> parseNeuralOutputs(){
 		NeuralNetwork neuralNetwork = getModel();
 
-		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
-		if(neuralOutputs == null){
-			return Collections.<FieldName, List<NeuralOutput>>emptyMap();
-		}
-
 		ListMultimap<FieldName, NeuralOutput> result = ArrayListMultimap.create();
 
+		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
 		for(NeuralOutput neuralOutput : neuralOutputs){
 			FieldName name;
 
@@ -534,14 +555,13 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				HasField<?> hasField = (HasField<?>)expression;
 
 				name = hasField.getField();
+				if(name == null){
+					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement((Class)hasField.getClass()) + "@field"), expression);
+				}
 			} else
 
 			{
-				throw new UnsupportedFeatureException(expression);
-			} // End if
-
-			if(name == null){
-				throw new InvalidFeatureException(expression);
+				throw new MisplacedElementException(expression);
 			}
 
 			result.put(name, neuralOutput);

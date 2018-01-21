@@ -56,7 +56,7 @@ public class CacheUtil {
 				throw (PMMLException)cause;
 			}
 
-			throw (PMMLException)new InvalidFeatureException(key)
+			throw new InvalidElementException(key)
 				.initCause(cause);
 		}
 	}
@@ -73,7 +73,7 @@ public class CacheUtil {
 				throw (PMMLException)cause;
 			}
 
-			throw (PMMLException)new InvalidFeatureException(key)
+			throw new InvalidElementException(key)
 				.initCause(cause);
 		}
 	}

@@ -34,6 +34,7 @@ import org.dmg.pmml.Field;
 import org.dmg.pmml.HasValue;
 import org.dmg.pmml.HasValueSet;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMMLObject;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -88,7 +89,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 			return equals(hasParsedValue);
 		}
 
-		return equalsString(hasValue.getValue());
+		return equalsString(ensureValue(hasValue));
 	}
 
 	public boolean equals(HasParsedValue<?> hasParsedValue){
@@ -111,6 +112,9 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		}
 
 		Array array = hasValueSet.getArray();
+		if(array == null){
+			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement((Class)hasValueSet.getClass()) + "/" + XPathUtil.formatElement(Array.class)), (PMMLObject)hasValueSet);
+		}
 
 		List<String> content = ArrayUtil.getContent(array);
 
@@ -136,7 +140,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 			return compareTo(hasParsedValue);
 		}
 
-		return compareToString(hasValue.getValue());
+		return compareToString(ensureValue(hasValue));
 	}
 
 	public int compareTo(HasParsedValue<?> hasParsedValue){
@@ -407,6 +411,16 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 
 	private void setValue(Object value){
 		this.value = value;
+	}
+
+	static
+	private String ensureValue(HasValue<?> hasValue){
+		String value = hasValue.getValue();
+		if(value == null){
+			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement((Class)hasValue.getClass()) + "@value"), (PMMLObject)hasValue);
+		}
+
+		return value;
 	}
 
 	static

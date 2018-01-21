@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import com.google.common.base.Function;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
@@ -61,25 +62,30 @@ import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.InputField;
-import org.jpmml.evaluator.InvalidFeatureException;
-import org.jpmml.evaluator.InvalidResultException;
+import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.MiningFieldUtil;
+import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.OutputField;
 import org.jpmml.evaluator.OutputUtil;
+import org.jpmml.evaluator.PMMLAttributes;
+import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLException;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.UnsupportedAttributeException;
+import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.ValueUtil;
+import org.jpmml.evaluator.XPathUtil;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 
@@ -101,23 +107,28 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		if(miningModel.hasEmbeddedModels()){
 			List<EmbeddedModel> embeddedModels = miningModel.getEmbeddedModels();
 
-			EmbeddedModel embeddedModel = embeddedModels.get(0);
+			EmbeddedModel embeddedModel = Iterables.getFirst(embeddedModels, null);
 
-			throw new UnsupportedFeatureException(embeddedModel);
+			throw new UnsupportedElementException(embeddedModel);
 		}
 
 		Segmentation segmentation = miningModel.getSegmentation();
 		if(segmentation == null){
-			throw new InvalidFeatureException(miningModel);
+			throw new MissingElementException(miningModel, PMMLElements.MININGMODEL_SEGMENTATION);
+		}
+
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
+		if(multipleModelMethod == null){
+			throw new MissingAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MULTIPLEMODELMETHOD);
 		} // End if
 
 		if(!segmentation.hasSegments()){
-			throw new InvalidFeatureException(segmentation);
+			throw new MissingElementException(segmentation, PMMLElements.SEGMENTATION_SEGMENTS);
 		}
 
 		LocalTransformations localTransformations = segmentation.getLocalTransformations();
 		if(localTransformations != null){
-			throw new UnsupportedFeatureException(localTransformations);
+			throw new UnsupportedElementException(localTransformations);
 		}
 	}
 
@@ -203,10 +214,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	public Map<FieldName, ?> evaluate(MiningModelEvaluationContext context){
-		MiningModel miningModel = getModel();
-		if(!miningModel.isScorable()){
-			throw new InvalidResultException(miningModel);
-		}
+		MiningModel miningModel = ensureScorableModel();
 
 		ValueFactory<?> valueFactory;
 
@@ -217,7 +225,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				valueFactory = getValueFactory();
 				break;
 			default:
-				throw new UnsupportedFeatureException(miningModel, mathContext);
+				throw new UnsupportedAttributeException(miningModel, mathContext);
 		}
 
 		Map<FieldName, ?> predictions;
@@ -265,8 +273,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case WEIGHTED_SUM:
 				result = MiningModelUtil.aggregateValues(valueFactory, segmentResults, multipleModelMethod);
 				break;
+			case MAJORITY_VOTE:
+			case WEIGHTED_MAJORITY_VOTE:
+			case MAX:
+			case SELECT_FIRST:
+			case SELECT_ALL:
+			case MODEL_CHAIN:
+				throw new InvalidAttributeException(segmentation, multipleModelMethod);
 			default:
-				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
 		}
 
 		return TargetUtil.evaluateRegression(getTargetField(), result);
@@ -315,8 +330,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					result = new ProbabilityDistribution<>(values);
 				}
 				break;
+			case WEIGHTED_MEDIAN:
+			case SUM:
+			case WEIGHTED_SUM:
+			case SELECT_FIRST:
+			case SELECT_ALL:
+			case MODEL_CHAIN:
+				throw new InvalidAttributeException(segmentation, multipleModelMethod);
 			default:
-				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
 		}
 
 		return TargetUtil.evaluateClassification(targetField, result);
@@ -346,8 +368,19 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					result = new VoteDistribution<>(values);
 				}
 				break;
+			case AVERAGE:
+			case WEIGHTED_AVERAGE:
+			case MEDIAN:
+			case WEIGHTED_MEDIAN:
+			case MAX:
+			case SUM:
+			case WEIGHTED_SUM:
+			case SELECT_FIRST:
+			case SELECT_ALL:
+			case MODEL_CHAIN:
+				throw new InvalidAttributeException(segmentation, multipleModelMethod);
 			default:
-				throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
 		}
 
 		result.computeResult(DataType.STRING);
@@ -387,19 +420,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		for(int i = 0, max = segments.size(); i < max; i++){
 			Segment segment = segments.get(i);
 
-			Predicate predicate = segment.getPredicate();
-			if(predicate == null){
-				throw new InvalidFeatureException(segment);
-			}
-
-			Boolean status = PredicateUtil.evaluate(predicate, context);
+			Boolean status = PredicateUtil.evaluatePredicateContainer(segment, context);
 			if(status == null || !status.booleanValue()){
 				continue;
 			}
 
 			Model model = segment.getModel();
 			if(model == null){
-				throw new InvalidFeatureException(segment);
+				throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(segment.getClass()) + "/<Model>"), segment);
 			}
 
 			// "With the exception of modelChain models, all model elements used inside Segment elements in one MiningModel must have the same MINING-FUNCTION"
@@ -408,9 +436,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					lastModel = model;
 					break;
 				default:
-					if(!(miningFunction).equals(model.getMiningFunction())){
-						throw new InvalidFeatureException(model);
-					}
+					checkMiningFunction(model, miningFunction);
 					break;
 			}
 
@@ -466,9 +492,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 				segmentResult = new SegmentResult(segment, segmentId, result, segmentTargetFieldName);
 			} catch(PMMLException pe){
-				pe.ensureContext(segment);
-
-				throw pe;
+				throw pe.ensureContext(segment);
 			}
 
 			context.putResult(segmentId, segmentResult);
@@ -520,8 +544,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		// "The model element used inside the last Segment element executed must have the same MINING-FUNCTION"
 		switch(multipleModelMethod){
 			case MODEL_CHAIN:
-				if(lastModel != null && !(miningFunction).equals(lastModel.getMiningFunction())){
-					throw new InvalidFeatureException(lastModel);
+				if(lastModel != null){
+					checkMiningFunction(lastModel, miningFunction);
 				}
 				break;
 			default:
@@ -552,7 +576,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				break;
 			default:
 				if(!(multipleModelMethods).contains(multipleModelMethod)){
-					throw new UnsupportedFeatureException(segmentation, multipleModelMethod);
+					throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
 				}
 				break;
 		}
@@ -570,10 +594,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		for(int i = 0, max = segments.size(); i < max; i++){
 			Segment segment = segments.get(i);
 
-			Predicate predicate = segment.getPredicate();
-			if(predicate == null){
-				throw new InvalidFeatureException(segment);
-			} // End if
+			Predicate predicate = PredicateUtil.ensurePredicate(segment);
 
 			if(predicate instanceof True){
 				return segments.subList(0, i + 1);
@@ -620,7 +641,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			Model model = segment.getModel();
 			if(model == null){
-				throw new InvalidFeatureException(segment);
+				throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(segment.getClass()) + "/<Model>"), segment);
 			}
 
 			String segmentId = EntityUtil.getId(segment, entityRegistry);
@@ -679,7 +700,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			// Ensure that all List values in the ListMultimap contain the same number of elements
 			if(!(keys).equals(segmentResult.keySet())){
-				throw new EvaluationException();
+				Function<Object, String> function = new Function<Object, String>(){
+
+					@Override
+					public String apply(Object object){
+						return PMMLException.formatKey(object);
+					}
+				};
+
+				throw new EvaluationException("Field sets " + Iterables.transform(keys, function) + " and " + Iterables.transform(segmentResult.keySet(), function) + " do not match");
 			}
 
 			for(FieldName key : keys){
@@ -688,6 +717,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 
 		return result.asMap();
+	}
+
+	static
+	private void checkMiningFunction(Model model, MiningFunction miningFunction){
+		MiningFunction modelMiningFunction = model.getMiningFunction();
+
+		if(!(miningFunction).equals(modelMiningFunction)){
+			throw new InvalidAttributeException(InvalidAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@miningFunction=" + modelMiningFunction.value()), model);
+		}
 	}
 
 	static

@@ -27,8 +27,8 @@ import org.dmg.pmml.PMMLObject;
  */
 public class InvalidResultException extends EvaluationException {
 
-	public InvalidResultException(PMMLObject context){
-		super(context);
+	public InvalidResultException(String message){
+		super(message);
 	}
 
 	public InvalidResultException(String message, PMMLObject context){

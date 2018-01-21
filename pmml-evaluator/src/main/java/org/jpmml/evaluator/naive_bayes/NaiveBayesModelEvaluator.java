@@ -63,23 +63,28 @@ import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.DiscretizationUtil;
 import org.jpmml.evaluator.DistributionUtil;
 import org.jpmml.evaluator.EvaluationContext;
-import org.jpmml.evaluator.EvaluationException;
+import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasParsedValueMapping;
-import org.jpmml.evaluator.InvalidFeatureException;
-import org.jpmml.evaluator.InvalidResultException;
+import org.jpmml.evaluator.InvalidAttributeException;
+import org.jpmml.evaluator.MisplacedElementException;
+import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
+import org.jpmml.evaluator.PMMLAttributes;
+import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueUtil;
 import org.jpmml.evaluator.VerificationUtil;
+import org.jpmml.evaluator.XPathUtil;
 
 public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
@@ -99,25 +104,25 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		BayesInputs bayesInputs = naiveBayesModel.getBayesInputs();
 		if(bayesInputs == null){
-			throw new InvalidFeatureException(naiveBayesModel);
+			throw new MissingElementException(naiveBayesModel, PMMLElements.NAIVEBAYESMODEL_BAYESINPUTS);
 		} // End if
 
 		if(!bayesInputs.hasBayesInputs() && !bayesInputs.hasExtensions()){
-			throw new InvalidFeatureException(bayesInputs);
+			throw new MissingElementException(bayesInputs, PMMLElements.BAYESINPUTS_BAYESINPUTS);
 		}
 
 		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
 		if(bayesOutput == null){
-			throw new InvalidFeatureException(naiveBayesModel);
+			throw new MissingElementException(naiveBayesModel, PMMLElements.NAIVEBAYESMODEL_BAYESOUTPUT);
 		}
 
 		TargetValueCounts targetValueCounts = bayesOutput.getTargetValueCounts();
 		if(targetValueCounts == null){
-			throw new InvalidFeatureException(bayesOutput);
+			throw new MissingElementException(bayesOutput, PMMLElements.BAYESOUTPUT_TARGETVALUECOUNTS);
 		} // End if
 
 		if(!targetValueCounts.hasTargetValueCounts()){
-			throw new InvalidFeatureException(targetValueCounts);
+			throw new MissingElementException(targetValueCounts, PMMLElements.TARGETVALUECOUNTS_TARGETVALUECOUNTS);
 		}
 	}
 
@@ -128,10 +133,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		NaiveBayesModel naiveBayesModel = getModel();
-		if(!naiveBayesModel.isScorable()){
-			throw new InvalidResultException(naiveBayesModel);
-		}
+		NaiveBayesModel naiveBayesModel = ensureScorableModel();
 
 		ValueFactory<Double> valueFactory;
 
@@ -141,7 +143,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				valueFactory = (ValueFactory)getValueFactory();
 				break;
 			default:
-				throw new UnsupportedFeatureException(naiveBayesModel, mathContext);
+				throw new UnsupportedAttributeException(naiveBayesModel, mathContext);
 		}
 
 		Map<FieldName, ? extends Classification<Double>> predictions;
@@ -151,8 +153,15 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			case CLASSIFICATION:
 				predictions = evaluateClassification(valueFactory, context);
 				break;
+			case ASSOCIATION_RULES:
+			case SEQUENCES:
+			case REGRESSION:
+			case CLUSTERING:
+			case TIME_SERIES:
+			case MIXED:
+				throw new InvalidAttributeException(naiveBayesModel, miningFunction);
 			default:
-				throw new UnsupportedFeatureException(naiveBayesModel, miningFunction);
+				throw new UnsupportedAttributeException(naiveBayesModel, miningFunction);
 		}
 
 		return OutputUtil.evaluate(predictions, context);
@@ -186,6 +195,9 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		List<BayesInput> bayesInputs = getBayesInputs();
 		for(BayesInput bayesInput : bayesInputs){
 			FieldName name = bayesInput.getFieldName();
+			if(name == null){
+				throw new MissingAttributeException(bayesInput, PMMLAttributes.BAYESINPUT_FIELDNAME);
+			}
 
 			FieldValue value = context.evaluate(name);
 
@@ -203,24 +215,10 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			DerivedField derivedField = bayesInput.getDerivedField();
 			if(derivedField != null){
-				Expression expression = derivedField.getExpression();
-				if(expression == null){
-					throw new InvalidFeatureException(derivedField);
-				} // End if
+				value = discretize(derivedField, value);
 
-				if(expression instanceof Discretize){
-					Discretize discretize = (Discretize)expression;
-
-					value = DiscretizationUtil.discretize(discretize, value);
-					if(value == null){
-						throw new EvaluationException();
-					}
-
-					value = FieldValueUtil.refine(derivedField, value);
-				} else
-
-				{
-					throw new UnsupportedFeatureException(expression);
+				if(value == null){
+					continue;
 				}
 			}
 
@@ -235,8 +233,12 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
 
 		FieldName targetFieldName = bayesOutput.getFieldName();
-		if(targetFieldName == null || !Objects.equals(targetField.getName(), targetFieldName)){
-			throw new InvalidFeatureException(bayesOutput);
+		if(targetFieldName == null){
+			throw new MissingAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELDNAME);
+		} // End if
+
+		if(targetFieldName != null && !Objects.equals(targetField.getName(), targetFieldName)){
+			throw new InvalidAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELDNAME, targetFieldName);
 		}
 
 		calculatePriorProbabilities(probabilities, bayesOutput.getTargetValueCounts());
@@ -249,27 +251,54 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
 
+	private FieldValue discretize(DerivedField derivedField, FieldValue value){
+		Expression expression = ExpressionUtil.ensureExpression(derivedField);
+
+		if(expression instanceof Discretize){
+			Discretize discretize = (Discretize)expression;
+
+			value = DiscretizationUtil.discretize(discretize, value);
+			if(value == null){
+				return null;
+			}
+
+			return FieldValueUtil.refine(derivedField, value);
+		} else
+
+		{
+			throw new MisplacedElementException(expression);
+		}
+	}
+
 	private void calculateContinuousProbabilities(ProbabilityMap<String, Double> probabilities, TargetValueStats targetValueStats, double threshold, FieldValue value){
 		Number x = value.asNumber();
 
 		for(TargetValueStat targetValueStat : targetValueStats){
 			String targetCategory = targetValueStat.getValue();
 			if(targetCategory == null){
-				throw new InvalidFeatureException(targetValueStat);
+				throw new MissingAttributeException(targetValueStat, PMMLAttributes.TARGETVALUESTAT_VALUE);
 			}
 
 			ContinuousDistribution distribution = targetValueStat.getContinuousDistribution();
-
-			// "For Naive Bayes models, continuous distribution types are restricted to Gaussian and Poisson distributions"
-			if(!((distribution instanceof GaussianDistribution) || (distribution instanceof PoissonDistribution))){
-				throw new InvalidFeatureException(targetValueStat);
+			if(distribution == null){
+				throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(targetValueStat.getClass()) + "/<ContinuousDistribution>"), targetValueStat);
 			} // End if
 
-			if(DistributionUtil.isNoOp(distribution)){
-				continue;
-			}
+			double probability;
 
-			double probability = DistributionUtil.probability(distribution, x);
+			// "For Naive Bayes models, continuous distribution types are restricted to Gaussian and Poisson distributions"
+			if((distribution instanceof GaussianDistribution) || (distribution instanceof PoissonDistribution)){
+
+				if(DistributionUtil.isNoOp(distribution)){
+					continue;
+				}
+
+				probability = DistributionUtil.probability(distribution, x);
+			} else
+
+			{
+				throw new MisplacedElementException(distribution);
+			}
 
 			// The calculated probability cannot fall below the default probability
 			probability = Math.max(probability, threshold);
@@ -283,7 +312,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		for(TargetValueCount targetValueCount : targetValueCounts){
 			String targetCategory = targetValueCount.getValue();
 			if(targetCategory == null){
-				throw new InvalidFeatureException(targetCategory);
+				throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_VALUE);
 			}
 
 			double count = targetValueCount.getCount();
@@ -311,7 +340,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		for(TargetValueCount targetValueCount : targetValueCounts){
 			String targetCategory = targetValueCount.getValue();
 			if(targetCategory == null){
-				throw new InvalidFeatureException(targetValueCount);
+				throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_VALUE);
 			}
 
 			double probability = targetValueCount.getCount();
@@ -425,11 +454,15 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		List<PairCounts> pairCounts = bayesInput.getPairCounts();
 		for(PairCounts pairCount : pairCounts){
+			String category = pairCount.getValue();
+			if(category == null){
+				throw new MissingAttributeException(pairCount, PMMLAttributes.PAIRCOUNTS_VALUE);
+			} // End if
 
-			if(value.equalsString(pairCount.getValue())){
+			if(value.equalsString(category)){
 				TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
 				if(targetValueCounts == null){
-					throw new InvalidFeatureException(pairCount);
+					throw new MissingElementException(pairCount, PMMLElements.PAIRCOUNTS_TARGETVALUECOUNTS);
 				}
 
 				return targetValueCounts;

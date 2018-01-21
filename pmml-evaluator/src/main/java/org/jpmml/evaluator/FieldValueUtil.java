@@ -59,7 +59,7 @@ public class FieldValueUtil {
 		OpType opType = field.getOpType();
 
 		if(dataType == null || opType == null){
-			throw new InvalidFeatureException(field);
+			throw new InvalidElementException(field);
 		} // End if
 
 		if(value == null){
@@ -91,7 +91,7 @@ public class FieldValueUtil {
 				case MISSING:
 					return performMissingValueTreatment(field, miningField);
 				default:
-					throw new EvaluationException();
+					throw new IllegalArgumentException();
 			}
 		}
 	}
@@ -102,15 +102,18 @@ public class FieldValueUtil {
 		OpType opType = dataField.getOpType();
 
 		if(dataType == null || opType == null){
-			throw new InvalidFeatureException(dataField);
+			throw new InvalidElementException(dataField);
 		} // End if
 
 		if(miningField != null){
 			String invalidValueReplacement = miningField.getInvalidValueReplacement();
-			String missingValueReplacement = miningField.getMissingValueReplacement();
+			if(invalidValueReplacement != null){
+				throw new MisplacedAttributeException(miningField, PMMLAttributes.MININGFIELD_INVALIDVALUEREPLACEMENT, invalidValueReplacement);
+			}
 
-			if(invalidValueReplacement != null || missingValueReplacement != null){
-				throw new InvalidFeatureException(miningField);
+			String missingValueReplacement = miningField.getMissingValueReplacement();
+			if(missingValueReplacement != null){
+				throw new MisplacedAttributeException(miningField, PMMLAttributes.MININGFIELD_MISSINGVALUEREPLACEMENT, missingValueReplacement);
 			}
 		}
 
@@ -128,14 +131,21 @@ public class FieldValueUtil {
 			case AS_EXTREME_VALUES:
 				break;
 			default:
-				throw new UnsupportedFeatureException(miningField, outlierTreatmentMethod);
+				throw new UnsupportedAttributeException(miningField, outlierTreatmentMethod);
 		}
 
 		Double lowValue = miningField.getLowValue();
-		Double highValue = miningField.getHighValue();
+		if(lowValue == null){
+			throw new MissingAttributeException(miningField, PMMLAttributes.MININGFIELD_LOWVALUE);
+		}
 
-		if(lowValue == null || highValue == null || (lowValue).compareTo(highValue) > 0){
-			throw new InvalidFeatureException(miningField);
+		Double highValue = miningField.getHighValue();
+		if(highValue == null){
+			throw new MissingAttributeException(miningField, PMMLAttributes.MININGFIELD_HIGHVALUE);
+		} // End if
+
+		if((lowValue).compareTo(highValue) > 0){
+			throw new InvalidElementException(miningField);
 		} // End if
 
 		if(value == null){
@@ -160,7 +170,7 @@ public class FieldValueUtil {
 				}
 				break;
 			default:
-				throw new UnsupportedFeatureException(miningField, outlierTreatmentMethod);
+				throw new UnsupportedAttributeException(miningField, outlierTreatmentMethod);
 		}
 
 		return createInputValue(field, miningField, value);
@@ -177,11 +187,11 @@ public class FieldValueUtil {
 			case AS_MISSING:
 			case RETURN_INVALID:
 				if(invalidValueReplacement != null){
-					throw new InvalidFeatureException(miningField);
+					throw new MisplacedAttributeException(miningField, PMMLAttributes.MININGFIELD_INVALIDVALUEREPLACEMENT, invalidValueReplacement);
 				}
 				break;
 			default:
-				throw new UnsupportedFeatureException(miningField, invalidValueTreatmentMethod);
+				throw new UnsupportedAttributeException(miningField, invalidValueTreatmentMethod);
 		}
 
 		switch(invalidValueTreatmentMethod){
@@ -193,9 +203,9 @@ public class FieldValueUtil {
 			case AS_MISSING:
 				return createMissingInputValue(field, miningField);
 			case RETURN_INVALID:
-				throw new InvalidResultException(miningField);
+				throw new InvalidResultException("Field " + PMMLException.formatKey(field.getName()) + " cannot accept user input value " + PMMLException.formatValue(value), miningField);
 			default:
-				throw new UnsupportedFeatureException(miningField, invalidValueTreatmentMethod);
+				throw new UnsupportedAttributeException(miningField, invalidValueTreatmentMethod);
 		}
 	}
 
@@ -215,7 +225,7 @@ public class FieldValueUtil {
 			case AS_VALUE:
 				return createMissingInputValue(field, miningField);
 			default:
-				throw new UnsupportedFeatureException(miningField, missingValueTreatmentMethod);
+				throw new UnsupportedAttributeException(miningField, missingValueTreatmentMethod);
 		}
 	}
 
@@ -280,6 +290,11 @@ public class FieldValueUtil {
 			for(int i = 0, max = pmmlValues.size(); i < max; i++){
 				Value pmmlValue = pmmlValues.get(i);
 
+				String stringValue = pmmlValue.getValue();
+				if(stringValue == null){
+					throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
+				}
+
 				boolean equals;
 
 				Value.Property property = pmmlValue.getProperty();
@@ -295,11 +310,11 @@ public class FieldValueUtil {
 							if(value instanceof FieldValue){
 								FieldValue fieldValue = (FieldValue)value;
 
-								equals = fieldValue.equalsString(pmmlValue.getValue());
+								equals = fieldValue.equalsString(stringValue);
 							} else
 
 							{
-								equals = equals(dataType, value, pmmlValue.getValue());
+								equals = equals(dataType, value, stringValue);
 							}
 						}
 						break;
@@ -309,16 +324,16 @@ public class FieldValueUtil {
 							if(value instanceof FieldValue){
 								FieldValue fieldValue = (FieldValue)value;
 
-								equals = equals(dataType, FieldValueUtil.getValue(fieldValue), pmmlValue.getValue());
+								equals = equals(dataType, FieldValueUtil.getValue(fieldValue), stringValue);
 							} else
 
 							{
-								equals = equals(dataType, value, pmmlValue.getValue());
+								equals = equals(dataType, value, stringValue);
 							}
 						}
 						break;
 					default:
-						throw new UnsupportedFeatureException(pmmlValue, property);
+						throw new UnsupportedAttributeException(pmmlValue, property);
 				}
 
 				if(equals){
@@ -355,7 +370,7 @@ public class FieldValueUtil {
 						} else
 
 						{
-							throw new EvaluationException();
+							throw new IllegalArgumentException();
 						}
 
 						// "If intervals are present, then a value that is outside the intervals is considered invalid"
@@ -364,9 +379,9 @@ public class FieldValueUtil {
 				case CATEGORICAL:
 				case ORDINAL:
 					// "Intervals are not allowed for non-continuous fields"
-					throw new InvalidFeatureException(dataField);
+					throw new InvalidElementException(dataField);
 				default:
-					throw new UnsupportedFeatureException(locatable, opType);
+					throw new UnsupportedAttributeException(locatable, opType);
 			}
 		}
 
@@ -452,14 +467,12 @@ public class FieldValueUtil {
 			if(dataType == null){
 				Collection<?> values = (Collection<?>)value;
 
-				if(values.size() > 0){
-					dataType = TypeUtil.getDataType(values);
-				}
+				dataType = TypeUtil.getDataType(values);
 			} // End if
 
 			if(dataType == null){
 				dataType = DataType.STRING;
-			}
+			} // End if
 
 			if(opType == null){
 				opType = TypeUtil.getOpType(dataType);
@@ -573,7 +586,7 @@ public class FieldValueUtil {
 			case ORDINAL:
 				return OrdinalValue.create(dataType, value);
 			default:
-				throw new EvaluationException();
+				throw new IllegalArgumentException();
 		}
 	}
 
@@ -632,7 +645,7 @@ public class FieldValueUtil {
 					case MISSING:
 						break;
 					default:
-						throw new UnsupportedFeatureException(pmmlValue, property);
+						throw new UnsupportedAttributeException(pmmlValue, property);
 				}
 			}
 		}
@@ -675,7 +688,7 @@ public class FieldValueUtil {
 					case MISSING:
 						break;
 					default:
-						throw new UnsupportedFeatureException(pmmlValue, property);
+						throw new UnsupportedAttributeException(pmmlValue, property);
 				}
 			}
 
@@ -765,12 +778,12 @@ public class FieldValueUtil {
 
 				@Override
 				public String apply(Value value){
-					String result = value.getValue();
-					if(result == null){
-						throw new InvalidFeatureException(value);
+					String stringValue = value.getValue();
+					if(stringValue == null){
+						throw new MissingAttributeException(value, PMMLAttributes.VALUE_VALUE);
 					}
 
-					return result;
+					return stringValue;
 				}
 			};
 

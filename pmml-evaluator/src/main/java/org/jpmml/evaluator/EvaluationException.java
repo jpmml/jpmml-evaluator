@@ -36,16 +36,8 @@ import org.dmg.pmml.PMMLObject;
  */
 public class EvaluationException extends PMMLException {
 
-	public EvaluationException(){
-		super();
-	}
-
 	public EvaluationException(String message){
 		super(message);
-	}
-
-	public EvaluationException(PMMLObject context){
-		super(context);
 	}
 
 	public EvaluationException(String message, PMMLObject context){

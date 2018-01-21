@@ -27,10 +27,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.lang.reflect.Field;
-
-import javax.xml.bind.annotation.XmlEnumValue;
-
 import org.dmg.pmml.PMMLObject;
 
 /**
@@ -40,66 +36,14 @@ import org.dmg.pmml.PMMLObject;
  *
  * @see InvalidFeatureException
  */
+abstract
 public class UnsupportedFeatureException extends PMMLException {
-
-	public UnsupportedFeatureException(){
-		super();
-	}
 
 	public UnsupportedFeatureException(String message){
 		super(message);
 	}
 
-	public UnsupportedFeatureException(PMMLObject object){
-		this(XPathUtil.formatXPath(object), object);
-	}
-
-	public UnsupportedFeatureException(PMMLObject object, Field field){
-		this(XPathUtil.formatXPath(object, field), object);
-	}
-
-	public UnsupportedFeatureException(PMMLObject object, Field field, Object value){
-		this(XPathUtil.formatXPath(object, field, value), object);
-	}
-
-	public UnsupportedFeatureException(PMMLObject object, Enum<?> value){
-		this(object, getEnumField(object, value), getEnumValue(value));
-	}
-
 	public UnsupportedFeatureException(String message, PMMLObject context){
 		super(message, context);
-	}
-
-	static
-	private Field getEnumField(PMMLObject element, Enum<?> value){
-		Class<?> clazz = element.getClass();
-
-		Field[] fields = clazz.getDeclaredFields();
-		for(Field field : fields){
-
-			if((field.getType()).equals(value.getClass())){
-				return field;
-			}
-		}
-
-		throw new RuntimeException();
-	}
-
-	static
-	private String getEnumValue(Enum<?> value){
-		Class<?> clazz = value.getClass();
-
-		try {
-			Field field = clazz.getField(value.name());
-
-			XmlEnumValue xmlEnumValue = field.getAnnotation(XmlEnumValue.class);
-			if(xmlEnumValue != null){
-				return xmlEnumValue.value();
-			}
-		} catch(NoSuchFieldException nsfe){
-			throw new RuntimeException(nsfe);
-		}
-
-		throw new RuntimeException();
 	}
 }

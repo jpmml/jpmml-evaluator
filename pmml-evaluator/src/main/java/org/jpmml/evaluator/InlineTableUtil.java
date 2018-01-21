@@ -51,7 +51,7 @@ public class InlineTableUtil {
 
 		TableLocator tableLocator = object.getTableLocator();
 		if(tableLocator != null){
-			throw new UnsupportedFeatureException(tableLocator);
+			throw new UnsupportedElementException(tableLocator);
 		}
 
 		return inlineTable;

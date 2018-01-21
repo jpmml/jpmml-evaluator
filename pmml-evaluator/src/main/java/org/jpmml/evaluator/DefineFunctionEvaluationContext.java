@@ -32,7 +32,7 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 
 	@Override
 	public FieldValue createFieldValue(FieldName name, Object value){
-		throw new EvaluationException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

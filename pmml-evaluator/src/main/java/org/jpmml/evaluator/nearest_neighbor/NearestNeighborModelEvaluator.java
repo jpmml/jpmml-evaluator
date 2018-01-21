@@ -72,22 +72,27 @@ import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationContext;
-import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.InlineTableUtil;
-import org.jpmml.evaluator.InvalidFeatureException;
-import org.jpmml.evaluator.InvalidResultException;
+import org.jpmml.evaluator.InvalidAttributeException;
+import org.jpmml.evaluator.InvalidElementException;
+import org.jpmml.evaluator.InvisibleFieldException;
 import org.jpmml.evaluator.MeasureUtil;
+import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
+import org.jpmml.evaluator.PMMLAttributes;
+import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
-import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.UnsupportedAttributeException;
+import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueAggregator;
 import org.jpmml.evaluator.ValueFactory;
@@ -116,30 +121,30 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		ComparisonMeasure comparisoonMeasure = nearestNeighborModel.getComparisonMeasure();
 		if(comparisoonMeasure == null){
-			throw new InvalidFeatureException(nearestNeighborModel);
+			throw new MissingElementException(nearestNeighborModel, PMMLElements.NEARESTNEIGHBORMODEL_COMPARISONMEASURE);
 		}
 
 		TrainingInstances trainingInstances = nearestNeighborModel.getTrainingInstances();
 		if(trainingInstances == null){
-			throw new InvalidFeatureException(nearestNeighborModel);
+			throw new MissingElementException(nearestNeighborModel, PMMLElements.NEARESTNEIGHBORMODEL_TRAININGINSTANCES);
 		}
 
 		InstanceFields instanceFields = trainingInstances.getInstanceFields();
 		if(instanceFields == null){
-			throw new InvalidFeatureException(trainingInstances);
+			throw new MissingElementException(trainingInstances, PMMLElements.TRAININGINSTANCES_INSTANCEFIELDS);
 		} // End if
 
 		if(!instanceFields.hasInstanceFields()){
-			throw new InvalidFeatureException(instanceFields);
+			throw new MissingElementException(instanceFields, PMMLElements.INSTANCEFIELDS_INSTANCEFIELDS);
 		}
 
 		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
 		if(knnInputs == null){
-			throw new InvalidFeatureException(nearestNeighborModel);
+			throw new MissingElementException(nearestNeighborModel, PMMLElements.NEARESTNEIGHBORMODEL_KNNINPUTS);
 		} // End if
 
 		if(!knnInputs.hasKNNInputs()){
-			throw new InvalidFeatureException(knnInputs);
+			throw new MissingElementException(knnInputs, PMMLElements.KNNINPUTS_KNNINPUTS);
 		}
 	}
 
@@ -164,10 +169,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		NearestNeighborModel nearestNeighborModel = getModel();
-		if(!nearestNeighborModel.isScorable()){
-			throw new InvalidResultException(nearestNeighborModel);
-		}
+		NearestNeighborModel nearestNeighborModel = ensureScorableModel();
 
 		ValueFactory<?> valueFactory;
 
@@ -178,7 +180,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				valueFactory = getValueFactory();
 				break;
 			default:
-				throw new UnsupportedFeatureException(nearestNeighborModel, mathContext);
+				throw new UnsupportedAttributeException(nearestNeighborModel, mathContext);
 		}
 
 		Map<FieldName, ? extends AffinityDistribution<?>> predictions;
@@ -195,8 +197,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			case CLUSTERING:
 				predictions = evaluateClustering(valueFactory, context);
 				break;
+			case ASSOCIATION_RULES:
+			case SEQUENCES:
+			case TIME_SERIES:
+				throw new InvalidAttributeException(nearestNeighborModel, miningFunction);
 			default:
-				throw new UnsupportedFeatureException(nearestNeighborModel, miningFunction);
+				throw new UnsupportedAttributeException(nearestNeighborModel, miningFunction);
 		}
 
 		return OutputUtil.evaluate(predictions, context);
@@ -213,7 +219,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		List<InstanceResult<V>> nearestInstanceResults = ordering.sortedCopy(instanceResults);
 
-		nearestInstanceResults = nearestInstanceResults.subList(0, nearestNeighborModel.getNumberOfNeighbors());
+		int numberOfNeighbors = nearestNeighborModel.getNumberOfNeighbors();
+
+		nearestInstanceResults = nearestInstanceResults.subList(0, numberOfNeighbors);
 
 		Function<Integer, String> function = new Function<Integer, String>(){
 
@@ -247,7 +255,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 					value = calculateCategoricalTarget(valueFactory, name, nearestInstanceResults, table);
 					break;
 				default:
-					throw new UnsupportedFeatureException(dataField, opType);
+					throw new InvalidElementException(nearestNeighborModel);
 			}
 
 			value = TypeUtil.parseOrCast(dataField.getDataType(), value);
@@ -269,7 +277,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		FieldName instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
 		if(instanceIdVariable == null){
-			throw new InvalidFeatureException(nearestNeighborModel);
+			throw new MissingAttributeException(nearestNeighborModel, PMMLAttributes.NEARESTNEIGHBORMODEL_INSTANCEIDVARIABLE);
 		}
 
 		Function<Integer, String> function = createIdentifierResolver(instanceIdVariable, table);
@@ -288,12 +296,17 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
 		for(KNNInput knnInput : knnInputs){
-			FieldValue value = context.evaluate(knnInput.getField());
+			FieldName name = knnInput.getField();
+			if(name == null){
+				throw new MissingAttributeException(knnInput, PMMLAttributes.KNNINPUT_FIELD);
+			}
+
+			FieldValue value = context.evaluate(name);
 
 			values.add(value);
 		}
 
-		Measure measure = comparisonMeasure.getMeasure();
+		Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
 
 		if(MeasureUtil.isSimilarity(measure)){
 			return evaluateSimilarity(valueFactory, comparisonMeasure, knnInputs.getKNNInputs(), values);
@@ -304,7 +317,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		} else
 
 		{
-			throw new UnsupportedFeatureException(measure);
+			throw new UnsupportedElementException(measure);
 		}
 	}
 
@@ -364,7 +377,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				aggregator = new ValueAggregator<>(valueFactory.newVector(instanceResults.size()));
 				break;
 			default:
-				throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
+				throw new UnsupportedAttributeException(nearestNeighborModel, continuousScoringMethod);
 		}
 
 		for(InstanceResult<V> instanceResult : instanceResults){
@@ -381,12 +394,14 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 					aggregator.add(number);
 					break;
 				case WEIGHTED_AVERAGE:
-					Value<V> weight = instanceResult.getWeight(nearestNeighborModel.getThreshold());
+					InstanceResult.Distance distance = TypeUtil.cast(InstanceResult.Distance.class, instanceResult);
+
+					Value<V> weight = distance.getWeight(nearestNeighborModel.getThreshold());
 
 					aggregator.add(number, weight.doubleValue());
 					break;
 				default:
-					throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
+					throw new UnsupportedAttributeException(nearestNeighborModel, continuousScoringMethod);
 			}
 		}
 
@@ -398,7 +413,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			case MEDIAN:
 				return (aggregator.median()).getValue();
 			default:
-				throw new UnsupportedFeatureException(nearestNeighborModel, continuousScoringMethod);
+				throw new UnsupportedAttributeException(nearestNeighborModel, continuousScoringMethod);
 		}
 	}
 
@@ -431,12 +446,14 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 					aggregator.add(object);
 					break;
 				case WEIGHTED_MAJORITY_VOTE:
-					Value<V> weight = instanceResult.getWeight(nearestNeighborModel.getThreshold());
+					InstanceResult.Distance distance = TypeUtil.cast(InstanceResult.Distance.class, instanceResult);
+
+					Value<V> weight = distance.getWeight(nearestNeighborModel.getThreshold());
 
 					aggregator.add(object, weight.doubleValue());
 					break;
 				default:
-					throw new UnsupportedFeatureException(nearestNeighborModel, categoricalScoringMethod);
+					throw new UnsupportedAttributeException(nearestNeighborModel, categoricalScoringMethod);
 			}
 		}
 
@@ -502,7 +519,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			values.put(function.apply(instanceResult.getId()), instanceResult.getValue());
 		}
 
-		Measure measure = comparisonMeasure.getMeasure();
+		Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
 
 		if(MeasureUtil.isSimilarity(measure)){
 			return new AffinityDistribution<>(Classification.Type.SIMILARITY, values, result);
@@ -513,7 +530,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		} else
 
 		{
-			throw new UnsupportedFeatureException(measure);
+			throw new UnsupportedElementException(measure);
 		}
 	}
 
@@ -562,6 +579,10 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		InstanceFields instanceFields = trainingInstances.getInstanceFields();
 		for(InstanceField instanceField : instanceFields){
 			FieldName name = instanceField.getField();
+			if(name == null){
+				throw new MissingAttributeException(instanceField, PMMLAttributes.INSTANCEFIELD_FIELD);
+			}
+
 			String column = instanceField.getColumn();
 
 			if(instanceIdVariable != null && (instanceIdVariable).equals(name)){
@@ -581,10 +602,10 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			if(field instanceof DataField){
 				DataField dataField = (DataField)field;
-				MiningField miningField = modelEvaluator.getMiningField(name);
 
+				MiningField miningField = modelEvaluator.getMiningField(name);
 				if(miningField == null){
-					throw new InvalidFeatureException(instanceField);
+					throw new InvisibleFieldException(name, instanceField);
 				}
 
 				fieldLoaders.add(new DataFieldLoader(name, column, dataField, miningField));
@@ -597,7 +618,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			} else
 
 			{
-				throw new InvalidFeatureException(instanceField);
+				throw new InvalidAttributeException(instanceField, PMMLAttributes.INSTANCEFIELD_FIELD, name);
 			}
 		}
 
@@ -637,8 +658,15 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				ModelEvaluationContext context = new ModelEvaluationContext(null, modelEvaluator);
 				context.declareAll(rowValues);
 
-				result.put(rowKey, name, ExpressionUtil.evaluate(derivedField, context));
+				FieldValue value = ExpressionUtil.evaluateDerivedField(derivedField, context);
+
+				result.put(rowKey, name, value);
 			}
+		}
+
+		int numberOfNeighbors = nearestNeighborModel.getNumberOfNeighbors();
+		if(numberOfNeighbors < 0 || result.size() < numberOfNeighbors){
+			throw new InvalidAttributeException(nearestNeighborModel, PMMLAttributes.NEARESTNEIGHBORMODEL_NUMBEROFNEIGHBORS, numberOfNeighbors);
 		}
 
 		return result;
@@ -860,9 +888,6 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			setValue(value);
 		}
 
-		abstract
-		public Value<V> getWeight(double threshold);
-
 		public Integer getId(){
 			return this.id;
 		}
@@ -895,11 +920,6 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 				throw new ClassCastException();
 			}
-
-			@Override
-			public Value<V> getWeight(double threshold){
-				throw new EvaluationException();
-			}
 		}
 
 		static
@@ -919,7 +939,6 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				throw new ClassCastException();
 			}
 
-			@Override
 			public Value<V> getWeight(double threshold){
 				Value<V> value = getValue();
 

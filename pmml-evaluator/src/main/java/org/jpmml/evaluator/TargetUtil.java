@@ -141,7 +141,7 @@ public class TargetUtil {
 			case FLOOR:
 				return value.floor();
 			default:
-				throw new UnsupportedFeatureException(target, castInteger);
+				throw new UnsupportedAttributeException(target, castInteger);
 		}
 	}
 
@@ -169,7 +169,7 @@ public class TargetUtil {
 
 		List<TargetValue> targetValues = target.getTargetValues();
 		if(targetValues.size() != 1){
-			throw new InvalidFeatureException(target);
+			throw new InvalidElementListException(targetValues);
 		}
 
 		TargetValue targetValue = targetValues.get(0);
@@ -178,7 +178,7 @@ public class TargetUtil {
 
 		// "The value and priorProbability attributes are used only if the optype of the field is categorical or ordinal"
 		if(targetValue.getValue() != null || targetValue.getPriorProbability() != null){
-			throw new InvalidFeatureException(targetValue);
+			throw new InvalidElementException(targetValue);
 		} // End if
 
 		if(defaultValue == null){
@@ -202,15 +202,18 @@ public class TargetUtil {
 		List<TargetValue> targetValues = target.getTargetValues();
 		for(TargetValue targetValue : targetValues){
 			String targetCategory = targetValue.getValue();
-			Double probability = targetValue.getPriorProbability();
+			if(targetCategory == null){
+				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_VALUE);
+			}
 
-			if(targetCategory == null || probability == null){
-				throw new InvalidFeatureException(targetValue);
-			} // End if
+			Double probability = targetValue.getPriorProbability();
+			if(probability == null){
+				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_PRIORPROBABILITY);
+			}
 
 			// "The defaultValue attribute is used only if the optype of the field is continuous"
 			if(targetValue.getDefaultValue() != null){
-				throw new InvalidFeatureException(targetValue);
+				throw new InvalidElementException(targetValue);
 			}
 
 			Value<V> value = valueFactory.newValue(probability);
@@ -221,7 +224,7 @@ public class TargetUtil {
 		}
 
 		if(sum.doubleValue() != 1d){
-			throw new InvalidFeatureException(target);
+			throw new InvalidElementException(target);
 		}
 
 		return new ProbabilityDistribution<>(values);

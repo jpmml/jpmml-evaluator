@@ -32,8 +32,7 @@ import org.dmg.pmml.support_vector_machine.LinearKernel;
 import org.dmg.pmml.support_vector_machine.PolynomialKernel;
 import org.dmg.pmml.support_vector_machine.RadialBasisKernel;
 import org.dmg.pmml.support_vector_machine.SigmoidKernel;
-import org.jpmml.evaluator.EvaluationException;
-import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.UnsupportedElementException;
 
 public class KernelUtil {
 
@@ -59,7 +58,7 @@ public class KernelUtil {
 			return evaluateSigmoidKernel((SigmoidKernel)kernel, input, vector);
 		}
 
-		throw new UnsupportedFeatureException(kernel);
+		throw new UnsupportedElementException(kernel);
 	}
 
 	static
@@ -87,10 +86,10 @@ public class KernelUtil {
 		double sum = 0d;
 
 		if(left.length != right.length){
-			throw new EvaluationException();
+			throw new IllegalArgumentException();
 		}
 
-		for(int i = 0; i < left.length; i++){
+		for(int i = 0, max = left.length; i < max; i++){
 			sum += (left[i] * right[i]);
 		}
 
@@ -102,10 +101,10 @@ public class KernelUtil {
 		double sum = 0d;
 
 		if(left.length != right.length){
-			throw new EvaluationException();
+			throw new IllegalArgumentException();
 		}
 
-		for(int i = 0; i < left.length; i++){
+		for(int i = 0, max = left.length; i < max; i++){
 			double diff = (left[i] - right[i]);
 
 			sum += (diff * diff);

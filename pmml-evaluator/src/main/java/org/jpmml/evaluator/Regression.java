@@ -41,7 +41,7 @@ public class Regression<V extends Number> implements Computable, HasPrediction {
 	public Object getResult(){
 
 		if(this.result == null){
-			throw new EvaluationException();
+			throw new EvaluationException("Regression result has not been computed");
 		}
 
 		return this.result;
