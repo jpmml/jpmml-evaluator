@@ -76,13 +76,17 @@ public class FunctionTest {
 
 	@Test
 	public void evaluateAggregateFunctions(){
-		List<Integer> values = Arrays.asList(1, 2, 3);
+		List<Integer> values = Arrays.asList(null, 1, 2, 3);
 
 		assertEquals(1, evaluate(Functions.MIN, values));
 		assertEquals(3, evaluate(Functions.MAX, values));
 		assertEquals(2d, evaluate(Functions.AVG, values));
 		assertEquals(6, evaluate(Functions.SUM, values));
 		assertEquals(6, evaluate(Functions.PRODUCT, values));
+
+		values = Arrays.asList(null, null, null);
+
+		assertEquals(null, evaluate(Functions.SUM, values));
 	}
 
 	@Test
