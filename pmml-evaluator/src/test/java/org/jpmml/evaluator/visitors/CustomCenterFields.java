@@ -16,27 +16,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.visitors;
 
-import org.dmg.pmml.PMMLObject;
+import java.util.List;
 
-public class UnsupportedElementException extends UnsupportedFeatureException {
+import javax.xml.bind.annotation.XmlRootElement;
 
-	public UnsupportedElementException(PMMLObject object){
-		super("Element " + formatElement(object) + " is not supported", object);
+import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.clustering.CenterFields;
+
+@XmlRootElement (
+	name = "CenterFields"
+)
+public class CustomCenterFields extends CenterFields {
+
+	public CustomCenterFields(){
+		super();
 	}
 
-	static
-	private String formatElement(PMMLObject object){
-		Class<? extends PMMLObject> clazz = object.getClass();
-
-		String result = XPathUtil.formatElement(clazz);
-
-		String name = clazz.getName();
-		if(!name.startsWith("org.dmg.pmml.")){
-			result += (" (Java class " + name + ")");
-		}
-
-		return result;
+	public CustomCenterFields(List<DerivedField> derivedFields){
+		super(derivedFields);
 	}
 }

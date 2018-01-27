@@ -64,6 +64,7 @@ public class InvalidFeatureInspectorTest {
 			String[] features = {"PMML@version", "PMML/Header", "DataDictionary", "DataDictionary/DataField"};
 
 			assertEquals(features.length, exceptions.size());
+			assertEquals(0, exceptions.indexOf(ife));
 
 			for(int i = 0; i < exceptions.size(); i++){
 				InvalidFeatureException exception = exceptions.get(i);
@@ -72,10 +73,6 @@ public class InvalidFeatureInspectorTest {
 
 				assertTrue(message.contains(features[i]));
 			}
-
-			String message = ife.getMessage();
-
-			assertTrue(message.contains("PMML@version"));
 		}
 	}
 }

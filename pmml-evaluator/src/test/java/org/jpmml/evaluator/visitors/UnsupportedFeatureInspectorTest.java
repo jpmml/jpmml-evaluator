@@ -37,7 +37,8 @@ public class UnsupportedFeatureInspectorTest {
 	@Test
 	public void inspect(){
 		ClusteringModel clusteringModel = new ClusteringModel()
-			.setModelClass(ClusteringModel.ModelClass.DISTRIBUTION_BASED);
+			.setModelClass(ClusteringModel.ModelClass.DISTRIBUTION_BASED)
+			.setCenterFields(new CustomCenterFields());
 
 		PMML pmml = new PMML(Version.PMML_4_3.getVersion(), new Header(), new DataDictionary())
 			.addModels(clusteringModel);
@@ -51,11 +52,21 @@ public class UnsupportedFeatureInspectorTest {
 		} catch(UnsupportedFeatureException ufe){
 			List<UnsupportedFeatureException> exceptions = inspector.getExceptions();
 
-			assertEquals(1, exceptions.size());
+			assertEquals(2, exceptions.size());
+			assertEquals(0, exceptions.indexOf(ufe));
 
-			String message = ufe.getMessage();
+			UnsupportedFeatureException exception = exceptions.get(0);
+
+			String message = exception.getMessage();
 
 			assertTrue(message.contains("ClusteringModel@modelClass=distributionBased"));
+
+			exception = exceptions.get(1);
+
+			message = exception.getMessage();
+
+			assertTrue(message.contains("CenterFields"));
+			assertTrue(message.contains(CustomCenterFields.class.getName()));
 		}
 	}
 }
