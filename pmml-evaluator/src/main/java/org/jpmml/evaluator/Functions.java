@@ -52,7 +52,7 @@ import org.jpmml.evaluator.functions.ValueListFunction;
 
 public interface Functions {
 
-	public static final ArithmeticFunction PLUS = new ArithmeticFunction("+"){
+	ArithmeticFunction PLUS = new ArithmeticFunction("+"){
 
 		@Override
 		public Double evaluate(Number left, Number right){
@@ -60,7 +60,7 @@ public interface Functions {
 		}
 	};
 
-	public static final ArithmeticFunction MINUS = new ArithmeticFunction("-"){
+	ArithmeticFunction MINUS = new ArithmeticFunction("-"){
 
 		@Override
 		public Double evaluate(Number left, Number right){
@@ -68,7 +68,7 @@ public interface Functions {
 		}
 	};
 
-	public static final ArithmeticFunction MULTIPLY = new ArithmeticFunction("*"){
+	ArithmeticFunction MULTIPLY = new ArithmeticFunction("*"){
 
 		@Override
 		public Double evaluate(Number left, Number right){
@@ -76,7 +76,7 @@ public interface Functions {
 		}
 	};
 
-	public static final ArithmeticFunction DIVIDE = new ArithmeticFunction("/"){
+	ArithmeticFunction DIVIDE = new ArithmeticFunction("/"){
 
 		@Override
 		public Number evaluate(Number left, Number right){
@@ -89,7 +89,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AggregateFunction MIN = new AggregateFunction("min"){
+	AggregateFunction MIN = new AggregateFunction("min"){
 
 		@Override
 		public Min createStatistic(){
@@ -97,7 +97,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AggregateFunction MAX = new AggregateFunction("max"){
+	AggregateFunction MAX = new AggregateFunction("max"){
 
 		@Override
 		public Max createStatistic(){
@@ -105,7 +105,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AggregateFunction AVG = new AggregateFunction("avg"){
+	AggregateFunction AVG = new AggregateFunction("avg"){
 
 		@Override
 		public Mean createStatistic(){
@@ -118,7 +118,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AggregateFunction SUM = new AggregateFunction("sum"){
+	AggregateFunction SUM = new AggregateFunction("sum"){
 
 		@Override
 		public Sum createStatistic(){
@@ -126,7 +126,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AggregateFunction PRODUCT = new AggregateFunction("product"){
+	AggregateFunction PRODUCT = new AggregateFunction("product"){
 
 		@Override
 		public Product createStatistic(){
@@ -134,7 +134,7 @@ public interface Functions {
 		}
 	};
 
-	public static final FpMathFunction LOG10 = new FpMathFunction("log10"){
+	FpMathFunction LOG10 = new FpMathFunction("log10"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -142,7 +142,7 @@ public interface Functions {
 		}
 	};
 
-	public static final FpMathFunction LN = new FpMathFunction("ln"){
+	FpMathFunction LN = new FpMathFunction("ln"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -150,7 +150,7 @@ public interface Functions {
 		}
 	};
 
-	public static final FpMathFunction LN1P = new FpMathFunction("x-ln1p"){
+	FpMathFunction LN1P = new FpMathFunction("x-ln1p"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -158,7 +158,7 @@ public interface Functions {
 		}
 	};
 
-	public static final FpMathFunction EXP = new FpMathFunction("exp"){
+	FpMathFunction EXP = new FpMathFunction("exp"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -166,7 +166,7 @@ public interface Functions {
 		}
 	};
 
-	public static final FpMathFunction EXPM1 = new FpMathFunction("x-expm1"){
+	FpMathFunction EXPM1 = new FpMathFunction("x-expm1"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -174,7 +174,7 @@ public interface Functions {
 		}
 	};
 
-	public static final FpMathFunction SQRT = new FpMathFunction("sqrt"){
+	FpMathFunction SQRT = new FpMathFunction("sqrt"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -182,7 +182,7 @@ public interface Functions {
 		}
 	};
 
-	public static final MathFunction ABS = new MathFunction("abs"){
+	MathFunction ABS = new MathFunction("abs"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -190,7 +190,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AbstractFunction POW = new AbstractFunction("pow"){
+	AbstractFunction POW = new AbstractFunction("pow"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -207,7 +207,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AbstractFunction THRESHOLD = new AbstractFunction("threshold"){
+	AbstractFunction THRESHOLD = new AbstractFunction("threshold"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -224,7 +224,7 @@ public interface Functions {
 		}
 	};
 
-	public static final MathFunction FLOOR = new MathFunction("floor"){
+	MathFunction FLOOR = new MathFunction("floor"){
 
 		@Override
 		public Double evaluate(Number number){
@@ -232,7 +232,7 @@ public interface Functions {
 		}
 	};
 
-	public static final MathFunction CEIL = new MathFunction("ceil"){
+	MathFunction CEIL = new MathFunction("ceil"){
 
 		@Override
 		public Double evaluate(Number number){
@@ -240,7 +240,7 @@ public interface Functions {
 		}
 	};
 
-	public static final MathFunction ROUND = new MathFunction("round"){
+	MathFunction ROUND = new MathFunction("round"){
 
 		@Override
 		public Double evaluate(Number number){
@@ -248,7 +248,7 @@ public interface Functions {
 		}
 	};
 
-	public static final MathFunction RINT = new MathFunction("x-rint"){
+	MathFunction RINT = new MathFunction("x-rint"){
 
 		@Override
 		public Double evaluate(Number number){
@@ -256,7 +256,7 @@ public interface Functions {
 		}
 	};
 
-	public static final ValueFunction IS_MISSING = new ValueFunction("isMissing"){
+	ValueFunction IS_MISSING = new ValueFunction("isMissing"){
 
 		@Override
 		public Boolean evaluate(FieldValue value){
@@ -264,7 +264,7 @@ public interface Functions {
 		}
 	};
 
-	public static final ValueFunction IS_NOT_MISSING = new ValueFunction("isNotMissing"){
+	ValueFunction IS_NOT_MISSING = new ValueFunction("isNotMissing"){
 
 		@Override
 		public Boolean evaluate(FieldValue value){
@@ -272,7 +272,7 @@ public interface Functions {
 		}
 	};
 
-	public static final EqualityFunction EQUAL = new EqualityFunction("equal"){
+	EqualityFunction EQUAL = new EqualityFunction("equal"){
 
 		@Override
 		public Boolean evaluate(boolean equals){
@@ -280,7 +280,7 @@ public interface Functions {
 		}
 	};
 
-	public static final EqualityFunction NOT_EQUAL = new EqualityFunction("notEqual"){
+	EqualityFunction NOT_EQUAL = new EqualityFunction("notEqual"){
 
 		@Override
 		public Boolean evaluate(boolean equals){
@@ -288,7 +288,7 @@ public interface Functions {
 		}
 	};
 
-	public static final ComparisonFunction LESS_THAN = new ComparisonFunction("lessThan"){
+	ComparisonFunction LESS_THAN = new ComparisonFunction("lessThan"){
 
 		@Override
 		public Boolean evaluate(int order){
@@ -296,7 +296,7 @@ public interface Functions {
 		}
 	};
 
-	public static final ComparisonFunction LESS_OR_EQUAL = new ComparisonFunction("lessOrEqual"){
+	ComparisonFunction LESS_OR_EQUAL = new ComparisonFunction("lessOrEqual"){
 
 		@Override
 		public Boolean evaluate(int order){
@@ -304,7 +304,7 @@ public interface Functions {
 		}
 	};
 
-	public static final ComparisonFunction GREATER_THAN = new ComparisonFunction("greaterThan"){
+	ComparisonFunction GREATER_THAN = new ComparisonFunction("greaterThan"){
 
 		@Override
 		public Boolean evaluate(int order){
@@ -312,7 +312,7 @@ public interface Functions {
 		}
 	};
 
-	public static final ComparisonFunction GREATER_OR_EQUAL = new ComparisonFunction("greaterOrEqual"){
+	ComparisonFunction GREATER_OR_EQUAL = new ComparisonFunction("greaterOrEqual"){
 
 		@Override
 		public Boolean evaluate(int order){
@@ -320,7 +320,7 @@ public interface Functions {
 		}
 	};
 
-	public static final BinaryBooleanFunction AND = new BinaryBooleanFunction("and"){
+	BinaryBooleanFunction AND = new BinaryBooleanFunction("and"){
 
 		@Override
 		public Boolean evaluate(Boolean left, Boolean right){
@@ -328,7 +328,7 @@ public interface Functions {
 		}
 	};
 
-	public static final BinaryBooleanFunction OR = new BinaryBooleanFunction("or"){
+	BinaryBooleanFunction OR = new BinaryBooleanFunction("or"){
 
 		@Override
 		public Boolean evaluate(Boolean left, Boolean right){
@@ -336,7 +336,7 @@ public interface Functions {
 		}
 	};
 
-	public static final UnaryBooleanFunction NOT = new UnaryBooleanFunction("not"){
+	UnaryBooleanFunction NOT = new UnaryBooleanFunction("not"){
 
 		@Override
 		public Boolean evaluate(Boolean value){
@@ -344,7 +344,7 @@ public interface Functions {
 		}
 	};
 
-	public static final ValueListFunction IS_IN = new ValueListFunction("isIn"){
+	ValueListFunction IS_IN = new ValueListFunction("isIn"){
 
 		@Override
 		public Boolean evaluate(int index){
@@ -352,7 +352,7 @@ public interface Functions {
 		}
 	};
 
-	public static final ValueListFunction IS_NOT_IN = new ValueListFunction("isNotIn"){
+	ValueListFunction IS_NOT_IN = new ValueListFunction("isNotIn"){
 
 		@Override
 		public Boolean evaluate(int index){
@@ -360,7 +360,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AbstractFunction IF = new AbstractFunction("if"){
+	AbstractFunction IF = new AbstractFunction("if"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -398,7 +398,7 @@ public interface Functions {
 		}
 	};
 
-	public static final StringFunction UPPERCASE = new StringFunction("uppercase"){
+	StringFunction UPPERCASE = new StringFunction("uppercase"){
 
 		@Override
 		public String evaluate(String value){
@@ -406,7 +406,7 @@ public interface Functions {
 		}
 	};
 
-	public static final StringFunction LOWERCASE = new StringFunction("lowercase"){
+	StringFunction LOWERCASE = new StringFunction("lowercase"){
 
 		@Override
 		public String evaluate(String value){
@@ -414,7 +414,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AbstractFunction SUBSTRING = new AbstractFunction("substring"){
+	AbstractFunction SUBSTRING = new AbstractFunction("substring"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -444,7 +444,7 @@ public interface Functions {
 		}
 	};
 
-	public static final StringFunction TRIM_BLANKS = new StringFunction("trimBlanks"){
+	StringFunction TRIM_BLANKS = new StringFunction("trimBlanks"){
 
 		@Override
 		public String evaluate(String value){
@@ -452,7 +452,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AbstractFunction CONCAT = new AbstractFunction("concat"){
+	AbstractFunction CONCAT = new AbstractFunction("concat"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -471,7 +471,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AbstractFunction REPLACE = new AbstractFunction("replace"){
+	AbstractFunction REPLACE = new AbstractFunction("replace"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -491,7 +491,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AbstractFunction MATCHES = new AbstractFunction("matches"){
+	AbstractFunction MATCHES = new AbstractFunction("matches"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -509,7 +509,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AbstractFunction FORMAT_NUMBER = new AbstractFunction("formatNumber"){
+	AbstractFunction FORMAT_NUMBER = new AbstractFunction("formatNumber"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -533,7 +533,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AbstractFunction FORMAT_DATETIME = new AbstractFunction("formatDatetime"){
+	AbstractFunction FORMAT_DATETIME = new AbstractFunction("formatDatetime"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -576,7 +576,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AbstractFunction DATE_DAYS_SINCE_YEAR = new AbstractFunction("dateDaysSinceYear"){
+	AbstractFunction DATE_DAYS_SINCE_YEAR = new AbstractFunction("dateDaysSinceYear"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -592,7 +592,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AbstractFunction DATE_SECONDS_SINCE_MIDNIGHT = new AbstractFunction("dateSecondsSinceMidnight"){
+	AbstractFunction DATE_SECONDS_SINCE_MIDNIGHT = new AbstractFunction("dateSecondsSinceMidnight"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -608,7 +608,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AbstractFunction DATE_SECONDS_SINCE_YEAR = new AbstractFunction("dateSecondsSinceYear"){
+	AbstractFunction DATE_SECONDS_SINCE_YEAR = new AbstractFunction("dateSecondsSinceYear"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -624,7 +624,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AbstractFunction HYPOT = new AbstractFunction("x-hypot"){
+	AbstractFunction HYPOT = new AbstractFunction("x-hypot"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -639,7 +639,7 @@ public interface Functions {
 		}
 	};
 
-	public static final TrigonometricFunction SIN = new TrigonometricFunction("x-sin"){
+	TrigonometricFunction SIN = new TrigonometricFunction("x-sin"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -647,7 +647,7 @@ public interface Functions {
 		}
 	};
 
-	public static final TrigonometricFunction COS = new TrigonometricFunction("x-cos"){
+	TrigonometricFunction COS = new TrigonometricFunction("x-cos"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -655,7 +655,7 @@ public interface Functions {
 		}
 	};
 
-	public static final TrigonometricFunction TAN = new TrigonometricFunction("x-tan"){
+	TrigonometricFunction TAN = new TrigonometricFunction("x-tan"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -663,7 +663,7 @@ public interface Functions {
 		}
 	};
 
-	public static final TrigonometricFunction ASIN = new TrigonometricFunction("x-asin"){
+	TrigonometricFunction ASIN = new TrigonometricFunction("x-asin"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -671,7 +671,7 @@ public interface Functions {
 		}
 	};
 
-	public static final TrigonometricFunction ACOS = new TrigonometricFunction("x-acos"){
+	TrigonometricFunction ACOS = new TrigonometricFunction("x-acos"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -679,7 +679,7 @@ public interface Functions {
 		}
 	};
 
-	public static final TrigonometricFunction ATAN = new TrigonometricFunction("x-atan"){
+	TrigonometricFunction ATAN = new TrigonometricFunction("x-atan"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -687,7 +687,7 @@ public interface Functions {
 		}
 	};
 
-	public static final AbstractFunction ATAN2 = new AbstractFunction("x-atan2"){
+	AbstractFunction ATAN2 = new AbstractFunction("x-atan2"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -705,7 +705,7 @@ public interface Functions {
 		}
 	};
 
-	public static final TrigonometricFunction SINH = new TrigonometricFunction("x-sinh"){
+	TrigonometricFunction SINH = new TrigonometricFunction("x-sinh"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -713,7 +713,7 @@ public interface Functions {
 		}
 	};
 
-	public static final TrigonometricFunction COSH = new TrigonometricFunction("x-cosh"){
+	TrigonometricFunction COSH = new TrigonometricFunction("x-cosh"){
 
 		@Override
 		public Double evaluate(Number value){
@@ -721,7 +721,7 @@ public interface Functions {
 		}
 	};
 
-	public static final TrigonometricFunction TANH = new TrigonometricFunction("x-tanh"){
+	TrigonometricFunction TANH = new TrigonometricFunction("x-tanh"){
 
 		@Override
 		public Double evaluate(Number value){

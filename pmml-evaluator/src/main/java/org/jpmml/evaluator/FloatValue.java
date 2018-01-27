@@ -409,6 +409,5 @@ public class FloatValue extends Value<Float> {
 	}
 
 	public static final double E = 2.7182817d;
-
 	public static final double PI = 3.1415927d;
 }

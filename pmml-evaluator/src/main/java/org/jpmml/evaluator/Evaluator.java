@@ -164,5 +164,5 @@ public interface Evaluator extends HasInputFields, HasResultFields {
 	 * The name of the default target field.
 	 * </p>
 	 */
-	public static final FieldName DEFAULT_TARGET_NAME = null;
+	FieldName DEFAULT_TARGET_NAME = null;
 }

@@ -392,6 +392,5 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	public static final double E = Math.E;
-
 	public static final double PI = Math.PI;
 }
