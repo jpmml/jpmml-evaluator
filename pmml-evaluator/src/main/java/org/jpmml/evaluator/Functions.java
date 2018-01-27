@@ -50,10 +50,7 @@ import org.jpmml.evaluator.functions.UnaryBooleanFunction;
 import org.jpmml.evaluator.functions.ValueFunction;
 import org.jpmml.evaluator.functions.ValueListFunction;
 
-public class Functions {
-
-	private Functions(){
-	}
+public interface Functions {
 
 	public static final ArithmeticFunction PLUS = new ArithmeticFunction("+"){
 
