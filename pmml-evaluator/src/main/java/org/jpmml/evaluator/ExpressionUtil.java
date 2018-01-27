@@ -33,7 +33,6 @@ import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.Constant;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Discretize;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
@@ -41,6 +40,7 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.HasExpression;
 import org.dmg.pmml.HasField;
+import org.dmg.pmml.HasType;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
@@ -76,10 +76,10 @@ public class ExpressionUtil {
 	}
 
 	static
-	public FieldValue evaluateDerivedField(DerivedField derivedField, EvaluationContext context){
-		FieldValue value = evaluateExpressionContainer(derivedField, context);
+	public <E extends PMMLObject & HasType<E> & HasExpression<E>> FieldValue evaluateTypedExpressionContainer(E hasTypedExpression, EvaluationContext context){
+		FieldValue value = evaluateExpressionContainer(hasTypedExpression, context);
 
-		return FieldValueUtil.refine(derivedField, value);
+		return FieldValueUtil.refine(hasTypedExpression.getDataType(), hasTypedExpression.getOpType(), value);
 	}
 
 	static

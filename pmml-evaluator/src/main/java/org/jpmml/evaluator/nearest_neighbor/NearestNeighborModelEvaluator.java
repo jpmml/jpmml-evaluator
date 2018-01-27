@@ -53,6 +53,7 @@ import org.dmg.pmml.ComparisonMeasure;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.Distance;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.MathContext;
@@ -61,6 +62,7 @@ import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.Similarity;
 import org.dmg.pmml.TypeDefinitionField;
 import org.dmg.pmml.nearest_neighbor.InstanceField;
 import org.dmg.pmml.nearest_neighbor.InstanceFields;
@@ -308,11 +310,11 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
 
-		if(MeasureUtil.isSimilarity(measure)){
+		if(measure instanceof Similarity){
 			return evaluateSimilarity(valueFactory, comparisonMeasure, knnInputs.getKNNInputs(), values);
 		} else
 
-		if(MeasureUtil.isDistance(measure)){
+		if(measure instanceof Distance){
 			return evaluateDistance(valueFactory, comparisonMeasure, knnInputs.getKNNInputs(), values);
 		} else
 
@@ -521,11 +523,11 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
 
-		if(MeasureUtil.isSimilarity(measure)){
+		if(measure instanceof Similarity){
 			return new AffinityDistribution<>(Classification.Type.SIMILARITY, values, result);
 		} else
 
-		if(MeasureUtil.isDistance(measure)){
+		if(measure instanceof Distance){
 			return new AffinityDistribution<>(Classification.Type.DISTANCE, values, result);
 		} else
 
@@ -658,7 +660,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				ModelEvaluationContext context = new ModelEvaluationContext(null, modelEvaluator);
 				context.declareAll(rowValues);
 
-				FieldValue value = ExpressionUtil.evaluateDerivedField(derivedField, context);
+				FieldValue value = ExpressionUtil.evaluateTypedExpressionContainer(derivedField, context);
 
 				result.put(rowKey, name, value);
 			}

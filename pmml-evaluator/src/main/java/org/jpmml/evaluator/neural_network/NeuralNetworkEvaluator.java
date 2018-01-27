@@ -398,7 +398,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				throw new MissingElementException(neuralInput, PMMLElements.NEURALINPUT_DERIVEDFIELD);
 			}
 
-			FieldValue value = ExpressionUtil.evaluateDerivedField(derivedField, context);
+			FieldValue value = ExpressionUtil.evaluateTypedExpressionContainer(derivedField, context);
 			if(value == null){
 				return null;
 			}

@@ -31,12 +31,14 @@ import com.google.common.collect.ImmutableList;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.ComparisonMeasure;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.Distance;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.Similarity;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.clustering.CenterFields;
@@ -200,11 +202,11 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 		Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
 
-		if(MeasureUtil.isSimilarity(measure)){
+		if(measure instanceof Similarity){
 			result = evaluateSimilarity(valueFactory, comparisonMeasure, clusteringFields, values);
 		} else
 
-		if(MeasureUtil.isDistance(measure)){
+		if(measure instanceof Distance){
 			result = evaluateDistance(valueFactory, comparisonMeasure, clusteringFields, values);
 		} else
 

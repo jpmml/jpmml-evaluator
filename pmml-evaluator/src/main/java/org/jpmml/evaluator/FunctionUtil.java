@@ -75,9 +75,7 @@ public class FunctionUtil {
 			functionContext.declare(parameterField.getName(), value);
 		}
 
-		FieldValue result = ExpressionUtil.evaluateExpressionContainer(defineFunction, functionContext);
-
-		return FieldValueUtil.refine(defineFunction.getDataType(), defineFunction.getOpType(), result);
+		return ExpressionUtil.evaluateTypedExpressionContainer(defineFunction, functionContext);
 	}
 
 	static
