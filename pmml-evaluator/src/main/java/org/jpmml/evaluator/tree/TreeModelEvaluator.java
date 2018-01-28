@@ -364,7 +364,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 
 		// "The predicted probabilities must sum to 1"
-		if(hasProbabilities && sum.doubleValue() != 1d){
+		if(hasProbabilities && !sum.equals(1d)){
 			throw new InvalidElementException(node);
 		}
 

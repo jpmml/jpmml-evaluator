@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -45,6 +46,44 @@ public class ValueTest {
 
 		assertEquals((Float)(-2f), floatValue.getValue());
 		assertEquals((Double)(-2d), doubleValue.getValue());
+	}
+
+	@Test
+	public void equals(){
+		FloatValue floatValue = new FloatValue(0f);
+		DoubleValue doubleValue = new DoubleValue(0d);
+
+		assertTrue(floatValue.equals(-0d));
+		assertTrue(doubleValue.equals(-0d));
+
+		assertTrue(floatValue.equals(0d));
+		assertTrue(doubleValue.equals(0d));
+
+		assertTrue(floatValue.equals(0d + Math.ulp(0d)));
+		assertFalse(doubleValue.equals(0d + Math.ulp(0d)));
+
+		assertTrue(floatValue.equals(-0f));
+		assertTrue(floatValue.equals(0f));
+		assertFalse(floatValue.equals(0f + Math.ulp(0f)));
+	}
+
+	@Test
+	public void compareTo(){
+		FloatValue floatValue = new FloatValue(0f);
+		DoubleValue doubleValue = new DoubleValue(0d);
+
+		assertEquals(1, floatValue.compareTo(-0d));
+		assertEquals(1, doubleValue.compareTo(-0d));
+
+		assertEquals(0, floatValue.compareTo(0d));
+		assertEquals(0, doubleValue.compareTo(0d));
+
+		assertEquals(0, floatValue.compareTo(0d + Math.ulp(0d)));
+		assertEquals(-1, doubleValue.compareTo(0d + Math.ulp(0d)));
+
+		assertEquals(1, floatValue.compareTo(-0f));
+		assertEquals(0, floatValue.compareTo(0f));
+		assertEquals(-1, floatValue.compareTo(0f + Math.ulp(0f)));
 	}
 
 	@Test

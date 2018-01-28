@@ -377,6 +377,16 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
+	public boolean equals(double value){
+		return this.value == value;
+	}
+
+	@Override
+	public int compareTo(double value){
+		return Double.compare(this.value, value);
+	}
+
+	@Override
 	public float floatValue(){
 		return (float)this.value;
 	}

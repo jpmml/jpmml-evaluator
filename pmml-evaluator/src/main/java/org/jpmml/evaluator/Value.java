@@ -300,6 +300,12 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> denormalize(double leftOrig, double leftNorm, double rightOrig, double rightNorm);
 
 	abstract
+	public boolean equals(double value);
+
+	abstract
+	public int compareTo(double value);
+
+	abstract
 	public float floatValue();
 
 	abstract

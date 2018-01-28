@@ -233,7 +233,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			Map.Entry<String, Value<V>> entry = it.next();
 
 			Value<V> value = entry.getValue();
-			if(value.doubleValue() < 0d){
+			if(value.compareTo(0d) < 0){
 				it.remove();
 			}
 		}

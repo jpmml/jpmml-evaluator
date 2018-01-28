@@ -373,6 +373,16 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
+	public boolean equals(double value){
+		return this.value == (float)value;
+	}
+
+	@Override
+	public int compareTo(double value){
+		return Float.compare(this.value, (float)value);
+	}
+
+	@Override
 	public float floatValue(){
 		return this.value;
 	}

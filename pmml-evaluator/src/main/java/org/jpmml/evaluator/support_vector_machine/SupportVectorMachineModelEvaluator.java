@@ -248,12 +248,12 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 							value.round();
 
 							// "A rounded value of 1 corresponds to the targetCategory attribute of the SupportVectorMachine element"
-							if(value.doubleValue() == 1d){
+							if(value.equals(1d)){
 								label = targetCategory;
 							} else
 
 							// "A rounded value of 0 corresponds to the alternateBinaryTargetCategory attribute of the SupportVectorMachineModel element"
-							if(value.doubleValue() == 0d){
+							if(value.equals(0d)){
 								label = alternateBinaryTargetCategory;
 							} else
 
@@ -274,7 +274,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 							} // End if
 
 							// "If the numeric prediction is smaller than the threshold, then it corresponds to the targetCategory attribute"
-							if(Double.compare(value.doubleValue(), threshold) < 0){
+							if(value.compareTo(threshold) < 0){
 								label = targetCategory;
 							} else
 

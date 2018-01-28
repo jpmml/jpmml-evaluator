@@ -130,11 +130,11 @@ public class NormalizationUtil {
 		for(int i = 1; i < linearNorms.size() - 1; i++){
 			LinearNorm linearNorm = linearNorms.get(i);
 
-			if(value.doubleValue() >= linearNorm.getNorm()){
+			if(value.compareTo(linearNorm.getNorm()) >= 0){
 				rangeStart = linearNorm;
 			} else
 
-			if(value.doubleValue() <= linearNorm.getNorm()){
+			if(value.compareTo(linearNorm.getNorm()) <= 0){
 				rangeEnd = linearNorm;
 
 				break;

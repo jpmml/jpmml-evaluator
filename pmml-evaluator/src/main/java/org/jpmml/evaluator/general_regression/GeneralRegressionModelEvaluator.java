@@ -1079,7 +1079,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				factorHandler.updateProduct(result, value);
 			}
 
-			if(result.doubleValue() == 0d){
+			if(result.equals(0d)){
 				return result;
 			}
 

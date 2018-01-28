@@ -223,7 +223,7 @@ public class TargetUtil {
 			sum.add(value);
 		}
 
-		if(sum.doubleValue() != 1d){
+		if(!sum.equals(1d)){
 			throw new InvalidElementException(target);
 		}
 

@@ -114,7 +114,7 @@ public class MeasureUtil {
 			throw new UnsupportedElementException(measure);
 		} // End if
 
-		if(denominator.doubleValue() == 0d){
+		if(denominator.equals(0d)){
 			throw new UndefinedResultException();
 		}
 
@@ -199,7 +199,7 @@ public class MeasureUtil {
 		if(measure instanceof Euclidean || measure instanceof SquaredEuclidean || measure instanceof CityBlock || measure instanceof Minkowski){
 			Value<V> result = distances.sum();
 
-			if(adjustment.doubleValue() != 1d){
+			if(!adjustment.equals(1d)){
 				result.multiply(adjustment);
 			} // End if
 
@@ -213,7 +213,7 @@ public class MeasureUtil {
 		if(measure instanceof Chebychev){
 			Value<V> result = distances.max();
 
-			if(adjustment.doubleValue() != 1d){
+			if(!adjustment.equals(1d)){
 				result.multiply(adjustment);
 			}
 
