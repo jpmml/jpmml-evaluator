@@ -44,6 +44,7 @@ import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.InvalidElementException;
+import org.jpmml.evaluator.MisplacedAttributeException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluationContext;
@@ -338,8 +339,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
 
+		NodeScoreDistribution<V> result = new NodeScoreDistribution<>(new ValueMap<String, V>(2 * scoreDistributions.size()), entityRegistry, node);
+
 		Value<V> sum = valueFactory.newValue();
 
+		// "If the predicted probability is defined for any class label, then it must be defined for all"
 		boolean hasProbabilities = false;
 
 		for(int i = 0, max = scoreDistributions.size(); i < max; i++){
@@ -347,42 +351,38 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 			Double probability = scoreDistribution.getProbability();
 
-			hasProbabilities |= (probability != null);
-
-			// "If the predicted probability is defined for any class label, then it must be defined for all"
-			if(hasProbabilities && probability == null){
-				throw new MissingAttributeException(scoreDistribution, PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY);
-			} // End if
-
-			if(hasProbabilities){
-				sum.add(probability);
-			} else
-
-			{
-				sum.add(scoreDistribution.getRecordCount());
+			if(i == 0){
+				hasProbabilities = (probability != null);
 			}
-		}
-
-		// "The predicted probabilities must sum to 1"
-		if(hasProbabilities && !sum.equals(1d)){
-			throw new InvalidElementException(node);
-		}
-
-		NodeScoreDistribution<V> result = new NodeScoreDistribution<>(new ValueMap<String, V>(2 * scoreDistributions.size()), entityRegistry, node);
-
-		for(int i = 0, max = scoreDistributions.size(); i < max; i++){
-			ScoreDistribution scoreDistribution = scoreDistributions.get(i);
 
 			Value<V> value;
 
 			if(hasProbabilities){
-				Double probability = scoreDistribution.getProbability();
+
+				if(probability == null){
+					throw new MissingAttributeException(scoreDistribution, PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY);
+				} // End if
+
+				if(probability < 0d || probability > 1d){
+					throw new InvalidAttributeException(scoreDistribution, PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY, probability);
+				}
+
+				sum.add(probability);
 
 				value = valueFactory.newValue(probability);
 			} else
 
 			{
-				value = valueFactory.newValue(scoreDistribution.getRecordCount()).divide(sum);
+				if(probability != null){
+					throw new MisplacedAttributeException(scoreDistribution, PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY, probability);
+				}
+
+				double recordCount = scoreDistribution.getRecordCount();
+				if(recordCount != 0d){
+					sum.add(recordCount);
+				}
+
+				value = valueFactory.newValue(recordCount);
 			}
 
 			result.put(scoreDistribution.getValue(), value);
@@ -396,6 +396,23 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 				}
 
 				result.putConfidence(scoreDistribution.getValue(), value);
+			}
+		}
+
+		if(sum.equals(1d)){
+			return result;
+		} // End if
+
+		// "The predicted probabilities must sum to 1"
+		if(hasProbabilities){
+			throw new InvalidElementException(node);
+		} else
+
+		{
+			ValueMap<String, V> values = result.getValues();
+
+			for(Value<V> value : values){
+				value.divide(sum);
 			}
 		}
 

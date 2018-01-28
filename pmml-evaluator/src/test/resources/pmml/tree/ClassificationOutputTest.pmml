@@ -21,8 +21,7 @@
             <True/>
             <Node id="2" score="0">
                 <SimplePredicate field="flag" operator="equal" value="false"/>
-                <ScoreDistribution value="0" recordCount="100.0"/>
-                <ScoreDistribution value="1" recordCount="0.0"/>
+                <ScoreDistribution value="0" probability="1.0" recordCount="100.0"/>
             </Node>
             <Node id="3" score="1">
                 <SimplePredicate field="flag" operator="equal" value="true"/>
