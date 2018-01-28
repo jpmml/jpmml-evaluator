@@ -165,14 +165,16 @@ public class OutputUtil {
 					break;
 				case PREDICTED_DISPLAY_VALUE:
 					{
-						DataField dataField = modelEvaluator.getDataField(targetFieldName);
-						if(dataField == null){
+						if(segmentId != null){
+							throw new UnsupportedElementException(outputField);
+						}
+
+						TargetField targetField = modelEvaluator.findTargetField(targetFieldName);
+						if(targetField == null){
 							throw new MissingFieldException(targetFieldName, outputField);
 						}
 
-						Target target = modelEvaluator.getTarget(targetFieldName);
-
-						value = getPredictedDisplayValue(targetValue, dataField, target);
+						value = getPredictedDisplayValue(targetValue, targetField);
 					}
 					break;
 				case TRANSFORMED_VALUE:
@@ -204,23 +206,31 @@ public class OutputUtil {
 					break;
 				case RESIDUAL:
 					{
+						if(segmentId != null){
+							throw new UnsupportedElementException(outputField);
+						}
+
 						FieldValue expectedTargetValue = context.evaluate(targetFieldName);
 						if(expectedTargetValue == null){
 							throw new MissingValueException(targetFieldName, outputField);
 						}
 
-						DataField dataField = modelEvaluator.getDataField(targetFieldName);
+						TargetField targetField = modelEvaluator.findTargetField(targetFieldName);
+						if(targetField == null){
+							throw new MissingFieldException(targetFieldName, outputField);
+						}
 
-						OpType opType = dataField.getOpType();
+						OpType opType = targetField.getOpType();
 						switch(opType){
 							case CONTINUOUS:
 								value = getContinuousResidual(targetValue, expectedTargetValue);
 								break;
 							case CATEGORICAL:
-								value = getCategoricalResidual(targetValue, expectedTargetValue);
+							case ORDINAL:
+								value = getDiscreteResidual(targetValue, expectedTargetValue);
 								break;
 							default:
-								throw new UnsupportedElementException(outputField);
+								throw new InvalidElementException(outputField);
 						}
 					}
 					break;
@@ -387,12 +397,12 @@ public class OutputUtil {
 						targetFieldName = modelEvaluator.getTargetFieldName();
 					}
 
-					DataField dataField = modelEvaluator.getDataField(targetFieldName);
-					if(dataField == null){
-						throw new MissingFieldException(targetFieldName, outputField);
+					TargetField targetField = modelEvaluator.findTargetField(targetFieldName);
+					if(targetField == null){
+						throw new TypeAnalysisException(outputField);
 					}
 
-					return dataField.getDataType();
+					return targetField.getDataType();
 				}
 			case PREDICTED_DISPLAY_VALUE:
 				{
@@ -481,7 +491,7 @@ public class OutputUtil {
 	}
 
 	static
-	private Object getPredictedDisplayValue(Object object, DataField dataField, Target target){
+	private Object getPredictedDisplayValue(Object object, TargetField targetField){
 
 		if(object instanceof HasDisplayValue){
 			HasDisplayValue hasDisplayValue = TypeUtil.cast(HasDisplayValue.class, object);
@@ -491,6 +501,7 @@ public class OutputUtil {
 
 		object = getPredictedValue(object);
 
+		Target target = targetField.getTarget();
 		if(target != null){
 			TargetValue targetValue = TargetUtil.getTargetValue(target, object);
 
@@ -503,14 +514,14 @@ public class OutputUtil {
 			}
 		}
 
-		OpType opType = dataField.getOpType();
+		OpType opType = targetField.getOpType();
 		switch(opType){
 			case CONTINUOUS:
 				break;
 			case CATEGORICAL:
 			case ORDINAL:
 				{
-					Value value = FieldValueUtil.getValidValue(dataField, object);
+					Value value = FieldValueUtil.getValidValue(targetField, object);
 
 					if(value != null){
 						String displayValue = value.getDisplayValue();
@@ -522,6 +533,8 @@ public class OutputUtil {
 				}
 				break;
 			default:
+				DataField dataField = targetField.getDataField(); // XXX
+
 				throw new UnsupportedAttributeException(dataField, opType);
 		}
 
@@ -559,7 +572,7 @@ public class OutputUtil {
 	}
 
 	static
-	public Double getCategoricalResidual(Object object, FieldValue expectedObject){
+	public Double getDiscreteResidual(Object object, FieldValue expectedObject){
 		HasProbability hasProbability = TypeUtil.cast(HasProbability.class, object);
 
 		String value = (String)TypeUtil.cast(DataType.STRING, getPredictedValue(object));

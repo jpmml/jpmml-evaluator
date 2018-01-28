@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.dmg.pmml.DataField;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.MathContext;
@@ -169,17 +168,13 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELDNAME, targetFieldName);
 		}
 
-		DataField dataField = targetField.getDataField();
-
-		OpType opType = dataField.getOpType();
+		OpType opType = targetField.getOpType();
 		switch(opType){
-			case CONTINUOUS:
-				throw new InvalidElementException(regressionModel);
 			case CATEGORICAL:
 			case ORDINAL:
 				break;
 			default:
-				throw new UnsupportedAttributeException(dataField, opType);
+				throw new InvalidElementException(regressionModel);
 		}
 
 		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
@@ -187,7 +182,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			throw new InvalidElementListException(regressionTables);
 		}
 
-		List<String> targetCategories = FieldValueUtil.getTargetCategories(dataField);
+		List<String> targetCategories = FieldValueUtil.getTargetCategories(targetField);
 		if(targetCategories.size() > 0 && targetCategories.size() != regressionTables.size()){
 			throw new InvalidElementListException(regressionTables);
 		}

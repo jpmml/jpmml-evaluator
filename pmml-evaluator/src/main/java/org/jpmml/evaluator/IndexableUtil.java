@@ -18,11 +18,11 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.dmg.pmml.Indexable;
 import org.dmg.pmml.PMMLObject;
@@ -33,27 +33,16 @@ public class IndexableUtil {
 	}
 
 	static
-	public <K, E extends PMMLObject & Indexable<K>> E find(K key, List<E> elements){
+	public <K, E extends PMMLObject & Indexable<K>> E find(List<E> elements, K key){
 
 		for(E element : elements){
 
-			if((key).equals(ensureKey(element))){
+			if(Objects.equals(ensureKey(element, false), key)){
 				return element;
 			}
 		}
 
 		return null;
-	}
-
-	static
-	public <K, E extends PMMLObject & Indexable<K>> List<K> keys(List<E> elements){
-		List<K> result = new ArrayList<>(elements.size());
-
-		for(E element : elements){
-			result.add(ensureKey(element));
-		}
-
-		return result;
 	}
 
 	static

@@ -81,7 +81,7 @@ public class RegressionTargetCorrector extends AbstractModelVisitor {
 
 		DataDictionary dataDictionary = pmml.getDataDictionary();
 
-		DataField dataField = IndexableUtil.find(name, dataDictionary.getDataFields());
+		DataField dataField = IndexableUtil.find(dataDictionary.getDataFields(), name);
 		if(dataField == null){
 			throw new MissingFieldException(name, miningField);
 		}
@@ -100,7 +100,7 @@ public class RegressionTargetCorrector extends AbstractModelVisitor {
 		Targets targets = model.getTargets();
 
 		if(targets != null){
-			Target target = IndexableUtil.find(name, targets.getTargets());
+			Target target = IndexableUtil.find(targets.getTargets(), name);
 
 			if(target != null){
 

@@ -601,6 +601,11 @@ public class FieldValueUtil {
 	}
 
 	static
+	public Value getValidValue(TargetField targetField, Object value){
+		return getValidValue(targetField.getDataField(), value);
+	}
+
+	static
 	public Value getValidValue(TypeDefinitionField field, Object value){
 
 		if(value == null){
@@ -696,6 +701,11 @@ public class FieldValueUtil {
 		}
 
 		return Collections.emptyList();
+	}
+
+	static
+	public List<String> getTargetCategories(TargetField targetField){
+		return getTargetCategories(targetField.getDataField());
 	}
 
 	static

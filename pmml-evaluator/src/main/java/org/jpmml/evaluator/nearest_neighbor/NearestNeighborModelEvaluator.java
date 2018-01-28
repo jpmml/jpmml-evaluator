@@ -244,11 +244,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		for(TargetField targetField : targetFields){
 			FieldName name = targetField.getName();
 
-			DataField dataField = targetField.getDataField();
-
 			Object value;
 
-			OpType opType = dataField.getOpType();
+			OpType opType = targetField.getOpType();
 			switch(opType){
 				case CONTINUOUS:
 					value = calculateContinuousTarget(valueFactory, name, nearestInstanceResults, table);
@@ -260,7 +258,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 					throw new InvalidElementException(nearestNeighborModel);
 			}
 
-			value = TypeUtil.parseOrCast(dataField.getDataType(), value);
+			value = TypeUtil.parseOrCast(targetField.getDataType(), value);
 
 			AffinityDistribution<V> result = createAffinityDistribution(instanceResults, function, value);
 

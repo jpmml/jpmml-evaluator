@@ -257,6 +257,10 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		return this.inputFields;
 	}
 
+	InputField findInputField(FieldName name){
+		return findModelField(getInputFields(), name);
+	}
+
 	@Override
 	public List<InputField> getActiveFields(){
 
@@ -297,6 +301,10 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		return targetField;
 	}
 
+	TargetField findTargetField(FieldName name){
+		return findModelField(getTargetFields(), name);
+	}
+
 	public FieldName getTargetFieldName(){
 		TargetField targetField = getTargetField();
 
@@ -315,6 +323,10 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		}
 
 		return this.outputResultFields;
+	}
+
+	OutputField findOutputField(FieldName name){
+		return findModelField(getOutputFields(), name);
 	}
 
 	protected EvaluationException createMiningSchemaException(String message){
@@ -668,6 +680,19 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		}
 
 		return model;
+	}
+
+	static
+	private <F extends ModelField> F findModelField(Collection<? extends F> fields, FieldName name){
+
+		for(F field : fields){
+
+			if(Objects.equals(field.getName(), name)){
+				return field;
+			}
+		}
+
+		return null;
 	}
 
 	static
