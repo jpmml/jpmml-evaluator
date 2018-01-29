@@ -665,7 +665,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		Double offset = getOffset(generalRegressionModel, context);
-		if(offset != null){
+		if(offset != null && offset != 0d){
 			value.add(offset);
 		}
 
@@ -703,7 +703,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		Double offset = getOffset(generalRegressionModel, context);
-		if(offset != null){
+		if(offset != null && offset != 0d){
 			value.add(offset.doubleValue());
 		}
 

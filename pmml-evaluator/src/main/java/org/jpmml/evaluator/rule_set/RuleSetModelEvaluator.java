@@ -207,12 +207,13 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 						Value<V> totalWeight = valueFactory.newValue();
 
 						for(SimpleRule keyRule : keyRules){
+							Double weight = keyRule.getWeight();
 
-							if(winner == null || (winner.getWeight() < keyRule.getWeight())){
+							if(winner == null || (winner.getWeight() < weight)){
 								winner = keyRule;
 							}
 
-							totalWeight.add(keyRule.getWeight());
+							totalWeight.add(weight);
 						}
 
 						Value<V> value = totalWeight.divide(firedRules.size());

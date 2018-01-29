@@ -312,12 +312,14 @@ public class MeasureUtil {
 
 		for(int i = 0; i < values.size(); i++){
 			FieldValue value = values.get(i);
-			Number adjustmentValue = (adjustmentValues != null ? adjustmentValues.get(i) : Numbers.DOUBLE_ONE);
+			double adjustmentValue = (adjustmentValues != null ? (adjustmentValues.get(i)).doubleValue() : 1d);
 
-			sum.add(adjustmentValue.doubleValue());
+			if(adjustmentValue != 0d){
+				sum.add(adjustmentValue);
 
-			if(value != null){
-				nonmissingSum.add(adjustmentValue.doubleValue());
+				if(value != null){
+					nonmissingSum.add(adjustmentValue);
+				}
 			}
 		}
 
