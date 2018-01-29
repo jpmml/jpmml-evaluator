@@ -224,7 +224,10 @@ public class TargetUtil {
 		}
 
 		if(!sum.equals(1d)){
-			throw new InvalidElementException(target);
+
+			for(Value<V> value : values){
+				value.divide(sum);
+			}
 		}
 
 		return new ProbabilityDistribution<>(values);

@@ -43,7 +43,6 @@ import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.InvalidAttributeException;
-import org.jpmml.evaluator.InvalidElementException;
 import org.jpmml.evaluator.MisplacedAttributeException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
@@ -399,16 +398,8 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			}
 		}
 
-		if(sum.equals(1d)){
-			return result;
-		} // End if
-
 		// "The predicted probabilities must sum to 1"
-		if(hasProbabilities){
-			throw new InvalidElementException(node);
-		} else
-
-		{
+		if(!sum.equals(1d)){
 			ValueMap<String, V> values = result.getValues();
 
 			for(Value<V> value : values){
