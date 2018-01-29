@@ -77,12 +77,6 @@ public class NormalizationUtil {
 			OutlierTreatmentMethod outlierTreatmentMethod = normContinuous.getOutliers();
 
 			switch(outlierTreatmentMethod){
-				case AS_MISSING_VALUES:
-					Double missing = normContinuous.getMapMissingTo();
-					if(missing == null){
-						throw new MissingAttributeException(normContinuous, PMMLAttributes.NORMCONTINUOUS_MAPMISSINGTO);
-					}
-					return missing;
 				case AS_IS:
 					if(value < rangeStart.getOrig()){
 						rangeEnd = linearNorms.get(1);
@@ -92,6 +86,12 @@ public class NormalizationUtil {
 						rangeStart = linearNorms.get(linearNorms.size() - 2);
 					}
 					break;
+				case AS_MISSING_VALUES:
+					Double missing = normContinuous.getMapMissingTo();
+					if(missing == null){
+						throw new MissingAttributeException(normContinuous, PMMLAttributes.NORMCONTINUOUS_MAPMISSINGTO);
+					}
+					return missing;
 				case AS_EXTREME_VALUES:
 					if(value < rangeStart.getOrig()){
 						return rangeStart.getNorm();

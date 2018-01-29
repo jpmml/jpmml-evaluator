@@ -45,8 +45,8 @@ public class MiningFieldUtil {
 
 		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
 		switch(invalidValueTreatmentMethod){
-			case AS_IS: // XXX
 			case RETURN_INVALID:
+			case AS_IS: // XXX
 				break;
 			default:
 				return false;

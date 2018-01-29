@@ -195,6 +195,8 @@ public class FieldValueUtil {
 		}
 
 		switch(invalidValueTreatmentMethod){
+			case RETURN_INVALID:
+				throw new InvalidResultException("Field " + PMMLException.formatKey(field.getName()) + " cannot accept user input value " + PMMLException.formatValue(value), miningField);
 			case AS_IS:
 				if(invalidValueReplacement != null){
 					return createInputValue(field, miningField, invalidValueReplacement);
@@ -202,8 +204,6 @@ public class FieldValueUtil {
 				return createInputValue(field, miningField, value);
 			case AS_MISSING:
 				return createMissingInputValue(field, miningField);
-			case RETURN_INVALID:
-				throw new InvalidResultException("Field " + PMMLException.formatKey(field.getName()) + " cannot accept user input value " + PMMLException.formatValue(value), miningField);
 			default:
 				throw new UnsupportedAttributeException(miningField, invalidValueTreatmentMethod);
 		}
@@ -220,8 +220,8 @@ public class FieldValueUtil {
 		switch(missingValueTreatmentMethod){
 			case AS_IS:
 			case AS_MEAN:
-			case AS_MEDIAN:
 			case AS_MODE:
+			case AS_MEDIAN:
 			case AS_VALUE:
 				return createMissingInputValue(field, miningField);
 			default:
