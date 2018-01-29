@@ -83,20 +83,20 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 	private Map<FieldName, MiningField> miningFields = Collections.emptyMap();
 
+	private Map<FieldName, DerivedField> localDerivedFields = Collections.emptyMap();
+
+	private Map<FieldName, Target> targets = Collections.emptyMap();
+
+	private Map<FieldName, org.dmg.pmml.OutputField> outputFields = Collections.emptyMap();
+
 	transient
 	private List<InputField> inputFields = null;
 
 	transient
 	private List<InputField> activeInputFields = null;
 
-	private Map<FieldName, DerivedField> localDerivedFields = Collections.emptyMap();
-
-	private Map<FieldName, Target> targets = Collections.emptyMap();
-
 	transient
 	private List<TargetField> targetResultFields = null;
-
-	private Map<FieldName, org.dmg.pmml.OutputField> outputFields = Collections.emptyMap();
 
 	transient
 	private List<OutputField> outputResultFields = null;
@@ -247,6 +247,22 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		return this.miningFields.get(name);
 	}
 
+	public DerivedField getLocalDerivedField(FieldName name){
+		return this.localDerivedFields.get(name);
+	}
+
+	public Target getTarget(FieldName name){
+		return this.targets.get(name);
+	}
+
+	public org.dmg.pmml.OutputField getOutputField(FieldName name){
+		return this.outputFields.get(name);
+	}
+
+	public boolean isPrimitive(){
+		return this.localDerivedFields.isEmpty() && this.outputFields.isEmpty();
+	}
+
 	@Override
 	public List<InputField> getInputFields(){
 
@@ -269,14 +285,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		}
 
 		return this.activeInputFields;
-	}
-
-	public DerivedField getLocalDerivedField(FieldName name){
-		return this.localDerivedFields.get(name);
-	}
-
-	public Target getTarget(FieldName name){
-		return this.targets.get(name);
 	}
 
 	@Override
@@ -311,10 +319,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		return targetField.getName();
 	}
 
-	public org.dmg.pmml.OutputField getOutputField(FieldName name){
-		return this.outputFields.get(name);
-	}
-
 	@Override
 	public List<OutputField> getOutputFields(){
 
@@ -335,10 +339,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		MiningSchema miningSchema = model.getMiningSchema();
 
 		return new EvaluationException(message, miningSchema);
-	}
-
-	public boolean isPrimitive(){
-		return this.localDerivedFields.isEmpty() && this.outputFields.isEmpty();
 	}
 
 	@Override

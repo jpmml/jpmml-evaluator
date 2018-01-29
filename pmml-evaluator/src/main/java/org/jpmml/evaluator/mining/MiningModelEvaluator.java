@@ -162,6 +162,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
+	public boolean isPrimitive(){
+		return false;
+	}
+
+	@Override
 	public FieldName getTargetFieldName(){
 		List<TargetField> targetFields = super.getTargetFields();
 
@@ -193,11 +198,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 
 		return outputFields;
-	}
-
-	@Override
-	public boolean isPrimitive(){
-		return false;
 	}
 
 	@Override
