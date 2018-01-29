@@ -54,6 +54,7 @@ import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
+import org.jpmml.evaluator.UndefinedResultException;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
@@ -401,6 +402,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		// "The predicted probabilities must sum to 1"
 		if(!sum.equals(1d)){
 			ValueMap<String, V> values = result.getValues();
+
+			if(sum.equals(0d)){
+				throw new UndefinedResultException();
+			}
 
 			for(Value<V> value : values){
 				value.divide(sum);

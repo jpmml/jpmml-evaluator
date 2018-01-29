@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class ValueAggregatorTest {
 
@@ -30,6 +31,14 @@ public class ValueAggregatorTest {
 	@Test
 	public void sumAndAverage(){
 		ValueAggregator<Double> aggregator = new ValueAggregator<>(this.valueFactory.newVector(0));
+
+		try {
+			aggregator.average();
+
+			fail();
+		} catch(UndefinedResultException ure){
+			// Ignored
+		}
 
 		aggregator.add(2d);
 		aggregator.add(3d);
@@ -44,6 +53,14 @@ public class ValueAggregatorTest {
 	public void weightedSumAndAverage(){
 		ValueAggregator<Double> aggregator = new ValueAggregator<>(this.valueFactory.newVector(0), this.valueFactory.newVector(0), this.valueFactory.newVector(0));
 
+		try {
+			aggregator.weightedAverage();
+
+			fail();
+		} catch(UndefinedResultException ure){
+			// Ignored
+		}
+
 		aggregator.add(2d, 1d / 3d);
 		aggregator.add(3d, 2d / 3d);
 
@@ -54,8 +71,38 @@ public class ValueAggregatorTest {
 	}
 
 	@Test
+	public void median(){
+		ValueAggregator<Double> aggregator = new ValueAggregator<>(this.valueFactory.newVector(3));
+
+		try {
+			aggregator.median();
+
+			fail();
+		} catch(UndefinedResultException ure){
+			// Ignored
+		}
+
+		aggregator.add(4d);
+		aggregator.add(5d);
+
+		assertEquals(new DoubleValue((4d + 5d) / 2d), aggregator.median());
+
+		aggregator.add(6d);
+
+		assertEquals(new DoubleValue(5d), aggregator.median());
+	}
+
+	@Test
 	public void weightedMedian(){
 		ValueAggregator<Double> aggregator = new ValueAggregator<>(this.valueFactory.newVector(3), this.valueFactory.newVector(3), this.valueFactory.newVector(3));
+
+		try {
+			aggregator.weightedMedian();
+
+			fail();
+		} catch(UndefinedResultException ure){
+			// Ignored
+		}
 
 		aggregator.add(1d, 3d);
 		aggregator.add(5d, 7d);

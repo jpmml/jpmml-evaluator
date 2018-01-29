@@ -105,12 +105,17 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 
 		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
 
-			private double denominator = ProbabilityAggregator.this.size;
+			private final int size = ProbabilityAggregator.this.size;
 
 
 			@Override
 			public Value<V> apply(Vector<V> values){
-				return (values.sum()).divide(this.denominator);
+
+				if(this.size == 0){
+					throw new UndefinedResultException();
+				}
+
+				return (values.sum()).divide(this.size);
 			}
 		};
 
@@ -125,12 +130,17 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 
 		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
 
-			private Value<V> denominator = ProbabilityAggregator.this.weights.sum();
+			private final Value<V> weightSum = ProbabilityAggregator.this.weights.sum();
 
 
 			@Override
 			public Value<V> apply(Vector<V> values){
-				return (values.sum()).divide(this.denominator);
+
+				if(this.weightSum.equals(0d)){
+					throw new UndefinedResultException();
+				}
+
+				return (values.sum()).divide(this.weightSum);
 			}
 		};
 

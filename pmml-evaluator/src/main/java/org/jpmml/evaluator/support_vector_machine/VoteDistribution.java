@@ -26,6 +26,7 @@ import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.Report;
 import org.jpmml.evaluator.ReportUtil;
+import org.jpmml.evaluator.UndefinedResultException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.ValueUtil;
@@ -78,6 +79,10 @@ public class VoteDistribution<V extends Number> extends Classification<V> implem
 
 		if(probability != null){
 			probability = probability.copy();
+
+			if(this.sum.equals(0d)){
+				throw new UndefinedResultException();
+			}
 
 			probability.divide(this.sum);
 		}

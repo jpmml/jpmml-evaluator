@@ -225,6 +225,10 @@ public class TargetUtil {
 
 		if(!sum.equals(1d)){
 
+			if(sum.equals(0d)){
+				throw new UndefinedResultException();
+			}
+
 			for(Value<V> value : values){
 				value.divide(sum);
 			}

@@ -47,6 +47,10 @@ public class ValueUtil {
 
 		if(sum == null || sum.equals(1d)){
 			return;
+		} else
+
+		if(sum.equals(0d)){
+			throw new UndefinedResultException();
 		}
 
 		for(Value<V> value : values){
@@ -89,6 +93,10 @@ public class ValueUtil {
 
 		if(sum == null || sum.equals(1d)){
 			return;
+		} else
+
+		if(sum.equals(0d)){
+			throw new UndefinedResultException();
 		}
 
 		for(Value<V> value : values){

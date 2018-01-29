@@ -40,6 +40,8 @@ public class ProbabilityAggregatorTest {
 			}
 		};
 
+		assertEquals(new ValueMap<>(), aggregator.averageMap());
+
 		aggregator.add(createProbabilityDistribution(0.2d, null, 0.8d));
 		aggregator.add(createProbabilityDistribution(null, 1.0d, null));
 
@@ -55,6 +57,8 @@ public class ProbabilityAggregatorTest {
 				return ProbabilityAggregatorTest.this.valueFactory;
 			}
 		};
+
+		assertEquals(new ValueMap<>(), aggregator.weightedAverageMap());
 
 		aggregator.add(createProbabilityDistribution(0.2d, 0.6d, 0.2d), 3d);
 		aggregator.add(createProbabilityDistribution(0.6d, 0.1d, 0.3d), 1d);

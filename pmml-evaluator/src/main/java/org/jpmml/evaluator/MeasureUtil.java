@@ -323,6 +323,10 @@ public class MeasureUtil {
 			}
 		}
 
+		if(nonmissingSum.equals(0d)){
+			throw new UndefinedResultException();
+		}
+
 		return sum.divide(nonmissingSum);
 	}
 }

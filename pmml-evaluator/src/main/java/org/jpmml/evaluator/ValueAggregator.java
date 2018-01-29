@@ -86,7 +86,12 @@ public class ValueAggregator<V extends Number> {
 			throw new IllegalStateException();
 		}
 
-		return (this.values.sum()).divide(this.values.size());
+		int size = this.values.size();
+		if(size == 0){
+			throw new UndefinedResultException();
+		}
+
+		return (this.values.sum()).divide(size);
 	}
 
 	public Value<V> weightedAverage(){
@@ -95,7 +100,12 @@ public class ValueAggregator<V extends Number> {
 			throw new IllegalStateException();
 		}
 
-		return (this.weightedValues.sum()).divide(this.weights.sum());
+		Value<V> weightSum = this.weights.sum();
+		if(weightSum.equals(0d)){
+			throw new UndefinedResultException();
+		}
+
+		return (this.weightedValues.sum()).divide(weightSum);
 	}
 
 	public Value<V> sum(){
@@ -122,6 +132,11 @@ public class ValueAggregator<V extends Number> {
 			throw new IllegalStateException();
 		}
 
+		int size = this.values.size();
+		if(size == 0){
+			throw new UndefinedResultException();
+		}
+
 		return this.values.median();
 	}
 
@@ -132,6 +147,9 @@ public class ValueAggregator<V extends Number> {
 		}
 
 		int size = this.values.size();
+		if(size == 0){
+			throw new UndefinedResultException();
+		}
 
 		List<Entry> entries = new ArrayList<>(size);
 
