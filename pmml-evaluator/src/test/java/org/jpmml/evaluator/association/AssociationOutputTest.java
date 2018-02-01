@@ -21,11 +21,9 @@ package org.jpmml.evaluator.association;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.jpmml.evaluator.OutputUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -48,27 +46,14 @@ public class AssociationOutputTest extends ModelEvaluatorTest {
 		checkValue("{Cracker}->{Water}", result, "rule");
 		checkValue("1", result, "ruleId");
 
-		checkDataType(DataType.STRING, evaluator, "rule");
-		checkDataType(DataType.STRING, evaluator, "ruleId");
-
 		checkValue(1d, result, "support");
 		checkValue(1d, result, "confidence");
 		checkValue(1d, result, "lift");
-
-		checkDataType(DataType.DOUBLE, evaluator, "support");
-		checkDataType(DataType.DOUBLE, evaluator, "confidence");
-		checkDataType(DataType.DOUBLE, evaluator, "lift");
 	}
 
 	static
 	private void checkValue(Object expected, Map<FieldName, ?> result, String name){
 		assertEquals(expected, getOutput(result, name));
 		assertEquals(expected, getOutput(result, "deprecated_" + name));
-	}
-
-	static
-	private void checkDataType(DataType expected, ModelEvaluator<?> evaluator, String name){
-		assertEquals(expected, OutputUtil.getDataType(evaluator.getOutputField(FieldName.create(name)), evaluator));
-		assertEquals(expected, OutputUtil.getDataType(evaluator.getOutputField(FieldName.create("deprecated_" + name)), evaluator));
 	}
 }

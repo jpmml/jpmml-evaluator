@@ -20,11 +20,9 @@ package org.jpmml.evaluator.general_regression;
 
 import java.util.Map;
 
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.jpmml.evaluator.OutputUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -45,8 +43,5 @@ public class ContrastMatrixTest extends ModelEvaluatorTest {
 		// Expected values have been calculated by hand
 		assertEquals(0.81956470d, (Double)getOutput(result, lowField), 1e-8);
 		assertEquals(0.18043530d, (Double)getOutput(result, highField), 1e-8);
-
-		assertEquals(DataType.DOUBLE, OutputUtil.getDataType(evaluator.getOutputField(lowField), evaluator));
-		assertEquals(DataType.DOUBLE, OutputUtil.getDataType(evaluator.getOutputField(highField), evaluator));
 	}
 }

@@ -23,12 +23,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Iterables;
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.TargetReferenceField;
 import org.junit.Test;
 
@@ -64,7 +62,5 @@ public class ContinuousResidualTest extends ModelEvaluatorTest {
 		FieldName field = FieldName.create("residual");
 
 		assertEquals(2.6d, (Double)getOutput(result, field), 1e-8);
-
-		assertEquals(DataType.DOUBLE, OutputUtil.getDataType(evaluator.getOutputField(field), evaluator));
 	}
 }

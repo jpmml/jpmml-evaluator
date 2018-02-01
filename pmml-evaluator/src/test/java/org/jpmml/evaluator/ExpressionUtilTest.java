@@ -54,14 +54,14 @@ public class ExpressionUtilTest {
 	public void evaluateConstant(){
 		Constant constant = new Constant("3");
 
-		assertEquals(DataType.INTEGER, getDataType(constant));
+		assertEquals(DataType.INTEGER, ExpressionUtil.getConstantDataType(constant));
 
 		assertEquals(3, evaluate(constant));
 
 		Constant stringThree = new Constant("3")
 			.setDataType(DataType.STRING);
 
-		assertEquals(DataType.STRING, getDataType(stringThree));
+		assertEquals(DataType.STRING, ExpressionUtil.getConstantDataType(stringThree));
 
 		assertEquals("3", evaluate(stringThree));
 
@@ -97,8 +97,6 @@ public class ExpressionUtilTest {
 		NormContinuous normContinuous = new NormContinuous(name, null)
 			.setMapMissingTo(5d);
 
-		assertEquals(DataType.DOUBLE, getDataType(normContinuous));
-
 		assertEquals(5d, evaluate(normContinuous, name, null));
 	}
 
@@ -110,8 +108,6 @@ public class ExpressionUtilTest {
 		Double notEquals = 0d;
 
 		NormDiscrete stringThree = new NormDiscrete(name, "3");
-
-		assertEquals(DataType.DOUBLE, getDataType(stringThree));
 
 		assertEquals(equals, evaluate(stringThree, name, "3"));
 		assertEquals(notEquals, evaluate(stringThree, name, "1"));
@@ -137,8 +133,6 @@ public class ExpressionUtilTest {
 
 		Discretize discretize = new Discretize(name);
 
-		assertEquals(DataType.STRING, getDataType(discretize));
-
 		assertEquals(null, evaluate(discretize, name, null));
 
 		discretize.setMapMissingTo("Missing");
@@ -157,8 +151,6 @@ public class ExpressionUtilTest {
 
 		MapValues mapValues = new MapValues("y")
 			.addFieldColumnPairs(new FieldColumnPair(name, "column"));
-
-		assertEquals(DataType.STRING, getDataType(mapValues));
 
 		assertEquals(null, evaluate(mapValues, name, null));
 
@@ -181,8 +173,6 @@ public class ExpressionUtilTest {
 			.setExpression(new Constant("user friendly"));
 
 		String text;
-
-		assertEquals(DataType.INTEGER, getDataType(textIndex));
 
 		assertEquals(1, evaluate(textIndex, name, "user friendly"));
 		assertEquals(1, evaluate(textIndex, name, "user-friendly"));
@@ -460,10 +450,5 @@ public class ExpressionUtilTest {
 		FieldValue result = ExpressionUtil.evaluate(expression, context);
 
 		return FieldValueUtil.getValue(result);
-	}
-
-	static
-	private DataType getDataType(Expression expression){
-		return ExpressionUtil.getDataType(expression, null);
 	}
 }

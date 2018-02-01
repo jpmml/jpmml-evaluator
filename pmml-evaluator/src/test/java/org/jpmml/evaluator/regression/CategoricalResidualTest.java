@@ -20,11 +20,9 @@ package org.jpmml.evaluator.regression;
 
 import java.util.Map;
 
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.jpmml.evaluator.OutputUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -42,8 +40,6 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 		FieldName field = FieldName.create("residual");
 
 		assertEquals(0.2d, (Double)getOutput(result, field), 1e-8);
-
-		assertEquals(DataType.DOUBLE, OutputUtil.getDataType(evaluator.getOutputField(field), evaluator));
 
 		arguments = createArguments("input", (2d * 0.8d), "target", "no");
 

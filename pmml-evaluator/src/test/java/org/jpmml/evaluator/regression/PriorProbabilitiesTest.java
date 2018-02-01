@@ -21,7 +21,6 @@ package org.jpmml.evaluator.regression;
 import java.util.List;
 import java.util.Map;
 
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.Target;
@@ -30,7 +29,6 @@ import org.dmg.pmml.Targets;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.jpmml.evaluator.OutputUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -56,9 +54,6 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		assertEquals("NO", getOutput(result, field));
 		assertEquals("No", getOutput(result, displayField));
-
-		assertEquals(DataType.STRING, OutputUtil.getDataType(evaluator.getOutputField(field), evaluator));
-		assertEquals(DataType.STRING, OutputUtil.getDataType(evaluator.getOutputField(displayField), evaluator));
 
 		assertEquals(0.02d, getOutput(result, "P_responseYes"));
 		assertEquals(0.98d, getOutput(result, "P_responseNo"));
