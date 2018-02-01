@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
-    <Header copyright="DMG.org"/>
-    <DataDictionary>
-        <DataField name="input" optype="continuous" dataType="double"/>
-        <DataField name="target" optype="categorical" dataType="string">
-            <Value value="yes"/>
-            <Value value="no"/>
-        </DataField>
-    </DataDictionary>
-    <RegressionModel functionName="classification" normalizationMethod="none">
-        <MiningSchema>
-            <MiningField name="input"/>
-            <MiningField name="target" usageType="predicted"/>
-        </MiningSchema>
-        <Output>
-            <OutputField name="residual" optype="continuous" feature="residual"/>
-        </Output>
-        <RegressionTable intercept="0.0" targetCategory="yes">
-            <NumericPredictor name="input" coefficient="0.5"/>
-        </RegressionTable>
-        <RegressionTable intercept="0.0" targetCategory="no"/>
-    </RegressionModel>
+	<Header copyright="DMG.org"/>
+	<DataDictionary>
+		<DataField name="input" optype="continuous" dataType="double"/>
+		<DataField name="target" optype="categorical" dataType="string">
+			<Value value="yes"/>
+			<Value value="no"/>
+		</DataField>
+	</DataDictionary>
+	<RegressionModel functionName="classification" normalizationMethod="none">
+		<MiningSchema>
+			<MiningField name="input"/>
+			<MiningField name="target" usageType="predicted"/>
+		</MiningSchema>
+		<Output>
+			<OutputField name="residual" optype="continuous" feature="residual"/>
+		</Output>
+		<RegressionTable intercept="0.0" targetCategory="yes">
+			<NumericPredictor name="input" coefficient="0.5"/>
+		</RegressionTable>
+		<RegressionTable intercept="0.0" targetCategory="no"/>
+	</RegressionModel>
 </PMML>

@@ -1,105 +1,105 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
-    <Header copyright="DMG.org"/>
-    <DataDictionary>
-        <DataField name="Modifier" optype="categorical" dataType="boolean"/>
-        <DataField name="StartTime" optype="continuous" dataType="integer"/>
-        <DataField name="State" optype="categorical" dataType="string"/>
-        <DataField name="Value" optype="continuous" dataType="double"/>
-    </DataDictionary>
-    <RegressionModel functionName="regression">
-        <MiningSchema>
-            <MiningField name="Modifier"/>
-            <MiningField name="StartTime"/>
-            <MiningField name="State"/>
-            <MiningField name="Value"/>
-        </MiningSchema>
-        <RegressionTable/>
-    </RegressionModel>
-    <TransformationDictionary>
-        <DefineFunction name="AMPM" optype="categorical" dataType="string">
-            <ParameterField name="TimeVal" optype="continuous" dataType="integer"/>
-            <Discretize field="TimeVal">
-                <DiscretizeBin binValue="AM">
-                    <Interval closure="closedClosed" leftMargin="0.0" rightMargin="43199.0"/>
-                </DiscretizeBin>
-                <DiscretizeBin binValue="PM">
-                    <Interval closure="closedOpen" leftMargin="43200.0" rightMargin="86400.0"/>
-                </DiscretizeBin>
-            </Discretize>
-        </DefineFunction>
-        <DefineFunction name="STATEGROUP" optype="categorical" dataType="string">
-            <ParameterField name="#1" optype="categorical" dataType="string"/>
-            <MapValues outputColumn="Region">
-                <FieldColumnPair field="#1" column="State"/>
-                <InlineTable>
-                    <row>
-                        <State>CA</State>
-                        <Region>West</Region>
-                    </row>
-                    <row>
-                        <State>OR</State>
-                        <Region>West</Region>
-                    </row>
-                    <row>
-                        <State>NC</State>
-                        <Region>East</Region>
-                    </row>
-                </InlineTable>
-            </MapValues>
-        </DefineFunction>
-        <DerivedField name="Shift" optype="categorical" dataType="string">
-            <Apply function="AMPM">
-                <FieldRef field="StartTime"/>
-            </Apply>
-        </DerivedField>
-        <DerivedField name="Group" optype="categorical" dataType="string">
-            <Apply function="STATEGROUP">
-                <FieldRef field="State"/>
-            </Apply>
-        </DerivedField>
-        <DerivedField name="SimpleTable" dataType="string">
-            <MapValues outputColumn="output">
-                <FieldColumnPair field="Value" column="input"/>
-                <InlineTable>
-                    <row>
-                        <input>1</input>
-                        <output>first</output>
-                    </row>
-                    <row>
-                        <input>2</input>
-                        <output>second</output>
-                    </row>
-                </InlineTable>
-            </MapValues>
-        </DerivedField>
-        <DerivedField name="ComplexTable" dataType="string">
-            <MapValues outputColumn="output">
-                <FieldColumnPair field="Value" column="input"/>
-                <FieldColumnPair field="Modifier" column="flag"/>
-                <InlineTable>
-                    <row>
-                        <input>1.0</input>
-                        <flag>true</flag>
-                        <output>firstTrue</output>
-                    </row>
-                    <row>
-                        <input>1.0</input>
-                        <flag>0</flag>
-                        <output>firstFalse</output>
-                    </row>
-                    <row>
-                        <input>2.0</input>
-                        <flag>1</flag>
-                        <output>secondTrue</output>
-                    </row>
-                    <row>
-                        <input>2.0</input>
-                        <flag>false</flag>
-                        <output>secondFalse</output>
-                    </row>
-                </InlineTable>
-            </MapValues>
-        </DerivedField>
-    </TransformationDictionary>
+	<Header copyright="DMG.org"/>
+	<DataDictionary>
+		<DataField name="Modifier" optype="categorical" dataType="boolean"/>
+		<DataField name="StartTime" optype="continuous" dataType="integer"/>
+		<DataField name="State" optype="categorical" dataType="string"/>
+		<DataField name="Value" optype="continuous" dataType="double"/>
+	</DataDictionary>
+	<RegressionModel functionName="regression">
+		<MiningSchema>
+			<MiningField name="Modifier"/>
+			<MiningField name="StartTime"/>
+			<MiningField name="State"/>
+			<MiningField name="Value"/>
+		</MiningSchema>
+		<RegressionTable/>
+	</RegressionModel>
+	<TransformationDictionary>
+		<DefineFunction name="AMPM" optype="categorical" dataType="string">
+			<ParameterField name="TimeVal" optype="continuous" dataType="integer"/>
+			<Discretize field="TimeVal">
+				<DiscretizeBin binValue="AM">
+					<Interval closure="closedClosed" leftMargin="0.0" rightMargin="43199.0"/>
+				</DiscretizeBin>
+				<DiscretizeBin binValue="PM">
+					<Interval closure="closedOpen" leftMargin="43200.0" rightMargin="86400.0"/>
+				</DiscretizeBin>
+			</Discretize>
+		</DefineFunction>
+		<DefineFunction name="STATEGROUP" optype="categorical" dataType="string">
+			<ParameterField name="#1" optype="categorical" dataType="string"/>
+			<MapValues outputColumn="Region">
+				<FieldColumnPair field="#1" column="State"/>
+				<InlineTable>
+					<row>
+						<State>CA</State>
+						<Region>West</Region>
+					</row>
+					<row>
+						<State>OR</State>
+						<Region>West</Region>
+					</row>
+					<row>
+						<State>NC</State>
+						<Region>East</Region>
+					</row>
+				</InlineTable>
+			</MapValues>
+		</DefineFunction>
+		<DerivedField name="Shift" optype="categorical" dataType="string">
+			<Apply function="AMPM">
+				<FieldRef field="StartTime"/>
+			</Apply>
+		</DerivedField>
+		<DerivedField name="Group" optype="categorical" dataType="string">
+			<Apply function="STATEGROUP">
+				<FieldRef field="State"/>
+			</Apply>
+		</DerivedField>
+		<DerivedField name="SimpleTable" dataType="string">
+			<MapValues outputColumn="output">
+				<FieldColumnPair field="Value" column="input"/>
+				<InlineTable>
+					<row>
+						<input>1</input>
+						<output>first</output>
+					</row>
+					<row>
+						<input>2</input>
+						<output>second</output>
+					</row>
+				</InlineTable>
+			</MapValues>
+		</DerivedField>
+		<DerivedField name="ComplexTable" dataType="string">
+			<MapValues outputColumn="output">
+				<FieldColumnPair field="Value" column="input"/>
+				<FieldColumnPair field="Modifier" column="flag"/>
+				<InlineTable>
+					<row>
+						<input>1.0</input>
+						<flag>true</flag>
+						<output>firstTrue</output>
+					</row>
+					<row>
+						<input>1.0</input>
+						<flag>0</flag>
+						<output>firstFalse</output>
+					</row>
+					<row>
+						<input>2.0</input>
+						<flag>1</flag>
+						<output>secondTrue</output>
+					</row>
+					<row>
+						<input>2.0</input>
+						<flag>false</flag>
+						<output>secondFalse</output>
+					</row>
+				</InlineTable>
+			</MapValues>
+		</DerivedField>
+	</TransformationDictionary>
 </PMML>

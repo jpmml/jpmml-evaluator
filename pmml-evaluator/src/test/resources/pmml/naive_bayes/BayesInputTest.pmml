@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
-    <DataDictionary/>
-    <NaiveBayesModel threshold="0.0" functionName="classification">
-        <MiningSchema/>
-        <BayesInputs>
-            <Extension>
-                <BayesInput>
-                    <TargetValueStats/>
-                </BayesInput>
-            </Extension>
-            <BayesInput>
-                <PairCounts>
-                    <TargetValueCounts/>
-                </PairCounts>
-            </BayesInput>
-        </BayesInputs>
-        <BayesOutput>
-            <TargetValueCounts>
-                <TargetValueCount/>
-            </TargetValueCounts>
-        </BayesOutput>
-    </NaiveBayesModel>
+	<DataDictionary/>
+	<NaiveBayesModel threshold="0.0" functionName="classification">
+		<MiningSchema/>
+		<BayesInputs>
+			<Extension>
+				<BayesInput>
+					<TargetValueStats/>
+				</BayesInput>
+			</Extension>
+			<BayesInput>
+				<PairCounts>
+					<TargetValueCounts/>
+				</PairCounts>
+			</BayesInput>
+		</BayesInputs>
+		<BayesOutput>
+			<TargetValueCounts>
+				<TargetValueCount/>
+			</TargetValueCounts>
+		</BayesOutput>
+	</NaiveBayesModel>
 </PMML>

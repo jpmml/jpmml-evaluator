@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
-    <Header copyright="DMG.org"/>
-    <DataDictionary>
-        <DataField name="input" optype="continuous" dataType="double"/>
-    </DataDictionary>
-    <RegressionModel functionName="classification">
-        <MiningSchema>
-            <MiningField name="input"/>
-        </MiningSchema>
-        <Output>
-            <OutputField name="I_response" feature="predictedValue"/>
-            <OutputField name="U_response" feature="predictedDisplayValue"/>
-            <OutputField name="P_responseYes" feature="probability" value="YES"/>
-            <OutputField name="P_responseNo" feature="probability" value="NO"/>
-        </Output>
-        <Targets>
-            <Target>
-                <TargetValue value="YES" displayValue="Yes" priorProbability="0.02"/>
-                <TargetValue value="NO" displayValue="No" priorProbability="0.98"/>
-            </Target>
-        </Targets>
-        <RegressionTable targetCategory="YES" intercept="0.0">
-            <NumericPredictor name="input" exponent="1" coefficient="1"/>
-        </RegressionTable>
-        <RegressionTable targetCategory="NO"/>
-    </RegressionModel>
+	<Header copyright="DMG.org"/>
+	<DataDictionary>
+		<DataField name="input" optype="continuous" dataType="double"/>
+	</DataDictionary>
+	<RegressionModel functionName="classification">
+		<MiningSchema>
+			<MiningField name="input"/>
+		</MiningSchema>
+		<Output>
+			<OutputField name="I_response" feature="predictedValue"/>
+			<OutputField name="U_response" feature="predictedDisplayValue"/>
+			<OutputField name="P_responseYes" feature="probability" value="YES"/>
+			<OutputField name="P_responseNo" feature="probability" value="NO"/>
+		</Output>
+		<Targets>
+			<Target>
+				<TargetValue value="YES" displayValue="Yes" priorProbability="0.02"/>
+				<TargetValue value="NO" displayValue="No" priorProbability="0.98"/>
+			</Target>
+		</Targets>
+		<RegressionTable targetCategory="YES" intercept="0.0">
+			<NumericPredictor name="input" exponent="1" coefficient="1"/>
+		</RegressionTable>
+		<RegressionTable targetCategory="NO"/>
+	</RegressionModel>
 </PMML>

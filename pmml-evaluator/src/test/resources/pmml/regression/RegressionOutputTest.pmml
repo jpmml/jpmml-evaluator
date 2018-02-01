@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
-    <Header copyright="DMG.org"/>
-    <DataDictionary>
-        <DataField name="input" optype="continuous" dataType="double"/>
-        <DataField name="result" optype="continuous" dataType="double"/>
-    </DataDictionary>
-    <RegressionModel functionName="regression" targetFieldName="result">
-        <MiningSchema>
-            <MiningField name="input"/>
-            <MiningField name="result" usageType="predicted"/>
-        </MiningSchema>
-        <Output>
-            <OutputField name="RawResult" optype="continuous" dataType="double" feature="predictedValue"/>
-            <OutputField name="RawIntegerResult" optype="continuous" dataType="integer" feature="predictedValue"/>
-            <OutputField name="FinalResult" optype="continuous" dataType="double" feature="transformedValue">
-                <Apply function="round">
-                    <NormContinuous field="RawResult">
-                        <LinearNorm orig="-100.0" norm="-21.4"/>
-                        <LinearNorm orig="-10.0" norm="-21.4"/>
-                        <LinearNorm orig="10.5" norm="42.97"/>
-                        <LinearNorm orig="100.0" norm="42.97"/>
-                    </NormContinuous>
-                </Apply>
-            </OutputField>
-            <OutputField name="FinalIntegerResult" optype="continuous" dataType="integer" feature="transformedValue">
-                <FieldRef field="FinalResult"/>
-            </OutputField>
-            <OutputField name="BusinessDecision" optype="categorical" dataType="string" feature="decision">
-                <Decisions businessProblem="Should the outstanding amount be collected?" description="The decision depends on the likelihood to get the money and the cost to try.">
-                    <Decision value="waive" description="Waive any existing conditions on case and approve."/>
-                    <Decision value="refer" description="Keep conditions and refer case for further scrutiny."/>
-                </Decisions>
-                <Apply function="if">
-                    <Apply function="greaterThan">
-                        <FieldRef field="FinalResult"/>
-                        <Constant>30</Constant>
-                    </Apply>
-                    <!--THEN-->
-                    <Constant>waive</Constant>
-                    <!--ELSE-->
-                    <Constant>refer</Constant>
-                </Apply>
-            </OutputField>
-        </Output>
-        <RegressionTable intercept="0.0">
-            <NumericPredictor name="input" coefficient="2.0"/>
-        </RegressionTable>
-    </RegressionModel>
+	<Header copyright="DMG.org"/>
+	<DataDictionary>
+		<DataField name="input" optype="continuous" dataType="double"/>
+		<DataField name="result" optype="continuous" dataType="double"/>
+	</DataDictionary>
+	<RegressionModel functionName="regression" targetFieldName="result">
+		<MiningSchema>
+			<MiningField name="input"/>
+			<MiningField name="result" usageType="predicted"/>
+		</MiningSchema>
+		<Output>
+			<OutputField name="RawResult" optype="continuous" dataType="double" feature="predictedValue"/>
+			<OutputField name="RawIntegerResult" optype="continuous" dataType="integer" feature="predictedValue"/>
+			<OutputField name="FinalResult" optype="continuous" dataType="double" feature="transformedValue">
+				<Apply function="round">
+					<NormContinuous field="RawResult">
+						<LinearNorm orig="-100.0" norm="-21.4"/>
+						<LinearNorm orig="-10.0" norm="-21.4"/>
+						<LinearNorm orig="10.5" norm="42.97"/>
+						<LinearNorm orig="100.0" norm="42.97"/>
+					</NormContinuous>
+				</Apply>
+			</OutputField>
+			<OutputField name="FinalIntegerResult" optype="continuous" dataType="integer" feature="transformedValue">
+				<FieldRef field="FinalResult"/>
+			</OutputField>
+			<OutputField name="BusinessDecision" optype="categorical" dataType="string" feature="decision">
+				<Decisions businessProblem="Should the outstanding amount be collected?" description="The decision depends on the likelihood to get the money and the cost to try.">
+					<Decision value="waive" description="Waive any existing conditions on case and approve."/>
+					<Decision value="refer" description="Keep conditions and refer case for further scrutiny."/>
+				</Decisions>
+				<Apply function="if">
+					<Apply function="greaterThan">
+						<FieldRef field="FinalResult"/>
+						<Constant>30</Constant>
+					</Apply>
+					<!--THEN-->
+					<Constant>waive</Constant>
+					<!--ELSE-->
+					<Constant>refer</Constant>
+				</Apply>
+			</OutputField>
+		</Output>
+		<RegressionTable intercept="0.0">
+			<NumericPredictor name="input" coefficient="2.0"/>
+		</RegressionTable>
+	</RegressionModel>
 </PMML>

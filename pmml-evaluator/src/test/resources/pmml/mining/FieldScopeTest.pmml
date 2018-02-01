@@ -1,56 +1,56 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
-    <Header/>
-    <DataDictionary>
-        <DataField name="input" optype="continuous" dataType="double"/>
-        <DataField name="prediction" optype="continuous" dataType="double"/>
-    </DataDictionary>
-    <TransformationDictionary>
-        <DerivedField name="squaredInput" optype="continuous" dataType="double">
-            <Apply function="*">
-                <FieldRef field="input"/>
-                <FieldRef field="input"/>
-            </Apply>
-        </DerivedField>
-        <DerivedField name="cubedInput" optype="continuous" dataType="double">
-            <Apply function="*">
-                <FieldRef field="input"/>
-                <FieldRef field="squaredInput"/>
-            </Apply>
-        </DerivedField>
-    </TransformationDictionary>
-    <MiningModel functionName="regression">
-        <MiningSchema>
-            <MiningField name="input"/>
-            <MiningField name="prediction" usageType="target"/>
-        </MiningSchema>
-        <Segmentation multipleModelMethod="modelChain">
-            <Segment id="1">
-                <True/>
-                <RegressionModel functionName="regression">
-                    <MiningSchema>
-                        <MiningField name="input" missingValueReplacement="50"/>
-                    </MiningSchema>
-                    <Output>
-                        <OutputField name="segment_1" optype="continuous" dataType="double" feature="predictedValue"/>
-                    </Output>
-                    <RegressionTable intercept="0.0">
-                        <NumericPredictor name="squaredInput" coefficient="1.0"/>
-                    </RegressionTable>
-                </RegressionModel>
-            </Segment>
-            <Segment id="2">
-                <True/>
-                <RegressionModel functionName="regression">
-                    <MiningSchema>
-                        <MiningField name="segment_1" outliers="asExtremeValues" lowValue="0.0" highValue="1000.0"/>
-                        <MiningField name="prediction" usageType="target"/>
-                    </MiningSchema>
-                    <RegressionTable intercept="0.0">
-                        <NumericPredictor name="segment_1" coefficient="1.0"/>
-                    </RegressionTable>
-                </RegressionModel>
-            </Segment>
-        </Segmentation>
-    </MiningModel>
+	<Header/>
+	<DataDictionary>
+		<DataField name="input" optype="continuous" dataType="double"/>
+		<DataField name="prediction" optype="continuous" dataType="double"/>
+	</DataDictionary>
+	<TransformationDictionary>
+		<DerivedField name="squaredInput" optype="continuous" dataType="double">
+			<Apply function="*">
+				<FieldRef field="input"/>
+				<FieldRef field="input"/>
+			</Apply>
+		</DerivedField>
+		<DerivedField name="cubedInput" optype="continuous" dataType="double">
+			<Apply function="*">
+				<FieldRef field="input"/>
+				<FieldRef field="squaredInput"/>
+			</Apply>
+		</DerivedField>
+	</TransformationDictionary>
+	<MiningModel functionName="regression">
+		<MiningSchema>
+			<MiningField name="input"/>
+			<MiningField name="prediction" usageType="target"/>
+		</MiningSchema>
+		<Segmentation multipleModelMethod="modelChain">
+			<Segment id="1">
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="input" missingValueReplacement="50"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="segment_1" optype="continuous" dataType="double" feature="predictedValue"/>
+					</Output>
+					<RegressionTable intercept="0.0">
+						<NumericPredictor name="squaredInput" coefficient="1.0"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+			<Segment id="2">
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="segment_1" outliers="asExtremeValues" lowValue="0.0" highValue="1000.0"/>
+						<MiningField name="prediction" usageType="target"/>
+					</MiningSchema>
+					<RegressionTable intercept="0.0">
+						<NumericPredictor name="segment_1" coefficient="1.0"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+		</Segmentation>
+	</MiningModel>
 </PMML>

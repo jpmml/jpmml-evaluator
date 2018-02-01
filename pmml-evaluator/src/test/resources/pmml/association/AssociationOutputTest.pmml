@@ -1,64 +1,64 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
-    <Header copyright="www.dmg.org" description="example model for association rules"/>
-    <DataDictionary numberOfFields="2">
-        <DataField name="transaction" optype="categorical" dataType="string"/>
-        <DataField name="item" optype="categorical" dataType="string"/>
-    </DataDictionary>
-    <AssociationModel functionName="associationRules" numberOfTransactions="5" minimumSupport="0.6" minimumConfidence="0.5" numberOfItems="6" numberOfItemsets="6" numberOfRules="5">
-        <MiningSchema>
-            <MiningField name="transaction" usageType="group"/>
-            <MiningField name="item" usageType="active"/>
-        </MiningSchema>
-        <Output>
-            <OutputField name="entityId" feature="entityId" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-            <!-- PMML schema version 4.2 -->
-            <OutputField name="antecedent" feature="antecedent" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-            <OutputField name="consequent" feature="consequent" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-            <OutputField name="rule" feature="rule" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-            <OutputField name="ruleId" feature="ruleId" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-            <OutputField name="support" feature="support" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-            <OutputField name="confidence" feature="confidence" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-            <OutputField name="lift" feature="lift" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-            <!-- PMML schema versions 4.0 and 4.1 -->
-            <OutputField name="deprecated_antecedent" feature="ruleValue" ruleFeature="antecedent" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-            <OutputField name="deprecated_consequent" feature="ruleValue" ruleFeature="consequent" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-            <OutputField name="deprecated_rule" feature="ruleValue" ruleFeature="rule" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-            <OutputField name="deprecated_ruleId" feature="ruleValue" ruleFeature="ruleId" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-            <OutputField name="deprecated_support" feature="ruleValue" ruleFeature="support" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-            <OutputField name="deprecated_confidence" feature="ruleValue" ruleFeature="confidence" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-            <OutputField name="deprecated_lift" feature="ruleValue" ruleFeature="lift" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
-        </Output>
-        <Item id="1" value="Cracker"/>
-        <Item id="2" value="Water"/>
-        <Item id="3" value="Coke"/>
-        <Item id="4" value="Nachos"/>
-        <Item id="5" value="Pear"/>
-        <Item id="6" value="Banana"/>
-        <Itemset id="1" numberOfItems="1">
-            <ItemRef itemRef="1"/>
-        </Itemset>
-        <Itemset id="2" numberOfItems="1">
-            <ItemRef itemRef="2"/>
-        </Itemset>
-        <Itemset id="3" numberOfItems="1">
-            <ItemRef itemRef="3"/>
-        </Itemset>
-        <Itemset id="4" numberOfItems="1">
-            <ItemRef itemRef="4"/>
-        </Itemset>
-        <Itemset id="5" numberOfItems="2">
-            <ItemRef itemRef="1"/>
-            <ItemRef itemRef="2"/>
-        </Itemset>
-        <Itemset id="6" numberOfItems="2">
-            <ItemRef itemRef="5"/>
-            <ItemRef itemRef="6"/>
-        </Itemset>
-        <AssociationRule antecedent="1" consequent="2" support="1.0" confidence="1.0" lift="1.0"/>
-        <AssociationRule antecedent="2" consequent="1" support="1.0" confidence="1.0" lift="1.0"/>
-        <AssociationRule antecedent="1" consequent="3" support="1.0" confidence="1.0" lift="1.0"/>
-        <AssociationRule antecedent="5" consequent="4" support="1.0" confidence="1.0" lift="1.0"/>
-        <AssociationRule antecedent="2" consequent="6" support="1.0" confidence="1.0" lift="1.0"/>
-    </AssociationModel>
+	<Header copyright="www.dmg.org" description="example model for association rules"/>
+	<DataDictionary numberOfFields="2">
+		<DataField name="transaction" optype="categorical" dataType="string"/>
+		<DataField name="item" optype="categorical" dataType="string"/>
+	</DataDictionary>
+	<AssociationModel functionName="associationRules" numberOfTransactions="5" minimumSupport="0.6" minimumConfidence="0.5" numberOfItems="6" numberOfItemsets="6" numberOfRules="5">
+		<MiningSchema>
+			<MiningField name="transaction" usageType="group"/>
+			<MiningField name="item" usageType="active"/>
+		</MiningSchema>
+		<Output>
+			<OutputField name="entityId" feature="entityId" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+			<!-- PMML schema version 4.2 -->
+			<OutputField name="antecedent" feature="antecedent" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+			<OutputField name="consequent" feature="consequent" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+			<OutputField name="rule" feature="rule" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+			<OutputField name="ruleId" feature="ruleId" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+			<OutputField name="support" feature="support" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+			<OutputField name="confidence" feature="confidence" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+			<OutputField name="lift" feature="lift" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+			<!-- PMML schema versions 4.0 and 4.1 -->
+			<OutputField name="deprecated_antecedent" feature="ruleValue" ruleFeature="antecedent" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+			<OutputField name="deprecated_consequent" feature="ruleValue" ruleFeature="consequent" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+			<OutputField name="deprecated_rule" feature="ruleValue" ruleFeature="rule" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+			<OutputField name="deprecated_ruleId" feature="ruleValue" ruleFeature="ruleId" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+			<OutputField name="deprecated_support" feature="ruleValue" ruleFeature="support" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+			<OutputField name="deprecated_confidence" feature="ruleValue" ruleFeature="confidence" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+			<OutputField name="deprecated_lift" feature="ruleValue" ruleFeature="lift" algorithm="exclusiveRecommendation" rank="1" rankBasis="lift" rankOrder="descending"/>
+		</Output>
+		<Item id="1" value="Cracker"/>
+		<Item id="2" value="Water"/>
+		<Item id="3" value="Coke"/>
+		<Item id="4" value="Nachos"/>
+		<Item id="5" value="Pear"/>
+		<Item id="6" value="Banana"/>
+		<Itemset id="1" numberOfItems="1">
+			<ItemRef itemRef="1"/>
+		</Itemset>
+		<Itemset id="2" numberOfItems="1">
+			<ItemRef itemRef="2"/>
+		</Itemset>
+		<Itemset id="3" numberOfItems="1">
+			<ItemRef itemRef="3"/>
+		</Itemset>
+		<Itemset id="4" numberOfItems="1">
+			<ItemRef itemRef="4"/>
+		</Itemset>
+		<Itemset id="5" numberOfItems="2">
+			<ItemRef itemRef="1"/>
+			<ItemRef itemRef="2"/>
+		</Itemset>
+		<Itemset id="6" numberOfItems="2">
+			<ItemRef itemRef="5"/>
+			<ItemRef itemRef="6"/>
+		</Itemset>
+		<AssociationRule antecedent="1" consequent="2" support="1.0" confidence="1.0" lift="1.0"/>
+		<AssociationRule antecedent="2" consequent="1" support="1.0" confidence="1.0" lift="1.0"/>
+		<AssociationRule antecedent="1" consequent="3" support="1.0" confidence="1.0" lift="1.0"/>
+		<AssociationRule antecedent="5" consequent="4" support="1.0" confidence="1.0" lift="1.0"/>
+		<AssociationRule antecedent="2" consequent="6" support="1.0" confidence="1.0" lift="1.0"/>
+	</AssociationModel>
 </PMML>

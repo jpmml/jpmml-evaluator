@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
-    <Header copyright="DMG.org"/>
-    <DataDictionary>
-        <DataField name="input" optype="continuous" dataType="double"/>
-    </DataDictionary>
-    <RegressionModel functionName="regression">
-        <MiningSchema>
-            <MiningField name="input"/>
-        </MiningSchema>
-        <Targets>
-            <Target>
-                <TargetValue defaultValue="432.21"/>
-            </Target>
-        </Targets>
-        <RegressionTable intercept="0.0">
-            <NumericPredictor name="input" exponent="1" coefficient="1"/>
-        </RegressionTable>
-    </RegressionModel>
+	<Header copyright="DMG.org"/>
+	<DataDictionary>
+		<DataField name="input" optype="continuous" dataType="double"/>
+	</DataDictionary>
+	<RegressionModel functionName="regression">
+		<MiningSchema>
+			<MiningField name="input"/>
+		</MiningSchema>
+		<Targets>
+			<Target>
+				<TargetValue defaultValue="432.21"/>
+			</Target>
+		</Targets>
+		<RegressionTable intercept="0.0">
+			<NumericPredictor name="input" exponent="1" coefficient="1"/>
+		</RegressionTable>
+	</RegressionModel>
 </PMML>

@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
-    <Header/>
-    <DataDictionary numberOfFields="1">
-        <DataField name="input" optype="continuous" dataType="double"/>
-    </DataDictionary>
-    <ClusteringModel functionName="clustering" modelClass="centerBased" numberOfClusters="3">
-        <MiningSchema>
-            <MiningField name="input"/>
-        </MiningSchema>
-        <Output>
-            <OutputField name="predictedValue" feature="predictedValue"/>
-            <OutputField name="id_first" feature="entityId" rank="1"/>
-            <OutputField name="affinity_first" feature="affinity" rank="1"/>
-            <OutputField name="id_second" feature="entityId" rank="2"/>
-            <OutputField name="affinity_second" feature="affinity" rank="2"/>
-            <OutputField name="id_third" feature="entityId" rank="3"/>
-            <OutputField name="affinity_third" feature="affinity" rank="3"/>
-        </Output>
-        <ComparisonMeasure kind="distance">
-            <squaredEuclidean/>
-        </ComparisonMeasure>
-        <ClusteringField field="input" compareFunction="absDiff"/>
-        <Cluster name="negative">
-            <Array type="real">-3</Array>
-        </Cluster>
-        <Cluster name="neutral">
-            <Array type="real">0</Array>
-        </Cluster>
-        <Cluster name="positive">
-            <Array type="real">3</Array>
-        </Cluster>
-    </ClusteringModel>
+	<Header/>
+	<DataDictionary numberOfFields="1">
+		<DataField name="input" optype="continuous" dataType="double"/>
+	</DataDictionary>
+	<ClusteringModel functionName="clustering" modelClass="centerBased" numberOfClusters="3">
+		<MiningSchema>
+			<MiningField name="input"/>
+		</MiningSchema>
+		<Output>
+			<OutputField name="predictedValue" feature="predictedValue"/>
+			<OutputField name="id_first" feature="entityId" rank="1"/>
+			<OutputField name="affinity_first" feature="affinity" rank="1"/>
+			<OutputField name="id_second" feature="entityId" rank="2"/>
+			<OutputField name="affinity_second" feature="affinity" rank="2"/>
+			<OutputField name="id_third" feature="entityId" rank="3"/>
+			<OutputField name="affinity_third" feature="affinity" rank="3"/>
+		</Output>
+		<ComparisonMeasure kind="distance">
+			<squaredEuclidean/>
+		</ComparisonMeasure>
+		<ClusteringField field="input" compareFunction="absDiff"/>
+		<Cluster name="negative">
+			<Array type="real">-3</Array>
+		</Cluster>
+		<Cluster name="neutral">
+			<Array type="real">0</Array>
+		</Cluster>
+		<Cluster name="positive">
+			<Array type="real">3</Array>
+		</Cluster>
+	</ClusteringModel>
 </PMML>
