@@ -33,8 +33,8 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
-import org.jpmml.evaluator.visitors.InvalidFeatureInspector;
-import org.jpmml.evaluator.visitors.UnsupportedFeatureInspector;
+import org.jpmml.evaluator.visitors.InvalidMarkupInspector;
+import org.jpmml.evaluator.visitors.UnsupportedMarkupInspector;
 import org.jpmml.model.visitors.LocatorTransformer;
 
 abstract
@@ -99,8 +99,8 @@ public class IntegrationTestBatch extends ArchiveBatch {
 	static
 	protected void ensureValidity(PMMLObject object){
 		List<Visitor> visitors = Arrays.<Visitor>asList(
-			new UnsupportedFeatureInspector(),
-			new InvalidFeatureInspector(){
+			new UnsupportedMarkupInspector(),
+			new InvalidMarkupInspector(){
 
 				@Override
 				public VisitorAction visit(Application application){

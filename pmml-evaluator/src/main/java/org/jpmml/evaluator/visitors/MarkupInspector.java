@@ -35,14 +35,14 @@ import org.jpmml.model.visitors.AbstractSimpleVisitor;
  * <p>
  * Unlike evaluation, which takes place in "dynamic mode", the inspection takes place in "static mode".
  * The inspector performs the full traversal of the specified class model object.
- * Every problematic feature is reported in the form of an appropriate {@link PMMLException} instance.
+ * Every problematic PMML element or attribute is reported in the form of an appropriate {@link PMMLException} instance.
  * The class model object can be considered safe and sound if the {@link #getExceptions() list of exceptions} stays empty.
  * </p>
  *
  * Typical usage:
  * <pre>
  * static
- * public &lt;E extends PMMLException&gt; void inspect(FeatureInspector&lt;E&gt; inspector){
+ * public &lt;E extends PMMLException&gt; void inspect(MarkupInspector&lt;E&gt; inspector){
  *   Visitable visitable = ...;
  *
  *   try {
@@ -54,7 +54,7 @@ import org.jpmml.model.visitors.AbstractSimpleVisitor;
  * </pre>
  */
 abstract
-public class FeatureInspector<E extends PMMLException> extends AbstractSimpleVisitor {
+public class MarkupInspector<E extends PMMLException> extends AbstractSimpleVisitor {
 
 	private List<E> exceptions = new ArrayList<>();
 

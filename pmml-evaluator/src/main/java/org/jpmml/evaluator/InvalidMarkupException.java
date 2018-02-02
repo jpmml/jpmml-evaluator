@@ -34,16 +34,16 @@ import org.dmg.pmml.PMMLObject;
  * Thrown to indicate that the class model object is not valid.
  * </p>
  *
- * @see UnsupportedFeatureException
+ * @see UnsupportedMarkupException
  */
 abstract
-public class InvalidFeatureException extends PMMLException {
+public class InvalidMarkupException extends PMMLException {
 
-	public InvalidFeatureException(String message){
+	public InvalidMarkupException(String message){
 		super(message);
 	}
 
-	public InvalidFeatureException(String message, PMMLObject context){
+	public InvalidMarkupException(String message, PMMLObject context){
 		super(message, context);
 	}
 }

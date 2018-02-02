@@ -22,7 +22,7 @@ import java.lang.reflect.Field;
 
 import org.dmg.pmml.PMMLObject;
 
-public class UnsupportedAttributeException extends UnsupportedFeatureException {
+public class UnsupportedAttributeException extends UnsupportedMarkupException {
 
 	public UnsupportedAttributeException(String message){
 		super(message);

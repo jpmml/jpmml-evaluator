@@ -75,17 +75,17 @@ Not yet supported model types:
 
 # Inspection API #
 
-Starting from JPMML-Evaluator version 1.1.7, it is possible to inspect the class model object for unsupported PMML features using a visitor class `org.jpmml.evaluator.visitors.UnsupportedFeatureInspector` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator/src/main/java/org/jpmml/evaluator/visitors/UnsupportedFeatureInspector.java). This visitor collects all unsupported features (viz. elements, attributes and enum-type attribute values) as instances of `org.jpmml.manager.UnsupportedFeatureException`.
+The class model object can be inspected for unsupported PMML elements and attributes using a visitor class `org.jpmml.evaluator.visitors.UnsupportedMarkupInspector` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator/src/main/java/org/jpmml/evaluator/visitors/UnsupportedMarkupInspector.java). This visitor collects all unsupported markup as instances of `org.jpmml.manager.UnsupportedMarkupException`.
 
 The class model object is safe for evaluation using the JPMML-Evaluator library if the collection of exceptions is empty:
 ```java
 public boolean isFullySupported(PMML pmml){
-  UnsupportedFeatureInspector inspector = new UnsupportedFeatureInspector();
+  UnsupportedMarkupInspector inspector = new UnsupportedMarkupInspector();
 
   // Traverse the specified class model object
   pmml.accept(inspector);
 
-  List<UnsupportedFeatureException> exceptions = inspector.getExceptions();
+  List<UnsupportedMarkupException> exceptions = inspector.getExceptions();
   if(exceptions.isEmpty()){
     return true;
   }

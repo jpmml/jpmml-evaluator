@@ -20,7 +20,7 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.PMMLObject;
 
-public class InvalidElementException extends InvalidFeatureException {
+public class InvalidElementException extends InvalidMarkupException {
 
 	public InvalidElementException(String message){
 		super(message);

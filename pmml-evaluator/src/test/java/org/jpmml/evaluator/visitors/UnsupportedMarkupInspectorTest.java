@@ -24,7 +24,7 @@ import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.Header;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.clustering.ClusteringModel;
-import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.UnsupportedMarkupException;
 import org.jpmml.schema.Version;
 import org.junit.Test;
 
@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class UnsupportedFeatureInspectorTest {
+public class UnsupportedMarkupInspectorTest {
 
 	@Test
 	public void inspect(){
@@ -43,19 +43,19 @@ public class UnsupportedFeatureInspectorTest {
 		PMML pmml = new PMML(Version.PMML_4_3.getVersion(), new Header(), new DataDictionary())
 			.addModels(clusteringModel);
 
-		UnsupportedFeatureInspector inspector = new UnsupportedFeatureInspector();
+		UnsupportedMarkupInspector inspector = new UnsupportedMarkupInspector();
 
 		try {
 			inspector.applyTo(pmml);
 
 			fail();
-		} catch(UnsupportedFeatureException ufe){
-			List<UnsupportedFeatureException> exceptions = inspector.getExceptions();
+		} catch(UnsupportedMarkupException ufe){
+			List<UnsupportedMarkupException> exceptions = inspector.getExceptions();
 
 			assertEquals(2, exceptions.size());
 			assertEquals(0, exceptions.indexOf(ufe));
 
-			UnsupportedFeatureException exception = exceptions.get(0);
+			UnsupportedMarkupException exception = exceptions.get(0);
 
 			String message = exception.getMessage();
 

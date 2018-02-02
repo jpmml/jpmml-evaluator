@@ -50,17 +50,17 @@ import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
-import org.jpmml.evaluator.UnsupportedFeatureException;
+import org.jpmml.evaluator.UnsupportedMarkupException;
 
 /**
  * <p>
  * A Visitor that inspects a class model object for unsupported features.
  * </p>
  *
- * @see FeatureInspector#applyTo(Visitable)
- * @see UnsupportedFeatureException
+ * @see MarkupInspector#applyTo(Visitable)
+ * @see UnsupportedMarkupException
  */
-public class UnsupportedFeatureInspector extends FeatureInspector<UnsupportedFeatureException> {
+public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarkupException> {
 
 	@Override
 	public VisitorAction visit(Aggregate aggregate){

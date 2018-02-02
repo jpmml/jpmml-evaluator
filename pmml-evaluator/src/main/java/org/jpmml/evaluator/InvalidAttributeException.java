@@ -22,7 +22,7 @@ import java.lang.reflect.Field;
 
 import org.dmg.pmml.PMMLObject;
 
-public class InvalidAttributeException extends InvalidFeatureException {
+public class InvalidAttributeException extends InvalidMarkupException {
 
 	public InvalidAttributeException(String message){
 		super(message);

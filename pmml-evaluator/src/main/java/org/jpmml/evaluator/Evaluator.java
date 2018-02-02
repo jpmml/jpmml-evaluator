@@ -86,7 +86,7 @@ import org.dmg.pmml.Model;
  * <h3>Handling exceptions</h3>
  * A code block that does exception-prone work should be surrounded with two levels of try-catch statements.
  * The inner try statement should catch {@link EvaluationException} instances that indicate "local" problems, which are related to individual data records.
- * The outer try statement should catch {@link InvalidFeatureException} and {@link UnsupportedFeatureException} instances that indicate "global" problems, which are related to the class model object.
+ * The outer try statement should catch {@link InvalidMarkupException} and {@link UnsupportedMarkupException} instances that indicate "global" problems, which are related to the class model object.
  * <pre>
  * try {
  *   List&lt;Map&lt;FieldName, ?&gt;&gt; records = ...;
@@ -98,7 +98,7 @@ import org.dmg.pmml.Model;
  *       // Skip this data record and proceed as usual with the next one
  *     }
  *   }
- * } catch(InvalidFeatureException | UnsupportedFeatureException fe){
+ * } catch(InvalidMarkupException | UnsupportedMarkupException me){
  *   // The work failed because of the class model object.
  *   // This is a persistent problem that is very likely to affect all data records
  *   // Decommission the Evaluator instance
@@ -132,8 +132,8 @@ public interface Evaluator extends HasInputFields, HasResultFields {
 	 * </p>
 	 *
 	 * @throws EvaluationException If the verification fails.
-	 * @throws InvalidFeatureException
-	 * @throws UnsupportedFeatureException
+	 * @throws InvalidMarkupException
+	 * @throws UnsupportedMarkupException
 	 */
 	void verify();
 
@@ -152,8 +152,8 @@ public interface Evaluator extends HasInputFields, HasResultFields {
 	 * A missing value is represented by <code>null</code>.
 	 *
 	 * @throws EvaluationException If the evaluation fails.
-	 * @throws InvalidFeatureException
-	 * @throws UnsupportedFeatureException
+	 * @throws InvalidMarkupException
+	 * @throws UnsupportedMarkupException
 	 *
 	 * @see Computable
 	 */

@@ -57,8 +57,8 @@ public class InputField extends ModelField {
 	 * Use <code>null</code> to represent a missing input value.
 	 *
 	 * @throws EvaluationException If the input value preparation fails.
-	 * @throws InvalidFeatureException
-	 * @throws UnsupportedFeatureException
+	 * @throws InvalidMarkupException
+	 * @throws UnsupportedMarkupException
 	 */
 	public FieldValue prepare(Object value){
 		return FieldValueUtil.prepareInputValue(getField(), getMiningField(), value);

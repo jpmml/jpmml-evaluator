@@ -41,7 +41,7 @@ import org.dmg.pmml.support_vector_machine.SupportVectors;
 import org.dmg.pmml.support_vector_machine.VectorDictionary;
 import org.dmg.pmml.support_vector_machine.VectorFields;
 import org.jpmml.evaluator.InvalidElementException;
-import org.jpmml.evaluator.InvalidFeatureException;
+import org.jpmml.evaluator.InvalidMarkupException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.model.ReflectionUtil;
@@ -51,10 +51,10 @@ import org.jpmml.model.ReflectionUtil;
  * A Visitor that inspects a class model object for invalid features.
  * </p>
  *
- * @see FeatureInspector#applyTo(Visitable)
- * @see InvalidFeatureException
+ * @see MarkupInspector#applyTo(Visitable)
+ * @see InvalidMarkupException
  */
-public class InvalidFeatureInspector extends FeatureInspector<InvalidFeatureException> {
+public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupException> {
 
 	@Override
 	public VisitorAction visit(PMMLObject object){

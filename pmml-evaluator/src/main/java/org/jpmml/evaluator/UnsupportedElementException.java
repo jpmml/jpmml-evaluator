@@ -20,7 +20,7 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.PMMLObject;
 
-public class UnsupportedElementException extends UnsupportedFeatureException {
+public class UnsupportedElementException extends UnsupportedMarkupException {
 
 	public UnsupportedElementException(PMMLObject object){
 		super("Element " + formatElement(object) + " is not supported", object);

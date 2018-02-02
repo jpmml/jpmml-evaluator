@@ -79,7 +79,7 @@ public class FieldValueUtilTest {
 			prepare(dataField, miningField, "one");
 
 			fail();
-		} catch(InvalidFeatureException ife){
+		} catch(InvalidMarkupException ife){
 			// Ignored
 		}
 
@@ -254,7 +254,7 @@ public class FieldValueUtilTest {
 			prepare(dataField, miningField, "one");
 
 			fail();
-		} catch(InvalidFeatureException ife){
+		} catch(InvalidMarkupException ife){
 			// Ignored
 		}
 

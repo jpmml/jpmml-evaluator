@@ -24,7 +24,7 @@ import java.util.List;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.PMML;
-import org.jpmml.evaluator.InvalidFeatureException;
+import org.jpmml.evaluator.InvalidMarkupException;
 import org.jpmml.model.ReflectionUtil;
 import org.junit.Test;
 
@@ -34,7 +34,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class InvalidFeatureInspectorTest {
+public class InvalidMarkupInspectorTest {
 
 	@Test
 	public void inspect() throws Exception {
@@ -52,14 +52,14 @@ public class InvalidFeatureInspectorTest {
 
 		PMML pmml = new PMML(null, null, dataDictionary);
 
-		InvalidFeatureInspector inspector = new InvalidFeatureInspector();
+		InvalidMarkupInspector inspector = new InvalidMarkupInspector();
 
 		try {
 			inspector.applyTo(pmml);
 
 			fail();
-		} catch(InvalidFeatureException ife){
-			List<InvalidFeatureException> exceptions = inspector.getExceptions();
+		} catch(InvalidMarkupException ife){
+			List<InvalidMarkupException> exceptions = inspector.getExceptions();
 
 			String[] features = {"PMML@version", "PMML/Header", "DataDictionary", "DataDictionary/DataField"};
 
@@ -67,7 +67,7 @@ public class InvalidFeatureInspectorTest {
 			assertEquals(0, exceptions.indexOf(ife));
 
 			for(int i = 0; i < exceptions.size(); i++){
-				InvalidFeatureException exception = exceptions.get(i);
+				InvalidMarkupException exception = exceptions.get(i);
 
 				String message = exception.getMessage();
 
