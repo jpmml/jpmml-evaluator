@@ -25,17 +25,13 @@ import org.dmg.pmml.Entity;
 abstract
 public class EntityClassification<E extends Entity, V extends Number> extends Classification<V> implements HasEntityId, HasEntityRegistry<E> {
 
-	private BiMap<String, E> entityRegistry = null;
-
 	private E entity = null;
 
 	private Value<V> entityValue = null;
 
 
-	protected EntityClassification(Type type, ValueMap<String, V> values, BiMap<String, E> entityRegistry){
+	protected EntityClassification(Type type, ValueMap<String, V> values){
 		super(type, values);
-
-		setEntityRegistry(entityRegistry);
 	}
 
 	@Override
@@ -71,20 +67,6 @@ public class EntityClassification<E extends Entity, V extends Number> extends Cl
 		E entity = getEntity();
 
 		return EntityUtil.getId(entity, this);
-	}
-
-	@Override
-	public BiMap<String, E> getEntityRegistry(){
-		return this.entityRegistry;
-	}
-
-	private void setEntityRegistry(BiMap<String, E> entityRegistry){
-
-		if(entityRegistry == null){
-			throw new IllegalArgumentException();
-		}
-
-		this.entityRegistry = entityRegistry;
 	}
 
 	public E getEntity(){

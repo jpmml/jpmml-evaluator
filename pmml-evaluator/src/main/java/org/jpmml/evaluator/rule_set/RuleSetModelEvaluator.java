@@ -153,9 +153,13 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 		evaluateRules(ruleSet.getRules(), firedRules, context);
 
-		BiMap<String, SimpleRule> entityRegistry = getEntityRegistry();
+		SimpleRuleScoreDistribution<V> result = new SimpleRuleScoreDistribution<V>(new ValueMap<String, V>(2 * firedRules.size())){
 
-		SimpleRuleScoreDistribution<V> result = new SimpleRuleScoreDistribution<>(new ValueMap<String, V>(2 * firedRules.size()), entityRegistry);
+			@Override
+			public BiMap<String, SimpleRule> getEntityRegistry(){
+				return RuleSetModelEvaluator.this.getEntityRegistry();
+			}
+		};
 
 		// Return the default prediction when no rules in the ruleset fire
 		if(firedRules.size() == 0){

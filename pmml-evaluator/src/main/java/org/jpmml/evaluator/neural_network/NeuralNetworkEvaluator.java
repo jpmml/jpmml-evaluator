@@ -281,6 +281,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		Map<FieldName, List<NeuralOutput>> neuralOutputMap = getNeuralOutputMap();
 
+		final
 		BiMap<String, Entity> entityRegistry = getEntityRegistry();
 
 		Map<FieldName, Classification<V>> results = null;
@@ -293,7 +294,13 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				throw new InvalidElementException(neuralNetwork);
 			}
 
-			NeuronProbabilityDistribution<V> result = new NeuronProbabilityDistribution<>(new ValueMap<String, V>(2 * neuralOutputs.size()), entityRegistry);
+			NeuronProbabilityDistribution<V> result = new NeuronProbabilityDistribution<V>(new ValueMap<String, V>(2 * neuralOutputs.size())){
+
+				@Override
+				public BiMap<String, Entity> getEntityRegistry(){
+					return entityRegistry;
+				}
+			};
 
 			for(NeuralOutput neuralOutput : neuralOutputs){
 				String id = neuralOutput.getOutputNeuron();

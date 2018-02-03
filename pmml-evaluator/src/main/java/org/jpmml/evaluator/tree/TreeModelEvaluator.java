@@ -321,25 +321,44 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	}
 
 	private <V extends Number> NodeScore<V> createNodeScore(ValueFactory<V> valueFactory, TargetField targetField, Node node){
-		BiMap<String, Node> entityRegistry = getEntityRegistry();
-
 		Value<V> value = valueFactory.newValue(node.getScore());
 
 		value = TargetUtil.evaluateRegressionInternal(targetField, value);
 
-		return new NodeScore<>(value, entityRegistry, node);
+		NodeScore<V> result = new NodeScore<V>(value, node){
+
+			@Override
+			public BiMap<String, Node> getEntityRegistry(){
+				return TreeModelEvaluator.this.getEntityRegistry();
+			}
+		};
+
+		return result;
 	}
 
 	private <V extends Number> NodeScoreDistribution<V> createNodeScoreDistribution(ValueFactory<V> valueFactory, TargetField targetField, Node node, double missingValuePenalty){
-		BiMap<String, Node> entityRegistry = getEntityRegistry();
 
 		if(!node.hasScoreDistributions()){
-			return new NodeScoreDistribution<>(new ValueMap<String, V>(0), entityRegistry, node);
+			NodeScoreDistribution<V> result = new NodeScoreDistribution<V>(new ValueMap<String, V>(0), node){
+
+				@Override
+				public BiMap<String, Node> getEntityRegistry(){
+					return TreeModelEvaluator.this.getEntityRegistry();
+				}
+			};
+
+			return result;
 		}
 
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
 
-		NodeScoreDistribution<V> result = new NodeScoreDistribution<>(new ValueMap<String, V>(2 * scoreDistributions.size()), entityRegistry, node);
+		NodeScoreDistribution<V> result = new NodeScoreDistribution<V>(new ValueMap<String, V>(2 * scoreDistributions.size()), node){
+
+			@Override
+			public BiMap<String, Node> getEntityRegistry(){
+				return TreeModelEvaluator.this.getEntityRegistry();
+			}
+		};
 
 		Value<V> sum = valueFactory.newValue();
 

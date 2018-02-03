@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.BiMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.tree.Node;
 import org.jpmml.evaluator.EntityClassification;
@@ -35,13 +34,14 @@ import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 
+abstract
 public class NodeScoreDistribution<V extends Number> extends EntityClassification<Node, V> implements HasProbability, HasConfidence {
 
 	private ValueMap<String, V> confidences = null;
 
 
-	NodeScoreDistribution(ValueMap<String, V> probabilities, BiMap<String, Node> entityRegistry, Node node){
-		super(Type.PROBABILITY, probabilities, entityRegistry);
+	NodeScoreDistribution(ValueMap<String, V> probabilities,  Node node){
+		super(Type.PROBABILITY, probabilities);
 
 		setEntity(node);
 	}

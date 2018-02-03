@@ -19,7 +19,6 @@
 package org.jpmml.evaluator.tree;
 
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.BiMap;
 import org.dmg.pmml.tree.Node;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.HasEntityId;
@@ -27,17 +26,15 @@ import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.Regression;
 import org.jpmml.evaluator.Value;
 
+abstract
 public class NodeScore<V extends Number> extends Regression<V> implements HasEntityId, HasEntityRegistry<Node> {
-
-	private BiMap<String, Node> entityRegistry = null;
 
 	private Node node = null;
 
 
-	NodeScore(Value<V> value, BiMap<String, Node> entityRegistry, Node node){
+	NodeScore(Value<V> value, Node node){
 		super(value);
 
-		setEntityRegistry(entityRegistry);
 		setNode(node);
 	}
 
@@ -56,20 +53,16 @@ public class NodeScore<V extends Number> extends Regression<V> implements HasEnt
 		return EntityUtil.getId(node, this);
 	}
 
-	@Override
-	public BiMap<String, Node> getEntityRegistry(){
-		return this.entityRegistry;
-	}
-
-	private void setEntityRegistry(BiMap<String, Node> entityRegistry){
-		this.entityRegistry = entityRegistry;
-	}
-
 	public Node getNode(){
 		return this.node;
 	}
 
 	private void setNode(Node node){
+
+		if(node == null){
+			throw new IllegalArgumentException();
+		}
+
 		this.node = node;
 	}
 }

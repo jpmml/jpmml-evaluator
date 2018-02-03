@@ -37,9 +37,16 @@ public class NodeClassificationMapTest {
 		Node node = new Node()
 			.setScore("ham");
 
+		final
 		BiMap<String, Node> entityRegistry = ImmutableBiMap.of("1", node);
 
-		NodeScoreDistribution<Double> classification = new NodeScoreDistribution<>(new ValueMap<String, Double>(), entityRegistry, node);
+		NodeScoreDistribution<Double> classification = new NodeScoreDistribution<Double>(new ValueMap<String, Double>(), node){
+
+			@Override
+			public BiMap<String, Node> getEntityRegistry(){
+				return entityRegistry;
+			}
+		};
 
 		assertEquals("1", classification.getEntityId());
 

@@ -20,7 +20,6 @@ package org.jpmml.evaluator.rule_set;
 
 import java.util.Set;
 
-import com.google.common.collect.BiMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.rule_set.SimpleRule;
 import org.jpmml.evaluator.EntityClassification;
@@ -31,10 +30,11 @@ import org.jpmml.evaluator.Report;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.ValueMap;
 
+abstract
 public class SimpleRuleScoreDistribution<V extends Number> extends EntityClassification<SimpleRule, V> implements HasConfidence {
 
-	SimpleRuleScoreDistribution(ValueMap<String, V> confidences, BiMap<String, SimpleRule> entityRegistry){
-		super(Type.CONFIDENCE, confidences, entityRegistry);
+	SimpleRuleScoreDistribution(ValueMap<String, V> confidences){
+		super(Type.CONFIDENCE, confidences);
 	}
 
 	@Override

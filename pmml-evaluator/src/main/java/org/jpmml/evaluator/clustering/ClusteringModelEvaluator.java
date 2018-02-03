@@ -225,9 +225,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 		List<Cluster> clusters = clusteringModel.getClusters();
 
-		BiMap<String, Cluster> entityRegistry = getEntityRegistry();
-
-		ClusterAffinityDistribution<V> result = new ClusterAffinityDistribution<>(Classification.Type.SIMILARITY, new ValueMap<String, V>(2 * clusters.size()), entityRegistry);
+		ClusterAffinityDistribution<V> result = createClusterAffinityDistribution(Classification.Type.SIMILARITY, clusters);
 
 		BitSet flags = MeasureUtil.toBitSet(values);
 
@@ -251,8 +249,6 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 		List<Cluster> clusters = clusteringModel.getClusters();
 
-		BiMap<String, Cluster> entityRegistry = getEntityRegistry();
-
 		Value<V> adjustment;
 
 		MissingValueWeights missingValueWeights = clusteringModel.getMissingValueWeights();
@@ -271,7 +267,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			adjustment = MeasureUtil.calculateAdjustment(valueFactory, values);
 		}
 
-		ClusterAffinityDistribution<V> result = new ClusterAffinityDistribution<>(Classification.Type.DISTANCE, new ValueMap<String, V>(2 * clusters.size()), entityRegistry);
+		ClusterAffinityDistribution<V> result = createClusterAffinityDistribution(Classification.Type.DISTANCE, clusters);
 
 		for(Cluster cluster : clusters){
 			List<FieldValue> clusterValues = CacheUtil.getValue(cluster, ClusteringModelEvaluator.clusterValueCache);
@@ -309,6 +305,18 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 					throw new UnsupportedAttributeException(clusteringField, centerField);
 			}
 		}
+
+		return result;
+	}
+
+	private <V extends Number> ClusterAffinityDistribution<V> createClusterAffinityDistribution(Classification.Type type, List<Cluster> clusters){
+		ClusterAffinityDistribution<V> result = new ClusterAffinityDistribution<V>(type, new ValueMap<String, V>(2 * clusters.size())){
+
+			@Override
+			public BiMap<String, Cluster> getEntityRegistry(){
+				return ClusteringModelEvaluator.this.getEntityRegistry();
+			}
+		};
 
 		return result;
 	}
