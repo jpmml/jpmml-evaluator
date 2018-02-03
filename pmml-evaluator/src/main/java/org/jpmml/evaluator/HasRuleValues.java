@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.BiMap;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.association.AssociationRule;
 import org.dmg.pmml.association.Item;
@@ -35,8 +34,6 @@ public interface HasRuleValues extends ResultFeature {
 	Map<String, Item> getItems();
 
 	Map<String, Itemset> getItemsets();
-
-	BiMap<String, AssociationRule> getAssociationRuleRegistry();
 
 	List<AssociationRule> getRuleValues(OutputField.Algorithm algorithm);
 }

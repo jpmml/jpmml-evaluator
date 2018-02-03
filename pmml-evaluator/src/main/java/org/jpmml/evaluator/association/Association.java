@@ -25,7 +25,6 @@ import java.util.List;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.collect.BiMap;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.association.AssociationRule;
@@ -115,11 +114,6 @@ public class Association implements Computable, HasRuleValues, HasEntityRegistry
 		}
 
 		return result;
-	}
-
-	@Override
-	public BiMap<String, AssociationRule> getEntityRegistry(){
-		return getAssociationRuleRegistry();
 	}
 
 	public List<AssociationRule> getAssociationRules(){

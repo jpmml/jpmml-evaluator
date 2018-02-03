@@ -242,7 +242,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			}
 
 			@Override
-			public BiMap<String, AssociationRule> getAssociationRuleRegistry(){
+			public BiMap<String, AssociationRule> getEntityRegistry(){
 				return AssociationModelEvaluator.this.getEntityRegistry();
 			}
 		};
