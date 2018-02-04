@@ -24,8 +24,11 @@ import java.util.Set;
 import com.google.common.base.Objects.ToStringHelper;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.tree.Node;
-import org.jpmml.evaluator.EntityClassification;
+import org.jpmml.evaluator.Classification;
+import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.HasConfidence;
+import org.jpmml.evaluator.HasEntityId;
+import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.Report;
@@ -35,7 +38,9 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 
 abstract
-public class NodeScoreDistribution<V extends Number> extends EntityClassification<Node, V> implements HasProbability, HasConfidence {
+public class NodeScoreDistribution<V extends Number> extends Classification<V> implements HasEntityId, HasEntityRegistry<Node>, HasProbability, HasConfidence {
+
+	private Node node = null;
 
 	private ValueMap<String, V> confidences = null;
 
@@ -43,12 +48,12 @@ public class NodeScoreDistribution<V extends Number> extends EntityClassificatio
 	NodeScoreDistribution(ValueMap<String, V> probabilities,  Node node){
 		super(Type.PROBABILITY, probabilities);
 
-		setEntity(node);
+		setNode(node);
 	}
 
 	@Override
 	protected void computeResult(DataType dataType){
-		Node node = getEntity();
+		Node node = getNode();
 
 		if(node.hasScore()){
 			Object result = TypeUtil.parseOrCast(dataType, node.getScore());
@@ -66,9 +71,17 @@ public class NodeScoreDistribution<V extends Number> extends EntityClassificatio
 		ValueMap<String, V> confidences = getConfidences();
 
 		ToStringHelper helper = super.toStringHelper()
+			.add("entityId", getEntityId())
 			.add(Type.CONFIDENCE.entryKey(), confidences != null ? confidences.entrySet() : Collections.emptySet());
 
 		return helper;
+	}
+
+	@Override
+	public String getEntityId(){
+		Node node = getNode();
+
+		return EntityUtil.getId(node, this);
 	}
 
 	public boolean isEmpty(){
@@ -81,7 +94,7 @@ public class NodeScoreDistribution<V extends Number> extends EntityClassificatio
 	public Set<String> getCategoryValues(){
 
 		if(isEmpty()){
-			Node node = getEntity();
+			Node node = getNode();
 
 			return Collections.singleton(node.getScore());
 		}
@@ -93,7 +106,7 @@ public class NodeScoreDistribution<V extends Number> extends EntityClassificatio
 	public Double getProbability(String category){
 
 		if(isEmpty()){
-			Node node = getEntity();
+			Node node = getNode();
 
 			if(category != null && (category).equals(node.getScore())){
 				return Numbers.DOUBLE_ONE;
@@ -143,6 +156,19 @@ public class NodeScoreDistribution<V extends Number> extends EntityClassificatio
 		}
 
 		confidences.put(category, confidence);
+	}
+
+	public Node getNode(){
+		return this.node;
+	}
+
+	private void setNode(Node node){
+
+		if(node == null){
+			throw new IllegalArgumentException();
+		}
+
+		this.node = node;
 	}
 
 	private ValueMap<String, V> getConfidences(){
