@@ -37,7 +37,6 @@ import org.dmg.pmml.ScoreDistribution;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.CacheUtil;
-import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
@@ -149,7 +148,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
-	private <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	private <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -159,6 +158,12 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		Node node = evaluateTree(trail, context);
 		if(node == null){
 			return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
+		} // End if
+
+		if(!node.hasScoreDistributions()){
+			NodeVote result = createNodeVote(node);
+
+			return TargetUtil.evaluateVote(targetField, result);
 		}
 
 		double missingValuePenalty = 1d;
@@ -168,7 +173,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			missingValuePenalty = Math.pow(treeModel.getMissingValuePenalty(), missingLevels);
 		}
 
-		NodeScoreDistribution<V> result = createNodeScoreDistribution(valueFactory, targetField, node, missingValuePenalty);
+		NodeScoreDistribution<V> result = createNodeScoreDistribution(valueFactory, node, missingValuePenalty);
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
@@ -336,20 +341,19 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return result;
 	}
 
-	private <V extends Number> NodeScoreDistribution<V> createNodeScoreDistribution(ValueFactory<V> valueFactory, TargetField targetField, Node node, double missingValuePenalty){
+	private NodeVote createNodeVote(Node node){
+		NodeVote result = new NodeVote(node){
 
-		if(!node.hasScoreDistributions()){
-			NodeScoreDistribution<V> result = new NodeScoreDistribution<V>(new ValueMap<String, V>(0), node){
+			@Override
+			public BiMap<String, Node> getEntityRegistry(){
+				return TreeModelEvaluator.this.getEntityRegistry();
+			}
+		};
 
-				@Override
-				public BiMap<String, Node> getEntityRegistry(){
-					return TreeModelEvaluator.this.getEntityRegistry();
-				}
-			};
+		return result;
+	}
 
-			return result;
-		}
-
+	private <V extends Number> NodeScoreDistribution<V> createNodeScoreDistribution(ValueFactory<V> valueFactory, Node node, double missingValuePenalty){
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
 
 		NodeScoreDistribution<V> result = new NodeScoreDistribution<V>(new ValueMap<String, V>(2 * scoreDistributions.size()), node){

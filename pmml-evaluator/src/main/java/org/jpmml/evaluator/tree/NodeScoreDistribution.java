@@ -30,7 +30,6 @@ import org.jpmml.evaluator.HasConfidence;
 import org.jpmml.evaluator.HasEntityId;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasProbability;
-import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.Report;
 import org.jpmml.evaluator.ReportUtil;
 import org.jpmml.evaluator.TypeUtil;
@@ -55,15 +54,9 @@ public class NodeScoreDistribution<V extends Number> extends Classification<V> i
 	protected void computeResult(DataType dataType){
 		Node node = getNode();
 
-		if(node.hasScore()){
-			Object result = TypeUtil.parseOrCast(dataType, node.getScore());
+		Object result = TypeUtil.parseOrCast(dataType, node.getScore());
 
-			super.setResult(result);
-
-			return;
-		}
-
-		super.computeResult(dataType);
+		setResult(result);
 	}
 
 	@Override
@@ -84,47 +77,18 @@ public class NodeScoreDistribution<V extends Number> extends Classification<V> i
 		return EntityUtil.getId(node, this);
 	}
 
-	public boolean isEmpty(){
-		ValueMap<String, V> values = getValues();
-
-		return values.isEmpty();
-	}
-
 	@Override
 	public Set<String> getCategoryValues(){
-
-		if(isEmpty()){
-			Node node = getNode();
-
-			return Collections.singleton(node.getScore());
-		}
-
 		return keySet();
 	}
 
 	@Override
 	public Double getProbability(String category){
-
-		if(isEmpty()){
-			Node node = getNode();
-
-			if(category != null && (category).equals(node.getScore())){
-				return Numbers.DOUBLE_ONE;
-			}
-
-			return Numbers.DOUBLE_ZERO;
-		}
-
 		return getValue(category);
 	}
 
 	@Override
 	public Report getProbabilityReport(String category){
-
-		if(isEmpty()){
-			return null;
-		}
-
 		return getValueReport(category);
 	}
 

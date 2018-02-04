@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.tree.TreeModel;
+import org.jpmml.evaluator.HasEntityId;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
@@ -41,7 +42,7 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void returnNullPrediction() throws Exception {
-		NodeScoreDistribution<?> targetValue = evaluate(TreeModel.NoTrueChildStrategy.RETURN_NULL_PREDICTION, 0d);
+		HasEntityId targetValue = evaluate(TreeModel.NoTrueChildStrategy.RETURN_NULL_PREDICTION, 0d);
 
 		assertNull(targetValue);
 
@@ -56,7 +57,7 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void returnLastPrediction() throws Exception {
-		NodeScoreDistribution<?> targetValue = evaluate(TreeModel.NoTrueChildStrategy.RETURN_LAST_PREDICTION, 0d);
+		HasEntityId targetValue = evaluate(TreeModel.NoTrueChildStrategy.RETURN_LAST_PREDICTION, 0d);
 
 		// The root Node evaluates to true, but it cannot be returned as a result, because it does not specify a score attribute
 		assertNull(targetValue);
@@ -70,7 +71,7 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 		assertEquals("3", targetValue.getEntityId());
 	}
 
-	private NodeScoreDistribution<?> evaluate(TreeModel.NoTrueChildStrategy noTrueChildStrategy, Double value) throws Exception {
+	private HasEntityId evaluate(TreeModel.NoTrueChildStrategy noTrueChildStrategy, Double value) throws Exception {
 		TreeModelEvaluator evaluator = (TreeModelEvaluator)createModelEvaluator();
 
 		TreeModel treeModel = evaluator.getModel()
@@ -80,6 +81,6 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		return (NodeScoreDistribution<?>)result.get(evaluator.getTargetFieldName());
+		return (HasEntityId)result.get(evaluator.getTargetFieldName());
 	}
 }

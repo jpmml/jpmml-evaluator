@@ -27,8 +27,6 @@ import org.jpmml.evaluator.ValueMap;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class NodeScoreDistributionTest {
 
@@ -48,19 +46,8 @@ public class NodeScoreDistributionTest {
 			}
 		};
 
-		assertEquals("1", classification.getEntityId());
-
-		assertTrue(classification.isEmpty());
-
-		assertEquals(ImmutableSet.of("ham"), classification.getCategoryValues());
-
-		assertEquals((Double)1d, classification.getProbability("ham"));
-		assertEquals((Double)0d, classification.getProbability("spam"));
-
 		classification.put("ham", new DoubleValue(0.75d));
 		classification.put("spam", new DoubleValue(0.25d));
-
-		assertFalse(classification.isEmpty());
 
 		assertEquals(ImmutableSet.of("ham", "spam"), classification.getCategoryValues());
 

@@ -86,6 +86,15 @@ public class TargetUtil {
 	}
 
 	static
+	public Map<FieldName, ? extends Vote> evaluateVote(TargetField targetField, Vote vote){
+		DataField dataField = targetField.getDataField();
+
+		vote.computeResult(dataField.getDataType());
+
+		return Collections.singletonMap(targetField.getName(), vote);
+	}
+
+	static
 	public <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassificationDefault(ValueFactory<V> valueFactory, TargetField targetField){
 		Target target = targetField.getTarget();
 

@@ -29,7 +29,6 @@ import org.jpmml.evaluator.Computable;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasEntityId;
-import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.ModelEvaluatorTest;
@@ -61,7 +60,7 @@ public class SelectAllTest extends ModelEvaluatorTest {
 		assertEquals(5, species.size());
 
 		for(Object value : species){
-			assertTrue((value instanceof Computable) & (value instanceof HasEntityId) & (value instanceof HasProbability));
+			assertTrue((value instanceof Computable) & (value instanceof HasEntityId));
 		}
 
 		assertEquals(Arrays.asList("setosa", "setosa", "setosa", "setosa", "versicolor"), EvaluatorUtil.decode(species));
