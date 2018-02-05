@@ -1,0 +1,23 @@
+<PMML xmlns="http://www.dmg.org/PMML-4_0" version="4.0">
+    <DataDictionary>
+        <DataField name="X" optype="continuous" dataType="double"/>
+        <DataField name="Z" optype="continuous" dataType="double"/>
+    </DataDictionary>
+    <TransformationDictionary>
+        <DerivedField name="Y1" dataType="double" optype="continuous">
+            <Constant>1.0</Constant>
+        </DerivedField>
+        <DerivedField name="spec" dataType="string" optype="categorical">
+            <Constant>CAT</Constant>
+        </DerivedField>
+        <DerivedField name="Y2" dataType="double" optype="continuous">
+            <FieldRef field="X"/>
+        </DerivedField>
+        <DerivedField name="Y3" dataType="double" optype="continuous">
+            <Apply function="pow">
+                <FieldRef field="Z"/>
+                <Constant>2.0</Constant>
+            </Apply>
+        </DerivedField>
+    </TransformationDictionary>
+</PMML>

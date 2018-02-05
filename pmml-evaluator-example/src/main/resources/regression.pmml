@@ -1,0 +1,24 @@
+<PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
+  <Header copyright="DMG.org"/>
+  <DataDictionary numberOfFields="2">
+    <DataField name="X" optype="continuous" dataType="double"/>
+    <DataField name="y" optype="continuous" dataType="double"/>
+  </DataDictionary>
+  <TransformationDictionary>
+    <DerivedField name="Y1" dataType="double" optype="continuous">
+      <Apply function="pow">
+        <FieldRef field="X"/>
+        <Constant>2.0</Constant>
+      </Apply>
+    </DerivedField>
+  </TransformationDictionary>
+  <RegressionModel modelName="Simple linear regression" functionName="regression" algorithmName="linearRegression" targetFieldName="y">
+    <MiningSchema>
+      <MiningField name="X"/>
+      <MiningField name="y" usageType="target"/>
+    </MiningSchema>
+    <RegressionTable intercept="0.0">
+      <NumericPredictor name="Y1" exponent="1" coefficient="2.0"/>
+    </RegressionTable>
+  </RegressionModel>
+</PMML>
