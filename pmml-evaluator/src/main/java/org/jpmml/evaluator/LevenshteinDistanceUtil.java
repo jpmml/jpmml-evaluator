@@ -18,9 +18,9 @@ package org.jpmml.evaluator;
 
 import java.util.Arrays;
 
-class StringUtil {
+class LevenshteinDistanceUtil {
 
-	private StringUtil(){
+	private LevenshteinDistanceUtil(){
 	}
 
 	/**
