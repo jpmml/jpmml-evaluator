@@ -48,7 +48,7 @@ public class ArrayUtil {
 	public int getSize(Array array){
 		Integer n = array.getN();
 		if(n != null){
-			return n.intValue();
+			return n;
 		}
 
 		List<String> content = getContent(array);
@@ -104,7 +104,7 @@ public class ArrayUtil {
 		}
 
 		Integer n = array.getN();
-		if(n != null && n.intValue() != result.size()){
+		if(n != null && n != result.size()){
 			throw new InvalidElementException(array);
 		}
 

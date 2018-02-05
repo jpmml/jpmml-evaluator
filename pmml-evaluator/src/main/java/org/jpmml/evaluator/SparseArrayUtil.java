@@ -60,7 +60,7 @@ public class SparseArrayUtil {
 
 		Integer n = sparseArray.getN();
 		if(n != null){
-			size = n.intValue();
+			size = n;
 		} else
 
 		{
@@ -114,14 +114,14 @@ public class SparseArrayUtil {
 			Integer index = indices.get(i);
 			E entry = entries.get(i);
 
-			if((index < 1) || (n != null && index > n.intValue())){
+			if((index < 1) || (n != null && index > n)){
 				throw new InvalidElementException(sparseArray);
 			}
 
 			result.put(index, entry);
 		}
 
-		if(n != null && n.intValue() < result.size()){
+		if(n != null && n < result.size()){
 			throw new InvalidElementException(sparseArray);
 		}
 

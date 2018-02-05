@@ -742,7 +742,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		}
 
 		Integer recordCount = modelVerification.getRecordCount();
-		if(recordCount != null && recordCount.intValue() != records.size()){
+		if(recordCount != null && recordCount != records.size()){
 			throw new InvalidElementException(modelVerification);
 		}
 

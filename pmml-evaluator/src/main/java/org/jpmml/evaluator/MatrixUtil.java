@@ -159,7 +159,7 @@ public class MatrixUtil {
 	public int getRows(Matrix matrix){
 		Integer nbRows = matrix.getNbRows();
 		if(nbRows != null){
-			return nbRows.intValue();
+			return nbRows;
 		}
 
 		List<Array> arrays = matrix.getArrays();
@@ -210,7 +210,7 @@ public class MatrixUtil {
 	public int getColumns(Matrix matrix){
 		Integer nbCols = matrix.getNbCols();
 		if(nbCols != null){
-			return nbCols.intValue();
+			return nbCols;
 		}
 
 		List<Array> arrays = matrix.getArrays();

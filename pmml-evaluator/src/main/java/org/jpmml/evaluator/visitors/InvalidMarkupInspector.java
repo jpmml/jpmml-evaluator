@@ -396,7 +396,7 @@ public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupExcepti
 			if(size != null){
 				Collection<?> collection = getCollection();
 
-				return evaluate(size.intValue(), collection.size());
+				return evaluate(size, collection.size());
 			}
 
 			return true;
