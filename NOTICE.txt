@@ -2,7 +2,6 @@ JPMML-Evaluator includes third-party dependencies that are released under the Ap
   * Commons Lang - https://commons.apache.org/proper/commons-lang/
   * Commons Math - http://commons.apache.org/proper/commons-math/
   * Guava - http://guava-libraries.googlecode.com
-  * Joda-Time - http://joda-time.sourceforge.net/index.html
 
                                  Apache License
                            Version 2.0, January 2004

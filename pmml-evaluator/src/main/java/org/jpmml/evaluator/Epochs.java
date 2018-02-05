@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2018 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,27 +18,11 @@
  */
 package org.jpmml.evaluator;
 
-abstract
-class SimplePeriod<P extends SimplePeriod<P>> extends Number implements Comparable<P> {
+import java.time.LocalDate;
 
-	@Override
-	public int intValue(){
-		long value = longValue();
+public interface Epochs {
 
-		if(value < Integer.MIN_VALUE || value > Integer.MAX_VALUE){
-			throw new UndefinedResultException();
-		}
-
-		return (int)value;
-	}
-
-	@Override
-	public float floatValue(){
-		return longValue();
-	}
-
-	@Override
-	public double doubleValue(){
-		return longValue();
-	}
+	LocalDate YEAR_1960 = LocalDate.of(1960, 1, 1);
+	LocalDate YEAR_1970 = LocalDate.of(1970, 1, 1);
+	LocalDate YEAR_1980 = LocalDate.of(1980, 1, 1);
 }

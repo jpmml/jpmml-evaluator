@@ -18,40 +18,40 @@
  */
 package org.jpmml.evaluator;
 
-import org.joda.time.Chronology;
-import org.joda.time.DateTimeField;
-import org.joda.time.DateTimeFieldType;
-import org.joda.time.DateTimeUtils;
-import org.joda.time.DurationField;
-import org.joda.time.DurationFieldType;
-import org.joda.time.Seconds;
-import org.joda.time.field.FieldUtils;
-import org.joda.time.field.PreciseDurationDateTimeField;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.SignStyle;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalField;
+import java.time.temporal.TemporalQuery;
+import java.time.temporal.TemporalUnit;
+import java.time.temporal.ValueRange;
 
 public class SecondsSinceMidnight extends SimplePeriod<SecondsSinceMidnight> {
 
-	private Seconds seconds = null;
+	private long seconds = 0;
 
 
-	public SecondsSinceMidnight(Seconds seconds){
+	public SecondsSinceMidnight(long seconds){
 		setSeconds(seconds);
 	}
 
 	@Override
-	public int intValue(){
-		return getSeconds().getSeconds();
+	public long longValue(){
+		return getSeconds();
 	}
 
 	@Override
 	public int compareTo(SecondsSinceMidnight that){
-		return (this.getSeconds()).compareTo(that.getSeconds());
+		return Long.compare(this.getSeconds(), that.getSeconds());
 	}
 
 	@Override
 	public int hashCode(){
-		return getSeconds().hashCode();
+		return Long.hashCode(getSeconds());
 	}
 
 	@Override
@@ -60,120 +60,124 @@ public class SecondsSinceMidnight extends SimplePeriod<SecondsSinceMidnight> {
 		if(object instanceof SecondsSinceMidnight){
 			SecondsSinceMidnight that = (SecondsSinceMidnight)object;
 
-			return (this.getSeconds()).equals(that.getSeconds());
+			return (this.getSeconds() == that.getSeconds());
 		}
 
 		return false;
 	}
 
-	public Seconds getSeconds(){
+	private SecondsSinceMidnight toNegative(){
+		setSeconds(-1 * getSeconds());
+
+		return this;
+	}
+
+	public long getSeconds(){
 		return this.seconds;
 	}
 
-	private void setSeconds(Seconds seconds){
+	private void setSeconds(long seconds){
 		this.seconds = seconds;
 	}
 
 	static
-	public DateTimeFormatter getFormat(){
+	public SecondsSinceMidnight parse(String string){
+		DateTimeFormatter formatter = SecondsSinceMidnight.FORMATTER;
 
-		if(SecondsSinceMidnight.format == null){
-			SecondsSinceMidnight.format = createFormat();
+		if(string.startsWith("-")){
+			SecondsSinceMidnight period = formatter.parse(string.substring(1), SecondsSinceMidnight.QUERY);
+
+			return period.toNegative();
+		} else
+
+		{
+			SecondsSinceMidnight period = formatter.parse(string, SecondsSinceMidnight.QUERY);
+
+			return period;
 		}
-
-		return SecondsSinceMidnight.format;
 	}
 
 	static
-	private DateTimeFormatter createFormat(){
+	private DateTimeFormatter createFormatter(){
 		DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder()
-			.appendSignedDecimal(HoursOfEpochFieldType.getInstance(), 1, 4)
+			.appendValue(SecondsSinceMidnight.HOURS_OF_EPOCH, 1, 4, SignStyle.NOT_NEGATIVE)
 			.appendLiteral(':')
-			.appendFixedDecimal(DateTimeFieldType.minuteOfHour(), 2)
+			.appendValue(ChronoField.MINUTE_OF_HOUR, 2)
 			.appendLiteral(':')
-			.appendFixedDecimal(DateTimeFieldType.secondOfMinute(), 2);
+			.appendValue(ChronoField.SECOND_OF_MINUTE, 2);
 
 		return builder.toFormatter();
 	}
 
-	private static DateTimeFormatter format = null;
+	private static final TemporalField HOURS_OF_EPOCH = new TemporalField(){
 
-	static
-	private class HoursOfEpochFieldType extends DateTimeFieldType {
+		private final ValueRange range = ValueRange.of(0, Long.MAX_VALUE);
 
-		private HoursOfEpochFieldType(){
-			super("hoursOfEpoch");
+
+		@Override
+		public TemporalUnit getBaseUnit(){
+			return ChronoUnit.HOURS;
 		}
 
 		@Override
-		public DurationFieldType getDurationType(){
-			return DurationFieldType.hours();
+		public TemporalUnit getRangeUnit(){
+			return ChronoUnit.FOREVER;
 		}
 
 		@Override
-		public DurationFieldType getRangeDurationType(){
-			return null;
+		public ValueRange range(){
+			return this.range;
 		}
 
 		@Override
-		public DateTimeField getField(Chronology chronology){
-			chronology = DateTimeUtils.getChronology(chronology);
-
-			return new PreciseDurationDateTimeField(this, chronology.hours()){
-
-				@Override
-				public int get(long millis){
-					long hours = (millis / HoursOfEpochFieldType.millisInHour);
-
-					return FieldUtils.safeToInt(hours);
-				}
-
-				@Override
-				public DurationField getRangeDurationField(){
-					return null;
-				}
-
-				@Override
-				public int getMinimumValue(){
-					return 0;
-				}
-
-				@Override
-				public int getMaximumValue(){
-					return Integer.MAX_VALUE;
-				}
-			};
-		}
-
-		@Override
-		public int hashCode(){
-			return getName().hashCode();
-		}
-
-		@Override
-		public boolean equals(Object object){
-
-			if(object instanceof HoursOfEpochFieldType){
-				HoursOfEpochFieldType that = (HoursOfEpochFieldType)object;
-
-				return (this.getName()).equals(that.getName());
-			}
-
+		public boolean isDateBased(){
 			return false;
 		}
 
-		static
-		public HoursOfEpochFieldType getInstance(){
-
-			if(HoursOfEpochFieldType.instance == null){
-				HoursOfEpochFieldType.instance = new HoursOfEpochFieldType();
-			}
-
-			return HoursOfEpochFieldType.instance;
+		@Override
+		public boolean isTimeBased(){
+			return false;
 		}
 
-		private static HoursOfEpochFieldType instance;
+		@Override
+		public boolean isSupportedBy(TemporalAccessor temporal){
+			return temporal.isSupported(this);
+		}
 
-		private static final long millisInHour = (60L * 60L * 1000L);
-	}
+		@Override
+		public ValueRange rangeRefinedBy(TemporalAccessor temporal){
+			return temporal.range(this);
+		}
+
+		@Override
+		public long getFrom(TemporalAccessor temporal){
+			return temporal.getLong(this);
+		}
+
+		@Override
+		public <R extends Temporal> R adjustInto(R temporal, long value){
+			return (R)temporal.with(this, value);
+		}
+
+		@Override
+		public String toString(){
+			return "HoursOfEpoch";
+		}
+	};
+
+	private static final DateTimeFormatter FORMATTER = createFormatter();
+
+	private static final TemporalQuery<SecondsSinceMidnight> QUERY = new TemporalQuery<SecondsSinceMidnight>(){
+
+		@Override
+		public SecondsSinceMidnight queryFrom(TemporalAccessor temporal){
+			long hoursOfEpoch = temporal.getLong(SecondsSinceMidnight.HOURS_OF_EPOCH);
+			long minutesOfHour = temporal.getLong(ChronoField.MINUTE_OF_HOUR);
+			long secondsOfMinute = temporal.getLong(ChronoField.SECOND_OF_MINUTE);
+
+			long seconds = (hoursOfEpoch * 60 * 60) + (minutesOfHour * 60) + secondsOfMinute;
+
+			return new SecondsSinceMidnight(seconds);
+		}
+	};
 }

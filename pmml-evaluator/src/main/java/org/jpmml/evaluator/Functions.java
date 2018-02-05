@@ -18,6 +18,12 @@
  */
 package org.jpmml.evaluator;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -32,10 +38,6 @@ import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
-import org.joda.time.Seconds;
 import org.jpmml.evaluator.functions.AbstractFunction;
 import org.jpmml.evaluator.functions.AggregateFunction;
 import org.jpmml.evaluator.functions.ArithmeticFunction;
@@ -542,10 +544,14 @@ public interface Functions {
 			FieldValue value = arguments.get(0);
 			FieldValue pattern = arguments.get(1);
 
+			ZonedDateTime zonedDateTime = value.asZonedDateTime(ZoneId.systemDefault());
+
+			Date date = Date.from(zonedDateTime.toInstant());
+
 			String result;
 
 			try {
-				result = String.format(translatePattern(pattern.asString()), (value.asDateTime()).toDate());
+				result = String.format(translatePattern(pattern.asString()), date);
 			} catch(IllegalFormatException ife){
 				throw new FunctionException(this, "Invalid format value")
 					.initCause(ife);
@@ -586,7 +592,7 @@ public interface Functions {
 
 			int year = (arguments.get(1)).asInteger();
 
-			DaysSinceDate period = new DaysSinceDate(year, instant);
+			DaysSinceDate period = new DaysSinceDate(LocalDate.of(year, 1, 1), instant);
 
 			return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, period.intValue());
 		}
@@ -600,9 +606,7 @@ public interface Functions {
 
 			LocalTime instant = (arguments.get(0)).asLocalTime();
 
-			Seconds seconds = Seconds.seconds(instant.getHourOfDay() * 60 * 60 + instant.getMinuteOfHour() * 60 + instant.getSecondOfMinute());
-
-			SecondsSinceMidnight period = new SecondsSinceMidnight(seconds);
+			SecondsSinceMidnight period = new SecondsSinceMidnight(instant.toSecondOfDay());
 
 			return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, period.intValue());
 		}
@@ -618,7 +622,7 @@ public interface Functions {
 
 			int year = (arguments.get(1)).asInteger();
 
-			SecondsSinceDate period = new SecondsSinceDate(year, instant);
+			SecondsSinceDate period = new SecondsSinceDate(LocalDate.of(year, 1, 1), instant);
 
 			return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, period.intValue());
 		}

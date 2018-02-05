@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
 
 abstract
 class ComplexPeriod<P extends ComplexPeriod<P>> extends SimplePeriod<P> {

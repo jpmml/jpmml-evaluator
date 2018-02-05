@@ -18,32 +18,28 @@
  */
 package org.jpmml.evaluator;
 
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.Seconds;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class SecondsSinceDate extends ComplexPeriod<SecondsSinceDate> {
 
-	private Seconds seconds = null;
+	private long seconds = 0;
 
-
-	public SecondsSinceDate(int year, LocalDateTime dateTime){
-		this(new LocalDate(year, 1, 1), dateTime);
-	}
 
 	public SecondsSinceDate(LocalDate epoch, LocalDateTime dateTime){
-		this(epoch, Seconds.secondsBetween(TypeUtil.toMidnight(epoch), dateTime));
+		this(epoch, ChronoUnit.SECONDS.between(epoch.atStartOfDay(), dateTime));
 	}
 
-	public SecondsSinceDate(LocalDate epoch, Seconds seconds){
+	public SecondsSinceDate(LocalDate epoch, long seconds){
 		super(epoch);
 
 		setSeconds(seconds);
 	}
 
 	@Override
-	public int intValue(){
-		return getSeconds().getSeconds();
+	public long longValue(){
+		return getSeconds();
 	}
 
 	@Override
@@ -53,12 +49,12 @@ public class SecondsSinceDate extends ComplexPeriod<SecondsSinceDate> {
 			throw new ClassCastException();
 		}
 
-		return (this.getSeconds()).compareTo(that.getSeconds());
+		return Long.compare(this.getSeconds(), that.getSeconds());
 	}
 
 	@Override
 	public int hashCode(){
-		return (31 * getEpoch().hashCode()) + getSeconds().hashCode();
+		return (31 * getEpoch().hashCode()) + Long.hashCode(getSeconds());
 	}
 
 	@Override
@@ -67,17 +63,17 @@ public class SecondsSinceDate extends ComplexPeriod<SecondsSinceDate> {
 		if(object instanceof SecondsSinceDate){
 			SecondsSinceDate that = (SecondsSinceDate)object;
 
-			return (this.getEpoch()).equals(that.getEpoch()) && (this.getSeconds()).equals(that.getSeconds());
+			return (this.getEpoch()).equals(that.getEpoch()) && (this.getSeconds() == that.getSeconds());
 		}
 
 		return false;
 	}
 
-	public Seconds getSeconds(){
+	public long getSeconds(){
 		return this.seconds;
 	}
 
-	private void setSeconds(Seconds seconds){
+	private void setSeconds(long seconds){
 		this.seconds = seconds;
 	}
 }

@@ -19,6 +19,11 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,10 +40,6 @@ import org.dmg.pmml.HasValue;
 import org.dmg.pmml.HasValueSet;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLObject;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
 
 /**
  * <p>
@@ -311,26 +312,28 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return (LocalTime)getValue(DataType.TIME);
 	}
 
-	public DateTime asDateTime(){
+	public ZonedDateTime asZonedDateTime(ZoneId zoneId){
 
 		try {
 			LocalDateTime dateTime = asLocalDateTime();
 
-			return dateTime.toDateTime();
+			return dateTime.atZone(zoneId);
 		} catch(TypeCheckException tceDateTime){
 
 			try {
-				LocalDate date = asLocalDate();
+				LocalDate localDate = asLocalDate();
+				LocalTime localTime = LocalTime.MIDNIGHT;
 
-				return date.toDateTimeAtStartOfDay();
+				return ZonedDateTime.of(localDate, localTime, zoneId);
 			} catch(TypeCheckException tceDate){
 				// Ignored
 			}
 
 			try {
-				LocalTime time = asLocalTime();
+				LocalDate localDate = LocalDate.now();
+				LocalTime localTime = asLocalTime();
 
-				return time.toDateTimeToday();
+				return ZonedDateTime.of(localDate, localTime, zoneId);
 			} catch(TypeCheckException tceTime){
 				// Ignored
 			}

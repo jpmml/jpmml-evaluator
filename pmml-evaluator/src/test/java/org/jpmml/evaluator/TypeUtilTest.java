@@ -18,11 +18,12 @@
  */
 package org.jpmml.evaluator;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
+
 import org.dmg.pmml.DataType;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
-import org.joda.time.Years;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -265,8 +266,8 @@ public class TypeUtilTest {
 		assertEquals(DataType.DATE_DAYS_SINCE_1970, TypeUtil.getDataType(seventies));
 		assertEquals(DataType.DATE_DAYS_SINCE_1980, TypeUtil.getDataType(eighties));
 
-		assertEquals(DECADE, Years.yearsBetween(sixties.getEpoch(), seventies.getEpoch()));
-		assertEquals(DECADE, Years.yearsBetween(seventies.getEpoch(), eighties.getEpoch()));
+		assertEquals(10, ChronoUnit.YEARS.between(sixties.getEpoch(), seventies.getEpoch()));
+		assertEquals(10, ChronoUnit.YEARS.between(seventies.getEpoch(), eighties.getEpoch()));
 
 		try {
 			int diff = (sixties).compareTo(seventies);
@@ -283,13 +284,13 @@ public class TypeUtilTest {
 		assertEquals(eighties, TypeUtil.cast(DataType.DATE_DAYS_SINCE_1980, sixties));
 		assertEquals(eighties, TypeUtil.cast(DataType.DATE_DAYS_SINCE_1980, seventies));
 
-		assertEquals(0, countDaysSince1960("1960-01-01"));
-		assertEquals(1, countDaysSince1960("1960-01-02"));
-		assertEquals(31, countDaysSince1960("1960-02-01"));
+		assertEquals(0L, countDaysSince1960("1960-01-01"));
+		assertEquals(1L, countDaysSince1960("1960-01-02"));
+		assertEquals(31L, countDaysSince1960("1960-02-01"));
 
-		assertEquals(-1, countDaysSince1960("1959-12-31"));
+		assertEquals(-1L, countDaysSince1960("1959-12-31"));
 
-		assertEquals(15796, countDaysSince1960("2003-04-01"));
+		assertEquals(15796L, countDaysSince1960("2003-04-01"));
 	}
 
 	@Test
@@ -298,15 +299,21 @@ public class TypeUtilTest {
 
 		assertEquals(DataType.TIME_SECONDS, TypeUtil.getDataType(noon));
 
-		assertEquals(0, countSecondsSinceMidnight("0:00:00"));
-		assertEquals(100, countSecondsSinceMidnight("0:01:40"));
-		assertEquals(200, countSecondsSinceMidnight("0:03:20"));
-		assertEquals(1000, countSecondsSinceMidnight("0:16:40"));
-		assertEquals(86400, countSecondsSinceMidnight("24:00:00"));
-		assertEquals(86401, countSecondsSinceMidnight("24:00:01"));
-		assertEquals(100000, countSecondsSinceMidnight("27:46:40"));
+		assertEquals(0L, countSecondsSinceMidnight("0:00:00"));
+		assertEquals(100L, countSecondsSinceMidnight("0:01:40"));
+		assertEquals(200L, countSecondsSinceMidnight("0:03:20"));
+		assertEquals(1000L, countSecondsSinceMidnight("0:16:40"));
+		assertEquals(86400L, countSecondsSinceMidnight("24:00:00"));
+		assertEquals(86401L, countSecondsSinceMidnight("24:00:01"));
+		assertEquals(100000L, countSecondsSinceMidnight("27:46:40"));
 
-		assertEquals(19410, countSecondsSinceMidnight("05:23:30"));
+		assertEquals(19410L, countSecondsSinceMidnight("05:23:30"));
+
+		assertEquals(-10L, countSecondsSinceMidnight("-0:00:10"));
+		assertEquals(-100L, countSecondsSinceMidnight("-0:01:40"));
+		assertEquals(-1000L, countSecondsSinceMidnight("-0:16:40"));
+		assertEquals(-10000L, countSecondsSinceMidnight("-2:46:40"));
+		assertEquals(-100000L, countSecondsSinceMidnight("-27:46:40"));
 	}
 
 	@Test
@@ -319,8 +326,8 @@ public class TypeUtilTest {
 		assertEquals(DataType.DATE_TIME_SECONDS_SINCE_1970, TypeUtil.getDataType(seventies));
 		assertEquals(DataType.DATE_TIME_SECONDS_SINCE_1980, TypeUtil.getDataType(eighties));
 
-		assertEquals(DECADE, Years.yearsBetween(sixties.getEpoch(), seventies.getEpoch()));
-		assertEquals(DECADE, Years.yearsBetween(seventies.getEpoch(), eighties.getEpoch()));
+		assertEquals(10, ChronoUnit.YEARS.between(sixties.getEpoch(), seventies.getEpoch()));
+		assertEquals(10, ChronoUnit.YEARS.between(seventies.getEpoch(), eighties.getEpoch()));
 
 		try {
 			int diff = (sixties).compareTo(seventies);
@@ -337,13 +344,13 @@ public class TypeUtilTest {
 		assertEquals(eighties, TypeUtil.cast(DataType.DATE_TIME_SECONDS_SINCE_1980, sixties));
 		assertEquals(eighties, TypeUtil.cast(DataType.DATE_TIME_SECONDS_SINCE_1980, seventies));
 
-		assertEquals(0, countSecondsSince1960("1960-01-01T00:00:00"));
-		assertEquals(1, countSecondsSince1960("1960-01-01T00:00:01"));
-		assertEquals(60, countSecondsSince1960("1960-01-01T00:01:00"));
+		assertEquals(0L, countSecondsSince1960("1960-01-01T00:00:00"));
+		assertEquals(1L, countSecondsSince1960("1960-01-01T00:00:01"));
+		assertEquals(60L, countSecondsSince1960("1960-01-01T00:01:00"));
 
-		assertEquals(-1, countSecondsSince1960("1959-12-31T23:59:59"));
+		assertEquals(-1L, countSecondsSince1960("1959-12-31T23:59:59"));
 
-		assertEquals(185403, countSecondsSince1960("1960-01-03T03:30:03"));
+		assertEquals(185403L, countSecondsSince1960("1960-01-03T03:30:03"));
 	}
 
 	@Test
@@ -378,24 +385,24 @@ public class TypeUtilTest {
 	}
 
 	static
-	private int countDaysSince1960(String string){
+	private long countDaysSince1960(String string){
 		DaysSinceDate period = (DaysSinceDate)TypeUtil.parse(DataType.DATE_DAYS_SINCE_1960, string);
 
-		return period.intValue();
+		return period.getDays();
 	}
 
 	static
-	private int countSecondsSinceMidnight(String string){
+	private long countSecondsSinceMidnight(String string){
 		SecondsSinceMidnight period = (SecondsSinceMidnight)TypeUtil.parse(DataType.TIME_SECONDS, string);
 
-		return period.intValue();
+		return period.getSeconds();
 	}
 
 	static
-	private int countSecondsSince1960(String string){
+	private long countSecondsSince1960(String string){
 		SecondsSinceDate period = (SecondsSinceDate)TypeUtil.parse(DataType.DATE_TIME_SECONDS_SINCE_1960, string);
 
-		return period.intValue();
+		return period.getSeconds();
 	}
 
 	static
@@ -407,6 +414,4 @@ public class TypeUtilTest {
 	private static final String DATE = "1969-07-20";
 	private static final String TIME = "20:17:40";
 	private static final String DATE_TIME = (DATE + "T" + TIME);
-
-	private static final Years DECADE = Years.years(10);
 }

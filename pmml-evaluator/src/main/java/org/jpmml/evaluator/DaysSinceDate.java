@@ -18,31 +18,27 @@
  */
 package org.jpmml.evaluator;
 
-import org.joda.time.Days;
-import org.joda.time.LocalDate;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class DaysSinceDate extends ComplexPeriod<DaysSinceDate> {
 
-	private Days days = null;
+	private long days = 0;
 
-
-	public DaysSinceDate(int year, LocalDate date){
-		this(new LocalDate(year, 1, 1), date);
-	}
 
 	public DaysSinceDate(LocalDate epoch, LocalDate date){
-		this(epoch, Days.daysBetween(epoch, date));
+		this(epoch, ChronoUnit.DAYS.between(epoch, date));
 	}
 
-	public DaysSinceDate(LocalDate epoch, Days days){
+	public DaysSinceDate(LocalDate epoch, long days){
 		super(epoch);
 
 		setDays(days);
 	}
 
 	@Override
-	public int intValue(){
-		return getDays().getDays();
+	public long longValue(){
+		return getDays();
 	}
 
 	@Override
@@ -52,12 +48,12 @@ public class DaysSinceDate extends ComplexPeriod<DaysSinceDate> {
 			throw new ClassCastException();
 		}
 
-		return (this.getDays()).compareTo(that.getDays());
+		return Long.compare(this.getDays(), that.getDays());
 	}
 
 	@Override
 	public int hashCode(){
-		return (31 * getEpoch().hashCode()) + getDays().hashCode();
+		return (31 * getEpoch().hashCode()) + Long.hashCode(getDays());
 	}
 
 	@Override
@@ -66,17 +62,17 @@ public class DaysSinceDate extends ComplexPeriod<DaysSinceDate> {
 		if(object instanceof DaysSinceDate){
 			DaysSinceDate that = (DaysSinceDate)object;
 
-			return (this.getEpoch()).equals(that.getEpoch()) && (this.getDays()).equals(that.getDays());
+			return (this.getEpoch()).equals(that.getEpoch()) && (this.getDays() == that.getDays());
 		}
 
 		return false;
 	}
 
-	public Days getDays(){
+	public long getDays(){
 		return this.days;
 	}
 
-	private void setDays(Days days){
+	private void setDays(long days){
 		this.days = days;
 	}
 }
