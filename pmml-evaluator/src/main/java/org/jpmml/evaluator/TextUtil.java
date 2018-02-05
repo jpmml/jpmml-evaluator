@@ -281,7 +281,7 @@ public class TextUtil {
 				} else
 
 				{
-					int tokenLevenshteinDistance = LevenshteinDistanceUtil.getLevenshteinDistance(textToken, termToken, caseSensitive, threshold);
+					int tokenLevenshteinDistance = LevenshteinDistanceUtil.limitedCompare(textToken, termToken, caseSensitive, threshold);
 
 					if(tokenLevenshteinDistance < 0){
 						continue text;

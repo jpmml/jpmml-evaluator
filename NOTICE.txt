@@ -1,6 +1,6 @@
 JPMML-Evaluator includes third-party dependencies that are released under the Apache License, Version 2.0:
-  * Apache Commons Lang - https://commons.apache.org/proper/commons-lang/
   * Apache Commons Math - http://commons.apache.org/proper/commons-math/
+  * Apache Commons Text - https://commons.apache.org/proper/commons-text/
   * Guava - https://github.com/google/guava
 
                                  Apache License
