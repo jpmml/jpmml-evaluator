@@ -21,7 +21,6 @@ package org.jpmml.evaluator.tree;
 import java.util.Collections;
 import java.util.Set;
 
-import com.google.common.base.Objects.ToStringHelper;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.tree.Node;
 import org.jpmml.evaluator.Classification;
@@ -32,6 +31,7 @@ import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.Report;
 import org.jpmml.evaluator.ReportUtil;
+import org.jpmml.evaluator.ToStringHelper;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;

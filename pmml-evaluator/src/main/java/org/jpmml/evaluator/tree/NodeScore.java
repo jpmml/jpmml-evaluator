@@ -18,12 +18,12 @@
  */
 package org.jpmml.evaluator.tree;
 
-import com.google.common.base.Objects.ToStringHelper;
 import org.dmg.pmml.tree.Node;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.HasEntityId;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.Regression;
+import org.jpmml.evaluator.ToStringHelper;
 import org.jpmml.evaluator.Value;
 
 abstract

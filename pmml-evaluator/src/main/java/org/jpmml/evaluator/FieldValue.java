@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import org.dmg.pmml.Array;
@@ -392,7 +391,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 
 	@Override
 	public String toString(){
-		ToStringHelper helper = com.google.common.base.Objects.toStringHelper(this)
+		ToStringHelper helper = new ToStringHelper(this)
 			.add("opType", getOpType())
 			.add("dataType", getDataType())
 			.add("value", getValue());

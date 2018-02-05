@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
 import org.dmg.pmml.DataType;
 
 abstract
@@ -56,7 +54,7 @@ public class Vote implements Computable, HasPrediction {
 	}
 
 	protected ToStringHelper toStringHelper(){
-		ToStringHelper helper = Objects.toStringHelper(this)
+		ToStringHelper helper = new ToStringHelper(this)
 			.add("result", getResult());
 
 		return helper;

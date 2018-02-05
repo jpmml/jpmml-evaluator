@@ -20,11 +20,11 @@ package org.jpmml.evaluator.scorecard;
 
 import java.util.List;
 
-import com.google.common.base.Objects.ToStringHelper;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.Classification.Type;
 import org.jpmml.evaluator.HasReasonCodeRanking;
 import org.jpmml.evaluator.Regression;
+import org.jpmml.evaluator.ToStringHelper;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 

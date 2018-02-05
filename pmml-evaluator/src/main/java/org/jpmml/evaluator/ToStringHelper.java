@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Villu Ruusmann
+ * Copyright (c) 2018 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,42 +18,37 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.Serializable;
+import java.util.StringJoiner;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.FieldName;
-import org.dmg.pmml.OpType;
+public class ToStringHelper {
 
-/**
- * <p>
- * A common superclass for all model fields.
- * </p>
- */
-abstract
-public class ModelField implements Serializable {
+	private StringJoiner joiner = null;
 
-	abstract
-	public FieldName getName();
 
-	abstract
-	public DataType getDataType();
+	public ToStringHelper(Object object){
+		setJoiner(new StringJoiner(", ", (object.getClass()).getSimpleName() + "{", "}"));
+	}
 
-	abstract
-	public OpType getOpType();
+	public ToStringHelper add(String key, Object value){
+		StringJoiner joiner = getJoiner();
+
+		joiner.add(key + "=" + value);
+
+		return this;
+	}
 
 	@Override
 	public String toString(){
-		ToStringHelper helper = toStringHelper();
+		StringJoiner joiner = getJoiner();
 
-		return helper.toString();
+		return joiner.toString();
 	}
 
-	protected ToStringHelper toStringHelper(){
-		ToStringHelper helper = new ToStringHelper(this)
-			.add("name", getName())
-			.add("dataType", getDataType())
-			.add("opType", getOpType());
+	public StringJoiner getJoiner(){
+		return this.joiner;
+	}
 
-		return helper;
+	private void setJoiner(StringJoiner joiner){
+		this.joiner = joiner;
 	}
 }

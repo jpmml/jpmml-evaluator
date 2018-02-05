@@ -23,14 +23,13 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.association.AssociationRule;
 import org.jpmml.evaluator.Computable;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasRuleValues;
+import org.jpmml.evaluator.ToStringHelper;
 
 /**
  * @see MiningFunction#ASSOCIATION_RULES
@@ -68,7 +67,7 @@ public class Association implements Computable, HasRuleValues, HasEntityRegistry
 	}
 
 	protected ToStringHelper toStringHelper(){
-		ToStringHelper helper = Objects.toStringHelper(this)
+		ToStringHelper helper = new ToStringHelper(this)
 			.add("antecedentFlags", getAntecedentFlags())
 			.add("consequentFlags", getConsequentFlags());
 

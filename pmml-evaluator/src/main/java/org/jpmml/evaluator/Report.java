@@ -20,9 +20,6 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
-
 abstract
 public class Report {
 
@@ -37,7 +34,7 @@ public class Report {
 
 	@Override
 	public String toString(){
-		ToStringHelper helper = Objects.toStringHelper(this)
+		ToStringHelper helper = new ToStringHelper(this)
 			.add("entries", getEntries());
 
 		return helper.toString();
@@ -84,7 +81,7 @@ public class Report {
 
 		@Override
 		public String toString(){
-			ToStringHelper helper = Objects.toStringHelper(this)
+			ToStringHelper helper = new ToStringHelper(this)
 				.add("expression", getExpression())
 				.add("value", getValue());
 

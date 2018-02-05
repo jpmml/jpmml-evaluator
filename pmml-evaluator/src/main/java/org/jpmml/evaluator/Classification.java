@@ -26,8 +26,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
@@ -111,7 +109,7 @@ public class Classification<V extends Number> implements Computable, HasPredicti
 		Type type = getType();
 		ValueMap<String, V> values = getValues();
 
-		ToStringHelper helper = Objects.toStringHelper(this)
+		ToStringHelper helper = new ToStringHelper(this)
 			.add("result", getResult())
 			.add(type.entryKey(), values.entrySet());
 

@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.Entity;
 

@@ -20,8 +20,6 @@ package org.jpmml.evaluator;
 
 import java.util.Map;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.MapDifference;
 import org.dmg.pmml.FieldName;
 
@@ -50,7 +48,7 @@ public class Conflict {
 
 	@Override
 	public String toString(){
-		ToStringHelper helper = Objects.toStringHelper(this)
+		ToStringHelper helper = new ToStringHelper(this)
 			.add("id", getId())
 			.add("arguments", getArguments());
 
