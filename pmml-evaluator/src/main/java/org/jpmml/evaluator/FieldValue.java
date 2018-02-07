@@ -116,9 +116,17 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement((Class)hasValueSet.getClass()) + "/" + XPathUtil.formatElement(Array.class)), (PMMLObject)hasValueSet);
 		}
 
-		List<String> content = ArrayUtil.getContent(array);
+		List<?> values = ArrayUtil.getContent(array);
 
-		return indexInStrings(content) > -1;
+		Predicate<Object> predicate = new Predicate<Object>(){
+
+			@Override
+			public boolean apply(Object value){
+				return equalsValue(value);
+			}
+		};
+
+		return Iterables.indexOf(values, predicate) > -1;
 	}
 
 	public boolean isIn(HasParsedValueSet<?> hasParsedValueSet){
@@ -159,6 +167,15 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return TypeUtil.equals(getDataType(), getValue(), value);
 	}
 
+	public boolean equalsValue(Object value){
+
+		if(isScalar()){
+			return (getValue()).equals(TypeUtil.parseOrCast(getDataType(), value));
+		}
+
+		return TypeUtil.equals(getDataType(), getValue(), value);
+	}
+
 	/**
 	 * <p>
 	 * A value-safe replacement for {@link #equals(FieldValue)}.
@@ -173,18 +190,6 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		DataType dataType = TypeUtil.getResultDataType(getDataType(), value.getDataType());
 
 		return TypeUtil.equals(dataType, getValue(), value.getValue());
-	}
-
-	public int indexInStrings(Iterable<String> strings){
-		Predicate<String> predicate = new Predicate<String>(){
-
-			@Override
-			public boolean apply(String string){
-				return equalsString(string);
-			}
-		};
-
-		return Iterables.indexOf(strings, predicate);
 	}
 
 	public int indexInValues(Iterable<FieldValue> values){

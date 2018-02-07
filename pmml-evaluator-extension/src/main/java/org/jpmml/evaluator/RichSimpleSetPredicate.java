@@ -62,12 +62,12 @@ public class RichSimpleSetPredicate extends SimpleSetPredicate implements HasPar
 	private Iterable<FieldValue> parseArray(final DataType dataType, final OpType opType){
 		Array array = getArray();
 
-		List<String> content = ArrayUtil.getContent(array);
+		List<?> content = ArrayUtil.getContent(array);
 
-		Function<String, FieldValue> function = new Function<String, FieldValue>(){
+		Function<Object, FieldValue> function = new Function<Object, FieldValue>(){
 
 			@Override
-			public FieldValue apply(String value){
+			public FieldValue apply(Object value){
 				return FieldValueUtil.create(dataType, opType, value);
 			}
 		};

@@ -51,19 +51,19 @@ public class ArrayUtil {
 			return n;
 		}
 
-		List<String> content = getContent(array);
+		List<?> content = getContent(array);
 
 		return content.size();
 	}
 
 	static
-	public List<String> getContent(Array array){
+	public List<?> getContent(Array array){
 		return CacheUtil.getValue(array, ArrayUtil.contentCache);
 	}
 
 	static
 	public List<? extends Number> asNumberList(Array array){
-		List<String> content = getContent(array);
+		List<?> content = getContent(array);
 
 		Array.Type type = array.getType();
 		if(type == null){
@@ -72,9 +72,8 @@ public class ArrayUtil {
 
 		switch(type){
 			case INT:
-				return Lists.transform(content, INT_PARSER);
 			case REAL:
-				return Lists.transform(content, REAL_PARSER);
+				return (List)content;
 			case STRING:
 				throw new InvalidElementException(array);
 			default:
@@ -83,7 +82,7 @@ public class ArrayUtil {
 	}
 
 	static
-	List<String> parse(Array array){
+	public List<String> tokenize(Array array){
 		List<String> result;
 
 		Array.Type type = array.getType();
@@ -91,13 +90,15 @@ public class ArrayUtil {
 			throw new MissingAttributeException(array, PMMLAttributes.ARRAY_TYPE);
 		}
 
+		String value = array.getValue();
+
 		switch(type){
 			case INT:
 			case REAL:
-				result = tokenize(array.getValue(), false);
+				result = tokenize(value, false);
 				break;
 			case STRING:
-				result = tokenize(array.getValue(), true);
+				result = tokenize(value, true);
 				break;
 			default:
 				throw new UnsupportedAttributeException(array, type);
@@ -109,6 +110,27 @@ public class ArrayUtil {
 		}
 
 		return result;
+	}
+
+	static
+	public List<?> parse(Array array){
+		List<String> tokens = tokenize(array);
+
+		Array.Type type = array.getType();
+		if(type == null){
+			throw new MissingAttributeException(array, PMMLAttributes.ARRAY_TYPE);
+		}
+
+		switch(type){
+			case INT:
+				return Lists.transform(tokens, INT_PARSER);
+			case REAL:
+				return Lists.transform(tokens, REAL_PARSER);
+			case STRING:
+				return Lists.transform(tokens, STRING_PARSER);
+			default:
+				throw new UnsupportedAttributeException(array, type);
+		}
 	}
 
 	static
@@ -194,20 +216,20 @@ public class ArrayUtil {
 			result = sb.substring(0, sb.length());
 		}
 
-		result = ArrayUtil.tokenInterner.intern(result);
-
 		sb.setLength(0);
 
 		return result;
 	}
 
-	private static Interner<String> tokenInterner = Interners.newWeakInterner();
+	private static final Interner<Integer> integerInterner = Interners.newWeakInterner();
+	private static final Interner<Double> doubleInterner = Interners.newWeakInterner();
+	private static final Interner<String> stringInterner = Interners.newWeakInterner();
 
 	private static final Function<String, Integer> INT_PARSER = new Function<String, Integer>(){
 
 		@Override
 		public Integer apply(String string){
-			return Integer.parseInt(string);
+			return ArrayUtil.integerInterner.intern(Integer.parseInt(string));
 		}
 	};
 
@@ -215,14 +237,22 @@ public class ArrayUtil {
 
 		@Override
 		public Double apply(String string){
-			return Double.parseDouble(string);
+			return ArrayUtil.doubleInterner.intern(Double.parseDouble(string));
 		}
 	};
 
-	private static final LoadingCache<Array, List<String>> contentCache = CacheUtil.buildLoadingCache(new CacheLoader<Array, List<String>>(){
+	private static final Function<String, String> STRING_PARSER = new Function<String, String>(){
 
 		@Override
-		public List<String> load(Array array){
+		public String apply(String string){
+			return ArrayUtil.stringInterner.intern(string);
+		}
+	};
+
+	private static final LoadingCache<Array, List<?>> contentCache = CacheUtil.buildLoadingCache(new CacheLoader<Array, List<?>>(){
+
+		@Override
+		public List<?> load(Array array){
 			return ImmutableList.copyOf(parse(array));
 		}
 	});

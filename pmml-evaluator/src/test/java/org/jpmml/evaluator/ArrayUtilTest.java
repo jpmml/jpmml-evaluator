@@ -40,7 +40,12 @@ public class ArrayUtilTest {
 
 	@Test
 	public void parseIntArray(){
-		assertEquals(Arrays.asList("1", "2", "3"), parseIntArray("1 2 3"));
+		assertEquals(Arrays.asList(1, 2, 3), parseIntArray("1 2 3"));
+	}
+
+	@Test
+	public void parseRealArray(){
+		assertEquals(Arrays.asList(1d, 2d, 3d), parseRealArray("1 2 3"));
 	}
 
 	@Test
@@ -61,8 +66,8 @@ public class ArrayUtilTest {
 
 	@Test
 	public void intern(){
-		List<String> left = parseStringArray("a b c");
-		List<String> right = parseStringArray("\"a\" \"b\" \"c\"");
+		List<?> left = parseStringArray("a b c");
+		List<?> right = parseStringArray("\"a\" \"b\" \"c\"");
 
 		for(int i = 0; i < 3; i++){
 			assertSame(left.get(i), right.get(i));
@@ -70,12 +75,17 @@ public class ArrayUtilTest {
 	}
 
 	static
-	private List<String> parseIntArray(String content){
-		return ArrayUtil.parse(new Array(Array.Type.INT, content));
+	private List<?> parseIntArray(String value){
+		return ArrayUtil.parse(new Array(Array.Type.INT, value));
 	}
 
 	static
-	private List<String> parseStringArray(String content){
-		return ArrayUtil.parse(new Array(Array.Type.STRING, content));
+	private List<?> parseRealArray(String value){
+		return ArrayUtil.parse(new Array(Array.Type.REAL, value));
+	}
+
+	static
+	private List<?> parseStringArray(String value){
+		return ArrayUtil.parse(new Array(Array.Type.STRING, value));
 	}
 }
