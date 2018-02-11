@@ -29,12 +29,12 @@ import org.dmg.pmml.OpType;
 
 public class InputField extends ModelField {
 
-	private Field field = null;
+	private Field<?> field = null;
 
 	private MiningField miningField = null;
 
 
-	public InputField(Field field, MiningField miningField){
+	public InputField(Field<?> field, MiningField miningField){
 		setField(Objects.requireNonNull(field));
 		setMiningField(Objects.requireNonNull(miningField));
 
@@ -66,14 +66,14 @@ public class InputField extends ModelField {
 
 	@Override
 	public FieldName getName(){
-		Field field = getField();
+		Field<?> field = getField();
 
 		return field.getName();
 	}
 
 	@Override
 	public DataType getDataType(){
-		Field field = getField();
+		Field<?> field = getField();
 
 		return field.getDataType();
 	}
@@ -87,11 +87,11 @@ public class InputField extends ModelField {
 	 * @return the backing {@link Field} element.
 	 * For top-level models, this is always the {@link DataField} element.
 	 */
-	public Field getField(){
+	public Field<?> getField(){
 		return this.field;
 	}
 
-	private void setField(Field field){
+	private void setField(Field<?> field){
 		this.field = field;
 	}
 

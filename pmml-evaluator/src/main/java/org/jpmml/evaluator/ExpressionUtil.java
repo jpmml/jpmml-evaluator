@@ -39,7 +39,7 @@ import org.dmg.pmml.FieldColumnPair;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.HasExpression;
-import org.dmg.pmml.HasField;
+import org.dmg.pmml.HasFieldReference;
 import org.dmg.pmml.HasType;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MapValues;
@@ -55,7 +55,7 @@ public class ExpressionUtil {
 	}
 
 	static
-	public <E extends Expression & HasField<E>> FieldName ensureField(E hasField){
+	public <E extends Expression & HasFieldReference<E>> FieldName ensureField(E hasField){
 		FieldName name = hasField.getField();
 		if(name == null){
 			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(hasField.getClass()) + "@field"), hasField);

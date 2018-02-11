@@ -932,7 +932,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		List<Predictor> predictors = predictorList.getPredictors();
 		for(Predictor predictor : predictors){
-			result.put(predictor.getName(), predictor);
+			result.put(predictor.getField(), predictor);
 		}
 
 		return result;
@@ -953,9 +953,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 				ppCells:
 				for(PPCell ppCell : ppCells){
-					FieldName name = ppCell.getPredictorName();
+					FieldName name = ppCell.getField();
 					if(name == null){
-						throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_PREDICTORNAME);
+						throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_FIELD);
 					}
 
 					Predictor factor = this.factors.get(name);
@@ -972,7 +972,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 						continue ppCells;
 					}
 
-					throw new InvalidAttributeException(ppCell, PMMLAttributes.PPCELL_PREDICTORNAME, name);
+					throw new InvalidAttributeException(ppCell, PMMLAttributes.PPCELL_FIELD, name);
 				}
 
 				return result;
@@ -1071,7 +1071,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			for(int i = 0, max = factorHandlers.size(); i < max; i++){
 				FactorHandler factorHandler = factorHandlers.get(i);
 
-				FieldValue value = context.evaluate(factorHandler.getPredictorName());
+				FieldValue value = context.evaluate(factorHandler.getField());
 				if(value == null){
 					return null;
 				}
@@ -1087,7 +1087,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			for(int i = 0, max = covariateHandlers.size(); i < max; i++){
 				CovariateHandler covariateHandler = covariateHandlers.get(i);
 
-				FieldValue value = context.evaluate(covariateHandler.getPredictorName());
+				FieldValue value = context.evaluate(covariateHandler.getField());
 				if(value == null){
 					return null;
 				}
@@ -1154,19 +1154,19 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			private PredictorHandler(PPCell ppCell){
 				setPPCell(ppCell);
 
-				FieldName name = ppCell.getPredictorName();
+				FieldName name = ppCell.getField();
 				if(name == null){
-					throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_PREDICTORNAME);
+					throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_FIELD);
 				}
 			}
 
 			abstract
 			public <V extends Number> Value<V> updateProduct(Value<V> product, FieldValue value);
 
-			public FieldName getPredictorName(){
+			public FieldName getField(){
 				PPCell ppCell = getPPCell();
 
-				return ppCell.getPredictorName();
+				return ppCell.getField();
 			}
 
 			public PPCell getPPCell(){

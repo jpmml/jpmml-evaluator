@@ -34,16 +34,16 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Entity;
 import org.dmg.pmml.Expression;
+import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
-import org.dmg.pmml.HasField;
+import org.dmg.pmml.HasFieldReference;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
-import org.dmg.pmml.TypeDefinitionField;
 import org.dmg.pmml.neural_network.Connection;
 import org.dmg.pmml.neural_network.NeuralInput;
 import org.dmg.pmml.neural_network.NeuralInputs;
@@ -366,7 +366,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				throw new MissingAttributeException(fieldRef, PMMLAttributes.FIELDREF_FIELD);
 			}
 
-			TypeDefinitionField field = resolveField(name);
+			Field<?> field = resolveField(name);
 			if(field == null){
 				throw new MissingFieldException(name, fieldRef);
 			} // End if
@@ -558,12 +558,12 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 			Expression expression = getOutputExpression(neuralOutput);
 
-			if(expression instanceof HasField){
-				HasField<?> hasField = (HasField<?>)expression;
+			if(expression instanceof HasFieldReference){
+				HasFieldReference<?> hasFieldReference = (HasFieldReference<?>)expression;
 
-				name = hasField.getField();
+				name = hasFieldReference.getField();
 				if(name == null){
-					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement((Class)hasField.getClass()) + "@field"), expression);
+					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement((Class)hasFieldReference.getClass()) + "@field"), expression);
 				}
 			} else
 

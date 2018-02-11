@@ -27,7 +27,7 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
 
-class VariableField extends Field {
+class VariableField extends Field<VariableField> {
 
 	private FieldName name = null;
 

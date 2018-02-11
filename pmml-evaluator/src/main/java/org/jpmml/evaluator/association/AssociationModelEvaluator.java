@@ -34,6 +34,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
+import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningField;
@@ -41,7 +42,6 @@ import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
-import org.dmg.pmml.TypeDefinitionField;
 import org.dmg.pmml.association.AssociationModel;
 import org.dmg.pmml.association.AssociationRule;
 import org.dmg.pmml.association.Item;
@@ -432,7 +432,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 					name = FieldName.create(value);
 					category = null;
 
-					TypeDefinitionField field = modelEvaluator.resolveField(name);
+					Field<?> field = modelEvaluator.resolveField(name);
 					if(field != null){
 						break parser;
 					}

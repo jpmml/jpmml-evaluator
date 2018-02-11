@@ -60,7 +60,6 @@ import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.TransformationDictionary;
-import org.dmg.pmml.TypeDefinitionField;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
 
@@ -440,8 +439,8 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		return evaluate(context);
 	}
 
-	protected TypeDefinitionField resolveField(FieldName name){
-		TypeDefinitionField result = getDataField(name);
+	protected Field<?> resolveField(FieldName name){
+		Field<?> result = getDataField(name);
 
 		if(result == null){
 			result = resolveDerivedField(name);
@@ -530,7 +529,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 					continue;
 				}
 
-				Field field = getDataField(name);
+				Field<?> field = getDataField(name);
 				if(field == null){
 					field = new VariableField(name);
 				}

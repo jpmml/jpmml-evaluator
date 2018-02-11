@@ -155,7 +155,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 			} // End if
 
 			if(parent != null){
-				Field field = resolveField(name, parent);
+				Field<?> field = resolveField(name, parent);
 				if(field != null){
 					FieldValue value = parent.evaluate(name);
 
@@ -215,7 +215,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	static
-	private Field resolveField(FieldName name, MiningModelEvaluationContext context){
+	private Field<?> resolveField(FieldName name, MiningModelEvaluationContext context){
 
 		while(context != null){
 			OutputField outputField = context.getOutputField(name);
@@ -235,7 +235,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	static
-	private FieldValue performValueTreatment(Field field, MiningField miningField, FieldValue value){
+	private FieldValue performValueTreatment(Field<?> field, MiningField miningField, FieldValue value){
 
 		if(MiningFieldUtil.isDefault(miningField)){
 			return value;

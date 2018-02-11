@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.dmg.pmml.Constant;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
 import org.jpmml.model.ReflectionUtil;
 
@@ -41,11 +40,6 @@ public class RichConstant extends Constant implements HasParsedValue<RichConstan
 
 	public RichConstant(Constant constant){
 		ReflectionUtil.copyState(constant, this);
-	}
-
-	@Override
-	public FieldName getField(){
-		throw new UnsupportedOperationException();
 	}
 
 	@Override

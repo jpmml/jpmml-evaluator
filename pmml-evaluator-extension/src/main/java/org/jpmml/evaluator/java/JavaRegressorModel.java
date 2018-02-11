@@ -31,7 +31,7 @@ import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
-import org.jpmml.model.Property;
+import org.jpmml.model.annotations.Property;
 
 abstract
 public class JavaRegressorModel extends JavaModel {

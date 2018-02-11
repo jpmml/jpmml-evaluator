@@ -45,7 +45,6 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethod;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Target;
-import org.dmg.pmml.TypeDefinitionField;
 import org.dmg.pmml.Value;
 
 public class FieldValueUtil {
@@ -54,7 +53,7 @@ public class FieldValueUtil {
 	}
 
 	static
-	public FieldValue prepareInputValue(Field field, MiningField miningField, Object value){
+	public FieldValue prepareInputValue(Field<?> field, MiningField miningField, Object value){
 		DataType dataType = field.getDataType();
 		OpType opType = field.getOpType();
 
@@ -121,7 +120,7 @@ public class FieldValueUtil {
 	}
 
 	static
-	public FieldValue performValidValueTreatment(Field field, MiningField miningField, FieldValue value){
+	public FieldValue performValidValueTreatment(Field<?> field, MiningField miningField, FieldValue value){
 		OutlierTreatmentMethod outlierTreatmentMethod = miningField.getOutlierTreatment();
 
 		switch(outlierTreatmentMethod){
@@ -177,7 +176,7 @@ public class FieldValueUtil {
 	}
 
 	static
-	public FieldValue performInvalidValueTreatment(Field field, MiningField miningField, Object value){
+	public FieldValue performInvalidValueTreatment(Field<?> field, MiningField miningField, Object value){
 		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
 		String invalidValueReplacement = miningField.getInvalidValueReplacement();
 
@@ -210,7 +209,7 @@ public class FieldValueUtil {
 	}
 
 	static
-	public FieldValue performMissingValueTreatment(Field field, MiningField miningField){
+	public FieldValue performMissingValueTreatment(Field<?> field, MiningField miningField){
 		MissingValueTreatmentMethod missingValueTreatmentMethod = miningField.getMissingValueTreatment();
 
 		if(missingValueTreatmentMethod == null){
@@ -230,7 +229,7 @@ public class FieldValueUtil {
 	}
 
 	static
-	OpType getOpType(Field field, MiningField miningField){
+	OpType getOpType(Field<?> field, MiningField miningField){
 		OpType opType = field.getOpType();
 
 		// "A MiningField overrides a (Data)Field"
@@ -242,7 +241,7 @@ public class FieldValueUtil {
 	}
 
 	static
-	OpType getOpType(Field field, MiningField miningField, Target target){
+	OpType getOpType(Field<?> field, MiningField miningField, Target target){
 		OpType opType = field.getOpType();
 
 		// "A MiningField overrides a (Data)Field, and a Target overrides a MiningField"
@@ -258,7 +257,7 @@ public class FieldValueUtil {
 	}
 
 	static
-	private Value.Property getStatus(Field field, MiningField miningField, Object value, boolean compatible){
+	private Value.Property getStatus(Field<?> field, MiningField miningField, Object value, boolean compatible){
 
 		if(field instanceof DataField){
 			DataField dataField = (DataField)field;
@@ -395,7 +394,7 @@ public class FieldValueUtil {
 	}
 
 	static
-	private FieldValue createInputValue(Field field, MiningField miningField, Object value){
+	private FieldValue createInputValue(Field<?> field, MiningField miningField, Object value){
 
 		if(value == null){
 			return null;
@@ -406,22 +405,22 @@ public class FieldValueUtil {
 
 		FieldValue fieldValue = createOrRefine(dataType, opType, value);
 
-		if(field instanceof TypeDefinitionField){
-			return enhance((TypeDefinitionField)field, fieldValue);
+		if(field instanceof DataField){
+			return enhance((DataField)field, fieldValue);
 		}
 
 		return fieldValue;
 	}
 
 	static
-	private FieldValue createMissingInputValue(Field field, MiningField miningField){
+	private FieldValue createMissingInputValue(Field<?> field, MiningField miningField){
 		String missingValueReplacement = miningField.getMissingValueReplacement();
 
 		return createInputValue(field, miningField, missingValueReplacement);
 	}
 
 	static
-	private FieldValue createTargetValue(Field field, MiningField miningField, Target target, Object value){
+	private FieldValue createTargetValue(Field<?> field, MiningField miningField, Target target, Object value){
 
 		if(value == null){
 			return null;
@@ -432,19 +431,19 @@ public class FieldValueUtil {
 
 		FieldValue fieldValue = createOrRefine(dataType, opType, value);
 
-		if(field instanceof TypeDefinitionField){
-			return enhance((TypeDefinitionField)field, fieldValue);
+		if(field instanceof DataField){
+			return enhance((DataField)field, fieldValue);
 		}
 
 		return fieldValue;
 	}
 
 	static
-	public FieldValue create(Field field, Object value){
+	public FieldValue create(Field<?> field, Object value){
 		FieldValue result = create(field.getDataType(), field.getOpType(), value);
 
-		if(field instanceof TypeDefinitionField){
-			return enhance((TypeDefinitionField)field, result);
+		if(field instanceof DataField){
+			return enhance((DataField)field, result);
 		}
 
 		return result;
@@ -510,11 +509,11 @@ public class FieldValueUtil {
 	}
 
 	static
-	public FieldValue refine(Field field, FieldValue value){
+	public FieldValue refine(Field<?> field, FieldValue value){
 		FieldValue result = refine(field.getDataType(), field.getOpType(), value);
 
-		if((field instanceof TypeDefinitionField) && (result != value)){
-			return enhance((TypeDefinitionField)field, result);
+		if((field instanceof DataField) && (result != value)){
+			return enhance((DataField)field, result);
 		}
 
 		return result;
@@ -564,12 +563,12 @@ public class FieldValueUtil {
 	}
 
 	static
-	private FieldValue enhance(TypeDefinitionField field, FieldValue value){
+	private FieldValue enhance(DataField dataField, FieldValue value){
 
 		if(value instanceof OrdinalValue){
 			OrdinalValue ordinalValue = (OrdinalValue)value;
 
-			ordinalValue.setOrdering(getOrdering(field, ordinalValue.getDataType()));
+			ordinalValue.setOrdering(getOrdering(dataField, ordinalValue.getDataType()));
 		}
 
 		return value;
@@ -606,20 +605,20 @@ public class FieldValueUtil {
 	}
 
 	static
-	public Value getValidValue(TypeDefinitionField field, Object value){
+	public Value getValidValue(DataField dataField, Object value){
 
 		if(value == null){
 			return null;
 		} // End if
 
-		if(field.hasValues()){
-			DataType dataType = field.getDataType();
-			OpType opType = field.getOpType();
+		if(dataField.hasValues()){
+			DataType dataType = dataField.getDataType();
+			OpType opType = dataField.getOpType();
 
 			value = TypeUtil.parseOrCast(dataType, value);
 
-			if(field instanceof HasParsedValueMapping){
-				HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)field;
+			if(dataField instanceof HasParsedValueMapping){
+				HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)dataField;
 
 				FieldValue fieldValue = createInternal(dataType, opType, value);
 
@@ -631,7 +630,7 @@ public class FieldValueUtil {
 				return null;
 			}
 
-			List<Value> pmmlValues = field.getValues();
+			List<Value> pmmlValues = dataField.getValues();
 			for(int i = 0, max = pmmlValues.size(); i < max; i++){
 				Value pmmlValue = pmmlValues.get(i);
 
@@ -674,10 +673,10 @@ public class FieldValueUtil {
 	}
 
 	static
-	public List<Value> getValidValues(TypeDefinitionField field){
+	public List<Value> getValidValues(DataField dataField){
 
-		if(field.hasValues()){
-			List<Value> pmmlValues = field.getValues();
+		if(dataField.hasValues()){
+			List<Value> pmmlValues = dataField.getValues();
 
 			List<Value> result = new ArrayList<>(pmmlValues.size());
 
@@ -709,8 +708,8 @@ public class FieldValueUtil {
 	}
 
 	static
-	public List<String> getTargetCategories(TypeDefinitionField field){
-		return CacheUtil.getValue(field, FieldValueUtil.targetCategoryCache);
+	public List<String> getTargetCategories(DataField dataField){
+		return CacheUtil.getValue(dataField, FieldValueUtil.targetCategoryCache);
 	}
 
 	static
@@ -761,8 +760,8 @@ public class FieldValueUtil {
 	}
 
 	static
-	private List<?> getOrdering(TypeDefinitionField field, final DataType dataType){
-		List<Value> values = getValidValues(field);
+	private List<?> getOrdering(DataField dataField, final DataType dataType){
+		List<Value> values = getValidValues(dataField);
 		if(values.isEmpty()){
 			return null;
 		}
@@ -778,11 +777,11 @@ public class FieldValueUtil {
 		return Lists.newArrayList(Iterables.transform(values, function));
 	}
 
-	private static final LoadingCache<TypeDefinitionField, List<String>> targetCategoryCache = CacheUtil.buildLoadingCache(new CacheLoader<TypeDefinitionField, List<String>>(){
+	private static final LoadingCache<DataField, List<String>> targetCategoryCache = CacheUtil.buildLoadingCache(new CacheLoader<DataField, List<String>>(){
 
 		@Override
-		public List<String> load(TypeDefinitionField field){
-			List<Value> values = getValidValues(field);
+		public List<String> load(DataField dataField){
+			List<Value> values = getValidValues(dataField);
 
 			Function<Value, String> function = new Function<Value, String>(){
 

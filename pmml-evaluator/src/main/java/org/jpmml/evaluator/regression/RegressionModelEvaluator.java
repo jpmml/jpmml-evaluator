@@ -287,9 +287,9 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		if(regressionTable.hasNumericPredictors()){
 			List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
 			for(NumericPredictor numericPredictor : numericPredictors){
-				FieldName name = numericPredictor.getName();
+				FieldName name = numericPredictor.getField();
 				if(name == null){
-					throw new MissingAttributeException(numericPredictor, PMMLAttributes.NUMERICPREDICTOR_NAME);
+					throw new MissingAttributeException(numericPredictor, PMMLAttributes.NUMERICPREDICTOR_FIELD);
 				}
 
 				FieldValue value = context.evaluate(name);
@@ -317,9 +317,9 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 			List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
 			for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
-				FieldName name = categoricalPredictor.getName();
+				FieldName name = categoricalPredictor.getField();
 				if(name == null){
-					throw new MissingAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_NAME);
+					throw new MissingAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
 				}
 
 				if(matchedName != null){

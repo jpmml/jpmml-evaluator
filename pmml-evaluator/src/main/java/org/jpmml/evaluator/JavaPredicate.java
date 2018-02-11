@@ -21,7 +21,7 @@ package org.jpmml.evaluator;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
-import org.jpmml.schema.Extension;
+import org.jpmml.model.annotations.Extension;
 
 @Extension
 abstract

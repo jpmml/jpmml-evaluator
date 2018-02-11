@@ -23,9 +23,9 @@ import java.util.List;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.Header;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.Version;
 import org.dmg.pmml.clustering.ClusteringModel;
 import org.jpmml.evaluator.UnsupportedMarkupException;
-import org.jpmml.schema.Version;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

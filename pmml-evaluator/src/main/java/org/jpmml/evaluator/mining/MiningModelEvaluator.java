@@ -743,7 +743,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			List<InputField> inputFields = modelEvaluator.getInputFields();
 			for(InputField inputField : inputFields){
-				Field field = inputField.getField();
+				Field<?> field = inputField.getField();
 
 				if(field instanceof DataField){
 					MiningField miningField = inputField.getMiningField();

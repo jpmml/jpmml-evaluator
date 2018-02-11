@@ -194,9 +194,9 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		List<BayesInput> bayesInputs = getBayesInputs();
 		for(BayesInput bayesInput : bayesInputs){
-			FieldName name = bayesInput.getFieldName();
+			FieldName name = bayesInput.getField();
 			if(name == null){
-				throw new MissingAttributeException(bayesInput, PMMLAttributes.BAYESINPUT_FIELDNAME);
+				throw new MissingAttributeException(bayesInput, PMMLAttributes.BAYESINPUT_FIELD);
 			}
 
 			FieldValue value = context.evaluate(name);
@@ -232,13 +232,13 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
 
-		FieldName targetFieldName = bayesOutput.getFieldName();
+		FieldName targetFieldName = bayesOutput.getField();
 		if(targetFieldName == null){
-			throw new MissingAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELDNAME);
+			throw new MissingAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD);
 		} // End if
 
 		if(targetFieldName != null && !Objects.equals(targetField.getName(), targetFieldName)){
-			throw new InvalidAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELDNAME, targetFieldName);
+			throw new InvalidAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD, targetFieldName);
 		}
 
 		calculatePriorProbabilities(probabilities, bayesOutput.getTargetValueCounts());
@@ -373,7 +373,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		List<BayesInput> bayesInputs = CacheUtil.getValue(naiveBayesModel, NaiveBayesModelEvaluator.bayesInputCache);
 		for(BayesInput bayesInput : bayesInputs){
-			FieldName name = bayesInput.getFieldName();
+			FieldName name = bayesInput.getField();
 
 			Map<String, Double> counts = new LinkedHashMap<>();
 
