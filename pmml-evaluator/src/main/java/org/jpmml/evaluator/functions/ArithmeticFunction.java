@@ -24,6 +24,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UndefinedResultException;
 
@@ -46,7 +47,7 @@ public class ArithmeticFunction extends AbstractFunction {
 
 		// "If one of the input fields of a simple arithmetic function is a missing value, then the result evaluates to missing value"
 		if(left == null || right == null){
-			return null;
+			return FieldValues.MISSING_VALUE;
 		}
 
 		DataType dataType = TypeUtil.getResultDataType(left.getDataType(), right.getDataType());

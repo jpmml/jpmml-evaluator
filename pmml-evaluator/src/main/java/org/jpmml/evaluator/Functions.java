@@ -26,6 +26,7 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.IllegalFormatException;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -262,7 +263,7 @@ public interface Functions {
 
 		@Override
 		public Boolean evaluate(FieldValue value){
-			return Boolean.valueOf(value == null);
+			return Boolean.valueOf(Objects.equals(FieldValues.MISSING_VALUE, value));
 		}
 	};
 
@@ -270,7 +271,7 @@ public interface Functions {
 
 		@Override
 		public Boolean evaluate(FieldValue value){
-			return Boolean.valueOf(value != null);
+			return Boolean.valueOf(!Objects.equals(FieldValues.MISSING_VALUE, value));
 		}
 	};
 
@@ -372,7 +373,7 @@ public interface Functions {
 			}
 
 			FieldValue flag = arguments.get(0);
-			if(flag == null){
+			if(Objects.equals(FieldValues.MISSING_VALUE, flag)){
 				throw new FunctionException(this, "Missing arguments");
 			} // End if
 
@@ -380,7 +381,7 @@ public interface Functions {
 				FieldValue trueValue = arguments.get(1);
 
 				// "The THEN part is required"
-				if(trueValue == null){
+				if(Objects.equals(FieldValues.MISSING_VALUE, trueValue)){
 					throw new FunctionException(this, "Missing arguments");
 				}
 
@@ -388,11 +389,11 @@ public interface Functions {
 			} else
 
 			{
-				FieldValue falseValue = (arguments.size() > 2 ? arguments.get(2) : null);
+				FieldValue falseValue = (arguments.size() > 2 ? arguments.get(2) : FieldValues.MISSING_VALUE);
 
 				// "The ELSE part is optional. If the ELSE part is absent, then a missing value is returned"
-				if(falseValue == null){
-					return null;
+				if(Objects.equals(FieldValues.MISSING_VALUE, falseValue)){
+					return FieldValues.MISSING_VALUE;
 				}
 
 				return falseValue;

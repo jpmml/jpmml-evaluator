@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.cache.CacheLoader;
@@ -58,6 +59,7 @@ import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
+import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.InvalidElementException;
@@ -406,7 +408,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			}
 
 			FieldValue value = ExpressionUtil.evaluateTypedExpressionContainer(derivedField, context);
-			if(value == null){
+			if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 				return null;
 			}
 

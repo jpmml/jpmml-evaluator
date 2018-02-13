@@ -66,6 +66,7 @@ import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.HasParsedValueMapping;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.MisplacedElementException;
@@ -202,7 +203,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			FieldValue value = context.evaluate(name);
 
 			// "Missing values are ignored"
-			if(value == null){
+			if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 				continue;
 			}
 
@@ -217,7 +218,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			if(derivedField != null){
 				value = discretize(derivedField, value);
 
-				if(value == null){
+				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 					continue;
 				}
 			}
@@ -258,8 +259,8 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			Discretize discretize = (Discretize)expression;
 
 			value = DiscretizationUtil.discretize(discretize, value);
-			if(value == null){
-				return null;
+			if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+				return FieldValues.MISSING_VALUE;
 			}
 
 			return FieldValueUtil.refine(derivedField, value);

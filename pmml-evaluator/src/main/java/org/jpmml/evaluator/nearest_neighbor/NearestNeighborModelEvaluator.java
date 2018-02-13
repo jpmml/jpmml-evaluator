@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -77,6 +78,7 @@ import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.InlineTableUtil;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.InvalidElementException;
@@ -382,7 +384,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		for(InstanceResult<V> instanceResult : instanceResults){
 			FieldValue value = table.get(instanceResult.getId(), name);
-			if(value == null){
+			if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 				throw new MissingValueException(name);
 			}
 
@@ -435,7 +437,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		for(InstanceResult<V> instanceResult : instanceResults){
 			FieldValue value = table.get(instanceResult.getId(), name);
-			if(value == null){
+			if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 				throw new MissingValueException(name);
 			}
 
@@ -497,7 +499,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			@Override
 			public String apply(Integer row){
 				FieldValue value = table.get(row, name);
-				if(value == null){
+				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 					throw new MissingValueException(name);
 				}
 

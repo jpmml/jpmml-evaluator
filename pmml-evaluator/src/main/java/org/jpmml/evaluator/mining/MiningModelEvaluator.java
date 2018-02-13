@@ -25,6 +25,7 @@ import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -60,6 +61,7 @@ import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.InvalidAttributeException;
@@ -512,7 +514,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 							context.putOutputField(outputField.getOutputField());
 
 							FieldValue value = segmentContext.getField(name);
-							if(value == null){
+							if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 								throw new MissingValueException(name, segment);
 							}
 

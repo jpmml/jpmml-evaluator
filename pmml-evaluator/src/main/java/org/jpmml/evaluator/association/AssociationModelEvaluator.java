@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -273,7 +274,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 			if(groupFields.size() == 0){
 
-				if(value == null){
+				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 					continue;
 				} // End if
 
@@ -302,7 +303,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 			if(groupFields.size() == 1){
 
-				if(value == null){
+				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 					throw new MissingValueException(name);
 				} // End if
 

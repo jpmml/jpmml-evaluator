@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Ordering;
@@ -211,7 +212,7 @@ public class OutputUtil {
 						}
 
 						FieldValue expectedTargetValue = context.evaluate(targetFieldName);
-						if(expectedTargetValue == null){
+						if(Objects.equals(FieldValues.MISSING_VALUE, expectedTargetValue)){
 							throw new MissingValueException(targetFieldName, outputField);
 						}
 

@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.FieldName;
@@ -59,7 +60,13 @@ public class EvaluationContext {
 		if(fields.size() > 0){
 			FieldValue value = fields.get(name);
 
-			if((value != null) || (value == null && fields.containsKey(name))){
+			// Distinguish between missing mappings, and keys mapped to null values
+			if(value != null || (value == null && fields.containsKey(name))){
+
+				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+					return FieldValues.MISSING_VALUE;
+				}
+
 				return value;
 			}
 		}

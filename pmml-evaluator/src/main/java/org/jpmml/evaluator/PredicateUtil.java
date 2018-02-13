@@ -28,6 +28,7 @@
 package org.jpmml.evaluator;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.False;
@@ -136,15 +137,15 @@ public class PredicateUtil {
 
 		switch(operator){
 			case IS_MISSING:
-				return Boolean.valueOf(value == null);
+				return Boolean.valueOf(Objects.equals(FieldValues.MISSING_VALUE, value));
 			case IS_NOT_MISSING:
-				return Boolean.valueOf(value != null);
+				return Boolean.valueOf(!Objects.equals(FieldValues.MISSING_VALUE, value));
 			default:
 				break;
 		}
 
 		// "A SimplePredicate evaluates to unknwon if the input value is missing"
-		if(value == null){
+		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 			return null;
 		}
 
@@ -186,7 +187,8 @@ public class PredicateUtil {
 		}
 
 		FieldValue value = context.evaluate(name);
-		if(value == null){
+
+		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 			return null;
 		}
 

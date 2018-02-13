@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.base.Function;
 import com.google.common.cache.CacheLoader;
@@ -61,7 +62,7 @@ public class FieldValueUtil {
 			throw new InvalidElementException(field);
 		} // End if
 
-		if(value == null){
+		if(Objects.equals(FieldValues.MISSING_VALUE, value) || (value == null)){
 			return performMissingValueTreatment(field, miningField);
 		} else
 
@@ -147,7 +148,7 @@ public class FieldValueUtil {
 			throw new InvalidElementException(miningField);
 		} // End if
 
-		if(value == null){
+		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 			throw new TypeCheckException(Number.class, null);
 		}
 
@@ -396,8 +397,8 @@ public class FieldValueUtil {
 	static
 	private FieldValue createInputValue(Field<?> field, MiningField miningField, Object value){
 
-		if(value == null){
-			return null;
+		if(Objects.equals(FieldValues.MISSING_VALUE, value) || (value == null)){
+			return FieldValues.MISSING_VALUE;
 		}
 
 		DataType dataType = field.getDataType();
@@ -422,8 +423,8 @@ public class FieldValueUtil {
 	static
 	private FieldValue createTargetValue(Field<?> field, MiningField miningField, Target target, Object value){
 
-		if(value == null){
-			return null;
+		if(Objects.equals(FieldValues.MISSING_VALUE, value) || (value == null)){
+			return FieldValues.MISSING_VALUE;
 		}
 
 		DataType dataType = field.getDataType();
@@ -458,7 +459,7 @@ public class FieldValueUtil {
 	public FieldValue create(DataType dataType, OpType opType, Object value){
 
 		if(value == null){
-			return null;
+			return FieldValues.MISSING_VALUE;
 		} // End if
 
 		if(value instanceof Collection){
@@ -522,8 +523,8 @@ public class FieldValueUtil {
 	static
 	public FieldValue refine(DataType dataType, OpType opType, FieldValue value){
 
-		if(value == null){
-			return null;
+		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+			return FieldValues.MISSING_VALUE;
 		}
 
 		DataType valueDataType = value.getDataType();
@@ -547,8 +548,8 @@ public class FieldValueUtil {
 	static
 	private FieldValue createOrRefine(DataType dataType, OpType opType, Object value){
 
-		if(value == null){
-			return null;
+		if(Objects.equals(FieldValues.MISSING_VALUE, value) || (value == null)){
+			return FieldValues.MISSING_VALUE;
 		} // End if
 
 		if(value instanceof FieldValue){

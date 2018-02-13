@@ -23,6 +23,8 @@ import org.dmg.pmml.OpType;
 
 public interface FieldValues {
 
+	FieldValue MISSING_VALUE = null;
+
 	FieldValue CONTINUOUS_DOUBLE_ZERO = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Numbers.DOUBLE_ZERO);
 	FieldValue CONTINUOUS_DOUBLE_ONE = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Numbers.DOUBLE_ONE);
 

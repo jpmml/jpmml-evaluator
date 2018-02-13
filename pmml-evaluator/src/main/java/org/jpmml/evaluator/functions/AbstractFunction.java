@@ -23,6 +23,7 @@ import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.jpmml.evaluator.FieldValue;
+import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.Function;
 import org.jpmml.evaluator.FunctionException;
 
@@ -56,7 +57,7 @@ public class AbstractFunction implements Function {
 			throw new FunctionException(this, "Expected " + size + " arguments, got " + arguments.size() + " arguments");
 		} // End if
 
-		if(!allowNulls && arguments.contains(null)){
+		if(!allowNulls && arguments.contains(FieldValues.MISSING_VALUE)){
 			throw new FunctionException(this, "Missing arguments");
 		}
 	}
@@ -81,7 +82,7 @@ public class AbstractFunction implements Function {
 			throw new FunctionException(this, "Expected " + minSize + " or more arguments, got " + arguments.size() + " arguments");
 		} // End if
 
-		if(!allowNulls && arguments.contains(null)){
+		if(!allowNulls && arguments.contains(FieldValues.MISSING_VALUE)){
 			throw new FunctionException(this, "Missing arguments");
 		}
 	}

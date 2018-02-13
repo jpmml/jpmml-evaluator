@@ -26,6 +26,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.FunctionException;
 import org.jpmml.evaluator.TypeUtil;
 
@@ -61,7 +62,7 @@ public class StandardDeviationFunction extends AbstractFunction {
 			throw new FunctionException(this, "Expected 1 or 2 arguments, got " + arguments.size() + " arguments");
 		} // End if
 
-		if(arguments.contains(null)){
+		if(arguments.contains(FieldValues.MISSING_VALUE)){
 			throw new FunctionException(this, "Missing arguments");
 		}
 

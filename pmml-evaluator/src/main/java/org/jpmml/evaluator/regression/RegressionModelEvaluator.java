@@ -39,6 +39,7 @@ import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.InvalidElementException;
 import org.jpmml.evaluator.InvalidElementListException;
@@ -295,7 +296,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				FieldValue value = context.evaluate(name);
 
 				// "If the input value is missing, then the result evaluates to a missing value"
-				if(value == null){
+				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 					return null;
 				}
 
@@ -334,7 +335,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				FieldValue value = context.evaluate(name);
 
 				// "If the input value is missing, then the categorical field is ignored"
-				if(value == null){
+				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 					matchedName = name;
 
 					continue;
@@ -361,7 +362,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 					FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
 
 					// "If the input value is missing, then the result evaluates to a missing value"
-					if(value == null){
+					if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 						return null;
 					}
 

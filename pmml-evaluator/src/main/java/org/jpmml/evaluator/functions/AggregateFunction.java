@@ -27,6 +27,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.TypeUtil;
 
 abstract
@@ -65,7 +66,7 @@ public class AggregateFunction extends AbstractFunction {
 
 		// "If all inputs are missing, then the result evaluates to a missing value"
 		if(statistic.getN() == 0){
-			return null;
+			return FieldValues.MISSING_VALUE;
 		}
 
 		Double result = statistic.getResult();

@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DefineFunction;
@@ -241,7 +242,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 			return value;
 		} // End if
 
-		if(value == null){
+		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 			return FieldValueUtil.performMissingValueTreatment(field, miningField);
 		} else
 
