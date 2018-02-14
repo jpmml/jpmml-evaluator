@@ -18,41 +18,27 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.DataType;
-
 abstract
-public class Vote extends AbstractComputable implements HasPrediction {
-
-	private Object result = null;
-
-
-	protected Vote(){
-	}
-
-	abstract
-	protected void computeResult(DataType dataType);
+public class AbstractComputable implements Computable {
 
 	@Override
-	public Object getResult(){
+	public String toString(){
+		ToStringHelper helper = toStringHelper();
 
-		if(this.result == null){
-			throw new EvaluationException("Vote result has not been computed");
+		return helper.toString();
+	}
+
+	protected ToStringHelper toStringHelper(){
+		ToStringHelper helper = new ToStringHelper(this);
+
+		try {
+			helper = helper.add("result", getResult());
+		} catch(UnsupportedOperationException uoe){
+			// Ignored
+		} catch(PMMLException pe){
+			helper = helper.add("result", pe);
 		}
 
-		return this.result;
-	}
-
-	protected void setResult(Object result){
-		this.result = result;
-	}
-
-	@Override
-	public Object getPrediction(){
-		return getResult();
-	}
-
-	@Override
-	public Report getPredictionReport(){
-		return null;
+		return helper;
 	}
 }

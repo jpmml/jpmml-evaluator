@@ -24,7 +24,7 @@ import org.dmg.pmml.MiningFunction;
 /**
  * @see MiningFunction#REGRESSION
  */
-public class Regression<V extends Number> implements Computable, HasPrediction {
+public class Regression<V extends Number> extends AbstractComputable implements HasPrediction {
 
 	private Value<V> value = null;
 
@@ -55,20 +55,6 @@ public class Regression<V extends Number> implements Computable, HasPrediction {
 		Object result = TypeUtil.cast(dataType, value.getValue());
 
 		setResult(result);
-	}
-
-	@Override
-	public String toString(){
-		ToStringHelper helper = toStringHelper();
-
-		return helper.toString();
-	}
-
-	protected ToStringHelper toStringHelper(){
-		ToStringHelper helper = new ToStringHelper(this)
-			.add("result", getResult());
-
-		return helper;
 	}
 
 	@Override

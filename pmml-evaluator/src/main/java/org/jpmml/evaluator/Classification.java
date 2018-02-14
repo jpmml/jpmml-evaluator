@@ -36,7 +36,7 @@ import org.dmg.pmml.MiningFunction;
  * @see MiningFunction#CLASSIFICATION
  * @see MiningFunction#CLUSTERING
  */
-public class Classification<V extends Number> implements Computable, HasPrediction {
+public class Classification<V extends Number> extends AbstractComputable implements HasPrediction {
 
 	private Type type = null;
 
@@ -99,18 +99,11 @@ public class Classification<V extends Number> implements Computable, HasPredicti
 	}
 
 	@Override
-	public String toString(){
-		ToStringHelper helper = toStringHelper();
-
-		return helper.toString();
-	}
-
 	protected ToStringHelper toStringHelper(){
 		Type type = getType();
 		ValueMap<String, V> values = getValues();
 
-		ToStringHelper helper = new ToStringHelper(this)
-			.add("result", getResult())
+		ToStringHelper helper = super.toStringHelper()
 			.add(type.entryKey(), values.entrySet());
 
 		return helper;

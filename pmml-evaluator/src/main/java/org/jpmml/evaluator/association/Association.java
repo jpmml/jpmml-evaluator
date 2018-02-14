@@ -26,7 +26,7 @@ import java.util.List;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.association.AssociationRule;
-import org.jpmml.evaluator.Computable;
+import org.jpmml.evaluator.AbstractComputable;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasRuleValues;
 import org.jpmml.evaluator.ToStringHelper;
@@ -35,7 +35,7 @@ import org.jpmml.evaluator.ToStringHelper;
  * @see MiningFunction#ASSOCIATION_RULES
  */
 abstract
-public class Association implements Computable, HasRuleValues, HasEntityRegistry<AssociationRule> {
+public class Association extends AbstractComputable implements HasRuleValues, HasEntityRegistry<AssociationRule> {
 
 	private List<AssociationRule> associationRules = null;
 
@@ -60,14 +60,8 @@ public class Association implements Computable, HasRuleValues, HasEntityRegistry
 	}
 
 	@Override
-	public String toString(){
-		ToStringHelper helper = toStringHelper();
-
-		return helper.toString();
-	}
-
 	protected ToStringHelper toStringHelper(){
-		ToStringHelper helper = new ToStringHelper(this)
+		ToStringHelper helper = super.toStringHelper()
 			.add("antecedentFlags", getAntecedentFlags())
 			.add("consequentFlags", getConsequentFlags());
 
