@@ -91,7 +91,7 @@ public class CategoricalValue extends FieldValue {
 				throw new TypeCheckException(DataType.DOUBLE, string);
 			}
 
-			return TypeUtil.compare(DataType.DOUBLE, asBoolean(), number);
+			return ((Comparable)TypeUtil.cast(DataType.DOUBLE, asBoolean())).compareTo(number);
 		}
 
 		@Override
@@ -99,12 +99,12 @@ public class CategoricalValue extends FieldValue {
 			Number number;
 
 			try {
-				number = value.asNumber();
+				number = (Number)TypeUtil.cast(DataType.DOUBLE, value.asNumber());
 			} catch(TypeCheckException tce){
 				throw new TypeCheckException(DataType.DOUBLE, value.getValue());
 			}
 
-			return TypeUtil.compare(DataType.DOUBLE, asBoolean(), number);
+			return ((Comparable)TypeUtil.cast(DataType.DOUBLE, asBoolean())).compareTo(number);
 		}
 
 		@Override

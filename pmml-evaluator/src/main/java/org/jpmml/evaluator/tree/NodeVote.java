@@ -41,7 +41,7 @@ public class NodeVote extends Vote implements HasEntityId, HasEntityRegistry<Nod
 	protected void computeResult(DataType dataType){
 		Node node = getNode();
 
-		Object result = TypeUtil.parseOrCast(dataType, node.getScore());
+		Object result = TypeUtil.parse(dataType, node.getScore());
 
 		setResult(result);
 	}

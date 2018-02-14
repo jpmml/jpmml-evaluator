@@ -158,22 +158,9 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	}
 
 	public boolean equalsString(String string){
-		Object value = parseValue(string);
+		Object value = TypeUtil.parse(getDataType(), string);
 
-		if(isScalar()){
-			return (getValue()).equals(value);
-		}
-
-		return TypeUtil.equals(getDataType(), getValue(), value);
-	}
-
-	public boolean equalsValue(Object value){
-
-		if(isScalar()){
-			return (getValue()).equals(TypeUtil.parseOrCast(getDataType(), value));
-		}
-
-		return TypeUtil.equals(getDataType(), getValue(), value);
+		return (getValue()).equals(value);
 	}
 
 	/**
@@ -187,9 +174,13 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 			return (getValue()).equals(value.getValue());
 		}
 
-		DataType dataType = TypeUtil.getResultDataType(getDataType(), value.getDataType());
+		return equalsValue(value.getValue());
+	}
 
-		return TypeUtil.equals(dataType, getValue(), value.getValue());
+	private boolean equalsValue(Object value){
+		value = TypeUtil.parseOrCast(getDataType(), value);
+
+		return (getValue()).equals(value);
 	}
 
 	public int indexInValues(Iterable<FieldValue> values){
@@ -205,13 +196,9 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	}
 
 	public int compareToString(String string){
-		Object value = parseValue(string);
+		Object value = TypeUtil.parse(getDataType(), string);
 
-		if(isScalar()){
-			return ((Comparable)getValue()).compareTo(value);
-		}
-
-		return TypeUtil.compare(getDataType(), getValue(), value);
+		return ((Comparable)getValue()).compareTo(value);
 	}
 
 	/**
@@ -225,15 +212,13 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 			return ((Comparable)getValue()).compareTo(value.getValue());
 		}
 
-		DataType dataType = TypeUtil.getResultDataType(getDataType(), value.getDataType());
-
-		return TypeUtil.compare(dataType, getValue(), value.getValue());
+		return compareToValue(value.getValue());
 	}
 
-	public Object parseValue(String string){
-		DataType dataType = getDataType();
+	private int compareToValue(Object value){
+		value = TypeUtil.parseOrCast(getDataType(), value);
 
-		return TypeUtil.parse(dataType, string);
+		return ((Comparable)getValue()).compareTo(value);
 	}
 
 	public <V> V getMapping(HasParsedValueMapping<V> hasParsedValueMapping){

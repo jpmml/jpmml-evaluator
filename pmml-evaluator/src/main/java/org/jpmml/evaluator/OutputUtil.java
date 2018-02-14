@@ -449,7 +449,7 @@ public class OutputUtil {
 		String value = (String)TypeUtil.cast(DataType.STRING, getPredictedValue(object));
 		String expectedValue = (String)TypeUtil.cast(DataType.STRING, FieldValueUtil.getValue(expectedObject));
 
-		boolean equals = TypeUtil.equals(DataType.STRING, value, expectedValue);
+		boolean equals = (value).equals(expectedValue);
 
 		return Double.valueOf((equals ? 1d : 0d) - hasProbability.getProbability(value));
 	}

@@ -46,7 +46,7 @@ public class OrdinalValue extends FieldValue {
 			return super.compareToString(string);
 		}
 
-		return compare(ordering, getValue(), parseValue(string));
+		return compare(ordering, getValue(), TypeUtil.parse(getDataType(), string));
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class OrdinalValue extends FieldValue {
 			return super.compareToValue(value);
 		}
 
-		return compare(ordering, getValue(), value.getValue());
+		return compare(ordering, getValue(), TypeUtil.parseOrCast(getDataType(), value.getValue()));
 	}
 
 	@Override

@@ -34,25 +34,6 @@ public class TypeUtil {
 	private TypeUtil(){
 	}
 
-	static
-	public boolean equals(DataType dataType, Object left, Object right){
-		left = cast(dataType, left);
-		right = cast(dataType, right);
-
-		return (left).equals(right);
-	}
-
-	@SuppressWarnings (
-		value = {"rawtypes", "unchecked"}
-	)
-	static
-	public int compare(DataType dataType, Object left, Object right){
-		left = cast(dataType, left);
-		right = cast(dataType, right);
-
-		return ((Comparable)left).compareTo(right);
-	}
-
 	/**
 	 * @throws IllegalArgumentException If the value is a String, and it cannot be parsed to the requested representation.
 	 * @throws TypeCheckException If the value is an Object other than String, and it cannot be cast to the requested representation.

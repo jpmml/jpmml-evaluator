@@ -229,6 +229,35 @@ public class FieldValueTest {
 	}
 
 	@Test
+	public void ordinalInteger(){
+		OrdinalValue zero = (OrdinalValue)FieldValueUtil.create(DataType.INTEGER, OpType.ORDINAL, 0);
+		OrdinalValue one = (OrdinalValue)FieldValueUtil.create(DataType.INTEGER, OpType.ORDINAL, 1);
+
+		assertTrue(zero.equalsString("0"));
+		assertTrue(zero.equalsString("0.0"));
+
+		assertTrue(zero.compareToString("-1") > 0);
+		assertTrue(zero.compareToString("0") == 0);
+		assertTrue(zero.compareToString("1") < 0);
+
+		assertTrue(zero.compareTo(zero) == 0);
+		assertTrue(zero.compareTo(one) < 0);
+
+		assertTrue(one.compareTo(zero) > 0);
+		assertTrue(one.compareTo(one) == 0);
+
+		zero.setOrdering(Arrays.asList(one.getValue(), zero.getValue()));
+
+		assertTrue(zero.compareTo(zero) == 0);
+		assertTrue(zero.compareTo(one) > 0);
+
+		one.setOrdering(zero.getOrdering());
+
+		assertTrue(one.compareTo(zero) < 0);
+		assertTrue(one.compareTo(one) == 0);
+	}
+
+	@Test
 	public void continuousFloat(){
 		Float negativeZeroValue = Float.valueOf(-0f);
 		Float positiveZeroValue = Float.valueOf(+0f);

@@ -74,7 +74,7 @@ public class Classification<V extends Number> extends AbstractComputable impleme
 		String key = entry.getKey();
 		Value<V> value = entry.getValue();
 
-		Object result = TypeUtil.parseOrCast(dataType, key);
+		Object result = TypeUtil.parse(dataType, key);
 
 		setResult(result);
 	}

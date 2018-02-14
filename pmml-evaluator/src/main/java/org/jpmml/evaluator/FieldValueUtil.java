@@ -635,11 +635,16 @@ public class FieldValueUtil {
 			for(int i = 0, max = pmmlValues.size(); i < max; i++){
 				Value pmmlValue = pmmlValues.get(i);
 
+				String stringValue = pmmlValue.getValue();
+				if(stringValue == null){
+					throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
+				}
+
 				Value.Property property = pmmlValue.getProperty();
 				switch(property){
 					case VALID:
 						{
-							boolean equals = equals(dataType, value, pmmlValue.getValue());
+							boolean equals = equals(dataType, value, stringValue);
 
 							if(equals){
 								return pmmlValue;
@@ -722,12 +727,12 @@ public class FieldValueUtil {
 	private boolean equals(DataType dataType, Object value, String referenceValue){
 
 		try {
-			return TypeUtil.equals(dataType, value, TypeUtil.parse(dataType, referenceValue));
+			return (TypeUtil.parseOrCast(dataType, value)).equals(TypeUtil.parse(dataType, referenceValue));
 		} catch(IllegalArgumentException | TypeCheckException e){
 
 			// The String representation of invalid or missing values (eg. "N/A") may not be parseable to the requested representation
 			try {
-				return TypeUtil.equals(DataType.STRING, value, referenceValue);
+				return (TypeUtil.parseOrCast(DataType.STRING, value)).equals(referenceValue);
 			} catch(TypeCheckException tce){
 				// Ignored
 			}
@@ -771,7 +776,12 @@ public class FieldValueUtil {
 
 			@Override
 			public Object apply(Value value){
-				return TypeUtil.parse(dataType, value.getValue());
+				String stringValue = value.getValue();
+				if(stringValue == null){
+					throw new MissingAttributeException(value, PMMLAttributes.VALUE_VALUE);
+				}
+
+				return TypeUtil.parse(dataType, stringValue);
 			}
 		};
 

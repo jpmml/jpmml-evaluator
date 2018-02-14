@@ -40,15 +40,15 @@ public class ContinuousValue extends FieldValue {
 		try {
 			return super.compareToString(string);
 		} catch(NumberFormatException nfeDefault){
-			Object value;
+			Number number;
 
 			try {
-				value = TypeUtil.parse(DataType.DOUBLE, string);
+				number = (Number)TypeUtil.parse(DataType.DOUBLE, string);
 			} catch(NumberFormatException nfeDouble){
 				throw nfeDefault;
 			}
 
-			return TypeUtil.compare(DataType.DOUBLE, asNumber(), value);
+			return ((Comparable)TypeUtil.cast(DataType.DOUBLE, asNumber())).compareTo(number);
 		}
 	}
 

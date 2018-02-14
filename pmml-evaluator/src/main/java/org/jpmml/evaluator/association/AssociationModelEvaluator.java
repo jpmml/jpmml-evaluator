@@ -35,11 +35,13 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
@@ -280,17 +282,32 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 				// "The item values are based on field names when the field has only true/false values"
 				if(category == null){
+					DataType dataType = value.getDataType();
 
-					if((FieldValues.CATEGORICAL_BOOLEAN_TRUE).equalsValue(value) || value.equalsString("T")){
-						result.add(id);
-					} else
+					switch(dataType){
+						case STRING:
+							if((AssociationModelEvaluator.STRING_TRUE).equalsValue(value)){
+								result.add(id);
 
-					if((FieldValues.CATEGORICAL_BOOLEAN_FALSE).equalsValue(value) || value.equalsString("F")){
-						// Ignored
-					} else
+								break;
+							} else
 
-					{
-						throw new EvaluationException("Expected " + PMMLException.formatValue(FieldValues.CATEGORICAL_BOOLEAN_FALSE) + " or " + PMMLException.formatValue(FieldValues.CATEGORICAL_BOOLEAN_TRUE) + ", got " + PMMLException.formatValue(value));
+							if((AssociationModelEvaluator.STRING_FALSE).equalsValue(value)){
+								break;
+							}
+							// Falls through
+						default:
+							if((AssociationModelEvaluator.BOOLEAN_TRUE).equalsValue(value)){
+								result.add(id);
+
+								break;
+							} else
+
+							if((AssociationModelEvaluator.BOOLEAN_FALSE).equalsValue(value)){
+								break;
+							}
+
+							throw new EvaluationException("Expected " + PMMLException.formatValue(FieldValues.CATEGORICAL_BOOLEAN_FALSE) + " or " + PMMLException.formatValue(FieldValues.CATEGORICAL_BOOLEAN_TRUE) + ", got " + PMMLException.formatValue(value));
 					}
 				} else
 
@@ -557,4 +574,11 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	});
 
 	private static final Cache<AssociationModel, List<ItemValue>> itemValueCache = CacheUtil.buildCache();
+
+	// IBM SPSS-style schema
+	private static final FieldValue STRING_TRUE = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "T");
+	private static final FieldValue STRING_FALSE = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "F");
+
+	private static final FieldValue BOOLEAN_TRUE = FieldValues.CATEGORICAL_BOOLEAN_TRUE;
+	private static final FieldValue BOOLEAN_FALSE = FieldValues.CATEGORICAL_BOOLEAN_FALSE;
 }

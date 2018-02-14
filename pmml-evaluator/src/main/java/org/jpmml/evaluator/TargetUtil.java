@@ -160,8 +160,12 @@ public class TargetUtil {
 
 		List<TargetValue> targetValues = target.getTargetValues();
 		for(TargetValue targetValue : targetValues){
+			String stringValue = targetValue.getValue();
+			if(stringValue == null){
+				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_VALUE);
+			} // End if
 
-			if(TypeUtil.equals(dataType, value, TypeUtil.parseOrCast(dataType, targetValue.getValue()))){
+			if((value).equals(TypeUtil.parse(dataType, stringValue))){
 				return targetValue;
 			}
 		}
