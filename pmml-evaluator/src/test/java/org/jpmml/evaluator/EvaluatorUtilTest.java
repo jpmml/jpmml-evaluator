@@ -87,13 +87,13 @@ public class EvaluatorUtilTest {
 
 		assertEquals(FieldName.create("item"), inputField.getName());
 
-		FieldValue simple = EvaluatorUtil.prepare(inputField, "Cracker");
+		FieldValue simple = inputField.prepare("Cracker");
 
 		assertEquals("Cracker", simple.getValue());
 		assertEquals(DataType.STRING, simple.getDataType());
 		assertEquals(OpType.CATEGORICAL, simple.getOpType());
 
-		FieldValue collection = EvaluatorUtil.prepare(inputField, Arrays.asList("Cracker", "Water", "Coke"));
+		FieldValue collection = inputField.prepare(Arrays.asList("Cracker", "Water", "Coke"));
 
 		assertEquals(Arrays.asList("Cracker", "Water", "Coke"), collection.getValue());
 		assertEquals(DataType.STRING, collection.getDataType());

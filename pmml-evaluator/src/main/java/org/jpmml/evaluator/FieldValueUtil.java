@@ -64,35 +64,49 @@ public class FieldValueUtil {
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value) || (value == null)){
 			return performMissingValueTreatment(field, miningField);
-		} else
+		} // End if
 
-		// XXX
 		if(value instanceof Collection){
-			return createInputValue(field, miningField, value);
+			Collection<?> rawValues = (Collection<?>)value;
+
+			List<Object> pmmlValues = new ArrayList<>(rawValues.size());
+
+			for(Object rawValue : rawValues){
+				FieldValue fieldValue = prepareScalarInputValue(field, miningField, rawValue);
+
+				pmmlValues.add(FieldValueUtil.getValue(fieldValue));
+			}
+
+			return createInputValue(field, miningField, pmmlValues);
 		} else
 
 		{
-			boolean compatible;
+			return prepareScalarInputValue(field, miningField, value);
+		}
+	}
 
-			try {
-				value = createInputValue(field, miningField, value);
+	static
+	private FieldValue prepareScalarInputValue(Field<?> field, MiningField miningField, Object value){
+		boolean compatible;
 
-				compatible = true;
-			} catch(IllegalArgumentException | TypeCheckException e){
-				compatible = false;
-			}
+		try {
+			value = createInputValue(field, miningField, value);
 
-			Value.Property status = getStatus(field, miningField, value, compatible);
-			switch(status){
-				case VALID:
-					return performValidValueTreatment(field, miningField, (FieldValue)value);
-				case INVALID:
-					return performInvalidValueTreatment(field, miningField, value);
-				case MISSING:
-					return performMissingValueTreatment(field, miningField);
-				default:
-					throw new IllegalArgumentException();
-			}
+			compatible = true;
+		} catch(IllegalArgumentException | TypeCheckException e){
+			compatible = false;
+		}
+
+		Value.Property status = getStatus(field, miningField, value, compatible);
+		switch(status){
+			case VALID:
+				return performValidValueTreatment(field, miningField, (FieldValue)value);
+			case INVALID:
+				return performInvalidValueTreatment(field, miningField, value);
+			case MISSING:
+				return performMissingValueTreatment(field, miningField);
+			default:
+				throw new IllegalArgumentException();
 		}
 	}
 

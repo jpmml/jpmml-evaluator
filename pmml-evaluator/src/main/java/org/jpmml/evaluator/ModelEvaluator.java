@@ -372,7 +372,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 			for(InputField inputField : inputFields){
 				FieldName name = inputField.getName();
 
-				FieldValue value = EvaluatorUtil.prepare(inputField, record.get(name));
+				FieldValue value = inputField.prepare(record.get(name));
 
 				arguments.put(name, value);
 			}

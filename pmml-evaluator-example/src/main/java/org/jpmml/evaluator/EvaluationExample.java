@@ -301,7 +301,7 @@ public class EvaluationExample extends Example {
 					for(InputField inputField : inputFields){
 						FieldName name = inputField.getName();
 
-						FieldValue value = EvaluatorUtil.prepare(inputField, inputRecord.get(name));
+						FieldValue value = inputField.prepare(inputRecord.get(name));
 
 						arguments.put(name, value);
 					}

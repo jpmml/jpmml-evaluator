@@ -28,9 +28,7 @@ import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.OpType;
 
 public class EvaluatorUtil {
 
@@ -52,7 +50,16 @@ public class EvaluatorUtil {
 		if(object instanceof Collection){
 			Collection<?> rawValues = (Collection<?>)object;
 
-			Collection<Object> decodedValues = createCollection(rawValues);
+			Collection<Object> decodedValues;
+
+			// Try to preserve the original contract
+			if(rawValues instanceof Set){
+				decodedValues = new LinkedHashSet<>(rawValues.size());
+			} else
+
+			{
+				decodedValues = new ArrayList<>(rawValues.size());
+			}
 
 			for(Object rawValue : rawValues){
 				decodedValues.add(decode(rawValue));
@@ -86,41 +93,6 @@ public class EvaluatorUtil {
 		}
 
 		return result;
-	}
-
-	static
-	public FieldValue prepare(InputField inputField, Object value){
-
-		if(value instanceof Collection){
-			Collection<?> rawValues = (Collection<?>)value;
-
-			DataType dataType = null;
-
-			OpType opType = null;
-
-			Collection<Object> preparedValues = createCollection(rawValues);
-
-			for(Object rawValue : rawValues){
-				FieldValue preparedValue = inputField.prepare(rawValue);
-
-				if(preparedValue != null){
-
-					if(dataType == null){
-						dataType = preparedValue.getDataType();
-					} // End if
-
-					if(opType == null){
-						opType = preparedValue.getOpType();
-					}
-				}
-
-				preparedValues.add(FieldValueUtil.getValue(preparedValue));
-			}
-
-			return FieldValueUtil.create(dataType, opType, preparedValues);
-		}
-
-		return inputField.prepare(value);
 	}
 
 	static
@@ -194,16 +166,5 @@ public class EvaluatorUtil {
 		}
 
 		return result;
-	}
-
-	static
-	private Collection<Object> createCollection(Collection<?> template){
-
-		// Try to preserve the original contract
-		if(template instanceof Set){
-			return new LinkedHashSet<>(template.size());
-		}
-
-		return new ArrayList<>(template.size());
 	}
 }
