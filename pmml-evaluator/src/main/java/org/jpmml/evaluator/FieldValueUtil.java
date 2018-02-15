@@ -20,25 +20,16 @@ package org.jpmml.evaluator;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import com.google.common.base.Function;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableRangeSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
-import com.google.common.collect.TreeRangeSet;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
-import org.dmg.pmml.Interval;
+import org.dmg.pmml.HasDiscreteDomain;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MissingValueTreatmentMethod;
@@ -294,9 +285,15 @@ public class FieldValueUtil {
 			if(dataField instanceof HasParsedValueMapping){
 				HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)dataField;
 
-				Value pmmlValue = getValue(hasParsedValueMapping, dataType, opType, value);
-				if(pmmlValue != null){
-					return pmmlValue.getProperty();
+				try {
+					FieldValue fieldValue = createOrRefine(dataType, opType, value);
+
+					Value pmmlValue = (Value)fieldValue.getMapping(hasParsedValueMapping);
+					if(pmmlValue != null){
+						return pmmlValue.getProperty();
+					}
+				} catch(IllegalArgumentException | TypeCheckException e){
+					// Ignored
 				}
 			}
 
@@ -373,7 +370,7 @@ public class FieldValueUtil {
 			switch(opType){
 				case CONTINUOUS:
 					{
-						RangeSet<Double> validRanges = getValidRanges(dataField);
+						RangeSet<Double> validRanges = FieldUtil.getValidRanges(dataField);
 
 						Double doubleValue;
 
@@ -420,11 +417,7 @@ public class FieldValueUtil {
 
 		FieldValue fieldValue = createOrRefine(dataType, opType, value);
 
-		if(field instanceof DataField){
-			return enhance((DataField)field, fieldValue);
-		}
-
-		return fieldValue;
+		return enhance(field, fieldValue);
 	}
 
 	static
@@ -446,11 +439,7 @@ public class FieldValueUtil {
 
 		FieldValue fieldValue = createOrRefine(dataType, opType, value);
 
-		if(field instanceof DataField){
-			return enhance((DataField)field, fieldValue);
-		}
-
-		return fieldValue;
+		return enhance(field, fieldValue);
 	}
 
 	static
@@ -509,13 +498,9 @@ public class FieldValueUtil {
 			opType = TypeUtil.getOpType(dataType);
 		}
 
-		FieldValue result = createInternal(dataType, opType, value);
+		FieldValue fieldValue = createInternal(dataType, opType, value);
 
-		if(field instanceof DataField){
-			return enhance((DataField)field, result);
-		}
-
-		return result;
+		return enhance(field, fieldValue);
 	}
 
 	static
@@ -557,8 +542,8 @@ public class FieldValueUtil {
 	public FieldValue refine(Field<?> field, FieldValue value){
 		FieldValue result = refine(field.getDataType(), field.getOpType(), value);
 
-		if((field instanceof DataField) && (result != value)){
-			return enhance((DataField)field, result);
+		if(result != value){
+			return enhance(field, result);
 		}
 
 		return result;
@@ -608,12 +593,18 @@ public class FieldValueUtil {
 	}
 
 	static
-	private FieldValue enhance(DataField dataField, FieldValue value){
+	private FieldValue enhance(Field<?> field, FieldValue value){
 
 		if(value instanceof OrdinalValue){
 			OrdinalValue ordinalValue = (OrdinalValue)value;
 
-			ordinalValue.setOrdering(getOrdering(dataField, ordinalValue.getDataType()));
+			List<?> ordering = null;
+
+			if(field instanceof HasDiscreteDomain){
+				ordering = FieldUtil.getValidValues((Field & HasDiscreteDomain)field);
+			}
+
+			ordinalValue.setOrdering(ordering);
 		}
 
 		return value;
@@ -667,7 +658,7 @@ public class FieldValueUtil {
 
 				FieldValue fieldValue = createInternal(dataType, opType, value);
 
-				Value pmmlValue = getValue(hasParsedValueMapping, dataType, opType, fieldValue);
+				Value pmmlValue = (Value)fieldValue.getMapping(hasParsedValueMapping);
 				if(pmmlValue != null && (Value.Property.VALID).equals(pmmlValue.getProperty())){
 					return pmmlValue;
 				}
@@ -708,63 +699,8 @@ public class FieldValueUtil {
 	}
 
 	static
-	private Value getValue(HasParsedValueMapping<?> hasParsedValueMapping, DataType dataType, OpType opType, Object value){
-		FieldValue fieldValue;
-
-		try {
-			fieldValue = createOrRefine(dataType, opType, value);
-		} catch(IllegalArgumentException | TypeCheckException e){
-			return null;
-		}
-
-		Map<FieldValue, ?> fieldValues = hasParsedValueMapping.getValueMapping(dataType, opType);
-
-		return (Value)fieldValues.get(value);
-	}
-
-	static
-	public List<Value> getValidValues(DataField dataField){
-
-		if(dataField.hasValues()){
-			List<Value> pmmlValues = dataField.getValues();
-
-			List<Value> result = new ArrayList<>(pmmlValues.size());
-
-			for(int i = 0, max = pmmlValues.size(); i < max; i++){
-				Value pmmlValue = pmmlValues.get(i);
-
-				Value.Property property = pmmlValue.getProperty();
-				switch(property){
-					case VALID:
-						result.add(pmmlValue);
-						break;
-					case INVALID:
-					case MISSING:
-						break;
-					default:
-						throw new UnsupportedAttributeException(pmmlValue, property);
-				}
-			}
-
-			return result;
-		}
-
-		return Collections.emptyList();
-	}
-
-	static
 	public List<String> getTargetCategories(TargetField targetField){
-		return getTargetCategories(targetField.getDataField());
-	}
-
-	static
-	public List<String> getTargetCategories(DataField dataField){
-		return CacheUtil.getValue(dataField, FieldValueUtil.targetCategoryCache);
-	}
-
-	static
-	public RangeSet<Double> getValidRanges(DataField dataField){
-		return CacheUtil.getValue(dataField, FieldValueUtil.validRangeCache);
+		return FieldUtil.getTargetCategories(targetField.getDataField());
 	}
 
 	static
@@ -794,72 +730,4 @@ public class FieldValueUtil {
 
 		return defaultValue;
 	}
-
-	static
-	private RangeSet<Double> parseValidRanges(DataField dataField){
-		RangeSet<Double> result = TreeRangeSet.create();
-
-		List<Interval> intervals = dataField.getIntervals();
-		for(Interval interval : intervals){
-			Range<Double> range = DiscretizationUtil.toRange(interval);
-
-			result.add(range);
-		}
-
-		return result;
-	}
-
-	static
-	private List<?> getOrdering(DataField dataField, final DataType dataType){
-		List<Value> values = getValidValues(dataField);
-		if(values.isEmpty()){
-			return null;
-		}
-
-		Function<Value, Object> function = new Function<Value, Object>(){
-
-			@Override
-			public Object apply(Value value){
-				String stringValue = value.getValue();
-				if(stringValue == null){
-					throw new MissingAttributeException(value, PMMLAttributes.VALUE_VALUE);
-				}
-
-				return TypeUtil.parse(dataType, stringValue);
-			}
-		};
-
-		return Lists.newArrayList(Iterables.transform(values, function));
-	}
-
-	private static final LoadingCache<DataField, List<String>> targetCategoryCache = CacheUtil.buildLoadingCache(new CacheLoader<DataField, List<String>>(){
-
-		@Override
-		public List<String> load(DataField dataField){
-			List<Value> values = getValidValues(dataField);
-
-			Function<Value, String> function = new Function<Value, String>(){
-
-				@Override
-				public String apply(Value value){
-					String stringValue = value.getValue();
-					if(stringValue == null){
-						throw new MissingAttributeException(value, PMMLAttributes.VALUE_VALUE);
-					}
-
-					return stringValue;
-				}
-			};
-
-			return ImmutableList.copyOf(Iterables.transform(values, function));
-		}
-	});
-
-	private static final LoadingCache<DataField, RangeSet<Double>> validRangeCache = CacheUtil.buildLoadingCache(new CacheLoader<DataField, RangeSet<Double>>(){
-
-		@Override
-		public RangeSet<Double> load(DataField dataField){
-			return ImmutableRangeSet.copyOf(parseValidRanges(dataField));
-		}
-	});
 }

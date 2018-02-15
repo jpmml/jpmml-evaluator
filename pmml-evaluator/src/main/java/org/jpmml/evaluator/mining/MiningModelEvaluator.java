@@ -59,8 +59,8 @@ import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.FieldUtil;
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.InputField;
@@ -325,7 +325,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				{
 					DataField dataField = targetField.getDataField();
 
-					List<String> categories = FieldValueUtil.getTargetCategories(dataField);
+					List<String> categories = FieldUtil.getTargetCategories(dataField);
 
 					ValueMap<String, V> values = MiningModelUtil.aggregateProbabilities(valueFactory, segmentResults, categories, multipleModelMethod);
 

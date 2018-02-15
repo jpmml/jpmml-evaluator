@@ -67,12 +67,16 @@ public class RichDataField extends DataField implements HasParsedValueMapping<Va
 
 		List<Value> pmmlValues = getValues();
 		for(Value pmmlValue : pmmlValues){
-			Value.Property property = pmmlValue.getProperty();
+			String stringValue = pmmlValue.getValue();
+			if(stringValue == null){
+				throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
+			}
 
+			Value.Property property = pmmlValue.getProperty();
 			switch(property){
 				case VALID:
 					{
-						FieldValue value = FieldValueUtil.create(dataType, opType, pmmlValue.getValue());
+						FieldValue value = FieldValueUtil.create(dataType, opType, stringValue);
 
 						result.put(value, pmmlValue);
 					}
@@ -83,7 +87,7 @@ public class RichDataField extends DataField implements HasParsedValueMapping<Va
 						FieldValue value;
 
 						try {
-							value = FieldValueUtil.create(dataType, opType, pmmlValue.getValue());
+							value = FieldValueUtil.create(dataType, opType, stringValue);
 						} catch(IllegalArgumentException | TypeCheckException e){
 							continue;
 						}
