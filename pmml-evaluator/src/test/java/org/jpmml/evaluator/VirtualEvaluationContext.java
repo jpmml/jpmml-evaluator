@@ -27,6 +27,6 @@ public class VirtualEvaluationContext extends EvaluationContext {
 
 	@Override
 	protected FieldValue createFieldValue(FieldName name, Object value){
-		return FieldValueUtil.create(null, null, value);
+		return FieldValueUtil.create(value);
 	}
 }

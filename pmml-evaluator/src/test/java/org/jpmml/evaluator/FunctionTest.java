@@ -24,7 +24,7 @@ import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
-import org.dmg.pmml.OpType;
+import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -319,12 +319,12 @@ public class FunctionTest {
 
 	static
 	private void assertEquals(Object expected, FieldValue actual){
-		Assert.assertEquals(FieldValueUtil.create(null, null, expected), actual);
+		Assert.assertEquals(FieldValueUtil.create(expected), actual);
 	}
 
 	static
 	private void assertEquals(Number expected, FieldValue actual, double delta){
-		Assert.assertEquals(FieldValueUtil.create(null, OpType.CONTINUOUS, expected).asDouble(), actual.asDouble(), delta);
+		Assert.assertEquals(expected.doubleValue(), (actual.asNumber()).doubleValue(), delta);
 	}
 
 	static
@@ -334,6 +334,14 @@ public class FunctionTest {
 
 	static
 	private FieldValue evaluate(Function function, List<?> arguments){
-		return function.evaluate(FieldValueUtil.createAll(null, null, arguments));
+		com.google.common.base.Function<Object, FieldValue> argumentFunction = new com.google.common.base.Function<Object, FieldValue>(){
+
+			@Override
+			public FieldValue apply(Object value){
+				return FieldValueUtil.create(value);
+			}
+		};
+
+		return function.evaluate(Lists.transform(arguments, argumentFunction));
 	}
 }

@@ -34,9 +34,11 @@ import java.util.List;
 
 import org.dmg.pmml.BinarySimilarity;
 import org.dmg.pmml.ComparisonMeasure;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Jaccard;
 import org.dmg.pmml.MathContext;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.SimpleMatching;
 import org.dmg.pmml.Tanimoto;
 import org.dmg.pmml.clustering.ClusteringField;
@@ -88,8 +90,8 @@ public class MeasureUtilTest {
 	}
 
 	static
-	private BitSet createFlags(List<Integer> values){
-		return MeasureUtil.toBitSet(FieldValueUtil.createAll(null, null, values));
+	private BitSet createFlags(List<? extends Number> values){
+		return MeasureUtil.toBitSet(FieldValueUtil.createAll(DataType.DOUBLE, OpType.CONTINUOUS, values));
 	}
 
 	private static ValueFactoryFactory valueFactoryFactory = ValueFactoryFactory.newInstance();

@@ -43,6 +43,19 @@ public class RichConstant extends Constant implements HasParsedValue<RichConstan
 	}
 
 	@Override
+	public DataType getDataType(){
+		DataType dataType = super.getDataType();
+
+		if(dataType == null){
+			dataType = TypeUtil.getConstantDataType(getValue());
+
+			setDataType(dataType);
+		}
+
+		return dataType;
+	}
+
+	@Override
 	public String getValue(){
 		return super.getValue();
 	}
@@ -55,12 +68,8 @@ public class RichConstant extends Constant implements HasParsedValue<RichConstan
 	@Override
 	public FieldValue getValue(DataType dataType, OpType opType){
 
-		if((dataType != null) || (opType != null)){
-			throw new IllegalArgumentException();
-		} // End if
-
 		if(this.parsedValue == null){
-			this.parsedValue = FieldValueUtil.create(ExpressionUtil.getConstantDataType(this), null, getValue());
+			this.parsedValue = FieldValueUtil.create(dataType, opType, getValue());
 		}
 
 		return this.parsedValue;

@@ -440,8 +440,62 @@ public class FieldValueUtil {
 	}
 
 	static
+	public FieldValue create(Object value){
+
+		if(value == null){
+			return FieldValues.MISSING_VALUE;
+		}
+
+		DataType dataType;
+
+		if(value instanceof Collection){
+			dataType = TypeUtil.getDataType((Collection<?>)value);
+		} else
+
+		{
+			dataType = TypeUtil.getDataType(value);
+		}
+
+		OpType opType = TypeUtil.getOpType(dataType);
+
+		return createInternal(dataType, opType, value);
+	}
+
+	static
 	public FieldValue create(Field<?> field, Object value){
-		FieldValue result = create(field.getDataType(), field.getOpType(), value);
+
+		if(value == null){
+			return FieldValues.MISSING_VALUE;
+		}
+
+		DataType dataType = field.getDataType();
+		if(dataType == null){
+
+			if(value instanceof Collection){
+				dataType = TypeUtil.getDataType((Collection<?>)value);
+			} else
+
+			{
+				dataType = TypeUtil.getDataType(value);
+			}
+		} else
+
+		{
+			if(value instanceof Collection){
+				// Ignored
+			} else
+
+			{
+				value = TypeUtil.parseOrCast(dataType, value);
+			}
+		}
+
+		OpType opType = field.getOpType();
+		if(opType == null){
+			opType = TypeUtil.getOpType(dataType);
+		}
+
+		FieldValue result = createInternal(dataType, opType, value);
 
 		if(field instanceof DataField){
 			return enhance((DataField)field, result);
@@ -450,11 +504,6 @@ public class FieldValueUtil {
 		return result;
 	}
 
-	/**
-	 * @param dataType The data type. If <code>null</code>, then the PMML data type will be derived from the Java data type of the value.
-	 * @param opType The operational type. If <code>null</code>, then the operational type will be derived from the data type.
-	 * @param value The value.
-	 */
 	static
 	public FieldValue create(DataType dataType, OpType opType, Object value){
 
@@ -462,35 +511,16 @@ public class FieldValueUtil {
 			return FieldValues.MISSING_VALUE;
 		} // End if
 
+		if(dataType == null || opType == null){
+			throw new IllegalArgumentException();
+		} // End if
+
 		if(value instanceof Collection){
-
-			if(dataType == null){
-				Collection<?> values = (Collection<?>)value;
-
-				dataType = TypeUtil.getDataType(values);
-			} // End if
-
-			if(dataType == null){
-				dataType = DataType.STRING;
-			} // End if
-
-			if(opType == null){
-				opType = TypeUtil.getOpType(dataType);
-			}
+			// Ignored
 		} else
 
 		{
-			if(dataType == null){
-				dataType = TypeUtil.getDataType(value);
-			} else
-
-			{
-				value = TypeUtil.parseOrCast(dataType, value);
-			} // End if
-
-			if(opType == null){
-				opType = TypeUtil.getOpType(dataType);
-			}
+			value = TypeUtil.parseOrCast(dataType, value);
 		}
 
 		return createInternal(dataType, opType, value);

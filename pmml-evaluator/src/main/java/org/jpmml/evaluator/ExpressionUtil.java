@@ -39,6 +39,7 @@ import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
+import org.dmg.pmml.HasDataType;
 import org.dmg.pmml.HasExpression;
 import org.dmg.pmml.HasFieldReference;
 import org.dmg.pmml.HasType;
@@ -144,26 +145,17 @@ public class ExpressionUtil {
 	}
 
 	static
-	public DataType getConstantDataType(Constant constant){
-		DataType dataType = constant.getDataType();
-
-		if(dataType == null){
-			dataType = TypeUtil.getConstantDataType(constant.getValue());
-		}
-
-		return dataType;
-	}
-
-	static
 	public FieldValue evaluateConstant(Constant constant){
+		DataType dataType = getConstantDataType(constant);
+		OpType opType = TypeUtil.getOpType(dataType);
 
 		if(constant instanceof HasParsedValue){
 			HasParsedValue<?> hasParsedValue = (HasParsedValue<?>)constant;
 
-			return hasParsedValue.getValue(null, null);
+			return hasParsedValue.getValue(dataType, opType);
 		}
 
-		return FieldValueUtil.create(getConstantDataType(constant), null, constant.getValue());
+		return FieldValueUtil.create(dataType, opType, constant.getValue());
 	}
 
 	static
@@ -214,7 +206,7 @@ public class ExpressionUtil {
 		FieldValue value = context.evaluate(ensureField(discretize));
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
-			return FieldValueUtil.create(discretize.getDataType(), null, discretize.getMapMissingTo());
+			return FieldValueUtil.create(getDataType(discretize, DataType.STRING), OpType.CATEGORICAL, discretize.getMapMissingTo());
 		}
 
 		return DiscretizationUtil.discretize(discretize, value);
@@ -238,7 +230,7 @@ public class ExpressionUtil {
 
 			FieldValue value = context.evaluate(name);
 			if(Objects.equals(FieldValues.MISSING_VALUE, value)){
-				return FieldValueUtil.create(mapValues.getDataType(), null, mapValues.getMapMissingTo());
+				return FieldValueUtil.create(getDataType(mapValues, DataType.STRING), OpType.CATEGORICAL, mapValues.getMapMissingTo());
 			}
 
 			values.put(column, value);
@@ -441,13 +433,13 @@ public class ExpressionUtil {
 			case COUNT:
 				return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, values.size());
 			case SUM:
-				return Functions.SUM.evaluate(FieldValueUtil.createAll(null, null, (List<?>)values));
+				return Functions.SUM.evaluate(FieldValueUtil.createAll(value.getDataType(), value.getOpType(), (List<?>)values));
 			case AVERAGE:
-				return Functions.AVG.evaluate(FieldValueUtil.createAll(null, null, (List<?>)values));
+				return Functions.AVG.evaluate(FieldValueUtil.createAll(value.getDataType(), value.getOpType(), (List<?>)values));
 			case MIN:
-				return FieldValueUtil.create(null, null, Collections.min((List<Comparable>)values));
+				return FieldValueUtil.create(value.getDataType(), value.getOpType(), Collections.min((List<Comparable>)values));
 			case MAX:
-				return FieldValueUtil.create(null, null, Collections.max((List<Comparable>)values));
+				return FieldValueUtil.create(value.getDataType(), value.getOpType(), Collections.max((List<Comparable>)values));
 			default:
 				throw new UnsupportedAttributeException(aggregate, function);
 		}
@@ -458,5 +450,27 @@ public class ExpressionUtil {
 		FieldValue value = javaExpression.evaluate(context);
 
 		return value;
+	}
+
+	static
+	public DataType getConstantDataType(Constant constant){
+		DataType dataType = constant.getDataType();
+
+		if(dataType == null){
+			dataType = TypeUtil.getConstantDataType(constant.getValue());
+		}
+
+		return dataType;
+	}
+
+	static
+	public <E extends Expression & HasDataType<E>> DataType getDataType(E expression, DataType defaultDataType){
+		DataType dataType = expression.getDataType();
+
+		if(dataType != null){
+			return dataType;
+		}
+
+		return defaultDataType;
 	}
 }

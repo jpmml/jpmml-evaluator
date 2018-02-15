@@ -345,6 +345,11 @@ public class TypeUtil {
 		DataType result = null;
 
 		for(Object value : values){
+
+			if(value == null){
+				continue;
+			}
+
 			DataType dataType = getDataType(value);
 
 			if(result == null){
@@ -356,6 +361,10 @@ public class TypeUtil {
 					throw new TypeCheckException(result, value);
 				}
 			}
+		}
+
+		if(result == null){
+			result = DataType.STRING;
 		}
 
 		return result;

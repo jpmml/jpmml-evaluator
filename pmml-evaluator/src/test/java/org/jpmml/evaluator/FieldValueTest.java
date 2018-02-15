@@ -33,7 +33,7 @@ public class FieldValueTest {
 
  	@Test
 	public void emptyList(){
-		FieldValue list = FieldValueUtil.create(null, null, Arrays.asList());
+		FieldValue list = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, Arrays.asList());
 
 		assertEquals(list.getDataType(), DataType.STRING);
 		assertEquals(list.getOpType(), OpType.CATEGORICAL);
@@ -81,7 +81,7 @@ public class FieldValueTest {
 
 	@Test
 	public void categoricalStringList(){
-		FieldValue list = FieldValueUtil.create(null, null, Arrays.asList("1", "2", "3"));
+		FieldValue list = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, Arrays.asList("1", "2", "3"));
 
 		assertEquals(DataType.STRING, list.getDataType());
 		assertEquals(OpType.CATEGORICAL, list.getOpType());
@@ -194,7 +194,7 @@ public class FieldValueTest {
 
 	@Test
 	public void continuousIntegerList(){
-		FieldValue list = FieldValueUtil.create(null, null, Arrays.asList(1, 2, 3));
+		FieldValue list = FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, Arrays.asList(1, 2, 3));
 
 		assertEquals(DataType.INTEGER, list.getDataType());
 		assertEquals(OpType.CONTINUOUS, list.getOpType());
@@ -294,7 +294,7 @@ public class FieldValueTest {
 
 	@Test
 	public void continuousFloatList(){
-		FieldValue list = FieldValueUtil.create(null, null, Arrays.asList(1f, 2f, 3f));
+		FieldValue list = FieldValueUtil.create(DataType.FLOAT, OpType.CONTINUOUS, Arrays.asList(1f, 2f, 3f));
 
 		assertEquals(DataType.FLOAT, list.getDataType());
 		assertEquals(OpType.CONTINUOUS, list.getOpType());
@@ -337,7 +337,7 @@ public class FieldValueTest {
 
 	@Test
 	public void continuousDoubleList(){
-		FieldValue list = FieldValueUtil.create(null, null, Arrays.asList(1d, 2d, 3d));
+		FieldValue list = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Arrays.asList(1d, 2d, 3d));
 
 		assertEquals(DataType.DOUBLE, list.getDataType());
 		assertEquals(OpType.CONTINUOUS, list.getOpType());
