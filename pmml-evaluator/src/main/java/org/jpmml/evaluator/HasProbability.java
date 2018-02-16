@@ -41,12 +41,12 @@ public interface HasProbability extends CategoricalResultFeature {
 	 * @return A probability in the range from 0.0 to 1.0.
 	 * The probability of an unknown category is 0.0.
 	 *
-	 * @see #getCategoryValues()
+	 * @see #getCategories()
 	 */
 	Double getProbability(String category);
 
 	/**
-	 * @see #getCategoryValues()
+	 * @see #getCategories()
 	 */
 	Report getProbabilityReport(String category);
 }

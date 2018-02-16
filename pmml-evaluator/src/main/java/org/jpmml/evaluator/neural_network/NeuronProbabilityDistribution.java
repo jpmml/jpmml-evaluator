@@ -34,7 +34,7 @@ public class NeuronProbabilityDistribution<V extends Number> extends EntityClass
 	}
 
 	@Override
-	public Set<String> getCategoryValues(){
+	public Set<String> getCategories(){
 		return keySet();
 	}
 

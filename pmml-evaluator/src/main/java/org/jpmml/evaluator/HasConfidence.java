@@ -38,12 +38,12 @@ public interface HasConfidence extends CategoricalResultFeature {
 	 * @return A confidence that normally lies in the range from 0.0 to 1.0.
 	 * The confidence of an unknown category is 0.0.
 	 *
-	 * @see #getCategoryValues()
+	 * @see #getCategories()
 	 */
 	Double getConfidence(String category);
 
 	/**
-	 * @see #getCategoryValues()
+	 * @see #getCategories()
 	 */
 	Report getConfidenceReport(String category);
 }

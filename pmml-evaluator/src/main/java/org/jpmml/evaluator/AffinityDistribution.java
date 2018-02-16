@@ -47,7 +47,7 @@ public class AffinityDistribution<V extends Number> extends Classification<V> im
 	}
 
 	@Override
-	public Set<String> getCategoryValues(){
+	public Set<String> getCategories(){
 		return keySet();
 	}
 

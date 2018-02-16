@@ -64,7 +64,7 @@ public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
 
 		assertNotNull(targetValue.getPredictionReport());
 
-		Collection<String> categories = targetValue.getCategoryValues();
+		Collection<String> categories = targetValue.getCategories();
 
 		assertEquals(5, categories.size());
 

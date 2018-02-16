@@ -58,7 +58,7 @@ public class SimpleRuleScoreDistribution<V extends Number> extends EntityClassif
 	}
 
 	@Override
-	public Set<String> getCategoryValues(){
+	public Set<String> getCategories(){
 		return keySet();
 	}
 

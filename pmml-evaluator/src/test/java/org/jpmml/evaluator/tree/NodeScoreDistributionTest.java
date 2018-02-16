@@ -49,7 +49,7 @@ public class NodeScoreDistributionTest {
 		classification.put("ham", new DoubleValue(0.75d));
 		classification.put("spam", new DoubleValue(0.25d));
 
-		assertEquals(ImmutableSet.of("ham", "spam"), classification.getCategoryValues());
+		assertEquals(ImmutableSet.of("ham", "spam"), classification.getCategories());
 
 		assertEquals((Double)0.75d, classification.getProbability("ham"));
 		assertEquals((Double)0.25d, classification.getProbability("spam"));

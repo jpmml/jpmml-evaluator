@@ -78,7 +78,7 @@ public class NodeScoreDistribution<V extends Number> extends Classification<V> i
 	}
 
 	@Override
-	public Set<String> getCategoryValues(){
+	public Set<String> getCategories(){
 		return keySet();
 	}
 

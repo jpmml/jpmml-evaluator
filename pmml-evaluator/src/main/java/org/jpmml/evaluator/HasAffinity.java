@@ -47,12 +47,12 @@ public interface HasAffinity extends CategoricalResultFeature {
 	 * @return An affinity in the range from 0.0 to positive infinity.
 	 * The affinity of an unknown category is the least optimal value in the range of valid values (ie. {@link Double#POSITIVE_INFINITY} for distance measures and 0.0 for similarity measures).
 	 *
-	 * @see #getCategoryValues()
+	 * @see #getCategories()
 	 */
 	Double getAffinity(String category);
 
 	/**
-	 * @see #getCategoryValues()
+	 * @see #getCategories()
 	 */
 	Report getAffinityReport(String category);
 }

@@ -50,7 +50,7 @@ public class VoteDistribution<V extends Number> extends Classification<V> implem
 	}
 
 	@Override
-	public Set<String> getCategoryValues(){
+	public Set<String> getCategories(){
 		return keySet();
 	}
 

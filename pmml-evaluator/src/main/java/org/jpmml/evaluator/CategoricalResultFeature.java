@@ -52,5 +52,5 @@ public interface CategoricalResultFeature extends ResultFeature {
 	 * The set of known categories either equals the set of all categories, or is a proper subset of it.
 	 * </p>
 	 */
-	Set<String> getCategoryValues();
+	Set<String> getCategories();
 }

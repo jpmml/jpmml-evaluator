@@ -27,7 +27,7 @@ public class ProbabilityDistribution<V extends Number> extends Classification<V>
 	}
 
 	@Override
-	public Set<String> getCategoryValues(){
+	public Set<String> getCategories(){
 		return keySet();
 	}
 
