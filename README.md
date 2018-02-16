@@ -145,7 +145,7 @@ for(InputField inputField : inputFields){
 			break;
 		case CATEGORICAL:
 		case ORDINAL:
-			List<?> validArgumentValues = FieldUtil.getValidValues(pmmlDataField);
+			List<?> validArgumentValues = inputField.getDiscreteDomain();
 			break;
 		default:
 			break;

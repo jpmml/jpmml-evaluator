@@ -141,7 +141,7 @@ public class FieldUtil {
 
 		@Override
 		public List<Object> load(Field<?> field){
-			return ImmutableList.copyOf(parseValidValues((Field & HasDiscreteDomain)field));
+			return ImmutableList.<Object>copyOf(parseValidValues((Field & HasDiscreteDomain)field));
 		}
 	});
 
