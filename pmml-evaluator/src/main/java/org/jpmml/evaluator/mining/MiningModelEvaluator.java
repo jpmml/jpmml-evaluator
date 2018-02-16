@@ -59,7 +59,6 @@ import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
-import org.jpmml.evaluator.FieldUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.HasEntityRegistry;
@@ -323,9 +322,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MEDIAN:
 			case MAX:
 				{
-					DataField dataField = targetField.getDataField();
-
-					List<String> categories = FieldUtil.getTargetCategories(dataField);
+					List<String> categories = targetField.getCategories();
 
 					ValueMap<String, V> values = MiningModelUtil.aggregateProbabilities(valueFactory, segmentResults, categories, multipleModelMethod);
 

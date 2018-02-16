@@ -169,7 +169,10 @@ for(TargetField targetField : targetFields){
 			break;
 		case CATEGORICAL:
 		case ORDINAL:
-			List<?> validResultValues = FieldUtil.getValidValues(pmmlDataField);
+			List<String> categories = targetField.getCategories();
+			for(String category : categories){
+				Object validResultValue = TypeUtil.parse(dataType, category);
+			}
 			break;
 		default:
 			break;

@@ -157,7 +157,7 @@ public class FieldValueUtilTest {
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(0d, prepare(dataField, miningField, 5d));
 
-		clearIntervalsAndValues(dataField);
+		clearDomain(dataField);
 
 		dataField.addValues(missingValue, createValue("1", Value.Property.VALID), createValue("2", Value.Property.VALID), createValue("3", Value.Property.VALID));
 
@@ -177,7 +177,7 @@ public class FieldValueUtilTest {
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 		assertEquals(0d, prepare(dataField, miningField, 5d));
 
-		clearIntervalsAndValues(dataField);
+		clearDomain(dataField);
 
 		dataField.addValues(missingValue, createValue("1", Value.Property.INVALID));
 
@@ -289,7 +289,7 @@ public class FieldValueUtilTest {
 	}
 
 	static
-	private void clearIntervalsAndValues(DataField dataField){
+	private void clearDomain(DataField dataField){
 		List<Interval> intervals = dataField.getIntervals();
 		intervals.clear();
 

@@ -699,11 +699,6 @@ public class FieldValueUtil {
 	}
 
 	static
-	public List<String> getTargetCategories(TargetField targetField){
-		return FieldUtil.getTargetCategories(targetField.getDataField());
-	}
-
-	static
 	private boolean equals(DataType dataType, Object value, String referenceValue){
 
 		try {

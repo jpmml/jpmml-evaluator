@@ -791,8 +791,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new InvalidElementException(generalRegressionModel);
 		}
 
-		List<String> targetCategories = FieldValueUtil.getTargetCategories(targetField);
-		if(targetCategories.size() > 0 && targetCategories.size() < 2){
+		List<String> targetCategories = targetField.getCategories();
+		if(targetCategories == null || targetCategories.size() < 2){
 			throw new InvalidElementException(generalRegressionModel);
 		}
 

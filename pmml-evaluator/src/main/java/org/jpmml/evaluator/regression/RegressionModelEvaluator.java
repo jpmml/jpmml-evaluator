@@ -38,7 +38,6 @@ import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.InvalidElementException;
@@ -183,8 +182,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			throw new InvalidElementListException(regressionTables);
 		}
 
-		List<String> targetCategories = FieldValueUtil.getTargetCategories(targetField);
-		if(targetCategories.size() > 0 && targetCategories.size() != regressionTables.size()){
+		List<String> targetCategories = targetField.getCategories();
+		if(targetCategories != null && targetCategories.size() != regressionTables.size()){
 			throw new InvalidElementListException(regressionTables);
 		}
 
@@ -196,7 +195,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new MissingAttributeException(regressionTable, PMMLAttributes.REGRESSIONTABLE_TARGETCATEGORY);
 			} // End if
 
-			if(targetCategories.size() > 0 && targetCategories.indexOf(targetCategory) < 0){
+			if(targetCategories != null && targetCategories.indexOf(targetCategory) < 0){
 				throw new InvalidAttributeException(regressionTable, PMMLAttributes.REGRESSIONTABLE_TARGETCATEGORY, targetCategory);
 			}
 

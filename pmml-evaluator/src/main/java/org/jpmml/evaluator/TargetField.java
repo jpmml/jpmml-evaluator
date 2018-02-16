@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.dmg.pmml.DataField;
@@ -64,6 +65,28 @@ public class TargetField extends ResultField {
 	@Override
 	public OpType getOpType(){
 		return FieldValueUtil.getOpType(getDataField(), getMiningField(), getTarget());
+	}
+
+	/**
+	 * <p>
+	 * Returns the range of categories for this categorical or ordinal field.
+	 * </p>
+	 *
+	 * @return a non-empty list, or <code>null</code>.
+	 *
+	 * @see #getOpType()
+	 *
+	 * @see CategoricalResultFeature
+	 * @see CategoricalResultFeature#getCategories()
+	 */
+	public List<String> getCategories(){
+		List<String> categories = FieldUtil.getCategories(getDataField());
+
+		if(categories != null && !categories.isEmpty()){
+			return categories;
+		}
+
+		return null;
 	}
 
 	public boolean isSynthetic(){

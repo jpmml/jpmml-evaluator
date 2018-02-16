@@ -294,6 +294,10 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 	private <V extends Number> Map.Entry<String, Value<V>> getWinner(Map<String, Value<V>> values, Collection<String> categories){
 		Map.Entry<String, Value<V>> maxEntry = null;
 
+		if(categories == null){
+			categories = values.keySet();
+		}
+
 		for(String category : categories){
 			Value<V> value = values.get(category);
 

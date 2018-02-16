@@ -40,6 +40,8 @@ import org.dmg.pmml.nearest_neighbor.NearestNeighborModel;
  * For {@link ClusteringModel clustering models} this includes all {@link Cluster clusters}.
  * For {@link NearestNeighborModel k-nearest neighbor models} this includes <em>k</em> nearest training instances.
  * </p>
+ *
+ * @see TargetField#getCategories()
  */
 public interface CategoricalResultFeature extends ResultFeature {
 

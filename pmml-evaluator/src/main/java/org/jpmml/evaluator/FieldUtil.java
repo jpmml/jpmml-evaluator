@@ -42,8 +42,8 @@ public class FieldUtil {
 	}
 
 	static
-	public List<String> getTargetCategories(DataField dataField){
-		return CacheUtil.getValue(dataField, FieldUtil.targetCategoryCache);
+	public List<String> getCategories(DataField dataField){
+		return CacheUtil.getValue(dataField, FieldUtil.categoryCache);
 	}
 
 	static
@@ -57,7 +57,7 @@ public class FieldUtil {
 	}
 
 	static
-	private List<String> parseTargetCategories(DataField dataField){
+	private List<String> parseCategories(DataField dataField){
 		List<String> result = new ArrayList<>();
 
 		if(dataField.hasValues()){
@@ -129,11 +129,11 @@ public class FieldUtil {
 		return result;
 	}
 
-	private static final LoadingCache<DataField, List<String>> targetCategoryCache = CacheUtil.buildLoadingCache(new CacheLoader<DataField, List<String>>(){
+	private static final LoadingCache<DataField, List<String>> categoryCache = CacheUtil.buildLoadingCache(new CacheLoader<DataField, List<String>>(){
 
 		@Override
 		public List<String> load(DataField dataField){
-			return ImmutableList.copyOf(parseTargetCategories(dataField));
+			return ImmutableList.copyOf(parseCategories(dataField));
 		}
 	});
 
