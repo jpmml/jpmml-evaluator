@@ -33,7 +33,7 @@ public class RegressionModelUtilTest {
 		values.put("yes", new FloatValue(0.3f));
 		values.put("no", new FloatValue(Float.MAX_VALUE));
 
-		RegressionModelUtil.computeBinomialProbabilities(values, RegressionModel.NormalizationMethod.NONE);
+		RegressionModelUtil.computeBinomialProbabilities(RegressionModel.NormalizationMethod.NONE, values);
 
 		assertEquals(new FloatValue(0.3f), values.get("yes"));
 		assertEquals(new FloatValue(1f - 0.3f), values.get("no"));
@@ -46,7 +46,7 @@ public class RegressionModelUtilTest {
 		values.put("yellow", new FloatValue(0.5f));
 		values.put("green", new FloatValue(Float.MAX_VALUE));
 
-		RegressionModelUtil.computeMultinomialProbabilities(values, RegressionModel.NormalizationMethod.NONE);
+		RegressionModelUtil.computeMultinomialProbabilities(RegressionModel.NormalizationMethod.NONE, values);
 
 		assertEquals(new FloatValue(0.3f), values.get("red"));
 		assertEquals(new FloatValue(0.5f), values.get("yellow"));
@@ -60,7 +60,7 @@ public class RegressionModelUtilTest {
 		values.put("louder", new FloatValue(0.7f));
 		values.put("insane", new FloatValue(1f));
 
-		RegressionModelUtil.computeOrdinalProbabilities(values, RegressionModel.NormalizationMethod.NONE);
+		RegressionModelUtil.computeOrdinalProbabilities(RegressionModel.NormalizationMethod.NONE, values);
 
 		assertEquals(new FloatValue(0.2f - 0f), values.get("loud"));
 		assertEquals(new FloatValue(0.7f - 0.2f), values.get("louder"));

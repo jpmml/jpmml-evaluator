@@ -30,7 +30,7 @@ public class NeuralNetworkUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> activateNeuronOutput(Value<V> value, Double threshold, NeuralNetwork.ActivationFunction activationFunction){
+	public <V extends Number> Value<V> activateNeuronOutput(NeuralNetwork.ActivationFunction activationFunction, Double threshold, Value<V> value){
 
 		switch(activationFunction){
 			case THRESHOLD:
@@ -68,7 +68,7 @@ public class NeuralNetworkUtil {
 	}
 
 	static
-	public <V extends Number> Collection<Value<V>> normalizeNeuralLayerOutputs(Collection<Value<V>> values, NeuralNetwork.NormalizationMethod normalizationMethod){
+	public <V extends Number> Collection<Value<V>> normalizeNeuralLayerOutputs(NeuralNetwork.NormalizationMethod normalizationMethod, Collection<Value<V>> values){
 
 		switch(normalizationMethod){
 			case NONE:

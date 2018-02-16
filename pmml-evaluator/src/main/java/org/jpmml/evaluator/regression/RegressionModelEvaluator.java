@@ -147,7 +147,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			case CLOGLOG:
 			case LOGLOG:
 			case CAUCHIT:
-				RegressionModelUtil.normalizeRegressionResult(result, normalizationMethod);
+				RegressionModelUtil.normalizeRegressionResult(normalizationMethod, result);
 				break;
 			case SIMPLEMAX:
 				throw new InvalidAttributeException(regressionModel, normalizationMethod);
@@ -215,16 +215,16 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				if((OpType.CATEGORICAL).equals(opType)){
 
 					if(values.size() == 2){
-						RegressionModelUtil.computeBinomialProbabilities(values, normalizationMethod);
+						RegressionModelUtil.computeBinomialProbabilities(normalizationMethod, values);
 					} else
 
 					{
-						RegressionModelUtil.computeMultinomialProbabilities(values, normalizationMethod);
+						RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, values);
 					}
 				} else
 
 				{
-					RegressionModelUtil.computeOrdinalProbabilities(values, normalizationMethod);
+					RegressionModelUtil.computeOrdinalProbabilities(normalizationMethod, values);
 				}
 				break;
 			case SIMPLEMAX:
@@ -233,11 +233,11 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 					// XXX: Non-standard behaviour
 					if((values.size() == 2 && isDefault(regressionTables.get(1)) && (RegressionModel.NormalizationMethod.SOFTMAX).equals(normalizationMethod))){
-						RegressionModelUtil.computeBinomialProbabilities(values, RegressionModel.NormalizationMethod.LOGIT);
+						RegressionModelUtil.computeBinomialProbabilities(RegressionModel.NormalizationMethod.LOGIT, values);
 					} else
 
 					{
-						RegressionModelUtil.computeMultinomialProbabilities(values, normalizationMethod);
+						RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, values);
 					}
 				} else
 
@@ -253,12 +253,12 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				if((OpType.CATEGORICAL).equals(opType)){
 
 					if(values.size() == 2){
-						RegressionModelUtil.computeBinomialProbabilities(values, normalizationMethod);
+						RegressionModelUtil.computeBinomialProbabilities(normalizationMethod, values);
 					} else
 
 					// XXX: Non-standard behaviour
 					if(values.size() > 2 && (RegressionModel.NormalizationMethod.LOGIT).equals(normalizationMethod)){
-						RegressionModelUtil.computeMultinomialProbabilities(values, normalizationMethod);
+						RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, values);
 					} else
 
 					{
@@ -267,7 +267,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				} else
 
 				{
-					RegressionModelUtil.computeOrdinalProbabilities(values, normalizationMethod);
+					RegressionModelUtil.computeOrdinalProbabilities(normalizationMethod, values);
 				}
 				break;
 			case EXP:

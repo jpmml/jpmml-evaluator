@@ -31,7 +31,7 @@ public class RegressionModelUtil {
 	}
 
 	static
-	public <K, V extends Number> ValueMap<K, V> computeBinomialProbabilities(ValueMap<K, V> values, RegressionModel.NormalizationMethod normalizationMethod){
+	public <K, V extends Number> ValueMap<K, V> computeBinomialProbabilities(RegressionModel.NormalizationMethod normalizationMethod, ValueMap<K, V> values){
 
 		if(values.size() != 2){
 			throw new IllegalArgumentException();
@@ -42,7 +42,7 @@ public class RegressionModelUtil {
 		Value<V> firstValue = valueIt.next();
 
 		// The probability of the first category is calculated
-		normalizeBinaryLogisticClassificationResult(firstValue, normalizationMethod);
+		normalizeBinaryLogisticClassificationResult(normalizationMethod, firstValue);
 
 		Value<V> secondValue = valueIt.next();
 
@@ -53,7 +53,7 @@ public class RegressionModelUtil {
 	}
 
 	static
-	public <K, V extends Number> ValueMap<K, V> computeMultinomialProbabilities(ValueMap<K, V> values, RegressionModel.NormalizationMethod normalizationMethod){
+	public <K, V extends Number> ValueMap<K, V> computeMultinomialProbabilities(RegressionModel.NormalizationMethod normalizationMethod, ValueMap<K, V> values){
 
 		if(values.size() < 2){
 			throw new IllegalArgumentException();
@@ -108,7 +108,7 @@ public class RegressionModelUtil {
 	}
 
 	static
-	public <K, V extends Number> ValueMap<K, V> computeOrdinalProbabilities(ValueMap<K, V> values, RegressionModel.NormalizationMethod normalizationMethod){
+	public <K, V extends Number> ValueMap<K, V> computeOrdinalProbabilities(RegressionModel.NormalizationMethod normalizationMethod, ValueMap<K, V> values){
 
 		if(values.size() < 2){
 			throw new IllegalArgumentException();
@@ -128,7 +128,7 @@ public class RegressionModelUtil {
 					for(int i = 0, max = values.size() - 1; i < max; i++){
 						Value<V> value = valueIt.next();
 
-						normalizeBinaryLogisticClassificationResult(value, normalizationMethod);
+						normalizeBinaryLogisticClassificationResult(normalizationMethod, value);
 
 						if(sum == null){
 							sum = value.copy();
@@ -154,7 +154,7 @@ public class RegressionModelUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> normalizeRegressionResult(Value<V> value, RegressionModel.NormalizationMethod normalizationMethod){
+	public <V extends Number> Value<V> normalizeRegressionResult(RegressionModel.NormalizationMethod normalizationMethod, Value<V> value){
 
 		switch(normalizationMethod){
 			case NONE:
@@ -178,7 +178,7 @@ public class RegressionModelUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> normalizeBinaryLogisticClassificationResult(Value<V> value, RegressionModel.NormalizationMethod normalizationMethod){
+	public <V extends Number> Value<V> normalizeBinaryLogisticClassificationResult(RegressionModel.NormalizationMethod normalizationMethod, Value<V> value){
 
 		switch(normalizationMethod){
 			case NONE:

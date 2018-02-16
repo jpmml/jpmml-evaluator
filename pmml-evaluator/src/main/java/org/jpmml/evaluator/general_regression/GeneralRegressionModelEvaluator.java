@@ -682,7 +682,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			case ODDSPOWER:
 			case POWER:
 			case PROBIT:
-				GeneralRegressionModelUtil.computeLink(value, distParameter, linkParameter, linkFunction);
+				GeneralRegressionModelUtil.computeLink(linkFunction, distParameter, linkParameter, value);
 				break;
 			default:
 				throw new UnsupportedAttributeException(generalRegressionModel, linkFunction);
@@ -715,7 +715,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			case CLOGLOG:
 			case LOGLOG:
 			case CAUCHIT:
-				GeneralRegressionModelUtil.computeCumulativeLink(value, cumulativeLinkFunction);
+				GeneralRegressionModelUtil.computeCumulativeLink(cumulativeLinkFunction, value);
 				break;
 			default:
 				throw new UnsupportedAttributeException(generalRegressionModel, cumulativeLinkFunction);

@@ -272,7 +272,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case WEIGHTED_MEDIAN:
 			case SUM:
 			case WEIGHTED_SUM:
-				result = MiningModelUtil.aggregateValues(valueFactory, segmentResults, multipleModelMethod);
+				result = MiningModelUtil.aggregateValues(valueFactory, multipleModelMethod, segmentResults);
 				break;
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
@@ -309,7 +309,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 				{
-					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, segmentResults, multipleModelMethod);
+					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, segmentResults);
 
 					// Convert from votes to probabilities
 					ValueUtil.normalizeSimpleMax(values);
@@ -324,7 +324,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				{
 					List<String> categories = targetField.getCategories();
 
-					ValueMap<String, V> values = MiningModelUtil.aggregateProbabilities(valueFactory, segmentResults, categories, multipleModelMethod);
+					ValueMap<String, V> values = MiningModelUtil.aggregateProbabilities(valueFactory, multipleModelMethod, categories, segmentResults);
 
 					result = new ProbabilityDistribution<>(values);
 				}
@@ -362,7 +362,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 				{
-					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, segmentResults, multipleModelMethod);
+					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, segmentResults);
 
 					result = new VoteDistribution<>(values);
 				}

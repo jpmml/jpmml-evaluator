@@ -506,7 +506,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 					case ELLIOTT:
 					case ARCTAN:
 					case RECTIFIER:
-						NeuralNetworkUtil.activateNeuronOutput(output, threshold, activationFunction);
+						NeuralNetworkUtil.activateNeuronOutput(activationFunction, threshold, output);
 						break;
 					default:
 						throw new UnsupportedAttributeException(locatable, activationFunction);
@@ -530,7 +530,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				case NONE:
 				case SIMPLEMAX:
 				case SOFTMAX:
-					NeuralNetworkUtil.normalizeNeuralLayerOutputs(outputs, normalizationMethod);
+					NeuralNetworkUtil.normalizeNeuralLayerOutputs(normalizationMethod, outputs);
 					break;
 				default:
 					throw new UnsupportedAttributeException(locatable, normalizationMethod);

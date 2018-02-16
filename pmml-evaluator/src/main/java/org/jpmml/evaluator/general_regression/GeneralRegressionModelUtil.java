@@ -27,7 +27,7 @@ public class GeneralRegressionModelUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> computeLink(Value<V> value, Double distParameter, Double linkParameter, GeneralRegressionModel.LinkFunction linkFunction){
+	public <V extends Number> Value<V> computeLink(GeneralRegressionModel.LinkFunction linkFunction, Double distParameter, Double linkParameter, Value<V> value){
 
 		switch(linkFunction){
 			case CLOGLOG:
@@ -65,7 +65,7 @@ public class GeneralRegressionModelUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> computeCumulativeLink(Value<V> value, GeneralRegressionModel.CumulativeLinkFunction cumulativeLinkFunction){
+	public <V extends Number> Value<V> computeCumulativeLink(GeneralRegressionModel.CumulativeLinkFunction cumulativeLinkFunction, Value<V> value){
 
 		switch(cumulativeLinkFunction){
 			case LOGIT:
