@@ -98,31 +98,32 @@ try(InputStream is = ...){
 }
 ```
 
-If the model type is known, then it is possible to instantiate the corresponding subclass of `org.jpmml.evaluator.ModelEvaluator` directly:
-```java
-PMML pmml = ...;
+The PMML standard defines large number of model types.
+The evaluation logic for each model type is encapsulated into a corresponding `org.jpmml.evaluator.ModelEvaluator` subclass.
 
-ModelEvaluator<TreeModel> modelEvaluator = new TreeModelEvaluator(pmml);
+Even though `ModelEvaluator` subclasses can be created directly, the recommended approach is to follow the factory design pattern as implemented by the `org.jpmml.evaluator.ModelEvaluatorFactory` factory class.
+
+Obtaining and configuring a `ModelEvaluatorFactory` instance:
+```java
+ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
+
+// Activate the generation of MathML prediction reports
+ValueFactoryFactory valueFactoryFactory = ReportingValueFactoryFactory.newInstance();
+modelEvaluatorFactory.setValueFactoryFactory(valueFactoryFactory);
 ```
 
-Otherwise, if the model type is unknown, then the model evaluator instantiation work should be delegated to an instance of class `org.jpmml.evaluator.ModelEvaluatorFactory`:
-```java
-PMML pmml = ...;
+The model evaluator factory selects the first scorable model from the `PMML` instance, and creates and configures a corresponding `ModelEvaluator` instance.
+However, in order to promote loose coupling, it is advisable for most application code to cast the result to a much simplified `org.jpmml.evaluator.Evaluator` instance.
 
-ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
- 
-ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
+Obtaining an `Evaluator` instance for the `PMML` instance:
+```java
+Evaluator evaluator = (Evaluator)modelEvaluatorFactory.newModelEvaluator(pmml);
 ```
 
 Model evaluator classes follow functional programming principles and are completely thread safe.
 
 Model evaluator instances are fairly lightweight, which makes them cheap to create and destroy.
-Nevertheless, long-running applications should maintain a one-to-one mapping between `PMML` and `ModelEvaluator` instances for better performance.
-
-It is advisable for application code to work against the `org.jpmml.evaluator.Evaluator` interface:
-```java
-Evaluator evaluator = (Evaluator)modelEvaluator;
-```
+Nevertheless, long-running applications should maintain a one-to-one mapping between `PMML` and `Evaluator` instances for better performance.
 
 ### Querying the "data schema" of models
 
@@ -140,11 +141,11 @@ for(InputField inputField : inputFields){
 
 	switch(opType){
 		case CONTINUOUS:
-			RangeSet<Double> validArgumentRanges = FieldValueUtil.getValidRanges(pmmlDataField);
+			RangeSet<Double> validArgumentRanges = FieldUtil.getValidRanges(pmmlDataField);
 			break;
 		case CATEGORICAL:
 		case ORDINAL:
-			List<Value> validArgumentValues = FieldValueUtil.getValidValues(pmmlDataField);
+			List<?> validArgumentValues = FieldUtil.getValidValues(pmmlDataField);
 			break;
 		default:
 			break;
@@ -168,7 +169,7 @@ for(TargetField targetField : targetFields){
 			break;
 		case CATEGORICAL:
 		case ORDINAL:
-			List<Value> validResultValues = FieldValueUtil.getValidValues(pmmlDataField);
+			List<?> validResultValues = FieldUtil.getValidValues(pmmlDataField);
 			break;
 		default:
 			break;
