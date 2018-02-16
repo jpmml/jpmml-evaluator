@@ -20,10 +20,12 @@ package org.jpmml.evaluator;
 
 import java.util.Objects;
 
+import com.google.common.collect.RangeSet;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.HasContinuousDomain;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
 
@@ -81,6 +83,31 @@ public class InputField extends ModelField {
 	@Override
 	public OpType getOpType(){
 		return FieldValueUtil.getOpType(getField(), getMiningField());
+	}
+
+	/**
+	 * <p>
+	 * Returns the domain of valid values for this continuous field.
+	 * If specified, then all values that are contained in this set shall be considered valid, and all others invalid.
+	 * If not specified, then all values shall be considered valid.
+	 * </p>
+	 *
+	 * @return a non-empty set, or <code>null</code>.
+	 *
+	 * @see #getOpType()
+	 */
+	public RangeSet<Double> getContinuousDomain(){
+		Field<?> field = getField();
+
+		if(field instanceof HasContinuousDomain){
+			RangeSet<Double> validRanges = FieldUtil.getValidRanges((Field & HasContinuousDomain)field);
+
+			if(validRanges != null && !validRanges.isEmpty()){
+				return validRanges;
+			}
+		}
+
+		return null;
 	}
 
 	/**

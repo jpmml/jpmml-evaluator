@@ -141,7 +141,7 @@ for(InputField inputField : inputFields){
 
 	switch(opType){
 		case CONTINUOUS:
-			RangeSet<Double> validArgumentRanges = FieldUtil.getValidRanges(pmmlDataField);
+			RangeSet<Double> validArgumentRanges = inputField.getContinuousDomain();
 			break;
 		case CATEGORICAL:
 		case ORDINAL:
