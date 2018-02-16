@@ -58,8 +58,6 @@ public class OutputField extends ResultField {
 
 	/**
 	 * @return the data type, or <code>null</code>.
-	 *
-	 * @see OutputUtil#getDataType(org.dmg.pmml.OutputField, ModelEvaluator)
 	 */
 	@Override
 	public DataType getDataType(){
