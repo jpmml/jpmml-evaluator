@@ -31,7 +31,7 @@ import org.dmg.pmml.nearest_neighbor.NearestNeighborModel;
  *
  * <p>
  * Classification is a supervised learning task.
- * The set of all categories is defined by the valid values of the {@link Evaluator#getTargetField() target field}.
+ * The set of all categories is defined by the range of categories of the target field.
  * </p>
  *
  * <p>

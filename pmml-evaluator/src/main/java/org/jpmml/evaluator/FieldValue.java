@@ -45,13 +45,11 @@ import org.dmg.pmml.PMMLObject;
  * A field value representation that meets the requirements of PMML type system.
  * </p>
  *
- * <p>
  * Type information has two components to it:
  * <ul>
  *   <li>{@link #getOpType() Operational type}. Determines supported type equality and type comparison operations.</li>
  *   <li>{@link #getDataType() Data type}. Determines supported type conversions.</li>
  * </ul>
- * </p>
  *
  * <p>
  * A field value is created after a {@link Field field}.
@@ -165,7 +163,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 
 	/**
 	 * <p>
-	 * A value-safe replacement for {@link #equals(FieldValue)}.
+	 * A value-safe replacement for {@link #equals(Object)}.
 	 * </p>
 	 */
 	public boolean equalsValue(FieldValue value){

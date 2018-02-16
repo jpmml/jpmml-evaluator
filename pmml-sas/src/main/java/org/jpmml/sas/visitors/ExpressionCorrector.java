@@ -31,7 +31,7 @@ import org.jpmml.model.visitors.ExpressionFilterer;
  *
  * Summary of corrections:
  * <ul>
- *   <li>Replace all occurrences of <code>&lt;Constant&gt;FMTWIDTH&lt;/Constant&gt;</code> with <code>&lt;FieldRef field=&quot;FMTWIDTH&quot;/&gt;</li>
+ *   <li>Replace all occurrences of <code>&lt;Constant&gt;FMTWIDTH&lt;/Constant&gt;</code> with <code>&lt;FieldRef field=&quot;FMTWIDTH&quot;/&gt;</code>.</li>
  * </ul>
  */
 public class ExpressionCorrector extends ExpressionFilterer {

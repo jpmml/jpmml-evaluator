@@ -36,7 +36,7 @@ import org.jpmml.evaluator.TypeUtil;
  * Pseudo-declaration of function:
  * <pre>
  *   &lt;DefineFunction name="..." dataType="double"&gt;
- *     &ltParameterField name="values" dataType="collection of numbers"/&gt;
+ *     &lt;ParameterField name="values" dataType="collection of numbers"/&gt;
  *   &lt;/DefineFunction&gt;
  * </pre>
  *

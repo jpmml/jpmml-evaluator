@@ -56,7 +56,7 @@ import org.dmg.pmml.Model;
  * </pre>
  *
  * <h3>Processing results</h3>
- * Retrieving the values of {@link #getTargetField() target fields} (ie. primary results):
+ * Retrieving the values of {@link #getTargetFields() target fields} (ie. primary results):
  * <pre>
  * List&lt;TargetField&gt; targetFields = evaluator.getTargetFields();
  * for(TargetField targetField : targetFields){

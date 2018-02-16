@@ -27,13 +27,11 @@ package org.jpmml.evaluator;
  * Affinity represents a degree of attraction between the sample and a particular category.
  * </p>
  *
- * <p>
  * PMML deals with two kinds of affinities:
  * <ul>
  *   <li>Distance between two points in an n-dimensional feature space. Smaller distance values indicate more optimal fit.</li>
  *   <li>Similarity between two feature vectors. Greater similarity values indicate more optimal fit.</li>
  * </ul>
- * </p>
  *
  * @see org.dmg.pmml.ResultFeature#AFFINITY
  */

@@ -34,7 +34,6 @@ public interface Batch extends AutoCloseable {
 	 * </p>
 	 *
 	 * @see Evaluator#getInputFields()
-	 * @see Evaluator#getGroupFields()
 	 */
 	List<? extends Map<FieldName, ?>> getInput() throws Exception;
 

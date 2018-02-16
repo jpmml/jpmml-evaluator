@@ -31,7 +31,6 @@ import org.dmg.pmml.Model;
  * The grouping is applied to {@link #getActiveFields() active field} values.
  * </p>
  *
- * <p>
  * Aggregating data records:
  * <pre>
  * Evaluator evaluator = ...;
@@ -41,7 +40,6 @@ import org.dmg.pmml.Model;
  *   preparedRecords = EvaluatorUtil.groupRows(hasGroupFields, preparedRecords);
  * }
  * </pre>
- * </p>
  *
  * @see EvaluatorUtil#groupRows(HasGroupFields, List)
  */
