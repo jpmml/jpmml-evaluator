@@ -3,6 +3,8 @@ JPMML-Evaluator includes third-party dependencies that are released under the Ap
   * Apache Commons Text - https://commons.apache.org/proper/commons-text/
   * Guava - https://github.com/google/guava
   * JCommander - http://jcommander.org/
+  * Metrics - http://metrics.dropwizard.io/
+  * Simple Logging Facade for Java (SLF4J) - https://www.slf4j.org/
 
                                  Apache License
                            Version 2.0, January 2004
