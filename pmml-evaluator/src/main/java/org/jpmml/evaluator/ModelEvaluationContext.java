@@ -56,6 +56,21 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
+	public void reset(boolean purge){
+		super.reset(purge);
+
+		this.arguments = Collections.emptyMap();
+
+		this.compatible = false;
+	}
+
+	public void reset(ModelEvaluator<?> modelEvaluator, boolean purge){
+		reset(purge);
+
+		setModelEvaluator(modelEvaluator);
+	}
+
+	@Override
 	protected FieldValue createFieldValue(FieldName name, Object value){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
@@ -87,21 +102,6 @@ public class ModelEvaluationContext extends EvaluationContext {
 			default:
 				throw new UnsupportedAttributeException(miningField, usageType);
 		}
-	}
-
-	@Override
-	public void reset(boolean purge){
-		super.reset(purge);
-
-		this.arguments = Collections.emptyMap();
-
-		this.compatible = false;
-	}
-
-	public void reset(ModelEvaluator<?> modelEvaluator, boolean purge){
-		reset(purge);
-
-		setModelEvaluator(modelEvaluator);
 	}
 
 	@Override

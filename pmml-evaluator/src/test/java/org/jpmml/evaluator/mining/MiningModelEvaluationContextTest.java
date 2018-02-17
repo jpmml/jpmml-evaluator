@@ -22,12 +22,10 @@ import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Classification;
-import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class MiningModelEvaluationContextTest extends ModelEvaluatorTest {
 
@@ -43,9 +41,5 @@ public class MiningModelEvaluationContextTest extends ModelEvaluatorTest {
 		Classification<?> targetValue = (Classification<?>)result.get(evaluator.getTargetFieldName());
 
 		assertEquals("under 50", targetValue.getResult());
-
-		FieldValue value = context.getField(FieldName.create("Age_missing"));
-
-		assertNotNull(value);
 	}
 }

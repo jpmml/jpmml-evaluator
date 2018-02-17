@@ -15,6 +15,10 @@
 					<MiningSchema>
 						<MiningField name="input"/>
 					</MiningSchema>
+					<Output>
+						<OutputField name="output" feature="predictedValue"/>
+						<OutputField name="report(output)" x-reportField="output" feature="x-report"/>
+					</Output>
 					<RegressionTable intercept="0.0">
 						<NumericPredictor name="input" coefficient="2.0"/>
 					</RegressionTable>

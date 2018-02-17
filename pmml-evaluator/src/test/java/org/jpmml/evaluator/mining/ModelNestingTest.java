@@ -24,12 +24,16 @@ import java.util.Map;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
+import org.jpmml.evaluator.OutputField;
 import org.jpmml.evaluator.TargetField;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 public class ModelNestingTest extends ModelEvaluatorTest {
@@ -38,9 +42,13 @@ public class ModelNestingTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
+		List<InputField> inputFields = evaluator.getInputFields();
 		List<TargetField> targetFields = evaluator.getTargetFields();
+		List<OutputField> outputFields = evaluator.getOutputFields();
 
+		assertEquals(1, inputFields.size());
 		assertEquals(0, targetFields.size());
+		assertEquals(2, outputFields.size());
 
 		try {
 			evaluator.getTargetField();
@@ -56,8 +64,20 @@ public class ModelNestingTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		assertEquals(1, result.size());
+		assertEquals(3, result.size());
 
 		assertEquals(2d * 2d, (Double)getTarget(result, Evaluator.DEFAULT_TARGET_NAME), 1e-8d);
+
+		assertNotNull((Double)getOutput(result, "output"));
+		assertNotNull((String)getOutput(result, "report(output)"));
+
+		evaluator.configure(null);
+
+		result = evaluator.evaluate(arguments);
+
+		assertEquals(3, result.size());
+
+		assertNotNull((Double)getOutput(result, "output"));
+		assertNull((String)getOutput(result, "report(output)"));
 	}
 }
