@@ -25,6 +25,9 @@ import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.JavaModel;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
+import org.jpmml.evaluator.ModelEvaluatorFactory;
+import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.evaluator.ValueFactoryFactory;
 
 public class JavaModelEvaluator extends ModelEvaluator<JavaModel> {
 
@@ -58,5 +61,20 @@ public class JavaModelEvaluator extends ModelEvaluator<JavaModel> {
 		JavaModel javaModel = ensureScorableModel();
 
 		return javaModel.evaluate(context);
+	}
+
+	@Override
+	public ModelEvaluatorFactory ensureModelEvaluatorFactory(){
+		return super.ensureModelEvaluatorFactory();
+	}
+
+	@Override
+	public ValueFactoryFactory ensureValueFactoryFactory(){
+		return super.ensureValueFactoryFactory();
+	}
+
+	@Override
+	public ValueFactory<?> ensureValueFactory(){
+		return super.ensureValueFactory();
 	}
 }

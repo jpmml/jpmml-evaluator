@@ -70,6 +70,8 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 	private M model = null;
 
+	private ModelEvaluatorFactory modelEvaluatorFactory = null;
+
 	private ValueFactoryFactory valueFactoryFactory = null;
 
 	private ValueFactory<?> valueFactory = null;
@@ -156,10 +158,21 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 	abstract
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context);
 
-	protected void configure(ModelEvaluatorFactory modelEvaluatorFactory){
-		ValueFactoryFactory valueFactoryFactory = modelEvaluatorFactory.getValueFactoryFactory();
+	/**
+	 * <p>
+	 * Configures the runtime behaviour of this Evaluator instance.
+	 * </p>
+	 *
+	 * <p>
+	 * Must be called once before the first evaluation.
+	 * May be called any number of times between subsequent evaluations.
+	 * </p>
+	 */
+	public void configure(ModelEvaluatorFactory modelEvaluatorFactory){
+		setModelEvaluatorFactory(modelEvaluatorFactory);
 
-		setValueFactoryFactory(valueFactoryFactory);
+		setValueFactoryFactory(null);
+		setValueFactory(null);
 	}
 
 	@Override
@@ -173,27 +186,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		M model = getModel();
 
 		return model.getMathContext();
-	}
-
-	public ValueFactory<?> getValueFactory(){
-
-		if(this.valueFactory == null){
-			this.valueFactory = createValueFactory();
-		}
-
-		return this.valueFactory;
-	}
-
-	protected ValueFactory<?> createValueFactory(){
-		ValueFactoryFactory valueFactoryFactory = getValueFactoryFactory();
-
-		if(valueFactoryFactory == null){
-			valueFactoryFactory = ValueFactoryFactory.newInstance();
-		}
-
-		MathContext mathContext = getMathContext();
-
-		return valueFactoryFactory.newValueFactory(mathContext);
 	}
 
 	public DataField getDataField(FieldName name){
@@ -638,6 +630,51 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		return CacheUtil.getValue(model, cache, loader);
 	}
 
+	protected ModelEvaluatorFactory ensureModelEvaluatorFactory(){
+		ModelEvaluatorFactory modelEvaluatorFactory = getModelEvaluatorFactory();
+
+		if(modelEvaluatorFactory == null){
+			modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
+
+			setModelEvaluatorFactory(modelEvaluatorFactory);
+		}
+
+		return modelEvaluatorFactory;
+	}
+
+	protected ValueFactoryFactory ensureValueFactoryFactory(){
+		ValueFactoryFactory valueFactoryFactory = getValueFactoryFactory();
+
+		if(valueFactoryFactory == null){
+			ModelEvaluatorFactory modelEvaluatorFactory = ensureModelEvaluatorFactory();
+
+			valueFactoryFactory = modelEvaluatorFactory.getValueFactoryFactory();
+			if(valueFactoryFactory == null){
+				valueFactoryFactory = ValueFactoryFactory.newInstance();
+			}
+
+			setValueFactoryFactory(valueFactoryFactory);
+		}
+
+		return valueFactoryFactory;
+	}
+
+	protected ValueFactory<?> ensureValueFactory(){
+		ValueFactory<?> valueFactory = getValueFactory();
+
+		if(valueFactory == null){
+			ValueFactoryFactory valueFactoryFactory = ensureValueFactoryFactory();
+
+			MathContext mathContext = getMathContext();
+
+			valueFactory = valueFactoryFactory.newValueFactory(mathContext);
+
+			setValueFactory(valueFactory);
+		}
+
+		return valueFactory;
+	}
+
 	public PMML getPMML(){
 		return this.pmml;
 	}
@@ -654,12 +691,28 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		this.model = model;
 	}
 
+	public ModelEvaluatorFactory getModelEvaluatorFactory(){
+		return this.modelEvaluatorFactory;
+	}
+
+	private void setModelEvaluatorFactory(ModelEvaluatorFactory modelEvaluatorFactory){
+		this.modelEvaluatorFactory = modelEvaluatorFactory;
+	}
+
 	public ValueFactoryFactory getValueFactoryFactory(){
 		return this.valueFactoryFactory;
 	}
 
 	private void setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
 		this.valueFactoryFactory = valueFactoryFactory;
+	}
+
+	public ValueFactory<?> getValueFactory(){
+		return this.valueFactory;
+	}
+
+	private void setValueFactory(ValueFactory<?> valueFactory){
+		this.valueFactory = valueFactory;
 	}
 
 	static

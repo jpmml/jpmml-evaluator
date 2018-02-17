@@ -142,7 +142,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		MathContext mathContext = supportVectorMachineModel.getMathContext();
 		switch(mathContext){
 			case DOUBLE:
-				valueFactory = (ValueFactory)getValueFactory();
+				valueFactory = (ValueFactory)ensureValueFactory();
 				break;
 			default:
 				throw new UnsupportedAttributeException(supportVectorMachineModel, mathContext);

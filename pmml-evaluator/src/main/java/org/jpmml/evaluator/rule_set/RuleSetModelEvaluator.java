@@ -109,7 +109,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		switch(mathContext){
 			case FLOAT:
 			case DOUBLE:
-				valueFactory = getValueFactory();
+				valueFactory = ensureValueFactory();
 				break;
 			default:
 				throw new UnsupportedAttributeException(ruleSetModel, mathContext);

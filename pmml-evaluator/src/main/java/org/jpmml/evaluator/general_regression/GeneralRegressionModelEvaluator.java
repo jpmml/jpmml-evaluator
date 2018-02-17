@@ -159,7 +159,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		switch(mathContext){
 			case FLOAT:
 			case DOUBLE:
-				valueFactory = getValueFactory();
+				valueFactory = ensureValueFactory();
 				break;
 			default:
 				throw new UnsupportedAttributeException(generalRegressionModel, mathContext);

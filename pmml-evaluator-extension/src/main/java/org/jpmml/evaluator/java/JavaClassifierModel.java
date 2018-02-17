@@ -82,7 +82,7 @@ public class JavaClassifierModel extends JavaModel {
 	protected Map<FieldName, ? extends Classification<?>> evaluateClassification(JavaModelEvaluationContext context){
 		JavaModelEvaluator modelEvaluator = context.getModelEvaluator();
 
-		ValueFactory<?> valueFactory = modelEvaluator.getValueFactory();
+		ValueFactory<?> valueFactory = modelEvaluator.ensureValueFactory();
 
 		TargetField targetField = modelEvaluator.getTargetField();
 

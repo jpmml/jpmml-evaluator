@@ -82,7 +82,7 @@ public class JavaRegressorModel extends JavaModel {
 	protected Map<FieldName, ?> evaluateRegression(JavaModelEvaluationContext context){
 		JavaModelEvaluator modelEvaluator = context.getModelEvaluator();
 
-		ValueFactory<?> valueFactory = modelEvaluator.getValueFactory();
+		ValueFactory<?> valueFactory = modelEvaluator.ensureValueFactory();
 
 		TargetField targetField = modelEvaluator.getTargetField();
 

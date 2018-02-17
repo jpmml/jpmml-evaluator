@@ -146,7 +146,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		switch(mathContext){
 			case FLOAT:
 			case DOUBLE:
-				valueFactory = getValueFactory();
+				valueFactory = ensureValueFactory();
 				break;
 			default:
 				throw new UnsupportedAttributeException(neuralNetwork, mathContext);

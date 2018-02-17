@@ -181,7 +181,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		switch(mathContext){
 			case FLOAT:
 			case DOUBLE:
-				valueFactory = getValueFactory();
+				valueFactory = ensureValueFactory();
 				break;
 			default:
 				throw new UnsupportedAttributeException(nearestNeighborModel, mathContext);

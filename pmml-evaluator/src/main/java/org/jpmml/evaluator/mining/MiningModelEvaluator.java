@@ -90,8 +90,6 @@ import org.jpmml.evaluator.XPathUtil;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 
-	private ModelEvaluatorFactory modelEvaluatorFactory = null;
-
 	private ConcurrentMap<String, SegmentHandler> segmentHandlers = new ConcurrentHashMap<>();
 
 	transient
@@ -134,10 +132,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	protected void configure(ModelEvaluatorFactory modelEvaluatorFactory){
+	public void configure(ModelEvaluatorFactory modelEvaluatorFactory){
 		super.configure(modelEvaluatorFactory);
 
-		setModelEvaluatorFactory(modelEvaluatorFactory);
+		this.segmentHandlers.clear();
 	}
 
 	@Override
@@ -223,7 +221,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		switch(mathContext){
 			case FLOAT:
 			case DOUBLE:
-				valueFactory = getValueFactory();
+				valueFactory = ensureValueFactory();
 				break;
 			default:
 				throw new UnsupportedAttributeException(miningModel, mathContext);
@@ -666,23 +664,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	private SegmentHandler createSegmentHandler(Model model){
-		ModelEvaluatorFactory modelEvaluatorFactory = getModelEvaluatorFactory();
-
-		if(modelEvaluatorFactory == null){
-			modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
-		}
+		ModelEvaluatorFactory modelEvaluatorFactory = ensureModelEvaluatorFactory();
 
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(getPMML(), model);
 
 		return new SegmentHandler(modelEvaluator);
-	}
-
-	public ModelEvaluatorFactory getModelEvaluatorFactory(){
-		return this.modelEvaluatorFactory;
-	}
-
-	private void setModelEvaluatorFactory(ModelEvaluatorFactory modelEvaluatorFactory){
-		this.modelEvaluatorFactory = modelEvaluatorFactory;
 	}
 
 	static
