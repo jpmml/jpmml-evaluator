@@ -20,13 +20,18 @@ package org.jpmml.evaluator.java;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.FieldValue;
+import org.jpmml.evaluator.FieldValues;
+import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
 
 public class JavaModelEvaluationContext extends ModelEvaluationContext {
+
+	private List<FieldName> names = null;
 
 	private List<FieldValue> values = null;
 
@@ -45,10 +50,10 @@ public class JavaModelEvaluationContext extends ModelEvaluationContext {
 	}
 
 	public void cache(List<FieldName> names){
+		this.names = null;
+		this.values = null;
 
 		if(names == null){
-			this.values = null;
-
 			return;
 		}
 
@@ -60,7 +65,26 @@ public class JavaModelEvaluationContext extends ModelEvaluationContext {
 			values.add(value);
 		}
 
+		this.names = names;
 		this.values = values;
+	}
+
+	@Override
+	public FieldValue evaluate(FieldName name){
+		return super.evaluate(name);
+	}
+
+	/**
+	 * @throws MissingValueException
+	 */
+	public FieldValue evaluateRequired(FieldName name){
+		FieldValue value = evaluate(name);
+
+		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+			throw new MissingValueException(name);
+		}
+
+		return value;
 	}
 
 	public FieldValue evaluate(int index){
@@ -71,5 +95,20 @@ public class JavaModelEvaluationContext extends ModelEvaluationContext {
 		}
 
 		return values.get(index);
+	}
+
+	/**
+	 * @throws MissingValueException
+	 */
+	public FieldValue evaluateRequired(int index){
+		FieldValue value = evaluate(index);
+
+		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+			FieldName name = this.names.get(index);
+
+			throw new MissingValueException(name);
+		}
+
+		return value;
 	}
 }
