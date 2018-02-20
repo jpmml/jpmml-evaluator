@@ -69,7 +69,7 @@ public class JavaModel extends Model {
 	public JavaModel(){
 	}
 
-	public JavaModel(MiningFunction miningFunction, MiningSchema miningSchema){
+	public JavaModel(@Property("miningFunction") MiningFunction miningFunction, @Property("miningSchema") MiningSchema miningSchema){
 		setMiningFunction(miningFunction);
 		setMiningSchema(miningSchema);
 	}

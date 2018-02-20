@@ -40,7 +40,7 @@ public class JavaRegressorModel extends JavaModel {
 		super();
 	}
 
-	public JavaRegressorModel(MiningFunction miningFunction, MiningSchema miningSchema){
+	public JavaRegressorModel(@Property("miningFunction") MiningFunction miningFunction, @Property("miningSchema") MiningSchema miningSchema){
 		super(miningFunction, miningSchema);
 	}
 

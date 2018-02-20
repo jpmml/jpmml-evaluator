@@ -40,7 +40,7 @@ public class JavaClassifierModel extends JavaModel {
 		super();
 	}
 
-	public JavaClassifierModel(MiningFunction miningFunction, MiningSchema miningSchema){
+	public JavaClassifierModel(@Property("miningFunction") MiningFunction miningFunction, @Property("miningSchema") MiningSchema miningSchema){
 		super(miningFunction, miningSchema);
 	}
 
