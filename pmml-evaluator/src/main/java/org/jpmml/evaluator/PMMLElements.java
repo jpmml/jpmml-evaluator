@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import org.dmg.pmml.ModelVerification;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.clustering.ClusteringModel;
 import org.dmg.pmml.general_regression.BaseCumHazardTables;
 import org.dmg.pmml.general_regression.BaselineStratum;
@@ -92,6 +93,7 @@ public interface PMMLElements {
 	Field RULESETMODEL_RULESET = ReflectionUtil.getField(RuleSetModel.class, "ruleSet");
 	Field SCORECARD_CHARACTERISTICS = ReflectionUtil.getField(Scorecard.class, "characteristics");
 	Field SEGMENTATION_SEGMENTS = ReflectionUtil.getField(Segmentation.class, "segments");
+	Field SIMPLESETPREDICATE_ARRAY = ReflectionUtil.getField(SimpleSetPredicate.class, "array");
 	Field SUPPORTVECTORMACHINEMODEL_SUPPORTVECTORMACHINES = ReflectionUtil.getField(SupportVectorMachineModel.class, "supportVectorMachines");
 	Field SUPPORTVECTORMACHINEMODEL_VECTORDICTIONARY = ReflectionUtil.getField(SupportVectorMachineModel.class, "vectorDictionary");
 	Field TARGETVALUECOUNTS_TARGETVALUECOUNTS = ReflectionUtil.getField(TargetValueCounts.class, "targetValueCounts");

@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 
@@ -33,4 +35,6 @@ public interface FieldValues {
 
 	FieldValue CATEGORICAL_BOOLEAN_TRUE = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
 	FieldValue CATEGORICAL_BOOLEAN_FALSE = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
+
+	Interner<FieldValue> INTERNER = Interners.newWeakInterner();
 }

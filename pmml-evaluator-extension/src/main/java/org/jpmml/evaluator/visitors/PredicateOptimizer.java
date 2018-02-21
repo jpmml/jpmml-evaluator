@@ -43,6 +43,15 @@ public class PredicateOptimizer extends PredicateFilterer {
 		if(predicate instanceof SimplePredicate){
 			SimplePredicate simplePredicate = (SimplePredicate)predicate;
 
+			SimplePredicate.Operator operator = simplePredicate.getOperator();
+			switch(operator){
+				case IS_MISSING:
+				case IS_NOT_MISSING:
+					return predicate;
+				default:
+					break;
+			}
+
 			return new RichSimplePredicate(simplePredicate);
 		} else
 

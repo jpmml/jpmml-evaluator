@@ -25,8 +25,9 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.regression.CategoricalPredictor;
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasParsedValue;
+import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (
@@ -49,7 +50,12 @@ public class RichCategoricalPredictor extends CategoricalPredictor implements Ha
 	public FieldValue getValue(DataType dataType, OpType opType){
 
 		if(this.parsedValue == null){
-			this.parsedValue = FieldValueUtil.create(dataType, opType, getValue());
+			String value = getValue();
+			if(value == null){
+				throw new MissingAttributeException(this, PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
+			}
+
+			this.parsedValue = parse(dataType, opType, value);
 		}
 
 		return this.parsedValue;

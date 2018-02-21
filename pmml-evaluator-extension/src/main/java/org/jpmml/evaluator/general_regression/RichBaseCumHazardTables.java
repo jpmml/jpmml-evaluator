@@ -31,8 +31,9 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.general_regression.BaseCumHazardTables;
 import org.dmg.pmml.general_regression.BaselineStratum;
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasParsedValueMapping;
+import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (
@@ -66,7 +67,12 @@ public class RichBaseCumHazardTables extends BaseCumHazardTables implements HasP
 
 		List<BaselineStratum> baselineStrata = getBaselineStrata();
 		for(BaselineStratum baselineStratum : baselineStrata){
-			FieldValue value = FieldValueUtil.create(dataType, opType, baselineStratum.getValue());
+			String category = baselineStratum.getValue();
+			if(category == null){
+				throw new MissingAttributeException(baselineStratum, PMMLAttributes.BASELINESTRATUM_VALUE);
+			}
+
+			FieldValue value = parse(dataType, opType, category);
 
 			result.put(value, baselineStratum);
 		}

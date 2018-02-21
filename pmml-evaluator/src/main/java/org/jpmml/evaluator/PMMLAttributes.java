@@ -96,6 +96,7 @@ public interface PMMLAttributes {
 	Field CATEGORY_VALUE = ReflectionUtil.getField(Category.class, "value");
 	Field CATEGORICALPREDICTOR_COEFFICIENT = ReflectionUtil.getField(CategoricalPredictor.class, "coefficient");
 	Field CATEGORICALPREDICTOR_FIELD = ReflectionUtil.getField(CategoricalPredictor.class, "field");
+	Field CATEGORICALPREDICTOR_VALUE = ReflectionUtil.getField(CategoricalPredictor.class, "value");
 	Field CHARACTERISTIC_BASELINESCORE = ReflectionUtil.getField(Characteristic.class, "baselineScore");
 	Field CLUSTERINGFIELD_FIELD = ReflectionUtil.getField(ClusteringField.class, "field");
 	Field CONNECTION_FROM = ReflectionUtil.getField(Connection.class, "from");

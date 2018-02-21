@@ -25,8 +25,9 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.general_regression.PPCell;
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasParsedValue;
+import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (
@@ -49,7 +50,12 @@ public class RichPPCell extends PPCell implements HasParsedValue<PPCell> {
 	public FieldValue getValue(DataType dataType, OpType opType){
 
 		if(this.parsedValue == null){
-			this.parsedValue = FieldValueUtil.create(dataType, opType, getValue());
+			String value = getValue();
+			if(value == null){
+				throw new MissingAttributeException(this, PMMLAttributes.PPCELL_VALUE);
+			}
+
+			this.parsedValue = parse(dataType, opType, value);
 		}
 
 		return this.parsedValue;

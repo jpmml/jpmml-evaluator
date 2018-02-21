@@ -76,7 +76,7 @@ public class RichDataField extends DataField implements HasParsedValueMapping<Va
 			switch(property){
 				case VALID:
 					{
-						FieldValue value = FieldValueUtil.create(dataType, opType, stringValue);
+						FieldValue value = parse(dataType, opType, stringValue);
 
 						result.put(value, pmmlValue);
 					}
@@ -87,7 +87,7 @@ public class RichDataField extends DataField implements HasParsedValueMapping<Va
 						FieldValue value;
 
 						try {
-							value = FieldValueUtil.create(dataType, opType, stringValue);
+							value = parse(dataType, opType, stringValue);
 						} catch(IllegalArgumentException | TypeCheckException e){
 							continue;
 						}

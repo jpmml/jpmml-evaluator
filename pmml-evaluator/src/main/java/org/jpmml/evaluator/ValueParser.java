@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Villu Ruusmann
+ * Copyright (c) 2018 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,14 +18,32 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Set;
+import java.util.List;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.HasValueSet;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.PMMLObject;
 
-public interface HasParsedValueSet<E extends PMMLObject & HasValueSet<E>> extends HasValueSet<E>, ValueParser {
+interface ValueParser {
 
-	Set<FieldValue> getValueSet(DataType dataType, OpType opType);
+	default
+	FieldValue parse(DataType dataType, OpType opType, Object value){
+		FieldValue fieldValue = FieldValueUtil.create(dataType, opType, value);
+
+		return FieldValues.INTERNER.intern(fieldValue);
+	}
+
+	default
+	List<FieldValue> parseAll(final DataType dataType, final OpType opType, List<?> values){
+		Function<Object, FieldValue> function = new Function<Object, FieldValue>(){
+
+			@Override
+			public FieldValue apply(Object object){
+				return parse(dataType, opType, object);
+			}
+		};
+
+		return Lists.transform(values, function);
+	}
 }

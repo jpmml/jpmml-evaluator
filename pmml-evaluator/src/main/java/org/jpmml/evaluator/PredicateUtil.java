@@ -30,6 +30,7 @@ package org.jpmml.evaluator;
 import java.util.List;
 import java.util.Objects;
 
+import org.dmg.pmml.Array;
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.False;
 import org.dmg.pmml.FieldName;
@@ -190,6 +191,11 @@ public class PredicateUtil {
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 			return null;
+		}
+
+		Array array = simpleSetPredicate.getArray();
+		if(array == null){
+			throw new MissingElementException(simpleSetPredicate, PMMLElements.SIMPLESETPREDICATE_ARRAY);
 		}
 
 		switch(booleanOperator){

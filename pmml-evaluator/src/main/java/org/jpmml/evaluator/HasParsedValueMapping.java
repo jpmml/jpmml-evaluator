@@ -23,7 +23,7 @@ import java.util.Map;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 
-public interface HasParsedValueMapping<V> {
+public interface HasParsedValueMapping<V> extends ValueParser {
 
 	Map<FieldValue, V> getValueMapping(DataType dataType, OpType opType);
 }

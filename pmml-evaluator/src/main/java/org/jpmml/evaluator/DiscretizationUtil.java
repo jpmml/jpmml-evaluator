@@ -299,7 +299,7 @@ public class DiscretizationUtil {
 
 			Collection<Map.Entry<Integer, String>> entries = columnValues.entrySet();
 			for(Map.Entry<Integer, String> entry : entries){
-				FieldValue value = FieldValueUtil.create(dataType, opType, entry.getValue());
+				FieldValue value = parse(dataType, opType, entry.getValue());
 				Integer row = entry.getKey();
 
 				result.put(value, row);

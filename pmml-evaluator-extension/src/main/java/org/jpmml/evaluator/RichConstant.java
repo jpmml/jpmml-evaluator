@@ -69,7 +69,9 @@ public class RichConstant extends Constant implements HasParsedValue<RichConstan
 	public FieldValue getValue(DataType dataType, OpType opType){
 
 		if(this.parsedValue == null){
-			this.parsedValue = FieldValueUtil.create(dataType, opType, getValue());
+			String value = getValue();
+
+			this.parsedValue = parse(dataType, opType, value);
 		}
 
 		return this.parsedValue;

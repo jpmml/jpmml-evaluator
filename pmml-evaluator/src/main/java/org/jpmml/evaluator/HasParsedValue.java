@@ -23,7 +23,7 @@ import org.dmg.pmml.HasValue;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLObject;
 
-public interface HasParsedValue<E extends PMMLObject & HasValue<E>> extends HasValue<E> {
+public interface HasParsedValue<E extends PMMLObject & HasValue<E>> extends HasValue<E>, ValueParser {
 
 	FieldValue getValue(DataType dataType, OpType opType);
 }

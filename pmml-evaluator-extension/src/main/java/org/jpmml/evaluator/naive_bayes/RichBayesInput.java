@@ -32,9 +32,10 @@ import org.dmg.pmml.naive_bayes.BayesInput;
 import org.dmg.pmml.naive_bayes.PairCounts;
 import org.dmg.pmml.naive_bayes.TargetValueCounts;
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasParsedValueMapping;
+import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
+import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.model.ReflectionUtil;
 
@@ -69,7 +70,12 @@ public class RichBayesInput extends BayesInput implements HasParsedValueMapping<
 
 		List<PairCounts> pairCounts = getPairCounts();
 		for(PairCounts pairCount : pairCounts){
-			FieldValue value = FieldValueUtil.create(dataType, opType, pairCount.getValue());
+			String category = pairCount.getValue();
+			if(category == null){
+				throw new MissingAttributeException(pairCount, PMMLAttributes.PAIRCOUNTS_VALUE);
+			}
+
+			FieldValue value = parse(dataType, opType, category);
 
 			TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
 			if(targetValueCounts == null){
