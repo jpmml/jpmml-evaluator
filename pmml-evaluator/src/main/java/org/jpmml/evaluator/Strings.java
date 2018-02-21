@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Villu Ruusmann
+ * Copyright (c) 2018 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -21,22 +21,7 @@ package org.jpmml.evaluator;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 
-public interface Numbers {
+public interface Strings {
 
-	Integer INTEGER_ZERO = Integer.valueOf(0);
-	Integer INTEGER_ONE = Integer.valueOf(1);
-
-	Float FLOAT_MINUS_ONE = Float.valueOf(-1f);
-	Float FLOAT_ZERO = Float.valueOf(0f);
-	Float FLOAT_ONE = Float.valueOf(1f);
-
-	Double DOUBLE_MINUS_ONE = Double.valueOf(-1d);
-	Double DOUBLE_ZERO = Double.valueOf(0d);
-	Double DOUBLE_ONE_HALF = Double.valueOf(0.5d);
-	Double DOUBLE_ONE = Double.valueOf(1d);
-	Double DOUBLE_TWO = Double.valueOf(2d);
-
-	Interner<Integer> INTEGER_INTERNER = Interners.newWeakInterner();
-	Interner<Float> FLOAT_INTERNER = Interners.newWeakInterner();
-	Interner<Double> DOUBLE_INTERNER = Interners.newWeakInterner();
+	Interner<String> INTERNER = Interners.newWeakInterner();
 }

@@ -34,8 +34,6 @@ import com.google.common.base.Function;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Interner;
-import com.google.common.collect.Interners;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.Array;
 
@@ -221,15 +219,11 @@ public class ArrayUtil {
 		return result;
 	}
 
-	private static final Interner<Integer> integerInterner = Interners.newWeakInterner();
-	private static final Interner<Double> doubleInterner = Interners.newWeakInterner();
-	private static final Interner<String> stringInterner = Interners.newWeakInterner();
-
 	private static final Function<String, Integer> INT_PARSER = new Function<String, Integer>(){
 
 		@Override
 		public Integer apply(String string){
-			return ArrayUtil.integerInterner.intern(Integer.parseInt(string));
+			return Numbers.INTEGER_INTERNER.intern(Integer.parseInt(string));
 		}
 	};
 
@@ -237,7 +231,7 @@ public class ArrayUtil {
 
 		@Override
 		public Double apply(String string){
-			return ArrayUtil.doubleInterner.intern(Double.parseDouble(string));
+			return Numbers.DOUBLE_INTERNER.intern(Double.parseDouble(string));
 		}
 	};
 
@@ -245,7 +239,7 @@ public class ArrayUtil {
 
 		@Override
 		public String apply(String string){
-			return ArrayUtil.stringInterner.intern(string);
+			return Strings.INTERNER.intern(string);
 		}
 	};
 
