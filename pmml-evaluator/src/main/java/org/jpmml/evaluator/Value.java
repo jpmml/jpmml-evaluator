@@ -52,18 +52,6 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 
 	/**
 	 * <p>
-	 * Adds <code>coefficient * (factor ^ exponent)</code>.
-	 * </p>
-	 */
-	@Operation (
-		value = "<apply><plus/>${this}<apply><times/>${0}<apply><power/>${1}${2}</apply></apply></apply>",
-		initialValue = "<apply><times/>${0}<apply><power/>${1}${2}</apply></apply>"
-	)
-	abstract
-	public Value<V> add(double coefficient, Number factor, int exponent);
-
-	/**
-	 * <p>
 	 * Adds <code>coefficient * product(factors)</code>.
 	 * </p>
 	 */
@@ -73,6 +61,18 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	)
 	abstract
 	public Value<V> add(double coefficient, Number... factors);
+
+	/**
+	 * <p>
+	 * Adds <code>coefficient * (factor ^ exponent)</code>.
+	 * </p>
+	 */
+	@Operation (
+		value = "<apply><plus/>${this}<apply><times/>${0}<apply><power/>${1}${2}</apply></apply></apply>",
+		initialValue = "<apply><times/>${0}<apply><power/>${1}${2}</apply></apply>"
+	)
+	abstract
+	public Value<V> add(double coefficient, Number factor, int exponent);
 
 	@Operation (
 		value = "<apply><minus/>${this}${0}</apply>",

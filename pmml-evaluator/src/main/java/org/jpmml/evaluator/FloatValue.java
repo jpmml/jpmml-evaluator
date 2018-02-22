@@ -84,13 +84,6 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue add(double coefficient, Number factor, int exponent){
-		this.value += (float)coefficient * FloatValue.pow(factor.floatValue(), exponent);
-
-		return this;
-	}
-
-	@Override
 	public FloatValue add(double coefficient, Number... factors){
 		float value = (float)coefficient;
 
@@ -101,6 +94,13 @@ public class FloatValue extends Value<Float> {
 		}
 
 		this.value += value;
+
+		return this;
+	}
+
+	@Override
+	public FloatValue add(double coefficient, Number factor, int exponent){
+		this.value += (float)coefficient * FloatValue.pow(factor.floatValue(), exponent);
 
 		return this;
 	}

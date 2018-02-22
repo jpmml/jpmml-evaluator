@@ -86,13 +86,6 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue add(double coefficient, Number factor, int exponent){
-		this.value += coefficient * Math.pow(factor.doubleValue(), exponent);
-
-		return this;
-	}
-
-	@Override
 	public DoubleValue add(double coefficient, Number... factors){
 		double value = coefficient;
 
@@ -103,6 +96,13 @@ public class DoubleValue extends Value<Double> {
 		}
 
 		this.value += value;
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue add(double coefficient, Number factor, int exponent){
+		this.value += coefficient * Math.pow(factor.doubleValue(), exponent);
 
 		return this;
 	}
