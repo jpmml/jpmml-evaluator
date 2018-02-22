@@ -50,6 +50,13 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	abstract
 	public Value<V> add(double coefficient, Number factor);
 
+	@Operation (
+		value = "<apply><plus/>${this}<apply><times/>${0}${1}${2}</apply></apply>",
+		initialValue = "<apply><times/>${0}${1}${2}</apply>"
+	)
+	abstract
+	public Value<V> add(double coefficient, Number firstFactor, Number secondFactor);
+
 	/**
 	 * <p>
 	 * Adds <code>coefficient * product(factors)</code>.

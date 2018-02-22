@@ -86,6 +86,13 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
+	public DoubleValue add(double coefficient, Number firstFactor, Number secondFactor){
+		this.value += coefficient * firstFactor.doubleValue() * secondFactor.doubleValue();
+
+		return this;
+	}
+
+	@Override
 	public DoubleValue add(double coefficient, Number... factors){
 		double value = coefficient;
 
