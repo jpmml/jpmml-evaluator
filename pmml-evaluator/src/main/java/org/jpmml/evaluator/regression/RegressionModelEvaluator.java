@@ -368,7 +368,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 					factors.add(value.asNumber());
 				}
 
-				result.add(predictorTerm.getCoefficient(), factors);
+				result.add(predictorTerm.getCoefficient(), factors.toArray(new Number[factors.size()]));
 			}
 		}
 

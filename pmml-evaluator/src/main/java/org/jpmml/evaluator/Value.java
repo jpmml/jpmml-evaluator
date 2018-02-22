@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.List;
-
 abstract
 public class Value<V extends Number> implements Comparable<Value<V>> {
 
@@ -74,7 +72,7 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 		initialValue = "<apply><times/>${0}${1}</apply>"
 	)
 	abstract
-	public Value<V> add(double coefficient, List<? extends Number> factors);
+	public Value<V> add(double coefficient, Number... factors);
 
 	@Operation (
 		value = "<apply><minus/>${this}${0}</apply>",

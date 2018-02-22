@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.List;
-
 public class DoubleValue extends Value<Double> {
 
 	protected double value = 0d;
@@ -95,11 +93,11 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue add(double coefficient, List<? extends Number> factors){
+	public DoubleValue add(double coefficient, Number... factors){
 		double value = coefficient;
 
-		for(int i = 0; i < factors.size(); i++){
-			Number factor = factors.get(i);
+		for(int i = 0; i < factors.length; i++){
+			Number factor = factors[i];
 
 			value *= factor.doubleValue();
 		}

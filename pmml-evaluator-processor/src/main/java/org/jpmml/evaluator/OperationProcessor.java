@@ -22,6 +22,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -38,9 +39,12 @@ import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
@@ -337,9 +341,26 @@ public class OperationProcessor extends AbstractProcessor {
 		JMethod method = clazz.method(JMod.PUBLIC, clazz, String.valueOf(executableElement.getSimpleName()));
 		method.annotate(Override.class);
 
+		List<JVar> params = new ArrayList<>();
+
 		List<? extends VariableElement> parameterElements = executableElement.getParameters();
 		for(VariableElement parameterElement : parameterElements){
-			method.param(toType(codeModel, parameterElement.asType()), String.valueOf(parameterElement.getSimpleName()));
+			TypeMirror paramType = parameterElement.asType();
+			Name paramName = parameterElement.getSimpleName();
+
+			JVar param;
+
+			if((TypeKind.ARRAY).equals(paramType.getKind())){
+				ArrayType arrayType = (ArrayType)paramType;
+
+				param = method.varParam(toType(codeModel, arrayType.getComponentType()), String.valueOf(paramName));
+			} else
+
+			{
+				param = method.param(toType(codeModel, paramType), String.valueOf(paramName));
+			}
+
+			params.add(param);
 		}
 
 		JBlock body = method.body();
@@ -351,15 +372,15 @@ public class OperationProcessor extends AbstractProcessor {
 
 			JBlock trueBlock = ifStatement._then();
 
-			trueBlock.add(JExpr.invoke("report").arg(createReportInvocation(clazz, operation, method.params(), type)));
+			trueBlock.add(JExpr.invoke("report").arg(createReportInvocation(clazz, operation, params, type)));
 
 			JBlock falseBlock = ifStatement._else();
 
-			falseBlock.add(JExpr.invoke("report").arg(createReportInvocation(clazz, initialOperation, method.params(), type)));
+			falseBlock.add(JExpr.invoke("report").arg(createReportInvocation(clazz, initialOperation, params, type)));
 		} else
 
 		{
-			body.add(JExpr.invoke("report").arg(createReportInvocation(clazz, operation, method.params(), type)));
+			body.add(JExpr.invoke("report").arg(createReportInvocation(clazz, operation, params, type)));
 		}
 
 		body._return(resultVariable);
@@ -447,21 +468,13 @@ public class OperationProcessor extends AbstractProcessor {
 		JClass numberClazz = codeModel.ref(Number.class);
 		JClass stringBuilderClazz = codeModel.ref(StringBuilder.class);
 
-		JType numberListClazz;
-
-		try {
-			numberListClazz = codeModel.parseType("java.util.List<? extends java.lang.Number>");
-		} catch(ClassNotFoundException cnfe){
-			throw new RuntimeException(cnfe);
-		}
-
 		JMethod method = clazz.method(JMod.STATIC | JMod.PRIVATE, String.class, "format");
 
-		JVar valuesParameter = method.param(numberListClazz, "values");
+		JVar valuesParameter = method.varParam(numberClazz, "values");
 
 		JBlock body = method.body();
 
-		JVar sbVariable = body.decl(stringBuilderClazz, "sb", JExpr._new(stringBuilderClazz).arg(valuesParameter.invoke("size").mul(JExpr.lit(32))));
+		JVar sbVariable = body.decl(stringBuilderClazz, "sb", JExpr._new(stringBuilderClazz).arg(valuesParameter.ref("length").mul(JExpr.lit(32))));
 
 		JForEach forStatement = body.forEach(numberClazz, "value", valuesParameter);
 
