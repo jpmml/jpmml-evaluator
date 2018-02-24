@@ -77,9 +77,9 @@ public class PercentileFunction extends AbstractFunction {
 		DoubleVector doubleValues = new ComplexDoubleVector(values.size());
 
 		for(Object value : values){
-			Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
+			Number number = (Number)TypeUtil.parseOrCast(DataType.DOUBLE, value);
 
-			doubleValues.add(doubleValue.doubleValue());
+			doubleValues.add(number.doubleValue());
 		}
 
 		return doubleValues.doublePercentile(percentile);

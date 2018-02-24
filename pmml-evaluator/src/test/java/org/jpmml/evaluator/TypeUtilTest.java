@@ -354,15 +354,26 @@ public class TypeUtilTest {
 	}
 
 	@Test
-	public void getResultDataType(){
-		assertEquals(DataType.DOUBLE, getResultDataType(1d, 1f));
-		assertEquals(DataType.DOUBLE, getResultDataType(1d, 1));
+	public void getCommonDataType(){
+		assertEquals(DataType.DOUBLE, TypeUtil.getCommonDataType(DataType.DOUBLE, DataType.DOUBLE));
+		assertEquals(DataType.DOUBLE, TypeUtil.getCommonDataType(DataType.DOUBLE, DataType.FLOAT));
+		assertEquals(DataType.DOUBLE, TypeUtil.getCommonDataType(DataType.DOUBLE, DataType.INTEGER));
 
-		assertEquals(DataType.DOUBLE, getResultDataType(1f, 1d));
-		assertEquals(DataType.FLOAT, getResultDataType(1f, 1));
+		try {
+			TypeUtil.getCommonDataType(DataType.DOUBLE, DataType.BOOLEAN);
 
-		assertEquals(DataType.DOUBLE, getResultDataType(1, 1d));
-		assertEquals(DataType.FLOAT, getResultDataType(1, 1f));
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
+
+		assertEquals(DataType.DOUBLE, TypeUtil.getCommonDataType(DataType.FLOAT, DataType.DOUBLE));
+		assertEquals(DataType.FLOAT, TypeUtil.getCommonDataType(DataType.FLOAT, DataType.FLOAT));
+		assertEquals(DataType.FLOAT, TypeUtil.getCommonDataType(DataType.FLOAT, DataType.INTEGER));
+
+		assertEquals(DataType.DOUBLE, TypeUtil.getCommonDataType(DataType.INTEGER, DataType.DOUBLE));
+		assertEquals(DataType.FLOAT, TypeUtil.getCommonDataType(DataType.INTEGER, DataType.FLOAT));
+		assertEquals(DataType.INTEGER, TypeUtil.getCommonDataType(DataType.INTEGER, DataType.INTEGER));
 	}
 
 	@Test
@@ -403,11 +414,6 @@ public class TypeUtilTest {
 		SecondsSinceDate period = (SecondsSinceDate)TypeUtil.parse(DataType.DATE_TIME_SECONDS_SINCE_1960, string);
 
 		return period.getSeconds();
-	}
-
-	static
-	private DataType getResultDataType(Object left, Object right){
-		return TypeUtil.getResultDataType(TypeUtil.getDataType(left), TypeUtil.getDataType(right));
 	}
 
 	// The date and time (UTC) of the first moon landing

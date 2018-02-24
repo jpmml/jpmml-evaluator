@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2018 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,31 +18,28 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.List;
-
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
-import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.FunctionException;
 
 abstract
-public class FpMathFunction extends AbstractNumericFunction {
+public class AbstractNumericFunction extends AbstractFunction {
 
-	public FpMathFunction(String name){
+	public AbstractNumericFunction(String name){
 		super(name);
 	}
 
-	abstract
-	public Double evaluate(Number value);
-
 	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkArguments(arguments, 1);
+	protected void checkType(DataType dataType, OpType opType){
+		super.checkType(dataType, opType);
 
-		FieldValue value = arguments.get(0);
-
-		Number result = evaluate(value.asNumber());
-
-		return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, result);
+		switch(dataType){
+			case INTEGER:
+			case FLOAT:
+			case DOUBLE:
+				break;
+			default:
+				throw new FunctionException(this, "Expected a numeric value, got " + dataType.value() + " value");
+		}
 	}
 }

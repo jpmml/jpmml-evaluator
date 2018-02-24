@@ -19,6 +19,7 @@
 package org.jpmml.evaluator.functions;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
@@ -29,7 +30,7 @@ import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UndefinedResultException;
 
 abstract
-public class ArithmeticFunction extends AbstractFunction {
+public class ArithmeticFunction extends AbstractNumericFunction {
 
 	public ArithmeticFunction(String name){
 		super(name);
@@ -46,11 +47,11 @@ public class ArithmeticFunction extends AbstractFunction {
 		FieldValue right = arguments.get(1);
 
 		// "If one of the input fields of a simple arithmetic function is a missing value, then the result evaluates to missing value"
-		if(left == null || right == null){
+		if(Objects.equals(FieldValues.MISSING_VALUE, left) || Objects.equals(FieldValues.MISSING_VALUE, right)){
 			return FieldValues.MISSING_VALUE;
 		}
 
-		DataType dataType = TypeUtil.getResultDataType(left.getDataType(), right.getDataType());
+		DataType dataType = TypeUtil.getCommonDataType(left.getDataType(), right.getDataType());
 
 		Number result;
 

@@ -26,18 +26,14 @@ import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 
 abstract
-public class MathFunction extends AbstractFunction {
+public class MathFunction extends AbstractNumericFunction {
 
 	public MathFunction(String name){
 		super(name);
 	}
 
 	abstract
-	public Double evaluate(Number value);
-
-	public DataType getResultType(DataType dataType){
-		return dataType;
-	}
+	public Number evaluate(Number value);
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
@@ -49,6 +45,6 @@ public class MathFunction extends AbstractFunction {
 
 		Number result = evaluate(value.asNumber());
 
-		return FieldValueUtil.create(getResultType(dataType), OpType.CONTINUOUS, result);
+		return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
 	}
 }

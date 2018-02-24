@@ -27,7 +27,7 @@ import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.NaNResultException;
 
 abstract
-public class TrigonometricFunction extends AbstractFunction {
+public class TrigonometricFunction extends AbstractNumericFunction {
 
 	public TrigonometricFunction(String name){
 		super(name);

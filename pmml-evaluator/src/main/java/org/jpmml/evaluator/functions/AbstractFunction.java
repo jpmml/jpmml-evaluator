@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.Function;
@@ -54,11 +55,11 @@ public class AbstractFunction implements Function {
 	protected void checkArguments(List<FieldValue> arguments, int size, boolean allowNulls){
 
 		if(arguments.size() != size){
-			throw new FunctionException(this, "Expected " + size + " arguments, got " + arguments.size() + " arguments");
-		} // End if
+			throw new FunctionException(this, "Expected " + size + " values, got " + arguments.size() + " values");
+		}
 
-		if(!allowNulls && arguments.contains(FieldValues.MISSING_VALUE)){
-			throw new FunctionException(this, "Missing arguments");
+		for(FieldValue argument : arguments){
+			checkArgument(argument, allowNulls);
 		}
 	}
 
@@ -79,12 +80,32 @@ public class AbstractFunction implements Function {
 	protected void checkVariableArguments(List<FieldValue> arguments, int minSize, boolean allowNulls){
 
 		if(arguments.size() < minSize){
-			throw new FunctionException(this, "Expected " + minSize + " or more arguments, got " + arguments.size() + " arguments");
-		} // End if
-
-		if(!allowNulls && arguments.contains(FieldValues.MISSING_VALUE)){
-			throw new FunctionException(this, "Missing arguments");
+			throw new FunctionException(this, "Expected " + minSize + " or more values, got " + arguments.size() + " values");
 		}
+
+		for(FieldValue argument : arguments){
+			checkArgument(argument, allowNulls);
+		}
+	}
+
+	protected void checkArgument(FieldValue argument, boolean allowNulls){
+
+		if(Objects.equals(FieldValues.MISSING_VALUE, argument)){
+
+			if(!allowNulls){
+				throw new FunctionException(this, "Missing value");
+			}
+		} else
+
+		{
+			DataType dataType = argument.getDataType();
+			OpType opType = argument.getOpType();
+
+			checkType(dataType, opType);
+		}
+	}
+
+	protected void checkType(DataType dataType, OpType opType){
 	}
 
 	@Override
@@ -94,18 +115,5 @@ public class AbstractFunction implements Function {
 
 	private void setName(String name){
 		this.name = name;
-	}
-
-	static
-	protected DataType integerToDouble(DataType dataType){
-
-		switch(dataType){
-			case INTEGER:
-				return DataType.DOUBLE;
-			default:
-				break;
-		}
-
-		return dataType;
 	}
 }

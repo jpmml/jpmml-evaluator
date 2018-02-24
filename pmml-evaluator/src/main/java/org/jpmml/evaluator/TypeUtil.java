@@ -371,21 +371,47 @@ public class TypeUtil {
 	}
 
 	/**
-	 * @return The least restrictive data type of the data types of two values.
+	 * @return The least restrictive data type of two numeric data types.
+	 *
+	 * @see DataType#INTEGER
+	 * @see DataType#FLOAT
+	 * @see DataType#DOUBLE
 	 */
 	static
-	public DataType getResultDataType(DataType left, DataType right){
+	public DataType getCommonDataType(DataType left, DataType right){
 
 		if((left).equals(right)){
-			return left;
-		}
 
-		// "When the input parameters have multiple dataTypes, the least restrictive dataType will be inherited by default"
-		for(int i = 0; i < inheritanceSequence.length; i++){
-			DataType dataType = inheritanceSequence[i];
+			switch(left){
+				case DOUBLE:
+				case FLOAT:
+				case INTEGER:
+					return left;
+			}
+		} else
 
-			if((dataType).equals(left) || (dataType).equals(right)){
-				return dataType;
+		if((DataType.DOUBLE).equals(left)){
+
+			if((DataType.FLOAT).equals(right) || (DataType.INTEGER).equals(right)){
+				return left;
+			}
+		} else
+
+		if((DataType.FLOAT).equals(left)){
+
+			if((DataType.DOUBLE).equals(right)){
+				return right;
+			} else
+
+			if((DataType.INTEGER).equals(right)){
+				return left;
+			}
+		} else
+
+		if((DataType.INTEGER).equals(left)){
+
+			if((DataType.DOUBLE).equals(right) || (DataType.FLOAT).equals(right)){
+				return right;
 			}
 		}
 
@@ -876,6 +902,4 @@ public class TypeUtil {
 
 		throw new EvaluationException("Non-standard epoch " + epoch);
 	}
-
-	private static final DataType[] inheritanceSequence = {DataType.STRING, DataType.DOUBLE, DataType.FLOAT, DataType.INTEGER};
 }

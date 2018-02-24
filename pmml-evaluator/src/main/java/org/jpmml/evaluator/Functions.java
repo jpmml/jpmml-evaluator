@@ -40,6 +40,7 @@ import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.functions.AbstractFunction;
+import org.jpmml.evaluator.functions.AbstractNumericFunction;
 import org.jpmml.evaluator.functions.AggregateFunction;
 import org.jpmml.evaluator.functions.ArithmeticFunction;
 import org.jpmml.evaluator.functions.BinaryBooleanFunction;
@@ -116,8 +117,13 @@ public interface Functions {
 		}
 
 		@Override
-		public DataType getResultType(DataType dataType){
-			return integerToDouble(dataType);
+		public DataType getResultDataType(DataType dataType){
+
+			if((DataType.INTEGER).equals(dataType)){
+				return DataType.DOUBLE;
+			}
+
+			return dataType;
 		}
 	};
 
@@ -188,12 +194,17 @@ public interface Functions {
 	MathFunction ABS = new MathFunction("abs"){
 
 		@Override
-		public Double evaluate(Number value){
+		public Number evaluate(Number value){
+
+			if(value instanceof Float){
+				return Math.abs(value.floatValue());
+			}
+
 			return Math.abs(value.doubleValue());
 		}
 	};
 
-	AbstractFunction POW = new AbstractFunction("pow"){
+	AbstractNumericFunction POW = new AbstractNumericFunction("pow"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -202,7 +213,7 @@ public interface Functions {
 			FieldValue left = arguments.get(0);
 			FieldValue right = arguments.get(1);
 
-			DataType dataType = TypeUtil.getResultDataType(left.getDataType(), right.getDataType());
+			DataType dataType = TypeUtil.getCommonDataType(left.getDataType(), right.getDataType());
 
 			Double result = Math.pow((left.asNumber()).doubleValue(), (right.asNumber()).doubleValue());
 
@@ -210,7 +221,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractFunction THRESHOLD = new AbstractFunction("threshold"){
+	AbstractNumericFunction THRESHOLD = new AbstractNumericFunction("threshold"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -219,7 +230,7 @@ public interface Functions {
 			FieldValue left = arguments.get(0);
 			FieldValue right = arguments.get(1);
 
-			DataType dataType = TypeUtil.getResultDataType(left.getDataType(), right.getDataType());
+			DataType dataType = TypeUtil.getCommonDataType(left.getDataType(), right.getDataType());
 
 			Integer result = ((left.asNumber()).doubleValue() > (right.asNumber()).doubleValue()) ? Numbers.INTEGER_ONE : Numbers.INTEGER_ZERO;
 
@@ -230,7 +241,7 @@ public interface Functions {
 	MathFunction FLOOR = new MathFunction("floor"){
 
 		@Override
-		public Double evaluate(Number number){
+		public Number evaluate(Number number){
 			return Math.floor(number.doubleValue());
 		}
 	};
@@ -238,7 +249,7 @@ public interface Functions {
 	MathFunction CEIL = new MathFunction("ceil"){
 
 		@Override
-		public Double evaluate(Number number){
+		public Number evaluate(Number number){
 			return Math.ceil(number.doubleValue());
 		}
 	};
@@ -246,15 +257,20 @@ public interface Functions {
 	MathFunction ROUND = new MathFunction("round"){
 
 		@Override
-		public Double evaluate(Number number){
-			return (double)Math.round(number.doubleValue());
+		public Number evaluate(Number number){
+
+			if(number instanceof Float){
+				Math.round(number.floatValue());
+			}
+
+			return Math.round(number.doubleValue());
 		}
 	};
 
 	MathFunction RINT = new MathFunction("x-rint"){
 
 		@Override
-		public Double evaluate(Number number){
+		public Number evaluate(Number number){
 			return Math.rint(number.doubleValue());
 		}
 	};
@@ -369,12 +385,12 @@ public interface Functions {
 		public FieldValue evaluate(List<FieldValue> arguments){
 
 			if((arguments.size() < 2 || arguments.size() > 3)){
-				throw new FunctionException(this, "Expected 2 or 3 arguments, got " + arguments.size() + " arguments");
+				throw new FunctionException(this, "Expected 2 or 3 values, got " + arguments.size() + " values");
 			}
 
 			FieldValue flag = arguments.get(0);
 			if(Objects.equals(FieldValues.MISSING_VALUE, flag)){
-				throw new FunctionException(this, "Missing arguments");
+				throw new FunctionException(this, "Missing flag value");
 			} // End if
 
 			if(flag.asBoolean()){
@@ -382,7 +398,7 @@ public interface Functions {
 
 				// "The THEN part is required"
 				if(Objects.equals(FieldValues.MISSING_VALUE, trueValue)){
-					throw new FunctionException(this, "Missing arguments");
+					throw new FunctionException(this, "Missing true value");
 				}
 
 				return trueValue;
@@ -629,7 +645,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractFunction HYPOT = new AbstractFunction("x-hypot"){
+	AbstractNumericFunction HYPOT = new AbstractNumericFunction("x-hypot"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -692,7 +708,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractFunction ATAN2 = new AbstractFunction("x-atan2"){
+	AbstractNumericFunction ATAN2 = new AbstractNumericFunction("x-atan2"){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){

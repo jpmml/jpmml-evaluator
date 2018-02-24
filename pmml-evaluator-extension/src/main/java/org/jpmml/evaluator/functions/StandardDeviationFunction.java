@@ -59,11 +59,11 @@ public class StandardDeviationFunction extends AbstractFunction {
 	public FieldValue evaluate(List<FieldValue> arguments){
 
 		if(arguments.size() < 1 || arguments.size() > 2){
-			throw new FunctionException(this, "Expected 1 or 2 arguments, got " + arguments.size() + " arguments");
+			throw new FunctionException(this, "Expected 1 or 2 values, got " + arguments.size() + " values");
 		} // End if
 
 		if(arguments.contains(FieldValues.MISSING_VALUE)){
-			throw new FunctionException(this, "Missing arguments");
+			throw new FunctionException(this, "Missing value");
 		}
 
 		Collection<?> values = FieldValueUtil.getValue(Collection.class, arguments.get(0));
@@ -84,9 +84,9 @@ public class StandardDeviationFunction extends AbstractFunction {
 		statistic.setBiasCorrected(biasCorrected);
 
 		for(Object value : values){
-			Double doubleValue = (Double)TypeUtil.parseOrCast(DataType.DOUBLE, value);
+			Number number = (Number)TypeUtil.parseOrCast(DataType.DOUBLE, value);
 
-			statistic.increment(doubleValue);
+			statistic.increment(number.doubleValue());
 		}
 
 		return statistic.getResult();

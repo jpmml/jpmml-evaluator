@@ -31,7 +31,7 @@ import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.TypeUtil;
 
 abstract
-public class AggregateFunction extends AbstractFunction {
+public class AggregateFunction extends AbstractNumericFunction {
 
 	public AggregateFunction(String name){
 		super(name);
@@ -39,10 +39,6 @@ public class AggregateFunction extends AbstractFunction {
 
 	abstract
 	public StorelessUnivariateStatistic createStatistic();
-
-	public DataType getResultType(DataType dataType){
-		return dataType;
-	}
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
@@ -56,7 +52,7 @@ public class AggregateFunction extends AbstractFunction {
 			statistic.increment((value.asNumber()).doubleValue());
 
 			if(dataType != null){
-				dataType = TypeUtil.getResultDataType(dataType, value.getDataType());
+				dataType = TypeUtil.getCommonDataType(dataType, value.getDataType());
 			} else
 
 			{
@@ -71,6 +67,10 @@ public class AggregateFunction extends AbstractFunction {
 
 		Double result = statistic.getResult();
 
-		return FieldValueUtil.create(getResultType(dataType), OpType.CONTINUOUS, result);
+		return FieldValueUtil.create(getResultDataType(dataType), OpType.CONTINUOUS, result);
+	}
+
+	protected DataType getResultDataType(DataType dataType){
+		return dataType;
 	}
 }

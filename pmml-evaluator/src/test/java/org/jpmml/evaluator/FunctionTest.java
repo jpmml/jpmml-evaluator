@@ -42,6 +42,14 @@ public class FunctionTest {
 		assertEquals(null, evaluate(Functions.PLUS, 1d, null));
 		assertEquals(null, evaluate(Functions.PLUS, null, 1d));
 
+		try {
+			evaluate(Functions.PLUS, true, true);
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
+
 		assertEquals(1, evaluate(Functions.MULTIPLY, 1, 1));
 		assertEquals(1f, evaluate(Functions.MULTIPLY, 1f, 1f));
 		assertEquals(1d, evaluate(Functions.MULTIPLY, 1d, 1d));
@@ -90,19 +98,22 @@ public class FunctionTest {
 	}
 
 	@Test
-	public void evaluateMathFunctions(){
+	public void evaluateFpMathFunctions(){
 		assertEquals(0d, evaluate(Functions.LOG10, 1));
-		assertEquals(0f, evaluate(Functions.LOG10, 1f));
+		assertEquals(0d, evaluate(Functions.LOG10, 1f));
 
 		assertEquals(0d, evaluate(Functions.LN, 1));
-		assertEquals(0f, evaluate(Functions.LN, 1f));
+		assertEquals(0d, evaluate(Functions.LN, 1f));
 
 		assertEquals(1d, evaluate(Functions.EXP, 0));
-		assertEquals(1f, evaluate(Functions.EXP, 0f));
+		assertEquals(1d, evaluate(Functions.EXP, 0f));
 
 		assertEquals(1d, evaluate(Functions.SQRT, 1));
-		assertEquals(1f, evaluate(Functions.SQRT, 1f));
+		assertEquals(1d, evaluate(Functions.SQRT, 1f));
+	}
 
+	@Test
+	public void evaluateMathFunctions(){
 		assertEquals(1, evaluate(Functions.ABS, -1));
 		assertEquals(1f, evaluate(Functions.ABS, -1f));
 		assertEquals(1d, evaluate(Functions.ABS, -1d));
