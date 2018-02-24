@@ -212,6 +212,12 @@ public class FunctionTest {
 		assertEquals(true, evaluate(Functions.IS_IN, "3", "1", "2", "3"));
 		assertEquals(true, evaluate(Functions.IS_NOT_IN, "0", "1", "2", "3"));
 
+		assertEquals(false, evaluate(Functions.IS_IN, null, "1", "2", "3"));
+		assertEquals(true, evaluate(Functions.IS_NOT_IN, null, "1", "2", "3"));
+
+		assertEquals(true, evaluate(Functions.IS_IN, null, "1", null, "3"));
+		assertEquals(false, evaluate(Functions.IS_NOT_IN, null, "1", null, "3"));
+
 		assertEquals(true, evaluate(Functions.IS_IN, 3, 1, 2, 3));
 		assertEquals(true, evaluate(Functions.IS_NOT_IN, 0, 1, 2, 3));
 

@@ -21,8 +21,6 @@ package org.jpmml.evaluator.functions;
 import java.util.List;
 import java.util.Objects;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.Function;
@@ -38,74 +36,60 @@ public class AbstractFunction implements Function {
 		setName(Objects.requireNonNull(name));
 	}
 
-	protected void checkArguments(List<FieldValue> arguments, int size){
-		checkArguments(arguments, size, false);
-	}
+	protected void checkFixedArityArguments(List<FieldValue> arguments, int arity){
 
-	/**
-	 * <p>
-	 * Validates arguments for a function that has a fixed number of formal parameters.
-	 * </p>
-	 *
-	 * @param size The number of arguments.
-	 * @param allowNulls <code>true</code> if missing arguments are permitted, <code>false</code> otherwise.
-	 *
-	 * @throws FunctionException If the validation fails.
-	 */
-	protected void checkArguments(List<FieldValue> arguments, int size, boolean allowNulls){
-
-		if(arguments.size() != size){
-			throw new FunctionException(this, "Expected " + size + " values, got " + arguments.size() + " values");
-		}
-
-		for(FieldValue argument : arguments){
-			checkArgument(argument, allowNulls);
+		if(arguments.size() != arity){
+			throw new FunctionException(this, "Expected " + arity + " values, got " + arguments.size() + " values");
 		}
 	}
 
-	protected void checkVariableArguments(List<FieldValue> arguments, int minSize){
-		checkVariableArguments(arguments, minSize, false);
-	}
+	protected void checkVariableArityArguments(List<FieldValue> arguments, int minArity){
 
-	/**
-	 * <p>
-	 * Validates arguments for a function that has a variable number ("<code>n</code> or more") of formal parameters.
-	 * </p>
-	 *
-	 * @param minSize The minimum number of arguments.
-	 * @param allowNulls <code>true</code> if missing arguments are allowed, <code>false</code> otherwise.
-	 *
-	 * @throws FunctionException If the validation fails.
-	 */
-	protected void checkVariableArguments(List<FieldValue> arguments, int minSize, boolean allowNulls){
-
-		if(arguments.size() < minSize){
-			throw new FunctionException(this, "Expected " + minSize + " or more values, got " + arguments.size() + " values");
-		}
-
-		for(FieldValue argument : arguments){
-			checkArgument(argument, allowNulls);
+		if(arguments.size() < minArity){
+			throw new FunctionException(this, "Expected " + minArity + " or more values, got " + arguments.size() + " values");
 		}
 	}
 
-	protected void checkArgument(FieldValue argument, boolean allowNulls){
+	protected void checkVariableArityArguments(List<FieldValue> arguments, int minArity, int maxArity){
+
+		if(arguments.size() < minArity || arguments.size() > maxArity){
+			throw new FunctionException(this, "Expected " + minArity + " to " + maxArity + " values, got " + arguments.size() + " values");
+ 		}
+ 	}
+
+	protected FieldValue getOptionalArgument(List<FieldValue> arguments, int index){
+		return getOptionalArgument(arguments, index, null);
+	}
+
+	protected FieldValue getOptionalArgument(List<FieldValue> arguments, int index, String alias){
+		FieldValue argument = arguments.get(index);
+
+		return checkArgument(argument, index, alias);
+	}
+
+	protected FieldValue getRequiredArgument(List<FieldValue> arguments, int index){
+		return getRequiredArgument(arguments, index, null);
+	}
+
+	protected FieldValue getRequiredArgument(List<FieldValue> arguments, int index, String alias){
+		FieldValue argument = arguments.get(index);
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, argument)){
 
-			if(!allowNulls){
-				throw new FunctionException(this, "Missing value");
+			if(alias != null){
+				throw new FunctionException(this, "Missing \'" + alias + "\' value at position " + index);
+			} else
+
+			{
+				throw new FunctionException(this, "Missing value at position " + index);
 			}
-		} else
-
-		{
-			DataType dataType = argument.getDataType();
-			OpType opType = argument.getOpType();
-
-			checkType(dataType, opType);
 		}
+
+		return checkArgument(argument, index, alias);
 	}
 
-	protected void checkType(DataType dataType, OpType opType){
+	protected FieldValue checkArgument(FieldValue argument, int index, String alias){
+		return argument;
 	}
 
 	@Override

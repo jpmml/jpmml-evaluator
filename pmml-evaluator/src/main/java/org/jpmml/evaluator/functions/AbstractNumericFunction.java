@@ -18,8 +18,11 @@
  */
 package org.jpmml.evaluator.functions;
 
+import java.util.Objects;
+
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
+import org.jpmml.evaluator.FieldValue;
+import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.FunctionException;
 
 abstract
@@ -30,16 +33,28 @@ public class AbstractNumericFunction extends AbstractFunction {
 	}
 
 	@Override
-	protected void checkType(DataType dataType, OpType opType){
-		super.checkType(dataType, opType);
+	protected FieldValue checkArgument(FieldValue argument, int index, String alias){
 
+		if(Objects.equals(FieldValues.MISSING_VALUE, argument)){
+			return argument;
+		}
+
+		DataType dataType = argument.getDataType();
 		switch(dataType){
 			case INTEGER:
 			case FLOAT:
 			case DOUBLE:
 				break;
 			default:
-				throw new FunctionException(this, "Expected a numeric value, got " + dataType.value() + " value");
+				if(alias != null){
+					throw new FunctionException(this, "Expected a numeric \'" + alias + "\' value at position " + index + ", got " + dataType.value() + " value");
+				} else
+
+				{
+					throw new FunctionException(this, "Expected a numeric value at position " + index + ", got " + dataType.value() + " value");
+				}
 		}
+
+		return argument;
 	}
 }

@@ -26,8 +26,6 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.FieldValues;
-import org.jpmml.evaluator.FunctionException;
 import org.jpmml.evaluator.TypeUtil;
 
 /**
@@ -57,20 +55,13 @@ public class StandardDeviationFunction extends AbstractFunction {
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
+		checkVariableArityArguments(arguments, 1, 2);
 
-		if(arguments.size() < 1 || arguments.size() > 2){
-			throw new FunctionException(this, "Expected 1 or 2 values, got " + arguments.size() + " values");
-		} // End if
-
-		if(arguments.contains(FieldValues.MISSING_VALUE)){
-			throw new FunctionException(this, "Missing value");
-		}
-
-		Collection<?> values = FieldValueUtil.getValue(Collection.class, arguments.get(0));
+		Collection<?> values = FieldValueUtil.getValue(Collection.class, getRequiredArgument(arguments, 0, "values"));
 
 		Boolean biasCorrected = Boolean.FALSE;
 		if(arguments.size() > 1){
-			biasCorrected = (arguments.get(1)).asBoolean();
+			biasCorrected = getRequiredArgument(arguments, 1, "biasCorrected").asBoolean();
 		}
 
 		Double result = evaluate(values, biasCorrected);

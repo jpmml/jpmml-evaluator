@@ -38,10 +38,10 @@ public class TrigonometricFunction extends AbstractNumericFunction {
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
-		checkArguments(arguments, 1);
+		checkFixedArityArguments(arguments, 1);
 
 		// Angle in radians
-		Number angle = (arguments.get(0)).asNumber();
+		Number angle = getRequiredArgument(arguments, 0, "x").asNumber();
 
 		Double result = evaluate(angle);
 		if(result.isNaN()){

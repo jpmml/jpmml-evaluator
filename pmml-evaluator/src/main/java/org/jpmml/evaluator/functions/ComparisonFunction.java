@@ -37,11 +37,12 @@ public class ComparisonFunction extends AbstractFunction {
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
-		checkArguments(arguments, 2);
+		checkFixedArityArguments(arguments, 2);
 
-		FieldValue left = arguments.get(0);
-		FieldValue right = arguments.get(1);
+		return evaluate(getRequiredArgument(arguments, 0), getRequiredArgument(arguments, 1));
+	}
 
+	private FieldValue evaluate(FieldValue left, FieldValue right){
 		Boolean result = evaluate((left).compareToValue(right));
 
 		return FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, result);

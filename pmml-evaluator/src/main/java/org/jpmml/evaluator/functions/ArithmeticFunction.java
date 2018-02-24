@@ -41,10 +41,12 @@ public class ArithmeticFunction extends AbstractNumericFunction {
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
-		checkArguments(arguments, 2, true);
+		checkFixedArityArguments(arguments, 2);
 
-		FieldValue left = arguments.get(0);
-		FieldValue right = arguments.get(1);
+		return evaluate(getOptionalArgument(arguments, 0), getOptionalArgument(arguments, 1));
+	}
+
+	private FieldValue evaluate(FieldValue left, FieldValue right){
 
 		// "If one of the input fields of a simple arithmetic function is a missing value, then the result evaluates to missing value"
 		if(Objects.equals(FieldValues.MISSING_VALUE, left) || Objects.equals(FieldValues.MISSING_VALUE, right)){

@@ -19,11 +19,13 @@
 package org.jpmml.evaluator.functions;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.FieldValues;
 
 abstract
 public class ValueListFunction extends AbstractFunction {
@@ -33,17 +35,25 @@ public class ValueListFunction extends AbstractFunction {
 	}
 
 	abstract
-	public Boolean evaluate(int index);
+	public Boolean evaluate(boolean isIn);
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
-		checkVariableArguments(arguments, 2);
+		checkVariableArityArguments(arguments, 2);
 
-		FieldValue value = arguments.get(0);
+		return evaluate(getOptionalArgument(arguments, 0), arguments.subList(1, arguments.size()));
+	}
 
-		List<FieldValue> values = arguments.subList(1, arguments.size());
+	private FieldValue evaluate(FieldValue value, List<FieldValue> values){
+		Boolean result;
 
-		Boolean result = evaluate(value.indexInValues(values));
+		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+			result = evaluate(values.contains(FieldValues.MISSING_VALUE));
+		} else
+
+		{
+			result = evaluate(value.indexIn(values) > -1);
+		}
 
 		return FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, result);
 	}

@@ -37,10 +37,12 @@ public class FpMathFunction extends AbstractNumericFunction {
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
-		checkArguments(arguments, 1);
+		checkFixedArityArguments(arguments, 1);
 
-		FieldValue value = arguments.get(0);
+		return evaluate(getRequiredArgument(arguments, 0, "x"));
+	}
 
+	private FieldValue evaluate(FieldValue value){
 		Number result = evaluate(value.asNumber());
 
 		return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, result);

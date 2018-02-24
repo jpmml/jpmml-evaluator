@@ -36,14 +36,14 @@ public class StringNormalize extends AbstractFunction {
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
-		checkArguments(arguments, 2);
+		checkFixedArityArguments(arguments, 2);
 
-		int length = (arguments.get(0)).asInteger();
+		int length = getRequiredArgument(arguments, 0, "length").asInteger();
 		if(length < 0){
-			throw new FunctionException(this, "Invalid length value " + length);
+			throw new FunctionException(this, "Invalid \'length\' value " + length);
 		}
 
-		String string = (arguments.get(1)).asString();
+		String string = getRequiredArgument(arguments, 1).asString();
 
 		// Trim leading whitespace characters (but keep trailing whitespace characters)
 		string = CharMatcher.WHITESPACE.trimLeadingFrom(string);

@@ -37,12 +37,12 @@ public class BinaryBooleanFunction extends AbstractFunction {
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
-		checkVariableArguments(arguments, 2);
+		checkVariableArityArguments(arguments, 2);
 
-		Boolean result = (arguments.get(0)).asBoolean();
+		Boolean result = getRequiredArgument(arguments, 0).asBoolean();
 
 		for(int i = 1; i < arguments.size(); i++){
-			result = evaluate(result, (arguments.get(i)).asBoolean());
+			result = evaluate(result, getRequiredArgument(arguments, i).asBoolean());
 		}
 
 		return FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, result);

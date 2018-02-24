@@ -181,11 +181,16 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return (getValue()).equals(value);
 	}
 
-	public int indexInValues(Iterable<FieldValue> values){
+	public int indexIn(Iterable<FieldValue> values){
 		Predicate<FieldValue> predicate = new Predicate<FieldValue>(){
 
 			@Override
 			public boolean apply(FieldValue value){
+
+				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+					return false;
+				}
+
 				return equalsValue(value);
 			}
 		};
