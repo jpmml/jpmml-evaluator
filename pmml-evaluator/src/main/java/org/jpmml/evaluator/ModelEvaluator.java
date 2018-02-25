@@ -456,7 +456,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 		List<OutputField> outputFields = getOutputFields();
 		if(outputFields.size() > 0){
-			List<TargetReferenceField> targetReferenceFields = null;
+			List<ResidualInputField> residualInputFields = null;
 
 			for(OutputField outputField : outputFields){
 				org.dmg.pmml.OutputField pmmlOutputField = outputField.getOutputField();
@@ -485,17 +485,17 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 					throw new InvisibleFieldException(targetFieldName, pmmlOutputField);
 				}
 
-				TargetReferenceField targetReferenceField = new TargetReferenceField(dataField, miningField);
+				ResidualInputField residualInputField = new ResidualInputField(dataField, miningField);
 
-				if(targetReferenceFields == null){
-					targetReferenceFields = new ArrayList<>();
+				if(residualInputFields == null){
+					residualInputFields = new ArrayList<>();
 				}
 
-				targetReferenceFields.add(targetReferenceField);
+				residualInputFields.add(residualInputField);
 			}
 
-			if(targetReferenceFields != null && targetReferenceFields.size() > 0){
-				inputFields = ImmutableList.copyOf(Iterables.concat(inputFields, targetReferenceFields));
+			if(residualInputFields != null && residualInputFields.size() > 0){
+				inputFields = ImmutableList.copyOf(Iterables.concat(inputFields, residualInputFields));
 			}
 		}
 

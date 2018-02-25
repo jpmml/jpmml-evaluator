@@ -21,9 +21,9 @@ package org.jpmml.evaluator;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.MiningField;
 
-public class TargetReferenceField extends InputField {
+public class ResidualInputField extends InputField {
 
-	public TargetReferenceField(DataField dataField, MiningField miningField){
+	public ResidualInputField(DataField dataField, MiningField miningField){
 		super(dataField, miningField);
 	}
 
