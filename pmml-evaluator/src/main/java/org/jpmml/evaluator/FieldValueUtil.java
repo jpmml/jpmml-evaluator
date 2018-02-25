@@ -77,6 +77,11 @@ public class FieldValueUtil {
 	}
 
 	static
+	public FieldValue prepareResidualInputValue(DataField dataField, MiningField miningField, Object value){
+		return prepareInputValue(dataField, miningField, value);
+	}
+
+	static
 	private FieldValue prepareScalarInputValue(Field<?> field, MiningField miningField, Object value){
 		boolean compatible;
 
@@ -99,30 +104,6 @@ public class FieldValueUtil {
 			default:
 				throw new IllegalArgumentException();
 		}
-	}
-
-	static
-	public FieldValue prepareTargetValue(DataField dataField, MiningField miningField, Target target, Object value){
-		DataType dataType = dataField.getDataType();
-		OpType opType = dataField.getOpType();
-
-		if(dataType == null || opType == null){
-			throw new InvalidElementException(dataField);
-		} // End if
-
-		if(miningField != null){
-			String invalidValueReplacement = miningField.getInvalidValueReplacement();
-			if(invalidValueReplacement != null){
-				throw new MisplacedAttributeException(miningField, PMMLAttributes.MININGFIELD_INVALIDVALUEREPLACEMENT, invalidValueReplacement);
-			}
-
-			String missingValueReplacement = miningField.getMissingValueReplacement();
-			if(missingValueReplacement != null){
-				throw new MisplacedAttributeException(miningField, PMMLAttributes.MININGFIELD_MISSINGVALUEREPLACEMENT, missingValueReplacement);
-			}
-		}
-
-		return createTargetValue(dataField, miningField, target, value);
 	}
 
 	static
@@ -425,21 +406,6 @@ public class FieldValueUtil {
 		String missingValueReplacement = miningField.getMissingValueReplacement();
 
 		return createInputValue(field, miningField, missingValueReplacement);
-	}
-
-	static
-	private FieldValue createTargetValue(Field<?> field, MiningField miningField, Target target, Object value){
-
-		if(Objects.equals(FieldValues.MISSING_VALUE, value) || (value == null)){
-			return FieldValues.MISSING_VALUE;
-		}
-
-		DataType dataType = field.getDataType();
-		OpType opType = getOpType(field, miningField, target);
-
-		FieldValue fieldValue = createOrRefine(dataType, opType, value);
-
-		return enhance(field, fieldValue);
 	}
 
 	static

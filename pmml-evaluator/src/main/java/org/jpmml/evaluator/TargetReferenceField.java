@@ -20,40 +20,20 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.MiningField;
-import org.dmg.pmml.OpType;
-import org.dmg.pmml.Target;
 
 public class TargetReferenceField extends InputField {
 
-	private Target target = null;
-
-
-	public TargetReferenceField(DataField dataField, MiningField miningField, Target target){
+	public TargetReferenceField(DataField dataField, MiningField miningField){
 		super(dataField, miningField);
-
-		setTarget(target);
 	}
 
 	@Override
 	public FieldValue prepare(Object value){
-		return FieldValueUtil.prepareTargetValue(getField(), getMiningField(), getTarget(), value);
-	}
-
-	@Override
-	public OpType getOpType(){
-		return FieldValueUtil.getOpType(getField(), getMiningField(), getTarget());
+		return FieldValueUtil.prepareResidualInputValue(getField(), getMiningField(), value);
 	}
 
 	@Override
 	public DataField getField(){
 		return (DataField)super.getField();
-	}
-
-	public Target getTarget(){
-		return this.target;
-	}
-
-	private void setTarget(Target target){
-		this.target = target;
 	}
 }

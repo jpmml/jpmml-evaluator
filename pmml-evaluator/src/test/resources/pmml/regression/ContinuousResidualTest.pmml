@@ -8,7 +8,7 @@
 	<RegressionModel functionName="regression">
 		<MiningSchema>
 			<MiningField name="input"/>
-			<MiningField name="target" usageType="predicted"/>
+			<MiningField name="target" missingValueReplacement="2.0" usageType="predicted"/>
 		</MiningSchema>
 		<Output>
 			<OutputField name="residual" optype="continuous" feature="residual"/>

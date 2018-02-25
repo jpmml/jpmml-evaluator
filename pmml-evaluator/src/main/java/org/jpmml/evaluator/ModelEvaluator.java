@@ -485,9 +485,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 					throw new InvisibleFieldException(targetFieldName, pmmlOutputField);
 				}
 
-				Target target = getTarget(targetFieldName);
-
-				TargetReferenceField targetReferenceField = new TargetReferenceField(dataField, miningField, target);
+				TargetReferenceField targetReferenceField = new TargetReferenceField(dataField, miningField);
 
 				if(targetReferenceFields == null){
 					targetReferenceFields = new ArrayList<>();

@@ -29,7 +29,6 @@ import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OutputField;
-import org.dmg.pmml.Target;
 import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
 
 public class ModelEvaluationContext extends EvaluationContext {
@@ -95,9 +94,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 			case PREDICTED:
 			case TARGET:
 				{
-					Target target = modelEvaluator.getTarget(name);
-
-					return FieldValueUtil.prepareTargetValue(dataField, miningField, target, value);
+					return FieldValueUtil.prepareResidualInputValue(dataField, miningField, value);
 				}
 			default:
 				throw new UnsupportedAttributeException(miningField, usageType);
