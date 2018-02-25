@@ -24,6 +24,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -393,6 +394,17 @@ public class TypeUtilTest {
 		assertEquals(DataType.FLOAT, TypeUtil.getConstantDataType("1.0E1"));
 		assertEquals(DataType.FLOAT, TypeUtil.getConstantDataType("1.0E+1"));
 		assertEquals(DataType.STRING, TypeUtil.getConstantDataType("1.0X"));
+	}
+
+	@Test
+	public void getOpType(){
+		assertEquals(OpType.ORDINAL, TypeUtil.getOpType(DataType.DATE));
+		assertEquals(OpType.ORDINAL, TypeUtil.getOpType(DataType.TIME));
+		assertEquals(OpType.ORDINAL, TypeUtil.getOpType(DataType.DATE_TIME));
+
+		assertEquals(OpType.CONTINUOUS, TypeUtil.getOpType(DataType.DATE_DAYS_SINCE_1970));
+		assertEquals(OpType.CONTINUOUS, TypeUtil.getOpType(DataType.TIME_SECONDS));
+		assertEquals(OpType.CONTINUOUS, TypeUtil.getOpType(DataType.DATE_TIME_SECONDS_SINCE_1970));
 	}
 
 	static

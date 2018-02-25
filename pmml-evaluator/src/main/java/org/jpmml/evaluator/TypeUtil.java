@@ -433,6 +433,7 @@ public class TypeUtil {
 			case DATE:
 			case TIME:
 			case DATE_TIME:
+				return OpType.ORDINAL;
 			case DATE_DAYS_SINCE_0:
 			case DATE_DAYS_SINCE_1960:
 			case DATE_DAYS_SINCE_1970:
@@ -442,7 +443,7 @@ public class TypeUtil {
 			case DATE_TIME_SECONDS_SINCE_1960:
 			case DATE_TIME_SECONDS_SINCE_1970:
 			case DATE_TIME_SECONDS_SINCE_1980:
-				return OpType.ORDINAL;
+				return OpType.CONTINUOUS;
 			default:
 				throw new IllegalArgumentException();
 		}
