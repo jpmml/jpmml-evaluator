@@ -333,12 +333,6 @@ java -cp target/example-1.4-SNAPSHOT.jar <application class name> --help
 
 Limited public support is available via the [JPMML mailing list](https://groups.google.com/forum/#!forum/jpmml).
 
-The [Openscoring.io blog](http://openscoring.io/blog/) contains fully worked out examples about using JPMML-Model and JPMML-Evaluator libraries.
-
-Recommended reading:
-* [Preparing arguments for evaluation](http://openscoring.io/blog/2014/05/15/jpmml_evaluator_api_prepare_evaluate/)
-* [Testing PMML Applications](http://openscoring.io/blog/2014/05/12/testing_pmml_applications/)
-
 # License #
 
 JPMML-Evaluator is licensed under the [GNU Affero General Public License (AGPL) version 3.0](http://www.gnu.org/licenses/agpl-3.0.html). Other licenses are available on request.
