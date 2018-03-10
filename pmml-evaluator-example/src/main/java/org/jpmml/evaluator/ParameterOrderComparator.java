@@ -42,7 +42,7 @@ class ParameterOrderComparator implements Comparator<ParameterDescription> {
 		Field field;
 
 		try {
-			field = Parameterized.class.getDeclaredField("m_field");
+			field = Parameterized.class.getDeclaredField("field");
 		} catch(NoSuchFieldException nsfe){
 			throw new RuntimeException(nsfe);
 		}
