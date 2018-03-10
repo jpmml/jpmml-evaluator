@@ -223,12 +223,12 @@
 						</goals>
 						<configuration>
 							<rules>
-								<requireMavenVersion>
-									<version>3.2</version>
-								</requireMavenVersion>
 								<requireJavaVersion>
 									<version>1.8</version>
 								</requireJavaVersion>
+								<requireMavenVersion>
+									<version>3.2</version>
+								</requireMavenVersion>
 							</rules>
 						</configuration>
 					</execution>
