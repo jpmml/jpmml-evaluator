@@ -101,14 +101,27 @@ try(InputStream is = ...){
 The newly loaded `PMML` instance should tailored by applying appropriate `org.dmg.pmml.Visitor` implementation classes to it:
 * `org.jpmml.model.visitors.LocatorTransformer`. Transforms SAX Locator information to Java serializable representation. Recommended for development and testing environments.
 * `org.jpmml.model.visitors.LocatorNullifier`. Removes SAX Locator information. Recommended for production environments.
-* `org.jpmml.model.visitors.<Type>Interner`. Replaces all occurrences of the same Java value with the singleton value.
-* `org.jpmml.evaluator.visitors.<Element>Optimizer`. Pre-parses PMML element.
+* `org.jpmml.model.visitors.<Type>Interner`. Replaces all occurrences of the same PMML attribute value with the singleton attribute value.
 * `org.jpmml.evaluator.visitors.<Element>Interner`. Replaces all occurrences of the same PMML element with the singleton element.
+* `org.jpmml.evaluator.visitors.<Element>Optimizer`. Pre-parses PMML element.
 
-Removing SAX Locator information (reduces memory consumption up to 25%):
+To facilitate their use, visitor classes have been grouped into visitor battery classes:
+* `org.jpmml.model.visitors.AttributeInternerBattery`
+* `org.jpmml.evaluator.visitors.ElementInternerBattery`
+* `org.jpmml.evaluator.visitors.ElementOptimizerBattery`
+
+Building and applying a custom visitor battery to reduce the memory consumption of a `PMML` instance in production environment:
 ```java
-Visitor visitor = new org.jpmml.model.visitors.LocatorNullifier();
-visitor.applyTo(pmml);
+VisitorBattery visitorBattery = new VisitorBattery();
+
+// Getting rid of SAX Locator information
+visitorBattery.add(org.jpmml.model.visitors.LocatorNullifier.class);
+
+// Getting rid of duplicate PMML attribute values and PMML elements
+visitorBattery.addAll(new org.jpmml.model.visitors.AttributeInternerBattery());
+visitorBattery.addAll(new org.jpmml.evaluator.visitors.ElementInternerBattery());
+
+visitorBattery.applyTo(pmml);
 ```
 
 The PMML standard defines large number of model types.

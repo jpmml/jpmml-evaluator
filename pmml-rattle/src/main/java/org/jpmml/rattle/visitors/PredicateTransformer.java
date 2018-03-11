@@ -26,8 +26,8 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
-import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.evaluator.ExtensionUtil;
+import org.jpmml.model.ArrayUtil;
 import org.jpmml.model.visitors.PredicateFilterer;
 
 public class PredicateTransformer extends PredicateFilterer {
@@ -58,12 +58,14 @@ public class PredicateTransformer extends PredicateFilterer {
 	private Predicate transform(SimpleSetPredicate simpleSetPredicate){
 		Array array = simpleSetPredicate.getArray();
 
-		List<String> content = ArrayUtil.tokenize(array);
-		if(content.size() != 1){
+		String value = array.getValue();
+
+		List<String> tokens = ArrayUtil.parse(value, true);
+		if(tokens.size() != 1){
 			return simpleSetPredicate;
 		}
 
-		String value = content.get(0);
+		value = tokens.get(0);
 
 		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.getBooleanOperator();
 		switch(booleanOperator){

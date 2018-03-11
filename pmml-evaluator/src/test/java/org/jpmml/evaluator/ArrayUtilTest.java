@@ -1,29 +1,20 @@
 /*
- * Copyright (c) 2012 University of Tartu
- * All rights reserved.
+ * Copyright (c) 2018 Villu Ruusmann
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * This file is part of JPMML-Evaluator
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of its contributors
- *    may be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ * JPMML-Evaluator is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * JPMML-Evaluator is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.jpmml.evaluator;
 
@@ -40,37 +31,37 @@ public class ArrayUtilTest {
 
 	@Test
 	public void parseIntArray(){
-		assertEquals(Arrays.asList(1, 2, 3), parseIntArray("1 2 3"));
+		List<?> first = parseIntArray("1 2 3");
+		List<?> second = parseIntArray("1 2 3");
+
+		checkSame(Arrays.asList(1, 2, 3), first, second);
 	}
 
 	@Test
 	public void parseRealArray(){
-		assertEquals(Arrays.asList(1d, 2d, 3d), parseRealArray("1 2 3"));
+		List<?> first = parseRealArray("1 2 3");
+		List<?> second = parseRealArray("1.0 2.0 3.0");
+
+		checkSame(Arrays.asList(1d, 2d, 3d), first, second);
 	}
 
 	@Test
 	public void parseStringArray(){
-		assertEquals(Arrays.asList("a"), parseStringArray("\"a\""));
+		List<?> first = parseStringArray("a b c");
+		List<?> second = parseStringArray("\"a\" \"b\" \"c\"");
 
-		assertEquals(Arrays.asList("a", "b", "c"), parseStringArray("a b c"));
-		assertEquals(Arrays.asList("a", "b", "c"), parseStringArray("\"a\" \"b\" \"c\""));
-
-		assertEquals(Arrays.asList("a b c"), parseStringArray("\"a b c\""));
-
-		assertEquals(Arrays.asList("\"a b c"), parseStringArray("\"a b c"));
-		assertEquals(Arrays.asList("\\a", "\\b\\", "c\\"), parseStringArray("\\a \\b\\ c\\"));
-
-		assertEquals(Arrays.asList("a \"b\" c"), parseStringArray("\"a \\\"b\\\" c\""));
-		assertEquals(Arrays.asList("\"a b c\""), parseStringArray("\"\\\"a b c\\\"\""));
+		checkSame(Arrays.asList("a", "b", "c"), first, second);
 	}
 
-	@Test
-	public void intern(){
-		List<?> left = parseStringArray("a b c");
-		List<?> right = parseStringArray("\"a\" \"b\" \"c\"");
+	static
+	private void checkSame(List<?> expected, List<?> actualFirst, List<?> actualSecond){
+		// Assert element equality
+		assertEquals(expected, actualFirst);
+		assertEquals(expected, actualSecond);
 
-		for(int i = 0; i < 3; i++){
-			assertSame(left.get(i), right.get(i));
+		// Assert element identity (after interning) between actual List instances
+		for(int i = 0; i < expected.size(); i++){
+			assertSame(actualFirst.get(i), actualSecond.get(i));
 		}
 	}
 

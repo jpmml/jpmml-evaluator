@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -41,21 +40,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.Visitor;
-import org.jpmml.evaluator.visitors.ExpressionOptimizer;
-import org.jpmml.evaluator.visitors.FieldOptimizer;
-import org.jpmml.evaluator.visitors.GeneralRegressionModelOptimizer;
-import org.jpmml.evaluator.visitors.MiningFieldInterner;
-import org.jpmml.evaluator.visitors.NaiveBayesModelOptimizer;
-import org.jpmml.evaluator.visitors.PredicateInterner;
-import org.jpmml.evaluator.visitors.PredicateOptimizer;
-import org.jpmml.evaluator.visitors.RegressionModelOptimizer;
-import org.jpmml.evaluator.visitors.ScoreDistributionInterner;
-import org.jpmml.model.visitors.ArrayListOptimizer;
+import org.jpmml.evaluator.visitors.ElementInternerBattery;
+import org.jpmml.evaluator.visitors.ElementOptimizerBattery;
+import org.jpmml.model.VisitorBattery;
 import org.jpmml.model.visitors.ArrayListTransformer;
-import org.jpmml.model.visitors.DoubleInterner;
-import org.jpmml.model.visitors.IntegerInterner;
-import org.jpmml.model.visitors.StringInterner;
+import org.jpmml.model.visitors.ArrayListTrimmer;
+import org.jpmml.model.visitors.AttributeInternerBattery;
+import org.jpmml.model.visitors.LocatorNullifier;
 
 public class EvaluationExample extends Example {
 
@@ -212,31 +203,29 @@ public class EvaluationExample extends Example {
 			CacheBuilderSpec cacheBuilderSpec = CacheBuilderSpec.parse(this.cacheBuilderSpec);
 
 			CacheUtil.setCacheBuilderSpec(cacheBuilderSpec);
-		} // End if
+		}
 
-		if(this.optimize){
-			List<? extends Visitor> optimizers = Arrays.asList(new ArrayListOptimizer(), new ExpressionOptimizer(), new FieldOptimizer(), new PredicateOptimizer(), new GeneralRegressionModelOptimizer(), new NaiveBayesModelOptimizer(), new RegressionModelOptimizer());
+		VisitorBattery visitorBattery = new VisitorBattery();
 
-			for(Visitor optimizer : optimizers){
-				optimizer.applyTo(pmml);
-			}
+		if(this.intern){
+			visitorBattery.add(LocatorNullifier.class);
 		} // End if
 
 		// Optimize first, intern second.
 		// The goal is to intern optimized elements (keeps one copy), not optimize interned elements (expands one copy to multiple copies).
-		if(this.intern){
-			List<? extends Visitor> interners = Arrays.asList(new DoubleInterner(), new IntegerInterner(), new StringInterner(), new MiningFieldInterner(), new PredicateInterner(), new ScoreDistributionInterner());
-
-			for(Visitor interner : interners){
-				interner.applyTo(pmml);
-			}
+		if(this.optimize){
+			visitorBattery.addAll(new ElementOptimizerBattery());
 		} // End if
 
-		if(this.optimize || this.intern){
-			Visitor transformer = new ArrayListTransformer();
+		if(this.intern){
+			visitorBattery.addAll(new AttributeInternerBattery());
+			visitorBattery.addAll(new ElementInternerBattery());
 
-			transformer.applyTo(pmml);
+			visitorBattery.add(ArrayListTransformer.class);
+			visitorBattery.add(ArrayListTrimmer.class);
 		}
+
+		visitorBattery.applyTo(pmml);
 
 		ModelEvaluatorFactory modelEvaluatorFactory = (ModelEvaluatorFactory)newInstance(Class.forName(this.modelEvaluatorFactoryClazz));
 

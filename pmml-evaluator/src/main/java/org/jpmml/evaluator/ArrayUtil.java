@@ -1,33 +1,23 @@
 /*
- * Copyright (c) 2012 University of Tartu
- * All rights reserved.
+ * Copyright (c) 2018 Villu Ruusmann
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * This file is part of JPMML-Evaluator
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of its contributors
- *    may be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ * JPMML-Evaluator is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * JPMML-Evaluator is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.jpmml.evaluator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Function;
@@ -80,9 +70,7 @@ public class ArrayUtil {
 	}
 
 	static
-	public List<String> tokenize(Array array){
-		List<String> result;
-
+	public List<?> parse(Array array){
 		Array.Type type = array.getType();
 		if(type == null){
 			throw new MissingAttributeException(array, PMMLAttributes.ARRAY_TYPE);
@@ -90,33 +78,23 @@ public class ArrayUtil {
 
 		String value = array.getValue();
 
+		List<String> tokens;
+
 		switch(type){
 			case INT:
 			case REAL:
-				result = tokenize(value, false);
+				tokens = org.jpmml.model.ArrayUtil.parse(value, false);
 				break;
 			case STRING:
-				result = tokenize(value, true);
+				tokens = org.jpmml.model.ArrayUtil.parse(value, true);
 				break;
 			default:
 				throw new UnsupportedAttributeException(array, type);
 		}
 
 		Integer n = array.getN();
-		if(n != null && n != result.size()){
+		if(n != null && n != tokens.size()){
 			throw new InvalidElementException(array);
-		}
-
-		return result;
-	}
-
-	static
-	public List<?> parse(Array array){
-		List<String> tokens = tokenize(array);
-
-		Array.Type type = array.getType();
-		if(type == null){
-			throw new MissingAttributeException(array, PMMLAttributes.ARRAY_TYPE);
 		}
 
 		switch(type){
@@ -129,94 +107,6 @@ public class ArrayUtil {
 			default:
 				throw new UnsupportedAttributeException(array, type);
 		}
-	}
-
-	static
-	private List<String> tokenize(String string, boolean enableQuotes){
-		List<String> result = new ArrayList<>();
-
-		StringBuilder sb = new StringBuilder();
-
-		boolean quoted = false;
-
-		tokens:
-		for(int i = 0; i < string.length(); i++){
-			char c = string.charAt(i);
-
-			if(quoted){
-
-				if(c == '\\' && i < (string.length() - 1)){
-					c = string.charAt(i + 1);
-
-					if(c == '\"'){
-						sb.append('\"');
-
-						i++;
-					} else
-
-					{
-						sb.append('\\');
-					}
-
-					continue tokens;
-				} // End if
-
-				sb.append(c);
-
-				if(c == '\"'){
-					result.add(createToken(sb, enableQuotes));
-
-					quoted = false;
-				}
-			} else
-
-			{
-				if(c == '\"' && enableQuotes){
-
-					if(sb.length() > 0){
-						result.add(createToken(sb, enableQuotes));
-					}
-
-					sb.append('\"');
-
-					quoted = true;
-				} else
-
-				if(Character.isWhitespace(c)){
-
-					if(sb.length() > 0){
-						result.add(createToken(sb, enableQuotes));
-					}
-				} else
-
-				{
-					sb.append(c);
-				}
-			}
-		}
-
-		if(sb.length() > 0){
-			result.add(createToken(sb, enableQuotes));
-		}
-
-		return result;
-	}
-
-	static
-	private String createToken(StringBuilder sb, boolean enableQuotes){
-		String result;
-
-		if(sb.length() > 1 && (sb.charAt(0) == '\"' && sb.charAt(sb.length() - 1) == '\"') && enableQuotes){
-			result = sb.substring(1, sb.length() - 1);
-		} else
-
-		{
-			result = sb.substring(0, sb.length());
-		}
-
-		sb.setLength(0);
-
-		return result;
 	}
 
 	private static final Function<String, Integer> INT_PARSER = new Function<String, Integer>(){
