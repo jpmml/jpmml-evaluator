@@ -205,6 +205,17 @@ public class OutputUtil {
 						value = getProbability(targetValue, outputField);
 					}
 					break;
+				case CONFIDENCE:
+					{
+						if(targetValue instanceof HasRuleValues){
+							value = getRuleValue(targetValue, outputField, OutputField.RuleFeature.CONFIDENCE);
+
+							break;
+						}
+
+						value = getConfidence(targetValue, outputField);
+					}
+					break;
 				case RESIDUAL:
 					{
 						if(segmentId != null){
@@ -299,11 +310,6 @@ public class OutputUtil {
 				case RULE_ID:
 					{
 						value = getRuleValue(targetValue, outputField, OutputField.RuleFeature.RULE_ID);
-					}
-					break;
-				case CONFIDENCE:
-					{
-						value = getRuleValue(targetValue, outputField, OutputField.RuleFeature.CONFIDENCE);
 					}
 					break;
 				case SUPPORT:
@@ -420,6 +426,15 @@ public class OutputUtil {
 		String value = getCategoryValue(object, outputField);
 
 		return hasProbability.getProbability(value);
+	}
+
+	static
+	private Double getConfidence(Object object, OutputField outputField){
+		HasConfidence hasConfidence = TypeUtil.cast(HasConfidence.class, object);
+
+		String value = getCategoryValue(object, outputField);
+
+		return hasConfidence.getConfidence(value);
 	}
 
 	static
@@ -623,6 +638,15 @@ public class OutputUtil {
 					String value = getCategoryValue(object, outputField);
 
 					report = hasProbability.getProbabilityReport(value);
+				}
+				break;
+			case CONFIDENCE:
+				{
+					HasConfidence hasConfidence = TypeUtil.cast(HasConfidence.class, object);
+
+					String value = getCategoryValue(object, outputField);
+
+					report = hasConfidence.getConfidenceReport(value);
 				}
 				break;
 			case AFFINITY:

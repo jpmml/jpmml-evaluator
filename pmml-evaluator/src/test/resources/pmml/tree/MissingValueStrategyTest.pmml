@@ -22,6 +22,10 @@
 			<MiningField name="outlook"/>
 			<MiningField name="whatIdo" usageType="predicted"/>
 		</MiningSchema>
+		<Output>
+			<OutputField name="probability(whatIdo)" feature="probability"/>
+			<OutputField name="confidence(whatIdo)" feature="confidence"/>
+		</Output>
 		<Node id="1" score="will play" recordCount="100.0" defaultChild="2">
 			<True/>
 			<ScoreDistribution value="will play" recordCount="60.0" confidence="0.6"/>
