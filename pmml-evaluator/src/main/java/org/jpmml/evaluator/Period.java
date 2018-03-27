@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2018 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -19,5 +19,26 @@
 package org.jpmml.evaluator;
 
 abstract
-class SimplePeriod<P extends SimplePeriod<P>> extends Period<P> {
+class Period<P extends Period<P>> extends Number implements Comparable<P> {
+
+	@Override
+	public int intValue(){
+		long value = longValue();
+
+		if(value < Integer.MIN_VALUE || value > Integer.MAX_VALUE){
+			throw new UndefinedResultException();
+		}
+
+		return (int)value;
+	}
+
+	@Override
+	public float floatValue(){
+		return longValue();
+	}
+
+	@Override
+	public double doubleValue(){
+		return longValue();
+	}
 }

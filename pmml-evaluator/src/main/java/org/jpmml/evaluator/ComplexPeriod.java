@@ -21,7 +21,7 @@ package org.jpmml.evaluator;
 import java.time.LocalDate;
 
 abstract
-class ComplexPeriod<P extends ComplexPeriod<P>> extends SimplePeriod<P> {
+class ComplexPeriod<P extends ComplexPeriod<P>> extends Period<P> {
 
 	private LocalDate epoch = null;
 
