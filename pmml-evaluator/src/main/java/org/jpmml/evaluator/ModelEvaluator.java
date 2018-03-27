@@ -63,8 +63,11 @@ import org.dmg.pmml.TransformationDictionary;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
 
+@SuppressWarnings (
+	value = {"unused"}
+)
 abstract
-public class ModelEvaluator<M extends Model> implements Evaluator, Serializable {
+public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, HasPMML, Serializable {
 
 	private PMML pmml = null;
 
@@ -160,7 +163,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 
 	/**
 	 * <p>
-	 * Configures the runtime behaviour of this Evaluator instance.
+	 * Configures the runtime behaviour of this {@link Evaluator} instance.
 	 * </p>
 	 *
 	 * <p>
@@ -673,6 +676,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		return valueFactory;
 	}
 
+	@Override
 	public PMML getPMML(){
 		return this.pmml;
 	}
@@ -681,6 +685,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, Serializable 
 		this.pmml = pmml;
 	}
 
+	@Override
 	public M getModel(){
 		return this.model;
 	}

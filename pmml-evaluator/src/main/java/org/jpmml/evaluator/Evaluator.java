@@ -109,6 +109,9 @@ import org.dmg.pmml.Model;
  *
  * @see HasGroupFields
  * @see HasOrderFields
+ *
+ * @see HasModel
+ * @see HasPMML
  */
 public interface Evaluator extends HasInputFields, HasResultFields {
 
