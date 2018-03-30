@@ -46,12 +46,6 @@ public class FieldValueUtil {
 
 	static
 	public FieldValue prepareInputValue(Field<?> field, MiningField miningField, Object value){
-		DataType dataType = field.getDataType();
-		OpType opType = field.getOpType();
-
-		if(dataType == null || opType == null){
-			throw new InvalidElementException(field);
-		} // End if
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value) || (value == null)){
 			return performMissingValueTreatment(field, miningField);
@@ -263,10 +257,17 @@ public class FieldValueUtil {
 
 		if(dataField.hasValues()){
 			DataType dataType = dataField.getDataType();
-			OpType opType = dataField.getOpType();
+			if(dataType == null){
+				throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_DATATYPE);
+			} // End if
 
 			if(dataField instanceof HasParsedValueMapping){
 				HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)dataField;
+
+				OpType opType = dataField.getOpType();
+				if(opType == null){
+					throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_OPTYPE);
+				}
 
 				try {
 					FieldValue fieldValue = createOrRefine(dataType, opType, value);
@@ -396,7 +397,14 @@ public class FieldValueUtil {
 		}
 
 		DataType dataType = field.getDataType();
+		if(dataType == null){
+			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@dataType"), field);
+		}
+
 		OpType opType = getOpType(field, miningField);
+		if(opType == null){
+			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@optype"), field);
+		}
 
 		FieldValue fieldValue = createOrRefine(dataType, opType, value);
 
@@ -545,10 +553,6 @@ public class FieldValueUtil {
 	static
 	private FieldValue createOrRefine(DataType dataType, OpType opType, Object value){
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, value) || (value == null)){
-			return FieldValues.MISSING_VALUE;
-		} // End if
-
 		if(value instanceof FieldValue){
 			FieldValue fieldValue = (FieldValue)value;
 
@@ -617,12 +621,19 @@ public class FieldValueUtil {
 
 		if(dataField.hasValues()){
 			DataType dataType = dataField.getDataType();
-			OpType opType = dataField.getOpType();
+			if(dataType == null){
+				throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_DATATYPE);
+			}
 
 			value = TypeUtil.parseOrCast(dataType, value);
 
 			if(dataField instanceof HasParsedValueMapping){
 				HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)dataField;
+
+				OpType opType = dataField.getOpType();
+				if(opType == null){
+					throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_OPTYPE);
+				}
 
 				FieldValue fieldValue = createInternal(dataType, opType, value);
 
