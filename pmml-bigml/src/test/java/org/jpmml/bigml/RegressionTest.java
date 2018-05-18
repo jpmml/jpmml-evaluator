@@ -22,27 +22,14 @@ import org.jpmml.evaluator.IntegrationTest;
 import org.jpmml.evaluator.PMMLEquivalence;
 import org.junit.Test;
 
-public class ClassificationTest extends IntegrationTest {
+public class RegressionTest extends IntegrationTest {
 
-	public ClassificationTest(){
+	public RegressionTest(){
 		super(new PMMLEquivalence(1e-13, 1e-13));
 	}
 
 	@Test
-	public void evaluateDecisionTreeIris() throws Exception {
-		evaluate("Model", "Iris");
+	public void evaluateRegressionGrades() throws Exception {
+		evaluate("Model", "Grades");
 	}
-
-	@Test
-	public void evaluateDecisionTreeAudit() throws Exception {
-		evaluate("Model", "Audit");
-	}
-
-    /*
-	@Test
-	public void evaluateLogisticRegressionIris() throws Exception {
-		evaluate("Logisticregression", "Iris");
-	}
-    */
-
 }

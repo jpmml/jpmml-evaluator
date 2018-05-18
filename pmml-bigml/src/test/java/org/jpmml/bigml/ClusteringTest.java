@@ -22,27 +22,16 @@ import org.jpmml.evaluator.IntegrationTest;
 import org.jpmml.evaluator.PMMLEquivalence;
 import org.junit.Test;
 
-public class ClassificationTest extends IntegrationTest {
+public class ClusteringTest extends IntegrationTest {
 
-	public ClassificationTest(){
+	public ClusteringTest(){
 		super(new PMMLEquivalence(1e-13, 1e-13));
-	}
-
-	@Test
-	public void evaluateDecisionTreeIris() throws Exception {
-		evaluate("Model", "Iris");
-	}
-
-	@Test
-	public void evaluateDecisionTreeAudit() throws Exception {
-		evaluate("Model", "Audit");
 	}
 
     /*
 	@Test
-	public void evaluateLogisticRegressionIris() throws Exception {
-		evaluate("Logisticregression", "Iris");
+	public void evaluateClusteringDiabetes() throws Exception {
+		evaluate("Cluster", "Diabetes");
 	}
     */
-
 }

@@ -1,4 +1,4 @@
-000000,000001,000002,000003,000004,000005,000006,000007,000008,000009,00000a,00000b,00000c
+ID,Age,Employment,Education,Marital,Occupation,Income,Gender,Deductions,Hours,Account,Adjustment,Adjusted
 1004641,38,Private,College,Unmarried,Service,81838,Female,0,72,UnitedStates,0,0
 1010229,35,Private,Associate,Absent,Transport,72099,Male,0,30,Jamaica,0,0
 1024587,32,Private,HSgrad,Divorced,Clerical,154676.74,Male,0,40,UnitedStates,0,0
