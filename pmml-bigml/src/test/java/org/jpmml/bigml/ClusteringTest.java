@@ -28,10 +28,9 @@ public class ClusteringTest extends IntegrationTest {
 		super(new PMMLEquivalence(1e-13, 1e-13));
 	}
 
-    /*
 	@Test
 	public void evaluateClusteringDiabetes() throws Exception {
 		evaluate("Cluster", "Diabetes");
 	}
-    */
+
 }
