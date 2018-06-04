@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<Header description="Model kind: kmeans Model id: 5b048c5828e1f43187000043">
+	<Header description="Model kind: kmeans Model id: 5b1552a09252736252003ee1">
 		<Application name="BigML"/>
 	</Header>
 	<DataDictionary>

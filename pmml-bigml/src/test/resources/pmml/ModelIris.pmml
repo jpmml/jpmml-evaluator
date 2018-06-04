@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<Header description="Model kind: mtree Model id: 5b048c6528e1f43187000046">
+	<Header description="Model kind: mtree Model id: 5b1552ae9252736252003ee7">
 		<Application name="BigML"/>
 	</Header>
 	<DataDictionary>
@@ -23,7 +23,7 @@
 			<Value value="virginica"/>
 		</DataField>
 	</DataDictionary>
-	<TreeModel algorithmName="mtree" functionName="classification" modelName="Iris">
+	<TreeModel algorithmName="mtree" functionName="classification" missingValueStrategy="lastPrediction" modelName="Iris">
 		<MiningSchema>
 			<MiningField name="Sepal_Length"/>
 			<MiningField name="Sepal_Width"/>

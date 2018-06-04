@@ -1,29 +1,29 @@
 <?xml version="1.0" ?>
 <PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<Header description="Model kind: mtree Model id: 5b048c4b28e1f4318700003d">
+	<Header description="Model kind: mtree Model id: 5b155299c7736e26840004bc">
 		<Application name="BigML"/>
 	</Header>
 	<DataDictionary>
 		<DataField dataType="integer" displayName="" name="Prefix" optype="continuous">
-			<Extension name="BigML-Field_ID" value="Prefix"/>
+			<Extension name="BigML-Field_ID" value="000000"/>
 		</DataField>
 		<DataField dataType="double" displayName="" name="Assignment" optype="continuous">
-			<Extension name="BigML-Field_ID" value="Assignment"/>
+			<Extension name="BigML-Field_ID" value="000001"/>
 		</DataField>
 		<DataField dataType="double" displayName="" name="Tutorial" optype="continuous">
-			<Extension name="BigML-Field_ID" value="Tutorial"/>
+			<Extension name="BigML-Field_ID" value="000002"/>
 		</DataField>
 		<DataField dataType="double" displayName="" name="Midterm" optype="continuous">
-			<Extension name="BigML-Field_ID" value="Midterm"/>
+			<Extension name="BigML-Field_ID" value="000003"/>
 		</DataField>
 		<DataField dataType="double" displayName="" name="TakeHome" optype="continuous">
-			<Extension name="BigML-Field_ID" value="TakeHome"/>
+			<Extension name="BigML-Field_ID" value="000004"/>
 		</DataField>
 		<DataField dataType="double" displayName="" name="Final" optype="continuous">
-			<Extension name="BigML-Field_ID" value="Final"/>
+			<Extension name="BigML-Field_ID" value="000005"/>
 		</DataField>
 	</DataDictionary>
-	<TreeModel algorithmName="mtree" functionName="regression" modelName="Grades">
+	<TreeModel algorithmName="mtree" functionName="regression" missingValueStrategy="lastPrediction" modelName="Grades">
 		<MiningSchema>
 			<MiningField name="Prefix"/>
 			<MiningField name="Assignment"/>

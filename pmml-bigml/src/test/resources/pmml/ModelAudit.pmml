@@ -1,14 +1,14 @@
 <?xml version="1.0" ?>
 <PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<Header description="Model kind: mtree Model id: 5b048c7528e1f4318700004f">
+	<Header description="Model kind: mtree Model id: 5b1552bec7736e268f00046c">
 		<Application name="BigML"/>
 	</Header>
 	<DataDictionary>
 		<DataField dataType="integer" displayName="" name="Age" optype="continuous">
-			<Extension name="BigML-Field_ID" value="Age"/>
+			<Extension name="BigML-Field_ID" value="000001"/>
 		</DataField>
 		<DataField dataType="string" displayName="" name="Employment" optype="categorical">
-			<Extension name="BigML-Field_ID" value="Employment"/>
+			<Extension name="BigML-Field_ID" value="000002"/>
 			<Value value="Private"/>
 			<Value value="Consultant"/>
 			<Value value="PSLocal"/>
@@ -18,7 +18,7 @@
 			<Value value="Volunteer"/>
 		</DataField>
 		<DataField dataType="string" displayName="" name="Education" optype="categorical">
-			<Extension name="BigML-Field_ID" value="Education"/>
+			<Extension name="BigML-Field_ID" value="000003"/>
 			<Value value="HSgrad"/>
 			<Value value="College"/>
 			<Value value="Bachelor"/>
@@ -37,7 +37,7 @@
 			<Value value="Yr1t4"/>
 		</DataField>
 		<DataField dataType="string" displayName="" name="Marital" optype="categorical">
-			<Extension name="BigML-Field_ID" value="Marital"/>
+			<Extension name="BigML-Field_ID" value="000004"/>
 			<Value value="Married"/>
 			<Value value="Absent"/>
 			<Value value="Divorced"/>
@@ -46,7 +46,7 @@
 			<Value value="Married-spouse-absent"/>
 		</DataField>
 		<DataField dataType="string" displayName="" name="Occupation" optype="categorical">
-			<Extension name="BigML-Field_ID" value="Occupation"/>
+			<Extension name="BigML-Field_ID" value="000005"/>
 			<Value value="Executive"/>
 			<Value value="Professional"/>
 			<Value value="Clerical"/>
@@ -63,21 +63,21 @@
 			<Value value="Military"/>
 		</DataField>
 		<DataField dataType="double" displayName="" name="Income" optype="continuous">
-			<Extension name="BigML-Field_ID" value="Income"/>
+			<Extension name="BigML-Field_ID" value="000006"/>
 		</DataField>
 		<DataField dataType="string" displayName="" name="Gender" optype="categorical">
-			<Extension name="BigML-Field_ID" value="Gender"/>
+			<Extension name="BigML-Field_ID" value="000007"/>
 			<Value value="Male"/>
 			<Value value="Female"/>
 		</DataField>
 		<DataField dataType="double" displayName="" name="Deductions" optype="continuous">
-			<Extension name="BigML-Field_ID" value="Deductions"/>
+			<Extension name="BigML-Field_ID" value="000008"/>
 		</DataField>
 		<DataField dataType="integer" displayName="" name="Hours" optype="continuous">
-			<Extension name="BigML-Field_ID" value="Hours"/>
+			<Extension name="BigML-Field_ID" value="000009"/>
 		</DataField>
 		<DataField dataType="string" displayName="" name="Account" optype="categorical">
-			<Extension name="BigML-Field_ID" value="Account"/>
+			<Extension name="BigML-Field_ID" value="00000a"/>
 			<Value value="UnitedStates"/>
 			<Value value="Mexico"/>
 			<Value value="Philippines"/>
@@ -112,15 +112,15 @@
 			<Value value="Yugoslavia"/>
 		</DataField>
 		<DataField dataType="integer" displayName="" name="Adjustment" optype="continuous">
-			<Extension name="BigML-Field_ID" value="Adjustment"/>
+			<Extension name="BigML-Field_ID" value="00000b"/>
 		</DataField>
 		<DataField dataType="string" displayName="" name="Adjusted" optype="categorical">
-			<Extension name="BigML-Field_ID" value="Adjusted"/>
+			<Extension name="BigML-Field_ID" value="00000c"/>
 			<Value value="0"/>
 			<Value value="1"/>
 		</DataField>
 	</DataDictionary>
-	<TreeModel algorithmName="mtree" functionName="classification" modelName="Audit">
+	<TreeModel algorithmName="mtree" functionName="classification" missingValueStrategy="lastPrediction" modelName="Audit">
 		<MiningSchema>
 			<MiningField name="Age"/>
 			<MiningField name="Employment"/>

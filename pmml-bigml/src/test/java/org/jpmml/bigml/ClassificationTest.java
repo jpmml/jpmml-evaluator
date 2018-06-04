@@ -38,10 +38,4 @@ public class ClassificationTest extends IntegrationTest {
 		evaluate("Model", "Audit");
 	}
 
-    /*
-	@Test
-	public void evaluateLogisticRegressionIris() throws Exception {
-		evaluate("Logisticregression", "Iris");
-	}*/
-
 }
