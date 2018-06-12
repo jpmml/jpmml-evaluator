@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.io.Console;
 import java.io.File;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,7 +28,9 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.beust.jcommander.Parameter;
@@ -49,6 +52,7 @@ import org.jpmml.model.visitors.ArrayListTransformer;
 import org.jpmml.model.visitors.ArrayListTrimmer;
 import org.jpmml.model.visitors.AttributeInternerBattery;
 import org.jpmml.model.visitors.LocatorNullifier;
+import org.jpmml.model.visitors.MemoryMeasurer;
 
 public class EvaluationExample extends Example {
 
@@ -163,6 +167,13 @@ public class EvaluationExample extends Example {
 	private boolean intern = false;
 
 	@Parameter (
+		names = "--measure",
+		description = "Measure PMML class model. Requires JPMML agent",
+		hidden = true
+	)
+	private boolean measure = false;
+
+	@Parameter (
 		names = "--loop",
 		description = "The number of repetitions",
 		hidden = true,
@@ -236,6 +247,20 @@ public class EvaluationExample extends Example {
 		}
 
 		visitorBattery.applyTo(pmml);
+
+		if(this.measure){
+			MemoryMeasurer memoryMeasurer = new MemoryMeasurer();
+			memoryMeasurer.applyTo(pmml);
+
+			NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
+			numberFormat.setGroupingUsed(true);
+
+			long size = memoryMeasurer.getSize();
+			System.out.println("Bytesize of the object graph: " + numberFormat.format(size));
+
+			Set<Object> objects = memoryMeasurer.getObjects();
+			System.out.println("Number of distinct Java objects in the object graph: " + numberFormat.format(objects.size()));
+		}
 
 		ModelEvaluatorFactory modelEvaluatorFactory = (ModelEvaluatorFactory)newInstance(Class.forName(this.modelEvaluatorFactoryClazz));
 
