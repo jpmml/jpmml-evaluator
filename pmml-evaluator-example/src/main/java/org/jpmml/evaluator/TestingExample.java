@@ -20,6 +20,8 @@ package org.jpmml.evaluator;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -72,12 +74,21 @@ public class TestingExample extends Example {
 	private String separator = null;
 
 	@Parameter (
+		names = {"--missing-values"},
+		description = "CSV missing value strings"
+	)
+	@ParameterOrder (
+		value = 5
+	)
+	private List<String> missingValues = Arrays.asList("N/A", "NA");
+
+	@Parameter (
 		names = {"--ignored-fields"},
 		description = "Ignored Model fields",
 		converter = FieldNameConverter.class
 	)
 	@ParameterOrder (
-		value = 5
+		value = 6
 	)
 	private List<FieldName> ignoredFields = new ArrayList<>();
 
@@ -86,7 +97,7 @@ public class TestingExample extends Example {
 		description = "Relative error"
 	)
 	@ParameterOrder (
-		value = 6
+		value = 7
 	)
 	private double precision = 1e-9;
 
@@ -95,7 +106,7 @@ public class TestingExample extends Example {
 		description = "Absolute error near zero"
 	)
 	@ParameterOrder (
-		value = 7
+		value = 8
 	)
 	private double zeroThreshold = 1e-9;
 
@@ -133,9 +144,11 @@ public class TestingExample extends Example {
 			predicate = Predicates.not(Predicates.in(this.ignoredFields));
 		}
 
-		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, Example.CSV_PARSER);
+		com.google.common.base.Function<String, String> cellParser = createCellParser(new HashSet<>(this.missingValues));
 
-		List<? extends Map<FieldName, ?>> outputRecords = BatchUtil.parseRecords(outputTable, Example.CSV_PARSER);
+		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, cellParser);
+
+		List<? extends Map<FieldName, ?>> outputRecords = BatchUtil.parseRecords(outputTable, cellParser);
 
 		List<Conflict> conflicts;
 

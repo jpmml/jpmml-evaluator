@@ -21,7 +21,9 @@ package org.jpmml.evaluator;
 import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -91,11 +93,20 @@ public class EvaluationExample extends Example {
 	private String separator = null;
 
 	@Parameter (
+		names = {"--missing-values"},
+		description = "CSV missing value strings"
+	)
+	@ParameterOrder (
+		value = 5
+	)
+	private List<String> missingValues = Arrays.asList("N/A", "NA");
+
+	@Parameter (
 		names = {"--sparse"},
 		description = "Permit missing input field columns"
 	)
 	@ParameterOrder (
-		value = 5
+		value = 6
 	)
 	private boolean sparse = false;
 
@@ -105,7 +116,7 @@ public class EvaluationExample extends Example {
 		arity = 1
 	)
 	@ParameterOrder (
-		value = 6
+		value = 7
 	)
 	private boolean copyColumns = true;
 
@@ -136,7 +147,6 @@ public class EvaluationExample extends Example {
 		hidden = true
 	)
 	private String valueFactoryFactoryClazz = ValueFactoryFactory.class.getName();
-
 
 	@Parameter (
 		names = "--optimize",
@@ -191,7 +201,7 @@ public class EvaluationExample extends Example {
 
 		CsvUtil.Table inputTable = readTable(this.input, this.separator);
 
-		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, Example.CSV_PARSER);
+		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, createCellParser(this.missingValues.size() > 0 ? new HashSet<>(this.missingValues) : null));
 
 		if(this.waitBeforeInit){
 			waitForUserInput();
@@ -316,7 +326,7 @@ public class EvaluationExample extends Example {
 		CsvUtil.Table outputTable = new CsvUtil.Table();
 		outputTable.setSeparator(inputTable.getSeparator());
 
-		outputTable.addAll(BatchUtil.formatRecords(outputRecords, EvaluatorUtil.getNames(resultFields), Example.CSV_FORMATTER));
+		outputTable.addAll(BatchUtil.formatRecords(outputRecords, EvaluatorUtil.getNames(resultFields), createCellFormatter(this.missingValues.size() > 0 ? this.missingValues.get(0) : null)));
 
 		if((inputTable.size() == outputTable.size()) && this.copyColumns){
 
