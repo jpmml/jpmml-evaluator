@@ -348,8 +348,10 @@ Limited public support is available via the [JPMML mailing list](https://groups.
 
 # License #
 
-JPMML-Evaluator is licensed under the [GNU Affero General Public License (AGPL) version 3.0](http://www.gnu.org/licenses/agpl-3.0.html). Other licenses are available on request.
+JPMML-Evaluator is dual-licensed under the [GNU Affero General Public License (AGPL) version 3.0](http://www.gnu.org/licenses/agpl-3.0.html), and a commercial license.
 
 # Additional information #
 
-Please contact [info@openscoring.io](mailto:info@openscoring.io)
+JPMML-Evaluator is developed and maintained by Openscoring Ltd, Estonia.
+
+Interested in using JPMML software in your application? Please contact [info@openscoring.io](mailto:info@openscoring.io)
