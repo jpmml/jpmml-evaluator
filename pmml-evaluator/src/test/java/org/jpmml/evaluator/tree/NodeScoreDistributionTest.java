@@ -35,7 +35,6 @@ public class NodeScoreDistributionTest {
 		Node node = new Node()
 			.setScore("ham");
 
-		final
 		BiMap<String, Node> entityRegistry = ImmutableBiMap.of("1", node);
 
 		NodeScoreDistribution<Double> classification = new NodeScoreDistribution<Double>(new ValueMap<String, Double>(), node){

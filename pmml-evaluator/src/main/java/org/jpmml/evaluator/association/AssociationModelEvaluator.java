@@ -403,7 +403,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	static
-	private Callable<List<ItemValue>> createItemValueLoader(final AssociationModelEvaluator modelEvaluator){
+	private Callable<List<ItemValue>> createItemValueLoader(AssociationModelEvaluator modelEvaluator){
 		return new Callable<List<ItemValue>>(){
 
 			@Override

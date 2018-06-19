@@ -116,7 +116,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private <V extends Number> Map<FieldName, ?> evaluateRegression(final ValueFactory<V> valueFactory, EvaluationContext context){
+	private <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		Scorecard scorecard = getModel();
 
 		boolean useReasonCodes = scorecard.isUseReasonCodes();

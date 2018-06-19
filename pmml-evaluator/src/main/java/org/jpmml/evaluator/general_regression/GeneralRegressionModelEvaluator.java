@@ -21,7 +21,6 @@ package org.jpmml.evaluator.general_regression;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -249,22 +248,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 		}
 
-		Comparator<BaselineCell> comparator = new Comparator<BaselineCell>(){
-
-			@Override
-			public int compare(BaselineCell left, BaselineCell right){
-				return Double.compare(left.getTime(), right.getTime());
-			}
-		};
-
-		Ordering<BaselineCell> ordering = Ordering.from(comparator);
+		Ordering<BaselineCell> ordering = Ordering.from((BaselineCell left, BaselineCell right) -> Double.compare(left.getTime(), right.getTime()));
 
 		BaselineCell minBaselineCell = baselineCells.stream()
 			.min(ordering).get();
 
 		Double minTime = minBaselineCell.getTime();
 
-		final
 		FieldValue value = getVariable(endTimeVariable, context);
 
 		FieldValue minTimeValue = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, minTime);
@@ -928,7 +918,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	static
-	private Map<String, Map<String, Row>> parsePPMatrix(final GeneralRegressionModel generalRegressionModel){
+	private Map<String, Map<String, Row>> parsePPMatrix(GeneralRegressionModel generalRegressionModel){
 		Function<List<PPCell>, Row> function = new Function<List<PPCell>, Row>(){
 
 			private BiMap<FieldName, Predictor> factors = CacheUtil.getValue(generalRegressionModel, GeneralRegressionModelEvaluator.factorCache);

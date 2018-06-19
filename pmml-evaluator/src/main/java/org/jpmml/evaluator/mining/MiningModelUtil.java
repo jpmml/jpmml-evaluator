@@ -39,7 +39,7 @@ public class MiningModelUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> aggregateValues(final ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, List<SegmentResult> segmentResults){
+	public <V extends Number> Value<V> aggregateValues(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, List<SegmentResult> segmentResults){
 		ValueAggregator<V> aggregator;
 
 		switch(multipleModelMethod){
@@ -115,7 +115,7 @@ public class MiningModelUtil {
 	}
 
 	static
-	public <V extends Number> ValueMap<String, V> aggregateVotes(final ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, List<SegmentResult> segmentResults){
+	public <V extends Number> ValueMap<String, V> aggregateVotes(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, List<SegmentResult> segmentResults){
 		VoteAggregator<String, V> aggregator = new VoteAggregator<String, V>(){
 
 			@Override
@@ -153,7 +153,7 @@ public class MiningModelUtil {
 	}
 
 	static
-	public <V extends Number> ValueMap<String, V> aggregateProbabilities(final ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, List<String> categories, List<SegmentResult> segmentResults){
+	public <V extends Number> ValueMap<String, V> aggregateProbabilities(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, List<String> categories, List<SegmentResult> segmentResults){
 		ProbabilityAggregator<V> aggregator;
 
 		switch(multipleModelMethod){

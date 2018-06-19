@@ -92,7 +92,7 @@ public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupExcepti
 	}
 
 	@Override
-	public VisitorAction visit(final AssociationModel associationModel){
+	public VisitorAction visit(AssociationModel associationModel){
 		check(new CollectionSize(associationModel){
 
 			@Override
@@ -142,7 +142,7 @@ public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupExcepti
 	}
 
 	@Override
-	public VisitorAction visit(final ClusteringModel clusteringModel){
+	public VisitorAction visit(ClusteringModel clusteringModel){
 		check(new CollectionSize(clusteringModel){
 
 			@Override
@@ -160,7 +160,7 @@ public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupExcepti
 	}
 
 	@Override
-	public VisitorAction visit(final Coefficients coefficients){
+	public VisitorAction visit(Coefficients coefficients){
 		check(new CollectionSize(coefficients){
 
 			@Override
@@ -178,7 +178,7 @@ public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupExcepti
 	}
 
 	@Override
-	public VisitorAction visit(final DataDictionary dataDictionary){
+	public VisitorAction visit(DataDictionary dataDictionary){
 		check(new CollectionSize(dataDictionary){
 
 			@Override
@@ -196,7 +196,7 @@ public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupExcepti
 	}
 
 	@Override
-	public VisitorAction visit(final Itemset itemset){
+	public VisitorAction visit(Itemset itemset){
 		check(new CollectionSize(itemset){
 
 			@Override
@@ -214,7 +214,7 @@ public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupExcepti
 	}
 
 	@Override
-	public VisitorAction visit(final NeuralInputs neuralInputs){
+	public VisitorAction visit(NeuralInputs neuralInputs){
 		check(new CollectionSize(neuralInputs){
 
 			@Override
@@ -232,7 +232,7 @@ public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupExcepti
 	}
 
 	@Override
-	public VisitorAction visit(final NeuralLayer neuralLayer){
+	public VisitorAction visit(NeuralLayer neuralLayer){
 		check(new CollectionSize(neuralLayer){
 
 			@Override
@@ -250,7 +250,7 @@ public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupExcepti
 	}
 
 	@Override
-	public VisitorAction visit(final NeuralNetwork neuralNetwork){
+	public VisitorAction visit(NeuralNetwork neuralNetwork){
 		check(new CollectionSize(neuralNetwork){
 
 			@Override
@@ -268,7 +268,7 @@ public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupExcepti
 	}
 
 	@Override
-	public VisitorAction visit(final NeuralOutputs neuralOutputs){
+	public VisitorAction visit(NeuralOutputs neuralOutputs){
 		check(new CollectionSize(neuralOutputs){
 
 			@Override
@@ -286,7 +286,7 @@ public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupExcepti
 	}
 
 	@Override
-	public VisitorAction visit(final SupportVectors supportVectors){
+	public VisitorAction visit(SupportVectors supportVectors){
 		check(new CollectionSize(supportVectors){
 
 			@Override
@@ -304,7 +304,7 @@ public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupExcepti
 	}
 
 	@Override
-	public VisitorAction visit(final VectorDictionary vectorDictionary){
+	public VisitorAction visit(VectorDictionary vectorDictionary){
 		check(new CollectionSize(vectorDictionary){
 
 			@Override
@@ -322,7 +322,7 @@ public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupExcepti
 	}
 
 	@Override
-	public VisitorAction visit(final VectorFields vectorFields){
+	public VisitorAction visit(VectorFields vectorFields){
 		check(new CollectionSize(vectorFields){
 
 			@Override

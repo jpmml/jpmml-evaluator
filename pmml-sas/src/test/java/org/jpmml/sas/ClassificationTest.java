@@ -73,7 +73,7 @@ public class ClassificationTest extends IntegrationTest {
 		}
 	}
 
-	protected Batch createFilterBatch(String name, String dataset, final Map<FieldName, FieldName> columns){
+	protected Batch createFilterBatch(String name, String dataset, Map<FieldName, FieldName> columns){
 		Batch result = new FilterBatch(createBatch(name, dataset, Predicates.in(columns.values()))){
 
 			@Override

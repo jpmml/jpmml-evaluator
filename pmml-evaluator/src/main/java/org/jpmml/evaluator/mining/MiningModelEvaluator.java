@@ -386,7 +386,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private Map<FieldName, ?> evaluateAny(MiningModelEvaluationContext context){
 		List<SegmentResult> segmentResults = evaluateSegmentation(context);
 
-		return getSegmentationResult(Collections.<Segmentation.MultipleModelMethod>emptySet(), segmentResults);
+		return getSegmentationResult(Collections.emptySet(), segmentResults);
 	}
 
 	private List<SegmentResult> evaluateSegmentation(MiningModelEvaluationContext context){

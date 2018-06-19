@@ -37,7 +37,7 @@ public class TextTokenizer {
 		Pattern pattern = getPattern();
 
 		if(("").equals(string)){
-			return Collections.<String>emptyList();
+			return Collections.emptyList();
 		}
 
 		int count = 0;

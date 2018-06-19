@@ -105,7 +105,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 
 		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
 
-			private final int size = ProbabilityAggregator.this.size;
+			private int size = ProbabilityAggregator.this.size;
 
 
 			@Override
@@ -130,7 +130,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 
 		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
 
-			private final Value<V> weightSum = ProbabilityAggregator.this.weights.sum();
+			private Value<V> weightSum = ProbabilityAggregator.this.weights.sum();
 
 
 			@Override

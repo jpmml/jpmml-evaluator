@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -209,16 +208,8 @@ public class Classification<V extends Number> extends AbstractComputable impleme
 	}
 
 	static
-	protected <V extends Number> Ordering<Map.Entry<String, Value<V>>> createOrdering(final Type type){
-		Comparator<Map.Entry<String, Value<V>>> comparator = new Comparator<Map.Entry<String, Value<V>>>(){
-
-			@Override
-			public int compare(Map.Entry<String, Value<V>> left, Map.Entry<String, Value<V>> right){
-				return type.compareValues(left.getValue(), right.getValue());
-			}
-		};
-
-		return Ordering.from(comparator);
+	protected <V extends Number> Ordering<Map.Entry<String, Value<V>>> createOrdering(Type type){
+		return Ordering.from((Map.Entry<String, Value<V>> left, Map.Entry<String, Value<V>> right) -> type.compareValues(left.getValue(), right.getValue()));
 	}
 
 	static

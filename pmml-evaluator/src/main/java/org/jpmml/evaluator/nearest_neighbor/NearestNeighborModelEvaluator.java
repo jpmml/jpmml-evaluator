@@ -361,7 +361,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return result;
 	}
 
-	private <V extends Number> V calculateContinuousTarget(final ValueFactory<V> valueFactory, FieldName name, List<InstanceResult<V>> instanceResults, Table<Integer, FieldName, FieldValue> table){
+	private <V extends Number> V calculateContinuousTarget(ValueFactory<V> valueFactory, FieldName name, List<InstanceResult<V>> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		NearestNeighborModel.ContinuousScoringMethod continuousScoringMethod = nearestNeighborModel.getContinuousScoringMethod();
@@ -422,7 +422,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	@SuppressWarnings (
 		value = {"rawtypes", "unchecked"}
 	)
-	private <V extends Number> Object calculateCategoricalTarget(final ValueFactory<V> valueFactory, FieldName name, List<InstanceResult<V>> instanceResults, Table<Integer, FieldName, FieldValue> table){
+	private <V extends Number> Object calculateCategoricalTarget(ValueFactory<V> valueFactory, FieldName name, List<InstanceResult<V>> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		VoteAggregator<Object, V> aggregator = new VoteAggregator<Object, V>(){
@@ -486,7 +486,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return Iterables.getFirst(winners, null);
 	}
 
-	private Function<Integer, String> createIdentifierResolver(final FieldName name, final Table<Integer, FieldName, FieldValue> table){
+	private Function<Integer, String> createIdentifierResolver(FieldName name, Table<Integer, FieldName, FieldValue> table){
 		Function<Integer, String> function = new Function<Integer, String>(){
 
 			@Override
@@ -539,7 +539,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	static
-	private Callable<Table<Integer, FieldName, FieldValue>> createTrainingInstanceLoader(final NearestNeighborModelEvaluator modelEvaluator){
+	private Callable<Table<Integer, FieldName, FieldValue>> createTrainingInstanceLoader(NearestNeighborModelEvaluator modelEvaluator){
 		return new Callable<Table<Integer, FieldName, FieldValue>>(){
 
 			@Override
@@ -677,7 +677,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	static
-	private Callable<Map<Integer, BitSet>> createInstanceFlagLoader(final NearestNeighborModelEvaluator modelEvaluator){
+	private Callable<Map<Integer, BitSet>> createInstanceFlagLoader(NearestNeighborModelEvaluator modelEvaluator){
 		return new Callable<Map<Integer, BitSet>>(){
 
 			@Override
@@ -715,7 +715,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	static
-	private Callable<Map<Integer, List<FieldValue>>> createInstanceValueLoader(final NearestNeighborModelEvaluator modelEvaluator){
+	private Callable<Map<Integer, List<FieldValue>>> createInstanceValueLoader(NearestNeighborModelEvaluator modelEvaluator){
 		return new Callable<Map<Integer, List<FieldValue>>>(){
 
 			@Override

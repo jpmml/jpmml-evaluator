@@ -162,7 +162,7 @@ public class TestingExample extends Example {
 	}
 
 	static
-	private Batch createBatch(final Evaluator evaluator, final List<? extends Map<FieldName, ?>> input, final List<? extends Map<FieldName, ?>> output, final Predicate<FieldName> predicate){
+	private Batch createBatch(Evaluator evaluator, List<? extends Map<FieldName, ?>> input, List<? extends Map<FieldName, ?>> output, Predicate<FieldName> predicate){
 		Batch batch = new Batch(){
 
 			@Override

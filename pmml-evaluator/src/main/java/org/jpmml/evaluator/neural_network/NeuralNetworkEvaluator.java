@@ -283,7 +283,6 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		Map<FieldName, List<NeuralOutput>> neuralOutputMap = getNeuralOutputMap();
 
-		final
 		BiMap<String, Entity> entityRegistry = getEntityRegistry();
 
 		Map<FieldName, Classification<V>> results = null;

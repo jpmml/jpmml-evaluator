@@ -77,7 +77,6 @@ public class OperationProcessor extends AbstractProcessor {
 
 	@Override
 	public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv){
-		final
 		JCodeModel codeModel = new JCodeModel();
 
 		try {
@@ -544,7 +543,7 @@ public class OperationProcessor extends AbstractProcessor {
 
 		JBlock body = method.body();
 
-		body._return(JExpr._new(valueClazz).arg(valueExpression).arg(JExpr.invoke("newReport")).arg(createReportInvocation(clazz, operation, Collections.<JVar>emptyList(), type)));
+		body._return(JExpr._new(valueClazz).arg(valueExpression).arg(JExpr.invoke("newReport")).arg(createReportInvocation(clazz, operation, Collections.emptyList(), type)));
 	}
 
 	static

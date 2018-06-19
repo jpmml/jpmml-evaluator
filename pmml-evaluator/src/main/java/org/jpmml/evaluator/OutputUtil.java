@@ -666,7 +666,7 @@ public class OutputUtil {
 	}
 
 	static
-	private List<AssociationRule> getRuleValues(HasRuleValues hasRuleValues, final OutputField outputField){
+	private List<AssociationRule> getRuleValues(HasRuleValues hasRuleValues, OutputField outputField){
 		List<AssociationRule> associationRules;
 
 		OutputField.Algorithm algorithm = outputField.getAlgorithm();

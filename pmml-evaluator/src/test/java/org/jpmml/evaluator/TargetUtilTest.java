@@ -62,7 +62,7 @@ public class TargetUtilTest {
 		assertEquals(OpType.CONTINUOUS, dataField.getOpType());
 		assertEquals(DataType.FLOAT, dataField.getDataType());
 
-		Map<FieldName, ?> result = evaluator.evaluate(Collections.<FieldName, FieldValue>emptyMap());
+		Map<FieldName, ?> result = evaluator.evaluate(Collections.emptyMap());
 
 		assertEquals((float)Math.PI, result.get(dataField.getName()));
 
@@ -73,7 +73,7 @@ public class TargetUtilTest {
 		assertEquals(OpType.CONTINUOUS, dataField.getOpType());
 		assertEquals(DataType.DOUBLE, dataField.getDataType());
 
-		result = evaluator.evaluate(Collections.<FieldName, FieldValue>emptyMap());
+		result = evaluator.evaluate(Collections.emptyMap());
 
 		assertEquals(Math.PI, result.get(dataField.getName()));
 	}
@@ -99,7 +99,7 @@ public class TargetUtilTest {
 		assertEquals(OpType.CATEGORICAL, dataField.getOpType());
 		assertEquals(DataType.STRING, dataField.getDataType());
 
-		Map<FieldName, ?> result = evaluator.evaluate(Collections.<FieldName, FieldValue>emptyMap());
+		Map<FieldName, ?> result = evaluator.evaluate(Collections.emptyMap());
 
 		HasProbability hasProbability = (HasProbability)result.get(dataField.getName());
 
@@ -113,7 +113,7 @@ public class TargetUtilTest {
 		assertEquals(OpType.CATEGORICAL, dataField.getOpType());
 		assertEquals(DataType.STRING, dataField.getDataType());
 
-		result = evaluator.evaluate(Collections.<FieldName, FieldValue>emptyMap());
+		result = evaluator.evaluate(Collections.emptyMap());
 
 		hasProbability = (HasProbability)result.get(dataField.getName());
 
