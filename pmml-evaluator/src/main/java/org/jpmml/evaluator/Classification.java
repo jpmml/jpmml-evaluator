@@ -31,6 +31,7 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.MiningFunction;
+import org.jpmml.model.ToStringHelper;
 
 /**
  * @see MiningFunction#CLASSIFICATION

@@ -23,6 +23,7 @@ import java.io.Serializable;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
+import org.jpmml.model.ToStringHelper;
 
 /**
  * <p>

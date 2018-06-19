@@ -23,6 +23,7 @@ import java.util.Objects;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
+import org.jpmml.model.ToStringHelper;
 
 public class OutputField extends ResultField {
 

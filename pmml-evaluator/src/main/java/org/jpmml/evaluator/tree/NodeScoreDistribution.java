@@ -31,10 +31,10 @@ import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.Report;
 import org.jpmml.evaluator.ReportUtil;
-import org.jpmml.evaluator.ToStringHelper;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
+import org.jpmml.model.ToStringHelper;
 
 abstract
 public class NodeScoreDistribution<V extends Number> extends Classification<V> implements HasEntityId, HasEntityRegistry<Node>, HasProbability, HasConfidence {

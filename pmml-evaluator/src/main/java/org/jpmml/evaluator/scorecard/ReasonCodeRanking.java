@@ -24,9 +24,9 @@ import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.Classification.Type;
 import org.jpmml.evaluator.HasReasonCodeRanking;
 import org.jpmml.evaluator.Regression;
-import org.jpmml.evaluator.ToStringHelper;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
+import org.jpmml.model.ToStringHelper;
 
 public class ReasonCodeRanking<V extends Number> extends Regression<V> implements HasReasonCodeRanking {
 

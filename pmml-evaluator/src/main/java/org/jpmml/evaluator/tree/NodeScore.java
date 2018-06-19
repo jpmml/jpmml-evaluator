@@ -23,8 +23,8 @@ import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.HasEntityId;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.Regression;
-import org.jpmml.evaluator.ToStringHelper;
 import org.jpmml.evaluator.Value;
+import org.jpmml.model.ToStringHelper;
 
 abstract
 public class NodeScore<V extends Number> extends Regression<V> implements HasEntityId, HasEntityRegistry<Node> {

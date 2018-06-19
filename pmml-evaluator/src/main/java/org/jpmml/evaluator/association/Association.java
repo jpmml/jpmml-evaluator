@@ -29,7 +29,7 @@ import org.dmg.pmml.association.AssociationRule;
 import org.jpmml.evaluator.AbstractComputable;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasRuleValues;
-import org.jpmml.evaluator.ToStringHelper;
+import org.jpmml.model.ToStringHelper;
 
 /**
  * @see MiningFunction#ASSOCIATION_RULES
