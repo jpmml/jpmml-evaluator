@@ -26,11 +26,11 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.IllegalFormatException;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.rank.Max;
 import org.apache.commons.math3.stat.descriptive.rank.Min;
@@ -463,16 +463,12 @@ public interface Functions {
 		public FieldValue evaluate(List<FieldValue> arguments){
 			checkVariableArityArguments(arguments, 2);
 
-			StringBuilder sb = new StringBuilder();
+			String result = arguments.stream()
+				.filter(Objects::nonNull)
+				.map(value -> (String)TypeUtil.cast(DataType.STRING, value.getValue()))
+				.collect(Collectors.joining());
 
-			Iterable<FieldValue> values = Iterables.filter(arguments, Predicates.notNull());
-			for(FieldValue value : values){
-				String string = (String)TypeUtil.cast(DataType.STRING, value.getValue());
-
-				sb.append(string);
-			}
-
-			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, sb.toString());
+			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, result);
 		}
 	};
 

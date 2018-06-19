@@ -52,7 +52,7 @@ public class ValueListFunction extends AbstractFunction {
 		} else
 
 		{
-			result = evaluate(value.indexIn(values) > -1);
+			result = evaluate(value.isIn(values));
 		}
 
 		return FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, result);

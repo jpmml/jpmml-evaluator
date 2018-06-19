@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
@@ -136,18 +135,10 @@ public class ModelEvaluatorTest {
 
 	static
 	public void checkResultFields(List<?> targetNames, List<?> outputNames, Evaluator evaluator){
-		Function<Object, FieldName> function = new Function<Object, FieldName>(){
-
-			@Override
-			public FieldName apply(Object object){
-				return toFieldName(object);
-			}
-		};
-
 		List<TargetField> targetFields = evaluator.getTargetFields();
 		List<OutputField> outputFields = evaluator.getOutputFields();
 
-		assertEquals(Lists.transform(targetNames, function), EvaluatorUtil.getNames(targetFields));
-		assertEquals(Lists.transform(outputNames, function), EvaluatorUtil.getNames(outputFields));
+		assertEquals(Lists.transform(targetNames, ModelEvaluatorTest::toFieldName), EvaluatorUtil.getNames(targetFields));
+		assertEquals(Lists.transform(outputNames, ModelEvaluatorTest::toFieldName), EvaluatorUtil.getNames(outputFields));
 	}
 }

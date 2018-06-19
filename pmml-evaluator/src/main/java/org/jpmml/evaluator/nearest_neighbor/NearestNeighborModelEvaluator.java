@@ -467,14 +467,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			Map<Integer, FieldValue> column = table.column(name);
 
-			Function<FieldValue, Object> function = new Function<FieldValue, Object>(){
-
-				@Override
-				public Object apply(FieldValue value){
-					return value.getValue();
-				}
-			};
-			multiset.addAll(Collections2.transform(column.values(), function));
+			multiset.addAll(Collections2.transform(column.values(), FieldValue::getValue));
 
 			aggregator.clear();
 

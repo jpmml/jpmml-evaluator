@@ -24,13 +24,13 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Expression;
@@ -117,15 +117,8 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 
 		List<?> values = ArrayUtil.getContent(array);
 
-		Predicate<Object> predicate = new Predicate<Object>(){
-
-			@Override
-			public boolean apply(Object value){
-				return equalsValue(value);
-			}
-		};
-
-		return Iterables.indexOf(values, predicate) > -1;
+		return values.stream()
+			.anyMatch(value -> equalsValue(value));
 	}
 
 	public boolean isIn(HasParsedValueSet<?> hasParsedValueSet){
@@ -182,11 +175,11 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return (getValue()).equals(value);
 	}
 
-	public int indexIn(Iterable<FieldValue> values){
+	public boolean isIn(Collection<FieldValue> values){
 		Predicate<FieldValue> predicate = new Predicate<FieldValue>(){
 
 			@Override
-			public boolean apply(FieldValue value){
+			public boolean test(FieldValue value){
 
 				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 					return false;
@@ -196,7 +189,8 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 			}
 		};
 
-		return Iterables.indexOf(values, predicate);
+		return values.stream()
+			.anyMatch(predicate);
 	}
 
 	public int compareToString(String string){

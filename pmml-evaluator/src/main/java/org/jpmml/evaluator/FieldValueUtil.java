@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.RangeSet;
 import org.dmg.pmml.DataField;
@@ -502,16 +501,8 @@ public class FieldValueUtil {
 	}
 
 	static
-	public List<FieldValue> createAll(final DataType dataType, final OpType opType, List<?> values){
-		Function<Object, FieldValue> function = new Function<Object, FieldValue>(){
-
-			@Override
-			public FieldValue apply(Object value){
-				return create(dataType, opType, value);
-			}
-		};
-
-		return Lists.transform(values, function);
+	public List<FieldValue> createAll(DataType dataType, OpType opType, List<?> values){
+		return Lists.transform(values, value -> create(dataType, opType, value));
 	}
 
 	static

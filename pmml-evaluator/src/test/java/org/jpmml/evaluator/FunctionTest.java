@@ -351,14 +351,6 @@ public class FunctionTest {
 
 	static
 	private FieldValue evaluate(Function function, List<?> arguments){
-		com.google.common.base.Function<Object, FieldValue> argumentFunction = new com.google.common.base.Function<Object, FieldValue>(){
-
-			@Override
-			public FieldValue apply(Object value){
-				return FieldValueUtil.create(value);
-			}
-		};
-
-		return function.evaluate(Lists.transform(arguments, argumentFunction));
+		return function.evaluate(Lists.transform(arguments, argument -> FieldValueUtil.create(argument)));
 	}
 }

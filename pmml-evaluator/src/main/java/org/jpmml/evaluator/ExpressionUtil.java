@@ -26,10 +26,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.Constant;
@@ -422,7 +420,9 @@ public class ExpressionUtil {
 		}
 
 		// Remove missing values
-		values = Lists.newArrayList(Iterables.filter(values, Predicates.notNull()));
+		values = values.stream()
+			.filter(Objects::nonNull)
+			.collect(Collectors.toList());
 
 		Aggregate.Function function = aggregate.getFunction();
 		if(function == null){

@@ -24,8 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Function;
-
 abstract
 public class VoteAggregator<K, V extends Number> extends KeyValueAggregator<K, V> {
 
@@ -34,15 +32,7 @@ public class VoteAggregator<K, V extends Number> extends KeyValueAggregator<K, V
 	}
 
 	public ValueMap<K, V> sumMap(){
-		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
-
-			@Override
-			public Value<V> apply(Vector<V> values){
-				return values.sum();
-			}
-		};
-
-		return new ValueMap<>(asTransformedMap(function));
+		return new ValueMap<>(asTransformedMap(Vector::sum));
 	}
 
 	public Set<K> getWinners(){

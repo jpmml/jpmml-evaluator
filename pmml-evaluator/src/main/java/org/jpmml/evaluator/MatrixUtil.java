@@ -21,9 +21,8 @@ package org.jpmml.evaluator;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.MatCell;
 import org.dmg.pmml.Matrix;
@@ -135,17 +134,14 @@ public class MatrixUtil {
 	}
 
 	static
-	private Number getMatCellValue(List<MatCell> matCells, final int row, final int column){
-		Predicate<MatCell> filter = new Predicate<MatCell>(){
+	private Number getMatCellValue(List<MatCell> matCells, int row, int column){
+		Optional<MatCell> result = matCells.stream()
+			.filter(matCell -> (matCell.getRow() == row) && (matCell.getCol() == column))
+			.findFirst();
 
-			@Override
-			public boolean apply(MatCell matCell){
-				return (matCell.getRow() == row) && (matCell.getCol() == column);
-			}
-		};
+		if(result.isPresent()){
+			MatCell matCell = result.get();
 
-		MatCell matCell = Iterables.getFirst(Iterables.filter(matCells, filter), null);
-		if(matCell != null){
 			return Double.parseDouble(matCell.getValue());
 		}
 

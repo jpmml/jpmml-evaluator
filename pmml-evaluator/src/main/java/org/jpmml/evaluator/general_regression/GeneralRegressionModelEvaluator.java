@@ -27,9 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
@@ -41,7 +41,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MathContext;
@@ -260,7 +259,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		Ordering<BaselineCell> ordering = Ordering.from(comparator);
 
-		BaselineCell minBaselineCell = ordering.min(baselineCells);
+		BaselineCell minBaselineCell = baselineCells.stream()
+			.min(ordering).get();
 
 		Double minTime = minBaselineCell.getTime();
 
@@ -283,19 +283,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			return null;
 		}
 
-		Predicate<BaselineCell> predicate = new Predicate<BaselineCell>(){
-
-			private double time = (value.asNumber()).doubleValue();
-
-
-			@Override
-			public boolean apply(BaselineCell baselineCell){
-				return (baselineCell.getTime() <= this.time);
-			}
-		};
+		double time = (value.asNumber()).doubleValue();
 
 		// "Select the BaselineCell element that has the largest time attribute value that is not greater than the value"
-		BaselineCell baselineCell = ordering.max(Iterables.filter(baselineCells, predicate));
+		BaselineCell maxTimeBaselineCell = baselineCells.stream()
+			.filter(baselineCell -> (baselineCell.getTime() <= time))
+			.max(ordering).get();
 
 		Value<V> r = computeDotProduct(valueFactory, context);
 
@@ -305,7 +298,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			return null;
 		}
 
-		Value<V> cumHazard = ((r.subtract(s)).exp()).multiply(baselineCell.getCumHazard());
+		Value<V> cumHazard = ((r.subtract(s)).exp()).multiply(maxTimeBaselineCell.getCumHazard());
 
 		return TargetUtil.evaluateRegression(getTargetField(), cumHazard);
 	}
@@ -803,19 +796,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			case GENERALIZED_LINEAR:
 			case MULTINOMIAL_LOGISTIC:
 				if(targetReferenceCategory == null){
-					Predicate<String> filter = new Predicate<String>(){
-
-						private Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
-
-
-						@Override
-						public boolean apply(String string){
-							return !this.paramMatrixMap.containsKey(string);
-						}
-					};
+					Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
 
 					// "The reference category is the one from DataDictionary that does not appear in the ParamMatrix"
-					Set<String> targetReferenceCategories = Sets.newLinkedHashSet(Iterables.filter(targetCategories, filter));
+					Set<String> targetReferenceCategories = targetCategories.stream()
+						.filter(targetCategory -> !paramMatrixMap.containsKey(targetCategory))
+						.collect(Collectors.toSet());
+
 					if(targetReferenceCategories.size() != 1){
 						ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
 
@@ -1023,28 +1010,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 	static
 	private <C extends ParameterCell> ListMultimap<String, C> groupByParameterName(List<C> cells){
-		Function<C, String> function = new Function<C, String>(){
-
-			@Override
-			public String apply(C cell){
-				return cell.getParameterName();
-			}
-		};
-
-		return groupCells(cells, function);
+		return groupCells(cells, C::getParameterName);
 	}
 
 	static
 	private <C extends ParameterCell> ListMultimap<String, C> groupByTargetCategory(List<C> cells){
-		Function<C, String> function = new Function<C, String>(){
-
-			@Override
-			public String apply(C cell){
-				return cell.getTargetCategory();
-			}
-		};
-
-		return groupCells(cells, function);
+		return groupCells(cells, C::getTargetCategory);
 	}
 
 	static
@@ -1265,18 +1236,10 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				return categories.indexOf(category);
 			}
 
-			private List<FieldValue> parseCategories(final DataType dataType, final OpType opType){
+			private List<FieldValue> parseCategories(DataType dataType, OpType opType){
 				List<String> categories = getCategories();
 
-				Function<String, FieldValue> function = new Function<String, FieldValue>(){
-
-					@Override
-					public FieldValue apply(String value){
-						return FieldValueUtil.create(dataType, opType, value);
-					}
-				};
-
-				return Lists.transform(categories, function);
+				return Lists.transform(categories, category -> FieldValueUtil.create(dataType, opType, category));
 			}
 
 			public Matrix getMatrix(){

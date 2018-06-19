@@ -20,7 +20,6 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
@@ -35,15 +34,7 @@ interface ValueParser {
 	}
 
 	default
-	List<FieldValue> parseAll(final DataType dataType, final OpType opType, List<?> values){
-		Function<Object, FieldValue> function = new Function<Object, FieldValue>(){
-
-			@Override
-			public FieldValue apply(Object object){
-				return parse(dataType, opType, object);
-			}
-		};
-
-		return Lists.transform(values, function);
+	List<FieldValue> parseAll(DataType dataType, OpType opType, List<?> values){
+		return Lists.transform(values, value -> parse(dataType, opType, value));
 	}
 }

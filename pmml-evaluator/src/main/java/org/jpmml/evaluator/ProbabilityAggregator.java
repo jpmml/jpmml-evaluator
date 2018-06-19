@@ -157,15 +157,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			throw new IllegalStateException();
 		}
 
-		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
-
-			@Override
-			public Value<V> apply(Vector<V> values){
-				return values.max();
-			}
-		};
-
-		Map<String, Value<V>> maxMap = asTransformedMap(function);
+		Map<String, Value<V>> maxMap = asTransformedMap(Vector::max);
 
 		Map.Entry<String, Value<V>> winnerEntry = getWinner(maxMap, categories);
 		if(winnerEntry == null){
@@ -202,15 +194,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			throw new IllegalStateException();
 		}
 
-		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
-
-			@Override
-			public Value<V> apply(Vector<V> values){
-				return values.median();
-			}
-		};
-
-		Map<String, Value<V>> medianMap = asTransformedMap(function);
+		Map<String, Value<V>> medianMap = asTransformedMap(Vector::median);
 
 		Map.Entry<String, Value<V>> winnerEntry = getWinner(medianMap, categories);
 		if(winnerEntry == null){
