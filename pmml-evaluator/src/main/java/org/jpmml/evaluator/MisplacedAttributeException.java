@@ -33,7 +33,7 @@ public class MisplacedAttributeException extends InvalidAttributeException {
 	}
 
 	static
-	public String formatMessage(String xpath){
-		return "Attribute with value " + xpath + " is not permitted in this location";
+	public String formatMessage(String xPath){
+		return "Attribute with value " + xPath + " is not permitted in this location";
 	}
 }

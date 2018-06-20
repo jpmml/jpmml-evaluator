@@ -35,7 +35,7 @@ public class InvalidElementException extends InvalidMarkupException {
 	}
 
 	static
-	public String formatMessage(String xpath){
-		return "Element " + xpath + " is not valid";
+	public String formatMessage(String xPath){
+		return "Element " + xPath + " is not valid";
 	}
 }
