@@ -27,8 +27,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
@@ -720,21 +722,29 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	static
 	protected <M extends Model> M selectModel(PMML pmml, Class<? extends M> clazz){
+		Model model = selectModel(pmml, clazz::isInstance, XPathUtil.formatElement(clazz));
+
+		return clazz.cast(model);
+	}
+
+	static
+	protected Model selectModel(PMML pmml, Predicate<Model> predicate, String predicateXPath){
 
 		if(!pmml.hasModels()){
-			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(pmml.getClass()) + "/" + XPathUtil.formatElement(clazz)), pmml);
+			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(pmml.getClass()) + "/" + predicateXPath), pmml);
 		}
 
 		List<Model> models = pmml.getModels();
 
-		Iterable<? extends M> filteredModels = Iterables.filter(models, clazz);
+		Optional<Model> result = models.stream()
+			.filter(predicate)
+			.findAny();
 
-		M model = Iterables.getFirst(filteredModels, null);
-		if(model == null){
-			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(pmml.getClass()) + "/" + XPathUtil.formatElement(clazz)), pmml);
+		if(!result.isPresent()){
+			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(pmml.getClass()) + "/" + predicateXPath), pmml);
 		}
 
-		return model;
+		return result.get();
 	}
 
 	static

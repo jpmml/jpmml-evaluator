@@ -19,7 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Objects;
 
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
@@ -58,14 +58,19 @@ public class ModelEvaluatorFactory implements Serializable {
 	}
 
 	public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml){
+		return newModelEvaluator(pmml, (String)null);
+	}
 
-		if(!pmml.hasModels()){
-			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(pmml.getClass()) + "/<Model>"), pmml);
+	public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml, String modelName){
+		Model model;
+
+		if(modelName != null){
+			model = ModelEvaluator.selectModel(pmml, (Model object) -> Objects.equals(object.getModelName(), modelName), "<Model>@modelName=" + modelName);
+		} else
+
+		{
+			model = ModelEvaluator.selectModel(pmml, (Model object) -> true, "<Model>");
 		}
-
-		List<Model> models = pmml.getModels();
-
-		Model model = models.get(0);
 
 		return newModelEvaluator(pmml, model);
 	}

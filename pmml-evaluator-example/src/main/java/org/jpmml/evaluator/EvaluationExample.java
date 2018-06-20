@@ -87,12 +87,21 @@ public class EvaluationExample extends Example {
 	private File output = null;
 
 	@Parameter (
+		names = {"--name"},
+		description = "The name of the target model in a multi-model PMML file. If missing, the first model is targeted"
+	)
+	@ParameterOrder (
+		value = 4
+	)
+	private String modelName = null;
+
+	@Parameter (
 		names = {"--separator"},
 		description = "CSV cell separator character",
 		converter = SeparatorConverter.class
 	)
 	@ParameterOrder (
-		value = 4
+		value = 5
 	)
 	private String separator = null;
 
@@ -101,7 +110,7 @@ public class EvaluationExample extends Example {
 		description = "CSV missing value strings"
 	)
 	@ParameterOrder (
-		value = 5
+		value = 6
 	)
 	private List<String> missingValues = Arrays.asList("N/A", "NA");
 
@@ -110,7 +119,7 @@ public class EvaluationExample extends Example {
 		description = "Permit missing input field columns"
 	)
 	@ParameterOrder (
-		value = 6
+		value = 7
 	)
 	private boolean sparse = false;
 
@@ -120,7 +129,7 @@ public class EvaluationExample extends Example {
 		arity = 1
 	)
 	@ParameterOrder (
-		value = 7
+		value = 8
 	)
 	private boolean copyColumns = true;
 
@@ -267,7 +276,7 @@ public class EvaluationExample extends Example {
 		ValueFactoryFactory valueFactoryFactory = (ValueFactoryFactory)newInstance(Class.forName(this.valueFactoryFactoryClazz));
 		modelEvaluatorFactory.setValueFactoryFactory(valueFactoryFactory);
 
-		Evaluator evaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
+		Evaluator evaluator = modelEvaluatorFactory.newModelEvaluator(pmml, this.modelName);
 
 		// Perform self-testing
 		evaluator.verify();
