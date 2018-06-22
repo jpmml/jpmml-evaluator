@@ -149,15 +149,24 @@ public class ExpressionUtilTest {
 	public void evaluateMapValues(){
 		FieldName name = FieldName.create("x");
 
-		MapValues mapValues = new MapValues("y")
-			.addFieldColumnPairs(new FieldColumnPair(name, "column"));
+		List<List<String>> rows = Arrays.asList(
+			Arrays.asList("0", "zero"),
+			Arrays.asList("1", "one")
+		);
+
+		MapValues mapValues = new MapValues("data:output")
+			.addFieldColumnPairs(new FieldColumnPair(name, "data:input"))
+			.setInlineTable(createInlineTable(rows, Arrays.asList("data:input", "data:output")));
+
+		assertEquals("zero", evaluate(mapValues, name, "0"));
+		assertEquals("one", evaluate(mapValues, name, "1"));
+		assertEquals(null, evaluate(mapValues, name, "3"));
 
 		assertEquals(null, evaluate(mapValues, name, null));
 
 		mapValues.setMapMissingTo("Missing");
 
 		assertEquals("Missing", evaluate(mapValues, name, null));
-		assertEquals(null, evaluate(mapValues, name, "3"));
 
 		mapValues.setDefaultValue("Default");
 
