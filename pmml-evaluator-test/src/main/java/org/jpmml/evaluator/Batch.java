@@ -20,8 +20,8 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
-import com.google.common.base.Predicate;
 import org.dmg.pmml.FieldName;
 
 public interface Batch extends AutoCloseable {

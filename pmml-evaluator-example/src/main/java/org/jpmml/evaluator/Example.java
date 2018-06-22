@@ -26,11 +26,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.function.Function;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
-import com.google.common.base.Function;
 import org.dmg.pmml.PMML;
 import org.jpmml.model.PMMLUtil;
 

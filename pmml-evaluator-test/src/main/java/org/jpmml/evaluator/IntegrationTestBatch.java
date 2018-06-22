@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
-import com.google.common.base.Predicate;
 import com.google.common.io.ByteStreams;
 import org.dmg.pmml.Application;
 import org.dmg.pmml.FieldName;

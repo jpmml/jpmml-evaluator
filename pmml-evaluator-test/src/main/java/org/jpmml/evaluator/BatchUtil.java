@@ -24,12 +24,12 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import org.dmg.pmml.FieldName;
@@ -60,7 +60,7 @@ public class BatchUtil {
 			throw new IllegalArgumentException("Expected the same number of data rows, got " + input.size() + " input data rows and " + output.size() + " expected output data rows");
 		}
 
-		Predicate<FieldName> predicate = Predicates.and(Predicates.not(Predicates.equalTo(Evaluator.DEFAULT_TARGET_NAME)), batch.getPredicate());
+		Predicate<FieldName> predicate = (batch.getPredicate()).and(name -> !Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name));
 
 		List<Conflict> conflicts = new ArrayList<>();
 
@@ -68,11 +68,11 @@ public class BatchUtil {
 			Map<FieldName, ?> arguments = input.get(i);
 
 			Map<FieldName, ?> expectedResult = output.get(i);
-			expectedResult = Maps.filterKeys(expectedResult, predicate);
+			expectedResult = Maps.filterKeys(expectedResult, predicate::test);
 
 			try {
 				Map<FieldName, ?> actualResult = evaluator.evaluate(arguments);
-				actualResult = Maps.filterKeys(actualResult, predicate);
+				actualResult = Maps.filterKeys(actualResult, predicate::test);
 
 				MapDifference<FieldName, ?> difference = Maps.<FieldName, Object>difference(expectedResult, actualResult, equivalence);
 				if(!difference.areEqual()){

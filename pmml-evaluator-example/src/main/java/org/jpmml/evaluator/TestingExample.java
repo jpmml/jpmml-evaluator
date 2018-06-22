@@ -24,10 +24,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import com.beust.jcommander.Parameter;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 
@@ -138,17 +137,21 @@ public class TestingExample extends Example {
 		// Perform self-testing
 		evaluator.verify();
 
-		Predicate<FieldName> predicate = Predicates.alwaysTrue();
-
-		if(this.ignoredFields != null && this.ignoredFields.size() > 0){
-			predicate = Predicates.not(Predicates.in(this.ignoredFields));
-		}
-
-		com.google.common.base.Function<String, String> cellParser = createCellParser(new HashSet<>(this.missingValues));
+		java.util.function.Function<String, String> cellParser = createCellParser(new HashSet<>(this.missingValues));
 
 		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, cellParser);
 
 		List<? extends Map<FieldName, ?>> outputRecords = BatchUtil.parseRecords(outputTable, cellParser);
+
+		Predicate<FieldName> predicate;
+
+		if(this.ignoredFields != null && this.ignoredFields.size() > 0){
+			predicate = (FieldName name) -> !this.ignoredFields.contains(name);
+		} else
+
+		{
+			predicate = (FieldName name) -> true;
+		}
 
 		List<Conflict> conflicts;
 

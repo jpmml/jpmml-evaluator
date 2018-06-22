@@ -21,8 +21,6 @@ package org.jpmml.rattle.visitors;
 import java.util.Deque;
 import java.util.List;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.ScoreDistribution;
@@ -56,6 +54,8 @@ public class ScoreDistributionCleaner extends AbstractVisitor {
 	private TreeModel getTreeModel(){
 		Deque<PMMLObject> parents = getParents();
 
-		return (TreeModel)Iterables.find(parents, Predicates.instanceOf(TreeModel.class));
+		return (TreeModel)parents.stream()
+			.filter(TreeModel.class::isInstance)
+			.findFirst().get();
 	}
 }
