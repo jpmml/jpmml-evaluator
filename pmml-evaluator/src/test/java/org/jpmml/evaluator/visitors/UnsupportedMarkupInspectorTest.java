@@ -49,11 +49,11 @@ public class UnsupportedMarkupInspectorTest {
 			inspector.applyTo(pmml);
 
 			fail();
-		} catch(UnsupportedMarkupException ufe){
+		} catch(UnsupportedMarkupException ume){
 			List<UnsupportedMarkupException> exceptions = inspector.getExceptions();
 
 			assertEquals(2, exceptions.size());
-			assertEquals(0, exceptions.indexOf(ufe));
+			assertEquals(0, exceptions.indexOf(ume));
 
 			UnsupportedMarkupException exception = exceptions.get(0);
 
