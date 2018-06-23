@@ -37,7 +37,7 @@ import org.jpmml.evaluator.ValueMap;
 import org.jpmml.model.ToStringHelper;
 
 abstract
-public class NodeScoreDistribution<V extends Number> extends Classification<V> implements HasEntityId, HasEntityRegistry<Node>, HasProbability, HasConfidence {
+public class NodeScoreDistribution<V extends Number> extends Classification<V> implements HasEntityId, HasEntityRegistry<Node>, HasDecisionPath, HasProbability, HasConfidence {
 
 	private Node node = null;
 
@@ -122,6 +122,7 @@ public class NodeScoreDistribution<V extends Number> extends Classification<V> i
 		confidences.put(category, confidence);
 	}
 
+	@Override
 	public Node getNode(){
 		return this.node;
 	}

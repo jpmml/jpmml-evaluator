@@ -28,7 +28,7 @@ import org.jpmml.evaluator.Vote;
 import org.jpmml.model.ToStringHelper;
 
 abstract
-public class NodeVote extends Vote implements HasEntityId, HasEntityRegistry<Node> {
+public class NodeVote extends Vote implements HasEntityId, HasEntityRegistry<Node>, HasDecisionPath {
 
 	private Node node = null;
 
@@ -61,6 +61,7 @@ public class NodeVote extends Vote implements HasEntityId, HasEntityRegistry<Nod
 		return EntityUtil.getId(node, this);
 	}
 
+	@Override
 	public Node getNode(){
 		return this.node;
 	}

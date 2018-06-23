@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator.tree;
 
+import java.util.List;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableSet;
@@ -42,6 +44,11 @@ public class NodeScoreDistributionTest {
 			@Override
 			public BiMap<String, Node> getEntityRegistry(){
 				return entityRegistry;
+			}
+
+			@Override
+			public List<Node> getDecisionPath(){
+				throw new UnsupportedOperationException();
 			}
 		};
 

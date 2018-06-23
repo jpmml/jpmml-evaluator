@@ -347,6 +347,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			public BiMap<String, Node> getEntityRegistry(){
 				return TreeModelEvaluator.this.getEntityRegistry();
 			}
+
+			@Override
+			public List<Node> getDecisionPath(){
+				return TreeModelEvaluator.this.getPath(getNode());
+			}
 		};
 
 		return result;
@@ -358,6 +363,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			@Override
 			public BiMap<String, Node> getEntityRegistry(){
 				return TreeModelEvaluator.this.getEntityRegistry();
+			}
+
+			@Override
+			public List<Node> getDecisionPath(){
+				return TreeModelEvaluator.this.getPath(getNode());
 			}
 		};
 
@@ -372,6 +382,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			@Override
 			public BiMap<String, Node> getEntityRegistry(){
 				return TreeModelEvaluator.this.getEntityRegistry();
+			}
+
+			@Override
+			public List<Node> getDecisionPath(){
+				return TreeModelEvaluator.this.getPath(getNode());
 			}
 		};
 
