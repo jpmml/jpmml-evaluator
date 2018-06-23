@@ -193,6 +193,7 @@ public class FieldValueUtil {
 	static
 	public FieldValue performMissingValueTreatment(Field<?> field, MiningField miningField){
 		MissingValueTreatmentMethod missingValueTreatmentMethod = miningField.getMissingValueTreatment();
+		String missingValueReplacement = miningField.getMissingValueReplacement();
 
 		if(missingValueTreatmentMethod == null){
 			missingValueTreatmentMethod = MissingValueTreatmentMethod.AS_IS;
@@ -205,6 +206,11 @@ public class FieldValueUtil {
 			case AS_MEDIAN:
 			case AS_VALUE:
 				return createMissingInputValue(field, miningField);
+			case RETURN_INVALID:
+				if(missingValueReplacement != null){
+					throw new MisplacedAttributeException(miningField, PMMLAttributes.MININGFIELD_MISSINGVALUEREPLACEMENT, missingValueReplacement);
+				}
+				throw new InvalidResultException("Field " + PMMLException.formatKey(field.getName()) + " requires user input value", miningField);
 			default:
 				throw new UnsupportedAttributeException(miningField, missingValueTreatmentMethod);
 		}

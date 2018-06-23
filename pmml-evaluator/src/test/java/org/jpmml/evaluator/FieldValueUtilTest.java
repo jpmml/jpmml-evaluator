@@ -27,6 +27,7 @@ import org.dmg.pmml.Interval;
 import org.dmg.pmml.Interval.Closure;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MiningField;
+import org.dmg.pmml.MissingValueTreatmentMethod;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethod;
 import org.dmg.pmml.Value;
@@ -264,6 +265,8 @@ public class FieldValueUtilTest {
 
 		dataField.addValues(missingValue);
 
+		miningField.setMissingValueTreatment(MissingValueTreatmentMethod.AS_IS);
+
 		assertEquals(null, prepare(dataField, miningField, null));
 		assertEquals(null, prepare(dataField, miningField, "-999"));
 		assertEquals(null, prepare(dataField, miningField, -999));
@@ -279,6 +282,26 @@ public class FieldValueUtilTest {
 
 		assertEquals(0, prepare(dataField, miningField, "one"));
 		assertEquals(0, prepare(dataField, miningField, 1.5d));
+
+		miningField.setMissingValueTreatment(MissingValueTreatmentMethod.RETURN_INVALID);
+
+		try {
+			prepare(dataField, miningField, null);
+
+			fail();
+		} catch(InvalidMarkupException ife){
+			// Ignored
+		}
+
+		miningField.setMissingValueReplacement(null);
+
+		try {
+			prepare(dataField, miningField, null);
+
+			fail();
+		} catch(InvalidResultException ire){
+			// Ignored
+		}
 	}
 
 	static
