@@ -20,6 +20,7 @@ package org.jpmml.evaluator.tree;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.cache.CacheLoader;
@@ -40,7 +41,6 @@ import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
-import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.MisplacedAttributeException;
 import org.jpmml.evaluator.MissingAttributeException;
@@ -60,7 +60,7 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 
-public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements HasEntityRegistry<Node> {
+public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements HasNodeRegistry {
 
 	transient
 	private BiMap<String, Node> entityRegistry = null;
@@ -92,6 +92,16 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 
 		return this.entityRegistry;
+	}
+
+	@Override
+	public List<Node> getPath(String id){
+		return getPath(resolveNode(id));
+	}
+
+	@Override
+	public List<Node> getPathBetween(String parentId, String childId){
+		return getPathBetween(resolveNode(parentId), resolveNode(childId));
 	}
 
 	@Override
@@ -436,6 +446,38 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 
 		return result;
+	}
+
+	private List<Node> getPath(Node node){
+		TreeModel treeModel = getModel();
+
+		Node root = treeModel.getNode();
+
+		return getPathBetween(root, node);
+	}
+
+	private List<Node> getPathBetween(Node parent, Node child){
+		PathFinder pathFinder = new PathFinder(){
+
+			@Override
+			public boolean test(Node node){
+				return Objects.equals(child, node);
+			}
+		};
+		pathFinder.applyTo(parent);
+
+		return pathFinder.getPath();
+	}
+
+	private Node resolveNode(String id){
+		BiMap<String, Node> entityRegistry = getEntityRegistry();
+
+		Node node = entityRegistry.get(id);
+		if(node == null){
+			throw new IllegalArgumentException(id);
+		}
+
+		return node;
 	}
 
 	static
