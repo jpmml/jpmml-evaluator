@@ -69,7 +69,7 @@ public class ModelEvaluatorFactory implements Serializable {
 		} else
 
 		{
-			model = PMMLUtil.findModel(pmml, (Model object) -> true, "<Model>");
+			model = PMMLUtil.findModel(pmml, (Model object) -> object.isScorable(), "<Model>@isScorable=true");
 		}
 
 		return newModelEvaluator(pmml, model);

@@ -32,7 +32,7 @@ public class PMMLUtil {
 
 	static
 	public <M extends Model> M findModel(PMML pmml, Class<? extends M> clazz){
-		Model model = findModel(pmml, clazz::isInstance, XPathUtil.formatElement(clazz));
+		Model model = findModel(pmml, (Model object) -> clazz.isInstance(object) && object.isScorable(), XPathUtil.formatElement(clazz) + "@isScorable=true");
 
 		return clazz.cast(model);
 	}
