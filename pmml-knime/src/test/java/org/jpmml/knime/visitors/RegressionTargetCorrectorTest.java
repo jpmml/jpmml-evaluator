@@ -75,7 +75,7 @@ public class RegressionTargetCorrectorTest {
 
 		assertNotNull(targets);
 
-		Target target = IndexableUtil.find(targets.getTargets(), name);
+		Target target = IndexableUtil.findIndexable(targets.getTargets(), name);
 
 		assertNotNull(target);
 

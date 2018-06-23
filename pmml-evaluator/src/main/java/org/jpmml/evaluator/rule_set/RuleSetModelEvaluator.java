@@ -52,6 +52,7 @@ import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
@@ -68,7 +69,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 
 	public RuleSetModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, RuleSetModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, RuleSetModel.class));
 	}
 
 	public RuleSetModelEvaluator(PMML pmml, RuleSetModel ruleSetModel){

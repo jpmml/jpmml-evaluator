@@ -71,6 +71,7 @@ import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLException;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 
@@ -93,7 +94,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 
 	public AssociationModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, AssociationModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, AssociationModel.class));
 	}
 
 	public AssociationModelEvaluator(PMML pmml, AssociationModel associationModel){

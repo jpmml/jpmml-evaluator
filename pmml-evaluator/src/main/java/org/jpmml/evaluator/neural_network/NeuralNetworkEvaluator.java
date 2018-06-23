@@ -74,6 +74,7 @@ import org.jpmml.evaluator.NormalizationUtil;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
@@ -92,7 +93,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 
 	public NeuralNetworkEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, NeuralNetwork.class));
+		this(pmml, PMMLUtil.findModel(pmml, NeuralNetwork.class));
 	}
 
 	public NeuralNetworkEvaluator(PMML pmml, NeuralNetwork neuralNetwork){

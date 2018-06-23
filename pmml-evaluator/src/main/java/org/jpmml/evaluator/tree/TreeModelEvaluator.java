@@ -50,6 +50,7 @@ import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
@@ -67,7 +68,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 
 	public TreeModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, TreeModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, TreeModel.class));
 	}
 
 	public TreeModelEvaluator(PMML pmml, TreeModel treeModel){

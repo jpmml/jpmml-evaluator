@@ -81,6 +81,7 @@ import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
@@ -107,7 +108,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 
 	public GeneralRegressionModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, GeneralRegressionModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, GeneralRegressionModel.class));
 	}
 
 	public GeneralRegressionModelEvaluator(PMML pmml, GeneralRegressionModel generalRegressionModel){

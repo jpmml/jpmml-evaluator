@@ -74,6 +74,7 @@ import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLException;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
@@ -95,7 +96,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 
 	public MiningModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, MiningModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, MiningModel.class));
 	}
 
 	public MiningModelEvaluator(PMML pmml, MiningModel miningModel){

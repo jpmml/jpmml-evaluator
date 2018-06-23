@@ -26,13 +26,14 @@ import org.jpmml.evaluator.JavaModel;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueFactoryFactory;
 
 public class JavaModelEvaluator extends ModelEvaluator<JavaModel> {
 
 	public JavaModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, JavaModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, JavaModel.class));
 	}
 
 	public JavaModelEvaluator(PMML pmml, JavaModel javaModel){

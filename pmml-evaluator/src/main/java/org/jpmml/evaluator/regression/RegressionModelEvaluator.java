@@ -49,6 +49,7 @@ import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
@@ -60,7 +61,7 @@ import org.jpmml.evaluator.ValueMap;
 public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 	public RegressionModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, RegressionModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, RegressionModel.class));
 	}
 
 	public RegressionModelEvaluator(PMML pmml, RegressionModel regressionModel){

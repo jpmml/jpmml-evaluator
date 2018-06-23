@@ -78,6 +78,7 @@ import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLException;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.SparseArrayUtil;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
@@ -94,7 +95,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 
 	public SupportVectorMachineModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, SupportVectorMachineModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, SupportVectorMachineModel.class));
 	}
 
 	public SupportVectorMachineModelEvaluator(PMML pmml, SupportVectorMachineModel supportVectorMachineModel){

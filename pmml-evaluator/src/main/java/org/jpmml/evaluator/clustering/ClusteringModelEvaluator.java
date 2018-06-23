@@ -65,6 +65,7 @@ import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
@@ -78,7 +79,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 
 	public ClusteringModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, ClusteringModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, ClusteringModel.class));
 	}
 
 	public ClusteringModelEvaluator(PMML pmml, ClusteringModel clusteringModel){

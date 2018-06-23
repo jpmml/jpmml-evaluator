@@ -33,7 +33,7 @@ public class IndexableUtil {
 	}
 
 	static
-	public <K, E extends PMMLObject & Indexable<K>> E find(List<E> elements, K key){
+	public <K, E extends PMMLObject & Indexable<K>> E findIndexable(List<E> elements, K key){
 
 		for(E element : elements){
 

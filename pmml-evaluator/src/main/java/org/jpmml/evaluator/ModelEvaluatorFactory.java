@@ -65,11 +65,11 @@ public class ModelEvaluatorFactory implements Serializable {
 		Model model;
 
 		if(modelName != null){
-			model = ModelEvaluator.selectModel(pmml, (Model object) -> Objects.equals(object.getModelName(), modelName), "<Model>@modelName=" + modelName);
+			model = PMMLUtil.findModel(pmml, (Model object) -> Objects.equals(object.getModelName(), modelName), "<Model>@modelName=" + modelName);
 		} else
 
 		{
-			model = ModelEvaluator.selectModel(pmml, (Model object) -> true, "<Model>");
+			model = PMMLUtil.findModel(pmml, (Model object) -> true, "<Model>");
 		}
 
 		return newModelEvaluator(pmml, model);
