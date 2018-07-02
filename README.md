@@ -40,13 +40,18 @@ For more information please see the [features.md](https://github.com/jpmml/jpmml
 JPMML-Evaluator is interoperable with most popular statistics and data mining software:
 
 * [R](http://www.r-project.org/) and [Rattle](http://rattle.togaware.com/):
-  * [JPMML-R](https://github.com/jpmml/jpmml-r) library and [`r2pmml`](https://github.com/jpmml/r2pmml) package.
-  * [`pmml`](https://cran.r-project.org/web/packages/pmml/) and [`pmmlTransformations`](https://cran.r-project.org/web/packages/pmmlTransformations/) packages.
+  * [JPMML-R](https://github.com/jpmml/jpmml-r) library.
+  * [`r2pmml`](https://github.com/jpmml/r2pmml) package.
+  * [`pmml`](https://cran.r-project.org/package=pmml) and [`pmmlTransformations`](https://CRAN.R-project.org/package=pmmlTransformations) packages.
 * [Python](http://www.python.org/) and [Scikit-Learn](http://scikit-learn.org/):
-  * [JPMML-SkLearn](https://github.com/jpmml/jpmml-sklearn) library and [`sklearn2pmml`](https://github.com/jpmml/sklearn2pmml) package.
+  * [JPMML-SkLearn](https://github.com/jpmml/jpmml-sklearn) library.
+  * [`sklearn2pmml`](https://github.com/jpmml/sklearn2pmml) package.
 * [Apache Spark](http://spark.apache.org/):
   * [JPMML-SparkML](https://github.com/jpmml/jpmml-sparkml) library.
+  * [`pyspark2pmml`](https://github.com/pyspark2pmml) and [`sparklyr2pmml`](https://github.com/jpmml/sparklyr2pmml) packages.
   * [`mllib.pmml.PMMLExportable`](https://spark.apache.org/docs/latest/api/java/org/apache/spark/mllib/pmml/PMMLExportable.html) interface.
+* [H2O.ai](https://www.h2o.ai/):
+  * [JPMML-H2O](https://github.com/jpmml/jpmml-h2o) library.
 * [XGBoost](https://github.com/dmlc/xgboost):
   * [JPMML-XGBoost](https://github.com/jpmml/jpmml-xgboost) library.
 * [LightGBM](https://github.com/Microsoft/LightGBM):
