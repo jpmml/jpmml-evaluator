@@ -31,6 +31,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
+import org.dmg.pmml.Cell;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Extension;
 import org.dmg.pmml.HasTable;
@@ -76,12 +77,19 @@ public class InlineTableUtil {
 				String column;
 				String value;
 
+				if(cell instanceof Cell){
+					Cell pmmlCell = (Cell)cell;
+
+					column = parseColumn(pmmlCell.getName());
+					value = pmmlCell.getValue();
+				} else
+
+				if(cell instanceof Extension){
+					continue;
+				} else
+
 				if(cell instanceof PMMLObject){
 					PMMLObject object = (PMMLObject)cell;
-
-					if(object instanceof Extension){
-						continue;
-					}
 
 					throw new MisplacedElementException(object);
 				} else
@@ -89,19 +97,7 @@ public class InlineTableUtil {
 				if(cell instanceof JAXBElement){
 					JAXBElement<?> jaxbElement = (JAXBElement<?>)cell;
 
-					QName name = jaxbElement.getName();
-
-					String prefix = name.getPrefix();
-					String localPart = name.getLocalPart();
-
-					if(prefix != null && !("").equals(prefix)){
-						column = prefix + ":" + localPart;
-					} else
-
-					{
-						column = localPart;
-					}
-
+					column = parseColumn(jaxbElement.getName());
 					value = (String)TypeUtil.parseOrCast(DataType.STRING, jaxbElement.getValue());
 				} else
 
@@ -133,6 +129,20 @@ public class InlineTableUtil {
 		}
 
 		return result;
+	}
+
+	static
+	private String parseColumn(QName name){
+		String prefix = name.getPrefix();
+		String localPart = name.getLocalPart();
+
+		if(prefix != null && !("").equals(prefix)){
+			return prefix + ":" + localPart;
+		} else
+
+		{
+			return localPart;
+		}
 	}
 
 	static
