@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator.mining;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.dmg.pmml.DataType;
@@ -39,7 +41,7 @@ public class MiningModelUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> aggregateValues(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, List<SegmentResult> segmentResults){
+	public <V extends Number> Value<V> aggregateValues(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, double missingThreshold, List<SegmentResult> segmentResults){
 		ValueAggregator<V> aggregator;
 
 		switch(multipleModelMethod){
@@ -61,12 +63,37 @@ public class MiningModelUtil {
 				throw new IllegalArgumentException();
 		}
 
+		Fraction<V> missingFraction = null;
+
+		segmentResults:
 		for(SegmentResult segmentResult : segmentResults){
+			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
+
+			if(targetValue == null){
+
+				switch(missingPredictionTreatment){
+					case RETURN_MISSING:
+						return null;
+					case SKIP_SEGMENT:
+						if(missingFraction == null){
+							missingFraction = new Fraction<>(valueFactory, segmentResults);
+						} // End if
+
+						if(missingFraction.update(segmentResult, missingThreshold)){
+							return null;
+						}
+
+						continue segmentResults;
+					case CONTINUE:
+						return null;
+					default:
+						throw new IllegalArgumentException();
+				}
+			}
+
 			Number value;
 
 			try {
-				Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
-
 				if(targetValue instanceof Number){
 					value = (Number)targetValue;
 				} else
@@ -115,7 +142,7 @@ public class MiningModelUtil {
 	}
 
 	static
-	public <V extends Number> ValueMap<String, V> aggregateVotes(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, List<SegmentResult> segmentResults){
+	public <V extends Number> ValueMap<String, V> aggregateVotes(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, double missingThreshold, List<SegmentResult> segmentResults){
 		VoteAggregator<String, V> aggregator = new VoteAggregator<String, V>(){
 
 			@Override
@@ -124,13 +151,51 @@ public class MiningModelUtil {
 			}
 		};
 
+		Fraction<V> missingFraction = null;
+
+		segmentResults:
 		for(SegmentResult segmentResult : segmentResults){
+			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
+
+			if(targetValue == null){
+
+				switch(missingPredictionTreatment){
+					case RETURN_MISSING:
+						return null;
+					case SKIP_SEGMENT:
+					case CONTINUE:
+						if(missingFraction == null){
+							missingFraction = new Fraction<>(valueFactory, segmentResults);
+						} // End if
+
+						if(missingFraction.update(segmentResult, missingThreshold)){
+							return null;
+						}
+						break;
+					default:
+						throw new IllegalArgumentException();
+				} // End switch
+
+				switch(missingPredictionTreatment){
+					case SKIP_SEGMENT:
+						continue segmentResults;
+					case CONTINUE:
+						break;
+					default:
+						throw new IllegalArgumentException();
+				}
+			}
+
 			String key;
 
 			try {
-				Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
+				if((targetValue == null) || (targetValue instanceof String)){
+					key = (String)targetValue;
+				} else
 
-				key = (String)TypeUtil.cast(DataType.STRING, targetValue);
+				{
+					key = (String)TypeUtil.cast(DataType.STRING, targetValue);
+				}
 			} catch(TypeCheckException tce){
 				throw tce.ensureContext(segmentResult.getSegment());
 			}
@@ -149,11 +214,31 @@ public class MiningModelUtil {
 			}
 		}
 
-		return aggregator.sumMap();
+		ValueMap<String, V> result = aggregator.sumMap();
+
+		switch(missingPredictionTreatment){
+			case CONTINUE:
+				// Remove the "missing" pseudo-category
+				Value<V> missingVoteSum = result.remove(null);
+
+				if(missingVoteSum != null){
+					Collection<Value<V>> voteSums = result.values();
+
+					// "The missing result is returned if it gets the most (possibly weighted) votes"
+					if(voteSums.size() > 0 && (missingVoteSum).compareTo(Collections.max(voteSums)) > 0){
+						return null;
+					}
+				}
+				break;
+			default:
+				break;
+		}
+
+		return result;
 	}
 
 	static
-	public <V extends Number> ValueMap<String, V> aggregateProbabilities(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, List<String> categories, List<SegmentResult> segmentResults){
+	public <V extends Number> ValueMap<String, V> aggregateProbabilities(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, double missingThreshold, List<String> categories, List<SegmentResult> segmentResults){
 		ProbabilityAggregator<V> aggregator;
 
 		switch(multipleModelMethod){
@@ -189,12 +274,37 @@ public class MiningModelUtil {
 				throw new IllegalArgumentException();
 		}
 
+		Fraction<V> missingFraction = null;
+
+		segmentResults:
 		for(SegmentResult segmentResult : segmentResults){
+			Object targetValue = segmentResult.getTargetValue();
+
+			if(targetValue == null){
+
+				switch(missingPredictionTreatment){
+					case RETURN_MISSING:
+						return null;
+					case SKIP_SEGMENT:
+						if(missingFraction == null){
+							missingFraction = new Fraction<>(valueFactory, segmentResults);
+						} // End if
+
+						if(missingFraction.update(segmentResult, missingThreshold)){
+							return null;
+						}
+
+						continue segmentResults;
+					case CONTINUE:
+						return null;
+					default:
+						throw new IllegalArgumentException();
+				}
+			}
+
 			HasProbability hasProbability;
 
 			try {
-				Object targetValue = segmentResult.getTargetValue();
-
 				hasProbability = TypeUtil.cast(HasProbability.class, targetValue);
 			} catch(TypeCheckException tce){
 				throw tce.ensureContext(segmentResult.getSegment());
@@ -227,6 +337,32 @@ public class MiningModelUtil {
 				return aggregator.maxMap(categories);
 			default:
 				throw new IllegalArgumentException();
+		}
+	}
+
+	static
+	private class Fraction<V extends Number> {
+
+		private Value<V> weightSum = null;
+
+		private Value<V> missingWeightSum = null;
+
+
+		private Fraction(ValueFactory<V> valueFactory, List<SegmentResult> segmentResults){
+			this.weightSum = valueFactory.newValue();
+			this.missingWeightSum = valueFactory.newValue();
+
+			for(int i = 0, max = segmentResults.size(); i < max; i++){
+				SegmentResult segmentResult = segmentResults.get(i);
+
+				this.weightSum.add(segmentResult.getWeight());
+			}
+		}
+
+		public boolean update(SegmentResult segmentResult, double missingThreshold){
+			this.missingWeightSum.add(segmentResult.getWeight());
+
+			return (this.missingWeightSum.doubleValue() / this.weightSum.doubleValue()) > missingThreshold;
 		}
 	}
 }

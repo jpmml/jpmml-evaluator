@@ -62,6 +62,7 @@ import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.InvalidAttributeException;
+import org.jpmml.evaluator.InvalidElementException;
 import org.jpmml.evaluator.MiningFieldUtil;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
@@ -257,11 +258,19 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			return predictions;
 		}
 
+		TargetField targetField = getTargetField();
+
 		Segmentation segmentation = miningModel.getSegmentation();
+
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
+		Segmentation.MissingPredictionTreatment missingPredictionTreatment = segmentation.getMissingPredictionTreatment();
+		Double missingThreshold = segmentation.getMissingThreshold();
+		if(missingThreshold < 0 || missingThreshold > 1){
+			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
+		}
 
 		Value<V> result;
 
-		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
@@ -269,7 +278,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case WEIGHTED_MEDIAN:
 			case SUM:
 			case WEIGHTED_SUM:
-				result = MiningModelUtil.aggregateValues(valueFactory, multipleModelMethod, segmentResults);
+				Value<V> value = MiningModelUtil.aggregateValues(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
+				if(value == null){
+					return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
+				}
+
+				result = value;
 				break;
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
@@ -282,7 +296,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
 		}
 
-		return TargetUtil.evaluateRegression(getTargetField(), result);
+		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
 	private <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, MiningModelEvaluationContext context){
@@ -299,14 +313,23 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
+		Segmentation.MissingPredictionTreatment missingPredictionTreatment = segmentation.getMissingPredictionTreatment();
+		Double missingThreshold = segmentation.getMissingThreshold();
+		if(missingThreshold < 0 || missingThreshold > 1){
+			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
+		}
+
 		ProbabilityDistribution<V> result;
 
-		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 				{
-					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, segmentResults);
+					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
+					if(values == null){
+						return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
+					}
 
 					// Convert from votes to probabilities
 					ValueUtil.normalizeSimpleMax(values);
@@ -319,9 +342,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MEDIAN:
 			case MAX:
 				{
-					List<String> categories = targetField.getCategories();
+					List<String> targetCategories = targetField.getCategories();
+					if(targetCategories != null && targetCategories.size() < 2){
+						throw new InvalidElementException(miningModel);
+					}
 
-					ValueMap<String, V> values = MiningModelUtil.aggregateProbabilities(valueFactory, multipleModelMethod, categories, segmentResults);
+					ValueMap<String, V> values = MiningModelUtil.aggregateProbabilities(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, targetCategories, segmentResults);
+					if(values == null){
+						return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
+					}
 
 					result = new ProbabilityDistribution<>(values);
 				}
@@ -350,16 +379,27 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			return predictions;
 		}
 
+		FieldName targetFieldName = getTargetFieldName();
+
 		Segmentation segmentation = miningModel.getSegmentation();
+
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
+		Segmentation.MissingPredictionTreatment missingPredictionTreatment = segmentation.getMissingPredictionTreatment();
+		Double missingThreshold = segmentation.getMissingThreshold();
+		if(missingThreshold < 0 || missingThreshold > 1){
+			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
+		}
 
 		VoteDistribution<V> result;
 
-		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 				{
-					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, segmentResults);
+					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
+					if(values == null){
+						return Collections.singletonMap(targetFieldName, null);
+					}
 
 					result = new VoteDistribution<>(values);
 				}
@@ -381,7 +421,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		result.computeResult(DataType.STRING);
 
-		return Collections.singletonMap(getTargetFieldName(), result);
+		return Collections.singletonMap(targetFieldName, result);
 	}
 
 	private Map<FieldName, ?> evaluateAny(MiningModelEvaluationContext context){
