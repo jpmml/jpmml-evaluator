@@ -469,7 +469,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			// "With the exception of modelChain models, all model elements used inside Segment elements in one MiningModel must have the same MINING-FUNCTION"
 			switch(multipleModelMethod){
 				case MODEL_CHAIN:
-					lastModel = model;
 					break;
 				default:
 					checkMiningFunction(model, miningFunction);
@@ -574,6 +573,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			switch(multipleModelMethod){
 				case SELECT_FIRST:
 					return Collections.singletonList(segmentResult);
+				case MODEL_CHAIN:
+					lastModel = model;
+					// Falls through
 				default:
 					segmentResults.add(segmentResult);
 					break;
@@ -747,11 +749,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	static
-	private void checkMiningFunction(Model model, MiningFunction miningFunction){
-		MiningFunction modelMiningFunction = model.getMiningFunction();
+	private void checkMiningFunction(Model model, MiningFunction parentMiningFunction){
+		MiningFunction miningFunction = model.getMiningFunction();
 
-		if(!(miningFunction).equals(modelMiningFunction)){
-			throw new InvalidAttributeException(InvalidAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@miningFunction=" + modelMiningFunction.value()), model);
+		if(miningFunction == null){
+			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@functionName"), model);
+		} // End if
+
+		if(!(miningFunction).equals(parentMiningFunction)){
+			throw new InvalidAttributeException(InvalidAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@functionName=" + miningFunction.value()), model);
 		}
 	}
 
