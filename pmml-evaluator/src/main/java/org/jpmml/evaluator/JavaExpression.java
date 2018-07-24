@@ -32,6 +32,17 @@ public class JavaExpression extends Expression {
 
 	@Override
 	public VisitorAction accept(Visitor visitor){
+		VisitorAction status = visitor.visit(this);
+
+		if(status == VisitorAction.CONTINUE){
+			visitor.pushParent(this);
+			visitor.popParent();
+		} // End if
+
+		if(status == VisitorAction.TERMINATE){
+			return VisitorAction.TERMINATE;
+		}
+
 		return VisitorAction.CONTINUE;
 	}
 }

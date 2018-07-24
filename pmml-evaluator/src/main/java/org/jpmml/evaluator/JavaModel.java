@@ -248,11 +248,15 @@ public class JavaModel extends Model {
 
 	@Override
 	public VisitorAction accept(Visitor visitor){
-		visitor.pushParent(this);
+		VisitorAction status = visitor.visit(this);
 
-		VisitorAction status = PMMLObject.traverse(visitor, getMiningSchema(), getLocalTransformations(), getTargets(), getOutput(), getModelStats(), getModelExplanation(), getModelVerification());
+		if(status == VisitorAction.CONTINUE){
+			visitor.pushParent(this);
 
-		visitor.popParent();
+			status = PMMLObject.traverse(visitor, getMiningSchema(), getLocalTransformations(), getTargets(), getOutput(), getModelStats(), getModelExplanation(), getModelVerification());
+
+			visitor.popParent();
+		} // End if
 
 		if(status == VisitorAction.TERMINATE){
 			return VisitorAction.TERMINATE;

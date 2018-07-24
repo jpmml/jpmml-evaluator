@@ -39,9 +39,9 @@ import org.jpmml.evaluator.IndexableUtil;
 import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
-import org.jpmml.model.visitors.AbstractModelVisitor;
+import org.jpmml.model.visitors.AbstractVisitor;
 
-public class RegressionTargetCorrector extends AbstractModelVisitor {
+public class RegressionTargetCorrector extends AbstractVisitor {
 
 	private Target.CastInteger castInteger = null;
 
@@ -66,7 +66,7 @@ public class RegressionTargetCorrector extends AbstractModelVisitor {
 				break;
 		}
 
-		return VisitorAction.CONTINUE;
+		return super.visit(model);
 	}
 
 	private void processRegressionModel(Model model){

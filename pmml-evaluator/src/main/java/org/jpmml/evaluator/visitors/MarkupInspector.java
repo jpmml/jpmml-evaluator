@@ -21,11 +21,9 @@ package org.jpmml.evaluator.visitors;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Visitable;
-import org.dmg.pmml.VisitorAction;
 import org.jpmml.evaluator.PMMLException;
-import org.jpmml.model.visitors.AbstractSimpleVisitor;
+import org.jpmml.model.visitors.AbstractVisitor;
 
 /**
  * <p>
@@ -54,15 +52,10 @@ import org.jpmml.model.visitors.AbstractSimpleVisitor;
  * </pre>
  */
 abstract
-public class MarkupInspector<E extends PMMLException> extends AbstractSimpleVisitor {
+public class MarkupInspector<E extends PMMLException> extends AbstractVisitor {
 
 	private List<E> exceptions = new ArrayList<>();
 
-
-	@Override
-	public VisitorAction visit(PMMLObject object){
-		return VisitorAction.CONTINUE;
-	}
 
 	/**
 	 * @throws E The first element of the {@link #getExceptions() list of Exceptions} if this list is not empty.
