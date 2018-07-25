@@ -45,6 +45,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.PMMLObject;
 import org.jpmml.evaluator.visitors.ElementInternerBattery;
 import org.jpmml.evaluator.visitors.ElementOptimizerBattery;
 import org.jpmml.model.VisitorBattery;
@@ -268,7 +269,17 @@ public class EvaluationExample extends Example {
 			System.out.println("Bytesize of the object graph: " + numberFormat.format(size));
 
 			Set<Object> objects = memoryMeasurer.getObjects();
-			System.out.println("Number of distinct Java objects in the object graph: " + numberFormat.format(objects.size()));
+
+			long objectCount = objects.size();
+
+			System.out.println("Number of distinct Java objects in the object graph: " + numberFormat.format(objectCount));
+
+			long pmmlObjectCount = objects.stream()
+				.filter(PMMLObject.class::isInstance)
+				.count();
+
+			System.out.println("\t" + "PMML class model objects: " + numberFormat.format(pmmlObjectCount));
+			System.out.println("\t" + "Other objects: " + numberFormat.format(objectCount - pmmlObjectCount));
 		}
 
 		ModelEvaluatorFactory modelEvaluatorFactory = (ModelEvaluatorFactory)newInstance(Class.forName(this.modelEvaluatorFactoryClazz));
