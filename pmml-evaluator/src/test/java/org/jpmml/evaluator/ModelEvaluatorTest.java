@@ -29,7 +29,6 @@ import org.dmg.pmml.PMML;
 import org.jpmml.model.PMMLUtil;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 abstract
 public class ModelEvaluatorTest {
@@ -72,8 +71,6 @@ public class ModelEvaluatorTest {
 	static
 	public ModelEvaluator<?> createModelEvaluator(InputStream is, ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
 		PMML pmml = PMMLUtil.unmarshal(is);
-
-		assertNull(pmml.getLocator());
 
 		return modelEvaluatorFactory.newModelEvaluator(pmml);
 	}
