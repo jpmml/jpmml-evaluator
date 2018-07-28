@@ -551,9 +551,18 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			try {
 				Map<FieldName, ?> result = segmentModelEvaluator.evaluate(segmentContext);
 
-				FieldName segmentTargetFieldName = segmentModelEvaluator.getTargetFieldName();
+				segmentResult = new SegmentResult(segment, result){
 
-				segmentResult = new SegmentResult(segment, segmentId, result, segmentTargetFieldName);
+					@Override
+					public String getEntityId(){
+						return segmentId;
+					}
+
+					@Override
+					protected ModelEvaluator<?> getModelEvaluator(){
+						return segmentModelEvaluator;
+					}
+				};
 			} catch(PMMLException pe){
 				throw pe.ensureContext(segment);
 			}
