@@ -20,6 +20,7 @@ package org.jpmml.evaluator.mining;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
@@ -78,6 +79,7 @@ import org.jpmml.evaluator.PMMLException;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
+import org.jpmml.evaluator.Regression;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
@@ -269,7 +271,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
 		}
 
-		Value<V> result;
+		Value<V> value;
 
 		switch(multipleModelMethod){
 			case AVERAGE:
@@ -278,12 +280,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case WEIGHTED_MEDIAN:
 			case SUM:
 			case WEIGHTED_SUM:
-				Value<V> value = MiningModelUtil.aggregateValues(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
+				value = MiningModelUtil.aggregateValues(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
 				if(value == null){
 					return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 				}
-
-				result = value;
 				break;
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
@@ -295,6 +295,16 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			default:
 				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
 		}
+
+		value = TargetUtil.evaluateRegressionInternal(targetField, value);
+
+		Regression<V> result = new MiningScore<V>(value){
+
+			@Override
+			public Collection<? extends SegmentResult> getSegmentResults(){
+				return segmentResults;
+			}
+		};
 
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
@@ -334,7 +344,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					// Convert from votes to probabilities
 					ValueUtil.normalizeSimpleMax(values);
 
-					result = new ProbabilityDistribution<>(values);
+					result = new MiningProbabilityDistribution<V>(values){
+
+						@Override
+						public Collection<? extends SegmentResult> getSegmentResults(){
+							return segmentResults;
+						}
+					};
 				}
 				break;
 			case AVERAGE:
@@ -352,7 +368,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 						return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 					}
 
-					result = new ProbabilityDistribution<>(values);
+					result = new MiningProbabilityDistribution<V>(values){
+
+						@Override
+						public Collection<? extends SegmentResult> getSegmentResults(){
+							return segmentResults;
+						}
+					};
 				}
 				break;
 			case WEIGHTED_MEDIAN:
@@ -390,7 +412,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
 		}
 
-		VoteDistribution<V> result;
+		MiningVoteDistribution<V> result;
 
 		switch(multipleModelMethod){
 			case MAJORITY_VOTE:
@@ -401,7 +423,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 						return Collections.singletonMap(targetFieldName, null);
 					}
 
-					result = new VoteDistribution<>(values);
+					result = new MiningVoteDistribution<V>(values){
+
+						@Override
+						public Collection<? extends SegmentResult> getSegmentResults(){
+							return segmentResults;
+						}
+					};
 				}
 				break;
 			case AVERAGE:

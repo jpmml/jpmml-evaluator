@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Villu Ruusmann
+ * Copyright (c) 2018 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,18 +18,11 @@
  */
 package org.jpmml.evaluator.mining;
 
-import org.dmg.pmml.DataType;
-import org.jpmml.evaluator.Classification;
-import org.jpmml.evaluator.ValueMap;
+import java.util.Collection;
 
-public class VoteDistribution<V extends Number> extends Classification<V> {
+import org.jpmml.evaluator.ResultFeature;
 
-	VoteDistribution(ValueMap<String, V> votes){
-		super(Type.VOTE, votes);
-	}
+public interface HasSegmentation extends ResultFeature {
 
-	@Override
-	protected void computeResult(DataType dataType){
-		super.computeResult(dataType);
-	}
+	Collection<? extends SegmentResult> getSegmentResults();
 }
