@@ -20,6 +20,8 @@ package org.jpmml.evaluator;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -62,13 +64,23 @@ public class EnhancementExample extends Example {
 	private File verification = null;
 
 	@Parameter (
-		names = {"--data-xmlns"},
-		description = "XML namespace URI for data elements"
+		names = {"--separator"},
+		description = "CSV cell separator character",
+		converter = SeparatorConverter.class
 	)
 	@ParameterOrder (
 		value = 3
 	)
-	private String dataURI = null;
+	private String separator = null;
+
+	@Parameter (
+		names = {"--missing-values"},
+		description = "CSV missing value strings"
+	)
+	@ParameterOrder (
+		value = 4
+	)
+	private List<String> missingValues = Arrays.asList("N/A", "NA");
 
 
 	static
@@ -80,7 +92,7 @@ public class EnhancementExample extends Example {
 	public void execute() throws Exception {
 		PMML pmml = readPMML(this.model);
 
-		CsvUtil.Table verificationTable = readTable(this.verification, null);
+		CsvUtil.Table table = readTable(this.verification, this.separator);
 
 		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
 
@@ -93,6 +105,8 @@ public class EnhancementExample extends Example {
 			throw new IllegalArgumentException("Model verification data is already defined");
 		}
 
+		java.util.function.Function<String, String> cellParser = createCellParser(new HashSet<>(this.missingValues));
+
 		modelVerification = new ModelVerification();
 
 		List<String> tagNames = new ArrayList<>();
@@ -101,7 +115,7 @@ public class EnhancementExample extends Example {
 
 		header:
 		{
-			List<String> headerRow = verificationTable.get(0);
+			List<String> headerRow = table.get(0);
 
 			for(int column = 0; column < headerRow.size(); column++){
 				String field = headerRow.get(column);
@@ -142,11 +156,13 @@ public class EnhancementExample extends Example {
 
 		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 
+		Document document = documentBuilder.newDocument();
+
 		InlineTable inlineTable = new InlineTable();
 
 		body:
-		for(int i = 1; i < verificationTable.size(); i++){
-			List<String> bodyRow = verificationTable.get(i);
+		for(int i = 1; i < table.size(); i++){
+			List<String> bodyRow = table.get(i);
 
 			Row row = new Row();
 
@@ -158,19 +174,18 @@ public class EnhancementExample extends Example {
 				}
 
 				String value = bodyRow.get(column);
+				if(value != null){
+					value = cellParser.apply(value);
+				} // End if
 
-				if(("N/A").equals(value) || ("NA").equals(value)){
+				if(value == null){
 					continue;
 				}
 
-				Document document = documentBuilder.newDocument();
-
-				Element element = document.createElementNS(this.dataURI, this.dataURI != null ? ("data:" + tagName) : tagName);
+				Element element = document.createElementNS("http://jpmml.org/jpmml-model/InlineTable", ("data:" + tagName));
 				element.setTextContent(value);
 
 				row.addContent(element);
-
-				documentBuilder.reset();
 			}
 
 			inlineTable.addRows(row);
