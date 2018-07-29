@@ -324,8 +324,8 @@ mvn clean install
 
 The resulting uber-JAR file `target/example-1.4-SNAPSHOT.jar` contains the following command-line applications:
 * `org.jpmml.evaluator.EvaluationExample` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/EvaluationExample.java).
+* `org.jpmml.evaluator.RecordCountingExample` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/RecordCountingExample.java).
 * `org.jpmml.evaluator.TestingExample` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/TestingExample.java).
-* `org.jpmml.evaluator.EnhancementExample`.
 
 Evaluating model `model.pmml` with data records from `input.csv`. The predictions are stored to `output.csv`:
 ```
