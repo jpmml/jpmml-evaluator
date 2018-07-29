@@ -53,15 +53,15 @@ public class JavaModel extends Model {
 
 	private MiningSchema miningSchema = null;
 
-	private LocalTransformations localTransformations = null;
-
-	private Targets targets = null;
-
 	private Output output = null;
 
 	private ModelStats modelStats = null;
 
 	private ModelExplanation modelExplanation = null;
+
+	private Targets targets = null;
+
+	private LocalTransformations localTransformations = null;
 
 	private ModelVerification modelVerification = null;
 
@@ -81,11 +81,11 @@ public class JavaModel extends Model {
 		setScorable(model.isScorable());
 		setMathContext(model.getMathContext());
 		setMiningSchema(model.getMiningSchema());
-		setLocalTransformations(model.getLocalTransformations());
-		setTargets(model.getTargets());
 		setOutput(model.getOutput());
 		setModelStats(model.getModelStats());
 		setModelExplanation(model.getModelExplanation());
+		setTargets(model.getTargets());
+		setLocalTransformations(model.getLocalTransformations());
 		setModelVerification(model.getModelVerification());
 	}
 
@@ -175,30 +175,6 @@ public class JavaModel extends Model {
 	}
 
 	@Override
-	public LocalTransformations getLocalTransformations(){
-		return this.localTransformations;
-	}
-
-	@Override
-	public JavaModel setLocalTransformations(@Property("localTransformations") LocalTransformations localTransformations){
-		this.localTransformations = localTransformations;
-
-		return this;
-	}
-
-	@Override
-	public Targets getTargets(){
-		return this.targets;
-	}
-
-	@Override
-	public JavaModel setTargets(@Property("targets") Targets targets){
-		this.targets = targets;
-
-		return this;
-	}
-
-	@Override
 	public Output getOutput(){
 		return this.output;
 	}
@@ -235,6 +211,30 @@ public class JavaModel extends Model {
 	}
 
 	@Override
+	public Targets getTargets(){
+		return this.targets;
+	}
+
+	@Override
+	public JavaModel setTargets(@Property("targets") Targets targets){
+		this.targets = targets;
+
+		return this;
+	}
+
+	@Override
+	public LocalTransformations getLocalTransformations(){
+		return this.localTransformations;
+	}
+
+	@Override
+	public JavaModel setLocalTransformations(@Property("localTransformations") LocalTransformations localTransformations){
+		this.localTransformations = localTransformations;
+
+		return this;
+	}
+
+	@Override
 	public ModelVerification getModelVerification(){
 		return this.modelVerification;
 	}
@@ -253,7 +253,7 @@ public class JavaModel extends Model {
 		if(status == VisitorAction.CONTINUE){
 			visitor.pushParent(this);
 
-			status = PMMLObject.traverse(visitor, getMiningSchema(), getLocalTransformations(), getTargets(), getOutput(), getModelStats(), getModelExplanation(), getModelVerification());
+			status = PMMLObject.traverse(visitor, getMiningSchema(), getOutput(), getModelStats(), getModelExplanation(), getTargets(), getLocalTransformations(), getModelVerification());
 
 			visitor.popParent();
 		} // End if
