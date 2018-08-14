@@ -389,7 +389,7 @@ public interface Functions {
 			Boolean flag = getRequiredArgument(arguments, 0).asBoolean();
 
 			if(flag){
-				return getRequiredArgument(arguments, 1);
+				return getOptionalArgument(arguments, 1);
 			} else
 
 			{
