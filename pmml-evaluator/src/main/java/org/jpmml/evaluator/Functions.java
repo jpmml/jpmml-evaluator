@@ -92,6 +92,19 @@ public interface Functions {
 		}
 	};
 
+	ArithmeticFunction MODULO = new ArithmeticFunction("x-modulo"){
+
+		@Override
+		public Number evaluate(Number left, Number right){
+
+			if(left instanceof Integer && right instanceof Integer){
+				return Integer.valueOf(left.intValue() % right.intValue());
+			}
+
+			return Double.valueOf(left.doubleValue() % right.doubleValue());
+		}
+	};
+
 	AggregateFunction MIN = new AggregateFunction("min"){
 
 		@Override

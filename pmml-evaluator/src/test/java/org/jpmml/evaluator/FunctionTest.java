@@ -62,6 +62,15 @@ public class FunctionTest {
 		assertEquals(1d, evaluate(Functions.DIVIDE, 1, 1d));
 		assertEquals(1d, evaluate(Functions.DIVIDE, 1f, 1d));
 		assertEquals(1d, evaluate(Functions.DIVIDE, 1d, 1d));
+
+		assertEquals(0, evaluate(Functions.MODULO, Integer.MIN_VALUE, -1));
+
+		assertEquals(1, evaluate(Functions.MODULO, 10, 3));
+		assertEquals(-1, evaluate(Functions.MODULO, -10, 3));
+		assertEquals(0, evaluate(Functions.MODULO, 6, 2));
+		assertEquals(0, evaluate(Functions.MODULO, 6, -2));
+		assertEquals((4.5d % 1.2d), evaluate(Functions.MODULO, 4.5d, 1.2d));
+		assertEquals(3.0e0, evaluate(Functions.MODULO, 1.23e2, 0.6e1));
 	}
 
 	@Test
@@ -80,6 +89,18 @@ public class FunctionTest {
 
 		assertEquals(Double.NEGATIVE_INFINITY, evaluate(Functions.DIVIDE, -1d, 0));
 		assertEquals(Double.POSITIVE_INFINITY, evaluate(Functions.DIVIDE, 1d, 0));
+
+		try {
+			evaluate(Functions.MODULO, 1, 0);
+
+			fail();
+		} catch(InvalidResultException ire){
+			// Ignored
+		}
+
+		assertEquals(Float.NaN, evaluate(Functions.MODULO, 1f, 0));
+
+		assertEquals(Double.NaN, evaluate(Functions.MODULO, 1d, 0));
 	}
 
 	@Test

@@ -111,6 +111,7 @@ public class FunctionUtil {
 		}
 
 		List<? extends Function> extensionFunctions = Arrays.asList(
+			Functions.MODULO,
 			Functions.LN1P, Functions.EXPM1,
 			Functions.RINT,
 			Functions.HYPOT,
