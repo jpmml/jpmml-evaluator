@@ -312,6 +312,23 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>de.jutzig</groupId>
+				<artifactId>github-release-plugin</artifactId>
+				<version>1.2.0</version>
+				<executions>
+					<execution>
+						<id>default-cli</id>
+						<configuration>
+							<artifact>${project.build.directory}/${project.artifactId}-executable-${project.version}.${project.packaging}</artifact>
+							<description>https://github.com/jpmml/jpmml-evaluator</description>
+							<releaseName>${project.version}</releaseName>
+							<repositoryId>jpmml/jpmml-evaluator</repositoryId>
+							<tag>${project.version}</tag>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>
