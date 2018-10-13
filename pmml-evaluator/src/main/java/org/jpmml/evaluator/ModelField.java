@@ -37,6 +37,9 @@ public class ModelField implements Serializable {
 	public FieldName getName();
 
 	abstract
+	public void setName(FieldName fieldName);
+
+	abstract
 	public DataType getDataType();
 
 	abstract

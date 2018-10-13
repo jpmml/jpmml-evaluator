@@ -56,6 +56,13 @@ public class TargetField extends ResultField {
 	}
 
 	@Override
+	public void setName(FieldName fieldName){
+		DataField dataField = getDataField();
+
+		dataField.setName(fieldName);
+	}
+
+	@Override
 	public DataType getDataType(){
 		DataField dataField = getDataField();
 

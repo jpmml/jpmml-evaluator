@@ -57,6 +57,13 @@ public class OutputField extends ResultField {
 		return outputField.getName();
 	}
 
+	@Override
+	public void setName(FieldName fieldName){
+		org.dmg.pmml.OutputField outputField = getOutputField();
+
+		outputField.setName(fieldName);
+	}
+
 	/**
 	 * @return the data type, or <code>null</code>.
 	 */

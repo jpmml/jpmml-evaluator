@@ -76,6 +76,13 @@ public class InputField extends ModelField {
 	}
 
 	@Override
+	public void setName(FieldName fieldName){
+		Field<?> field = getField();
+
+		field.setName(fieldName);
+	}
+
+	@Override
 	public DataType getDataType(){
 		Field<?> field = getField();
 
