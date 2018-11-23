@@ -49,9 +49,8 @@ import org.dmg.pmml.PMMLObject;
 import org.jpmml.evaluator.visitors.ElementInternerBattery;
 import org.jpmml.evaluator.visitors.ElementOptimizerBattery;
 import org.jpmml.model.VisitorBattery;
-import org.jpmml.model.visitors.ArrayListTransformer;
-import org.jpmml.model.visitors.ArrayListTrimmer;
 import org.jpmml.model.visitors.AttributeInternerBattery;
+import org.jpmml.model.visitors.ListFinalizerBattery;
 import org.jpmml.model.visitors.LocatorNullifier;
 import org.jpmml.model.visitors.MemoryMeasurer;
 
@@ -252,8 +251,7 @@ public class EvaluationExample extends Example {
 			visitorBattery.addAll(new AttributeInternerBattery());
 			visitorBattery.addAll(new ElementInternerBattery());
 
-			visitorBattery.add(ArrayListTransformer.class);
-			visitorBattery.add(ArrayListTrimmer.class);
+			visitorBattery.addAll(new ListFinalizerBattery());
 		}
 
 		visitorBattery.applyTo(pmml);

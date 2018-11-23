@@ -107,11 +107,12 @@ The newly loaded `PMML` instance should tailored by applying appropriate `org.dm
 * `org.jpmml.model.visitors.LocatorTransformer`. Transforms SAX Locator information to Java serializable representation. Recommended for development and testing environments.
 * `org.jpmml.model.visitors.LocatorNullifier`. Removes SAX Locator information. Recommended for production environments.
 * `org.jpmml.model.visitors.<Type>Interner`. Replaces all occurrences of the same PMML attribute value with the singleton attribute value.
+* `org.jpmml.evaluator.visitors.<Element>Optimizer`. Pre-parses a PMML element.
 * `org.jpmml.evaluator.visitors.<Element>Interner`. Replaces all occurrences of the same PMML element with the singleton element.
-* `org.jpmml.evaluator.visitors.<Element>Optimizer`. Pre-parses PMML element.
 
-To facilitate their use, visitor classes have been grouped into visitor battery classes:
+To facilitate their discovery and use, visitor classes have been grouped into visitor battery classes:
 * `org.jpmml.model.visitors.AttributeInternerBattery`
+* `org.jpmml.model.visitors.ListFinalizerBattery`
 * `org.jpmml.evaluator.visitors.ElementInternerBattery`
 * `org.jpmml.evaluator.visitors.ElementOptimizerBattery`
 
@@ -122,9 +123,15 @@ VisitorBattery visitorBattery = new VisitorBattery();
 // Getting rid of SAX Locator information
 visitorBattery.add(org.jpmml.model.visitors.LocatorNullifier.class);
 
+// Pre-parsing PMML elements
+visitorBattery.addAll(new org.jpmml.evaluator.visitors.ElementOptimizerBattery());
+
 // Getting rid of duplicate PMML attribute values and PMML elements
 visitorBattery.addAll(new org.jpmml.model.visitors.AttributeInternerBattery());
 visitorBattery.addAll(new org.jpmml.evaluator.visitors.ElementInternerBattery());
+
+// Freezing the final representation of PMML elements
+visitorBattery.addAll(new org.jpmml.model.visitors.ListFinalizerBattery());
 
 visitorBattery.applyTo(pmml);
 ```
