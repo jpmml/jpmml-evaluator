@@ -130,9 +130,10 @@ public class TestingExample extends Example {
 
 		CsvUtil.Table outputTable = readTable(this.output, this.separator);
 
-		ModelEvaluatorFactory modelEvaluatorFactory = (ModelEvaluatorFactory)newInstance(Class.forName(this.modelEvaluatorFactoryClazz));
+		EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml)
+			.setModelEvaluatorFactory((ModelEvaluatorFactory)newInstance(this.modelEvaluatorFactoryClazz));
 
-		Evaluator evaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
+		Evaluator evaluator = evaluatorBuilder.build();
 
 		// Perform self-testing
 		evaluator.verify();

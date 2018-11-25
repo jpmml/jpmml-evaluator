@@ -139,29 +139,29 @@ visitorBattery.applyTo(pmml);
 The PMML standard defines large number of model types.
 The evaluation logic for each model type is encapsulated into a corresponding `org.jpmml.evaluator.ModelEvaluator` subclass.
 
-Even though `ModelEvaluator` subclasses can be created directly, the recommended approach is to follow the factory design pattern as implemented by the `org.jpmml.evaluator.ModelEvaluatorFactory` factory class.
+Even though `ModelEvaluator` subclasses can be instantiated directly, the recommended approach is to follow the Builder design pattern as implemented by the `org.jpmml.evaluator.ModelEvaluatorBuilder` builder class.
 
-Obtaining and configuring a `ModelEvaluatorFactory` instance:
+Creating and configuring a `ModelEvaluatorBuilder` instance:
+
 ```java
-ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
-
-// Activate the generation of MathML prediction reports
-ValueFactoryFactory valueFactoryFactory = ReportingValueFactoryFactory.newInstance();
-modelEvaluatorFactory.setValueFactoryFactory(valueFactoryFactory);
+ModelEvaluatorBuilder modelEvaluatorBuilder = new ModelEvaluatorBuilder(pmml)
+	// Activate the generation of MathML prediction reports
+	.setValueFactoryFactory(ReportingValueFactoryFactory.newInstance());
 ```
 
-The model evaluator factory selects the first model from the `PMML` instance, and creates and configures a corresponding `ModelEvaluator` instance.
+By default, the model evaluator builder selects the first scorable model from the `PMML` instance, and builds a corresponding `ModelEvaluator` instance.
 However, in order to promote loose coupling, it is advisable to cast the result to a much simplified `org.jpmml.evaluator.Evaluator` instance.
 
-Obtaining an `Evaluator` instance for the `PMML` instance:
-```java
-Evaluator evaluator = (Evaluator)modelEvaluatorFactory.newModelEvaluator(pmml);
-```
+Building an `Evaluator` instance:
 
-Model evaluator classes follow functional programming principles and are completely thread safe.
+```java
+Evaluator evaluator = (Evaluator)modelEvaluatorBuilder.build();
+```
 
 Model evaluator instances are fairly lightweight, which makes them cheap to create and destroy.
 Nevertheless, long-running applications should maintain a one-to-one mapping between `PMML` and `Evaluator` instances for better performance.
+
+Model evaluator classes follow functional programming principles and are completely thread safe.
 
 ### Querying the "data schema" of models
 

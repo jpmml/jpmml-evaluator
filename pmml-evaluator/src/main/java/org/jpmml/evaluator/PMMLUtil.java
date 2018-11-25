@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -28,6 +29,21 @@ import org.dmg.pmml.PMML;
 public class PMMLUtil {
 
 	private PMMLUtil(){
+	}
+
+	static
+	public Model findModel(PMML pmml, String modelName){
+		Model model;
+
+		if(modelName != null){
+			model = PMMLUtil.findModel(pmml, (Model object) -> Objects.equals(object.getModelName(), modelName), "<Model>@modelName=" + modelName);
+		} else
+
+		{
+			model = PMMLUtil.findModel(pmml, (Model object) -> object.isScorable(), "<Model>@isScorable=true");
+		}
+
+		return model;
 	}
 
 	static

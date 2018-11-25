@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
@@ -62,17 +61,7 @@ public class ModelEvaluatorFactory implements Serializable {
 	}
 
 	public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml, String modelName){
-		Model model;
-
-		if(modelName != null){
-			model = PMMLUtil.findModel(pmml, (Model object) -> Objects.equals(object.getModelName(), modelName), "<Model>@modelName=" + modelName);
-		} else
-
-		{
-			model = PMMLUtil.findModel(pmml, (Model object) -> object.isScorable(), "<Model>@isScorable=true");
-		}
-
-		return newModelEvaluator(pmml, model);
+		return newModelEvaluator(pmml, PMMLUtil.findModel(pmml, modelName));
 	}
 
 	public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml, Model model){

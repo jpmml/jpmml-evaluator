@@ -120,7 +120,9 @@ public class Example {
 	}
 
 	static
-	public Object newInstance(Class<?> clazz) throws ReflectiveOperationException {
+	public Object newInstance(String name) throws ReflectiveOperationException {
+		Class<?> clazz = Class.forName(name);
+
 		Method newInstanceMethod = clazz.getDeclaredMethod("newInstance");
 
 		return newInstanceMethod.invoke(null);

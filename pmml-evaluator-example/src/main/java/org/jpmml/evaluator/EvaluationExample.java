@@ -280,12 +280,11 @@ public class EvaluationExample extends Example {
 			System.out.println("\t" + "Other objects: " + numberFormat.format(objectCount - pmmlObjectCount));
 		}
 
-		ModelEvaluatorFactory modelEvaluatorFactory = (ModelEvaluatorFactory)newInstance(Class.forName(this.modelEvaluatorFactoryClazz));
+		EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml, this.modelName)
+			.setModelEvaluatorFactory((ModelEvaluatorFactory)newInstance(this.modelEvaluatorFactoryClazz))
+			.setValueFactoryFactory((ValueFactoryFactory)newInstance(this.valueFactoryFactoryClazz));
 
-		ValueFactoryFactory valueFactoryFactory = (ValueFactoryFactory)newInstance(Class.forName(this.valueFactoryFactoryClazz));
-		modelEvaluatorFactory.setValueFactoryFactory(valueFactoryFactory);
-
-		Evaluator evaluator = modelEvaluatorFactory.newModelEvaluator(pmml, this.modelName);
+		Evaluator evaluator = evaluatorBuilder.build();
 
 		// Perform self-testing
 		evaluator.verify();

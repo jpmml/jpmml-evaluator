@@ -52,12 +52,13 @@ public class ArchiveBatch implements Batch {
 	public Evaluator getEvaluator() throws Exception {
 		PMML pmml = getPMML();
 
-		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
+		EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml);
 
-		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
-		modelEvaluator.verify();
+		Evaluator evaluator = evaluatorBuilder.build();
 
-		return modelEvaluator;
+		evaluator.verify();
+
+		return evaluator;
 	}
 
 	public PMML getPMML() throws Exception {
