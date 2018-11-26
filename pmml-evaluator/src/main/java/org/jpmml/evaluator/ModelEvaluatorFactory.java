@@ -61,7 +61,9 @@ public class ModelEvaluatorFactory implements Serializable {
 	}
 
 	public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml, String modelName){
-		return newModelEvaluator(pmml, PMMLUtil.findModel(pmml, modelName));
+		Model model = PMMLUtil.findModel(pmml, modelName);
+
+		return newModelEvaluator(pmml, model);
 	}
 
 	public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml, Model model){

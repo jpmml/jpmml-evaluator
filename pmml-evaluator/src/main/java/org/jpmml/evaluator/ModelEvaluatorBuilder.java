@@ -34,6 +34,9 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	private ValueFactoryFactory valueFactoryFactory = null;
 
 
+	ModelEvaluatorBuilder(){
+	}
+
 	/**
 	 * <p>
 	 * Selects the first scorable model.
@@ -42,8 +45,7 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	 * @throw MissingElementException If the PMML does not contain any scorable models.
 	 */
 	public ModelEvaluatorBuilder(PMML pmml){
-		setPMML(pmml);
-		setModel(PMMLUtil.findModel(pmml, (String)null));
+		this(pmml, (String)null);
 	}
 
 	/**
