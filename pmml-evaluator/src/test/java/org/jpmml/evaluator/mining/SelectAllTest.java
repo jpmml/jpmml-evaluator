@@ -75,7 +75,7 @@ public class SelectAllTest extends ModelEvaluatorTest {
 
 
 		@Override
-		public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml, Model model){
+		public ModelEvaluator<?> newModelEvaluator(PMML pmml, Model model){
 			ModelEvaluator<?> modelEvaluator = super.newModelEvaluator(pmml, model);
 
 			if(modelEvaluator instanceof MiningModelEvaluator){

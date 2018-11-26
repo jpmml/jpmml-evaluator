@@ -56,24 +56,24 @@ public class ModelEvaluatorFactory implements Serializable {
 	protected ModelEvaluatorFactory(){
 	}
 
-	public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml){
+	public ModelEvaluator<?> newModelEvaluator(PMML pmml){
 		return newModelEvaluator(pmml, (String)null);
 	}
 
-	public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml, String modelName){
+	public ModelEvaluator<?> newModelEvaluator(PMML pmml, String modelName){
 		Model model = PMMLUtil.findModel(pmml, modelName);
 
 		return newModelEvaluator(pmml, model);
 	}
 
-	public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml, Model model){
+	public ModelEvaluator<?> newModelEvaluator(PMML pmml, Model model){
 		ModelEvaluator<?> modelEvaluator = createModelEvaluator(pmml, model);
 		modelEvaluator.configure(this);
 
 		return modelEvaluator;
 	}
 
-	private ModelEvaluator<? extends Model> createModelEvaluator(PMML pmml, Model model){
+	private ModelEvaluator<?> createModelEvaluator(PMML pmml, Model model){
 
 		if(model instanceof AssociationModel){
 			return new AssociationModelEvaluator(pmml, (AssociationModel)model);
