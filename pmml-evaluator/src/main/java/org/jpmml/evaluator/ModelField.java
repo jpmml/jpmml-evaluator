@@ -19,8 +19,10 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
 import org.jpmml.model.ToStringHelper;
@@ -33,14 +35,30 @@ import org.jpmml.model.ToStringHelper;
 abstract
 public class ModelField implements Serializable {
 
-	abstract
-	public FieldName getName();
+	private Field<?> field = null;
 
-	abstract
-	public DataType getDataType();
 
-	abstract
-	public OpType getOpType();
+	public ModelField(Field<?> field){
+		setField(Objects.requireNonNull(field));
+	}
+
+	public FieldName getName(){
+		Field<?> field = getField();
+
+		return field.getName();
+	}
+
+	public DataType getDataType(){
+		Field<?> field = getField();
+
+		return field.getDataType();
+	}
+
+	public OpType getOpType(){
+		Field<?> field = getField();
+
+		return field.getOpType();
+	}
 
 	@Override
 	public String toString(){
@@ -56,5 +74,16 @@ public class ModelField implements Serializable {
 			.add("opType", getOpType());
 
 		return helper;
+	}
+
+	/**
+	 * @return The backing {@link Field} element.
+	 */
+	public Field<?> getField(){
+		return this.field;
+	}
+
+	private void setField(Field<?> field){
+		this.field = field;
 	}
 }

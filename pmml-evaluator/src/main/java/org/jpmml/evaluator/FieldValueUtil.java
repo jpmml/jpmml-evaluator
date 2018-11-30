@@ -606,7 +606,7 @@ public class FieldValueUtil {
 
 	static
 	public Value getValidValue(TargetField targetField, Object value){
-		return getValidValue(targetField.getDataField(), value);
+		return getValidValue(targetField.getField(), value);
 	}
 
 	static

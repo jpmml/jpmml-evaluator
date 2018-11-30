@@ -195,7 +195,7 @@ Querying and analyzing target fields:
 ```java
 List<TargetField> targetFields = evaluator.getTargetFields();
 for(TargetField targetField : targetFields){
-	org.dmg.pmml.DataField pmmlDataField = targetField.getDataField();
+	org.dmg.pmml.DataField pmmlDataField = targetField.getField();
 	org.dmg.pmml.MiningField pmmlMiningField = targetField.getMiningField(); // Could be null
 	org.dmg.pmml.Target pmmlTarget = targetField.getTarget(); // Could be null
 

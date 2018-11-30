@@ -50,7 +50,7 @@ public class TargetUtil {
 
 	static
 	public <V extends Number> Map<FieldName, ?> evaluateRegression(TargetField targetField, Value<V> value){
-		DataField dataField = targetField.getDataField();
+		DataField dataField = targetField.getField();
 
 		value = evaluateRegressionInternal(targetField, value);
 
@@ -67,7 +67,7 @@ public class TargetUtil {
 
 	static
 	public <V extends Number> Map<FieldName, ? extends Regression<V>> evaluateRegression(TargetField targetField, Regression<V> regression){
-		DataField dataField = targetField.getDataField();
+		DataField dataField = targetField.getField();
 
 		regression.computeResult(dataField.getDataType());
 
@@ -87,7 +87,7 @@ public class TargetUtil {
 
 	static
 	public Map<FieldName, ? extends Vote> evaluateVote(TargetField targetField, Vote vote){
-		DataField dataField = targetField.getDataField();
+		DataField dataField = targetField.getField();
 
 		vote.computeResult(dataField.getDataType());
 
@@ -111,7 +111,7 @@ public class TargetUtil {
 
 	static
 	public <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(TargetField targetField, Classification<V> classification){
-		DataField dataField = targetField.getDataField();
+		DataField dataField = targetField.getField();
 
 		classification.computeResult(dataField.getDataType());
 

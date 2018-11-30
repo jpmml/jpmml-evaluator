@@ -581,7 +581,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 								continue;
 							}
 
-							context.putOutputField(outputField.getOutputField());
+							context.putOutputField(outputField.getField());
 
 							FieldValue value;
 

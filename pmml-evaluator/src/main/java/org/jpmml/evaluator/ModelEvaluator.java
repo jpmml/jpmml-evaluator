@@ -465,7 +465,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 			List<ResidualInputField> residualInputFields = null;
 
 			for(OutputField outputField : outputFields){
-				org.dmg.pmml.OutputField pmmlOutputField = outputField.getOutputField();
+				org.dmg.pmml.OutputField pmmlOutputField = outputField.getField();
 
 				if(!(pmmlOutputField.getResultFeature()).equals(ResultFeature.RESIDUAL)){
 					continue;

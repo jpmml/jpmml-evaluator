@@ -410,7 +410,7 @@ public class OutputUtil {
 				}
 				break;
 			default:
-				DataField dataField = targetField.getDataField(); // XXX
+				DataField dataField = targetField.getField(); // XXX
 
 				throw new UnsupportedAttributeException(dataField, opType);
 		}

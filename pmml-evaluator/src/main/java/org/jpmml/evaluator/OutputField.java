@@ -18,22 +18,17 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Objects;
-
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
 import org.jpmml.model.ToStringHelper;
 
 public class OutputField extends ResultField {
 
-	private org.dmg.pmml.OutputField outputField = null;
-
 	private int depth = 0;
 
 
 	public OutputField(OutputField outputField){
-		this(outputField.getOutputField(), outputField.getDepth() + 1);
+		this(outputField.getField(), outputField.getDepth() + 1);
 	}
 
 	public OutputField(org.dmg.pmml.OutputField outputField){
@@ -41,7 +36,7 @@ public class OutputField extends ResultField {
 	}
 
 	public OutputField(org.dmg.pmml.OutputField outputField, int depth){
-		setOutputField(Objects.requireNonNull(outputField));
+		super(outputField);
 
 		if(depth < 0){
 			throw new IllegalArgumentException();
@@ -50,31 +45,20 @@ public class OutputField extends ResultField {
 		setDepth(depth);
 	}
 
-	@Override
-	public FieldName getName(){
-		org.dmg.pmml.OutputField outputField = getOutputField();
-
-		return outputField.getName();
-	}
-
 	/**
-	 * @return the data type, or <code>null</code>.
+	 * @return The data type, or <code>null</code>.
 	 */
 	@Override
 	public DataType getDataType(){
-		org.dmg.pmml.OutputField outputField = getOutputField();
-
-		return outputField.getDataType();
+		return super.getDataType();
 	}
 
 	/**
-	 * @return the operational type, or <code>null</code>.
+	 * @return The operational type, or <code>null</code>.
 	 */
 	@Override
 	public OpType getOpType(){
-		org.dmg.pmml.OutputField outputField = getOutputField();
-
-		return outputField.getOpType();
+		return super.getOpType();
 	}
 
 	/**
@@ -103,7 +87,7 @@ public class OutputField extends ResultField {
 	 * </pre>
 	 */
 	public boolean isFinalResult(){
-		org.dmg.pmml.OutputField outputField = getOutputField();
+		org.dmg.pmml.OutputField outputField = getField();
 
 		return outputField.isFinalResult();
 	}
@@ -118,14 +102,11 @@ public class OutputField extends ResultField {
 	}
 
 	/**
-	 * @return the backing {@link org.dmg.pmml.OutputField} element.
+	 * @return The backing {@link org.dmg.pmml.OutputField} element.
 	 */
-	public org.dmg.pmml.OutputField getOutputField(){
-		return this.outputField;
-	}
-
-	private void setOutputField(org.dmg.pmml.OutputField outputField){
-		this.outputField = outputField;
+	@Override
+	public org.dmg.pmml.OutputField getField(){
+		return (org.dmg.pmml.OutputField)super.getField();
 	}
 
 	/**
@@ -149,7 +130,7 @@ public class OutputField extends ResultField {
 	 * }
 	 * </pre>
 	 *
-	 * @return the nesting depth.
+	 * @return The nesting depth.
 	 */
 	public int getDepth(){
 		return this.depth;
