@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.google.common.collect.Iterables;
 import org.dmg.pmml.FieldName;
@@ -64,13 +65,13 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	 * @see Model#getModelName()
 	 */
 	public ModelEvaluatorBuilder(PMML pmml, String modelName){
-		setPMML(pmml);
+		setPMML(Objects.requireNonNull(pmml));
 		setModel(PMMLUtil.findModel(pmml, modelName));
 	}
 
 	public ModelEvaluatorBuilder(PMML pmml, Model model){
-		setPMML(pmml);
-		setModel(model);
+		setPMML(Objects.requireNonNull(pmml));
+		setModel(Objects.requireNonNull(model));
 	}
 
 	@Override
@@ -119,12 +120,7 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		return this.pmml;
 	}
 
-	public ModelEvaluatorBuilder setPMML(PMML pmml){
-
-		if(pmml == null){
-			throw new NullPointerException();
-		}
-
+	ModelEvaluatorBuilder setPMML(PMML pmml){
 		this.pmml = pmml;
 
 		return this;
@@ -134,12 +130,7 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		return this.model;
 	}
 
-	public ModelEvaluatorBuilder setModel(Model model){
-
-		if(model == null){
-			throw new NullPointerException();
-		}
-
+	ModelEvaluatorBuilder setModel(Model model){
 		this.model = model;
 
 		return this;

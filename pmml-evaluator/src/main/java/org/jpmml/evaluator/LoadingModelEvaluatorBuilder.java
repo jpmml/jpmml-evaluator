@@ -18,6 +18,9 @@
  */
 package org.jpmml.evaluator;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
@@ -54,6 +57,20 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 
 
 	public LoadingModelEvaluatorBuilder(){
+	}
+
+	public LoadingModelEvaluatorBuilder load(File file) throws IOException, SAXException, JAXBException {
+
+		try(InputStream is = new FileInputStream(file)){
+			return load(is);
+		}
+	}
+
+	public LoadingModelEvaluatorBuilder load(File file, String modelName) throws IOException, SAXException, JAXBException {
+
+		try(InputStream is = new FileInputStream(file)){
+			return load(is, modelName);
+		}
 	}
 
 	public LoadingModelEvaluatorBuilder load(InputStream is) throws SAXException, JAXBException {
