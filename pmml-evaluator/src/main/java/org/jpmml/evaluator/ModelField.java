@@ -37,15 +37,34 @@ public class ModelField implements Serializable {
 
 	private Field<?> field = null;
 
+	private FieldName name = null;
+
 
 	public ModelField(Field<?> field){
 		setField(Objects.requireNonNull(field));
 	}
 
 	public FieldName getName(){
-		Field<?> field = getField();
 
-		return field.getName();
+		if(this.name == null){
+			Field<?> field = getField();
+
+			return field.getName();
+		}
+
+		return this.name;
+	}
+
+	/**
+	 * <p>
+	 * Soft-renames this model field.
+	 * </p>
+	 *
+	 * @param name The new name of the model field.
+	 * Use <code>null</code> to restore the origial name of the model field.
+	 */
+	public void setName(FieldName name){
+		this.name = name;
 	}
 
 	public DataType getDataType(){

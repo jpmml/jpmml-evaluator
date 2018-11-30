@@ -20,6 +20,8 @@ package org.jpmml.evaluator;
 
 import java.io.Serializable;
 
+import com.google.common.collect.Iterables;
+import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 
@@ -32,6 +34,10 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	private ModelEvaluatorFactory modelEvaluatorFactory = null;
 
 	private ValueFactoryFactory valueFactoryFactory = null;
+
+	private java.util.function.Function<FieldName, FieldName> inputMapper = null;
+
+	private java.util.function.Function<FieldName, FieldName> resultMapper = null;
 
 
 	ModelEvaluatorBuilder(){
@@ -85,7 +91,28 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 
 		modelEvaluatorFactory.setValueFactoryFactory(valueFactoryFactory);
 
-		return modelEvaluatorFactory.newModelEvaluator(pmml, model);
+		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml, model);
+
+		java.util.function.Function<FieldName, FieldName> inputMapper = getInputMapper();
+		java.util.function.Function<FieldName, FieldName> resultMapper = getResultMapper();
+
+		if(inputMapper != null){
+			Iterable<? extends InputField> inputFields = modelEvaluator.getInputFields();
+
+			for(InputField inputField : inputFields){
+				inputField.setName(inputMapper.apply(inputField.getName()));
+			}
+		} // End if
+
+		if(resultMapper != null){
+			Iterable<? extends ResultField> resultFields = Iterables.concat(modelEvaluator.getTargetFields(), modelEvaluator.getOutputFields());
+
+			for(ResultField resultField : resultFields){
+				resultField.setName(resultMapper.apply(resultField.getName()));
+			}
+		}
+
+		return modelEvaluator;
 	}
 
 	public PMML getPMML(){
@@ -134,6 +161,26 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 
 	public ModelEvaluatorBuilder setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
 		this.valueFactoryFactory = valueFactoryFactory;
+
+		return this;
+	}
+
+	public java.util.function.Function<FieldName, FieldName> getInputMapper(){
+		return this.inputMapper;
+	}
+
+	public ModelEvaluatorBuilder setInputMapper(java.util.function.Function<FieldName, FieldName> inputMapper){
+		this.inputMapper = inputMapper;
+
+		return this;
+	}
+
+	public java.util.function.Function<FieldName, FieldName> getResultMapper(){
+		return this.resultMapper;
+	}
+
+	public ModelEvaluatorBuilder setResultMapper(java.util.function.Function<FieldName, FieldName> resultMapper){
+		this.resultMapper = resultMapper;
 
 		return this;
 	}
