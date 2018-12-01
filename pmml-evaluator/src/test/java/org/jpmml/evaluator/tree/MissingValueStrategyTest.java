@@ -120,8 +120,8 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 			.setMissingValueStrategy(missingValueStrategy)
 			.setMissingValuePenalty(missingValuePenalty);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		return (NodeScoreDistribution<?>)result.get(evaluator.getTargetFieldName());
+		return (NodeScoreDistribution<?>)results.get(evaluator.getTargetFieldName());
 	}
 }

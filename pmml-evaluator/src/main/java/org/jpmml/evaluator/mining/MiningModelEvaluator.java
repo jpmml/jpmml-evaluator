@@ -550,9 +550,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			SegmentResult segmentResult;
 
 			try {
-				Map<FieldName, ?> result = segmentModelEvaluator.evaluate(segmentContext);
+				Map<FieldName, ?> results = segmentModelEvaluator.evaluate(segmentContext);
 
-				segmentResult = new SegmentResult(segment, result){
+				segmentResult = new SegmentResult(segment, results){
 
 					@Override
 					public String getEntityId(){

@@ -50,9 +50,9 @@ public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("marital status", "d", "dependents", 0);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		AffinityDistribution<?> targetValue = (AffinityDistribution<?>)result.get(evaluator.getTargetFieldName());
+		AffinityDistribution<?> targetValue = (AffinityDistribution<?>)results.get(evaluator.getTargetFieldName());
 
 		try {
 			targetValue.getResult();
@@ -75,8 +75,8 @@ public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
 
 		assertEquals(Arrays.asList("3", "1", "4"), (targetValue.getEntityIdRanking()).subList(0, 3));
 
-		assertEquals("3", getOutput(result, "neighbor1"));
-		assertEquals("1", getOutput(result, "neighbor2"));
-		assertEquals("4", getOutput(result, "neighbor3"));
+		assertEquals("3", getOutput(results, "neighbor1"));
+		assertEquals("1", getOutput(results, "neighbor2"));
+		assertEquals("4", getOutput(results, "neighbor3"));
 	}
 }

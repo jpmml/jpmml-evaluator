@@ -347,9 +347,9 @@ public class EvaluationExample extends Example {
 						arguments.put(name, value);
 					}
 
-					Map<FieldName, ?> result = evaluator.evaluate(arguments);
+					Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-					outputRecords.add(result);
+					outputRecords.add(results);
 				}
 			} finally {
 				context.close();

@@ -35,16 +35,16 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("input", (2d * 0.8d), "target", "yes");
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		FieldName field = FieldName.create("residual");
+		FieldName name = FieldName.create("residual");
 
-		assertEquals(0.2d, (Double)getOutput(result, field), 1e-8);
+		assertEquals(0.2d, (Double)getOutput(results, name), 1e-8);
 
 		arguments = createArguments("input", (2d * 0.8d), "target", "no");
 
-		result = evaluator.evaluate(arguments);
+		results = evaluator.evaluate(arguments);
 
-		assertEquals(-0.8d, (Double)getOutput(result, field), 1e-8);
+		assertEquals(-0.8d, (Double)getOutput(results, name), 1e-8);
 	}
 }

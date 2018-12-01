@@ -35,12 +35,12 @@ public class SegmentResult extends ForwardingMap<FieldName, Object> implements H
 
 	private Segment segment = null;
 
-	private Map<FieldName, ?> result = null;
+	private Map<FieldName, ?> results = null;
 
 
-	SegmentResult(Segment segment, Map<FieldName, ?> result){
+	SegmentResult(Segment segment, Map<FieldName, ?> results){
 		setSegment(segment);
-		setResult(result);
+		setResults(results);
 	}
 
 	abstract
@@ -51,9 +51,9 @@ public class SegmentResult extends ForwardingMap<FieldName, Object> implements H
 		value = {"rawtypes", "unchecked"}
 	)
 	public Map<FieldName, Object> delegate(){
-		Map<FieldName, ?> result = getResult();
+		Map<FieldName, ?> results = getResults();
 
-		return (Map)result;
+		return (Map)results;
 	}
 
 	@Override
@@ -92,11 +92,11 @@ public class SegmentResult extends ForwardingMap<FieldName, Object> implements H
 		this.segment = segment;
 	}
 
-	public Map<FieldName, ?> getResult(){
-		return this.result;
+	public Map<FieldName, ?> getResults(){
+		return this.results;
 	}
 
-	private void setResult(Map<FieldName, ?> result){
-		this.result = result;
+	private void setResults(Map<FieldName, ?> results){
+		this.results = results;
 	}
 }

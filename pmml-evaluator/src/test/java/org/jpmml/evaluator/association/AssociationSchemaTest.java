@@ -50,14 +50,14 @@ public class AssociationSchemaTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createItemArguments(items);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals(recommendations, getOutput(result, "Recommendation"));
-		assertEquals(exclusiveRecommendations, getOutput(result, "Exclusive_Recommendation"));
-		assertEquals(ruleAssociations, getOutput(result, "Rule_Association"));
+		assertEquals(recommendations, getOutput(results, "Recommendation"));
+		assertEquals(exclusiveRecommendations, getOutput(results, "Exclusive_Recommendation"));
+		assertEquals(ruleAssociations, getOutput(results, "Rule_Association"));
 
-		assertEquals(Iterables.getFirst(recommendations, null), getOutput(result, "Top Recommendation"));
-		assertEquals(Iterables.getFirst(exclusiveRecommendations, null), getOutput(result, "Top Exclusive_Recommendation"));
-		assertEquals(Iterables.getFirst(ruleAssociations, null), getOutput(result, "Top Rule_Association"));
+		assertEquals(Iterables.getFirst(recommendations, null), getOutput(results, "Top Recommendation"));
+		assertEquals(Iterables.getFirst(exclusiveRecommendations, null), getOutput(results, "Top Exclusive_Recommendation"));
+		assertEquals(Iterables.getFirst(ruleAssociations, null), getOutput(results, "Top Rule_Association"));
 	}
 }

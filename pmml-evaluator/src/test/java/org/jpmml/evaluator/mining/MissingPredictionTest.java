@@ -84,8 +84,8 @@ public class MissingPredictionTest extends ModelEvaluatorTest {
 	private Integer evaluate(ModelEvaluator<?> evaluator, Double x){
 		Map<FieldName, ?> arguments = createArguments("x", x);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		return (Integer)getTarget(result, "y");
+		return (Integer)getTarget(results, "y");
 	}
 }

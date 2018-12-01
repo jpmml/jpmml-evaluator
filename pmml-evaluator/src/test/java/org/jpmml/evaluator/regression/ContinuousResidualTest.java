@@ -57,16 +57,16 @@ public class ContinuousResidualTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("input", 0.8d, "target", 3d);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		FieldName field = FieldName.create("residual");
+		FieldName name = FieldName.create("residual");
 
-		assertEquals(2.6d, (Double)getOutput(result, field), 1e-8);
+		assertEquals(2.6d, (Double)getOutput(results, name), 1e-8);
 
 		arguments = createArguments("input", 0.8d, "target", null);
 
-		result = evaluator.evaluate(arguments);
+		results = evaluator.evaluate(arguments);
 
-		assertEquals(1.6d, (Double)getOutput(result, field), 1e-8);
+		assertEquals(1.6d, (Double)getOutput(results, name), 1e-8);
 	}
 }

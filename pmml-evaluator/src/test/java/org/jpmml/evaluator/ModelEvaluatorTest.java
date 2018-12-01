@@ -124,15 +124,15 @@ public class ModelEvaluatorTest {
 	}
 
 	static
-	public Object getTarget(Map<FieldName, ?> result, Object name){
-		Object value = result.get(toFieldName(name));
+	public Object getTarget(Map<FieldName, ?> results, Object name){
+		Object value = results.get(toFieldName(name));
 
 		return EvaluatorUtil.decode(value);
 	}
 
 	static
-	public Object getOutput(Map<FieldName, ?> result, Object name){
-		Object value = result.get(toFieldName(name));
+	public Object getOutput(Map<FieldName, ?> results, Object name){
+		Object value = results.get(toFieldName(name));
 
 		return value;
 	}

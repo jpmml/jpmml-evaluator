@@ -67,14 +67,14 @@ public class BatchUtil {
 		for(int i = 0; i < input.size(); i++){
 			Map<FieldName, ?> arguments = input.get(i);
 
-			Map<FieldName, ?> expectedResult = output.get(i);
-			expectedResult = Maps.filterKeys(expectedResult, predicate::test);
+			Map<FieldName, ?> expectedResults = output.get(i);
+			expectedResults = Maps.filterKeys(expectedResults, predicate::test);
 
 			try {
-				Map<FieldName, ?> actualResult = evaluator.evaluate(arguments);
-				actualResult = Maps.filterKeys(actualResult, predicate::test);
+				Map<FieldName, ?> actualResults = evaluator.evaluate(arguments);
+				actualResults = Maps.filterKeys(actualResults, predicate::test);
 
-				MapDifference<FieldName, ?> difference = Maps.<FieldName, Object>difference(expectedResult, actualResult, equivalence);
+				MapDifference<FieldName, ?> difference = Maps.<FieldName, Object>difference(expectedResults, actualResults, equivalence);
 				if(!difference.areEqual()){
 					Conflict conflict = new Conflict(i, arguments, difference);
 

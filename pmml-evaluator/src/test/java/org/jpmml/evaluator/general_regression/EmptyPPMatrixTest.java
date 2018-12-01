@@ -35,8 +35,8 @@ public class EmptyPPMatrixTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments();
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals((Double)0d, getTarget(result, "high_time"));
+		assertEquals((Double)0d, getTarget(results, "high_time"));
 	}
 }

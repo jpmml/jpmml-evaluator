@@ -35,12 +35,12 @@ public class ClassificationOutputTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("flag", false);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals("0", getTarget(result, "result"));
+		assertEquals("0", getTarget(results, "result"));
 
-		assertEquals("0", getOutput(result, "output_predictedValue"));
-		assertEquals("zero", getOutput(result, "output_predictedDisplayValue"));
-		assertEquals(1d, getOutput(result, "output_probability"));
+		assertEquals("0", getOutput(results, "output_predictedValue"));
+		assertEquals("zero", getOutput(results, "output_predictedDisplayValue"));
+		assertEquals(1d, getOutput(results, "output_probability"));
 	}
 }

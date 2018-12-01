@@ -52,9 +52,9 @@ public class VectorInstanceTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("x1", x1, "x2", x2);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		Regression<?> targetValue = (Regression<?>)result.get(evaluator.getTargetFieldName());
+		Regression<?> targetValue = (Regression<?>)results.get(evaluator.getTargetFieldName());
 
 		return (Double)targetValue.getResult();
 	}

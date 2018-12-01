@@ -372,7 +372,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 				arguments.put(name, value);
 			}
 
-			Map<FieldName, ?> result = evaluate(arguments);
+			Map<FieldName, ?> results = evaluate(arguments);
 
 			// "If there exist VerificationField elements that refer to OutputField elements,
 			// then any VerificationField element that refers to a MiningField element whose "usageType=target" should be ignored,
@@ -387,7 +387,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 						continue;
 					}
 
-					verify(record.get(name), result.get(name), verificationField.getPrecision(), verificationField.getZeroThreshold());
+					verify(record.get(name), results.get(name), verificationField.getPrecision(), verificationField.getZeroThreshold());
 				}
 			} else
 
@@ -402,7 +402,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 						continue;
 					}
 
-					verify(record.get(name), EvaluatorUtil.decode(result.get(name)), verificationField.getPrecision(), verificationField.getZeroThreshold());
+					verify(record.get(name), EvaluatorUtil.decode(results.get(name)), verificationField.getPrecision(), verificationField.getZeroThreshold());
 				}
 			}
 		}

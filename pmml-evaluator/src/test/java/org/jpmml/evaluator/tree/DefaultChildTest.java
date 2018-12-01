@@ -35,9 +35,9 @@ public class DefaultChildTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("Integer", null, "Double", 76.45d);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		NodeScoreDistribution<?> targetValue = (NodeScoreDistribution<?>)result.get(evaluator.getTargetFieldName());
+		NodeScoreDistribution<?> targetValue = (NodeScoreDistribution<?>)results.get(evaluator.getTargetFieldName());
 
 		assertEquals("Result1", targetValue.getResult());
 		assertEquals("10", targetValue.getEntityId());

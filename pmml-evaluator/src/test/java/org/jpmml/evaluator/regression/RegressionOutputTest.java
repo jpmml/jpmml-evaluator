@@ -35,14 +35,14 @@ public class RegressionOutputTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("input", 4d);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals(8d, getTarget(result, "result"));
+		assertEquals(8d, getTarget(results, "result"));
 
-		assertEquals(8d, getOutput(result, "RawResult"));
-		assertEquals(8, getOutput(result, "RawIntegerResult"));
-		assertEquals(35d, getOutput(result, "FinalResult"));
-		assertEquals(35, getOutput(result, "FinalIntegerResult"));
-		assertEquals("waive", getOutput(result, "BusinessDecision"));
+		assertEquals(8d, getOutput(results, "RawResult"));
+		assertEquals(8, getOutput(results, "RawIntegerResult"));
+		assertEquals(35d, getOutput(results, "FinalResult"));
+		assertEquals(35, getOutput(results, "FinalIntegerResult"));
+		assertEquals("waive", getOutput(results, "BusinessDecision"));
 	}
 }

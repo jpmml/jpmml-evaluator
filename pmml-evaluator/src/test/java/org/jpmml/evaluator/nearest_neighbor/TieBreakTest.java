@@ -44,9 +44,9 @@ public class TieBreakTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("input", 1.5d);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals("medium", getTarget(result, "output"));
+		assertEquals("medium", getTarget(results, "output"));
 	}
 
 	@Test
@@ -55,8 +55,8 @@ public class TieBreakTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("input", 3.5d);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals("high", getTarget(result, "output"));
+		assertEquals("high", getTarget(results, "output"));
 	}
 }

@@ -62,9 +62,9 @@ public class TargetUtilTest {
 		assertEquals(OpType.CONTINUOUS, dataField.getOpType());
 		assertEquals(DataType.FLOAT, dataField.getDataType());
 
-		Map<FieldName, ?> result = evaluator.evaluate(Collections.emptyMap());
+		Map<FieldName, ?> results = evaluator.evaluate(Collections.emptyMap());
 
-		assertEquals((float)Math.PI, result.get(dataField.getName()));
+		assertEquals((float)Math.PI, results.get(dataField.getName()));
 
 		evaluator = createTreeModelEvaluator(MiningFunction.REGRESSION, MathContext.DOUBLE, target);
 
@@ -73,9 +73,9 @@ public class TargetUtilTest {
 		assertEquals(OpType.CONTINUOUS, dataField.getOpType());
 		assertEquals(DataType.DOUBLE, dataField.getDataType());
 
-		result = evaluator.evaluate(Collections.emptyMap());
+		results = evaluator.evaluate(Collections.emptyMap());
 
-		assertEquals(Math.PI, result.get(dataField.getName()));
+		assertEquals(Math.PI, results.get(dataField.getName()));
 	}
 
 	@Test
@@ -99,9 +99,9 @@ public class TargetUtilTest {
 		assertEquals(OpType.CATEGORICAL, dataField.getOpType());
 		assertEquals(DataType.STRING, dataField.getDataType());
 
-		Map<FieldName, ?> result = evaluator.evaluate(Collections.emptyMap());
+		Map<FieldName, ?> results = evaluator.evaluate(Collections.emptyMap());
 
-		HasProbability hasProbability = (HasProbability)result.get(dataField.getName());
+		HasProbability hasProbability = (HasProbability)results.get(dataField.getName());
 
 		assertEquals((Double)((double)(float)(1d / 7d)), hasProbability.getProbability("yes"));
 		assertEquals((Double)((double)(float)(1d - (1d / 7d))), hasProbability.getProbability("no"));
@@ -113,9 +113,9 @@ public class TargetUtilTest {
 		assertEquals(OpType.CATEGORICAL, dataField.getOpType());
 		assertEquals(DataType.STRING, dataField.getDataType());
 
-		result = evaluator.evaluate(Collections.emptyMap());
+		results = evaluator.evaluate(Collections.emptyMap());
 
-		hasProbability = (HasProbability)result.get(dataField.getName());
+		hasProbability = (HasProbability)results.get(dataField.getName());
 
 		assertEquals(yesValue.getPriorProbability(), hasProbability.getProbability("yes"));
 		assertEquals(noValue.getPriorProbability(), hasProbability.getProbability("no"));

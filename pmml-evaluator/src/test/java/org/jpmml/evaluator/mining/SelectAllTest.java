@@ -51,14 +51,14 @@ public class SelectAllTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("sepal_length", 5.1d, "sepal_width", 3.5d, "petal_length", 1.4d, "petal_width", 0.2d);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
 		assertEquals(1, modelEvaluatorFactory.getMiningModelCount());
 		assertEquals(5, modelEvaluatorFactory.getTreeModelCount());
 
-		assertEquals(1, result.size());
+		assertEquals(1, results.size());
 
-		Collection<?> species = (Collection<?>)result.get(FieldName.create("species"));
+		Collection<?> species = (Collection<?>)results.get(FieldName.create("species"));
 
 		assertEquals(5, species.size());
 

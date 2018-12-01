@@ -63,24 +63,24 @@ public class ModelNestingTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("input", 2d);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals(3, result.size());
+		assertEquals(3, results.size());
 
-		assertEquals(2d * 2d, (Double)getTarget(result, Evaluator.DEFAULT_TARGET_NAME), 1e-8d);
+		assertEquals(2d * 2d, (Double)getTarget(results, Evaluator.DEFAULT_TARGET_NAME), 1e-8d);
 
-		assertNotNull((Double)getOutput(result, "output"));
-		assertNotNull((String)getOutput(result, "report(output)"));
+		assertNotNull((Double)getOutput(results, "output"));
+		assertNotNull((String)getOutput(results, "report(output)"));
 
 		Configuration configuration = Configuration.getInstance();
 
 		evaluator.configure(configuration);
 
-		result = evaluator.evaluate(arguments);
+		results = evaluator.evaluate(arguments);
 
-		assertEquals(3, result.size());
+		assertEquals(3, results.size());
 
-		assertNotNull((Double)getOutput(result, "output"));
-		assertNull((String)getOutput(result, "report(output)"));
+		assertNotNull((Double)getOutput(results, "output"));
+		assertNull((String)getOutput(results, "report(output)"));
 	}
 }

@@ -44,8 +44,8 @@ public class ComplexPartialScoreTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("department", null, "age", null, "income", income);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		return (Double)getOutput(result, "Final Score");
+		return (Double)getOutput(results, "Final Score");
 	}
 }

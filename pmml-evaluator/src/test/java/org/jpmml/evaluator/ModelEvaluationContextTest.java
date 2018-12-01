@@ -34,14 +34,14 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("input", null);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals(1000d, getTarget(result, "prediction"));
+		assertEquals(1000d, getTarget(results, "prediction"));
 
 		arguments = createArguments("input", 1d);
 
-		result = evaluator.evaluate(arguments);
+		results = evaluator.evaluate(arguments);
 
-		assertEquals(1d, getTarget(result, "prediction"));
+		assertEquals(1d, getTarget(results, "prediction"));
 	}
 }

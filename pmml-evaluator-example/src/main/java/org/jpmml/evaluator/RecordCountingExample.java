@@ -118,12 +118,12 @@ public class RecordCountingExample extends Example {
 				arguments.put(name, value);
 			}
 
-			Map<FieldName, ?> result = evaluator.evaluate(arguments);
+			Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
 			for(TargetField targetField : targetFields){
 				FieldName name = targetField.getName();
 
-				Object value = result.get(name);
+				Object value = results.get(name);
 
 				HasSegmentation hasSegmentation = TypeUtil.cast(HasSegmentation.class, value);
 
