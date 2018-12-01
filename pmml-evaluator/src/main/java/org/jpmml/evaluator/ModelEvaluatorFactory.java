@@ -51,9 +51,6 @@ import org.jpmml.evaluator.tree.TreeModelEvaluator;
 
 public class ModelEvaluatorFactory implements Serializable {
 
-	private ValueFactoryFactory valueFactoryFactory = null;
-
-
 	protected ModelEvaluatorFactory(){
 	}
 
@@ -74,7 +71,7 @@ public class ModelEvaluatorFactory implements Serializable {
 		Objects.requireNonNull(model);
 
 		ModelEvaluator<?> modelEvaluator = createModelEvaluator(pmml, model);
-		modelEvaluator.configure(this);
+		modelEvaluator.configure(new Configuration(this));
 
 		return modelEvaluator;
 	}
@@ -134,14 +131,6 @@ public class ModelEvaluatorFactory implements Serializable {
 		}
 
 		throw new UnsupportedElementException(model);
-	}
-
-	public ValueFactoryFactory getValueFactoryFactory(){
-		return this.valueFactoryFactory;
-	}
-
-	public void setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
-		this.valueFactoryFactory = valueFactoryFactory;
 	}
 
 	static

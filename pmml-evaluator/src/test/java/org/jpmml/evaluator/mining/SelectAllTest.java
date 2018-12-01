@@ -26,6 +26,7 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.Computable;
+import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasEntityId;
@@ -42,16 +43,18 @@ public class SelectAllTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		CountingModelEvaluatorFactory evaluatorFactory = new CountingModelEvaluatorFactory();
+		CountingModelEvaluatorFactory modelEvaluatorFactory = new CountingModelEvaluatorFactory();
 
-		Evaluator evaluator = createModelEvaluator(evaluatorFactory);
+		Configuration configuration = new Configuration(modelEvaluatorFactory);
+
+		Evaluator evaluator = createModelEvaluator(configuration);
 
 		Map<FieldName, ?> arguments = createArguments("sepal_length", 5.1d, "sepal_width", 3.5d, "petal_length", 1.4d, "petal_width", 0.2d);
 
 		Map<FieldName, ?> result = evaluator.evaluate(arguments);
 
-		assertEquals(1, evaluatorFactory.getMiningModelCount());
-		assertEquals(5, evaluatorFactory.getTreeModelCount());
+		assertEquals(1, modelEvaluatorFactory.getMiningModelCount());
+		assertEquals(5, modelEvaluatorFactory.getTreeModelCount());
 
 		assertEquals(1, result.size());
 

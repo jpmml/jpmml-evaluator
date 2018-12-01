@@ -89,10 +89,14 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		}
 
 		ValueFactoryFactory valueFactoryFactory = getValueFactoryFactory();
+		if(valueFactoryFactory == null){
+			valueFactoryFactory = ValueFactoryFactory.newInstance();
+		}
 
-		modelEvaluatorFactory.setValueFactoryFactory(valueFactoryFactory);
+		Configuration configuration = new Configuration(modelEvaluatorFactory, valueFactoryFactory);
 
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml, model);
+		modelEvaluator.configure(configuration);
 
 		java.util.function.Function<FieldName, FieldName> inputMapper = getInputMapper();
 		java.util.function.Function<FieldName, FieldName> resultMapper = getResultMapper();

@@ -76,9 +76,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	private M model = null;
 
-	private ModelEvaluatorFactory modelEvaluatorFactory = null;
-
-	private ValueFactoryFactory valueFactoryFactory = null;
+	private Configuration configuration = Configuration.getInstance();
 
 	private ValueFactory<?> valueFactory = null;
 
@@ -174,10 +172,9 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 	 * May be called any number of times between subsequent evaluations.
 	 * </p>
 	 */
-	public void configure(ModelEvaluatorFactory modelEvaluatorFactory){
-		setModelEvaluatorFactory(modelEvaluatorFactory);
+	public void configure(Configuration configuration){
+		setConfiguration(Objects.requireNonNull(configuration));
 
-		setValueFactoryFactory(null);
 		setValueFactory(null);
 	}
 
@@ -634,40 +631,13 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		return CacheUtil.getValue(model, cache, loader);
 	}
 
-	protected ModelEvaluatorFactory ensureModelEvaluatorFactory(){
-		ModelEvaluatorFactory modelEvaluatorFactory = getModelEvaluatorFactory();
-
-		if(modelEvaluatorFactory == null){
-			modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
-
-			setModelEvaluatorFactory(modelEvaluatorFactory);
-		}
-
-		return modelEvaluatorFactory;
-	}
-
-	protected ValueFactoryFactory ensureValueFactoryFactory(){
-		ValueFactoryFactory valueFactoryFactory = getValueFactoryFactory();
-
-		if(valueFactoryFactory == null){
-			ModelEvaluatorFactory modelEvaluatorFactory = ensureModelEvaluatorFactory();
-
-			valueFactoryFactory = modelEvaluatorFactory.getValueFactoryFactory();
-			if(valueFactoryFactory == null){
-				valueFactoryFactory = ValueFactoryFactory.newInstance();
-			}
-
-			setValueFactoryFactory(valueFactoryFactory);
-		}
-
-		return valueFactoryFactory;
-	}
-
 	protected ValueFactory<?> ensureValueFactory(){
 		ValueFactory<?> valueFactory = getValueFactory();
 
 		if(valueFactory == null){
-			ValueFactoryFactory valueFactoryFactory = ensureValueFactoryFactory();
+			Configuration configuration = getConfiguration();
+
+			ValueFactoryFactory valueFactoryFactory = configuration.getValueFactoryFactory();
 
 			MathContext mathContext = getMathContext();
 
@@ -697,20 +667,12 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		this.model = model;
 	}
 
-	public ModelEvaluatorFactory getModelEvaluatorFactory(){
-		return this.modelEvaluatorFactory;
+	public Configuration getConfiguration(){
+		return this.configuration;
 	}
 
-	private void setModelEvaluatorFactory(ModelEvaluatorFactory modelEvaluatorFactory){
-		this.modelEvaluatorFactory = modelEvaluatorFactory;
-	}
-
-	public ValueFactoryFactory getValueFactoryFactory(){
-		return this.valueFactoryFactory;
-	}
-
-	private void setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
-		this.valueFactoryFactory = valueFactoryFactory;
+	private void setConfiguration(Configuration configuration){
+		this.configuration = configuration;
 	}
 
 	public ValueFactory<?> getValueFactory(){

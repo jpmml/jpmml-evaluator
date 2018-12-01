@@ -37,12 +37,12 @@ public class ModelEvaluatorTest {
 		return createModelEvaluator(getClass());
 	}
 
-	public ModelEvaluator<?> createModelEvaluator(ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
-		return createModelEvaluator(getClass(), modelEvaluatorFactory);
-	}
-
 	static
 	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz) throws Exception {
+		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
+
+		ReportingValueFactoryFactory valueFactoryFactory = ReportingValueFactoryFactory.newInstance();
+
 		ReportFactory reportFactory = new ReportFactory(){
 
 			@Override
@@ -51,28 +51,35 @@ public class ModelEvaluatorTest {
 			}
 		};
 
-		ReportingValueFactoryFactory valueFactoryFactory = ReportingValueFactoryFactory.newInstance();
 		valueFactoryFactory.setReportFactory(reportFactory);
 
-		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
-		modelEvaluatorFactory.setValueFactoryFactory(valueFactoryFactory);
+		Configuration configuration = new Configuration(modelEvaluatorFactory, valueFactoryFactory);
 
-		return createModelEvaluator(clazz, modelEvaluatorFactory);
+		return createModelEvaluator(clazz, configuration);
+	}
+
+	public ModelEvaluator<?> createModelEvaluator(Configuration configuration) throws Exception {
+		return createModelEvaluator(getClass(), configuration);
 	}
 
 	static
-	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz, ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
+	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz, Configuration configuration) throws Exception {
 
 		try(InputStream is = getInputStream(clazz)){
-			return createModelEvaluator(is, modelEvaluatorFactory);
+			return createModelEvaluator(is, configuration);
 		}
 	}
 
 	static
-	public ModelEvaluator<?> createModelEvaluator(InputStream is, ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
+	public ModelEvaluator<?> createModelEvaluator(InputStream is, Configuration configuration) throws Exception {
 		PMML pmml = PMMLUtil.unmarshal(is);
 
-		return modelEvaluatorFactory.newModelEvaluator(pmml);
+		ModelEvaluatorFactory modelEvaluatorFactory = configuration.getModelEvaluatorFactory();
+
+		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
+		modelEvaluator.configure(configuration);
+
+		return modelEvaluator;
 	}
 
 	static

@@ -56,6 +56,7 @@ import org.dmg.pmml.mining.MiningModel;
 import org.dmg.pmml.mining.Segment;
 import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.CacheUtil;
+import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
@@ -134,8 +135,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public void configure(ModelEvaluatorFactory modelEvaluatorFactory){
-		super.configure(modelEvaluatorFactory);
+	public void configure(Configuration configuration){
+		super.configure(configuration);
 
 		this.segmentHandlers.clear();
 	}
@@ -745,9 +746,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	private SegmentHandler createSegmentHandler(Model model){
-		ModelEvaluatorFactory modelEvaluatorFactory = ensureModelEvaluatorFactory();
+		Configuration configuration = getConfiguration();
+
+		ModelEvaluatorFactory modelEvaluatorFactory = configuration.getModelEvaluatorFactory();
 
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(getPMML(), model);
+		modelEvaluator.configure(configuration);
 
 		return new SegmentHandler(modelEvaluator);
 	}

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
+import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.InputField;
@@ -71,7 +72,9 @@ public class ModelNestingTest extends ModelEvaluatorTest {
 		assertNotNull((Double)getOutput(result, "output"));
 		assertNotNull((String)getOutput(result, "report(output)"));
 
-		evaluator.configure(null);
+		Configuration configuration = Configuration.getInstance();
+
+		evaluator.configure(configuration);
 
 		result = evaluator.evaluate(arguments);
 
