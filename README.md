@@ -88,7 +88,137 @@ The current version is **1.4.3** (30 July, 2018).
 </dependency>
 ```
 
-# Usage #
+# API highlights #
+
+Core types:
+
+* Interface `org.jpmml.evaluator.EvaluatorBuilder`
+  * Class `org.jpmml.evaluator.ModelEvaluatorBuilder` - Builds a `ModelEvaluator` instance based on an `org.dmg.pmml.PMML` instance
+    * Class `org.jpmml.evaluator.LoadingModelEvaluatorBuilder` - Builds a `ModelEvaluator` instance from a PMML byte stream or a PMML file
+* Interface `org.jpmml.evaluator.Evaluator`
+  * Abstract class `org.jpmml.evaluator.ModelEvaluator` - Implements model evaluator functionality based on an `org.dmg.pmml.Model` instance
+    * Classes `org.jpmml.evaluator.<Model>Evaluator` (`GeneralRegressionModelEvaluator`, `MiningModelEvaluator`, `NeuralNetworkEvaluator`, `RegressionEvaluator`, `TreeModelEvaluator`, `SupportVectorMachineEvaluator` etc.)
+* Abstract class `org.jpmml.evaluator.ModelField`
+  * Abstract class `org.jpmml.evaluator.InputField` - Describes a model input field
+  * Abstract class `org.jpmml.evaluator.ResultField`
+    * Class `org.jpmml.evaluator.TargetField` - Describes a primary model result field
+    * Class `org.jpmml.evaluator.OutputField` - Describes a secondary model result field
+* Abstract class `org.jpmml.evaluator.FieldValue`
+  * Class `org.jpmml.evaluator.ContinuousValue`
+  * Class `org.jpmml.evaluator.CategoricalValue`
+  * Class `org.jpmml.evaluator.OrdinalValue`
+* Utility class `org.jpmml.evaluator.EvaluatorUtil`
+* Utility class `org.jpmml.evaluator.FieldValueUtil`
+
+Core methods:
+
+* `EvaluatorBuilder`
+  * `#build()`
+* `Evaluator`
+  * `#verify()`
+  * `#getInputFields()`
+  * `#getTargetFields()`
+  * `#getOutputFields()`
+  * `#evaluate(Map<FieldName, ?>)`
+* `InputField`
+  * `#prepare(Object)`
+
+Target value types:
+
+* Interface `org.jpmml.evaluator.Computable`
+  * Abstract class `org.jpmml.evaluator.AbstractComputable`
+    * Class `org.jpmml.evaluator.Classification`
+    * Class `org.jpmml.evaluator.Regression`
+    * Class `org.jpmml.evaluator.Vote`
+* Interface `org.jpmml.evaluator.ResultFeature`
+  * Marker interface `org.jpmml.evaluator.HasCategoricalResult`
+    * Marker interface `org.jpmml.evaluator.HasAffinity`
+    * Marker interface `org.jpmml.evaluator.HasConfidence`
+    * Marker interface `org.jpmml.evaluator.HasProbability`
+  * Marker interface `org.jpmml.evaluator.HasDecisionPath`
+  * Marker interface `org.jpmml.evaluator.HasEntityId`
+  * Marker interface `org.jpmml.evaluator.HasPrediction`
+* Abstract class `org.jpmml.evaluator.Report`
+* Utility class `org.jpmml.evaluator.ReportUtil`
+
+Target value methods:
+
+* `Computable`
+  * `#getResult()`
+* `HasProbability`
+  * `#getProbability(String)`
+  * `#getProbabilityReport(String)`
+* `HasPrediction`
+  * `#getPrediction()`
+  * `#getPredictionReport()`
+
+Exception types:
+
+* Abstract class `org.jpmml.evaluator.PMMLException`
+  * Abstract class `org.jpmml.evaluator.InvalidMarkupException`
+  * Abstract class `org.jpmml.evaluator.UnsupportedMarkupException`
+  * Abstract class `org.jpmml.evaluator.EvaluationException`
+
+# Basic usage #
+
+```java
+// Building a model evaluator from a PMML file
+Evaluator evaluator = new LoadingModelEvaluatorBuilder()
+	.load(new File("model.pmml"))
+	.build();
+
+// Perforing the self-check
+evaluator.verify();
+
+// Printing input (x1, x2, .., xn) fields
+List<? extends InputField> inputFields = evaluator.getInputFields();
+System.out.println("Input fields: " + inputFields);
+
+// Printing primary result (y) field(s)
+List<? extends TargetField> targetFields = evaluator.getTargetFields();
+System.out.println("Target field(s): " + targetFields);
+
+// Printing secondary result (eg. probability(y), decision(y)) fields
+List<? extends OutputField> outputFields = evaluator.getOutputFields();
+System.out.println("Output fields: " + outputFields);
+
+// Iterating through columnar data (eg. a CSV file, an SQL result set)
+while(true){
+	// Reading a record from the data source
+	Map<String, ?> inputRecord = readRecord();
+	if(inputRecord == null){
+		break;
+	}
+
+	Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
+
+	// Mapping the record field-by-field from data source schema to PMML schema
+	for(InputField inputField : inputFields){
+		FieldName inputName = inputField.getName();
+
+		Object rawValue = inputRecord.get(inputName.getValue());
+
+		// Transforming an arbitrary user-supplied value to a known-good PMML value
+		FieldValue inputValue = inputField.prepare(rawValue);
+
+		arguments.put(inputName, inputValue);
+	}
+
+	// Evaluating the model with known-good arguments
+	Map<FieldName, ?> results = evaluator.evaluate(arguments);
+
+	// Decoupling results from the JPMML-Evaluator runtime environment
+	Map<String, ?> resultRecord = EvaluatorUtil.decode(results);
+
+	// Writing a record to the data sink
+	writeRecord(resultRecord);
+}
+
+// Making the model evaluator eligible for garbage collection
+evaluator = null;
+```
+
+# Advanced usage #
 
 ### Loading models
 
@@ -96,7 +226,7 @@ JPMML-Evaluator depends on the [JPMML-Model](https://github.com/jpmml/jpmml-mode
 
 Loading a PMML schema version 3.X or 4.X document into an `org.dmg.pmml.PMML` instance:
 ```java
-PMML pmml;
+org.dmg.pmml.PMML pmml;
 
 try(InputStream is = ...){
 	pmml = org.jpmml.model.PMMLUtil.unmarshal(is);
@@ -116,30 +246,30 @@ To facilitate their discovery and use, visitor classes have been grouped into vi
 * `org.jpmml.evaluator.visitors.ElementInternerBattery`
 * `org.jpmml.evaluator.visitors.ElementOptimizerBattery`
 
-Building and applying a custom visitor battery to reduce the memory consumption of a `PMML` instance in production environment:
+Creating and applying a custom visitor battery to reduce the memory consumption of a `PMML` instance in production environment:
 ```java
-VisitorBattery visitorBattery = new VisitorBattery();
+org.jpmml.model.VisitorBattery visitorBattery = new org.jpmml.model.VisitorBattery();
 
 // Getting rid of SAX Locator information
-visitorBattery.add(org.jpmml.model.visitors.LocatorNullifier.class);
+visitorBattery.add(LocatorNullifier.class);
 
 // Pre-parsing PMML elements
-visitorBattery.addAll(new org.jpmml.evaluator.visitors.ElementOptimizerBattery());
+visitorBattery.addAll(new ElementOptimizerBattery());
 
 // Getting rid of duplicate PMML attribute values and PMML elements
-visitorBattery.addAll(new org.jpmml.model.visitors.AttributeInternerBattery());
-visitorBattery.addAll(new org.jpmml.evaluator.visitors.ElementInternerBattery());
+visitorBattery.addAll(new AttributeInternerBattery());
+visitorBattery.addAll(new ElementInternerBattery());
 
 // Freezing the final representation of PMML elements
-visitorBattery.addAll(new org.jpmml.model.visitors.ListFinalizerBattery());
+visitorBattery.addAll(new ListFinalizerBattery());
 
 visitorBattery.applyTo(pmml);
 ```
 
 The PMML standard defines large number of model types.
-The evaluation logic for each model type is encapsulated into a corresponding `org.jpmml.evaluator.ModelEvaluator` subclass.
+The evaluation logic for each model type is encapsulated into a corresponding `ModelEvaluator` subclass.
 
-Even though `ModelEvaluator` subclasses can be instantiated directly, the recommended approach is to follow the Builder design pattern as implemented by the `org.jpmml.evaluator.ModelEvaluatorBuilder` builder class.
+Even though `ModelEvaluator` subclasses can be instantiated directly, the recommended approach is to follow the Builder design pattern as implemented by the `ModelEvaluatorBuilder` builder class.
 
 Creating and configuring a `ModelEvaluatorBuilder` instance:
 
@@ -150,7 +280,7 @@ ModelEvaluatorBuilder modelEvaluatorBuilder = new ModelEvaluatorBuilder(pmml)
 ```
 
 By default, the model evaluator builder selects the first scorable model from the `PMML` instance, and builds a corresponding `ModelEvaluator` instance.
-However, in order to promote loose coupling, it is advisable to cast the result to a much simplified `org.jpmml.evaluator.Evaluator` instance.
+However, in order to promote loose coupling, it is advisable to cast the result to a much simplified `Evaluator` instance.
 
 Building an `Evaluator` instance:
 
@@ -165,11 +295,11 @@ Model evaluator classes follow functional programming principles and are complet
 
 ### Querying the "data schema" of models
 
-The model evaluator can be queried for the list of input (ie. independent), target (ie. primary dependent) and output (ie. secondary dependent) field definitions, which provide information about field name, data type, operational type, value domain etc. information.
+The model evaluator can be queried for the list of input (ie. independent), target (ie. primary dependent) and output (ie. secondary dependent) field definitions, which provide information about field name, data type, operational type, value domain etc.
 
 Querying and analyzing input fields:
 ```java
-List<InputField> inputFields = evaluator.getInputFields();
+List<? extends InputField> inputFields = evaluator.getInputFields();
 for(InputField inputField : inputFields){
 	org.dmg.pmml.DataField pmmlDataField = (org.dmg.pmml.DataField)inputField.getField();
 	org.dmg.pmml.MiningField pmmlMiningField = inputField.getMiningField();
@@ -179,11 +309,11 @@ for(InputField inputField : inputFields){
 
 	switch(opType){
 		case CONTINUOUS:
-			RangeSet<Double> validArgumentRanges = inputField.getContinuousDomain();
+			com.google.common.collect.RangeSet<Double> validInputRanges = inputField.getContinuousDomain();
 			break;
 		case CATEGORICAL:
 		case ORDINAL:
-			List<?> validArgumentValues = inputField.getDiscreteDomain();
+			List<?> validInputValues = inputField.getDiscreteDomain();
 			break;
 		default:
 			break;
@@ -193,7 +323,7 @@ for(InputField inputField : inputFields){
 
 Querying and analyzing target fields:
 ```java
-List<TargetField> targetFields = evaluator.getTargetFields();
+List<? extends TargetField> targetFields = evaluator.getTargetFields();
 for(TargetField targetField : targetFields){
 	org.dmg.pmml.DataField pmmlDataField = targetField.getField();
 	org.dmg.pmml.MiningField pmmlMiningField = targetField.getMiningField(); // Could be null
@@ -209,7 +339,7 @@ for(TargetField targetField : targetFields){
 		case ORDINAL:
 			List<String> categories = targetField.getCategories();
 			for(String category : categories){
-				Object validResultValue = TypeUtil.parse(dataType, category);
+				Object validTargetValue = TypeUtil.parse(dataType, category);
 			}
 			break;
 		default:
@@ -220,7 +350,7 @@ for(TargetField targetField : targetFields){
 
 Querying and analyzing output fields:
 ```java
-List<OutputField> outputFields = evaluator.getOutputFields();
+List<? extends OutputField> outputFields = evaluator.getOutputFields();
 for(OutputField outputField : outputFields){
 	org.dmg.pmml.OutputField pmmlOutputField = outputField.getOutputField();
 
@@ -251,19 +381,21 @@ If the model contains verification data, then this warm-up cost is borne during 
 
 Preparing the argument map:
 ```java
+Map<String, ?> inputDataRecord = ...;
+
 Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
 
-List<InputField> inputFields = evaluator.getInputFields();
+List<? extends InputField> inputFields = evaluator.getInputFields();
 for(InputField inputField : inputFields){
-	FieldName inputFieldName = inputField.getName();
+	FieldName inputName = inputField.getName();
 
-	// The raw (ie. user-supplied) value could be any Java primitive value
-	Object rawValue = ...;
+	Object rawValue = inputDataRecord.get(inputName.getValue());
 
-	// The raw value is passed through: 1) outlier treatment, 2) missing value treatment, 3) invalid value treatment and 4) type conversion
-	FieldValue inputFieldValue = inputField.prepare(rawValue);
+	// Transforming an arbitrary user-supplied value to a known-good PMML value
+	// The user-supplied value is passed through: 1) outlier treatment, 2) missing value treatment, 3) invalid value treatment and 4) type conversion
+	FieldValue inputValue = inputField.prepare(rawValue);
 
-	arguments.put(inputFieldName, inputFieldValue);
+	arguments.put(inputName, inputValue);
 }
 ```
 
@@ -274,47 +406,52 @@ Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
 Extracting primary results from the result map:
 ```
-List<TargetField> targetFields = evaluator.getTargetFields();
+List<? extends TargetField> targetFields = evaluator.getTargetFields();
 for(TargetField targetField : targetFields){
-	FieldName targetFieldName = targetField.getName();
+	FieldName targetName = targetField.getName();
 
-	Object targetFieldValue = results.get(targetFieldName);
+	Object targetValue = results.get(targetName);
 }
 ```
 
-The target value is either a Java primitive value (as a wrapper object) or an instance of `org.jpmml.evaluator.Computable`:
-```java
-if(targetFieldValue instanceof Computable){
-	Computable computable = (Computable)targetFieldValue;
+The target value is either a Java primitive value (as a wrapper object) or a complex value as a `Computable` instance.
 
-	Object unboxedTargetFieldValue = computable.getResult();
-}
-```
-
-The target value may implement interfaces that descend from interface `org.jpmml.evaluator.ResultFeature`:
+A complex target value may expose additional information about the prediction by implementing appropriate `ResultFeature` subinterfaces:
 ```java
 // Test for "entityId" result feature
-if(targetFieldValue instanceof HasEntityId){
-	HasEntityId hasEntityId = (HasEntityId)targetFieldValue;
+if(targetValue instanceof HasEntityId){
+	HasEntityId hasEntityId = (HasEntityId)targetValue;
+
 	HasEntityRegistry<?> hasEntityRegistry = (HasEntityRegistry<?>)evaluator;
 	BiMap<String, ? extends Entity> entities = hasEntityRegistry.getEntityRegistry();
+
 	Entity winner = entities.get(hasEntityId.getEntityId());
 
 	// Test for "probability" result feature
-	if(targetFieldValue instanceof HasProbability){
-		HasProbability hasProbability = (HasProbability)targetFieldValue;
+	if(targetValue instanceof HasProbability){
+		HasProbability hasProbability = (HasProbability)targetValue;
+
 		Double winnerProbability = hasProbability.getProbability(winner.getId());
 	}
 }
 ```
 
+A complex target value may hold a reference to the model evaluator that created it. It is adisable to decode it to a Java primitive value (ie. decoupling from the JPMML-Evaluator runtime environment) as soon as all the additional information has been retrieved:
+```java
+if(targetValue instanceof Computable){
+	Computable computable = (Computable)targetValue;
+
+	targetValue = computable.getResult();
+}
+```
+
 Extracting secondary results from the result map:
 ```
-List<OutputField> outputFields = evaluator.getOutputFields();
+List<? extends OutputField> outputFields = evaluator.getOutputFields();
 for(OutputField outputField : outputFields){
-	FieldName outputFieldName = outputField.getName();
+	FieldName outputName = outputField.getName();
 
-	Object outputFieldValue = results.get(outputFieldName);
+	Object outputValue = results.get(outputName);
 }
 ```
 
