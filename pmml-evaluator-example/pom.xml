@@ -94,7 +94,7 @@
 							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<finalName>example-${project.version}</finalName>
+							<finalName>${project.artifactId}-executable-${project.version}</finalName>
 							<filters>
 								<filter>
 									<artifact>*:*</artifact>
