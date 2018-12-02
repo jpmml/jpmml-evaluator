@@ -3,9 +3,25 @@ JPMML-Evaluator [![Build Status](https://travis-ci.org/jpmml/jpmml-evaluator.png
 
 Java Evaluator API for Predictive Model Markup Language (PMML).
 
+# Table of Contents #
+
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [API](#api)
+- [Basic usage](#basic-usage)
+- [Advanced usage](#advanced-usage)
+    + [Loading models](#loading-models)
+    + [Querying the "data schema" of models](#querying-the-data-schema-of-models)
+    + [Evaluating models](#evaluating-models)
+- [Example applications](#example-applications)
+- [Support](#support)
+- [License](#license)
+- [Additional information](#additional-information)
+
 # Features #
 
-JPMML-Evaluator is *de facto* the reference implementation of the PMML specification versions 3.0, 3.1, 3.2, 4.0, 4.1, 4.2 and 4.3 for the Java platform:
+JPMML-Evaluator is *de facto* the reference implementation of the PMML specification versions 3.0, 3.1, 3.2, 4.0, 4.1, 4.2 and 4.3 for the Java/JVM platform:
 
 * Pre-processing of input fields according to the [DataDictionary](http://www.dmg.org/pmml/v4-3/DataDictionary.html) and [MiningSchema](http://www.dmg.org/pmml/v4-3/MiningSchema.html) elements:
   * Complete data type system.
@@ -67,7 +83,7 @@ JPMML-Evaluator is fast and memory efficient. It can deliver one million scoring
 
 # Prerequisites #
 
-* Java 1.8 or newer.
+* Java Platform, Standard Edition 8 or newer.
 
 # Installation #
 
@@ -88,7 +104,7 @@ The current version is **1.4.3** (30 July, 2018).
 </dependency>
 ```
 
-# API highlights #
+# API #
 
 Core types:
 
@@ -220,7 +236,7 @@ evaluator = null;
 
 # Advanced usage #
 
-### Loading models
+### Loading models ###
 
 JPMML-Evaluator depends on the [JPMML-Model](https://github.com/jpmml/jpmml-model) library for PMML class model.
 
@@ -274,9 +290,9 @@ Even though `ModelEvaluator` subclasses can be instantiated directly, the recomm
 Creating and configuring a `ModelEvaluatorBuilder` instance:
 
 ```java
-ModelEvaluatorBuilder modelEvaluatorBuilder = new ModelEvaluatorBuilder(pmml)
+ModelEvaluatorBuilder modelEvaluatorBuilder = new ModelEvaluatorBuilder(pmml);
 	// Activate the generation of MathML prediction reports
-	.setValueFactoryFactory(ReportingValueFactoryFactory.newInstance());
+	//.setValueFactoryFactory(org.jpmml.evaluator.ReportingValueFactoryFactory.newInstance());
 ```
 
 By default, the model evaluator builder selects the first scorable model from the `PMML` instance, and builds a corresponding `ModelEvaluator` instance.
@@ -293,7 +309,7 @@ Nevertheless, long-running applications should maintain a one-to-one mapping bet
 
 Model evaluator classes follow functional programming principles and are completely thread safe.
 
-### Querying the "data schema" of models
+### Querying the "data schema" of models ###
 
 The model evaluator can be queried for the list of input (ie. independent), target (ie. primary dependent) and output (ie. secondary dependent) field definitions, which provide information about field name, data type, operational type, value domain etc.
 
@@ -364,7 +380,7 @@ for(OutputField outputField : outputFields){
 }
 ```
 
-### Evaluating models
+### Evaluating models ###
 
 A model may contain verification data, which is a small but representative set of data records (inputs plus expected outputs) for ensuring that the model evaluator is behaving correctly in this deployment configuration (JPMML-Evaluator version, Java/JVM version and vendor etc. variables).
 The model evaluator should be verified once, before putting it into actual use.
@@ -491,7 +507,7 @@ Getting help:
 java -cp target/example-1.4-SNAPSHOT.jar <application class name> --help
 ```
 
-# Support and Documentation #
+# Support #
 
 Limited public support is available via the [JPMML mailing list](https://groups.google.com/forum/#!forum/jpmml).
 
