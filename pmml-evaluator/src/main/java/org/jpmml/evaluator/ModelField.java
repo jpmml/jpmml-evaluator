@@ -24,6 +24,7 @@ import java.util.Objects;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.HasDisplayName;
 import org.dmg.pmml.OpType;
 import org.jpmml.model.ToStringHelper;
 
@@ -67,6 +68,18 @@ public class ModelField implements Serializable {
 		this.name = name;
 	}
 
+	public String getDisplayName(){
+		Field<?> field = getField();
+
+		if(field instanceof HasDisplayName){
+			HasDisplayName<?> hasDisplayName = (HasDisplayName<?>)field;
+
+			return hasDisplayName.getDisplayName();
+		}
+
+		return null;
+	}
+
 	public DataType getDataType(){
 		Field<?> field = getField();
 
@@ -89,6 +102,7 @@ public class ModelField implements Serializable {
 	protected ToStringHelper toStringHelper(){
 		ToStringHelper helper = new ToStringHelper(this)
 			.add("name", getName())
+			.add("displayName", getDisplayName())
 			.add("dataType", getDataType())
 			.add("opType", getOpType());
 
