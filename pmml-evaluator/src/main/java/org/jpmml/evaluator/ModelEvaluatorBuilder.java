@@ -49,7 +49,7 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	 * Selects the first scorable model.
 	 * </p>
 	 *
-	 * @throw MissingElementException If the PMML does not contain any scorable models.
+	 * @throws MissingElementException If the PMML does not contain any scorable models.
 	 */
 	public ModelEvaluatorBuilder(PMML pmml){
 		this(pmml, (String)null);
@@ -60,7 +60,7 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	 * Selects the named model.
 	 * </p>
 	 *
-	 * @throw MissingElementException If the PMML does not contain a model with the specified model name.
+	 * @throws MissingElementException If the PMML does not contain a model with the specified model name.
 	 *
 	 * @see Model#getModelName()
 	 */
