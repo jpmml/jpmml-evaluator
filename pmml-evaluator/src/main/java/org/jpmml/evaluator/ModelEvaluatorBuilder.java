@@ -19,10 +19,13 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import com.google.common.collect.Iterables;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 
@@ -41,7 +44,7 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	private java.util.function.Function<FieldName, FieldName> resultMapper = null;
 
 
-	ModelEvaluatorBuilder(){
+	protected ModelEvaluatorBuilder(){
 	}
 
 	/**
@@ -108,11 +111,19 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml, model);
 		modelEvaluator.configure(configuration);
 
+		checkSchema(modelEvaluator);
+
 		java.util.function.Function<FieldName, FieldName> inputMapper = getInputMapper();
 		java.util.function.Function<FieldName, FieldName> resultMapper = getResultMapper();
 
 		if(inputMapper != null){
-			Iterable<? extends InputField> inputFields = modelEvaluator.getInputFields();
+			Iterable<InputField> inputFields = modelEvaluator.getInputFields();
+
+			if(modelEvaluator instanceof HasGroupFields){
+				HasGroupFields hasGroupFields = (HasGroupFields)modelEvaluator;
+
+				inputFields = Iterables.concat(inputFields, hasGroupFields.getGroupFields());
+			}
 
 			for(InputField inputField : inputFields){
 				inputField.setName(inputMapper.apply(inputField.getName()));
@@ -120,7 +131,7 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		} // End if
 
 		if(resultMapper != null){
-			Iterable<? extends ResultField> resultFields = Iterables.concat(modelEvaluator.getTargetFields(), modelEvaluator.getOutputFields());
+			Iterable<ResultField> resultFields = Iterables.concat(modelEvaluator.getTargetFields(), modelEvaluator.getOutputFields());
 
 			for(ResultField resultField : resultFields){
 				resultField.setName(resultMapper.apply(resultField.getName()));
@@ -130,11 +141,37 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		return modelEvaluator;
 	}
 
+	protected void checkSchema(ModelEvaluator<?> modelEvaluator){
+		Model model = modelEvaluator.getModel();
+
+		MiningSchema miningSchema = model.getMiningSchema();
+
+		List<InputField> inputFields = modelEvaluator.getInputFields();
+		List<InputField> groupFields = Collections.emptyList();
+
+		if(modelEvaluator instanceof HasGroupFields){
+			HasGroupFields hasGroupFields = (HasGroupFields)modelEvaluator;
+
+			groupFields = hasGroupFields.getGroupFields();
+		} // End if
+
+		if((inputFields.size() + groupFields.size()) > 1000){
+			throw new InvalidElementException("Model has too many input fields", miningSchema);
+		}
+
+		List<TargetField> targetFields = modelEvaluator.getTargetFields();
+		List<OutputField> outputFields = modelEvaluator.getOutputFields();
+
+		if((targetFields.size() + outputFields.size()) < 1){
+			throw new InvalidElementException("Model does not have any target or output fields", miningSchema);
+		}
+	}
+
 	public PMML getPMML(){
 		return this.pmml;
 	}
 
-	ModelEvaluatorBuilder setPMML(PMML pmml){
+	protected ModelEvaluatorBuilder setPMML(PMML pmml){
 		this.pmml = pmml;
 
 		return this;
@@ -144,7 +181,7 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		return this.model;
 	}
 
-	ModelEvaluatorBuilder setModel(Model model){
+	protected ModelEvaluatorBuilder setModel(Model model){
 		this.model = model;
 
 		return this;

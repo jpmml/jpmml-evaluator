@@ -104,10 +104,9 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 			visitors.applyTo(pmml);
 		}
 
-		setPMML(pmml);
-
 		Model model = PMMLUtil.findModel(pmml, modelName);
 
+		setPMML(pmml);
 		setModel(model);
 
 		return this;
