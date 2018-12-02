@@ -113,6 +113,11 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 		return this;
 	}
 
+	@Override
+	public LoadingModelEvaluatorBuilder clone(){
+		return (LoadingModelEvaluatorBuilder)super.clone();
+	}
+
 	public Schema getSchema(){
 		return this.schema;
 	}

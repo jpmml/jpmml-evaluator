@@ -18,7 +18,9 @@
  */
 package org.jpmml.evaluator;
 
-public interface EvaluatorBuilder {
+public interface EvaluatorBuilder extends Cloneable {
+
+	EvaluatorBuilder clone();
 
 	Evaluator build();
 }

@@ -75,6 +75,16 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	}
 
 	@Override
+	public ModelEvaluatorBuilder clone(){
+
+		try {
+			return (ModelEvaluatorBuilder)super.clone();
+		} catch(CloneNotSupportedException cnse){
+			throw new InternalError(cnse);
+		}
+	}
+
+	@Override
 	public ModelEvaluator<?> build(){
 		PMML pmml = getPMML();
 		Model model = getModel();
