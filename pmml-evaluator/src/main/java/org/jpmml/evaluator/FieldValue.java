@@ -379,12 +379,18 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 
 	@Override
 	public String toString(){
+		ToStringHelper helper = toStringHelper();
+
+		return helper.toString();
+	}
+
+	protected ToStringHelper toStringHelper(){
 		ToStringHelper helper = new ToStringHelper(this)
 			.add("opType", getOpType())
 			.add("dataType", getDataType())
 			.add("value", getValue());
 
-		return helper.toString();
+		return helper;
 	}
 
 	public DataType getDataType(){

@@ -24,6 +24,7 @@ import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
+import org.jpmml.model.ToStringHelper;
 
 public class OrdinalValue extends FieldValue {
 
@@ -79,6 +80,14 @@ public class OrdinalValue extends FieldValue {
 		}
 
 		return false;
+	}
+
+	@Override
+	protected ToStringHelper toStringHelper(){
+		ToStringHelper helper = super.toStringHelper()
+			.add("ordering", getOrdering());
+
+		return helper;
 	}
 
 	public List<?> getOrdering(){
