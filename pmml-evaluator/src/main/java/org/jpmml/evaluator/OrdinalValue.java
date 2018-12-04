@@ -26,7 +26,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.jpmml.model.ToStringHelper;
 
-public class OrdinalValue extends FieldValue {
+public class OrdinalValue extends DiscreteValue {
 
 	private List<?> ordering = null;
 

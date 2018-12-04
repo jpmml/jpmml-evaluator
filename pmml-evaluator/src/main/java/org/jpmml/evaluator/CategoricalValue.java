@@ -23,7 +23,7 @@ import java.util.Collection;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 
-public class CategoricalValue extends FieldValue {
+public class CategoricalValue extends DiscreteValue {
 
 	CategoricalValue(DataType dataType, Object value){
 		super(dataType, value);
