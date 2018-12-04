@@ -27,8 +27,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.collect.ImmutableMap;
 import org.dmg.pmml.DataField;
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.Value;
 import org.jpmml.model.ReflectionUtil;
 
@@ -48,21 +46,17 @@ public class RichDataField extends DataField implements HasParsedValueMapping<Va
 		ReflectionUtil.copyState(dataField, this);
 	}
 
-	public Map<FieldValue, Value> getValueMapping(){
-		return getValueMapping(getDataType(), getOpType());
-	}
-
 	@Override
-	public Map<FieldValue, Value> getValueMapping(DataType dataType, OpType opType){
+	public Map<FieldValue, Value> getValueMapping(TypeInfo typeInfo){
 
 		if(this.parsedValueMappings == null){
-			this.parsedValueMappings = ImmutableMap.copyOf(parseValues(dataType, opType));
+			this.parsedValueMappings = ImmutableMap.copyOf(parseValues(typeInfo));
 		}
 
 		return this.parsedValueMappings;
 	}
 
-	private Map<FieldValue, Value> parseValues(DataType dataType, OpType opType){
+	private Map<FieldValue, Value> parseValues(TypeInfo typeInfo){
 		Map<FieldValue, Value> result = new LinkedHashMap<>();
 
 		List<Value> pmmlValues = getValues();
@@ -76,7 +70,7 @@ public class RichDataField extends DataField implements HasParsedValueMapping<Va
 			switch(property){
 				case VALID:
 					{
-						FieldValue value = parse(dataType, opType, stringValue);
+						FieldValue value = parse(typeInfo, stringValue);
 
 						result.put(value, pmmlValue);
 					}
@@ -87,7 +81,7 @@ public class RichDataField extends DataField implements HasParsedValueMapping<Va
 						FieldValue value;
 
 						try {
-							value = parse(dataType, opType, stringValue);
+							value = parse(typeInfo, stringValue);
 						} catch(IllegalArgumentException | TypeCheckException e){
 							continue;
 						}

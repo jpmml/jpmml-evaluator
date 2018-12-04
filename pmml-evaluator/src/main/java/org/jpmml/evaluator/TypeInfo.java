@@ -20,25 +20,17 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 
-interface ValueParser {
+public interface TypeInfo {
 
-	default
-	FieldValue parse(TypeInfo typeInfo, Object value){
-		FieldValue fieldValue = FieldValueUtil.create(typeInfo.getDataType(), typeInfo.getOpType(), value);
+	DataType getDataType();
 
-		if(typeInfo instanceof OrdinalValue){
-			OrdinalValue ordinalValue = (OrdinalValue)fieldValue;
-
-			ordinalValue.setOrdering(typeInfo.getOrdering());
-		}
-
-		return FieldValues.INTERNER.intern(fieldValue);
-	}
+	OpType getOpType();
 
 	default
-	List<FieldValue> parseAll(TypeInfo typeInfo, List<?> values){
-		return Lists.transform(values, value -> parse(typeInfo, value));
+	List<?> getOrdering(){
+		return null;
 	}
 }

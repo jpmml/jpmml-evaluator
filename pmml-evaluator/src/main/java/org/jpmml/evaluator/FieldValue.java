@@ -37,7 +37,6 @@ import org.dmg.pmml.Expression;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.HasValue;
 import org.dmg.pmml.HasValueSet;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLObject;
 import org.jpmml.model.ToStringHelper;
 
@@ -60,7 +59,7 @@ import org.jpmml.model.ToStringHelper;
  * @see FieldValueUtil
  */
 abstract
-public class FieldValue implements Comparable<FieldValue>, Serializable {
+public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializable {
 
 	private DataType dataType = null;
 
@@ -71,9 +70,6 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		setDataType(Objects.requireNonNull(dataType));
 		setValue(filterValue(Objects.requireNonNull(value)));
 	}
-
-	abstract
-	public OpType getOpType();
 
 	/**
 	 * <p>
@@ -92,7 +88,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	}
 
 	public boolean equals(HasParsedValue<?> hasParsedValue){
-		FieldValue value = hasParsedValue.getValue(getDataType(), getOpType());
+		FieldValue value = hasParsedValue.getValue(this);
 
 		return this.equals(value);
 	}
@@ -122,7 +118,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	}
 
 	public boolean isIn(HasParsedValueSet<?> hasParsedValueSet){
-		Set<FieldValue> values = hasParsedValueSet.getValueSet(getDataType(), getOpType());
+		Set<FieldValue> values = hasParsedValueSet.getValueSet(this);
 
 		return values.contains(this);
 	}
@@ -144,7 +140,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	}
 
 	public int compareTo(HasParsedValue<?> hasParsedValue){
-		FieldValue value = hasParsedValue.getValue(getDataType(), getOpType());
+		FieldValue value = hasParsedValue.getValue(this);
 
 		return this.compareTo(value);
 	}
@@ -220,7 +216,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	}
 
 	public <V> V getMapping(HasParsedValueMapping<V> hasParsedValueMapping){
-		Map<FieldValue, V> values = hasParsedValueMapping.getValueMapping(getDataType(), getOpType());
+		Map<FieldValue, V> values = hasParsedValueMapping.getValueMapping(this);
 
 		return values.get(this);
 	}
@@ -393,6 +389,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return helper;
 	}
 
+	@Override
 	public DataType getDataType(){
 		return this.dataType;
 	}

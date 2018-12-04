@@ -26,8 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.collect.ImmutableMap;
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.naive_bayes.BayesInput;
 import org.dmg.pmml.naive_bayes.PairCounts;
 import org.dmg.pmml.naive_bayes.TargetValueCounts;
@@ -37,6 +35,7 @@ import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
+import org.jpmml.evaluator.TypeInfo;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (
@@ -56,16 +55,16 @@ public class RichBayesInput extends BayesInput implements HasParsedValueMapping<
 	}
 
 	@Override
-	public Map<FieldValue, TargetValueCounts> getValueMapping(DataType dataType, OpType opType){
+	public Map<FieldValue, TargetValueCounts> getValueMapping(TypeInfo typeInfo){
 
 		if(this.parsedValueMappings == null){
-			this.parsedValueMappings = ImmutableMap.copyOf(parsePairCounts(dataType, opType));
+			this.parsedValueMappings = ImmutableMap.copyOf(parsePairCounts(typeInfo));
 		}
 
 		return this.parsedValueMappings;
 	}
 
-	private Map<FieldValue, TargetValueCounts> parsePairCounts(DataType dataType, OpType opType){
+	private Map<FieldValue, TargetValueCounts> parsePairCounts(TypeInfo typeInfo){
 		Map<FieldValue, TargetValueCounts> result = new LinkedHashMap<>();
 
 		List<PairCounts> pairCounts = getPairCounts();
@@ -75,7 +74,7 @@ public class RichBayesInput extends BayesInput implements HasParsedValueMapping<
 				throw new MissingAttributeException(pairCount, PMMLAttributes.PAIRCOUNTS_VALUE);
 			}
 
-			FieldValue value = parse(dataType, opType, category);
+			FieldValue value = parse(typeInfo, category);
 
 			TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
 			if(targetValueCounts == null){

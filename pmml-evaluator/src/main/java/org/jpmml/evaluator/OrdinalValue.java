@@ -90,6 +90,7 @@ public class OrdinalValue extends DiscreteValue {
 		return helper;
 	}
 
+	@Override
 	public List<?> getOrdering(){
 		return this.ordering;
 	}

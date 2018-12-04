@@ -18,12 +18,10 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.HasValue;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLObject;
 
 public interface HasParsedValue<E extends PMMLObject & HasValue<E>> extends HasValue<E>, ValueParser {
 
-	FieldValue getValue(DataType dataType, OpType opType);
+	FieldValue getValue(TypeInfo typeInfo);
 }

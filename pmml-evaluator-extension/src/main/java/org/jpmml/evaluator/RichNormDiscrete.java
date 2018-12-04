@@ -21,9 +21,7 @@ package org.jpmml.evaluator;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.NormDiscrete;
-import org.dmg.pmml.OpType;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (
@@ -43,7 +41,7 @@ public class RichNormDiscrete extends NormDiscrete implements HasParsedValue<Nor
 	}
 
 	@Override
-	public FieldValue getValue(DataType dataType, OpType opType){
+	public FieldValue getValue(TypeInfo typeInfo){
 
 		if(this.parsedValue == null){
 			String value = getValue();
@@ -51,7 +49,7 @@ public class RichNormDiscrete extends NormDiscrete implements HasParsedValue<Nor
 				throw new MissingAttributeException(this, PMMLAttributes.NORMDISCRETE_VALUE);
 			}
 
-			this.parsedValue = parse(dataType, opType, value);
+			this.parsedValue = parse(typeInfo, value);
 		}
 
 		return this.parsedValue;

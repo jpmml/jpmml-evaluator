@@ -26,14 +26,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.collect.ImmutableMap;
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.general_regression.BaseCumHazardTables;
 import org.dmg.pmml.general_regression.BaselineStratum;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.HasParsedValueMapping;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.PMMLAttributes;
+import org.jpmml.evaluator.TypeInfo;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (
@@ -53,16 +52,16 @@ public class RichBaseCumHazardTables extends BaseCumHazardTables implements HasP
 	}
 
 	@Override
-	public Map<FieldValue, BaselineStratum> getValueMapping(DataType dataType, OpType opType){
+	public Map<FieldValue, BaselineStratum> getValueMapping(TypeInfo typeInfo){
 
 		if(this.parsedValueMappings == null){
-			this.parsedValueMappings = ImmutableMap.copyOf(parseBaselineStrata(dataType, opType));
+			this.parsedValueMappings = ImmutableMap.copyOf(parseBaselineStrata(typeInfo));
 		}
 
 		return this.parsedValueMappings;
 	}
 
-	private Map<FieldValue, BaselineStratum> parseBaselineStrata(DataType dataType, OpType opType){
+	private Map<FieldValue, BaselineStratum> parseBaselineStrata(TypeInfo typeInfo){
 		Map<FieldValue, BaselineStratum> result = new LinkedHashMap<>();
 
 		List<BaselineStratum> baselineStrata = getBaselineStrata();
@@ -72,7 +71,7 @@ public class RichBaseCumHazardTables extends BaseCumHazardTables implements HasP
 				throw new MissingAttributeException(baselineStratum, PMMLAttributes.BASELINESTRATUM_VALUE);
 			}
 
-			FieldValue value = parse(dataType, opType, category);
+			FieldValue value = parse(typeInfo, category);
 
 			result.put(value, baselineStratum);
 		}

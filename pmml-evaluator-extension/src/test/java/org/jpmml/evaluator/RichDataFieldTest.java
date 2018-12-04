@@ -46,7 +46,20 @@ public class RichDataFieldTest {
 
 		RichDataField richDataField = new RichDataField(dataField);
 
-		Map<FieldValue, Value> valueMappings = richDataField.getValueMapping();
+		TypeInfo typeInfo = new TypeInfo(){
+
+			@Override
+			public DataType getDataType(){
+				return richDataField.getDataType();
+			}
+
+			@Override
+			public OpType getOpType(){
+				return richDataField.getOpType();
+			}
+		};
+
+		Map<FieldValue, Value> valueMappings = richDataField.getValueMapping(typeInfo);
 
 		assertEquals(4, valueMappings.size());
 

@@ -21,8 +21,6 @@ package org.jpmml.evaluator;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.SimplePredicate;
 import org.jpmml.model.ReflectionUtil;
 
@@ -43,7 +41,7 @@ public class RichSimplePredicate extends SimplePredicate implements HasParsedVal
 	}
 
 	@Override
-	public FieldValue getValue(DataType dataType, OpType opType){
+	public FieldValue getValue(TypeInfo typeInfo){
 
 		if(this.parsedValue == null){
 			String value = getValue();
@@ -51,7 +49,7 @@ public class RichSimplePredicate extends SimplePredicate implements HasParsedVal
 				throw new MissingAttributeException(this, PMMLAttributes.SIMPLEPREDICATE_VALUE);
 			}
 
-			this.parsedValue = parse(dataType, opType, value);
+			this.parsedValue = parse(typeInfo, value);
 		}
 
 		return this.parsedValue;

@@ -185,7 +185,7 @@ public class DiscretizationUtil {
 				throw new InvalidElementException(inlineTable);
 			}
 
-			Map<FieldValue, Set<Integer>> columnRowMap = rowFilter.getValueMapping(value.getDataType(), value.getOpType());
+			Map<FieldValue, Set<Integer>> columnRowMap = rowFilter.getValueMapping(value);
 
 			Set<Integer> columnRows = columnRowMap.get(value);
 
@@ -283,23 +283,23 @@ public class DiscretizationUtil {
 			value = {"rawtypes", "unchecked"}
 		)
 		@Override
-		public Map<FieldValue, Set<Integer>> getValueMapping(DataType dataType, OpType opType){
+		public Map<FieldValue, Set<Integer>> getValueMapping(TypeInfo typeInfo){
 
 			if(this.parsedColumnValues == null){
-				this.parsedColumnValues = ImmutableSetMultimap.copyOf(parseColumnValues(dataType, opType));
+				this.parsedColumnValues = ImmutableSetMultimap.copyOf(parseColumnValues(typeInfo));
 			}
 
 			return (Map)this.parsedColumnValues.asMap();
 		}
 
-		private SetMultimap<FieldValue, Integer> parseColumnValues(DataType dataType, OpType opType){
+		private SetMultimap<FieldValue, Integer> parseColumnValues(TypeInfo typeInfo){
 			SetMultimap<FieldValue, Integer> result = HashMultimap.create();
 
 			Map<Integer, String> columnValues = getColumnValues();
 
 			Collection<Map.Entry<Integer, String>> entries = columnValues.entrySet();
 			for(Map.Entry<Integer, String> entry : entries){
-				FieldValue value = parse(dataType, opType, entry.getValue());
+				FieldValue value = parse(typeInfo, entry.getValue());
 				Integer row = entry.getKey();
 
 				result.put(value, row);

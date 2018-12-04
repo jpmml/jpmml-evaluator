@@ -150,7 +150,20 @@ public class ExpressionUtil {
 		if(constant instanceof HasParsedValue){
 			HasParsedValue<?> hasParsedValue = (HasParsedValue<?>)constant;
 
-			return hasParsedValue.getValue(dataType, opType);
+			TypeInfo typeInfo = new TypeInfo(){
+
+				@Override
+				public DataType getDataType(){
+					return dataType;
+				}
+
+				@Override
+				public OpType getOpType(){
+					return opType;
+				}
+			};
+
+			return hasParsedValue.getValue(typeInfo);
 		}
 
 		return FieldValueUtil.create(dataType, opType, constant.getValue());

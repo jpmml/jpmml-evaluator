@@ -26,8 +26,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.collect.ImmutableSet;
 import org.dmg.pmml.Array;
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.jpmml.model.ReflectionUtil;
 
@@ -48,16 +46,16 @@ public class RichSimpleSetPredicate extends SimpleSetPredicate implements HasPar
 	}
 
 	@Override
-	public Set<FieldValue> getValueSet(DataType dataType, OpType opType){
+	public Set<FieldValue> getValueSet(TypeInfo typeInfo){
 
 		if(this.parsedValueSet == null){
-			this.parsedValueSet = ImmutableSet.copyOf(parseArray(dataType, opType));
+			this.parsedValueSet = ImmutableSet.copyOf(parseArray(typeInfo));
 		}
 
 		return this.parsedValueSet;
 	}
 
-	private List<FieldValue> parseArray(DataType dataType, OpType opType){
+	private List<FieldValue> parseArray(TypeInfo typeInfo){
 		Array array = getArray();
 		if(array == null){
 			throw new MissingElementException(this, PMMLElements.SIMPLESETPREDICATE_ARRAY);
@@ -65,6 +63,6 @@ public class RichSimpleSetPredicate extends SimpleSetPredicate implements HasPar
 
 		List<?> content = ArrayUtil.getContent(array);
 
-		return parseAll(dataType, opType, content);
+		return parseAll(typeInfo, content);
 	}
 }

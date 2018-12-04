@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.dmg.pmml.Constant;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (
@@ -66,12 +65,12 @@ public class RichConstant extends Constant implements HasParsedValue<RichConstan
 	}
 
 	@Override
-	public FieldValue getValue(DataType dataType, OpType opType){
+	public FieldValue getValue(TypeInfo typeInfo){
 
 		if(this.parsedValue == null){
 			String value = getValue();
 
-			this.parsedValue = parse(dataType, opType, value);
+			this.parsedValue = parse(typeInfo, value);
 		}
 
 		return this.parsedValue;
