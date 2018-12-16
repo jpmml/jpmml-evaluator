@@ -85,6 +85,7 @@ import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
+import org.jpmml.evaluator.TypeInfo;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
@@ -1215,7 +1216,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			public int getIndex(FieldValue value){
 
 				if(this.parsedCategories == null){
-					this.parsedCategories = ImmutableList.copyOf(parseCategories(value.getDataType(), value.getOpType()));
+					this.parsedCategories = ImmutableList.copyOf(parseCategories(value));
 				}
 
 				return this.parsedCategories.indexOf(value);
@@ -1227,10 +1228,10 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				return categories.indexOf(category);
 			}
 
-			private List<FieldValue> parseCategories(DataType dataType, OpType opType){
+			private List<FieldValue> parseCategories(TypeInfo typeInfo){
 				List<String> categories = getCategories();
 
-				return Lists.transform(categories, category -> FieldValueUtil.create(dataType, opType, category));
+				return Lists.transform(categories, category -> FieldValueUtil.create(typeInfo, category));
 			}
 
 			public Matrix getMatrix(){

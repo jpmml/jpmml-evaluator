@@ -335,7 +335,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 					Collection<?> objects = FieldValueUtil.getValue(Collection.class, value);
 					for(Object object : objects){
-						explodedValue.add(FieldValueUtil.create(value.getDataType(), value.getOpType(), object));
+						explodedValue.add(FieldValueUtil.create(value, object));
 					}
 				} // End if
 
@@ -344,7 +344,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				} else
 
 				{
-					FieldValue categoryValue = FieldValueUtil.create(value.getDataType(), value.getOpType(), category);
+					FieldValue categoryValue = FieldValueUtil.create(value, category);
 
 					if(explodedValue.contains(categoryValue)){
 						result.add(id);

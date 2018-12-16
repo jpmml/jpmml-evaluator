@@ -37,6 +37,7 @@ import org.dmg.pmml.Expression;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.HasValue;
 import org.dmg.pmml.HasValueSet;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLObject;
 import org.jpmml.model.ToStringHelper;
 
@@ -69,6 +70,43 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 	FieldValue(DataType dataType, Object value){
 		setDataType(Objects.requireNonNull(dataType));
 		setValue(filterValue(Objects.requireNonNull(value)));
+	}
+
+	public FieldValue cast(DataType dataType, OpType opType){
+		boolean compatible = true;
+
+		if(dataType == null){
+			dataType = getDataType();
+		} else
+
+		if(dataType != null && !(dataType).equals(getDataType())){
+			compatible = false;
+		} // End if
+
+		if(opType == null){
+			opType = getOpType();
+		} else
+
+		if(opType != null && !(opType).equals(getOpType())){
+			compatible = false;
+		} // End if
+
+		if(compatible){
+			return this;
+		}
+
+		return FieldValue.create(dataType, opType, getValue());
+	}
+
+	public FieldValue cast(TypeInfo typeInfo){
+		DataType dataType = typeInfo.getDataType();
+		OpType opType = typeInfo.getOpType();
+
+		if((dataType).equals(getDataType()) && (opType).equals(getOpType())){
+			return this;
+		}
+
+		return FieldValue.create(typeInfo, getValue());
 	}
 
 	/**
@@ -404,6 +442,65 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 
 	private void setValue(Object value){
 		this.value = value;
+	}
+
+	static
+	public FieldValue create(DataType dataType, OpType opType, Object value){
+
+		if(dataType == null || opType == null){
+			throw new IllegalArgumentException();
+		} // End if
+
+		if(value instanceof Collection){
+			// Ignored
+		} else
+
+		{
+			value = TypeUtil.parseOrCast(dataType, value);
+		}
+
+		switch(opType){
+			case CONTINUOUS:
+				return ContinuousValue.create(dataType, value);
+			case CATEGORICAL:
+				return CategoricalValue.create(dataType, value);
+			case ORDINAL:
+				return OrdinalValue.create(dataType, (List<?>)null, value);
+			default:
+				throw new IllegalArgumentException();
+		}
+	}
+
+	static
+	public FieldValue create(TypeInfo typeInfo, Object value){
+
+		if(typeInfo == null){
+			throw new IllegalArgumentException();
+		} // End if
+
+		DataType dataType = typeInfo.getDataType();
+		OpType opType = typeInfo.getOpType();
+
+		if(value instanceof Collection){
+			// Ignored
+		} else
+
+		{
+			value = TypeUtil.parseOrCast(dataType, value);
+		}
+
+		switch(opType){
+			case CONTINUOUS:
+				return ContinuousValue.create(dataType, value);
+			case CATEGORICAL:
+				return CategoricalValue.create(dataType, value);
+			case ORDINAL:
+				List<?> ordering = typeInfo.getOrdering();
+
+				return OrdinalValue.create(dataType, ordering, value);
+			default:
+				throw new IllegalArgumentException();
+		}
 	}
 
 	static

@@ -27,6 +27,7 @@ import com.google.common.collect.RangeSet;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
+import org.dmg.pmml.HasDiscreteDomain;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MissingValueTreatmentMethod;
@@ -244,7 +245,7 @@ public class InputFieldUtil {
 				}
 
 				try {
-					FieldValue fieldValue = FieldValueUtil.createOrRefine(dataType, opType, value);
+					FieldValue fieldValue = FieldValueUtil.createOrCast(dataType, opType, value);
 
 					Value pmmlValue = (Value)fieldValue.getMapping(hasParsedValueMapping);
 					if(pmmlValue != null){
@@ -283,7 +284,7 @@ public class InputFieldUtil {
 							} else
 
 							{
-								equals = FieldValueUtil.equals(dataType, value, stringValue);
+								equals = TypeUtil.equals(dataType, value, stringValue);
 							}
 						}
 						break;
@@ -293,11 +294,11 @@ public class InputFieldUtil {
 							if(value instanceof FieldValue){
 								FieldValue fieldValue = (FieldValue)value;
 
-								equals = FieldValueUtil.equals(dataType, FieldValueUtil.getValue(fieldValue), stringValue);
+								equals = TypeUtil.equals(dataType, FieldValueUtil.getValue(fieldValue), stringValue);
 							} else
 
 							{
-								equals = FieldValueUtil.equals(dataType, value, stringValue);
+								equals = TypeUtil.equals(dataType, value, stringValue);
 							}
 						}
 						break;
@@ -370,19 +371,41 @@ public class InputFieldUtil {
 			return FieldValues.MISSING_VALUE;
 		}
 
-		DataType dataType = field.getDataType();
-		if(dataType == null){
-			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@dataType"), field);
-		}
+		TypeInfo typeInfo = new TypeInfo(){
 
-		OpType opType = FieldValueUtil.getOpType(field, miningField);
-		if(opType == null){
-			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@optype"), field);
-		}
+			@Override
+			public DataType getDataType(){
+				DataType dataType = FieldUtil.getDataType(field);
+				if(dataType == null){
+					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@dataType"), field);
+				}
 
-		FieldValue fieldValue = FieldValueUtil.createOrRefine(dataType, opType, value);
+				return dataType;
+			}
 
-		return FieldValueUtil.enhance(field, fieldValue);
+			@Override
+			public OpType getOpType(){
+				OpType opType = FieldUtil.getOpType(field, miningField);
+				if(opType == null){
+					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@optype"), field);
+				}
+
+				return opType;
+			}
+
+			@Override
+			public List<?> getOrdering(){
+				List<?> ordering = null;
+
+				if(field instanceof HasDiscreteDomain){
+					ordering = FieldUtil.getValidValues((Field & HasDiscreteDomain)field);
+				}
+
+				return ordering;
+			}
+		};
+
+		return FieldValueUtil.createOrCast(typeInfo, value);
 	}
 
 	static

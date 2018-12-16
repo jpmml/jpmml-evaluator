@@ -25,6 +25,7 @@ import org.dmg.pmml.Apply;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.DataField;
+import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.DiscretizeBin;
 import org.dmg.pmml.FieldColumnPair;
 import org.dmg.pmml.FieldRef;
@@ -104,6 +105,8 @@ public interface PMMLAttributes {
 	Field COMPOUNDPREDICATE_BOOLEANOPERATOR = ReflectionUtil.getField(CompoundPredicate.class, "booleanOperator");
 	Field DATAFIELD_DATATYPE = ReflectionUtil.getField(DataField.class, "dataType");
 	Field DATAFIELD_OPTYPE = ReflectionUtil.getField(DataField.class, "opType");
+	Field DERIVEDFIELD_DATATYPE = ReflectionUtil.getField(DerivedField.class, "dataType");
+	Field DERIVEDFIELD_OPTYPE = ReflectionUtil.getField(DerivedField.class, "opType");
 	Field DISCRETIZEBIN_BINVALUE = ReflectionUtil.getField(DiscretizeBin.class, "binValue");
 	Field DISCRETIZEBIN_INTERVAL = ReflectionUtil.getField(DiscretizeBin.class, "interval");
 	Field FIELDCOLUMNPAIR_COLUMN = ReflectionUtil.getField(FieldColumnPair.class, "column");

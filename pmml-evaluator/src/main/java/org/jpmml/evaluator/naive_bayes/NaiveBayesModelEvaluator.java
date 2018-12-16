@@ -65,7 +65,6 @@ import org.jpmml.evaluator.DistributionUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.HasParsedValueMapping;
 import org.jpmml.evaluator.InvalidAttributeException;
@@ -264,7 +263,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				return FieldValues.MISSING_VALUE;
 			}
 
-			return FieldValueUtil.refine(derivedField, value);
+			return value.cast(derivedField.getDataType(), derivedField.getOpType());
 		} else
 
 		{

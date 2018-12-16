@@ -46,7 +46,7 @@ public class InputField extends ModelField {
 
 	@Override
 	public OpType getOpType(){
-		return FieldValueUtil.getOpType(getField(), getMiningField());
+		return FieldUtil.getOpType(getField(), getMiningField());
 	}
 
 	/**

@@ -357,7 +357,7 @@ public class FunctionTest {
 
 	static
 	private void assertEquals(Object expected, FieldValue actual){
-		Assert.assertEquals(FieldValueUtil.create(expected), actual);
+		Assert.assertEquals(FieldValueUtil.create(actual, expected), actual);
 	}
 
 	static

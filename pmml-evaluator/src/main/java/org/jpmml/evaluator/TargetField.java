@@ -52,7 +52,7 @@ public class TargetField extends ResultField {
 
 	@Override
 	public OpType getOpType(){
-		return FieldValueUtil.getOpType(getField(), getMiningField(), getTarget());
+		return FieldUtil.getOpType(getField(), getMiningField(), getTarget());
 	}
 
 	/**

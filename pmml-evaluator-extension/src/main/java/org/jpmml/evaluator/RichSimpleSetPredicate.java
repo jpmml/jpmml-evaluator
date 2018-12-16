@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.jpmml.model.ReflectionUtil;
@@ -63,6 +64,6 @@ public class RichSimpleSetPredicate extends SimpleSetPredicate implements HasPar
 
 		List<?> content = ArrayUtil.getContent(array);
 
-		return parseAll(typeInfo, content);
+		return Lists.transform(content, value -> parse(typeInfo, value));
 	}
 }

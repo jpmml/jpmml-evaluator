@@ -76,6 +76,7 @@ import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
+import org.jpmml.evaluator.FieldUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FieldValues;
@@ -96,6 +97,7 @@ import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
+import org.jpmml.evaluator.TypeInfo;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
@@ -859,7 +861,39 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		@Override
 		public FieldValue prepare(String value){
-			return FieldValueUtil.create(getDerivedField(), value);
+			DerivedField derivedField = getDerivedField();
+
+			TypeInfo typeInfo = new TypeInfo(){
+
+				@Override
+				public DataType getDataType(){
+					DataType dataType = derivedField.getDataType();
+					if(dataType == null){
+						throw new MissingAttributeException(derivedField, PMMLAttributes.DERIVEDFIELD_DATATYPE);
+					}
+
+					return dataType;
+				}
+
+				@Override
+				public OpType getOpType(){
+					OpType opType = derivedField.getOpType();
+					if(opType == null){
+						throw new MissingAttributeException(derivedField, PMMLAttributes.DERIVEDFIELD_OPTYPE);
+					}
+
+					return opType;
+				}
+
+				@Override
+				public List<?> getOrdering(){
+					List<?> ordering = FieldUtil.getValidValues(derivedField);
+
+					return ordering;
+				}
+			};
+
+			return FieldValueUtil.create(typeInfo, value);
 		}
 
 		public DerivedField getDerivedField(){

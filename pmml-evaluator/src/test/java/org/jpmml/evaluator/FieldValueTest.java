@@ -26,6 +26,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -102,7 +104,7 @@ public class FieldValueTest {
 		assertFalse(louder.equalsValue(insane));
 
 		// Implicit (ie. lexicographic) ordering
-		louder.setOrdering(null);
+		assertNull(loud.getOrdering());
 
 		assertTrue(louder.compareToString("loud") > 0);
 		assertTrue(louder.compareToString("louder") == 0);
@@ -112,8 +114,14 @@ public class FieldValueTest {
 		assertTrue(louder.compareTo(louder) == 0);
 		assertTrue(louder.compareTo(insane) > 0);
 
+		TypeInfo typeInfo = new SimpleTypeInfo(DataType.STRING, OpType.ORDINAL, Arrays.asList("loud", "louder", "insane"));
+
+		loud = (OrdinalValue)FieldValueUtil.create(typeInfo, loud.getValue());
+		louder = (OrdinalValue)FieldValueUtil.create(typeInfo, louder.getValue());
+		insane = (OrdinalValue)FieldValueUtil.create(typeInfo, insane.getValue());
+
 		// Explicit ordering
-		louder.setOrdering(Arrays.asList(loud.getValue(), louder.getValue(), insane.getValue()));
+		assertNotNull(loud.getOrdering());
 
 		assertTrue(louder.compareToString("loud") > 0);
 		assertTrue(louder.compareToString("louder") == 0);
@@ -169,7 +177,9 @@ public class FieldValueTest {
 		assertTrue(zero.compareTo(one) < 0);
 
 		try {
-			FieldValue categoricalZero = FieldValueUtil.refine(zero.getDataType(), OpType.CATEGORICAL, zero);
+			TypeInfo typeInfo = new SimpleTypeInfo(zero.getDataType(), OpType.CATEGORICAL);
+
+			FieldValue categoricalZero = zero.cast(typeInfo);
 
 			zero.compareTo(categoricalZero);
 
@@ -179,7 +189,9 @@ public class FieldValueTest {
 		}
 
 		try {
-			FieldValue doubleZero = FieldValueUtil.refine(DataType.DOUBLE, zero.getOpType(), zero);
+			TypeInfo typeInfo = new SimpleTypeInfo(DataType.DOUBLE, zero.getOpType());
+
+			FieldValue doubleZero = zero.cast(typeInfo);
 
 			zero.compareTo(doubleZero);
 
@@ -246,12 +258,14 @@ public class FieldValueTest {
 		assertTrue(one.compareTo(zero) > 0);
 		assertTrue(one.compareTo(one) == 0);
 
-		zero.setOrdering(Arrays.asList(one.getValue(), zero.getValue()));
+		TypeInfo typeInfo = new SimpleTypeInfo(DataType.INTEGER, OpType.ORDINAL, Arrays.asList(1, 0));
+
+		zero = (OrdinalValue)FieldValueUtil.create(typeInfo, zero.getValue());
 
 		assertTrue(zero.compareTo(zero) == 0);
 		assertTrue(zero.compareTo(one) > 0);
 
-		one.setOrdering(zero.getOrdering());
+		one = (OrdinalValue)FieldValueUtil.create(typeInfo, one.getValue());
 
 		assertTrue(one.compareTo(zero) < 0);
 		assertTrue(one.compareTo(one) == 0);

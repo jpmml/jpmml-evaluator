@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import org.dmg.pmml.BinarySimilarity;
 import org.dmg.pmml.ComparisonMeasure;
 import org.dmg.pmml.DataType;
@@ -91,7 +92,7 @@ public class MeasureUtilTest {
 
 	static
 	private BitSet createFlags(List<? extends Number> values){
-		return MeasureUtil.toBitSet(FieldValueUtil.createAll(DataType.DOUBLE, OpType.CONTINUOUS, values));
+		return MeasureUtil.toBitSet(Lists.transform(values, value -> FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, value)));
 	}
 
 	private static ValueFactoryFactory valueFactoryFactory = ValueFactoryFactory.newInstance();

@@ -70,7 +70,9 @@ public class FunctionUtil {
 		for(int i = 0; i < parameterFields.size(); i++){
 			ParameterField parameterField = parameterFields.get(i);
 
-			FieldValue value = FieldValueUtil.refine(parameterField, values.get(i));
+			FieldValue value = values.get(i);
+
+			value = value.cast(parameterField.getDataType(), parameterField.getOpType());
 
 			functionContext.declare(parameterField.getName(), value);
 		}

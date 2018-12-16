@@ -34,7 +34,9 @@ import org.dmg.pmml.Field;
 import org.dmg.pmml.HasContinuousDomain;
 import org.dmg.pmml.HasDiscreteDomain;
 import org.dmg.pmml.Interval;
+import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.Target;
 import org.dmg.pmml.Value;
 
 public class FieldUtil {
@@ -58,68 +60,36 @@ public class FieldUtil {
 	}
 
 	static
-	public Value getValidValue(DataField dataField, Object value){
+	public DataType getDataType(Field<?> field){
+		return field.getDataType();
+	}
 
-		if(value == null){
-			return null;
-		} // End if
+	static
+	public OpType getOpType(Field<?> field, MiningField miningField){
+		OpType opType = field.getOpType();
 
-		if(dataField.hasValues()){
-			DataType dataType = dataField.getDataType();
-			if(dataType == null){
-				throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_DATATYPE);
-			}
+		// "A MiningField overrides a (Data)Field"
+		if(miningField != null){
+			opType = firstNonNull(miningField.getOpType(), opType);
+		}
 
-			value = TypeUtil.parseOrCast(dataType, value);
+		return opType;
+	}
 
-			if(dataField instanceof HasParsedValueMapping){
-				HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)dataField;
+	static
+	public OpType getOpType(Field<?> field, MiningField miningField, Target target){
+		OpType opType = field.getOpType();
 
-				OpType opType = dataField.getOpType();
-				if(opType == null){
-					throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_OPTYPE);
-				}
+		// "A MiningField overrides a (Data)Field, and a Target overrides a MiningField"
+		if(miningField != null){
+			opType = firstNonNull(miningField.getOpType(), opType);
 
-				FieldValue fieldValue = FieldValueUtil.createInternal(dataType, opType, value);
-
-				Value pmmlValue = (Value)fieldValue.getMapping(hasParsedValueMapping);
-				if(pmmlValue != null && (Value.Property.VALID).equals(pmmlValue.getProperty())){
-					return pmmlValue;
-				}
-
-				return null;
-			}
-
-			List<Value> pmmlValues = dataField.getValues();
-			for(int i = 0, max = pmmlValues.size(); i < max; i++){
-				Value pmmlValue = pmmlValues.get(i);
-
-				String stringValue = pmmlValue.getValue();
-				if(stringValue == null){
-					throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
-				}
-
-				Value.Property property = pmmlValue.getProperty();
-				switch(property){
-					case VALID:
-						{
-							boolean equals = FieldValueUtil.equals(dataType, value, stringValue);
-
-							if(equals){
-								return pmmlValue;
-							}
-						}
-						break;
-					case INVALID:
-					case MISSING:
-						break;
-					default:
-						throw new UnsupportedAttributeException(pmmlValue, property);
-				}
+			if(target != null){
+				opType = firstNonNull(target.getOpType(), opType);
 			}
 		}
 
-		return null;
+		return opType;
 	}
 
 	static
@@ -154,6 +124,9 @@ public class FieldUtil {
 		List<Object> result = new ArrayList<>();
 
 		DataType dataType = field.getDataType();
+		if(dataType == null){
+			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@dataType"), field);
+		} // End if
 
 		if(field.hasValues()){
 			List<Value> pmmlValues = field.getValues();
@@ -193,6 +166,16 @@ public class FieldUtil {
 		}
 
 		return result;
+	}
+
+	static
+	private <V> V firstNonNull(V value, V defaultValue){
+
+		if(value != null){
+			return value;
+		}
+
+		return defaultValue;
 	}
 
 	private static final LoadingCache<DataField, List<String>> categoryCache = CacheUtil.buildLoadingCache(new CacheLoader<DataField, List<String>>(){

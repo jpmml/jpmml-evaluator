@@ -18,27 +18,12 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 interface ValueParser {
 
 	default
 	FieldValue parse(TypeInfo typeInfo, Object value){
-		FieldValue fieldValue = FieldValueUtil.create(typeInfo.getDataType(), typeInfo.getOpType(), value);
-
-		if(typeInfo instanceof OrdinalValue){
-			OrdinalValue ordinalValue = (OrdinalValue)fieldValue;
-
-			ordinalValue.setOrdering(typeInfo.getOrdering());
-		}
+		FieldValue fieldValue = FieldValueUtil.create(typeInfo, value);
 
 		return FieldValues.INTERNER.intern(fieldValue);
-	}
-
-	default
-	List<FieldValue> parseAll(TypeInfo typeInfo, List<?> values){
-		return Lists.transform(values, value -> parse(typeInfo, value));
 	}
 }

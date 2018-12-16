@@ -65,9 +65,9 @@ public class RichDataFieldTest {
 
 		assertSame(invalidValue, valueMappings.get(FieldValueUtil.create(DataType.INTEGER, OpType.CATEGORICAL, 0)));
 
-		assertSame(validValueOne, FieldUtil.getValidValue(richDataField, true));
-		assertSame(validValueTwo, FieldUtil.getValidValue(richDataField, 2d));
-		assertSame(validValueThree, FieldUtil.getValidValue(richDataField, "3"));
+		assertSame(validValueOne, TargetFieldUtil.getValidValue(richDataField, true));
+		assertSame(validValueTwo, TargetFieldUtil.getValidValue(richDataField, 2d));
+		assertSame(validValueThree, TargetFieldUtil.getValidValue(richDataField, "3"));
 
 		try {
 			valueMappings.get(FieldValueUtil.create(DataType.INTEGER, OpType.CATEGORICAL, "N/A"));

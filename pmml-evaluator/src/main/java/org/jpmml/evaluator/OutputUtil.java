@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -351,7 +352,48 @@ public class OutputUtil {
 					throw new UnsupportedAttributeException(outputField, resultFeature);
 			}
 
-			FieldValue outputValue = FieldValueUtil.create(outputField, value);
+			TypeInfo typeInfo = new TypeInfo(){
+
+				@Override
+				public DataType getDataType(){
+					DataType dataType = outputField.getDataType();
+					if(dataType == null){
+
+						if(value instanceof Collection){
+							Collection<?> values = (Collection<?>)value;
+
+							dataType = TypeUtil.getDataType(values);
+						} else
+
+						{
+							dataType = TypeUtil.getDataType(value);
+						}
+					}
+
+					return dataType;
+				}
+
+				@Override
+				public OpType getOpType(){
+					OpType opType = outputField.getOpType();
+					if(opType == null){
+						DataType dataType = getDataType();
+
+						opType = TypeUtil.getOpType(dataType);
+					}
+
+					return opType;
+				}
+
+				@Override
+				public List<?> getOrdering(){
+					List<?> ordering = FieldUtil.getValidValues(outputField);
+
+					return ordering;
+				}
+			};
+
+			FieldValue outputValue = FieldValueUtil.create(typeInfo, value);
 
 			// The result of one output field becomes available to other output fields
 			context.declare(outputField.getName(), outputValue);
@@ -391,6 +433,8 @@ public class OutputUtil {
 			}
 		}
 
+		DataField dataField = targetField.getField();
+
 		OpType opType = targetField.getOpType();
 		switch(opType){
 			case CONTINUOUS:
@@ -398,7 +442,7 @@ public class OutputUtil {
 			case CATEGORICAL:
 			case ORDINAL:
 				{
-					Value value = TargetFieldUtil.getValidValue(targetField, object);
+					Value value = TargetFieldUtil.getValidValue(dataField, object);
 
 					if(value != null){
 						String displayValue = value.getDisplayValue();
@@ -410,8 +454,6 @@ public class OutputUtil {
 				}
 				break;
 			default:
-				DataField dataField = targetField.getField(); // XXX
-
 				throw new UnsupportedAttributeException(dataField, opType);
 		}
 

@@ -28,6 +28,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.ComparisonMeasure;
 import org.dmg.pmml.DataType;
@@ -330,7 +331,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 			List<? extends Number> values = ArrayUtil.asNumberList(array);
 
-			return ImmutableList.copyOf(FieldValueUtil.createAll(DataType.DOUBLE, OpType.CONTINUOUS, values));
+			return ImmutableList.copyOf(Lists.transform(values, value -> FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, value)));
 		}
 	});
 

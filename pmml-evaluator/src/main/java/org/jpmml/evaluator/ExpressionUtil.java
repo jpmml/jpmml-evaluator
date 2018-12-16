@@ -78,7 +78,11 @@ public class ExpressionUtil {
 	public <E extends PMMLObject & HasType<E> & HasExpression<E>> FieldValue evaluateTypedExpressionContainer(E hasTypedExpression, EvaluationContext context){
 		FieldValue value = evaluateExpressionContainer(hasTypedExpression, context);
 
-		return FieldValueUtil.refine(hasTypedExpression.getDataType(), hasTypedExpression.getOpType(), value);
+		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+			return FieldValues.MISSING_VALUE;
+		}
+
+		return value.cast(hasTypedExpression.getDataType(), hasTypedExpression.getOpType());
 	}
 
 	static
@@ -414,15 +418,15 @@ public class ExpressionUtil {
 	}
 
 	@SuppressWarnings (
-		value = {"rawtypes", "unchecked"}
+		value = {"unchecked"}
 	)
 	static
 	public FieldValue evaluateAggregate(Aggregate aggregate, EvaluationContext context){
-		FieldValue value = context.evaluate(ensureField(aggregate));
+		FieldValue fieldValue = context.evaluate(ensureField(aggregate));
 
 		// The JPMML library operates with single records, so it's impossible to implement "proper" aggregation over multiple records.
 		// It is assumed that application developers have performed the aggregation beforehand
-		Collection<?> values = FieldValueUtil.getValue(Collection.class, value);
+		Collection<?> values = FieldValueUtil.getValue(Collection.class, fieldValue);
 
 		FieldName groupName = aggregate.getGroupField();
 		if(groupName != null){
@@ -432,9 +436,10 @@ public class ExpressionUtil {
 			TypeUtil.getDataType(FieldValueUtil.getValue(groupValue));
 		}
 
-		// Remove missing values
 		values = values.stream()
+			// "Missing values are ignored"
 			.filter(Objects::nonNull)
+			.map(value -> FieldValueUtil.create(fieldValue, value))
 			.collect(Collectors.toList());
 
 		Aggregate.Function function = aggregate.getFunction();
@@ -446,13 +451,13 @@ public class ExpressionUtil {
 			case COUNT:
 				return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, values.size());
 			case SUM:
-				return Functions.SUM.evaluate(FieldValueUtil.createAll(value.getDataType(), value.getOpType(), (List<?>)values));
+				return Functions.SUM.evaluate((List<FieldValue>)values);
 			case AVERAGE:
-				return Functions.AVG.evaluate(FieldValueUtil.createAll(value.getDataType(), value.getOpType(), (List<?>)values));
+				return Functions.AVG.evaluate((List<FieldValue>)values);
 			case MIN:
-				return FieldValueUtil.create(value.getDataType(), value.getOpType(), Collections.min((List<Comparable>)values));
+				return Collections.min((List<FieldValue>)values);
 			case MAX:
-				return FieldValueUtil.create(value.getDataType(), value.getOpType(), Collections.max((List<Comparable>)values));
+				return Collections.max((List<FieldValue>)values);
 			default:
 				throw new UnsupportedAttributeException(aggregate, function);
 		}
