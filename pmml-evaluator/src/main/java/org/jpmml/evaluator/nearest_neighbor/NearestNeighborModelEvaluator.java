@@ -80,6 +80,7 @@ import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.InlineTableUtil;
+import org.jpmml.evaluator.InputFieldUtil;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.InvalidElementException;
 import org.jpmml.evaluator.InvisibleFieldException;
@@ -824,7 +825,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		@Override
 		public FieldValue prepare(String value){
-			return FieldValueUtil.prepareInputValue(getDataField(), getMiningField(), value);
+			return InputFieldUtil.prepareInputValue(getDataField(), getMiningField(), value);
 		}
 
 		public DataField getDataField(){

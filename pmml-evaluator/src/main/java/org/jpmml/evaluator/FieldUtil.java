@@ -34,6 +34,7 @@ import org.dmg.pmml.Field;
 import org.dmg.pmml.HasContinuousDomain;
 import org.dmg.pmml.HasDiscreteDomain;
 import org.dmg.pmml.Interval;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.Value;
 
 public class FieldUtil {
@@ -54,6 +55,71 @@ public class FieldUtil {
 	static
 	public <F extends Field<F> & HasContinuousDomain<F>> RangeSet<Double> getValidRanges(F field){
 		return CacheUtil.getValue(field, FieldUtil.validRangeCache);
+	}
+
+	static
+	public Value getValidValue(DataField dataField, Object value){
+
+		if(value == null){
+			return null;
+		} // End if
+
+		if(dataField.hasValues()){
+			DataType dataType = dataField.getDataType();
+			if(dataType == null){
+				throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_DATATYPE);
+			}
+
+			value = TypeUtil.parseOrCast(dataType, value);
+
+			if(dataField instanceof HasParsedValueMapping){
+				HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)dataField;
+
+				OpType opType = dataField.getOpType();
+				if(opType == null){
+					throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_OPTYPE);
+				}
+
+				FieldValue fieldValue = FieldValueUtil.createInternal(dataType, opType, value);
+
+				Value pmmlValue = (Value)fieldValue.getMapping(hasParsedValueMapping);
+				if(pmmlValue != null && (Value.Property.VALID).equals(pmmlValue.getProperty())){
+					return pmmlValue;
+				}
+
+				return null;
+			}
+
+			List<Value> pmmlValues = dataField.getValues();
+			for(int i = 0, max = pmmlValues.size(); i < max; i++){
+				Value pmmlValue = pmmlValues.get(i);
+
+				String stringValue = pmmlValue.getValue();
+				if(stringValue == null){
+					throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
+				}
+
+				Value.Property property = pmmlValue.getProperty();
+				switch(property){
+					case VALID:
+						{
+							boolean equals = FieldValueUtil.equals(dataType, value, stringValue);
+
+							if(equals){
+								return pmmlValue;
+							}
+						}
+						break;
+					case INVALID:
+					case MISSING:
+						break;
+					default:
+						throw new UnsupportedAttributeException(pmmlValue, property);
+				}
+			}
+		}
+
+		return null;
 	}
 
 	static

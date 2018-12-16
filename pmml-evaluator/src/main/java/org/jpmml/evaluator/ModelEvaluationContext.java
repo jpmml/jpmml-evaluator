@@ -89,12 +89,12 @@ public class ModelEvaluationContext extends EvaluationContext {
 			case GROUP:
 			case ORDER:
 				{
-					return FieldValueUtil.prepareInputValue(dataField, miningField, value);
+					return InputFieldUtil.prepareInputValue(dataField, miningField, value);
 				}
 			case PREDICTED:
 			case TARGET:
 				{
-					return FieldValueUtil.prepareResidualInputValue(dataField, miningField, value);
+					return InputFieldUtil.prepareResidualInputValue(dataField, miningField, value);
 				}
 			default:
 				throw new UnsupportedAttributeException(miningField, usageType);
@@ -240,11 +240,11 @@ public class ModelEvaluationContext extends EvaluationContext {
 		} // End if
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
-			return FieldValueUtil.performMissingValueTreatment(field, miningField);
+			return InputFieldUtil.performMissingValueTreatment(field, miningField);
 		} else
 
 		{
-			return FieldValueUtil.performValidValueTreatment(field, miningField, value);
+			return InputFieldUtil.performValidValueTreatment(field, miningField, value);
 		}
 	}
 }

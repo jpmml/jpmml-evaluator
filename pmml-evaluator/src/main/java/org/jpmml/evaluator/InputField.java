@@ -67,7 +67,7 @@ public class InputField extends ModelField {
 	 * @throws UnsupportedMarkupException
 	 */
 	public FieldValue prepare(Object value){
-		return FieldValueUtil.prepareInputValue(getField(), getMiningField(), value);
+		return InputFieldUtil.prepareInputValue(getField(), getMiningField(), value);
 	}
 
 	/**

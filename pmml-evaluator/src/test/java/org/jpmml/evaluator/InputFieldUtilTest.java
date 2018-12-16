@@ -37,7 +37,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class FieldValueUtilTest {
+public class InputFieldUtilTest {
 
 	@Test
 	public void prepareContinuousInputValue(){
@@ -306,7 +306,7 @@ public class FieldValueUtilTest {
 
 	static
 	private Object prepare(DataField dataField, MiningField miningField, Object value){
-		FieldValue result = FieldValueUtil.prepareInputValue(dataField, miningField, value);
+		FieldValue result = InputFieldUtil.prepareInputValue(dataField, miningField, value);
 
 		return FieldValueUtil.getValue(result);
 	}

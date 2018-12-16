@@ -398,7 +398,7 @@ public class OutputUtil {
 			case CATEGORICAL:
 			case ORDINAL:
 				{
-					Value value = FieldValueUtil.getValidValue(targetField, object);
+					Value value = TargetFieldUtil.getValidValue(targetField, object);
 
 					if(value != null){
 						String displayValue = value.getDisplayValue();

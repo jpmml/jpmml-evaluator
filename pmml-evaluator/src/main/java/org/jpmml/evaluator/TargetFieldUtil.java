@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Villu Ruusmann
+ * Copyright (c) 2013 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,22 +18,15 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.DataField;
-import org.dmg.pmml.MiningField;
+import org.dmg.pmml.Value;
 
-public class ResidualInputField extends InputField {
+public class TargetFieldUtil {
 
-	public ResidualInputField(DataField dataField, MiningField miningField){
-		super(dataField, miningField);
+	private TargetFieldUtil(){
 	}
 
-	@Override
-	public FieldValue prepare(Object value){
-		return InputFieldUtil.prepareResidualInputValue(getField(), getMiningField(), value);
-	}
-
-	@Override
-	public DataField getField(){
-		return (DataField)super.getField();
+	static
+	public Value getValidValue(TargetField targetField, Object value){
+		return FieldUtil.getValidValue(targetField.getField(), value);
 	}
 }
