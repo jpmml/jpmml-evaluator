@@ -20,11 +20,10 @@ package org.jpmml.sas.functions;
 
 import java.util.List;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FunctionException;
+import org.jpmml.evaluator.TypeInfos;
 import org.jpmml.evaluator.functions.AbstractFunction;
 
 public class StringNormalize extends AbstractFunction {
@@ -63,6 +62,6 @@ public class StringNormalize extends AbstractFunction {
 		// Convert to all uppercase characters
 		string = string.toUpperCase();
 
-		return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, string);
+		return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, string);
 	}
 }

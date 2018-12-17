@@ -41,7 +41,6 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
@@ -73,6 +72,7 @@ import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLException;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
+import org.jpmml.evaluator.TypeInfos;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 
 public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> implements HasGroupFields, HasEntityRegistry<AssociationRule> {
@@ -577,8 +577,8 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	private static final Cache<AssociationModel, List<ItemValue>> itemValueCache = CacheUtil.buildCache();
 
 	// IBM SPSS-style schema
-	private static final FieldValue STRING_TRUE = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "T");
-	private static final FieldValue STRING_FALSE = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "F");
+	private static final FieldValue STRING_TRUE = FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, "T");
+	private static final FieldValue STRING_FALSE = FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, "F");
 
 	private static final FieldValue BOOLEAN_TRUE = FieldValues.CATEGORICAL_BOOLEAN_TRUE;
 	private static final FieldValue BOOLEAN_FALSE = FieldValues.CATEGORICAL_BOOLEAN_FALSE;

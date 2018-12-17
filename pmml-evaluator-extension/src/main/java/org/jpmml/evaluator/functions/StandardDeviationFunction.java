@@ -23,9 +23,9 @@ import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.TypeInfos;
 import org.jpmml.evaluator.TypeUtil;
 
 /**
@@ -66,7 +66,7 @@ public class StandardDeviationFunction extends AbstractFunction {
 
 		Double result = evaluate(values, biasCorrected);
 
-		return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, result);
+		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 	}
 
 	static

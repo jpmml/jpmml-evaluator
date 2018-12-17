@@ -21,11 +21,10 @@ package org.jpmml.evaluator.functions;
 import java.util.Arrays;
 import java.util.List;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.Function;
+import org.jpmml.evaluator.TypeInfos;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -46,7 +45,7 @@ public class StandardDeviationFunctionTest {
 	private Number evaluate(List<Double> values){
 		Function standardDeviation = new StandardDeviationFunction();
 
-		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, values));
+		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, values));
 
 		return (standardDeviation.evaluate(arguments)).asNumber();
 	}
@@ -55,7 +54,7 @@ public class StandardDeviationFunctionTest {
 	private Number evaluate(List<Double> values, boolean flag){
 		Function standardDeviation = new StandardDeviationFunction();
 
-		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, values), FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, flag));
+		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, values), FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, flag));
 
 		return (standardDeviation.evaluate(arguments)).asNumber();
 	}

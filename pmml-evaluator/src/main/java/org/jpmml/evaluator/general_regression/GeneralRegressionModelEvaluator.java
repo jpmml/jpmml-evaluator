@@ -40,7 +40,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.Matrix;
@@ -86,6 +85,7 @@ import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.TypeInfo;
+import org.jpmml.evaluator.TypeInfos;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
@@ -259,7 +259,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		FieldValue value = getVariable(endTimeVariable, context);
 
-		FieldValue minTimeValue = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, minTime);
+		FieldValue minTimeValue = FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, minTime);
 
 		// "If the value is less than the minimum time, then cumulative hazard is 0 and predicted survival is 1"
 		if(value.compareToValue(minTimeValue) < 0){
@@ -268,7 +268,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			return TargetUtil.evaluateRegression(getTargetField(), cumHazard);
 		}
 
-		FieldValue maxTimeValue = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, maxTime);
+		FieldValue maxTimeValue = FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, maxTime);
 
 		// "If the value is greater than the maximum time, then the result is a missing value"
 		if(value.compareToValue(maxTimeValue) > 0){

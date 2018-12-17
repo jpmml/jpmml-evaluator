@@ -23,12 +23,12 @@ import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.ComplexDoubleVector;
 import org.jpmml.evaluator.DoubleVector;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FunctionException;
+import org.jpmml.evaluator.TypeInfos;
 import org.jpmml.evaluator.TypeUtil;
 
 /**
@@ -69,7 +69,7 @@ public class PercentileFunction extends AbstractFunction {
 
 		Double result = evaluate(values, percentile);
 
-		return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, result);
+		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 	}
 
 	static

@@ -178,7 +178,7 @@ public class ExpressionUtil {
 		FieldValue value = context.evaluate(ensureField(fieldRef));
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
-			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, fieldRef.getMapMissingTo());
+			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, fieldRef.getMapMissingTo());
 		}
 
 		return value;
@@ -189,7 +189,7 @@ public class ExpressionUtil {
 		FieldValue value = context.evaluate(ensureField(normContinuous));
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
-			return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, normContinuous.getMapMissingTo());
+			return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, normContinuous.getMapMissingTo());
 		}
 
 		return NormalizationUtil.normalize(normContinuous, value);
@@ -200,7 +200,7 @@ public class ExpressionUtil {
 		FieldValue value = context.evaluate(ensureField(normDiscrete));
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
-			return FieldValueUtil.create(DataType.DOUBLE, OpType.CATEGORICAL, normDiscrete.getMapMissingTo());
+			return FieldValueUtil.create(TypeInfos.CATEGORICAL_DOUBLE, normDiscrete.getMapMissingTo());
 		}
 
 		NormDiscrete.Method method = normDiscrete.getMethod();
@@ -284,9 +284,9 @@ public class ExpressionUtil {
 		switch(localTermWeights){
 			case BINARY:
 			case TERM_FREQUENCY:
-				return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, termFrequency);
+				return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, termFrequency);
 			case LOGARITHMIC:
-				return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Math.log10(1d + termFrequency));
+				return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, Math.log10(1d + termFrequency));
 			default:
 				throw new UnsupportedAttributeException(textIndex, localTermWeights);
 		}
@@ -311,7 +311,7 @@ public class ExpressionUtil {
 				FieldValue flag = evaluate(arguments.next(), context);
 
 				if(flag == null && mapMissingTo != null){
-					return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, mapMissingTo);
+					return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
 				}
 
 				values.add(flag);
@@ -341,7 +341,7 @@ public class ExpressionUtil {
 						FieldValue trueValue = evaluate(arguments.next(), context);
 
 						if(Objects.equals(FieldValues.MISSING_VALUE, trueValue) && mapMissingTo != null){
-							return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, mapMissingTo);
+							return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
 						}
 
 						values.add(trueValue);
@@ -365,7 +365,7 @@ public class ExpressionUtil {
 							FieldValue falseValue = evaluate(arguments.next(), context);
 
 							if(Objects.equals(FieldValues.MISSING_VALUE, falseValue) && mapMissingTo != null){
-								return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, mapMissingTo);
+								return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
 							}
 
 							values.add(falseValue);
@@ -380,7 +380,7 @@ public class ExpressionUtil {
 
 			// "If a mapMissingTo value is specified and any of the input values of the function are missing, then the function is not applied at all and the mapMissingTo value is returned instead"
 			if(Objects.equals(FieldValues.MISSING_VALUE, value) && mapMissingTo != null){
-				return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, mapMissingTo);
+				return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
 			}
 
 			values.add(value);
@@ -403,7 +403,7 @@ public class ExpressionUtil {
 					// Re-throw the given InvalidResultException instance
 					throw ire;
 				case AS_MISSING:
-					return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, defaultValue);
+					return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, defaultValue);
 				default:
 					throw new UnsupportedAttributeException(apply, invalidValueTreatmentMethod);
 			}
@@ -411,7 +411,7 @@ public class ExpressionUtil {
 
 		// "If a defaultValue value is specified and the function produced a missing value, then the defaultValue is returned"
 		if(result == null && defaultValue != null){
-			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, defaultValue);
+			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, defaultValue);
 		}
 
 		return result;
@@ -449,7 +449,7 @@ public class ExpressionUtil {
 
 		switch(function){
 			case COUNT:
-				return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, values.size());
+				return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, values.size());
 			case SUM:
 				return Functions.SUM.evaluate((List<FieldValue>)values);
 			case AVERAGE:

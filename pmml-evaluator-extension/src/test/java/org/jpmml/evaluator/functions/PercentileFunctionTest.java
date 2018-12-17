@@ -21,11 +21,10 @@ package org.jpmml.evaluator.functions;
 import java.util.Arrays;
 import java.util.List;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.Function;
+import org.jpmml.evaluator.TypeInfos;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -43,7 +42,7 @@ public class PercentileFunctionTest {
 	private Number evaluate(List<Double> values, int quantile){
 		Function percentile = new PercentileFunction();
 
-		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, values), FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, quantile));
+		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, values), FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, quantile));
 
 		return (percentile.evaluate(arguments)).asNumber();
 	}

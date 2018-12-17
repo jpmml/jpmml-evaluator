@@ -37,7 +37,6 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.MiningFunction;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Similarity;
 import org.dmg.pmml.Target;
@@ -67,6 +66,7 @@ import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
+import org.jpmml.evaluator.TypeInfos;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
@@ -331,7 +331,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 			List<? extends Number> values = ArrayUtil.asNumberList(array);
 
-			return ImmutableList.copyOf(Lists.transform(values, value -> FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, value)));
+			return ImmutableList.copyOf(Lists.transform(values, value -> FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, value)));
 		}
 	});
 

@@ -98,6 +98,7 @@ import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeInfo;
+import org.jpmml.evaluator.TypeInfos;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
@@ -806,7 +807,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		@Override
 		public FieldValue prepare(String value){
-			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, value);
+			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, value);
 		}
 	}
 

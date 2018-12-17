@@ -458,7 +458,7 @@ public interface Functions {
 			// This expression must never throw a StringIndexOutOfBoundsException
 			String result = string.substring(javaPosition, javaPosition + javaLength);
 
-			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, result);
+			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
 		}
 	};
 
@@ -481,7 +481,7 @@ public interface Functions {
 				.map(value -> (String)TypeUtil.cast(DataType.STRING, value.getValue()))
 				.collect(Collectors.joining());
 
-			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, result);
+			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
 		}
 	};
 
@@ -503,7 +503,7 @@ public interface Functions {
 
 			String result = matcher.replaceAll(replacement);
 
-			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, result);
+			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
 		}
 	};
 
@@ -522,7 +522,7 @@ public interface Functions {
 			// "The string is considered to match the pattern if any substring matches the pattern"
 			Boolean result = Boolean.valueOf(matcher.find());
 
-			return FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, result);
+			return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 		}
 	};
 
@@ -547,7 +547,7 @@ public interface Functions {
 					.initCause(ife);
 			}
 
-			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, result);
+			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
 		}
 	};
 
@@ -572,7 +572,7 @@ public interface Functions {
 					.initCause(ife);
 			}
 
-			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, result);
+			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
 		}
 
 		private String translatePattern(String pattern){
@@ -609,7 +609,7 @@ public interface Functions {
 
 			DaysSinceDate period = new DaysSinceDate(LocalDate.of(year, 1, 1), instant);
 
-			return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, period.intValue());
+			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, period.intValue());
 		}
 	};
 
@@ -623,7 +623,7 @@ public interface Functions {
 
 			SecondsSinceMidnight period = new SecondsSinceMidnight(instant.toSecondOfDay());
 
-			return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, period.intValue());
+			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, period.intValue());
 		}
 	};
 
@@ -639,7 +639,7 @@ public interface Functions {
 
 			SecondsSinceDate period = new SecondsSinceDate(LocalDate.of(year, 1, 1), instant);
 
-			return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, period.intValue());
+			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, period.intValue());
 		}
 	};
 
@@ -655,7 +655,7 @@ public interface Functions {
 
 			Double result = Math.hypot(x.doubleValue(), y.doubleValue());
 
-			return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, result);
+			return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 		}
 	};
 
@@ -722,7 +722,7 @@ public interface Functions {
 				throw new NaNResultException();
 			}
 
-			return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, result);
+			return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 		}
 	};
 

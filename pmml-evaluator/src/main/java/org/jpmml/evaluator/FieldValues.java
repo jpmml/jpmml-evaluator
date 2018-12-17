@@ -20,21 +20,19 @@ package org.jpmml.evaluator;
 
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 
 public interface FieldValues {
 
 	FieldValue MISSING_VALUE = null;
 
-	FieldValue CONTINUOUS_DOUBLE_ZERO = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Numbers.DOUBLE_ZERO);
-	FieldValue CONTINUOUS_DOUBLE_ONE = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Numbers.DOUBLE_ONE);
+	FieldValue CONTINUOUS_DOUBLE_ZERO = FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, Numbers.DOUBLE_ZERO);
+	FieldValue CONTINUOUS_DOUBLE_ONE = FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, Numbers.DOUBLE_ONE);
 
-	FieldValue CATEGORICAL_DOUBLE_ZERO = FieldValueUtil.create(DataType.DOUBLE, OpType.CATEGORICAL, Numbers.DOUBLE_ZERO);
-	FieldValue CATEGORICAL_DOUBLE_ONE = FieldValueUtil.create(DataType.DOUBLE, OpType.CATEGORICAL, Numbers.DOUBLE_ONE);
+	FieldValue CATEGORICAL_DOUBLE_ZERO = FieldValueUtil.create(TypeInfos.CATEGORICAL_DOUBLE, Numbers.DOUBLE_ZERO);
+	FieldValue CATEGORICAL_DOUBLE_ONE = FieldValueUtil.create(TypeInfos.CATEGORICAL_DOUBLE, Numbers.DOUBLE_ONE);
 
-	FieldValue CATEGORICAL_BOOLEAN_TRUE = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
-	FieldValue CATEGORICAL_BOOLEAN_FALSE = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
+	FieldValue CATEGORICAL_BOOLEAN_TRUE = FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, true);
+	FieldValue CATEGORICAL_BOOLEAN_FALSE = FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, false);
 
 	Interner<FieldValue> INTERNER = Interners.newWeakInterner();
 }

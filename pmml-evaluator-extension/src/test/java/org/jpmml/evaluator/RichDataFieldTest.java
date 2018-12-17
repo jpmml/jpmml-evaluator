@@ -63,14 +63,14 @@ public class RichDataFieldTest {
 
 		assertEquals(4, valueMappings.size());
 
-		assertSame(invalidValue, valueMappings.get(FieldValueUtil.create(DataType.INTEGER, OpType.CATEGORICAL, 0)));
+		assertSame(invalidValue, valueMappings.get(FieldValueUtil.create(TypeInfos.CATEGORICAL_INTEGER, 0)));
 
 		assertSame(validValueOne, TargetFieldUtil.getValidValue(richDataField, true));
 		assertSame(validValueTwo, TargetFieldUtil.getValidValue(richDataField, 2d));
 		assertSame(validValueThree, TargetFieldUtil.getValidValue(richDataField, "3"));
 
 		try {
-			valueMappings.get(FieldValueUtil.create(DataType.INTEGER, OpType.CATEGORICAL, "N/A"));
+			valueMappings.get(FieldValueUtil.create(TypeInfos.CATEGORICAL_INTEGER, "N/A"));
 
 			fail();
 		} catch(NumberFormatException nfe){
