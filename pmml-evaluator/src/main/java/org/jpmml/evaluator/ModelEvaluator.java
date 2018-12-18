@@ -631,13 +631,33 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		return CacheUtil.getValue(model, cache, loader);
 	}
 
+	protected Configuration ensureConfiguration(){
+		Configuration configuration = getConfiguration();
+
+		if(this.configuration == null){
+			throw new IllegalStateException();
+		}
+
+		return this.configuration;
+	}
+
+	protected ModelEvaluatorFactory ensureModelEvaluatorFactory(){
+		Configuration configuration = ensureConfiguration();
+
+		return configuration.getModelEvaluatorFactory();
+	}
+
+	protected ValueFactoryFactory ensureValueFactoryFactory(){
+		Configuration configuration = ensureConfiguration();
+
+		return configuration.getValueFactoryFactory();
+	}
+
 	protected ValueFactory<?> ensureValueFactory(){
 		ValueFactory<?> valueFactory = getValueFactory();
 
 		if(valueFactory == null){
-			Configuration configuration = getConfiguration();
-
-			ValueFactoryFactory valueFactoryFactory = configuration.getValueFactoryFactory();
+			ValueFactoryFactory valueFactoryFactory = ensureValueFactoryFactory();
 
 			MathContext mathContext = getMathContext();
 
@@ -675,7 +695,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		this.configuration = configuration;
 	}
 
-	public ValueFactory<?> getValueFactory(){
+	private ValueFactory<?> getValueFactory(){
 		return this.valueFactory;
 	}
 

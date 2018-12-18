@@ -20,45 +20,63 @@ package org.jpmml.evaluator;
 
 import java.io.Serializable;
 
-/**
- * @see ConfigurationBuilder
- */
-public class Configuration implements Serializable {
+public class ConfigurationBuilder implements Cloneable, Serializable {
 
 	private ModelEvaluatorFactory modelEvaluatorFactory = null;
 
 	private ValueFactoryFactory valueFactoryFactory = null;
 
 
-	Configuration(){
+	public ConfigurationBuilder(){
+	}
+
+	@Override
+	public ConfigurationBuilder clone(){
+
+		try {
+			return (ConfigurationBuilder)super.clone();
+		} catch(CloneNotSupportedException cnse){
+			throw new InternalError(cnse);
+		}
+	}
+
+	public Configuration build(){
+		Configuration configuration = new Configuration();
+
+		ModelEvaluatorFactory modelEvaluatorFactory = getModelEvaluatorFactory();
+		if(modelEvaluatorFactory == null){
+			modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
+		}
+
+		configuration.setModelEvaluatorFactory(modelEvaluatorFactory);
+
+		ValueFactoryFactory valueFactoryFactory = getValueFactoryFactory();
+		if(valueFactoryFactory == null){
+			valueFactoryFactory = ValueFactoryFactory.newInstance();
+		}
+
+		configuration.setValueFactoryFactory(valueFactoryFactory);
+
+		return configuration;
 	}
 
 	public ModelEvaluatorFactory getModelEvaluatorFactory(){
 		return this.modelEvaluatorFactory;
 	}
 
-	void setModelEvaluatorFactory(ModelEvaluatorFactory modelEvaluatorFactory){
+	public ConfigurationBuilder setModelEvaluatorFactory(ModelEvaluatorFactory modelEvaluatorFactory){
 		this.modelEvaluatorFactory = modelEvaluatorFactory;
+
+		return this;
 	}
 
 	public ValueFactoryFactory getValueFactoryFactory(){
 		return this.valueFactoryFactory;
 	}
 
-	void setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
+	public ConfigurationBuilder setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
 		this.valueFactoryFactory = valueFactoryFactory;
-	}
 
-	static
-	public Configuration getInstance(){
-		return Configuration.INSTANCE;
-	}
-
-	private static final Configuration INSTANCE;
-
-	static {
-		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-
-		INSTANCE = configurationBuilder.build();
+		return this;
 	}
 }

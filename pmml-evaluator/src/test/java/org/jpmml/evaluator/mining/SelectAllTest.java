@@ -27,6 +27,7 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.Computable;
 import org.jpmml.evaluator.Configuration;
+import org.jpmml.evaluator.ConfigurationBuilder;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasEntityId;
@@ -45,7 +46,10 @@ public class SelectAllTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		CountingModelEvaluatorFactory modelEvaluatorFactory = new CountingModelEvaluatorFactory();
 
-		Configuration configuration = new Configuration(modelEvaluatorFactory);
+		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
+			.setModelEvaluatorFactory(modelEvaluatorFactory);
+
+		Configuration configuration = configurationBuilder.build();
 
 		Evaluator evaluator = createModelEvaluator(configuration);
 

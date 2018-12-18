@@ -35,9 +35,7 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 
 	private Model model = null;
 
-	private ModelEvaluatorFactory modelEvaluatorFactory = null;
-
-	private ValueFactoryFactory valueFactoryFactory = null;
+	private ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
 
 	private java.util.function.Function<FieldName, FieldName> inputMapper = null;
 
@@ -79,12 +77,17 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 
 	@Override
 	public ModelEvaluatorBuilder clone(){
+		ModelEvaluatorBuilder modelEvaluatorBuilder;
 
 		try {
-			return (ModelEvaluatorBuilder)super.clone();
+			modelEvaluatorBuilder = (ModelEvaluatorBuilder)super.clone();
 		} catch(CloneNotSupportedException cnse){
 			throw new InternalError(cnse);
 		}
+
+		modelEvaluatorBuilder.configurationBuilder = modelEvaluatorBuilder.configurationBuilder.clone();
+
+		return modelEvaluatorBuilder;
 	}
 
 	@Override
@@ -96,17 +99,11 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 			throw new IllegalStateException();
 		}
 
-		ModelEvaluatorFactory modelEvaluatorFactory = getModelEvaluatorFactory();
-		if(modelEvaluatorFactory == null){
-			modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
-		}
+		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
 
-		ValueFactoryFactory valueFactoryFactory = getValueFactoryFactory();
-		if(valueFactoryFactory == null){
-			valueFactoryFactory = ValueFactoryFactory.newInstance();
-		}
+		Configuration configuration = configurationBuilder.build();
 
-		Configuration configuration = new Configuration(modelEvaluatorFactory, valueFactoryFactory);
+		ModelEvaluatorFactory modelEvaluatorFactory = configuration.getModelEvaluatorFactory();
 
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml, model);
 		modelEvaluator.configure(configuration);
@@ -187,22 +184,34 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		return this;
 	}
 
+	public ConfigurationBuilder getConfigurationBuilder(){
+		return this.configurationBuilder;
+	}
+
 	public ModelEvaluatorFactory getModelEvaluatorFactory(){
-		return this.modelEvaluatorFactory;
+		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
+
+		return configurationBuilder.getModelEvaluatorFactory();
 	}
 
 	public ModelEvaluatorBuilder setModelEvaluatorFactory(ModelEvaluatorFactory modelEvaluatorFactory){
-		this.modelEvaluatorFactory = modelEvaluatorFactory;
+		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
+
+		configurationBuilder.setModelEvaluatorFactory(modelEvaluatorFactory);
 
 		return this;
 	}
 
 	public ValueFactoryFactory getValueFactoryFactory(){
-		return this.valueFactoryFactory;
+		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
+
+		return configurationBuilder.getValueFactoryFactory();
 	}
 
 	public ModelEvaluatorBuilder setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
-		this.valueFactoryFactory = valueFactoryFactory;
+		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
+
+		configurationBuilder.setValueFactoryFactory(valueFactoryFactory);
 
 		return this;
 	}

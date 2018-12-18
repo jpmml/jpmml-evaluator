@@ -746,7 +746,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	private SegmentHandler createSegmentHandler(Model model){
-		Configuration configuration = getConfiguration();
+		Configuration configuration = ensureConfiguration();
 
 		ModelEvaluatorFactory modelEvaluatorFactory = configuration.getModelEvaluatorFactory();
 

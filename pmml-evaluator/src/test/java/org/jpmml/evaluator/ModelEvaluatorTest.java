@@ -25,8 +25,6 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.PMML;
-import org.jpmml.model.PMMLUtil;
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,8 +37,6 @@ public class ModelEvaluatorTest {
 
 	static
 	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz) throws Exception {
-		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
-
 		ReportingValueFactoryFactory valueFactoryFactory = ReportingValueFactoryFactory.newInstance();
 
 		ReportFactory reportFactory = new ReportFactory(){
@@ -53,7 +49,10 @@ public class ModelEvaluatorTest {
 
 		valueFactoryFactory.setReportFactory(reportFactory);
 
-		Configuration configuration = new Configuration(modelEvaluatorFactory, valueFactoryFactory);
+		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
+			.setValueFactoryFactory(valueFactoryFactory);
+
+		Configuration configuration = configurationBuilder.build();
 
 		return createModelEvaluator(clazz, configuration);
 	}
@@ -72,12 +71,20 @@ public class ModelEvaluatorTest {
 
 	static
 	public ModelEvaluator<?> createModelEvaluator(InputStream is, Configuration configuration) throws Exception {
-		PMML pmml = PMMLUtil.unmarshal(is);
+		ModelEvaluatorBuilder modelEvaluatorBuilder = new LoadingModelEvaluatorBuilder(){
 
-		ModelEvaluatorFactory modelEvaluatorFactory = configuration.getModelEvaluatorFactory();
+			{
+				setModelEvaluatorFactory(configuration.getModelEvaluatorFactory());
+				setValueFactoryFactory(configuration.getValueFactoryFactory());
+			}
 
-		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
-		modelEvaluator.configure(configuration);
+			@Override
+			protected void checkSchema(ModelEvaluator<?> modelEvaluator){
+			}
+		}
+			.load(is);
+
+		ModelEvaluator<?> modelEvaluator = modelEvaluatorBuilder.build();
 
 		return modelEvaluator;
 	}
