@@ -171,11 +171,18 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	private Map<FieldName, ? extends Classification<Double>> evaluateClassification(ValueFactory<Double> valueFactory, EvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 
+		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
+
 		TargetField targetField = getTargetField();
 
-		double threshold = naiveBayesModel.getThreshold();
+		FieldName targetFieldName = bayesOutput.getField();
+		if(targetFieldName == null){
+			throw new MissingAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD);
+		} // End if
 
-		Map<FieldName, Map<String, Double>> fieldCountSums = getFieldCountSums();
+		if(targetFieldName != null && !Objects.equals(targetField.getName(), targetFieldName)){
+			throw new InvalidAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD, targetFieldName);
+		}
 
 		// Probability calculations use logarithmic scale for greater numerical stability
 		ProbabilityMap<String, Double> probabilities = new ProbabilityMap<String, Double>(){
@@ -192,6 +199,16 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				value.add(Math.log(probability));
 			}
 		};
+
+		{
+			TargetValueCounts targetValueCounts = getTargetValueCounts(bayesOutput);
+
+			calculatePriorProbabilities(probabilities, targetValueCounts);
+		}
+
+		double threshold = naiveBayesModel.getThreshold();
+
+		Map<FieldName, Map<String, Double>> fieldCountSums = getFieldCountSums();
 
 		List<BayesInput> bayesInputs = getBayesInputs();
 		for(BayesInput bayesInput : bayesInputs){
@@ -230,19 +247,6 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				calculateDiscreteProbabilities(probabilities, targetValueCounts, threshold, countSums);
 			}
 		}
-
-		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
-
-		FieldName targetFieldName = bayesOutput.getField();
-		if(targetFieldName == null){
-			throw new MissingAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD);
-		} // End if
-
-		if(targetFieldName != null && !Objects.equals(targetField.getName(), targetFieldName)){
-			throw new InvalidAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD, targetFieldName);
-		}
-
-		calculatePriorProbabilities(probabilities, bayesOutput.getTargetValueCounts());
 
 		// Convert from logarithmic scale to normal scale
 		ValueUtil.normalizeSoftMax(probabilities);
@@ -471,6 +475,11 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 
 		return null;
+	}
+
+	static
+	private TargetValueCounts getTargetValueCounts(BayesOutput bayesOutput){
+		return bayesOutput.getTargetValueCounts();
 	}
 
 	private static final LoadingCache<NaiveBayesModel, List<BayesInput>> bayesInputCache = CacheUtil.buildLoadingCache(new CacheLoader<NaiveBayesModel, List<BayesInput>>(){
