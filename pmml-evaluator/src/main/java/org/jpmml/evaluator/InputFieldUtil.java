@@ -42,6 +42,52 @@ public class InputFieldUtil {
 	}
 
 	static
+	public boolean isDefault(Field<?> field, MiningField miningField){
+
+		if(field instanceof DataField){
+
+			if(!Objects.equals(field.getOpType(), FieldUtil.getOpType(field, miningField))){
+				return false;
+			}
+		} else
+
+		{
+			if(!Objects.equals(miningField.getOpType(), null)){
+				return false;
+			}
+		}
+
+		String invalidValueReplacement = miningField.getInvalidValueReplacement();
+		if(invalidValueReplacement != null){
+			return false;
+		}
+
+		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
+		switch(invalidValueTreatmentMethod){
+			case RETURN_INVALID:
+			case AS_IS: // XXX
+				break;
+			default:
+				return false;
+		}
+
+		String missingValueReplacement = miningField.getMissingValueReplacement();
+		if(missingValueReplacement != null){
+			return false;
+		}
+
+		OutlierTreatmentMethod outlierTreatmentMethod = miningField.getOutlierTreatment();
+		switch(outlierTreatmentMethod){
+			case AS_IS:
+				break;
+			default:
+				return false;
+		}
+
+		return true;
+	}
+
+	static
 	public FieldValue prepareInputValue(Field<?> field, MiningField miningField, Object value){
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value) || (value == null)){

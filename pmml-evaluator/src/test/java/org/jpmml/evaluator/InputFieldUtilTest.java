@@ -35,9 +35,26 @@ import org.dmg.pmml.Value.Property;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class InputFieldUtilTest {
+
+	@Test
+	public void isDefault(){
+		FieldName name = FieldName.create("x");
+
+		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE);
+
+		MiningField miningField = new MiningField(name);
+
+		assertTrue(InputFieldUtil.isDefault(dataField, miningField));
+
+		miningField.setOpType(OpType.CATEGORICAL);
+
+		assertFalse(InputFieldUtil.isDefault(dataField, miningField));
+	}
 
 	@Test
 	public void prepareContinuousInputValue(){

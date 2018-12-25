@@ -95,6 +95,12 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 	private Map<FieldName, org.dmg.pmml.OutputField> outputFields = Collections.emptyMap();
 
 	transient
+	private Boolean parentCompatible = null;
+
+	transient
+	private Boolean pure = null;
+
+	transient
 	private List<InputField> inputFields = null;
 
 	transient
@@ -253,8 +259,41 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		return this.outputFields.get(name);
 	}
 
-	public boolean isPrimitive(){
-		return this.localDerivedFields.isEmpty() && this.outputFields.isEmpty();
+	/**
+	 * <p>
+	 * A flag indicating if this model evaluator is compatible with its parent model evaluator.
+	 * </p>
+	 *
+	 * <p>
+	 * A compatible model evaluator inherits {@link DataField} declarations unchanged,
+	 * which makes it possible to propagate {@link DataField} and global {@link DerivedField} values between evaluation contexts during evaluation.
+	 * </p>
+	 */
+	public boolean isParentCompatible(){
+
+		if(this.parentCompatible == null){
+			this.parentCompatible = assessParentCompatibility();
+		}
+
+		return this.parentCompatible;
+	}
+
+	/**
+	 * <p>
+	 * A flag indicating if this model evaluator represents a pure function.
+	 * </p>
+	 *
+	 * <p>
+	 * A pure model evaluator does not tamper with the evaluation context during evaluation.
+	 * </p>
+	 */
+	public boolean isPure(){
+
+		if(this.pure == null){
+			this.pure = assessPurity();
+		}
+
+		return this.pure;
 	}
 
 	@Override
@@ -452,6 +491,40 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		}
 
 		return result;
+	}
+
+	protected boolean assessParentCompatibility(){
+		List<InputField> inputFields = getInputFields();
+
+		for(InputField inputField : inputFields){
+			Field<?> field = inputField.getField();
+			MiningField miningField = inputField.getMiningField();
+
+			if(!(field instanceof DataField)){
+				continue;
+			} // End if
+
+			if(!InputFieldUtil.isDefault(field, miningField)){
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	protected boolean assessPurity(){
+		List<InputField> inputFields = getInputFields();
+
+		for(InputField inputField : inputFields){
+			Field<?> field = inputField.getField();
+			MiningField miningField = inputField.getMiningField();
+
+			if(!InputFieldUtil.isDefault(field, miningField)){
+				return false;
+			}
+		}
+
+		return this.localDerivedFields.isEmpty() && this.outputFields.isEmpty();
 	}
 
 	protected List<InputField> createInputFields(){

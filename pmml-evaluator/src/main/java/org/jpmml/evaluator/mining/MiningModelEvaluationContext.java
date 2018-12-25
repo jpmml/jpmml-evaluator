@@ -49,8 +49,8 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 	}
 
 	@Override
-	public void reset(boolean purge){
-		super.reset(purge);
+	public void reset(boolean clearFields){
+		super.reset(clearFields);
 
 		if(!this.results.isEmpty()){
 			this.results.clear();

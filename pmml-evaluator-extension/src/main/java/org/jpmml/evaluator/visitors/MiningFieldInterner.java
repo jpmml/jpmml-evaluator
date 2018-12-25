@@ -24,7 +24,7 @@ import java.util.ListIterator;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.VisitorAction;
-import org.jpmml.evaluator.MiningFieldUtil;
+import org.jpmml.evaluator.InputFieldUtil;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 /**
@@ -65,7 +65,7 @@ public class MiningFieldInterner extends AbstractVisitor {
 			return miningField;
 		} // End if
 
-		if(!MiningFieldUtil.isDefault(miningField)){
+		if(!InputFieldUtil.isDefault(null, miningField)){
 			return miningField;
 		}
 
