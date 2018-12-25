@@ -20,6 +20,8 @@ package org.jpmml.evaluator;
 
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MathContext;
@@ -37,6 +39,10 @@ import org.dmg.pmml.VisitorAction;
 import org.jpmml.model.annotations.Extension;
 import org.jpmml.model.annotations.Property;
 
+@XmlRootElement (
+	name = "X-JavaModel",
+	namespace = "http://jpmml.org/jpmml-evaluator/"
+)
 @Extension
 abstract
 public class JavaModel extends Model {
