@@ -82,7 +82,7 @@ public class OutputUtil {
 
 		outputFields:
 		for(OutputField outputField : outputFields){
-			FieldName targetFieldName = outputField.getTargetField();
+			FieldName targetName = outputField.getTargetField();
 
 			Object targetValue = null;
 
@@ -108,13 +108,13 @@ public class OutputUtil {
 					continue outputFields;
 				} // End if
 
-				if(targetFieldName != null){
+				if(targetName != null){
 
-					if(!segmentPredictions.containsKey(targetFieldName)){
-						throw new MissingValueException(targetFieldName, outputField);
+					if(!segmentPredictions.containsKey(targetName)){
+						throw new MissingValueException(targetName, outputField);
 					}
 
-					targetValue = segmentPredictions.get(targetFieldName);
+					targetValue = segmentPredictions.get(targetName);
 				} else
 
 				{
@@ -137,15 +137,15 @@ public class OutputUtil {
 						// Falls through
 					default:
 						{
-							if(targetFieldName == null){
-								targetFieldName = modelEvaluator.getTargetFieldName();
+							if(targetName == null){
+								targetName = modelEvaluator.getTargetFieldName();
 							} // End if
 
-							if(!predictions.containsKey(targetFieldName)){
-								throw new MissingValueException(targetFieldName, outputField);
+							if(!predictions.containsKey(targetName)){
+								throw new MissingValueException(targetName, outputField);
 							}
 
-							targetValue = predictions.get(targetFieldName);
+							targetValue = predictions.get(targetName);
 						}
 						break;
 				}
@@ -171,9 +171,9 @@ public class OutputUtil {
 							throw new UnsupportedElementException(outputField);
 						}
 
-						TargetField targetField = modelEvaluator.findTargetField(targetFieldName);
+						TargetField targetField = modelEvaluator.findTargetField(targetName);
 						if(targetField == null){
-							throw new MissingFieldException(targetFieldName, outputField);
+							throw new MissingFieldException(targetName, outputField);
 						}
 
 						value = getPredictedDisplayValue(targetValue, targetField);
@@ -223,14 +223,14 @@ public class OutputUtil {
 							throw new UnsupportedElementException(outputField);
 						}
 
-						FieldValue expectedTargetValue = context.evaluate(targetFieldName);
+						FieldValue expectedTargetValue = context.evaluate(targetName);
 						if(Objects.equals(FieldValues.MISSING_VALUE, expectedTargetValue)){
-							throw new MissingValueException(targetFieldName, outputField);
+							throw new MissingValueException(targetName, outputField);
 						}
 
-						TargetField targetField = modelEvaluator.findTargetField(targetFieldName);
+						TargetField targetField = modelEvaluator.findTargetField(targetName);
 						if(targetField == null){
-							throw new MissingFieldException(targetFieldName, outputField);
+							throw new MissingFieldException(targetName, outputField);
 						}
 
 						OpType opType = targetField.getOpType();

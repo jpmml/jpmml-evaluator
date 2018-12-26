@@ -397,8 +397,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			return predictions;
 		}
 
-		FieldName targetFieldName = getTargetFieldName();
-
 		Segmentation segmentation = miningModel.getSegmentation();
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
@@ -416,7 +414,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				{
 					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
 					if(values == null){
-						return Collections.singletonMap(targetFieldName, null);
+						return Collections.singletonMap(getTargetFieldName(), null);
 					}
 
 					result = new MiningVoteDistribution<V>(values){
@@ -445,7 +443,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		result.computeResult(DataType.STRING);
 
-		return Collections.singletonMap(targetFieldName, result);
+		return Collections.singletonMap(getTargetFieldName(), result);
 	}
 
 	private Map<FieldName, ?> evaluateAny(MiningModelEvaluationContext context){

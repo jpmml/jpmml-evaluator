@@ -546,19 +546,19 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 					throw new UnsupportedElementException(pmmlOutputField);
 				}
 
-				FieldName targetFieldName = pmmlOutputField.getTargetField();
-				if(targetFieldName == null){
-					targetFieldName = getTargetFieldName();
+				FieldName targetName = pmmlOutputField.getTargetField();
+				if(targetName == null){
+					targetName = getTargetFieldName();
 				}
 
-				DataField dataField = getDataField(targetFieldName);
+				DataField dataField = getDataField(targetName);
 				if(dataField == null){
-					throw new MissingFieldException(targetFieldName, pmmlOutputField);
+					throw new MissingFieldException(targetName, pmmlOutputField);
 				}
 
-				MiningField miningField = getMiningField(targetFieldName);
+				MiningField miningField = getMiningField(targetName);
 				if(miningField == null){
-					throw new InvisibleFieldException(targetFieldName, pmmlOutputField);
+					throw new InvisibleFieldException(targetName, pmmlOutputField);
 				}
 
 				ResidualInputField residualInputField = new ResidualInputField(dataField, miningField);

@@ -175,13 +175,13 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		TargetField targetField = getTargetField();
 
-		FieldName targetFieldName = bayesOutput.getField();
-		if(targetFieldName == null){
+		FieldName targetName = bayesOutput.getField();
+		if(targetName == null){
 			throw new MissingAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD);
 		} // End if
 
-		if(targetFieldName != null && !Objects.equals(targetField.getName(), targetFieldName)){
-			throw new InvalidAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD, targetFieldName);
+		if(targetName != null && !Objects.equals(targetField.getName(), targetName)){
+			throw new InvalidAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD, targetName);
 		}
 
 		// Probability calculations use logarithmic scale for greater numerical stability

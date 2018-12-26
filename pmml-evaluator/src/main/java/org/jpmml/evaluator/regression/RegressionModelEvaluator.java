@@ -121,9 +121,9 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		TargetField targetField = getTargetField();
 
-		FieldName targetFieldName = regressionModel.getTargetFieldName();
-		if(targetFieldName != null && !Objects.equals(targetField.getName(), targetFieldName)){
-			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELDNAME, targetFieldName);
+		FieldName targetName = regressionModel.getTargetFieldName();
+		if(targetName != null && !Objects.equals(targetField.getName(), targetName)){
+			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELDNAME, targetName);
 		}
 
 		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
@@ -164,9 +164,9 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		TargetField targetField = getTargetField();
 
-		FieldName targetFieldName = regressionModel.getTargetFieldName();
-		if(targetFieldName != null && !Objects.equals(targetField.getName(), targetFieldName)){
-			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELDNAME, targetFieldName);
+		FieldName targetName = regressionModel.getTargetFieldName();
+		if(targetName != null && !Objects.equals(targetField.getName(), targetName)){
+			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELDNAME, targetName);
 		}
 
 		OpType opType = targetField.getOpType();
