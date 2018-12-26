@@ -31,7 +31,7 @@ import org.dmg.pmml.FieldName;
 abstract
 public class EvaluationContext {
 
-	private Map<FieldName, FieldValue> fields = new HashMap<>();
+	private Map<FieldName, FieldValue> values = new HashMap<>();
 
 	private List<String> warnings = null;
 
@@ -42,10 +42,10 @@ public class EvaluationContext {
 	abstract
 	protected FieldValue createFieldValue(FieldName name, Object value);
 
-	protected void reset(boolean clearFields){
+	protected void reset(boolean clearValues){
 
-		if(clearFields && !this.fields.isEmpty()){
-			this.fields.clear();
+		if(clearValues && !this.values.isEmpty()){
+			this.values.clear();
 		} // End if
 
 		if(this.warnings != null && !this.warnings.isEmpty()){
@@ -54,10 +54,10 @@ public class EvaluationContext {
 	}
 
 	public FieldValue lookup(FieldName name){
-		Map<FieldName, FieldValue> fields = getFields();
+		Map<FieldName, FieldValue> values = getValues();
 
-		FieldValue value = fields.get(name);
-		if(value != null || (value == null && fields.containsKey(name))){
+		FieldValue value = values.get(name);
+		if(value != null || (value == null && values.containsKey(name))){
 			return value;
 		}
 
@@ -65,10 +65,10 @@ public class EvaluationContext {
 	}
 
 	public FieldValue evaluate(FieldName name){
-		Map<FieldName, FieldValue> fields = getFields();
+		Map<FieldName, FieldValue> values = getValues();
 
-		FieldValue value = fields.get(name);
-		if(value != null || (value == null && fields.containsKey(name))){
+		FieldValue value = values.get(name);
+		if(value != null || (value == null && values.containsKey(name))){
 			return value;
 		}
 
@@ -89,14 +89,14 @@ public class EvaluationContext {
 	}
 
 	public FieldValue declare(FieldName name, FieldValue value){
-		Map<FieldName, FieldValue> fields = getFields();
+		Map<FieldName, FieldValue> values = getValues();
 
-		boolean declared = fields.containsKey(name);
+		boolean declared = values.containsKey(name);
 		if(declared){
 			throw new DuplicateValueException(name);
 		}
 
-		fields.put(name, value);
+		values.put(name, value);
 
 		return value;
 	}
@@ -122,8 +122,8 @@ public class EvaluationContext {
 		this.warnings.add(warning);
 	}
 
-	public Map<FieldName, FieldValue> getFields(){
-		return this.fields;
+	public Map<FieldName, FieldValue> getValues(){
+		return this.values;
 	}
 
 	public List<String> getWarnings(){

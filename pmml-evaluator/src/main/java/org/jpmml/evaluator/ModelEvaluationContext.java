@@ -50,8 +50,8 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public void reset(boolean clearFields){
-		super.reset(clearFields);
+	public void reset(boolean clearValues){
+		super.reset(clearValues);
 
 		this.arguments = Collections.emptyMap();
 	}

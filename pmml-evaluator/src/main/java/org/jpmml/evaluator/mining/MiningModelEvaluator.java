@@ -590,9 +590,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				}
 			}
 
-			boolean clearFields = !segmentModelEvaluator.isPure();
+			boolean clearValues = !segmentModelEvaluator.isPure();
 
-			segmentContext.reset(clearFields);
+			segmentContext.reset(clearValues);
 
 			switch(multipleModelMethod){
 				case SELECT_FIRST:
