@@ -25,6 +25,7 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.DefineFunction;
+import org.dmg.pmml.FieldName;
 import org.dmg.pmml.ParameterField;
 
 public class FunctionUtil {
@@ -69,12 +70,16 @@ public class FunctionUtil {
 
 		for(int i = 0; i < parameterFields.size(); i++){
 			ParameterField parameterField = parameterFields.get(i);
-
 			FieldValue value = values.get(i);
+
+			FieldName name = parameterField.getName();
+			if(name == null){
+				throw new MissingAttributeException(parameterField, PMMLAttributes.PARAMETERFIELD_NAME);
+			}
 
 			value = value.cast(parameterField.getDataType(), parameterField.getOpType());
 
-			functionContext.declare(parameterField.getName(), value);
+			functionContext.declare(name, value);
 		}
 
 		return ExpressionUtil.evaluateTypedExpressionContainer(defineFunction, functionContext);

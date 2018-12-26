@@ -352,6 +352,11 @@ public class OutputUtil {
 					throw new UnsupportedAttributeException(outputField, resultFeature);
 			}
 
+			FieldName outputName = outputField.getName();
+			if(outputName == null){
+				throw new MissingAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_NAME);
+			}
+
 			TypeInfo typeInfo = new TypeInfo(){
 
 				@Override
@@ -396,9 +401,9 @@ public class OutputUtil {
 			FieldValue outputValue = FieldValueUtil.create(typeInfo, value);
 
 			// The result of one output field becomes available to other output fields
-			context.declare(outputField.getName(), outputValue);
+			context.declare(outputName, outputValue);
 
-			result.put(outputField.getName(), FieldValueUtil.getValue(outputValue));
+			result.put(outputName, FieldValueUtil.getValue(outputValue));
 		}
 
 		return result;
