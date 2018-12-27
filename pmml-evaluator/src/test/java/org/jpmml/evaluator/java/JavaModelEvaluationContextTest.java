@@ -86,7 +86,7 @@ public class JavaModelEvaluationContextTest {
 			// Ignored
 		}
 
-		context.cache(Arrays.asList(name));
+		context.evaluateAll(Arrays.asList(name));
 
 		assertEquals(FieldValues.MISSING_VALUE, context.evaluate(0));
 
@@ -98,7 +98,7 @@ public class JavaModelEvaluationContextTest {
 			// Ignored
 		}
 
-		context.cache(null);
+		context.reset(false);
 
 		try {
 			context.evaluate(0);

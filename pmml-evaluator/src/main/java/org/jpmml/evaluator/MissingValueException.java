@@ -28,6 +28,10 @@ import org.dmg.pmml.PMMLObject;
  */
 public class MissingValueException extends EvaluationException {
 
+	public MissingValueException(){
+		this(null);
+	}
+
 	public MissingValueException(FieldName name){
 		super(formatMessage(name));
 	}

@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator.java;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import org.dmg.pmml.FieldName;
@@ -30,11 +28,6 @@ import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
 
 public class JavaModelEvaluationContext extends ModelEvaluationContext {
-
-	private List<FieldName> names = null;
-
-	private List<FieldValue> values = null;
-
 
 	public JavaModelEvaluationContext(JavaModelEvaluator javaModelEvaluator){
 		super(javaModelEvaluator);
@@ -47,31 +40,6 @@ public class JavaModelEvaluationContext extends ModelEvaluationContext {
 	@Override
 	public JavaModelEvaluator getModelEvaluator(){
 		return (JavaModelEvaluator)super.getModelEvaluator();
-	}
-
-	public void cache(List<FieldName> names){
-		this.names = null;
-		this.values = null;
-
-		if(names == null){
-			return;
-		}
-
-		List<FieldValue> values = new ArrayList<>(names.size());
-
-		for(FieldName name : names){
-			FieldValue value = evaluate(name);
-
-			values.add(value);
-		}
-
-		this.names = names;
-		this.values = values;
-	}
-
-	@Override
-	public FieldValue evaluate(FieldName name){
-		return super.evaluate(name);
 	}
 
 	/**
@@ -87,16 +55,6 @@ public class JavaModelEvaluationContext extends ModelEvaluationContext {
 		return value;
 	}
 
-	public FieldValue evaluate(int index){
-		List<FieldValue> values = this.values;
-
-		if(values == null){
-			throw new IllegalStateException();
-		}
-
-		return values.get(index);
-	}
-
 	/**
 	 * @throws MissingValueException
 	 */
@@ -104,9 +62,7 @@ public class JavaModelEvaluationContext extends ModelEvaluationContext {
 		FieldValue value = evaluate(index);
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
-			FieldName name = this.names.get(index);
-
-			throw new MissingValueException(name);
+			throw new MissingValueException();
 		}
 
 		return value;

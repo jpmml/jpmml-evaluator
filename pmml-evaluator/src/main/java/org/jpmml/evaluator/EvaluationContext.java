@@ -33,6 +33,10 @@ public class EvaluationContext {
 
 	private Map<FieldName, FieldValue> values = new HashMap<>();
 
+	private List<FieldName> cachedNames = null;
+
+	private List<FieldValue> cachedValues = null;
+
 	private List<String> warnings = null;
 
 
@@ -44,8 +48,14 @@ public class EvaluationContext {
 
 	protected void reset(boolean clearValues){
 
-		if(clearValues && !this.values.isEmpty()){
-			this.values.clear();
+		if(clearValues){
+
+			if(!this.values.isEmpty()){
+				this.values.clear();
+			}
+
+			this.cachedNames = null;
+			this.cachedValues = null;
 		} // End if
 
 		if(this.warnings != null && !this.warnings.isEmpty()){
@@ -64,6 +74,16 @@ public class EvaluationContext {
 		throw new MissingFieldException(name);
 	}
 
+	public FieldValue lookup(int index){
+		List<FieldValue> cachedValues = this.cachedValues;
+
+		if(cachedValues == null){
+			throw new IllegalStateException();
+		}
+
+		return cachedValues.get(index);
+	}
+
 	public FieldValue evaluate(FieldName name){
 		Map<FieldName, FieldValue> values = getValues();
 
@@ -73,6 +93,30 @@ public class EvaluationContext {
 		}
 
 		return resolve(name);
+	}
+
+	public List<FieldValue> evaluateAll(List<FieldName> names){
+		return evaluateAll(names, true);
+	}
+
+	public List<FieldValue> evaluateAll(List<FieldName> names, boolean cache){
+		this.cachedNames = null;
+		this.cachedValues = null;
+
+		List<FieldValue> values = new ArrayList<>(names.size());
+
+		for(FieldName name : names){
+			FieldValue value = evaluate(name);
+
+			values.add(value);
+		}
+
+		if(cache){
+			this.cachedNames = names;
+			this.cachedValues = values;
+		}
+
+		return values;
 	}
 
 	protected FieldValue resolve(FieldName name){
@@ -85,7 +129,9 @@ public class EvaluationContext {
 			return declare(name, (FieldValue)value);
 		}
 
-		return declare(name, createFieldValue(name, value));
+		value = createFieldValue(name, value);
+
+		return declare(name, (FieldValue)value);
 	}
 
 	public FieldValue declare(FieldName name, FieldValue value){
