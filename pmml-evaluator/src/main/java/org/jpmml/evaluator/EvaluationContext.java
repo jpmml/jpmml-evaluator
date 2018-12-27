@@ -63,6 +63,14 @@ public class EvaluationContext {
 		}
 	}
 
+	/**
+	 * <p>
+	 * Looks up a field value by name.
+	 * If the field value has not been declared, then fails fast with an exception.
+	 * </p>
+	 *
+	 * @throws MissingValueException If the field value has not been declared.
+	 */
 	public FieldValue lookup(FieldName name){
 		Map<FieldName, FieldValue> values = getValues();
 
@@ -71,9 +79,17 @@ public class EvaluationContext {
 			return value;
 		}
 
-		throw new MissingFieldException(name);
+		throw new MissingValueException(name);
 	}
 
+	/**
+	 * <p>
+	 * Looks up a field value by field value cache position.
+	 * </p>
+	 *
+	 * @throws IllegalStateException If the field value cache is not available.
+	 * @throws IndexOutOfBoundsException If the field value cache position is out of range.
+	 */
 	public FieldValue lookup(int index){
 		List<FieldValue> cachedValues = this.cachedValues;
 
@@ -84,6 +100,12 @@ public class EvaluationContext {
 		return cachedValues.get(index);
 	}
 
+	/**
+	 * <p>
+	 * Looks up a field value by name.
+	 * If the field value has not been declared, then makes full effort to resolve and declare it.
+	 * </p>
+	 */
 	public FieldValue evaluate(FieldName name){
 		Map<FieldName, FieldValue> values = getValues();
 

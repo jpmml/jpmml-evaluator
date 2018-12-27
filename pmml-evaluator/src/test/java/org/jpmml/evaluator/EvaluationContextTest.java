@@ -46,7 +46,7 @@ public class EvaluationContextTest {
 			context.lookup(name);
 
 			fail();
-		} catch(MissingFieldException mfe){
+		} catch(MissingValueException mve){
 			// Ignored
 		} // End try
 
@@ -107,7 +107,7 @@ public class EvaluationContextTest {
 			context.lookup(name);
 
 			fail();
-		} catch(MissingFieldException mfe){
+		} catch(MissingValueException mve){
 			// Ignored
 		} // End try
 
@@ -127,4 +127,31 @@ public class EvaluationContextTest {
 			// Ignored
 		}
 	}
+
+	@Test
+	public void evaluateMissing(){
+		FieldName name = FieldName.create("x");
+
+		EvaluationContext context = new EvaluationContext(){
+
+			@Override
+			public FieldValue createFieldValue(FieldName name, Object value){
+				throw new UnsupportedOperationException();
+			}
+		};
+
+		context.declare(name, FieldValues.MISSING_VALUE);
+
+		assertEquals(FieldValues.MISSING_VALUE, context.lookup(name));
+
+		try {
+			context.lookup(0);
+
+			fail();
+		} catch(IllegalStateException ise){
+			// Ignored
+		}
+
+		assertEquals(FieldValues.MISSING_VALUE, context.evaluate(name));
+ 	}
 }
