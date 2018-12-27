@@ -49,7 +49,7 @@ public class JavaRegressorModel extends JavaModel {
 	}
 
 	abstract
-	public <V extends Number> Value<V> evaluateRegression(ValueFactory<V> valueFactory, JavaModelEvaluationContext context);
+	public <V extends Number> Value<V> evaluateRegression(ValueFactory<V> valueFactory, ModelEvaluationContext context);
 
 	@Override
 	public MiningFunction getMiningFunction(){
@@ -74,13 +74,13 @@ public class JavaRegressorModel extends JavaModel {
 
 	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		Map<FieldName, ?> predictions = evaluateRegression((JavaModelEvaluationContext)context);
+		Map<FieldName, ?> predictions = evaluateRegression(context);
 
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	protected Map<FieldName, ?> evaluateRegression(JavaModelEvaluationContext context){
-		JavaModelEvaluator modelEvaluator = context.getModelEvaluator();
+	protected Map<FieldName, ?> evaluateRegression(ModelEvaluationContext context){
+		JavaModelEvaluator modelEvaluator = (JavaModelEvaluator)context.getModelEvaluator();
 
 		ValueFactory<?> valueFactory = modelEvaluator.ensureValueFactory();
 

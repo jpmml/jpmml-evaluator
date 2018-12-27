@@ -49,7 +49,7 @@ public class JavaClassifierModel extends JavaModel {
 	}
 
 	abstract
-	public <V extends Number> Classification<V> evaluateClassification(ValueFactory<V> valueFactory, JavaModelEvaluationContext context);
+	public <V extends Number> Classification<V> evaluateClassification(ValueFactory<V> valueFactory, ModelEvaluationContext context);
 
 	@Override
 	public MiningFunction getMiningFunction(){
@@ -74,13 +74,13 @@ public class JavaClassifierModel extends JavaModel {
 
 	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		Map<FieldName, ?> predictions = evaluateClassification((JavaModelEvaluationContext)context);
+		Map<FieldName, ?> predictions = evaluateClassification(context);
 
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	protected Map<FieldName, ? extends Classification<?>> evaluateClassification(JavaModelEvaluationContext context){
-		JavaModelEvaluator modelEvaluator = context.getModelEvaluator();
+	protected Map<FieldName, ? extends Classification<?>> evaluateClassification(ModelEvaluationContext context){
+		JavaModelEvaluator modelEvaluator = (JavaModelEvaluator)context.getModelEvaluator();
 
 		ValueFactory<?> valueFactory = modelEvaluator.ensureValueFactory();
 
