@@ -111,7 +111,7 @@ public class OutputField extends ResultField {
 
 	/**
 	 * <p>
-	 * Returns the nesting depth relative to the "host" {@link Evaluator} instance.
+	 * Returns the nesting depth relative to the "host" model evaluator.
 	 * </p>
 	 *
 	 * Filtering output fields based on their origin:

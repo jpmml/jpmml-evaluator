@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -56,7 +57,6 @@ import org.dmg.pmml.ModelVerification;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.TransformationDictionary;
@@ -111,6 +111,9 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	transient
 	private List<OutputField> outputResultFields = null;
+
+	transient
+	private Set<org.dmg.pmml.ResultFeature> resultFeatures = null;
 
 
 	protected ModelEvaluator(PMML pmml, M model){
@@ -170,7 +173,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	/**
 	 * <p>
-	 * Configures the runtime behaviour of this {@link Evaluator} instance.
+	 * Configures the runtime behaviour of this model evaluator.
 	 * </p>
 	 *
 	 * <p>
@@ -261,11 +264,11 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	/**
 	 * <p>
-	 * A flag indicating if this model evaluator is compatible with its parent model evaluator.
+	 * Indicates if this model evaluator is compatible with its parent model evaluator.
 	 * </p>
 	 *
 	 * <p>
-	 * A compatible model evaluator inherits {@link DataField} declarations unchanged,
+	 * A parent compatible model evaluator inherits {@link DataField} declarations unchanged,
 	 * which makes it possible to propagate {@link DataField} and global {@link DerivedField} values between evaluation contexts during evaluation.
 	 * </p>
 	 */
@@ -280,7 +283,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	/**
 	 * <p>
-	 * A flag indicating if this model evaluator represents a pure function.
+	 * Indicates if this model evaluator represents a pure function.
 	 * </p>
 	 *
 	 * <p>
@@ -364,6 +367,33 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	OutputField findOutputField(FieldName name){
 		return findModelField(getOutputFields(), name);
+	}
+
+	/**
+	 * <p>
+	 * Indicates if this model evaluator provides the specified result feature.
+	 * </p>
+	 *
+	 * <p>
+	 * A result feature is first and foremost manifested through output fields.
+	 * However, selected result features may make a secondary manifestation through a target field.
+	 * </p>
+	 *
+	 * @see org.dmg.pmml.OutputField#getResultFeature()
+	 */
+	public boolean hasResultFeature(org.dmg.pmml.ResultFeature resultFeature){
+		Set<org.dmg.pmml.ResultFeature> resultFeatures = getResultFeatures();
+
+		return resultFeatures.contains(resultFeature);
+	}
+
+	public Set<org.dmg.pmml.ResultFeature> getResultFeatures(){
+
+		if(this.resultFeatures == null){
+			this.resultFeatures = collectResultFeatures();
+		}
+
+		return this.resultFeatures;
 	}
 
 	protected EvaluationException createMiningSchemaException(String message){
@@ -537,7 +567,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 			for(OutputField outputField : outputFields){
 				org.dmg.pmml.OutputField pmmlOutputField = outputField.getField();
 
-				if(!(pmmlOutputField.getResultFeature()).equals(ResultFeature.RESIDUAL)){
+				if(!(org.dmg.pmml.ResultFeature.RESIDUAL).equals(pmmlOutputField.getResultFeature())){
 					continue;
 				}
 
@@ -680,6 +710,24 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		}
 
 		return ImmutableList.copyOf(resultFields);
+	}
+
+	protected Set<org.dmg.pmml.ResultFeature> collectResultFeatures(){
+		M model = getModel();
+
+		Output output = model.getOutput();
+
+		Set<org.dmg.pmml.ResultFeature> resultFeatures = EnumSet.noneOf(org.dmg.pmml.ResultFeature.class);
+
+		if(output != null && output.hasOutputFields()){
+			List<org.dmg.pmml.OutputField> outputFields = output.getOutputFields();
+
+			for(org.dmg.pmml.OutputField outputField : outputFields){
+				resultFeatures.add(outputField.getResultFeature());
+			}
+		}
+
+		return Sets.immutableEnumSet(resultFeatures);
 	}
 
 	protected M ensureScorableModel(){
