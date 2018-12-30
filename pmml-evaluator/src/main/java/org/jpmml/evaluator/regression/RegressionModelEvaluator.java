@@ -50,7 +50,6 @@ import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
-import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
@@ -277,7 +276,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new UnsupportedAttributeException(regressionModel, normalizationMethod);
 		}
 
-		ProbabilityDistribution<V> result = new ProbabilityDistribution<>(values);
+		Classification<V> result = createClassification(values);
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
@@ -380,10 +379,6 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 	static
 	private boolean isDefault(RegressionTable regressionTable){
-
-		if(regressionTable.hasExtensions()){
-			return false;
-		} // End if
 
 		if(regressionTable.hasNumericPredictors() || regressionTable.hasCategoricalPredictors() || regressionTable.hasPredictorTerms()){
 			return false;

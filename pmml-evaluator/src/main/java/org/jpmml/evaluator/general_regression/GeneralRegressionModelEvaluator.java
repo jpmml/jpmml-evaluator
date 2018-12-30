@@ -81,7 +81,6 @@ import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
-import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.TypeInfo;
@@ -499,7 +498,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new UnsupportedAttributeException(generalRegressionModel, modelType);
 		}
 
-		ProbabilityDistribution<V> result = new ProbabilityDistribution<>(values);
+		Classification<V> result = createClassification(values);
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
