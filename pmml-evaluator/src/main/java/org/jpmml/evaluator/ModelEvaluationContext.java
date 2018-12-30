@@ -33,20 +33,20 @@ import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
 
 public class ModelEvaluationContext extends EvaluationContext {
 
-	private MiningModelEvaluationContext parent = null;
-
 	private ModelEvaluator<?> modelEvaluator = null;
+
+	private MiningModelEvaluationContext parent = null;
 
 	private Map<FieldName, ?> arguments = Collections.emptyMap();
 
 
 	public ModelEvaluationContext(ModelEvaluator<?> modelEvaluator){
-		this(null, modelEvaluator);
+		this(modelEvaluator, null);
 	}
 
-	public ModelEvaluationContext(MiningModelEvaluationContext parent, ModelEvaluator<?> modelEvaluator){
-		setParent(parent);
+	public ModelEvaluationContext(ModelEvaluator<?> modelEvaluator, MiningModelEvaluationContext parent){
 		setModelEvaluator(modelEvaluator);
+		setParent(parent);
 	}
 
 	@Override
@@ -161,20 +161,20 @@ public class ModelEvaluationContext extends EvaluationContext {
 		return defineFunction;
 	}
 
-	public MiningModelEvaluationContext getParent(){
-		return this.parent;
-	}
-
-	private void setParent(MiningModelEvaluationContext parent){
-		this.parent = parent;
-	}
-
 	public ModelEvaluator<?> getModelEvaluator(){
 		return this.modelEvaluator;
 	}
 
 	public void setModelEvaluator(ModelEvaluator<?> modelEvaluator){
 		this.modelEvaluator = Objects.requireNonNull(modelEvaluator);
+	}
+
+	public MiningModelEvaluationContext getParent(){
+		return this.parent;
+	}
+
+	private void setParent(MiningModelEvaluationContext parent){
+		this.parent = parent;
 	}
 
 	public Map<FieldName, ?> getArguments(){

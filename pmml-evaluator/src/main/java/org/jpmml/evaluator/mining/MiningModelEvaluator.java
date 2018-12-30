@@ -505,7 +505,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				MiningModelEvaluator segmentMiningModelEvaluator = (MiningModelEvaluator)segmentModelEvaluator;
 
 				if(miningModelContext == null){
-					miningModelContext = new MiningModelEvaluationContext(context, segmentMiningModelEvaluator);
+					miningModelContext = new MiningModelEvaluationContext(segmentMiningModelEvaluator, context);
 				} else
 
 				{
@@ -517,7 +517,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			{
 				if(modelContext == null){
-					modelContext = new ModelEvaluationContext(context, segmentModelEvaluator);
+					modelContext = new ModelEvaluationContext(segmentModelEvaluator, context);
 				} else
 
 				{

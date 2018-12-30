@@ -37,11 +37,11 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 
 
 	public MiningModelEvaluationContext(MiningModelEvaluator miningModelEvaluator){
-		this(null, miningModelEvaluator);
+		this(miningModelEvaluator, null);
 	}
 
-	public MiningModelEvaluationContext(MiningModelEvaluationContext parent, MiningModelEvaluator miningModelEvaluator){
-		super(parent, miningModelEvaluator);
+	public MiningModelEvaluationContext(MiningModelEvaluator miningModelEvaluator, MiningModelEvaluationContext parent){
+		super(miningModelEvaluator, parent);
 
 		BiMap<String, Segment> entityRegistry = miningModelEvaluator.getEntityRegistry();
 
