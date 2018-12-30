@@ -44,7 +44,7 @@ public class EvaluationContext {
 	}
 
 	abstract
-	protected FieldValue createFieldValue(FieldName name, Object value);
+	protected FieldValue prepare(FieldName name, Object value);
 
 	protected void reset(boolean clearValues){
 
@@ -151,7 +151,7 @@ public class EvaluationContext {
 			return declare(name, (FieldValue)value);
 		}
 
-		value = createFieldValue(name, value);
+		value = prepare(name, value);
 
 		return declare(name, (FieldValue)value);
 	}

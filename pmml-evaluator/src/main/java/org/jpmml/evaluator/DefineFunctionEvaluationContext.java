@@ -40,7 +40,7 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public FieldValue createFieldValue(FieldName name, Object value){
+	public FieldValue prepare(FieldName name, Object value){
 		ParameterField parameterField = findParameterField(name);
 		if(parameterField == null){
 			throw new MissingFieldException(name);

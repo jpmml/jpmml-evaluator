@@ -57,7 +57,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	protected FieldValue createFieldValue(FieldName name, Object value){
+	protected FieldValue prepare(FieldName name, Object value){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
 		DataField dataField = modelEvaluator.getDataField(name);
