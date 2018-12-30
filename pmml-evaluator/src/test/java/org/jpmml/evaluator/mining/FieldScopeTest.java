@@ -38,5 +38,11 @@ public class FieldScopeTest extends ModelEvaluatorTest {
 		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
 		assertEquals(1000d, getTarget(results, "prediction"));
+
+		arguments = createArguments("input", 1d);
+
+		results = evaluator.evaluate(arguments);
+
+		assertEquals(1d, getTarget(results, "prediction"));
 	}
 }
