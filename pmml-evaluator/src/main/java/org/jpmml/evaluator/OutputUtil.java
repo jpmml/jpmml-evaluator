@@ -330,14 +330,14 @@ public class OutputUtil {
 					break;
 				case REPORT:
 					{
-						FieldName reportFieldName = outputField.getReportField();
-						if(reportFieldName == null){
+						FieldName reportName = outputField.getReportField();
+						if(reportName == null){
 							throw new MissingAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_REPORTFIELD);
 						}
 
-						OutputField reportOutputField = modelEvaluator.getOutputField(reportFieldName);
+						OutputField reportOutputField = modelEvaluator.getOutputField(reportName);
 						if(reportOutputField == null){
-							throw new MissingFieldException(reportFieldName);
+							throw new MissingFieldException(reportName);
 						}
 
 						value = getReport(targetValue, reportOutputField);
