@@ -18,21 +18,45 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.List;
+import java.util.Objects;
+
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.OpType;
+import org.dmg.pmml.ParameterField;
 
 public class DefineFunctionEvaluationContext extends EvaluationContext {
+
+	private DefineFunction defineFunction = null;
 
 	private EvaluationContext parent = null;
 
 
-	DefineFunctionEvaluationContext(EvaluationContext parent){
-		setParent(parent);
+	public DefineFunctionEvaluationContext(DefineFunction defineFunction, EvaluationContext parent){
+		setDefineFunction(Objects.requireNonNull(defineFunction));
+		setParent(Objects.requireNonNull(parent));
 	}
 
 	@Override
 	public FieldValue createFieldValue(FieldName name, Object value){
-		throw new UnsupportedOperationException();
+		ParameterField parameterField = findParameterField(name);
+		if(parameterField == null){
+			throw new MissingFieldException(name);
+		}
+
+		DataType dataType = parameterField.getDataType();
+		if(dataType == null){
+			throw new MissingAttributeException(parameterField, PMMLAttributes.PARAMETERFIELD_DATATYPE);
+		}
+
+		OpType opType = parameterField.getOpType();
+		if(opType == null){
+			throw new MissingAttributeException(parameterField, PMMLAttributes.PARAMETERFIELD_OPTYPE);
+		}
+
+		return FieldValueUtil.create(dataType, opType, value);
 	}
 
 	@Override
@@ -40,6 +64,31 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 		EvaluationContext parent = getParent();
 
 		return parent.getDefineFunction(name);
+	}
+
+	private ParameterField findParameterField(FieldName name){
+		DefineFunction defineFunction = getDefineFunction();
+
+		if(defineFunction.hasParameterFields()){
+			List<ParameterField> parameterFields = defineFunction.getParameterFields();
+
+			for(ParameterField parameterField : parameterFields){
+
+				if(Objects.equals(parameterField.getName(), name)){
+					return parameterField;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public DefineFunction getDefineFunction(){
+		return this.defineFunction;
+	}
+
+	private void setDefineFunction(DefineFunction defineFunction){
+		this.defineFunction = defineFunction;
 	}
 
 	public EvaluationContext getParent(){

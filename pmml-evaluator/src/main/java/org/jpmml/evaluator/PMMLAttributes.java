@@ -150,7 +150,9 @@ public interface PMMLAttributes {
 	Field OUTPUTFIELD_SEGMENTID = ReflectionUtil.getField(OutputField.class, "segmentId");
 	Field OUTPUTFIELD_VALUE = ReflectionUtil.getField(OutputField.class, "value");
 	Field PAIRCOUNTS_VALUE = ReflectionUtil.getField(PairCounts.class, "value");
+	Field PARAMETERFIELD_DATATYPE = ReflectionUtil.getField(ParameterField.class, "dataType");
 	Field PARAMETERFIELD_NAME = ReflectionUtil.getField(ParameterField.class, "name");
+	Field PARAMETERFIELD_OPTYPE = ReflectionUtil.getField(ParameterField.class, "opType");
 	Field PPCELL_FIELD = ReflectionUtil.getField(PPCell.class, "field");
 	Field PPCELL_VALUE = ReflectionUtil.getField(PPCell.class, "value");
 	Field REGRESSIONMODEL_TARGETFIELDNAME = ReflectionUtil.getField(RegressionModel.class, "targetFieldName");

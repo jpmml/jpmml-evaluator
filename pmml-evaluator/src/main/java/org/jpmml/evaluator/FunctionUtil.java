@@ -66,7 +66,7 @@ public class FunctionUtil {
 			throw new EvaluationException("Function " + PMMLException.formatKey(defineFunction.getName()) + " expects " + parameterFields.size() + " arguments, got " + values.size() + " arguments");
 		}
 
-		DefineFunctionEvaluationContext functionContext = new DefineFunctionEvaluationContext(context);
+		DefineFunctionEvaluationContext functionContext = new DefineFunctionEvaluationContext(defineFunction, context);
 
 		for(int i = 0; i < parameterFields.size(); i++){
 			ParameterField parameterField = parameterFields.get(i);
