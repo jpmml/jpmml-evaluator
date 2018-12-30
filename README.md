@@ -55,14 +55,14 @@ For more information please see the [features.md](https://github.com/jpmml/jpmml
 
 JPMML-Evaluator is interoperable with most popular statistics and data mining software:
 
-* [R](http://www.r-project.org/) and [Rattle](http://rattle.togaware.com/):
+* [R](https://www.r-project.org/) and [Rattle](https://rattle.togaware.com/):
   * [JPMML-R](https://github.com/jpmml/jpmml-r) library.
   * [`r2pmml`](https://github.com/jpmml/r2pmml) package.
   * [`pmml`](https://cran.r-project.org/package=pmml) and [`pmmlTransformations`](https://CRAN.R-project.org/package=pmmlTransformations) packages.
-* [Python](http://www.python.org/) and [Scikit-Learn](http://scikit-learn.org/):
+* [Python](https://www.python.org/) and [Scikit-Learn](https://scikit-learn.org/):
   * [JPMML-SkLearn](https://github.com/jpmml/jpmml-sklearn) library.
   * [`sklearn2pmml`](https://github.com/jpmml/sklearn2pmml) package.
-* [Apache Spark](http://spark.apache.org/):
+* [Apache Spark](https://spark.apache.org/):
   * [JPMML-SparkML](https://github.com/jpmml/jpmml-sparkml) library.
   * [`pyspark2pmml`](https://github.com/pyspark2pmml) and [`sparklyr2pmml`](https://github.com/jpmml/sparklyr2pmml) packages.
   * [`mllib.pmml.PMMLExportable`](https://spark.apache.org/docs/latest/api/java/org/apache/spark/mllib/pmml/PMMLExportable.html) interface.
@@ -72,12 +72,12 @@ JPMML-Evaluator is interoperable with most popular statistics and data mining so
   * [JPMML-XGBoost](https://github.com/jpmml/jpmml-xgboost) library.
 * [LightGBM](https://github.com/Microsoft/LightGBM):
   * [JPMML-LightGBM](https://github.com/jpmml/jpmml-lightgbm) library.
-* [TensorFlow](http://tensorflow.org):
+* [TensorFlow](https://tensorflow.org):
   * [JPMML-TensorFlow](https://github.com/jpmml/jpmml-tensorflow) library.
-* [KNIME](http://www.knime.com/)
-* [RapidMiner](http://rapidminer.com/products/rapidminer-studio/)
-* [SAS](http://www.sas.com/en_us/software/analytics/enterprise-miner.html)
-* [SPSS](http://www-01.ibm.com/software/analytics/spss/)
+* [KNIME](https://www.knime.com/)
+* [RapidMiner](https://rapidminer.com/products/rapidminer-studio/)
+* [SAS](https://www.sas.com/en_us/software/analytics/enterprise-miner.html)
+* [SPSS](https://www-01.ibm.com/software/analytics/spss/)
 
 JPMML-Evaluator is fast and memory efficient. It can deliver one million scorings per second already on a desktop computer.
 
@@ -87,7 +87,7 @@ JPMML-Evaluator is fast and memory efficient. It can deliver one million scoring
 
 # Installation #
 
-JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository](http://repo1.maven.org/maven2/org/jpmml/).
+JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository](https://repo1.maven.org/maven2/org/jpmml/).
 
 The current version is **1.4.4** (2 December, 2018).
 
@@ -478,7 +478,7 @@ The output value is always a Java primitive value (as a wrapper object).
 
 Module `pmml-evaluator-example` exemplifies the use of the JPMML-Evaluator library.
 
-This module can be built using [Apache Maven](http://maven.apache.org/):
+This module can be built using [Apache Maven](https://maven.apache.org/):
 ```
 mvn clean install
 ```
@@ -514,7 +514,7 @@ Limited public support is available via the [JPMML mailing list](https://groups.
 
 # License #
 
-JPMML-Evaluator is dual-licensed under the [GNU Affero General Public License (AGPL) version 3.0](http://www.gnu.org/licenses/agpl-3.0.html), and a commercial license.
+JPMML-Evaluator is dual-licensed under the [GNU Affero General Public License (AGPL) version 3.0](https://www.gnu.org/licenses/agpl-3.0.html), and a commercial license.
 
 # Additional information #
 
