@@ -34,13 +34,7 @@ public class EvaluationContextTest {
 	public void evaluate(){
 		FieldName name = FieldName.create("x");
 
-		EvaluationContext context = new EvaluationContext(){
-
-			@Override
-			public FieldValue createFieldValue(FieldName name, Object value){
-				throw new UnsupportedOperationException();
-			}
-		};
+		EvaluationContext context = new VirtualEvaluationContext();
 
 		try {
 			context.lookup(name);
@@ -132,14 +126,7 @@ public class EvaluationContextTest {
 	public void evaluateMissing(){
 		FieldName name = FieldName.create("x");
 
-		EvaluationContext context = new EvaluationContext(){
-
-			@Override
-			public FieldValue createFieldValue(FieldName name, Object value){
-				throw new UnsupportedOperationException();
-			}
-		};
-
+		EvaluationContext context = new VirtualEvaluationContext();
 		context.declare(name, FieldValues.MISSING_VALUE);
 
 		assertEquals(FieldValues.MISSING_VALUE, context.lookup(name));

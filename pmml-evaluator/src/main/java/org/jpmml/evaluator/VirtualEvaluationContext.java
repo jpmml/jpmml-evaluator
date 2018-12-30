@@ -22,7 +22,7 @@ import org.dmg.pmml.FieldName;
 
 public class VirtualEvaluationContext extends EvaluationContext {
 
-	VirtualEvaluationContext(){
+	public VirtualEvaluationContext(){
 	}
 
 	@Override
