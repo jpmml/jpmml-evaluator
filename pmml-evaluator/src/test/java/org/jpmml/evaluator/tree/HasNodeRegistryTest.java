@@ -27,6 +27,8 @@ import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Version;
+import org.dmg.pmml.tree.BranchNode;
+import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.junit.Test;
@@ -38,20 +40,20 @@ public class HasNodeRegistryTest {
 
 	@Test
 	public void getPath(){
-		Node node1a = new Node();
+		Node node1a = new BranchNode();
 
-		Node node2a = new Node();
-		Node node2b = new Node();
+		Node node2a = new BranchNode();
+		Node node2b = new BranchNode();
 
 		node1a.addNodes(node2a, node2b);
 
-		Node node3a = new Node();
-		Node node3b = new Node();
+		Node node3a = new BranchNode();
+		Node node3b = new BranchNode();
 
 		node2a.addNodes(node3a, node3b);
 
-		Node node3c = new Node();
-		Node node3d = new Node();
+		Node node3c = new LeafNode();
+		Node node3d = new LeafNode();
 
 		node2b.addNodes(node3c, node3d);
 

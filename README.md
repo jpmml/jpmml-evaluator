@@ -259,6 +259,7 @@ The newly loaded `PMML` instance should tailored by applying appropriate `org.dm
 
 To facilitate their discovery and use, visitor classes have been grouped into visitor battery classes:
 * `org.jpmml.model.visitors.AttributeInternerBattery`
+* `org.jpmml.model.visitors.AttributeOptimizerBattery`
 * `org.jpmml.model.visitors.ListFinalizerBattery`
 * `org.jpmml.evaluator.visitors.ElementInternerBattery`
 * `org.jpmml.evaluator.visitors.ElementOptimizerBattery`
@@ -271,6 +272,7 @@ org.jpmml.model.VisitorBattery visitorBattery = new org.jpmml.model.VisitorBatte
 visitorBattery.add(LocatorNullifier.class);
 
 // Pre-parsing PMML elements
+visitorBattery.addAll(new AttributeOptimizerBattery());
 visitorBattery.addAll(new ElementOptimizerBattery());
 
 // Getting rid of duplicate PMML attribute values and PMML elements

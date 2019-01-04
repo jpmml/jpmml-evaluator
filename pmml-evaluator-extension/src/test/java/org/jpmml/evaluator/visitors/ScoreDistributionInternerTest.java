@@ -20,6 +20,7 @@ package org.jpmml.evaluator.visitors;
 
 import org.dmg.pmml.ScoreDistribution;
 import org.dmg.pmml.True;
+import org.dmg.pmml.tree.ComplexNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class ScoreDistributionInternerTest {
 		Node leftChild = createNode(left);
 		Node rightChild = createNode(right);
 
-		Node root = new Node()
+		Node root = new ComplexNode()
 			.setPredicate(new True())
 			.addNodes(leftChild, rightChild);
 
@@ -59,7 +60,7 @@ public class ScoreDistributionInternerTest {
 	private Node createNode(ScoreDistribution event){
 		ScoreDistribution noEvent = new ScoreDistribution("no-event", 1d - event.getRecordCount());
 
-		Node node = new Node()
+		Node node = new ComplexNode()
 			.addScoreDistributions(event, noEvent);
 
 		return node;

@@ -24,6 +24,7 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
+import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.junit.Test;
 
@@ -66,7 +67,7 @@ public class PredicateTransformerTest {
 
 	static
 	private Predicate transform(Predicate predicate){
-		Node node = new Node()
+		Node node = new LeafNode()
 			.setPredicate(predicate);
 
 		PredicateTransformer transformer = new PredicateTransformer();

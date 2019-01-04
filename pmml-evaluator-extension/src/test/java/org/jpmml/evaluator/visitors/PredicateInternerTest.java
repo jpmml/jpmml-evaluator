@@ -25,6 +25,8 @@ import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.True;
+import org.dmg.pmml.tree.BranchNode;
+import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.junit.Test;
@@ -75,7 +77,7 @@ public class PredicateInternerTest {
 
 	static
 	private void checkTree(Node leftChild, Node rightChild){
-		Node root = new Node()
+		Node root = new BranchNode()
 			.setPredicate(new True())
 			.addNodes(leftChild, rightChild);
 
@@ -91,7 +93,7 @@ public class PredicateInternerTest {
 
 	static
 	private Node createNode(Predicate predicate){
-		Node node = new Node()
+		Node node = new LeafNode()
 			.setPredicate(predicate);
 
 		return node;

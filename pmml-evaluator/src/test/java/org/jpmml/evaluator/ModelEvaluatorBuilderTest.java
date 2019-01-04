@@ -22,6 +22,7 @@ import org.dmg.pmml.False;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.model.SerializationUtil;
@@ -73,7 +74,7 @@ public class ModelEvaluatorBuilderTest {
 
 	static
 	private ModelEvaluatorBuilder createModelEvaluatorBuilder(){
-		Node root = new Node()
+		Node root = new LeafNode()
 			.setPredicate(new False());
 
 		TreeModel treeModel = new TreeModel(MiningFunction.REGRESSION, new MiningSchema(), root);

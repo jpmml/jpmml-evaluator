@@ -50,6 +50,7 @@ import org.jpmml.evaluator.visitors.ElementInternerBattery;
 import org.jpmml.evaluator.visitors.ElementOptimizerBattery;
 import org.jpmml.model.VisitorBattery;
 import org.jpmml.model.visitors.AttributeInternerBattery;
+import org.jpmml.model.visitors.AttributeOptimizerBattery;
 import org.jpmml.model.visitors.ListFinalizerBattery;
 import org.jpmml.model.visitors.LocatorNullifier;
 import org.jpmml.model.visitors.MemoryMeasurer;
@@ -244,6 +245,7 @@ public class EvaluationExample extends Example {
 		// Optimize first, intern second.
 		// The goal is to intern optimized elements (keeps one copy), not optimize interned elements (expands one copy to multiple copies).
 		if(this.optimize){
+			visitorBattery.addAll(new AttributeOptimizerBattery());
 			visitorBattery.addAll(new ElementOptimizerBattery());
 		} // End if
 

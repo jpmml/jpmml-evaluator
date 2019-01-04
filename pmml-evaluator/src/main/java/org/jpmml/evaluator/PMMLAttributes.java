@@ -77,7 +77,7 @@ import org.dmg.pmml.support_vector_machine.SupportVector;
 import org.dmg.pmml.support_vector_machine.SupportVectorMachine;
 import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
 import org.dmg.pmml.support_vector_machine.VectorInstance;
-import org.dmg.pmml.tree.Node;
+import org.dmg.pmml.tree.ComplexNode;
 import org.jpmml.model.ReflectionUtil;
 
 public interface PMMLAttributes {
@@ -138,8 +138,8 @@ public interface PMMLAttributes {
 	Field NEURALNETWORK_ACTIVATIONFUNCTION = ReflectionUtil.getField(NeuralNetwork.class, "activationFunction");
 	Field NEURALNETWORK_THRESHOLD = ReflectionUtil.getField(NeuralNetwork.class, "threshold");
 	Field NEURALOUTPUT_OUTPUTNEURON = ReflectionUtil.getField(NeuralOutput.class, "outputNeuron");
-	Field NODE_DEFAULTCHILD = ReflectionUtil.getField(Node.class, "defaultChild");
-	Field NODE_SCORE = ReflectionUtil.getField(Node.class, "score");
+	Field NODE_DEFAULTCHILD = ReflectionUtil.getField(ComplexNode.class, "defaultChild");
+	Field NODE_SCORE = ReflectionUtil.getField(ComplexNode.class, "score");
 	Field NORMCONTINUOUS_MAPMISSINGTO = ReflectionUtil.getField(NormContinuous.class, "mapMissingTo");
 	Field NORMDISCRETE_VALUE = ReflectionUtil.getField(NormDiscrete.class, "value");
 	Field NUMERICPREDICTOR_FIELD = ReflectionUtil.getField(NumericPredictor.class, "field");
@@ -155,7 +155,7 @@ public interface PMMLAttributes {
 	Field PARAMETERFIELD_OPTYPE = ReflectionUtil.getField(ParameterField.class, "opType");
 	Field PPCELL_FIELD = ReflectionUtil.getField(PPCell.class, "field");
 	Field PPCELL_VALUE = ReflectionUtil.getField(PPCell.class, "value");
-	Field REGRESSIONMODEL_TARGETFIELDNAME = ReflectionUtil.getField(RegressionModel.class, "targetFieldName");
+	Field REGRESSIONMODEL_TARGETFIELDNAME = ReflectionUtil.getField(RegressionModel.class, "targetField");
 	Field REGRESSIONTABLE_TARGETCATEGORY = ReflectionUtil.getField(RegressionTable.class, "targetCategory");
 	Field RULESET_DEFAULTCONFIDENCE = ReflectionUtil.getField(RuleSet.class, "defaultConfidence");
 	Field RULESET_DEFAULTSCORE = ReflectionUtil.getField(RuleSet.class, "defaultScore");

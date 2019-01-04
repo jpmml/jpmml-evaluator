@@ -337,7 +337,17 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	}
 
 	private <V extends Number> NodeScore<V> createNodeScore(ValueFactory<V> valueFactory, TargetField targetField, Node node){
-		Value<V> value = valueFactory.newValue(node.getScore());
+		Object score = node.getScore();
+
+		Value<V> value;
+
+		if(score instanceof Number){
+			value = valueFactory.newValue((Number)score);
+		} else
+
+		{
+			value = valueFactory.newValue((String)score);
+		}
 
 		value = TargetUtil.evaluateRegressionInternal(targetField, value);
 

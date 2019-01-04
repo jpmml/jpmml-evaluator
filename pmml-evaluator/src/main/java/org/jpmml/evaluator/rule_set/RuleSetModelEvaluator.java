@@ -260,25 +260,20 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 	static
 	private void evaluateRule(Rule rule, ListMultimap<String, SimpleRule> firedRules, EvaluationContext context){
+		Boolean status = PredicateUtil.evaluatePredicateContainer(rule, context);
+
+		if(status == null || !status.booleanValue()){
+			return;
+		} // End if
 
 		if(rule instanceof SimpleRule){
 			SimpleRule simpleRule = (SimpleRule)rule;
-
-			Boolean status = PredicateUtil.evaluatePredicateContainer(simpleRule, context);
-			if(status == null || !status.booleanValue()){
-				return;
-			}
 
 			firedRules.put(simpleRule.getScore(), simpleRule);
 		} else
 
 		if(rule instanceof CompoundRule){
 			CompoundRule compoundRule = (CompoundRule)rule;
-
-			Boolean status = PredicateUtil.evaluatePredicateContainer(compoundRule, context);
-			if(status == null || !status.booleanValue()){
-				return;
-			}
 
 			evaluateRules(compoundRule.getRules(), firedRules, context);
 		} else

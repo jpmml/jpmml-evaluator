@@ -36,6 +36,7 @@ import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.Version;
+import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.tree.TreeModelEvaluator;
@@ -150,7 +151,7 @@ public class TargetUtilTest {
 
 	static
 	private TreeModelEvaluator createTreeModelEvaluator(MiningFunction miningFunction, MathContext mathContext, Target target){
-		Node root = new Node()
+		Node root = new LeafNode()
 			.setPredicate(new False());
 
 		Targets targets = new Targets()
