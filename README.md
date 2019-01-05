@@ -181,6 +181,8 @@ Exception types:
 ```java
 // Building a model evaluator from a PMML file
 Evaluator evaluator = new LoadingModelEvaluatorBuilder()
+	.setLocatable(false)
+	.setVisitors(new DefaultVisitorBattery())
 	.load(new File("model.pmml"))
 	.build();
 
