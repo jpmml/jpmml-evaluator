@@ -59,7 +59,7 @@ public class ModelNestingTest extends ModelEvaluatorTest {
 			// Ignored
 		}
 
-		assertEquals(Evaluator.DEFAULT_TARGET_NAME, evaluator.getTargetFieldName());
+		assertEquals(Evaluator.DEFAULT_TARGET_NAME, evaluator.getTargetName());
 
 		Map<FieldName, ?> arguments = createArguments("input", 2d);
 

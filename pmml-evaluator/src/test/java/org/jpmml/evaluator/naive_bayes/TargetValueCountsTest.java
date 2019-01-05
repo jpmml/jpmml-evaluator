@@ -57,7 +57,7 @@ public class TargetValueCountsTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		Classification<?> targetValue = (Classification<?>)results.get(evaluator.getTargetFieldName());
+		Classification<?> targetValue = (Classification<?>)results.get(evaluator.getTargetName());
 
 		double l0 = 8723d * 0.001d * 4273d / 8598d * 225d / 8561d * 830d / 8008d;
 		double l1 = 2557d * probability(24.936, 0.516, 24) * 1321d / 2533d * 10d / 2436d * 182d / 2266d;

@@ -81,6 +81,6 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		return (HasEntityId)results.get(evaluator.getTargetFieldName());
+		return (HasEntityId)results.get(evaluator.getTargetName());
 	}
 }

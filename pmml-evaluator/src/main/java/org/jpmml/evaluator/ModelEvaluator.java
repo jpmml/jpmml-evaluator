@@ -345,14 +345,14 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		return targetField;
 	}
 
-	TargetField findTargetField(FieldName name){
-		return findModelField(getTargetFields(), name);
-	}
-
-	public FieldName getTargetFieldName(){
+	public FieldName getTargetName(){
 		TargetField targetField = getTargetField();
 
 		return targetField.getName();
+	}
+
+	TargetField findTargetField(FieldName name){
+		return findModelField(getTargetFields(), name);
 	}
 
 	@Override
@@ -593,7 +593,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 				FieldName targetName = pmmlOutputField.getTargetField();
 				if(targetName == null){
-					targetName = getTargetFieldName();
+					targetName = getTargetName();
 				}
 
 				DataField dataField = getDataField(targetName);

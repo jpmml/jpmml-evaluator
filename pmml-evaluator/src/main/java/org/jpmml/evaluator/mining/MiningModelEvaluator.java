@@ -164,14 +164,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public FieldName getTargetFieldName(){
+	public FieldName getTargetName(){
 		List<TargetField> targetFields = super.getTargetFields();
 
 		if(targetFields.size() == 0){
 			return Evaluator.DEFAULT_TARGET_NAME;
 		}
 
-		return super.getTargetFieldName();
+		return super.getTargetName();
 	}
 
 	@Override
@@ -414,7 +414,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				{
 					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
 					if(values == null){
-						return Collections.singletonMap(getTargetFieldName(), null);
+						return Collections.singletonMap(getTargetName(), null);
 					}
 
 					result = new MiningVoteDistribution<V>(values){
@@ -443,7 +443,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		result.computeResult(DataType.STRING);
 
-		return Collections.singletonMap(getTargetFieldName(), result);
+		return Collections.singletonMap(getTargetName(), result);
 	}
 
 	private Map<FieldName, ?> evaluateAny(MiningModelEvaluationContext context){
@@ -646,7 +646,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		// "If no segments have predicates that evaluate to true, then the result is a missing value"
 		if(segmentResults.size() == 0){
-			return Collections.singletonMap(getTargetFieldName(), null);
+			return Collections.singletonMap(getTargetName(), null);
 		}
 
 		return null;

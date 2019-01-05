@@ -54,7 +54,7 @@ public class VectorInstanceTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		Regression<?> targetValue = (Regression<?>)results.get(evaluator.getTargetFieldName());
+		Regression<?> targetValue = (Regression<?>)results.get(evaluator.getTargetName());
 
 		return (Double)targetValue.getResult();
 	}

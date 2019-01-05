@@ -219,7 +219,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		// "For clustering models, the identifier of the winning cluster is returned as the predictedValue"
 		result.computeResult(DataType.STRING);
 
-		return Collections.singletonMap(getTargetFieldName(), result);
+		return Collections.singletonMap(getTargetName(), result);
 	}
 
 	private <V extends Number> ClusterAffinityDistribution<V> evaluateSimilarity(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){

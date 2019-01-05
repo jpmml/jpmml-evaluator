@@ -138,7 +138,7 @@ public class OutputUtil {
 					default:
 						{
 							if(targetName == null){
-								targetName = modelEvaluator.getTargetFieldName();
+								targetName = modelEvaluator.getTargetName();
 							} // End if
 
 							if(!predictions.containsKey(targetName)){

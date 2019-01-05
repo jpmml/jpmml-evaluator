@@ -130,7 +130,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	@Override
-	public FieldName getTargetFieldName(){
+	public FieldName getTargetName(){
 		return Evaluator.DEFAULT_TARGET_NAME;
 	}
 
@@ -251,7 +251,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			}
 		};
 
-		return Collections.singletonMap(getTargetFieldName(), association);
+		return Collections.singletonMap(getTargetName(), association);
 	}
 
 	/**

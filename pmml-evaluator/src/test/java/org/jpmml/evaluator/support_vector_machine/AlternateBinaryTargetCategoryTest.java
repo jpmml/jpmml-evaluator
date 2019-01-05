@@ -45,7 +45,7 @@ public class AlternateBinaryTargetCategoryTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		Classification<?> targetValue = (Classification<?>)results.get(evaluator.getTargetFieldName());
+		Classification<?> targetValue = (Classification<?>)results.get(evaluator.getTargetName());
 
 		return (String)targetValue.getResult();
 	}
