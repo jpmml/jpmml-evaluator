@@ -70,7 +70,7 @@ import org.dmg.pmml.VerificationFields;
 	value = {"unused"}
 )
 abstract
-public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, HasPMML, Serializable {
+public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasModel<M>, Serializable {
 
 	private PMML pmml = null;
 
