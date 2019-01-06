@@ -1,29 +1,20 @@
 /*
- * Copyright (c) 2013 KNIME.com AG, Zurich, Switzerland
- * All rights reserved.
+ * Copyright (c) 2019 Villu Ruusmann
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * This file is part of JPMML-Evaluator
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of its contributors
- *    may be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ * JPMML-Evaluator is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * JPMML-Evaluator is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.jpmml.evaluator.support_vector_machine;
 
@@ -33,6 +24,8 @@ import org.dmg.pmml.support_vector_machine.PolynomialKernel;
 import org.dmg.pmml.support_vector_machine.RadialBasisKernel;
 import org.dmg.pmml.support_vector_machine.SigmoidKernel;
 import org.jpmml.evaluator.UnsupportedElementException;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueFactory;
 
 public class KernelUtil {
 
@@ -40,54 +33,113 @@ public class KernelUtil {
 	}
 
 	static
-	public double evaluate(Kernel kernel, double[] input, double[] vector){
+	public <V extends Number> Value<V> evaluate(Kernel kernel, ValueFactory<V> valueFactory, Object input, Object vector){
 
 		if(kernel instanceof LinearKernel){
-			return evaluateLinearKernel((LinearKernel)kernel, input, vector);
+			return evaluateLinearKernel((LinearKernel)kernel, valueFactory, input, vector);
 		} else
 
 		if(kernel instanceof PolynomialKernel){
-			return evaluatePolynomialKernel((PolynomialKernel)kernel, input, vector);
+			return evaluatePolynomialKernel((PolynomialKernel)kernel, valueFactory, input, vector);
 		} else
 
 		if(kernel instanceof RadialBasisKernel){
-			return evaluateRadialBasisKernel((RadialBasisKernel)kernel, input, vector);
+			return evaluateRadialBasisKernel((RadialBasisKernel)kernel, valueFactory, input, vector);
 		} else
 
 		if(kernel instanceof SigmoidKernel){
-			return evaluateSigmoidKernel((SigmoidKernel)kernel, input, vector);
+			return evaluateSigmoidKernel((SigmoidKernel)kernel, valueFactory, input, vector);
 		}
 
 		throw new UnsupportedElementException(kernel);
 	}
 
 	static
-	public double evaluateLinearKernel(LinearKernel linearKernel, double[] input, double[] vector){
-		return dotProduct(input, vector);
+	public <V extends Number> Value<V> evaluateLinearKernel(LinearKernel linearKernel, ValueFactory<V> valueFactory, Object input, Object vector){
+		Value<V> result = valueFactory.newValue(dotProduct(input, vector));
+
+		return result;
 	}
 
 	static
-	public double evaluatePolynomialKernel(PolynomialKernel polynomialKernel, double[] input, double[] vector){
-		return Math.pow(polynomialKernel.getGamma() * dotProduct(input, vector) + polynomialKernel.getCoef0(), polynomialKernel.getDegree());
+	public <V extends Number> Value<V> evaluatePolynomialKernel(PolynomialKernel polynomialKernel, ValueFactory<V> valueFactory, Object input, Object vector){
+		Value<V> result = valueFactory.newValue(dotProduct(input, vector));
+
+		Double gamma = polynomialKernel.getGamma();
+		if(gamma.doubleValue() != 1d){
+			result.multiply(gamma);
+		}
+
+		Double coef0 = polynomialKernel.getCoef0();
+		if(coef0.doubleValue() != 1d){
+			result.add(coef0);
+		}
+
+		Double degree = polynomialKernel.getDegree();
+		if(degree.doubleValue() != 1d){
+			result.power(degree);
+		}
+
+		return result;
 	}
 
 	static
-	public double evaluateRadialBasisKernel(RadialBasisKernel radialBasisKernel, double[] input, double[] vector){
-		return Math.exp(-radialBasisKernel.getGamma() * squaredDistance(input, vector));
+	public <V extends Number> Value<V> evaluateRadialBasisKernel(RadialBasisKernel radialBasisKernel, ValueFactory<V> valueFactory, Object input, Object vector){
+		Value<V> result = valueFactory.newValue(negativeSquaredDistance(input, vector));
+
+		Double gamma = radialBasisKernel.getGamma();
+		if(gamma != 1d){
+			result.multiply(gamma);
+		}
+
+		result.exp();
+
+		return result;
 	}
 
 	static
-	public double evaluateSigmoidKernel(SigmoidKernel sigmoidKernel, double[] input, double[] vector){
-		return Math.tanh(sigmoidKernel.getGamma() * dotProduct(input, vector) + sigmoidKernel.getCoef0());
+	public <V extends Number> Value<V> evaluateSigmoidKernel(SigmoidKernel sigmoidKernel, ValueFactory<V> valueFactory, Object input, Object vector){
+		Value<V> result = valueFactory.newValue(dotProduct(input, vector));
+
+		Double gamma = sigmoidKernel.getGamma();
+		if(gamma != 1d){
+			result.multiply(gamma);
+		}
+
+		Double coef0 = sigmoidKernel.getCoef0();
+		if(coef0 != 1d){
+			result.add(coef0);
+		}
+
+		result.tanh();
+
+		return result;
 	}
 
 	static
-	private double dotProduct(double[] left, double[] right){
-		double sum = 0d;
+	private Number dotProduct(Object left, Object right){
+
+		if((left instanceof float[]) && (right instanceof float[])){
+			return dotProduct((float[])left, (float[])right);
+		} else
+
+		if((left instanceof double[]) && (right instanceof double[])){
+			return dotProduct((double[])left, (double[])right);
+		} else
+
+		{
+			throw new IllegalArgumentException();
+		}
+	}
+
+	static
+	private float dotProduct(float[] left, float[] right){
 
 		if(left.length != right.length){
 			throw new IllegalArgumentException();
 		}
+
+		float sum = 0f;
 
 		for(int i = 0, max = left.length; i < max; i++){
 			sum += (left[i] * right[i]);
@@ -97,12 +149,63 @@ public class KernelUtil {
 	}
 
 	static
-	private double squaredDistance(double[] left, double[] right){
-		double sum = 0d;
+	private double dotProduct(double[] left, double[] right){
 
 		if(left.length != right.length){
 			throw new IllegalArgumentException();
 		}
+
+		double sum = 0d;
+
+		for(int i = 0, max = left.length; i < max; i++){
+			sum += (left[i] * right[i]);
+		}
+
+		return sum;
+	}
+
+	static
+	private Number negativeSquaredDistance(Object left, Object right){
+
+		if((left instanceof float[]) && (right instanceof float[])){
+			return -squaredDistance((float[])left, (float[])right);
+		} else
+
+		if((left instanceof double[]) && (right instanceof double[])){
+			return -squaredDistance((double[])left, (double[])right);
+		} else
+
+		{
+			throw new IllegalArgumentException();
+		}
+	}
+
+	static
+	private float squaredDistance(float[] left, float[] right){
+
+		if(left.length != right.length){
+			throw new IllegalArgumentException();
+		}
+
+		float sum = 0f;
+
+		for(int i = 0, max = left.length; i < max; i++){
+			float diff = (left[i] - right[i]);
+
+			sum += (diff * diff);
+		}
+
+		return sum;
+	}
+
+	static
+	private double squaredDistance(double[] left, double[] right){
+
+		if(left.length != right.length){
+			throw new IllegalArgumentException();
+		}
+
+		double sum = 0d;
 
 		for(int i = 0, max = left.length; i < max; i++){
 			double diff = (left[i] - right[i]);
