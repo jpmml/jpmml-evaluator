@@ -23,7 +23,6 @@ import java.util.Map;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.EvaluationContext;
-import org.jpmml.evaluator.JavaModel;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.ValueFactory;

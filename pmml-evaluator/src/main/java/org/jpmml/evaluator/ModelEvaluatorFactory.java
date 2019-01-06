@@ -38,6 +38,7 @@ import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.association.AssociationModelEvaluator;
 import org.jpmml.evaluator.clustering.ClusteringModelEvaluator;
 import org.jpmml.evaluator.general_regression.GeneralRegressionModelEvaluator;
+import org.jpmml.evaluator.java.JavaModel;
 import org.jpmml.evaluator.java.JavaModelEvaluator;
 import org.jpmml.evaluator.mining.MiningModelEvaluator;
 import org.jpmml.evaluator.naive_bayes.NaiveBayesModelEvaluator;

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.java;
 
 import java.util.Map;
 
@@ -36,6 +36,9 @@ import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
+import org.jpmml.evaluator.EvaluationContext;
+import org.jpmml.evaluator.InvalidAttributeException;
+import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.model.annotations.Extension;
 import org.jpmml.model.annotations.Property;
 
@@ -95,11 +98,11 @@ public class JavaModel extends Model {
 		setModelVerification(model.getModelVerification());
 	}
 
-	public <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateDefault();
 	}
 
-	public <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateDefault();
 	}
 
