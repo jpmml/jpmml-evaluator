@@ -136,18 +136,19 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
 		NaiveBayesModel naiveBayesModel = ensureScorableModel();
 
-		ValueFactory<Double> valueFactory;
+		ValueFactory<?> valueFactory;
 
 		MathContext mathContext = naiveBayesModel.getMathContext();
 		switch(mathContext){
+			case FLOAT:
 			case DOUBLE:
-				valueFactory = (ValueFactory)ensureValueFactory();
+				valueFactory = ensureValueFactory();
 				break;
 			default:
 				throw new UnsupportedAttributeException(naiveBayesModel, mathContext);
 		}
 
-		Map<FieldName, ? extends Classification<Double>> predictions;
+		Map<FieldName, ? extends Classification<?>> predictions;
 
 		MiningFunction miningFunction = naiveBayesModel.getMiningFunction();
 		switch(miningFunction){
@@ -168,7 +169,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	private Map<FieldName, ? extends Classification<Double>> evaluateClassification(ValueFactory<Double> valueFactory, EvaluationContext context){
+	private <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 
 		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
@@ -185,18 +186,24 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 
 		// Probability calculations use logarithmic scale for greater numerical stability
-		ProbabilityMap<String, Double> probabilities = new ProbabilityMap<String, Double>(){
+		ProbabilityMap<String, V> probabilities = new ProbabilityMap<String, V>(){
 
 			@Override
-			public ValueFactory<Double> getValueFactory(){
+			public ValueFactory<V> getValueFactory(){
 				return valueFactory;
 			}
 
 			@Override
 			public void multiply(String key, double probability){
-				Value<Double> value = ensureValue(key);
+				ValueFactory<V> valueFactory = getValueFactory();
 
-				value.add(Math.log(probability));
+				Value<V> value = ensureValue(key);
+
+				Value<V> probabilityValue = valueFactory.newValue(probability);
+
+				probabilityValue.ln();
+
+				value.add(probabilityValue);
 			}
 		};
 
@@ -251,7 +258,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		// Convert from logarithmic scale to normal scale
 		ValueUtil.normalizeSoftMax(probabilities);
 
-		ProbabilityDistribution<Double> result = new ProbabilityDistribution<>(probabilities);
+		ProbabilityDistribution<V> result = new ProbabilityDistribution<>(probabilities);
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
@@ -275,7 +282,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 	}
 
-	private void calculateContinuousProbabilities(ProbabilityMap<String, Double> probabilities, TargetValueStats targetValueStats, double threshold, FieldValue value){
+	private void calculateContinuousProbabilities(ProbabilityMap<String, ?> probabilities, TargetValueStats targetValueStats, double threshold, FieldValue value){
 		Number x = value.asNumber();
 
 		for(TargetValueStat targetValueStat : targetValueStats){
@@ -312,7 +319,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 	}
 
-	private void calculateDiscreteProbabilities(ProbabilityMap<String, Double> probabilities, TargetValueCounts targetValueCounts, double threshold, Map<String, Double> countSums){
+	private void calculateDiscreteProbabilities(ProbabilityMap<String, ?> probabilities, TargetValueCounts targetValueCounts, double threshold, Map<String, Double> countSums){
 
 		for(TargetValueCount targetValueCount : targetValueCounts){
 			String targetCategory = targetValueCount.getValue();
@@ -340,7 +347,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 	}
 
-	private void calculatePriorProbabilities(ProbabilityMap<String, Double> probabilities, TargetValueCounts targetValueCounts){
+	private void calculatePriorProbabilities(ProbabilityMap<String, ?> probabilities, TargetValueCounts targetValueCounts){
 
 		for(TargetValueCount targetValueCount : targetValueCounts){
 			String targetCategory = targetValueCount.getValue();

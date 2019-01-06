@@ -206,6 +206,13 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
+	public DoubleValue ln(){
+		this.value = Math.log(this.value);
+
+		return this;
+	}
+
+	@Override
 	public DoubleValue gauss(){
 		this.value = Math.exp(-(this.value * this.value));
 

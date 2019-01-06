@@ -204,6 +204,13 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
+	public FloatValue ln(){
+		this.value = (float)Math.log(this.value);
+
+		return this;
+	}
+
+	@Override
 	public FloatValue gauss(){
 		this.value = FloatValue.exp(-(this.value * this.value));
 

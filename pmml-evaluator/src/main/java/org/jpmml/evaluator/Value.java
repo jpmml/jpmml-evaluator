@@ -167,6 +167,12 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> exp();
 
 	@Operation (
+		value = "<apply><ln/>${this}</apply>"
+	)
+	abstract
+	public Value<V> ln();
+
+	@Operation (
 		value = "<apply><ci>gauss</ci>${this}</apply>"
 	)
 	abstract
