@@ -30,8 +30,6 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MathContext;
-import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.rule_set.CompoundRule;
 import org.dmg.pmml.rule_set.Rule;
@@ -44,12 +42,9 @@ import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.HasEntityRegistry;
-import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
-import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
@@ -101,43 +96,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		RuleSetModel ruleSetModel = ensureScorableModel();
-
-		ValueFactory<?> valueFactory;
-
-		MathContext mathContext = ruleSetModel.getMathContext();
-		switch(mathContext){
-			case FLOAT:
-			case DOUBLE:
-				valueFactory = ensureValueFactory();
-				break;
-			default:
-				throw new UnsupportedAttributeException(ruleSetModel, mathContext);
-		}
-
-		Map<FieldName, ? extends Classification<?>> predictions;
-
-		MiningFunction miningFunction = ruleSetModel.getMiningFunction();
-		switch(miningFunction){
-			case CLASSIFICATION:
-				predictions = evaluateClassification(valueFactory, context);
-				break;
-			case ASSOCIATION_RULES:
-			case SEQUENCES:
-			case REGRESSION:
-			case CLUSTERING:
-			case TIME_SERIES:
-			case MIXED:
-				throw new InvalidAttributeException(ruleSetModel, miningFunction);
-			default:
-				throw new UnsupportedAttributeException(ruleSetModel, miningFunction);
-		}
-
-		return OutputUtil.evaluate(predictions, context);
-	}
-
-	private <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		RuleSetModel ruleSetModel = getModel();
 
 		RuleSet ruleSet = ruleSetModel.getRuleSet();

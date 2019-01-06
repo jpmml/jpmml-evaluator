@@ -41,9 +41,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MathContext;
 import org.dmg.pmml.Matrix;
-import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.general_regression.BaseCumHazardTables;
@@ -75,9 +73,7 @@ import org.jpmml.evaluator.MisplacedAttributeException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingValueException;
-import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
@@ -149,45 +145,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		GeneralRegressionModel generalRegressionModel = ensureScorableModel();
-
-		ValueFactory<?> valueFactory;
-
-		MathContext mathContext = generalRegressionModel.getMathContext();
-		switch(mathContext){
-			case FLOAT:
-			case DOUBLE:
-				valueFactory = ensureValueFactory();
-				break;
-			default:
-				throw new UnsupportedAttributeException(generalRegressionModel, mathContext);
-		}
-
-		Map<FieldName, ?> predictions;
-
-		MiningFunction miningFunction = generalRegressionModel.getMiningFunction();
-		switch(miningFunction){
-			case REGRESSION:
-				predictions = evaluateRegression(valueFactory, context);
-				break;
-			case CLASSIFICATION:
-				predictions = evaluateClassification(valueFactory, context);
-				break;
-			case ASSOCIATION_RULES:
-			case SEQUENCES:
-			case CLUSTERING:
-			case TIME_SERIES:
-			case MIXED:
-				throw new InvalidAttributeException(generalRegressionModel, miningFunction);
-			default:
-				throw new UnsupportedAttributeException(generalRegressionModel, miningFunction);
-		}
-
-		return OutputUtil.evaluate(predictions, context);
-	}
-
-	private <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
@@ -323,7 +281,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
-	private <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		TargetField targetField = getTargetField();

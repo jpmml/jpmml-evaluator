@@ -58,7 +58,6 @@ import org.dmg.pmml.Distance;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.InlineTable;
-import org.dmg.pmml.MathContext;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
@@ -92,7 +91,6 @@ import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
@@ -177,47 +175,17 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		NearestNeighborModel nearestNeighborModel = ensureScorableModel();
-
-		ValueFactory<?> valueFactory;
-
-		MathContext mathContext = nearestNeighborModel.getMathContext();
-		switch(mathContext){
-			case FLOAT:
-			case DOUBLE:
-				valueFactory = ensureValueFactory();
-				break;
-			default:
-				throw new UnsupportedAttributeException(nearestNeighborModel, mathContext);
-		}
-
-		Map<FieldName, ? extends AffinityDistribution<?>> predictions;
-
-		MiningFunction miningFunction = nearestNeighborModel.getMiningFunction();
-		switch(miningFunction){
-			// The model contains one or more continuous and/or categorical target(s)
-			case REGRESSION:
-			case CLASSIFICATION:
-			case MIXED:
-				predictions = evaluateMixed(valueFactory, context);
-				break;
-			// The model does not contain targets
-			case CLUSTERING:
-				predictions = evaluateClustering(valueFactory, context);
-				break;
-			case ASSOCIATION_RULES:
-			case SEQUENCES:
-			case TIME_SERIES:
-				throw new InvalidAttributeException(nearestNeighborModel, miningFunction);
-			default:
-				throw new UnsupportedAttributeException(nearestNeighborModel, miningFunction);
-		}
-
-		return OutputUtil.evaluate(predictions, context);
+	protected <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateMixed(valueFactory, context);
 	}
 
-	private <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateMixed(valueFactory, context);
+	}
+
+	@Override
+	protected <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
@@ -275,7 +243,8 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return results;
 	}
 
-	private <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();

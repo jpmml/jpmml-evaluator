@@ -25,8 +25,6 @@ import java.util.Objects;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
-import org.dmg.pmml.MathContext;
-import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.regression.CategoricalPredictor;
@@ -44,9 +42,7 @@ import org.jpmml.evaluator.InvalidElementException;
 import org.jpmml.evaluator.InvalidElementListException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
-import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
@@ -77,45 +73,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		RegressionModel regressionModel = ensureScorableModel();
-
-		ValueFactory<?> valueFactory;
-
-		MathContext mathContext = regressionModel.getMathContext();
-		switch(mathContext){
-			case FLOAT:
-			case DOUBLE:
-				valueFactory = ensureValueFactory();
-				break;
-			default:
-				throw new UnsupportedAttributeException(regressionModel, mathContext);
-		}
-
-		Map<FieldName, ?> predictions;
-
-		MiningFunction miningFunction = regressionModel.getMiningFunction();
-		switch(miningFunction){
-			case REGRESSION:
-				predictions = evaluateRegression(valueFactory, context);
-				break;
-			case CLASSIFICATION:
-				predictions = evaluateClassification(valueFactory, context);
-				break;
-			case ASSOCIATION_RULES:
-			case SEQUENCES:
-			case CLUSTERING:
-			case TIME_SERIES:
-			case MIXED:
-				throw new InvalidAttributeException(regressionModel, miningFunction);
-			default:
-				throw new UnsupportedAttributeException(regressionModel, miningFunction);
-		}
-
-		return OutputUtil.evaluate(predictions, context);
-	}
-
-	private <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -158,7 +116,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
-	private <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		TargetField targetField = getTargetField();

@@ -43,7 +43,6 @@ import org.dmg.pmml.Array;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.MathContext;
-import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.RealSparseArray;
@@ -74,10 +73,8 @@ import org.jpmml.evaluator.MisplacedElementException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingValueException;
-import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.Numbers;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLException;
@@ -138,45 +135,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		SupportVectorMachineModel supportVectorMachineModel = ensureScorableModel();
-
-		ValueFactory<?> valueFactory;
-
-		MathContext mathContext = supportVectorMachineModel.getMathContext();
-		switch(mathContext){
-			case FLOAT:
-			case DOUBLE:
-				valueFactory = ensureValueFactory();
-				break;
-			default:
-				throw new UnsupportedAttributeException(supportVectorMachineModel, mathContext);
-		}
-
-		Map<FieldName, ?> predictions;
-
-		MiningFunction miningFunction = supportVectorMachineModel.getMiningFunction();
-		switch(miningFunction){
-			case REGRESSION:
-				predictions = evaluateRegression(valueFactory, context);
-				break;
-			case CLASSIFICATION:
-				predictions = evaluateClassification(valueFactory, context);
-				break;
-			case ASSOCIATION_RULES:
-			case SEQUENCES:
-			case CLUSTERING:
-			case TIME_SERIES:
-			case MIXED:
-				throw new InvalidAttributeException(supportVectorMachineModel, miningFunction);
-			default:
-				throw new UnsupportedAttributeException(supportVectorMachineModel, miningFunction);
-		}
-
-		return OutputUtil.evaluate(predictions, context);
-	}
-
-	private <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
@@ -193,7 +152,8 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		return TargetUtil.evaluateRegression(getTargetField(), result);
 	}
 
-	private <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();

@@ -45,8 +45,6 @@ import org.dmg.pmml.Expression;
 import org.dmg.pmml.Extension;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.GaussianDistribution;
-import org.dmg.pmml.MathContext;
-import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PoissonDistribution;
 import org.dmg.pmml.naive_bayes.BayesInput;
@@ -71,16 +69,13 @@ import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.MisplacedElementException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
-import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueUtil;
@@ -133,43 +128,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		NaiveBayesModel naiveBayesModel = ensureScorableModel();
-
-		ValueFactory<?> valueFactory;
-
-		MathContext mathContext = naiveBayesModel.getMathContext();
-		switch(mathContext){
-			case FLOAT:
-			case DOUBLE:
-				valueFactory = ensureValueFactory();
-				break;
-			default:
-				throw new UnsupportedAttributeException(naiveBayesModel, mathContext);
-		}
-
-		Map<FieldName, ? extends Classification<?>> predictions;
-
-		MiningFunction miningFunction = naiveBayesModel.getMiningFunction();
-		switch(miningFunction){
-			case CLASSIFICATION:
-				predictions = evaluateClassification(valueFactory, context);
-				break;
-			case ASSOCIATION_RULES:
-			case SEQUENCES:
-			case REGRESSION:
-			case CLUSTERING:
-			case TIME_SERIES:
-			case MIXED:
-				throw new InvalidAttributeException(naiveBayesModel, miningFunction);
-			default:
-				throw new UnsupportedAttributeException(naiveBayesModel, miningFunction);
-		}
-
-		return OutputUtil.evaluate(predictions, context);
-	}
-
-	private <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 
 		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();

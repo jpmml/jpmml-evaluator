@@ -22,8 +22,8 @@ import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
+import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.JavaModel;
-import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.ValueFactory;
@@ -44,14 +44,16 @@ public class JavaModelEvaluator extends ModelEvaluator<JavaModel> {
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		JavaModel javaModel = ensureScorableModel();
+	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+		JavaModel javaModel = getModel();
 
-		return javaModel.evaluate(context);
+		return javaModel.evaluateRegression(valueFactory, context);
 	}
 
 	@Override
-	protected ValueFactory<?> ensureValueFactory(){
-		return super.ensureValueFactory();
+	protected <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+		JavaModel javaModel = getModel();
+
+		return javaModel.evaluateClassification(valueFactory, context);
 	}
 }

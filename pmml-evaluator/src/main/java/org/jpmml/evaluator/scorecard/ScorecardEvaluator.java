@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MathContext;
-import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.scorecard.Attribute;
 import org.dmg.pmml.scorecard.Characteristic;
@@ -37,12 +35,9 @@ import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValues;
-import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
-import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
@@ -81,43 +76,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		Scorecard scorecard = ensureScorableModel();
-
-		ValueFactory<?> valueFactory;
-
-		MathContext mathContext = scorecard.getMathContext();
-		switch(mathContext){
-			case FLOAT:
-			case DOUBLE:
-				valueFactory = ensureValueFactory();
-				break;
-			default:
-				throw new UnsupportedAttributeException(scorecard, mathContext);
-		}
-
-		Map<FieldName, ?> predictions;
-
-		MiningFunction miningFunction = scorecard.getMiningFunction();
-		switch(miningFunction){
-			case REGRESSION:
-				predictions = evaluateRegression(valueFactory, context);
-				break;
-			case ASSOCIATION_RULES:
-			case SEQUENCES:
-			case CLASSIFICATION:
-			case CLUSTERING:
-			case TIME_SERIES:
-			case MIXED:
-				throw new InvalidAttributeException(scorecard, miningFunction);
-			default:
-				throw new UnsupportedAttributeException(scorecard, miningFunction);
-		}
-
-		return OutputUtil.evaluate(predictions, context);
-	}
-
-	private <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		Scorecard scorecard = getModel();
 
 		boolean useReasonCodes = scorecard.isUseReasonCodes();

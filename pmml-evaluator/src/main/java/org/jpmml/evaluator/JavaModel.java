@@ -95,8 +95,19 @@ public class JavaModel extends Model {
 		setModelVerification(model.getModelVerification());
 	}
 
-	abstract
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context);
+	public <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateDefault();
+	}
+
+	public <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateDefault();
+	}
+
+	private Map<FieldName, ?> evaluateDefault(){
+		MiningFunction miningFunction = getMiningFunction();
+
+		throw new InvalidAttributeException(this, miningFunction);
+	}
 
 	@Override
 	public String getModelName(){

@@ -43,7 +43,6 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
-import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
@@ -55,6 +54,7 @@ import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.EntityUtil;
+import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.FieldValue;
@@ -68,7 +68,6 @@ import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.OutputField;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLException;
@@ -207,49 +206,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		return evaluate((MiningModelEvaluationContext)context);
+		return super.evaluate((MiningModelEvaluationContext)context);
 	}
 
-	public Map<FieldName, ?> evaluate(MiningModelEvaluationContext context){
-		MiningModel miningModel = ensureScorableModel();
-
-		ValueFactory<?> valueFactory;
-
-		MathContext mathContext = miningModel.getMathContext();
-		switch(mathContext){
-			case FLOAT:
-			case DOUBLE:
-				valueFactory = ensureValueFactory();
-				break;
-			default:
-				throw new UnsupportedAttributeException(miningModel, mathContext);
-		}
-
-		Map<FieldName, ?> predictions;
-
-		MiningFunction miningFunction = miningModel.getMiningFunction();
-		switch(miningFunction){
-			case REGRESSION:
-				predictions = evaluateRegression(valueFactory, context);
-				break;
-			case CLASSIFICATION:
-				predictions = evaluateClassification(valueFactory, context);
-				break;
-			case CLUSTERING:
-				predictions = evaluateClustering(valueFactory, context);
-				break;
-			default:
-				predictions = evaluateAny(context);
-				break;
-		}
-
-		return OutputUtil.evaluate(predictions, context);
-	}
-
-	private <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, MiningModelEvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> segmentResults = evaluateSegmentation(context);
+		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
 		Map<FieldName, ?> predictions = getSegmentationResult(REGRESSION_METHODS, segmentResults);
 		if(predictions != null){
@@ -305,10 +269,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
-	private <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, MiningModelEvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> segmentResults = evaluateSegmentation(context);
+		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
 		Map<FieldName, ?> predictions = getSegmentationResult(CLASSIFICATION_METHODS, segmentResults);
 		if(predictions != null){
@@ -387,10 +352,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
 
-	private <V extends Number> Map<FieldName, ?> evaluateClustering(ValueFactory<V> valueFactory, MiningModelEvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, ?> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> segmentResults = evaluateSegmentation(context);
+		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
 		Map<FieldName, ?> predictions = getSegmentationResult(CLUSTERING_METHODS, segmentResults);
 		if(predictions != null){
@@ -446,8 +412,18 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return Collections.singletonMap(getTargetName(), result);
 	}
 
-	private Map<FieldName, ?> evaluateAny(MiningModelEvaluationContext context){
-		List<SegmentResult> segmentResults = evaluateSegmentation(context);
+	@Override
+	protected <V extends Number> Map<FieldName, ?> evaluateAssociationRules(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateAny(valueFactory, context);
+	}
+
+	@Override
+	protected <V extends Number> Map<FieldName, ?> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateAny(valueFactory, context);
+	}
+
+	private <V extends Number> Map<FieldName, ?> evaluateAny(ValueFactory<V> valueFactory, EvaluationContext context){
+		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
 		return getSegmentationResult(Collections.emptySet(), segmentResults);
 	}

@@ -168,9 +168,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		}
 	}
 
-	abstract
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context);
-
 	/**
 	 * <p>
 	 * Configures the runtime behaviour of this model evaluator.
@@ -503,6 +500,93 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		return evaluate(context);
 	}
 
+	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
+		M model = getModel();
+
+		if(!model.isScorable()){
+			throw new EvaluationException("Model is not scorable", model);
+		}
+
+		ValueFactory<?> valueFactory;
+
+		MathContext mathContext = model.getMathContext();
+		switch(mathContext){
+			case FLOAT:
+			case DOUBLE:
+				valueFactory = ensureValueFactory();
+				break;
+			default:
+				throw new UnsupportedAttributeException(model, mathContext);
+		}
+
+		Map<FieldName, ?> predictions;
+
+		MiningFunction miningFunction = model.getMiningFunction();
+		switch(miningFunction){
+			case REGRESSION:
+				predictions = evaluateRegression(valueFactory, context);
+				break;
+			case CLASSIFICATION:
+				predictions = evaluateClassification(valueFactory, context);
+				break;
+			case CLUSTERING:
+				predictions = evaluateClustering(valueFactory, context);
+				break;
+			case ASSOCIATION_RULES:
+				predictions = evaluateAssociationRules(valueFactory, context);
+				break;
+			case SEQUENCES:
+				predictions = evaluateSequences(valueFactory, context);
+				break;
+			case TIME_SERIES:
+				predictions = evaluateTimeSeries(valueFactory, context);
+				break;
+			case MIXED:
+				predictions = evaluateMixed(valueFactory, context);
+				break;
+			default:
+				throw new UnsupportedAttributeException(model, miningFunction);
+		}
+
+		return OutputUtil.evaluate(predictions, context);
+	}
+
+	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateDefault();
+	}
+
+	protected <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateDefault();
+	}
+
+	protected <V extends Number> Map<FieldName, ?> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateDefault();
+	}
+
+	protected <V extends Number> Map<FieldName, ?> evaluateAssociationRules(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateDefault();
+	}
+
+	protected <V extends Number> Map<FieldName, ?> evaluateSequences(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateDefault();
+	}
+
+	protected <V extends Number> Map<FieldName, ?> evaluateTimeSeries(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateDefault();
+	}
+
+	protected <V extends Number> Map<FieldName, ?> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateDefault();
+	}
+
+	private <V extends Number> Map<FieldName, ?> evaluateDefault(){
+		Model model = getModel();
+
+		MiningFunction miningFunction = model.getMiningFunction();
+
+		throw new InvalidAttributeException(model, miningFunction);
+	}
+
 	protected <V extends Number> Classification<V> createClassification(ValueMap<String, V> values){
 
 		if(hasResultFeature(org.dmg.pmml.ResultFeature.PROBABILITY) || hasResultFeature(org.dmg.pmml.ResultFeature.RESIDUAL)){
@@ -743,16 +827,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		}
 
 		return Sets.immutableEnumSet(resultFeatures);
-	}
-
-	protected M ensureScorableModel(){
-		M model = getModel();
-
-		if(!model.isScorable()){
-			throw new EvaluationException("Model is not scorable", model);
-		}
-
-		return model;
 	}
 
 	public <V> V getValue(LoadingCache<M, V> cache){
