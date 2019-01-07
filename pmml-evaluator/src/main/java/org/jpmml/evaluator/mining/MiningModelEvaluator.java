@@ -68,6 +68,7 @@ import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.OutputField;
+import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLException;
@@ -201,7 +202,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MiningModelEvaluationContext context = new MiningModelEvaluationContext(this);
 		context.setArguments(arguments);
 
-		return evaluate(context);
+		Map<FieldName, ?> results = evaluate(context);
+
+		return OutputUtil.clear(results);
 	}
 
 	@Override

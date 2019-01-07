@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import com.google.common.collect.Iterables;
 import org.dmg.pmml.FieldName;
@@ -217,7 +218,21 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		return this;
 	}
 
-	public Function<FieldName, FieldName> getInputMapper(){
+	public Predicate<org.dmg.pmml.OutputField> getOutputFilter(){
+		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
+
+		return configurationBuilder.getOutputFilter();
+	}
+
+	public ModelEvaluatorBuilder setOutputFilter(Predicate<org.dmg.pmml.OutputField> outputFilter){
+		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
+
+		configurationBuilder.setOutputFilter(outputFilter);
+
+		return this;
+	}
+
+	public java.util.function.Function<FieldName, FieldName> getInputMapper(){
 		return this.inputMapper;
 	}
 

@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
@@ -182,6 +183,8 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 		setConfiguration(Objects.requireNonNull(configuration));
 
 		setValueFactory(null);
+
+		this.outputResultFields = null;
 	}
 
 	@Override
@@ -497,7 +500,9 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 		ModelEvaluationContext context = new ModelEvaluationContext(this);
 		context.setArguments(arguments);
 
-		return evaluate(context);
+		Map<FieldName, ?> results = evaluate(context);
+
+		return OutputUtil.clear(results);
 	}
 
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
@@ -801,10 +806,16 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 		if(output != null && output.hasOutputFields()){
 			List<org.dmg.pmml.OutputField> outputFields = output.getOutputFields();
 
-			for(org.dmg.pmml.OutputField outputField : outputFields){
-				OutputField resultField = new OutputField(outputField);
+			Predicate<org.dmg.pmml.OutputField> outputFilter = ensureOutputFilter();
 
-				resultFields.add(resultField);
+			outputFields:
+			for(org.dmg.pmml.OutputField outputField : outputFields){
+
+				if(outputFilter.test(outputField)){
+					OutputField resultField = new OutputField(outputField);
+
+					resultFields.add(resultField);
+				}
 			}
 		}
 
@@ -861,6 +872,12 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 		Configuration configuration = ensureConfiguration();
 
 		return configuration.getValueFactoryFactory();
+	}
+
+	protected Predicate<org.dmg.pmml.OutputField> ensureOutputFilter(){
+		Configuration configuration = ensureConfiguration();
+
+		return configuration.getOutputFilter();
 	}
 
 	protected ValueFactory<?> ensureValueFactory(){

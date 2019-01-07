@@ -19,12 +19,15 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
+import java.util.function.Predicate;
 
 public class ConfigurationBuilder implements Cloneable, Serializable {
 
 	private ModelEvaluatorFactory modelEvaluatorFactory = null;
 
 	private ValueFactoryFactory valueFactoryFactory = null;
+
+	private Predicate<org.dmg.pmml.OutputField> outputFilter = null;
 
 
 	public ConfigurationBuilder(){
@@ -57,6 +60,15 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 
 		configuration.setValueFactoryFactory(valueFactoryFactory);
 
+		Predicate<org.dmg.pmml.OutputField> outputFilter = getOutputFilter();
+		if(outputFilter == null){
+			// Create a serializable lambda
+			// See https://stackoverflow.com/a/22808112
+			outputFilter = (Predicate<org.dmg.pmml.OutputField> & Serializable)(org.dmg.pmml.OutputField outputField) -> true;
+		}
+
+		configuration.setOutputFilter(outputFilter);
+
 		return configuration;
 	}
 
@@ -76,6 +88,16 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 
 	public ConfigurationBuilder setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
 		this.valueFactoryFactory = valueFactoryFactory;
+
+		return this;
+	}
+
+	public Predicate<org.dmg.pmml.OutputField> getOutputFilter(){
+		return this.outputFilter;
+	}
+
+	public ConfigurationBuilder setOutputFilter(Predicate<org.dmg.pmml.OutputField> outputFilter){
+		this.outputFilter = outputFilter;
 
 		return this;
 	}

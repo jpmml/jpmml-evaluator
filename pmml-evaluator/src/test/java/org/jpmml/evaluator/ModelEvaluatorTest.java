@@ -76,6 +76,7 @@ public class ModelEvaluatorTest {
 			{
 				setModelEvaluatorFactory(configuration.getModelEvaluatorFactory());
 				setValueFactoryFactory(configuration.getValueFactoryFactory());
+				setOutputFilter(configuration.getOutputFilter());
 			}
 
 			@Override

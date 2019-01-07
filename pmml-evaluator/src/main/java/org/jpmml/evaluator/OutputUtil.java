@@ -21,10 +21,10 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Ordering;
@@ -53,6 +53,18 @@ public class OutputUtil {
 	private OutputUtil(){
 	}
 
+	static
+	public Map<FieldName, ?> clear(Map<FieldName, ?> results){
+
+		if(results instanceof OutputMap){
+			OutputMap outputMap = (OutputMap)results;
+
+			outputMap.clearPrivate();
+		}
+
+		return results;
+	}
+
 	/**
 	 * <p>
 	 * Evaluates the {@link Output} element.
@@ -76,9 +88,11 @@ public class OutputUtil {
 			return predictions;
 		}
 
-		Map<FieldName, Object> result = new LinkedHashMap<>(predictions);
+		OutputMap result = new OutputMap(predictions);
 
 		List<OutputField> outputFields = output.getOutputFields();
+
+		Predicate<OutputField> outputFilter = modelEvaluator.ensureOutputFilter();
 
 		outputFields:
 		for(OutputField outputField : outputFields){
@@ -403,7 +417,13 @@ public class OutputUtil {
 			// The result of one output field becomes available to other output fields
 			context.declare(outputName, outputValue);
 
-			result.put(outputName, FieldValueUtil.getValue(outputValue));
+			if(outputFilter.test(outputField)){
+				result.putPublic(outputName, FieldValueUtil.getValue(outputValue));
+			} else
+
+			{
+				result.putPrivate(outputName, FieldValueUtil.getValue(outputValue));
+			}
 		}
 
 		return result;

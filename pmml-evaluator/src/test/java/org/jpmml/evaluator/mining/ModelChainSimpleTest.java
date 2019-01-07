@@ -22,7 +22,9 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
-import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.Configuration;
+import org.jpmml.evaluator.ConfigurationBuilder;
+import org.jpmml.evaluator.ModelEvaluator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -31,14 +33,28 @@ public class ModelChainSimpleTest extends ModelChainTest {
 
 	@Test
 	public void getResultFields() throws Exception {
-		Evaluator evaluator = createModelEvaluator();
+		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+
+		Configuration configuration = configurationBuilder.build();
+
+		ModelEvaluator<?> evaluator = createModelEvaluator(configuration);
 
 		checkResultFields(Arrays.asList("Class", "PollenIndex"), Arrays.asList("Pollen Index"), evaluator);
+
+		configurationBuilder.setOutputFilter(outputField -> outputField.isFinalResult());
+
+		configuration = configurationBuilder.build();
+
+		evaluator.configure(configuration);
+
+		checkResultFields(Arrays.asList("Class", "PollenIndex"), Arrays.asList(), evaluator);
 	}
 
 	@Test
 	public void evaluateSetosa() throws Exception {
 		Map<FieldName, ?> result = evaluateExample(1.4, 0.2);
+
+		assertEquals(1 + 1, result.size());
 
 		assertEquals(0.8d + 0.3d, getTarget(result, "PollenIndex"));
 	}

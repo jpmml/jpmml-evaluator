@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
+import java.util.function.Predicate;
 
 /**
  * @see ConfigurationBuilder
@@ -28,6 +29,8 @@ public class Configuration implements Serializable {
 	private ModelEvaluatorFactory modelEvaluatorFactory = null;
 
 	private ValueFactoryFactory valueFactoryFactory = null;
+
+	private Predicate<org.dmg.pmml.OutputField> outputFilter = null;
 
 
 	Configuration(){
@@ -47,6 +50,14 @@ public class Configuration implements Serializable {
 
 	void setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
 		this.valueFactoryFactory = valueFactoryFactory;
+	}
+
+	public Predicate<org.dmg.pmml.OutputField> getOutputFilter(){
+		return this.outputFilter;
+	}
+
+	void setOutputFilter(Predicate<org.dmg.pmml.OutputField> outputFilter){
+		this.outputFilter = outputFilter;
 	}
 
 	static

@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.validators.PositiveInteger;
@@ -163,6 +164,13 @@ public class EvaluationExample extends Example {
 	private String valueFactoryFactoryClazz = ValueFactoryFactory.class.getName();
 
 	@Parameter (
+		names = {"--filter-output"},
+		description = "Exclude non-final output fields",
+		hidden = true
+	)
+	private boolean filterOutput = false;
+
+	@Parameter (
 		names = "--optimize",
 		description = "Optimize PMML class model",
 		hidden = true
@@ -282,9 +290,20 @@ public class EvaluationExample extends Example {
 			System.out.println("\t" + "Other objects: " + numberFormat.format(objectCount - pmmlObjectCount));
 		}
 
+		Predicate<org.dmg.pmml.OutputField> outputFilter;
+
+		if(this.filterOutput){
+			outputFilter = (outputField -> outputField.isFinalResult());
+		} else
+
+		{
+			outputFilter = (outputField -> true);
+		}
+
 		EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml, this.modelName)
 			.setModelEvaluatorFactory((ModelEvaluatorFactory)newInstance(this.modelEvaluatorFactoryClazz))
-			.setValueFactoryFactory((ValueFactoryFactory)newInstance(this.valueFactoryFactoryClazz));
+			.setValueFactoryFactory((ValueFactoryFactory)newInstance(this.valueFactoryFactoryClazz))
+			.setOutputFilter(outputFilter);
 
 		Evaluator evaluator = evaluatorBuilder.build();
 
