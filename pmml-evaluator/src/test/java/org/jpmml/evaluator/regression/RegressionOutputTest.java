@@ -26,6 +26,7 @@ import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.ConfigurationBuilder;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
+import org.jpmml.evaluator.OutputFilters;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -56,7 +57,7 @@ public class RegressionOutputTest extends ModelEvaluatorTest {
 		assertEquals(35, getOutput(results, "FinalIntegerResult"));
 		assertEquals("waive", getOutput(results, "BusinessDecision"));
 
-		configurationBuilder.setOutputFilter(outputField -> outputField.isFinalResult());
+		configurationBuilder.setOutputFilter(OutputFilters.KEEP_FINAL_RESULTS);
 
 		configuration = configurationBuilder.build();
 

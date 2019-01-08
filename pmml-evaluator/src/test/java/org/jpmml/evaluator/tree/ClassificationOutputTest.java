@@ -26,6 +26,7 @@ import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.ConfigurationBuilder;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
+import org.jpmml.evaluator.OutputFilters;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -54,7 +55,7 @@ public class ClassificationOutputTest extends ModelEvaluatorTest {
 		assertEquals("zero", getOutput(results, "output_predictedDisplayValue"));
 		assertEquals(1d, getOutput(results, "output_probability"));
 
-		configurationBuilder.setOutputFilter(outputField -> outputField.isFinalResult());
+		configurationBuilder.setOutputFilter(OutputFilters.KEEP_FINAL_RESULTS);
 
 		configuration = configurationBuilder.build();
 

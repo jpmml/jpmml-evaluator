@@ -224,6 +224,9 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		return configurationBuilder.getOutputFilter();
 	}
 
+	/**
+	 * @see OutputFilter
+	 */
 	public ModelEvaluatorBuilder setOutputFilter(Predicate<org.dmg.pmml.OutputField> outputFilter){
 		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
 

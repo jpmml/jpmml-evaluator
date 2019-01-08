@@ -62,9 +62,7 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 
 		Predicate<org.dmg.pmml.OutputField> outputFilter = getOutputFilter();
 		if(outputFilter == null){
-			// Create a serializable lambda
-			// See https://stackoverflow.com/a/22808112
-			outputFilter = (Predicate<org.dmg.pmml.OutputField> & Serializable)(org.dmg.pmml.OutputField outputField) -> true;
+			outputFilter = OutputFilters.KEEP_ALL;
 		}
 
 		configuration.setOutputFilter(outputFilter);
