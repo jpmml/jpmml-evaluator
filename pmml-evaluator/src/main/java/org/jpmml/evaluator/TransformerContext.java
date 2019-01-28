@@ -63,7 +63,7 @@ public class TransformerContext extends EvaluationContext {
 
     @Override
     protected FieldValue prepare(FieldName name, Object value) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
