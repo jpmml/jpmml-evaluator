@@ -15,11 +15,6 @@ public class TransformerContext extends EvaluationContext {
         this.transformer = transformer;
     }
 
-    @Override
-    protected FieldValue createFieldValue(FieldName name, Object value) {
-        throw new NotImplementedException();
-    }
-
     public Map<FieldName, ?> getArguments() {
         return this.arguments;
     }
@@ -64,6 +59,11 @@ public class TransformerContext extends EvaluationContext {
         // Casting should stay in place in order to avoid calling 'declare(FieldName,Object)'
         // which would result in exception
         return declare(name, (FieldValue) null);
+    }
+
+    @Override
+    protected FieldValue prepare(FieldName name, Object value) {
+        throw new NotImplementedException();
     }
 
     @Override
