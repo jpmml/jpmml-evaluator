@@ -20,12 +20,10 @@ package org.jpmml.evaluator;
 
 import java.util.Set;
 
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.HasValueSet;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLObject;
 
 public interface HasParsedValueSet<E extends PMMLObject & HasValueSet<E>> extends HasValueSet<E>, ValueParser {
 
-	Set<FieldValue> getValueSet(DataType dataType, OpType opType);
+	Set<FieldValue> getValueSet(TypeInfo typeInfo);
 }

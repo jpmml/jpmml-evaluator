@@ -23,12 +23,12 @@ import org.dmg.pmml.tree.Node;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.HasEntityId;
 import org.jpmml.evaluator.HasEntityRegistry;
-import org.jpmml.evaluator.ToStringHelper;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.Vote;
+import org.jpmml.model.ToStringHelper;
 
 abstract
-public class NodeVote extends Vote implements HasEntityId, HasEntityRegistry<Node> {
+public class NodeVote extends Vote implements HasEntityId, HasEntityRegistry<Node>, HasDecisionPath {
 
 	private Node node = null;
 
@@ -41,7 +41,7 @@ public class NodeVote extends Vote implements HasEntityId, HasEntityRegistry<Nod
 	protected void computeResult(DataType dataType){
 		Node node = getNode();
 
-		Object result = TypeUtil.parse(dataType, node.getScore());
+		Object result = TypeUtil.parseOrCast(dataType, node.getScore());
 
 		setResult(result);
 	}
@@ -61,6 +61,7 @@ public class NodeVote extends Vote implements HasEntityId, HasEntityRegistry<Nod
 		return EntityUtil.getId(node, this);
 	}
 
+	@Override
 	public Node getNode(){
 		return this.node;
 	}

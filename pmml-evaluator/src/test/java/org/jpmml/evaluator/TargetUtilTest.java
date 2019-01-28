@@ -36,6 +36,7 @@ import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.Version;
+import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.tree.TreeModelEvaluator;
@@ -62,9 +63,9 @@ public class TargetUtilTest {
 		assertEquals(OpType.CONTINUOUS, dataField.getOpType());
 		assertEquals(DataType.FLOAT, dataField.getDataType());
 
-		Map<FieldName, ?> result = evaluator.evaluate(Collections.<FieldName, FieldValue>emptyMap());
+		Map<FieldName, ?> results = evaluator.evaluate(Collections.emptyMap());
 
-		assertEquals((float)Math.PI, result.get(dataField.getName()));
+		assertEquals((float)Math.PI, results.get(dataField.getName()));
 
 		evaluator = createTreeModelEvaluator(MiningFunction.REGRESSION, MathContext.DOUBLE, target);
 
@@ -73,9 +74,9 @@ public class TargetUtilTest {
 		assertEquals(OpType.CONTINUOUS, dataField.getOpType());
 		assertEquals(DataType.DOUBLE, dataField.getDataType());
 
-		result = evaluator.evaluate(Collections.<FieldName, FieldValue>emptyMap());
+		results = evaluator.evaluate(Collections.emptyMap());
 
-		assertEquals(Math.PI, result.get(dataField.getName()));
+		assertEquals(Math.PI, results.get(dataField.getName()));
 	}
 
 	@Test
@@ -99,9 +100,9 @@ public class TargetUtilTest {
 		assertEquals(OpType.CATEGORICAL, dataField.getOpType());
 		assertEquals(DataType.STRING, dataField.getDataType());
 
-		Map<FieldName, ?> result = evaluator.evaluate(Collections.<FieldName, FieldValue>emptyMap());
+		Map<FieldName, ?> results = evaluator.evaluate(Collections.emptyMap());
 
-		HasProbability hasProbability = (HasProbability)result.get(dataField.getName());
+		HasProbability hasProbability = (HasProbability)results.get(dataField.getName());
 
 		assertEquals((Double)((double)(float)(1d / 7d)), hasProbability.getProbability("yes"));
 		assertEquals((Double)((double)(float)(1d - (1d / 7d))), hasProbability.getProbability("no"));
@@ -113,9 +114,9 @@ public class TargetUtilTest {
 		assertEquals(OpType.CATEGORICAL, dataField.getOpType());
 		assertEquals(DataType.STRING, dataField.getDataType());
 
-		result = evaluator.evaluate(Collections.<FieldName, FieldValue>emptyMap());
+		results = evaluator.evaluate(Collections.emptyMap());
 
-		hasProbability = (HasProbability)result.get(dataField.getName());
+		hasProbability = (HasProbability)results.get(dataField.getName());
 
 		assertEquals(yesValue.getPriorProbability(), hasProbability.getProbability("yes"));
 		assertEquals(noValue.getPriorProbability(), hasProbability.getProbability("no"));
@@ -150,7 +151,7 @@ public class TargetUtilTest {
 
 	static
 	private TreeModelEvaluator createTreeModelEvaluator(MiningFunction miningFunction, MathContext mathContext, Target target){
-		Node root = new Node()
+		Node root = new LeafNode()
 			.setPredicate(new False());
 
 		Targets targets = new Targets()

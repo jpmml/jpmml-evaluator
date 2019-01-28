@@ -29,10 +29,8 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.LinearNorm;
 import org.dmg.pmml.NormContinuous;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethod;
 
 public class NormalizationUtil {
@@ -44,7 +42,7 @@ public class NormalizationUtil {
 	public FieldValue normalize(NormContinuous normContinuous, FieldValue value){
 		double result = normalize(normContinuous, (value.asNumber()).doubleValue());
 
-		return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, result);
+		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 	}
 
 	static

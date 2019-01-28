@@ -120,18 +120,29 @@
 
 			<dependency>
 				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-agent</artifactId>
+				<version>1.4.8</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model</artifactId>
-				<version>1.4.1</version>
+				<version>1.4.8</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model-metro</artifactId>
-				<version>1.4.1</version>
+				<version>1.4.8</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model-moxy</artifactId>
-				<version>1.4.1</version>
+				<version>1.4.8</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.glassfish.jaxb</groupId>
+						<artifactId>jaxb-runtime</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<dependency>
@@ -143,7 +154,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>[14.0, 24.0-jre]</version>
+				<version>[19.0, 27.0-jre]</version>
 				<exclusions>
 					<exclusion>
 						<groupId>com.google.code.findbugs</groupId>
@@ -154,12 +165,24 @@
 						<artifactId>error_prone_annotations</artifactId>
 					</exclusion>
 					<exclusion>
+						<groupId>com.google.guava</groupId>
+						<artifactId>failureaccess</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>com.google.guava</groupId>
+						<artifactId>listenablefuture</artifactId>
+					</exclusion>
+					<exclusion>
 						<groupId>com.google.j2objc</groupId>
 						<artifactId>j2objc-annotations</artifactId>
 					</exclusion>
 					<exclusion>
 						<groupId>org.checkerframework</groupId>
 						<artifactId>checker-compat-qual</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.checkerframework</groupId>
+						<artifactId>checker-qual</artifactId>
 					</exclusion>
 					<exclusion>
 						<groupId>org.codehaus.mojo</groupId>
@@ -205,7 +228,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.7.0</version>
+				<version>3.8.0</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -237,7 +260,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.0.0</version>
+				<version>3.0.1</version>
 				<configuration>
 					<javadocVersion>1.8</javadocVersion>
 				</configuration>
@@ -268,7 +291,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.20.1</version>
+				<version>2.22.1</version>
 				<configuration>
 					<argLine>${jacoco.agent}</argLine>
 					<trimStackTrace>false</trimStackTrace>
@@ -277,7 +300,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.1</version>
+				<version>0.8.2</version>
 				<executions>
 					<execution>
 						<id>pre-unit-test</id>
@@ -294,6 +317,23 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>de.jutzig</groupId>
+				<artifactId>github-release-plugin</artifactId>
+				<version>1.2.0</version>
+				<executions>
+					<execution>
+						<id>default-cli</id>
+						<configuration>
+							<artifact>${project.build.directory}/${project.artifactId}-executable-${project.version}.${project.packaging}</artifact>
+							<description>https://github.com/jpmml/jpmml-evaluator</description>
+							<releaseName>${project.version}</releaseName>
+							<repositoryId>jpmml/jpmml-evaluator</repositoryId>
+							<tag>${project.version}</tag>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

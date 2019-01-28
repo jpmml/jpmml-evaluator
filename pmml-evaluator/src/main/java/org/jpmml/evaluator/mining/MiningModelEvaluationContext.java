@@ -37,11 +37,11 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 
 
 	public MiningModelEvaluationContext(MiningModelEvaluator miningModelEvaluator){
-		this(null, miningModelEvaluator);
+		this(miningModelEvaluator, null);
 	}
 
-	public MiningModelEvaluationContext(MiningModelEvaluationContext parent, MiningModelEvaluator miningModelEvaluator){
-		super(parent, miningModelEvaluator);
+	public MiningModelEvaluationContext(MiningModelEvaluator miningModelEvaluator, MiningModelEvaluationContext parent){
+		super(miningModelEvaluator, parent);
 
 		BiMap<String, Segment> entityRegistry = miningModelEvaluator.getEntityRegistry();
 
@@ -49,8 +49,8 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 	}
 
 	@Override
-	public void reset(boolean purge){
-		super.reset(purge);
+	public void reset(boolean clearValues){
+		super.reset(clearValues);
 
 		if(!this.results.isEmpty()){
 			this.results.clear();

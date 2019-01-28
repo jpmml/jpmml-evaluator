@@ -46,18 +46,31 @@ public class RichDataFieldTest {
 
 		RichDataField richDataField = new RichDataField(dataField);
 
-		Map<FieldValue, Value> valueMappings = richDataField.getValueMapping();
+		TypeInfo typeInfo = new TypeInfo(){
+
+			@Override
+			public DataType getDataType(){
+				return richDataField.getDataType();
+			}
+
+			@Override
+			public OpType getOpType(){
+				return richDataField.getOpType();
+			}
+		};
+
+		Map<FieldValue, Value> valueMappings = richDataField.getValueMapping(typeInfo);
 
 		assertEquals(4, valueMappings.size());
 
-		assertSame(invalidValue, valueMappings.get(FieldValueUtil.create(DataType.INTEGER, OpType.CATEGORICAL, 0)));
+		assertSame(invalidValue, valueMappings.get(FieldValueUtil.create(TypeInfos.CATEGORICAL_INTEGER, 0)));
 
-		assertSame(validValueOne, FieldValueUtil.getValidValue(richDataField, true));
-		assertSame(validValueTwo, FieldValueUtil.getValidValue(richDataField, 2d));
-		assertSame(validValueThree, FieldValueUtil.getValidValue(richDataField, "3"));
+		assertSame(validValueOne, TargetFieldUtil.getValidValue(richDataField, true));
+		assertSame(validValueTwo, TargetFieldUtil.getValidValue(richDataField, 2d));
+		assertSame(validValueThree, TargetFieldUtil.getValidValue(richDataField, "3"));
 
 		try {
-			valueMappings.get(FieldValueUtil.create(DataType.INTEGER, OpType.CATEGORICAL, "N/A"));
+			valueMappings.get(FieldValueUtil.create(TypeInfos.CATEGORICAL_INTEGER, "N/A"));
 
 			fail();
 		} catch(NumberFormatException nfe){

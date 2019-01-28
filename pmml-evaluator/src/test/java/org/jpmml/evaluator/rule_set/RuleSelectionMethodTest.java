@@ -51,9 +51,9 @@ public class RuleSelectionMethodTest extends ModelEvaluatorTest {
 			it.remove();
 		}
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		SimpleRuleScoreDistribution<?> targetValue = (SimpleRuleScoreDistribution<?>)result.get(evaluator.getTargetFieldName());
+		SimpleRuleScoreDistribution<?> targetValue = (SimpleRuleScoreDistribution<?>)results.get(evaluator.getTargetName());
 
 		return targetValue.getEntityId();
 	}
@@ -61,9 +61,9 @@ public class RuleSelectionMethodTest extends ModelEvaluatorTest {
 	public String getScore(Map<FieldName, ?> arguments) throws Exception {
 		RuleSetModelEvaluator evaluator = (RuleSetModelEvaluator)createModelEvaluator();
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		SimpleRuleScoreDistribution<?> targetValue = (SimpleRuleScoreDistribution<?>)result.get(evaluator.getTargetFieldName());
+		SimpleRuleScoreDistribution<?> targetValue = (SimpleRuleScoreDistribution<?>)results.get(evaluator.getTargetName());
 
 		return (String)targetValue.getResult();
 	}

@@ -26,6 +26,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -33,7 +35,7 @@ public class FieldValueTest {
 
  	@Test
 	public void emptyList(){
-		FieldValue list = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, Arrays.asList());
+		FieldValue list = FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, Arrays.asList());
 
 		assertEquals(list.getDataType(), DataType.STRING);
 		assertEquals(list.getOpType(), OpType.CATEGORICAL);
@@ -41,8 +43,8 @@ public class FieldValueTest {
 
 	@Test
 	public void categoricalString(){
-		FieldValue zero = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "0");
-		FieldValue one = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "1");
+		FieldValue zero = FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, "0");
+		FieldValue one = FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, "1");
 
 		assertTrue(zero.equalsString("0"));
 		assertFalse(zero.equalsString("0.0"));
@@ -81,7 +83,7 @@ public class FieldValueTest {
 
 	@Test
 	public void categoricalStringList(){
-		FieldValue list = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, Arrays.asList("1", "2", "3"));
+		FieldValue list = FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, Arrays.asList("1", "2", "3"));
 
 		assertEquals(DataType.STRING, list.getDataType());
 		assertEquals(OpType.CATEGORICAL, list.getOpType());
@@ -89,9 +91,9 @@ public class FieldValueTest {
 
 	@Test
 	public void ordinalString(){
-		OrdinalValue loud = (OrdinalValue)FieldValueUtil.create(DataType.STRING, OpType.ORDINAL, "loud");
-		OrdinalValue louder = (OrdinalValue)FieldValueUtil.create(DataType.STRING, OpType.ORDINAL, "louder");
-		OrdinalValue insane = (OrdinalValue)FieldValueUtil.create(DataType.STRING, OpType.ORDINAL, "insane");
+		OrdinalValue loud = (OrdinalValue)FieldValueUtil.create(TypeInfos.ORDINAL_STRING, "loud");
+		OrdinalValue louder = (OrdinalValue)FieldValueUtil.create(TypeInfos.ORDINAL_STRING, "louder");
+		OrdinalValue insane = (OrdinalValue)FieldValueUtil.create(TypeInfos.ORDINAL_STRING, "insane");
 
 		assertFalse(louder.equalsString("loud"));
 		assertTrue(louder.equalsString("louder"));
@@ -102,7 +104,7 @@ public class FieldValueTest {
 		assertFalse(louder.equalsValue(insane));
 
 		// Implicit (ie. lexicographic) ordering
-		louder.setOrdering(null);
+		assertNull(loud.getOrdering());
 
 		assertTrue(louder.compareToString("loud") > 0);
 		assertTrue(louder.compareToString("louder") == 0);
@@ -112,8 +114,14 @@ public class FieldValueTest {
 		assertTrue(louder.compareTo(louder) == 0);
 		assertTrue(louder.compareTo(insane) > 0);
 
+		TypeInfo typeInfo = new SimpleTypeInfo(DataType.STRING, OpType.ORDINAL, Arrays.asList("loud", "louder", "insane"));
+
+		loud = (OrdinalValue)FieldValueUtil.create(typeInfo, loud.getValue());
+		louder = (OrdinalValue)FieldValueUtil.create(typeInfo, louder.getValue());
+		insane = (OrdinalValue)FieldValueUtil.create(typeInfo, insane.getValue());
+
 		// Explicit ordering
-		louder.setOrdering(Arrays.asList(loud.getValue(), louder.getValue(), insane.getValue()));
+		assertNotNull(loud.getOrdering());
 
 		assertTrue(louder.compareToString("loud") > 0);
 		assertTrue(louder.compareToString("louder") == 0);
@@ -126,8 +134,8 @@ public class FieldValueTest {
 
 	@Test
 	public void continuousInteger(){
-		FieldValue zero = FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, 0);
-		FieldValue one = FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, 1);
+		FieldValue zero = FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, 0);
+		FieldValue one = FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, 1);
 
 		assertTrue(zero.equalsString("-0"));
 		assertTrue(zero.equalsString("-0.0"));
@@ -169,7 +177,9 @@ public class FieldValueTest {
 		assertTrue(zero.compareTo(one) < 0);
 
 		try {
-			FieldValue categoricalZero = FieldValueUtil.refine(zero.getDataType(), OpType.CATEGORICAL, zero);
+			TypeInfo typeInfo = new SimpleTypeInfo(zero.getDataType(), OpType.CATEGORICAL);
+
+			FieldValue categoricalZero = zero.cast(typeInfo);
 
 			zero.compareTo(categoricalZero);
 
@@ -179,7 +189,9 @@ public class FieldValueTest {
 		}
 
 		try {
-			FieldValue doubleZero = FieldValueUtil.refine(DataType.DOUBLE, zero.getOpType(), zero);
+			TypeInfo typeInfo = new SimpleTypeInfo(DataType.DOUBLE, zero.getOpType());
+
+			FieldValue doubleZero = zero.cast(typeInfo);
 
 			zero.compareTo(doubleZero);
 
@@ -194,7 +206,7 @@ public class FieldValueTest {
 
 	@Test
 	public void continuousIntegerList(){
-		FieldValue list = FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, Arrays.asList(1, 2, 3));
+		FieldValue list = FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, Arrays.asList(1, 2, 3));
 
 		assertEquals(DataType.INTEGER, list.getDataType());
 		assertEquals(OpType.CONTINUOUS, list.getOpType());
@@ -202,7 +214,7 @@ public class FieldValueTest {
 
 	@Test
 	public void categoricalInteger(){
-		FieldValue zero = FieldValueUtil.create(DataType.INTEGER, OpType.CATEGORICAL, 0);
+		FieldValue zero = FieldValueUtil.create(TypeInfos.CATEGORICAL_INTEGER, 0);
 
 		assertTrue(zero.equalsString("-0"));
 		assertTrue(zero.equalsString("-0.0"));
@@ -246,12 +258,14 @@ public class FieldValueTest {
 		assertTrue(one.compareTo(zero) > 0);
 		assertTrue(one.compareTo(one) == 0);
 
-		zero.setOrdering(Arrays.asList(one.getValue(), zero.getValue()));
+		TypeInfo typeInfo = new SimpleTypeInfo(DataType.INTEGER, OpType.ORDINAL, Arrays.asList(1, 0));
+
+		zero = (OrdinalValue)FieldValueUtil.create(typeInfo, zero.getValue());
 
 		assertTrue(zero.compareTo(zero) == 0);
 		assertTrue(zero.compareTo(one) > 0);
 
-		one.setOrdering(zero.getOrdering());
+		one = (OrdinalValue)FieldValueUtil.create(typeInfo, one.getValue());
 
 		assertTrue(one.compareTo(zero) < 0);
 		assertTrue(one.compareTo(one) == 0);
@@ -267,8 +281,8 @@ public class FieldValueTest {
 		assertFalse((negativeZeroValue).equals(positiveZeroValue));
 		assertTrue((negativeZeroValue).compareTo(positiveZeroValue) < 0);
 
-		FieldValue negativeZero = FieldValueUtil.create(DataType.FLOAT, OpType.CONTINUOUS, negativeZeroValue);
-		FieldValue positiveZero = FieldValueUtil.create(DataType.FLOAT, OpType.CONTINUOUS, positiveZeroValue);
+		FieldValue negativeZero = FieldValueUtil.create(TypeInfos.CONTINUOUS_FLOAT, negativeZeroValue);
+		FieldValue positiveZero = FieldValueUtil.create(TypeInfos.CONTINUOUS_FLOAT, positiveZeroValue);
 
 		assertEquals(negativeZero, positiveZero);
 
@@ -294,7 +308,7 @@ public class FieldValueTest {
 
 	@Test
 	public void continuousFloatList(){
-		FieldValue list = FieldValueUtil.create(DataType.FLOAT, OpType.CONTINUOUS, Arrays.asList(1f, 2f, 3f));
+		FieldValue list = FieldValueUtil.create(TypeInfos.CONTINUOUS_FLOAT, Arrays.asList(1f, 2f, 3f));
 
 		assertEquals(DataType.FLOAT, list.getDataType());
 		assertEquals(OpType.CONTINUOUS, list.getOpType());
@@ -310,8 +324,8 @@ public class FieldValueTest {
 		assertFalse((negativeZeroValue).equals(positiveZeroValue));
 		assertTrue((negativeZeroValue).compareTo(positiveZeroValue) < 0);
 
-		FieldValue negativeZero = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, negativeZeroValue);
-		FieldValue positiveZero = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, positiveZeroValue);
+		FieldValue negativeZero = FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, negativeZeroValue);
+		FieldValue positiveZero = FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, positiveZeroValue);
 
 		assertEquals(negativeZero, positiveZero);
 
@@ -337,7 +351,7 @@ public class FieldValueTest {
 
 	@Test
 	public void continuousDoubleList(){
-		FieldValue list = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Arrays.asList(1d, 2d, 3d));
+		FieldValue list = FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, Arrays.asList(1d, 2d, 3d));
 
 		assertEquals(DataType.DOUBLE, list.getDataType());
 		assertEquals(OpType.CONTINUOUS, list.getOpType());
@@ -345,8 +359,8 @@ public class FieldValueTest {
 
 	@Test
 	public void categoricalBoolean(){
-		FieldValue zero = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, false);
-		FieldValue one = FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, true);
+		FieldValue zero = FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, false);
+		FieldValue one = FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, true);
 
 		assertTrue(zero.compareToString("-0") == 0);
 		assertTrue(zero.compareToString("-0.0") == 0);

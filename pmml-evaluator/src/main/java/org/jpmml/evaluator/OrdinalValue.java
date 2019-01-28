@@ -24,14 +24,17 @@ import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
+import org.jpmml.model.ToStringHelper;
 
-public class OrdinalValue extends FieldValue {
+public class OrdinalValue extends DiscreteValue {
 
 	private List<?> ordering = null;
 
 
-	OrdinalValue(DataType dataType, Object value){
+	OrdinalValue(DataType dataType, List<?> ordering, Object value){
 		super(dataType, value);
+
+		setOrdering(ordering);
 	}
 
 	@Override
@@ -81,26 +84,39 @@ public class OrdinalValue extends FieldValue {
 		return false;
 	}
 
+	@Override
+	protected ToStringHelper toStringHelper(){
+		ToStringHelper helper = super.toStringHelper()
+			.add("ordering", getOrdering());
+
+		return helper;
+	}
+
+	@Override
 	public List<?> getOrdering(){
 		return this.ordering;
 	}
 
-	public void setOrdering(List<?> ordering){
+	private void setOrdering(List<?> ordering){
 		this.ordering = ordering;
 	}
 
 	static
-	public OrdinalValue create(DataType dataType, Object value){
+	public OrdinalValue create(DataType dataType, List<?> ordering, Object value){
+
+		if(ordering != null && ordering.isEmpty()){
+			ordering = null;
+		} // End if
 
 		if(value instanceof Collection){
-			return new OrdinalValue(dataType, value);
+			return new OrdinalValue(dataType, ordering, value);
 		}
 
 		switch(dataType){
 			case STRING:
-				return new OrdinalString(value);
+				return new OrdinalString(ordering, value);
 			default:
-				return new OrdinalValue(dataType, value);
+				return new OrdinalValue(dataType, ordering, value);
 		}
 	}
 
@@ -119,8 +135,8 @@ public class OrdinalValue extends FieldValue {
 	static
 	private class OrdinalString extends OrdinalValue implements Scalar {
 
-		OrdinalString(Object value){
-			super(DataType.STRING, value);
+		OrdinalString(List<?> ordering, Object value){
+			super(DataType.STRING, ordering, value);
 		}
 
 		@Override

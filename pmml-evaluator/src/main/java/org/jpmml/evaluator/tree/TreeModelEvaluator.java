@@ -20,6 +20,7 @@ package org.jpmml.evaluator.tree;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.cache.CacheLoader;
@@ -29,8 +30,6 @@ import com.google.common.collect.ImmutableBiMap;
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MathContext;
-import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.ScoreDistribution;
@@ -40,16 +39,14 @@ import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
-import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.MisplacedAttributeException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
-import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
@@ -60,14 +57,14 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 
-public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements HasEntityRegistry<Node> {
+public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements HasNodeRegistry {
 
 	transient
 	private BiMap<String, Node> entityRegistry = null;
 
 
 	public TreeModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, TreeModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, TreeModel.class));
 	}
 
 	public TreeModelEvaluator(PMML pmml, TreeModel treeModel){
@@ -95,45 +92,17 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		TreeModel treeModel = ensureScorableModel();
-
-		ValueFactory<?> valueFactory;
-
-		MathContext mathContext = treeModel.getMathContext();
-		switch(mathContext){
-			case FLOAT:
-			case DOUBLE:
-				valueFactory = ensureValueFactory();
-				break;
-			default:
-				throw new UnsupportedAttributeException(treeModel, mathContext);
-		}
-
-		Map<FieldName, ?> predictions;
-
-		MiningFunction miningFunction = treeModel.getMiningFunction();
-		switch(miningFunction){
-			case REGRESSION:
-				predictions = evaluateRegression(valueFactory, context);
-				break;
-			case CLASSIFICATION:
-				predictions = evaluateClassification(valueFactory, context);
-				break;
-			case ASSOCIATION_RULES:
-			case SEQUENCES:
-			case CLUSTERING:
-			case TIME_SERIES:
-			case MIXED:
-				throw new InvalidAttributeException(treeModel, miningFunction);
-			default:
-				throw new UnsupportedAttributeException(treeModel, miningFunction);
-		}
-
-		return OutputUtil.evaluate(predictions, context);
+	public List<Node> getPath(String id){
+		return getPath(resolveNode(id));
 	}
 
-	private <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	@Override
+	public List<Node> getPathBetween(String parentId, String childId){
+		return getPathBetween(resolveNode(parentId), resolveNode(childId));
+	}
+
+	@Override
+	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		TargetField targetField = getTargetField();
 
 		Trail trail = new Trail();
@@ -148,7 +117,8 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
-	private <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -326,7 +296,17 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	}
 
 	private <V extends Number> NodeScore<V> createNodeScore(ValueFactory<V> valueFactory, TargetField targetField, Node node){
-		Value<V> value = valueFactory.newValue(node.getScore());
+		Object score = node.getScore();
+
+		Value<V> value;
+
+		if(score instanceof Number){
+			value = valueFactory.newValue((Number)score);
+		} else
+
+		{
+			value = valueFactory.newValue((String)score);
+		}
 
 		value = TargetUtil.evaluateRegressionInternal(targetField, value);
 
@@ -335,6 +315,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			@Override
 			public BiMap<String, Node> getEntityRegistry(){
 				return TreeModelEvaluator.this.getEntityRegistry();
+			}
+
+			@Override
+			public List<Node> getDecisionPath(){
+				return TreeModelEvaluator.this.getPath(getNode());
 			}
 		};
 
@@ -347,6 +332,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			@Override
 			public BiMap<String, Node> getEntityRegistry(){
 				return TreeModelEvaluator.this.getEntityRegistry();
+			}
+
+			@Override
+			public List<Node> getDecisionPath(){
+				return TreeModelEvaluator.this.getPath(getNode());
 			}
 		};
 
@@ -361,6 +351,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			@Override
 			public BiMap<String, Node> getEntityRegistry(){
 				return TreeModelEvaluator.this.getEntityRegistry();
+			}
+
+			@Override
+			public List<Node> getDecisionPath(){
+				return TreeModelEvaluator.this.getPath(getNode());
 			}
 		};
 
@@ -436,6 +431,38 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 
 		return result;
+	}
+
+	private List<Node> getPath(Node node){
+		TreeModel treeModel = getModel();
+
+		Node root = treeModel.getNode();
+
+		return getPathBetween(root, node);
+	}
+
+	private List<Node> getPathBetween(Node parent, Node child){
+		PathFinder pathFinder = new PathFinder(){
+
+			@Override
+			public boolean test(Node node){
+				return Objects.equals(child, node);
+			}
+		};
+		pathFinder.applyTo(parent);
+
+		return pathFinder.getPath();
+	}
+
+	private Node resolveNode(String id){
+		BiMap<String, Node> entityRegistry = getEntityRegistry();
+
+		Node node = entityRegistry.get(id);
+		if(node == null){
+			throw new IllegalArgumentException(id);
+		}
+
+		return node;
 	}
 
 	static

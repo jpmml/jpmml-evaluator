@@ -21,11 +21,10 @@ package org.jpmml.evaluator.functions;
 import java.util.List;
 import java.util.Objects;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FieldValues;
+import org.jpmml.evaluator.TypeInfos;
 
 abstract
 public class ValueFunction extends AbstractFunction {
@@ -47,6 +46,6 @@ public class ValueFunction extends AbstractFunction {
 	private FieldValue evaluate(FieldValue value){
 		Boolean result = evaluate(Objects.equals(FieldValues.MISSING_VALUE, value));
 
-		return FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, result);
+		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 	}
 }

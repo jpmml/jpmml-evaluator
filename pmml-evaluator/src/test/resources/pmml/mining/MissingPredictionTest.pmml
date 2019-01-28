@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<PMML xmlns="http://www.dmg.org/PMML-4_3" version="4.3">
+	<DataDictionary>
+		<DataField name="y" optype="categorical" dataType="integer">
+			<Value value="0"/>
+			<Value value="1"/>
+		</DataField>
+		<DataField name="x" optype="continuous" dataType="double"/>
+	</DataDictionary>
+	<MiningModel functionName="classification">
+		<MiningSchema>
+			<MiningField name="y" usageType="target"/>
+			<MiningField name="x"/>
+		</MiningSchema>
+		<Segmentation multipleModelMethod="weightedMajorityVote" x-missingPredictionTreatment="continue" x-missingThreshold="0.5">
+			<Segment>
+				<True/>
+				<TreeModel functionName="classification" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnNullPrediction">
+					<MiningSchema>
+						<MiningField name="x"/>
+					</MiningSchema>
+					<Node score="0">
+						<True/>
+						<Node score="1">
+							<SimplePredicate field="x" operator="greaterOrEqual" value="1"/>
+						</Node>
+					</Node>
+				</TreeModel>
+			</Segment>
+			<Segment>
+				<True/>
+				<TreeModel functionName="classification" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnNullPrediction">
+					<MiningSchema>
+						<MiningField name="x"/>
+					</MiningSchema>
+					<Node score="0">
+						<True/>
+						<Node score="1">
+							<SimplePredicate field="x" operator="greaterOrEqual" value="2"/>
+						</Node>
+					</Node>
+				</TreeModel>
+			</Segment>
+			<Segment>
+				<True/>
+				<TreeModel functionName="classification" missingValueStrategy="nullPrediction" noTrueChildStrategy="returnNullPrediction">
+					<MiningSchema>
+						<MiningField name="x"/>
+					</MiningSchema>
+					<Node score="0">
+						<True/>
+						<Node score="1">
+							<SimplePredicate field="x" operator="greaterOrEqual" value="3"/>
+						</Node>
+					</Node>
+				</TreeModel>
+			</Segment>
+		</Segmentation>
+	</MiningModel>
+</PMML>

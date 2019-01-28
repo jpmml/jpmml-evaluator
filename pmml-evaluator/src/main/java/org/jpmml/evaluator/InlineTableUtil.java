@@ -23,21 +23,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
+import org.dmg.pmml.Cell;
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.Extension;
 import org.dmg.pmml.HasTable;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Row;
 import org.dmg.pmml.TableLocator;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class InlineTableUtil {
@@ -73,18 +74,75 @@ public class InlineTableUtil {
 			List<Object> cells = row.getContent();
 
 			for(Object cell : cells){
+				String column;
+				String value;
+
+				if(cell instanceof Cell){
+					Cell pmmlCell = (Cell)cell;
+
+					column = parseColumn(pmmlCell.getName());
+					value = pmmlCell.getValue();
+				} else
+
+				if(cell instanceof Extension){
+					continue;
+				} else
+
+				if(cell instanceof PMMLObject){
+					PMMLObject object = (PMMLObject)cell;
+
+					throw new MisplacedElementException(object);
+				} else
+
+				if(cell instanceof JAXBElement){
+					JAXBElement<?> jaxbElement = (JAXBElement<?>)cell;
+
+					column = parseColumn(jaxbElement.getName());
+					value = (String)TypeUtil.parseOrCast(DataType.STRING, jaxbElement.getValue());
+				} else
 
 				if(cell instanceof Element){
-					Element element = (Element)cell;
+					Element domElement = (Element)cell;
 
-					result.put(rowKey, element.getTagName(), element.getTextContent());
+					column = domElement.getTagName();
+					value = domElement.getTextContent();
+				} else
+
+				if(cell instanceof String){
+					String string = (String)cell;
+
+					if(("").equals(string.trim())){
+						continue;
+					}
+
+					throw new InvalidElementException(row);
+				} else
+
+				{
+					throw new InvalidElementException(row);
 				}
+
+				result.put(rowKey, column, value);
 			}
 
 			rowKey += 1;
 		}
 
 		return result;
+	}
+
+	static
+	private String parseColumn(QName name){
+		String prefix = name.getPrefix();
+		String localPart = name.getLocalPart();
+
+		if(prefix != null && !("").equals(prefix)){
+			return prefix + ":" + localPart;
+		} else
+
+		{
+			return localPart;
+		}
 	}
 
 	static
@@ -100,28 +158,30 @@ public class InlineTableUtil {
 			throw new IllegalArgumentException();
 		}
 
-		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		documentBuilderFactory.setNamespaceAware(true);
-
-		DocumentBuilder documentBuilder;
-
-		try {
-			documentBuilder = documentBuilderFactory.newDocumentBuilder();
-		} catch(ParserConfigurationException pce){
-			throw new RuntimeException(pce);
-		}
-
 		for(int i = minRow; i <= maxRow; i++){
 			Map<String, String> tableRow = tableRows.get(i);
 
 			Row row = new Row();
 
-			Document document = documentBuilder.newDocument();
-
 			Collection<String> columns = tableRow.keySet();
 			for(String column : columns){
-				Element cell = document.createElement(column);
-				cell.setTextContent(tableRow.get(column));
+				String value = tableRow.get(column);
+
+				if(value == null){
+					continue;
+				}
+
+				QName name;
+
+				if(column.startsWith("data:")){
+					name = new QName("http://jpmml.org/jpmml-model/InlineTable", column.substring("data:".length()), "data");
+				} else
+
+				{
+					name = new QName("http://www.dmg.org/PMML-4_3", column);
+				}
+
+				JAXBElement<String> cell = new JAXBElement<>(name, String.class, value);
 
 				row.addContent(cell);
 			}

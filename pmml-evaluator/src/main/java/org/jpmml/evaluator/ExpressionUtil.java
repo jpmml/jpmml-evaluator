@@ -26,10 +26,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.Constant;
@@ -80,7 +78,11 @@ public class ExpressionUtil {
 	public <E extends PMMLObject & HasType<E> & HasExpression<E>> FieldValue evaluateTypedExpressionContainer(E hasTypedExpression, EvaluationContext context){
 		FieldValue value = evaluateExpressionContainer(hasTypedExpression, context);
 
-		return FieldValueUtil.refine(hasTypedExpression.getDataType(), hasTypedExpression.getOpType(), value);
+		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+			return FieldValues.MISSING_VALUE;
+		}
+
+		return value.cast(hasTypedExpression.getDataType(), hasTypedExpression.getOpType());
 	}
 
 	static
@@ -152,7 +154,20 @@ public class ExpressionUtil {
 		if(constant instanceof HasParsedValue){
 			HasParsedValue<?> hasParsedValue = (HasParsedValue<?>)constant;
 
-			return hasParsedValue.getValue(dataType, opType);
+			TypeInfo typeInfo = new TypeInfo(){
+
+				@Override
+				public DataType getDataType(){
+					return dataType;
+				}
+
+				@Override
+				public OpType getOpType(){
+					return opType;
+				}
+			};
+
+			return hasParsedValue.getValue(typeInfo);
 		}
 
 		return FieldValueUtil.create(dataType, opType, constant.getValue());
@@ -163,7 +178,7 @@ public class ExpressionUtil {
 		FieldValue value = context.evaluate(ensureField(fieldRef));
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
-			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, fieldRef.getMapMissingTo());
+			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, fieldRef.getMapMissingTo());
 		}
 
 		return value;
@@ -174,7 +189,7 @@ public class ExpressionUtil {
 		FieldValue value = context.evaluate(ensureField(normContinuous));
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
-			return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, normContinuous.getMapMissingTo());
+			return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, normContinuous.getMapMissingTo());
 		}
 
 		return NormalizationUtil.normalize(normContinuous, value);
@@ -185,7 +200,7 @@ public class ExpressionUtil {
 		FieldValue value = context.evaluate(ensureField(normDiscrete));
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
-			return FieldValueUtil.create(DataType.DOUBLE, OpType.CATEGORICAL, normDiscrete.getMapMissingTo());
+			return FieldValueUtil.create(TypeInfos.CATEGORICAL_DOUBLE, normDiscrete.getMapMissingTo());
 		}
 
 		NormDiscrete.Method method = normDiscrete.getMethod();
@@ -269,9 +284,9 @@ public class ExpressionUtil {
 		switch(localTermWeights){
 			case BINARY:
 			case TERM_FREQUENCY:
-				return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, termFrequency);
+				return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, termFrequency);
 			case LOGARITHMIC:
-				return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, Math.log10(1d + termFrequency));
+				return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, Math.log10(1d + termFrequency));
 			default:
 				throw new UnsupportedAttributeException(textIndex, localTermWeights);
 		}
@@ -296,7 +311,7 @@ public class ExpressionUtil {
 				FieldValue flag = evaluate(arguments.next(), context);
 
 				if(flag == null && mapMissingTo != null){
-					return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, mapMissingTo);
+					return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
 				}
 
 				values.add(flag);
@@ -326,7 +341,7 @@ public class ExpressionUtil {
 						FieldValue trueValue = evaluate(arguments.next(), context);
 
 						if(Objects.equals(FieldValues.MISSING_VALUE, trueValue) && mapMissingTo != null){
-							return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, mapMissingTo);
+							return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
 						}
 
 						values.add(trueValue);
@@ -350,7 +365,7 @@ public class ExpressionUtil {
 							FieldValue falseValue = evaluate(arguments.next(), context);
 
 							if(Objects.equals(FieldValues.MISSING_VALUE, falseValue) && mapMissingTo != null){
-								return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, mapMissingTo);
+								return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
 							}
 
 							values.add(falseValue);
@@ -365,7 +380,7 @@ public class ExpressionUtil {
 
 			// "If a mapMissingTo value is specified and any of the input values of the function are missing, then the function is not applied at all and the mapMissingTo value is returned instead"
 			if(Objects.equals(FieldValues.MISSING_VALUE, value) && mapMissingTo != null){
-				return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, mapMissingTo);
+				return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
 			}
 
 			values.add(value);
@@ -388,7 +403,7 @@ public class ExpressionUtil {
 					// Re-throw the given InvalidResultException instance
 					throw ire;
 				case AS_MISSING:
-					return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, defaultValue);
+					return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, defaultValue);
 				default:
 					throw new UnsupportedAttributeException(apply, invalidValueTreatmentMethod);
 			}
@@ -396,22 +411,22 @@ public class ExpressionUtil {
 
 		// "If a defaultValue value is specified and the function produced a missing value, then the defaultValue is returned"
 		if(result == null && defaultValue != null){
-			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, defaultValue);
+			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, defaultValue);
 		}
 
 		return result;
 	}
 
 	@SuppressWarnings (
-		value = {"rawtypes", "unchecked"}
+		value = {"unchecked"}
 	)
 	static
 	public FieldValue evaluateAggregate(Aggregate aggregate, EvaluationContext context){
-		FieldValue value = context.evaluate(ensureField(aggregate));
+		FieldValue fieldValue = context.evaluate(ensureField(aggregate));
 
 		// The JPMML library operates with single records, so it's impossible to implement "proper" aggregation over multiple records.
 		// It is assumed that application developers have performed the aggregation beforehand
-		Collection<?> values = FieldValueUtil.getValue(Collection.class, value);
+		Collection<?> values = FieldValueUtil.getValue(Collection.class, fieldValue);
 
 		FieldName groupName = aggregate.getGroupField();
 		if(groupName != null){
@@ -421,8 +436,11 @@ public class ExpressionUtil {
 			TypeUtil.getDataType(FieldValueUtil.getValue(groupValue));
 		}
 
-		// Remove missing values
-		values = Lists.newArrayList(Iterables.filter(values, Predicates.notNull()));
+		values = values.stream()
+			// "Missing values are ignored"
+			.filter(Objects::nonNull)
+			.map(value -> FieldValueUtil.create(fieldValue, value))
+			.collect(Collectors.toList());
 
 		Aggregate.Function function = aggregate.getFunction();
 		if(function == null){
@@ -431,15 +449,15 @@ public class ExpressionUtil {
 
 		switch(function){
 			case COUNT:
-				return FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, values.size());
+				return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, values.size());
 			case SUM:
-				return Functions.SUM.evaluate(FieldValueUtil.createAll(value.getDataType(), value.getOpType(), (List<?>)values));
+				return Functions.SUM.evaluate((List<FieldValue>)values);
 			case AVERAGE:
-				return Functions.AVG.evaluate(FieldValueUtil.createAll(value.getDataType(), value.getOpType(), (List<?>)values));
+				return Functions.AVG.evaluate((List<FieldValue>)values);
 			case MIN:
-				return FieldValueUtil.create(value.getDataType(), value.getOpType(), Collections.min((List<Comparable>)values));
+				return Collections.min((List<FieldValue>)values);
 			case MAX:
-				return FieldValueUtil.create(value.getDataType(), value.getOpType(), Collections.max((List<Comparable>)values));
+				return Collections.max((List<FieldValue>)values);
 			default:
 				throw new UnsupportedAttributeException(aggregate, function);
 		}

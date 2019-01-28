@@ -25,11 +25,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.function.Function;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
-import com.google.common.base.Function;
 import org.dmg.pmml.PMML;
 import org.jpmml.model.PMMLUtil;
 
@@ -119,62 +120,74 @@ public class Example {
 	}
 
 	static
-	public Object newInstance(Class<?> clazz) throws ReflectiveOperationException {
+	public Object newInstance(String name) throws ReflectiveOperationException {
+		Class<?> clazz = Class.forName(name);
+
 		Method newInstanceMethod = clazz.getDeclaredMethod("newInstance");
 
 		return newInstanceMethod.invoke(null);
 	}
 
-	public static final Function<String, String> CSV_PARSER = new Function<String, String>(){
+	static
+	public Function<String, String> createCellParser(Collection<String> missingValues){
+		Function<String, String> function = new Function<String, String>(){
 
-		@Override
-		public String apply(String string){
+			@Override
+			public String apply(String string){
 
-			if(("").equals(string) || ("N/A").equals(string) || ("NA").equals(string)){
-				return null;
-			}
-
-			// Remove leading and trailing quotation marks
-			string = stripQuotes(string, '\"');
-			string = stripQuotes(string, '\"');
-
-			// Standardize European-style decimal marks (',') to US-style decimal marks ('.')
-			if(string.indexOf(',') > -1){
-				String usString = string.replace(',', '.');
-
-				try {
-					Double.parseDouble(usString);
-
-					string = usString;
-				} catch(NumberFormatException nfe){
-					// Ignored
+				if(missingValues != null && missingValues.contains(string)){
+					return null;
 				}
+
+				// Remove leading and trailing quotation marks
+				string = stripQuotes(string, '\"');
+				string = stripQuotes(string, '\"');
+
+				// Standardize European-style decimal marks (',') to US-style decimal marks ('.')
+				if(string.indexOf(',') > -1){
+					String usString = string.replace(',', '.');
+
+					try {
+						Double.parseDouble(usString);
+
+						string = usString;
+					} catch(NumberFormatException nfe){
+						// Ignored
+					}
+				}
+
+				return string;
 			}
 
-			return string;
-		}
+			private String stripQuotes(String string, char quoteChar){
 
-		private String stripQuotes(String string, char quoteChar){
+				if(string.length() > 1 && ((string.charAt(0) == quoteChar) && (string.charAt(string.length() - 1) == quoteChar))){
+					return string.substring(1, string.length() - 1);
+				}
 
-			if(string.length() > 1 && ((string.charAt(0) == quoteChar) && (string.charAt(string.length() - 1) == quoteChar))){
-				return string.substring(1, string.length() - 1);
+				return string;
 			}
+		};
 
-			return string;
-		}
-	};
+		return function;
+	}
 
-	public static final Function<Object, String> CSV_FORMATTER = new Function<Object, String>(){
+	static
+	public Function<Object, String> createCellFormatter(String missingValue){
+		Function<Object, String> function = new Function<Object, String>(){
 
-		@Override
-		public String apply(Object object){
-			object = EvaluatorUtil.decode(object);
+			@Override
+			public String apply(Object object){
+				object = EvaluatorUtil.decode(object);
 
-			if(object == null){
-				return "N/A";
+				if(object == null){
+					return missingValue;
+				}
+
+				return object.toString();
 			}
+		};
 
-			return object.toString();
-		}
-	};
+		return function;
+	}
 }

@@ -22,17 +22,15 @@ import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
-import org.jpmml.evaluator.JavaModel;
-import org.jpmml.evaluator.ModelEvaluationContext;
+import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.ModelEvaluatorFactory;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.ValueFactory;
-import org.jpmml.evaluator.ValueFactoryFactory;
 
 public class JavaModelEvaluator extends ModelEvaluator<JavaModel> {
 
 	public JavaModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, JavaModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, JavaModel.class));
 	}
 
 	public JavaModelEvaluator(PMML pmml, JavaModel javaModel){
@@ -45,36 +43,16 @@ public class JavaModelEvaluator extends ModelEvaluator<JavaModel> {
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
-		JavaModelEvaluationContext context = new JavaModelEvaluationContext(this);
-		context.setArguments(arguments);
+	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+		JavaModel javaModel = getModel();
 
-		return evaluate(context);
+		return javaModel.evaluateRegression(valueFactory, context);
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		return evaluate((JavaModelEvaluationContext)context);
-	}
+	protected <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+		JavaModel javaModel = getModel();
 
-	public Map<FieldName, ?> evaluate(JavaModelEvaluationContext context){
-		JavaModel javaModel = ensureScorableModel();
-
-		return javaModel.evaluate(context);
-	}
-
-	@Override
-	public ModelEvaluatorFactory ensureModelEvaluatorFactory(){
-		return super.ensureModelEvaluatorFactory();
-	}
-
-	@Override
-	public ValueFactoryFactory ensureValueFactoryFactory(){
-		return super.ensureValueFactoryFactory();
-	}
-
-	@Override
-	public ValueFactory<?> ensureValueFactory(){
-		return super.ensureValueFactory();
+		return javaModel.evaluateClassification(valueFactory, context);
 	}
 }

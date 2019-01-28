@@ -25,6 +25,7 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.DefineFunction;
+import org.dmg.pmml.FieldName;
 import org.dmg.pmml.ParameterField;
 
 public class FunctionUtil {
@@ -65,14 +66,20 @@ public class FunctionUtil {
 			throw new EvaluationException("Function " + PMMLException.formatKey(defineFunction.getName()) + " expects " + parameterFields.size() + " arguments, got " + values.size() + " arguments");
 		}
 
-		DefineFunctionEvaluationContext functionContext = new DefineFunctionEvaluationContext(context);
+		DefineFunctionEvaluationContext functionContext = new DefineFunctionEvaluationContext(defineFunction, context);
 
 		for(int i = 0; i < parameterFields.size(); i++){
 			ParameterField parameterField = parameterFields.get(i);
+			FieldValue value = values.get(i);
 
-			FieldValue value = FieldValueUtil.refine(parameterField, values.get(i));
+			FieldName name = parameterField.getName();
+			if(name == null){
+				throw new MissingAttributeException(parameterField, PMMLAttributes.PARAMETERFIELD_NAME);
+			}
 
-			functionContext.declare(parameterField.getName(), value);
+			value = value.cast(parameterField.getDataType(), parameterField.getOpType());
+
+			functionContext.declare(name, value);
 		}
 
 		return ExpressionUtil.evaluateTypedExpressionContainer(defineFunction, functionContext);
@@ -111,6 +118,7 @@ public class FunctionUtil {
 		}
 
 		List<? extends Function> extensionFunctions = Arrays.asList(
+			Functions.MODULO,
 			Functions.LN1P, Functions.EXPM1,
 			Functions.RINT,
 			Functions.HYPOT,

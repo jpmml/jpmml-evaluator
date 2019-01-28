@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.tree.TreeModel;
-import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
@@ -43,7 +42,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void nullPredictionDefault() throws Exception {
-		NodeScoreDistribution<?> targetValue = evaluate(TreeModel.MissingValueStrategy.NULL_PREDICTION, Collections.<FieldName, FieldValue>emptyMap());
+		NodeScoreDistribution<?> targetValue = evaluate(TreeModel.MissingValueStrategy.NULL_PREDICTION, Collections.emptyMap());
 
 		assertNull(targetValue);
 	}
@@ -63,7 +62,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void lastPredictionDefault() throws Exception {
-		NodeScoreDistribution<?> targetValue = evaluate(TreeModel.MissingValueStrategy.LAST_PREDICTION, Collections.<FieldName, FieldValue>emptyMap());
+		NodeScoreDistribution<?> targetValue = evaluate(TreeModel.MissingValueStrategy.LAST_PREDICTION, Collections.emptyMap());
 
 		assertEquals("1", targetValue.getEntityId());
 
@@ -121,8 +120,8 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 			.setMissingValueStrategy(missingValueStrategy)
 			.setMissingValuePenalty(missingValuePenalty);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		return (NodeScoreDistribution<?>)result.get(evaluator.getTargetFieldName());
+		return (NodeScoreDistribution<?>)results.get(evaluator.getTargetName());
 	}
 }

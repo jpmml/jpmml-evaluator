@@ -58,13 +58,13 @@ public class InvalidMarkupInspectorTest {
 			inspector.applyTo(pmml);
 
 			fail();
-		} catch(InvalidMarkupException ife){
+		} catch(InvalidMarkupException ime){
 			List<InvalidMarkupException> exceptions = inspector.getExceptions();
 
 			String[] features = {"PMML@version", "PMML/Header", "DataDictionary", "DataDictionary/DataField"};
 
 			assertEquals(features.length, exceptions.size());
-			assertEquals(0, exceptions.indexOf(ife));
+			assertEquals(0, exceptions.indexOf(ime));
 
 			for(int i = 0; i < exceptions.size(); i++){
 				InvalidMarkupException exception = exceptions.get(i);

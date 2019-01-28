@@ -21,13 +21,12 @@ package org.jpmml.evaluator.regression;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.regression.CategoricalPredictor;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.HasParsedValue;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.PMMLAttributes;
+import org.jpmml.evaluator.TypeInfo;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (
@@ -47,7 +46,7 @@ public class RichCategoricalPredictor extends CategoricalPredictor implements Ha
 	}
 
 	@Override
-	public FieldValue getValue(DataType dataType, OpType opType){
+	public FieldValue getValue(TypeInfo typeInfo){
 
 		if(this.parsedValue == null){
 			String value = getValue();
@@ -55,7 +54,7 @@ public class RichCategoricalPredictor extends CategoricalPredictor implements Ha
 				throw new MissingAttributeException(this, PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
 			}
 
-			this.parsedValue = parse(dataType, opType, value);
+			this.parsedValue = parse(typeInfo, value);
 		}
 
 		return this.parsedValue;

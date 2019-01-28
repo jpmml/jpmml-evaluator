@@ -19,10 +19,14 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.HasDisplayName;
 import org.dmg.pmml.OpType;
+import org.jpmml.model.ToStringHelper;
 
 /**
  * <p>
@@ -32,14 +36,61 @@ import org.dmg.pmml.OpType;
 abstract
 public class ModelField implements Serializable {
 
-	abstract
-	public FieldName getName();
+	private Field<?> field = null;
 
-	abstract
-	public DataType getDataType();
+	private FieldName name = null;
 
-	abstract
-	public OpType getOpType();
+
+	public ModelField(Field<?> field){
+		setField(Objects.requireNonNull(field));
+	}
+
+	public FieldName getName(){
+
+		if(this.name == null){
+			Field<?> field = getField();
+
+			return field.getName();
+		}
+
+		return this.name;
+	}
+
+	/**
+	 * <p>
+	 * Soft-renames this model field.
+	 * </p>
+	 *
+	 * @param name The new name of the model field.
+	 * Use <code>null</code> to restore the origial name of the model field.
+	 */
+	public void setName(FieldName name){
+		this.name = name;
+	}
+
+	public String getDisplayName(){
+		Field<?> field = getField();
+
+		if(field instanceof HasDisplayName){
+			HasDisplayName<?> hasDisplayName = (HasDisplayName<?>)field;
+
+			return hasDisplayName.getDisplayName();
+		}
+
+		return null;
+	}
+
+	public DataType getDataType(){
+		Field<?> field = getField();
+
+		return field.getDataType();
+	}
+
+	public OpType getOpType(){
+		Field<?> field = getField();
+
+		return field.getOpType();
+	}
 
 	@Override
 	public String toString(){
@@ -51,9 +102,21 @@ public class ModelField implements Serializable {
 	protected ToStringHelper toStringHelper(){
 		ToStringHelper helper = new ToStringHelper(this)
 			.add("name", getName())
+			.add("displayName", getDisplayName())
 			.add("dataType", getDataType())
 			.add("opType", getOpType());
 
 		return helper;
+	}
+
+	/**
+	 * @return The backing {@link Field} element.
+	 */
+	public Field<?> getField(){
+		return this.field;
+	}
+
+	private void setField(Field<?> field){
+		this.field = field;
 	}
 }

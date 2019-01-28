@@ -23,6 +23,7 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
+import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.HasParsedValue;
@@ -51,7 +52,7 @@ public class PredicateOptimizerTest {
 
 	static
 	private void checkTree(Predicate predicate, Class<?> clazz){
-		Node root = new Node()
+		Node root = new LeafNode()
 			.setPredicate(predicate);
 
 		TreeModel treeModel = new TreeModel()

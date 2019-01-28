@@ -20,12 +20,13 @@ package org.jpmml.evaluator;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import com.beust.jcommander.Parameter;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 
@@ -72,12 +73,21 @@ public class TestingExample extends Example {
 	private String separator = null;
 
 	@Parameter (
+		names = {"--missing-values"},
+		description = "CSV missing value strings"
+	)
+	@ParameterOrder (
+		value = 5
+	)
+	private List<String> missingValues = Arrays.asList("N/A", "NA");
+
+	@Parameter (
 		names = {"--ignored-fields"},
 		description = "Ignored Model fields",
 		converter = FieldNameConverter.class
 	)
 	@ParameterOrder (
-		value = 5
+		value = 6
 	)
 	private List<FieldName> ignoredFields = new ArrayList<>();
 
@@ -86,7 +96,7 @@ public class TestingExample extends Example {
 		description = "Relative error"
 	)
 	@ParameterOrder (
-		value = 6
+		value = 7
 	)
 	private double precision = 1e-9;
 
@@ -95,7 +105,7 @@ public class TestingExample extends Example {
 		description = "Absolute error near zero"
 	)
 	@ParameterOrder (
-		value = 7
+		value = 8
 	)
 	private double zeroThreshold = 1e-9;
 
@@ -120,22 +130,29 @@ public class TestingExample extends Example {
 
 		CsvUtil.Table outputTable = readTable(this.output, this.separator);
 
-		ModelEvaluatorFactory modelEvaluatorFactory = (ModelEvaluatorFactory)newInstance(Class.forName(this.modelEvaluatorFactoryClazz));
+		EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml)
+			.setModelEvaluatorFactory((ModelEvaluatorFactory)newInstance(this.modelEvaluatorFactoryClazz));
 
-		Evaluator evaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
+		Evaluator evaluator = evaluatorBuilder.build();
 
 		// Perform self-testing
 		evaluator.verify();
 
-		Predicate<FieldName> predicate = Predicates.alwaysTrue();
+		java.util.function.Function<String, String> cellParser = createCellParser(new HashSet<>(this.missingValues));
+
+		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, cellParser);
+
+		List<? extends Map<FieldName, ?>> outputRecords = BatchUtil.parseRecords(outputTable, cellParser);
+
+		Predicate<FieldName> predicate;
 
 		if(this.ignoredFields != null && this.ignoredFields.size() > 0){
-			predicate = Predicates.not(Predicates.in(this.ignoredFields));
+			predicate = (FieldName name) -> !this.ignoredFields.contains(name);
+		} else
+
+		{
+			predicate = (FieldName name) -> true;
 		}
-
-		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, Example.CSV_PARSER);
-
-		List<? extends Map<FieldName, ?>> outputRecords = BatchUtil.parseRecords(outputTable, Example.CSV_PARSER);
 
 		List<Conflict> conflicts;
 
@@ -149,7 +166,7 @@ public class TestingExample extends Example {
 	}
 
 	static
-	private Batch createBatch(final Evaluator evaluator, final List<? extends Map<FieldName, ?>> input, final List<? extends Map<FieldName, ?>> output, final Predicate<FieldName> predicate){
+	private Batch createBatch(Evaluator evaluator, List<? extends Map<FieldName, ?>> input, List<? extends Map<FieldName, ?>> output, Predicate<FieldName> predicate){
 		Batch batch = new Batch(){
 
 			@Override

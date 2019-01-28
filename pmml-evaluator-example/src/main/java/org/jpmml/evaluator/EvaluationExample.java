@@ -20,12 +20,17 @@ package org.jpmml.evaluator;
 
 import java.io.Console;
 import java.io.File;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.beust.jcommander.Parameter;
@@ -40,13 +45,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.PMMLObject;
 import org.jpmml.evaluator.visitors.ElementInternerBattery;
 import org.jpmml.evaluator.visitors.ElementOptimizerBattery;
 import org.jpmml.model.VisitorBattery;
-import org.jpmml.model.visitors.ArrayListTransformer;
-import org.jpmml.model.visitors.ArrayListTrimmer;
 import org.jpmml.model.visitors.AttributeInternerBattery;
+import org.jpmml.model.visitors.AttributeOptimizerBattery;
+import org.jpmml.model.visitors.ListFinalizerBattery;
 import org.jpmml.model.visitors.LocatorNullifier;
+import org.jpmml.model.visitors.MemoryMeasurer;
 
 public class EvaluationExample extends Example {
 
@@ -81,21 +88,39 @@ public class EvaluationExample extends Example {
 	private File output = null;
 
 	@Parameter (
+		names = {"--name"},
+		description = "The name of the target model in a multi-model PMML file. If missing, the first model is targeted"
+	)
+	@ParameterOrder (
+		value = 4
+	)
+	private String modelName = null;
+
+	@Parameter (
 		names = {"--separator"},
 		description = "CSV cell separator character",
 		converter = SeparatorConverter.class
 	)
 	@ParameterOrder (
-		value = 4
+		value = 5
 	)
 	private String separator = null;
+
+	@Parameter (
+		names = {"--missing-values"},
+		description = "CSV missing value strings"
+	)
+	@ParameterOrder (
+		value = 6
+	)
+	private List<String> missingValues = Arrays.asList("N/A", "NA");
 
 	@Parameter (
 		names = {"--sparse"},
 		description = "Permit missing input field columns"
 	)
 	@ParameterOrder (
-		value = 5
+		value = 7
 	)
 	private boolean sparse = false;
 
@@ -105,7 +130,7 @@ public class EvaluationExample extends Example {
 		arity = 1
 	)
 	@ParameterOrder (
-		value = 6
+		value = 8
 	)
 	private boolean copyColumns = true;
 
@@ -137,6 +162,12 @@ public class EvaluationExample extends Example {
 	)
 	private String valueFactoryFactoryClazz = ValueFactoryFactory.class.getName();
 
+	@Parameter (
+		names = {"--filter-output"},
+		description = "Exclude non-final output fields",
+		hidden = true
+	)
+	private boolean filterOutput = false;
 
 	@Parameter (
 		names = "--optimize",
@@ -151,6 +182,13 @@ public class EvaluationExample extends Example {
 		hidden = true
 	)
 	private boolean intern = false;
+
+	@Parameter (
+		names = "--measure",
+		description = "Measure PMML class model. Requires JPMML agent",
+		hidden = true
+	)
+	private boolean measure = false;
 
 	@Parameter (
 		names = "--loop",
@@ -191,7 +229,7 @@ public class EvaluationExample extends Example {
 
 		CsvUtil.Table inputTable = readTable(this.input, this.separator);
 
-		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, Example.CSV_PARSER);
+		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, createCellParser(this.missingValues.size() > 0 ? new HashSet<>(this.missingValues) : null));
 
 		if(this.waitBeforeInit){
 			waitForUserInput();
@@ -214,6 +252,7 @@ public class EvaluationExample extends Example {
 		// Optimize first, intern second.
 		// The goal is to intern optimized elements (keeps one copy), not optimize interned elements (expands one copy to multiple copies).
 		if(this.optimize){
+			visitorBattery.addAll(new AttributeOptimizerBattery());
 			visitorBattery.addAll(new ElementOptimizerBattery());
 		} // End if
 
@@ -221,18 +260,41 @@ public class EvaluationExample extends Example {
 			visitorBattery.addAll(new AttributeInternerBattery());
 			visitorBattery.addAll(new ElementInternerBattery());
 
-			visitorBattery.add(ArrayListTransformer.class);
-			visitorBattery.add(ArrayListTrimmer.class);
+			visitorBattery.addAll(new ListFinalizerBattery());
 		}
 
 		visitorBattery.applyTo(pmml);
 
-		ModelEvaluatorFactory modelEvaluatorFactory = (ModelEvaluatorFactory)newInstance(Class.forName(this.modelEvaluatorFactoryClazz));
+		if(this.measure){
+			MemoryMeasurer memoryMeasurer = new MemoryMeasurer();
+			memoryMeasurer.applyTo(pmml);
 
-		ValueFactoryFactory valueFactoryFactory = (ValueFactoryFactory)newInstance(Class.forName(this.valueFactoryFactoryClazz));
-		modelEvaluatorFactory.setValueFactoryFactory(valueFactoryFactory);
+			NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
+			numberFormat.setGroupingUsed(true);
 
-		Evaluator evaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
+			long size = memoryMeasurer.getSize();
+			System.out.println("Bytesize of the object graph: " + numberFormat.format(size));
+
+			Set<Object> objects = memoryMeasurer.getObjects();
+
+			long objectCount = objects.size();
+
+			System.out.println("Number of distinct Java objects in the object graph: " + numberFormat.format(objectCount));
+
+			long pmmlObjectCount = objects.stream()
+				.filter(PMMLObject.class::isInstance)
+				.count();
+
+			System.out.println("\t" + "PMML class model objects: " + numberFormat.format(pmmlObjectCount));
+			System.out.println("\t" + "Other objects: " + numberFormat.format(objectCount - pmmlObjectCount));
+		}
+
+		EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml, this.modelName)
+			.setModelEvaluatorFactory((ModelEvaluatorFactory)newInstance(this.modelEvaluatorFactoryClazz))
+			.setValueFactoryFactory((ValueFactoryFactory)newInstance(this.valueFactoryFactoryClazz))
+			.setOutputFilter(this.filterOutput ? OutputFilters.KEEP_FINAL_RESULTS : OutputFilters.KEEP_ALL);
+
+		Evaluator evaluator = evaluatorBuilder.build();
 
 		// Perform self-testing
 		evaluator.verify();
@@ -295,9 +357,9 @@ public class EvaluationExample extends Example {
 						arguments.put(name, value);
 					}
 
-					Map<FieldName, ?> result = evaluator.evaluate(arguments);
+					Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-					outputRecords.add(result);
+					outputRecords.add(results);
 				}
 			} finally {
 				context.close();
@@ -316,7 +378,7 @@ public class EvaluationExample extends Example {
 		CsvUtil.Table outputTable = new CsvUtil.Table();
 		outputTable.setSeparator(inputTable.getSeparator());
 
-		outputTable.addAll(BatchUtil.formatRecords(outputRecords, EvaluatorUtil.getNames(resultFields), Example.CSV_FORMATTER));
+		outputTable.addAll(BatchUtil.formatRecords(outputRecords, EvaluatorUtil.getNames(resultFields), createCellFormatter(this.missingValues.size() > 0 ? this.missingValues.get(0) : null)));
 
 		if((inputTable.size() == outputTable.size()) && this.copyColumns){
 

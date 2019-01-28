@@ -21,15 +21,14 @@ package org.jpmml.evaluator.general_regression;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
@@ -41,12 +40,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MathContext;
 import org.dmg.pmml.Matrix;
-import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.general_regression.BaseCumHazardTables;
@@ -78,14 +73,14 @@ import org.jpmml.evaluator.MisplacedAttributeException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingValueException;
-import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
-import org.jpmml.evaluator.ProbabilityDistribution;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
+import org.jpmml.evaluator.TypeInfo;
+import org.jpmml.evaluator.TypeInfos;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
@@ -109,7 +104,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 
 	public GeneralRegressionModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, GeneralRegressionModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, GeneralRegressionModel.class));
 	}
 
 	public GeneralRegressionModelEvaluator(PMML pmml, GeneralRegressionModel generalRegressionModel){
@@ -150,45 +145,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		GeneralRegressionModel generalRegressionModel = ensureScorableModel();
-
-		ValueFactory<?> valueFactory;
-
-		MathContext mathContext = generalRegressionModel.getMathContext();
-		switch(mathContext){
-			case FLOAT:
-			case DOUBLE:
-				valueFactory = ensureValueFactory();
-				break;
-			default:
-				throw new UnsupportedAttributeException(generalRegressionModel, mathContext);
-		}
-
-		Map<FieldName, ?> predictions;
-
-		MiningFunction miningFunction = generalRegressionModel.getMiningFunction();
-		switch(miningFunction){
-			case REGRESSION:
-				predictions = evaluateRegression(valueFactory, context);
-				break;
-			case CLASSIFICATION:
-				predictions = evaluateClassification(valueFactory, context);
-				break;
-			case ASSOCIATION_RULES:
-			case SEQUENCES:
-			case CLUSTERING:
-			case TIME_SERIES:
-			case MIXED:
-				throw new InvalidAttributeException(generalRegressionModel, miningFunction);
-			default:
-				throw new UnsupportedAttributeException(generalRegressionModel, miningFunction);
-		}
-
-		return OutputUtil.evaluate(predictions, context);
-	}
-
-	private <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
@@ -250,24 +207,16 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 		}
 
-		Comparator<BaselineCell> comparator = new Comparator<BaselineCell>(){
+		Ordering<BaselineCell> ordering = Ordering.from((BaselineCell left, BaselineCell right) -> Double.compare(left.getTime(), right.getTime()));
 
-			@Override
-			public int compare(BaselineCell left, BaselineCell right){
-				return Double.compare(left.getTime(), right.getTime());
-			}
-		};
-
-		Ordering<BaselineCell> ordering = Ordering.from(comparator);
-
-		BaselineCell minBaselineCell = ordering.min(baselineCells);
+		BaselineCell minBaselineCell = baselineCells.stream()
+			.min(ordering).get();
 
 		Double minTime = minBaselineCell.getTime();
 
-		final
 		FieldValue value = getVariable(endTimeVariable, context);
 
-		FieldValue minTimeValue = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, minTime);
+		FieldValue minTimeValue = FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, minTime);
 
 		// "If the value is less than the minimum time, then cumulative hazard is 0 and predicted survival is 1"
 		if(value.compareToValue(minTimeValue) < 0){
@@ -276,26 +225,19 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			return TargetUtil.evaluateRegression(getTargetField(), cumHazard);
 		}
 
-		FieldValue maxTimeValue = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, maxTime);
+		FieldValue maxTimeValue = FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, maxTime);
 
 		// "If the value is greater than the maximum time, then the result is a missing value"
 		if(value.compareToValue(maxTimeValue) > 0){
 			return null;
 		}
 
-		Predicate<BaselineCell> predicate = new Predicate<BaselineCell>(){
-
-			private double time = (value.asNumber()).doubleValue();
-
-
-			@Override
-			public boolean apply(BaselineCell baselineCell){
-				return (baselineCell.getTime() <= this.time);
-			}
-		};
+		double time = (value.asNumber()).doubleValue();
 
 		// "Select the BaselineCell element that has the largest time attribute value that is not greater than the value"
-		BaselineCell baselineCell = ordering.max(Iterables.filter(baselineCells, predicate));
+		BaselineCell maxTimeBaselineCell = baselineCells.stream()
+			.filter(baselineCell -> (baselineCell.getTime() <= time))
+			.max(ordering).get();
 
 		Value<V> r = computeDotProduct(valueFactory, context);
 
@@ -305,7 +247,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			return null;
 		}
 
-		Value<V> cumHazard = ((r.subtract(s)).exp()).multiply(baselineCell.getCumHazard());
+		Value<V> cumHazard = ((r.subtract(s)).exp()).multiply(maxTimeBaselineCell.getCumHazard());
 
 		return TargetUtil.evaluateRegression(getTargetField(), cumHazard);
 	}
@@ -339,7 +281,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
-	private <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -514,7 +457,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new UnsupportedAttributeException(generalRegressionModel, modelType);
 		}
 
-		ProbabilityDistribution<V> result = new ProbabilityDistribution<>(values);
+		Classification<V> result = createClassification(values);
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
@@ -803,19 +746,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			case GENERALIZED_LINEAR:
 			case MULTINOMIAL_LOGISTIC:
 				if(targetReferenceCategory == null){
-					Predicate<String> filter = new Predicate<String>(){
-
-						private Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
-
-
-						@Override
-						public boolean apply(String string){
-							return !this.paramMatrixMap.containsKey(string);
-						}
-					};
+					Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
 
 					// "The reference category is the one from DataDictionary that does not appear in the ParamMatrix"
-					Set<String> targetReferenceCategories = Sets.newLinkedHashSet(Iterables.filter(targetCategories, filter));
+					Set<String> targetReferenceCategories = targetCategories.stream()
+						.filter(targetCategory -> !paramMatrixMap.containsKey(targetCategory))
+						.collect(Collectors.toSet());
+
 					if(targetReferenceCategories.size() != 1){
 						ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
 
@@ -941,7 +878,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	static
-	private Map<String, Map<String, Row>> parsePPMatrix(final GeneralRegressionModel generalRegressionModel){
+	private Map<String, Map<String, Row>> parsePPMatrix(GeneralRegressionModel generalRegressionModel){
 		Function<List<PPCell>, Row> function = new Function<List<PPCell>, Row>(){
 
 			private BiMap<FieldName, Predictor> factors = CacheUtil.getValue(generalRegressionModel, GeneralRegressionModelEvaluator.factorCache);
@@ -1023,28 +960,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 	static
 	private <C extends ParameterCell> ListMultimap<String, C> groupByParameterName(List<C> cells){
-		Function<C, String> function = new Function<C, String>(){
-
-			@Override
-			public String apply(C cell){
-				return cell.getParameterName();
-			}
-		};
-
-		return groupCells(cells, function);
+		return groupCells(cells, C::getParameterName);
 	}
 
 	static
 	private <C extends ParameterCell> ListMultimap<String, C> groupByTargetCategory(List<C> cells){
-		Function<C, String> function = new Function<C, String>(){
-
-			@Override
-			public String apply(C cell){
-				return cell.getTargetCategory();
-			}
-		};
-
-		return groupCells(cells, function);
+		return groupCells(cells, C::getTargetCategory);
 	}
 
 	static
@@ -1253,7 +1174,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			public int getIndex(FieldValue value){
 
 				if(this.parsedCategories == null){
-					this.parsedCategories = ImmutableList.copyOf(parseCategories(value.getDataType(), value.getOpType()));
+					this.parsedCategories = ImmutableList.copyOf(parseCategories(value));
 				}
 
 				return this.parsedCategories.indexOf(value);
@@ -1265,18 +1186,10 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				return categories.indexOf(category);
 			}
 
-			private List<FieldValue> parseCategories(final DataType dataType, final OpType opType){
+			private List<FieldValue> parseCategories(TypeInfo typeInfo){
 				List<String> categories = getCategories();
 
-				Function<String, FieldValue> function = new Function<String, FieldValue>(){
-
-					@Override
-					public FieldValue apply(String value){
-						return FieldValueUtil.create(dataType, opType, value);
-					}
-				};
-
-				return Lists.transform(categories, function);
+				return Lists.transform(categories, category -> FieldValueUtil.create(typeInfo, category));
 			}
 
 			public Matrix getMatrix(){

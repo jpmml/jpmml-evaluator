@@ -39,9 +39,9 @@ import org.jpmml.evaluator.IndexableUtil;
 import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
-import org.jpmml.model.visitors.AbstractModelVisitor;
+import org.jpmml.model.visitors.AbstractVisitor;
 
-public class RegressionTargetCorrector extends AbstractModelVisitor {
+public class RegressionTargetCorrector extends AbstractVisitor {
 
 	private Target.CastInteger castInteger = null;
 
@@ -66,7 +66,7 @@ public class RegressionTargetCorrector extends AbstractModelVisitor {
 				break;
 		}
 
-		return VisitorAction.CONTINUE;
+		return super.visit(model);
 	}
 
 	private void processRegressionModel(Model model){
@@ -81,7 +81,7 @@ public class RegressionTargetCorrector extends AbstractModelVisitor {
 
 		DataDictionary dataDictionary = pmml.getDataDictionary();
 
-		DataField dataField = IndexableUtil.find(dataDictionary.getDataFields(), name);
+		DataField dataField = IndexableUtil.findIndexable(dataDictionary.getDataFields(), name);
 		if(dataField == null){
 			throw new MissingFieldException(name, miningField);
 		}
@@ -100,7 +100,7 @@ public class RegressionTargetCorrector extends AbstractModelVisitor {
 		Targets targets = model.getTargets();
 
 		if(targets != null){
-			Target target = IndexableUtil.find(targets.getTargets(), name);
+			Target target = IndexableUtil.findIndexable(targets.getTargets(), name);
 
 			if(target != null){
 

@@ -24,13 +24,13 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Expression;
@@ -39,6 +39,7 @@ import org.dmg.pmml.HasValue;
 import org.dmg.pmml.HasValueSet;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLObject;
+import org.jpmml.model.ToStringHelper;
 
 /**
  * <p>
@@ -59,7 +60,7 @@ import org.dmg.pmml.PMMLObject;
  * @see FieldValueUtil
  */
 abstract
-public class FieldValue implements Comparable<FieldValue>, Serializable {
+public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializable {
 
 	private DataType dataType = null;
 
@@ -71,8 +72,42 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		setValue(filterValue(Objects.requireNonNull(value)));
 	}
 
-	abstract
-	public OpType getOpType();
+	public FieldValue cast(DataType dataType, OpType opType){
+		boolean compatible = true;
+
+		if(dataType == null){
+			dataType = getDataType();
+		} else
+
+		if(dataType != null && !(dataType).equals(getDataType())){
+			compatible = false;
+		} // End if
+
+		if(opType == null){
+			opType = getOpType();
+		} else
+
+		if(opType != null && !(opType).equals(getOpType())){
+			compatible = false;
+		} // End if
+
+		if(compatible){
+			return this;
+		}
+
+		return FieldValue.create(dataType, opType, getValue());
+	}
+
+	public FieldValue cast(TypeInfo typeInfo){
+		DataType dataType = typeInfo.getDataType();
+		OpType opType = typeInfo.getOpType();
+
+		if((dataType).equals(getDataType()) && (opType).equals(getOpType())){
+			return this;
+		}
+
+		return FieldValue.create(typeInfo, getValue());
+	}
 
 	/**
 	 * <p>
@@ -91,7 +126,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	}
 
 	public boolean equals(HasParsedValue<?> hasParsedValue){
-		FieldValue value = hasParsedValue.getValue(getDataType(), getOpType());
+		FieldValue value = hasParsedValue.getValue(this);
 
 		return this.equals(value);
 	}
@@ -116,19 +151,12 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 
 		List<?> values = ArrayUtil.getContent(array);
 
-		Predicate<Object> predicate = new Predicate<Object>(){
-
-			@Override
-			public boolean apply(Object value){
-				return equalsValue(value);
-			}
-		};
-
-		return Iterables.indexOf(values, predicate) > -1;
+		return values.stream()
+			.anyMatch(value -> equalsValue(value));
 	}
 
 	public boolean isIn(HasParsedValueSet<?> hasParsedValueSet){
-		Set<FieldValue> values = hasParsedValueSet.getValueSet(getDataType(), getOpType());
+		Set<FieldValue> values = hasParsedValueSet.getValueSet(this);
 
 		return values.contains(this);
 	}
@@ -150,7 +178,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	}
 
 	public int compareTo(HasParsedValue<?> hasParsedValue){
-		FieldValue value = hasParsedValue.getValue(getDataType(), getOpType());
+		FieldValue value = hasParsedValue.getValue(this);
 
 		return this.compareTo(value);
 	}
@@ -181,11 +209,11 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 		return (getValue()).equals(value);
 	}
 
-	public int indexIn(Iterable<FieldValue> values){
+	public boolean isIn(Collection<FieldValue> values){
 		Predicate<FieldValue> predicate = new Predicate<FieldValue>(){
 
 			@Override
-			public boolean apply(FieldValue value){
+			public boolean test(FieldValue value){
 
 				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 					return false;
@@ -195,7 +223,8 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 			}
 		};
 
-		return Iterables.indexOf(values, predicate);
+		return values.stream()
+			.anyMatch(predicate);
 	}
 
 	public int compareToString(String string){
@@ -225,7 +254,7 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 	}
 
 	public <V> V getMapping(HasParsedValueMapping<V> hasParsedValueMapping){
-		Map<FieldValue, V> values = hasParsedValueMapping.getValueMapping(getDataType(), getOpType());
+		Map<FieldValue, V> values = hasParsedValueMapping.getValueMapping(this);
 
 		return values.get(this);
 	}
@@ -384,14 +413,21 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 
 	@Override
 	public String toString(){
+		ToStringHelper helper = toStringHelper();
+
+		return helper.toString();
+	}
+
+	protected ToStringHelper toStringHelper(){
 		ToStringHelper helper = new ToStringHelper(this)
 			.add("opType", getOpType())
 			.add("dataType", getDataType())
 			.add("value", getValue());
 
-		return helper.toString();
+		return helper;
 	}
 
+	@Override
 	public DataType getDataType(){
 		return this.dataType;
 	}
@@ -406,6 +442,65 @@ public class FieldValue implements Comparable<FieldValue>, Serializable {
 
 	private void setValue(Object value){
 		this.value = value;
+	}
+
+	static
+	public FieldValue create(DataType dataType, OpType opType, Object value){
+
+		if(dataType == null || opType == null){
+			throw new IllegalArgumentException();
+		} // End if
+
+		if(value instanceof Collection){
+			// Ignored
+		} else
+
+		{
+			value = TypeUtil.parseOrCast(dataType, value);
+		}
+
+		switch(opType){
+			case CONTINUOUS:
+				return ContinuousValue.create(dataType, value);
+			case CATEGORICAL:
+				return CategoricalValue.create(dataType, value);
+			case ORDINAL:
+				return OrdinalValue.create(dataType, (List<?>)null, value);
+			default:
+				throw new IllegalArgumentException();
+		}
+	}
+
+	static
+	public FieldValue create(TypeInfo typeInfo, Object value){
+
+		if(typeInfo == null){
+			throw new IllegalArgumentException();
+		} // End if
+
+		DataType dataType = typeInfo.getDataType();
+		OpType opType = typeInfo.getOpType();
+
+		if(value instanceof Collection){
+			// Ignored
+		} else
+
+		{
+			value = TypeUtil.parseOrCast(dataType, value);
+		}
+
+		switch(opType){
+			case CONTINUOUS:
+				return ContinuousValue.create(dataType, value);
+			case CATEGORICAL:
+				return CategoricalValue.create(dataType, value);
+			case ORDINAL:
+				List<?> ordering = typeInfo.getOrdering();
+
+				return OrdinalValue.create(dataType, ordering, value);
+			default:
+				throw new IllegalArgumentException();
+		}
 	}
 
 	static

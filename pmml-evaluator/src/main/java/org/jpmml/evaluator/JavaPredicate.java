@@ -18,11 +18,17 @@
  */
 package org.jpmml.evaluator;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.model.annotations.Extension;
 
+@XmlRootElement (
+	name = "X-JavaPredicate",
+	namespace = "http://jpmml.org/jpmml-evaluator/"
+)
 @Extension
 abstract
 public class JavaPredicate extends Predicate {
@@ -32,6 +38,17 @@ public class JavaPredicate extends Predicate {
 
 	@Override
 	public VisitorAction accept(Visitor visitor){
+		VisitorAction status = visitor.visit(this);
+
+		if(status == VisitorAction.CONTINUE){
+			visitor.pushParent(this);
+			visitor.popParent();
+		} // End if
+
+		if(status == VisitorAction.TERMINATE){
+			return VisitorAction.TERMINATE;
+		}
+
 		return VisitorAction.CONTINUE;
 	}
 }

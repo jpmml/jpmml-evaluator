@@ -31,7 +31,11 @@ import org.dmg.pmml.FieldName;
 abstract
 public class EvaluationContext {
 
-	private Map<FieldName, FieldValue> fields = new HashMap<>();
+	private Map<FieldName, FieldValue> values = new HashMap<>();
+
+	private List<FieldName> cachedNames = null;
+
+	private List<FieldValue> cachedValues = null;
 
 	private List<String> warnings = null;
 
@@ -40,12 +44,18 @@ public class EvaluationContext {
 	}
 
 	abstract
-	protected FieldValue createFieldValue(FieldName name, Object value);
+	protected FieldValue prepare(FieldName name, Object value);
 
-	protected void reset(boolean purge){
+	protected void reset(boolean clearValues){
 
-		if(purge && !this.fields.isEmpty()){
-			this.fields.clear();
+		if(clearValues){
+
+			if(!this.values.isEmpty()){
+				this.values.clear();
+			}
+
+			this.cachedNames = null;
+			this.cachedValues = null;
 		} // End if
 
 		if(this.warnings != null && !this.warnings.isEmpty()){
@@ -53,26 +63,82 @@ public class EvaluationContext {
 		}
 	}
 
+	/**
+	 * <p>
+	 * Looks up a field value by name.
+	 * If the field value has not been declared, then fails fast with an exception.
+	 * </p>
+	 *
+	 * @throws MissingValueException If the field value has not been declared.
+	 */
 	public FieldValue lookup(FieldName name){
-		Map<FieldName, FieldValue> fields = getFields();
+		Map<FieldName, FieldValue> values = getValues();
 
-		FieldValue value = fields.get(name);
-		if(value != null || (value == null && fields.containsKey(name))){
+		FieldValue value = values.get(name);
+		if(value != null || (value == null && values.containsKey(name))){
 			return value;
 		}
 
-		throw new MissingFieldException(name);
+		throw new MissingValueException(name);
 	}
 
-	public FieldValue evaluate(FieldName name){
-		Map<FieldName, FieldValue> fields = getFields();
+	/**
+	 * <p>
+	 * Looks up a field value by field value cache position.
+	 * </p>
+	 *
+	 * @throws IllegalStateException If the field value cache is not available.
+	 * @throws IndexOutOfBoundsException If the field value cache position is out of range.
+	 */
+	public FieldValue lookup(int index){
+		List<FieldValue> cachedValues = this.cachedValues;
 
-		FieldValue value = fields.get(name);
-		if(value != null || (value == null && fields.containsKey(name))){
+		if(cachedValues == null){
+			throw new IllegalStateException();
+		}
+
+		return cachedValues.get(index);
+	}
+
+	/**
+	 * <p>
+	 * Looks up a field value by name.
+	 * If the field value has not been declared, then makes full effort to resolve and declare it.
+	 * </p>
+	 */
+	public FieldValue evaluate(FieldName name){
+		Map<FieldName, FieldValue> values = getValues();
+
+		FieldValue value = values.get(name);
+		if(value != null || (value == null && values.containsKey(name))){
 			return value;
 		}
 
 		return resolve(name);
+	}
+
+	public List<FieldValue> evaluateAll(List<FieldName> names){
+		return evaluateAll(names, true);
+	}
+
+	public List<FieldValue> evaluateAll(List<FieldName> names, boolean cache){
+		this.cachedNames = null;
+		this.cachedValues = null;
+
+		List<FieldValue> values = new ArrayList<>(names.size());
+
+		for(FieldName name : names){
+			FieldValue value = evaluate(name);
+
+			values.add(value);
+		}
+
+		if(cache){
+			this.cachedNames = names;
+			this.cachedValues = values;
+		}
+
+		return values;
 	}
 
 	protected FieldValue resolve(FieldName name){
@@ -85,18 +151,20 @@ public class EvaluationContext {
 			return declare(name, (FieldValue)value);
 		}
 
-		return declare(name, createFieldValue(name, value));
+		value = prepare(name, value);
+
+		return declare(name, (FieldValue)value);
 	}
 
 	public FieldValue declare(FieldName name, FieldValue value){
-		Map<FieldName, FieldValue> fields = getFields();
+		Map<FieldName, FieldValue> values = getValues();
 
-		boolean declared = fields.containsKey(name);
+		boolean declared = values.containsKey(name);
 		if(declared){
 			throw new DuplicateValueException(name);
 		}
 
-		fields.put(name, value);
+		values.put(name, value);
 
 		return value;
 	}
@@ -122,8 +190,8 @@ public class EvaluationContext {
 		this.warnings.add(warning);
 	}
 
-	public Map<FieldName, FieldValue> getFields(){
-		return this.fields;
+	public Map<FieldName, FieldValue> getValues(){
+		return this.values;
 	}
 
 	public List<String> getWarnings(){

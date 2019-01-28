@@ -20,11 +20,10 @@ package org.jpmml.evaluator.functions;
 
 import java.util.List;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.NaNResultException;
+import org.jpmml.evaluator.TypeInfos;
 
 abstract
 public class TrigonometricFunction extends AbstractNumericFunction {
@@ -48,6 +47,6 @@ public class TrigonometricFunction extends AbstractNumericFunction {
 			throw new NaNResultException();
 		}
 
-		return FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, result);
+		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 	}
 }

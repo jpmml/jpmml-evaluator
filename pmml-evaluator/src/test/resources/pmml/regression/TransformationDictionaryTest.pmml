@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
+<PMML xmlns="http://www.dmg.org/PMML-4_2" xmlns:data="http://jpmml.org/jpmml-model/InlineTable" version="4.2">
 	<Header copyright="DMG.org"/>
 	<DataDictionary>
 		<DataField name="Modifier" optype="categorical" dataType="boolean"/>
@@ -59,16 +59,18 @@
 			</Apply>
 		</DerivedField>
 		<DerivedField name="SimpleTable" dataType="string">
-			<MapValues outputColumn="output">
-				<FieldColumnPair field="Value" column="input"/>
+			<MapValues outputColumn="data:output">
+				<FieldColumnPair field="Value" column="data:input"/>
 				<InlineTable>
 					<row>
-						<input>1</input>
-						<output>first</output>
+						<Extension name="id" value="1=first"/>
+						<data:input>1</data:input>
+						<data:output>first</data:output>
 					</row>
 					<row>
-						<input>2</input>
-						<output>second</output>
+						<Extension name="id" value="2=second"/>
+						<data:input>2</data:input>
+						<data:output>second</data:output>
 					</row>
 				</InlineTable>
 			</MapValues>

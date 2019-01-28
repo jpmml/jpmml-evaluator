@@ -29,6 +29,15 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.jpmml</groupId>
+			<artifactId>pmml-model-metro</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jpmml</groupId>
+			<artifactId>pmml-model-moxy</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>provided</scope>

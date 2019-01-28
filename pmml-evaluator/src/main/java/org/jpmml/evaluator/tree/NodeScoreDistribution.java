@@ -31,13 +31,13 @@ import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.Report;
 import org.jpmml.evaluator.ReportUtil;
-import org.jpmml.evaluator.ToStringHelper;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
+import org.jpmml.model.ToStringHelper;
 
 abstract
-public class NodeScoreDistribution<V extends Number> extends Classification<V> implements HasEntityId, HasEntityRegistry<Node>, HasProbability, HasConfidence {
+public class NodeScoreDistribution<V extends Number> extends Classification<V> implements HasEntityId, HasEntityRegistry<Node>, HasDecisionPath, HasProbability, HasConfidence {
 
 	private Node node = null;
 
@@ -54,7 +54,7 @@ public class NodeScoreDistribution<V extends Number> extends Classification<V> i
 	protected void computeResult(DataType dataType){
 		Node node = getNode();
 
-		Object result = TypeUtil.parse(dataType, node.getScore());
+		Object result = TypeUtil.parseOrCast(dataType, node.getScore());
 
 		setResult(result);
 	}
@@ -122,6 +122,7 @@ public class NodeScoreDistribution<V extends Number> extends Classification<V> i
 		confidences.put(category, confidence);
 	}
 
+	@Override
 	public Node getNode(){
 		return this.node;
 	}

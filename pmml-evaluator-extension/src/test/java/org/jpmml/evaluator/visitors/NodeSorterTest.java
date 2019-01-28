@@ -20,6 +20,7 @@ package org.jpmml.evaluator.visitors;
 
 import java.util.Arrays;
 
+import org.dmg.pmml.tree.ComplexNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.junit.Test;
@@ -30,11 +31,11 @@ public class NodeSorterTest {
 
 	@Test
 	public void sort(){
-		Node first = new Node();
-		Node second = new Node();
-		Node third = new Node();
+		Node first = new ComplexNode();
+		Node second = new ComplexNode();
+		Node third = new ComplexNode();
 
-		Node root = new Node()
+		Node root = new ComplexNode()
 			.addNodes(first, second, third);
 
 		TreeModel treeModel = new TreeModel()

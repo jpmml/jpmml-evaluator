@@ -18,32 +18,12 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.List;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
-
 interface ValueParser {
 
 	default
-	FieldValue parse(DataType dataType, OpType opType, Object value){
-		FieldValue fieldValue = FieldValueUtil.create(dataType, opType, value);
+	FieldValue parse(TypeInfo typeInfo, Object value){
+		FieldValue fieldValue = FieldValueUtil.create(typeInfo, value);
 
 		return FieldValues.INTERNER.intern(fieldValue);
-	}
-
-	default
-	List<FieldValue> parseAll(final DataType dataType, final OpType opType, List<?> values){
-		Function<Object, FieldValue> function = new Function<Object, FieldValue>(){
-
-			@Override
-			public FieldValue apply(Object object){
-				return parse(dataType, opType, object);
-			}
-		};
-
-		return Lists.transform(values, function);
 	}
 }

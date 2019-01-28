@@ -20,7 +20,6 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
-import com.google.common.base.Function;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
@@ -99,39 +98,15 @@ public class ArrayUtil {
 
 		switch(type){
 			case INT:
-				return Lists.transform(tokens, INT_PARSER);
+				return Lists.transform(tokens, token -> Numbers.INTEGER_INTERNER.intern(Integer.parseInt(token)));
 			case REAL:
-				return Lists.transform(tokens, REAL_PARSER);
+				return Lists.transform(tokens, token -> Numbers.DOUBLE_INTERNER.intern(Double.parseDouble(token)));
 			case STRING:
-				return Lists.transform(tokens, STRING_PARSER);
+				return Lists.transform(tokens, token -> Strings.INTERNER.intern(token));
 			default:
 				throw new UnsupportedAttributeException(array, type);
 		}
 	}
-
-	private static final Function<String, Integer> INT_PARSER = new Function<String, Integer>(){
-
-		@Override
-		public Integer apply(String string){
-			return Numbers.INTEGER_INTERNER.intern(Integer.parseInt(string));
-		}
-	};
-
-	private static final Function<String, Double> REAL_PARSER = new Function<String, Double>(){
-
-		@Override
-		public Double apply(String string){
-			return Numbers.DOUBLE_INTERNER.intern(Double.parseDouble(string));
-		}
-	};
-
-	private static final Function<String, String> STRING_PARSER = new Function<String, String>(){
-
-		@Override
-		public String apply(String string){
-			return Strings.INTERNER.intern(string);
-		}
-	};
 
 	private static final LoadingCache<Array, List<?>> contentCache = CacheUtil.buildLoadingCache(new CacheLoader<Array, List<?>>(){
 

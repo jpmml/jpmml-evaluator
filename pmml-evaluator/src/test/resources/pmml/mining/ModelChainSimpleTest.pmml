@@ -81,7 +81,7 @@
 						<MiningField name="PollenIndex" usageType="predicted"/>
 					</MiningSchema>
 					<Output>
-						<OutputField name="Pollen Index" optype="continuous" dataType="double" feature="predictedValue"/>
+						<OutputField name="Pollen Index" optype="continuous" dataType="double" isFinalResult="false" feature="predictedValue"/>
 					</Output>
 					<RegressionTable intercept="0.3">
 						<NumericPredictor name="Probability_setosa" exponent="1" coefficient="0.8"/>

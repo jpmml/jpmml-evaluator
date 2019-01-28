@@ -21,11 +21,10 @@ package org.jpmml.evaluator.functions;
 import java.util.Arrays;
 import java.util.List;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.Function;
+import org.jpmml.evaluator.TypeInfos;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -43,7 +42,7 @@ public class MeanFunctionTest {
 	private Number evaluate(List<Double> values){
 		Function mean = new MeanFunction();
 
-		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, values));
+		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, values));
 
 		return (mean.evaluate(arguments)).asNumber();
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2018 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -16,17 +16,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.mining;
 
-import org.dmg.pmml.FieldName;
+import java.util.Collection;
 
-public class VirtualEvaluationContext extends EvaluationContext {
+import org.jpmml.evaluator.ResultFeature;
 
-	VirtualEvaluationContext(){
-	}
+public interface HasSegmentation extends ResultFeature {
 
-	@Override
-	protected FieldValue createFieldValue(FieldName name, Object value){
-		return FieldValueUtil.create(value);
-	}
+	Collection<? extends SegmentResult> getSegmentResults();
 }

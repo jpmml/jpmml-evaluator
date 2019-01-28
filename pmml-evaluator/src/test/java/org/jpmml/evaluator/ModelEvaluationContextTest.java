@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Villu Ruusmann
+ * Copyright (c) 2018 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,30 +18,129 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
-import org.jpmml.evaluator.mining.FieldScopeTest;
+import org.dmg.pmml.OpType;
+import org.jpmml.evaluator.mining.MissingPredictionTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		ModelEvaluator<?> evaluator = createModelEvaluator(FieldScopeTest.class);
+		FieldName name = FieldName.create("x");
 
-		Map<FieldName, ?> arguments = createArguments("input", null);
+		ModelEvaluator<?> evaluator = createModelEvaluator(MissingPredictionTest.class);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
+		context.setArguments(Collections.singletonMap(name, 1d));
 
-		assertEquals(1000d, getTarget(result, "prediction"));
+		FieldValue value = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, 1d);
 
-		arguments = createArguments("input", 1d);
+		try {
+			context.lookup(name);
 
-		result = evaluator.evaluate(arguments);
+			fail();
+		} catch(MissingValueException mve){
+			// Ignored
+		} // End try
 
-		assertEquals(1d, getTarget(result, "prediction"));
+		try {
+			context.lookup(0);
+
+			fail();
+		} catch(IllegalStateException ise){
+			// Ignored
+		}
+
+		assertEquals(value, context.evaluate(name));
+
+		assertEquals(value, context.lookup(name));
+
+		try {
+			context.lookup(0);
+
+			fail();
+		} catch(IllegalStateException ise){
+			// Ignored
+		}
+
+		assertEquals(Arrays.asList(value), context.evaluateAll(Arrays.asList(name)));
+
+		assertEquals(value, context.lookup(0));
+
+		try {
+			context.lookup(1);
+
+			fail();
+		} catch(IndexOutOfBoundsException ioobe){
+			// Ignored
+		}
+
+		context.reset(false);
+
+		Map<FieldName, ?> arguments = context.getArguments();
+
+		assertEquals(0, arguments.size());
+
+		assertEquals(value, context.lookup(name));
+		assertEquals(value, context.lookup(0));
+
+		assertEquals(value, context.evaluate(name));
+
+		context.reset(true);
+
+		try {
+			context.lookup(name);
+
+			fail();
+		} catch(MissingValueException mve){
+			// Ignored
+		} // End try
+
+		try {
+			context.lookup(0);
+
+			fail();
+		} catch(IllegalStateException ise){
+			// Ignored
+		}
+
+		assertEquals(FieldValues.MISSING_VALUE, context.evaluate(name));
 	}
+
+	@Test
+	public void evaluateMissing() throws Exception {
+		FieldName name = FieldName.create("x");
+
+		ModelEvaluator<?> evaluator = createModelEvaluator(MissingPredictionTest.class);
+
+		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
+		context.setArguments(Collections.emptyMap());
+
+		try {
+			context.lookup(name);
+
+			fail();
+		} catch(MissingValueException mve){
+			// Ignored
+		} // End try
+
+		try {
+			context.lookup(0);
+
+			fail();
+		} catch(IllegalStateException ise){
+			// Ignored
+		}
+
+		assertEquals(FieldValues.MISSING_VALUE, context.evaluate(name));
+ 	}
 }

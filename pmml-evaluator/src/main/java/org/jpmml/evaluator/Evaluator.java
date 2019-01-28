@@ -29,57 +29,57 @@ import org.dmg.pmml.Model;
  * Performs the evaluation of a {@link Model}.
  * </p>
  *
- * <h3>Obtaining and verifying an Evaluator instance</h3>
+ * <h3>Building and verifying an Evaluator instance</h3>
  * <pre>
  * PMML pmml = ...;
- * ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
- * Evaluator evaluator = (Evaluator)modelEvaluatorFactory.newModelEvaluator(pmml);
+ * EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml);
+ * Evaluator evaluator = evaluatorBuilder.build();
  * evaluator.verify();
  * </pre>
  *
  * <h3>Preparing arguments</h3>
- * Converting an user-supplied map of arguments to a prepared map of arguments:
+ * Transforming an user-supplied map of arguments to a known-good PMML map of arguments:
  * <pre>
- * Map&lt;FieldName, ?&gt; userArguments = ...;
+ * Map&lt;String, ?&gt; userArguments = ...;
  * Map&lt;FieldName, FieldValue&gt; arguments = new LinkedHashMap&lt;&gt;();
- * List&lt;InputField&gt; inputFields = evaluator.getInputFields();
+ * List&lt;? extends InputField&gt; inputFields = evaluator.getInputFields();
  * for(InputField inputField : inputFields){
- *   FieldName inputFieldName = inputField.getName();
- *   FieldValue inputFieldValue = inputField.prepare(userArguments.get(inputFieldName));
- *   arguments.put(inputFieldName, inputFieldValue);
+ *   FieldName inputName = inputField.getName();
+ *   Object rawValue = userArguments.get(inputName.getValue());
+ *   FieldValue inputValue = inputField.prepare(rawValue);
+ *   arguments.put(inputName, inputValue);
  * }
  * </pre>
  *
  * <h3>Performing the evaluation</h3>
  * <pre>
- * Map&lt;FieldName, ?&gt; result = evaluator.evaluate(arguments);
+ * Map&lt;FieldName, ?&gt; results = evaluator.evaluate(arguments);
  * </pre>
  *
  * <h3>Processing results</h3>
  * Retrieving the values of {@link #getTargetFields() target fields} (ie. primary results):
  * <pre>
- * List&lt;TargetField&gt; targetFields = evaluator.getTargetFields();
+ * List&lt;? extends TargetField&gt; targetFields = evaluator.getTargetFields();
  * for(TargetField targetField : targetFields){
- *   FieldName targetFieldName = targetField.getName();
- *   Object targetFieldValue = result.get(targetFieldName);
+ *   FieldName targetName = targetField.getName();
+ *   Object targetValue = results.get(targetName);
  * }
  * </pre>
  *
  * Decoding a {@link Computable complex value} to a Java primitive value:
  * <pre>
- * if(targetFieldValue instanceof Computable){
- *   Computable computable = (Computable)targetFieldValue;
- *
- *   targetFieldValue = computable.getResult();
+ * if(targetValue instanceof Computable){
+ *   Computable computable = (Computable)targetValue;
+ *   targetValue = computable.getResult();
  * }
  * </pre>
  *
  * Retrieving the values of {@link #getOutputFields() output fields} (ie. secondary results):
  * <pre>
- * List&lt;OutputField&gt; outputFields = evaluator.getOutputFields();
+ * List&lt;? extends OutputField&gt; outputFields = evaluator.getOutputFields();
  * for(OutputField outputField : outputFields){
- *   FieldName outputFieldName = outputField.getName();
- *   Object outputFieldValue = result.get(outputFieldName);
+ *   FieldName outputName = outputField.getName();
+ *   Object outputValue = results.get(outputName);
  * }
  * </pre>
  *
@@ -89,8 +89,8 @@ import org.dmg.pmml.Model;
  * The outer try statement should catch {@link InvalidMarkupException} and {@link UnsupportedMarkupException} instances that indicate "global" problems, which are related to the class model object.
  * <pre>
  * try {
- *   List&lt;Map&lt;FieldName, ?&gt;&gt; records = ...;
- *   for(Map&lt;FieldName, ?&gt; record : records){
+ *   List&lt;Map&lt;String, ?&gt;&gt; records = ...;
+ *   for(Map&lt;String, ?&gt; record : records){
  *     try {
  *       // Do exception-prone work
  *     } catch(EvaluationException ee){

@@ -20,6 +20,8 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
+import org.jpmml.model.ToStringHelper;
+
 abstract
 public class Report {
 

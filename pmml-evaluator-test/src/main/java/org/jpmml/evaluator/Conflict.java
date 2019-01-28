@@ -22,6 +22,7 @@ import java.util.Map;
 
 import com.google.common.collect.MapDifference;
 import org.dmg.pmml.FieldName;
+import org.jpmml.model.ToStringHelper;
 
 public class Conflict {
 

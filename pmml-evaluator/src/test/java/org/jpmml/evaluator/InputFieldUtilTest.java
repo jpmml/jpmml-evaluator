@@ -27,6 +27,7 @@ import org.dmg.pmml.Interval;
 import org.dmg.pmml.Interval.Closure;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MiningField;
+import org.dmg.pmml.MissingValueTreatmentMethod;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethod;
 import org.dmg.pmml.Value;
@@ -34,9 +35,26 @@ import org.dmg.pmml.Value.Property;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class FieldValueUtilTest {
+public class InputFieldUtilTest {
+
+	@Test
+	public void isDefault(){
+		FieldName name = FieldName.create("x");
+
+		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE);
+
+		MiningField miningField = new MiningField(name);
+
+		assertTrue(InputFieldUtil.isDefault(dataField, miningField));
+
+		miningField.setOpType(OpType.CATEGORICAL);
+
+		assertFalse(InputFieldUtil.isDefault(dataField, miningField));
+	}
 
 	@Test
 	public void prepareContinuousInputValue(){
@@ -79,7 +97,7 @@ public class FieldValueUtilTest {
 			prepare(dataField, miningField, "one");
 
 			fail();
-		} catch(InvalidMarkupException ife){
+		} catch(InvalidMarkupException ime){
 			// Ignored
 		}
 
@@ -254,7 +272,7 @@ public class FieldValueUtilTest {
 			prepare(dataField, miningField, "one");
 
 			fail();
-		} catch(InvalidMarkupException ife){
+		} catch(InvalidMarkupException ime){
 			// Ignored
 		}
 
@@ -263,6 +281,8 @@ public class FieldValueUtilTest {
 		Value missingValue = createValue("-999", Property.MISSING);
 
 		dataField.addValues(missingValue);
+
+		miningField.setMissingValueTreatment(MissingValueTreatmentMethod.AS_IS);
 
 		assertEquals(null, prepare(dataField, miningField, null));
 		assertEquals(null, prepare(dataField, miningField, "-999"));
@@ -279,11 +299,31 @@ public class FieldValueUtilTest {
 
 		assertEquals(0, prepare(dataField, miningField, "one"));
 		assertEquals(0, prepare(dataField, miningField, 1.5d));
+
+		miningField.setMissingValueTreatment(MissingValueTreatmentMethod.RETURN_INVALID);
+
+		try {
+			prepare(dataField, miningField, null);
+
+			fail();
+		} catch(InvalidMarkupException ime){
+			// Ignored
+		}
+
+		miningField.setMissingValueReplacement(null);
+
+		try {
+			prepare(dataField, miningField, null);
+
+			fail();
+		} catch(InvalidResultException ire){
+			// Ignored
+		}
 	}
 
 	static
 	private Object prepare(DataField dataField, MiningField miningField, Object value){
-		FieldValue result = FieldValueUtil.prepareInputValue(dataField, miningField, value);
+		FieldValue result = InputFieldUtil.prepareInputValue(dataField, miningField, value);
 
 		return FieldValueUtil.getValue(result);
 	}

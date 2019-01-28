@@ -18,56 +18,70 @@
  */
 package org.jpmml.evaluator.mining;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ForwardingMap;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.mining.Segment;
 import org.jpmml.evaluator.HasEntityId;
+import org.jpmml.evaluator.HasResultFields;
+import org.jpmml.evaluator.ModelEvaluator;
+import org.jpmml.evaluator.OutputField;
+import org.jpmml.evaluator.TargetField;
 
-public class SegmentResult extends ForwardingMap<FieldName, Object> implements HasEntityId {
+abstract
+public class SegmentResult extends ForwardingMap<FieldName, Object> implements HasEntityId, HasResultFields {
 
 	private Segment segment = null;
 
-	private String segmentId = null;
-
-	private Map<FieldName, ?> result = null;
-
-	private FieldName targetFieldName = null;
+	private Map<FieldName, ?> results = null;
 
 
-	public SegmentResult(Segment segment, String segmentId, Map<FieldName, ?> result, FieldName targetFieldName){
+	SegmentResult(Segment segment, Map<FieldName, ?> results){
 		setSegment(segment);
-		setSegmentId(segmentId);
-		setResult(result);
-		setTargetFieldName(targetFieldName);
+		setResults(results);
 	}
 
-	@Override
-	public String getEntityId(){
-		return getSegmentId();
-	}
+	abstract
+	protected ModelEvaluator<?> getModelEvaluator();
 
 	@Override
 	@SuppressWarnings (
 		value = {"rawtypes", "unchecked"}
 	)
 	public Map<FieldName, Object> delegate(){
-		Map<FieldName, ?> result = getResult();
+		Map<FieldName, ?> results = getResults();
 
-		return (Map)result;
+		return (Map)results;
+	}
+
+	@Override
+	public List<TargetField> getTargetFields(){
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
+
+		return modelEvaluator.getTargetFields();
+	}
+
+	@Override
+	public List<OutputField> getOutputFields(){
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
+
+		return modelEvaluator.getOutputFields();
+	}
+
+	public Object getTargetValue(){
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
+
+		FieldName targetName = modelEvaluator.getTargetName();
+
+		return get(targetName);
 	}
 
 	public double getWeight(){
 		Segment segment = getSegment();
 
 		return segment.getWeight();
-	}
-
-	public Object getTargetValue(){
-		FieldName targetFieldName = getTargetFieldName();
-
-		return get(targetFieldName);
 	}
 
 	public Segment getSegment(){
@@ -78,27 +92,11 @@ public class SegmentResult extends ForwardingMap<FieldName, Object> implements H
 		this.segment = segment;
 	}
 
-	public String getSegmentId(){
-		return this.segmentId;
+	public Map<FieldName, ?> getResults(){
+		return this.results;
 	}
 
-	private void setSegmentId(String segmentId){
-		this.segmentId = segmentId;
-	}
-
-	public Map<FieldName, ?> getResult(){
-		return this.result;
-	}
-
-	private void setResult(Map<FieldName, ?> result){
-		this.result = result;
-	}
-
-	public FieldName getTargetFieldName(){
-		return this.targetFieldName;
-	}
-
-	private void setTargetFieldName(FieldName targetFieldName){
-		this.targetFieldName = targetFieldName;
+	private void setResults(Map<FieldName, ?> results){
+		this.results = results;
 	}
 }

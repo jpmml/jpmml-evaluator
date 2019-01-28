@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
+import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.InputField;
@@ -58,26 +59,28 @@ public class ModelNestingTest extends ModelEvaluatorTest {
 			// Ignored
 		}
 
-		assertEquals(Evaluator.DEFAULT_TARGET_NAME, evaluator.getTargetFieldName());
+		assertEquals(Evaluator.DEFAULT_TARGET_NAME, evaluator.getTargetName());
 
 		Map<FieldName, ?> arguments = createArguments("input", 2d);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals(3, result.size());
+		assertEquals(3, results.size());
 
-		assertEquals(2d * 2d, (Double)getTarget(result, Evaluator.DEFAULT_TARGET_NAME), 1e-8d);
+		assertEquals(2d * 2d, (Double)getTarget(results, Evaluator.DEFAULT_TARGET_NAME), 1e-8d);
 
-		assertNotNull((Double)getOutput(result, "output"));
-		assertNotNull((String)getOutput(result, "report(output)"));
+		assertNotNull((Double)getOutput(results, "output"));
+		assertNotNull((String)getOutput(results, "report(output)"));
 
-		evaluator.configure(null);
+		Configuration configuration = Configuration.getInstance();
 
-		result = evaluator.evaluate(arguments);
+		evaluator.configure(configuration);
 
-		assertEquals(3, result.size());
+		results = evaluator.evaluate(arguments);
 
-		assertNotNull((Double)getOutput(result, "output"));
-		assertNull((String)getOutput(result, "report(output)"));
+		assertEquals(3, results.size());
+
+		assertNotNull((Double)getOutput(results, "output"));
+		assertNull((String)getOutput(results, "report(output)"));
 	}
 }

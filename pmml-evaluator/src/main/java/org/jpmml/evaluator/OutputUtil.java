@@ -19,11 +19,12 @@
 package org.jpmml.evaluator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Ordering;
@@ -52,6 +53,18 @@ public class OutputUtil {
 	private OutputUtil(){
 	}
 
+	static
+	public Map<FieldName, ?> clear(Map<FieldName, ?> results){
+
+		if(results instanceof OutputMap){
+			OutputMap outputMap = (OutputMap)results;
+
+			outputMap.clearPrivate();
+		}
+
+		return results;
+	}
+
 	/**
 	 * <p>
 	 * Evaluates the {@link Output} element.
@@ -75,13 +88,15 @@ public class OutputUtil {
 			return predictions;
 		}
 
-		Map<FieldName, Object> result = new LinkedHashMap<>(predictions);
+		OutputMap result = new OutputMap(predictions);
 
 		List<OutputField> outputFields = output.getOutputFields();
 
+		Predicate<OutputField> outputFilter = modelEvaluator.ensureOutputFilter();
+
 		outputFields:
 		for(OutputField outputField : outputFields){
-			FieldName targetFieldName = outputField.getTargetField();
+			FieldName targetName = outputField.getTargetField();
 
 			Object targetValue = null;
 
@@ -107,13 +122,13 @@ public class OutputUtil {
 					continue outputFields;
 				} // End if
 
-				if(targetFieldName != null){
+				if(targetName != null){
 
-					if(!segmentPredictions.containsKey(targetFieldName)){
-						throw new MissingValueException(targetFieldName, outputField);
+					if(!segmentPredictions.containsKey(targetName)){
+						throw new MissingValueException(targetName, outputField);
 					}
 
-					targetValue = segmentPredictions.get(targetFieldName);
+					targetValue = segmentPredictions.get(targetName);
 				} else
 
 				{
@@ -136,15 +151,15 @@ public class OutputUtil {
 						// Falls through
 					default:
 						{
-							if(targetFieldName == null){
-								targetFieldName = modelEvaluator.getTargetFieldName();
+							if(targetName == null){
+								targetName = modelEvaluator.getTargetName();
 							} // End if
 
-							if(!predictions.containsKey(targetFieldName)){
-								throw new MissingValueException(targetFieldName, outputField);
+							if(!predictions.containsKey(targetName)){
+								throw new MissingValueException(targetName, outputField);
 							}
 
-							targetValue = predictions.get(targetFieldName);
+							targetValue = predictions.get(targetName);
 						}
 						break;
 				}
@@ -170,9 +185,9 @@ public class OutputUtil {
 							throw new UnsupportedElementException(outputField);
 						}
 
-						TargetField targetField = modelEvaluator.findTargetField(targetFieldName);
+						TargetField targetField = modelEvaluator.findTargetField(targetName);
 						if(targetField == null){
-							throw new MissingFieldException(targetFieldName, outputField);
+							throw new MissingFieldException(targetName, outputField);
 						}
 
 						value = getPredictedDisplayValue(targetValue, targetField);
@@ -222,14 +237,14 @@ public class OutputUtil {
 							throw new UnsupportedElementException(outputField);
 						}
 
-						FieldValue expectedTargetValue = context.evaluate(targetFieldName);
+						FieldValue expectedTargetValue = context.evaluate(targetName);
 						if(Objects.equals(FieldValues.MISSING_VALUE, expectedTargetValue)){
-							throw new MissingValueException(targetFieldName, outputField);
+							throw new MissingValueException(targetName, outputField);
 						}
 
-						TargetField targetField = modelEvaluator.findTargetField(targetFieldName);
+						TargetField targetField = modelEvaluator.findTargetField(targetName);
 						if(targetField == null){
-							throw new MissingFieldException(targetFieldName, outputField);
+							throw new MissingFieldException(targetName, outputField);
 						}
 
 						OpType opType = targetField.getOpType();
@@ -329,14 +344,14 @@ public class OutputUtil {
 					break;
 				case REPORT:
 					{
-						FieldName reportFieldName = outputField.getReportField();
-						if(reportFieldName == null){
+						FieldName reportName = outputField.getReportField();
+						if(reportName == null){
 							throw new MissingAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_REPORTFIELD);
 						}
 
-						OutputField reportOutputField = modelEvaluator.getOutputField(reportFieldName);
+						OutputField reportOutputField = modelEvaluator.getOutputField(reportName);
 						if(reportOutputField == null){
-							throw new MissingFieldException(reportFieldName);
+							throw new MissingFieldException(reportName);
 						}
 
 						value = getReport(targetValue, reportOutputField);
@@ -351,12 +366,64 @@ public class OutputUtil {
 					throw new UnsupportedAttributeException(outputField, resultFeature);
 			}
 
-			FieldValue outputValue = FieldValueUtil.create(outputField, value);
+			FieldName outputName = outputField.getName();
+			if(outputName == null){
+				throw new MissingAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_NAME);
+			}
+
+			TypeInfo typeInfo = new TypeInfo(){
+
+				@Override
+				public DataType getDataType(){
+					DataType dataType = outputField.getDataType();
+					if(dataType == null){
+
+						if(value instanceof Collection){
+							Collection<?> values = (Collection<?>)value;
+
+							dataType = TypeUtil.getDataType(values);
+						} else
+
+						{
+							dataType = TypeUtil.getDataType(value);
+						}
+					}
+
+					return dataType;
+				}
+
+				@Override
+				public OpType getOpType(){
+					OpType opType = outputField.getOpType();
+					if(opType == null){
+						DataType dataType = getDataType();
+
+						opType = TypeUtil.getOpType(dataType);
+					}
+
+					return opType;
+				}
+
+				@Override
+				public List<?> getOrdering(){
+					List<?> ordering = FieldUtil.getValidValues(outputField);
+
+					return ordering;
+				}
+			};
+
+			FieldValue outputValue = FieldValueUtil.create(typeInfo, value);
 
 			// The result of one output field becomes available to other output fields
-			context.declare(outputField.getName(), outputValue);
+			context.declare(outputName, outputValue);
 
-			result.put(outputField.getName(), FieldValueUtil.getValue(outputValue));
+			if(outputFilter.test(outputField)){
+				result.putPublic(outputName, FieldValueUtil.getValue(outputValue));
+			} else
+
+			{
+				result.putPrivate(outputName, FieldValueUtil.getValue(outputValue));
+			}
 		}
 
 		return result;
@@ -391,6 +458,8 @@ public class OutputUtil {
 			}
 		}
 
+		DataField dataField = targetField.getField();
+
 		OpType opType = targetField.getOpType();
 		switch(opType){
 			case CONTINUOUS:
@@ -398,7 +467,7 @@ public class OutputUtil {
 			case CATEGORICAL:
 			case ORDINAL:
 				{
-					Value value = FieldValueUtil.getValidValue(targetField, object);
+					Value value = TargetFieldUtil.getValidValue(dataField, object);
 
 					if(value != null){
 						String displayValue = value.getDisplayValue();
@@ -410,8 +479,6 @@ public class OutputUtil {
 				}
 				break;
 			default:
-				DataField dataField = targetField.getDataField(); // XXX
-
 				throw new UnsupportedAttributeException(dataField, opType);
 		}
 
@@ -666,7 +733,7 @@ public class OutputUtil {
 	}
 
 	static
-	private List<AssociationRule> getRuleValues(HasRuleValues hasRuleValues, final OutputField outputField){
+	private List<AssociationRule> getRuleValues(HasRuleValues hasRuleValues, OutputField outputField){
 		List<AssociationRule> associationRules;
 
 		OutputField.Algorithm algorithm = outputField.getAlgorithm();

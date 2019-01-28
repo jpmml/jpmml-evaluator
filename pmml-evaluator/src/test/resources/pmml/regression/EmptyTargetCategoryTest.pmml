@@ -12,6 +12,10 @@
 			<MiningField name="x2"/>
 			<MiningField name="y" usageType="target"/>
 		</MiningSchema>
+		<Output>
+			<OutputField name="probability(no)" feature="probability" value="no"/>
+			<OutputField name="probability(yes)" feature="probability" value="yes"/>
+		</Output>
 		<RegressionTable intercept="125.56601826" targetCategory="no">
 			<NumericPredictor name="x1" coefficient="-28.6617384"/>
 			<NumericPredictor name="x2" coefficient="-20.42027426"/>

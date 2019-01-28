@@ -20,10 +20,12 @@ package org.jpmml.evaluator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ArrayTable;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
@@ -39,6 +41,7 @@ import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.TextIndex.CountHits;
 import org.dmg.pmml.TextIndexNormalization;
@@ -149,15 +152,24 @@ public class ExpressionUtilTest {
 	public void evaluateMapValues(){
 		FieldName name = FieldName.create("x");
 
-		MapValues mapValues = new MapValues("y")
-			.addFieldColumnPairs(new FieldColumnPair(name, "column"));
+		List<List<String>> rows = Arrays.asList(
+			Arrays.asList("0", "zero"),
+			Arrays.asList("1", "one")
+		);
+
+		MapValues mapValues = new MapValues("data:output")
+			.addFieldColumnPairs(new FieldColumnPair(name, "data:input"))
+			.setInlineTable(createInlineTable(rows, Arrays.asList("data:input", "data:output")));
+
+		assertEquals("zero", evaluate(mapValues, name, "0"));
+		assertEquals("one", evaluate(mapValues, name, "1"));
+		assertEquals(null, evaluate(mapValues, name, "3"));
 
 		assertEquals(null, evaluate(mapValues, name, null));
 
 		mapValues.setMapMissingTo("Missing");
 
 		assertEquals("Missing", evaluate(mapValues, name, null));
-		assertEquals(null, evaluate(mapValues, name, "3"));
 
 		mapValues.setDefaultValue("Default");
 
@@ -387,19 +399,35 @@ public class ExpressionUtilTest {
 	public void evaluateAggregate(){
 		FieldName name = FieldName.create("x");
 
+		TypeInfo typeInfo = new SimpleTypeInfo(DataType.DATE, OpType.ORDINAL);
+
 		List<?> values = Arrays.asList(TypeUtil.parse(DataType.DATE, "2013-01-01"), TypeUtil.parse(DataType.DATE, "2013-02-01"), TypeUtil.parse(DataType.DATE, "2013-03-01"));
+
+		Map<FieldName, FieldValue> arguments = Collections.singletonMap(name, FieldValue.create(typeInfo, values));
 
 		Aggregate aggregate = new Aggregate(name, Aggregate.Function.COUNT);
 
-		assertEquals(3, evaluate(aggregate, name, values));
+		assertEquals(3, evaluate(aggregate, arguments));
 
 		aggregate.setFunction(Aggregate.Function.MIN);
 
-		assertEquals(values.get(0), evaluate(aggregate, name, values));
+		assertEquals(values.get(0), evaluate(aggregate, arguments));
 
 		aggregate.setFunction(Aggregate.Function.MAX);
 
-		assertEquals(values.get(2), evaluate(aggregate, name, values));
+		assertEquals(values.get(2), evaluate(aggregate, arguments));
+
+		typeInfo = new SimpleTypeInfo(DataType.DATE, OpType.ORDINAL, Lists.reverse(values));
+
+		arguments = Collections.singletonMap(name, FieldValue.create(typeInfo, values));
+
+		aggregate.setFunction(Aggregate.Function.MIN);
+
+		assertEquals(values.get(2), evaluate(aggregate, arguments));
+
+		aggregate.setFunction(Aggregate.Function.MAX);
+
+		assertEquals(values.get(0), evaluate(aggregate, arguments));
 	}
 
 	static

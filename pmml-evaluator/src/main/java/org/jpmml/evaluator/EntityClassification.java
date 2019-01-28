@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.Entity;
+import org.jpmml.model.ToStringHelper;
 
 abstract
 public class EntityClassification<E extends Entity, V extends Number> extends Classification<V> implements HasEntityId, HasEntityRegistry<E> {

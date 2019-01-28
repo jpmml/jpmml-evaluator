@@ -38,10 +38,7 @@ import com.google.common.collect.ImmutableList;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningField;
-import org.dmg.pmml.MiningFunction;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
@@ -66,13 +63,13 @@ import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.MisplacedElementException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingValueException;
-import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLException;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
-import org.jpmml.evaluator.UnsupportedAttributeException;
+import org.jpmml.evaluator.TypeInfos;
+import org.jpmml.evaluator.ValueFactory;
 
 public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> implements HasGroupFields, HasEntityRegistry<AssociationRule> {
 
@@ -93,7 +90,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 
 	public AssociationModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, AssociationModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, AssociationModel.class));
 	}
 
 	public AssociationModelEvaluator(PMML pmml, AssociationModel associationModel){
@@ -129,7 +126,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	@Override
-	public FieldName getTargetFieldName(){
+	public FieldName getTargetName(){
 		return Evaluator.DEFAULT_TARGET_NAME;
 	}
 
@@ -155,39 +152,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		AssociationModel associationModel = ensureScorableModel();
-
-		MathContext mathContext = associationModel.getMathContext();
-		switch(mathContext){
-			case DOUBLE:
-				break;
-			default:
-				throw new UnsupportedAttributeException(associationModel, mathContext);
-		}
-
-		Map<FieldName, Association> predictions;
-
-		MiningFunction miningFunction = associationModel.getMiningFunction();
-		switch(miningFunction){
-			case ASSOCIATION_RULES:
-				predictions = evaluateAssociationRules(context);
-				break;
-			case SEQUENCES:
-			case CLASSIFICATION:
-			case REGRESSION:
-			case CLUSTERING:
-			case TIME_SERIES:
-			case MIXED:
-				throw new InvalidAttributeException(associationModel, miningFunction);
-			default:
-				throw new UnsupportedAttributeException(associationModel, miningFunction);
-		}
-
-		return OutputUtil.evaluate(predictions, context);
-	}
-
-	private Map<FieldName, Association> evaluateAssociationRules(EvaluationContext context){
+	protected <V extends Number> Map<FieldName, Association> evaluateAssociationRules(ValueFactory<V> valueFactory, EvaluationContext context){
 		AssociationModel associationModel = getModel();
 
 		Set<String> activeItems = getActiveItemIds(context);
@@ -250,7 +215,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			}
 		};
 
-		return Collections.singletonMap(getTargetFieldName(), association);
+		return Collections.singletonMap(getTargetName(), association);
 	}
 
 	/**
@@ -334,7 +299,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 					Collection<?> objects = FieldValueUtil.getValue(Collection.class, value);
 					for(Object object : objects){
-						explodedValue.add(FieldValueUtil.create(value.getDataType(), value.getOpType(), object));
+						explodedValue.add(FieldValueUtil.create(value, object));
 					}
 				} // End if
 
@@ -343,7 +308,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				} else
 
 				{
-					FieldValue categoryValue = FieldValueUtil.create(value.getDataType(), value.getOpType(), category);
+					FieldValue categoryValue = FieldValueUtil.create(value, category);
 
 					if(explodedValue.contains(categoryValue)){
 						result.add(id);
@@ -403,7 +368,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	static
-	private Callable<List<ItemValue>> createItemValueLoader(final AssociationModelEvaluator modelEvaluator){
+	private Callable<List<ItemValue>> createItemValueLoader(AssociationModelEvaluator modelEvaluator){
 		return new Callable<List<ItemValue>>(){
 
 			@Override
@@ -576,8 +541,8 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	private static final Cache<AssociationModel, List<ItemValue>> itemValueCache = CacheUtil.buildCache();
 
 	// IBM SPSS-style schema
-	private static final FieldValue STRING_TRUE = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "T");
-	private static final FieldValue STRING_FALSE = FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, "F");
+	private static final FieldValue STRING_TRUE = FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, "T");
+	private static final FieldValue STRING_FALSE = FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, "F");
 
 	private static final FieldValue BOOLEAN_TRUE = FieldValues.CATEGORICAL_BOOLEAN_TRUE;
 	private static final FieldValue BOOLEAN_FALSE = FieldValues.CATEGORICAL_BOOLEAN_FALSE;

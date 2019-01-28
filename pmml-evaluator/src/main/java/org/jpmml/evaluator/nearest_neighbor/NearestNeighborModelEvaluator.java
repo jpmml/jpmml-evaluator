@@ -58,7 +58,6 @@ import org.dmg.pmml.Distance;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.InlineTable;
-import org.dmg.pmml.MathContext;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
@@ -76,10 +75,12 @@ import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
+import org.jpmml.evaluator.FieldUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.InlineTableUtil;
+import org.jpmml.evaluator.InputFieldUtil;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.InvalidElementException;
 import org.jpmml.evaluator.InvisibleFieldException;
@@ -90,10 +91,12 @@ import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
+import org.jpmml.evaluator.TypeInfo;
+import org.jpmml.evaluator.TypeInfos;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
@@ -117,7 +120,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 
 	public NearestNeighborModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, NearestNeighborModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, NearestNeighborModel.class));
 	}
 
 	public NearestNeighborModelEvaluator(PMML pmml, NearestNeighborModel nearestNeighborModel){
@@ -172,47 +175,17 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		NearestNeighborModel nearestNeighborModel = ensureScorableModel();
-
-		ValueFactory<?> valueFactory;
-
-		MathContext mathContext = nearestNeighborModel.getMathContext();
-		switch(mathContext){
-			case FLOAT:
-			case DOUBLE:
-				valueFactory = ensureValueFactory();
-				break;
-			default:
-				throw new UnsupportedAttributeException(nearestNeighborModel, mathContext);
-		}
-
-		Map<FieldName, ? extends AffinityDistribution<?>> predictions;
-
-		MiningFunction miningFunction = nearestNeighborModel.getMiningFunction();
-		switch(miningFunction){
-			// The model contains one or more continuous and/or categorical target(s)
-			case REGRESSION:
-			case CLASSIFICATION:
-			case MIXED:
-				predictions = evaluateMixed(valueFactory, context);
-				break;
-			// The model does not contain targets
-			case CLUSTERING:
-				predictions = evaluateClustering(valueFactory, context);
-				break;
-			case ASSOCIATION_RULES:
-			case SEQUENCES:
-			case TIME_SERIES:
-				throw new InvalidAttributeException(nearestNeighborModel, miningFunction);
-			default:
-				throw new UnsupportedAttributeException(nearestNeighborModel, miningFunction);
-		}
-
-		return OutputUtil.evaluate(predictions, context);
+	protected <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateMixed(valueFactory, context);
 	}
 
-	private <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateMixed(valueFactory, context);
+	}
+
+	@Override
+	protected <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
@@ -270,7 +243,8 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return results;
 	}
 
-	private <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
@@ -286,7 +260,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		AffinityDistribution<V> result = createAffinityDistribution(instanceResults, function, null);
 
-		return Collections.singletonMap(getTargetFieldName(), result);
+		return Collections.singletonMap(getTargetName(), result);
 	}
 
 	private <V extends Number> List<InstanceResult<V>> evaluateInstanceRows(ValueFactory<V> valueFactory, EvaluationContext context){
@@ -361,7 +335,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return result;
 	}
 
-	private <V extends Number> V calculateContinuousTarget(final ValueFactory<V> valueFactory, FieldName name, List<InstanceResult<V>> instanceResults, Table<Integer, FieldName, FieldValue> table){
+	private <V extends Number> V calculateContinuousTarget(ValueFactory<V> valueFactory, FieldName name, List<InstanceResult<V>> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		NearestNeighborModel.ContinuousScoringMethod continuousScoringMethod = nearestNeighborModel.getContinuousScoringMethod();
@@ -422,7 +396,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	@SuppressWarnings (
 		value = {"rawtypes", "unchecked"}
 	)
-	private <V extends Number> Object calculateCategoricalTarget(final ValueFactory<V> valueFactory, FieldName name, List<InstanceResult<V>> instanceResults, Table<Integer, FieldName, FieldValue> table){
+	private <V extends Number> Object calculateCategoricalTarget(ValueFactory<V> valueFactory, FieldName name, List<InstanceResult<V>> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		VoteAggregator<Object, V> aggregator = new VoteAggregator<Object, V>(){
@@ -467,14 +441,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			Map<Integer, FieldValue> column = table.column(name);
 
-			Function<FieldValue, Object> function = new Function<FieldValue, Object>(){
-
-				@Override
-				public Object apply(FieldValue value){
-					return value.getValue();
-				}
-			};
-			multiset.addAll(Collections2.transform(column.values(), function));
+			multiset.addAll(Collections2.transform(column.values(), FieldValue::getValue));
 
 			aggregator.clear();
 
@@ -493,7 +460,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return Iterables.getFirst(winners, null);
 	}
 
-	private Function<Integer, String> createIdentifierResolver(final FieldName name, final Table<Integer, FieldName, FieldValue> table){
+	private Function<Integer, String> createIdentifierResolver(FieldName name, Table<Integer, FieldName, FieldValue> table){
 		Function<Integer, String> function = new Function<Integer, String>(){
 
 			@Override
@@ -546,7 +513,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	static
-	private Callable<Table<Integer, FieldName, FieldValue>> createTrainingInstanceLoader(final NearestNeighborModelEvaluator modelEvaluator){
+	private Callable<Table<Integer, FieldName, FieldValue>> createTrainingInstanceLoader(NearestNeighborModelEvaluator modelEvaluator){
 		return new Callable<Table<Integer, FieldName, FieldValue>>(){
 
 			@Override
@@ -657,7 +624,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 					continue;
 				}
 
-				ModelEvaluationContext context = new ModelEvaluationContext(null, modelEvaluator);
+				ModelEvaluationContext context = new ModelEvaluationContext(modelEvaluator);
 				context.declareAll(rowValues);
 
 				FieldValue value = ExpressionUtil.evaluateTypedExpressionContainer(derivedField, context);
@@ -684,7 +651,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	static
-	private Callable<Map<Integer, BitSet>> createInstanceFlagLoader(final NearestNeighborModelEvaluator modelEvaluator){
+	private Callable<Map<Integer, BitSet>> createInstanceFlagLoader(NearestNeighborModelEvaluator modelEvaluator){
 		return new Callable<Map<Integer, BitSet>>(){
 
 			@Override
@@ -722,7 +689,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	static
-	private Callable<Map<Integer, List<FieldValue>>> createInstanceValueLoader(final NearestNeighborModelEvaluator modelEvaluator){
+	private Callable<Map<Integer, List<FieldValue>>> createInstanceValueLoader(NearestNeighborModelEvaluator modelEvaluator){
 		return new Callable<Map<Integer, List<FieldValue>>>(){
 
 			@Override
@@ -809,7 +776,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		@Override
 		public FieldValue prepare(String value){
-			return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, value);
+			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, value);
 		}
 	}
 
@@ -830,7 +797,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		@Override
 		public FieldValue prepare(String value){
-			return FieldValueUtil.prepareInputValue(getDataField(), getMiningField(), value);
+			return InputFieldUtil.prepareInputValue(getDataField(), getMiningField(), value);
 		}
 
 		public DataField getDataField(){
@@ -864,7 +831,39 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		@Override
 		public FieldValue prepare(String value){
-			return FieldValueUtil.create(getDerivedField(), value);
+			DerivedField derivedField = getDerivedField();
+
+			TypeInfo typeInfo = new TypeInfo(){
+
+				@Override
+				public DataType getDataType(){
+					DataType dataType = derivedField.getDataType();
+					if(dataType == null){
+						throw new MissingAttributeException(derivedField, PMMLAttributes.DERIVEDFIELD_DATATYPE);
+					}
+
+					return dataType;
+				}
+
+				@Override
+				public OpType getOpType(){
+					OpType opType = derivedField.getOpType();
+					if(opType == null){
+						throw new MissingAttributeException(derivedField, PMMLAttributes.DERIVEDFIELD_OPTYPE);
+					}
+
+					return opType;
+				}
+
+				@Override
+				public List<?> getOrdering(){
+					List<?> ordering = FieldUtil.getValidValues(derivedField);
+
+					return ordering;
+				}
+			};
+
+			return FieldValueUtil.create(typeInfo, value);
 		}
 
 		public DerivedField getDerivedField(){

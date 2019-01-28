@@ -23,14 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.PMML;
-import org.jpmml.model.PMMLUtil;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 abstract
 public class ModelEvaluatorTest {
@@ -39,12 +35,10 @@ public class ModelEvaluatorTest {
 		return createModelEvaluator(getClass());
 	}
 
-	public ModelEvaluator<?> createModelEvaluator(ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
-		return createModelEvaluator(getClass(), modelEvaluatorFactory);
-	}
-
 	static
 	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz) throws Exception {
+		ReportingValueFactoryFactory valueFactoryFactory = ReportingValueFactoryFactory.newInstance();
+
 		ReportFactory reportFactory = new ReportFactory(){
 
 			@Override
@@ -53,30 +47,47 @@ public class ModelEvaluatorTest {
 			}
 		};
 
-		ReportingValueFactoryFactory valueFactoryFactory = ReportingValueFactoryFactory.newInstance();
 		valueFactoryFactory.setReportFactory(reportFactory);
 
-		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
-		modelEvaluatorFactory.setValueFactoryFactory(valueFactoryFactory);
+		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
+			.setValueFactoryFactory(valueFactoryFactory);
 
-		return createModelEvaluator(clazz, modelEvaluatorFactory);
+		Configuration configuration = configurationBuilder.build();
+
+		return createModelEvaluator(clazz, configuration);
+	}
+
+	public ModelEvaluator<?> createModelEvaluator(Configuration configuration) throws Exception {
+		return createModelEvaluator(getClass(), configuration);
 	}
 
 	static
-	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz, ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
+	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz, Configuration configuration) throws Exception {
 
 		try(InputStream is = getInputStream(clazz)){
-			return createModelEvaluator(is, modelEvaluatorFactory);
+			return createModelEvaluator(is, configuration);
 		}
 	}
 
 	static
-	public ModelEvaluator<?> createModelEvaluator(InputStream is, ModelEvaluatorFactory modelEvaluatorFactory) throws Exception {
-		PMML pmml = PMMLUtil.unmarshal(is);
+	public ModelEvaluator<?> createModelEvaluator(InputStream is, Configuration configuration) throws Exception {
+		ModelEvaluatorBuilder modelEvaluatorBuilder = new LoadingModelEvaluatorBuilder(){
 
-		assertNull(pmml.getLocator());
+			{
+				setModelEvaluatorFactory(configuration.getModelEvaluatorFactory());
+				setValueFactoryFactory(configuration.getValueFactoryFactory());
+				setOutputFilter(configuration.getOutputFilter());
+			}
 
-		return modelEvaluatorFactory.newModelEvaluator(pmml);
+			@Override
+			protected void checkSchema(ModelEvaluator<?> modelEvaluator){
+			}
+		}
+			.load(is);
+
+		ModelEvaluator<?> modelEvaluator = modelEvaluatorBuilder.build();
+
+		return modelEvaluator;
 	}
 
 	static
@@ -121,33 +132,25 @@ public class ModelEvaluatorTest {
 	}
 
 	static
-	public Object getTarget(Map<FieldName, ?> result, Object name){
-		Object value = result.get(toFieldName(name));
+	public Object getTarget(Map<FieldName, ?> results, Object name){
+		Object value = results.get(toFieldName(name));
 
 		return EvaluatorUtil.decode(value);
 	}
 
 	static
-	public Object getOutput(Map<FieldName, ?> result, Object name){
-		Object value = result.get(toFieldName(name));
+	public Object getOutput(Map<FieldName, ?> results, Object name){
+		Object value = results.get(toFieldName(name));
 
 		return value;
 	}
 
 	static
 	public void checkResultFields(List<?> targetNames, List<?> outputNames, Evaluator evaluator){
-		Function<Object, FieldName> function = new Function<Object, FieldName>(){
-
-			@Override
-			public FieldName apply(Object object){
-				return toFieldName(object);
-			}
-		};
-
 		List<TargetField> targetFields = evaluator.getTargetFields();
 		List<OutputField> outputFields = evaluator.getOutputFields();
 
-		assertEquals(Lists.transform(targetNames, function), EvaluatorUtil.getNames(targetFields));
-		assertEquals(Lists.transform(outputNames, function), EvaluatorUtil.getNames(outputFields));
+		assertEquals(Lists.transform(targetNames, ModelEvaluatorTest::toFieldName), EvaluatorUtil.getNames(targetFields));
+		assertEquals(Lists.transform(outputNames, ModelEvaluatorTest::toFieldName), EvaluatorUtil.getNames(outputFields));
 	}
 }

@@ -21,10 +21,9 @@ package org.jpmml.sas.functions;
 import java.util.Arrays;
 import java.util.List;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.TypeInfos;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -44,7 +43,7 @@ public class StringNormalizeTest {
 	private String evaluate(int length, String string){
 		StringNormalize stringNormalize = new StringNormalize();
 
-		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(DataType.INTEGER, OpType.CONTINUOUS, length), FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, string));
+		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, length), FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, string));
 
 		return (stringNormalize.evaluate(arguments)).asString();
 	}

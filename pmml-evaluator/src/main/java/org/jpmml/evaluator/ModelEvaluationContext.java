@@ -33,44 +33,31 @@ import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
 
 public class ModelEvaluationContext extends EvaluationContext {
 
-	private MiningModelEvaluationContext parent = null;
-
 	private ModelEvaluator<?> modelEvaluator = null;
+
+	private MiningModelEvaluationContext parent = null;
 
 	private Map<FieldName, ?> arguments = Collections.emptyMap();
 
-	/*
-	 * A flag indicating if this evaluation context inherits {@link DataField data field} values from its parent evaluation context exactly as they are.
-	 */
-	private boolean compatible = false;
-
 
 	public ModelEvaluationContext(ModelEvaluator<?> modelEvaluator){
-		this(null, modelEvaluator);
+		this(modelEvaluator, null);
 	}
 
-	public ModelEvaluationContext(MiningModelEvaluationContext parent, ModelEvaluator<?> modelEvaluator){
-		setParent(parent);
+	public ModelEvaluationContext(ModelEvaluator<?> modelEvaluator, MiningModelEvaluationContext parent){
 		setModelEvaluator(modelEvaluator);
+		setParent(parent);
 	}
 
 	@Override
-	public void reset(boolean purge){
-		super.reset(purge);
+	public void reset(boolean clearValues){
+		super.reset(clearValues);
 
 		this.arguments = Collections.emptyMap();
-
-		this.compatible = false;
-	}
-
-	public void reset(ModelEvaluator<?> modelEvaluator, boolean purge){
-		reset(purge);
-
-		setModelEvaluator(modelEvaluator);
 	}
 
 	@Override
-	protected FieldValue createFieldValue(FieldName name, Object value){
+	protected FieldValue prepare(FieldName name, Object value){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
 		DataField dataField = modelEvaluator.getDataField(name);
@@ -89,12 +76,12 @@ public class ModelEvaluationContext extends EvaluationContext {
 			case GROUP:
 			case ORDER:
 				{
-					return FieldValueUtil.prepareInputValue(dataField, miningField, value);
+					return InputFieldUtil.prepareInputValue(dataField, miningField, value);
 				}
 			case PREDICTED:
 			case TARGET:
 				{
-					return FieldValueUtil.prepareResidualInputValue(dataField, miningField, value);
+					return InputFieldUtil.prepareResidualInputValue(dataField, miningField, value);
 				}
 			default:
 				throw new UnsupportedAttributeException(miningField, usageType);
@@ -123,7 +110,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 				FieldValue value;
 
 				// Perform the evaluation of a global DerivedField element at the highest compatible level
-				if(parent != null && isCompatible()){
+				if(parent != null && modelEvaluator.isParentCompatible()){
 					value = parent.evaluate(name);
 				} else
 
@@ -174,6 +161,14 @@ public class ModelEvaluationContext extends EvaluationContext {
 		return defineFunction;
 	}
 
+	public ModelEvaluator<?> getModelEvaluator(){
+		return this.modelEvaluator;
+	}
+
+	public void setModelEvaluator(ModelEvaluator<?> modelEvaluator){
+		this.modelEvaluator = Objects.requireNonNull(modelEvaluator);
+	}
+
 	public MiningModelEvaluationContext getParent(){
 		return this.parent;
 	}
@@ -182,34 +177,12 @@ public class ModelEvaluationContext extends EvaluationContext {
 		this.parent = parent;
 	}
 
-	public ModelEvaluator<?> getModelEvaluator(){
-		return this.modelEvaluator;
-	}
-
-	private void setModelEvaluator(ModelEvaluator<?> modelEvaluator){
-		this.modelEvaluator = modelEvaluator;
-	}
-
 	public Map<FieldName, ?> getArguments(){
 		return this.arguments;
 	}
 
 	public void setArguments(Map<FieldName, ?> arguments){
-		this.arguments = arguments;
-	}
-
-	public boolean isCompatible(){
-		return this.compatible;
-	}
-
-	public void setCompatible(boolean compatible){
-		MiningModelEvaluationContext parent = getParent();
-
-		if(parent == null){
-			throw new IllegalStateException();
-		}
-
-		this.compatible = compatible;
+		this.arguments = Objects.requireNonNull(arguments);
 	}
 
 	static
@@ -235,16 +208,16 @@ public class ModelEvaluationContext extends EvaluationContext {
 	static
 	private FieldValue performValueTreatment(Field<?> field, MiningField miningField, FieldValue value){
 
-		if(MiningFieldUtil.isDefault(miningField)){
+		if(InputFieldUtil.isDefault(field, miningField)){
 			return value;
 		} // End if
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
-			return FieldValueUtil.performMissingValueTreatment(field, miningField);
+			return InputFieldUtil.performMissingValueTreatment(field, miningField);
 		} else
 
 		{
-			return FieldValueUtil.performValidValueTreatment(field, miningField, value);
+			return InputFieldUtil.performValidValueTreatment(field, miningField, value);
 		}
 	}
 }

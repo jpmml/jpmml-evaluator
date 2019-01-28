@@ -18,6 +18,12 @@
  */
 package org.jpmml.evaluator;
 
+import org.dmg.pmml.Field;
+
 abstract
 public class ResultField extends ModelField {
+
+	public ResultField(Field<?> field){
+		super(field);
+	}
 }

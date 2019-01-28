@@ -18,7 +18,8 @@
  */
 package org.jpmml.rattle;
 
-import com.google.common.base.Predicate;
+import java.util.function.Predicate;
+
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.IntegrationTest;
 import org.jpmml.evaluator.PMMLEquivalence;

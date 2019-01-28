@@ -36,19 +36,19 @@ public class AssociationOutputTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("item", Arrays.asList("Cracker", "Coke"));
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals("1", getOutput(result, "entityId"));
+		assertEquals("1", getOutput(results, "entityId"));
 
-		checkValue(Arrays.asList("Cracker"), result, "antecedent");
-		checkValue(Arrays.asList("Water"), result, "consequent");
+		checkValue(Arrays.asList("Cracker"), results, "antecedent");
+		checkValue(Arrays.asList("Water"), results, "consequent");
 
-		checkValue("{Cracker}->{Water}", result, "rule");
-		checkValue("1", result, "ruleId");
+		checkValue("{Cracker}->{Water}", results, "rule");
+		checkValue("1", results, "ruleId");
 
-		checkValue(1d, result, "support");
-		checkValue(1d, result, "confidence");
-		checkValue(1d, result, "lift");
+		checkValue(1d, results, "support");
+		checkValue(1d, results, "confidence");
+		checkValue(1d, results, "lift");
 	}
 
 	static

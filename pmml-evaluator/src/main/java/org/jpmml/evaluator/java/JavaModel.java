@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.java;
 
 import java.util.Map;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
@@ -34,9 +36,16 @@ import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
+import org.jpmml.evaluator.EvaluationContext;
+import org.jpmml.evaluator.InvalidAttributeException;
+import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.model.annotations.Extension;
 import org.jpmml.model.annotations.Property;
 
+@XmlRootElement (
+	name = "X-JavaModel",
+	namespace = "http://jpmml.org/jpmml-evaluator/"
+)
 @Extension
 abstract
 public class JavaModel extends Model {
@@ -53,15 +62,15 @@ public class JavaModel extends Model {
 
 	private MiningSchema miningSchema = null;
 
-	private LocalTransformations localTransformations = null;
-
-	private Targets targets = null;
-
 	private Output output = null;
 
 	private ModelStats modelStats = null;
 
 	private ModelExplanation modelExplanation = null;
+
+	private Targets targets = null;
+
+	private LocalTransformations localTransformations = null;
 
 	private ModelVerification modelVerification = null;
 
@@ -81,16 +90,27 @@ public class JavaModel extends Model {
 		setScorable(model.isScorable());
 		setMathContext(model.getMathContext());
 		setMiningSchema(model.getMiningSchema());
-		setLocalTransformations(model.getLocalTransformations());
-		setTargets(model.getTargets());
 		setOutput(model.getOutput());
 		setModelStats(model.getModelStats());
 		setModelExplanation(model.getModelExplanation());
+		setTargets(model.getTargets());
+		setLocalTransformations(model.getLocalTransformations());
 		setModelVerification(model.getModelVerification());
 	}
 
-	abstract
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context);
+	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateDefault();
+	}
+
+	protected <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateDefault();
+	}
+
+	private Map<FieldName, ?> evaluateDefault(){
+		MiningFunction miningFunction = getMiningFunction();
+
+		throw new InvalidAttributeException(this, miningFunction);
+	}
 
 	@Override
 	public String getModelName(){
@@ -175,30 +195,6 @@ public class JavaModel extends Model {
 	}
 
 	@Override
-	public LocalTransformations getLocalTransformations(){
-		return this.localTransformations;
-	}
-
-	@Override
-	public JavaModel setLocalTransformations(@Property("localTransformations") LocalTransformations localTransformations){
-		this.localTransformations = localTransformations;
-
-		return this;
-	}
-
-	@Override
-	public Targets getTargets(){
-		return this.targets;
-	}
-
-	@Override
-	public JavaModel setTargets(@Property("targets") Targets targets){
-		this.targets = targets;
-
-		return this;
-	}
-
-	@Override
 	public Output getOutput(){
 		return this.output;
 	}
@@ -235,6 +231,30 @@ public class JavaModel extends Model {
 	}
 
 	@Override
+	public Targets getTargets(){
+		return this.targets;
+	}
+
+	@Override
+	public JavaModel setTargets(@Property("targets") Targets targets){
+		this.targets = targets;
+
+		return this;
+	}
+
+	@Override
+	public LocalTransformations getLocalTransformations(){
+		return this.localTransformations;
+	}
+
+	@Override
+	public JavaModel setLocalTransformations(@Property("localTransformations") LocalTransformations localTransformations){
+		this.localTransformations = localTransformations;
+
+		return this;
+	}
+
+	@Override
 	public ModelVerification getModelVerification(){
 		return this.modelVerification;
 	}
@@ -248,11 +268,15 @@ public class JavaModel extends Model {
 
 	@Override
 	public VisitorAction accept(Visitor visitor){
-		visitor.pushParent(this);
+		VisitorAction status = visitor.visit(this);
 
-		VisitorAction status = PMMLObject.traverse(visitor, getMiningSchema(), getLocalTransformations(), getTargets(), getOutput(), getModelStats(), getModelExplanation(), getModelVerification());
+		if(status == VisitorAction.CONTINUE){
+			visitor.pushParent(this);
 
-		visitor.popParent();
+			status = PMMLObject.traverse(visitor, getMiningSchema(), getOutput(), getModelStats(), getModelExplanation(), getTargets(), getLocalTransformations(), getModelVerification());
+
+			visitor.popParent();
+		} // End if
 
 		if(status == VisitorAction.TERMINATE){
 			return VisitorAction.TERMINATE;

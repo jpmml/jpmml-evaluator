@@ -35,15 +35,15 @@ public class RankingTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("input", 1d);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		ClusterAffinityDistribution<?> affinityDistribution = (ClusterAffinityDistribution<?>)result.get(evaluator.getTargetFieldName());
+		ClusterAffinityDistribution<?> affinityDistribution = (ClusterAffinityDistribution<?>)results.get(evaluator.getTargetName());
 
 		assertEquals("2", affinityDistribution.getResult());
 
-		checkValue("2", 1d, result, "first");
-		checkValue("3", 4d, result, "second");
-		checkValue("1", 16d, result, "third");
+		checkValue("2", 1d, results, "first");
+		checkValue("3", 4d, results, "second");
+		checkValue("1", 16d, results, "third");
 	}
 
 	static

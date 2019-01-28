@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Villu Ruusmann
+ * Copyright (c) 2018 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,18 +18,9 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.FieldName;
-import org.dmg.pmml.MiningField;
-import org.junit.Test;
+public interface EvaluatorBuilder extends Cloneable {
 
-import static org.junit.Assert.assertTrue;
+	EvaluatorBuilder clone();
 
-public class MiningFieldUtilTest {
-
-	@Test
-	public void isDefault(){
-		MiningField miningField = new MiningField(FieldName.create("x"));
-
-		assertTrue(MiningFieldUtil.isDefault(miningField));
-	}
+	Evaluator build();
 }

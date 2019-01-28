@@ -41,7 +41,7 @@ public class InvalidAttributeException extends InvalidMarkupException {
 	}
 
 	static
-	public String formatMessage(String xpath){
-		return "Attribute with value " + xpath + " is not valid";
+	public String formatMessage(String xPath){
+		return "Attribute with value " + xPath + " is not valid";
 	}
 }

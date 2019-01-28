@@ -111,7 +111,7 @@ public class SecondsSinceMidnight extends SimplePeriod<SecondsSinceMidnight> {
 
 	private static final TemporalField HOURS_OF_EPOCH = new TemporalField(){
 
-		private final ValueRange range = ValueRange.of(0, Long.MAX_VALUE);
+		private ValueRange range = ValueRange.of(0, Long.MAX_VALUE);
 
 
 		@Override

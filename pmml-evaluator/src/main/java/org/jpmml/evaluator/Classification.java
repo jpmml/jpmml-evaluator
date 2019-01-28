@@ -19,18 +19,17 @@
 package org.jpmml.evaluator;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Range;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.MiningFunction;
+import org.jpmml.model.ToStringHelper;
 
 /**
  * @see MiningFunction#CLASSIFICATION
@@ -149,15 +148,7 @@ public class Classification<V extends Number> extends AbstractComputable impleme
 	}
 
 	protected List<Double> getWinnerValues(){
-		Function<Value<V>, Double> function = new Function<Value<V>, Double>(){
-
-			@Override
-			public Double apply(Value<V> value){
-				return value.doubleValue();
-			}
-		};
-
-		return Lists.transform(entryValues(getWinnerRanking()), function);
+		return Lists.transform(entryValues(getWinnerRanking()), Value::doubleValue);
 	}
 
 	protected Set<String> keySet(){
@@ -217,42 +208,18 @@ public class Classification<V extends Number> extends AbstractComputable impleme
 	}
 
 	static
-	protected <V extends Number> Ordering<Map.Entry<String, Value<V>>> createOrdering(final Type type){
-		Comparator<Map.Entry<String, Value<V>>> comparator = new Comparator<Map.Entry<String, Value<V>>>(){
-
-			@Override
-			public int compare(Map.Entry<String, Value<V>> left, Map.Entry<String, Value<V>> right){
-				return type.compareValues(left.getValue(), right.getValue());
-			}
-		};
-
-		return Ordering.from(comparator);
+	protected <V extends Number> Ordering<Map.Entry<String, Value<V>>> createOrdering(Type type){
+		return Ordering.from((Map.Entry<String, Value<V>> left, Map.Entry<String, Value<V>> right) -> type.compareValues(left.getValue(), right.getValue()));
 	}
 
 	static
 	public <K, V> List<K> entryKeys(List<Map.Entry<K, V>> entries){
-		Function<Map.Entry<K, V>, K> function = new Function<Map.Entry<K, V>, K>(){
-
-			@Override
-			public K apply(Map.Entry<K, V> entry){
-				return entry.getKey();
-			}
-		};
-
-		return Lists.transform(entries, function);
+		return Lists.transform(entries, Map.Entry::getKey);
 	}
 
 	static
 	public <K, V> List<V> entryValues(List<Map.Entry<K, V>> entries){
-		Function<Map.Entry<K, V>, V> function = new Function<Map.Entry<K, V>, V>(){
-
-			@Override
-			public V apply(Map.Entry<K, V> entry){
-				return entry.getValue();
-			}
-		};
-
-		return Lists.transform(entries, function);
+		return Lists.transform(entries, Map.Entry::getValue);
 	}
 
 	static

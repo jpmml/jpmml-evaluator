@@ -56,8 +56,8 @@ public class EvaluatorUtilTest {
 		assertEquals(Arrays.asList("value"), EvaluatorUtil.decode(Arrays.asList(value)));
 		assertEquals(Arrays.asList("value", "value"), EvaluatorUtil.decode(Arrays.asList(value, value)));
 
-		assertEquals(Collections.<String, String>singletonMap((String)null, "value"), EvaluatorUtil.decode(Collections.singletonMap((FieldName)null, value)));
-		assertEquals(Collections.<String, String>singletonMap("key", "value"), EvaluatorUtil.decode(Collections.singletonMap(FieldName.create("key"), value)));
+		assertEquals(Collections.singletonMap((String)null, "value"), EvaluatorUtil.decode(Collections.singletonMap((FieldName)null, value)));
+		assertEquals(Collections.singletonMap("key", "value"), EvaluatorUtil.decode(Collections.singletonMap(FieldName.create("key"), value)));
 
 		Computable invalidValue = new Computable(){
 
@@ -126,11 +126,11 @@ public class EvaluatorUtilTest {
 
 		evaluator = ModelEvaluatorTest.createModelEvaluator(RankingTest.class);
 
-		checkFieldNames(Collections.<FieldName>singletonList(null), evaluator.getTargetFields());
+		checkFieldNames(Collections.singletonList(null), evaluator.getTargetFields());
 
 		evaluator = ModelEvaluatorTest.createModelEvaluator(TransactionalSchemaTest.class);
 
-		checkFieldNames(Collections.<FieldName>emptyList(), evaluator.getTargetFields());
+		checkFieldNames(Collections.emptyList(), evaluator.getTargetFields());
 	}
 
 	static

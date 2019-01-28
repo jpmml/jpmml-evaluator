@@ -43,10 +43,11 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("input", null);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
-		assertEquals(1, result.size());
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals(432.21d, getTarget(result, Evaluator.DEFAULT_TARGET_NAME));
+		assertEquals(1, results.size());
+
+		assertEquals(432.21d, getTarget(results, Evaluator.DEFAULT_TARGET_NAME));
 
 		Targets targets = model.getTargets();
 		for(Target target : targets){
@@ -55,10 +56,10 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 			targetValues.clear();
 		}
 
-		result = evaluator.evaluate(arguments);
+		results = evaluator.evaluate(arguments);
 
-		assertEquals(1, result.size());
+		assertEquals(1, results.size());
 
-		assertEquals(null, getTarget(result, Evaluator.DEFAULT_TARGET_NAME));
+		assertEquals(null, getTarget(results, Evaluator.DEFAULT_TARGET_NAME));
 	}
 }

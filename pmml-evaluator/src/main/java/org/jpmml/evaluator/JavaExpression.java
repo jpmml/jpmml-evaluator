@@ -18,11 +18,17 @@
  */
 package org.jpmml.evaluator;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.model.annotations.Extension;
 
+@XmlRootElement (
+	name = "X-JavaExpression",
+	namespace = "http://jpmml.org/jpmml-evaluator/"
+)
 @Extension
 abstract
 public class JavaExpression extends Expression {
@@ -32,6 +38,17 @@ public class JavaExpression extends Expression {
 
 	@Override
 	public VisitorAction accept(Visitor visitor){
+		VisitorAction status = visitor.visit(this);
+
+		if(status == VisitorAction.CONTINUE){
+			visitor.pushParent(this);
+			visitor.popParent();
+		} // End if
+
+		if(status == VisitorAction.TERMINATE){
+			return VisitorAction.TERMINATE;
+		}
+
 		return VisitorAction.CONTINUE;
 	}
 }

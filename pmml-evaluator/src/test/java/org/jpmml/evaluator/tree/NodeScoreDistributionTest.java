@@ -18,9 +18,12 @@
  */
 package org.jpmml.evaluator.tree;
 
+import java.util.List;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableSet;
+import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.jpmml.evaluator.DoubleValue;
 import org.jpmml.evaluator.ValueMap;
@@ -32,10 +35,9 @@ public class NodeScoreDistributionTest {
 
 	@Test
 	public void getProbability(){
-		Node node = new Node()
+		Node node = new LeafNode()
 			.setScore("ham");
 
-		final
 		BiMap<String, Node> entityRegistry = ImmutableBiMap.of("1", node);
 
 		NodeScoreDistribution<Double> classification = new NodeScoreDistribution<Double>(new ValueMap<String, Double>(), node){
@@ -43,6 +45,11 @@ public class NodeScoreDistributionTest {
 			@Override
 			public BiMap<String, Node> getEntityRegistry(){
 				return entityRegistry;
+			}
+
+			@Override
+			public List<Node> getDecisionPath(){
+				throw new UnsupportedOperationException();
 			}
 		};
 

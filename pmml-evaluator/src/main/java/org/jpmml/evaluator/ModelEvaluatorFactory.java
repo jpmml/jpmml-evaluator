@@ -19,7 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Objects;
 
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
@@ -38,6 +38,7 @@ import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.association.AssociationModelEvaluator;
 import org.jpmml.evaluator.clustering.ClusteringModelEvaluator;
 import org.jpmml.evaluator.general_regression.GeneralRegressionModelEvaluator;
+import org.jpmml.evaluator.java.JavaModel;
 import org.jpmml.evaluator.java.JavaModelEvaluator;
 import org.jpmml.evaluator.mining.MiningModelEvaluator;
 import org.jpmml.evaluator.naive_bayes.NaiveBayesModelEvaluator;
@@ -51,33 +52,39 @@ import org.jpmml.evaluator.tree.TreeModelEvaluator;
 
 public class ModelEvaluatorFactory implements Serializable {
 
-	private ValueFactoryFactory valueFactoryFactory = null;
+	final
+	private Configuration configuration;
 
 
 	protected ModelEvaluatorFactory(){
+		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
+			.setModelEvaluatorFactory(this);
+
+		this.configuration = configurationBuilder.build();
 	}
 
-	public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml){
+	public ModelEvaluator<?> newModelEvaluator(PMML pmml){
+		return newModelEvaluator(pmml, (String)null);
+	}
 
-		if(!pmml.hasModels()){
-			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(pmml.getClass()) + "/<Model>"), pmml);
-		}
+	public ModelEvaluator<?> newModelEvaluator(PMML pmml, String modelName){
+		Objects.requireNonNull(pmml);
 
-		List<Model> models = pmml.getModels();
-
-		Model model = models.get(0);
+		Model model = PMMLUtil.findModel(pmml, modelName);
 
 		return newModelEvaluator(pmml, model);
 	}
 
-	public ModelEvaluator<? extends Model> newModelEvaluator(PMML pmml, Model model){
+	public ModelEvaluator<?> newModelEvaluator(PMML pmml, Model model){
 		ModelEvaluator<?> modelEvaluator = createModelEvaluator(pmml, model);
-		modelEvaluator.configure(this);
+		modelEvaluator.configure(this.configuration);
 
 		return modelEvaluator;
 	}
 
-	private ModelEvaluator<? extends Model> createModelEvaluator(PMML pmml, Model model){
+	private ModelEvaluator<?> createModelEvaluator(PMML pmml, Model model){
+		Objects.requireNonNull(pmml);
+		Objects.requireNonNull(model);
 
 		if(model instanceof AssociationModel){
 			return new AssociationModelEvaluator(pmml, (AssociationModel)model);
@@ -132,14 +139,6 @@ public class ModelEvaluatorFactory implements Serializable {
 		}
 
 		throw new UnsupportedElementException(model);
-	}
-
-	public ValueFactoryFactory getValueFactoryFactory(){
-		return this.valueFactoryFactory;
-	}
-
-	public void setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
-		this.valueFactoryFactory = valueFactoryFactory;
 	}
 
 	static

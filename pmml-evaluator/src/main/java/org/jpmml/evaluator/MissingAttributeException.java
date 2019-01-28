@@ -37,7 +37,7 @@ public class MissingAttributeException extends InvalidMarkupException {
 	}
 
 	static
-	public String formatMessage(String xpath){
-		return "Required attribute " + xpath + " is not defined";
+	public String formatMessage(String xPath){
+		return "Required attribute " + xPath + " is not defined";
 	}
 }

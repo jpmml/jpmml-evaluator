@@ -18,8 +18,8 @@
  */
 package org.jpmml.evaluator.mining;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
@@ -41,11 +41,8 @@ import com.google.common.collect.Lists;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
-import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
-import org.dmg.pmml.MathContext;
-import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
@@ -55,14 +52,15 @@ import org.dmg.pmml.mining.MiningModel;
 import org.dmg.pmml.mining.Segment;
 import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.CacheUtil;
+import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.EntityUtil;
+import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.HasEntityRegistry;
-import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.InvalidAttributeException;
-import org.jpmml.evaluator.MiningFieldUtil;
+import org.jpmml.evaluator.InvalidElementException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingValueException;
@@ -74,8 +72,10 @@ import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLException;
+import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
+import org.jpmml.evaluator.Regression;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
@@ -88,14 +88,14 @@ import org.jpmml.evaluator.XPathUtil;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 
-	private ConcurrentMap<String, SegmentHandler> segmentHandlers = new ConcurrentHashMap<>();
+	private ConcurrentMap<String, ModelEvaluator<?>> segmentModelEvaluators = new ConcurrentHashMap<>();
 
 	transient
 	private BiMap<String, Segment> entityRegistry = null;
 
 
 	public MiningModelEvaluator(PMML pmml){
-		this(pmml, selectModel(pmml, MiningModel.class));
+		this(pmml, PMMLUtil.findModel(pmml, MiningModel.class));
 	}
 
 	public MiningModelEvaluator(PMML pmml, MiningModel miningModel){
@@ -130,10 +130,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public void configure(ModelEvaluatorFactory modelEvaluatorFactory){
-		super.configure(modelEvaluatorFactory);
+	public void configure(Configuration configuration){
+		super.configure(configuration);
 
-		this.segmentHandlers.clear();
+		this.segmentModelEvaluators.clear();
 	}
 
 	@Override
@@ -159,19 +159,19 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public boolean isPrimitive(){
+	public boolean isPure(){
 		return false;
 	}
 
 	@Override
-	public FieldName getTargetFieldName(){
+	public FieldName getTargetName(){
 		List<TargetField> targetFields = super.getTargetFields();
 
 		if(targetFields.size() == 0){
 			return Evaluator.DEFAULT_TARGET_NAME;
 		}
 
-		return super.getTargetFieldName();
+		return super.getTargetName();
 	}
 
 	@Override
@@ -202,65 +202,40 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MiningModelEvaluationContext context = new MiningModelEvaluationContext(this);
 		context.setArguments(arguments);
 
-		return evaluate(context);
+		Map<FieldName, ?> results = evaluate(context);
+
+		return OutputUtil.clear(results);
 	}
 
 	@Override
 	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		return evaluate((MiningModelEvaluationContext)context);
+		return super.evaluate((MiningModelEvaluationContext)context);
 	}
 
-	public Map<FieldName, ?> evaluate(MiningModelEvaluationContext context){
-		MiningModel miningModel = ensureScorableModel();
-
-		ValueFactory<?> valueFactory;
-
-		MathContext mathContext = miningModel.getMathContext();
-		switch(mathContext){
-			case FLOAT:
-			case DOUBLE:
-				valueFactory = ensureValueFactory();
-				break;
-			default:
-				throw new UnsupportedAttributeException(miningModel, mathContext);
-		}
-
-		Map<FieldName, ?> predictions;
-
-		MiningFunction miningFunction = miningModel.getMiningFunction();
-		switch(miningFunction){
-			case REGRESSION:
-				predictions = evaluateRegression(valueFactory, context);
-				break;
-			case CLASSIFICATION:
-				predictions = evaluateClassification(valueFactory, context);
-				break;
-			case CLUSTERING:
-				predictions = evaluateClustering(valueFactory, context);
-				break;
-			default:
-				predictions = evaluateAny(context);
-				break;
-		}
-
-		return OutputUtil.evaluate(predictions, context);
-	}
-
-	private <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, MiningModelEvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> segmentResults = evaluateSegmentation(context);
+		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
 		Map<FieldName, ?> predictions = getSegmentationResult(REGRESSION_METHODS, segmentResults);
 		if(predictions != null){
 			return predictions;
 		}
 
+		TargetField targetField = getTargetField();
+
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		Value<V> result;
-
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
+		Segmentation.MissingPredictionTreatment missingPredictionTreatment = segmentation.getMissingPredictionTreatment();
+		Double missingThreshold = segmentation.getMissingThreshold();
+		if(missingThreshold < 0 || missingThreshold > 1){
+			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
+		}
+
+		Value<V> value;
+
 		switch(multipleModelMethod){
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
@@ -268,7 +243,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case WEIGHTED_MEDIAN:
 			case SUM:
 			case WEIGHTED_SUM:
-				result = MiningModelUtil.aggregateValues(valueFactory, multipleModelMethod, segmentResults);
+				value = MiningModelUtil.aggregateValues(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
+				if(value == null){
+					return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
+				}
 				break;
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
@@ -281,13 +259,24 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
 		}
 
-		return TargetUtil.evaluateRegression(getTargetField(), result);
+		value = TargetUtil.evaluateRegressionInternal(targetField, value);
+
+		Regression<V> result = new MiningScore<V>(value){
+
+			@Override
+			public Collection<? extends SegmentResult> getSegmentResults(){
+				return segmentResults;
+			}
+		};
+
+		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
-	private <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, MiningModelEvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> segmentResults = evaluateSegmentation(context);
+		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
 		Map<FieldName, ?> predictions = getSegmentationResult(CLASSIFICATION_METHODS, segmentResults);
 		if(predictions != null){
@@ -298,19 +287,34 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
+		Segmentation.MissingPredictionTreatment missingPredictionTreatment = segmentation.getMissingPredictionTreatment();
+		Double missingThreshold = segmentation.getMissingThreshold();
+		if(missingThreshold < 0 || missingThreshold > 1){
+			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
+		}
+
 		ProbabilityDistribution<V> result;
 
-		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 				{
-					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, segmentResults);
+					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
+					if(values == null){
+						return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
+					}
 
 					// Convert from votes to probabilities
 					ValueUtil.normalizeSimpleMax(values);
 
-					result = new ProbabilityDistribution<>(values);
+					result = new MiningProbabilityDistribution<V>(values){
+
+						@Override
+						public Collection<? extends SegmentResult> getSegmentResults(){
+							return segmentResults;
+						}
+					};
 				}
 				break;
 			case AVERAGE:
@@ -318,11 +322,23 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MEDIAN:
 			case MAX:
 				{
-					List<String> categories = targetField.getCategories();
+					List<String> targetCategories = targetField.getCategories();
+					if(targetCategories != null && targetCategories.size() < 2){
+						throw new InvalidElementException(miningModel);
+					}
 
-					ValueMap<String, V> values = MiningModelUtil.aggregateProbabilities(valueFactory, multipleModelMethod, categories, segmentResults);
+					ValueMap<String, V> values = MiningModelUtil.aggregateProbabilities(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, targetCategories, segmentResults);
+					if(values == null){
+						return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
+					}
 
-					result = new ProbabilityDistribution<>(values);
+					result = new MiningProbabilityDistribution<V>(values){
+
+						@Override
+						public Collection<? extends SegmentResult> getSegmentResults(){
+							return segmentResults;
+						}
+					};
 				}
 				break;
 			case WEIGHTED_MEDIAN:
@@ -339,10 +355,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
 
-	private <V extends Number> Map<FieldName, ?> evaluateClustering(ValueFactory<V> valueFactory, MiningModelEvaluationContext context){
+	@Override
+	protected <V extends Number> Map<FieldName, ?> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
 		MiningModel miningModel = getModel();
 
-		List<SegmentResult> segmentResults = evaluateSegmentation(context);
+		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
 		Map<FieldName, ?> predictions = getSegmentationResult(CLUSTERING_METHODS, segmentResults);
 		if(predictions != null){
@@ -351,16 +368,31 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		VoteDistribution<V> result;
-
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
+		Segmentation.MissingPredictionTreatment missingPredictionTreatment = segmentation.getMissingPredictionTreatment();
+		Double missingThreshold = segmentation.getMissingThreshold();
+		if(missingThreshold < 0 || missingThreshold > 1){
+			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
+		}
+
+		MiningVoteDistribution<V> result;
+
 		switch(multipleModelMethod){
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 				{
-					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, segmentResults);
+					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
+					if(values == null){
+						return Collections.singletonMap(getTargetName(), null);
+					}
 
-					result = new VoteDistribution<>(values);
+					result = new MiningVoteDistribution<V>(values){
+
+						@Override
+						public Collection<? extends SegmentResult> getSegmentResults(){
+							return segmentResults;
+						}
+					};
 				}
 				break;
 			case AVERAGE:
@@ -380,13 +412,23 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		result.computeResult(DataType.STRING);
 
-		return Collections.singletonMap(getTargetFieldName(), result);
+		return Collections.singletonMap(getTargetName(), result);
 	}
 
-	private Map<FieldName, ?> evaluateAny(MiningModelEvaluationContext context){
-		List<SegmentResult> segmentResults = evaluateSegmentation(context);
+	@Override
+	protected <V extends Number> Map<FieldName, ?> evaluateAssociationRules(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateAny(valueFactory, context);
+	}
 
-		return getSegmentationResult(Collections.<Segmentation.MultipleModelMethod>emptySet(), segmentResults);
+	@Override
+	protected <V extends Number> Map<FieldName, ?> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
+		return evaluateAny(valueFactory, context);
+	}
+
+	private <V extends Number> Map<FieldName, ?> evaluateAny(ValueFactory<V> valueFactory, EvaluationContext context){
+		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
+
+		return getSegmentationResult(Collections.emptySet(), segmentResults);
 	}
 
 	private List<SegmentResult> evaluateSegmentation(MiningModelEvaluationContext context){
@@ -401,8 +443,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		Model lastModel = null;
-
-		boolean purge = false;
 
 		MiningModelEvaluationContext miningModelContext = null;
 
@@ -428,7 +468,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			// "With the exception of modelChain models, all model elements used inside Segment elements in one MiningModel must have the same MINING-FUNCTION"
 			switch(multipleModelMethod){
 				case MODEL_CHAIN:
-					lastModel = model;
 					break;
 				default:
 					checkMiningFunction(model, miningFunction);
@@ -437,16 +476,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			String segmentId = EntityUtil.getId(segment, entityRegistry);
 
-			SegmentHandler segmentHandler = this.segmentHandlers.get(segmentId);
-			if(segmentHandler == null){
-				segmentHandler = createSegmentHandler(model);
-
-				this.segmentHandlers.putIfAbsent(segmentId, segmentHandler);
-			}
-
-			ModelEvaluator<?> segmentModelEvaluator = segmentHandler.getModelEvaluator();
-
-			purge |= !(segmentHandler.isCompatible() && segmentModelEvaluator.isPrimitive());
+			ModelEvaluator<?> segmentModelEvaluator = ensureSegmentModelEvaluator(segmentId, model);
 
 			ModelEvaluationContext segmentContext;
 
@@ -454,11 +484,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				MiningModelEvaluator segmentMiningModelEvaluator = (MiningModelEvaluator)segmentModelEvaluator;
 
 				if(miningModelContext == null){
-					miningModelContext = new MiningModelEvaluationContext(context, segmentMiningModelEvaluator);
+					miningModelContext = new MiningModelEvaluationContext(segmentMiningModelEvaluator, context);
 				} else
 
 				{
-					miningModelContext.reset(segmentMiningModelEvaluator, purge);
+					miningModelContext.setModelEvaluator(segmentMiningModelEvaluator);
 				}
 
 				segmentContext = miningModelContext;
@@ -466,29 +496,36 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			{
 				if(modelContext == null){
-					modelContext = new ModelEvaluationContext(context, segmentModelEvaluator);
+					modelContext = new ModelEvaluationContext(segmentModelEvaluator, context);
 				} else
 
 				{
-					modelContext.reset(segmentModelEvaluator, purge);
+					modelContext.setModelEvaluator(segmentModelEvaluator);
 				}
 
 				segmentContext = modelContext;
 			}
 
-			segmentContext.setCompatible(segmentHandler.isCompatible());
-
-			SegmentResult segmentResult;
+			Map<FieldName, ?> results;
 
 			try {
-				Map<FieldName, ?> result = segmentModelEvaluator.evaluate(segmentContext);
-
-				FieldName segmentTargetFieldName = segmentModelEvaluator.getTargetFieldName();
-
-				segmentResult = new SegmentResult(segment, segmentId, result, segmentTargetFieldName);
+				results = segmentModelEvaluator.evaluate(segmentContext);
 			} catch(PMMLException pe){
 				throw pe.ensureContext(segment);
 			}
+
+			SegmentResult segmentResult = new SegmentResult(segment, results){
+
+				@Override
+				public String getEntityId(){
+					return segmentId;
+				}
+
+				@Override
+				protected ModelEvaluator<?> getModelEvaluator(){
+					return segmentModelEvaluator;
+				}
+			};
 
 			context.putResult(segmentId, segmentResult);
 
@@ -504,7 +541,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 								continue;
 							}
 
-							context.putOutputField(outputField.getOutputField());
+							context.putOutputField(outputField.getField());
 
 							FieldValue value;
 
@@ -530,9 +567,16 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				}
 			}
 
+			boolean clearValues = !segmentModelEvaluator.isPure();
+
+			segmentContext.reset(clearValues);
+
 			switch(multipleModelMethod){
 				case SELECT_FIRST:
 					return Collections.singletonList(segmentResult);
+				case MODEL_CHAIN:
+					lastModel = model;
+					// Falls through
 				default:
 					segmentResults.add(segmentResult);
 					break;
@@ -581,7 +625,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		// "If no segments have predicates that evaluate to true, then the result is a missing value"
 		if(segmentResults.size() == 0){
-			return Collections.singletonMap(getTargetFieldName(), null);
+			return Collections.singletonMap(getTargetName(), null);
 		}
 
 		return null;
@@ -644,16 +688,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			String segmentId = EntityUtil.getId(segment, entityRegistry);
 
-			SegmentHandler segmentHandler = this.segmentHandlers.get(segmentId);
-			if(segmentHandler == null){
-				segmentHandler = createSegmentHandler(model);
+			ModelEvaluator<?> segmentModelEvaluator = ensureSegmentModelEvaluator(segmentId, model);
 
-				this.segmentHandlers.putIfAbsent(segmentId, segmentHandler);
-			}
-
-			ModelEvaluator<?> modelEvaluator = segmentHandler.getModelEvaluator();
-
-			List<OutputField> outputFields = modelEvaluator.getOutputFields();
+			List<OutputField> outputFields = segmentModelEvaluator.getOutputFields();
 			for(OutputField outputField : outputFields){
 				OutputField nestedOutputField = new OutputField(outputField);
 
@@ -664,12 +701,27 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return ImmutableList.copyOf(result);
 	}
 
-	private SegmentHandler createSegmentHandler(Model model){
-		ModelEvaluatorFactory modelEvaluatorFactory = ensureModelEvaluatorFactory();
+	private ModelEvaluator<?> ensureSegmentModelEvaluator(String segmentId, Model model){
+		ModelEvaluator<?> segmentModelEvaluator = this.segmentModelEvaluators.get(segmentId);
+
+		if(segmentModelEvaluator == null){
+			segmentModelEvaluator = createSegmentModelEvaluator(model);
+
+			this.segmentModelEvaluators.putIfAbsent(segmentId, segmentModelEvaluator);
+		}
+
+		return segmentModelEvaluator;
+	}
+
+	private ModelEvaluator<?> createSegmentModelEvaluator(Model model){
+		Configuration configuration = ensureConfiguration();
+
+		ModelEvaluatorFactory modelEvaluatorFactory = configuration.getModelEvaluatorFactory();
 
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(getPMML(), model);
+		modelEvaluator.configure(configuration);
 
-		return new SegmentHandler(modelEvaluator);
+		return modelEvaluator;
 	}
 
 	static
@@ -706,55 +758,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	static
-	private void checkMiningFunction(Model model, MiningFunction miningFunction){
-		MiningFunction modelMiningFunction = model.getMiningFunction();
+	private void checkMiningFunction(Model model, MiningFunction parentMiningFunction){
+		MiningFunction miningFunction = model.getMiningFunction();
 
-		if(!(miningFunction).equals(modelMiningFunction)){
-			throw new InvalidAttributeException(InvalidAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@miningFunction=" + modelMiningFunction.value()), model);
-		}
-	}
+		if(miningFunction == null){
+			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@functionName"), model);
+		} // End if
 
-	static
-	private class SegmentHandler implements Serializable {
-
-		private ModelEvaluator<?> modelEvaluator = null;
-
-		private boolean compatible = false;
-
-
-		private SegmentHandler(ModelEvaluator<?> modelEvaluator){
-			setModelEvaluator(modelEvaluator);
-
-			boolean compatible = true;
-
-			List<InputField> inputFields = modelEvaluator.getInputFields();
-			for(InputField inputField : inputFields){
-				Field<?> field = inputField.getField();
-
-				if(field instanceof DataField){
-					MiningField miningField = inputField.getMiningField();
-
-					compatible &= MiningFieldUtil.isDefault(miningField);
-				}
-			}
-
-			setCompatible(compatible);
-		}
-
-		public ModelEvaluator<?> getModelEvaluator(){
-			return this.modelEvaluator;
-		}
-
-		private void setModelEvaluator(ModelEvaluator<?> modelEvaluator){
-			this.modelEvaluator = modelEvaluator;
-		}
-
-		public boolean isCompatible(){
-			return this.compatible;
-		}
-
-		private void setCompatible(boolean compatible){
-			this.compatible = compatible;
+		if(!(miningFunction).equals(parentMiningFunction)){
+			throw new InvalidAttributeException(InvalidAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@functionName=" + miningFunction.value()), model);
 		}
 	}
 

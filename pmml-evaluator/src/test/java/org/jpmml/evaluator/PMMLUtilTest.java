@@ -18,37 +18,41 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.StringJoiner;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.tree.TreeModel;
+import org.junit.Test;
 
-public class ToStringHelper {
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
-	private StringJoiner joiner = null;
+public class PMMLUtilTest {
 
+	@Test
+	public void findModel(){
+		PMML pmml = new PMML();
 
-	public ToStringHelper(Object object){
-		setJoiner(new StringJoiner(", ", (object.getClass()).getSimpleName() + "{", "}"));
-	}
+		TreeModel firstTreeModel = new TreeModel()
+			.setModelName("first");
 
-	public ToStringHelper add(String key, Object value){
-		StringJoiner joiner = getJoiner();
+		TreeModel secondTreeModel = new TreeModel()
+			.setModelName("second");
 
-		joiner.add(key + "=" + value);
+		pmml.addModels(firstTreeModel, secondTreeModel);
 
-		return this;
-	}
+		assertSame(firstTreeModel, PMMLUtil.findModel(pmml, TreeModel.class));
 
-	@Override
-	public String toString(){
-		StringJoiner joiner = getJoiner();
+		firstTreeModel.setScorable(false);
 
-		return joiner.toString();
-	}
+		assertSame(secondTreeModel, PMMLUtil.findModel(pmml, TreeModel.class));
 
-	public StringJoiner getJoiner(){
-		return this.joiner;
-	}
+		secondTreeModel.setScorable(false);
 
-	private void setJoiner(StringJoiner joiner){
-		this.joiner = joiner;
+		try {
+			PMMLUtil.findModel(pmml, TreeModel.class);
+
+			fail();
+		} catch(MissingElementException mee){
+			// Ignored
+		}
 	}
 }

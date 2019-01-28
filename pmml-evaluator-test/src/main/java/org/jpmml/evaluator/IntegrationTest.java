@@ -19,10 +19,10 @@
 package org.jpmml.evaluator;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import org.dmg.pmml.FieldName;
 
 abstract
@@ -33,11 +33,11 @@ public class IntegrationTest extends BatchTest {
 	}
 
 	public void evaluate(String name, String dataset) throws Exception {
-		evaluate(name, dataset, Predicates.<FieldName>alwaysTrue(), null);
+		evaluate(name, dataset, x -> true, null);
 	}
 
 	public void evaluate(String name, String dataset, Equivalence<Object> equivalence) throws Exception {
-		evaluate(name, dataset, Predicates.<FieldName>alwaysTrue(), equivalence);
+		evaluate(name, dataset, x -> true, equivalence);
 	}
 
 	public void evaluate(String name, String dataset, Predicate<FieldName> predicate) throws Exception {
@@ -65,6 +65,19 @@ public class IntegrationTest extends BatchTest {
 
 	static
 	public Predicate<FieldName> excludeFields(FieldName... names){
-		return Predicates.not(Predicates.in(Arrays.asList(names)));
+		return excludeFields(Arrays.asList(names));
+	}
+
+	static
+	public Predicate<FieldName> excludeFields(Collection<FieldName> names){
+		Predicate<FieldName> predicate = new Predicate<FieldName>(){
+
+			@Override
+			public boolean test(FieldName name){
+				return !names.contains(name);
+			}
+		};
+
+		return predicate;
 	}
 }

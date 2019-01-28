@@ -22,10 +22,9 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.FieldName;
@@ -73,8 +72,8 @@ public class ClassificationTest extends IntegrationTest {
 		}
 	}
 
-	protected Batch createFilterBatch(String name, String dataset, final Map<FieldName, FieldName> columns){
-		Batch result = new FilterBatch(createBatch(name, dataset, Predicates.in(columns.values()))){
+	protected Batch createFilterBatch(String name, String dataset, Map<FieldName, FieldName> columns){
+		Batch result = new FilterBatch(createBatch(name, dataset, columns.values()::contains)){
 
 			@Override
 			public List<? extends Map<FieldName, ?>> getOutput() throws Exception {

@@ -27,7 +27,7 @@ public class MisplacedElementException extends InvalidElementException {
 	}
 
 	static
-	public String formatMessage(String xpath){
-		return "Element " + xpath + " is not permitted in this location";
+	public String formatMessage(String xPath){
+		return "Element " + xPath + " is not permitted in this location";
 	}
 }

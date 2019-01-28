@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import org.jpmml.model.ToStringHelper;
+
 abstract
 public class AbstractComputable implements Computable {
 

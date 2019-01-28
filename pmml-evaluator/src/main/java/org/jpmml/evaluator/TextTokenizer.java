@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.ImmutableList;
+import org.jpmml.model.TermUtil;
 
 public class TextTokenizer {
 
@@ -37,48 +38,24 @@ public class TextTokenizer {
 		Pattern pattern = getPattern();
 
 		if(("").equals(string)){
-			return Collections.<String>emptyList();
+			return Collections.emptyList();
 		}
+
+		String[] tokens = pattern.split(string, -1);
 
 		int count = 0;
 
-		String[] tokens = pattern.split(string, -1);
 		for(int i = 0, max = tokens.length; i < max; i++){
 			String token = tokens[i];
 
-			int begin = 0;
-			int end = token.length();
-
-			// Trim leading punctuation
-			while(begin < end){
-				char c = token.charAt(begin);
-
-				if(!isPunctuation(c)){
-					break;
-				}
-
-				begin++;
-			}
-
-			// Trim trailing punctuation
-			while(end > begin){
-				char c = token.charAt(end - 1);
-
-				if(!isPunctuation(c)){
-					break;
-				}
-
-				end--;
-			}
-
-			if(begin > 0 || end < token.length()){
-				token = token.substring(begin, end);
-			} // End if
-
 			if(token.length() > 0){
-				tokens[count] = token;
+				token = TermUtil.trimPunctuation(token);
 
-				count++;
+				if(token.length() > 0){
+					tokens[count] = token;
+
+					count++;
+				}
 			}
 		}
 
@@ -99,23 +76,5 @@ public class TextTokenizer {
 
 	private void setPattern(Pattern pattern){
 		this.pattern = pattern;
-	}
-
-	static
-	public boolean isPunctuation(char c){
-		int type = Character.getType(c);
-
-		switch(type){
-			case Character.DASH_PUNCTUATION:
-			case Character.END_PUNCTUATION:
-			case Character.START_PUNCTUATION:
-			case Character.CONNECTOR_PUNCTUATION:
-			case Character.OTHER_PUNCTUATION:
-			case Character.INITIAL_QUOTE_PUNCTUATION:
-			case Character.FINAL_QUOTE_PUNCTUATION:
-				return true;
-			default:
-				return false;
-		}
 	}
 }

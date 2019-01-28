@@ -29,7 +29,7 @@ public class ResidualInputField extends InputField {
 
 	@Override
 	public FieldValue prepare(Object value){
-		return FieldValueUtil.prepareResidualInputValue(getField(), getMiningField(), value);
+		return InputFieldUtil.prepareResidualInputValue(getField(), getMiningField(), value);
 	}
 
 	@Override

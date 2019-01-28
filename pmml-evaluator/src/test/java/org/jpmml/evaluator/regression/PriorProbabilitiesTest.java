@@ -43,20 +43,17 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("input", null);
 
-		Map<FieldName, ?> result = evaluator.evaluate(arguments);
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals(5, result.size());
+		assertEquals(5, results.size());
 
-		assertEquals("NO", getTarget(result, Evaluator.DEFAULT_TARGET_NAME));
+		assertEquals("NO", getTarget(results, Evaluator.DEFAULT_TARGET_NAME));
 
-		FieldName field = FieldName.create("I_response");
-		FieldName displayField = FieldName.create("U_response");
+		assertEquals("NO", getOutput(results, "I_response"));
+		assertEquals("No", getOutput(results, "U_response"));
 
-		assertEquals("NO", getOutput(result, field));
-		assertEquals("No", getOutput(result, displayField));
-
-		assertEquals(0.02d, getOutput(result, "P_responseYes"));
-		assertEquals(0.98d, getOutput(result, "P_responseNo"));
+		assertEquals(0.02d, getOutput(results, "P_responseYes"));
+		assertEquals(0.98d, getOutput(results, "P_responseNo"));
 
 		Targets targets = model.getTargets();
 		for(Target target : targets){
@@ -65,10 +62,10 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 			targetValues.clear();
 		}
 
-		result = evaluator.evaluate(arguments);
+		results = evaluator.evaluate(arguments);
 
-		assertEquals(1, result.size());
+		assertEquals(1, results.size());
 
-		assertEquals(null, getTarget(result, Evaluator.DEFAULT_TARGET_NAME));
+		assertEquals(null, getTarget(results, Evaluator.DEFAULT_TARGET_NAME));
 	}
 }

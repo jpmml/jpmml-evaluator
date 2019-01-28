@@ -283,6 +283,24 @@ public class TypeUtil {
 		return new SecondsSinceDate(epoch, parseDateTime(value));
 	}
 
+	static
+	public boolean equals(DataType dataType, Object value, String referenceValue){
+
+		try {
+			return (parseOrCast(dataType, value)).equals(parse(dataType, referenceValue));
+		} catch(IllegalArgumentException | TypeCheckException e){
+
+			// The String representation of invalid or missing values (eg. "N/A") may not be parseable to the requested representation
+			try {
+				return (parseOrCast(DataType.STRING, value)).equals(referenceValue);
+			} catch(TypeCheckException tce){
+				// Ignored
+			}
+
+			throw e;
+		}
+	}
+
 	/**
 	 * @return The data type of the value.
 	 */

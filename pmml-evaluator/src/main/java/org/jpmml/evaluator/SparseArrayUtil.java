@@ -52,10 +52,8 @@ public class SparseArrayUtil {
 
 	static
 	public <E extends Number> List<E> asNumberList(SparseArray<E> sparseArray){
-		final
 		SortedMap<Integer, E> content = getContent(sparseArray);
 
-		final
 		int size;
 
 		Integer n = sparseArray.getN();
@@ -67,7 +65,6 @@ public class SparseArrayUtil {
 			size = content.size();
 		}
 
-		final
 		E defaultValue = sparseArray.getDefaultValue();
 
 		List<E> result = new AbstractList<E>(){

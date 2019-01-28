@@ -20,12 +20,10 @@ package org.jpmml.sas.functions;
 
 import java.util.List;
 
-import com.google.common.base.CharMatcher;
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FunctionException;
+import org.jpmml.evaluator.TypeInfos;
 import org.jpmml.evaluator.functions.AbstractFunction;
 
 public class StringNormalize extends AbstractFunction {
@@ -45,15 +43,25 @@ public class StringNormalize extends AbstractFunction {
 
 		String string = getRequiredArgument(arguments, 1).asString();
 
-		// Trim leading whitespace characters (but keep trailing whitespace characters)
-		string = CharMatcher.WHITESPACE.trimLeadingFrom(string);
+		int offset = 0;
 
-		// Truncate to a fixed length
-		string = string.substring(0, Math.min(length, string.length()));
+		// Trim leading whitespace characters (but keep trailing whitespace characters)
+		for(int i = 0; i < string.length(); i++){
+			char c = string.charAt(i);
+
+			if(c > 32){
+				break;
+			}
+
+			offset++;
+		}
+
+		// Truncate to fixed length
+		string = string.substring(offset, offset + Math.min(length, string.length() - offset));
 
 		// Convert to all uppercase characters
 		string = string.toUpperCase();
 
-		return FieldValueUtil.create(DataType.STRING, OpType.CATEGORICAL, string);
+		return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, string);
 	}
 }

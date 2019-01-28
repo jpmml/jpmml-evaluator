@@ -34,6 +34,9 @@ import org.dmg.pmml.Field;
 import org.dmg.pmml.HasContinuousDomain;
 import org.dmg.pmml.HasDiscreteDomain;
 import org.dmg.pmml.Interval;
+import org.dmg.pmml.MiningField;
+import org.dmg.pmml.OpType;
+import org.dmg.pmml.Target;
 import org.dmg.pmml.Value;
 
 public class FieldUtil {
@@ -54,6 +57,39 @@ public class FieldUtil {
 	static
 	public <F extends Field<F> & HasContinuousDomain<F>> RangeSet<Double> getValidRanges(F field){
 		return CacheUtil.getValue(field, FieldUtil.validRangeCache);
+	}
+
+	static
+	public DataType getDataType(Field<?> field){
+		return field.getDataType();
+	}
+
+	static
+	public OpType getOpType(Field<?> field, MiningField miningField){
+		OpType opType = field.getOpType();
+
+		// "A MiningField overrides a (Data)Field"
+		if(miningField != null){
+			opType = firstNonNull(miningField.getOpType(), opType);
+		}
+
+		return opType;
+	}
+
+	static
+	public OpType getOpType(Field<?> field, MiningField miningField, Target target){
+		OpType opType = field.getOpType();
+
+		// "A MiningField overrides a (Data)Field, and a Target overrides a MiningField"
+		if(miningField != null){
+			opType = firstNonNull(miningField.getOpType(), opType);
+
+			if(target != null){
+				opType = firstNonNull(target.getOpType(), opType);
+			}
+		}
+
+		return opType;
 	}
 
 	static
@@ -88,6 +124,9 @@ public class FieldUtil {
 		List<Object> result = new ArrayList<>();
 
 		DataType dataType = field.getDataType();
+		if(dataType == null){
+			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@dataType"), field);
+		} // End if
 
 		if(field.hasValues()){
 			List<Value> pmmlValues = field.getValues();
@@ -127,6 +166,16 @@ public class FieldUtil {
 		}
 
 		return result;
+	}
+
+	static
+	private <V> V firstNonNull(V value, V defaultValue){
+
+		if(value != null){
+			return value;
+		}
+
+		return defaultValue;
 	}
 
 	private static final LoadingCache<DataField, List<String>> categoryCache = CacheUtil.buildLoadingCache(new CacheLoader<DataField, List<String>>(){

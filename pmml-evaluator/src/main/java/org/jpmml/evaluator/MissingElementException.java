@@ -37,7 +37,7 @@ public class MissingElementException extends InvalidMarkupException {
 	}
 
 	static
-	public String formatMessage(String xpath){
-		return "Required element " + xpath + " is not defined";
+	public String formatMessage(String xPath){
+		return "Required element " + xPath + " is not defined";
 	}
 }

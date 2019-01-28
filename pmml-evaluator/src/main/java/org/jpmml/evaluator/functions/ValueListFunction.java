@@ -21,11 +21,10 @@ package org.jpmml.evaluator.functions;
 import java.util.List;
 import java.util.Objects;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FieldValues;
+import org.jpmml.evaluator.TypeInfos;
 
 abstract
 public class ValueListFunction extends AbstractFunction {
@@ -52,9 +51,9 @@ public class ValueListFunction extends AbstractFunction {
 		} else
 
 		{
-			result = evaluate(value.indexIn(values) > -1);
+			result = evaluate(value.isIn(values));
 		}
 
-		return FieldValueUtil.create(DataType.BOOLEAN, OpType.CATEGORICAL, result);
+		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 	}
 }

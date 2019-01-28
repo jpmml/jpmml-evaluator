@@ -11,8 +11,8 @@
 			<MiningField name="result" usageType="predicted"/>
 		</MiningSchema>
 		<Output>
-			<OutputField name="RawResult" optype="continuous" dataType="double" feature="predictedValue"/>
-			<OutputField name="RawIntegerResult" optype="continuous" dataType="integer" feature="predictedValue"/>
+			<OutputField name="RawResult" optype="continuous" dataType="double" isFinalResult="false" feature="predictedValue"/>
+			<OutputField name="RawIntegerResult" optype="continuous" dataType="integer" isFinalResult="false" feature="predictedValue"/>
 			<OutputField name="FinalResult" optype="continuous" dataType="double" feature="transformedValue">
 				<Apply function="round">
 					<NormContinuous field="RawResult">
