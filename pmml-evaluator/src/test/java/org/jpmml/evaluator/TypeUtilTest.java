@@ -47,39 +47,13 @@ public class TypeUtilTest {
 
 		assertEquals(Integer.MIN_VALUE, TypeUtil.parse(DataType.INTEGER, Integer.toString(Integer.MIN_VALUE)));
 
-		try {
-			TypeUtil.parse(DataType.INTEGER, Long.toString(Integer.MIN_VALUE - 1l));
 
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
-
-		try {
-			TypeUtil.parse(DataType.INTEGER, Double.toString(Integer.MIN_VALUE - 1d));
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
+		assertEquals(Integer.MIN_VALUE - 1L, TypeUtil.parse(DataType.INTEGER, Long.toString(Integer.MIN_VALUE - 1L)));
+		assertEquals(Integer.MIN_VALUE - 1L, TypeUtil.parse(DataType.INTEGER, Double.toString(Integer.MIN_VALUE - 1L)));
+		assertEquals(Integer.MAX_VALUE + 1L, TypeUtil.parse(DataType.INTEGER, Long.toString(Integer.MAX_VALUE + 1L)));
+		assertEquals(Integer.MAX_VALUE + 1L, TypeUtil.parse(DataType.INTEGER, Double.toString(Integer.MAX_VALUE + 1L)));
 
 		assertEquals(Integer.MAX_VALUE, TypeUtil.parse(DataType.INTEGER, Integer.toString(Integer.MAX_VALUE)));
-
-		try {
-			TypeUtil.parse(DataType.INTEGER, Long.toString(Integer.MAX_VALUE + 1l));
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
-
-		try {
-			TypeUtil.parse(DataType.INTEGER, Double.toString(Integer.MAX_VALUE + 1d));
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
 	}
 
 	@Test
@@ -153,21 +127,8 @@ public class TypeUtilTest {
 	@Test
 	public void castInteger(){
 
-		try {
-			TypeUtil.cast(DataType.INTEGER, Long.valueOf(Integer.MIN_VALUE - 1l));
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
-
-		try {
-			TypeUtil.cast(DataType.INTEGER, Long.valueOf(Integer.MAX_VALUE + 1l));
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
+		assertEquals(-2147483649L, TypeUtil.cast(DataType.INTEGER, Integer.MIN_VALUE - 1L));
+		assertEquals(2147483648L, TypeUtil.cast(DataType.INTEGER, Integer.MAX_VALUE + 1L));
 
 		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1f));
 		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1.0f));
@@ -191,21 +152,8 @@ public class TypeUtilTest {
 			// Ignored
 		}
 
-		try {
-			TypeUtil.cast(DataType.INTEGER, Double.valueOf(Integer.MIN_VALUE - 1d));
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
-
-		try {
-			TypeUtil.cast(DataType.INTEGER, Double.valueOf(Integer.MAX_VALUE + 1d));
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
+		assertEquals(-2147483649L, TypeUtil.cast(DataType.INTEGER, Integer.MIN_VALUE - 1D));
+		assertEquals(2147483648L, TypeUtil.cast(DataType.INTEGER, Integer.MAX_VALUE + 1D));
 	}
 
 	@Test

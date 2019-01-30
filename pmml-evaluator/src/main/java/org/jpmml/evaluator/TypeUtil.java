@@ -97,11 +97,10 @@ public class TypeUtil {
 	}
 
 	static
-	private Integer parseInteger(String value){
+	private Number parseInteger(String value){
 
 		try {
 			long result = Long.parseLong(value);
-
 			return toInteger(result);
 		} catch(NumberFormatException nfeInteger){
 
@@ -560,7 +559,7 @@ public class TypeUtil {
 	 * @see DataType#INTEGER
 	 */
 	static
-	private Integer toInteger(Object value){
+	private Number toInteger(Object value){
 
 		if(value instanceof Integer){
 			return (Integer)value;
@@ -576,39 +575,36 @@ public class TypeUtil {
 
 		if(value instanceof Long){
 			Long number = (Long)value;
-
 			return toInteger(number.longValue());
 		} else
 
 		if((value instanceof Short) || (value instanceof Byte)){
 			Number number = (Number)value;
-
-			return Integer.valueOf(number.intValue());
+			return number.intValue();
 		} else
 
 		if(value instanceof Boolean){
 			Boolean flag = (Boolean)value;
 
-			return (flag.booleanValue() ? Numbers.INTEGER_ONE : Numbers.INTEGER_ZERO);
+			return (flag ? Numbers.INTEGER_ONE : Numbers.INTEGER_ZERO);
 		} else
 
 		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
 			Number number = (Number)value;
-
-			return Integer.valueOf(number.intValue());
+			return number.intValue();
 		}
 
 		throw new TypeCheckException(DataType.INTEGER, value);
 	}
 
 	static
-	private Integer toInteger(long value){
+	private Number toInteger(long value){
 
 		if(value < Integer.MIN_VALUE || value > Integer.MAX_VALUE){
-			throw new UndefinedResultException();
+			return value;
 		}
 
-		return Integer.valueOf((int)value);
+		return (int) value;
 	}
 
 	/**
