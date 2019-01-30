@@ -66,6 +66,9 @@ public class ContinuousValue extends FieldValue {
 
 		switch(dataType){
 			case INTEGER:
+				if (value instanceof Long) {
+					return new ContinuousValue(dataType, value);
+				}
 				return new ContinuousInteger((Integer)value);
 			case FLOAT:
 				return new ContinuousFloat((Float)value);
