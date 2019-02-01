@@ -500,12 +500,12 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 		ModelEvaluationContext context = new ModelEvaluationContext(this);
 		context.setArguments(arguments);
 
-		Map<FieldName, ?> results = evaluate(context);
+		Map<FieldName, ?> results = evaluateInternal(context);
 
 		return OutputUtil.clear(results);
 	}
 
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
+	public Map<FieldName, ?> evaluateInternal(ModelEvaluationContext context){
 		M model = getModel();
 
 		if(!model.isScorable()){

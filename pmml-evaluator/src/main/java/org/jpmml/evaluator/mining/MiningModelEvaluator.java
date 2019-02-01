@@ -202,14 +202,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		MiningModelEvaluationContext context = new MiningModelEvaluationContext(this);
 		context.setArguments(arguments);
 
-		Map<FieldName, ?> results = evaluate(context);
+		Map<FieldName, ?> results = evaluateInternal(context);
 
 		return OutputUtil.clear(results);
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		return super.evaluate((MiningModelEvaluationContext)context);
+	public Map<FieldName, ?> evaluateInternal(ModelEvaluationContext context){
+		return super.evaluateInternal((MiningModelEvaluationContext)context);
 	}
 
 	@Override
@@ -509,7 +509,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			Map<FieldName, ?> results;
 
 			try {
-				results = segmentModelEvaluator.evaluate(segmentContext);
+				results = segmentModelEvaluator.evaluateInternal(segmentContext);
 			} catch(PMMLException pe){
 				throw pe.ensureContext(segment);
 			}
