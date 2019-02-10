@@ -72,7 +72,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 	private FieldValue evaluate(FieldName name, Map<FieldName, ?> arguments) throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
+		ModelEvaluationContext context = evaluator.createEvaluationContext();
 		context.setArguments(arguments);
 
 		return context.evaluate(name);

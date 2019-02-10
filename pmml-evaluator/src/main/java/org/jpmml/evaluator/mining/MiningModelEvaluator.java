@@ -68,7 +68,6 @@ import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.OutputField;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLException;
@@ -198,13 +197,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
-		MiningModelEvaluationContext context = new MiningModelEvaluationContext(this);
-		context.setArguments(arguments);
-
-		Map<FieldName, ?> results = evaluateInternal(context);
-
-		return OutputUtil.clear(results);
+	public ModelEvaluationContext createEvaluationContext(){
+		return new MiningModelEvaluationContext(this);
 	}
 
 	@Override
@@ -481,14 +475,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			ModelEvaluationContext segmentContext;
 
 			if(segmentModelEvaluator instanceof MiningModelEvaluator){
-				MiningModelEvaluator segmentMiningModelEvaluator = (MiningModelEvaluator)segmentModelEvaluator;
 
 				if(miningModelContext == null){
-					miningModelContext = new MiningModelEvaluationContext(segmentMiningModelEvaluator, context);
+					miningModelContext = (MiningModelEvaluationContext)segmentModelEvaluator.createEvaluationContext();
+					miningModelContext.setParent(context);
 				} else
 
 				{
-					miningModelContext.setModelEvaluator(segmentMiningModelEvaluator);
+					miningModelContext.setModelEvaluator(segmentModelEvaluator);
 				}
 
 				segmentContext = miningModelContext;
@@ -496,7 +490,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			{
 				if(modelContext == null){
-					modelContext = new ModelEvaluationContext(segmentModelEvaluator, context);
+					modelContext = segmentModelEvaluator.createEvaluationContext();
+					modelContext.setParent(context);
 				} else
 
 				{

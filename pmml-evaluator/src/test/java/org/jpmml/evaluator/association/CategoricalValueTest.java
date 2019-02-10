@@ -50,7 +50,7 @@ public class CategoricalValueTest extends ModelEvaluatorTest {
 
 	static
 	private void checkActiveItems(Set<String> items, AssociationModelEvaluator evaluator, Map<FieldName, ?> arguments){
-		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
+		ModelEvaluationContext context = evaluator.createEvaluationContext();
 		context.setArguments(arguments);
 
 		assertEquals(items, evaluator.getActiveItemIds(context));

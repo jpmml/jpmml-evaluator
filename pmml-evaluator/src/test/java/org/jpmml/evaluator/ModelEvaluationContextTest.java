@@ -39,7 +39,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 
 		ModelEvaluator<?> evaluator = createModelEvaluator(MissingPredictionTest.class);
 
-		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
+		ModelEvaluationContext context = evaluator.createEvaluationContext();
 		context.setArguments(Collections.singletonMap(name, 1d));
 
 		FieldValue value = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, 1d);
@@ -122,7 +122,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 
 		ModelEvaluator<?> evaluator = createModelEvaluator(MissingPredictionTest.class);
 
-		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
+		ModelEvaluationContext context = evaluator.createEvaluationContext();
 		context.setArguments(Collections.emptyMap());
 
 		try {

@@ -498,9 +498,13 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 		}
 	}
 
+	public ModelEvaluationContext createEvaluationContext(){
+		return new ModelEvaluationContext(this);
+	}
+
 	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
-		ModelEvaluationContext context = new ModelEvaluationContext(this);
+		ModelEvaluationContext context = createEvaluationContext();
 		context.setArguments(arguments);
 
 		Map<FieldName, ?> results = evaluateInternal(context);

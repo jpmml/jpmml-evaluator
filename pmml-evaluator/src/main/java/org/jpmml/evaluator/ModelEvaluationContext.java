@@ -41,12 +41,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 
 	public ModelEvaluationContext(ModelEvaluator<?> modelEvaluator){
-		this(modelEvaluator, null);
-	}
-
-	public ModelEvaluationContext(ModelEvaluator<?> modelEvaluator, MiningModelEvaluationContext parent){
 		setModelEvaluator(modelEvaluator);
-		setParent(parent);
 	}
 
 	@Override
@@ -173,7 +168,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 		return this.parent;
 	}
 
-	private void setParent(MiningModelEvaluationContext parent){
+	public void setParent(MiningModelEvaluationContext parent){
 		this.parent = parent;
 	}
 
