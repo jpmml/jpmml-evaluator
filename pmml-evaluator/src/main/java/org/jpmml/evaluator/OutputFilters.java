@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import org.dmg.pmml.OutputField;
+
 public interface OutputFilters {
 
 	/**
@@ -25,7 +27,13 @@ public interface OutputFilters {
 	 * A predicate that keeps all output fields.
 	 * </p>
 	 */
-	OutputFilter KEEP_ALL = (outputField -> true);
+	OutputFilter KEEP_ALL = new OutputFilter(){
+
+		@Override
+		public boolean test(OutputField outputField){
+			return true;
+		}
+	};
 
 	/**
 	 * <p>
@@ -34,5 +42,11 @@ public interface OutputFilters {
 	 *
 	 * @see org.dmg.pmml.OutputField#isFinalResult()
 	 */
-	OutputFilter KEEP_FINAL_RESULTS = (outputField -> outputField.isFinalResult());
+	OutputFilter KEEP_FINAL_RESULTS = new OutputFilter(){
+
+		@Override
+		public boolean test(OutputField outputField){
+			return outputField.isFinalResult();
+		}
+	};
 }
