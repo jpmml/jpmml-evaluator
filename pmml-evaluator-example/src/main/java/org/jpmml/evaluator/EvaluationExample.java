@@ -311,12 +311,12 @@ public class EvaluationExample extends Example {
 		if(inputRecords.size() > 0){
 			Map<FieldName, ?> inputRecord = inputRecords.get(0);
 
-			Sets.SetView<FieldName> missingInputFields = Sets.difference(new LinkedHashSet<>(EvaluatorUtil.getNames(inputFields)), inputRecord.keySet());
+			Sets.SetView<FieldName> missingInputFields = Sets.difference(new LinkedHashSet<>(Lists.transform(inputFields, InputField::getName)), inputRecord.keySet());
 			if((missingInputFields.size() > 0) && !this.sparse){
 				throw new IllegalArgumentException("Missing input field(s): " + missingInputFields);
 			}
 
-			Sets.SetView<FieldName> missingGroupFields = Sets.difference(new LinkedHashSet<>(EvaluatorUtil.getNames(groupFields)), inputRecord.keySet());
+			Sets.SetView<FieldName> missingGroupFields = Sets.difference(new LinkedHashSet<>(Lists.transform(groupFields, InputField::getName)), inputRecord.keySet());
 			if(missingGroupFields.size() > 0){
 				throw new IllegalArgumentException("Missing group field(s): " + missingGroupFields);
 			}
@@ -378,7 +378,7 @@ public class EvaluationExample extends Example {
 		CsvUtil.Table outputTable = new CsvUtil.Table();
 		outputTable.setSeparator(inputTable.getSeparator());
 
-		outputTable.addAll(BatchUtil.formatRecords(outputRecords, EvaluatorUtil.getNames(resultFields), createCellFormatter(this.missingValues.size() > 0 ? this.missingValues.get(0) : null)));
+		outputTable.addAll(BatchUtil.formatRecords(outputRecords, new ArrayList<>(Lists.transform(resultFields, ResultField::getName)), createCellFormatter(this.missingValues.size() > 0 ? this.missingValues.get(0) : null)));
 
 		if((inputTable.size() == outputTable.size()) && this.copyColumns){
 

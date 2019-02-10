@@ -37,6 +37,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 import com.google.common.collect.Table;
@@ -428,7 +429,9 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 		List<TargetField> targetFields = getTargetFields();
 		List<OutputField> outputFields = getOutputFields();
 
-		SetView<FieldName> intersection = Sets.intersection(batch.keySet(), new LinkedHashSet<>(EvaluatorUtil.getNames(outputFields)));
+		SetView<FieldName> intersection = Sets.intersection(batch.keySet(), new LinkedHashSet<>(Lists.transform(outputFields, OutputField::getName)));
+
+		boolean disjoint = intersection.isEmpty();
 
 		for(Map<FieldName, ?> record : records){
 			Map<FieldName, Object> arguments = new LinkedHashMap<>();
@@ -446,7 +449,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 			// "If there exist VerificationField elements that refer to OutputField elements,
 			// then any VerificationField element that refers to a MiningField element whose "usageType=target" should be ignored,
 			// because they are considered to represent a dependent variable from the training data set, not an expected output"
-			if(intersection.size() > 0){
+			if(!disjoint){
 
 				for(OutputField outputField : outputFields){
 					FieldName name = outputField.getName();

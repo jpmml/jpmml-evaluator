@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
@@ -152,6 +153,6 @@ public class EvaluatorUtilTest {
 
 	static
 	private void checkFieldNames(List<FieldName> names, List<? extends ResultField> resultFields){
-		assertEquals(names, EvaluatorUtil.getNames(resultFields));
+		assertEquals(names, Lists.transform(resultFields, ResultField::getName));
 	}
 }

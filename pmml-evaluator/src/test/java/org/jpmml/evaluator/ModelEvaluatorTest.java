@@ -150,7 +150,7 @@ public class ModelEvaluatorTest {
 		List<TargetField> targetFields = evaluator.getTargetFields();
 		List<OutputField> outputFields = evaluator.getOutputFields();
 
-		assertEquals(Lists.transform(targetNames, ModelEvaluatorTest::toFieldName), EvaluatorUtil.getNames(targetFields));
-		assertEquals(Lists.transform(outputNames, ModelEvaluatorTest::toFieldName), EvaluatorUtil.getNames(outputFields));
+		assertEquals(Lists.transform(targetNames, ModelEvaluatorTest::toFieldName), Lists.transform(targetFields, TargetField::getName));
+		assertEquals(Lists.transform(outputNames, ModelEvaluatorTest::toFieldName), Lists.transform(outputFields, OutputField::getName));
 	}
 }

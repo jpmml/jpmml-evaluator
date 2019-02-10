@@ -154,17 +154,4 @@ public class EvaluatorUtil {
 
 		return resultTable;
 	}
-
-	static
-	public List<FieldName> getNames(List<? extends ModelField> modelFields){
-		List<FieldName> result = new ArrayList<>(modelFields.size());
-
-		for(ModelField modelField : modelFields){
-			FieldName name = modelField.getName();
-
-			result.add(name);
-		}
-
-		return result;
-	}
 }
