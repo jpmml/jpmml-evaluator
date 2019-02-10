@@ -22,11 +22,9 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.google.common.collect.Iterables;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
@@ -39,9 +37,9 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 
 	private ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
 
-	private Function<FieldName, FieldName> inputMapper = null;
+	private InputMapper inputMapper = null;
 
-	private Function<FieldName, FieldName> resultMapper = null;
+	private ResultMapper resultMapper = null;
 
 
 	protected ModelEvaluatorBuilder(){
@@ -112,8 +110,8 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 
 		checkSchema(modelEvaluator);
 
-		Function<FieldName, FieldName> inputMapper = getInputMapper();
-		Function<FieldName, FieldName> resultMapper = getResultMapper();
+		InputMapper inputMapper = getInputMapper();
+		ResultMapper resultMapper = getResultMapper();
 
 		if(inputMapper != null){
 			Iterable<InputField> inputFields = modelEvaluator.getInputFields();
@@ -235,27 +233,21 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		return this;
 	}
 
-	public java.util.function.Function<FieldName, FieldName> getInputMapper(){
+	public InputMapper getInputMapper(){
 		return this.inputMapper;
 	}
 
-	/**
-	 * @see FieldMapper
-	 */
-	public ModelEvaluatorBuilder setInputMapper(Function<FieldName, FieldName> inputMapper){
+	public ModelEvaluatorBuilder setInputMapper(InputMapper inputMapper){
 		this.inputMapper = inputMapper;
 
 		return this;
 	}
 
-	public Function<FieldName, FieldName> getResultMapper(){
+	public ResultMapper getResultMapper(){
 		return this.resultMapper;
 	}
 
-	/**
-	 * @see FieldMapper
-	 */
-	public ModelEvaluatorBuilder setResultMapper(Function<FieldName, FieldName> resultMapper){
+	public ModelEvaluatorBuilder setResultMapper(ResultMapper resultMapper){
 		this.resultMapper = resultMapper;
 
 		return this;
