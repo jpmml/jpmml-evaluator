@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 import com.google.common.collect.Iterables;
 import org.dmg.pmml.MiningSchema;
@@ -216,16 +215,13 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		return this;
 	}
 
-	public Predicate<org.dmg.pmml.OutputField> getOutputFilter(){
+	public OutputFilter getOutputFilter(){
 		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
 
 		return configurationBuilder.getOutputFilter();
 	}
 
-	/**
-	 * @see OutputFilter
-	 */
-	public ModelEvaluatorBuilder setOutputFilter(Predicate<org.dmg.pmml.OutputField> outputFilter){
+	public ModelEvaluatorBuilder setOutputFilter(OutputFilter outputFilter){
 		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
 
 		configurationBuilder.setOutputFilter(outputFilter);

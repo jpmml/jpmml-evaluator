@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
-import java.util.function.Predicate;
 
 public class ConfigurationBuilder implements Cloneable, Serializable {
 
@@ -27,7 +26,7 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 
 	private ValueFactoryFactory valueFactoryFactory = null;
 
-	private Predicate<org.dmg.pmml.OutputField> outputFilter = null;
+	private OutputFilter outputFilter = null;
 
 
 	public ConfigurationBuilder(){
@@ -60,7 +59,7 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 
 		configuration.setValueFactoryFactory(valueFactoryFactory);
 
-		Predicate<org.dmg.pmml.OutputField> outputFilter = getOutputFilter();
+		OutputFilter outputFilter = getOutputFilter();
 		if(outputFilter == null){
 			outputFilter = OutputFilters.KEEP_ALL;
 		}
@@ -90,11 +89,11 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 		return this;
 	}
 
-	public Predicate<org.dmg.pmml.OutputField> getOutputFilter(){
+	public OutputFilter getOutputFilter(){
 		return this.outputFilter;
 	}
 
-	public ConfigurationBuilder setOutputFilter(Predicate<org.dmg.pmml.OutputField> outputFilter){
+	public ConfigurationBuilder setOutputFilter(OutputFilter outputFilter){
 		this.outputFilter = outputFilter;
 
 		return this;
