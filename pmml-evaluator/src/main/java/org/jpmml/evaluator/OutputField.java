@@ -27,10 +27,6 @@ public class OutputField extends ResultField {
 	private int depth = 0;
 
 
-	public OutputField(OutputField outputField){
-		this(outputField.getField(), outputField.getDepth() + 1);
-	}
-
 	public OutputField(org.dmg.pmml.OutputField outputField){
 		this(outputField, 0);
 	}

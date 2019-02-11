@@ -217,7 +217,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		List<TargetField> targetFields = getTargetFields();
 		for(TargetField targetField : targetFields){
-			FieldName name = targetField.getName();
+			FieldName name = targetField.getFieldName();
 
 			Object value;
 
@@ -538,7 +538,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		List<TargetField> targetFields = modelEvaluator.getTargetFields();
 		for(TargetField targetField : targetFields){
-			fieldNames.add(targetField.getName());
+			fieldNames.add(targetField.getFieldName());
 		}
 
 		TrainingInstances trainingInstances = nearestNeighborModel.getTrainingInstances();

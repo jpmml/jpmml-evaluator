@@ -45,7 +45,7 @@ public class TargetUtil {
 			}
 		}
 
-		return Collections.singletonMap(targetField.getName(), null);
+		return Collections.singletonMap(targetField.getFieldName(), null);
 	}
 
 	static
@@ -62,7 +62,7 @@ public class TargetUtil {
 
 		Object result = TypeUtil.cast(dataField.getDataType(), value.getValue());
 
-		return Collections.singletonMap(targetField.getName(), result);
+		return Collections.singletonMap(targetField.getFieldName(), result);
 	}
 
 	static
@@ -71,7 +71,7 @@ public class TargetUtil {
 
 		regression.computeResult(dataField.getDataType());
 
-		return Collections.singletonMap(targetField.getName(), regression);
+		return Collections.singletonMap(targetField.getFieldName(), regression);
 	}
 
 	static
@@ -91,7 +91,7 @@ public class TargetUtil {
 
 		vote.computeResult(dataField.getDataType());
 
-		return Collections.singletonMap(targetField.getName(), vote);
+		return Collections.singletonMap(targetField.getFieldName(), vote);
 	}
 
 	static
@@ -106,7 +106,7 @@ public class TargetUtil {
 			}
 		}
 
-		return Collections.singletonMap(targetField.getName(), null);
+		return Collections.singletonMap(targetField.getFieldName(), null);
 	}
 
 	static
@@ -115,7 +115,7 @@ public class TargetUtil {
 
 		classification.computeResult(dataField.getDataType());
 
-		return Collections.singletonMap(targetField.getName(), classification);
+		return Collections.singletonMap(targetField.getFieldName(), classification);
 	}
 
 	static

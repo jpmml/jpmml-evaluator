@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.google.common.collect.Iterables;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
@@ -107,32 +106,13 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml, model);
 		modelEvaluator.configure(configuration);
 
-		checkSchema(modelEvaluator);
-
 		InputMapper inputMapper = getInputMapper();
 		ResultMapper resultMapper = getResultMapper();
 
-		if(inputMapper != null){
-			Iterable<InputField> inputFields = modelEvaluator.getInputFields();
+		modelEvaluator.setInputMapper(inputMapper);
+		modelEvaluator.setResultMapper(resultMapper);
 
-			if(modelEvaluator instanceof HasGroupFields){
-				HasGroupFields hasGroupFields = (HasGroupFields)modelEvaluator;
-
-				inputFields = Iterables.concat(inputFields, hasGroupFields.getGroupFields());
-			}
-
-			for(InputField inputField : inputFields){
-				inputField.setName(inputMapper.apply(inputField.getName()));
-			}
-		} // End if
-
-		if(resultMapper != null){
-			Iterable<ResultField> resultFields = Iterables.concat(modelEvaluator.getTargetFields(), modelEvaluator.getOutputFields());
-
-			for(ResultField resultField : resultFields){
-				resultField.setName(resultMapper.apply(resultField.getName()));
-			}
-		}
+		checkSchema(modelEvaluator);
 
 		return modelEvaluator;
 	}

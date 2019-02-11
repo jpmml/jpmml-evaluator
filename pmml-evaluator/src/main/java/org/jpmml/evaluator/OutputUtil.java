@@ -53,18 +53,6 @@ public class OutputUtil {
 	private OutputUtil(){
 	}
 
-	static
-	public Map<FieldName, ?> clear(Map<FieldName, ?> results){
-
-		if(results instanceof OutputMap){
-			OutputMap outputMap = (OutputMap)results;
-
-			outputMap.clearPrivate();
-		}
-
-		return results;
-	}
-
 	/**
 	 * <p>
 	 * Evaluates the {@link Output} element.

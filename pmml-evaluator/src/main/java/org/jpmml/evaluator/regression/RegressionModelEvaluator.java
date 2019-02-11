@@ -79,7 +79,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		TargetField targetField = getTargetField();
 
 		FieldName targetName = regressionModel.getTargetField();
-		if(targetName != null && !Objects.equals(targetField.getName(), targetName)){
+		if(targetName != null && !Objects.equals(targetField.getFieldName(), targetName)){
 			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELDNAME, targetName);
 		}
 
@@ -123,7 +123,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		TargetField targetField = getTargetField();
 
 		FieldName targetName = regressionModel.getTargetField();
-		if(targetName != null && !Objects.equals(targetField.getName(), targetName)){
+		if(targetName != null && !Objects.equals(targetField.getFieldName(), targetName)){
 			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELDNAME, targetName);
 		}
 

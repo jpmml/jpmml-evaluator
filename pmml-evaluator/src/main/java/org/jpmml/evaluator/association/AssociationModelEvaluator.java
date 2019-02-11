@@ -443,7 +443,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 					InputField activeField = activeFields.get(0);
 
-					name = activeField.getName();
+					name = activeField.getFieldName();
 					category = value;
 				} else
 

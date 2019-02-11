@@ -529,7 +529,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					{
 						List<OutputField> outputFields = segmentModelEvaluator.getOutputFields();
 						for(OutputField outputField : outputFields){
-							FieldName name = outputField.getName();
+							FieldName name = outputField.getFieldName();
 
 							int depth = outputField.getDepth();
 							if(depth > 0){
@@ -687,7 +687,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			List<OutputField> outputFields = segmentModelEvaluator.getOutputFields();
 			for(OutputField outputField : outputFields){
-				OutputField nestedOutputField = new OutputField(outputField);
+				OutputField nestedOutputField = new OutputField(outputField.getField(), outputField.getDepth() + 1);
 
 				result.add(nestedOutputField);
 			}

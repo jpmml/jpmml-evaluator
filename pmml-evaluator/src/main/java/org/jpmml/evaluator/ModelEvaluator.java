@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -79,6 +80,10 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 	private M model = null;
 
 	private Configuration configuration = Configuration.getInstance();
+
+	private InputMapper inputMapper = null;
+
+	private ResultMapper resultMapper = null;
 
 	private ValueFactory<?> valueFactory = null;
 
@@ -185,7 +190,8 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 
 		setValueFactory(null);
 
-		this.outputResultFields = null;
+		resetInputFields();
+		resetResultFields();
 	}
 
 	@Override
@@ -304,21 +310,21 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 	public List<InputField> getInputFields(){
 
 		if(this.inputFields == null){
-			this.inputFields = createInputFields();
+			InputMapper inputMapper = getInputMapper();
+
+			this.inputFields = updateNames(createInputFields(), inputMapper);
 		}
 
 		return this.inputFields;
-	}
-
-	InputField findInputField(FieldName name){
-		return findModelField(getInputFields(), name);
 	}
 
 	@Override
 	public List<InputField> getActiveFields(){
 
 		if(this.activeInputFields == null){
-			this.activeInputFields = createInputFields(MiningField.UsageType.ACTIVE);
+			InputMapper inputMapper = getInputMapper();
+
+			this.activeInputFields = updateNames(createInputFields(MiningField.UsageType.ACTIVE), inputMapper);
 		}
 
 		return this.activeInputFields;
@@ -328,7 +334,9 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 	public List<TargetField> getTargetFields(){
 
 		if(this.targetResultFields == null){
-			this.targetResultFields = createTargetFields();
+			ResultMapper resultMapper = getResultMapper();
+
+			this.targetResultFields = updateNames(createTargetFields(), resultMapper);
 		}
 
 		return this.targetResultFields;
@@ -349,25 +357,32 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 	public FieldName getTargetName(){
 		TargetField targetField = getTargetField();
 
-		return targetField.getName();
+		return targetField.getFieldName();
 	}
 
 	TargetField findTargetField(FieldName name){
-		return findModelField(getTargetFields(), name);
+		List<TargetField> targetFields = getTargetFields();
+
+		for(TargetField targetField : targetFields){
+
+			if(Objects.equals(targetField.getFieldName(), name)){
+				return targetField;
+			}
+		}
+
+		return null;
 	}
 
 	@Override
 	public List<OutputField> getOutputFields(){
 
 		if(this.outputResultFields == null){
-			this.outputResultFields = createOutputFields();
+			ResultMapper resultMapper = getResultMapper();
+
+			this.outputResultFields = updateNames(createOutputFields(), resultMapper);
 		}
 
 		return this.outputResultFields;
-	}
-
-	OutputField findOutputField(FieldName name){
-		return findModelField(getOutputFields(), name);
 	}
 
 	/**
@@ -429,7 +444,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 		List<TargetField> targetFields = getTargetFields();
 		List<OutputField> outputFields = getOutputFields();
 
-		SetView<FieldName> intersection = Sets.intersection(batch.keySet(), new LinkedHashSet<>(Lists.transform(outputFields, OutputField::getName)));
+		SetView<FieldName> intersection = Sets.intersection(batch.keySet(), new LinkedHashSet<>(Lists.transform(outputFields, OutputField::getFieldName)));
 
 		boolean disjoint = intersection.isEmpty();
 
@@ -437,14 +452,17 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 			Map<FieldName, Object> arguments = new LinkedHashMap<>();
 
 			for(InputField inputField : inputFields){
-				FieldName name = inputField.getName();
+				FieldName name = inputField.getFieldName();
 
 				FieldValue value = inputField.prepare(record.get(name));
 
 				arguments.put(name, value);
 			}
 
-			Map<FieldName, ?> results = evaluate(arguments);
+			ModelEvaluationContext context = createEvaluationContext();
+			context.setArguments(arguments);
+
+			Map<FieldName, ?> results = evaluateInternal(context);
 
 			// "If there exist VerificationField elements that refer to OutputField elements,
 			// then any VerificationField element that refers to a MiningField element whose "usageType=target" should be ignored,
@@ -452,7 +470,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 			if(!disjoint){
 
 				for(OutputField outputField : outputFields){
-					FieldName name = outputField.getName();
+					FieldName name = outputField.getFieldName();
 
 					VerificationField verificationField = batch.get(name);
 					if(verificationField == null){
@@ -467,7 +485,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 			// then any VerificationField element that refers to a MiningField element whose "usageType=target" should be considered to represent an expected output"
 			{
 				for(TargetField targetField : targetFields){
-					FieldName name = targetField.getName();
+					FieldName name = targetField.getFieldName();
 
 					VerificationField verificationField = batch.get(name);
 					if(verificationField == null){
@@ -504,12 +522,63 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 
 	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+		InputMapper inputMapper = getInputMapper();
+		ResultMapper resultMapper = getResultMapper();
+
 		ModelEvaluationContext context = createEvaluationContext();
-		context.setArguments(arguments);
+
+		if(inputMapper != null){
+			Map<FieldName, Object> remappedArguments = new AbstractMap<FieldName, Object>(){
+
+				@Override
+				public Object get(Object key){
+					return arguments.get(inputMapper.apply((FieldName)key));
+				}
+
+				@Override
+				public Set<Map.Entry<FieldName, Object>> entrySet(){
+					throw new UnsupportedOperationException();
+				}
+			};
+
+			context.setArguments(remappedArguments);
+		} else
+
+		{
+			context.setArguments(arguments);
+		}
 
 		Map<FieldName, ?> results = evaluateInternal(context);
 
-		return OutputUtil.clear(results);
+		if(results instanceof OutputMap){
+			OutputMap outputMap = (OutputMap)results;
+
+			outputMap.clearPrivate();
+		} // End if
+
+		if(resultMapper != null){
+
+			if(results.size() == 0){
+				return results;
+			} else
+
+			if(results.size() == 1){
+				Map.Entry<FieldName, ?> entry = Iterables.getOnlyElement(results.entrySet());
+
+				return Collections.singletonMap(resultMapper.apply(entry.getKey()), entry.getValue());
+			}
+
+			Map<FieldName, Object> remappedResults = new LinkedHashMap<>(2 * results.size());
+
+			Collection<? extends Map.Entry<FieldName, ?>> entries = results.entrySet();
+			for(Map.Entry<FieldName, ?> entry : entries){
+				remappedResults.put(resultMapper.apply(entry.getKey()), entry.getValue());
+			}
+
+			return remappedResults;
+		}
+
+		return results;
 	}
 
 	public Map<FieldName, ?> evaluateInternal(ModelEvaluationContext context){
@@ -847,6 +916,18 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 		return Sets.immutableEnumSet(resultFeatures);
 	}
 
+	private void resetInputFields(){
+		this.inputFields = null;
+		this.activeInputFields = null;
+	}
+
+	private void resetResultFields(){
+		this.targetResultFields = null;
+		this.outputResultFields = null;
+
+		this.resultFeatures = null;
+	}
+
 	public <V> V getValue(LoadingCache<M, V> cache){
 		M model = getModel();
 
@@ -929,25 +1010,32 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 		this.configuration = configuration;
 	}
 
+	public InputMapper getInputMapper(){
+		return this.inputMapper;
+	}
+
+	void setInputMapper(InputMapper inputMapper){
+		this.inputMapper = inputMapper;
+
+		resetInputFields();
+	}
+
+	public ResultMapper getResultMapper(){
+		return this.resultMapper;
+	}
+
+	void setResultMapper(ResultMapper resultMapper){
+		this.resultMapper = resultMapper;
+
+		resetResultFields();
+	}
+
 	private ValueFactory<?> getValueFactory(){
 		return this.valueFactory;
 	}
 
 	private void setValueFactory(ValueFactory<?> valueFactory){
 		this.valueFactory = valueFactory;
-	}
-
-	static
-	private <F extends ModelField> F findModelField(Collection<? extends F> fields, FieldName name){
-
-		for(F field : fields){
-
-			if(Objects.equals(field.getName(), name)){
-				return field;
-			}
-		}
-
-		return null;
 	}
 
 	static
@@ -1004,6 +1092,25 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 		result.setRecords(records);
 
 		return result;
+	}
+
+	static
+	private <F extends ModelField> List<F> updateNames(List<F> fields, java.util.function.Function<FieldName, FieldName> mapper){
+
+		if(mapper == null){
+			return fields;
+		}
+
+		for(F field : fields){
+			FieldName name = field.getFieldName();
+
+			FieldName mappedName = mapper.apply(name);
+			if(mappedName != null && !Objects.equals(mappedName, name)){
+				field.setName(mappedName);
+			}
+		}
+
+		return fields;
 	}
 
 	private static final DataField DEFAULT_TARGET_CONTINUOUS_FLOAT = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.FLOAT);

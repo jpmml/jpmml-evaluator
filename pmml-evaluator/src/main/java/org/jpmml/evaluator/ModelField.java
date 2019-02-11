@@ -45,12 +45,17 @@ public class ModelField implements Serializable {
 		setField(Objects.requireNonNull(field));
 	}
 
+	/**
+	 * <p>
+	 * The name of this model field in user application space.
+	 * </p>
+	 *
+	 * @see getFieldName()
+	 */
 	public FieldName getName(){
 
 		if(this.name == null){
-			Field<?> field = getField();
-
-			return field.getName();
+			return getFieldName();
 		}
 
 		return this.name;
@@ -64,8 +69,19 @@ public class ModelField implements Serializable {
 	 * @param name The new name of the model field.
 	 * Use <code>null</code> to restore the origial name of the model field.
 	 */
-	public void setName(FieldName name){
+	void setName(FieldName name){
 		this.name = name;
+	}
+
+	/**
+	 * <p>
+	 * The name of this model field in PMML space.
+	 * </p>
+	 */
+	public FieldName getFieldName(){
+		Field<?> field = getField();
+
+		return field.getName();
 	}
 
 	public String getDisplayName(){
@@ -102,6 +118,7 @@ public class ModelField implements Serializable {
 	protected ToStringHelper toStringHelper(){
 		ToStringHelper helper = new ToStringHelper(this)
 			.add("name", getName())
+			.add("fieldName", getFieldName())
 			.add("displayName", getDisplayName())
 			.add("dataType", getDataType())
 			.add("opType", getOpType());

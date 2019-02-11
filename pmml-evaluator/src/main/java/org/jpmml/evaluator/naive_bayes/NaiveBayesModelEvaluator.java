@@ -140,7 +140,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			throw new MissingAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD);
 		} // End if
 
-		if(targetName != null && !Objects.equals(targetField.getName(), targetName)){
+		if(targetName != null && !Objects.equals(targetField.getFieldName(), targetName)){
 			throw new InvalidAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD, targetName);
 		}
 

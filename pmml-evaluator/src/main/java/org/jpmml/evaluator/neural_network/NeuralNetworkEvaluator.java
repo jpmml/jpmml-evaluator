@@ -162,7 +162,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		Map<FieldName, Object> results = null;
 
 		for(TargetField targetField : targetFields){
-			FieldName name = targetField.getName();
+			FieldName name = targetField.getFieldName();
 
 			List<NeuralOutput> neuralOutputs = neuralOutputMap.get(name);
 			if(neuralOutputs == null){
@@ -248,7 +248,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		Map<FieldName, Classification<V>> results = null;
 
 		for(TargetField targetField : targetFields){
-			FieldName name = targetField.getName();
+			FieldName name = targetField.getFieldName();
 
 			List<NeuralOutput> neuralOutputs = neuralOutputMap.get(name);
 			if(neuralOutputs == null){
