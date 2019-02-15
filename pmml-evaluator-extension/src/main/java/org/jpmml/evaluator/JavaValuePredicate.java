@@ -37,7 +37,7 @@ public class JavaValuePredicate extends JavaSimplePredicate {
 
 	@Override
 	public Boolean evaluate(EvaluationContext context){
-		FieldValue value = context.lookup(getIndex());
+		FieldValue value = context.evaluate(getIndex());
 
 		return evaluate(Objects.equals(FieldValues.MISSING_VALUE, value));
 	}

@@ -33,9 +33,9 @@ public class EvaluationContext {
 
 	private Map<FieldName, FieldValue> values = new HashMap<>();
 
-	private List<FieldName> cachedNames = null;
+	private FieldName[] indexedNames = null;
 
-	private List<FieldValue> cachedValues = null;
+	private FieldValue[] indexedValues = null;
 
 	private List<String> warnings = null;
 
@@ -49,18 +49,28 @@ public class EvaluationContext {
 	protected void reset(boolean clearValues){
 
 		if(clearValues){
+			this.values.clear();
 
-			if(!this.values.isEmpty()){
-				this.values.clear();
-			}
-
-			this.cachedNames = null;
-			this.cachedValues = null;
+			this.indexedNames = null;
+			this.indexedValues = null;
 		} // End if
 
-		if(this.warnings != null && !this.warnings.isEmpty()){
+		if(this.warnings != null){
 			this.warnings.clear();
 		}
+	}
+
+	public void setIndex(List<FieldName> names){
+
+		if(names == null){
+			this.indexedNames = null;
+			this.indexedValues = null;
+
+			return;
+		}
+
+		this.indexedNames = names.toArray(new FieldName[names.size()]);
+		this.indexedValues = new FieldValue[names.size()];
 	}
 
 	/**
@@ -84,24 +94,6 @@ public class EvaluationContext {
 
 	/**
 	 * <p>
-	 * Looks up a field value by field value cache position.
-	 * </p>
-	 *
-	 * @throws IllegalStateException If the field value cache is not available.
-	 * @throws IndexOutOfBoundsException If the field value cache position is out of range.
-	 */
-	public FieldValue lookup(int index){
-		List<FieldValue> cachedValues = this.cachedValues;
-
-		if(cachedValues == null){
-			throw new IllegalStateException();
-		}
-
-		return cachedValues.get(index);
-	}
-
-	/**
-	 * <p>
 	 * Looks up a field value by name.
 	 * If the field value has not been declared, then makes full effort to resolve and declare it.
 	 * </p>
@@ -117,25 +109,36 @@ public class EvaluationContext {
 		return resolve(name);
 	}
 
-	public List<FieldValue> evaluateAll(List<FieldName> names){
-		return evaluateAll(names, true);
+ 	/**
+ 	 * <p>
+	 * Looks up a field value by name index.
+	 * </p>
+	 */
+	public FieldValue evaluate(int index){
+
+		if(this.indexedNames == null){
+			throw new IllegalStateException();
+		}
+
+		FieldValue value = this.indexedValues[index];
+		if(value == null){
+			FieldName name = this.indexedNames[index];
+
+			value = evaluate(name);
+
+			this.indexedValues[index] = value;
+		}
+
+		return value;
 	}
 
-	public List<FieldValue> evaluateAll(List<FieldName> names, boolean cache){
-		this.cachedNames = null;
-		this.cachedValues = null;
-
+	public List<FieldValue> evaluateAll(List<FieldName> names){
 		List<FieldValue> values = new ArrayList<>(names.size());
 
 		for(FieldName name : names){
 			FieldValue value = evaluate(name);
 
 			values.add(value);
-		}
-
-		if(cache){
-			this.cachedNames = names;
-			this.cachedValues = values;
 		}
 
 		return values;

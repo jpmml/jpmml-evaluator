@@ -42,7 +42,7 @@ public class JavaComparisonPredicate extends JavaSimplePredicate {
 
 	@Override
 	public Boolean evaluate(EvaluationContext context){
-		FieldValue value = context.lookup(getIndex());
+		FieldValue value = context.evaluate(getIndex());
 
 		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
 			return null;
