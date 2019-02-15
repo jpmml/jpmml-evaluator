@@ -19,14 +19,17 @@
 package org.jpmml.evaluator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.OpType;
 
 abstract
 public class EvaluationContext {
@@ -71,6 +74,8 @@ public class EvaluationContext {
 
 		this.indexedNames = names.toArray(new FieldName[names.size()]);
 		this.indexedValues = new FieldValue[names.size()];
+
+		Arrays.fill(this.indexedValues, EvaluationContext.UNDECLARED_VALUE);
 	}
 
 	/**
@@ -84,8 +89,8 @@ public class EvaluationContext {
 	public FieldValue lookup(FieldName name){
 		Map<FieldName, FieldValue> values = getValues();
 
-		FieldValue value = values.get(name);
-		if(value != null || (value == null && values.containsKey(name))){
+		FieldValue value = values.getOrDefault(name, EvaluationContext.UNDECLARED_VALUE);
+		if(value != EvaluationContext.UNDECLARED_VALUE){
 			return value;
 		}
 
@@ -101,8 +106,8 @@ public class EvaluationContext {
 	public FieldValue evaluate(FieldName name){
 		Map<FieldName, FieldValue> values = getValues();
 
-		FieldValue value = values.get(name);
-		if(value != null || (value == null && values.containsKey(name))){
+		FieldValue value = values.getOrDefault(name, EvaluationContext.UNDECLARED_VALUE);
+		if(value != EvaluationContext.UNDECLARED_VALUE){
 			return value;
 		}
 
@@ -121,7 +126,7 @@ public class EvaluationContext {
 		}
 
 		FieldValue value = this.indexedValues[index];
-		if(value == null){
+		if(value == EvaluationContext.UNDECLARED_VALUE){
 			FieldName name = this.indexedNames[index];
 
 			value = evaluate(name);
@@ -162,12 +167,11 @@ public class EvaluationContext {
 	public FieldValue declare(FieldName name, FieldValue value){
 		Map<FieldName, FieldValue> values = getValues();
 
-		boolean declared = values.containsKey(name);
-		if(declared){
+		// XXX: Fails to detect a situation where the name was already associated with a missing value (null)
+		FieldValue prevValue = values.putIfAbsent(name, value);
+		if(prevValue != null){
 			throw new DuplicateValueException(name);
 		}
-
-		values.put(name, value);
 
 		return value;
 	}
@@ -205,4 +209,12 @@ public class EvaluationContext {
 
 		return this.warnings;
 	}
+
+	private static final FieldValue UNDECLARED_VALUE = new FieldValue(DataType.DOUBLE, Double.NaN){
+
+		@Override
+		public OpType getOpType(){
+			return OpType.CONTINUOUS;
+		}
+	};
 }
