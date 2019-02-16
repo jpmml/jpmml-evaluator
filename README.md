@@ -120,6 +120,7 @@ Core types:
     * Class `org.jpmml.evaluator.TargetField` - Describes a primary model result field
     * Class `org.jpmml.evaluator.OutputField` - Describes a secondary model result field
 * Abstract class `org.jpmml.evaluator.FieldValue`
+  * Class `org.jpmml.evaluator.CollectionValue`
   * Class `org.jpmml.evaluator.ContinuousValue`
   * Abstract class `org.jpmml.evaluator.DiscreteValue`
     * Class `org.jpmml.evaluator.CategoricalValue`

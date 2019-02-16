@@ -102,14 +102,14 @@ public class OrdinalValue extends DiscreteValue {
 	}
 
 	static
-	public OrdinalValue create(DataType dataType, List<?> ordering, Object value){
+	public FieldValue create(DataType dataType, List<?> ordering, Object value){
 
 		if(ordering != null && ordering.isEmpty()){
 			ordering = null;
 		} // End if
 
 		if(value instanceof Collection){
-			return new OrdinalValue(dataType, ordering, value);
+			return new CollectionValue(dataType, OpType.ORDINAL, ordering, (Collection<?>)value);
 		}
 
 		switch(dataType){

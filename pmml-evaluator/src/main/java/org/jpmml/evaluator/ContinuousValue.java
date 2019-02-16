@@ -58,10 +58,10 @@ public class ContinuousValue extends FieldValue {
 	}
 
 	static
-	public ContinuousValue create(DataType dataType, Object value){
+	public FieldValue create(DataType dataType, Object value){
 
 		if(value instanceof Collection){
-			return new ContinuousValue(dataType, value);
+			return new CollectionValue(dataType, OpType.CONTINUOUS, (Collection<?>)value);
 		}
 
 		switch(dataType){
