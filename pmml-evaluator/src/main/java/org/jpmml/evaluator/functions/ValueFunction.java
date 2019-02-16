@@ -19,11 +19,9 @@
 package org.jpmml.evaluator.functions;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.TypeInfos;
 
 abstract
@@ -44,7 +42,7 @@ public class ValueFunction extends AbstractFunction {
 	}
 
 	private FieldValue evaluate(FieldValue value){
-		Boolean result = evaluate(Objects.equals(FieldValues.MISSING_VALUE, value));
+		Boolean result = evaluate(FieldValueUtil.isMissing(value));
 
 		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 	}

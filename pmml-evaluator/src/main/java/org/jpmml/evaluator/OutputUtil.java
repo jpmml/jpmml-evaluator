@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 import com.google.common.base.Joiner;
@@ -226,7 +225,7 @@ public class OutputUtil {
 						}
 
 						FieldValue expectedTargetValue = context.evaluate(targetName);
-						if(Objects.equals(FieldValues.MISSING_VALUE, expectedTargetValue)){
+						if(FieldValueUtil.isMissing(expectedTargetValue)){
 							throw new MissingValueException(targetName, outputField);
 						}
 

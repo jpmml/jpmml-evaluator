@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
@@ -34,7 +33,7 @@ import org.dmg.pmml.scorecard.Scorecard;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValues;
+import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
@@ -124,7 +123,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 				ComplexPartialScore complexPartialScore = attribute.getComplexPartialScore();
 				if(complexPartialScore != null){
 					FieldValue computedValue = ExpressionUtil.evaluateExpressionContainer(complexPartialScore, context);
-					if(Objects.equals(FieldValues.MISSING_VALUE, computedValue)){
+					if(FieldValueUtil.isMissing(computedValue)){
 						return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 					}
 

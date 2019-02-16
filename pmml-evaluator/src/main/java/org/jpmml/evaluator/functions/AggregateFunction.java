@@ -19,7 +19,6 @@
 package org.jpmml.evaluator.functions;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
 import org.dmg.pmml.DataType;
@@ -49,7 +48,7 @@ public class AggregateFunction extends AbstractNumericFunction {
 			FieldValue value = getOptionalArgument(arguments, i);
 
 			// "Missing values in the input to an aggregate function are simply ignored"
-			if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+			if(FieldValueUtil.isMissing(value)){
 				continue;
 			}
 

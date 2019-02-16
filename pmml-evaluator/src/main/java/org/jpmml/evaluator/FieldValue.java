@@ -212,7 +212,7 @@ public class FieldValue implements TypeInfo, Serializable {
 			@Override
 			public boolean test(FieldValue value){
 
-				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+				if(FieldValueUtil.isMissing(value)){
 					return false;
 				}
 

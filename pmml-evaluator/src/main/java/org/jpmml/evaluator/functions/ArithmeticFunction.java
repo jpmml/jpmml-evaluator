@@ -19,7 +19,6 @@
 package org.jpmml.evaluator.functions;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
@@ -49,7 +48,7 @@ public class ArithmeticFunction extends AbstractNumericFunction {
 	private FieldValue evaluate(FieldValue left, FieldValue right){
 
 		// "If one of the input fields of a simple arithmetic function is a missing value, then the result evaluates to missing value"
-		if(Objects.equals(FieldValues.MISSING_VALUE, left) || Objects.equals(FieldValues.MISSING_VALUE, right)){
+		if(FieldValueUtil.isMissing(left) || FieldValueUtil.isMissing(right)){
 			return FieldValues.MISSING_VALUE;
 		}
 

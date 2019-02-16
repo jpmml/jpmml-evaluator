@@ -20,7 +20,6 @@ package org.jpmml.evaluator;
 
 import java.util.BitSet;
 import java.util.List;
-import java.util.Objects;
 
 import org.dmg.pmml.BinarySimilarity;
 import org.dmg.pmml.Chebychev;
@@ -186,7 +185,7 @@ public class MeasureUtil {
 			ComparisonField comparisonField = comparisonFields.get(i);
 
 			FieldValue value = values.get(i);
-			if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+			if(FieldValueUtil.isMissing(value)){
 				continue;
 			}
 

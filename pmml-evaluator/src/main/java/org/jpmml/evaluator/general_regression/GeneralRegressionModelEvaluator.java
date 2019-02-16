@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -64,7 +63,6 @@ import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.HasParsedValueMapping;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.InvalidElementException;
@@ -814,7 +812,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private FieldValue getVariable(FieldName name, EvaluationContext context){
 		FieldValue value = context.evaluate(name);
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+		if(FieldValueUtil.isMissing(value)){
 			throw new MissingValueException(name);
 		}
 
@@ -995,7 +993,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				FactorHandler factorHandler = factorHandlers.get(i);
 
 				FieldValue value = context.evaluate(factorHandler.getField());
-				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+				if(FieldValueUtil.isMissing(value)){
 					return null;
 				}
 
@@ -1011,7 +1009,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				CovariateHandler covariateHandler = covariateHandlers.get(i);
 
 				FieldValue value = context.evaluate(covariateHandler.getField());
-				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+				if(FieldValueUtil.isMissing(value)){
 					return null;
 				}
 

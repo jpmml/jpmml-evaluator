@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Objects;
-
 import org.jpmml.evaluator.functions.ValueFunction;
 
 /**
@@ -39,7 +37,7 @@ public class JavaValuePredicate extends JavaSimplePredicate {
 	public Boolean evaluate(EvaluationContext context){
 		FieldValue value = context.evaluate(getIndex());
 
-		return evaluate(Objects.equals(FieldValues.MISSING_VALUE, value));
+		return evaluate(FieldValueUtil.isMissing(value));
 	}
 
 	static

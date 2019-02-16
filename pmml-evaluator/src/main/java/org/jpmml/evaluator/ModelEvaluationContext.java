@@ -207,7 +207,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 			return value;
 		} // End if
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+		if(FieldValueUtil.isMissing(value)){
 			return InputFieldUtil.performMissingValueTreatment(field, miningField);
 		} else
 

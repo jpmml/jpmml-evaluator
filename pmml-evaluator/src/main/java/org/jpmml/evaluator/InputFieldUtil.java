@@ -90,7 +90,7 @@ public class InputFieldUtil {
 	static
 	public FieldValue prepareInputValue(Field<?> field, MiningField miningField, Object value){
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, value) || (value == null)){
+		if(FieldValueUtil.isMissing(value)){
 			return performMissingValueTreatment(field, miningField);
 		} // End if
 
@@ -169,7 +169,7 @@ public class InputFieldUtil {
 			throw new InvalidElementException(miningField);
 		} // End if
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+		if(FieldValueUtil.isMissing(value)){
 			throw new TypeCheckException(Number.class, null);
 		}
 
@@ -413,7 +413,7 @@ public class InputFieldUtil {
 	static
 	private FieldValue createInputValue(Field<?> field, MiningField miningField, Object value){
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, value) || (value == null)){
+		if(FieldValueUtil.isMissing(value)){
 			return FieldValues.MISSING_VALUE;
 		}
 
