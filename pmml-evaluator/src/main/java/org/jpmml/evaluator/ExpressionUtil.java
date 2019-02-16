@@ -266,7 +266,7 @@ public class ExpressionUtil {
 		FieldValue termValue = ExpressionUtil.evaluateExpressionContainer(textIndex, context);
 
 		// See http://mantis.dmg.org/view.php?id=171
-		if(Objects.equals(FieldValues.MISSING_VALUE, textIndex) || Objects.equals(FieldValues.MISSING_VALUE, termValue)){
+		if(Objects.equals(FieldValues.MISSING_VALUE, textValue) || Objects.equals(FieldValues.MISSING_VALUE, termValue)){
 			return FieldValues.MISSING_VALUE;
 		}
 
