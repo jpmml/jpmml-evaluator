@@ -23,7 +23,7 @@ import java.util.Collection;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 
-public class ContinuousValue extends FieldValue {
+public class ContinuousValue extends ScalarValue {
 
 	ContinuousValue(DataType dataType, Object value){
 		super(dataType, value);
@@ -77,7 +77,7 @@ public class ContinuousValue extends FieldValue {
 	}
 
 	static
-	private class ContinuousInteger extends ContinuousValue implements Scalar {
+	private class ContinuousInteger extends ContinuousValue {
 
 		ContinuousInteger(Object value){
 			super(DataType.INTEGER, value);
@@ -95,7 +95,7 @@ public class ContinuousValue extends FieldValue {
 	}
 
 	static
-	private class ContinuousFloat extends ContinuousValue implements Scalar {
+	private class ContinuousFloat extends ContinuousValue {
 
 		ContinuousFloat(Object value){
 			super(DataType.FLOAT, value);
@@ -113,7 +113,7 @@ public class ContinuousValue extends FieldValue {
 	}
 
 	static
-	private class ContinuousDouble extends ContinuousValue implements Scalar {
+	private class ContinuousDouble extends ContinuousValue {
 
 		ContinuousDouble(Object value){
 			super(DataType.DOUBLE, value);

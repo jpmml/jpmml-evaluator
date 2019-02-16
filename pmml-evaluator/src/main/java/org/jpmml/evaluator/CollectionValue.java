@@ -38,11 +38,9 @@ public class CollectionValue extends FieldValue {
 	}
 
 	CollectionValue(DataType dataType, OpType opType, List<?> ordering, Collection<?> value){
-		super(dataType, Objects.requireNonNull(value));
+		super(dataType, value);
 
-		opType = Objects.requireNonNull(opType);
-
-		setOpType(opType);
+		setOpType(Objects.requireNonNull(opType));
 
 		switch(opType){
 			case CONTINUOUS:
@@ -57,6 +55,16 @@ public class CollectionValue extends FieldValue {
 			default:
 				throw new IllegalArgumentException();
 		}
+	}
+
+	@Override
+	public int compareToString(String string){
+		throw new EvaluationException("Collection value cannot be used in comparison operations");
+	}
+
+	@Override
+	public int compareToValue(FieldValue value){
+		throw new EvaluationException("Collection value cannot be used in comparison operations");
 	}
 
 	@Override

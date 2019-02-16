@@ -21,7 +21,7 @@ package org.jpmml.evaluator;
 import org.dmg.pmml.DataType;
 
 abstract
-public class DiscreteValue extends FieldValue {
+public class DiscreteValue extends ScalarValue {
 
 	DiscreteValue(DataType dataType, Object value){
 		super(dataType, value);

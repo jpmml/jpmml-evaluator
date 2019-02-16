@@ -62,7 +62,7 @@ public class CategoricalValue extends DiscreteValue {
 	}
 
 	static
-	private class CategoricalString extends CategoricalValue implements Scalar {
+	private class CategoricalString extends CategoricalValue {
 
 		CategoricalString(Object value){
 			super(DataType.STRING, value);
@@ -75,7 +75,7 @@ public class CategoricalValue extends DiscreteValue {
 	}
 
 	static
-	private class CategoricalBoolean extends CategoricalValue implements Scalar {
+	private class CategoricalBoolean extends CategoricalValue {
 
 		CategoricalBoolean(Object value){
 			super(DataType.BOOLEAN, value);

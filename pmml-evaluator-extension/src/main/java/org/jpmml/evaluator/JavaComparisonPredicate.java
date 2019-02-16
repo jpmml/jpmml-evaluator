@@ -48,7 +48,7 @@ public class JavaComparisonPredicate extends JavaSimplePredicate {
 			return null;
 		}
 
-		return evaluate(value.compareTo(getValue()));
+		return evaluate(value.compareToValue(getValue()));
 	}
 
 	public FieldValue getValue(){

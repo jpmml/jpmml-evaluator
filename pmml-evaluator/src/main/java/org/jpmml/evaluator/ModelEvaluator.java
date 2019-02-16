@@ -504,7 +504,11 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 			return;
 		} // End if
 
-		if(!(actual instanceof Collection)){
+		if(actual instanceof Collection){
+			// Ignored
+		} else
+
+		{
 			DataType dataType = TypeUtil.getDataType(actual);
 
 			expected = TypeUtil.parseOrCast(dataType, expected);

@@ -67,7 +67,7 @@ public class FieldValueTest {
 		}
 
 		try {
-			zero.compareTo(zero);
+			zero.compareToValue(zero);
 
 			fail();
 		} catch(EvaluationException ee){
@@ -173,15 +173,15 @@ public class FieldValueTest {
 		assertTrue(one.compareToString("false") > 0);
 		assertTrue(one.compareToString("true") == 0);
 
-		assertTrue(zero.compareTo(zero) == 0);
-		assertTrue(zero.compareTo(one) < 0);
+		assertTrue(zero.compareToValue(zero) == 0);
+		assertTrue(zero.compareToValue(one) < 0);
 
 		try {
 			TypeInfo typeInfo = new SimpleTypeInfo(zero.getDataType(), OpType.CATEGORICAL);
 
 			FieldValue categoricalZero = zero.cast(typeInfo);
 
-			zero.compareTo(categoricalZero);
+			((ScalarValue)zero).compareTo((ScalarValue)categoricalZero);
 
 			fail();
 		} catch(ClassCastException cce){
@@ -193,15 +193,15 @@ public class FieldValueTest {
 
 			FieldValue doubleZero = zero.cast(typeInfo);
 
-			zero.compareTo(doubleZero);
+			((ScalarValue)zero).compareTo((ScalarValue)doubleZero);
 
 			fail();
 		} catch(ClassCastException cce){
 			// Ignored
 		}
 
-		assertTrue(one.compareTo(zero) > 0);
-		assertTrue(one.compareTo(one) == 0);
+		assertTrue(one.compareToValue(zero) > 0);
+		assertTrue(one.compareToValue(one) == 0);
 	}
 
 	@Test
@@ -232,7 +232,7 @@ public class FieldValueTest {
 		}
 
 		try {
-			zero.compareTo(zero);
+			zero.compareToValue(zero);
 
 			fail();
 		} catch(EvaluationException ee){
@@ -303,7 +303,7 @@ public class FieldValueTest {
 
 		assertTrue(negativeZero.equalsValue(positiveZero));
 
-		assertTrue(negativeZero.compareTo(positiveZero) == 0);
+		assertTrue(negativeZero.compareToValue(positiveZero) == 0);
 	}
 
 	@Test
@@ -346,7 +346,7 @@ public class FieldValueTest {
 
 		assertTrue(negativeZero.equalsValue(positiveZero));
 
-		assertTrue(negativeZero.compareTo(positiveZero) == 0);
+		assertTrue(negativeZero.compareToValue(positiveZero) == 0);
 	}
 
 	@Test
@@ -378,11 +378,11 @@ public class FieldValueTest {
 		assertTrue(one.compareToString("false") > 0);
 		assertTrue(one.compareToString("true") == 0);
 
-		assertTrue(zero.compareTo(zero) == 0);
-		assertTrue(zero.compareTo(one) < 0);
+		assertTrue(zero.compareToValue(zero) == 0);
+		assertTrue(zero.compareToValue(one) < 0);
 
-		assertTrue(one.compareTo(zero) > 0);
-		assertTrue(one.compareTo(one) == 0);
+		assertTrue(one.compareToValue(zero) > 0);
+		assertTrue(one.compareToValue(one) == 0);
 	}
 
 	@Test

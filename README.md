@@ -121,10 +121,11 @@ Core types:
     * Class `org.jpmml.evaluator.OutputField` - Describes a secondary model result field
 * Abstract class `org.jpmml.evaluator.FieldValue`
   * Class `org.jpmml.evaluator.CollectionValue`
-  * Class `org.jpmml.evaluator.ContinuousValue`
-  * Abstract class `org.jpmml.evaluator.DiscreteValue`
-    * Class `org.jpmml.evaluator.CategoricalValue`
-    * Class `org.jpmml.evaluator.OrdinalValue`
+  * Abstract class `org.jpmml.evaluator.ScalarValue`
+    * Class `org.jpmml.evaluator.ContinuousValue`
+    * Abstract class `org.jpmml.evaluator.DiscreteValue`
+      * Class `org.jpmml.evaluator.CategoricalValue`
+      * Class `org.jpmml.evaluator.OrdinalValue`
 * Utility class `org.jpmml.evaluator.EvaluatorUtil`
 * Utility class `org.jpmml.evaluator.FieldValueUtil`
 

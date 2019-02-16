@@ -210,7 +210,7 @@ public class EvaluationContext {
 		return this.warnings;
 	}
 
-	private static final FieldValue UNDECLARED_VALUE = new FieldValue(DataType.DOUBLE, Double.NaN){
+	private static final FieldValue UNDECLARED_VALUE = new ScalarValue(DataType.DOUBLE, Double.NaN){
 
 		@Override
 		public OpType getOpType(){

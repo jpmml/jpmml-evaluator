@@ -455,9 +455,9 @@ public class ExpressionUtil {
 			case AVERAGE:
 				return Functions.AVG.evaluate((List<FieldValue>)values);
 			case MIN:
-				return Collections.min((List<FieldValue>)values);
+				return Collections.min((List<ScalarValue>)values);
 			case MAX:
-				return Collections.max((List<FieldValue>)values);
+				return Collections.max((List<ScalarValue>)values);
 			default:
 				throw new UnsupportedAttributeException(aggregate, function);
 		}

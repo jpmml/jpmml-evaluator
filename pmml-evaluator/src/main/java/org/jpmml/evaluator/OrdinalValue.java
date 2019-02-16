@@ -133,7 +133,7 @@ public class OrdinalValue extends DiscreteValue {
 	}
 
 	static
-	private class OrdinalString extends OrdinalValue implements Scalar {
+	private class OrdinalString extends OrdinalValue {
 
 		OrdinalString(List<?> ordering, Object value){
 			super(DataType.STRING, ordering, value);
