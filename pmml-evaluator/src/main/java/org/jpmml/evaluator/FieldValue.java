@@ -68,8 +68,18 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 
 
 	FieldValue(DataType dataType, Object value){
-		setDataType(Objects.requireNonNull(dataType));
-		setValue(filterValue(Objects.requireNonNull(value)));
+		dataType = Objects.requireNonNull(dataType);
+
+		if(value instanceof Collection){
+			// Ignored
+		} else
+
+		{
+			value = filterValue(TypeUtil.parseOrCast(dataType, Objects.requireNonNull(value)));
+		}
+
+		setDataType(dataType);
+		setValue(value);
 	}
 
 	public FieldValue cast(DataType dataType, OpType opType){
@@ -449,14 +459,6 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 
 		if(dataType == null || opType == null){
 			throw new IllegalArgumentException();
-		} // End if
-
-		if(value instanceof Collection){
-			// Ignored
-		} else
-
-		{
-			value = TypeUtil.parseOrCast(dataType, value);
 		}
 
 		switch(opType){
@@ -480,14 +482,6 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 
 		DataType dataType = typeInfo.getDataType();
 		OpType opType = typeInfo.getOpType();
-
-		if(value instanceof Collection){
-			// Ignored
-		} else
-
-		{
-			value = TypeUtil.parseOrCast(dataType, value);
-		}
 
 		switch(opType){
 			case CONTINUOUS:

@@ -66,11 +66,11 @@ public class ContinuousValue extends FieldValue {
 
 		switch(dataType){
 			case INTEGER:
-				return new ContinuousInteger((Integer)value);
+				return new ContinuousInteger(value);
 			case FLOAT:
-				return new ContinuousFloat((Float)value);
+				return new ContinuousFloat(value);
 			case DOUBLE:
-				return new ContinuousDouble((Double)value);
+				return new ContinuousDouble(value);
 			default:
 				return new ContinuousValue(dataType, value);
 		}
@@ -79,7 +79,7 @@ public class ContinuousValue extends FieldValue {
 	static
 	private class ContinuousInteger extends ContinuousValue implements Scalar {
 
-		ContinuousInteger(Integer value){
+		ContinuousInteger(Object value){
 			super(DataType.INTEGER, value);
 		}
 
@@ -97,7 +97,7 @@ public class ContinuousValue extends FieldValue {
 	static
 	private class ContinuousFloat extends ContinuousValue implements Scalar {
 
-		ContinuousFloat(Float value){
+		ContinuousFloat(Object value){
 			super(DataType.FLOAT, value);
 		}
 
@@ -115,7 +115,7 @@ public class ContinuousValue extends FieldValue {
 	static
 	private class ContinuousDouble extends ContinuousValue implements Scalar {
 
-		ContinuousDouble(Double value){
+		ContinuousDouble(Object value){
 			super(DataType.DOUBLE, value);
 		}
 

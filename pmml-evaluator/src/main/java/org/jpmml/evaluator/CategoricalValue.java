@@ -53,9 +53,9 @@ public class CategoricalValue extends DiscreteValue {
 
 		switch(dataType){
 			case STRING:
-				return new CategoricalString((String)value);
+				return new CategoricalString(value);
 			case BOOLEAN:
-				return new CategoricalBoolean((Boolean)value);
+				return new CategoricalBoolean(value);
 			default:
 				return new CategoricalValue(dataType, value);
 		}
@@ -64,7 +64,7 @@ public class CategoricalValue extends DiscreteValue {
 	static
 	private class CategoricalString extends CategoricalValue implements Scalar {
 
-		CategoricalString(String value){
+		CategoricalString(Object value){
 			super(DataType.STRING, value);
 		}
 
@@ -77,7 +77,7 @@ public class CategoricalValue extends DiscreteValue {
 	static
 	private class CategoricalBoolean extends CategoricalValue implements Scalar {
 
-		CategoricalBoolean(Boolean value){
+		CategoricalBoolean(Object value){
 			super(DataType.BOOLEAN, value);
 		}
 
