@@ -421,12 +421,12 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 	}
 
 	@Override
-	public void verify(){
+	public ModelEvaluator<M> verify(){
 		M model = getModel();
 
 		ModelVerification modelVerification = model.getModelVerification();
 		if(modelVerification == null){
-			return;
+			return this;
 		}
 
 		VerificationBatch batch = CacheUtil.getValue(modelVerification, ModelEvaluator.batchCache);
@@ -496,6 +496,8 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasPMML, HasM
 				}
 			}
 		}
+
+		return this;
 	}
 
 	private void verify(Object expected, Object actual, double precision, double zeroThreshold){
