@@ -25,7 +25,7 @@ import org.dmg.pmml.PMML;
  * A marker interface for {@link Evaluator} implementations that are backed by an in-memory {@link PMML} object.
  * </p>
  */
-public interface HasPMML extends Evaluator {
+public interface HasPMML {
 
 	PMML getPMML();
 }
