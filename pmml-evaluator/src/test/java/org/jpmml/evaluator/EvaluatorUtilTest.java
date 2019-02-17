@@ -26,14 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.OpType;
-import org.jpmml.evaluator.association.TransactionalSchemaTest;
-import org.jpmml.evaluator.clustering.RankingTest;
-import org.jpmml.evaluator.nearest_neighbor.MixedNeighborhoodTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -107,27 +100,6 @@ public class EvaluatorUtilTest {
 	}
 
 	@Test
-	public void prepare() throws Exception {
-		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(TransactionalSchemaTest.class);
-
-		InputField inputField = Iterables.getOnlyElement(evaluator.getInputFields());
-
-		assertEquals(FieldName.create("item"), inputField.getName());
-
-		FieldValue simple = inputField.prepare("Cracker");
-
-		assertEquals("Cracker", simple.getValue());
-		assertEquals(DataType.STRING, simple.getDataType());
-		assertEquals(OpType.CATEGORICAL, simple.getOpType());
-
-		FieldValue collection = inputField.prepare(Arrays.asList("Cracker", "Water", "Coke"));
-
-		assertEquals(Arrays.asList("Cracker", "Water", "Coke"), collection.getValue());
-		assertEquals(DataType.STRING, collection.getDataType());
-		assertEquals(OpType.CATEGORICAL, collection.getOpType());
-	}
-
-	@Test
 	public void groupRows(){
 		List<Map<FieldName, Object>> table = new ArrayList<>();
 		table.add(createRow("1", "Cracker"));
@@ -145,21 +117,6 @@ public class EvaluatorUtilTest {
 		checkGroupedRow(table.get(2), "3", Arrays.asList("Cracker", "Water", "Coke"));
 	}
 
-	@Test
-	public void getTargetFields() throws Exception {
-		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(MixedNeighborhoodTest.class);
-
-		checkFieldNames(Arrays.asList(FieldName.create("species"), FieldName.create("species_class")), evaluator.getTargetFields());
-
-		evaluator = ModelEvaluatorTest.createModelEvaluator(RankingTest.class);
-
-		checkFieldNames(Collections.singletonList(null), evaluator.getTargetFields());
-
-		evaluator = ModelEvaluatorTest.createModelEvaluator(TransactionalSchemaTest.class);
-
-		checkFieldNames(Collections.emptyList(), evaluator.getTargetFields());
-	}
-
 	static
 	private Map<FieldName, Object> createRow(String transaction, String item){
 		Map<FieldName, Object> result = new HashMap<>();
@@ -175,10 +132,5 @@ public class EvaluatorUtilTest {
 
 		assertEquals(transaction, row.get(FieldName.create("transaction")));
 		assertEquals(items, row.get(FieldName.create("item")));
-	}
-
-	static
-	private void checkFieldNames(List<FieldName> names, List<? extends ResultField> resultFields){
-		assertEquals(names, Lists.transform(resultFields, ResultField::getName));
 	}
 }

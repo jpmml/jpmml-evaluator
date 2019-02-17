@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator.clustering;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
@@ -32,6 +33,8 @@ public class RankingTest extends ModelEvaluatorTest {
 	@Test
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
+
+		checkTargetFields(Collections.singletonList(null), evaluator);
 
 		Map<FieldName, ?> arguments = createArguments("input", 1d);
 

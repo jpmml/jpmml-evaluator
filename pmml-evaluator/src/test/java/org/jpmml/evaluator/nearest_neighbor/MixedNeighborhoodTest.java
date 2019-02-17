@@ -27,6 +27,7 @@
  */
 package org.jpmml.evaluator.nearest_neighbor;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
@@ -42,6 +43,8 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 	@Test
 	public void evaluate() throws Exception {
 		NearestNeighborModelEvaluator evaluator = (NearestNeighborModelEvaluator)createModelEvaluator();
+
+		checkTargetFields(Arrays.asList("species", "species_class"), evaluator);
 
 		NearestNeighborModel nearestNeighborModel = evaluator.getModel()
 			.setNumberOfNeighbors(1); // XXX

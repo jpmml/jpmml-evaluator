@@ -146,6 +146,13 @@ public class ModelEvaluatorTest {
 	}
 
 	static
+	public void checkTargetFields(List<?> targetNames, Evaluator evaluator){
+		List<TargetField> targetFields = evaluator.getTargetFields();
+
+		assertEquals(Lists.transform(targetNames, ModelEvaluatorTest::toFieldName), Lists.transform(targetFields, TargetField::getName));
+	}
+
+	static
 	public void checkResultFields(List<?> targetNames, List<?> outputNames, Evaluator evaluator){
 		List<TargetField> targetFields = evaluator.getTargetFields();
 		List<OutputField> outputFields = evaluator.getOutputFields();

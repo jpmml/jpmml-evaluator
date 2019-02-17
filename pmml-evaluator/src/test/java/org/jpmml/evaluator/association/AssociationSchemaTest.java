@@ -19,6 +19,7 @@
 package org.jpmml.evaluator.association;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +48,8 @@ public class AssociationSchemaTest extends ModelEvaluatorTest {
 
 	private void evaluate(List<String> items, List<String> recommendations, List<String> exclusiveRecommendations, List<String> ruleAssociations) throws Exception {
 		Evaluator evaluator = createModelEvaluator();
+
+		checkTargetFields(Collections.emptyList(), evaluator);
 
 		Map<FieldName, ?> arguments = createItemArguments(items);
 
