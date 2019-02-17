@@ -77,8 +77,8 @@ public class EvaluatorUtil {
 	 * </p>
 	 */
 	static
-	public Map<String, ?> decode(Map<FieldName, ?> map){
-		Map<String, Object> result = new LinkedHashMap<>();
+	public Map<String, ?> decodeAll(Map<FieldName, ?> map){
+		Map<String, Object> result = new LinkedHashMap<>(2 * map.size());
 
 		Collection<? extends Map.Entry<FieldName, ?>> entries = map.entrySet();
 		for(Map.Entry<FieldName, ?> entry : entries){
@@ -86,10 +86,12 @@ public class EvaluatorUtil {
 			Object value = entry.getValue();
 
 			try {
-				result.put(name != null ? name.getValue() : null, decode(value));
+				value = decode(value);
 			} catch(UnsupportedOperationException uoe){
-				// Ignored
+				continue;
 			}
+
+			result.put(name != null ? name.getValue() : null, value);
 		}
 
 		return result;

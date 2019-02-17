@@ -230,7 +230,7 @@ while(true){
 	Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
 	// Decoupling results from the JPMML-Evaluator runtime environment
-	Map<String, ?> resultRecord = EvaluatorUtil.decode(results);
+	Map<String, ?> resultRecord = EvaluatorUtil.decodeAll(results);
 
 	// Writing a record to the data sink
 	writeRecord(resultRecord);

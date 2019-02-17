@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,9 +58,6 @@ public class EvaluatorUtilTest {
 		assertEquals(Arrays.asList("value"), EvaluatorUtil.decode(Arrays.asList(value)));
 		assertEquals(Arrays.asList("value", "value"), EvaluatorUtil.decode(Arrays.asList(value, value)));
 
-		assertEquals(Collections.singletonMap((String)null, "value"), EvaluatorUtil.decode(Collections.singletonMap((FieldName)null, value)));
-		assertEquals(Collections.singletonMap("key", "value"), EvaluatorUtil.decode(Collections.singletonMap(FieldName.create("key"), value)));
-
 		Computable invalidValue = new Computable(){
 
 			@Override
@@ -75,9 +73,37 @@ public class EvaluatorUtilTest {
 		} catch(UnsupportedOperationException uoe){
 			// Ignored
 		}
+	}
 
-		assertEquals(Collections.emptyMap(), EvaluatorUtil.decode(Collections.singletonMap((FieldName)null, invalidValue)));
-		assertEquals(Collections.emptyMap(), EvaluatorUtil.decode(Collections.singletonMap(FieldName.create("key"), invalidValue)));
+	@Test
+	public void decodeAll(){
+		Computable value = new Computable(){
+
+			@Override
+			public String getResult(){
+				return "value";
+			}
+		};
+
+		assertEquals(Collections.singletonMap((String)null, "value"), EvaluatorUtil.decodeAll(Collections.singletonMap((FieldName)null, value)));
+		assertEquals(Collections.singletonMap("key", "value"), EvaluatorUtil.decodeAll(Collections.singletonMap(FieldName.create("key"), value)));
+
+		Computable invalidValue = new Computable(){
+
+			@Override
+			public Object getResult(){
+				throw new UnsupportedOperationException();
+			}
+		};
+
+		assertEquals(Collections.emptyMap(), EvaluatorUtil.decodeAll(Collections.singletonMap((FieldName)null, invalidValue)));
+		assertEquals(Collections.emptyMap(), EvaluatorUtil.decodeAll(Collections.singletonMap(FieldName.create("key"), invalidValue)));
+
+		Map<FieldName, Object> results = new LinkedHashMap<>();
+		results.put((FieldName)null, invalidValue);
+		results.put(FieldName.create("decision"), Boolean.TRUE);
+
+		assertEquals(Collections.singletonMap("decision", Boolean.TRUE), EvaluatorUtil.decodeAll(results));
 	}
 
 	@Test
