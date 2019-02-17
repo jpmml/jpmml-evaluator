@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.jpmml</groupId>
 		<artifactId>jpmml-evaluator</artifactId>
-		<version>1.4-SNAPSHOT</version>
+		<version>1.4.7</version>
 	</parent>
 
 	<groupId>org.jpmml</groupId>
