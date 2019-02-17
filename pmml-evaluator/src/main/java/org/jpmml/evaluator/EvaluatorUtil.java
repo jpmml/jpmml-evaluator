@@ -35,6 +35,21 @@ public class EvaluatorUtil {
 	private EvaluatorUtil(){
 	}
 
+	static
+	public Map<FieldName, ?> encodeKeys(Map<String, ?> map){
+		Map<FieldName, Object> result = new LinkedHashMap<>(2 * map.size());
+
+		Collection<? extends Map.Entry<String, ?>> entries = map.entrySet();
+		for(Map.Entry<String, ?> entry : entries){
+			String name = entry.getKey();
+			Object value = entry.getValue();
+
+			result.put(name != null ? FieldName.create(name) : null, value);
+		}
+
+		return result;
+	}
+
 	/**
 	 * @see Computable
 	 */
