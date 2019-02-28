@@ -22,16 +22,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Iterables;
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.OpType;
-import org.jpmml.evaluator.association.TransactionalSchemaTest;
-import org.jpmml.evaluator.clustering.RankingTest;
-import org.jpmml.evaluator.nearest_neighbor.MixedNeighborhoodTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -56,9 +51,6 @@ public class EvaluatorUtilTest {
 		assertEquals(Arrays.asList("value"), EvaluatorUtil.decode(Arrays.asList(value)));
 		assertEquals(Arrays.asList("value", "value"), EvaluatorUtil.decode(Arrays.asList(value, value)));
 
-		assertEquals(Collections.singletonMap((String)null, "value"), EvaluatorUtil.decode(Collections.singletonMap((FieldName)null, value)));
-		assertEquals(Collections.singletonMap("key", "value"), EvaluatorUtil.decode(Collections.singletonMap(FieldName.create("key"), value)));
-
 		Computable invalidValue = new Computable(){
 
 			@Override
@@ -74,30 +66,37 @@ public class EvaluatorUtilTest {
 		} catch(UnsupportedOperationException uoe){
 			// Ignored
 		}
-
-		assertEquals(Collections.emptyMap(), EvaluatorUtil.decode(Collections.singletonMap((FieldName)null, invalidValue)));
-		assertEquals(Collections.emptyMap(), EvaluatorUtil.decode(Collections.singletonMap(FieldName.create("key"), invalidValue)));
 	}
 
 	@Test
-	public void prepare() throws Exception {
-		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(TransactionalSchemaTest.class);
+	public void decodeAll(){
+		Computable value = new Computable(){
 
-		InputField inputField = Iterables.getOnlyElement(evaluator.getInputFields());
+			@Override
+			public String getResult(){
+				return "value";
+			}
+		};
 
-		assertEquals(FieldName.create("item"), inputField.getName());
+		assertEquals(Collections.singletonMap((String)null, "value"), EvaluatorUtil.decodeAll(Collections.singletonMap((FieldName)null, value)));
+		assertEquals(Collections.singletonMap("key", "value"), EvaluatorUtil.decodeAll(Collections.singletonMap(FieldName.create("key"), value)));
 
-		FieldValue simple = inputField.prepare("Cracker");
+		Computable invalidValue = new Computable(){
 
-		assertEquals("Cracker", simple.getValue());
-		assertEquals(DataType.STRING, simple.getDataType());
-		assertEquals(OpType.CATEGORICAL, simple.getOpType());
+			@Override
+			public Object getResult(){
+				throw new UnsupportedOperationException();
+			}
+		};
 
-		FieldValue collection = inputField.prepare(Arrays.asList("Cracker", "Water", "Coke"));
+		assertEquals(Collections.emptyMap(), EvaluatorUtil.decodeAll(Collections.singletonMap((FieldName)null, invalidValue)));
+		assertEquals(Collections.emptyMap(), EvaluatorUtil.decodeAll(Collections.singletonMap(FieldName.create("key"), invalidValue)));
 
-		assertEquals(Arrays.asList("Cracker", "Water", "Coke"), collection.getValue());
-		assertEquals(DataType.STRING, collection.getDataType());
-		assertEquals(OpType.CATEGORICAL, collection.getOpType());
+		Map<FieldName, Object> results = new LinkedHashMap<>();
+		results.put((FieldName)null, invalidValue);
+		results.put(FieldName.create("decision"), Boolean.TRUE);
+
+		assertEquals(Collections.singletonMap("decision", Boolean.TRUE), EvaluatorUtil.decodeAll(results));
 	}
 
 	@Test
@@ -118,21 +117,6 @@ public class EvaluatorUtilTest {
 		checkGroupedRow(table.get(2), "3", Arrays.asList("Cracker", "Water", "Coke"));
 	}
 
-	@Test
-	public void getTargetFields() throws Exception {
-		Evaluator evaluator = ModelEvaluatorTest.createModelEvaluator(MixedNeighborhoodTest.class);
-
-		checkFieldNames(Arrays.asList(FieldName.create("species"), FieldName.create("species_class")), evaluator.getTargetFields());
-
-		evaluator = ModelEvaluatorTest.createModelEvaluator(RankingTest.class);
-
-		checkFieldNames(Collections.singletonList(null), evaluator.getTargetFields());
-
-		evaluator = ModelEvaluatorTest.createModelEvaluator(TransactionalSchemaTest.class);
-
-		checkFieldNames(Collections.emptyList(), evaluator.getTargetFields());
-	}
-
 	static
 	private Map<FieldName, Object> createRow(String transaction, String item){
 		Map<FieldName, Object> result = new HashMap<>();
@@ -148,10 +132,5 @@ public class EvaluatorUtilTest {
 
 		assertEquals(transaction, row.get(FieldName.create("transaction")));
 		assertEquals(items, row.get(FieldName.create("item")));
-	}
-
-	static
-	private void checkFieldNames(List<FieldName> names, List<? extends ResultField> resultFields){
-		assertEquals(names, EvaluatorUtil.getNames(resultFields));
 	}
 }

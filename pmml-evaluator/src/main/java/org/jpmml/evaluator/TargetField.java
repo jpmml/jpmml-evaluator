@@ -46,8 +46,8 @@ public class TargetField extends ResultField {
 	 * @see #isSynthetic()
 	 */
 	@Override
-	public FieldName getName(){
-		return super.getName();
+	public FieldName getFieldName(){
+		return super.getFieldName();
 	}
 
 	@Override

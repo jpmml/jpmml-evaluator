@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 import com.google.common.base.Joiner;
@@ -51,18 +50,6 @@ import org.jpmml.evaluator.mining.SegmentResult;
 public class OutputUtil {
 
 	private OutputUtil(){
-	}
-
-	static
-	public Map<FieldName, ?> clear(Map<FieldName, ?> results){
-
-		if(results instanceof OutputMap){
-			OutputMap outputMap = (OutputMap)results;
-
-			outputMap.clearPrivate();
-		}
-
-		return results;
 	}
 
 	/**
@@ -238,7 +225,7 @@ public class OutputUtil {
 						}
 
 						FieldValue expectedTargetValue = context.evaluate(targetName);
-						if(Objects.equals(FieldValues.MISSING_VALUE, expectedTargetValue)){
+						if(FieldValueUtil.isMissing(expectedTargetValue)){
 							throw new MissingValueException(targetName, outputField);
 						}
 

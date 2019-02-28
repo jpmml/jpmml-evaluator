@@ -32,7 +32,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -64,7 +63,7 @@ import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValues;
+import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.InvalidElementException;
 import org.jpmml.evaluator.InvalidElementListException;
@@ -394,7 +393,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				FieldName name = fieldRef.getField();
 
 				FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
-				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+				if(FieldValueUtil.isMissing(value)){
 					throw new MissingValueException(name, vectorFields);
 				}
 
@@ -410,7 +409,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				}
 
 				FieldValue value = context.evaluate(name);
-				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+				if(FieldValueUtil.isMissing(value)){
 					throw new MissingValueException(name, categoricalPredictor);
 				}
 

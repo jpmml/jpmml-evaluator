@@ -35,6 +35,21 @@ public class EvaluatorUtil {
 	private EvaluatorUtil(){
 	}
 
+	static
+	public Map<FieldName, ?> encodeKeys(Map<String, ?> map){
+		Map<FieldName, Object> result = new LinkedHashMap<>(2 * map.size());
+
+		Collection<? extends Map.Entry<String, ?>> entries = map.entrySet();
+		for(Map.Entry<String, ?> entry : entries){
+			String name = entry.getKey();
+			Object value = entry.getValue();
+
+			result.put(name != null ? FieldName.create(name) : null, value);
+		}
+
+		return result;
+	}
+
 	/**
 	 * @see Computable
 	 */
@@ -77,8 +92,8 @@ public class EvaluatorUtil {
 	 * </p>
 	 */
 	static
-	public Map<String, ?> decode(Map<FieldName, ?> map){
-		Map<String, Object> result = new LinkedHashMap<>();
+	public Map<String, ?> decodeAll(Map<FieldName, ?> map){
+		Map<String, Object> result = new LinkedHashMap<>(2 * map.size());
 
 		Collection<? extends Map.Entry<FieldName, ?>> entries = map.entrySet();
 		for(Map.Entry<FieldName, ?> entry : entries){
@@ -86,10 +101,12 @@ public class EvaluatorUtil {
 			Object value = entry.getValue();
 
 			try {
-				result.put(name != null ? name.getValue() : null, decode(value));
+				value = decode(value);
 			} catch(UnsupportedOperationException uoe){
-				// Ignored
+				continue;
 			}
+
+			result.put(name != null ? name.getValue() : null, value);
 		}
 
 		return result;
@@ -153,18 +170,5 @@ public class EvaluatorUtil {
 		}
 
 		return resultTable;
-	}
-
-	static
-	public List<FieldName> getNames(List<? extends ModelField> modelFields){
-		List<FieldName> result = new ArrayList<>(modelFields.size());
-
-		for(ModelField modelField : modelFields){
-			FieldName name = modelField.getName();
-
-			result.add(name);
-		}
-
-		return result;
 	}
 }

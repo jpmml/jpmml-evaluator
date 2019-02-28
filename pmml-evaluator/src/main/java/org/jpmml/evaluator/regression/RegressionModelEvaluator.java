@@ -36,7 +36,7 @@ import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValues;
+import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.InvalidElementException;
 import org.jpmml.evaluator.InvalidElementListException;
@@ -79,7 +79,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		TargetField targetField = getTargetField();
 
 		FieldName targetName = regressionModel.getTargetField();
-		if(targetName != null && !Objects.equals(targetField.getName(), targetName)){
+		if(targetName != null && !Objects.equals(targetField.getFieldName(), targetName)){
 			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELDNAME, targetName);
 		}
 
@@ -123,7 +123,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		TargetField targetField = getTargetField();
 
 		FieldName targetName = regressionModel.getTargetField();
-		if(targetName != null && !Objects.equals(targetField.getName(), targetName)){
+		if(targetName != null && !Objects.equals(targetField.getFieldName(), targetName)){
 			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELDNAME, targetName);
 		}
 
@@ -254,7 +254,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				FieldValue value = context.evaluate(name);
 
 				// "If the input value is missing, then the result evaluates to a missing value"
-				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+				if(FieldValueUtil.isMissing(value)){
 					return null;
 				}
 
@@ -293,7 +293,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				FieldValue value = context.evaluate(name);
 
 				// "If the input value is missing, then the categorical field is ignored"
-				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+				if(FieldValueUtil.isMissing(value)){
 					matchedName = name;
 
 					continue;
@@ -320,7 +320,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 					FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
 
 					// "If the input value is missing, then the result evaluates to a missing value"
-					if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+					if(FieldValueUtil.isMissing(value)){
 						return null;
 					}
 

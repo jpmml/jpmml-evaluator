@@ -138,7 +138,7 @@ public interface Evaluator extends HasInputFields, HasResultFields {
 	 * @throws InvalidMarkupException
 	 * @throws UnsupportedMarkupException
 	 */
-	void verify();
+	Evaluator verify();
 
 	/**
 	 * <p>

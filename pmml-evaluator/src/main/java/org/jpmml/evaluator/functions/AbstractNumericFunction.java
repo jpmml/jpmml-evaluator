@@ -18,10 +18,9 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.Objects;
-
 import org.dmg.pmml.DataType;
 import org.jpmml.evaluator.FieldValue;
+import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.FunctionException;
 
@@ -35,8 +34,8 @@ public class AbstractNumericFunction extends AbstractFunction {
 	@Override
 	protected FieldValue checkArgument(FieldValue argument, int index, String alias){
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, argument)){
-			return argument;
+		if(FieldValueUtil.isMissing(argument)){
+			return FieldValues.MISSING_VALUE;
 		}
 
 		DataType dataType = argument.getDataType();

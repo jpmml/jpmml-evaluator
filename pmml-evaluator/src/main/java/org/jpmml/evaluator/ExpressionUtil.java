@@ -78,7 +78,7 @@ public class ExpressionUtil {
 	public <E extends PMMLObject & HasType<E> & HasExpression<E>> FieldValue evaluateTypedExpressionContainer(E hasTypedExpression, EvaluationContext context){
 		FieldValue value = evaluateExpressionContainer(hasTypedExpression, context);
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+		if(FieldValueUtil.isMissing(value)){
 			return FieldValues.MISSING_VALUE;
 		}
 
@@ -177,7 +177,7 @@ public class ExpressionUtil {
 	public FieldValue evaluateFieldRef(FieldRef fieldRef, EvaluationContext context){
 		FieldValue value = context.evaluate(ensureField(fieldRef));
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+		if(FieldValueUtil.isMissing(value)){
 			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, fieldRef.getMapMissingTo());
 		}
 
@@ -188,7 +188,7 @@ public class ExpressionUtil {
 	public FieldValue evaluateNormContinuous(NormContinuous normContinuous, EvaluationContext context){
 		FieldValue value = context.evaluate(ensureField(normContinuous));
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+		if(FieldValueUtil.isMissing(value)){
 			return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, normContinuous.getMapMissingTo());
 		}
 
@@ -199,7 +199,7 @@ public class ExpressionUtil {
 	public FieldValue evaluateNormDiscrete(NormDiscrete normDiscrete, EvaluationContext context){
 		FieldValue value = context.evaluate(ensureField(normDiscrete));
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+		if(FieldValueUtil.isMissing(value)){
 			return FieldValueUtil.create(TypeInfos.CATEGORICAL_DOUBLE, normDiscrete.getMapMissingTo());
 		}
 
@@ -220,7 +220,7 @@ public class ExpressionUtil {
 	public FieldValue evaluateDiscretize(Discretize discretize, EvaluationContext context){
 		FieldValue value = context.evaluate(ensureField(discretize));
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+		if(FieldValueUtil.isMissing(value)){
 			return FieldValueUtil.create(getDataType(discretize, DataType.STRING), OpType.CATEGORICAL, discretize.getMapMissingTo());
 		}
 
@@ -244,7 +244,7 @@ public class ExpressionUtil {
 			}
 
 			FieldValue value = context.evaluate(name);
-			if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+			if(FieldValueUtil.isMissing(value)){
 				return FieldValueUtil.create(getDataType(mapValues, DataType.STRING), OpType.CATEGORICAL, mapValues.getMapMissingTo());
 			}
 
@@ -266,7 +266,7 @@ public class ExpressionUtil {
 		FieldValue termValue = ExpressionUtil.evaluateExpressionContainer(textIndex, context);
 
 		// See http://mantis.dmg.org/view.php?id=171
-		if(Objects.equals(FieldValues.MISSING_VALUE, textIndex) || Objects.equals(FieldValues.MISSING_VALUE, termValue)){
+		if(FieldValueUtil.isMissing(textValue) || FieldValueUtil.isMissing(termValue)){
 			return FieldValues.MISSING_VALUE;
 		}
 
@@ -340,7 +340,7 @@ public class ExpressionUtil {
 					if(arguments.hasNext()){
 						FieldValue trueValue = evaluate(arguments.next(), context);
 
-						if(Objects.equals(FieldValues.MISSING_VALUE, trueValue) && mapMissingTo != null){
+						if(FieldValueUtil.isMissing(trueValue) && mapMissingTo != null){
 							return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
 						}
 
@@ -364,7 +364,7 @@ public class ExpressionUtil {
 						if(arguments.hasNext()){
 							FieldValue falseValue = evaluate(arguments.next(), context);
 
-							if(Objects.equals(FieldValues.MISSING_VALUE, falseValue) && mapMissingTo != null){
+							if(FieldValueUtil.isMissing(falseValue) && mapMissingTo != null){
 								return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
 							}
 
@@ -379,7 +379,7 @@ public class ExpressionUtil {
 			FieldValue value = evaluate(arguments.next(), context);
 
 			// "If a mapMissingTo value is specified and any of the input values of the function are missing, then the function is not applied at all and the mapMissingTo value is returned instead"
-			if(Objects.equals(FieldValues.MISSING_VALUE, value) && mapMissingTo != null){
+			if(FieldValueUtil.isMissing(value) && mapMissingTo != null){
 				return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
 			}
 
@@ -455,9 +455,9 @@ public class ExpressionUtil {
 			case AVERAGE:
 				return Functions.AVG.evaluate((List<FieldValue>)values);
 			case MIN:
-				return Collections.min((List<FieldValue>)values);
+				return Collections.min((List<ScalarValue>)values);
 			case MAX:
-				return Collections.max((List<FieldValue>)values);
+				return Collections.max((List<ScalarValue>)values);
 			default:
 				throw new UnsupportedAttributeException(aggregate, function);
 		}

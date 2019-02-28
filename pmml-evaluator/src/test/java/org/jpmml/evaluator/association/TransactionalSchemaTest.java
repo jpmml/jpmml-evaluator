@@ -18,15 +18,53 @@
  */
 package org.jpmml.evaluator.association;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Iterables;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.OpType;
+import org.jpmml.evaluator.CollectionValue;
+import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.FieldValue;
+import org.jpmml.evaluator.InputField;
+import org.jpmml.evaluator.ScalarValue;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TransactionalSchemaTest extends AssociationSchemaTest {
 
 	@Override
 	public Map<FieldName, ?> createItemArguments(List<String> items){
 		return createArguments("item", items);
+	}
+
+	@Test
+	public void prepare() throws Exception {
+		Evaluator evaluator = createModelEvaluator();
+
+		InputField inputField = Iterables.getOnlyElement(evaluator.getInputFields());
+
+		assertEquals(FieldName.create("item"), inputField.getName());
+
+		FieldValue value = inputField.prepare("Cracker");
+
+		assertTrue(value instanceof ScalarValue);
+
+		assertEquals(DataType.STRING, value.getDataType());
+		assertEquals(OpType.CATEGORICAL, value.getOpType());
+		assertEquals("Cracker", value.getValue());
+
+		value = inputField.prepare(Arrays.asList("Cracker", "Water", "Coke"));
+
+		assertTrue(value instanceof CollectionValue);
+
+		assertEquals(DataType.STRING, value.getDataType());
+		assertEquals(OpType.CATEGORICAL, value.getOpType());
+		assertEquals(Arrays.asList("Cracker", "Water", "Coke"), value.getValue());
 	}
 }

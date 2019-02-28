@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Villu Ruusmann
+ * Copyright (c) 2019 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,14 +18,10 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.PMML;
+import java.io.Serializable;
+import java.util.function.Function;
 
-/**
- * <p>
- * A marker interface for {@link Evaluator} implementations that are backed by an in-memory {@link PMML} object.
- * </p>
- */
-public interface HasPMML {
+import org.dmg.pmml.FieldName;
 
-	PMML getPMML();
+public interface ResultMapper extends Function<FieldName, FieldName>, Serializable {
 }

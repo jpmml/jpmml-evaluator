@@ -101,6 +101,16 @@ public class FieldValueUtil {
 	}
 
 	static
+	public boolean isMissing(Object value){
+		return (value == null);
+	}
+
+	static
+	public boolean isMissing(FieldValue value){
+		return (value == null);
+	}
+
+	static
 	public Object getValue(FieldValue value){
 		return (value != null ? value.getValue() : null);
 	}

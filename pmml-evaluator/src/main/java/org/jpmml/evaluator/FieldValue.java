@@ -60,7 +60,7 @@ import org.jpmml.model.ToStringHelper;
  * @see FieldValueUtil
  */
 abstract
-public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializable {
+public class FieldValue implements TypeInfo, Serializable {
 
 	private DataType dataType = null;
 
@@ -69,8 +69,14 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 
 	FieldValue(DataType dataType, Object value){
 		setDataType(Objects.requireNonNull(dataType));
-		setValue(filterValue(Objects.requireNonNull(value)));
+		setValue(Objects.requireNonNull(value));
 	}
+
+	abstract
+	public int compareToString(String string);
+
+	abstract
+	public int compareToValue(FieldValue value);
 
 	public FieldValue cast(DataType dataType, OpType opType){
 		boolean compatible = true;
@@ -128,7 +134,7 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 	public boolean equals(HasParsedValue<?> hasParsedValue){
 		FieldValue value = hasParsedValue.getValue(this);
 
-		return this.equals(value);
+		return equalsValue(value);
 	}
 
 	/**
@@ -158,6 +164,7 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 	public boolean isIn(HasParsedValueSet<?> hasParsedValueSet){
 		Set<FieldValue> values = hasParsedValueSet.getValueSet(this);
 
+		// XXX
 		return values.contains(this);
 	}
 
@@ -180,7 +187,7 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 	public int compareTo(HasParsedValue<?> hasParsedValue){
 		FieldValue value = hasParsedValue.getValue(this);
 
-		return this.compareTo(value);
+		return compareToValue(value);
 	}
 
 	public boolean equalsString(String string){
@@ -189,17 +196,7 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 		return (getValue()).equals(value);
 	}
 
-	/**
-	 * <p>
-	 * A value-safe replacement for {@link #equals(Object)}.
-	 * </p>
-	 */
 	public boolean equalsValue(FieldValue value){
-
-		if(sameScalarType(value)){
-			return (getValue()).equals(value.getValue());
-		}
-
 		return equalsValue(value.getValue());
 	}
 
@@ -215,7 +212,7 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 			@Override
 			public boolean test(FieldValue value){
 
-				if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+				if(FieldValueUtil.isMissing(value)){
 					return false;
 				}
 
@@ -227,49 +224,10 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 			.anyMatch(predicate);
 	}
 
-	public int compareToString(String string){
-		Object value = TypeUtil.parse(getDataType(), string);
-
-		return ((Comparable)getValue()).compareTo(value);
-	}
-
-	/**
-	 * <p>
-	 * A value-safe replacement for {@link #compareTo(FieldValue)}
-	 * </p>
-	 */
-	public int compareToValue(FieldValue value){
-
-		if(sameScalarType(value)){
-			return ((Comparable)getValue()).compareTo(value.getValue());
-		}
-
-		return compareToValue(value.getValue());
-	}
-
-	private int compareToValue(Object value){
-		value = TypeUtil.parseOrCast(getDataType(), value);
-
-		return ((Comparable)getValue()).compareTo(value);
-	}
-
 	public <V> V getMapping(HasParsedValueMapping<V> hasParsedValueMapping){
 		Map<FieldValue, V> values = hasParsedValueMapping.getValueMapping(this);
 
 		return values.get(this);
-	}
-
-	private boolean isScalar(){
-		return (this instanceof Scalar);
-	}
-
-	private boolean sameScalarType(FieldValue value){
-
-		if(isScalar()){
-			return (getClass()).equals(value.getClass());
-		}
-
-		return false;
 	}
 
 	public String asString(){
@@ -283,7 +241,7 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 			return (Number)value;
 		}
 
-		return (Double)getValue(DataType.DOUBLE);
+		return (Number)getValue(DataType.DOUBLE);
 	}
 
 	public Integer asInteger(){
@@ -385,16 +343,6 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 	}
 
 	@Override
-	public int compareTo(FieldValue that){
-
-		if((this.getOpType() != that.getOpType()) || (this.getDataType() != that.getDataType())){
-			throw new ClassCastException();
-		}
-
-		return compareToValue(that);
-	}
-
-	@Override
 	public int hashCode(){
 		return (31 * (getOpType().hashCode() ^ getDataType().hashCode())) + getValue().hashCode();
 	}
@@ -405,7 +353,7 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 		if(object instanceof FieldValue){
 			FieldValue that = (FieldValue)object;
 
-			return (this.getOpType() == that.getOpType()) && (this.getDataType() == that.getDataType()) && (this.getValue()).equals(that.getValue());
+			return (this.getOpType()).equals(that.getOpType()) && (this.getDataType()).equals(that.getDataType()) && (this.getValue()).equals(that.getValue());
 		}
 
 		return false;
@@ -449,14 +397,6 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 
 		if(dataType == null || opType == null){
 			throw new IllegalArgumentException();
-		} // End if
-
-		if(value instanceof Collection){
-			// Ignored
-		} else
-
-		{
-			value = TypeUtil.parseOrCast(dataType, value);
 		}
 
 		switch(opType){
@@ -481,14 +421,6 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 		DataType dataType = typeInfo.getDataType();
 		OpType opType = typeInfo.getOpType();
 
-		if(value instanceof Collection){
-			// Ignored
-		} else
-
-		{
-			value = TypeUtil.parseOrCast(dataType, value);
-		}
-
 		switch(opType){
 			case CONTINUOUS:
 				return ContinuousValue.create(dataType, value);
@@ -511,43 +443,5 @@ public class FieldValue implements TypeInfo, Comparable<FieldValue>, Serializabl
 		}
 
 		return value;
-	}
-
-	static
-	private Object filterValue(Object value){
-
-		if(value instanceof Float){
-			return filterValue((Float)value);
-		} else
-
-		if(value instanceof Double){
-			return filterValue((Double)value);
-		}
-
-		return value;
-	}
-
-	static
-	private Float filterValue(Float value){
-
-		if(value.doubleValue() == 0f){
-			return Numbers.FLOAT_ZERO;
-		}
-
-		return value;
-	}
-
-	static
-	private Double filterValue(Double value){
-
-		if(value.doubleValue() == 0d){
-			return Numbers.DOUBLE_ZERO;
-		}
-
-		return value;
-	}
-
-	static
-	interface Scalar {
 	}
 }

@@ -23,5 +23,5 @@ import java.util.function.Function;
 
 import org.dmg.pmml.FieldName;
 
-public interface FieldMapper extends Function<FieldName, FieldName>, Serializable {
+public interface InputMapper extends Function<FieldName, FieldName>, Serializable {
 }

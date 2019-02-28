@@ -22,11 +22,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
 
-import com.google.common.collect.Iterables;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
@@ -39,9 +35,9 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 
 	private ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
 
-	private Function<FieldName, FieldName> inputMapper = null;
+	private InputMapper inputMapper = null;
 
-	private Function<FieldName, FieldName> resultMapper = null;
+	private ResultMapper resultMapper = null;
 
 
 	protected ModelEvaluatorBuilder(){
@@ -110,32 +106,13 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml, model);
 		modelEvaluator.configure(configuration);
 
+		InputMapper inputMapper = getInputMapper();
+		ResultMapper resultMapper = getResultMapper();
+
+		modelEvaluator.setInputMapper(inputMapper);
+		modelEvaluator.setResultMapper(resultMapper);
+
 		checkSchema(modelEvaluator);
-
-		Function<FieldName, FieldName> inputMapper = getInputMapper();
-		Function<FieldName, FieldName> resultMapper = getResultMapper();
-
-		if(inputMapper != null){
-			Iterable<InputField> inputFields = modelEvaluator.getInputFields();
-
-			if(modelEvaluator instanceof HasGroupFields){
-				HasGroupFields hasGroupFields = (HasGroupFields)modelEvaluator;
-
-				inputFields = Iterables.concat(inputFields, hasGroupFields.getGroupFields());
-			}
-
-			for(InputField inputField : inputFields){
-				inputField.setName(inputMapper.apply(inputField.getName()));
-			}
-		} // End if
-
-		if(resultMapper != null){
-			Iterable<ResultField> resultFields = Iterables.concat(modelEvaluator.getTargetFields(), modelEvaluator.getOutputFields());
-
-			for(ResultField resultField : resultFields){
-				resultField.setName(resultMapper.apply(resultField.getName()));
-			}
-		}
 
 		return modelEvaluator;
 	}
@@ -218,16 +195,13 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		return this;
 	}
 
-	public Predicate<org.dmg.pmml.OutputField> getOutputFilter(){
+	public OutputFilter getOutputFilter(){
 		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
 
 		return configurationBuilder.getOutputFilter();
 	}
 
-	/**
-	 * @see OutputFilter
-	 */
-	public ModelEvaluatorBuilder setOutputFilter(Predicate<org.dmg.pmml.OutputField> outputFilter){
+	public ModelEvaluatorBuilder setOutputFilter(OutputFilter outputFilter){
 		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
 
 		configurationBuilder.setOutputFilter(outputFilter);
@@ -235,27 +209,21 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		return this;
 	}
 
-	public java.util.function.Function<FieldName, FieldName> getInputMapper(){
+	public InputMapper getInputMapper(){
 		return this.inputMapper;
 	}
 
-	/**
-	 * @see FieldMapper
-	 */
-	public ModelEvaluatorBuilder setInputMapper(Function<FieldName, FieldName> inputMapper){
+	public ModelEvaluatorBuilder setInputMapper(InputMapper inputMapper){
 		this.inputMapper = inputMapper;
 
 		return this;
 	}
 
-	public Function<FieldName, FieldName> getResultMapper(){
+	public ResultMapper getResultMapper(){
 		return this.resultMapper;
 	}
 
-	/**
-	 * @see FieldMapper
-	 */
-	public ModelEvaluatorBuilder setResultMapper(Function<FieldName, FieldName> resultMapper){
+	public ModelEvaluatorBuilder setResultMapper(ResultMapper resultMapper){
 		this.resultMapper = resultMapper;
 
 		return this;

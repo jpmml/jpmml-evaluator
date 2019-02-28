@@ -19,7 +19,6 @@
 package org.jpmml.evaluator.functions;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
@@ -46,7 +45,7 @@ public class ValueListFunction extends AbstractFunction {
 	private FieldValue evaluate(FieldValue value, List<FieldValue> values){
 		Boolean result;
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+		if(FieldValueUtil.isMissing(value)){
 			result = evaluate(values.contains(FieldValues.MISSING_VALUE));
 		} else
 

@@ -184,7 +184,7 @@ public class ExpressionUtilTest {
 			.setWordSeparatorCharacterRE("[\\s\\-]")
 			.setExpression(new Constant("user friendly"));
 
-		String text;
+		assertEquals(null, evaluate(textIndex, name, null));
 
 		assertEquals(1, evaluate(textIndex, name, "user friendly"));
 		assertEquals(1, evaluate(textIndex, name, "user-friendly"));
@@ -192,7 +192,7 @@ public class ExpressionUtilTest {
 		textIndex = new TextIndex(name)
 			.setExpression(new Constant("brown fox"));
 
-		text = "The quick browny foxy jumps over the lazy dog. The brown fox runs away and to be with another brown foxy.";
+		String text = "The quick browny foxy jumps over the lazy dog. The brown fox runs away and to be with another brown foxy.";
 
 		textIndex.setMaxLevenshteinDistance(0);
 

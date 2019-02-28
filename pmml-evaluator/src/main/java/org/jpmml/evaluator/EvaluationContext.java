@@ -19,23 +19,26 @@
 package org.jpmml.evaluator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.OpType;
 
 abstract
 public class EvaluationContext {
 
 	private Map<FieldName, FieldValue> values = new HashMap<>();
 
-	private List<FieldName> cachedNames = null;
+	private FieldName[] indexedNames = null;
 
-	private List<FieldValue> cachedValues = null;
+	private FieldValue[] indexedValues = null;
 
 	private List<String> warnings = null;
 
@@ -49,18 +52,30 @@ public class EvaluationContext {
 	protected void reset(boolean clearValues){
 
 		if(clearValues){
+			this.values.clear();
 
-			if(!this.values.isEmpty()){
-				this.values.clear();
-			}
-
-			this.cachedNames = null;
-			this.cachedValues = null;
+			this.indexedNames = null;
+			this.indexedValues = null;
 		} // End if
 
-		if(this.warnings != null && !this.warnings.isEmpty()){
+		if(this.warnings != null){
 			this.warnings.clear();
 		}
+	}
+
+	public void setIndex(List<FieldName> names){
+
+		if(names == null){
+			this.indexedNames = null;
+			this.indexedValues = null;
+
+			return;
+		}
+
+		this.indexedNames = names.toArray(new FieldName[names.size()]);
+		this.indexedValues = new FieldValue[names.size()];
+
+		Arrays.fill(this.indexedValues, EvaluationContext.UNDECLARED_VALUE);
 	}
 
 	/**
@@ -74,30 +89,12 @@ public class EvaluationContext {
 	public FieldValue lookup(FieldName name){
 		Map<FieldName, FieldValue> values = getValues();
 
-		FieldValue value = values.get(name);
-		if(value != null || (value == null && values.containsKey(name))){
+		FieldValue value = values.getOrDefault(name, EvaluationContext.UNDECLARED_VALUE);
+		if(value != EvaluationContext.UNDECLARED_VALUE){
 			return value;
 		}
 
 		throw new MissingValueException(name);
-	}
-
-	/**
-	 * <p>
-	 * Looks up a field value by field value cache position.
-	 * </p>
-	 *
-	 * @throws IllegalStateException If the field value cache is not available.
-	 * @throws IndexOutOfBoundsException If the field value cache position is out of range.
-	 */
-	public FieldValue lookup(int index){
-		List<FieldValue> cachedValues = this.cachedValues;
-
-		if(cachedValues == null){
-			throw new IllegalStateException();
-		}
-
-		return cachedValues.get(index);
 	}
 
 	/**
@@ -109,33 +106,44 @@ public class EvaluationContext {
 	public FieldValue evaluate(FieldName name){
 		Map<FieldName, FieldValue> values = getValues();
 
-		FieldValue value = values.get(name);
-		if(value != null || (value == null && values.containsKey(name))){
+		FieldValue value = values.getOrDefault(name, EvaluationContext.UNDECLARED_VALUE);
+		if(value != EvaluationContext.UNDECLARED_VALUE){
 			return value;
 		}
 
 		return resolve(name);
 	}
 
-	public List<FieldValue> evaluateAll(List<FieldName> names){
-		return evaluateAll(names, true);
+ 	/**
+ 	 * <p>
+	 * Looks up a field value by name index.
+	 * </p>
+	 */
+	public FieldValue evaluate(int index){
+
+		if(this.indexedNames == null){
+			throw new IllegalStateException();
+		}
+
+		FieldValue value = this.indexedValues[index];
+		if(value == EvaluationContext.UNDECLARED_VALUE){
+			FieldName name = this.indexedNames[index];
+
+			value = evaluate(name);
+
+			this.indexedValues[index] = value;
+		}
+
+		return value;
 	}
 
-	public List<FieldValue> evaluateAll(List<FieldName> names, boolean cache){
-		this.cachedNames = null;
-		this.cachedValues = null;
-
+	public List<FieldValue> evaluateAll(List<FieldName> names){
 		List<FieldValue> values = new ArrayList<>(names.size());
 
 		for(FieldName name : names){
 			FieldValue value = evaluate(name);
 
 			values.add(value);
-		}
-
-		if(cache){
-			this.cachedNames = names;
-			this.cachedValues = values;
 		}
 
 		return values;
@@ -159,12 +167,11 @@ public class EvaluationContext {
 	public FieldValue declare(FieldName name, FieldValue value){
 		Map<FieldName, FieldValue> values = getValues();
 
-		boolean declared = values.containsKey(name);
-		if(declared){
+		// XXX: Fails to detect a situation where the name was already associated with a missing value (null)
+		FieldValue prevValue = values.putIfAbsent(name, value);
+		if(prevValue != null){
 			throw new DuplicateValueException(name);
 		}
-
-		values.put(name, value);
 
 		return value;
 	}
@@ -202,4 +209,12 @@ public class EvaluationContext {
 
 		return this.warnings;
 	}
+
+	private static final FieldValue UNDECLARED_VALUE = new ScalarValue(DataType.DOUBLE, Double.NaN){
+
+		@Override
+		public OpType getOpType(){
+			return OpType.CONTINUOUS;
+		}
+	};
 }

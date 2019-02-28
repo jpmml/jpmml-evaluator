@@ -45,26 +45,26 @@ public class CategoricalValue extends DiscreteValue {
 	}
 
 	static
-	public CategoricalValue create(DataType dataType, Object value){
+	public FieldValue create(DataType dataType, Object value){
 
 		if(value instanceof Collection){
-			return new CategoricalValue(dataType, value);
+			return new CollectionValue(dataType, OpType.CATEGORICAL, (Collection<?>)value);
 		}
 
 		switch(dataType){
 			case STRING:
-				return new CategoricalString((String)value);
+				return new CategoricalString(value);
 			case BOOLEAN:
-				return new CategoricalBoolean((Boolean)value);
+				return new CategoricalBoolean(value);
 			default:
 				return new CategoricalValue(dataType, value);
 		}
 	}
 
 	static
-	private class CategoricalString extends CategoricalValue implements Scalar {
+	private class CategoricalString extends CategoricalValue {
 
-		CategoricalString(String value){
+		CategoricalString(Object value){
 			super(DataType.STRING, value);
 		}
 
@@ -75,9 +75,9 @@ public class CategoricalValue extends DiscreteValue {
 	}
 
 	static
-	private class CategoricalBoolean extends CategoricalValue implements Scalar {
+	private class CategoricalBoolean extends CategoricalValue {
 
-		CategoricalBoolean(Boolean value){
+		CategoricalBoolean(Object value){
 			super(DataType.BOOLEAN, value);
 		}
 

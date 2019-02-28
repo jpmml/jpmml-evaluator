@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Objects;
-
 import org.jpmml.evaluator.functions.ComparisonFunction;
 
 /**
@@ -42,13 +40,13 @@ public class JavaComparisonPredicate extends JavaSimplePredicate {
 
 	@Override
 	public Boolean evaluate(EvaluationContext context){
-		FieldValue value = context.lookup(getIndex());
+		FieldValue value = context.evaluate(getIndex());
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, value)){
+		if(FieldValueUtil.isMissing(value)){
 			return null;
 		}
 
-		return evaluate(value.compareTo(getValue()));
+		return evaluate(value.compareToValue(getValue()));
 	}
 
 	public FieldValue getValue(){

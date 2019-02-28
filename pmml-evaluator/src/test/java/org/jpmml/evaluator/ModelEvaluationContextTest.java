@@ -39,7 +39,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 
 		ModelEvaluator<?> evaluator = createModelEvaluator(MissingPredictionTest.class);
 
-		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
+		ModelEvaluationContext context = evaluator.createEvaluationContext();
 		context.setArguments(Collections.singletonMap(name, 1d));
 
 		FieldValue value = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, 1d);
@@ -50,39 +50,31 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 			fail();
 		} catch(MissingValueException mve){
 			// Ignored
-		} // End try
-
-		try {
-			context.lookup(0);
-
-			fail();
-		} catch(IllegalStateException ise){
-			// Ignored
 		}
 
 		assertEquals(value, context.evaluate(name));
 
-		assertEquals(value, context.lookup(name));
-
 		try {
-			context.lookup(0);
+			context.evaluate(0);
 
 			fail();
 		} catch(IllegalStateException ise){
 			// Ignored
 		}
 
-		assertEquals(Arrays.asList(value), context.evaluateAll(Arrays.asList(name)));
+		context.setIndex(Collections.singletonList(name));
 
-		assertEquals(value, context.lookup(0));
+		assertEquals(value, context.evaluate(0));
 
 		try {
-			context.lookup(1);
+			context.evaluate(1);
 
 			fail();
-		} catch(IndexOutOfBoundsException ioobe){
+		} catch(IndexOutOfBoundsException aioobe){
 			// Ignored
 		}
+
+		assertEquals(Arrays.asList(value), context.evaluateAll(Arrays.asList(name)));
 
 		context.reset(false);
 
@@ -91,9 +83,10 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 		assertEquals(0, arguments.size());
 
 		assertEquals(value, context.lookup(name));
-		assertEquals(value, context.lookup(0));
 
 		assertEquals(value, context.evaluate(name));
+		assertEquals(value, context.evaluate(0));
+		assertEquals(Arrays.asList(value), context.evaluateAll(Arrays.asList(name)));
 
 		context.reset(true);
 
@@ -103,17 +96,17 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 			fail();
 		} catch(MissingValueException mve){
 			// Ignored
-		} // End try
+		}
+
+		assertEquals(FieldValues.MISSING_VALUE, context.evaluate(name));
 
 		try {
-			context.lookup(0);
+			context.evaluate(0);
 
 			fail();
 		} catch(IllegalStateException ise){
 			// Ignored
 		}
-
-		assertEquals(FieldValues.MISSING_VALUE, context.evaluate(name));
 	}
 
 	@Test
@@ -122,7 +115,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 
 		ModelEvaluator<?> evaluator = createModelEvaluator(MissingPredictionTest.class);
 
-		ModelEvaluationContext context = new ModelEvaluationContext(evaluator);
+		ModelEvaluationContext context = evaluator.createEvaluationContext();
 		context.setArguments(Collections.emptyMap());
 
 		try {
@@ -131,16 +124,18 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 			fail();
 		} catch(MissingValueException mve){
 			// Ignored
-		} // End try
+		}
+
+		assertEquals(FieldValues.MISSING_VALUE, context.evaluate(name));
 
 		try {
-			context.lookup(0);
+			context.evaluate(0);
 
 			fail();
 		} catch(IllegalStateException ise){
 			// Ignored
 		}
 
-		assertEquals(FieldValues.MISSING_VALUE, context.evaluate(name));
+		assertEquals(Arrays.asList(FieldValues.MISSING_VALUE), context.evaluateAll(Arrays.asList(name)));
  	}
 }

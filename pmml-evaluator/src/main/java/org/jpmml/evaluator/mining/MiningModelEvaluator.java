@@ -68,7 +68,6 @@ import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.OutputField;
-import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLException;
@@ -198,18 +197,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
-		MiningModelEvaluationContext context = new MiningModelEvaluationContext(this);
-		context.setArguments(arguments);
-
-		Map<FieldName, ?> results = evaluate(context);
-
-		return OutputUtil.clear(results);
+	public ModelEvaluationContext createEvaluationContext(){
+		return new MiningModelEvaluationContext(this);
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(ModelEvaluationContext context){
-		return super.evaluate((MiningModelEvaluationContext)context);
+	public Map<FieldName, ?> evaluateInternal(ModelEvaluationContext context){
+		return super.evaluateInternal((MiningModelEvaluationContext)context);
 	}
 
 	@Override
@@ -481,14 +475,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			ModelEvaluationContext segmentContext;
 
 			if(segmentModelEvaluator instanceof MiningModelEvaluator){
-				MiningModelEvaluator segmentMiningModelEvaluator = (MiningModelEvaluator)segmentModelEvaluator;
 
 				if(miningModelContext == null){
-					miningModelContext = new MiningModelEvaluationContext(segmentMiningModelEvaluator, context);
+					miningModelContext = (MiningModelEvaluationContext)segmentModelEvaluator.createEvaluationContext();
+					miningModelContext.setParent(context);
 				} else
 
 				{
-					miningModelContext.setModelEvaluator(segmentMiningModelEvaluator);
+					miningModelContext.setModelEvaluator(segmentModelEvaluator);
 				}
 
 				segmentContext = miningModelContext;
@@ -496,7 +490,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			{
 				if(modelContext == null){
-					modelContext = new ModelEvaluationContext(segmentModelEvaluator, context);
+					modelContext = segmentModelEvaluator.createEvaluationContext();
+					modelContext.setParent(context);
 				} else
 
 				{
@@ -509,7 +504,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			Map<FieldName, ?> results;
 
 			try {
-				results = segmentModelEvaluator.evaluate(segmentContext);
+				results = segmentModelEvaluator.evaluateInternal(segmentContext);
 			} catch(PMMLException pe){
 				throw pe.ensureContext(segment);
 			}
@@ -534,7 +529,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					{
 						List<OutputField> outputFields = segmentModelEvaluator.getOutputFields();
 						for(OutputField outputField : outputFields){
-							FieldName name = outputField.getName();
+							FieldName name = outputField.getFieldName();
 
 							int depth = outputField.getDepth();
 							if(depth > 0){
@@ -692,7 +687,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			List<OutputField> outputFields = segmentModelEvaluator.getOutputFields();
 			for(OutputField outputField : outputFields){
-				OutputField nestedOutputField = new OutputField(outputField);
+				OutputField nestedOutputField = new OutputField(outputField.getField(), outputField.getDepth() + 1);
 
 				result.add(nestedOutputField);
 			}

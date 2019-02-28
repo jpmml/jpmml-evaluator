@@ -25,7 +25,7 @@ import org.dmg.pmml.Model;
  * A marker interface for {@link Evaluator} implementations that are backed by an in-memory {@link Model} object.
  * </p>
  */
-public interface HasModel<M extends Model> extends Evaluator {
+public interface HasModel<M extends Model> extends HasPMML {
 
 	M getModel();
 }

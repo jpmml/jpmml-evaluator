@@ -89,18 +89,18 @@ JPMML-Evaluator is fast and memory efficient. It can deliver one million scoring
 
 JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository](https://repo1.maven.org/maven2/org/jpmml/).
 
-The current version is **1.4.6** (8 January, 2019).
+The current version is **1.4.7** (17 February, 2019).
 
 ```xml
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.4.6</version>
+	<version>1.4.7</version>
 </dependency>
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator-extension</artifactId>
-	<version>1.4.6</version>
+	<version>1.4.7</version>
 </dependency>
 ```
 
@@ -120,10 +120,12 @@ Core types:
     * Class `org.jpmml.evaluator.TargetField` - Describes a primary model result field
     * Class `org.jpmml.evaluator.OutputField` - Describes a secondary model result field
 * Abstract class `org.jpmml.evaluator.FieldValue`
-  * Class `org.jpmml.evaluator.ContinuousValue`
-  * Abstract class `org.jpmml.evaluator.DiscreteValue`
-    * Class `org.jpmml.evaluator.CategoricalValue`
-    * Class `org.jpmml.evaluator.OrdinalValue`
+  * Class `org.jpmml.evaluator.CollectionValue`
+  * Abstract class `org.jpmml.evaluator.ScalarValue`
+    * Class `org.jpmml.evaluator.ContinuousValue`
+    * Abstract class `org.jpmml.evaluator.DiscreteValue`
+      * Class `org.jpmml.evaluator.CategoricalValue`
+      * Class `org.jpmml.evaluator.OrdinalValue`
 * Utility class `org.jpmml.evaluator.EvaluatorUtil`
 * Utility class `org.jpmml.evaluator.FieldValueUtil`
 
@@ -228,7 +230,7 @@ while(true){
 	Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
 	// Decoupling results from the JPMML-Evaluator runtime environment
-	Map<String, ?> resultRecord = EvaluatorUtil.decode(results);
+	Map<String, ?> resultRecord = EvaluatorUtil.decodeAll(results);
 
 	// Writing a record to the data sink
 	writeRecord(resultRecord);

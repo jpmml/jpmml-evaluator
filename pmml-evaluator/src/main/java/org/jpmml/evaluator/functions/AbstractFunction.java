@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValues;
+import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.Function;
 import org.jpmml.evaluator.FunctionException;
 
@@ -74,7 +74,7 @@ public class AbstractFunction implements Function {
 	protected FieldValue getRequiredArgument(List<FieldValue> arguments, int index, String alias){
 		FieldValue argument = arguments.get(index);
 
-		if(Objects.equals(FieldValues.MISSING_VALUE, argument)){
+		if(FieldValueUtil.isMissing(argument)){
 
 			if(alias != null){
 				throw new FunctionException(this, "Missing \'" + alias + "\' value at position " + index);
