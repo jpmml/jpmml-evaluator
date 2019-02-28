@@ -527,16 +527,16 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		FieldName instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
 
-		Set<FieldName> fieldNames = new HashSet<>();
+		Set<FieldName> names = new HashSet<>();
 
 		FieldReferenceFinder variableFinder = new FieldReferenceFinder();
 		variableFinder.applyTo(nearestNeighborModel);
 
-		fieldNames.addAll(variableFinder.getFieldNames());
+		names.addAll(variableFinder.getFieldNames());
 
 		List<TargetField> targetFields = modelEvaluator.getTargetFields();
 		for(TargetField targetField : targetFields){
-			fieldNames.add(targetField.getFieldName());
+			names.add(targetField.getFieldName());
 		}
 
 		TrainingInstances trainingInstances = nearestNeighborModel.getTrainingInstances();
@@ -558,7 +558,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				continue;
 			} // End if
 
-			if(!fieldNames.contains(name)){
+			if(!names.contains(name)){
 				continue;
 			}
 
