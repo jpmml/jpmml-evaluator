@@ -57,7 +57,7 @@ public class InputFieldUtil {
 			}
 		}
 
-		String invalidValueReplacement = miningField.getInvalidValueReplacement();
+		Object invalidValueReplacement = miningField.getInvalidValueReplacement();
 		if(invalidValueReplacement != null){
 			return false;
 		}
@@ -71,7 +71,7 @@ public class InputFieldUtil {
 				return false;
 		}
 
-		String missingValueReplacement = miningField.getMissingValueReplacement();
+		Object missingValueReplacement = miningField.getMissingValueReplacement();
 		if(missingValueReplacement != null){
 			return false;
 		}
@@ -204,7 +204,7 @@ public class InputFieldUtil {
 	static
 	public FieldValue performInvalidValueTreatment(Field<?> field, MiningField miningField, Object value){
 		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
-		String invalidValueReplacement = miningField.getInvalidValueReplacement();
+		Object invalidValueReplacement = miningField.getInvalidValueReplacement();
 
 		switch(invalidValueTreatmentMethod){
 			case AS_IS:
@@ -237,7 +237,7 @@ public class InputFieldUtil {
 	static
 	public FieldValue performMissingValueTreatment(Field<?> field, MiningField miningField){
 		MissingValueTreatmentMethod missingValueTreatmentMethod = miningField.getMissingValueTreatment();
-		String missingValueReplacement = miningField.getMissingValueReplacement();
+		Object missingValueReplacement = miningField.getMissingValueReplacement();
 
 		if(missingValueTreatmentMethod == null){
 			missingValueTreatmentMethod = MissingValueTreatmentMethod.AS_IS;
@@ -306,8 +306,8 @@ public class InputFieldUtil {
 			for(int i = 0, max = pmmlValues.size(); i < max; i++){
 				Value pmmlValue = pmmlValues.get(i);
 
-				String stringValue = pmmlValue.getValue();
-				if(stringValue == null){
+				Object simpleValue = pmmlValue.getValue();
+				if(simpleValue == null){
 					throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
 				}
 
@@ -326,11 +326,11 @@ public class InputFieldUtil {
 							if(value instanceof FieldValue){
 								FieldValue fieldValue = (FieldValue)value;
 
-								equals = fieldValue.equalsString(stringValue);
+								equals = fieldValue.equalsObject(simpleValue);
 							} else
 
 							{
-								equals = TypeUtil.equals(dataType, value, stringValue);
+								equals = TypeUtil.equals(dataType, value, simpleValue);
 							}
 						}
 						break;
@@ -340,11 +340,11 @@ public class InputFieldUtil {
 							if(value instanceof FieldValue){
 								FieldValue fieldValue = (FieldValue)value;
 
-								equals = TypeUtil.equals(dataType, FieldValueUtil.getValue(fieldValue), stringValue);
+								equals = TypeUtil.equals(dataType, FieldValueUtil.getValue(fieldValue), simpleValue);
 							} else
 
 							{
-								equals = TypeUtil.equals(dataType, value, stringValue);
+								equals = TypeUtil.equals(dataType, value, simpleValue);
 							}
 						}
 						break;
@@ -456,7 +456,7 @@ public class InputFieldUtil {
 
 	static
 	private FieldValue createMissingInputValue(Field<?> field, MiningField miningField){
-		String missingValueReplacement = miningField.getMissingValueReplacement();
+		Object missingValueReplacement = miningField.getMissingValueReplacement();
 
 		return createInputValue(field, miningField, missingValueReplacement);
 	}

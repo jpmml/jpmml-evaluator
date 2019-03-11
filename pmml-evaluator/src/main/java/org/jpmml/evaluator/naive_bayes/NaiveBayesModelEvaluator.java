@@ -282,7 +282,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	private void calculateDiscreteProbabilities(ProbabilityMap<String, ?> probabilities, TargetValueCounts targetValueCounts, double threshold, Map<String, Double> countSums){
 
 		for(TargetValueCount targetValueCount : targetValueCounts){
-			String targetCategory = targetValueCount.getValue();
+			String targetCategory = (String)targetValueCount.getValue();
 			if(targetCategory == null){
 				throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_VALUE);
 			}
@@ -310,7 +310,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	private void calculatePriorProbabilities(ProbabilityMap<String, ?> probabilities, TargetValueCounts targetValueCounts){
 
 		for(TargetValueCount targetValueCount : targetValueCounts){
-			String targetCategory = targetValueCount.getValue();
+			String targetCategory = (String)targetValueCount.getValue();
 			if(targetCategory == null){
 				throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_VALUE);
 			}
@@ -354,13 +354,17 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
 
 				for(TargetValueCount targetValueCount : targetValueCounts){
-					Double count = counts.get(targetValueCount.getValue());
+					String targetCategory = (String)targetValueCount.getValue();
+					if(targetCategory == null){
+						throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_VALUE);
+					}
 
+					Double count = counts.get(targetCategory);
 					if(count == null){
 						count = 0d;
 					}
 
-					counts.put(targetValueCount.getValue(), count + targetValueCount.getCount());
+					counts.put(targetCategory, count + targetValueCount.getCount());
 				}
 			}
 
@@ -426,12 +430,12 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		List<PairCounts> pairCounts = bayesInput.getPairCounts();
 		for(PairCounts pairCount : pairCounts){
-			String category = pairCount.getValue();
+			Object category = pairCount.getValue();
 			if(category == null){
 				throw new MissingAttributeException(pairCount, PMMLAttributes.PAIRCOUNTS_VALUE);
 			} // End if
 
-			if(value.equalsString(category)){
+			if(value.equalsObject(category)){
 				TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
 				if(targetValueCounts == null){
 					throw new MissingElementException(pairCount, PMMLElements.PAIRCOUNTS_TARGETVALUECOUNTS);

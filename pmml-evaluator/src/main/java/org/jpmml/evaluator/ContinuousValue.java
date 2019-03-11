@@ -35,15 +35,15 @@ public class ContinuousValue extends ScalarValue {
 	}
 
 	@Override
-	public int compareToString(String string){
+	public int compareToObject(Object value){
 
 		try {
-			return super.compareToString(string);
+			return super.compareToObject(value);
 		} catch(NumberFormatException nfeDefault){
 			Number number;
 
 			try {
-				number = (Number)TypeUtil.parse(DataType.DOUBLE, string);
+				number = (Number)TypeUtil.parseOrCast(DataType.DOUBLE, value);
 			} catch(NumberFormatException nfeDouble){
 				throw nfeDefault;
 			}

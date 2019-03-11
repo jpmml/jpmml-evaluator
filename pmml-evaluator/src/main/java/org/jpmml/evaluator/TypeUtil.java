@@ -284,15 +284,15 @@ public class TypeUtil {
 	}
 
 	static
-	public boolean equals(DataType dataType, Object value, String referenceValue){
+	public boolean equals(DataType dataType, Object value, Object referenceValue){
 
 		try {
-			return (parseOrCast(dataType, value)).equals(parse(dataType, referenceValue));
+			return (parseOrCast(dataType, value)).equals(parseOrCast(dataType, referenceValue));
 		} catch(IllegalArgumentException | TypeCheckException e){
 
 			// The String representation of invalid or missing values (eg. "N/A") may not be parseable to the requested representation
 			try {
-				return (parseOrCast(DataType.STRING, value)).equals(referenceValue);
+				return (parseOrCast(DataType.STRING, value)).equals(parseOrCast(DataType.STRING, referenceValue));
 			} catch(TypeCheckException tce){
 				// Ignored
 			}
@@ -864,6 +864,18 @@ public class TypeUtil {
 		}
 
 		throw new TypeCheckException(getSecondsDataType(epoch), value);
+	}
+
+	static
+	public DataType getConstantDataType(Object value){
+
+		if(value instanceof String){
+			String string = (String)value;
+
+			return getConstantDataType(string);
+		}
+
+		return TypeUtil.getDataType(value);
 	}
 
 	static

@@ -32,7 +32,6 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
 import org.dmg.pmml.Cell;
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.Extension;
 import org.dmg.pmml.HasTable;
 import org.dmg.pmml.InlineTable;
@@ -59,13 +58,13 @@ public class InlineTableUtil {
 	}
 
 	static
-	public Table<Integer, String, String> getContent(InlineTable inlineTable){
+	public Table<Integer, String, Object> getContent(InlineTable inlineTable){
 		return CacheUtil.getValue(inlineTable, InlineTableUtil.contentCache);
 	}
 
 	static
-	Table<Integer, String, String> parse(InlineTable inlineTable){
-		Table<Integer, String, String> result = HashBasedTable.create();
+	Table<Integer, String, Object> parse(InlineTable inlineTable){
+		Table<Integer, String, Object> result = HashBasedTable.create();
 
 		Integer rowKey = 1;
 
@@ -75,7 +74,7 @@ public class InlineTableUtil {
 
 			for(Object cell : cells){
 				String column;
-				String value;
+				Object value;
 
 				if(cell instanceof Cell){
 					Cell pmmlCell = (Cell)cell;
@@ -98,7 +97,7 @@ public class InlineTableUtil {
 					JAXBElement<?> jaxbElement = (JAXBElement<?>)cell;
 
 					column = parseColumn(jaxbElement.getName());
-					value = (String)TypeUtil.parseOrCast(DataType.STRING, jaxbElement.getValue());
+					value = jaxbElement.getValue();
 				} else
 
 				if(cell instanceof Element){
@@ -192,10 +191,10 @@ public class InlineTableUtil {
 		return result;
 	}
 
-	private static final LoadingCache<InlineTable, Table<Integer, String, String>> contentCache = CacheUtil.buildLoadingCache(new CacheLoader<InlineTable, Table<Integer, String, String>>(){
+	private static final LoadingCache<InlineTable, Table<Integer, String, Object>> contentCache = CacheUtil.buildLoadingCache(new CacheLoader<InlineTable, Table<Integer, String, Object>>(){
 
 		@Override
-		public Table<Integer, String, String> load(InlineTable inlineTable){
+		public Table<Integer, String, Object> load(InlineTable inlineTable){
 			return Tables.unmodifiableTable(parse(inlineTable));
 		}
 	});

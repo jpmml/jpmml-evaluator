@@ -58,7 +58,7 @@ public class CollectionValue extends FieldValue {
 	}
 
 	@Override
-	public int compareToString(String string){
+	public int compareToObject(Object value){
 		throw new EvaluationException("Collection value cannot be used in comparison operations");
 	}
 

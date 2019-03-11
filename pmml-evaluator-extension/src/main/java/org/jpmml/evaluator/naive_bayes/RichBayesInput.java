@@ -69,7 +69,7 @@ public class RichBayesInput extends BayesInput implements HasParsedValueMapping<
 
 		List<PairCounts> pairCounts = getPairCounts();
 		for(PairCounts pairCount : pairCounts){
-			String category = pairCount.getValue();
+			Object category = pairCount.getValue();
 			if(category == null){
 				throw new MissingAttributeException(pairCount, PMMLAttributes.PAIRCOUNTS_VALUE);
 			}

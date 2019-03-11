@@ -67,8 +67,8 @@ public class TargetFieldUtil {
 			for(int i = 0, max = pmmlValues.size(); i < max; i++){
 				Value pmmlValue = pmmlValues.get(i);
 
-				String stringValue = pmmlValue.getValue();
-				if(stringValue == null){
+				Object simpleValue = pmmlValue.getValue();
+				if(simpleValue == null){
 					throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
 				}
 
@@ -76,7 +76,7 @@ public class TargetFieldUtil {
 				switch(property){
 					case VALID:
 						{
-							boolean equals = TypeUtil.equals(dataType, value, stringValue);
+							boolean equals = TypeUtil.equals(dataType, value, simpleValue);
 
 							if(equals){
 								return pmmlValue;

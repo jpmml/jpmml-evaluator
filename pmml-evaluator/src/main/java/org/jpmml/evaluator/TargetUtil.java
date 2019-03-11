@@ -160,12 +160,12 @@ public class TargetUtil {
 
 		List<TargetValue> targetValues = target.getTargetValues();
 		for(TargetValue targetValue : targetValues){
-			String stringValue = targetValue.getValue();
-			if(stringValue == null){
+			Object simpleValue = targetValue.getValue();
+			if(simpleValue == null){
 				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_VALUE);
 			} // End if
 
-			if((value).equals(TypeUtil.parse(dataType, stringValue))){
+			if((value).equals(TypeUtil.parseOrCast(dataType, simpleValue))){
 				return targetValue;
 			}
 		}
@@ -214,7 +214,7 @@ public class TargetUtil {
 
 		List<TargetValue> targetValues = target.getTargetValues();
 		for(TargetValue targetValue : targetValues){
-			String targetCategory = targetValue.getValue();
+			String targetCategory = (String)targetValue.getValue();
 			if(targetCategory == null){
 				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_VALUE);
 			}

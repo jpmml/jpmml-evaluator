@@ -49,7 +49,7 @@ public class RichCategoricalPredictor extends CategoricalPredictor implements Ha
 	public FieldValue getValue(TypeInfo typeInfo){
 
 		if(this.parsedValue == null){
-			String value = getValue();
+			Object value = getValue();
 			if(value == null){
 				throw new MissingAttributeException(this, PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
 			}

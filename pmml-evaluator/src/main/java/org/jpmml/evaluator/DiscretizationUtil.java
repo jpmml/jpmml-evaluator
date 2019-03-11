@@ -52,16 +52,16 @@ public class DiscretizationUtil {
 
 	static
 	public FieldValue discretize(Discretize discretize, FieldValue value){
-		String result = discretize(discretize, value.asDouble());
+		Object result = discretize(discretize, value.asDouble());
 
 		return FieldValueUtil.create(ExpressionUtil.getDataType(discretize, DataType.STRING), OpType.CATEGORICAL, result);
 	}
 
 	static
-	public String discretize(Discretize discretize, Double value){
-		RangeMap<Double, String> binRanges = CacheUtil.getValue(discretize, DiscretizationUtil.binRangeCache);
+	public Object discretize(Discretize discretize, Double value){
+		RangeMap<Double, Object> binRanges = CacheUtil.getValue(discretize, DiscretizationUtil.binRangeCache);
 
-		Map.Entry<Range<Double>, String> entry = binRanges.getEntry(value);
+		Map.Entry<Range<Double>, Object> entry = binRanges.getEntry(value);
 		if(entry != null){
 			return entry.getValue();
 		}
@@ -80,10 +80,10 @@ public class DiscretizationUtil {
 
 		InlineTable inlineTable = InlineTableUtil.getInlineTable(mapValues);
 		if(inlineTable != null){
-			Map<String, String> row = match(inlineTable, values);
+			Map<String, Object> row = match(inlineTable, values);
 
 			if(row != null){
-				String result = row.get(outputColumn);
+				Object result = row.get(outputColumn);
 
 				if(result == null){
 					throw new InvalidElementException(inlineTable);
@@ -170,7 +170,7 @@ public class DiscretizationUtil {
 	}
 
 	static
-	private Map<String, String> match(InlineTable inlineTable, Map<String, FieldValue> values){
+	private Map<String, Object> match(InlineTable inlineTable, Map<String, FieldValue> values){
 		Map<String, RowFilter> rowFilters = CacheUtil.getValue(inlineTable, DiscretizationUtil.rowFilterCache);
 
 		Set<Integer> rows = null;
@@ -210,7 +210,7 @@ public class DiscretizationUtil {
 		}
 
 		if(rows != null && rows.size() > 0){
-			Table<Integer, String, String> content = InlineTableUtil.getContent(inlineTable);
+			Table<Integer, String, Object> content = InlineTableUtil.getContent(inlineTable);
 
 			// "It is an error if the table entries used for matching are not unique"
 			if(rows.size() != 1){
@@ -226,8 +226,8 @@ public class DiscretizationUtil {
 	}
 
 	static
-	private RangeMap<Double, String> parseDiscretize(Discretize discretize){
-		RangeMap<Double, String> result = TreeRangeMap.create();
+	private RangeMap<Double, Object> parseDiscretize(Discretize discretize){
+		RangeMap<Double, Object> result = TreeRangeMap.create();
 
 		List<DiscretizeBin> discretizeBins = discretize.getDiscretizeBins();
 		for(DiscretizeBin discretizeBin : discretizeBins){
@@ -238,7 +238,7 @@ public class DiscretizationUtil {
 
 			Range<Double> range = toRange(interval);
 
-			String binValue = discretizeBin.getBinValue();
+			Object binValue = discretizeBin.getBinValue();
 			if(binValue == null){
 				throw new MissingAttributeException(discretizeBin, PMMLAttributes.DISCRETIZEBIN_BINVALUE);
 			}
@@ -253,11 +253,11 @@ public class DiscretizationUtil {
 	private Map<String, RowFilter> parseInlineTable(InlineTable inlineTable){
 		Map<String, RowFilter> result = new LinkedHashMap<>();
 
-		Table<Integer, String, String> table = InlineTableUtil.getContent(inlineTable);
+		Table<Integer, String, Object> table = InlineTableUtil.getContent(inlineTable);
 
 		Set<String> columns = table.columnKeySet();
 		for(String column : columns){
-			Map<Integer, String> columnValues = table.column(column);
+			Map<Integer, Object> columnValues = table.column(column);
 
 			RowFilter rowFilter = new RowFilter(columnValues);
 
@@ -270,12 +270,12 @@ public class DiscretizationUtil {
 	static
 	private class RowFilter implements HasParsedValueMapping<Set<Integer>> {
 
-		private Map<Integer, String> columnValues = null;
+		private Map<Integer, Object> columnValues = null;
 
 		private SetMultimap<FieldValue, Integer> parsedColumnValues = null;
 
 
-		private RowFilter(Map<Integer, String> columnValues){
+		private RowFilter(Map<Integer, Object> columnValues){
 			setColumnValues(columnValues);
 		}
 
@@ -295,10 +295,10 @@ public class DiscretizationUtil {
 		private SetMultimap<FieldValue, Integer> parseColumnValues(TypeInfo typeInfo){
 			SetMultimap<FieldValue, Integer> result = HashMultimap.create();
 
-			Map<Integer, String> columnValues = getColumnValues();
+			Map<Integer, Object> columnValues = getColumnValues();
 
-			Collection<Map.Entry<Integer, String>> entries = columnValues.entrySet();
-			for(Map.Entry<Integer, String> entry : entries){
+			Collection<Map.Entry<Integer, Object>> entries = columnValues.entrySet();
+			for(Map.Entry<Integer, Object> entry : entries){
 				FieldValue value = parse(typeInfo, entry.getValue());
 				Integer row = entry.getKey();
 
@@ -308,19 +308,19 @@ public class DiscretizationUtil {
 			return result;
 		}
 
-		public Map<Integer, String> getColumnValues(){
+		public Map<Integer, Object> getColumnValues(){
 			return this.columnValues;
 		}
 
-		private void setColumnValues(Map<Integer, String> columnValues){
+		private void setColumnValues(Map<Integer, Object> columnValues){
 			this.columnValues = columnValues;
 		}
 	}
 
-	private static final LoadingCache<Discretize, RangeMap<Double, String>> binRangeCache = CacheUtil.buildLoadingCache(new CacheLoader<Discretize, RangeMap<Double, String>>(){
+	private static final LoadingCache<Discretize, RangeMap<Double, Object>> binRangeCache = CacheUtil.buildLoadingCache(new CacheLoader<Discretize, RangeMap<Double, Object>>(){
 
 		@Override
-		public RangeMap<Double, String> load(Discretize discretize){
+		public RangeMap<Double, Object> load(Discretize discretize){
 			return ImmutableRangeMap.copyOf(parseDiscretize(discretize));
 		}
 	});

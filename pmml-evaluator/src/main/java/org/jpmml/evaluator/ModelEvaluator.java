@@ -1062,13 +1062,13 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 			throw new MissingElementException(modelVerification, PMMLElements.MODELVERIFICATION_INLINETABLE);
 		}
 
-		Table<Integer, String, String> table = InlineTableUtil.getContent(inlineTable);
+		Table<Integer, String, Object> table = InlineTableUtil.getContent(inlineTable);
 
 		List<Map<FieldName, Object>> records = new ArrayList<>();
 
 		Set<Integer> rowKeys = table.rowKeySet();
 		for(Integer rowKey : rowKeys){
-			Map<String, String> row = table.row(rowKey);
+			Map<String, Object> row = table.row(rowKey);
 
 			Map<FieldName, Object> record = new LinkedHashMap<>();
 

@@ -35,7 +35,7 @@ public class CategoricalValue extends DiscreteValue {
 	}
 
 	@Override
-	public int compareToString(String string){
+	public int compareToObject(Object value){
 		throw new EvaluationException("Categorical value cannot be used in comparison operations");
 	}
 
@@ -82,13 +82,13 @@ public class CategoricalValue extends DiscreteValue {
 		}
 
 		@Override
-		public int compareToString(String string){
+		public int compareToObject(Object value){
 			Number number;
 
 			try {
-				number = (Number)TypeUtil.parse(DataType.DOUBLE, string);
+				number = (Number)TypeUtil.parseOrCast(DataType.DOUBLE, value);
 			} catch(NumberFormatException nfe){
-				throw new TypeCheckException(DataType.DOUBLE, string);
+				throw new TypeCheckException(DataType.DOUBLE, value);
 			}
 
 			return ((Comparable)TypeUtil.cast(DataType.DOUBLE, asBoolean())).compareTo(number);

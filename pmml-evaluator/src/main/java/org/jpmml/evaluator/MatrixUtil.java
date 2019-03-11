@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.dmg.pmml.Array;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.MatCell;
 import org.dmg.pmml.Matrix;
 
@@ -142,7 +143,7 @@ public class MatrixUtil {
 		if(result.isPresent()){
 			MatCell matCell = result.get();
 
-			return Double.parseDouble(matCell.getValue());
+			return (Number)TypeUtil.parseOrCast(DataType.DOUBLE, matCell.getValue());
 		}
 
 		return null;

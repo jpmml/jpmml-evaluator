@@ -46,11 +46,11 @@ public class FieldValueTest {
 		FieldValue zero = FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, "0");
 		FieldValue one = FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, "1");
 
-		assertTrue(zero.equalsString("0"));
-		assertFalse(zero.equalsString("0.0"));
+		assertTrue(zero.equalsObject("0"));
+		assertFalse(zero.equalsObject("0.0"));
 
-		assertTrue(one.equalsString("1"));
-		assertFalse(one.equalsString("1.0"));
+		assertTrue(one.equalsObject("1"));
+		assertFalse(one.equalsObject("1.0"));
 
 		assertTrue(zero.equalsValue(zero));
 		assertFalse(zero.equalsValue(one));
@@ -59,7 +59,7 @@ public class FieldValueTest {
 		assertTrue(one.equalsValue(one));
 
 		try {
-			zero.compareToString("0");
+			zero.compareToObject("0");
 
 			fail();
 		} catch(EvaluationException ee){
@@ -95,9 +95,9 @@ public class FieldValueTest {
 		OrdinalValue louder = (OrdinalValue)FieldValueUtil.create(TypeInfos.ORDINAL_STRING, "louder");
 		OrdinalValue insane = (OrdinalValue)FieldValueUtil.create(TypeInfos.ORDINAL_STRING, "insane");
 
-		assertFalse(louder.equalsString("loud"));
-		assertTrue(louder.equalsString("louder"));
-		assertFalse(louder.equalsString("insane"));
+		assertFalse(louder.equalsObject("loud"));
+		assertTrue(louder.equalsObject("louder"));
+		assertFalse(louder.equalsObject("insane"));
 
 		assertFalse(louder.equalsValue(loud));
 		assertTrue(louder.equalsValue(louder));
@@ -106,9 +106,9 @@ public class FieldValueTest {
 		// Implicit (ie. lexicographic) ordering
 		assertNull(loud.getOrdering());
 
-		assertTrue(louder.compareToString("loud") > 0);
-		assertTrue(louder.compareToString("louder") == 0);
-		assertTrue(louder.compareToString("insane") > 0);
+		assertTrue(louder.compareToObject("loud") > 0);
+		assertTrue(louder.compareToObject("louder") == 0);
+		assertTrue(louder.compareToObject("insane") > 0);
 
 		assertTrue(louder.compareTo(loud) > 0);
 		assertTrue(louder.compareTo(louder) == 0);
@@ -123,9 +123,9 @@ public class FieldValueTest {
 		// Explicit ordering
 		assertNotNull(loud.getOrdering());
 
-		assertTrue(louder.compareToString("loud") > 0);
-		assertTrue(louder.compareToString("louder") == 0);
-		assertTrue(louder.compareToString("insane") < 0);
+		assertTrue(louder.compareToObject("loud") > 0);
+		assertTrue(louder.compareToObject("louder") == 0);
+		assertTrue(louder.compareToObject("insane") < 0);
 
 		assertTrue(louder.compareTo(loud) > 0);
 		assertTrue(louder.compareTo(louder) == 0);
@@ -137,17 +137,17 @@ public class FieldValueTest {
 		FieldValue zero = FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, 0);
 		FieldValue one = FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, 1);
 
-		assertTrue(zero.equalsString("-0"));
-		assertTrue(zero.equalsString("-0.0"));
-		assertTrue(zero.equalsString("0"));
-		assertTrue(zero.equalsString("0.0"));
-		assertTrue(zero.equalsString("false"));
-		assertFalse(zero.equalsString("true"));
+		assertTrue(zero.equalsObject("-0"));
+		assertTrue(zero.equalsObject("-0.0"));
+		assertTrue(zero.equalsObject("0"));
+		assertTrue(zero.equalsObject("0.0"));
+		assertTrue(zero.equalsObject("false"));
+		assertFalse(zero.equalsObject("true"));
 
-		assertTrue(one.equalsString("1"));
-		assertTrue(one.equalsString("1.0"));
-		assertFalse(one.equalsString("false"));
-		assertTrue(one.equalsString("true"));
+		assertTrue(one.equalsObject("1"));
+		assertTrue(one.equalsObject("1.0"));
+		assertFalse(one.equalsObject("false"));
+		assertTrue(one.equalsObject("true"));
 
 		assertTrue(zero.equalsValue(zero));
 		assertFalse(zero.equalsValue(one));
@@ -155,23 +155,23 @@ public class FieldValueTest {
 		assertFalse(one.equalsValue(zero));
 		assertTrue(one.equalsValue(one));
 
-		assertTrue(zero.compareToString("-1") > 0);
-		assertTrue(zero.compareToString("-1.5") > 0);
-		assertTrue(zero.compareToString("-0") == 0);
-		assertTrue(zero.compareToString("-0.0") == 0);
-		assertTrue(zero.compareToString("0") == 0);
-		assertTrue(zero.compareToString("0.0") == 0);
-		assertTrue(zero.compareToString("1") < 0);
-		assertTrue(zero.compareToString("1.5") < 0);
-		assertTrue(zero.compareToString("false") == 0);
-		assertTrue(zero.compareToString("true") < 0);
+		assertTrue(zero.compareToObject("-1") > 0);
+		assertTrue(zero.compareToObject("-1.5") > 0);
+		assertTrue(zero.compareToObject("-0") == 0);
+		assertTrue(zero.compareToObject("-0.0") == 0);
+		assertTrue(zero.compareToObject("0") == 0);
+		assertTrue(zero.compareToObject("0.0") == 0);
+		assertTrue(zero.compareToObject("1") < 0);
+		assertTrue(zero.compareToObject("1.5") < 0);
+		assertTrue(zero.compareToObject("false") == 0);
+		assertTrue(zero.compareToObject("true") < 0);
 
-		assertTrue(one.compareToString("0") > 0);
-		assertTrue(one.compareToString("1") == 0);
-		assertTrue(one.compareToString("1.0") == 0);
-		assertTrue(one.compareToString("2") < 0);
-		assertTrue(one.compareToString("false") > 0);
-		assertTrue(one.compareToString("true") == 0);
+		assertTrue(one.compareToObject("0") > 0);
+		assertTrue(one.compareToObject("1") == 0);
+		assertTrue(one.compareToObject("1.0") == 0);
+		assertTrue(one.compareToObject("2") < 0);
+		assertTrue(one.compareToObject("false") > 0);
+		assertTrue(one.compareToObject("true") == 0);
 
 		assertTrue(zero.compareToValue(zero) == 0);
 		assertTrue(zero.compareToValue(one) < 0);
@@ -216,15 +216,15 @@ public class FieldValueTest {
 	public void categoricalInteger(){
 		FieldValue zero = FieldValueUtil.create(TypeInfos.CATEGORICAL_INTEGER, 0);
 
-		assertTrue(zero.equalsString("-0"));
-		assertTrue(zero.equalsString("-0.0"));
-		assertTrue(zero.equalsString("0"));
-		assertTrue(zero.equalsString("0.0"));
-		assertTrue(zero.equalsString("false"));
-		assertFalse(zero.equalsString("true"));
+		assertTrue(zero.equalsObject("-0"));
+		assertTrue(zero.equalsObject("-0.0"));
+		assertTrue(zero.equalsObject("0"));
+		assertTrue(zero.equalsObject("0.0"));
+		assertTrue(zero.equalsObject("false"));
+		assertFalse(zero.equalsObject("true"));
 
 		try {
-			zero.compareToString("0");
+			zero.compareToObject("0");
 
 			fail();
 		} catch(EvaluationException ee){
@@ -245,12 +245,12 @@ public class FieldValueTest {
 		OrdinalValue zero = (OrdinalValue)FieldValueUtil.create(DataType.INTEGER, OpType.ORDINAL, 0);
 		OrdinalValue one = (OrdinalValue)FieldValueUtil.create(DataType.INTEGER, OpType.ORDINAL, 1);
 
-		assertTrue(zero.equalsString("0"));
-		assertTrue(zero.equalsString("0.0"));
+		assertTrue(zero.equalsObject("0"));
+		assertTrue(zero.equalsObject("0.0"));
 
-		assertTrue(zero.compareToString("-1") > 0);
-		assertTrue(zero.compareToString("0") == 0);
-		assertTrue(zero.compareToString("1") < 0);
+		assertTrue(zero.compareToObject("-1") > 0);
+		assertTrue(zero.compareToObject("0") == 0);
+		assertTrue(zero.compareToObject("1") < 0);
 
 		assertTrue(zero.compareTo(zero) == 0);
 		assertTrue(zero.compareTo(one) < 0);
@@ -286,20 +286,20 @@ public class FieldValueTest {
 
 		assertEquals(negativeZero, positiveZero);
 
-		assertTrue(negativeZero.equalsString("-0"));
-		assertTrue(negativeZero.equalsString("-0.0"));
-		assertTrue(negativeZero.equalsString("0"));
-		assertTrue(negativeZero.equalsString("0.0"));
-		assertTrue(negativeZero.equalsString("false"));
+		assertTrue(negativeZero.equalsObject("-0"));
+		assertTrue(negativeZero.equalsObject("-0.0"));
+		assertTrue(negativeZero.equalsObject("0"));
+		assertTrue(negativeZero.equalsObject("0.0"));
+		assertTrue(negativeZero.equalsObject("false"));
 
-		assertTrue(negativeZero.compareToString("0") == 0);
-		assertTrue(negativeZero.compareToString("0.0") == 0);
+		assertTrue(negativeZero.compareToObject("0") == 0);
+		assertTrue(negativeZero.compareToObject("0.0") == 0);
 
-		assertTrue(positiveZero.equalsString("-0"));
-		assertTrue(positiveZero.equalsString("-0.0"));
+		assertTrue(positiveZero.equalsObject("-0"));
+		assertTrue(positiveZero.equalsObject("-0.0"));
 
-		assertTrue(positiveZero.compareToString("-0") == 0);
-		assertTrue(positiveZero.compareToString("-0.0") == 0);
+		assertTrue(positiveZero.compareToObject("-0") == 0);
+		assertTrue(positiveZero.compareToObject("-0.0") == 0);
 
 		assertTrue(negativeZero.equalsValue(positiveZero));
 
@@ -329,20 +329,20 @@ public class FieldValueTest {
 
 		assertEquals(negativeZero, positiveZero);
 
-		assertTrue(negativeZero.equalsString("-0"));
-		assertTrue(negativeZero.equalsString("-0.0"));
-		assertTrue(negativeZero.equalsString("0"));
-		assertTrue(negativeZero.equalsString("0.0"));
-		assertTrue(negativeZero.equalsString("false"));
+		assertTrue(negativeZero.equalsObject("-0"));
+		assertTrue(negativeZero.equalsObject("-0.0"));
+		assertTrue(negativeZero.equalsObject("0"));
+		assertTrue(negativeZero.equalsObject("0.0"));
+		assertTrue(negativeZero.equalsObject("false"));
 
-		assertTrue(negativeZero.compareToString("0") == 0);
-		assertTrue(negativeZero.compareToString("0.0") == 0);
+		assertTrue(negativeZero.compareToObject("0") == 0);
+		assertTrue(negativeZero.compareToObject("0.0") == 0);
 
-		assertTrue(positiveZero.equalsString("-0"));
-		assertTrue(positiveZero.equalsString("-0.0"));
+		assertTrue(positiveZero.equalsObject("-0"));
+		assertTrue(positiveZero.equalsObject("-0.0"));
 
-		assertTrue(positiveZero.compareToString("-0") == 0);
-		assertTrue(positiveZero.compareToString("-0.0") == 0);
+		assertTrue(positiveZero.compareToObject("-0") == 0);
+		assertTrue(positiveZero.compareToObject("-0.0") == 0);
 
 		assertTrue(negativeZero.equalsValue(positiveZero));
 
@@ -362,21 +362,21 @@ public class FieldValueTest {
 		FieldValue zero = FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, false);
 		FieldValue one = FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, true);
 
-		assertTrue(zero.compareToString("-0") == 0);
-		assertTrue(zero.compareToString("-0.0") == 0);
-		assertTrue(zero.compareToString("0") == 0);
-		assertTrue(zero.compareToString("0.0") == 0);
-		assertTrue(zero.compareToString("1") < 0);
-		assertTrue(zero.compareToString("1.0") < 0);
-		assertTrue(zero.compareToString("false") == 0);
-		assertTrue(zero.compareToString("true") < 0);
+		assertTrue(zero.compareToObject("-0") == 0);
+		assertTrue(zero.compareToObject("-0.0") == 0);
+		assertTrue(zero.compareToObject("0") == 0);
+		assertTrue(zero.compareToObject("0.0") == 0);
+		assertTrue(zero.compareToObject("1") < 0);
+		assertTrue(zero.compareToObject("1.0") < 0);
+		assertTrue(zero.compareToObject("false") == 0);
+		assertTrue(zero.compareToObject("true") < 0);
 
-		assertTrue(one.compareToString("0") > 0);
-		assertTrue(one.compareToString("0.0") > 0);
-		assertTrue(one.compareToString("1") == 0);
-		assertTrue(one.compareToString("1.0") == 0);
-		assertTrue(one.compareToString("false") > 0);
-		assertTrue(one.compareToString("true") == 0);
+		assertTrue(one.compareToObject("0") > 0);
+		assertTrue(one.compareToObject("0.0") > 0);
+		assertTrue(one.compareToObject("1") == 0);
+		assertTrue(one.compareToObject("1.0") == 0);
+		assertTrue(one.compareToObject("false") > 0);
+		assertTrue(one.compareToObject("true") == 0);
 
 		assertTrue(zero.compareToValue(zero) == 0);
 		assertTrue(zero.compareToValue(one) < 0);

@@ -66,7 +66,7 @@ public class RichBaseCumHazardTables extends BaseCumHazardTables implements HasP
 
 		List<BaselineStratum> baselineStrata = getBaselineStrata();
 		for(BaselineStratum baselineStratum : baselineStrata){
-			String category = baselineStratum.getValue();
+			Object category = baselineStratum.getValue();
 			if(category == null){
 				throw new MissingAttributeException(baselineStratum, PMMLAttributes.BASELINESTRATUM_VALUE);
 			}

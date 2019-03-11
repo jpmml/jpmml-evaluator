@@ -593,11 +593,11 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		InlineTable inlineTable = InlineTableUtil.getInlineTable(trainingInstances);
 		if(inlineTable != null){
-			Table<Integer, String, String> table = InlineTableUtil.getContent(inlineTable);
+			Table<Integer, String, Object> table = InlineTableUtil.getContent(inlineTable);
 
 			Set<Integer> rowKeys = table.rowKeySet();
 			for(Integer rowKey : rowKeys){
-				Map<String, String> rowValues = table.row(rowKey);
+				Map<String, Object> rowValues = table.row(rowKey);
 
 				for(FieldLoader fieldLoader : fieldLoaders){
 					result.put(rowKey, fieldLoader.getName(), fieldLoader.load(rowValues));
@@ -740,10 +740,10 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 
 		abstract
-		public FieldValue prepare(String value);
+		public FieldValue prepare(Object value);
 
-		public FieldValue load(Map<String, String> values){
-			String value = values.get(getColumn());
+		public FieldValue load(Map<String, Object> values){
+			Object value = values.get(getColumn());
 
 			return prepare(value);
 		}
@@ -773,7 +773,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 
 		@Override
-		public FieldValue prepare(String value){
+		public FieldValue prepare(Object value){
 			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, value);
 		}
 	}
@@ -794,7 +794,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 
 		@Override
-		public FieldValue prepare(String value){
+		public FieldValue prepare(Object value){
 			return InputFieldUtil.prepareInputValue(getDataField(), getMiningField(), value);
 		}
 
@@ -828,7 +828,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 
 		@Override
-		public FieldValue prepare(String value){
+		public FieldValue prepare(Object value){
 			DerivedField derivedField = getDerivedField();
 
 			TypeInfo typeInfo = new TypeInfo(){

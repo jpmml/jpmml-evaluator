@@ -55,12 +55,12 @@ public class RichConstant extends Constant implements HasParsedValue<RichConstan
 	}
 
 	@Override
-	public String getValue(){
+	public Object getValue(){
 		return super.getValue();
 	}
 
 	@Override
-	public RichConstant setValue(String value){
+	public RichConstant setValue(Object value){
 		return (RichConstant)super.setValue(value);
 	}
 
@@ -68,7 +68,7 @@ public class RichConstant extends Constant implements HasParsedValue<RichConstan
 	public FieldValue getValue(TypeInfo typeInfo){
 
 		if(this.parsedValue == null){
-			String value = getValue();
+			Object value = getValue();
 
 			this.parsedValue = parse(typeInfo, value);
 		}

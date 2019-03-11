@@ -100,15 +100,16 @@ public class FieldUtil {
 			List<Value> pmmlValues = dataField.getValues();
 
 			for(Value pmmlValue : pmmlValues){
-				String stringValue = pmmlValue.getValue();
-				if(stringValue == null){
+				Object simpleValue = pmmlValue.getValue();
+				if(simpleValue == null){
 					throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
 				}
 
 				Value.Property property = pmmlValue.getProperty();
 				switch(property){
 					case VALID:
-						result.add(stringValue);
+						// XXX
+						result.add((String)simpleValue);
 						break;
 					default:
 						break;
@@ -132,15 +133,15 @@ public class FieldUtil {
 			List<Value> pmmlValues = field.getValues();
 
 			for(Value pmmlValue : pmmlValues){
-				String stringValue = pmmlValue.getValue();
-				if(stringValue == null){
+				Object simpleValue = pmmlValue.getValue();
+				if(simpleValue == null){
 					throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
 				}
 
 				Value.Property property = pmmlValue.getProperty();
 				switch(property){
 					case VALID:
-						result.add(TypeUtil.parse(dataType, stringValue));
+						result.add(TypeUtil.parseOrCast(dataType, simpleValue));
 						break;
 					default:
 						break;

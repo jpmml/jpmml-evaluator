@@ -75,20 +75,32 @@ public class ArrayUtil {
 			throw new MissingAttributeException(array, PMMLAttributes.ARRAY_TYPE);
 		}
 
-		String value = array.getValue();
-
 		List<String> tokens;
 
-		switch(type){
-			case INT:
-			case REAL:
-				tokens = org.jpmml.model.ArrayUtil.parse(value, false);
-				break;
-			case STRING:
-				tokens = org.jpmml.model.ArrayUtil.parse(value, true);
-				break;
-			default:
-				throw new UnsupportedAttributeException(array, type);
+		Object value = array.getValue();
+
+		if(value instanceof String){
+			String string = (String)value;
+
+			switch(type){
+				case INT:
+				case REAL:
+				case STRING:
+					tokens = org.jpmml.model.ArrayUtil.parse(type, string);
+					break;
+				default:
+					throw new UnsupportedAttributeException(array, type);
+			}
+		} else
+
+		if(value instanceof List){
+			List<?> list = (List<?>)value;
+
+			tokens = Lists.transform(list, org.jpmml.model.ValueUtil::toString);
+		} else
+
+		{
+			throw new InvalidElementException(array);
 		}
 
 		Integer n = array.getN();

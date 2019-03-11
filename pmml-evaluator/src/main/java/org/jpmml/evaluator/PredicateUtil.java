@@ -115,19 +115,17 @@ public class PredicateUtil {
 			throw new MissingAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_OPERATOR);
 		}
 
-		String stringValue = simplePredicate.getValue();
-
 		switch(operator){
 			case IS_MISSING:
 			case IS_NOT_MISSING:
 				// "If the operator is isMissing or isNotMissing, then the value attribute must not appear"
-				if(stringValue != null){
-					throw new MisplacedAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_VALUE, stringValue);
+				if(simplePredicate.hasValue()){
+					throw new MisplacedAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_VALUE, simplePredicate.getValue());
 				}
 				break;
 			default:
 				// "With all other operators, however, the value attribute is required"
-				if(stringValue == null){
+				if(!simplePredicate.hasValue()){
 					throw new MissingAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_VALUE);
 				}
 				break;

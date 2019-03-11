@@ -58,9 +58,9 @@ public class PredicateTransformer extends PredicateFilterer {
 	private Predicate transform(SimpleSetPredicate simpleSetPredicate){
 		Array array = simpleSetPredicate.getArray();
 
-		String value = array.getValue();
+		String value = (String)array.getValue();
 
-		List<String> tokens = ArrayUtil.parse(value, true);
+		List<String> tokens = ArrayUtil.parse(array.getType(), value);
 		if(tokens.size() != 1){
 			return simpleSetPredicate;
 		}

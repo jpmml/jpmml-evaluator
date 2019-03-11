@@ -39,6 +39,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Matrix;
 import org.dmg.pmml.OpType;
@@ -79,6 +80,7 @@ import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.TypeInfo;
 import org.jpmml.evaluator.TypeInfos;
+import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
@@ -830,12 +832,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		List<BaselineStratum> baselineStrata = baseCumHazardTables.getBaselineStrata();
 		for(BaselineStratum baselineStratum : baselineStrata){
-			String category = baselineStratum.getValue();
+			Object category = baselineStratum.getValue();
 			if(category == null){
 				throw new MissingAttributeException(baselineStratum, PMMLAttributes.BASELINESTRATUM_VALUE);
 			} // End if
 
-			if(value.equalsString(category)){
+			if(value.equalsObject(category)){
 				return baselineStratum;
 			}
 		}
@@ -1029,11 +1031,11 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					throw new UnsupportedElementException(predictor);
 				}
 
-				Function<Category, String> function = new Function<Category, String>(){
+				Function<Category, Object> function = new Function<Category, Object>(){
 
 					@Override
-					public String apply(Category category){
-						String value = category.getValue();
+					public Object apply(Category category){
+						Object value = category.getValue();
 						if(value == null){
 							throw new MissingAttributeException(category, PMMLAttributes.CATEGORY_VALUE);
 						}
@@ -1042,7 +1044,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					}
 				};
 
-				List<String> values = Lists.transform(categories.getCategories(), function);
+				List<Object> values = Lists.transform(categories.getCategories(), function);
 
 				factorHandlers.add(new ContrastMatrixHandler(ppCell, matrix, values));
 			} else
@@ -1101,13 +1103,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		private class FactorHandler extends PredictorHandler {
 
-			private String category = null;
+			private Object category = null;
 
 
 			private FactorHandler(PPCell ppCell){
 				super(ppCell);
 
-				String value = ppCell.getValue();
+				Object value = ppCell.getValue();
 				if(value == null){
 					throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_VALUE);
 				}
@@ -1124,11 +1126,11 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				return (equals ? product : product.multiply(0d));
 			}
 
-			public String getCategory(){
+			public Object getCategory(){
 				return this.category;
 			}
 
-			private void setCategory(String category){
+			private void setCategory(Object category){
 				this.category = category;
 			}
 		}
@@ -1137,12 +1139,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			private Matrix matrix = null;
 
-			private List<String> categories = null;
+			private List<Object> categories = null;
 
 			private List<FieldValue> parsedCategories = null;
 
 
-			private ContrastMatrixHandler(PPCell ppCell, Matrix matrix, List<String> categories){
+			private ContrastMatrixHandler(PPCell ppCell, Matrix matrix, List<Object> categories){
 				super(ppCell);
 
 				setMatrix(matrix);
@@ -1178,14 +1180,14 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				return this.parsedCategories.indexOf(value);
 			}
 
-			public int getIndex(String category){
-				List<String> categories = getCategories();
+			public int getIndex(Object category){
+				List<Object> categories = getCategories();
 
 				return categories.indexOf(category);
 			}
 
 			private List<FieldValue> parseCategories(TypeInfo typeInfo){
-				List<String> categories = getCategories();
+				List<Object> categories = getCategories();
 
 				return Lists.transform(categories, category -> FieldValueUtil.create(typeInfo, category));
 			}
@@ -1198,11 +1200,11 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				this.matrix = matrix;
 			}
 
-			public List<String> getCategories(){
+			public List<Object> getCategories(){
 				return this.categories;
 			}
 
-			private void setCategories(List<String> categories){
+			private void setCategories(List<Object> categories){
 				this.categories = categories;
 			}
 		}
@@ -1215,12 +1217,14 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			private CovariateHandler(PPCell ppCell){
 				super(ppCell);
 
-				String value = ppCell.getValue();
+				Object value = ppCell.getValue();
 				if(value == null){
 					throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_VALUE);
 				}
 
-				setExponent(Double.parseDouble(value));
+				Number number = (Number)TypeUtil.parseOrCast(DataType.DOUBLE, value);
+
+				setExponent(number.doubleValue());
 			}
 
 			@Override

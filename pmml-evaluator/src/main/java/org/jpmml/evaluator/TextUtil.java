@@ -130,7 +130,7 @@ public class TextUtil {
 
 	static
 	String normalize(InlineTable inlineTable, String inColumn, String outColumn, String regexColumn, String string, TextTokenizer tokenizer, boolean caseSensitive, int maxLevenshteinDistance){
-		Table<Integer, String, String> table = InlineTableUtil.getContent(inlineTable);
+		Table<Integer, String, Object> table = InlineTableUtil.getContent(inlineTable);
 
 		int regexFlags = (caseSensitive ? 0 : (Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE));
 
@@ -140,17 +140,17 @@ public class TextUtil {
 
 			Integer rowKey = (i + 1);
 
-			String inValue = table.get(rowKey, inColumn);
+			String inValue = (String)table.get(rowKey, inColumn);
 			if(inValue == null){
 				throw new InvalidElementException("Cell " + PMMLException.formatKey(inColumn) + " is not defined", row);
 			}
 
-			String outValue = table.get(rowKey, outColumn);
+			String outValue = (String)table.get(rowKey, outColumn);
 			if(outValue == null){
 				throw new InvalidElementException("Cell " + PMMLException.formatKey(outColumn) + " is not defined", row);
 			}
 
-			String regexValue = table.get(rowKey, regexColumn);
+			String regexValue = (String)table.get(rowKey, regexColumn);
 
 			// "If there is a regexField column and its value for that row is true, then the string in the inField column should be treated as a PCRE regular expression"
 			boolean regex = ("true").equalsIgnoreCase(regexValue);

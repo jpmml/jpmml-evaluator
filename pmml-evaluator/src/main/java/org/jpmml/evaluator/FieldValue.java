@@ -73,7 +73,7 @@ public class FieldValue implements TypeInfo, Serializable {
 	}
 
 	abstract
-	public int compareToString(String string);
+	public int compareToObject(Object value);
 
 	abstract
 	public int compareToValue(FieldValue value);
@@ -128,7 +128,7 @@ public class FieldValue implements TypeInfo, Serializable {
 			return equals(hasParsedValue);
 		}
 
-		return equalsString(ensureValue(hasValue));
+		return equalsObject(ensureValue(hasValue));
 	}
 
 	public boolean equals(HasParsedValue<?> hasParsedValue){
@@ -181,7 +181,7 @@ public class FieldValue implements TypeInfo, Serializable {
 			return compareTo(hasParsedValue);
 		}
 
-		return compareToString(ensureValue(hasValue));
+		return compareToObject(ensureValue(hasValue));
 	}
 
 	public int compareTo(HasParsedValue<?> hasParsedValue){
@@ -190,8 +190,8 @@ public class FieldValue implements TypeInfo, Serializable {
 		return compareToValue(value);
 	}
 
-	public boolean equalsString(String string){
-		Object value = TypeUtil.parse(getDataType(), string);
+	public boolean equalsObject(Object value){
+		value = TypeUtil.parseOrCast(getDataType(), value);
 
 		return (getValue()).equals(value);
 	}
@@ -436,8 +436,8 @@ public class FieldValue implements TypeInfo, Serializable {
 	}
 
 	static
-	private String ensureValue(HasValue<?> hasValue){
-		String value = hasValue.getValue();
+	private Object ensureValue(HasValue<?> hasValue){
+		Object value = hasValue.getValue();
 		if(value == null){
 			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement((Class)hasValue.getClass()) + "@value"), (PMMLObject)hasValue);
 		}

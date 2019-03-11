@@ -283,7 +283,8 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				if(expression instanceof NormDiscrete){
 					NormDiscrete normDiscrete = (NormDiscrete)expression;
 
-					String targetCategory = normDiscrete.getValue();
+					// XXX
+					String targetCategory = (String)normDiscrete.getValue();
 					if(targetCategory == null){
 						throw new MissingAttributeException(normDiscrete, PMMLAttributes.NORMDISCRETE_VALUE);
 					}

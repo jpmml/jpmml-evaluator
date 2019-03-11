@@ -44,7 +44,7 @@ public class RichNormDiscrete extends NormDiscrete implements HasParsedValue<Nor
 	public FieldValue getValue(TypeInfo typeInfo){
 
 		if(this.parsedValue == null){
-			String value = getValue();
+			Object value = getValue();
 			if(value == null){
 				throw new MissingAttributeException(this, PMMLAttributes.NORMDISCRETE_VALUE);
 			}
