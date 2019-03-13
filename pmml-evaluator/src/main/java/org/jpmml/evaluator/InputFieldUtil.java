@@ -27,7 +27,6 @@ import com.google.common.collect.RangeSet;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
-import org.dmg.pmml.HasDiscreteDomain;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MissingValueTreatmentMethod;
@@ -417,39 +416,7 @@ public class InputFieldUtil {
 			return FieldValues.MISSING_VALUE;
 		}
 
-		TypeInfo typeInfo = new TypeInfo(){
-
-			@Override
-			public DataType getDataType(){
-				DataType dataType = FieldUtil.getDataType(field);
-				if(dataType == null){
-					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@dataType"), field);
-				}
-
-				return dataType;
-			}
-
-			@Override
-			public OpType getOpType(){
-				OpType opType = FieldUtil.getOpType(field, miningField);
-				if(opType == null){
-					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@optype"), field);
-				}
-
-				return opType;
-			}
-
-			@Override
-			public List<?> getOrdering(){
-				List<?> ordering = null;
-
-				if(field instanceof HasDiscreteDomain){
-					ordering = FieldUtil.getValidValues((Field & HasDiscreteDomain)field);
-				}
-
-				return ordering;
-			}
-		};
+		TypeInfo typeInfo = FieldUtil.getTypeInfo(field, miningField);
 
 		return FieldValueUtil.createOrCast(typeInfo, value);
 	}

@@ -29,9 +29,4 @@ public class RichObjectFactory extends ObjectFactory {
 	public RichBaseCumHazardTables createBaseCumHazardTables(){
 		return new RichBaseCumHazardTables();
 	}
-
-	@Override
-	public RichPPCell createPPCell(){
-		return new RichPPCell();
-	}
 }

@@ -49,7 +49,8 @@ public class ScoreDistributionInternerTest {
 			assertNotSame((leftChild.getScoreDistributions()).get(i), (rightChild.getScoreDistributions()).get(i));
 		}
 
-		intern(treeModel);
+		ScoreDistributionInterner interner = new ScoreDistributionInterner();
+		interner.applyTo(treeModel);
 
 		for(int i = 0; i < 2; i++){
 			assertSame((leftChild.getScoreDistributions()).get(i), (rightChild.getScoreDistributions()).get(i));
@@ -64,11 +65,5 @@ public class ScoreDistributionInternerTest {
 			.addScoreDistributions(event, noEvent);
 
 		return node;
-	}
-
-	static
-	private void intern(TreeModel treeModel){
-		ScoreDistributionInterner interner = new ScoreDistributionInterner();
-		interner.applyTo(treeModel);
 	}
 }

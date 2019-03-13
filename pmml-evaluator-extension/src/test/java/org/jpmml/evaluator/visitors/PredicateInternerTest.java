@@ -86,7 +86,8 @@ public class PredicateInternerTest {
 
 		assertNotSame(leftChild.getPredicate(), rightChild.getPredicate());
 
-		intern(treeModel);
+		PredicateInterner interner = new PredicateInterner();
+		interner.applyTo(treeModel);
 
 		assertSame(leftChild.getPredicate(), rightChild.getPredicate());
 	}
@@ -97,11 +98,5 @@ public class PredicateInternerTest {
 			.setPredicate(predicate);
 
 		return node;
-	}
-
-	static
-	private void intern(TreeModel treeModel){
-		PredicateInterner interner = new PredicateInterner();
-		interner.applyTo(treeModel);
 	}
 }

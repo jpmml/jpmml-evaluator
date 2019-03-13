@@ -77,6 +77,7 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.XPathUtil;
+import org.jpmml.model.ValueUtil;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<Entity> {
 
@@ -283,13 +284,12 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				if(expression instanceof NormDiscrete){
 					NormDiscrete normDiscrete = (NormDiscrete)expression;
 
-					// XXX
-					String targetCategory = (String)normDiscrete.getValue();
+					Object targetCategory = normDiscrete.getValue();
 					if(targetCategory == null){
 						throw new MissingAttributeException(normDiscrete, PMMLAttributes.NORMDISCRETE_VALUE);
 					}
 
-					result.put(entity, targetCategory, value);
+					result.put(entity, ValueUtil.toString(targetCategory), value);
 				} else
 
 				{

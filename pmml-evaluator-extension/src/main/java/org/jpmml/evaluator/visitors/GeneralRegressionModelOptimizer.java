@@ -18,16 +18,10 @@
  */
 package org.jpmml.evaluator.visitors;
 
-import java.util.List;
-import java.util.ListIterator;
-
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.general_regression.BaseCumHazardTables;
 import org.dmg.pmml.general_regression.GeneralRegressionModel;
-import org.dmg.pmml.general_regression.PPCell;
-import org.dmg.pmml.general_regression.PPMatrix;
 import org.jpmml.evaluator.general_regression.RichBaseCumHazardTables;
-import org.jpmml.evaluator.general_regression.RichPPCell;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 public class GeneralRegressionModelOptimizer extends AbstractVisitor {
@@ -41,19 +35,5 @@ public class GeneralRegressionModelOptimizer extends AbstractVisitor {
 		}
 
 		return super.visit(generalRegressionModel);
-	}
-
-	@Override
-	public VisitorAction visit(PPMatrix ppMatrix){
-
-		if(ppMatrix.hasPPCells()){
-			List<PPCell> ppCells = ppMatrix.getPPCells();
-
-			for(ListIterator<PPCell> it = ppCells.listIterator(); it.hasNext(); ){
-				it.set(new RichPPCell(it.next()));
-			}
-		}
-
-		return super.visit(ppMatrix);
 	}
 }

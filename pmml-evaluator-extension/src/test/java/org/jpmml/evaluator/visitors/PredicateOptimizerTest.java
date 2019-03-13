@@ -21,12 +21,10 @@ package org.jpmml.evaluator.visitors;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Predicate;
-import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
-import org.jpmml.evaluator.HasParsedValue;
 import org.jpmml.evaluator.HasParsedValueSet;
 import org.junit.Test;
 
@@ -36,38 +34,20 @@ import static org.junit.Assert.assertTrue;
 public class PredicateOptimizerTest {
 
 	@Test
-	public void optimizeSimplePredicate(){
-		Predicate predicate = new SimplePredicate(FieldName.create("x"), SimplePredicate.Operator.EQUAL)
-			.setValue("1");
-
-		checkTree(predicate, HasParsedValue.class);
-	}
-
-	@Test
 	public void optimizeSimpleSetPredicate(){
 		Predicate predicate = new SimpleSetPredicate(FieldName.create("x"), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "1"));
 
-		checkTree(predicate, HasParsedValueSet.class);
-	}
-
-	static
-	private void checkTree(Predicate predicate, Class<?> clazz){
 		Node root = new LeafNode()
 			.setPredicate(predicate);
 
 		TreeModel treeModel = new TreeModel()
 			.setNode(root);
 
-		assertFalse(clazz.isInstance(root.getPredicate()));
+		assertFalse(HasParsedValueSet.class.isInstance(root.getPredicate()));
 
-		optimize(treeModel);
-
-		assertTrue(clazz.isInstance(root.getPredicate()));
-	}
-
-	static
-	private void optimize(TreeModel treeModel){
 		PredicateOptimizer optimizer = new PredicateOptimizer();
 		optimizer.applyTo(treeModel);
+
+		assertTrue(HasParsedValueSet.class.isInstance(root.getPredicate()));
 	}
 }

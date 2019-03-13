@@ -141,6 +141,7 @@ public interface PMMLAttributes {
 	Field NODE_DEFAULTCHILD = ReflectionUtil.getField(ComplexNode.class, "defaultChild");
 	Field NODE_SCORE = ReflectionUtil.getField(ComplexNode.class, "score");
 	Field NORMCONTINUOUS_MAPMISSINGTO = ReflectionUtil.getField(NormContinuous.class, "mapMissingTo");
+	Field NORMDISCRETE_FIELD = ReflectionUtil.getField(NormDiscrete.class, "field");
 	Field NORMDISCRETE_VALUE = ReflectionUtil.getField(NormDiscrete.class, "value");
 	Field NUMERICPREDICTOR_FIELD = ReflectionUtil.getField(NumericPredictor.class, "field");
 	Field OUTPUTFIELD_ISMULTIVALUED = ReflectionUtil.getField(OutputField.class, "isMultiValued");

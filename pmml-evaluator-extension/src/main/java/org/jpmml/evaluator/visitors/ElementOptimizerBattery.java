@@ -23,11 +23,9 @@ import org.jpmml.model.VisitorBattery;
 public class ElementOptimizerBattery extends VisitorBattery {
 
 	public ElementOptimizerBattery(){
-		add(ExpressionOptimizer.class);
 		add(FieldOptimizer.class);
 		add(GeneralRegressionModelOptimizer.class);
 		add(NaiveBayesModelOptimizer.class);
 		add(PredicateOptimizer.class);
-		add(RegressionModelOptimizer.class);
 	}
 }

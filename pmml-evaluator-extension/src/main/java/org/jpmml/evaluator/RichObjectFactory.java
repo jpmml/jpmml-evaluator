@@ -26,23 +26,8 @@ import org.dmg.pmml.ObjectFactory;
 public class RichObjectFactory extends ObjectFactory {
 
 	@Override
-	public RichConstant createConstant(){
-		return new RichConstant();
-	}
-
-	@Override
 	public RichDataField createDataField(){
 		return new RichDataField();
-	}
-
-	@Override
-	public RichNormDiscrete createNormDiscrete(){
-		return new RichNormDiscrete();
-	}
-
-	@Override
-	public RichSimplePredicate createSimplePredicate(){
-		return new RichSimplePredicate();
 	}
 
 	@Override

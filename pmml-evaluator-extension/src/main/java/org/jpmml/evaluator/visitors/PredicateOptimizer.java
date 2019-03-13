@@ -19,10 +19,8 @@
 package org.jpmml.evaluator.visitors;
 
 import org.dmg.pmml.Predicate;
-import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.jpmml.evaluator.ExtensionUtil;
-import org.jpmml.evaluator.RichSimplePredicate;
 import org.jpmml.evaluator.RichSimpleSetPredicate;
 import org.jpmml.model.visitors.PredicateFilterer;
 
@@ -39,21 +37,6 @@ public class PredicateOptimizer extends PredicateFilterer {
 	}
 
 	public Predicate optimize(Predicate predicate){
-
-		if(predicate instanceof SimplePredicate){
-			SimplePredicate simplePredicate = (SimplePredicate)predicate;
-
-			SimplePredicate.Operator operator = simplePredicate.getOperator();
-			switch(operator){
-				case IS_MISSING:
-				case IS_NOT_MISSING:
-					return predicate;
-				default:
-					break;
-			}
-
-			return new RichSimplePredicate(simplePredicate);
-		} else
 
 		if(predicate instanceof SimpleSetPredicate){
 			SimpleSetPredicate simpleSetPredicate = (SimpleSetPredicate)predicate;

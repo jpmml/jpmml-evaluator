@@ -151,25 +151,6 @@ public class ExpressionUtil {
 		DataType dataType = getConstantDataType(constant);
 		OpType opType = TypeUtil.getOpType(dataType);
 
-		if(constant instanceof HasParsedValue){
-			HasParsedValue<?> hasParsedValue = (HasParsedValue<?>)constant;
-
-			TypeInfo typeInfo = new TypeInfo(){
-
-				@Override
-				public DataType getDataType(){
-					return dataType;
-				}
-
-				@Override
-				public OpType getOpType(){
-					return opType;
-				}
-			};
-
-			return hasParsedValue.getValue(typeInfo);
-		}
-
 		return FieldValueUtil.create(dataType, opType, constant.getValue());
 	}
 

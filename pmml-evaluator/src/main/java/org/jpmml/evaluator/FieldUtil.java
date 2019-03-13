@@ -93,6 +93,45 @@ public class FieldUtil {
 	}
 
 	static
+	public TypeInfo getTypeInfo(Field<?> field, MiningField miningField){
+		TypeInfo typeInfo = new TypeInfo(){
+
+			@Override
+			public DataType getDataType(){
+				DataType dataType = FieldUtil.getDataType(field);
+				if(dataType == null){
+					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@dataType"), field);
+				}
+
+				return dataType;
+			}
+
+			@Override
+			public OpType getOpType(){
+				OpType opType = FieldUtil.getOpType(field, miningField);
+				if(opType == null){
+					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@optype"), field);
+				}
+
+				return opType;
+			}
+
+			@Override
+			public List<?> getOrdering(){
+				List<?> ordering = null;
+
+				if(field instanceof HasDiscreteDomain){
+					ordering = FieldUtil.getValidValues((Field & HasDiscreteDomain)field);
+				}
+
+				return ordering;
+			}
+		};
+
+		return typeInfo;
+	}
+
+	static
 	private List<String> parseCategories(DataField dataField){
 		List<String> result = new ArrayList<>();
 

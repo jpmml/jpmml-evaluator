@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import org.jpmml.evaluator.visitors.ElementInternerBattery;
 import org.jpmml.evaluator.visitors.ElementOptimizerBattery;
+import org.jpmml.evaluator.visitors.ValueOptimizer;
 import org.jpmml.model.VisitorBattery;
 import org.jpmml.model.visitors.AttributeInternerBattery;
 import org.jpmml.model.visitors.AttributeOptimizerBattery;
@@ -38,6 +39,7 @@ public class DefaultVisitorBattery extends VisitorBattery {
 		// Convert PMML attributes and elements from their original representation to optimized representation.
 		// The optimization pass should improve performance
 		addAll(new AttributeOptimizerBattery());
+		add(ValueOptimizer.class);
 		addAll(new ElementOptimizerBattery());
 
 		// Identify unique PMML attributes and elements.

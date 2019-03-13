@@ -117,24 +117,20 @@ public class FieldValue implements TypeInfo, Serializable {
 
 	/**
 	 * <p>
+	 * Calculates the order between this value and the reference value.
+	 * </p>
+	 */
+	public int compareTo(HasValue<?> hasValue){
+		return compareToValue(ensureValue(hasValue));
+	}
+
+	/**
+	 * <p>
 	 * Checks if this value is equal to the reference value.
 	 * </p>
 	 */
 	public boolean equals(HasValue<?> hasValue){
-
-		if(hasValue instanceof HasParsedValue){
-			HasParsedValue<?> hasParsedValue = (HasParsedValue<?>)hasValue;
-
-			return equals(hasParsedValue);
-		}
-
 		return equalsValue(ensureValue(hasValue));
-	}
-
-	public boolean equals(HasParsedValue<?> hasParsedValue){
-		FieldValue value = hasParsedValue.getValue(this);
-
-		return equalsValue(value);
 	}
 
 	/**
@@ -168,38 +164,6 @@ public class FieldValue implements TypeInfo, Serializable {
 		return values.contains(this);
 	}
 
-	/**
-	 * <p>
-	 * Calculates the order between this value and the reference value.
-	 * </p>
-	 */
-	public int compareTo(HasValue<?> hasValue){
-
-		if(hasValue instanceof HasParsedValue){
-			HasParsedValue<?> hasParsedValue = (HasParsedValue<?>)hasValue;
-
-			return compareTo(hasParsedValue);
-		}
-
-		return compareToValue(ensureValue(hasValue));
-	}
-
-	public int compareTo(HasParsedValue<?> hasParsedValue){
-		FieldValue value = hasParsedValue.getValue(this);
-
-		return compareToValue(value);
-	}
-
-	public boolean equalsValue(Object value){
-		value = TypeUtil.parseOrCast(getDataType(), value);
-
-		return (getValue()).equals(value);
-	}
-
-	public boolean equalsValue(FieldValue value){
-		return equalsValue(value.getValue());
-	}
-
 	public boolean isIn(Collection<FieldValue> values){
 		Predicate<FieldValue> predicate = new Predicate<FieldValue>(){
 
@@ -222,6 +186,16 @@ public class FieldValue implements TypeInfo, Serializable {
 		Map<FieldValue, V> values = hasParsedValueMapping.getValueMapping(this);
 
 		return values.get(this);
+	}
+
+	public boolean equalsValue(Object value){
+		value = TypeUtil.parseOrCast(getDataType(), value);
+
+		return (getValue()).equals(value);
+	}
+
+	public boolean equalsValue(FieldValue value){
+		return equalsValue(value.getValue());
 	}
 
 	public String asString(){
