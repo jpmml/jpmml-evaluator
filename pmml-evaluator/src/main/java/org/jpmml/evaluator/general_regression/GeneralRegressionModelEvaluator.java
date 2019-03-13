@@ -837,7 +837,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new MissingAttributeException(baselineStratum, PMMLAttributes.BASELINESTRATUM_VALUE);
 			} // End if
 
-			if(value.equalsObject(category)){
+			if(value.equalsValue(category)){
 				return baselineStratum;
 			}
 		}

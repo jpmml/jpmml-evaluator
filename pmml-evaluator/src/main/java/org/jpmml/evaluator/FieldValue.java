@@ -128,7 +128,7 @@ public class FieldValue implements TypeInfo, Serializable {
 			return equals(hasParsedValue);
 		}
 
-		return equalsObject(ensureValue(hasValue));
+		return equalsValue(ensureValue(hasValue));
 	}
 
 	public boolean equals(HasParsedValue<?> hasParsedValue){
@@ -190,7 +190,7 @@ public class FieldValue implements TypeInfo, Serializable {
 		return compareToValue(value);
 	}
 
-	public boolean equalsObject(Object value){
+	public boolean equalsValue(Object value){
 		value = TypeUtil.parseOrCast(getDataType(), value);
 
 		return (getValue()).equals(value);
@@ -198,12 +198,6 @@ public class FieldValue implements TypeInfo, Serializable {
 
 	public boolean equalsValue(FieldValue value){
 		return equalsValue(value.getValue());
-	}
-
-	private boolean equalsValue(Object value){
-		value = TypeUtil.parseOrCast(getDataType(), value);
-
-		return (getValue()).equals(value);
 	}
 
 	public boolean isIn(Collection<FieldValue> values){

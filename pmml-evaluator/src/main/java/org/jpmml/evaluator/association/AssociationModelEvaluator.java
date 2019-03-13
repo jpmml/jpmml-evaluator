@@ -276,7 +276,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				} else
 
 				{
-					if(value.equalsObject(category)){
+					if(value.equalsValue(category)){
 						result.add(id);
 					}
 				}

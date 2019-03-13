@@ -435,7 +435,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				throw new MissingAttributeException(pairCount, PMMLAttributes.PAIRCOUNTS_VALUE);
 			} // End if
 
-			if(value.equalsObject(category)){
+			if(value.equalsValue(category)){
 				TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
 				if(targetValueCounts == null){
 					throw new MissingElementException(pairCount, PMMLElements.PAIRCOUNTS_TARGETVALUECOUNTS);

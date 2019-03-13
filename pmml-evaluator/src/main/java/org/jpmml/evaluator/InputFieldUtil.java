@@ -326,7 +326,7 @@ public class InputFieldUtil {
 							if(value instanceof FieldValue){
 								FieldValue fieldValue = (FieldValue)value;
 
-								equals = fieldValue.equalsObject(simpleValue);
+								equals = fieldValue.equalsValue(simpleValue);
 							} else
 
 							{
