@@ -35,10 +35,10 @@ public class ContinuousValue extends ScalarValue {
 	}
 
 	@Override
-	public int compareToObject(Object value){
+	public int compareToValue(Object value){
 
 		try {
-			return super.compareToObject(value);
+			return super.compareToValue(value);
 		} catch(NumberFormatException nfeDefault){
 			Number number;
 

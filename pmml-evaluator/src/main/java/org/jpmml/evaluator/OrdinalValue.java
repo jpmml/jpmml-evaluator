@@ -43,10 +43,10 @@ public class OrdinalValue extends DiscreteValue {
 	}
 
 	@Override
-	public int compareToObject(Object value){
+	public int compareToValue(Object value){
 		List<?> ordering = getOrdering();
 		if(ordering == null){
-			return super.compareToObject(value);
+			return super.compareToValue(value);
 		}
 
 		return compare(ordering, getValue(), TypeUtil.parseOrCast(getDataType(), value));

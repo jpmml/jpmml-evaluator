@@ -73,7 +73,7 @@ public class FieldValue implements TypeInfo, Serializable {
 	}
 
 	abstract
-	public int compareToObject(Object value);
+	public int compareToValue(Object value);
 
 	abstract
 	public int compareToValue(FieldValue value);
@@ -181,7 +181,7 @@ public class FieldValue implements TypeInfo, Serializable {
 			return compareTo(hasParsedValue);
 		}
 
-		return compareToObject(ensureValue(hasValue));
+		return compareToValue(ensureValue(hasValue));
 	}
 
 	public int compareTo(HasParsedValue<?> hasParsedValue){

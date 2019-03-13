@@ -44,7 +44,7 @@ public class ScalarValue extends FieldValue implements Comparable<ScalarValue> {
 	}
 
 	@Override
-	public int compareToObject(Object value){
+	public int compareToValue(Object value){
 		value = TypeUtil.parseOrCast(getDataType(), value);
 
 		return ((Comparable)getValue()).compareTo(value);
@@ -62,12 +62,6 @@ public class ScalarValue extends FieldValue implements Comparable<ScalarValue> {
 		}
 
 		return compareToValue(value.getValue());
-	}
-
-	private int compareToValue(Object value){
-		value = TypeUtil.parseOrCast(getDataType(), value);
-
-		return ((Comparable)getValue()).compareTo(value);
 	}
 
 	@Override

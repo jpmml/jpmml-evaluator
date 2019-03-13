@@ -35,7 +35,7 @@ public class CategoricalValue extends DiscreteValue {
 	}
 
 	@Override
-	public int compareToObject(Object value){
+	public int compareToValue(Object value){
 		throw new EvaluationException("Categorical value cannot be used in comparison operations");
 	}
 
@@ -92,7 +92,7 @@ public class CategoricalValue extends DiscreteValue {
 		}
 
 		@Override
-		public int compareToObject(Object value){
+		public int compareToValue(Object value){
 			Number number;
 
 			try {
