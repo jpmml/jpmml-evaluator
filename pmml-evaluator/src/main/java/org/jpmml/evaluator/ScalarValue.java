@@ -30,20 +30,6 @@ public class ScalarValue extends FieldValue implements Comparable<ScalarValue> {
 	}
 
 	@Override
-	public boolean equalsValue(FieldValue value){
-
-		if(value instanceof ScalarValue){
-			ScalarValue that = (ScalarValue)value;
-
-			if((this.getDataType()).equals(that.getDataType())){
-				return (this.getValue()).equals(that.getValue());
-			}
-		}
-
-		return super.equalsValue(value);
-	}
-
-	@Override
 	public int compareToValue(Object value){
 		value = TypeUtil.parseOrCast(getDataType(), value);
 
@@ -62,6 +48,20 @@ public class ScalarValue extends FieldValue implements Comparable<ScalarValue> {
 		}
 
 		return compareToValue(value.getValue());
+	}
+
+	@Override
+	public boolean equalsValue(FieldValue value){
+
+		if(value instanceof ScalarValue){
+			ScalarValue that = (ScalarValue)value;
+
+			if((this.getDataType()).equals(that.getDataType())){
+				return (this.getValue()).equals(that.getValue());
+			}
+		}
+
+		return super.equalsValue(value);
 	}
 
 	@Override
