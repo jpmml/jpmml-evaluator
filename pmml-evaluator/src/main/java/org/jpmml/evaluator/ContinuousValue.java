@@ -84,6 +84,16 @@ public class ContinuousValue extends ScalarValue {
 		}
 
 		@Override
+		public boolean equalsValue(Object value){
+
+			if(value instanceof Integer){
+				return (asInteger()).equals(value);
+			}
+
+			return super.equalsValue(value);
+		}
+
+		@Override
 		public Number asNumber(){
 			return (Number)getValue();
 		}
@@ -102,6 +112,16 @@ public class ContinuousValue extends ScalarValue {
 		}
 
 		@Override
+		public boolean equalsValue(Object value){
+
+			if(value instanceof Float){
+				return (asFloat()).equals(value);
+			}
+
+			return super.equalsValue(value);
+		}
+
+		@Override
 		public Number asNumber(){
 			return (Number)getValue();
 		}
@@ -117,6 +137,16 @@ public class ContinuousValue extends ScalarValue {
 
 		ContinuousDouble(Object value){
 			super(DataType.DOUBLE, value);
+		}
+
+		@Override
+		public boolean equalsValue(Object value){
+
+			if(value instanceof Double){
+				return (asDouble()).equals(value);
+			}
+
+			return super.equalsValue(value);
 		}
 
 		@Override

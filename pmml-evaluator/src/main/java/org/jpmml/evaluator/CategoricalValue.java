@@ -69,6 +69,16 @@ public class CategoricalValue extends DiscreteValue {
 		}
 
 		@Override
+		public boolean equalsValue(Object value){
+
+			if(value instanceof String){
+				return (asString()).equals(value);
+			}
+
+			return super.equalsValue(value);
+		}
+
+		@Override
 		public String asString(){
 			return (String)getValue();
 		}
@@ -105,6 +115,16 @@ public class CategoricalValue extends DiscreteValue {
 			}
 
 			return ((Comparable)TypeUtil.cast(DataType.DOUBLE, asBoolean())).compareTo(number);
+		}
+
+		@Override
+		public boolean equalsValue(Object value){
+
+			if(value instanceof Boolean){
+				return (asBoolean()).equals(value);
+			}
+
+			return super.equalsValue(value);
 		}
 
 		@Override

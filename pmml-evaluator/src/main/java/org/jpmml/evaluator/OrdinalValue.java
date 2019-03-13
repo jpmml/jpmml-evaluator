@@ -140,6 +140,16 @@ public class OrdinalValue extends DiscreteValue {
 		}
 
 		@Override
+		public boolean equalsValue(Object value){
+
+			if(value instanceof String){
+				return (asString()).equals(value);
+			}
+
+			return super.equalsValue(value);
+		}
+
+		@Override
 		public String asString(){
 			return (String)getValue();
 		}
