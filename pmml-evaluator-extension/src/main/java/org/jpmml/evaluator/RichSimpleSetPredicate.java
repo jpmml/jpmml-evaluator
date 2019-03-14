@@ -28,7 +28,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.SimpleSetPredicate;
-import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (
 	name = "SimpleSetPredicate"
@@ -43,7 +42,14 @@ public class RichSimpleSetPredicate extends SimpleSetPredicate implements HasPar
 	}
 
 	public RichSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate){
-		ReflectionUtil.copyState(simpleSetPredicate, this);
+		setField(simpleSetPredicate.getField());
+		setBooleanOperator(simpleSetPredicate.getBooleanOperator());
+
+		if(simpleSetPredicate.hasExtensions()){
+			(getExtensions()).addAll(simpleSetPredicate.getExtensions());
+		}
+
+		setArray(simpleSetPredicate.getArray());
 	}
 
 	@Override
