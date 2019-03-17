@@ -739,7 +739,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			throw new InvalidElementException(generalRegressionModel);
 		}
 
-		String targetReferenceCategory = generalRegressionModel.getTargetReferenceCategory();
+		Object targetReferenceCategory = generalRegressionModel.getTargetReferenceCategory();
 
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
 		switch(modelType){
@@ -775,9 +775,11 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		if(targetReferenceCategory != null){
 			targetCategories = new ArrayList<>(targetCategories);
 
+			targetReferenceCategory = org.jpmml.model.ValueUtil.toString(targetReferenceCategory);
+
 			// Move the element from any position to the last position
 			if(targetCategories.remove(targetReferenceCategory)){
-				targetCategories.add(targetReferenceCategory);
+				targetCategories.add((String)targetReferenceCategory);
 			}
 		}
 
@@ -965,7 +967,20 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 	static
 	private <C extends ParameterCell> ListMultimap<String, C> groupByTargetCategory(List<C> cells){
-		return groupCells(cells, C::getTargetCategory);
+		Function<C, String> function = new Function<C, String>(){
+
+			@Override
+			public String apply(C parameterCell){
+				Object targetCategory = parameterCell.getTargetCategory();
+				if(targetCategory == null){
+					return null;
+				}
+
+				return org.jpmml.model.ValueUtil.toString(targetCategory);
+			}
+		};
+
+		return groupCells(cells, function);
 	}
 
 	static

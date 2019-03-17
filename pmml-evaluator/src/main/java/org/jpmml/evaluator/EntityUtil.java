@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import org.dmg.pmml.Entity;
+import org.jpmml.model.ValueUtil;
 
 public class EntityUtil {
 
@@ -31,15 +32,15 @@ public class EntityUtil {
 	}
 
 	static
-	public <E extends Entity> String getId(E entity, HasEntityRegistry<E> hasEntityRegistry){
+	public <E extends Entity<?>> String getId(E entity, HasEntityRegistry<E> hasEntityRegistry){
 		BiMap<String, E> entityRegistry = hasEntityRegistry.getEntityRegistry();
 
 		return getId(entity, entityRegistry);
 	}
 
 	static
-	public <E extends Entity> String getId(E entity, BiMap<String, E> entityRegistry){
-		String id = entity.getId();
+	public <E extends Entity<?>> String getId(E entity, BiMap<String, E> entityRegistry){
+		Object id = entity.getId();
 
 		if(id == null){
 			BiMap<E, String> inversedEntityRegistry = entityRegistry.inverse();
@@ -47,11 +48,11 @@ public class EntityUtil {
 			return inversedEntityRegistry.get(entity);
 		}
 
-		return id;
+		return ValueUtil.toString(id);
 	}
 
 	static
-	public <E extends Entity> ImmutableBiMap<String, E> buildBiMap(List<E> entities){
+	public <E extends Entity<?>> ImmutableBiMap<String, E> buildBiMap(List<E> entities){
 		ImmutableBiMap.Builder<String, E> builder = new ImmutableBiMap.Builder<>();
 
 		builder = putAll(entities, new AtomicInteger(1), builder);
@@ -60,19 +61,19 @@ public class EntityUtil {
 	}
 
 	static
-	public <E extends Entity> ImmutableBiMap.Builder<String, E> put(E entity, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
+	public <E extends Entity<?>> ImmutableBiMap.Builder<String, E> put(E entity, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
 		String implicitId = String.valueOf(index.getAndIncrement());
 
-		String id = entity.getId();
+		Object id = entity.getId();
 		if(id == null){
 			id = implicitId;
 		}
 
-		return builder.put(id, entity);
+		return builder.put(ValueUtil.toString(id), entity);
 	}
 
 	static
-	public <E extends Entity> ImmutableBiMap.Builder<String, E> putAll(List<E> entities, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
+	public <E extends Entity<?>> ImmutableBiMap.Builder<String, E> putAll(List<E> entities, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
 
 		for(E entity : entities){
 			builder = put(entity, index, builder);

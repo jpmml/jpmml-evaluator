@@ -23,7 +23,7 @@ import org.dmg.pmml.Entity;
 import org.jpmml.model.ToStringHelper;
 
 abstract
-public class EntityClassification<E extends Entity, V extends Number> extends Classification<V> implements HasEntityId, HasEntityRegistry<E> {
+public class EntityClassification<E extends Entity<String>, V extends Number> extends Classification<V> implements HasEntityId, HasEntityRegistry<E> {
 
 	private E entity = null;
 

@@ -40,6 +40,7 @@ import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.baseline.FieldValue;
 import org.dmg.pmml.baseline.FieldValueCount;
 import org.dmg.pmml.general_regression.BaselineStratum;
+import org.dmg.pmml.general_regression.Category;
 import org.dmg.pmml.general_regression.PPCell;
 import org.dmg.pmml.naive_bayes.PairCounts;
 import org.dmg.pmml.naive_bayes.TargetValueCount;
@@ -107,6 +108,11 @@ public class ValueOptimizer extends FieldResolver {
 		parseValue(name, categoricalPredictor);
 
 		return super.visit(categoricalPredictor);
+	}
+
+	@Override
+	public VisitorAction visit(Category category){
+		return super.visit(category);
 	}
 
 	@Override

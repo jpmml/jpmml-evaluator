@@ -19,6 +19,8 @@
 package org.jpmml.evaluator;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -97,6 +99,14 @@ public class ArrayUtil {
 			List<?> list = (List<?>)value;
 
 			tokens = Lists.transform(list, org.jpmml.model.ValueUtil::toString);
+		} else
+
+		if(value instanceof Set){
+			Set<?> set = (Set<?>)value;
+
+			tokens = set.stream()
+				.map(org.jpmml.model.ValueUtil::toString)
+				.collect(Collectors.toList());
 		} else
 
 		{

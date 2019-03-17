@@ -21,7 +21,7 @@ package org.jpmml.evaluator;
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.Entity;
 
-public interface HasEntityRegistry<E extends Entity> {
+public interface HasEntityRegistry<E extends Entity<?>> {
 
 	/**
 	 * @return A bidirectional map between {@link Entity#getId() Entity identifiers} and {@link Entity Entity instances}.

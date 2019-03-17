@@ -20,14 +20,14 @@ package org.jpmml.evaluator.neural_network;
 
 import java.util.Set;
 
-import org.dmg.pmml.Entity;
+import org.dmg.pmml.neural_network.NeuralEntity;
 import org.jpmml.evaluator.EntityClassification;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.Report;
 import org.jpmml.evaluator.ValueMap;
 
 abstract
-public class NeuronProbabilityDistribution<V extends Number> extends EntityClassification<Entity, V> implements HasProbability {
+public class NeuronProbabilityDistribution<V extends Number> extends EntityClassification<NeuralEntity, V> implements HasProbability {
 
 	NeuronProbabilityDistribution(ValueMap<String, V> probabilities){
 		super(Type.PROBABILITY, probabilities);

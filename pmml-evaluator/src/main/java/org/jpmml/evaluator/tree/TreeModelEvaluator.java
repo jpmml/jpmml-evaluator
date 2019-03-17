@@ -56,6 +56,7 @@ import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
+import org.jpmml.model.ValueUtil;
 
 public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements HasNodeRegistry {
 
@@ -231,7 +232,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	private Trail handleDefaultChild(Trail trail, Node node, EvaluationContext context){
 
 		// "The defaultChild missing value strategy requires the presence of the defaultChild attribute in every non-leaf Node"
-		String defaultChild = node.getDefaultChild();
+		Object defaultChild = node.getDefaultChild();
 		if(defaultChild == null){
 			throw new MissingAttributeException(node, PMMLAttributes.NODE_DEFAULTCHILD);
 		}
@@ -242,7 +243,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		for(int i = 0, max = children.size(); i < max; i++){
 			Node child = children.get(i);
 
-			String id = child.getId();
+			Object id = child.getId();
 			if(id != null && (id).equals(defaultChild)){
 				// The predicate of the referenced Node is not evaluated
 				return handleTrue(trail, child, context);
@@ -403,7 +404,14 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 				value = valueFactory.newValue(recordCount);
 			}
 
-			result.put(scoreDistribution.getValue(), value);
+			Object targetCategory = scoreDistribution.getValue();
+			if(targetCategory == null){
+				throw new MissingAttributeException(scoreDistribution, PMMLAttributes.SCOREDISTRIBUTION_VALUE);
+			}
+
+			targetCategory = ValueUtil.toString(targetCategory);
+
+			result.put((String)targetCategory, value);
 
 			Double confidence = scoreDistribution.getConfidence();
 			if(confidence != null){
@@ -413,7 +421,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 					value.multiply(missingValuePenalty);
 				}
 
-				result.putConfidence(scoreDistribution.getValue(), value);
+				result.putConfidence(ValueUtil.toString(targetCategory), value);
 			}
 		}
 

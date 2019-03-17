@@ -246,10 +246,12 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		Number x = value.asNumber();
 
 		for(TargetValueStat targetValueStat : targetValueStats){
-			String targetCategory = targetValueStat.getValue();
+			Object targetCategory = targetValueStat.getValue();
 			if(targetCategory == null){
 				throw new MissingAttributeException(targetValueStat, PMMLAttributes.TARGETVALUESTAT_VALUE);
 			}
+
+			targetCategory = org.jpmml.model.ValueUtil.toString(targetCategory);
 
 			ContinuousDistribution distribution = targetValueStat.getContinuousDistribution();
 			if(distribution == null){
@@ -275,17 +277,19 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			// The calculated probability cannot fall below the default probability
 			probability = Math.max(probability, threshold);
 
-			probabilities.multiply(targetCategory, probability);
+			probabilities.multiply((String)targetCategory, probability);
 		}
 	}
 
 	private void calculateDiscreteProbabilities(ProbabilityMap<String, ?> probabilities, TargetValueCounts targetValueCounts, double threshold, Map<String, Double> countSums){
 
 		for(TargetValueCount targetValueCount : targetValueCounts){
-			String targetCategory = (String)targetValueCount.getValue();
+			Object targetCategory = targetValueCount.getValue();
 			if(targetCategory == null){
 				throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_VALUE);
 			}
+
+			targetCategory = org.jpmml.model.ValueUtil.toString(targetCategory);
 
 			double count = targetValueCount.getCount();
 
@@ -303,21 +307,23 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				probability = count / countSum;
 			}
 
-			probabilities.multiply(targetCategory, probability);
+			probabilities.multiply((String)targetCategory, probability);
 		}
 	}
 
 	private void calculatePriorProbabilities(ProbabilityMap<String, ?> probabilities, TargetValueCounts targetValueCounts){
 
 		for(TargetValueCount targetValueCount : targetValueCounts){
-			String targetCategory = (String)targetValueCount.getValue();
+			Object targetCategory = targetValueCount.getValue();
 			if(targetCategory == null){
 				throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_VALUE);
 			}
 
+			targetCategory = org.jpmml.model.ValueUtil.toString(targetCategory);
+
 			double probability = targetValueCount.getCount();
 
-			probabilities.multiply(targetCategory, probability);
+			probabilities.multiply((String)targetCategory, probability);
 		}
 	}
 
@@ -354,17 +360,19 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
 
 				for(TargetValueCount targetValueCount : targetValueCounts){
-					String targetCategory = (String)targetValueCount.getValue();
+					Object targetCategory = targetValueCount.getValue();
 					if(targetCategory == null){
 						throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_VALUE);
 					}
+
+					targetCategory = org.jpmml.model.ValueUtil.toString(targetCategory);
 
 					Double count = counts.get(targetCategory);
 					if(count == null){
 						count = 0d;
 					}
 
-					counts.put(targetCategory, count + targetValueCount.getCount());
+					counts.put((String)targetCategory, count + targetValueCount.getCount());
 				}
 			}
 

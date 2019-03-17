@@ -184,17 +184,19 @@ public class OutputUtil {
 				case DECISION:
 					{
 						if(segmentId != null){
-							String name = outputField.getValue();
+							Object name = outputField.getValue();
 							if(name == null){
 								throw new MissingAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_VALUE);
 							}
+
+							name = org.jpmml.model.ValueUtil.toString(name);
 
 							Expression expression = outputField.getExpression();
 							if(expression != null){
 								throw new MisplacedElementException(expression);
 							}
 
-							value = segmentPredictions.get(FieldName.create(name));
+							value = segmentPredictions.get(FieldName.create((String)name));
 
 							break;
 						}
@@ -272,7 +274,7 @@ public class OutputUtil {
 				case CLUSTER_AFFINITY:
 				case ENTITY_AFFINITY:
 					{
-						String entityId = outputField.getValue();
+						Object entityId = outputField.getValue();
 
 						// Select the specified entity instead of the winning entity
 						if(entityId != null){
@@ -493,14 +495,14 @@ public class OutputUtil {
 
 	static
 	private String getCategoryValue(Object object, OutputField outputField){
-		String value = outputField.getValue();
+		Object value = outputField.getValue();
 
 		// "If the value attribute is not specified, then the predicted categorical value should be returned as a result"
 		if(value == null){
 			return (String)TypeUtil.cast(DataType.STRING, getPredictedValue(object));
 		}
 
-		return value;
+		return org.jpmml.model.ValueUtil.toString(value);
 	}
 
 	static

@@ -162,6 +162,7 @@ public interface PMMLAttributes {
 	Field RULESET_DEFAULTSCORE = ReflectionUtil.getField(RuleSet.class, "defaultScore");
 	Field RULESELECTIONMETHOD_CRITERION = ReflectionUtil.getField(RuleSelectionMethod.class, "criterion");
 	Field SCOREDISTRIBUTION_PROBABILITY = ReflectionUtil.getField(ScoreDistribution.class, "probability");
+	Field SCOREDISTRIBUTION_VALUE = ReflectionUtil.getField(ScoreDistribution.class, "value");
 	Field SEGMENTATION_MISSINGTHRESHOLD = ReflectionUtil.getField(Segmentation.class, "missingThreshold");
 	Field SEGMENTATION_MULTIPLEMODELMETHOD = ReflectionUtil.getField(Segmentation.class, "multipleModelMethod");
 	Field SIMPLEPREDICATE_FIELD = ReflectionUtil.getField(SimplePredicate.class, "field");

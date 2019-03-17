@@ -42,12 +42,12 @@ public class SimpleRuleScoreDistribution<V extends Number> extends EntityClassif
 		SimpleRule simpleRule = getEntity();
 
 		if(simpleRule != null){
-			String score = simpleRule.getScore();
+			Object score = simpleRule.getScore();
 			if(score == null){
 				throw new MissingAttributeException(simpleRule, PMMLAttributes.SIMPLERULE_SCORE);
 			}
 
-			Object result = TypeUtil.parse(dataType, score);
+			Object result = TypeUtil.parseOrCast(dataType, score);
 
 			super.setResult(result);
 

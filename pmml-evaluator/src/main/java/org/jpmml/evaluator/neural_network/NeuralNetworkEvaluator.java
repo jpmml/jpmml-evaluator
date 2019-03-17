@@ -32,7 +32,6 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ListMultimap;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DerivedField;
-import org.dmg.pmml.Entity;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
@@ -43,6 +42,7 @@ import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.neural_network.Connection;
+import org.dmg.pmml.neural_network.NeuralEntity;
 import org.dmg.pmml.neural_network.NeuralInput;
 import org.dmg.pmml.neural_network.NeuralInputs;
 import org.dmg.pmml.neural_network.NeuralLayer;
@@ -79,13 +79,13 @@ import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.XPathUtil;
 import org.jpmml.model.ValueUtil;
 
-public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<Entity> {
+public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<NeuralEntity> {
 
 	transient
 	private Map<FieldName, List<NeuralOutput>> neuralOutputMap = null;
 
 	transient
-	private BiMap<String, Entity> entityRegistry = null;
+	private BiMap<String, NeuralEntity> entityRegistry = null;
 
 
 	public NeuralNetworkEvaluator(PMML pmml){
@@ -124,7 +124,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	}
 
 	@Override
-	public BiMap<String, Entity> getEntityRegistry(){
+	public BiMap<String, NeuralEntity> getEntityRegistry(){
 
 		if(this.entityRegistry == null){
 			this.entityRegistry = getValue(NeuralNetworkEvaluator.entityCache);
@@ -243,7 +243,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		Map<FieldName, List<NeuralOutput>> neuralOutputMap = getNeuralOutputMap();
 
-		BiMap<String, Entity> entityRegistry = getEntityRegistry();
+		BiMap<String, NeuralEntity> entityRegistry = getEntityRegistry();
 
 		Map<FieldName, Classification<V>> results = null;
 
@@ -258,7 +258,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			NeuronProbabilityDistribution<V> result = new NeuronProbabilityDistribution<V>(new ValueMap<String, V>(2 * neuralOutputs.size())){
 
 				@Override
-				public BiMap<String, Entity> getEntityRegistry(){
+				public BiMap<String, NeuralEntity> getEntityRegistry(){
 					return entityRegistry;
 				}
 			};
@@ -269,7 +269,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 					throw new MissingAttributeException(neuralOutput, PMMLAttributes.NEURALOUTPUT_OUTPUTNEURON);
 				}
 
-				Entity entity = entityRegistry.get(id);
+				NeuralEntity entity = entityRegistry.get(id);
 				if(entity == null){
 					throw new InvalidAttributeException(neuralOutput, PMMLAttributes.NEURALOUTPUT_OUTPUTNEURON, id);
 				}
@@ -289,7 +289,9 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 						throw new MissingAttributeException(normDiscrete, PMMLAttributes.NORMDISCRETE_VALUE);
 					}
 
-					result.put(entity, ValueUtil.toString(targetCategory), value);
+					targetCategory = ValueUtil.toString(targetCategory);
+
+					result.put(entity, (String)targetCategory, value);
 				} else
 
 				{
@@ -355,7 +357,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	private <V extends Number> ValueMap<String, V> evaluateRaw(ValueFactory<V> valueFactory, EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
-		BiMap<String, Entity> entityRegistry = getEntityRegistry();
+		BiMap<String, NeuralEntity> entityRegistry = getEntityRegistry();
 
 		ValueMap<String, V> result = new ValueMap<>(2 * entityRegistry.size());
 
@@ -538,11 +540,11 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return (Map)result.asMap();
 	}
 
-	private static final LoadingCache<NeuralNetwork, BiMap<String, Entity>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<NeuralNetwork, BiMap<String, Entity>>(){
+	private static final LoadingCache<NeuralNetwork, BiMap<String, NeuralEntity>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<NeuralNetwork, BiMap<String, NeuralEntity>>(){
 
 		@Override
-		public BiMap<String, Entity> load(NeuralNetwork neuralNetwork){
-			ImmutableBiMap.Builder<String, Entity> builder = new ImmutableBiMap.Builder<>();
+		public BiMap<String, NeuralEntity> load(NeuralNetwork neuralNetwork){
+			ImmutableBiMap.Builder<String, NeuralEntity> builder = new ImmutableBiMap.Builder<>();
 
 			AtomicInteger index = new AtomicInteger(1);
 

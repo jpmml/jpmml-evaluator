@@ -149,10 +149,12 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		ValueMap<String, V> values = new ValueMap<>(2 * regressionTables.size());
 
 		for(RegressionTable regressionTable : regressionTables){
-			String targetCategory = regressionTable.getTargetCategory();
+			Object targetCategory = regressionTable.getTargetCategory();
 			if(targetCategory == null){
 				throw new MissingAttributeException(regressionTable, PMMLAttributes.REGRESSIONTABLE_TARGETCATEGORY);
-			} // End if
+			}
+
+			targetCategory = org.jpmml.model.ValueUtil.toString(targetCategory);
 
 			if(targetCategories != null && targetCategories.indexOf(targetCategory) < 0){
 				throw new InvalidAttributeException(regressionTable, PMMLAttributes.REGRESSIONTABLE_TARGETCATEGORY, targetCategory);
@@ -165,7 +167,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 			}
 
-			values.put(targetCategory, value);
+			values.put((String)targetCategory, value);
 		}
 
 		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();

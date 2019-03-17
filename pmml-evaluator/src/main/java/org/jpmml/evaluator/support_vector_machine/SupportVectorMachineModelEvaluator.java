@@ -86,6 +86,7 @@ import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.XPathUtil;
 import org.jpmml.model.ReflectionUtil;
+import org.jpmml.model.ValueUtil;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
 
@@ -157,7 +158,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
 
-		String alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
+		Object alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
 
 		ValueMap<String, V> values;
 
@@ -182,12 +183,12 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		Object input = createInput(context);
 
 		for(SupportVectorMachine supportVectorMachine : supportVectorMachines){
-			String targetCategory = supportVectorMachine.getTargetCategory();
+			Object targetCategory = supportVectorMachine.getTargetCategory();
 			if(targetCategory == null){
 				throw new MissingAttributeException(supportVectorMachine, PMMLAttributes.SUPPORTVECTORMACHINE_TARGETCATEGORY);
 			}
 
-			String alternateTargetCategory = supportVectorMachine.getAlternateTargetCategory();
+			Object alternateTargetCategory = supportVectorMachine.getAlternateTargetCategory();
 
 			Value<V> value = evaluateSupportVectorMachine(valueFactory, supportVectorMachine, input);
 
@@ -198,12 +199,14 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 							throw new MisplacedAttributeException(supportVectorMachine, PMMLAttributes.SUPPORTVECTORMACHINE_ALTERNATETARGETCATEGORY, alternateTargetCategory);
 						}
 
-						values.put(targetCategory, value);
+						targetCategory = ValueUtil.toString(targetCategory);
+
+						values.put((String)targetCategory, value);
 					}
 					break;
 				case ONE_AGAINST_ONE:
 					{
-						String label;
+						Object label;
 
 						if(alternateBinaryTargetCategory != null){
 
@@ -249,9 +252,11 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 							}
 						}
 
+						label = ValueUtil.toString(label);
+
 						VoteMap<String, V> votes = (VoteMap<String, V>)values;
 
-						votes.increment(label);
+						votes.increment((String)label);
 					}
 					break;
 				default:
@@ -337,13 +342,13 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
 
-		String alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
+		Object alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
 		if(alternateBinaryTargetCategory != null){
 
 			if(supportVectorMachines.size() == 1){
 				SupportVectorMachine supportVectorMachine = supportVectorMachines.get(0);
 
-				String targetCategory = supportVectorMachine.getTargetCategory();
+				Object targetCategory = supportVectorMachine.getTargetCategory();
 				if(targetCategory != null){
 					return SupportVectorMachineModel.ClassificationMethod.ONE_AGAINST_ONE;
 				}
@@ -355,8 +360,8 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		}
 
 		for(SupportVectorMachine supportVectorMachine : supportVectorMachines){
-			String targetCategory = supportVectorMachine.getTargetCategory();
-			String alternateTargetCategory = supportVectorMachine.getAlternateTargetCategory();
+			Object targetCategory = supportVectorMachine.getTargetCategory();
+			Object alternateTargetCategory = supportVectorMachine.getAlternateTargetCategory();
 
 			if(targetCategory != null){
 
