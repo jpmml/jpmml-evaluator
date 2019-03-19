@@ -20,14 +20,9 @@ package org.jpmml.evaluator.visitors;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.clustering.CenterFields;
 
-@XmlRootElement (
-	name = "CenterFields"
-)
 public class CustomCenterFields extends CenterFields {
 
 	public CustomCenterFields(){

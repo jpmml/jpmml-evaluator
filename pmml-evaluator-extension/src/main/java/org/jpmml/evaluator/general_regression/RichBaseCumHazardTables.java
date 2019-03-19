@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.collect.ImmutableMap;
@@ -36,9 +35,6 @@ import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.model.ReflectionUtil;
 
-@XmlRootElement (
-	name = "BaseCumHazardTables"
-)
 public class RichBaseCumHazardTables extends BaseCumHazardTables implements MapHolder<BaselineStratum> {
 
 	@XmlTransient

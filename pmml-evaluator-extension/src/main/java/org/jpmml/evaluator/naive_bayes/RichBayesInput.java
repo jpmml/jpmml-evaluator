@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.collect.ImmutableMap;
@@ -39,9 +38,6 @@ import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.model.ReflectionUtil;
 
-@XmlRootElement (
-	name = "BayesInput"
-)
 public class RichBayesInput extends BayesInput implements MapHolder<TargetValueCounts> {
 
 	@XmlTransient
