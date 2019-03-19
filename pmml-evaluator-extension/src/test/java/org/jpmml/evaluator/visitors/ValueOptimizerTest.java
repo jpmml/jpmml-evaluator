@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator.visitors;
 
+import com.google.common.collect.ImmutableSet;
+import org.dmg.pmml.Array;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
@@ -31,8 +33,8 @@ import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.SimplePredicate;
+import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.TransformationDictionary;
-import org.dmg.pmml.True;
 import org.dmg.pmml.Value;
 import org.dmg.pmml.Version;
 import org.dmg.pmml.regression.CategoricalPredictor;
@@ -42,9 +44,11 @@ import org.dmg.pmml.tree.BranchNode;
 import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
+import org.jpmml.evaluator.RichComplexArray;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ValueOptimizerTest {
 
@@ -103,18 +107,20 @@ public class ValueOptimizerTest {
 		TransformationDictionary transformationDictionary = new TransformationDictionary()
 			.addDerivedFields(derivedField);
 
+		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(dataField.getName(), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "0 1"));
+
+		Node parent = new BranchNode()
+			.setScore("0")
+			.setPredicate(simpleSetPredicate);
+
 		SimplePredicate simplePredicate = new SimplePredicate(derivedField.getName(), SimplePredicate.Operator.EQUAL)
 			.setValue("1");
 
-		Node parentNode = new BranchNode()
-			.setScore("0")
-			.setPredicate(new True());
-
-		Node childNode = new LeafNode()
+		Node child = new LeafNode()
 			.setScore("1")
 			.setPredicate(simplePredicate);
 
-		parentNode.addNodes(childNode);
+		parent.addNodes(child);
 
 		MiningField miningField = new MiningField(dataField.getName());
 
@@ -122,7 +128,7 @@ public class ValueOptimizerTest {
 			.addMiningFields(miningField);
 
 		TreeModel treeModel = new TreeModel(MiningFunction.REGRESSION, miningSchema, null)
-			.setNode(parentNode);
+			.setNode(parent);
 
 		PMML pmml = new PMML(Version.PMML_4_3.getVersion(), new Header(), dataDictionary)
 			.setTransformationDictionary(transformationDictionary)
@@ -134,12 +140,21 @@ public class ValueOptimizerTest {
 		assertEquals("1", normDiscrete.getValue());
 		assertEquals("1", simplePredicate.getValue());
 
+		Array array = simpleSetPredicate.getArray();
+
+		assertEquals(ImmutableSet.of("0", "1"), array.getValue());
+
 		dataField.setDataType(DataType.INTEGER);
 
 		optimizer.applyTo(pmml);
 
 		assertEquals(1, normDiscrete.getValue());
 		assertEquals("1", simplePredicate.getValue());
+
+		array = simpleSetPredicate.getArray();
+
+		assertTrue(array instanceof RichComplexArray);
+		assertEquals(ImmutableSet.of(0, 1), array.getValue());
 
 		dataField.setDataType(DataType.DOUBLE);
 		derivedField.setDataType(DataType.INTEGER);
@@ -149,6 +164,10 @@ public class ValueOptimizerTest {
 		assertEquals(1.0d, normDiscrete.getValue());
 		assertEquals(1, simplePredicate.getValue());
 
+		array = simpleSetPredicate.getArray();
+
+		assertEquals(ImmutableSet.of(0.0d, 1.0d), array.getValue());
+
 		dataField.setDataType(DataType.BOOLEAN);
 		derivedField.setDataType(DataType.DOUBLE);
 
@@ -156,6 +175,10 @@ public class ValueOptimizerTest {
 
 		assertEquals(true, normDiscrete.getValue());
 		assertEquals(1.0d, simplePredicate.getValue());
+
+		array = simpleSetPredicate.getArray();
+
+		assertEquals(ImmutableSet.of(false, true), array.getValue());
 
 		derivedField.setDataType(DataType.BOOLEAN);
 

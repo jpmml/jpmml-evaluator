@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Villu Ruusmann
+ * Copyright (c) 2019 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -20,10 +20,11 @@ package org.jpmml.evaluator;
 
 import java.util.Set;
 
-import org.dmg.pmml.HasValueSet;
-import org.dmg.pmml.PMMLObject;
+import org.dmg.pmml.DataType;
 
-public interface HasParsedValueSet<E extends PMMLObject & HasValueSet<E>> extends HasValueSet<E>, ValueParser {
+public interface SetHolder {
 
-	Set<FieldValue> getValueSet(TypeInfo typeInfo);
+	DataType getDataType();
+
+	Set<?> getSet();
 }

@@ -26,6 +26,5 @@ public class ElementOptimizerBattery extends VisitorBattery {
 		add(FieldOptimizer.class);
 		add(GeneralRegressionModelOptimizer.class);
 		add(NaiveBayesModelOptimizer.class);
-		add(PredicateOptimizer.class);
 	}
 }

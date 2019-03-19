@@ -139,29 +139,27 @@ public class FieldValue implements TypeInfo, Serializable {
 	 * </p>
 	 */
 	public boolean isIn(HasValueSet<?> hasValueSet){
-
-		if(hasValueSet instanceof HasParsedValueSet){
-			HasParsedValueSet<?> hasParsedValueSet = (HasParsedValueSet<?>)hasValueSet;
-
-			return isIn(hasParsedValueSet);
-		}
-
 		Array array = hasValueSet.getArray();
 		if(array == null){
 			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement((Class)hasValueSet.getClass()) + "/" + XPathUtil.formatElement(Array.class)), (PMMLObject)hasValueSet);
+		} // End if
+
+		if(array instanceof SetHolder){
+			SetHolder setHolder = (SetHolder)array;
+
+			if(!(getDataType()).equals(setHolder.getDataType())){
+				throw new ClassCastException();
+			}
+
+			Set<?> values = setHolder.getSet();
+
+			return values.contains(getValue());
 		}
 
 		List<?> values = ArrayUtil.getContent(array);
 
 		return values.stream()
 			.anyMatch(value -> equalsValue(value));
-	}
-
-	public boolean isIn(HasParsedValueSet<?> hasParsedValueSet){
-		Set<FieldValue> values = hasParsedValueSet.getValueSet(this);
-
-		// XXX
-		return values.contains(this);
 	}
 
 	public boolean isIn(Collection<FieldValue> values){

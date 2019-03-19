@@ -20,9 +20,13 @@ package org.jpmml.evaluator.visitors;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
+import org.dmg.pmml.Array;
 import org.dmg.pmml.Constant;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
@@ -33,6 +37,7 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.SimplePredicate;
+import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.TransformationDictionary;
 import org.dmg.pmml.Visitable;
@@ -45,8 +50,12 @@ import org.dmg.pmml.general_regression.PPCell;
 import org.dmg.pmml.naive_bayes.PairCounts;
 import org.dmg.pmml.naive_bayes.TargetValueCount;
 import org.dmg.pmml.regression.CategoricalPredictor;
+import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.PMMLAttributes;
+import org.jpmml.evaluator.PMMLElements;
+import org.jpmml.evaluator.RichComplexArray;
 import org.jpmml.evaluator.TypeCheckException;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.XPathUtil;
@@ -184,6 +193,57 @@ public class ValueOptimizer extends FieldResolver {
 		}
 
 		return super.visit(simplePredicate);
+	}
+
+	@Override
+	public VisitorAction visit(SimpleSetPredicate simpleSetPredicate){
+		FieldName name = simpleSetPredicate.getField();
+		if(name == null){
+			throw new MissingAttributeException(simpleSetPredicate, PMMLAttributes.SIMPLESETPREDICATE_FIELD);
+		}
+
+		Array array = simpleSetPredicate.getArray();
+		if(array == null){
+			throw new MissingElementException(simpleSetPredicate, PMMLElements.SIMPLESETPREDICATE_ARRAY);
+		}
+
+		DataType dataType = getDataType(name);
+		if(dataType == null){
+			return super.visit(simpleSetPredicate);
+		}
+
+		Set<?> values;
+
+		Object value = array.getValue();
+
+		if(value instanceof List){
+			values = new LinkedHashSet<>((List<?>)value);
+		} else
+
+		if(value instanceof Set){
+			values = (Set<?>)value;
+		} else
+
+		{
+			values = new LinkedHashSet<>(ArrayUtil.parse(array));
+		}
+
+		try {
+			array = new RichComplexArray(dataType)
+				.setType(array.getType())
+				.setValue(values);
+		} catch(TypeCheckException | IllegalArgumentException e){
+
+			if((Mode.LOOSE).equals(this.mode)){
+				return super.visit(simpleSetPredicate);
+			}
+
+			throw e;
+		}
+
+		simpleSetPredicate.setArray(array);
+
+		return super.visit(simpleSetPredicate);
 	}
 
 	@Override

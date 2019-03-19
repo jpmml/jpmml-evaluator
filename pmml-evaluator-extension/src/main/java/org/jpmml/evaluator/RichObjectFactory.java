@@ -29,9 +29,4 @@ public class RichObjectFactory extends ObjectFactory {
 	public RichDataField createDataField(){
 		return new RichDataField();
 	}
-
-	@Override
-	public RichSimpleSetPredicate createSimpleSetPredicate(){
-		return new RichSimpleSetPredicate();
-	}
 }
