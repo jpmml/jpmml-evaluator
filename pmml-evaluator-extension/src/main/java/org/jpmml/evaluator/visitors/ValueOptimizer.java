@@ -44,6 +44,7 @@ import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.TransformationDictionary;
+import org.dmg.pmml.Value;
 import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.baseline.FieldValue;
@@ -350,6 +351,29 @@ public class ValueOptimizer extends FieldResolver {
 	@Override
 	public VisitorAction visit(TargetValueCount targetValueCount){
 		return super.visit(targetValueCount);
+	}
+
+	@Override
+	public VisitorAction visit(Value value){
+		PMMLObject parent = getParent();
+
+		Object simpleValue = value.getValue();
+		if(simpleValue == null){
+			throw new MissingAttributeException(value, PMMLAttributes.VALUE_VALUE);
+		} // End if
+
+		if(parent instanceof Field){
+			Field<?> field = (Field<?>)parent;
+
+			DataType dataType = field.getDataType();
+			if(dataType != null){
+				simpleValue = safeParseOrCast(dataType, simpleValue);
+
+				value.setValue(simpleValue);
+			}
+		}
+
+		return super.visit(value);
 	}
 
 	public Mode getMode(){

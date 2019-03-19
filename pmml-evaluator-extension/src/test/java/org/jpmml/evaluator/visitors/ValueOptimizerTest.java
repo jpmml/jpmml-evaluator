@@ -57,8 +57,12 @@ public class ValueOptimizerTest {
 
 	@Test
 	public void parseRegressionModel(){
+		Value falseValue = new Value("false");
+		Value trueValue = new Value("true");
+		Value invalidValue = new Value("N/A");
+
 		DataField dataField = new DataField(FieldName.create("x1"), OpType.CATEGORICAL, DataType.STRING)
-			.addValues(new Value("false"), new Value("true"));
+			.addValues(falseValue, trueValue, invalidValue);
 
 		DataDictionary dataDictionary = new DataDictionary()
 			.addDataFields(dataField);
@@ -91,6 +95,10 @@ public class ValueOptimizerTest {
 
 		assertTrue(dataField instanceof RichDataField);
 
+		assertEquals("false", falseValue.getValue());
+		assertEquals("true", trueValue.getValue());
+		assertEquals("N/A", invalidValue.getValue());
+
 		assertEquals("false", falseTerm.getValue());
 		assertEquals("true", trueTerm.getValue());
 
@@ -100,6 +108,10 @@ public class ValueOptimizerTest {
 		dataField.setDataType(DataType.BOOLEAN);
 
 		optimizer.applyTo(pmml);
+
+		assertEquals(Boolean.FALSE, falseValue.getValue());
+		assertEquals(Boolean.TRUE, trueValue.getValue());
+		assertEquals("N/A", invalidValue.getValue());
 
 		assertEquals(Boolean.FALSE, falseTerm.getValue());
 		assertEquals(Boolean.TRUE, trueTerm.getValue());
