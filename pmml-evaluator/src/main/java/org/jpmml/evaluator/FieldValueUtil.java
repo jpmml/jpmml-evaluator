@@ -29,34 +29,6 @@ public class FieldValueUtil {
 	}
 
 	static
-	public FieldValue createOrCast(DataType dataType, OpType opType, Object value){
-
-		if(value instanceof FieldValue){
-			FieldValue fieldValue = (FieldValue)value;
-
-			return fieldValue.cast(dataType, opType);
-		} else
-
-		{
-			return FieldValueUtil.create(dataType, opType, value);
-		}
-	}
-
-	static
-	public FieldValue createOrCast(TypeInfo typeInfo, Object value){
-
-		if(value instanceof FieldValue){
-			FieldValue fieldValue = (FieldValue)value;
-
-			return fieldValue.cast(typeInfo);
-		} else
-
-		{
-			return FieldValueUtil.create(typeInfo, value);
-		}
-	}
-
-	static
 	public FieldValue create(Object value){
 
 		if(value == null){

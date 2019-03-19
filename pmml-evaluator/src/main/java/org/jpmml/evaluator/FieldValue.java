@@ -26,9 +26,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Predicate;
 
 import org.dmg.pmml.Array;
@@ -147,7 +145,7 @@ public class FieldValue implements TypeInfo, Serializable {
 		if(array instanceof SetHolder){
 			SetHolder setHolder = (SetHolder)array;
 
-			return contains(setHolder);
+			return setHolder.contains(getDataType(), getValue());
 		}
 
 		List<?> values = ArrayUtil.getContent(array);
@@ -172,28 +170,6 @@ public class FieldValue implements TypeInfo, Serializable {
 
 		return values.stream()
 			.anyMatch(predicate);
-	}
-
-	public boolean contains(SetHolder setHolder){
-
-		if(!(getDataType()).equals(setHolder.getDataType())){
-			throw new ClassCastException();
-		}
-
-		Set<?> values = setHolder.getSet();
-
-		return values.contains(getValue());
-	}
-
-	public <V> V get(MapHolder<V> mapHolder){
-
-		if(!(getDataType()).equals(mapHolder.getDataType())){
-			throw new ClassCastException();
-		}
-
-		Map<?, V> valueMap = mapHolder.getMap();
-
-		return valueMap.get(getValue());
 	}
 
 	public boolean equalsValue(Object value){

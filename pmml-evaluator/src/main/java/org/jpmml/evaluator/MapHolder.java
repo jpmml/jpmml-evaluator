@@ -27,4 +27,15 @@ public interface MapHolder<V> {
 	DataType getDataType();
 
 	Map<?, V> getMap();
+
+	default
+	public V get(DataType dataType, Object key){
+		Map<?, V> map = getMap();
+
+		if(!(getDataType()).equals(dataType)){
+			throw new TypeCheckException(getDataType(), key);
+		}
+
+		return map.get(key);
+	}
 }

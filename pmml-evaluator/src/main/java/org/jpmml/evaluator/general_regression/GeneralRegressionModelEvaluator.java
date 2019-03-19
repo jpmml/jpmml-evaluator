@@ -829,7 +829,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		if(baseCumHazardTables instanceof MapHolder){
 			MapHolder<?> mapHolder = (MapHolder<?>)baseCumHazardTables;
 
-			return (BaselineStratum)value.get(mapHolder);
+			return (BaselineStratum)mapHolder.get(value.getDataType(), value.getValue());
 		}
 
 		List<BaselineStratum> baselineStrata = baseCumHazardTables.getBaselineStrata();

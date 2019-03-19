@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.Value;
 
 public class TargetFieldUtil {
@@ -43,25 +42,18 @@ public class TargetFieldUtil {
 				throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_DATATYPE);
 			}
 
+			value = TypeUtil.parseOrCast(dataType, value);
+
 			if(dataField instanceof MapHolder){
 				MapHolder<?> mapHolder = (MapHolder<?>)dataField;
 
-				OpType opType = dataField.getOpType();
-				if(opType == null){
-					throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_OPTYPE);
-				}
-
-				FieldValue fieldValue = FieldValueUtil.create(dataType, opType, value);
-
-				Value pmmlValue = (Value)fieldValue.get(mapHolder);
+				Value pmmlValue = (Value)mapHolder.get(dataType, value);
 				if(pmmlValue != null && (Value.Property.VALID).equals(pmmlValue.getProperty())){
 					return pmmlValue;
 				}
 
 				return null;
 			}
-
-			value = TypeUtil.parseOrCast(dataType, value);
 
 			List<Value> pmmlValues = dataField.getValues();
 			for(int i = 0, max = pmmlValues.size(); i < max; i++){

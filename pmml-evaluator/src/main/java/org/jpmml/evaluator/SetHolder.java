@@ -27,4 +27,15 @@ public interface SetHolder {
 	DataType getDataType();
 
 	Set<?> getSet();
+
+	default
+	boolean contains(DataType dataType, Object value){
+		Set<?> set = getSet();
+
+		if(!(getDataType()).equals(dataType)){
+			throw new TypeCheckException(getDataType(), value);
+		}
+
+		return set.contains(value);
+	}
 }

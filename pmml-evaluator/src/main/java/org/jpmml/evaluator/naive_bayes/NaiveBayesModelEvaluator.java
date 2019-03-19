@@ -433,7 +433,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		if(bayesInput instanceof MapHolder){
 			MapHolder<?> mapHolder = (MapHolder<?>)bayesInput;
 
-			return (TargetValueCounts)value.get(mapHolder);
+			return (TargetValueCounts)mapHolder.get(value.getDataType(), value.getValue());
 		}
 
 		List<PairCounts> pairCounts = bayesInput.getPairCounts();

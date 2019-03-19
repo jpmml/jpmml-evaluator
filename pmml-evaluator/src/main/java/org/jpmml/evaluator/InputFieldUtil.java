@@ -284,15 +284,25 @@ public class InputFieldUtil {
 			if(dataField instanceof MapHolder){
 				MapHolder<?> mapHolder = (MapHolder<?>)dataField;
 
-				OpType opType = dataField.getOpType();
-				if(opType == null){
-					throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_OPTYPE);
-				}
-
 				try {
-					FieldValue fieldValue = FieldValueUtil.createOrCast(dataType, opType, value);
+					Value pmmlValue;
 
-					Value pmmlValue = (Value)fieldValue.get(mapHolder);
+					if(value instanceof FieldValue){
+						FieldValue fieldValue = (FieldValue)value;
+
+						if(!(dataType).equals(fieldValue.getDataType())){
+							fieldValue = fieldValue.cast(dataType, null);
+						}
+
+						pmmlValue = (Value)mapHolder.get(fieldValue.getDataType(), fieldValue.getValue());
+					} else
+
+					{
+						value = TypeUtil.parseOrCast(dataType, value);
+
+						pmmlValue = (Value)mapHolder.get(dataType, value);
+					} // End if
+
 					if(pmmlValue != null){
 						return pmmlValue.getProperty();
 					}
@@ -418,7 +428,15 @@ public class InputFieldUtil {
 
 		TypeInfo typeInfo = FieldUtil.getTypeInfo(field, miningField);
 
-		return FieldValueUtil.createOrCast(typeInfo, value);
+		if(value instanceof FieldValue){
+			FieldValue fieldValue = (FieldValue)value;
+
+			return fieldValue.cast(typeInfo);
+		} else
+
+		{
+			return FieldValueUtil.create(typeInfo, value);
+		}
 	}
 
 	static
