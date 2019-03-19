@@ -22,12 +22,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import org.dmg.pmml.Array;
 import org.dmg.pmml.Constant;
+import org.dmg.pmml.DataDictionary;
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
@@ -44,9 +47,13 @@ import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.baseline.FieldValue;
 import org.dmg.pmml.baseline.FieldValueCount;
+import org.dmg.pmml.general_regression.BaseCumHazardTables;
 import org.dmg.pmml.general_regression.BaselineStratum;
 import org.dmg.pmml.general_regression.Category;
+import org.dmg.pmml.general_regression.GeneralRegressionModel;
 import org.dmg.pmml.general_regression.PPCell;
+import org.dmg.pmml.naive_bayes.BayesInput;
+import org.dmg.pmml.naive_bayes.BayesInputs;
 import org.dmg.pmml.naive_bayes.PairCounts;
 import org.dmg.pmml.naive_bayes.TargetValueCount;
 import org.dmg.pmml.regression.CategoricalPredictor;
@@ -56,9 +63,12 @@ import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.RichComplexArray;
+import org.jpmml.evaluator.RichDataField;
 import org.jpmml.evaluator.TypeCheckException;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.XPathUtil;
+import org.jpmml.evaluator.general_regression.RichBaseCumHazardTables;
+import org.jpmml.evaluator.naive_bayes.RichBayesInput;
 import org.jpmml.model.visitors.FieldResolver;
 
 public class ValueOptimizer extends FieldResolver {
@@ -108,6 +118,30 @@ public class ValueOptimizer extends FieldResolver {
 	}
 
 	@Override
+	public VisitorAction visit(BayesInputs bayesInputs){
+
+		if(bayesInputs.hasBayesInputs()){
+			List<BayesInput> content = bayesInputs.getBayesInputs();
+
+			for(ListIterator<BayesInput> it = content.listIterator(); it.hasNext(); ){
+				BayesInput bayesInput = it.next();
+
+				FieldName name = bayesInput.getField();
+				if(name == null){
+					throw new MissingAttributeException(bayesInput, PMMLAttributes.BAYESINPUT_FIELD);
+				}
+
+				DataType dataType = getDataType(name);
+				if(dataType != null){
+					it.set(new RichBayesInput(dataType, bayesInput));
+				}
+			}
+		}
+
+		return super.visit(bayesInputs);
+	}
+
+	@Override
 	public VisitorAction visit(CategoricalPredictor categoricalPredictor){
 		FieldName name = categoricalPredictor.getField();
 		if(name == null){
@@ -143,6 +177,20 @@ public class ValueOptimizer extends FieldResolver {
 	}
 
 	@Override
+	public VisitorAction visit(DataDictionary dataDictionary){
+
+		if(dataDictionary.hasDataFields()){
+			List<DataField> dataFields = dataDictionary.getDataFields();
+
+			for(ListIterator<DataField> it = dataFields.listIterator(); it.hasNext(); ){
+				it.set(new RichDataField(it.next()));
+			}
+		}
+
+		return super.visit(dataDictionary);
+	}
+
+	@Override
 	public VisitorAction visit(FieldValue fieldValue){
 		return super.visit(fieldValue);
 	}
@@ -150,6 +198,25 @@ public class ValueOptimizer extends FieldResolver {
 	@Override
 	public VisitorAction visit(FieldValueCount fieldValueCount){
 		return super.visit(fieldValueCount);
+	}
+
+	@Override
+	public VisitorAction visit(GeneralRegressionModel generalRegressionModel){
+		BaseCumHazardTables baseCumHazardTables = generalRegressionModel.getBaseCumHazardTables();
+
+		if(baseCumHazardTables != null){
+			FieldName baselineStrataVariable = generalRegressionModel.getBaselineStrataVariable();
+
+			if(baselineStrataVariable != null){
+				DataType dataType = getDataType(baselineStrataVariable);
+
+				if(dataType != null){
+					generalRegressionModel.setBaseCumHazardTables(new RichBaseCumHazardTables(dataType, baseCumHazardTables));
+				}
+			}
+		}
+
+		return super.visit(generalRegressionModel);
 	}
 
 	@Override
@@ -269,6 +336,7 @@ public class ValueOptimizer extends FieldResolver {
 
 		if(dataType == null){
 			dataType = getDataType(name);
+
 			if(dataType == null){
 				return;
 			}

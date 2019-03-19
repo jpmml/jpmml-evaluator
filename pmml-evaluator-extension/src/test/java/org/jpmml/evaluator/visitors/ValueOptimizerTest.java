@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator.visitors;
 
+import java.util.List;
+
 import com.google.common.collect.ImmutableSet;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.DataDictionary;
@@ -45,6 +47,7 @@ import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.RichComplexArray;
+import org.jpmml.evaluator.RichDataField;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -77,8 +80,14 @@ public class ValueOptimizerTest {
 		PMML pmml = new PMML(Version.PMML_4_3.getVersion(), new Header(), dataDictionary)
 			.addModels(regressionModel);
 
+		List<DataField> dataFields = dataDictionary.getDataFields();
+
 		ValueOptimizer optimizer = new ValueOptimizer(ValueOptimizer.Mode.STRICT);
 		optimizer.applyTo(pmml);
+
+		dataField = dataFields.get(0);
+
+		assertTrue(dataField instanceof RichDataField);
 
 		assertEquals("false", falseTerm.getValue());
 		assertEquals("true", trueTerm.getValue());
@@ -134,8 +143,14 @@ public class ValueOptimizerTest {
 			.setTransformationDictionary(transformationDictionary)
 			.addModels(treeModel);
 
+		List<DataField> dataFields = dataDictionary.getDataFields();
+
 		ValueOptimizer optimizer = new ValueOptimizer(ValueOptimizer.Mode.STRICT);
 		optimizer.applyTo(pmml);
+
+		dataField = dataFields.get(0);
+
+		assertTrue(dataField instanceof RichDataField);
 
 		assertEquals("1", normDiscrete.getValue());
 		assertEquals("1", simplePredicate.getValue());
@@ -147,6 +162,8 @@ public class ValueOptimizerTest {
 		dataField.setDataType(DataType.INTEGER);
 
 		optimizer.applyTo(pmml);
+
+		dataField = dataFields.get(0);
 
 		assertEquals(1, normDiscrete.getValue());
 		assertEquals("1", simplePredicate.getValue());
@@ -161,6 +178,8 @@ public class ValueOptimizerTest {
 
 		optimizer.applyTo(pmml);
 
+		dataField = dataFields.get(0);
+
 		assertEquals(1.0d, normDiscrete.getValue());
 		assertEquals(1, simplePredicate.getValue());
 
@@ -173,6 +192,8 @@ public class ValueOptimizerTest {
 
 		optimizer.applyTo(pmml);
 
+		dataField = dataFields.get(0);
+
 		assertEquals(true, normDiscrete.getValue());
 		assertEquals(1.0d, simplePredicate.getValue());
 
@@ -183,6 +204,8 @@ public class ValueOptimizerTest {
 		derivedField.setDataType(DataType.BOOLEAN);
 
 		optimizer.applyTo(pmml);
+
+		dataField = dataFields.get(0);
 
 		assertEquals(true, normDiscrete.getValue());
 		assertEquals(true, simplePredicate.getValue());

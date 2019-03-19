@@ -21,48 +21,66 @@ package org.jpmml.evaluator.general_regression;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.collect.ImmutableMap;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.general_regression.BaseCumHazardTables;
 import org.dmg.pmml.general_regression.BaselineStratum;
-import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.HasParsedValueMapping;
+import org.jpmml.evaluator.MapHolder;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.PMMLAttributes;
-import org.jpmml.evaluator.TypeInfo;
+import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (
 	name = "BaseCumHazardTables"
 )
-public class RichBaseCumHazardTables extends BaseCumHazardTables implements HasParsedValueMapping<BaselineStratum> {
+public class RichBaseCumHazardTables extends BaseCumHazardTables implements MapHolder<BaselineStratum> {
 
 	@XmlTransient
-	private Map<FieldValue, BaselineStratum> parsedValueMappings = null;
+	private DataType dataType = null;
+
+	@XmlTransient
+	private Map<?, BaselineStratum> baselineStratumMap = null;
 
 
-	public RichBaseCumHazardTables(){
+	public RichBaseCumHazardTables(DataType dataType){
+		setDataType(dataType);
 	}
 
-	public RichBaseCumHazardTables(BaseCumHazardTables baseCumHazardTables){
+	public RichBaseCumHazardTables(DataType dataType, BaseCumHazardTables baseCumHazardTables){
+		setDataType(dataType);
+
 		ReflectionUtil.copyState(baseCumHazardTables, this);
 	}
 
 	@Override
-	public Map<FieldValue, BaselineStratum> getValueMapping(TypeInfo typeInfo){
+	public Map<?, BaselineStratum> getMap(){
 
-		if(this.parsedValueMappings == null){
-			this.parsedValueMappings = ImmutableMap.copyOf(parseBaselineStrata(typeInfo));
+		if(this.baselineStratumMap == null){
+			this.baselineStratumMap = ImmutableMap.copyOf(parseBaselineStrata());
 		}
 
-		return this.parsedValueMappings;
+		return this.baselineStratumMap;
 	}
 
-	private Map<FieldValue, BaselineStratum> parseBaselineStrata(TypeInfo typeInfo){
-		Map<FieldValue, BaselineStratum> result = new LinkedHashMap<>();
+	@Override
+	public DataType getDataType(){
+		return this.dataType;
+	}
+
+	private void setDataType(DataType dataType){
+		this.dataType = Objects.requireNonNull(dataType);
+	}
+
+	private Map<?, BaselineStratum> parseBaselineStrata(){
+		DataType dataType = getDataType();
+
+		Map<Object, BaselineStratum> result = new LinkedHashMap<>();
 
 		List<BaselineStratum> baselineStrata = getBaselineStrata();
 		for(BaselineStratum baselineStratum : baselineStrata){
@@ -71,7 +89,7 @@ public class RichBaseCumHazardTables extends BaseCumHazardTables implements HasP
 				throw new MissingAttributeException(baselineStratum, PMMLAttributes.BASELINESTRATUM_VALUE);
 			}
 
-			FieldValue value = parse(typeInfo, category);
+			Object value = TypeUtil.parseOrCast(dataType, category);
 
 			result.put(value, baselineStratum);
 		}

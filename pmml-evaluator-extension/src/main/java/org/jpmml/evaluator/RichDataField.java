@@ -27,16 +27,17 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.collect.ImmutableMap;
 import org.dmg.pmml.DataField;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.Value;
 import org.jpmml.model.ReflectionUtil;
 
 @XmlRootElement (
 	name = "DataField"
 )
-public class RichDataField extends DataField implements HasParsedValueMapping<Value> {
+public class RichDataField extends DataField implements MapHolder<Value> {
 
 	@XmlTransient
-	private Map<FieldValue, Value> parsedValueMappings = null;
+	private Map<?, Value> valueMap = null;
 
 
 	public RichDataField(){
@@ -47,17 +48,29 @@ public class RichDataField extends DataField implements HasParsedValueMapping<Va
 	}
 
 	@Override
-	public Map<FieldValue, Value> getValueMapping(TypeInfo typeInfo){
-
-		if(this.parsedValueMappings == null){
-			this.parsedValueMappings = ImmutableMap.copyOf(parseValues(typeInfo));
+	public DataType getDataType(){
+		DataType dataType = super.getDataType();
+		if(dataType == null){
+			throw new MissingAttributeException(this, PMMLAttributes.DATAFIELD_DATATYPE);
 		}
 
-		return this.parsedValueMappings;
+		return dataType;
 	}
 
-	private Map<FieldValue, Value> parseValues(TypeInfo typeInfo){
-		Map<FieldValue, Value> result = new LinkedHashMap<>();
+	@Override
+	public Map<?, Value> getMap(){
+
+		if(this.valueMap == null){
+			this.valueMap = ImmutableMap.copyOf(parseValues());
+		}
+
+		return this.valueMap;
+	}
+
+	private Map<Object, Value> parseValues(){
+		DataType dataType = getDataType();
+
+		Map<Object, Value> result = new LinkedHashMap<>();
 
 		List<Value> pmmlValues = getValues();
 		for(Value pmmlValue : pmmlValues){
@@ -70,7 +83,7 @@ public class RichDataField extends DataField implements HasParsedValueMapping<Va
 			switch(property){
 				case VALID:
 					{
-						FieldValue value = parse(typeInfo, objectValue);
+						Object value = TypeUtil.parseOrCast(dataType, objectValue);
 
 						result.put(value, pmmlValue);
 					}
@@ -78,10 +91,10 @@ public class RichDataField extends DataField implements HasParsedValueMapping<Va
 				case INVALID:
 				case MISSING:
 					{
-						FieldValue value;
+						Object value;
 
 						try {
-							value = parse(typeInfo, objectValue);
+							value = TypeUtil.parseOrCast(dataType, objectValue);
 						} catch(IllegalArgumentException | TypeCheckException e){
 							continue;
 						}

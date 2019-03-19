@@ -64,9 +64,9 @@ import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.HasParsedValueMapping;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.InvalidElementException;
+import org.jpmml.evaluator.MapHolder;
 import org.jpmml.evaluator.MatrixUtil;
 import org.jpmml.evaluator.MisplacedAttributeException;
 import org.jpmml.evaluator.MissingAttributeException;
@@ -826,10 +826,10 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	static
 	private BaselineStratum getBaselineStratum(BaseCumHazardTables baseCumHazardTables, FieldValue value){
 
-		if(baseCumHazardTables instanceof HasParsedValueMapping){
-			HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)baseCumHazardTables;
+		if(baseCumHazardTables instanceof MapHolder){
+			MapHolder<?> mapHolder = (MapHolder<?>)baseCumHazardTables;
 
-			return (BaselineStratum)value.getMapping(hasParsedValueMapping);
+			return (BaselineStratum)value.get(mapHolder);
 		}
 
 		List<BaselineStratum> baselineStrata = baseCumHazardTables.getBaselineStrata();

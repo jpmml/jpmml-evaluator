@@ -65,8 +65,8 @@ import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FieldValues;
-import org.jpmml.evaluator.HasParsedValueMapping;
 import org.jpmml.evaluator.InvalidAttributeException;
+import org.jpmml.evaluator.MapHolder;
 import org.jpmml.evaluator.MisplacedElementException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
@@ -430,10 +430,10 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	static
 	private TargetValueCounts getTargetValueCounts(BayesInput bayesInput, FieldValue value){
 
-		if(bayesInput instanceof HasParsedValueMapping){
-			HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)bayesInput;
+		if(bayesInput instanceof MapHolder){
+			MapHolder<?> mapHolder = (MapHolder<?>)bayesInput;
 
-			return (TargetValueCounts)value.getMapping(hasParsedValueMapping);
+			return (TargetValueCounts)value.get(mapHolder);
 		}
 
 		List<PairCounts> pairCounts = bayesInput.getPairCounts();

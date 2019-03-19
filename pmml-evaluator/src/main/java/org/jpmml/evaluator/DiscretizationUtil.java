@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -185,18 +186,18 @@ public class DiscretizationUtil {
 				throw new InvalidElementException(inlineTable);
 			}
 
-			Map<FieldValue, Set<Integer>> columnRowMap = rowFilter.getValueMapping(value);
+			SetMultimap<Object, Integer> valueRowsMap = rowFilter.getValueRowsMap(value.getDataType());
 
-			Set<Integer> columnRows = columnRowMap.get(value);
+			Set<Integer> valueRows = valueRowsMap.get(FieldValueUtil.getValue(value));
 
-			if(columnRows != null && columnRows.size() > 0){
+			if(valueRows != null && valueRows.size() > 0){
 
 				if(rows == null){
-					rows = (entries.size() > 1 ? new HashSet<>(columnRows) : columnRows);
+					rows = (entries.size() > 1 ? new HashSet<>(valueRows) : valueRows);
 				} else
 
 				{
-					rows.retainAll(columnRows);
+					rows.retainAll(valueRows);
 				} // End if
 
 				if(rows.isEmpty()){
@@ -268,38 +269,37 @@ public class DiscretizationUtil {
 	}
 
 	static
-	private class RowFilter implements HasParsedValueMapping<Set<Integer>> {
+	private class RowFilter {
 
 		private Map<Integer, Object> columnValues = null;
 
-		private SetMultimap<FieldValue, Integer> parsedColumnValues = null;
+		private Map<DataType, SetMultimap<Object, Integer>> valueRowsMap = new EnumMap<>(DataType.class);
 
 
 		private RowFilter(Map<Integer, Object> columnValues){
 			setColumnValues(columnValues);
 		}
 
-		@SuppressWarnings (
-			value = {"rawtypes", "unchecked"}
-		)
-		@Override
-		public Map<FieldValue, Set<Integer>> getValueMapping(TypeInfo typeInfo){
+		public SetMultimap<Object, Integer> getValueRowsMap(DataType dataType){
+			SetMultimap<Object, Integer> result = this.valueRowsMap.get(dataType);
 
-			if(this.parsedColumnValues == null){
-				this.parsedColumnValues = ImmutableSetMultimap.copyOf(parseColumnValues(typeInfo));
+			if(result == null){
+				result = ImmutableSetMultimap.copyOf(parseColumnValues(dataType));
+
+				this.valueRowsMap.put(dataType, result);
 			}
 
-			return (Map)this.parsedColumnValues.asMap();
+			return result;
 		}
 
-		private SetMultimap<FieldValue, Integer> parseColumnValues(TypeInfo typeInfo){
-			SetMultimap<FieldValue, Integer> result = HashMultimap.create();
-
+		private SetMultimap<Object, Integer> parseColumnValues(DataType dataType){
 			Map<Integer, Object> columnValues = getColumnValues();
+
+			SetMultimap<Object, Integer> result = HashMultimap.create();
 
 			Collection<Map.Entry<Integer, Object>> entries = columnValues.entrySet();
 			for(Map.Entry<Integer, Object> entry : entries){
-				FieldValue value = parse(typeInfo, entry.getValue());
+				Object value = TypeUtil.parseOrCast(dataType, entry.getValue());
 				Integer row = entry.getKey();
 
 				result.put(value, row);

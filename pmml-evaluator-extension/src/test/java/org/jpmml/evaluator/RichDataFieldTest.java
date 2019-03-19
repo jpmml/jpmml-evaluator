@@ -29,53 +29,44 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 
 public class RichDataFieldTest {
 
 	@Test
 	public void getValueMapping(){
 		Value invalidValue = createValue("0", Value.Property.INVALID);
-		Value validValueOne = createValue("1", null);
+		Value validValueOne = createValue("1", Value.Property.VALID);
 		Value validValueTwo = createValue("2", null);
 		Value validValueThree = createValue("3", null);
 		Value missingValue = createValue("N/A", Value.Property.MISSING);
 
-		DataField dataField = new DataField(FieldName.create("x"), OpType.CATEGORICAL, DataType.INTEGER)
+		DataField dataField = new DataField(FieldName.create("x"), OpType.CATEGORICAL, DataType.STRING)
 			.addValues(invalidValue, validValueOne, validValueTwo, validValueThree, missingValue);
 
 		RichDataField richDataField = new RichDataField(dataField);
 
-		TypeInfo typeInfo = new TypeInfo(){
+		Map<?, Value> valueMap = richDataField.getMap();
 
-			@Override
-			public DataType getDataType(){
-				return richDataField.getDataType();
-			}
+		assertEquals(5, valueMap.size());
 
-			@Override
-			public OpType getOpType(){
-				return richDataField.getOpType();
-			}
-		};
+		assertSame(invalidValue, valueMap.get("0"));
+		assertSame(validValueOne, valueMap.get("1"));
+		assertSame(validValueTwo, valueMap.get("2"));
+		assertSame(validValueThree, valueMap.get("3"));
+		assertSame(missingValue, valueMap.get("N/A"));
 
-		Map<FieldValue, Value> valueMappings = richDataField.getValueMapping(typeInfo);
+		dataField.setDataType(DataType.INTEGER);
 
-		assertEquals(4, valueMappings.size());
+		richDataField = new RichDataField(dataField);
 
-		assertSame(invalidValue, valueMappings.get(FieldValueUtil.create(TypeInfos.CATEGORICAL_INTEGER, 0)));
+		valueMap = richDataField.getMap();
 
-		assertSame(validValueOne, TargetFieldUtil.getValidValue(richDataField, true));
-		assertSame(validValueTwo, TargetFieldUtil.getValidValue(richDataField, 2d));
-		assertSame(validValueThree, TargetFieldUtil.getValidValue(richDataField, "3"));
+		assertEquals(4, valueMap.size());
 
-		try {
-			valueMappings.get(FieldValueUtil.create(TypeInfos.CATEGORICAL_INTEGER, "N/A"));
-
-			fail();
-		} catch(NumberFormatException nfe){
-			// Ignored
-		}
+		assertSame(invalidValue, valueMap.get(0));
+		assertSame(validValueOne, valueMap.get(1));
+		assertSame(validValueTwo, valueMap.get(2));
+		assertSame(validValueThree, valueMap.get(3));
 	}
 
 	static

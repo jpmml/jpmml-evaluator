@@ -43,8 +43,8 @@ public class TargetFieldUtil {
 				throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_DATATYPE);
 			}
 
-			if(dataField instanceof HasParsedValueMapping){
-				HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)dataField;
+			if(dataField instanceof MapHolder){
+				MapHolder<?> mapHolder = (MapHolder<?>)dataField;
 
 				OpType opType = dataField.getOpType();
 				if(opType == null){
@@ -53,7 +53,7 @@ public class TargetFieldUtil {
 
 				FieldValue fieldValue = FieldValueUtil.create(dataType, opType, value);
 
-				Value pmmlValue = (Value)fieldValue.getMapping(hasParsedValueMapping);
+				Value pmmlValue = (Value)fieldValue.get(mapHolder);
 				if(pmmlValue != null && (Value.Property.VALID).equals(pmmlValue.getProperty())){
 					return pmmlValue;
 				}

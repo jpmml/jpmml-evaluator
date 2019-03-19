@@ -48,7 +48,7 @@ public class DefaultVisitorBattery extends VisitorBattery {
 		addAll(new AttributeInternerBattery());
 		addAll(new ElementInternerBattery());
 
-		// Replace mutable data structures with immutaable ones
+		// Replace mutable data structures with immutable ones
 		addAll(new ListFinalizerBattery());
 	}
 }

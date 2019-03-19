@@ -147,13 +147,7 @@ public class FieldValue implements TypeInfo, Serializable {
 		if(array instanceof SetHolder){
 			SetHolder setHolder = (SetHolder)array;
 
-			if(!(getDataType()).equals(setHolder.getDataType())){
-				throw new ClassCastException();
-			}
-
-			Set<?> values = setHolder.getSet();
-
-			return values.contains(getValue());
+			return contains(setHolder);
 		}
 
 		List<?> values = ArrayUtil.getContent(array);
@@ -180,10 +174,26 @@ public class FieldValue implements TypeInfo, Serializable {
 			.anyMatch(predicate);
 	}
 
-	public <V> V getMapping(HasParsedValueMapping<V> hasParsedValueMapping){
-		Map<FieldValue, V> values = hasParsedValueMapping.getValueMapping(this);
+	public boolean contains(SetHolder setHolder){
 
-		return values.get(this);
+		if(!(getDataType()).equals(setHolder.getDataType())){
+			throw new ClassCastException();
+		}
+
+		Set<?> values = setHolder.getSet();
+
+		return values.contains(getValue());
+	}
+
+	public <V> V get(MapHolder<V> mapHolder){
+
+		if(!(getDataType()).equals(mapHolder.getDataType())){
+			throw new ClassCastException();
+		}
+
+		Map<?, V> valueMap = mapHolder.getMap();
+
+		return valueMap.get(getValue());
 	}
 
 	public boolean equalsValue(Object value){

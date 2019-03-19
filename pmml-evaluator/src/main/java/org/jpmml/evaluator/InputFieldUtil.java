@@ -281,8 +281,8 @@ public class InputFieldUtil {
 				throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_DATATYPE);
 			} // End if
 
-			if(dataField instanceof HasParsedValueMapping){
-				HasParsedValueMapping<?> hasParsedValueMapping = (HasParsedValueMapping<?>)dataField;
+			if(dataField instanceof MapHolder){
+				MapHolder<?> mapHolder = (MapHolder<?>)dataField;
 
 				OpType opType = dataField.getOpType();
 				if(opType == null){
@@ -292,7 +292,7 @@ public class InputFieldUtil {
 				try {
 					FieldValue fieldValue = FieldValueUtil.createOrCast(dataType, opType, value);
 
-					Value pmmlValue = (Value)fieldValue.getMapping(hasParsedValueMapping);
+					Value pmmlValue = (Value)fieldValue.get(mapHolder);
 					if(pmmlValue != null){
 						return pmmlValue.getProperty();
 					}

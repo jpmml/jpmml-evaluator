@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Villu Ruusmann
+ * Copyright (c) 2019 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -16,30 +16,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.visitors;
+package org.jpmml.evaluator;
 
-import java.util.List;
-import java.util.ListIterator;
+import java.util.Map;
 
-import org.dmg.pmml.DataDictionary;
-import org.dmg.pmml.DataField;
-import org.dmg.pmml.VisitorAction;
-import org.jpmml.evaluator.RichDataField;
-import org.jpmml.model.visitors.AbstractVisitor;
+import org.dmg.pmml.DataType;
 
-public class FieldOptimizer extends AbstractVisitor {
+public interface MapHolder<V> {
 
-	@Override
-	public VisitorAction visit(DataDictionary dataDictionary){
+	DataType getDataType();
 
-		if(dataDictionary.hasDataFields()){
-			List<DataField> dataFields = dataDictionary.getDataFields();
-
-			for(ListIterator<DataField> it = dataFields.listIterator(); it.hasNext(); ){
-				it.set(new RichDataField(it.next()));
-			}
-		}
-
-		return super.visit(dataDictionary);
-	}
+	Map<?, V> getMap();
 }
