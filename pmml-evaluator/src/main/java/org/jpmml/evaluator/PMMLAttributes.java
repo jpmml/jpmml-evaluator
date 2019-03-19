@@ -133,6 +133,7 @@ public interface PMMLAttributes {
 	Field MININGFIELD_INVALIDVALUEREPLACEMENT = ReflectionUtil.getField(MiningField.class, "invalidValueReplacement");
 	Field MININGFIELD_LOWVALUE = ReflectionUtil.getField(MiningField.class, "lowValue");
 	Field MININGFIELD_MISSINGVALUEREPLACEMENT = ReflectionUtil.getField(MiningField.class, "missingValueReplacement");
+	Field MININGFIELD_NAME = ReflectionUtil.getField(MiningField.class, "name");
 	Field NEARESTNEIGHBORMODEL_INSTANCEIDVARIABLE = ReflectionUtil.getField(NearestNeighborModel.class, "instanceIdVariable");
 	Field NEARESTNEIGHBORMODEL_NUMBEROFNEIGHBORS = ReflectionUtil.getField(NearestNeighborModel.class, "numberOfNeighbors");
 	Field NEURALNETWORK_ACTIVATIONFUNCTION = ReflectionUtil.getField(NeuralNetwork.class, "activationFunction");

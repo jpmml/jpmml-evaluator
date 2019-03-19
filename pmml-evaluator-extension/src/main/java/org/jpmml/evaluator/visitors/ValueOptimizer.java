@@ -36,6 +36,7 @@ import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.HasValue;
 import org.dmg.pmml.LocalTransformations;
+import org.dmg.pmml.MiningField;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.PMMLObject;
@@ -220,6 +221,34 @@ public class ValueOptimizer extends FieldResolver {
 	}
 
 	@Override
+	public VisitorAction visit(MiningField miningField){
+		FieldName name = miningField.getName();
+		if(name == null){
+			throw new MissingAttributeException(miningField, PMMLAttributes.MININGFIELD_NAME);
+		}
+
+		DataType dataType = getDataType(name);
+
+		if(dataType != null){
+			Object missingValueReplacement = miningField.getMissingValueReplacement();
+			if(missingValueReplacement != null){
+				missingValueReplacement = safeParseOrCast(dataType, missingValueReplacement);
+
+				miningField.setMissingValueReplacement(missingValueReplacement);
+			}
+
+			Object invalidValueReplacement = miningField.getInvalidValueReplacement();
+			if(invalidValueReplacement != null){
+				invalidValueReplacement = safeParseOrCast(dataType, invalidValueReplacement);
+
+				miningField.setInvalidValueReplacement(invalidValueReplacement);
+			}
+		}
+
+		return super.visit(miningField);
+	}
+
+	@Override
 	public VisitorAction visit(NormDiscrete normDiscrete){
 		FieldName name = normDiscrete.getField();
 		if(name == null){
@@ -390,6 +419,15 @@ public class ValueOptimizer extends FieldResolver {
 			}
 
 			throw e;
+		}
+	}
+
+	private Object safeParseOrCast(DataType dataType, Object value){
+
+		try {
+			return TypeUtil.parseOrCast(dataType, value);
+		} catch(IllegalArgumentException | TypeCheckException e){
+			return value;
 		}
 	}
 

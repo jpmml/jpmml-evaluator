@@ -69,7 +69,9 @@ public class ValueOptimizerTest {
 		RegressionTable regressionTable = new RegressionTable()
 			.addCategoricalPredictors(falseTerm, trueTerm);
 
-		MiningField miningField = new MiningField(dataField.getName());
+		MiningField miningField = new MiningField(dataField.getName())
+			.setMissingValueReplacement("false")
+			.setInvalidValueReplacement("N/A");
 
 		MiningSchema miningSchema = new MiningSchema()
 			.addMiningFields(miningField);
@@ -92,12 +94,18 @@ public class ValueOptimizerTest {
 		assertEquals("false", falseTerm.getValue());
 		assertEquals("true", trueTerm.getValue());
 
+		assertEquals("false", miningField.getMissingValueReplacement());
+		assertEquals("N/A", miningField.getInvalidValueReplacement());
+
 		dataField.setDataType(DataType.BOOLEAN);
 
 		optimizer.applyTo(pmml);
 
 		assertEquals(Boolean.FALSE, falseTerm.getValue());
 		assertEquals(Boolean.TRUE, trueTerm.getValue());
+
+		assertEquals(Boolean.FALSE, miningField.getMissingValueReplacement());
+		assertEquals("N/A", miningField.getInvalidValueReplacement());
 	}
 
 	@Test

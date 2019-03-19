@@ -156,6 +156,15 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		} // End if
 
 		if(miningSchema.hasMiningFields()){
+			List<MiningField> miningFields = miningSchema.getMiningFields();
+
+			for(MiningField miningField : miningFields){
+				FieldName name = miningField.getName();
+				if(name == null){
+					throw new MissingAttributeException(miningField, PMMLAttributes.MININGFIELD_NAME);
+				}
+			}
+
 			this.miningFields = CacheUtil.getValue(miningSchema, ModelEvaluator.miningFieldCache);
 		}
 
