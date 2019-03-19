@@ -32,6 +32,8 @@ import org.dmg.pmml.Constant;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.Discretize;
+import org.dmg.pmml.DiscretizeBin;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.HasValue;
@@ -193,6 +195,45 @@ public class ValueOptimizer extends FieldResolver {
 	}
 
 	@Override
+	public VisitorAction visit(Discretize discretize){
+		DataType dataType = discretize.getDataType();
+		if(dataType != null){
+			Object mapMissingTo = discretize.getMapMissingTo();
+			if(mapMissingTo != null){
+				mapMissingTo = parseOrCast(dataType, mapMissingTo);
+
+				discretize.setMapMissingTo(mapMissingTo);
+			}
+
+			Object defaultValue = discretize.getDefaultValue();
+			if(defaultValue != null){
+				defaultValue = parseOrCast(dataType, defaultValue);
+
+				discretize.setDefaultValue(defaultValue);
+			}
+		}
+
+		return super.visit(discretize);
+	}
+
+	@Override
+	public VisitorAction visit(DiscretizeBin discretizeBin){
+		Discretize discretize = (Discretize)getParent();
+
+		DataType dataType = discretize.getDataType();
+		if(dataType != null){
+			Object binValue = discretizeBin.getBinValue();
+			if(binValue != null){
+				binValue = parseOrCast(dataType, binValue);
+
+				discretizeBin.setBinValue(binValue);
+			}
+		}
+
+		return super.visit(discretizeBin);
+	}
+
+	@Override
 	public VisitorAction visit(FieldValue fieldValue){
 		return super.visit(fieldValue);
 	}
@@ -229,7 +270,6 @@ public class ValueOptimizer extends FieldResolver {
 		}
 
 		DataType dataType = getDataType(name);
-
 		if(dataType != null){
 			Object missingValueReplacement = miningField.getMissingValueReplacement();
 			if(missingValueReplacement != null){

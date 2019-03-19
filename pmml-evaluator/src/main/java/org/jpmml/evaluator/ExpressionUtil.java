@@ -454,9 +454,8 @@ public class ExpressionUtil {
 	static
 	public DataType getConstantDataType(Constant constant){
 		DataType dataType = constant.getDataType();
-
 		if(dataType == null){
-			dataType = TypeUtil.getConstantDataType(constant.getValue());
+			return TypeUtil.getConstantDataType(constant.getValue());
 		}
 
 		return dataType;
@@ -465,11 +464,10 @@ public class ExpressionUtil {
 	static
 	public <E extends Expression & HasDataType<E>> DataType getDataType(E expression, DataType defaultDataType){
 		DataType dataType = expression.getDataType();
-
-		if(dataType != null){
-			return dataType;
+		if(dataType == null){
+			return defaultDataType;
 		}
 
-		return defaultDataType;
+		return dataType;
 	}
 }
