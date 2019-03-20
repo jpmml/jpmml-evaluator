@@ -239,6 +239,12 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		trail.addMissingLevel();
 
+		if(defaultChild instanceof Node){
+			Node child = (Node)defaultChild;
+
+			return handleTrue(trail, child, context);
+		}
+
 		List<Node> children = node.getNodes();
 		for(int i = 0, max = children.size(); i < max; i++){
 			Node child = children.get(i);

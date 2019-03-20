@@ -23,5 +23,6 @@ import org.jpmml.model.VisitorBattery;
 public class ElementOptimizerBattery extends VisitorBattery {
 
 	public ElementOptimizerBattery(){
+		add(NodeResolver.class);
 	}
 }

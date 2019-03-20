@@ -136,12 +136,6 @@ public class ValueOptimizerTest {
 		TransformationDictionary transformationDictionary = new TransformationDictionary()
 			.addDerivedFields(derivedField);
 
-		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(dataField.getName(), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "0 1"));
-
-		Node parent = new BranchNode()
-			.setScore("0")
-			.setPredicate(simpleSetPredicate);
-
 		SimplePredicate simplePredicate = new SimplePredicate(derivedField.getName(), SimplePredicate.Operator.EQUAL)
 			.setValue("1");
 
@@ -149,7 +143,12 @@ public class ValueOptimizerTest {
 			.setScore("1")
 			.setPredicate(simplePredicate);
 
-		parent.addNodes(child);
+		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(dataField.getName(), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "0 1"));
+
+		Node root = new BranchNode()
+			.setScore("0")
+			.setPredicate(simpleSetPredicate)
+			.addNodes(child);
 
 		MiningField miningField = new MiningField(dataField.getName());
 
@@ -157,7 +156,7 @@ public class ValueOptimizerTest {
 			.addMiningFields(miningField);
 
 		TreeModel treeModel = new TreeModel(MiningFunction.REGRESSION, miningSchema, null)
-			.setNode(parent);
+			.setNode(root);
 
 		PMML pmml = new PMML(Version.PMML_4_3.getVersion(), new Header(), dataDictionary)
 			.setTransformationDictionary(transformationDictionary)
