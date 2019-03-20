@@ -109,9 +109,9 @@ public class PMMLException extends RuntimeException {
 	public String formatValue(Object object){
 
 		if(object instanceof FieldValue){
-			FieldValue value = (FieldValue)object;
+			FieldValue fieldValue = (FieldValue)object;
 
-			object = FieldValueUtil.getValue(value);
+			object = fieldValue.getValue();
 		}
 
 		return format(object);

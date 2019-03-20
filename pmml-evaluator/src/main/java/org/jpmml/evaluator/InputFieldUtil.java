@@ -291,7 +291,7 @@ public class InputFieldUtil {
 						FieldValue fieldValue = (FieldValue)value;
 
 						if(!(dataType).equals(fieldValue.getDataType())){
-							fieldValue = fieldValue.cast(dataType, null);
+							fieldValue = fieldValue.cast(dataField);
 						}
 
 						pmmlValue = (Value)mapHolder.get(fieldValue.getDataType(), fieldValue.getValue());
@@ -349,7 +349,7 @@ public class InputFieldUtil {
 							if(value instanceof FieldValue){
 								FieldValue fieldValue = (FieldValue)value;
 
-								equals = TypeUtil.equals(dataType, FieldValueUtil.getValue(fieldValue), simpleValue);
+								equals = TypeUtil.equals(dataType, fieldValue.getValue(), simpleValue);
 							} else
 
 							{

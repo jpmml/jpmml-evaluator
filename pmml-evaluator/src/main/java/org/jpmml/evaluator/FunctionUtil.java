@@ -77,7 +77,7 @@ public class FunctionUtil {
 				throw new MissingAttributeException(parameterField, PMMLAttributes.PARAMETERFIELD_NAME);
 			}
 
-			value = value.cast(parameterField.getDataType(), parameterField.getOpType());
+			value = value.cast(parameterField);
 
 			functionContext.declare(name, value);
 		}

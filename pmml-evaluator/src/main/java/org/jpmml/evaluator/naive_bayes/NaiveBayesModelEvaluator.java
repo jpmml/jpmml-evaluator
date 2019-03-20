@@ -234,7 +234,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				return FieldValues.MISSING_VALUE;
 			}
 
-			return value.cast(derivedField.getDataType(), derivedField.getOpType());
+			return value.cast(derivedField);
 		} else
 
 		{

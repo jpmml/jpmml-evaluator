@@ -33,6 +33,7 @@ import org.dmg.pmml.Array;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.Field;
+import org.dmg.pmml.HasType;
 import org.dmg.pmml.HasValue;
 import org.dmg.pmml.HasValueSet;
 import org.dmg.pmml.OpType;
@@ -76,26 +77,29 @@ public class FieldValue implements TypeInfo, Serializable {
 	abstract
 	public int compareToValue(FieldValue value);
 
-	public FieldValue cast(DataType dataType, OpType opType){
-		boolean compatible = true;
+	public FieldValue cast(HasType<?> hasType){
+		DataType dataType = hasType.getDataType();
+		OpType opType = hasType.getOpType();
+
+		boolean equal = true;
 
 		if(dataType == null){
 			dataType = getDataType();
 		} else
 
-		if(dataType != null && !(dataType).equals(getDataType())){
-			compatible = false;
+		{
+			equal &= (getDataType()).equals(dataType);
 		} // End if
 
 		if(opType == null){
 			opType = getOpType();
 		} else
 
-		if(opType != null && !(opType).equals(getOpType())){
-			compatible = false;
+		{
+			equal &= (getOpType()).equals(opType);
 		} // End if
 
-		if(compatible){
+		if(equal){
 			return this;
 		}
 
@@ -106,7 +110,7 @@ public class FieldValue implements TypeInfo, Serializable {
 		DataType dataType = typeInfo.getDataType();
 		OpType opType = typeInfo.getOpType();
 
-		if((dataType).equals(getDataType()) && (opType).equals(getOpType())){
+		if((getDataType()).equals(dataType) && (getOpType()).equals(opType)){
 			return this;
 		}
 

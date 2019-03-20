@@ -82,7 +82,7 @@ public class ExpressionUtil {
 			return FieldValues.MISSING_VALUE;
 		}
 
-		return value.cast(hasTypedExpression.getDataType(), hasTypedExpression.getOpType());
+		return value.cast(hasTypedExpression);
 	}
 
 	static
