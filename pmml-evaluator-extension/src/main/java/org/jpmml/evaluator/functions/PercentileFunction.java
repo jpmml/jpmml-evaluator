@@ -60,7 +60,7 @@ public class PercentileFunction extends AbstractFunction {
 	public FieldValue evaluate(List<FieldValue> arguments){
 		checkFixedArityArguments(arguments, 2);
 
-		Collection<?> values = FieldValueUtil.getValue(Collection.class, getRequiredArgument(arguments, 0, "values"));
+		Collection<?> values = getRequiredArgument(arguments, 0, "values").asCollection();
 
 		int percentile = getRequiredArgument(arguments, 1, "percentile").asInteger();
 		if(percentile < 1 || percentile > 100){

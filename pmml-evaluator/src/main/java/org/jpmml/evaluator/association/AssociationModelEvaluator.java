@@ -296,7 +296,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				if(explodedValue == null){
 					explodedValue = new HashSet<>();
 
-					Collection<?> objects = FieldValueUtil.getValue(Collection.class, value);
+					Collection<?> objects = value.asCollection();
 					for(Object object : objects){
 						explodedValue.add(FieldValueUtil.create(value, object));
 					}

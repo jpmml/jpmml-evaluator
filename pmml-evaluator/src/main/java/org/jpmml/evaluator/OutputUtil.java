@@ -508,7 +508,7 @@ public class OutputUtil {
 	static
 	private Double getContinuousResidual(Object object, FieldValue expectedObject){
 		Number value = (Number)getPredictedValue(object);
-		Number expectedValue = (Number)FieldValueUtil.getValue(expectedObject);
+		Number expectedValue = expectedObject.asNumber();
 
 		return Double.valueOf(expectedValue.doubleValue() - value.doubleValue());
 	}
@@ -518,7 +518,7 @@ public class OutputUtil {
 		HasProbability hasProbability = TypeUtil.cast(HasProbability.class, object);
 
 		String value = (String)TypeUtil.cast(DataType.STRING, getPredictedValue(object));
-		String expectedValue = (String)TypeUtil.cast(DataType.STRING, FieldValueUtil.getValue(expectedObject));
+		String expectedValue = expectedObject.asString();
 
 		boolean equals = (value).equals(expectedValue);
 

@@ -56,7 +56,7 @@ public class MeanFunction extends AbstractFunction {
 	public FieldValue evaluate(List<FieldValue> arguments){
 		checkFixedArityArguments(arguments, 1);
 
-		Collection<?> values = FieldValueUtil.getValue(Collection.class, getRequiredArgument(arguments, 0, "values"));
+		Collection<?> values = getRequiredArgument(arguments, 0, "values").asCollection();
 
 		Double result = evaluate(values);
 

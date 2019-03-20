@@ -18,15 +18,13 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Objects;
-
 import org.dmg.pmml.DataType;
 
 abstract
 public class ScalarValue extends FieldValue implements Comparable<ScalarValue> {
 
 	ScalarValue(DataType dataType, Object value){
-		super(dataType, filterValue(TypeUtil.parseOrCast(dataType, Objects.requireNonNull(value))));
+		super(dataType, filterValue(TypeUtil.parseOrCast(dataType, value)));
 	}
 
 	@Override

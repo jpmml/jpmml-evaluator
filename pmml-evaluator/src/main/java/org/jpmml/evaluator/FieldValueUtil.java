@@ -86,9 +86,4 @@ public class FieldValueUtil {
 	public Object getValue(FieldValue value){
 		return (value != null ? value.getValue() : null);
 	}
-
-	static
-	public <V> V getValue(Class<? extends V> clazz, FieldValue value){
-		return TypeUtil.cast(clazz, getValue(value));
-	}
 }

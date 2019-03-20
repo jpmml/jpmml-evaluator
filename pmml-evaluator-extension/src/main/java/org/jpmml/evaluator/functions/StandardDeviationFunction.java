@@ -57,7 +57,7 @@ public class StandardDeviationFunction extends AbstractFunction {
 	public FieldValue evaluate(List<FieldValue> arguments){
 		checkVariableArityArguments(arguments, 1, 2);
 
-		Collection<?> values = FieldValueUtil.getValue(Collection.class, getRequiredArgument(arguments, 0, "values"));
+		Collection<?> values = getRequiredArgument(arguments, 0, "values").asCollection();
 
 		Boolean biasCorrected = Boolean.FALSE;
 		if(arguments.size() > 1){

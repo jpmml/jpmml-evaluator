@@ -186,6 +186,10 @@ public class FieldValue implements TypeInfo, Serializable {
 		return equalsValue(value.getValue());
 	}
 
+	public Collection<?> asCollection(){
+		return TypeUtil.cast(Collection.class, getValue());
+	}
+
 	public String asString(){
 		return (String)getValue(DataType.STRING);
 	}
@@ -278,24 +282,12 @@ public class FieldValue implements TypeInfo, Serializable {
 	}
 
 	private Object getValue(DataType dataType){
-		Object value = getValue();
 
-		try {
-			return TypeUtil.cast(dataType, value);
-		} catch(TypeCheckException tce){
-
-			try {
-				if(value instanceof String){
-					String string = (String)value;
-
-					return TypeUtil.parse(dataType, string);
-				}
-			} catch(IllegalArgumentException iae){
-				// Ignored
-			}
-
-			throw tce;
+		if((getDataType()).equals(dataType)){
+			return getValue();
 		}
+
+		return TypeUtil.parseOrCast(dataType, getValue());
 	}
 
 	@Override

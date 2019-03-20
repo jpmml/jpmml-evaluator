@@ -403,11 +403,15 @@ public class ExpressionUtil {
 	)
 	static
 	public FieldValue evaluateAggregate(Aggregate aggregate, EvaluationContext context){
-		FieldValue fieldValue = context.evaluate(ensureField(aggregate));
+		FieldValue value = context.evaluate(ensureField(aggregate));
+
+		if(FieldValueUtil.isMissing(value)){
+			return FieldValues.MISSING_VALUE;
+		}
 
 		// The JPMML library operates with single records, so it's impossible to implement "proper" aggregation over multiple records.
 		// It is assumed that application developers have performed the aggregation beforehand
-		Collection<?> values = FieldValueUtil.getValue(Collection.class, fieldValue);
+		Collection<?> values = value.asCollection();
 
 		FieldName groupName = aggregate.getGroupField();
 		if(groupName != null){
@@ -420,7 +424,7 @@ public class ExpressionUtil {
 		values = values.stream()
 			// "Missing values are ignored"
 			.filter(Objects::nonNull)
-			.map(value -> FieldValueUtil.create(fieldValue, value))
+			.map(object -> FieldValueUtil.create(value, object))
 			.collect(Collectors.toList());
 
 		Aggregate.Function function = aggregate.getFunction();
