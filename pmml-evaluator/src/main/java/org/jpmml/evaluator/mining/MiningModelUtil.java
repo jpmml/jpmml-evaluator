@@ -189,12 +189,12 @@ public class MiningModelUtil {
 			String key;
 
 			try {
-				if((targetValue == null) || (targetValue instanceof String)){
-					key = (String)targetValue;
+				if(targetValue == null){
+					key = null;
 				} else
 
 				{
-					key = (String)TypeUtil.cast(DataType.STRING, targetValue);
+					key = TypeUtil.format(targetValue);
 				}
 			} catch(TypeCheckException tce){
 				throw tce.ensureContext(segmentResult.getSegment());

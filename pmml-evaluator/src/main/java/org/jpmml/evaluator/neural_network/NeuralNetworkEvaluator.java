@@ -72,12 +72,12 @@ import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
+import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.XPathUtil;
-import org.jpmml.model.ValueUtil;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<NeuralEntity> {
 
@@ -289,7 +289,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 						throw new MissingAttributeException(normDiscrete, PMMLAttributes.NORMDISCRETE_VALUE);
 					}
 
-					targetCategory = ValueUtil.toString(targetCategory);
+					targetCategory = TypeUtil.format(targetCategory);
 
 					result.put(entity, (String)targetCategory, value);
 				} else

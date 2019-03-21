@@ -24,7 +24,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import org.dmg.pmml.Entity;
-import org.jpmml.model.ValueUtil;
 
 public class EntityUtil {
 
@@ -48,7 +47,7 @@ public class EntityUtil {
 			return inversedEntityRegistry.get(entity);
 		}
 
-		return ValueUtil.toString(id);
+		return TypeUtil.format(id);
 	}
 
 	static
@@ -69,7 +68,7 @@ public class EntityUtil {
 			id = implicitId;
 		}
 
-		return builder.put(ValueUtil.toString(id), entity);
+		return builder.put(TypeUtil.format(id), entity);
 	}
 
 	static

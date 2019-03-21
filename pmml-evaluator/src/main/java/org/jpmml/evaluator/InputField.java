@@ -112,6 +112,7 @@ public class InputField extends ModelField {
 	 * @see #getDataType()
 	 * @see #getOpType()
 	 *
+	 * @see TypeUtil#format(Object)
 	 * @see TypeUtil#parse(DataType, String)
 	 * @see TypeUtil#parseOrCast(DataType, Object)
 	 */

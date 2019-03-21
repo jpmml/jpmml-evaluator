@@ -50,13 +50,13 @@ import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
+import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UndefinedResultException;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
-import org.jpmml.model.ValueUtil;
 
 public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements HasNodeRegistry {
 
@@ -415,7 +415,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 				throw new MissingAttributeException(scoreDistribution, PMMLAttributes.SCOREDISTRIBUTION_VALUE);
 			}
 
-			targetCategory = ValueUtil.toString(targetCategory);
+			targetCategory = TypeUtil.format(targetCategory);
 
 			result.put((String)targetCategory, value);
 
@@ -427,7 +427,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 					value.multiply(missingValuePenalty);
 				}
 
-				result.putConfidence(ValueUtil.toString(targetCategory), value);
+				result.putConfidence(TypeUtil.format(targetCategory), value);
 			}
 		}
 

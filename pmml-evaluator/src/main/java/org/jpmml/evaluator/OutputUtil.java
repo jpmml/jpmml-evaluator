@@ -189,7 +189,7 @@ public class OutputUtil {
 								throw new MissingAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_VALUE);
 							}
 
-							name = org.jpmml.model.ValueUtil.toString(name);
+							name = TypeUtil.format(name);
 
 							Expression expression = outputField.getExpression();
 							if(expression != null){
@@ -499,10 +499,10 @@ public class OutputUtil {
 
 		// "If the value attribute is not specified, then the predicted categorical value should be returned as a result"
 		if(value == null){
-			return (String)TypeUtil.cast(DataType.STRING, getPredictedValue(object));
+			return TypeUtil.format(getPredictedValue(object));
 		}
 
-		return org.jpmml.model.ValueUtil.toString(value);
+		return TypeUtil.format(value);
 	}
 
 	static
@@ -517,7 +517,7 @@ public class OutputUtil {
 	public Double getDiscreteResidual(Object object, FieldValue expectedObject){
 		HasProbability hasProbability = TypeUtil.cast(HasProbability.class, object);
 
-		String value = (String)TypeUtil.cast(DataType.STRING, getPredictedValue(object));
+		String value = TypeUtil.format(getPredictedValue(object));
 		String expectedValue = expectedObject.asString();
 
 		boolean equals = (value).equals(expectedValue);

@@ -98,14 +98,14 @@ public class ArrayUtil {
 		if(value instanceof List){
 			List<?> list = (List<?>)value;
 
-			tokens = Lists.transform(list, org.jpmml.model.ValueUtil::toString);
+			tokens = Lists.transform(list, TypeUtil::format);
 		} else
 
 		if(value instanceof Set){
 			Set<?> set = (Set<?>)value;
 
 			tokens = set.stream()
-				.map(org.jpmml.model.ValueUtil::toString)
+				.map(TypeUtil::format)
 				.collect(Collectors.toList());
 		} else
 

@@ -775,7 +775,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		if(targetReferenceCategory != null){
 			targetCategories = new ArrayList<>(targetCategories);
 
-			targetReferenceCategory = org.jpmml.model.ValueUtil.toString(targetReferenceCategory);
+			targetReferenceCategory = TypeUtil.format(targetReferenceCategory);
 
 			// Move the element from any position to the last position
 			if(targetCategories.remove(targetReferenceCategory)){
@@ -976,7 +976,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					return null;
 				}
 
-				return org.jpmml.model.ValueUtil.toString(targetCategory);
+				return TypeUtil.format(targetCategory);
 			}
 		};
 

@@ -147,7 +147,7 @@ public class FieldUtil {
 				Value.Property property = pmmlValue.getProperty();
 				switch(property){
 					case VALID:
-						result.add(org.jpmml.model.ValueUtil.toString(simpleValue));
+						result.add(TypeUtil.format(simpleValue));
 						break;
 					default:
 						break;

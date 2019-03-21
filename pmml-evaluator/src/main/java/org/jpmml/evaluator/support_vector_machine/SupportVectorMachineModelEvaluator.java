@@ -80,13 +80,13 @@ import org.jpmml.evaluator.PMMLException;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.SparseArrayUtil;
 import org.jpmml.evaluator.TargetUtil;
+import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.XPathUtil;
 import org.jpmml.model.ReflectionUtil;
-import org.jpmml.model.ValueUtil;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
 
@@ -199,7 +199,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 							throw new MisplacedAttributeException(supportVectorMachine, PMMLAttributes.SUPPORTVECTORMACHINE_ALTERNATETARGETCATEGORY, alternateTargetCategory);
 						}
 
-						targetCategory = ValueUtil.toString(targetCategory);
+						targetCategory = TypeUtil.format(targetCategory);
 
 						values.put((String)targetCategory, value);
 					}
@@ -252,7 +252,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 							}
 						}
 
-						label = ValueUtil.toString(label);
+						label = TypeUtil.format(label);
 
 						VoteMap<String, V> votes = (VoteMap<String, V>)values;
 

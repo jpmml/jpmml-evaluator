@@ -28,10 +28,18 @@ import java.util.Collection;
 import com.google.common.math.DoubleMath;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
+import org.jpmml.model.ValueUtil;;
 
 public class TypeUtil {
 
 	private TypeUtil(){
+	}
+
+	static
+	public String format(Object value){
+		value = ValueUtil.toSimpleValue(value);
+
+		return toString(value);
 	}
 
 	/**
@@ -292,7 +300,7 @@ public class TypeUtil {
 
 			// The String representation of invalid or missing values (eg. "N/A") may not be parseable to the requested representation
 			try {
-				return (parseOrCast(DataType.STRING, value)).equals(parseOrCast(DataType.STRING, referenceValue));
+				return (format(value)).equals(format(referenceValue));
 			} catch(TypeCheckException tce){
 				// Ignored
 			}

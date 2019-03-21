@@ -48,6 +48,7 @@ import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
+import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
@@ -154,7 +155,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new MissingAttributeException(regressionTable, PMMLAttributes.REGRESSIONTABLE_TARGETCATEGORY);
 			}
 
-			targetCategory = org.jpmml.model.ValueUtil.toString(targetCategory);
+			targetCategory = TypeUtil.format(targetCategory);
 
 			if(targetCategories != null && targetCategories.indexOf(targetCategory) < 0){
 				throw new InvalidAttributeException(regressionTable, PMMLAttributes.REGRESSIONTABLE_TARGETCATEGORY, targetCategory);

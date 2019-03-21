@@ -51,12 +51,12 @@ import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
+import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
-import org.jpmml.model.ValueUtil;
 
 public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implements HasEntityRegistry<SimpleRule> {
 
@@ -234,7 +234,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 				throw new MissingAttributeException(simpleRule, PMMLAttributes.SIMPLERULE_SCORE);
 			}
 
-			score = ValueUtil.toString(score);
+			score = TypeUtil.format(score);
 
 			firedRules.put((String)score, simpleRule);
 		} else

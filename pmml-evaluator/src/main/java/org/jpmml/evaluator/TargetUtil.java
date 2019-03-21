@@ -27,7 +27,6 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
-import org.jpmml.model.ValueUtil;
 
 public class TargetUtil {
 
@@ -220,7 +219,7 @@ public class TargetUtil {
 				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_VALUE);
 			}
 
-			targetCategory = ValueUtil.toString(targetCategory);
+			targetCategory = TypeUtil.format(targetCategory);
 
 			Double probability = targetValue.getPriorProbability();
 			if(probability == null){

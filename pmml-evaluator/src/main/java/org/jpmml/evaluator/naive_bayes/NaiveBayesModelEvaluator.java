@@ -77,6 +77,7 @@ import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
+import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueUtil;
@@ -251,7 +252,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				throw new MissingAttributeException(targetValueStat, PMMLAttributes.TARGETVALUESTAT_VALUE);
 			}
 
-			targetCategory = org.jpmml.model.ValueUtil.toString(targetCategory);
+			targetCategory = TypeUtil.format(targetCategory);
 
 			ContinuousDistribution distribution = targetValueStat.getContinuousDistribution();
 			if(distribution == null){
@@ -289,7 +290,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_VALUE);
 			}
 
-			targetCategory = org.jpmml.model.ValueUtil.toString(targetCategory);
+			targetCategory = TypeUtil.format(targetCategory);
 
 			double count = targetValueCount.getCount();
 
@@ -319,7 +320,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_VALUE);
 			}
 
-			targetCategory = org.jpmml.model.ValueUtil.toString(targetCategory);
+			targetCategory = TypeUtil.format(targetCategory);
 
 			double probability = targetValueCount.getCount();
 
@@ -365,7 +366,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 						throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_VALUE);
 					}
 
-					targetCategory = org.jpmml.model.ValueUtil.toString(targetCategory);
+					targetCategory = TypeUtil.format(targetCategory);
 
 					Double count = counts.get(targetCategory);
 					if(count == null){
