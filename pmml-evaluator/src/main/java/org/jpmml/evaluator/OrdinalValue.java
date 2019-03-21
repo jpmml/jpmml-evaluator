@@ -59,7 +59,7 @@ public class OrdinalValue extends DiscreteValue {
 			return super.compareToValue(value);
 		}
 
-		return compare(ordering, getValue(), TypeUtil.parseOrCast(getDataType(), value.getValue()));
+		return compare(ordering, getValue(), value.getValue(getDataType()));
 	}
 
 	@Override

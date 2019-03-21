@@ -93,6 +93,11 @@ public class CategoricalValue extends DiscreteValue {
 
 		@Override
 		public int compareToValue(Object value){
+
+			if(value instanceof Boolean){
+				return Boolean.compare(asBoolean(), (Boolean)value);
+			}
+
 			Number number;
 
 			try {
@@ -101,20 +106,21 @@ public class CategoricalValue extends DiscreteValue {
 				throw new TypeCheckException(DataType.DOUBLE, value);
 			}
 
-			return ((Comparable)TypeUtil.cast(DataType.DOUBLE, asBoolean())).compareTo(number);
+			return ((Comparable)asDouble()).compareTo(number);
 		}
 
 		@Override
 		public int compareToValue(FieldValue value){
-			Number number;
 
-			try {
-				number = (Number)TypeUtil.cast(DataType.DOUBLE, value.asNumber());
-			} catch(TypeCheckException tce){
-				throw new TypeCheckException(DataType.DOUBLE, value.getValue());
+			if(value instanceof ScalarValue){
+				ScalarValue that = (ScalarValue)value;
+
+				if((DataType.BOOLEAN).equals(that.getDataType())){
+					return Boolean.compare(this.asBoolean(), that.asBoolean());
+				}
 			}
 
-			return ((Comparable)TypeUtil.cast(DataType.DOUBLE, asBoolean())).compareTo(number);
+			return compareToValue(value.getValue());
 		}
 
 		@Override

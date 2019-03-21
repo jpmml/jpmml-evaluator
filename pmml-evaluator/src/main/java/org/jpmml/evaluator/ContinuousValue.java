@@ -48,7 +48,7 @@ public class ContinuousValue extends ScalarValue {
 				throw nfeDefault;
 			}
 
-			return ((Comparable)TypeUtil.cast(DataType.DOUBLE, asNumber())).compareTo(number);
+			return ((Comparable)asDouble()).compareTo(number);
 		}
 	}
 

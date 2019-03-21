@@ -281,7 +281,7 @@ public class FieldValue implements TypeInfo, Serializable {
 		}
 	}
 
-	private Object getValue(DataType dataType){
+	Object getValue(DataType dataType){
 
 		if((getDataType()).equals(dataType)){
 			return getValue();

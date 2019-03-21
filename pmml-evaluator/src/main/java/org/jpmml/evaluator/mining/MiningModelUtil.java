@@ -99,7 +99,7 @@ public class MiningModelUtil {
 				} else
 
 				{
-					value = (Double)TypeUtil.cast(DataType.DOUBLE, targetValue);
+					value = (Number)TypeUtil.cast(DataType.DOUBLE, targetValue);
 				}
 			} catch(TypeCheckException tce){
 				throw tce.ensureContext(segmentResult.getSegment());

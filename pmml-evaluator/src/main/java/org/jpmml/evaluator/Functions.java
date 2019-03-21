@@ -478,7 +478,7 @@ public interface Functions {
 
 			String result = arguments.stream()
 				.filter(Objects::nonNull)
-				.map(value -> (String)TypeUtil.cast(DataType.STRING, value.getValue()))
+				.map(value -> value.asString())
 				.collect(Collectors.joining());
 
 			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
