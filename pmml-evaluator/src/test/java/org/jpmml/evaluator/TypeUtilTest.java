@@ -301,6 +301,11 @@ public class TypeUtilTest {
 	public void parseSecondsSinceMidnight(){
 		SecondsSinceMidnight noon = (SecondsSinceMidnight)TypeUtil.parse(DataType.TIME_SECONDS, "12:00:00");
 
+		assertEquals(12 * 60 * 60, noon.intValue());
+		assertEquals(12L * 60 * 60, noon.longValue());
+
+		assertEquals("43200", TypeUtil.format(noon));
+
 		assertEquals(DataType.TIME_SECONDS, TypeUtil.getDataType(noon));
 
 		assertEquals(0L, countSecondsSinceMidnight("0:00:00"));
