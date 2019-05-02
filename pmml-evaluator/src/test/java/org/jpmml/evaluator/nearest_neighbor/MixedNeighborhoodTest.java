@@ -28,10 +28,14 @@
 package org.jpmml.evaluator.nearest_neighbor;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.InlineTable;
+import org.dmg.pmml.Row;
 import org.dmg.pmml.nearest_neighbor.NearestNeighborModel;
+import org.dmg.pmml.nearest_neighbor.TrainingInstances;
 import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -49,7 +53,7 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 		NearestNeighborModel nearestNeighborModel = evaluator.getModel()
 			.setNumberOfNeighbors(1); // XXX
 
-		Map<FieldName, ?> arguments = createArguments("petal length", 4.7d, "petal width", 1.4d, "sepal length", 7d, "sepal width", 3.2d);
+		Map<FieldName, ?> arguments = createArguments("sepal length", 7d, "sepal width", 3.2d, "petal length", 4.7d, "petal width", 1.4d);
 
 		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
@@ -63,5 +67,76 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 
 		assertEquals(20d, getOutput(results, "output_1"));
 		assertEquals("Iris-versicolor", getOutput(results, "output_2"));
+	}
+
+	@Test
+	public void evaluateFirstVsRest() throws Exception {
+		NearestNeighborModelEvaluator evaluator = (NearestNeighborModelEvaluator)createModelEvaluator();
+
+		removeRow(evaluator, 0);
+
+		Map<FieldName, ?> arguments = createArguments("sepal length", 5.1d, "sepal width", 3.5d, "petal length", 1.4d, "petal width", 0.2d);
+
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+
+		AffinityDistribution<?> species = (AffinityDistribution<?>)results.get(FieldName.create("species"));
+
+		assertEquals(10d, species.getResult());
+
+		List<Double> speciesAffinityRanking = species.getAffinityRanking();
+
+		assertEquals((Double)0.01d, speciesAffinityRanking.get(0), 1e-13);
+		assertEquals((Double)0.02d, speciesAffinityRanking.get(1), 1e-13);
+		assertEquals((Double)0.02d, speciesAffinityRanking.get(2), 1e-13);
+
+		AffinityDistribution<?> speciesClass = (AffinityDistribution<?>)results.get(FieldName.create("species_class"));
+
+		assertEquals("Iris-setosa", speciesClass.getResult());
+
+		List<Double> speciesClassAffinityRanking = speciesClass.getAffinityRanking();
+
+		assertEquals(speciesAffinityRanking, speciesClassAffinityRanking);
+	}
+
+	@Test
+	public void evaluateLastVsRest() throws Exception {
+		NearestNeighborModelEvaluator evaluator = (NearestNeighborModelEvaluator)createModelEvaluator();
+
+		removeRow(evaluator, 149);
+
+		Map<FieldName, ?> arguments = createArguments("sepal length", 5.9d, "sepal width", 3.0d, "petal length", 5.1d, "petal width", 1.8d);
+
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+
+		AffinityDistribution<?> species = (AffinityDistribution<?>)results.get(FieldName.create("species"));
+
+		assertEquals(30d, species.getResult());
+
+		List<Double> speciesAffinityRanking = species.getAffinityRanking();
+
+		assertEquals((Double)0.08d, speciesAffinityRanking.get(0), 1e-13);
+		assertEquals((Double)0.10d, speciesAffinityRanking.get(1), 1e-13);
+		assertEquals((Double)0.11d, speciesAffinityRanking.get(2), 1e-13);
+
+		AffinityDistribution<?> speciesClass = (AffinityDistribution<?>)results.get(FieldName.create("species_class"));
+
+		assertEquals("Iris-virginica", speciesClass.getResult());
+	}
+
+	static
+	private void removeRow(NearestNeighborModelEvaluator evaluator, int index){
+		NearestNeighborModel nearestNeighborModel = evaluator.getModel();
+
+		TrainingInstances trainingInstances = nearestNeighborModel.getTrainingInstances();
+
+		InlineTable inlineTable = trainingInstances.getInlineTable();
+
+		List<Row> rows = inlineTable.getRows();
+
+		assertEquals(150, rows.size());
+
+		trainingInstances.setRecordCount(149);
+
+		rows.remove(index);
 	}
 }
