@@ -223,8 +223,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		Segmentation.MissingPredictionTreatment missingPredictionTreatment = segmentation.getMissingPredictionTreatment();
-		Double missingThreshold = segmentation.getMissingThreshold();
-		if(missingThreshold < 0 || missingThreshold > 1){
+		Number missingThreshold = segmentation.getMissingThreshold();
+		if(missingThreshold.doubleValue() < 0 || missingThreshold.doubleValue() > 1){
 			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
 		}
 
@@ -283,8 +283,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		Segmentation.MissingPredictionTreatment missingPredictionTreatment = segmentation.getMissingPredictionTreatment();
-		Double missingThreshold = segmentation.getMissingThreshold();
-		if(missingThreshold < 0 || missingThreshold > 1){
+		Number missingThreshold = segmentation.getMissingThreshold();
+		if(missingThreshold.doubleValue() < 0d || missingThreshold.doubleValue() > 1d){
 			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
 		}
 
@@ -364,8 +364,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		Segmentation.MissingPredictionTreatment missingPredictionTreatment = segmentation.getMissingPredictionTreatment();
-		Double missingThreshold = segmentation.getMissingThreshold();
-		if(missingThreshold < 0 || missingThreshold > 1){
+		Number missingThreshold = segmentation.getMissingThreshold();
+		if(missingThreshold.doubleValue() < 0d || missingThreshold.doubleValue() > 1d){
 			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
 		}
 

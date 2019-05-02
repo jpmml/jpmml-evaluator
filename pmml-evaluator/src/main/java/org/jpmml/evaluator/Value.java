@@ -29,7 +29,7 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 		initialValue = "${0}"
 	)
 	abstract
-	public Value<V> add(double value);
+	public Value<V> add(Number value);
 
 	@Operation (
 		value = "<apply><plus/>${this}${0}</apply>",
@@ -48,14 +48,14 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 		initialValue = "<apply><times/>${0}${1}</apply>"
 	)
 	abstract
-	public Value<V> add(double coefficient, Number factor);
+	public Value<V> add(Number coefficient, Number factor);
 
 	@Operation (
 		value = "<apply><plus/>${this}<apply><times/>${0}${1}${2}</apply></apply>",
 		initialValue = "<apply><times/>${0}${1}${2}</apply>"
 	)
 	abstract
-	public Value<V> add(double coefficient, Number firstFactor, Number secondFactor);
+	public Value<V> add(Number coefficient, Number firstFactor, Number secondFactor);
 
 	/**
 	 * <p>
@@ -67,7 +67,7 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 		initialValue = "<apply><times/>${0}${1}</apply>"
 	)
 	abstract
-	public Value<V> add(double coefficient, Number... factors);
+	public Value<V> add(Number coefficient, Number... factors);
 
 	/**
 	 * <p>
@@ -79,14 +79,14 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 		initialValue = "<apply><times/>${0}<apply><power/>${1}${2}</apply></apply>"
 	)
 	abstract
-	public Value<V> add(double coefficient, Number factor, int exponent);
+	public Value<V> add(Number coefficient, Number factor, int exponent);
 
 	@Operation (
 		value = "<apply><minus/>${this}${0}</apply>",
 		initialValue = "<apply><minus/>${0}</apply>"
 	)
 	abstract
-	public Value<V> subtract(double value);
+	public Value<V> subtract(Number value);
 
 	@Operation (
 		value = "<apply><minus/>${this}${0}</apply>",
@@ -99,7 +99,7 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 		value = "<apply><times/>${this}${0}</apply>"
 	)
 	abstract
-	public Value<V> multiply(double value);
+	public Value<V> multiply(Number value);
 
 	@Operation (
 		value = "<apply><times/>${this}${0}</apply>"
@@ -116,13 +116,13 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 		value = "<apply><times/>${this}<apply><power/>${0}${1}</apply></apply>"
 	)
 	abstract
-	public Value<V> multiply(Number factor, double exponent);
+	public Value<V> multiply(Number factor, Number exponent);
 
 	@Operation (
 		value = "<apply><divide/>${this}${0}</apply>"
 	)
 	abstract
-	public Value<V> divide(double value);
+	public Value<V> divide(Number value);
 
 	@Operation (
 		value = "<apply><divide/>${this}${0}</apply>"
@@ -146,7 +146,7 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 		value = "<apply><power/>${this}{0}</apply>"
 	)
 	abstract
-	public Value<V> power(double value);
+	public Value<V> power(Number value);
 
 	@Operation (
 		value = "<apply><divide/><cn>1</cn>${this}</apply>"
@@ -206,19 +206,19 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 		value = "<apply><apply><inverse/><ci>negbin</ci></apply>${this}${0}</apply>"
 	)
 	abstract
-	public Value<V> inverseNegbin(double value);
+	public Value<V> inverseNegbin(Number value);
 
 	@Operation (
 		value = "<apply><apply><inverse/><ci>oddspower</ci></apply>${this}${0}</apply>"
 	)
 	abstract
-	public Value<V> inverseOddspower(double value);
+	public Value<V> inverseOddspower(Number value);
 
 	@Operation (
 		value = "<apply><power/>${this}<apply><divide/><cn>1</cn>${0}</apply></apply>"
 	)
 	abstract
-	public Value<V> inversePower(double value);
+	public Value<V> inversePower(Number value);
 
 	@Operation (
 		value = "<apply><apply><inverse/><ci>cauchit</ci></apply>${this}</apply>"
@@ -260,7 +260,7 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 		value = "<apply><ci>threshold</ci>${this}${0}</apply>"
 	)
 	abstract
-	public Value<V> threshold(double value);
+	public Value<V> threshold(Number value);
 
 	@Operation (
 		value = "<apply><max/><cn>0</cn>${this}</apply>"
@@ -278,13 +278,13 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 		value = "<apply><ci>gaussSim</ci>${this}${0}</apply>"
 	)
 	abstract
-	public Value<V> gaussSim(double value);
+	public Value<V> gaussSim(Number value);
 
 	@Operation (
 		value = "<apply><max/>${0}<apply><min/>${1}${this}</apply></apply>"
 	)
 	abstract
-	public Value<V> restrict(double lowValue, double highValue);
+	public Value<V> restrict(Number lowValue, Number highValue);
 
 	@Operation (
 		value = "<apply><ci>round</ci>${this}</apply>"
@@ -305,16 +305,22 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> floor();
 
 	@Operation (
+		value = "<apply><ci>normalize</ci>${this}${0}${1}${2}${3}</apply>"
+	)
+	abstract
+	public Value<V> normalize(Number leftOrig, Number leftNorm, Number rightOrig, Number rightNorm);
+
+	@Operation (
 		value = "<apply><ci>denormalize</ci>${this}${0}${1}${2}${3}</apply>"
 	)
 	abstract
-	public Value<V> denormalize(double leftOrig, double leftNorm, double rightOrig, double rightNorm);
+	public Value<V> denormalize(Number leftOrig, Number leftNorm, Number rightOrig, Number rightNorm);
 
 	abstract
-	public boolean equals(double value);
+	public boolean equals(Number value);
 
 	abstract
-	public int compareTo(double value);
+	public int compareTo(Number value);
 
 	abstract
 	public float floatValue();

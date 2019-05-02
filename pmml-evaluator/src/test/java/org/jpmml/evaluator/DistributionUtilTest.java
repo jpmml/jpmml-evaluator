@@ -50,7 +50,7 @@ public class DistributionUtilTest {
 
 	@Test
 	public void isNoOp(){
-		ContinuousDistribution distribution = new GaussianDistribution();
+		ContinuousDistribution distribution = new GaussianDistribution(0d, 0d);
 
 		assertTrue(DistributionUtil.isNoOp(distribution));
 	}

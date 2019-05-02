@@ -36,18 +36,18 @@ public class SimpleDoubleVector extends DoubleVector {
 	}
 
 	@Override
-	public DoubleVector add(double value){
-		return addInternal(value);
-	}
-
-	@Override
 	public DoubleVector add(Number value){
 		return addInternal(value.doubleValue());
 	}
 
 	@Override
-	public DoubleVector add(double coefficient, Number factor){
-		return addInternal(coefficient * factor.doubleValue());
+	public DoubleVector add(Value<? extends Number> value){
+		return addInternal(value.doubleValue());
+	}
+
+	@Override
+	public DoubleVector add(Number coefficient, Number factor){
+		return addInternal(coefficient.doubleValue() * factor.doubleValue());
 	}
 
 	private DoubleVector addInternal(double value){

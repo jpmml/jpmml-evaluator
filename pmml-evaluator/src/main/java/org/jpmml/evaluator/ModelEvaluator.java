@@ -501,7 +501,10 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 						continue;
 					}
 
-					verify(record.get(name), EvaluatorUtil.decode(results.get(name)), verificationField.getPrecision(), verificationField.getZeroThreshold());
+					Number precision = verificationField.getPrecision();
+					Number zeroThreshold = verificationField.getZeroThreshold();
+
+					verify(record.get(name), EvaluatorUtil.decode(results.get(name)), precision, zeroThreshold);
 				}
 			}
 		}
@@ -509,7 +512,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		return this;
 	}
 
-	private void verify(Object expected, Object actual, double precision, double zeroThreshold){
+	private void verify(Object expected, Object actual, Number precision, Number zeroThreshold){
 
 		if(expected == null){
 			return;
@@ -525,7 +528,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 			expected = TypeUtil.parseOrCast(dataType, expected);
 		}
 
-		boolean acceptable = VerificationUtil.acceptable(expected, actual, precision, zeroThreshold);
+		boolean acceptable = VerificationUtil.acceptable(expected, actual, precision.doubleValue(), zeroThreshold.doubleValue());
 		if(!acceptable){
 			throw new EvaluationException("Values " + PMMLException.formatValue(expected) + " and " + PMMLException.formatValue(actual) + " do not match");
 		}

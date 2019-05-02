@@ -30,6 +30,13 @@ public class DoubleValue extends Value<Double> {
 		this.value = value;
 	}
 
+	@Operation (
+		value = "${0}"
+	)
+	public DoubleValue(Number value){
+		this.value = value.doubleValue();
+	}
+
 	@Override
 	public int compareTo(Value<Double> that){
 		return Double.compare(this.doubleValue(), that.doubleValue());
@@ -65,8 +72,8 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue add(double value){
-		this.value += value;
+	public DoubleValue add(Number value){
+		this.value += value.doubleValue();
 
 		return this;
 	}
@@ -79,22 +86,22 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue add(double coefficient, Number factor){
-		this.value += coefficient * factor.doubleValue();
+	public DoubleValue add(Number coefficient, Number factor){
+		this.value += coefficient.doubleValue() * factor.doubleValue();
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue add(double coefficient, Number firstFactor, Number secondFactor){
-		this.value += coefficient * firstFactor.doubleValue() * secondFactor.doubleValue();
+	public DoubleValue add(Number coefficient, Number firstFactor, Number secondFactor){
+		this.value += coefficient.doubleValue() * firstFactor.doubleValue() * secondFactor.doubleValue();
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue add(double coefficient, Number... factors){
-		double value = coefficient;
+	public DoubleValue add(Number coefficient, Number... factors){
+		double value = coefficient.doubleValue();
 
 		for(int i = 0; i < factors.length; i++){
 			Number factor = factors[i];
@@ -108,15 +115,15 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue add(double coefficient, Number factor, int exponent){
-		this.value += coefficient * Math.pow(factor.doubleValue(), exponent);
+	public DoubleValue add(Number coefficient, Number factor, int exponent){
+		this.value += coefficient.doubleValue() * Math.pow(factor.doubleValue(), exponent);
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue subtract(double value){
-		this.value -= value;
+	public DoubleValue subtract(Number value){
+		this.value -= value.doubleValue();
 
 		return this;
 	}
@@ -129,8 +136,8 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue multiply(double value){
-		this.value *= value;
+	public DoubleValue multiply(Number value){
+		this.value *= value.doubleValue();
 
 		return this;
 	}
@@ -143,15 +150,15 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue multiply(Number factor, double exponent){
-		this.value *= Math.pow(factor.doubleValue(), exponent);
+	public DoubleValue multiply(Number factor, Number exponent){
+		this.value *= Math.pow(factor.doubleValue(), exponent.doubleValue());
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue divide(double value){
-		this.value /= value;
+	public DoubleValue divide(Number value){
+		this.value /= value.doubleValue();
 
 		return this;
 	}
@@ -178,8 +185,8 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue power(double value){
-		this.value = Math.pow(this.value, value);
+	public DoubleValue power(Number value){
+		this.value = Math.pow(this.value, value.doubleValue());
 
 		return this;
 	}
@@ -248,14 +255,18 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue inverseNegbin(double value){
-		this.value = 1d / (value * (Math.exp(-this.value) - 1d));
+	public DoubleValue inverseNegbin(Number value){
+		this.value = 1d / (value.doubleValue() * (Math.exp(-this.value) - 1d));
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue inverseOddspower(double value){
+	public DoubleValue inverseOddspower(Number value){
+		return inverseOddspowerInternal(value.doubleValue());
+	}
+
+	private DoubleValue inverseOddspowerInternal(double value){
 
 		if(value < 0d || value > 0d){
 			this.value = 1d / (1d + Math.pow(1d + (value * this.value), -(1d / value)));
@@ -269,7 +280,11 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue inversePower(double value){
+	public DoubleValue inversePower(Number value){
+		return inversePowerInternal(value.doubleValue());
+	}
+
+	private DoubleValue inversePowerInternal(double value){
 
 		if(value < 0d || value > 0d){
 			this.value = Math.pow(this.value, 1d / value);
@@ -325,8 +340,8 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue threshold(double value){
-		this.value = (this.value > value ? 1d : 0d);
+	public DoubleValue threshold(Number value){
+		this.value = (this.value > value.doubleValue() ? 1d : 0d);
 
 		return this;
 	}
@@ -346,16 +361,16 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue gaussSim(double value){
-		this.value = Math.exp((-Math.log(2d) * this.value * this.value) / (value * value));
+	public DoubleValue gaussSim(Number value){
+		this.value = Math.exp((-Math.log(2d) * this.value * this.value) / (value.doubleValue() * value.doubleValue()));
 
 		return this;
 	}
 
 	@Override
-	public DoubleValue restrict(double lowValue, double highValue){
-		this.value = Math.max(this.value, lowValue);
-		this.value = Math.min(this.value, highValue);
+	public DoubleValue restrict(Number lowValue, Number highValue){
+		this.value = Math.max(this.value, lowValue.doubleValue());
+		this.value = Math.min(this.value, highValue.doubleValue());
 
 		return this;
 	}
@@ -382,20 +397,35 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
-	public DoubleValue denormalize(double leftOrig, double leftNorm, double rightOrig, double rightNorm){
+	public DoubleValue normalize(Number leftOrig, Number leftNorm, Number rightOrig, Number rightNorm){
+		return normalizeInternal(leftOrig.doubleValue(), leftNorm.doubleValue(), rightOrig.doubleValue(), rightNorm.doubleValue());
+	}
+
+	private DoubleValue normalizeInternal(double leftOrig, double leftNorm, double rightOrig, double rightNorm){
+		this.value = leftNorm + ((this.value - leftOrig) / (rightOrig - leftOrig)) * (rightNorm - leftNorm);
+
+		return this;
+	}
+
+	@Override
+	public DoubleValue denormalize(Number leftOrig, Number leftNorm, Number rightOrig, Number rightNorm){
+		return denormalizeInternal(leftOrig.doubleValue(), leftNorm.doubleValue(), rightOrig.doubleValue(), rightNorm.doubleValue());
+	}
+
+	private DoubleValue denormalizeInternal(double leftOrig, double leftNorm, double rightOrig, double rightNorm){
 		this.value = ((this.value - leftNorm) / (rightNorm - leftNorm)) * (rightOrig - leftOrig) + leftOrig;
 
 		return this;
 	}
 
 	@Override
-	public boolean equals(double value){
-		return this.value == value;
+	public boolean equals(Number value){
+		return this.value == value.doubleValue();
 	}
 
 	@Override
-	public int compareTo(double value){
-		return Double.compare(this.value, value);
+	public int compareTo(Number value){
+		return Double.compare(this.value, value.doubleValue());
 	}
 
 	@Override

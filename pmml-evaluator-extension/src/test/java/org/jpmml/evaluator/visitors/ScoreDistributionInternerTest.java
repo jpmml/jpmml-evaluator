@@ -23,6 +23,7 @@ import org.dmg.pmml.True;
 import org.dmg.pmml.tree.ComplexNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
+import org.jpmml.evaluator.NumberUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotSame;
@@ -59,7 +60,7 @@ public class ScoreDistributionInternerTest {
 
 	static
 	private Node createNode(ScoreDistribution event){
-		ScoreDistribution noEvent = new ScoreDistribution("no-event", 1d - event.getRecordCount());
+		ScoreDistribution noEvent = new ScoreDistribution("no-event", 1d - NumberUtil.asDouble(event.getRecordCount()));
 
 		Node node = new ComplexNode()
 			.addScoreDistributions(event, noEvent);

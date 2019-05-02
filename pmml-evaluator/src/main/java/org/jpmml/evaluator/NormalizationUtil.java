@@ -1,29 +1,20 @@
 /*
- * Copyright (c) 2011 University of Tartu
- * All rights reserved.
+ * Copyright (c) 2019 Villu Ruusmann
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * This file is part of JPMML-Evaluator
  *
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holder nor the names of its contributors
- *    may be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ * JPMML-Evaluator is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
- * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * JPMML-Evaluator is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.jpmml.evaluator;
 
@@ -40,106 +31,191 @@ public class NormalizationUtil {
 
 	static
 	public FieldValue normalize(NormContinuous normContinuous, FieldValue value){
-		double result = normalize(normContinuous, (value.asNumber()).doubleValue());
+		Number result = normalize(normContinuous, value.asNumber());
 
 		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 	}
 
 	static
-	public double normalize(NormContinuous normContinuous, double value){
+	public Number normalize(NormContinuous normContinuous, Number value){
+		Value<Double> doubleValue = new DoubleValue(value);
+
+		doubleValue = normalize(normContinuous, doubleValue);
+		if(doubleValue == null){
+			return null;
+		}
+
+		return doubleValue.getValue();
+	}
+
+	static
+	public <V extends Number> Value<V> normalize(NormContinuous normContinuous, Value<V> value){
 		List<LinearNorm> linearNorms = ensureLinearNorms(normContinuous);
 
-		LinearNorm rangeStart = linearNorms.get(0);
-		LinearNorm rangeEnd = linearNorms.get(linearNorms.size() - 1);
+		LinearNorm start = linearNorms.get(0);
+		LinearNorm end = linearNorms.get(linearNorms.size() - 1);
 
-		// Select proper interval for normalization
-		if(value >= rangeStart.getOrig() && value <= rangeEnd.getOrig()){
+		Number startOrig = start.getOrig();
+		if(startOrig == null){
+			throw new MissingAttributeException(start, PMMLAttributes.LINEARNORM_ORIG);
+		}
 
-			for(int i = 1; i < linearNorms.size() - 1; i++){
-				LinearNorm linearNorm = linearNorms.get(i);
+		Number endOrig = end.getOrig();
+		if(endOrig == null){
+			throw new MissingAttributeException(end, PMMLAttributes.LINEARNORM_ORIG);
+		} // End if
 
-				if(value >= linearNorm.getOrig()){
-					rangeStart = linearNorm;
-				} else
-
-				if(value <= linearNorm.getOrig()){
-					rangeEnd = linearNorm;
-
-					break;
-				}
-			}
-		} else
-
-		// Deal with outliers
-		{
+		if(value.compareTo(startOrig) < 0 || value.compareTo(endOrig) > 0){
 			OutlierTreatmentMethod outlierTreatmentMethod = normContinuous.getOutliers();
 
 			switch(outlierTreatmentMethod){
 				case AS_IS:
-					if(value < rangeStart.getOrig()){
-						rangeEnd = linearNorms.get(1);
+					// "Extrapolate from the first interval"
+					if(value.compareTo(startOrig) < 0){
+						end = linearNorms.get(1);
+
+						endOrig = end.getOrig();
+						if(endOrig == null){
+							throw new MissingAttributeException(end, PMMLAttributes.LINEARNORM_ORIG);
+						}
 					} else
 
+					// "Extrapolate from the last interval"
 					{
-						rangeStart = linearNorms.get(linearNorms.size() - 2);
+						start = linearNorms.get(linearNorms.size() - 2);
+
+						startOrig = start.getOrig();
+						if(startOrig == null){
+							throw new MissingAttributeException(start, PMMLAttributes.LINEARNORM_ORIG);
+						}
 					}
 					break;
 				case AS_MISSING_VALUES:
-					Double missing = normContinuous.getMapMissingTo();
-					if(missing == null){
-						throw new MissingAttributeException(normContinuous, PMMLAttributes.NORMCONTINUOUS_MAPMISSINGTO);
-					}
-					return missing;
+					// "Map to a missing value"
+					return null;
 				case AS_EXTREME_VALUES:
-					if(value < rangeStart.getOrig()){
-						return rangeStart.getNorm();
+					// "Map to the value of the first interval"
+					if(value.compareTo(startOrig) < 0){
+						Number startNorm = start.getNorm();
+						if(startNorm == null){
+							throw new MissingAttributeException(start, PMMLAttributes.LINEARNORM_NORM);
+						}
+
+						return value.restrict(startNorm, Double.POSITIVE_INFINITY);
 					} else
 
+					// "Map to the value of the last interval"
 					{
-						return rangeEnd.getNorm();
+						Number endNorm = end.getNorm();
+						if(endNorm == null){
+							throw new MissingAttributeException(end, PMMLAttributes.LINEARNORM_NORM);
+						}
+
+						return value.restrict(Double.NEGATIVE_INFINITY, endNorm);
 					}
 				default:
 					throw new UnsupportedAttributeException(normContinuous, outlierTreatmentMethod);
 			}
+		} else
+
+		{
+			for(int i = 1, max = (linearNorms.size() - 1); i < max; i++){
+				LinearNorm linearNorm = linearNorms.get(i);
+
+				Number orig = linearNorm.getOrig();
+				if(orig == null){
+					throw new MissingAttributeException(linearNorm, PMMLAttributes.LINEARNORM_ORIG);
+				} // End if
+
+				if(value.compareTo(orig) >= 0){
+					start = linearNorm;
+
+					startOrig = orig;
+				} else
+
+				if(value.compareTo(orig) <= 0){
+					end = linearNorm;
+
+					endOrig = orig;
+
+					break;
+				}
+			}
 		}
 
-		double origRange = rangeEnd.getOrig() - rangeStart.getOrig();
-		double normRange = rangeEnd.getNorm() - rangeStart.getNorm();
+		Number startNorm = start.getNorm();
+		if(startNorm == null){
+			throw new MissingAttributeException(start, PMMLAttributes.LINEARNORM_NORM);
+		}
 
-		return rangeStart.getNorm() + (value - rangeStart.getOrig()) / origRange * normRange;
+		Number endNorm = end.getNorm();
+		if(endNorm == null){
+			throw new MissingAttributeException(end, PMMLAttributes.LINEARNORM_NORM);
+		}
+
+		return value.normalize(startOrig, startNorm, endOrig, endNorm);
 	}
 
 	static
-	public double denormalize(NormContinuous normContinuous, double value){
-		DoubleValue doubleValue = new DoubleValue(value);
+	public Number denormalize(NormContinuous normContinuous, Number value){
+		Value<Double> doubleValue = new DoubleValue(value);
 
-		denormalize(normContinuous, doubleValue);
+		doubleValue = denormalize(normContinuous, doubleValue);
 
-		return doubleValue.doubleValue();
+		return doubleValue.getValue();
 	}
 
 	static
 	public <V extends Number> Value<V> denormalize(NormContinuous normContinuous, Value<V> value){
 		List<LinearNorm> linearNorms = ensureLinearNorms(normContinuous);
 
-		LinearNorm rangeStart = linearNorms.get(0);
-		LinearNorm rangeEnd = linearNorms.get(linearNorms.size() - 1);
+		LinearNorm start = linearNorms.get(0);
+		LinearNorm end = linearNorms.get(linearNorms.size() - 1);
 
-		for(int i = 1; i < linearNorms.size() - 1; i++){
+		Number startNorm = start.getNorm();
+		if(startNorm == null){
+			throw new MissingAttributeException(start, PMMLAttributes.LINEARNORM_NORM);
+		}
+
+		Number endNorm = end.getNorm();
+		if(endNorm == null){
+			throw new MissingAttributeException(end, PMMLAttributes.LINEARNORM_NORM);
+		}
+
+		for(int i = 1, max = (linearNorms.size() - 1); i < max; i++){
 			LinearNorm linearNorm = linearNorms.get(i);
 
-			if(value.compareTo(linearNorm.getNorm()) >= 0){
-				rangeStart = linearNorm;
+			Number norm = linearNorm.getNorm();
+			if(norm == null){
+				throw new MissingAttributeException(linearNorm, PMMLAttributes.LINEARNORM_NORM);
+			} // End if
+
+			if(value.compareTo(norm) >= 0){
+				start = linearNorm;
+
+				startNorm = norm;
 			} else
 
-			if(value.compareTo(linearNorm.getNorm()) <= 0){
-				rangeEnd = linearNorm;
+			if(value.compareTo(norm) <= 0){
+				end = linearNorm;
+
+				endNorm = norm;
 
 				break;
 			}
 		}
 
-		return value.denormalize(rangeStart.getOrig(), rangeStart.getNorm(), rangeEnd.getOrig(), rangeEnd.getNorm());
+		Number startOrig = start.getOrig();
+		if(startOrig == null){
+			throw new MissingAttributeException(start, PMMLAttributes.LINEARNORM_ORIG);
+		}
+
+		Number endOrig = end.getOrig();
+		if(endOrig == null){
+			throw new MissingAttributeException(end, PMMLAttributes.LINEARNORM_ORIG);
+		}
+
+		return value.denormalize(startOrig, startNorm, endOrig, endNorm);
 	}
 
 	static

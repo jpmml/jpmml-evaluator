@@ -55,7 +55,7 @@ public class DiscretizationUtil {
 	public FieldValue discretize(Discretize discretize, FieldValue value){
 		Object result = discretize(discretize, value.asDouble());
 
-		return FieldValueUtil.create(ExpressionUtil.getDataType(discretize, DataType.STRING), OpType.CATEGORICAL, result);
+		return FieldValueUtil.create(discretize.getDataType(DataType.STRING), OpType.CATEGORICAL, result);
 	}
 
 	static
@@ -77,7 +77,7 @@ public class DiscretizationUtil {
 			throw new MissingAttributeException(mapValues, PMMLAttributes.MAPVALUES_OUTPUTCOLUMN);
 		}
 
-		DataType dataType = ExpressionUtil.getDataType(mapValues, DataType.STRING);
+		DataType dataType = mapValues.getDataType(DataType.STRING);
 
 		InlineTable inlineTable = InlineTableUtil.getInlineTable(mapValues);
 		if(inlineTable != null){
@@ -99,15 +99,15 @@ public class DiscretizationUtil {
 
 	static
 	public Range<Double> toRange(Interval interval){
-		Double leftMargin = interval.getLeftMargin();
-		Double rightMargin = interval.getRightMargin();
+		Double leftMargin = NumberUtil.asDouble(interval.getLeftMargin());
+		Double rightMargin = NumberUtil.asDouble(interval.getRightMargin());
 
 		// "The leftMargin and rightMargin attributes are optional, but at least one value must be defined"
 		if(leftMargin == null && rightMargin == null){
 			throw new MissingAttributeException(interval, PMMLAttributes.INTERVAL_LEFTMARGIN);
 		} // End if
 
-		if(leftMargin != null && rightMargin != null && (leftMargin).compareTo(rightMargin) > 0){
+		if(leftMargin != null && rightMargin != null && NumberUtil.compare(leftMargin, rightMargin) > 0){
 			throw new InvalidElementException(interval);
 		}
 

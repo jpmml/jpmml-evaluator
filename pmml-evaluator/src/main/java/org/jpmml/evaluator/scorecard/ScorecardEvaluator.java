@@ -34,9 +34,11 @@ import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.Functions;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
+import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
@@ -98,7 +100,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 		Characteristics characteristics = scorecard.getCharacteristics();
 		for(Characteristic characteristic : characteristics){
-			Double baselineScore = null;
+			Number baselineScore = null;
 
 			if(useReasonCodes){
 				baselineScore = characteristic.getBaselineScore();
@@ -111,7 +113,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 				}
 			}
 
-			Double partialScore = null;
+			Number partialScore = null;
 
 			List<Attribute> attributes = characteristic.getAttributes();
 			for(Attribute attribute : attributes){
@@ -127,7 +129,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 						return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 					}
 
-					partialScore = computedValue.asDouble();
+					partialScore = computedValue.asNumber();
 				} else
 
 				{
@@ -149,15 +151,15 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 						throw new MissingAttributeException(attribute, PMMLAttributes.ATTRIBUTE_REASONCODE);
 					}
 
-					double difference;
+					Number difference;
 
 					Scorecard.ReasonCodeAlgorithm reasonCodeAlgorithm = scorecard.getReasonCodeAlgorithm();
 					switch(reasonCodeAlgorithm){
 						case POINTS_ABOVE:
-							difference = (partialScore - baselineScore);
+							difference = Functions.MINUS.evaluate(partialScore, baselineScore);
 							break;
 						case POINTS_BELOW:
-							difference = (baselineScore - partialScore);
+							difference = Functions.MINUS.evaluate(baselineScore, partialScore);
 							break;
 						default:
 							throw new UnsupportedAttributeException(scorecard, reasonCodeAlgorithm);
@@ -194,7 +196,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			Map.Entry<String, Value<V>> entry = it.next();
 
 			Value<V> value = entry.getValue();
-			if(value.compareTo(0d) < 0){
+			if(value.compareTo(Numbers.DOUBLE_ZERO) < 0){
 				it.remove();
 			}
 		}

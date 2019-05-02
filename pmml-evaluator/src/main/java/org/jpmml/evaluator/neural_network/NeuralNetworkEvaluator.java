@@ -397,7 +397,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				throw new MissingAttributeException(neuralNetwork, PMMLAttributes.NEURALNETWORK_ACTIVATIONFUNCTION);
 			}
 
-			Double threshold = neuralLayer.getThreshold();
+			Number threshold = neuralLayer.getThreshold();
 			if(threshold == null){
 				threshold = neuralNetwork.getThreshold();
 			}
@@ -440,16 +440,21 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 						throw new MissingAttributeException(connection, PMMLAttributes.CONNECTION_FROM);
 					}
 
+					Number weight = connection.getWeight();
+					if(weight == null){
+						throw new MissingAttributeException(connection, PMMLAttributes.CONNECTION_WEIGHT);
+					}
+
 					Value<V> input = result.get(id);
 					if(input == null){
 						throw new InvalidAttributeException(connection, PMMLAttributes.CONNECTION_FROM, id);
 					}
 
-					output.add(connection.getWeight(), input.getValue());
+					output.add(weight, input.getValue());
 				}
 
-				Double bias = neuron.getBias();
-				if(bias != null && bias != 0d){
+				Number bias = neuron.getBias();
+				if(bias != null && bias.doubleValue() != 0d){
 					output.add(bias);
 				}
 

@@ -87,7 +87,7 @@ public class TargetUtilTest {
 
 		TargetValue noValue = new TargetValue()
 			.setValue("no")
-			.setPriorProbability(1d - yesValue.getPriorProbability());
+			.setPriorProbability(1d - NumberUtil.asDouble(yesValue.getPriorProbability()));
 
 		Target target = new Target()
 			.setField(null)

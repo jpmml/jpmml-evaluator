@@ -41,7 +41,7 @@ public class MiningModelUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> aggregateValues(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, double missingThreshold, List<SegmentResult> segmentResults){
+	public <V extends Number> Value<V> aggregateValues(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, List<SegmentResult> segmentResults){
 		ValueAggregator<V> aggregator;
 
 		switch(multipleModelMethod){
@@ -114,7 +114,7 @@ public class MiningModelUtil {
 				case WEIGHTED_AVERAGE:
 				case WEIGHTED_SUM:
 				case WEIGHTED_MEDIAN:
-					double weight = segmentResult.getWeight();
+					Number weight = segmentResult.getWeight();
 
 					aggregator.add(value, weight);
 					break;
@@ -142,7 +142,7 @@ public class MiningModelUtil {
 	}
 
 	static
-	public <V extends Number> ValueMap<String, V> aggregateVotes(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, double missingThreshold, List<SegmentResult> segmentResults){
+	public <V extends Number> ValueMap<String, V> aggregateVotes(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, List<SegmentResult> segmentResults){
 		VoteAggregator<String, V> aggregator = new VoteAggregator<String, V>(){
 
 			@Override
@@ -205,7 +205,7 @@ public class MiningModelUtil {
 					aggregator.add(key);
 					break;
 				case WEIGHTED_MAJORITY_VOTE:
-					double weight = segmentResult.getWeight();
+					Number weight = segmentResult.getWeight();
 
 					aggregator.add(key, weight);
 					break;
@@ -238,7 +238,7 @@ public class MiningModelUtil {
 	}
 
 	static
-	public <V extends Number> ValueMap<String, V> aggregateProbabilities(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, double missingThreshold, List<String> categories, List<SegmentResult> segmentResults){
+	public <V extends Number> ValueMap<String, V> aggregateProbabilities(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, List<String> categories, List<SegmentResult> segmentResults){
 		ProbabilityAggregator<V> aggregator;
 
 		switch(multipleModelMethod){
@@ -317,7 +317,7 @@ public class MiningModelUtil {
 					aggregator.add(hasProbability);
 					break;
 				case WEIGHTED_AVERAGE:
-					double weight = segmentResult.getWeight();
+					Number weight = segmentResult.getWeight();
 
 					aggregator.add(hasProbability, weight);
 					break;
@@ -359,10 +359,10 @@ public class MiningModelUtil {
 			}
 		}
 
-		public boolean update(SegmentResult segmentResult, double missingThreshold){
+		public boolean update(SegmentResult segmentResult, Number missingThreshold){
 			this.missingWeightSum.add(segmentResult.getWeight());
 
-			return (this.missingWeightSum.doubleValue() / this.weightSum.doubleValue()) > missingThreshold;
+			return (this.missingWeightSum.doubleValue() / this.weightSum.doubleValue()) > missingThreshold.doubleValue();
 		}
 	}
 }

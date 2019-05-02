@@ -40,19 +40,19 @@ public class KeyValueAggregator<K, V extends Number> {
 	public ValueFactory<V> getValueFactory();
 
 	public void add(K key){
-		add(key, 1d);
+		add(key, Numbers.DOUBLE_ONE);
 	}
 
-	public void add(K key, double value){
+	public void add(K key, Number value){
 		Vector<V> values = ensureVector(key);
 
 		values.add(value);
 	}
 
-	public void add(K key, double coefficient, Number factor){
+	public void add(K key, Number coefficient, Number factor){
 		Vector<V> values = ensureVector(key);
 
-		if(coefficient != 1d){
+		if(coefficient.doubleValue() != 1d){
 			values.add(coefficient, factor);
 		} else
 

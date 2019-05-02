@@ -194,7 +194,10 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		List<InstanceResult<V>> nearestInstanceResults = ordering.sortedCopy(instanceResults);
 
-		int numberOfNeighbors = nearestNeighborModel.getNumberOfNeighbors();
+		Integer numberOfNeighbors = nearestNeighborModel.getNumberOfNeighbors();
+		if(numberOfNeighbors == null){
+			throw new MissingAttributeException(nearestNeighborModel, PMMLAttributes.NEARESTNEIGHBORMODEL_NUMBEROFNEIGHBORS);
+		}
 
 		nearestInstanceResults = nearestInstanceResults.subList(0, numberOfNeighbors);
 
@@ -336,6 +339,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private <V extends Number> V calculateContinuousTarget(ValueFactory<V> valueFactory, FieldName name, List<InstanceResult<V>> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
+		Number threshold = nearestNeighborModel.getThreshold();
 		NearestNeighborModel.ContinuousScoringMethod continuousScoringMethod = nearestNeighborModel.getContinuousScoringMethod();
 
 		ValueAggregator<V> aggregator;
@@ -370,7 +374,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				case WEIGHTED_AVERAGE:
 					InstanceResult.Distance distance = TypeUtil.cast(InstanceResult.Distance.class, instanceResult);
 
-					Value<V> weight = distance.getWeight(nearestNeighborModel.getThreshold());
+					Value<V> weight = distance.getWeight(threshold);
 
 					aggregator.add(number, weight.doubleValue());
 					break;
@@ -397,6 +401,8 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private <V extends Number> Object calculateCategoricalTarget(ValueFactory<V> valueFactory, FieldName name, List<InstanceResult<V>> instanceResults, Table<Integer, FieldName, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
+		Number threshold = nearestNeighborModel.getThreshold();
+
 		VoteAggregator<Object, V> aggregator = new VoteAggregator<Object, V>(){
 
 			@Override
@@ -422,7 +428,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				case WEIGHTED_MAJORITY_VOTE:
 					InstanceResult.Distance distance = TypeUtil.cast(InstanceResult.Distance.class, instanceResult);
 
-					Value<V> weight = distance.getWeight(nearestNeighborModel.getThreshold());
+					Value<V> weight = distance.getWeight(threshold);
 
 					aggregator.add(object, weight.doubleValue());
 					break;
@@ -631,7 +637,11 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			}
 		}
 
-		int numberOfNeighbors = nearestNeighborModel.getNumberOfNeighbors();
+		Integer numberOfNeighbors = nearestNeighborModel.getNumberOfNeighbors();
+		if(numberOfNeighbors == null){
+			throw new MissingAttributeException(nearestNeighborModel, PMMLAttributes.NEARESTNEIGHBORMODEL_NUMBEROFNEIGHBORS);
+		} else
+
 		if(numberOfNeighbors < 0 || result.size() < numberOfNeighbors){
 			throw new InvalidAttributeException(nearestNeighborModel, PMMLAttributes.NEARESTNEIGHBORMODEL_NUMBEROFNEIGHBORS, numberOfNeighbors);
 		}
@@ -938,12 +948,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				throw new ClassCastException();
 			}
 
-			public Value<V> getWeight(double threshold){
+			public Value<V> getWeight(Number threshold){
 				Value<V> value = getValue();
 
 				value = value.copy();
 
-				if(threshold != 0d){
+				if(threshold.doubleValue() != 0d){
 					value.add(threshold);
 				}
 

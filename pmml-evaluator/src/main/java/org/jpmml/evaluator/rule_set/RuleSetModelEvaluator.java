@@ -45,6 +45,7 @@ import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
+import org.jpmml.evaluator.NumberUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
@@ -129,7 +130,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 				throw new MissingAttributeException(ruleSet, PMMLAttributes.RULESET_DEFAULTSCORE);
 			}
 
-			Double defaultConfidence = ruleSet.getDefaultConfidence();
+			Number defaultConfidence = ruleSet.getDefaultConfidence();
 			if(defaultConfidence == null){
 				throw new MissingAttributeException(ruleSet, PMMLAttributes.RULESET_DEFAULTCONFIDENCE);
 			}
@@ -172,9 +173,9 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 						Value<V> totalWeight = valueFactory.newValue();
 
 						for(SimpleRule keyRule : keyRules){
-							Double weight = keyRule.getWeight();
+							Number weight = keyRule.getWeight();
 
-							if(winner == null || (winner.getWeight() < weight)){
+							if(winner == null || NumberUtil.compare(winner.getWeight(), weight) < 0){
 								winner = keyRule;
 							}
 
@@ -192,7 +193,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 						for(SimpleRule keyRule : keyRules){
 
-							if(winner == null || (winner.getWeight() < keyRule.getWeight())){
+							if(winner == null || NumberUtil.compare(winner.getWeight(), keyRule.getWeight()) < 0){
 								winner = keyRule;
 							}
 						}

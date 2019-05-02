@@ -745,27 +745,35 @@ public class OutputUtil {
 
 			@Override
 			public int compare(AssociationRule left, AssociationRule right){
-				int order;
+				Number leftValue;
+				Number rightValue;
 
 				switch(this.rankBasis){
 					case CONFIDENCE:
-						order = (getConfidence(left)).compareTo(getConfidence(right));
+						leftValue = getConfidence(left);
+						rightValue = getConfidence(right);
 						break;
 					case SUPPORT:
-						order = (getSupport(left)).compareTo(getSupport(right));
+						leftValue = getSupport(left);
+						rightValue = getSupport(right);
 						break;
 					case LIFT:
-						order = (getLift(left)).compareTo(getLift(right));
+						leftValue = getLift(left);
+						rightValue = getLift(right);
 						break;
 					case LEVERAGE:
-						order = (getLeverage(left)).compareTo(getLeverage(right));
+						leftValue = getLeverage(left);
+						rightValue = getLeverage(right);
 						break;
 					case AFFINITY:
-						order = (getAffinity(left)).compareTo(getAffinity(right));
+						leftValue = getAffinity(left);
+						rightValue = getAffinity(right);
 						break;
 					default:
 						throw new UnsupportedAttributeException(outputField, this.rankBasis);
-				} // End switch
+				}
+
+				int order = NumberUtil.compare(leftValue, rightValue);
 
 				switch(this.rankOrder){
 					case ASCENDING:
@@ -777,16 +785,26 @@ public class OutputUtil {
 				}
 			}
 
-			private Double getConfidence(AssociationRule associationRule){
-				return associationRule.getConfidence();
+			private Number getConfidence(AssociationRule associationRule){
+				Number confidence = associationRule.getConfidence();
+				if(confidence == null){
+					throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_CONFIDENCE);
+				}
+
+				return confidence;
 			}
 
-			private Double getSupport(AssociationRule associationRule){
-				return associationRule.getSupport();
+			private Number getSupport(AssociationRule associationRule){
+				Number support = associationRule.getSupport();
+				if(support == null){
+					throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_SUPPORT);
+				}
+
+				return support;
 			}
 
-			private Double getLift(AssociationRule associationRule){
-				Double lift = associationRule.getLift();
+			private Number getLift(AssociationRule associationRule){
+				Number lift = associationRule.getLift();
 				if(lift == null){
 					throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_LIFT);
 				}
@@ -794,8 +812,8 @@ public class OutputUtil {
 				return lift;
 			}
 
-			private Double getLeverage(AssociationRule associationRule){
-				Double leverage = associationRule.getLeverage();
+			private Number getLeverage(AssociationRule associationRule){
+				Number leverage = associationRule.getLeverage();
 				if(leverage == null){
 					throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_LEVERAGE);
 				}
@@ -803,8 +821,8 @@ public class OutputUtil {
 				return leverage;
 			}
 
-			private Double getAffinity(AssociationRule associationRule){
-				Double affinity = associationRule.getAffinity();
+			private Number getAffinity(AssociationRule associationRule){
+				Number affinity = associationRule.getAffinity();
 				if(affinity == null){
 					throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_AFFINITY);
 				}

@@ -55,13 +55,13 @@ public class ValueAggregator<V extends Number> {
 		this.values.add(value);
 	}
 
-	public void add(Number value, double weight){
+	public void add(Number value, Number weight){
 
 		if(this.weights == null){
 			throw new IllegalStateException();
 		} // End if
 
-		if(weight < 0d){
+		if(weight.doubleValue() < 0d){
 			throw new IllegalArgumentException();
 		}
 
@@ -70,7 +70,7 @@ public class ValueAggregator<V extends Number> {
 
 		if(this.weightedValues != null){
 
-			if(weight != 1d){
+			if(weight.doubleValue() != 1d){
 				this.weightedValues.add(weight, value);
 			} else
 
@@ -101,7 +101,7 @@ public class ValueAggregator<V extends Number> {
 		}
 
 		Value<V> weightSum = this.weights.sum();
-		if(weightSum.equals(0d)){
+		if(weightSum.equals(Numbers.DOUBLE_ZERO)){
 			throw new UndefinedResultException();
 		}
 

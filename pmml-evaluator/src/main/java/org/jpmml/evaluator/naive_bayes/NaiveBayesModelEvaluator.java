@@ -65,12 +65,14 @@ import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FieldValues;
+import org.jpmml.evaluator.Functions;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.MapHolder;
 import org.jpmml.evaluator.MisplacedElementException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
+import org.jpmml.evaluator.NumberUtil;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
@@ -90,7 +92,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	private List<BayesInput> bayesInputs = null;
 
 	transient
-	private Map<FieldName, Map<String, Double>> fieldCountSums = null;
+	private Map<FieldName, Map<String, Number>> fieldCountSums = null;
 
 
 	public NaiveBayesModelEvaluator(PMML pmml){
@@ -155,7 +157,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			}
 
 			@Override
-			public void multiply(String key, double probability){
+			public void multiply(String key, Number probability){
 				ValueFactory<V> valueFactory = getValueFactory();
 
 				Value<V> value = ensureValue(key);
@@ -174,9 +176,12 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			calculatePriorProbabilities(probabilities, targetValueCounts);
 		}
 
-		double threshold = naiveBayesModel.getThreshold();
+		Number threshold = naiveBayesModel.getThreshold();
+		if(threshold == null){
+			throw new MissingAttributeException(naiveBayesModel, PMMLAttributes.NAIVEBAYESMODEL_THRESHOLD);
+		}
 
-		Map<FieldName, Map<String, Double>> fieldCountSums = getFieldCountSums();
+		Map<FieldName, Map<String, Number>> fieldCountSums = getFieldCountSums();
 
 		List<BayesInput> bayesInputs = getBayesInputs();
 		for(BayesInput bayesInput : bayesInputs){
@@ -208,7 +213,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				}
 			}
 
-			Map<String, Double> countSums = fieldCountSums.get(name);
+			Map<String, Number> countSums = fieldCountSums.get(name);
 
 			TargetValueCounts targetValueCounts = getTargetValueCounts(bayesInput, value);
 			if(targetValueCounts != null){
@@ -243,7 +248,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 	}
 
-	private void calculateContinuousProbabilities(ProbabilityMap<String, ?> probabilities, TargetValueStats targetValueStats, double threshold, FieldValue value){
+	private void calculateContinuousProbabilities(ProbabilityMap<String, ?> probabilities, TargetValueStats targetValueStats, Number threshold, FieldValue value){
 		Number x = value.asNumber();
 
 		for(TargetValueStat targetValueStat : targetValueStats){
@@ -259,7 +264,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(targetValueStat.getClass()) + "/<ContinuousDistribution>"), targetValueStat);
 			} // End if
 
-			double probability;
+			Number probability;
 
 			// "For Naive Bayes models, continuous distribution types are restricted to Gaussian and Poisson distributions"
 			if((distribution instanceof GaussianDistribution) || (distribution instanceof PoissonDistribution)){
@@ -276,13 +281,15 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			}
 
 			// The calculated probability cannot fall below the default probability
-			probability = Math.max(probability, threshold);
+			if(NumberUtil.compare(probability, threshold) < 0){
+				probability = threshold;
+			}
 
 			probabilities.multiply((String)targetCategory, probability);
 		}
 	}
 
-	private void calculateDiscreteProbabilities(ProbabilityMap<String, ?> probabilities, TargetValueCounts targetValueCounts, double threshold, Map<String, Double> countSums){
+	private void calculateDiscreteProbabilities(ProbabilityMap<String, ?> probabilities, TargetValueCounts targetValueCounts, Number threshold, Map<String, Number> countSums){
 
 		for(TargetValueCount targetValueCount : targetValueCounts){
 			Object targetCategory = targetValueCount.getValue();
@@ -292,9 +299,12 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			targetCategory = TypeUtil.format(targetCategory);
 
-			double count = targetValueCount.getCount();
+			Number count = targetValueCount.getCount();
+			if(count == null){
+				throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_COUNT);
+			}
 
-			double probability;
+			Number probability;
 
 			// The calculated probability can fall below the default probability
 			// However, a count of zero represents a special case, which needs adjustment
@@ -303,9 +313,9 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			} else
 
 			{
-				Double countSum = countSums.get(targetCategory);
+				Number countSum = countSums.get(targetCategory);
 
-				probability = count / countSum;
+				probability = Functions.DIVIDE.evaluate(count, countSum);
 			}
 
 			probabilities.multiply((String)targetCategory, probability);
@@ -322,7 +332,12 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			targetCategory = TypeUtil.format(targetCategory);
 
-			double probability = targetValueCount.getCount();
+			Number count = targetValueCount.getCount();
+			if(count == null){
+				throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_COUNT);
+			}
+
+			Number probability = count;
 
 			probabilities.multiply((String)targetCategory, probability);
 		}
@@ -337,7 +352,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		return this.bayesInputs;
 	}
 
-	protected Map<FieldName, Map<String, Double>> getFieldCountSums(){
+	protected Map<FieldName, Map<String, Number>> getFieldCountSums(){
 
 		if(this.fieldCountSums == null){
 			this.fieldCountSums = getValue(NaiveBayesModelEvaluator.fieldCountSumCache);
@@ -347,14 +362,14 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	}
 
 	static
-	private Map<FieldName, Map<String, Double>> calculateFieldCountSums(NaiveBayesModel naiveBayesModel){
-		Map<FieldName, Map<String, Double>> result = new LinkedHashMap<>();
+	private Map<FieldName, Map<String, Number>> calculateFieldCountSums(NaiveBayesModel naiveBayesModel){
+		Map<FieldName, Map<String, Number>> result = new LinkedHashMap<>();
 
 		List<BayesInput> bayesInputs = CacheUtil.getValue(naiveBayesModel, NaiveBayesModelEvaluator.bayesInputCache);
 		for(BayesInput bayesInput : bayesInputs){
 			FieldName name = bayesInput.getField();
 
-			Map<String, Double> counts = new LinkedHashMap<>();
+			Map<String, Number> countSums = new LinkedHashMap<>();
 
 			List<PairCounts> pairCounts = bayesInput.getPairCounts();
 			for(PairCounts pairCount : pairCounts){
@@ -368,16 +383,25 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 					targetCategory = TypeUtil.format(targetCategory);
 
-					Double count = counts.get(targetCategory);
+					Number count = targetValueCount.getCount();
 					if(count == null){
-						count = 0d;
+						throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_COUNT);
 					}
 
-					counts.put((String)targetCategory, count + targetValueCount.getCount());
+					Number countSum = countSums.get(targetCategory);
+					if(countSum == null){
+						countSum = count;
+					} else
+
+					{
+						countSum = Functions.PLUS.evaluate(countSum, count);
+					}
+
+					countSums.put((String)targetCategory, countSum);
 				}
 			}
 
-			result.put(name, counts);
+			result.put(name, countSums);
 		}
 
 		return result;
@@ -470,10 +494,10 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 	});
 
-	private static final LoadingCache<NaiveBayesModel, Map<FieldName, Map<String, Double>>> fieldCountSumCache = CacheUtil.buildLoadingCache(new CacheLoader<NaiveBayesModel, Map<FieldName, Map<String, Double>>>(){
+	private static final LoadingCache<NaiveBayesModel, Map<FieldName, Map<String, Number>>> fieldCountSumCache = CacheUtil.buildLoadingCache(new CacheLoader<NaiveBayesModel, Map<FieldName, Map<String, Number>>>(){
 
 		@Override
-		public Map<FieldName, Map<String, Double>> load(NaiveBayesModel naiveBayesModel){
+		public Map<FieldName, Map<String, Number>> load(NaiveBayesModel naiveBayesModel){
 			return ImmutableMap.copyOf(calculateFieldCountSums(naiveBayesModel));
 		}
 	});

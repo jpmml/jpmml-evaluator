@@ -37,7 +37,6 @@ import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
-import org.dmg.pmml.HasDataType;
 import org.dmg.pmml.HasExpression;
 import org.dmg.pmml.HasFieldReference;
 import org.dmg.pmml.HasType;
@@ -202,7 +201,7 @@ public class ExpressionUtil {
 		FieldValue value = context.evaluate(ensureField(discretize));
 
 		if(FieldValueUtil.isMissing(value)){
-			return FieldValueUtil.create(getDataType(discretize, DataType.STRING), OpType.CATEGORICAL, discretize.getMapMissingTo());
+			return FieldValueUtil.create(discretize.getDataType(DataType.STRING), OpType.CATEGORICAL, discretize.getMapMissingTo());
 		}
 
 		return DiscretizationUtil.discretize(discretize, value);
@@ -226,7 +225,7 @@ public class ExpressionUtil {
 
 			FieldValue value = context.evaluate(name);
 			if(FieldValueUtil.isMissing(value)){
-				return FieldValueUtil.create(getDataType(mapValues, DataType.STRING), OpType.CATEGORICAL, mapValues.getMapMissingTo());
+				return FieldValueUtil.create(mapValues.getDataType(DataType.STRING), OpType.CATEGORICAL, mapValues.getMapMissingTo());
 			}
 
 			values.put(column, value);
@@ -460,16 +459,6 @@ public class ExpressionUtil {
 		DataType dataType = constant.getDataType();
 		if(dataType == null){
 			return TypeUtil.getConstantDataType(constant.getValue());
-		}
-
-		return dataType;
-	}
-
-	static
-	public <E extends Expression & HasDataType<E>> DataType getDataType(E expression, DataType defaultDataType){
-		DataType dataType = expression.getDataType();
-		if(dataType == null){
-			return defaultDataType;
 		}
 
 		return dataType;

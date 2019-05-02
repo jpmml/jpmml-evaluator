@@ -45,11 +45,11 @@ public class ValueUtil {
 	public <V extends Number> void normalizeSimpleMax(Iterable<Value<V>> values){
 		Value<V> sum = sum(values);
 
-		if(sum == null || sum.equals(1d)){
+		if(sum == null || sum.equals(Numbers.DOUBLE_ONE)){
 			return;
 		} else
 
-		if(sum.equals(0d)){
+		if(sum.equals(Numbers.DOUBLE_ZERO)){
 			throw new UndefinedResultException();
 		}
 
@@ -91,11 +91,11 @@ public class ValueUtil {
 			}
 		}
 
-		if(sum == null || sum.equals(1d)){
+		if(sum == null || sum.equals(Numbers.DOUBLE_ONE)){
 			return;
 		} else
 
-		if(sum.equals(0d)){
+		if(sum.equals(Numbers.DOUBLE_ZERO)){
 			throw new UndefinedResultException();
 		}
 

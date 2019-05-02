@@ -78,7 +78,7 @@ public class SegmentResult extends ForwardingMap<FieldName, Object> implements H
 		return get(targetName);
 	}
 
-	public double getWeight(){
+	public Number getWeight(){
 		Segment segment = getSegment();
 
 		return segment.getWeight();

@@ -135,14 +135,14 @@ public class RecordCountingExample extends Example {
 
 					List<Node> nodes = hasDecisionPath.getDecisionPath();
 					for(Node node : nodes){
-						Double recordCount = node.getRecordCount();
+						Number recordCount = node.getRecordCount();
 
 						if(recordCount == null){
 							recordCount = 1d;
 						} else
 
 						{
-							recordCount = (recordCount + 1d);
+							recordCount = (recordCount.doubleValue() + 1d);
 						}
 
 						node.setRecordCount(recordCount);
@@ -182,7 +182,7 @@ public class RecordCountingExample extends Example {
 					TreeModel treeModel = (TreeModel)parent;
 					Segment segment = (Segment)it.next();
 
-					Double recordCount = node.getRecordCount();
+					Number recordCount = node.getRecordCount();
 					if(recordCount == null){
 						recordCount = 0d;
 					}

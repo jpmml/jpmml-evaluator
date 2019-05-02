@@ -114,7 +114,7 @@ public class MeasureUtil {
 			throw new UnsupportedElementException(measure);
 		} // End if
 
-		if(denominator.equals(0d)){
+		if(denominator.equals(Numbers.DOUBLE_ZERO)){
 			throw new UndefinedResultException();
 		}
 
@@ -148,27 +148,31 @@ public class MeasureUtil {
 	public <V extends Number> Value<V> evaluateDistance(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, List<? extends ComparisonField<?>> comparisonFields, List<FieldValue> values, List<FieldValue> referenceValues, Value<V> adjustment){
 		Distance measure = TypeUtil.cast(Distance.class, comparisonMeasure.getMeasure());
 
-		double innerPower;
-		double outerPower;
+		Number innerPower;
+		Number outerPower;
 
 		if(measure instanceof Euclidean){
-			innerPower = outerPower = 2d;
+			innerPower = outerPower = Numbers.DOUBLE_TWO;
 		} else
 
 		if(measure instanceof SquaredEuclidean){
-			innerPower = 2d;
-			outerPower = 1d;
+			innerPower = Numbers.DOUBLE_TWO;
+			outerPower = Numbers.DOUBLE_ONE;
 		} else
 
 		if(measure instanceof Chebychev || measure instanceof CityBlock){
-			innerPower = outerPower = 1d;
+			innerPower = outerPower = Numbers.DOUBLE_ONE;
 		} else
 
 		if(measure instanceof Minkowski){
 			Minkowski minkowski = (Minkowski)measure;
 
-			double p = minkowski.getPParameter();
-			if(p < 0d){
+			Number p = minkowski.getPParameter();
+			if(p == null){
+				throw new MissingAttributeException(minkowski, PMMLAttributes.MINKOWSKI_PPARAMETER);
+			} // End if
+
+			if(p.doubleValue() < 0d){
 				throw new InvalidAttributeException(minkowski, PMMLAttributes.MINKOWSKI_PPARAMETER, p);
 			}
 
@@ -193,17 +197,17 @@ public class MeasureUtil {
 
 			Value<V> distance = evaluateInnerFunction(valueFactory, comparisonMeasure, comparisonField, value, referenceValue, innerPower);
 
-			distances.add(distance.doubleValue());
+			distances.add(distance);
 		}
 
 		if(measure instanceof Euclidean || measure instanceof SquaredEuclidean || measure instanceof CityBlock || measure instanceof Minkowski){
 			Value<V> result = distances.sum();
 
-			if(!adjustment.equals(1d)){
+			if(!adjustment.equals(Numbers.DOUBLE_ONE)){
 				result.multiply(adjustment);
 			} // End if
 
-			if(outerPower != 1d){
+			if(!outerPower.equals(Numbers.DOUBLE_ONE)){
 				result.inversePower(outerPower);
 			}
 
@@ -213,7 +217,7 @@ public class MeasureUtil {
 		if(measure instanceof Chebychev){
 			Value<V> result = distances.max();
 
-			if(!adjustment.equals(1d)){
+			if(!adjustment.equals(Numbers.DOUBLE_ONE)){
 				result.multiply(adjustment);
 			}
 
@@ -226,7 +230,7 @@ public class MeasureUtil {
 	}
 
 	static
-	private <V extends Number> Value<V> evaluateInnerFunction(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, ComparisonField<?> comparisonField, FieldValue value, FieldValue referenceValue, double power){
+	private <V extends Number> Value<V> evaluateInnerFunction(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, ComparisonField<?> comparisonField, FieldValue value, FieldValue referenceValue, Number power){
 		CompareFunction compareFunction = comparisonField.getCompareFunction();
 
 		if(compareFunction == null){
@@ -258,7 +262,7 @@ public class MeasureUtil {
 				break;
 			case GAUSS_SIM:
 				{
-					Double similarityScale = comparisonField.getSimilarityScale();
+					Number similarityScale = comparisonField.getSimilarityScale();
 					if(similarityScale == null){
 						throw new InvalidElementException(comparisonField);
 					}
@@ -288,12 +292,12 @@ public class MeasureUtil {
 				throw new UnsupportedAttributeException(comparisonField, compareFunction);
 		}
 
-		if(power != 1d){
+		if(power.doubleValue() != 1d){
 			distance.power(power);
 		}
 
-		Double fieldWeight = comparisonField.getFieldWeight();
-		if(fieldWeight != null && fieldWeight != 1d){
+		Number fieldWeight = comparisonField.getFieldWeight();
+		if(fieldWeight != null && fieldWeight.doubleValue() != 1d){
 			distance.multiply(fieldWeight);
 		}
 
@@ -323,7 +327,7 @@ public class MeasureUtil {
 			}
 		}
 
-		if(nonmissingSum.equals(0d)){
+		if(nonmissingSum.equals(Numbers.DOUBLE_ZERO)){
 			throw new UndefinedResultException();
 		}
 

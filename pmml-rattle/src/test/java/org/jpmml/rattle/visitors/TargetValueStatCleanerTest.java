@@ -34,7 +34,7 @@ public class TargetValueStatCleanerTest {
 	@Test
 	public void clean(){
 		TargetValueStat zero = createTargetValueStat("0", new GaussianDistribution(0d, 1d));
-		TargetValueStat one = createTargetValueStat("1", new GaussianDistribution());
+		TargetValueStat one = createTargetValueStat("1", new GaussianDistribution(0d, 0d));
 
 		TargetValueStats targetValueStats = new TargetValueStats()
 			.addTargetValueStats(zero, one);

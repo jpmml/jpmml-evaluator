@@ -65,17 +65,17 @@ public class KernelUtil {
 	public <V extends Number> Value<V> evaluatePolynomialKernel(PolynomialKernel polynomialKernel, ValueFactory<V> valueFactory, Object input, Object vector){
 		Value<V> result = valueFactory.newValue(dotProduct(input, vector));
 
-		Double gamma = polynomialKernel.getGamma();
+		Number gamma = polynomialKernel.getGamma();
 		if(gamma.doubleValue() != 1d){
 			result.multiply(gamma);
 		}
 
-		Double coef0 = polynomialKernel.getCoef0();
+		Number coef0 = polynomialKernel.getCoef0();
 		if(coef0.doubleValue() != 1d){
 			result.add(coef0);
 		}
 
-		Double degree = polynomialKernel.getDegree();
+		Number degree = polynomialKernel.getDegree();
 		if(degree.doubleValue() != 1d){
 			result.power(degree);
 		}
@@ -87,8 +87,8 @@ public class KernelUtil {
 	public <V extends Number> Value<V> evaluateRadialBasisKernel(RadialBasisKernel radialBasisKernel, ValueFactory<V> valueFactory, Object input, Object vector){
 		Value<V> result = valueFactory.newValue(negativeSquaredDistance(input, vector));
 
-		Double gamma = radialBasisKernel.getGamma();
-		if(gamma != 1d){
+		Number gamma = radialBasisKernel.getGamma();
+		if(gamma.doubleValue() != 1d){
 			result.multiply(gamma);
 		}
 
@@ -101,13 +101,13 @@ public class KernelUtil {
 	public <V extends Number> Value<V> evaluateSigmoidKernel(SigmoidKernel sigmoidKernel, ValueFactory<V> valueFactory, Object input, Object vector){
 		Value<V> result = valueFactory.newValue(dotProduct(input, vector));
 
-		Double gamma = sigmoidKernel.getGamma();
-		if(gamma != 1d){
+		Number gamma = sigmoidKernel.getGamma();
+		if(gamma.doubleValue() != 1d){
 			result.multiply(gamma);
 		}
 
-		Double coef0 = sigmoidKernel.getCoef0();
-		if(coef0 != 1d){
+		Number coef0 = sigmoidKernel.getCoef0();
+		if(coef0.doubleValue() != 1d){
 			result.add(coef0);
 		}
 

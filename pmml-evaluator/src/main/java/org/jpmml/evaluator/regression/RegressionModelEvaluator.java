@@ -254,6 +254,11 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 					throw new MissingAttributeException(numericPredictor, PMMLAttributes.NUMERICPREDICTOR_FIELD);
 				}
 
+				Number coefficient = numericPredictor.getCoefficient();
+				if(coefficient == null){
+					throw new MissingAttributeException(numericPredictor, PMMLAttributes.NUMERICPREDICTOR_COEFFICIENT);
+				}
+
 				FieldValue value = context.evaluate(name);
 
 				// "If the input value is missing, then the result evaluates to a missing value"
@@ -263,11 +268,11 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 				int exponent = numericPredictor.getExponent();
 				if(exponent != 1){
-					result.add(numericPredictor.getCoefficient(), value.asNumber(), exponent);
+					result.add(coefficient, value.asNumber(), exponent);
 				} else
 
 				{
-					result.add(numericPredictor.getCoefficient(), value.asNumber());
+					result.add(coefficient, value.asNumber());
 				}
 			}
 		} // End if
@@ -282,6 +287,11 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				FieldName name = categoricalPredictor.getField();
 				if(name == null){
 					throw new MissingAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
+				}
+
+				Number coefficient = categoricalPredictor.getCoefficient();
+				if(coefficient == null){
+					throw new MissingAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_COEFFICIENT);
 				}
 
 				if(matchedName != null){
@@ -306,7 +316,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				if(equals){
 					matchedName = name;
 
-					result.add(categoricalPredictor.getCoefficient());
+					result.add(coefficient);
 				}
 			}
 		} // End if
@@ -317,6 +327,11 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			List<PredictorTerm> predictorTerms = regressionTable.getPredictorTerms();
 			for(PredictorTerm predictorTerm : predictorTerms){
 				factors.clear();
+
+				Number coefficient = predictorTerm.getCoefficient();
+				if(coefficient == null){
+					throw new MissingAttributeException(predictorTerm, PMMLAttributes.PREDICTORTERM_COEFFICIENT);
+				}
 
 				List<FieldRef> fieldRefs = predictorTerm.getFieldRefs();
 				for(FieldRef fieldRef : fieldRefs){
@@ -330,11 +345,24 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 					factors.add(value.asNumber());
 				}
 
-				result.add(predictorTerm.getCoefficient(), factors.toArray(new Number[factors.size()]));
+				if(factors.size() == 1){
+					result.add(coefficient, factors.get(0));
+				} else
+
+				if(factors.size() == 2){
+					result.add(coefficient, factors.get(0), factors.get(1));
+				} else
+
+				{
+					result.add(coefficient, factors.toArray(new Number[factors.size()]));
+				}
 			}
 		}
 
-		result.add(regressionTable.getIntercept());
+		Number intercept = regressionTable.getIntercept();
+		if(intercept != null && intercept.doubleValue() != 0d){
+			result.add(intercept);
+		}
 
 		return result;
 	}
@@ -346,6 +374,11 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			return false;
 		}
 
-		return (regressionTable.getIntercept() == 0d);
+		Number intercept = regressionTable.getIntercept();
+		if(intercept != null && intercept.doubleValue() != 0d){
+			return false;
+		}
+
+		return true;
 	}
 }

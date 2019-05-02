@@ -32,7 +32,7 @@ class ProbabilityMap<K, V extends Number> extends ValueMap<K, V> {
 		super(initialCapacity);
 	}
 
-	public void multiply(K key, double probability){
+	public void multiply(K key, Number probability){
 		Value<V> value = ensureValue(key);
 
 		value.multiply(probability);

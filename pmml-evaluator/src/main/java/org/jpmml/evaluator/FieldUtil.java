@@ -70,7 +70,7 @@ public class FieldUtil {
 
 		// "A MiningField overrides a (Data)Field"
 		if(miningField != null){
-			opType = firstNonNull(miningField.getOpType(), opType);
+			opType = miningField.getOpType(opType);
 		}
 
 		return opType;
@@ -82,10 +82,10 @@ public class FieldUtil {
 
 		// "A MiningField overrides a (Data)Field, and a Target overrides a MiningField"
 		if(miningField != null){
-			opType = firstNonNull(miningField.getOpType(), opType);
+			opType = miningField.getOpType(opType);
 
 			if(target != null){
-				opType = firstNonNull(target.getOpType(), opType);
+				opType = target.getOpType(opType);
 			}
 		}
 
@@ -205,16 +205,6 @@ public class FieldUtil {
 		}
 
 		return result;
-	}
-
-	static
-	private <V> V firstNonNull(V value, V defaultValue){
-
-		if(value != null){
-			return value;
-		}
-
-		return defaultValue;
 	}
 
 	private static final LoadingCache<DataField, List<String>> categoryCache = CacheUtil.buildLoadingCache(new CacheLoader<DataField, List<String>>(){

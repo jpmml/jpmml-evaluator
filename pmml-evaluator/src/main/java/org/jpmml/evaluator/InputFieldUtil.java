@@ -156,15 +156,15 @@ public class InputFieldUtil {
 				throw new UnsupportedAttributeException(miningField, outlierTreatmentMethod);
 		}
 
-		Double lowValue = miningField.getLowValue();
-		Double highValue = miningField.getHighValue();
+		Number lowValue = miningField.getLowValue();
+		Number highValue = miningField.getHighValue();
 
 		// "At least one of bounds is required"
 		if(lowValue == null && highValue == null){
 			throw new MissingAttributeException(miningField, PMMLAttributes.MININGFIELD_LOWVALUE);
 		} // End if
 
-		if((lowValue != null && highValue != null) && (lowValue).compareTo(highValue) > 0){
+		if((lowValue != null && highValue != null) && NumberUtil.compare(lowValue, highValue) > 0){
 			throw new InvalidElementException(miningField);
 		} // End if
 
@@ -172,24 +172,22 @@ public class InputFieldUtil {
 			throw new TypeCheckException(Number.class, null);
 		}
 
-		Number numberValue = value.asNumber();
-
 		switch(outlierTreatmentMethod){
 			case AS_MISSING_VALUES:
-				if(lowValue != null && numberValue.doubleValue() < lowValue){
+				if(lowValue != null && value.compareToValue(lowValue) < 0){
 					return createMissingInputValue(field, miningField);
 				} else
 
-				if(highValue != null && numberValue.doubleValue() > highValue){
+				if(highValue != null && value.compareToValue(highValue) > 0){
 					return createMissingInputValue(field, miningField);
 				}
 				break;
 			case AS_EXTREME_VALUES:
-				if(lowValue != null && numberValue.doubleValue() < lowValue){
+				if(lowValue != null && value.compareToValue(lowValue) < 0){
 					return createInputValue(field, miningField, lowValue);
 				} else
 
-				if(highValue != null && numberValue.doubleValue() > highValue){
+				if(highValue != null && value.compareToValue(highValue) > 0){
 					return createInputValue(field, miningField, highValue);
 				}
 				break;

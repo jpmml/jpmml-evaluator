@@ -71,13 +71,13 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 		this.size++;
 	}
 
-	public void add(HasProbability hasProbability, double weight){
+	public void add(HasProbability hasProbability, Number weight){
 
 		if(this.weights == null){
 			throw new IllegalStateException();
 		} // End if
 
-		if(weight < 0d){
+		if(weight.doubleValue() < 0d){
 			throw new IllegalArgumentException();
 		} // End if
 
@@ -136,7 +136,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			@Override
 			public Value<V> apply(Vector<V> values){
 
-				if(this.weightSum.equals(0d)){
+				if(this.weightSum.equals(Numbers.DOUBLE_ZERO)){
 					throw new UndefinedResultException();
 				}
 

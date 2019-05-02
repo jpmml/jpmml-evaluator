@@ -120,20 +120,20 @@ public class TargetUtil {
 
 	static
 	public <V extends Number> Value<V> processValue(Target target, Value<V> value){
-		Double min = target.getMin();
-		Double max = target.getMax();
+		Number min = target.getMin();
+		Number max = target.getMax();
 
 		if(min != null || max != null){
 			value.restrict((min != null ? min : Double.NEGATIVE_INFINITY), (max != null ? max : Double.POSITIVE_INFINITY));
 		}
 
-		double rescaleFactor = target.getRescaleFactor();
-		if(rescaleFactor != 1d){
+		Number rescaleFactor = target.getRescaleFactor();
+		if(rescaleFactor.doubleValue() != 1d){
 			value.multiply(rescaleFactor);
 		}
 
-		double rescaleConstant = target.getRescaleConstant();
-		if(rescaleConstant != 0d){
+		Number rescaleConstant = target.getRescaleConstant();
+		if(rescaleConstant.doubleValue() != 0d){
 			value.add(rescaleConstant);
 		}
 
@@ -187,7 +187,7 @@ public class TargetUtil {
 
 		TargetValue targetValue = targetValues.get(0);
 
-		Double defaultValue = targetValue.getDefaultValue();
+		Number defaultValue = targetValue.getDefaultValue();
 
 		// "The value and priorProbability attributes are used only if the optype of the field is categorical or ordinal"
 		if(targetValue.getValue() != null || targetValue.getPriorProbability() != null){
@@ -221,7 +221,7 @@ public class TargetUtil {
 
 			targetCategory = TypeUtil.format(targetCategory);
 
-			Double probability = targetValue.getPriorProbability();
+			Number probability = targetValue.getPriorProbability();
 			if(probability == null){
 				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_PRIORPROBABILITY);
 			}
@@ -238,9 +238,9 @@ public class TargetUtil {
 			sum.add(value);
 		}
 
-		if(!sum.equals(1d)){
+		if(!sum.equals(Numbers.DOUBLE_ONE)){
 
-			if(sum.equals(0d)){
+			if(sum.equals(Numbers.DOUBLE_ZERO)){
 				throw new UndefinedResultException();
 			}
 

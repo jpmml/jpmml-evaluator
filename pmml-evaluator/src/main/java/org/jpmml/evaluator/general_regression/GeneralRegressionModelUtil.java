@@ -27,7 +27,7 @@ public class GeneralRegressionModelUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> computeLink(GeneralRegressionModel.LinkFunction linkFunction, Double distParameter, Double linkParameter, Value<V> value){
+	public <V extends Number> Value<V> computeLink(GeneralRegressionModel.LinkFunction linkFunction, Number distParameter, Number linkParameter, Value<V> value){
 
 		switch(linkFunction){
 			case CLOGLOG:

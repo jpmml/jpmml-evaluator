@@ -30,6 +30,13 @@ public class FloatValue extends Value<Float> {
 		this.value = value;
 	}
 
+	@Operation (
+		value = "${0}"
+	)
+	public FloatValue(Number value){
+		this.value = value.floatValue();
+	}
+
 	@Override
 	public int compareTo(Value<Float> that){
 		return Float.compare(this.floatValue(), that.floatValue());
@@ -63,8 +70,8 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue add(double value){
-		this.value += (float)value;
+	public FloatValue add(Number value){
+		this.value += value.floatValue();
 
 		return this;
 	}
@@ -77,22 +84,22 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue add(double coefficient, Number factor){
-		this.value += (float)coefficient * factor.floatValue();
+	public FloatValue add(Number coefficient, Number factor){
+		this.value += coefficient.floatValue() * factor.floatValue();
 
 		return this;
 	}
 
 	@Override
-	public FloatValue add(double coefficient, Number firstFactor, Number secondFactor){
-		this.value += (float)coefficient * firstFactor.floatValue() * secondFactor.floatValue();
+	public FloatValue add(Number coefficient, Number firstFactor, Number secondFactor){
+		this.value += coefficient.floatValue() * firstFactor.floatValue() * secondFactor.floatValue();
 
 		return this;
 	}
 
 	@Override
-	public FloatValue add(double coefficient, Number... factors){
-		float value = (float)coefficient;
+	public FloatValue add(Number coefficient, Number... factors){
+		float value = coefficient.floatValue();
 
 		for(int i = 0; i < factors.length; i++){
 			Number factor = factors[i];
@@ -106,15 +113,15 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue add(double coefficient, Number factor, int exponent){
-		this.value += (float)coefficient * FloatValue.pow(factor.floatValue(), exponent);
+	public FloatValue add(Number coefficient, Number factor, int exponent){
+		this.value += coefficient.floatValue() * FloatValue.pow(factor.floatValue(), exponent);
 
 		return this;
 	}
 
 	@Override
-	public FloatValue subtract(double value){
-		this.value -= (float)value;
+	public FloatValue subtract(Number value){
+		this.value -= value.floatValue();
 
 		return this;
 	}
@@ -127,8 +134,8 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue multiply(double value){
-		this.value *= (float)value;
+	public FloatValue multiply(Number value){
+		this.value *= value.floatValue();
 
 		return this;
 	}
@@ -141,15 +148,15 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue multiply(Number factor, double exponent){
-		this.value *= FloatValue.pow(factor.floatValue(), (float)exponent);
+	public FloatValue multiply(Number factor, Number exponent){
+		this.value *= FloatValue.pow(factor.floatValue(), exponent.floatValue());
 
 		return this;
 	}
 
 	@Override
-	public FloatValue divide(double value){
-		this.value /= (float)value;
+	public FloatValue divide(Number value){
+		this.value /= value.floatValue();
 
 		return this;
 	}
@@ -176,8 +183,8 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue power(double value){
-		this.value = FloatValue.pow(this.value, (float)value);
+	public FloatValue power(Number value){
+		this.value = FloatValue.pow(this.value, value.floatValue());
 
 		return this;
 	}
@@ -246,17 +253,21 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue inverseNegbin(double value){
-		this.value = 1f / ((float)value * (FloatValue.exp(-this.value) - 1f));
+	public FloatValue inverseNegbin(Number value){
+		this.value = 1f / (value.floatValue() * (FloatValue.exp(-this.value) - 1f));
 
 		return this;
 	}
 
 	@Override
-	public FloatValue inverseOddspower(double value){
+	public FloatValue inverseOddspower(Number value){
+		return inverseOddspowerInternal(value.floatValue());
+	}
 
-		if(value < 0d || value > 0d){
-			this.value = 1f / (1f + FloatValue.pow(1f + ((float)value * this.value), -(1f / (float)value)));
+	private FloatValue inverseOddspowerInternal(float value){
+
+		if(value < 0f || value > 0f){
+			this.value = 1f / (1f + FloatValue.pow(1f + (value * this.value), -(1f / value)));
 		} else
 
 		{
@@ -267,10 +278,14 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue inversePower(double value){
+	public FloatValue inversePower(Number value){
+		return inversePowerInternal(value.floatValue());
+	}
 
-		if(value < 0d || value > 0d){
-			this.value = FloatValue.pow(this.value, 1f / (float)value);
+	private FloatValue inversePowerInternal(float value){
+
+		if(value < 0f || value > 0f){
+			this.value = FloatValue.pow(this.value, 1f / value);
 		} else
 
 		{
@@ -321,8 +336,8 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue threshold(double value){
-		this.value = (this.value > (float)value ? 1f : 0f);
+	public FloatValue threshold(Number value){
+		this.value = (this.value > value.floatValue() ? 1f : 0f);
 
 		return this;
 	}
@@ -342,16 +357,20 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue gaussSim(double value){
-		this.value = FloatValue.exp((-(float)Math.log(2f) * this.value * this.value) / ((float)value * (float)value));
+	public FloatValue gaussSim(Number value){
+		return gaussSimInternal(value.floatValue());
+	}
+
+	private FloatValue gaussSimInternal(float value){
+		this.value = FloatValue.exp((-(float)Math.log(2f) * this.value * this.value) / (value * value));
 
 		return this;
 	}
 
 	@Override
-	public FloatValue restrict(double lowValue, double highValue){
-		this.value = Math.max(this.value, (float)lowValue);
-		this.value = Math.min(this.value, (float)highValue);
+	public FloatValue restrict(Number lowValue, Number highValue){
+		this.value = Math.max(this.value, lowValue.floatValue());
+		this.value = Math.min(this.value, highValue.floatValue());
 
 		return this;
 	}
@@ -378,20 +397,35 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
-	public FloatValue denormalize(double leftOrig, double leftNorm, double rightOrig, double rightNorm){
-		this.value = ((this.value - (float)leftNorm) / ((float)rightNorm - (float)leftNorm)) * ((float)rightOrig - (float)leftOrig) + (float)leftOrig;
+	public FloatValue normalize(Number leftOrig, Number leftNorm, Number rightOrig, Number rightNorm){
+		return normalizeInternal(leftOrig.floatValue(), leftNorm.floatValue(), rightOrig.floatValue(), rightNorm.floatValue());
+	}
+
+	private FloatValue normalizeInternal(float leftOrig, float leftNorm, float rightOrig, float rightNorm){
+		this.value = leftNorm + ((this.value - leftOrig) / (rightOrig - leftOrig)) * (rightNorm - leftNorm);
 
 		return this;
 	}
 
 	@Override
-	public boolean equals(double value){
-		return this.value == (float)value;
+	public FloatValue denormalize(Number leftOrig, Number leftNorm, Number rightOrig, Number rightNorm){
+		return denormalizeInternal(leftOrig.floatValue(), leftNorm.floatValue(), rightOrig.floatValue(), rightNorm.floatValue());
+	}
+
+	private FloatValue denormalizeInternal(float leftOrig, float leftNorm, float rightOrig, float rightNorm){
+		this.value = ((this.value - leftNorm) / (rightNorm - leftNorm)) * (rightOrig - leftOrig) + leftOrig;
+
+		return this;
 	}
 
 	@Override
-	public int compareTo(double value){
-		return Float.compare(this.value, (float)value);
+	public boolean equals(Number value){
+		return this.value == value.floatValue();
+	}
+
+	@Override
+	public int compareTo(Number value){
+		return Float.compare(this.value, value.floatValue());
 	}
 
 	@Override

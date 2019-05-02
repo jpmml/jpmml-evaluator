@@ -217,12 +217,12 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 							value.round();
 
 							// "A rounded value of 1 corresponds to the targetCategory attribute of the SupportVectorMachine element"
-							if(value.equals(1d)){
+							if(value.equals(Numbers.DOUBLE_ONE)){
 								label = targetCategory;
 							} else
 
 							// "A rounded value of 0 corresponds to the alternateBinaryTargetCategory attribute of the SupportVectorMachineModel element"
-							if(value.equals(0d)){
+							if(value.equals(Numbers.DOUBLE_ZERO)){
 								label = alternateBinaryTargetCategory;
 							} else
 
@@ -237,7 +237,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 								throw new MissingAttributeException(supportVectorMachine, PMMLAttributes.SUPPORTVECTORMACHINE_ALTERNATETARGETCATEGORY);
 							}
 
-							Double threshold = supportVectorMachine.getThreshold();
+							Number threshold = supportVectorMachine.getThreshold();
 							if(threshold == null){
 								threshold = supportVectorMachineModel.getThreshold();
 							} // End if
@@ -321,8 +321,8 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			throw new InvalidElementException(supportVectorMachine);
 		}
 
-		double absoluteValue = coefficients.getAbsoluteValue();
-		if(absoluteValue != 0d){
+		Number absoluteValue = coefficients.getAbsoluteValue();
+		if(absoluteValue.doubleValue() != 0d){
 			result.add(absoluteValue);
 		}
 
@@ -418,8 +418,8 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 					throw new MissingValueException(name, categoricalPredictor);
 				}
 
-				double coefficient = categoricalPredictor.getCoefficient();
-				if(coefficient != 1d){
+				Number coefficient = categoricalPredictor.getCoefficient();
+				if(coefficient != null && coefficient.doubleValue() != 1d){
 					throw new InvalidAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_COEFFICIENT, coefficient);
 				}
 

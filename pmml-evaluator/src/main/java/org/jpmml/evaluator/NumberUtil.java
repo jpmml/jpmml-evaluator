@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Villu Ruusmann
+ * Copyright (c) 2019 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -16,26 +16,29 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.support_vector_machine;
+package org.jpmml.evaluator;
 
-import org.jpmml.evaluator.Numbers;
-import org.jpmml.evaluator.Value;
-import org.jpmml.evaluator.ValueMap;
+public class NumberUtil {
 
-abstract
-class VoteMap<K, V extends Number> extends ValueMap<K, V> {
-
-	public VoteMap(){
-		super();
+	private NumberUtil(){
 	}
 
-	public VoteMap(int initialCapacity){
-		super(initialCapacity);
+	static
+	public Double asDouble(Number number){
+
+		if(number == null){
+			return null;
+		} // End if
+
+		if(number instanceof Double){
+			return (Double)number;
+		}
+
+		return number.doubleValue();
 	}
 
-	public void increment(K key){
-		Value<V> value = ensureValue(key);
-
-		value.add(Numbers.DOUBLE_ONE);
+	static
+	public int compare(Number left, Number right){
+		return Double.compare(left.doubleValue(), right.doubleValue());
 	}
 }

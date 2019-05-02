@@ -30,7 +30,7 @@ public class NeuralNetworkUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> activateNeuronOutput(NeuralNetwork.ActivationFunction activationFunction, Double threshold, Value<V> value){
+	public <V extends Number> Value<V> activateNeuronOutput(NeuralNetwork.ActivationFunction activationFunction, Number threshold, Value<V> value){
 
 		switch(activationFunction){
 			case THRESHOLD:

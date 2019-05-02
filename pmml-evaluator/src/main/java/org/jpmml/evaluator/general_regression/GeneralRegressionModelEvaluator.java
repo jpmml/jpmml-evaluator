@@ -21,6 +21,7 @@ package org.jpmml.evaluator.general_regression;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Matrix;
@@ -73,13 +73,14 @@ import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluator;
+import org.jpmml.evaluator.NumberUtil;
+import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.TypeInfo;
-import org.jpmml.evaluator.TypeInfos;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
@@ -173,7 +174,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		List<BaselineCell> baselineCells;
 
-		Double maxTime;
+		Number maxTime;
 
 		FieldName baselineStrataVariable = generalRegressionModel.getBaselineStrataVariable();
 
@@ -193,6 +194,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 
 			maxTime = baselineStratum.getMaxTime();
+			if(maxTime == null){
+				throw new MissingAttributeException(baselineStratum, PMMLAttributes.BASELINESTRATUM_MAXTIME);
+			}
 		} else
 
 		{
@@ -207,37 +211,56 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 		}
 
-		Ordering<BaselineCell> ordering = Ordering.from((BaselineCell left, BaselineCell right) -> Double.compare(left.getTime(), right.getTime()));
+		Comparator<BaselineCell> comparator = new Comparator<BaselineCell>(){
+
+			@Override
+			public int compare(BaselineCell left, BaselineCell right){
+				Number leftTime = getTime(left);
+				Number rightTime = getTime(right);
+
+				return NumberUtil.compare(leftTime, rightTime);
+			}
+
+			private Number getTime(BaselineCell baselineCell){
+				Number time = baselineCell.getTime();
+				if(time == null){
+					throw new MissingAttributeException(baselineCell, PMMLAttributes.BASELINECELL_TIME);
+				}
+
+				return time;
+			}
+		};
 
 		BaselineCell minBaselineCell = baselineCells.stream()
-			.min(ordering).get();
+			.min(comparator).get();
 
-		Double minTime = minBaselineCell.getTime();
+		Number minTime = minBaselineCell.getTime();
 
 		FieldValue value = getVariable(endTimeVariable, context);
 
-		FieldValue minTimeValue = FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, minTime);
+		// "If the value is greater than the maximum time, then the result is a missing value"
+		if(value.compareToValue(maxTime) > 0){
+			return null;
+		} // End if
 
 		// "If the value is less than the minimum time, then cumulative hazard is 0 and predicted survival is 1"
-		if(value.compareToValue(minTimeValue) < 0){
+		if(value.compareToValue(minTime) < 0){
 			Value<V> cumHazard = valueFactory.newValue(0d);
 
 			return TargetUtil.evaluateRegression(getTargetField(), cumHazard);
 		}
 
-		FieldValue maxTimeValue = FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, maxTime);
-
-		// "If the value is greater than the maximum time, then the result is a missing value"
-		if(value.compareToValue(maxTimeValue) > 0){
-			return null;
-		}
-
-		double time = (value.asNumber()).doubleValue();
+		Number time = value.asNumber();
 
 		// "Select the BaselineCell element that has the largest time attribute value that is not greater than the value"
 		BaselineCell maxTimeBaselineCell = baselineCells.stream()
-			.filter(baselineCell -> (baselineCell.getTime() <= time))
-			.max(ordering).get();
+			.filter(baselineCell -> NumberUtil.compare(baselineCell.getTime(), time) <= 0)
+			.max(comparator).get();
+
+		Number maxTimeCumHazard = maxTimeBaselineCell.getCumHazard();
+		if(maxTimeCumHazard == null){
+			throw new MissingAttributeException(maxTimeBaselineCell, PMMLAttributes.BASELINECELL_CUMHAZARD);
+		}
 
 		Value<V> r = computeDotProduct(valueFactory, context);
 
@@ -247,7 +270,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			return null;
 		}
 
-		Value<V> cumHazard = ((r.subtract(s)).exp()).multiply(maxTimeBaselineCell.getCumHazard());
+		Value<V> cumHazard = ((r.subtract(s)).exp()).multiply(maxTimeCumHazard);
 
 		return TargetUtil.evaluateRegression(getTargetField(), cumHazard);
 	}
@@ -499,12 +522,21 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		Value<V> result = null;
 
 		for(PCell parameterCell : parameterCells){
-			Row parameterPredictorRow = parameterPredictorRows.get(parameterCell.getParameterName());
+			String parameterName = parameterCell.getParameterName();
+			if(parameterName == null){
+				throw new MissingAttributeException(parameterCell, PMMLAttributes.PCELL_PARAMETERNAME);
+			}
+
+			Number beta = parameterCell.getBeta();
+			if(beta == null){
+				throw new MissingAttributeException(parameterCell, PMMLAttributes.PCELL_BETA);
+			} // End if
 
 			if(result == null){
 				result = valueFactory.newValue();
-			} // End if
+			}
 
+			Row parameterPredictorRow = parameterPredictorRows.get(parameterName);
 			if(parameterPredictorRow != null){
 				Value<V> x = parameterPredictorRow.evaluate(valueFactory, context);
 
@@ -512,11 +544,11 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					return null;
 				}
 
-				result.add(parameterCell.getBeta(), x.getValue());
+				result.add(beta, x.getValue());
 			} else
 
 			{
-				result.add(parameterCell.getBeta());
+				result.add(beta);
 			}
 		}
 
@@ -541,14 +573,23 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		Value<V> result = null;
 
 		for(PCell parameterCell : parameterCells){
-			Parameter parameter = parameters.get(parameterCell.getParameterName());
+			String parameterName = parameterCell.getParameterName();
+			if(parameterName == null){
+				throw new MissingAttributeException(parameterCell, PMMLAttributes.PCELL_PARAMETERNAME);
+			}
+
+			Number beta = parameterCell.getBeta();
+			if(beta == null){
+				throw new MissingAttributeException(parameterCell, PMMLAttributes.PCELL_BETA);
+			} // End if
 
 			if(result == null){
 				result = valueFactory.newValue();
-			} // End if
+			}
 
+			Parameter parameter = parameters.get(parameterCell.getParameterName());
 			if(parameter != null){
-				result.add(parameterCell.getBeta(), parameter.getReferencePoint());
+				result.add(beta, parameter.getReferencePoint());
 			} else
 
 			{
@@ -567,8 +608,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			throw new MissingAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_LINKFUNCTION);
 		}
 
-		Double distParameter = generalRegressionModel.getDistParameter();
-		Double linkParameter = generalRegressionModel.getLinkParameter();
+		Number distParameter = generalRegressionModel.getDistParameter();
+		Number linkParameter = generalRegressionModel.getLinkParameter();
 
 		switch(linkFunction){
 			case CLOGLOG:
@@ -609,8 +650,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new UnsupportedAttributeException(generalRegressionModel, linkFunction);
 		}
 
-		Double offset = getOffset(generalRegressionModel, context);
-		if(offset != null && offset != 0d){
+		Number offset = getOffset(generalRegressionModel, context);
+		if(offset != null && offset.doubleValue() != 0d){
 			value.add(offset);
 		}
 
@@ -647,9 +688,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			throw new MissingAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_CUMULATIVELINKFUNCTION);
 		}
 
-		Double offset = getOffset(generalRegressionModel, context);
-		if(offset != null && offset != 0d){
-			value.add(offset.doubleValue());
+		Number offset = getOffset(generalRegressionModel, context);
+		if(offset != null && offset.doubleValue() != 0d){
+			value.add(offset);
 		}
 
 		switch(cumulativeLinkFunction){
@@ -787,13 +828,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	static
-	private Double getOffset(GeneralRegressionModel generalRegressionModel, EvaluationContext context){
+	private Number getOffset(GeneralRegressionModel generalRegressionModel, EvaluationContext context){
 		FieldName offsetVariable = generalRegressionModel.getOffsetVariable();
 
 		if(offsetVariable != null){
 			FieldValue value = getVariable(offsetVariable, context);
 
-			return value.asDouble();
+			return value.asNumber();
 		}
 
 		return generalRegressionModel.getOffsetValue();
@@ -1017,7 +1058,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				factorHandler.updateProduct(result, value);
 			}
 
-			if(result.equals(0d)){
+			if(result.equals(Numbers.DOUBLE_ZERO)){
 				return result;
 			}
 
