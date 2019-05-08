@@ -21,14 +21,22 @@ package org.jpmml.evaluator.mining;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
+import org.jpmml.evaluator.Configuration;
+import org.jpmml.evaluator.ConfigurationBuilder;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
+import org.jpmml.evaluator.OutputFilters;
 
 abstract
 public class ModelChainTest extends ModelEvaluatorTest {
 
 	public Map<FieldName, ?> evaluateExample(double petalLength, double petalWidth) throws Exception {
-		Evaluator evaluator = createModelEvaluator();
+		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
+			.setOutputFilter(OutputFilters.KEEP_FINAL_RESULTS);
+
+		Configuration configuration = configurationBuilder.build();
+
+		Evaluator evaluator = createModelEvaluator(configuration);
 
 		Map<FieldName, ?> arguments = createArguments("petal_length", petalLength, "petal_width", petalWidth, "temperature", 0d, "cloudiness", 0d);
 

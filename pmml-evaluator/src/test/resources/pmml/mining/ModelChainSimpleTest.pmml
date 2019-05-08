@@ -33,9 +33,9 @@
 					</MiningSchema>
 					<Output>
 						<OutputField name="PredictedClass" optype="categorical" dataType="string" feature="predictedValue"/>
-						<OutputField name="Probability_setosa" optype="continuous" dataType="double" feature="probability" value="Iris-setosa"/>
-						<OutputField name="Probability_versicolor" optype="continuous" dataType="double" feature="probability" value="Iris-versicolor"/>
-						<OutputField name="Probability_virginica" optype="continuous" dataType="double" feature="probability" value="Iris-virginica"/>
+						<OutputField name="Probability_setosa" optype="continuous" dataType="double" isFinalResult="false" feature="probability" value="Iris-setosa"/>
+						<OutputField name="Probability_versicolor" optype="continuous" dataType="double" isFinalResult="false" feature="probability" value="Iris-versicolor"/>
+						<OutputField name="Probability_virginica" optype="continuous" dataType="double" isFinalResult="false" feature="probability" value="Iris-virginica"/>
 					</Output>
 					<Node score="Iris-setosa" recordCount="150.0">
 						<True/>

@@ -540,10 +540,20 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
-		InputMapper inputMapper = getInputMapper();
-		ResultMapper resultMapper = getResultMapper();
+		arguments = processArguments(arguments);
 
 		ModelEvaluationContext context = createEvaluationContext();
+		context.setArguments(arguments);
+
+		Map<FieldName, ?> results = evaluateInternal(context);
+
+		results = processResults(results);
+
+		return results;
+	}
+
+	protected Map<FieldName, ?> processArguments(Map<FieldName, ?> arguments){
+		InputMapper inputMapper = getInputMapper();
 
 		if(inputMapper != null){
 			Map<FieldName, Object> remappedArguments = new AbstractMap<FieldName, Object>(){
@@ -559,14 +569,14 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 				}
 			};
 
-			context.setArguments(remappedArguments);
-		} else
-
-		{
-			context.setArguments(arguments);
+			return remappedArguments;
 		}
 
-		Map<FieldName, ?> results = evaluateInternal(context);
+		return arguments;
+	}
+
+	protected Map<FieldName, ?> processResults(Map<FieldName, ?> results){
+		ResultMapper resultMapper = getResultMapper();
 
 		if(results instanceof OutputMap){
 			OutputMap outputMap = (OutputMap)results;

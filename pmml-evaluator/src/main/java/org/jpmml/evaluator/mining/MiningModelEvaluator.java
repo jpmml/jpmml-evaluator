@@ -45,6 +45,7 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.Model;
+import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.True;
@@ -527,16 +528,21 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			switch(multipleModelMethod){
 				case MODEL_CHAIN:
 					{
-						List<OutputField> outputFields = segmentModelEvaluator.getOutputFields();
-						for(OutputField outputField : outputFields){
-							FieldName name = outputField.getFieldName();
+						Model segmentModel = segmentModelEvaluator.getModel();
 
-							int depth = outputField.getDepth();
-							if(depth > 0){
-								continue;
+						Output segmentOutput = segmentModel.getOutput();
+						if(segmentOutput == null || !segmentOutput.hasOutputFields()){
+							break;
+						}
+
+						List<org.dmg.pmml.OutputField> pmmlSegmentOutputFields = segmentOutput.getOutputFields();
+						for(org.dmg.pmml.OutputField pmmlSegmentOutputField : pmmlSegmentOutputFields){
+							FieldName name = pmmlSegmentOutputField.getName();
+							if(name == null){
+								throw new MissingAttributeException(pmmlSegmentOutputField, PMMLAttributes.OUTPUTFIELD_NAME);
 							}
 
-							context.putOutputField(outputField.getField());
+							context.putOutputField(name, pmmlSegmentOutputField);
 
 							FieldValue value;
 

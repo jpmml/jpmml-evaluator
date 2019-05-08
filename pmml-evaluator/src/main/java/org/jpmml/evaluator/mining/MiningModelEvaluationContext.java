@@ -79,10 +79,6 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 		return this.outputFields.get(name);
 	}
 
-	void putOutputField(OutputField outputField){
-		putOutputField(outputField.getName(), outputField);
-	}
-
 	void putOutputField(FieldName name, OutputField outputField){
 
 		if(this.outputFields == null){

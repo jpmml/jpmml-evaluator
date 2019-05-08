@@ -38,17 +38,6 @@ class OutputMap extends LinkedHashMap<FieldName, Object> {
 		setPredictions(predictions);
 	}
 
-	public void clearPrivate(){
-
-		if(this.privateFields != null && this.privateFields.size() > 0){
-			Set<FieldName> fields = keySet();
-
-			fields.removeAll(this.privateFields);
-		}
-
-		this.privateFields = null;
-	}
-
 	public Object putPublic(FieldName name, Object value){
 		return put(name, value);
 	}
@@ -62,6 +51,17 @@ class OutputMap extends LinkedHashMap<FieldName, Object> {
 		this.privateFields.add(name);
 
 		return put(name, value);
+	}
+
+	public void clearPrivate(){
+
+		if(this.privateFields != null && this.privateFields.size() > 0){
+			Set<FieldName> fields = keySet();
+
+			fields.removeAll(this.privateFields);
+		}
+
+		this.privateFields = null;
 	}
 
 	public Map<FieldName, ?> getPredictions(){
