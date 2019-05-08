@@ -98,10 +98,13 @@ public interface Functions {
 		public Number evaluate(Number left, Number right){
 
 			if(left instanceof Integer && right instanceof Integer){
-				return Integer.valueOf(left.intValue() % right.intValue());
+				return Math.floorMod(left.intValue(), right.intValue());
 			}
 
-			return Double.valueOf(left.doubleValue() % right.doubleValue());
+			double leftValue = left.doubleValue();
+			double rightValue = right.doubleValue();
+
+			return leftValue - Math.floor(leftValue / rightValue) * rightValue;
 		}
 	};
 

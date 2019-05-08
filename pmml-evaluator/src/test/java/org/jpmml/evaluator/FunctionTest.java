@@ -65,12 +65,27 @@ public class FunctionTest {
 
 		assertEquals(0, evaluate(Functions.MODULO, Integer.MIN_VALUE, -1));
 
+		assertEquals(2, evaluate(Functions.MODULO, 11, 3));
+		assertEquals(-5, evaluate(Functions.MODULO, 9, -7));
+		assertEquals(-4, evaluate(Functions.MODULO, -4, -9));
+		assertEquals(0.3d, evaluate(Functions.MODULO, -17.2d, 0.5d), 1e-13);
+
 		assertEquals(1, evaluate(Functions.MODULO, 10, 3));
-		assertEquals(-1, evaluate(Functions.MODULO, -10, 3));
+		assertEquals(-2, evaluate(Functions.MODULO, 10, -3));
+		assertEquals(2, evaluate(Functions.MODULO, -10, 3));
+		assertEquals(-1, evaluate(Functions.MODULO, -10, -3));
+
 		assertEquals(0, evaluate(Functions.MODULO, 6, 2));
-		assertEquals(0, evaluate(Functions.MODULO, 6, -2));
-		assertEquals((4.5d % 1.2d), evaluate(Functions.MODULO, 4.5d, 1.2d));
-		assertEquals(3.0e0, evaluate(Functions.MODULO, 1.23e2, 0.6e1));
+		assertEquals(-0, evaluate(Functions.MODULO, 6, -2));
+		assertEquals(0, evaluate(Functions.MODULO, -6, 2));
+		assertEquals(-0, evaluate(Functions.MODULO, -6, -2));
+
+		assertEquals(0.9d, evaluate(Functions.MODULO, 4.5d, 1.2d), 1e-13);
+		assertEquals(-0.3d, evaluate(Functions.MODULO, 4.5d, -1.2d), 1e-13);
+		assertEquals(0.3d, evaluate(Functions.MODULO, -4.5d, 1.2d), 1e-13);
+		assertEquals(-0.9d, evaluate(Functions.MODULO, -4.5d, -1.2d), 1e-13);
+
+		assertEquals(3.0e0d, evaluate(Functions.MODULO, 1.23e2d, 0.6e1d), 1e-13);
 	}
 
 	@Test
