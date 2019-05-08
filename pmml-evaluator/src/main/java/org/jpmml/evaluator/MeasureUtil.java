@@ -128,16 +128,16 @@ public class MeasureUtil {
 		for(int i = 0; i < values.size(); i++){
 			FieldValue value = values.get(i);
 
-			if((FieldValues.CONTINUOUS_DOUBLE_ZERO).equalsValue(value)){
+			if(value.equalsValue(Numbers.INTEGER_ZERO)){
 				result.set(i, false);
 			} else
 
-			if((FieldValues.CONTINUOUS_DOUBLE_ONE).equalsValue(value)){
+			if(value.equalsValue(Numbers.INTEGER_ONE)){
 				result.set(i, true);
 			} else
 
 			{
-				throw new EvaluationException("Expected " + PMMLException.formatValue(FieldValues.CONTINUOUS_DOUBLE_ZERO) + " or " + PMMLException.formatValue(FieldValues.CONTINUOUS_DOUBLE_ONE) + ", got " + PMMLException.formatValue(value));
+				throw new EvaluationException("Expected " + PMMLException.formatValue(Numbers.INTEGER_ZERO) + " or " + PMMLException.formatValue(Numbers.INTEGER_ONE) + ", got " + PMMLException.formatValue(value));
 			}
 		}
 

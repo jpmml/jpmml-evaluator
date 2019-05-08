@@ -39,13 +39,13 @@ public class ContinuousValue extends ScalarValue {
 
 		try {
 			return super.compareToValue(value);
-		} catch(NumberFormatException nfeDefault){
+		} catch(IllegalArgumentException | TypeCheckException e){
 			Number number;
 
 			try {
 				number = (Number)TypeUtil.parseOrCast(DataType.DOUBLE, value);
 			} catch(NumberFormatException nfeDouble){
-				throw nfeDefault;
+				throw e;
 			}
 
 			return ((Comparable)asDouble()).compareTo(number);

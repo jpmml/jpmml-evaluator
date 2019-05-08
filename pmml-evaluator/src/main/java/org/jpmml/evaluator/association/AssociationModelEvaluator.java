@@ -271,7 +271,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 								break;
 							}
 
-							throw new EvaluationException("Expected " + PMMLException.formatValue(FieldValues.CATEGORICAL_BOOLEAN_FALSE) + " or " + PMMLException.formatValue(FieldValues.CATEGORICAL_BOOLEAN_TRUE) + ", got " + PMMLException.formatValue(value));
+							throw new EvaluationException("Expected " + PMMLException.formatValue(AssociationModelEvaluator.BOOLEAN_FALSE) + " or " + PMMLException.formatValue(AssociationModelEvaluator.BOOLEAN_TRUE) + ", got " + PMMLException.formatValue(value));
 					}
 				} else
 

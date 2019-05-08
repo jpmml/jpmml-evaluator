@@ -52,6 +52,10 @@ public class FieldValueTest {
 		assertTrue(one.equalsValue("1"));
 		assertFalse(one.equalsValue("1.0"));
 
+		assertTrue(zero.equalsValue(0));
+		assertFalse(zero.equalsValue(0f));
+		assertFalse(zero.equalsValue(0d));
+
 		assertTrue(zero.equalsValue(zero));
 		assertFalse(zero.equalsValue(one));
 
@@ -137,41 +141,30 @@ public class FieldValueTest {
 		FieldValue zero = FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, 0);
 		FieldValue one = FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, 1);
 
-		assertTrue(zero.equalsValue("-0"));
-		assertTrue(zero.equalsValue("-0.0"));
-		assertTrue(zero.equalsValue("0"));
-		assertTrue(zero.equalsValue("0.0"));
-		assertTrue(zero.equalsValue("false"));
-		assertFalse(zero.equalsValue("true"));
+		try {
+			zero.equalsValue(0.5f);
 
-		assertTrue(one.equalsValue("1"));
-		assertTrue(one.equalsValue("1.0"));
-		assertFalse(one.equalsValue("false"));
-		assertTrue(one.equalsValue("true"));
+			fail();
+		} catch(TypeCheckException tce){
+			// Ignored
+		}
+
+		try {
+			zero.equalsValue(0.5d);
+
+			fail();
+		} catch(TypeCheckException tce){
+			// Ignored
+		}
+
+		checkContinuousZero(zero);
+		checkContinuousOne(one);
 
 		assertTrue(zero.equalsValue(zero));
 		assertFalse(zero.equalsValue(one));
 
 		assertFalse(one.equalsValue(zero));
 		assertTrue(one.equalsValue(one));
-
-		assertTrue(zero.compareToValue("-1") > 0);
-		assertTrue(zero.compareToValue("-1.5") > 0);
-		assertTrue(zero.compareToValue("-0") == 0);
-		assertTrue(zero.compareToValue("-0.0") == 0);
-		assertTrue(zero.compareToValue("0") == 0);
-		assertTrue(zero.compareToValue("0.0") == 0);
-		assertTrue(zero.compareToValue("1") < 0);
-		assertTrue(zero.compareToValue("1.5") < 0);
-		assertTrue(zero.compareToValue("false") == 0);
-		assertTrue(zero.compareToValue("true") < 0);
-
-		assertTrue(one.compareToValue("0") > 0);
-		assertTrue(one.compareToValue("1") == 0);
-		assertTrue(one.compareToValue("1.0") == 0);
-		assertTrue(one.compareToValue("2") < 0);
-		assertTrue(one.compareToValue("false") > 0);
-		assertTrue(one.compareToValue("true") == 0);
 
 		assertTrue(zero.compareToValue(zero) == 0);
 		assertTrue(zero.compareToValue(one) < 0);
@@ -286,20 +279,8 @@ public class FieldValueTest {
 
 		assertEquals(negativeZero, positiveZero);
 
-		assertTrue(negativeZero.equalsValue("-0"));
-		assertTrue(negativeZero.equalsValue("-0.0"));
-		assertTrue(negativeZero.equalsValue("0"));
-		assertTrue(negativeZero.equalsValue("0.0"));
-		assertTrue(negativeZero.equalsValue("false"));
-
-		assertTrue(negativeZero.compareToValue("0") == 0);
-		assertTrue(negativeZero.compareToValue("0.0") == 0);
-
-		assertTrue(positiveZero.equalsValue("-0"));
-		assertTrue(positiveZero.equalsValue("-0.0"));
-
-		assertTrue(positiveZero.compareToValue("-0") == 0);
-		assertTrue(positiveZero.compareToValue("-0.0") == 0);
+		checkContinuousZero(negativeZero);
+		checkContinuousZero(positiveZero);
 
 		assertTrue(negativeZero.equalsValue(positiveZero));
 
@@ -329,20 +310,8 @@ public class FieldValueTest {
 
 		assertEquals(negativeZero, positiveZero);
 
-		assertTrue(negativeZero.equalsValue("-0"));
-		assertTrue(negativeZero.equalsValue("-0.0"));
-		assertTrue(negativeZero.equalsValue("0"));
-		assertTrue(negativeZero.equalsValue("0.0"));
-		assertTrue(negativeZero.equalsValue("false"));
-
-		assertTrue(negativeZero.compareToValue("0") == 0);
-		assertTrue(negativeZero.compareToValue("0.0") == 0);
-
-		assertTrue(positiveZero.equalsValue("-0"));
-		assertTrue(positiveZero.equalsValue("-0.0"));
-
-		assertTrue(positiveZero.compareToValue("-0") == 0);
-		assertTrue(positiveZero.compareToValue("-0.0") == 0);
+		checkContinuousZero(negativeZero);
+		checkContinuousZero(positiveZero);
 
 		assertTrue(negativeZero.equalsValue(positiveZero));
 
@@ -362,6 +331,34 @@ public class FieldValueTest {
 		FieldValue zero = FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, false);
 		FieldValue one = FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, true);
 
+		assertTrue(zero.equalsValue(0));
+		assertFalse(zero.equalsValue(1));
+
+		assertTrue(zero.equalsValue(0f));
+		assertFalse(zero.equalsValue(1f));
+
+		try {
+			zero.equalsValue(0.5f);
+
+			fail();
+		} catch(TypeCheckException tce){
+			// Ignored
+		}
+
+		assertTrue(zero.equalsValue(0d));
+		assertFalse(zero.equalsValue(1d));
+
+		try {
+			zero.equalsValue(0.5d);
+
+			fail();
+		} catch(TypeCheckException tce){
+			// Ignored
+		}
+
+		assertTrue(zero.equalsValue(false));
+		assertFalse(zero.equalsValue(true));
+
 		assertTrue(zero.compareToValue("-0") == 0);
 		assertTrue(zero.compareToValue("-0.0") == 0);
 		assertTrue(zero.compareToValue("0") == 0);
@@ -378,11 +375,33 @@ public class FieldValueTest {
 		assertTrue(one.compareToValue("false") > 0);
 		assertTrue(one.compareToValue("true") == 0);
 
+		assertTrue(zero.compareToValue(0) == 0);
+		assertTrue(zero.compareToValue(1) < 0);
+
+		assertTrue(zero.compareToValue(0f) == 0);
+		assertTrue(zero.compareToValue(0.5f) < 0);
+		assertTrue(zero.compareToValue(1f) < 0);
+
+		assertTrue(zero.compareToValue(0d) == 0);
+		assertTrue(zero.compareToValue(0.5d) < 0);
+		assertTrue(zero.compareToValue(1d) < 0);
+
+		assertTrue(zero.compareToValue(false) == 0);
+		assertTrue(zero.compareToValue(true) < 0);
+
 		assertTrue(zero.compareToValue(zero) == 0);
 		assertTrue(zero.compareToValue(one) < 0);
 
 		assertTrue(one.compareToValue(zero) > 0);
 		assertTrue(one.compareToValue(one) == 0);
+
+		try {
+			zero.compareToValue("1960-01-03");
+
+			fail();
+		} catch(IllegalArgumentException iae){
+			// Ignored
+		}
 	}
 
 	@Test
@@ -397,5 +416,89 @@ public class FieldValueTest {
 		FieldValue period = FieldValueUtil.create(DataType.DATE_TIME_SECONDS_SINCE_1960, OpType.CATEGORICAL, "1960-01-03T03:30:03");
 
 		assertEquals((Integer)185403, period.asInteger());
+	}
+
+	static
+	private void checkContinuousZero(FieldValue zero){
+		assertTrue(zero.equalsValue("-0"));
+		assertTrue(zero.equalsValue("-0.0"));
+		assertTrue(zero.equalsValue("0"));
+		assertTrue(zero.equalsValue("0.0"));
+		assertTrue(zero.equalsValue("false"));
+		assertFalse(zero.equalsValue("true"));
+
+		assertTrue(zero.equalsValue(0));
+		assertFalse(zero.equalsValue(1));
+
+		assertTrue(zero.equalsValue(0f));
+		assertFalse(zero.equalsValue(1f));
+
+		assertTrue(zero.equalsValue(0d));
+		assertFalse(zero.equalsValue(1d));
+
+		assertTrue(zero.equalsValue(false));
+		assertFalse(zero.equalsValue(true));
+
+		assertTrue(zero.compareToValue("-1") > 0);
+		assertTrue(zero.compareToValue("-1.5") > 0);
+		assertTrue(zero.compareToValue("-0") == 0);
+		assertTrue(zero.compareToValue("-0.0") == 0);
+		assertTrue(zero.compareToValue("0") == 0);
+		assertTrue(zero.compareToValue("0.0") == 0);
+		assertTrue(zero.compareToValue("1") < 0);
+		assertTrue(zero.compareToValue("1.5") < 0);
+		assertTrue(zero.compareToValue("false") == 0);
+		assertTrue(zero.compareToValue("true") < 0);
+
+		try {
+			zero.compareToValue("1960-01-03");
+
+			fail();
+		} catch(IllegalArgumentException iae){
+			// Ignored
+		}
+
+		assertTrue(zero.compareToValue(0) == 0);
+		assertTrue(zero.compareToValue(1) < 0);
+
+		assertTrue(zero.compareToValue(0f) == 0);
+		assertTrue(zero.compareToValue(0.5f) < 0);
+		assertTrue(zero.compareToValue(1f) < 0);
+
+		assertTrue(zero.compareToValue(0d) == 0);
+		assertTrue(zero.compareToValue(0.5d) < 0);
+		assertTrue(zero.compareToValue(1d) < 0);
+
+		assertTrue(zero.compareToValue(false) == 0);
+		assertTrue(zero.compareToValue(true) < 0);
+	}
+
+	static
+	private void checkContinuousOne(FieldValue one){
+		assertTrue(one.equalsValue("1"));
+		assertTrue(one.equalsValue("1.0"));
+		assertFalse(one.equalsValue("false"));
+		assertTrue(one.equalsValue("true"));
+
+		assertTrue(one.compareToValue("0") > 0);
+		assertTrue(one.compareToValue("1") == 0);
+		assertTrue(one.compareToValue("1.0") == 0);
+		assertTrue(one.compareToValue("2") < 0);
+		assertTrue(one.compareToValue("false") > 0);
+		assertTrue(one.compareToValue("true") == 0);
+
+		assertTrue(one.compareToValue(0) > 0);
+		assertTrue(one.compareToValue(1) == 0);
+
+		assertTrue(one.compareToValue(0f) > 0);
+		assertTrue(one.compareToValue(0.5f) > 0);
+		assertTrue(one.compareToValue(1f) == 0);
+
+		assertTrue(one.compareToValue(0d) > 0);
+		assertTrue(one.compareToValue(0.5d) > 0);
+		assertTrue(one.compareToValue(1d) == 0);
+
+		assertTrue(one.compareToValue(false) > 0);
+		assertTrue(one.compareToValue(true) == 0);
 	}
 }

@@ -103,7 +103,9 @@ public class CategoricalValue extends DiscreteValue {
 			try {
 				number = (Number)TypeUtil.parseOrCast(DataType.DOUBLE, value);
 			} catch(NumberFormatException nfe){
-				throw new TypeCheckException(DataType.DOUBLE, value);
+				throw nfe;
+			} catch(TypeCheckException tce){
+				throw new TypeCheckException(DataType.BOOLEAN, value);
 			}
 
 			return ((Comparable)asDouble()).compareTo(number);
