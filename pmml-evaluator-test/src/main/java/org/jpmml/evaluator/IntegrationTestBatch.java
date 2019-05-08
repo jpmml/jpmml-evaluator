@@ -60,13 +60,12 @@ public class IntegrationTestBatch extends ArchiveBatch {
 	}
 
 	@Override
-	public PMML getPMML() throws Exception {
-		PMML pmml = super.getPMML();
+	public EvaluatorBuilder getEvaluatorBuilder() throws Exception {
+		ModelEvaluatorBuilder modelEvaluatorBuilder = (ModelEvaluatorBuilder)super.getEvaluatorBuilder();
 
-		LocatorTransformer locatorTransformer = new LocatorTransformer();
-		locatorTransformer.applyTo(pmml);
+		modelEvaluatorBuilder.setOutputFilter(OutputFilters.KEEP_FINAL_RESULTS);
 
-		return pmml;
+		return modelEvaluatorBuilder;
 	}
 
 	@Override
@@ -81,6 +80,16 @@ public class IntegrationTestBatch extends ArchiveBatch {
 		}
 
 		return this.evaluator;
+	}
+
+	@Override
+	public PMML getPMML() throws Exception {
+		PMML pmml = super.getPMML();
+
+		LocatorTransformer locatorTransformer = new LocatorTransformer();
+		locatorTransformer.applyTo(pmml);
+
+		return pmml;
 	}
 
 	@Override
