@@ -37,11 +37,13 @@ public class ValueFactory<V extends Number> implements Serializable {
 	 * </p>
 	 */
 	abstract
-	public Value<V> newValue(double value);
-
-	abstract
 	public Value<V> newValue(Number value);
 
+	/**
+	 * <p>
+	 * Creates a value, which is "vocally" set to the specified value.
+	 * </p>
+	 */
 	abstract
 	public Value<V> newValue(String value);
 

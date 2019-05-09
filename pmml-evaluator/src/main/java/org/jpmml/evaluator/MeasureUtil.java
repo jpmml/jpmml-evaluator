@@ -255,7 +255,7 @@ public class MeasureUtil {
 		switch(compareFunction){
 			case ABS_DIFF:
 				{
-					distance = valueFactory.newValue((value.asNumber()).doubleValue()).subtract((referenceValue.asNumber()).doubleValue());
+					distance = valueFactory.newValue(value.asNumber()).subtract((referenceValue.asNumber()).doubleValue());
 
 					distance.abs();
 				}
@@ -267,7 +267,7 @@ public class MeasureUtil {
 						throw new InvalidElementException(comparisonField);
 					}
 
-					distance = valueFactory.newValue((value.asNumber()).doubleValue()).subtract((referenceValue.asNumber()).doubleValue());
+					distance = valueFactory.newValue(value.asNumber()).subtract((referenceValue.asNumber()).doubleValue());
 
 					distance.gaussSim(similarityScale);
 				}
@@ -276,14 +276,14 @@ public class MeasureUtil {
 				{
 					boolean equals = (value).equalsValue(referenceValue);
 
-					distance = valueFactory.newValue(equals ? 0d : 1d);
+					distance = valueFactory.newValue(equals ? Numbers.DOUBLE_ZERO : Numbers.DOUBLE_ONE);
 				}
 				break;
 			case EQUAL:
 				{
 					boolean equals = (value).equalsValue(referenceValue);
 
-					distance = valueFactory.newValue(equals ? 1d : 0d);
+					distance = valueFactory.newValue(equals ? Numbers.DOUBLE_ONE : Numbers.DOUBLE_ZERO);
 				}
 				break;
 			case TABLE:

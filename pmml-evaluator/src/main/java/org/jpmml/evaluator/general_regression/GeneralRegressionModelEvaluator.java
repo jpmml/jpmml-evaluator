@@ -245,7 +245,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		// "If the value is less than the minimum time, then cumulative hazard is 0 and predicted survival is 1"
 		if(value.compareToValue(minTime) < 0){
-			Value<V> cumHazard = valueFactory.newValue(0d);
+			Value<V> cumHazard = valueFactory.newValue(Numbers.DOUBLE_ZERO);
 
 			return TargetUtil.evaluateRegression(getTargetField(), cumHazard);
 		}
@@ -420,18 +420,18 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			{
 				switch(modelType){
 					case GENERALIZED_LINEAR:
-						value = valueFactory.newValue(1d);
+						value = valueFactory.newValue(Numbers.DOUBLE_ONE);
 						if(previousValue != null){
 							value.subtract(previousValue);
 						}
 						break;
 					case MULTINOMIAL_LOGISTIC:
 						// "By convention, the vector of Parameter estimates for the last category is 0"
-						value = valueFactory.newValue(0d);
+						value = valueFactory.newValue(Numbers.DOUBLE_ZERO);
 						value.exp();
 						break;
 					case ORDINAL_MULTINOMIAL:
-						value = valueFactory.newValue(1d);
+						value = valueFactory.newValue(Numbers.DOUBLE_ONE);
 						break;
 					case REGRESSION:
 					case GENERAL_LINEAR:
@@ -1044,7 +1044,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 
 		public <V extends Number> Value<V> evaluate(ValueFactory<V> valueFactory, EvaluationContext context){
-			Value<V> result = valueFactory.newValue(1d);
+			Value<V> result = valueFactory.newValue(Numbers.DOUBLE_ONE);
 
 			List<FactorHandler> factorHandlers = getFactorHandlers();
 			for(int i = 0, max = factorHandlers.size(); i < max; i++){
