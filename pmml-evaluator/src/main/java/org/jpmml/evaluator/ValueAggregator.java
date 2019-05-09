@@ -100,6 +100,11 @@ public class ValueAggregator<V extends Number> {
 			throw new IllegalStateException();
 		}
 
+		int size = this.weightedValues.size();
+		if(size == 0){
+			throw new UndefinedResultException();
+		}
+
 		Value<V> weightSum = this.weights.sum();
 		if(weightSum.equals(Numbers.DOUBLE_ZERO)){
 			throw new UndefinedResultException();

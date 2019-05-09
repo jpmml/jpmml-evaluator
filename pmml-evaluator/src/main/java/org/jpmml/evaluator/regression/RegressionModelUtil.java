@@ -21,6 +21,7 @@ package org.jpmml.evaluator.regression;
 import java.util.Iterator;
 
 import org.dmg.pmml.regression.RegressionModel;
+import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.ValueUtil;
@@ -182,7 +183,7 @@ public class RegressionModelUtil {
 
 		switch(normalizationMethod){
 			case NONE:
-				return value.restrict(0d, 1d);
+				return value.restrict(Numbers.DOUBLE_ZERO, Numbers.DOUBLE_ONE);
 			case LOGIT:
 				return value.inverseLogit();
 			case PROBIT:

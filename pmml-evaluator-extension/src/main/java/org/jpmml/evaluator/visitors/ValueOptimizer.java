@@ -369,7 +369,7 @@ public class ValueOptimizer extends FieldResolver {
 			array = new RichComplexArray(dataType)
 				.setType(array.getType())
 				.setValue(values);
-		} catch(TypeCheckException | IllegalArgumentException e){
+		} catch(IllegalArgumentException | TypeCheckException e){
 
 			if((Mode.LOOSE).equals(this.mode)){
 				return super.visit(simpleSetPredicate);

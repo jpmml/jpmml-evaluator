@@ -100,7 +100,7 @@ public class MeasureUtil {
 
 		if(measure instanceof Tanimoto){
 			numerator.add(a11 + a00);
-			denominator.add(a11).add(2d, (a10 + a01)).add(a00);
+			denominator.add(a11).add(Numbers.DOUBLE_TWO, (a10 + a01)).add(a00);
 		} else
 
 		if(measure instanceof BinarySimilarity){
@@ -128,16 +128,16 @@ public class MeasureUtil {
 		for(int i = 0; i < values.size(); i++){
 			FieldValue value = values.get(i);
 
-			if(value.equalsValue(Numbers.INTEGER_ZERO)){
+			if(value.equalsValue(Boolean.FALSE)){
 				result.set(i, false);
 			} else
 
-			if(value.equalsValue(Numbers.INTEGER_ONE)){
+			if(value.equalsValue(Boolean.TRUE)){
 				result.set(i, true);
 			} else
 
 			{
-				throw new EvaluationException("Expected " + PMMLException.formatValue(Numbers.INTEGER_ZERO) + " or " + PMMLException.formatValue(Numbers.INTEGER_ONE) + ", got " + PMMLException.formatValue(value));
+				throw new EvaluationException("Expected " + PMMLException.formatValue(Boolean.FALSE) + " or " + PMMLException.formatValue(Boolean.TRUE) + ", got " + PMMLException.formatValue(value));
 			}
 		}
 
@@ -186,7 +186,7 @@ public class MeasureUtil {
 		Vector<V> distances = valueFactory.newVector(0);
 
 		for(int i = 0, max = comparisonFields.size(); i < max; i++){
-			ComparisonField comparisonField = comparisonFields.get(i);
+			ComparisonField<?> comparisonField = comparisonFields.get(i);
 
 			FieldValue value = values.get(i);
 			if(FieldValueUtil.isMissing(value)){
@@ -255,7 +255,7 @@ public class MeasureUtil {
 		switch(compareFunction){
 			case ABS_DIFF:
 				{
-					distance = valueFactory.newValue(value.asNumber()).subtract((referenceValue.asNumber()).doubleValue());
+					distance = valueFactory.newValue(value.asNumber()).subtract(referenceValue.asNumber());
 
 					distance.abs();
 				}
@@ -267,7 +267,7 @@ public class MeasureUtil {
 						throw new InvalidElementException(comparisonField);
 					}
 
-					distance = valueFactory.newValue(value.asNumber()).subtract((referenceValue.asNumber()).doubleValue());
+					distance = valueFactory.newValue(value.asNumber()).subtract(referenceValue.asNumber());
 
 					distance.gaussSim(similarityScale);
 				}
@@ -316,12 +316,12 @@ public class MeasureUtil {
 
 		for(int i = 0; i < values.size(); i++){
 			FieldValue value = values.get(i);
-			double adjustmentValue = (adjustmentValues != null ? (adjustmentValues.get(i)).doubleValue() : 1d);
+			Number adjustmentValue = (adjustmentValues != null ? adjustmentValues.get(i) : Numbers.DOUBLE_ONE);
 
-			if(adjustmentValue != 0d){
+			if(adjustmentValue.doubleValue() != 0d){
 				sum.add(adjustmentValue);
 
-				if(value != null){
+				if(!FieldValueUtil.isMissing(value)){
 					nonmissingSum.add(adjustmentValue);
 				}
 			}

@@ -53,6 +53,7 @@ import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.TypeUtil;
+import org.jpmml.evaluator.UndefinedResultException;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
@@ -182,7 +183,12 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 							totalWeight.add(weight);
 						}
 
-						Value<V> value = totalWeight.divide(firedRules.size());
+						int size = firedRules.size();
+						if(size == 0){
+							throw new UndefinedResultException();
+						}
+
+						Value<V> value = totalWeight.divide(size);
 
 						result.put(winner, key, value);
 					}

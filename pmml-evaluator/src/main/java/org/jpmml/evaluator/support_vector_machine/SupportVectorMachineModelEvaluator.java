@@ -216,19 +216,19 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 							value.round();
 
-							// "A rounded value of 1 corresponds to the targetCategory attribute of the SupportVectorMachine element"
-							if(value.equals(Numbers.DOUBLE_ONE)){
-								label = targetCategory;
-							} else
-
 							// "A rounded value of 0 corresponds to the alternateBinaryTargetCategory attribute of the SupportVectorMachineModel element"
 							if(value.equals(Numbers.DOUBLE_ZERO)){
 								label = alternateBinaryTargetCategory;
 							} else
 
+							// "A rounded value of 1 corresponds to the targetCategory attribute of the SupportVectorMachine element"
+							if(value.equals(Numbers.DOUBLE_ONE)){
+								label = targetCategory;
+							} else
+
 							// "The numeric prediction must be between 0 and 1"
 							{
-								throw new EvaluationException("Expected " + PMMLException.formatValue(0d) + " or " + PMMLException.formatValue(1d) + ", got " + PMMLException.formatValue(value.getValue()));
+								throw new EvaluationException("Expected " + PMMLException.formatValue(Numbers.DOUBLE_ZERO) + " or " + PMMLException.formatValue(Numbers.DOUBLE_ONE) + ", got " + PMMLException.formatValue(value.getValue()));
 							}
 						} else
 

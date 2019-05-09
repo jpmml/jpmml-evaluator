@@ -364,19 +364,19 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				throw new MissingValueException(name);
 			}
 
-			Number number = value.asNumber();
+			Number targetValue = value.asNumber();
 
 			switch(continuousScoringMethod){
 				case AVERAGE:
 				case MEDIAN:
-					aggregator.add(number);
+					aggregator.add(targetValue);
 					break;
 				case WEIGHTED_AVERAGE:
 					InstanceResult.Distance distance = TypeUtil.cast(InstanceResult.Distance.class, instanceResult);
 
 					Value<V> weight = distance.getWeight(threshold);
 
-					aggregator.add(number, weight.doubleValue());
+					aggregator.add(targetValue, weight.getValue());
 					break;
 				default:
 					throw new UnsupportedAttributeException(nearestNeighborModel, continuousScoringMethod);
@@ -419,18 +419,18 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				throw new MissingValueException(name);
 			}
 
-			Object object = value.getValue();
+			Object targetValue = value.getValue();
 
 			switch(categoricalScoringMethod){
 				case MAJORITY_VOTE:
-					aggregator.add(object);
+					aggregator.add(targetValue);
 					break;
 				case WEIGHTED_MAJORITY_VOTE:
 					InstanceResult.Distance distance = TypeUtil.cast(InstanceResult.Distance.class, instanceResult);
 
 					Value<V> weight = distance.getWeight(threshold);
 
-					aggregator.add(object, weight.doubleValue());
+					aggregator.add(targetValue, weight.getValue());
 					break;
 				default:
 					throw new UnsupportedAttributeException(nearestNeighborModel, categoricalScoringMethod);

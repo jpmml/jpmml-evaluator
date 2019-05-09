@@ -752,12 +752,12 @@ public class TypeUtil {
 		if((value instanceof Double) || (value instanceof Float) || (value instanceof Long) || (value instanceof Integer) || (value instanceof Short) || (value instanceof Byte)){
 			Number number = (Number)value;
 
-			if(number.doubleValue() == 1d){
-				return Boolean.TRUE;
-			} else
-
 			if(number.doubleValue() == 0d){
 				return Boolean.FALSE;
+			} else
+
+			if(number.doubleValue() == 1d){
+				return Boolean.TRUE;
 			}
 		}
 

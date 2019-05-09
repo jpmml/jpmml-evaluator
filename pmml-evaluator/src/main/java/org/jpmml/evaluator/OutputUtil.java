@@ -506,23 +506,21 @@ public class OutputUtil {
 	}
 
 	static
-	private Double getContinuousResidual(Object object, FieldValue expectedObject){
-		Number value = (Number)getPredictedValue(object);
-		Number expectedValue = expectedObject.asNumber();
+	private Number getContinuousResidual(Object value, FieldValue expectedValue){
+		value = getPredictedValue(value);
 
-		return Double.valueOf(expectedValue.doubleValue() - value.doubleValue());
+		return Functions.MINUS.evaluate(expectedValue.asNumber(), (Number)value);
 	}
 
 	static
-	public Double getDiscreteResidual(Object object, FieldValue expectedObject){
-		HasProbability hasProbability = TypeUtil.cast(HasProbability.class, object);
+	public Number getDiscreteResidual(Object value, FieldValue expectedValue){
+		HasProbability hasProbability = TypeUtil.cast(HasProbability.class, value);
 
-		String value = TypeUtil.format(getPredictedValue(object));
-		String expectedValue = expectedObject.asString();
+		value = getPredictedValue(value);
 
-		boolean equals = (value).equals(expectedValue);
+		boolean equals = expectedValue.equalsValue(value);
 
-		return Double.valueOf((equals ? 1d : 0d) - hasProbability.getProbability(value));
+		return Functions.MINUS.evaluate(equals ? Numbers.DOUBLE_ONE : Numbers.DOUBLE_ZERO, hasProbability.getProbability(TypeUtil.format(value)));
 	}
 
 	static

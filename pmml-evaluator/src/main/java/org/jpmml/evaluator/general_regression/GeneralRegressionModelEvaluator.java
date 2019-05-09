@@ -587,7 +587,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				result = valueFactory.newValue();
 			}
 
-			Parameter parameter = parameters.get(parameterCell.getParameterName());
+			Parameter parameter = parameters.get(parameterName);
 			if(parameter != null){
 				result.add(beta, parameter.getReferencePoint());
 			} else
@@ -673,7 +673,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		Integer trials = getTrials(generalRegressionModel, context);
-		if(trials != null && trials != 1){
+		if(trials != null && trials.intValue() != 1){
 			value.multiply(trials);
 		}
 
@@ -1179,7 +1179,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 				boolean equals = value.equals(ppCell);
 
-				return (equals ? product : product.multiply(0d));
+				return (equals ? product : product.multiply(Numbers.DOUBLE_ZERO));
 			}
 
 			public Object getCategory(){
@@ -1224,7 +1224,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					throw new InvalidElementException(matrix);
 				}
 
-				return product.multiply(result.doubleValue());
+				return product.multiply(result);
 			}
 
 			public int getIndex(FieldValue value){
@@ -1267,7 +1267,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		private class CovariateHandler extends PredictorHandler {
 
-			private double exponent = 1d;
+			private Number exponent = null;
 
 
 			private CovariateHandler(PPCell ppCell){
@@ -1278,29 +1278,32 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_VALUE);
 				}
 
-				Number number = (Number)TypeUtil.parseOrCast(DataType.DOUBLE, value);
+				Number exponent = (Number)TypeUtil.parseOrCast(DataType.DOUBLE, value);
+				if(exponent.doubleValue() == 1d){
+					exponent = null;
+				}
 
-				setExponent(number.doubleValue());
+				setExponent(exponent);
 			}
 
 			@Override
 			public <V extends Number> Value<V> updateProduct(Value<V> product, FieldValue value){
-				double exponent = getExponent();
+				Number exponent = getExponent();
 
-				if(exponent != 1d){
+				if(exponent != null){
 					return product.multiply(value.asNumber(), exponent);
 				} else
 
 				{
-					return product.multiply((value.asNumber()).doubleValue());
+					return product.multiply(value.asNumber());
 				}
 			}
 
-			public double getExponent(){
+			public Number getExponent(){
 				return this.exponent;
 			}
 
-			private void setExponent(double exponent){
+			private void setExponent(Number exponent){
 				this.exponent = exponent;
 			}
 		}
