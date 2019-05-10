@@ -419,6 +419,16 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
+	public boolean isZero(){
+		return this.value == 0f;
+	}
+
+	@Override
+	public boolean isOne(){
+		return this.value == 1f;
+	}
+
+	@Override
 	public boolean equals(Number value){
 		return this.value == value.floatValue();
 	}

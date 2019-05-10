@@ -136,7 +136,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			@Override
 			public Value<V> apply(Vector<V> values){
 
-				if(this.weightSum.equals(Numbers.DOUBLE_ZERO)){
+				if(this.weightSum.isZero()){
 					throw new UndefinedResultException();
 				}
 

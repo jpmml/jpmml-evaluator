@@ -44,7 +44,6 @@ import org.jpmml.evaluator.MisplacedAttributeException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
@@ -441,10 +440,10 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 
 		// "The predicted probabilities must sum to 1"
-		if(!sum.equals(Numbers.DOUBLE_ONE)){
+		if(!sum.isOne()){
 			ValueMap<String, V> values = result.getValues();
 
-			if(sum.equals(Numbers.DOUBLE_ZERO)){
+			if(sum.isZero()){
 				throw new UndefinedResultException();
 			}
 

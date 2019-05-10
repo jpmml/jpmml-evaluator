@@ -217,12 +217,12 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 							value.round();
 
 							// "A rounded value of 0 corresponds to the alternateBinaryTargetCategory attribute of the SupportVectorMachineModel element"
-							if(value.equals(Numbers.DOUBLE_ZERO)){
+							if(value.isZero()){
 								label = alternateBinaryTargetCategory;
 							} else
 
 							// "A rounded value of 1 corresponds to the targetCategory attribute of the SupportVectorMachine element"
-							if(value.equals(Numbers.DOUBLE_ONE)){
+							if(value.isOne()){
 								label = targetCategory;
 							} else
 

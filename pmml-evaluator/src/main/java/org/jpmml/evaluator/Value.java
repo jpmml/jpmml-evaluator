@@ -317,6 +317,12 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> denormalize(Number leftOrig, Number leftNorm, Number rightOrig, Number rightNorm);
 
 	abstract
+	public boolean isZero();
+
+	abstract
+	public boolean isOne();
+
+	abstract
 	public boolean equals(Number value);
 
 	abstract

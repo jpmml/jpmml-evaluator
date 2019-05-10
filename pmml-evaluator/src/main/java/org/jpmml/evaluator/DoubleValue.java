@@ -419,6 +419,16 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
+	public boolean isZero(){
+		return this.value == 0d;
+	}
+
+	@Override
+	public boolean isOne(){
+		return this.value == 1d;
+	}
+
+	@Override
 	public boolean equals(Number value){
 		return this.value == value.doubleValue();
 	}

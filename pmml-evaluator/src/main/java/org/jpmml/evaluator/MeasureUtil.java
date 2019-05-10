@@ -114,7 +114,7 @@ public class MeasureUtil {
 			throw new UnsupportedElementException(measure);
 		} // End if
 
-		if(denominator.equals(Numbers.DOUBLE_ZERO)){
+		if(denominator.isZero()){
 			throw new UndefinedResultException();
 		}
 
@@ -203,7 +203,7 @@ public class MeasureUtil {
 		if(measure instanceof Euclidean || measure instanceof SquaredEuclidean || measure instanceof CityBlock || measure instanceof Minkowski){
 			Value<V> result = distances.sum();
 
-			if(!adjustment.equals(Numbers.DOUBLE_ONE)){
+			if(!adjustment.isOne()){
 				result.multiply(adjustment);
 			} // End if
 
@@ -217,7 +217,7 @@ public class MeasureUtil {
 		if(measure instanceof Chebychev){
 			Value<V> result = distances.max();
 
-			if(!adjustment.equals(Numbers.DOUBLE_ONE)){
+			if(!adjustment.isOne()){
 				result.multiply(adjustment);
 			}
 
@@ -327,7 +327,7 @@ public class MeasureUtil {
 			}
 		}
 
-		if(nonmissingSum.equals(Numbers.DOUBLE_ZERO)){
+		if(nonmissingSum.isZero()){
 			throw new UndefinedResultException();
 		}
 

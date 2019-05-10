@@ -24,7 +24,6 @@ import org.dmg.pmml.DataType;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.HasProbability;
-import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.Report;
 import org.jpmml.evaluator.ReportUtil;
 import org.jpmml.evaluator.UndefinedResultException;
@@ -81,7 +80,7 @@ public class VoteDistribution<V extends Number> extends Classification<V> implem
 		if(probability != null){
 			probability = probability.copy();
 
-			if(this.sum.equals(Numbers.DOUBLE_ZERO)){
+			if(this.sum.isZero()){
 				throw new UndefinedResultException();
 			}
 

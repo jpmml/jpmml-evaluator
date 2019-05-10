@@ -238,9 +238,9 @@ public class TargetUtil {
 			sum.add(value);
 		}
 
-		if(!sum.equals(Numbers.DOUBLE_ONE)){
+		if(!sum.isOne()){
 
-			if(sum.equals(Numbers.DOUBLE_ZERO)){
+			if(sum.isZero()){
 				throw new UndefinedResultException();
 			}
 
