@@ -71,7 +71,7 @@ public class KernelUtil {
 		}
 
 		Number coef0 = polynomialKernel.getCoef0();
-		if(coef0.doubleValue() != 1d){
+		if(coef0.doubleValue() != 0d){
 			result.add(coef0);
 		}
 
@@ -107,7 +107,7 @@ public class KernelUtil {
 		}
 
 		Number coef0 = sigmoidKernel.getCoef0();
-		if(coef0.doubleValue() != 1d){
+		if(coef0.doubleValue() != 0d){
 			result.add(coef0);
 		}
 
