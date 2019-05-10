@@ -106,8 +106,49 @@ public class MeasureUtil {
 		if(measure instanceof BinarySimilarity){
 			BinarySimilarity binarySimilarity = (BinarySimilarity)measure;
 
-			numerator.add(binarySimilarity.getC11Parameter(), a11).add(binarySimilarity.getC10Parameter(), a10).add(binarySimilarity.getC01Parameter(), a01).add(binarySimilarity.getC00Parameter(), a00);
-			denominator.add(binarySimilarity.getD11Parameter(), a11).add(binarySimilarity.getD10Parameter(), a10).add(binarySimilarity.getD01Parameter(), a01).add(binarySimilarity.getD00Parameter(), a00);
+			Number c00 = binarySimilarity.getC00Parameter();
+			if(c00 == null){
+				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_C00PARAMETER);
+			}
+
+			Number c01 = binarySimilarity.getC01Parameter();
+			if(c01 == null){
+				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_C01PARAMETER);
+			}
+
+			Number c10 = binarySimilarity.getC10Parameter();
+			if(c10 == null){
+				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_C10PARAMETER);
+			}
+
+			Number c11 = binarySimilarity.getC11Parameter();
+			if(c11 == null){
+				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_C11PARAMETER);
+			}
+
+			numerator.add(c11, a11).add(c10, a10).add(c01, a01).add(c00, a00);
+
+			Number d00 = binarySimilarity.getD00Parameter();
+			if(d00 == null){
+				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_D00PARAMETER);
+			}
+
+			Number d01 = binarySimilarity.getD01Parameter();
+			if(d01 == null){
+				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_D01PARAMETER);
+			}
+
+			Number d10 = binarySimilarity.getD10Parameter();
+			if(d10 == null){
+				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_D10PARAMETER);
+			}
+
+			Number d11 = binarySimilarity.getD11Parameter();
+			if(d11 == null){
+				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_D11PARAMETER);
+			}
+
+			denominator.add(d11, a11).add(d10, a10).add(d01, a01).add(d00, a00);
 		} else
 
 		{
