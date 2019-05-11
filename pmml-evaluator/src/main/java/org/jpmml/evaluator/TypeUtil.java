@@ -110,14 +110,14 @@ public class TypeUtil {
 		try {
 			long result = Long.parseLong(value);
 
-			return toInteger(result);
+			return parseInteger(value, result);
 		} catch(NumberFormatException nfeInteger){
 
 			try {
 				double result = Double.parseDouble(value);
 
 				if(DoubleMath.isMathematicalInteger(result)){
-					return toInteger((long)result);
+					return parseInteger(value, (long)result);
 				}
 			} catch(NumberFormatException nfeDouble){
 				// Ignored
@@ -130,6 +130,16 @@ public class TypeUtil {
 			}
 
 			throw nfeInteger;
+		}
+	}
+
+	static
+	private Integer parseInteger(String value, long parsedValue){
+
+		try {
+			return Math.toIntExact(parsedValue);
+		} catch(ArithmeticException ae){
+			throw new IllegalArgumentException(value, ae);
 		}
 	}
 
@@ -578,20 +588,20 @@ public class TypeUtil {
 			Number number = (Number)value;
 
 			if(DoubleMath.isMathematicalInteger(number.doubleValue())){
-				return toInteger(number.longValue());
+				return toInteger(number);
 			}
 		} else
 
 		if(value instanceof Long){
 			Long number = (Long)value;
 
-			return toInteger(number.longValue());
+			return toInteger(number);
 		} else
 
 		if((value instanceof Short) || (value instanceof Byte)){
 			Number number = (Number)value;
 
-			return Integer.valueOf(number.intValue());
+			return number.intValue();
 		} else
 
 		if(value instanceof Boolean){
@@ -603,20 +613,21 @@ public class TypeUtil {
 		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
 			Number number = (Number)value;
 
-			return Integer.valueOf(number.intValue());
+			return toInteger(number);
 		}
 
 		throw new TypeCheckException(DataType.INTEGER, value);
 	}
 
 	static
-	private Integer toInteger(long value){
+	private Integer toInteger(Number value){
 
-		if(value < Integer.MIN_VALUE || value > Integer.MAX_VALUE){
-			throw new UndefinedResultException();
+		try {
+			return Math.toIntExact(value.longValue());
+		} catch(ArithmeticException ae){
+			throw new TypeCheckException(DataType.INTEGER, value)
+				.initCause(ae);
 		}
-
-		return Integer.valueOf((int)value);
 	}
 
 	/**

@@ -627,7 +627,7 @@ public interface Functions {
 
 			DaysSinceDate period = new DaysSinceDate(LocalDate.of(year, 1, 1), instant);
 
-			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, period.intValue());
+			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, period);
 		}
 	};
 
@@ -641,7 +641,7 @@ public interface Functions {
 
 			SecondsSinceMidnight period = new SecondsSinceMidnight(instant.toSecondOfDay());
 
-			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, period.intValue());
+			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, period);
 		}
 	};
 
@@ -657,7 +657,7 @@ public interface Functions {
 
 			SecondsSinceDate period = new SecondsSinceDate(LocalDate.of(year, 1, 1), instant);
 
-			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, period.intValue());
+			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, period);
 		}
 	};
 

@@ -30,13 +30,7 @@ class Period<P extends Period<P>> extends Number implements ComplexValue, Compar
 
 	@Override
 	public int intValue(){
-		long value = longValue();
-
-		if(value < Integer.MIN_VALUE || value > Integer.MAX_VALUE){
-			throw new UndefinedResultException();
-		}
-
-		return (int)value;
+		return Math.toIntExact(longValue());
 	}
 
 	@Override

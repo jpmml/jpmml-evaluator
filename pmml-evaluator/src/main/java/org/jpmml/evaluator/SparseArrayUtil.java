@@ -76,7 +76,7 @@ public class SparseArrayUtil {
 
 			@Override
 			public E get(int index){
-				E value = content.get(Integer.valueOf(index + 1));
+				E value = content.get(index + 1);
 
 				if(value == null){
 					value = defaultValue;

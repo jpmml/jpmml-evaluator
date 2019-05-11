@@ -65,7 +65,7 @@ public class TypeUtilTest {
 			TypeUtil.parse(DataType.INTEGER, Long.toString(Integer.MIN_VALUE - 1l));
 
 			fail();
-		} catch(EvaluationException ee){
+		} catch(IllegalArgumentException iae){
 			// Ignored
 		}
 
@@ -73,7 +73,7 @@ public class TypeUtilTest {
 			TypeUtil.parse(DataType.INTEGER, Double.toString(Integer.MIN_VALUE - 1d));
 
 			fail();
-		} catch(EvaluationException ee){
+		} catch(IllegalArgumentException iae){
 			// Ignored
 		}
 
@@ -83,7 +83,7 @@ public class TypeUtilTest {
 			TypeUtil.parse(DataType.INTEGER, Long.toString(Integer.MAX_VALUE + 1l));
 
 			fail();
-		} catch(EvaluationException ee){
+		} catch(IllegalArgumentException iae){
 			// Ignored
 		}
 
@@ -91,7 +91,7 @@ public class TypeUtilTest {
 			TypeUtil.parse(DataType.INTEGER, Double.toString(Integer.MAX_VALUE + 1d));
 
 			fail();
-		} catch(EvaluationException ee){
+		} catch(IllegalArgumentException iae){
 			// Ignored
 		}
 	}
@@ -160,7 +160,7 @@ public class TypeUtilTest {
 			TypeUtil.cast(DataType.INTEGER, Long.valueOf(Integer.MIN_VALUE - 1l));
 
 			fail();
-		} catch(EvaluationException ee){
+		} catch(TypeCheckException tce){
 			// Ignored
 		}
 
@@ -168,7 +168,7 @@ public class TypeUtilTest {
 			TypeUtil.cast(DataType.INTEGER, Long.valueOf(Integer.MAX_VALUE + 1l));
 
 			fail();
-		} catch(EvaluationException ee){
+		} catch(TypeCheckException tce){
 			// Ignored
 		}
 
@@ -198,7 +198,7 @@ public class TypeUtilTest {
 			TypeUtil.cast(DataType.INTEGER, Double.valueOf(Integer.MIN_VALUE - 1d));
 
 			fail();
-		} catch(EvaluationException ee){
+		} catch(TypeCheckException tce){
 			// Ignored
 		}
 
@@ -206,7 +206,7 @@ public class TypeUtilTest {
 			TypeUtil.cast(DataType.INTEGER, Double.valueOf(Integer.MAX_VALUE + 1d));
 
 			fail();
-		} catch(EvaluationException ee){
+		} catch(TypeCheckException tce){
 			// Ignored
 		}
 	}
@@ -301,7 +301,6 @@ public class TypeUtilTest {
 	public void parseSecondsSinceMidnight(){
 		SecondsSinceMidnight noon = (SecondsSinceMidnight)TypeUtil.parse(DataType.TIME_SECONDS, "12:00:00");
 
-		assertEquals(12 * 60 * 60, noon.intValue());
 		assertEquals(12L * 60 * 60, noon.longValue());
 
 		assertEquals("43200", TypeUtil.format(noon));
