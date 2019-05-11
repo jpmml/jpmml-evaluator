@@ -337,7 +337,9 @@ public class OperationProcessor extends AbstractProcessor {
 	private void createReportingMethod(JDefinedClass clazz, ExecutableElement executableElement, String operation, String initialOperation, JPrimitiveType type){
 		JCodeModel codeModel = clazz.owner();
 
-		JMethod method = clazz.method(JMod.PUBLIC, clazz, String.valueOf(executableElement.getSimpleName()));
+		String name = String.valueOf(executableElement.getSimpleName());
+
+		JMethod method = clazz.method(JMod.PUBLIC, clazz, name);
 		method.annotate(Override.class);
 
 		List<JVar> params = new ArrayList<>();
@@ -362,12 +364,55 @@ public class OperationProcessor extends AbstractProcessor {
 			params.add(param);
 		}
 
+		String valueMethod;
+
+		if((codeModel.DOUBLE).equals(type)){
+			valueMethod = "doubleValue";
+		} else
+
+		if((codeModel.FLOAT).equals(type)){
+			valueMethod = "floatValue";
+		} else
+
+		{
+			throw new IllegalArgumentException();
+		}
+
+		boolean checkChange;
+
+		switch(name){
+			case "add":
+			case "subtract":
+			case "multiply":
+			case "divide":
+				checkChange = (clazz.name()).endsWith("Value");
+				break;
+			default:
+				checkChange = false;
+				break;
+		}
+
 		JBlock body = method.body();
+
+		JVar oldValueVar = null;
+		if(checkChange){
+			oldValueVar = body.decl(type, "oldValue", JExpr.invoke(valueMethod));
+		}
 
 		JVar resultVariable = body.decl(clazz, "result", JExpr.cast(clazz, createSuperInvocation(clazz, method)));
 
+		JVar newValueVar = null;
+		if(checkChange){
+			newValueVar = body.decl(type, "newValue", JExpr.invoke(valueMethod));
+		}
+
+		JBlock block = body;
+		if(checkChange){
+			block = body._if((oldValueVar).ne(newValueVar))._then();
+		}
+
 		if(initialOperation != null){
-			JConditional ifStatement = body._if(JExpr.invoke("hasExpression"));
+			JConditional ifStatement = block._if(JExpr.invoke("hasExpression"));
 
 			JBlock trueBlock = ifStatement._then();
 
@@ -379,7 +424,7 @@ public class OperationProcessor extends AbstractProcessor {
 		} else
 
 		{
-			body.add(JExpr.invoke("report").arg(createReportInvocation(clazz, operation, params, type)));
+			block.add(JExpr.invoke("report").arg(createReportInvocation(clazz, operation, params, type)));
 		}
 
 		body._return(resultVariable);

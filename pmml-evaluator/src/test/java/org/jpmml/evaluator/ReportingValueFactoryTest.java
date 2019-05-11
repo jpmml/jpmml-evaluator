@@ -52,6 +52,23 @@ public class ReportingValueFactoryTest {
 		} catch(IllegalStateException ise){
 			// Ignored
 		}
+
+		value.add(Numbers.FLOAT_ZERO);
+
+		assertEquals((Float)0f, value.getValue());
+
+		assertFalse(report.hasEntries());
+
+		value.add(Numbers.FLOAT_ONE);
+
+		assertEquals((Float)1f, value.getValue());
+
+		assertTrue(report.hasEntries());
+
+		Report.Entry entry = report.tailEntry();
+
+		assertEquals("<cn>" + 1f + "</cn>", entry.getExpression());
+		assertEquals((Float)1f, entry.getValue());
 	}
 
 	@Test
