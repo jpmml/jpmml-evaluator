@@ -34,6 +34,14 @@ public class FunctionTest {
 
 	@Test
 	public void evaluateArithmeticFunctions(){
+		assertEquals(4, evaluate(Functions.PLUS, 1, 3));
+		assertEquals(-2, evaluate(Functions.MINUS, 1, 3));
+		assertEquals(3d, evaluate(Functions.MULTIPLY, 1, 3));
+		assertEquals(0, evaluate(Functions.DIVIDE, 1, 3));
+
+		assertEquals(null, evaluate(Functions.PLUS, 1, null));
+		assertEquals(null, evaluate(Functions.PLUS, null, 1));
+
 		assertEquals(4d, evaluate(Functions.PLUS, 1d, 3d));
 		assertEquals(-2d, evaluate(Functions.MINUS, 1d, 3d));
 		assertEquals(3d, evaluate(Functions.MULTIPLY, 1d, 3d));

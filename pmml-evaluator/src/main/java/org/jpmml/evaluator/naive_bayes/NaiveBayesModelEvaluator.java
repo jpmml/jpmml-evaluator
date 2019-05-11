@@ -314,7 +314,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			{
 				Number countSum = countSums.get(targetCategory);
 
-				probability = Functions.DIVIDE.evaluate(count, countSum);
+				probability = Functions.DIVIDE.evaluate(count, NumberUtil.asDouble(countSum));
 			}
 
 			probabilities.multiply((String)targetCategory, probability);

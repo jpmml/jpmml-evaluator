@@ -58,24 +58,39 @@ public interface Functions {
 	ArithmeticFunction PLUS = new ArithmeticFunction("+"){
 
 		@Override
-		public Double evaluate(Number left, Number right){
-			return Double.valueOf(left.doubleValue() + right.doubleValue());
+		public Number evaluate(Number left, Number right){
+
+			if(left instanceof Integer && right instanceof Integer){
+				return Math.addExact(left.intValue(), right.intValue());
+			}
+
+			return (left.doubleValue() + right.doubleValue());
 		}
 	};
 
 	ArithmeticFunction MINUS = new ArithmeticFunction("-"){
 
 		@Override
-		public Double evaluate(Number left, Number right){
-			return Double.valueOf(left.doubleValue() - right.doubleValue());
+		public Number evaluate(Number left, Number right){
+
+			if(left instanceof Integer && right instanceof Integer){
+				return Math.subtractExact(left.intValue(), right.intValue());
+			}
+
+			return (left.doubleValue() - right.doubleValue());
 		}
 	};
 
 	ArithmeticFunction MULTIPLY = new ArithmeticFunction("*"){
 
 		@Override
-		public Double evaluate(Number left, Number right){
-			return Double.valueOf(left.doubleValue() * right.doubleValue());
+		public Number evaluate(Number left, Number right){
+
+			if(left instanceof Integer && right instanceof Integer){
+				return Math.multiplyExact(left.intValue(), right.intValue());
+			}
+
+			return (left.doubleValue() * right.doubleValue());
 		}
 	};
 
@@ -85,10 +100,10 @@ public interface Functions {
 		public Number evaluate(Number left, Number right){
 
 			if(left instanceof Integer && right instanceof Integer){
-				return Integer.valueOf(left.intValue() / right.intValue());
+				return (left.intValue() / right.intValue());
 			}
 
-			return Double.valueOf(left.doubleValue() / right.doubleValue());
+			return (left.doubleValue() / right.doubleValue());
 		}
 	};
 
