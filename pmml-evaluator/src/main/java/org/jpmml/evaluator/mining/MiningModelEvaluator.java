@@ -225,7 +225,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		Segmentation.MissingPredictionTreatment missingPredictionTreatment = segmentation.getMissingPredictionTreatment();
 		Number missingThreshold = segmentation.getMissingThreshold();
-		if(missingThreshold.doubleValue() < 0 || missingThreshold.doubleValue() > 1){
+		if(missingThreshold.doubleValue() < 0d || missingThreshold.doubleValue() > 1d){
 			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
 		}
 

@@ -63,55 +63,29 @@ public class KernelUtil {
 
 	static
 	public <V extends Number> Value<V> evaluatePolynomialKernel(PolynomialKernel polynomialKernel, ValueFactory<V> valueFactory, Object input, Object vector){
-		Value<V> result = valueFactory.newValue(dotProduct(input, vector));
-
-		Number gamma = polynomialKernel.getGamma();
-		if(gamma.doubleValue() != 1d){
-			result.multiply(gamma);
-		}
-
-		Number coef0 = polynomialKernel.getCoef0();
-		if(coef0.doubleValue() != 0d){
-			result.add(coef0);
-		}
-
-		Number degree = polynomialKernel.getDegree();
-		if(degree.doubleValue() != 1d){
-			result.power(degree);
-		}
+		Value<V> result = valueFactory.newValue(dotProduct(input, vector))
+			.multiply(polynomialKernel.getGamma())
+			.add(polynomialKernel.getCoef0())
+			.power(polynomialKernel.getDegree());
 
 		return result;
 	}
 
 	static
 	public <V extends Number> Value<V> evaluateRadialBasisKernel(RadialBasisKernel radialBasisKernel, ValueFactory<V> valueFactory, Object input, Object vector){
-		Value<V> result = valueFactory.newValue(negativeSquaredDistance(input, vector));
-
-		Number gamma = radialBasisKernel.getGamma();
-		if(gamma.doubleValue() != 1d){
-			result.multiply(gamma);
-		}
-
-		result.exp();
+		Value<V> result = valueFactory.newValue(negativeSquaredDistance(input, vector))
+			.multiply(radialBasisKernel.getGamma())
+			.exp();
 
 		return result;
 	}
 
 	static
 	public <V extends Number> Value<V> evaluateSigmoidKernel(SigmoidKernel sigmoidKernel, ValueFactory<V> valueFactory, Object input, Object vector){
-		Value<V> result = valueFactory.newValue(dotProduct(input, vector));
-
-		Number gamma = sigmoidKernel.getGamma();
-		if(gamma.doubleValue() != 1d){
-			result.multiply(gamma);
-		}
-
-		Number coef0 = sigmoidKernel.getCoef0();
-		if(coef0.doubleValue() != 0d){
-			result.add(coef0);
-		}
-
-		result.tanh();
+		Value<V> result = valueFactory.newValue(dotProduct(input, vector))
+			.multiply(sigmoidKernel.getGamma())
+			.add(sigmoidKernel.getCoef0())
+			.tanh();
 
 		return result;
 	}

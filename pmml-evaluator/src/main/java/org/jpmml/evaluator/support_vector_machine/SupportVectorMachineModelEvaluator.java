@@ -321,10 +321,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			throw new InvalidElementException(supportVectorMachine);
 		}
 
-		Number absoluteValue = coefficients.getAbsoluteValue();
-		if(absoluteValue.doubleValue() != 0d){
-			result.add(absoluteValue);
-		}
+		result.add(coefficients.getAbsoluteValue());
 
 		return result;
 	}

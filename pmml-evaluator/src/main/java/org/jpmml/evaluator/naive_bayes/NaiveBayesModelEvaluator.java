@@ -162,9 +162,8 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 				Value<V> value = ensureValue(key);
 
-				Value<V> probabilityValue = valueFactory.newValue(probability);
-
-				probabilityValue.ln();
+				Value<V> probabilityValue = valueFactory.newValue(probability)
+					.ln();
 
 				value.add(probabilityValue);
 			}

@@ -454,7 +454,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				}
 
 				Number bias = neuron.getBias();
-				if(bias != null && bias.doubleValue() != 0d){
+				if(bias != null){
 					output.add(bias);
 				}
 

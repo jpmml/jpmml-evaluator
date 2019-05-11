@@ -127,15 +127,9 @@ public class TargetUtil {
 			value.restrict((min != null ? min : Double.NEGATIVE_INFINITY), (max != null ? max : Double.POSITIVE_INFINITY));
 		}
 
-		Number rescaleFactor = target.getRescaleFactor();
-		if(rescaleFactor.doubleValue() != 1d){
-			value.multiply(rescaleFactor);
-		}
-
-		Number rescaleConstant = target.getRescaleConstant();
-		if(rescaleConstant.doubleValue() != 0d){
-			value.add(rescaleConstant);
-		}
+		value
+			.multiply(target.getRescaleFactor())
+			.add(target.getRescaleConstant());
 
 		Target.CastInteger castInteger = target.getCastInteger();
 		if(castInteger == null){

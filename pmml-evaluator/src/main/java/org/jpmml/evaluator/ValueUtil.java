@@ -80,7 +80,9 @@ public class ValueUtil {
 		Value<V> sum = null;
 
 		for(Value<V> value : values){
-			value = (value.subtract(max)).exp();
+			value
+				.subtract(max)
+				.exp();
 
 			if(sum == null){
 				sum = value.copy();

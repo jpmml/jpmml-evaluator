@@ -409,11 +409,9 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 				Number recordCount = scoreDistribution.getRecordCount();
 				if(recordCount == null){
 					throw new MissingAttributeException(scoreDistribution, PMMLAttributes.SCOREDISTRIBUTION_RECORDCOUNT);
-				} // End if
-
-				if(recordCount.doubleValue() != 0d){
-					sum.add(recordCount);
 				}
+
+				sum.add(recordCount);
 
 				value = valueFactory.newValue(recordCount);
 			}
@@ -429,11 +427,8 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 			Number confidence = scoreDistribution.getConfidence();
 			if(confidence != null){
-				value = valueFactory.newValue(confidence);
-
-				if(missingValuePenalty != 1d){
-					value.multiply(missingValuePenalty);
-				}
+				value = valueFactory.newValue(confidence)
+					.multiply(missingValuePenalty);
 
 				result.putConfidence(TypeUtil.format(targetCategory), value);
 			}

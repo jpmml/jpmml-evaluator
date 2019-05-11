@@ -360,7 +360,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		}
 
 		Number intercept = regressionTable.getIntercept();
-		if(intercept != null && intercept.doubleValue() != 0d){
+		if(intercept != null){
 			result.add(intercept);
 		}
 

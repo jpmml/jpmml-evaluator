@@ -270,7 +270,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			return null;
 		}
 
-		Value<V> cumHazard = ((r.subtract(s)).exp()).multiply(maxTimeCumHazard);
+		Value<V> cumHazard = r.subtract(s)
+			.exp()
+			.multiply(maxTimeCumHazard);
 
 		return TargetUtil.evaluateRegression(getTargetField(), cumHazard);
 	}
@@ -427,8 +429,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 						break;
 					case MULTINOMIAL_LOGISTIC:
 						// "By convention, the vector of Parameter estimates for the last category is 0"
-						value = valueFactory.newValue(Numbers.DOUBLE_ZERO);
-						value.exp();
+						value = valueFactory.newValue(Numbers.DOUBLE_ZERO)
+							.exp();
 						break;
 					case ORDINAL_MULTINOMIAL:
 						value = valueFactory.newValue(Numbers.DOUBLE_ONE);
@@ -651,7 +653,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		Number offset = getOffset(generalRegressionModel, context);
-		if(offset != null && offset.doubleValue() != 0d){
+		if(offset != null){
 			value.add(offset);
 		}
 
@@ -673,7 +675,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		Integer trials = getTrials(generalRegressionModel, context);
-		if(trials != null && trials.intValue() != 1){
+		if(trials != null){
 			value.multiply(trials);
 		}
 
@@ -689,7 +691,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		Number offset = getOffset(generalRegressionModel, context);
-		if(offset != null && offset.doubleValue() != 0d){
+		if(offset != null){
 			value.add(offset);
 		}
 

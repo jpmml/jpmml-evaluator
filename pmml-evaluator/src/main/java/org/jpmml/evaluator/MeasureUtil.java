@@ -100,7 +100,10 @@ public class MeasureUtil {
 
 		if(measure instanceof Tanimoto){
 			numerator.add(a11 + a00);
-			denominator.add(a11).add(Numbers.DOUBLE_TWO, (a10 + a01)).add(a00);
+			denominator
+				.add(a11)
+				.add(Numbers.DOUBLE_TWO, (a10 + a01))
+				.add(a00);
 		} else
 
 		if(measure instanceof BinarySimilarity){
@@ -126,7 +129,11 @@ public class MeasureUtil {
 				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_C11PARAMETER);
 			}
 
-			numerator.add(c11, a11).add(c10, a10).add(c01, a01).add(c00, a00);
+			numerator
+				.add(c11, a11)
+				.add(c10, a10)
+				.add(c01, a01)
+				.add(c00, a00);
 
 			Number d00 = binarySimilarity.getD00Parameter();
 			if(d00 == null){
@@ -148,7 +155,11 @@ public class MeasureUtil {
 				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_D11PARAMETER);
 			}
 
-			denominator.add(d11, a11).add(d10, a10).add(d01, a01).add(d00, a00);
+			denominator
+				.add(d11, a11)
+				.add(d10, a10)
+				.add(d01, a01)
+				.add(d00, a00);
 		} else
 
 		{
@@ -242,25 +253,16 @@ public class MeasureUtil {
 		}
 
 		if(measure instanceof Euclidean || measure instanceof SquaredEuclidean || measure instanceof CityBlock || measure instanceof Minkowski){
-			Value<V> result = distances.sum();
-
-			if(!adjustment.isOne()){
-				result.multiply(adjustment);
-			} // End if
-
-			if(!outerPower.equals(Numbers.DOUBLE_ONE)){
-				result.inversePower(outerPower);
-			}
+			Value<V> result = distances.sum()
+				.multiply(adjustment)
+				.inversePower(outerPower);
 
 			return result;
 		} else
 
 		if(measure instanceof Chebychev){
-			Value<V> result = distances.max();
-
-			if(!adjustment.isOne()){
-				result.multiply(adjustment);
-			}
+			Value<V> result = distances.max()
+				.multiply(adjustment);
 
 			return result;
 		} else
@@ -296,9 +298,9 @@ public class MeasureUtil {
 		switch(compareFunction){
 			case ABS_DIFF:
 				{
-					distance = valueFactory.newValue(value.asNumber()).subtract(referenceValue.asNumber());
-
-					distance.abs();
+					distance = valueFactory.newValue(value.asNumber())
+						.subtract(referenceValue.asNumber())
+						.abs();
 				}
 				break;
 			case GAUSS_SIM:
@@ -308,9 +310,9 @@ public class MeasureUtil {
 						throw new InvalidElementException(comparisonField);
 					}
 
-					distance = valueFactory.newValue(value.asNumber()).subtract(referenceValue.asNumber());
-
-					distance.gaussSim(similarityScale);
+					distance = valueFactory.newValue(value.asNumber())
+						.subtract(referenceValue.asNumber())
+						.gaussSim(similarityScale);
 				}
 				break;
 			case DELTA:
@@ -333,12 +335,10 @@ public class MeasureUtil {
 				throw new UnsupportedAttributeException(comparisonField, compareFunction);
 		}
 
-		if(power.doubleValue() != 1d){
-			distance.power(power);
-		}
+		distance.power(power);
 
 		Number fieldWeight = comparisonField.getFieldWeight();
-		if(fieldWeight != null && fieldWeight.doubleValue() != 1d){
+		if(fieldWeight != null){
 			distance.multiply(fieldWeight);
 		}
 
@@ -359,12 +359,10 @@ public class MeasureUtil {
 			FieldValue value = values.get(i);
 			Number adjustmentValue = (adjustmentValues != null ? adjustmentValues.get(i) : Numbers.DOUBLE_ONE);
 
-			if(adjustmentValue.doubleValue() != 0d){
-				sum.add(adjustmentValue);
+			sum.add(adjustmentValue);
 
-				if(!FieldValueUtil.isMissing(value)){
-					nonmissingSum.add(adjustmentValue);
-				}
+			if(!FieldValueUtil.isMissing(value)){
+				nonmissingSum.add(adjustmentValue);
 			}
 		}
 

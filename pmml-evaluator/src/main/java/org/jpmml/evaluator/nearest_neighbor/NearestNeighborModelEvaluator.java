@@ -953,11 +953,11 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 				value = value.copy();
 
-				if(threshold.doubleValue() != 0d){
-					value.add(threshold);
-				}
+				value
+					.add(threshold)
+					.reciprocal();
 
-				return value.reciprocal();
+				return value;
 			}
 		}
 	}
