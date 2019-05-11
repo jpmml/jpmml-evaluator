@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Objects;
+
 import org.jpmml.evaluator.functions.EqualityFunction;
 
 /**
@@ -26,10 +28,10 @@ import org.jpmml.evaluator.functions.EqualityFunction;
 abstract
 public class JavaEqualityPredicate extends JavaSimplePredicate {
 
-	private FieldValue value = null;
+	private Object value = null;
 
 
-	JavaEqualityPredicate(int index, FieldValue value){
+	JavaEqualityPredicate(int index, Object value){
 		super(index);
 
 		setValue(value);
@@ -49,18 +51,18 @@ public class JavaEqualityPredicate extends JavaSimplePredicate {
 		return evaluate(value.equalsValue(getValue()));
 	}
 
-	public FieldValue getValue(){
+	public Object getValue(){
 		return this.value;
 	}
 
-	private void setValue(FieldValue value){
-		this.value = value;
+	private void setValue(Object value){
+		this.value = Objects.requireNonNull(value);
 	}
 
 	static
 	public class Equal extends JavaEqualityPredicate {
 
-		public Equal(int index, FieldValue value){
+		public Equal(int index, Object value){
 			super(index, value);
 		}
 
@@ -73,7 +75,7 @@ public class JavaEqualityPredicate extends JavaSimplePredicate {
 	static
 	public class NotEqual extends JavaEqualityPredicate {
 
-		public NotEqual(int index, FieldValue value){
+		public NotEqual(int index, Object value){
 			super(index, value);
 		}
 

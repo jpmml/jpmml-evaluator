@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Objects;
+
 import org.jpmml.evaluator.functions.ComparisonFunction;
 
 /**
@@ -26,10 +28,10 @@ import org.jpmml.evaluator.functions.ComparisonFunction;
 abstract
 public class JavaComparisonPredicate extends JavaSimplePredicate {
 
-	private FieldValue value = null;
+	private Object value = null;
 
 
-	JavaComparisonPredicate(int index, FieldValue value){
+	JavaComparisonPredicate(int index, Object value){
 		super(index);
 
 		setValue(value);
@@ -49,18 +51,18 @@ public class JavaComparisonPredicate extends JavaSimplePredicate {
 		return evaluate(value.compareToValue(getValue()));
 	}
 
-	public FieldValue getValue(){
+	public Object getValue(){
 		return this.value;
 	}
 
-	private void setValue(FieldValue value){
-		this.value = value;
+	private void setValue(Object value){
+		this.value = Objects.requireNonNull(value);
 	}
 
 	static
 	public class GreaterOrEqual extends JavaComparisonPredicate {
 
-		public GreaterOrEqual(int index, FieldValue value){
+		public GreaterOrEqual(int index, Object value){
 			super(index, value);
 		}
 
@@ -73,7 +75,7 @@ public class JavaComparisonPredicate extends JavaSimplePredicate {
 	static
 	public class GreaterThan extends JavaComparisonPredicate {
 
-		public GreaterThan(int index, FieldValue value){
+		public GreaterThan(int index, Object value){
 			super(index, value);
 		}
 
@@ -86,7 +88,7 @@ public class JavaComparisonPredicate extends JavaSimplePredicate {
 	static
 	public class LessOrEqual extends JavaComparisonPredicate {
 
-		public LessOrEqual(int index, FieldValue value){
+		public LessOrEqual(int index, Object value){
 			super(index, value);
 		}
 
@@ -99,7 +101,7 @@ public class JavaComparisonPredicate extends JavaSimplePredicate {
 	static
 	public class LessThan extends JavaComparisonPredicate {
 
-		public LessThan(int index, FieldValue value){
+		public LessThan(int index, Object value){
 			super(index, value);
 		}
 
