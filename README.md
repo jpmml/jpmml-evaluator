@@ -89,18 +89,18 @@ JPMML-Evaluator is fast and memory efficient. It can deliver one million scoring
 
 JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository](https://repo1.maven.org/maven2/org/jpmml/).
 
-The current version is **1.4.8** (21 March, 2019).
+The current version is **1.4.9** (11 May, 2019).
 
 ```xml
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.4.8</version>
+	<version>1.4.9</version>
 </dependency>
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator-extension</artifactId>
-	<version>1.4.8</version>
+	<version>1.4.9</version>
 </dependency>
 ```
 
