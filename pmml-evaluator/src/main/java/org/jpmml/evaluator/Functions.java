@@ -273,36 +273,60 @@ public interface Functions {
 	MathFunction FLOOR = new MathFunction("floor"){
 
 		@Override
-		public Number evaluate(Number number){
-			return Math.floor(number.doubleValue());
+		public Integer evaluate(Number number){
+			long result = (long)Math.floor(number.doubleValue());
+
+			return Math.toIntExact(result);
+		}
+
+		@Override
+		public DataType getResultDataType(DataType dataType){
+			return DataType.INTEGER;
 		}
 	};
 
 	MathFunction CEIL = new MathFunction("ceil"){
 
 		@Override
-		public Number evaluate(Number number){
-			return Math.ceil(number.doubleValue());
+		public Integer evaluate(Number number){
+			long result = (long)Math.ceil(number.doubleValue());
+
+			return Math.toIntExact(result);
+		}
+
+		@Override
+		public DataType getResultDataType(DataType dataType){
+			return DataType.INTEGER;
 		}
 	};
 
 	MathFunction ROUND = new MathFunction("round"){
 
 		@Override
-		public Number evaluate(Number number){
+		public Integer evaluate(Number number){
+			long result;
 
 			if(number instanceof Float){
-				Math.round(number.floatValue());
+				result = (long)Math.round(number.floatValue());
+			} else
+
+			{
+				result = (long)Math.round(number.doubleValue());
 			}
 
-			return Math.round(number.doubleValue());
+			return Math.toIntExact(result);
+		}
+
+		@Override
+		public DataType getResultDataType(DataType dataType){
+			return DataType.INTEGER;
 		}
 	};
 
 	MathFunction RINT = new MathFunction("x-rint"){
 
 		@Override
-		public Number evaluate(Number number){
+		public Double evaluate(Number number){
 			return Math.rint(number.doubleValue());
 		}
 	};

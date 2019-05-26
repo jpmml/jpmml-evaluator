@@ -47,6 +47,10 @@ public class MathFunction extends AbstractNumericFunction {
 
 		Number result = evaluate(value.asNumber());
 
-		return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
+		return FieldValueUtil.create(getResultDataType(dataType), OpType.CONTINUOUS, result);
+	}
+
+	protected DataType getResultDataType(DataType dataType){
+		return dataType;
 	}
 }

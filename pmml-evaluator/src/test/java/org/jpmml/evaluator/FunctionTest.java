@@ -176,11 +176,11 @@ public class FunctionTest {
 		assertEquals(1, evaluate(Functions.FLOOR, 1));
 		assertEquals(1, evaluate(Functions.CEIL, 1));
 
-		assertEquals(1f, evaluate(Functions.FLOOR, 1.99f));
-		assertEquals(2f, evaluate(Functions.ROUND, 1.99f));
+		assertEquals(1, evaluate(Functions.FLOOR, 1.99f));
+		assertEquals(2, evaluate(Functions.ROUND, 1.99f));
 
-		assertEquals(1f, evaluate(Functions.CEIL, 0.01f));
-		assertEquals(0f, evaluate(Functions.ROUND, 0.01f));
+		assertEquals(1, evaluate(Functions.CEIL, 0.01f));
+		assertEquals(0, evaluate(Functions.ROUND, 0.01f));
 	}
 
 	@Test
