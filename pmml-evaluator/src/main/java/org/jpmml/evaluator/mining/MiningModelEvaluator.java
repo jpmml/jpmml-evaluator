@@ -50,6 +50,8 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.True;
 import org.dmg.pmml.mining.MiningModel;
+import org.dmg.pmml.mining.PMMLAttributes;
+import org.dmg.pmml.mining.PMMLElements;
 import org.dmg.pmml.mining.Segment;
 import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.CacheUtil;
@@ -69,8 +71,6 @@ import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.OutputField;
-import org.jpmml.evaluator.PMMLAttributes;
-import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLException;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
@@ -84,7 +84,7 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.ValueUtil;
-import org.jpmml.evaluator.XPathUtil;
+import org.jpmml.model.XPathUtil;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 
@@ -539,7 +539,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 						for(org.dmg.pmml.OutputField pmmlSegmentOutputField : pmmlSegmentOutputFields){
 							FieldName name = pmmlSegmentOutputField.getName();
 							if(name == null){
-								throw new MissingAttributeException(pmmlSegmentOutputField, PMMLAttributes.OUTPUTFIELD_NAME);
+								throw new MissingAttributeException(pmmlSegmentOutputField, org.dmg.pmml.PMMLAttributes.OUTPUTFIELD_NAME);
 							}
 
 							context.putOutputField(name, pmmlSegmentOutputField);

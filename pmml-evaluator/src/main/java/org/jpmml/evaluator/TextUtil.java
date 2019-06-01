@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import com.google.common.cache.Cache;
 import com.google.common.collect.Table;
 import org.dmg.pmml.InlineTable;
+import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Row;
 import org.dmg.pmml.TextIndex;

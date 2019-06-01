@@ -50,6 +50,8 @@ import org.dmg.pmml.neural_network.NeuralNetwork;
 import org.dmg.pmml.neural_network.NeuralOutput;
 import org.dmg.pmml.neural_network.NeuralOutputs;
 import org.dmg.pmml.neural_network.Neuron;
+import org.dmg.pmml.neural_network.PMMLAttributes;
+import org.dmg.pmml.neural_network.PMMLElements;
 import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EntityUtil;
@@ -67,8 +69,6 @@ import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.NormalizationUtil;
-import org.jpmml.evaluator.PMMLAttributes;
-import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
@@ -77,7 +77,7 @@ import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
-import org.jpmml.evaluator.XPathUtil;
+import org.jpmml.model.XPathUtil;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<NeuralEntity> {
 
@@ -286,7 +286,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 					Object targetCategory = normDiscrete.getValue();
 					if(targetCategory == null){
-						throw new MissingAttributeException(normDiscrete, PMMLAttributes.NORMDISCRETE_VALUE);
+						throw new MissingAttributeException(normDiscrete, org.dmg.pmml.PMMLAttributes.NORMDISCRETE_VALUE);
 					}
 
 					targetCategory = TypeUtil.format(targetCategory);
@@ -326,7 +326,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 			FieldName name = fieldRef.getField();
 			if(name == null){
-				throw new MissingAttributeException(fieldRef, PMMLAttributes.FIELDREF_FIELD);
+				throw new MissingAttributeException(fieldRef, org.dmg.pmml.PMMLAttributes.FIELDREF_FIELD);
 			}
 
 			Field<?> field = resolveField(name);
@@ -347,7 +347,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			} else
 
 			{
-				throw new InvalidAttributeException(fieldRef, PMMLAttributes.FIELDREF_FIELD, name);
+				throw new InvalidAttributeException(fieldRef, org.dmg.pmml.PMMLAttributes.FIELDREF_FIELD, name);
 			}
 		}
 

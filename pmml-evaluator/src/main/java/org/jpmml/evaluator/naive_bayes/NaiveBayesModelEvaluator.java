@@ -51,6 +51,8 @@ import org.dmg.pmml.naive_bayes.BayesInput;
 import org.dmg.pmml.naive_bayes.BayesInputs;
 import org.dmg.pmml.naive_bayes.BayesOutput;
 import org.dmg.pmml.naive_bayes.NaiveBayesModel;
+import org.dmg.pmml.naive_bayes.PMMLAttributes;
+import org.dmg.pmml.naive_bayes.PMMLElements;
 import org.dmg.pmml.naive_bayes.PairCounts;
 import org.dmg.pmml.naive_bayes.TargetValueCount;
 import org.dmg.pmml.naive_bayes.TargetValueCounts;
@@ -73,8 +75,6 @@ import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.NumberUtil;
-import org.jpmml.evaluator.PMMLAttributes;
-import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.TargetField;
@@ -84,7 +84,7 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueUtil;
 import org.jpmml.evaluator.VerificationUtil;
-import org.jpmml.evaluator.XPathUtil;
+import org.jpmml.model.XPathUtil;
 
 public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 

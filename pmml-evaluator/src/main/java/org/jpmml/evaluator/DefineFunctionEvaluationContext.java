@@ -25,6 +25,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.ParameterField;
 
 public class DefineFunctionEvaluationContext extends EvaluationContext {

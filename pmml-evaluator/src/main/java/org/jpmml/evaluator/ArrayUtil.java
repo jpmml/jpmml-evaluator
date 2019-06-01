@@ -27,6 +27,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.Array;
+import org.dmg.pmml.PMMLAttributes;
 
 public class ArrayUtil {
 

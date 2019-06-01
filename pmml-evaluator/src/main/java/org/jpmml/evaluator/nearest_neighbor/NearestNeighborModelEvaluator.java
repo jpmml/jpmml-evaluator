@@ -68,6 +68,8 @@ import org.dmg.pmml.nearest_neighbor.InstanceFields;
 import org.dmg.pmml.nearest_neighbor.KNNInput;
 import org.dmg.pmml.nearest_neighbor.KNNInputs;
 import org.dmg.pmml.nearest_neighbor.NearestNeighborModel;
+import org.dmg.pmml.nearest_neighbor.PMMLAttributes;
+import org.dmg.pmml.nearest_neighbor.PMMLElements;
 import org.dmg.pmml.nearest_neighbor.TrainingInstances;
 import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.CacheUtil;
@@ -89,8 +91,6 @@ import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.PMMLAttributes;
-import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeInfo;
@@ -847,7 +847,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				public DataType getDataType(){
 					DataType dataType = derivedField.getDataType();
 					if(dataType == null){
-						throw new MissingAttributeException(derivedField, PMMLAttributes.DERIVEDFIELD_DATATYPE);
+						throw new MissingAttributeException(derivedField, org.dmg.pmml.PMMLAttributes.DERIVEDFIELD_DATATYPE);
 					}
 
 					return dataType;
@@ -857,7 +857,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				public OpType getOpType(){
 					OpType opType = derivedField.getOpType();
 					if(opType == null){
-						throw new MissingAttributeException(derivedField, PMMLAttributes.DERIVEDFIELD_OPTYPE);
+						throw new MissingAttributeException(derivedField, org.dmg.pmml.PMMLAttributes.DERIVEDFIELD_OPTYPE);
 					}
 
 					return opType;

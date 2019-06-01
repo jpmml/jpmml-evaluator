@@ -42,6 +42,7 @@ import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMMLFunctions;
 import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.TextIndex.CountHits;
 import org.dmg.pmml.TextIndexNormalization;
@@ -272,7 +273,7 @@ public class ExpressionUtilTest {
 	public void evaluateApply(){
 		FieldName name = FieldName.create("x");
 
-		Apply apply = new Apply("/")
+		Apply apply = new Apply(PMMLFunctions.DIVIDE)
 			.addExpressions(new FieldRef(name), new Constant("0"));
 
 		assertEquals(null, evaluate(apply, name, null));
@@ -314,10 +315,10 @@ public class ExpressionUtilTest {
 	public void evaluateApplyCondition(){
 		FieldName name = FieldName.create("x");
 
-		Apply condition = new Apply("isNotMissing")
+		Apply condition = new Apply(PMMLFunctions.ISNOTMISSING)
 			.addExpressions(new FieldRef(name));
 
-		Apply apply = new Apply("if")
+		Apply apply = new Apply(PMMLFunctions.IF)
 			.addExpressions(condition);
 
 		try {
@@ -328,7 +329,7 @@ public class ExpressionUtilTest {
 			// Ignored
 		}
 
-		Expression thenPart = new Apply("abs")
+		Expression thenPart = new Apply(PMMLFunctions.ABS)
 			.addExpressions(new FieldRef(name));
 
 		apply.addExpressions(thenPart);

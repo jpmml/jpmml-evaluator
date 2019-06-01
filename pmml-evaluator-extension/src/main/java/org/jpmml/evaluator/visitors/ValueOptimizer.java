@@ -41,6 +41,8 @@ import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.NormDiscrete;
+import org.dmg.pmml.PMMLAttributes;
+import org.dmg.pmml.PMMLElements;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
@@ -64,15 +66,13 @@ import org.dmg.pmml.regression.CategoricalPredictor;
 import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
-import org.jpmml.evaluator.PMMLAttributes;
-import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.RichComplexArray;
 import org.jpmml.evaluator.RichDataField;
 import org.jpmml.evaluator.TypeCheckException;
 import org.jpmml.evaluator.TypeUtil;
-import org.jpmml.evaluator.XPathUtil;
 import org.jpmml.evaluator.general_regression.RichBaseCumHazardTables;
 import org.jpmml.evaluator.naive_bayes.RichBayesInput;
+import org.jpmml.model.XPathUtil;
 import org.jpmml.model.visitors.FieldResolver;
 
 public class ValueOptimizer extends FieldResolver {
@@ -132,7 +132,7 @@ public class ValueOptimizer extends FieldResolver {
 
 				FieldName name = bayesInput.getField();
 				if(name == null){
-					throw new MissingAttributeException(bayesInput, PMMLAttributes.BAYESINPUT_FIELD);
+					throw new MissingAttributeException(bayesInput, org.dmg.pmml.naive_bayes.PMMLAttributes.BAYESINPUT_FIELD);
 				}
 
 				DataType dataType = getDataType(name);
@@ -149,7 +149,7 @@ public class ValueOptimizer extends FieldResolver {
 	public VisitorAction visit(CategoricalPredictor categoricalPredictor){
 		FieldName name = categoricalPredictor.getField();
 		if(name == null){
-			throw new MissingAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
+			throw new MissingAttributeException(categoricalPredictor, org.dmg.pmml.regression.PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
 		}
 
 		parseValue(name, categoricalPredictor);
@@ -310,7 +310,7 @@ public class ValueOptimizer extends FieldResolver {
 	public VisitorAction visit(PPCell ppCell){
 		FieldName name = ppCell.getField();
 		if(name == null){
-			throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_FIELD);
+			throw new MissingAttributeException(ppCell, org.dmg.pmml.general_regression.PMMLAttributes.PPCELL_FIELD);
 		}
 
 		parseValue(name, ppCell);

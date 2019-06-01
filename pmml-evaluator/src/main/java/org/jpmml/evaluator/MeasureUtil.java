@@ -32,10 +32,12 @@ import org.dmg.pmml.Euclidean;
 import org.dmg.pmml.Jaccard;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.Minkowski;
+import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Similarity;
 import org.dmg.pmml.SimpleMatching;
 import org.dmg.pmml.SquaredEuclidean;
 import org.dmg.pmml.Tanimoto;
+import org.jpmml.model.XPathUtil;
 
 public class MeasureUtil {
 

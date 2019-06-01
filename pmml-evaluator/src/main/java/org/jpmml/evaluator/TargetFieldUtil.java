@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Value;
 
 public class TargetFieldUtil {

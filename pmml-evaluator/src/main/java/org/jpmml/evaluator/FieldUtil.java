@@ -36,8 +36,10 @@ import org.dmg.pmml.HasDiscreteDomain;
 import org.dmg.pmml.Interval;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Value;
+import org.jpmml.model.XPathUtil;
 
 public class FieldUtil {
 

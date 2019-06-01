@@ -29,9 +29,9 @@ import com.google.common.collect.ImmutableMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.general_regression.BaseCumHazardTables;
 import org.dmg.pmml.general_regression.BaselineStratum;
+import org.dmg.pmml.general_regression.PMMLAttributes;
 import org.jpmml.evaluator.MapHolder;
 import org.jpmml.evaluator.MissingAttributeException;
-import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.model.ReflectionUtil;
 

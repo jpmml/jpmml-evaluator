@@ -26,6 +26,7 @@ import com.google.common.collect.ImmutableMap;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.ParameterField;
 
 public class FunctionUtil {

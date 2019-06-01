@@ -32,6 +32,7 @@ import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MissingValueTreatmentMethod;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethod;
+import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Value;
 

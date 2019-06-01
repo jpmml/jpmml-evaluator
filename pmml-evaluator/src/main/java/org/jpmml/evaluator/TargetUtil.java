@@ -25,6 +25,7 @@ import java.util.Map;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 

@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import org.dmg.pmml.PMMLObject;
+import org.jpmml.model.XPathUtil;
 
 public class InvalidElementException extends InvalidMarkupException {
 

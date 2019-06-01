@@ -23,6 +23,8 @@ import java.util.List;
 import org.dmg.pmml.LinearNorm;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.OutlierTreatmentMethod;
+import org.dmg.pmml.PMMLAttributes;
+import org.dmg.pmml.PMMLElements;
 
 public class NormalizationUtil {
 

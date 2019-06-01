@@ -45,6 +45,8 @@ import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.Interval;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMMLAttributes;
+import org.dmg.pmml.PMMLElements;
 
 public class DiscretizationUtil {
 
@@ -234,7 +236,7 @@ public class DiscretizationUtil {
 		for(DiscretizeBin discretizeBin : discretizeBins){
 			Interval interval = discretizeBin.getInterval();
 			if(interval == null){
-				throw new MissingAttributeException(discretizeBin, PMMLAttributes.DISCRETIZEBIN_INTERVAL);
+				throw new MissingElementException(discretizeBin, PMMLElements.DISCRETIZEBIN_INTERVAL);
 			}
 
 			Range<Double> range = toRange(interval);

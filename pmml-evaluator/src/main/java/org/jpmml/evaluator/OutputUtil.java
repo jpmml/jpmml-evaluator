@@ -35,6 +35,7 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.OutputField;
+import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
@@ -786,7 +787,7 @@ public class OutputUtil {
 			private Number getConfidence(AssociationRule associationRule){
 				Number confidence = associationRule.getConfidence();
 				if(confidence == null){
-					throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_CONFIDENCE);
+					throw new MissingAttributeException(associationRule, org.dmg.pmml.association.PMMLAttributes.ASSOCIATIONRULE_CONFIDENCE);
 				}
 
 				return confidence;
@@ -795,7 +796,7 @@ public class OutputUtil {
 			private Number getSupport(AssociationRule associationRule){
 				Number support = associationRule.getSupport();
 				if(support == null){
-					throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_SUPPORT);
+					throw new MissingAttributeException(associationRule, org.dmg.pmml.association.PMMLAttributes.ASSOCIATIONRULE_SUPPORT);
 				}
 
 				return support;
@@ -804,7 +805,7 @@ public class OutputUtil {
 			private Number getLift(AssociationRule associationRule){
 				Number lift = associationRule.getLift();
 				if(lift == null){
-					throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_LIFT);
+					throw new MissingAttributeException(associationRule, org.dmg.pmml.association.PMMLAttributes.ASSOCIATIONRULE_LIFT);
 				}
 
 				return lift;
@@ -813,7 +814,7 @@ public class OutputUtil {
 			private Number getLeverage(AssociationRule associationRule){
 				Number leverage = associationRule.getLeverage();
 				if(leverage == null){
-					throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_LEVERAGE);
+					throw new MissingAttributeException(associationRule, org.dmg.pmml.association.PMMLAttributes.ASSOCIATIONRULE_LEVERAGE);
 				}
 
 				return leverage;
@@ -822,7 +823,7 @@ public class OutputUtil {
 			private Number getAffinity(AssociationRule associationRule){
 				Number affinity = associationRule.getAffinity();
 				if(affinity == null){
-					throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_AFFINITY);
+					throw new MissingAttributeException(associationRule, org.dmg.pmml.association.PMMLAttributes.ASSOCIATIONRULE_AFFINITY);
 				}
 
 				return affinity;

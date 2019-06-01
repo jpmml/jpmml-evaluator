@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import com.google.common.collect.ImmutableMap;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Value;
 import org.jpmml.model.ReflectionUtil;
 

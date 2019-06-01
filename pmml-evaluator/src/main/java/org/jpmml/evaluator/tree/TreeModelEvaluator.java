@@ -34,6 +34,8 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.ScoreDistribution;
 import org.dmg.pmml.tree.Node;
+import org.dmg.pmml.tree.PMMLAttributes;
+import org.dmg.pmml.tree.PMMLElements;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.EntityUtil;
@@ -44,8 +46,6 @@ import org.jpmml.evaluator.MisplacedAttributeException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.PMMLAttributes;
-import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
@@ -167,7 +167,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 			// "It is not possible that the scoring process ends in a Node which does not have a score attribute"
 			if(node != null && !node.hasScore()){
-				throw new MissingAttributeException(node, PMMLAttributes.NODE_SCORE);
+				throw new MissingAttributeException(node, PMMLAttributes.COMPLEXNODE_SCORE);
 			}
 
 			return node;
@@ -238,7 +238,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		// "The defaultChild missing value strategy requires the presence of the defaultChild attribute in every non-leaf Node"
 		Object defaultChild = node.getDefaultChild();
 		if(defaultChild == null){
-			throw new MissingAttributeException(node, PMMLAttributes.NODE_DEFAULTCHILD);
+			throw new MissingAttributeException(node, PMMLAttributes.COMPLEXNODE_DEFAULTCHILD);
 		}
 
 		trail.addMissingLevel();
@@ -261,7 +261,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 		}
 
 		// "Only Nodes which are immediate children of the respective Node can be referenced"
-		throw new InvalidAttributeException(node, PMMLAttributes.NODE_DEFAULTCHILD, defaultChild);
+		throw new InvalidAttributeException(node, PMMLAttributes.COMPLEXNODE_DEFAULTCHILD, defaultChild);
 	}
 
 	private Trail handleNoTrueChild(Trail trail){
@@ -389,11 +389,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 			if(hasProbabilities){
 
 				if(probability == null){
-					throw new MissingAttributeException(scoreDistribution, PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY);
+					throw new MissingAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY);
 				} // End if
 
 				if(probability.doubleValue() < 0d || probability.doubleValue() > 1d){
-					throw new InvalidAttributeException(scoreDistribution, PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY, probability);
+					throw new InvalidAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY, probability);
 				}
 
 				sum.add(probability);
@@ -403,12 +403,12 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 			{
 				if(probability != null){
-					throw new MisplacedAttributeException(scoreDistribution, PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY, probability);
+					throw new MisplacedAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY, probability);
 				}
 
 				Number recordCount = scoreDistribution.getRecordCount();
 				if(recordCount == null){
-					throw new MissingAttributeException(scoreDistribution, PMMLAttributes.SCOREDISTRIBUTION_RECORDCOUNT);
+					throw new MissingAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.SCOREDISTRIBUTION_RECORDCOUNT);
 				}
 
 				sum.add(recordCount);
@@ -418,7 +418,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 			Object targetCategory = scoreDistribution.getValue();
 			if(targetCategory == null){
-				throw new MissingAttributeException(scoreDistribution, PMMLAttributes.SCOREDISTRIBUTION_VALUE);
+				throw new MissingAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.SCOREDISTRIBUTION_VALUE);
 			}
 
 			targetCategory = TypeUtil.format(targetCategory);

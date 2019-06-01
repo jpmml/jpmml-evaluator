@@ -25,6 +25,8 @@ import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Matrix;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OutputField;
+import org.dmg.pmml.PMMLAttributes;
+import org.dmg.pmml.PMMLFunctions;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.TableLocator;
 import org.dmg.pmml.TextIndex;
@@ -47,7 +49,6 @@ import org.dmg.pmml.text.TextModel;
 import org.dmg.pmml.time_series.TimeSeriesModel;
 import org.dmg.pmml.tree.DecisionTree;
 import org.dmg.pmml.tree.TreeModel;
-import org.jpmml.evaluator.PMMLAttributes;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.UnsupportedMarkupException;
@@ -82,13 +83,13 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 		String function = apply.getFunction();
 
 		switch(function){
-			case "erf":
-			case "normalCDF":
-			case "normalIDF":
-			case "normalPDF":
-			case "stdNormalCDF":
-			case "stdNormalIDF":
-			case "stdNormalPDF":
+			case PMMLFunctions.ERF:
+			case PMMLFunctions.NORMALCDF:
+			case PMMLFunctions.NORMALIDF:
+			case PMMLFunctions.NORMALPDF:
+			case PMMLFunctions.STDNORMALCDF:
+			case PMMLFunctions.STDNORMALIDF:
+			case PMMLFunctions.STDNORMALPDF:
 				report(new UnsupportedAttributeException(apply, PMMLAttributes.APPLY_FUNCTION, function));
 				break;
 			default:
@@ -262,7 +263,7 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 	public VisitorAction visit(SupportVectorMachineModel supportVectorMachineModel){
 		boolean maxWins = supportVectorMachineModel.isMaxWins();
 		if(maxWins){
-			report(new UnsupportedAttributeException(supportVectorMachineModel, PMMLAttributes.SUPPORTVECTORMACHINEMODEL_MAXWINS, true));
+			report(new UnsupportedAttributeException(supportVectorMachineModel, org.dmg.pmml.support_vector_machine.PMMLAttributes.SUPPORTVECTORMACHINEMODEL_MAXWINS, true));
 		}
 
 		SupportVectorMachineModel.Representation representation = supportVectorMachineModel.getRepresentation();

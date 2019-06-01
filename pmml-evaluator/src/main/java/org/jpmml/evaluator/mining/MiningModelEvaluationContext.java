@@ -27,7 +27,6 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.mining.Segment;
 import org.jpmml.evaluator.ModelEvaluationContext;
-import org.jpmml.evaluator.ModelEvaluator;
 
 public class MiningModelEvaluationContext extends ModelEvaluationContext {
 
@@ -89,8 +88,8 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 	}
 
 	public DerivedField getLocalDerivedField(FieldName name){
-		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
+		MiningModelEvaluator miningModelEvaluator = getModelEvaluator();
 
-		return modelEvaluator.getLocalDerivedField(name);
+		return miningModelEvaluator.getLocalDerivedField(name);
 	}
 }

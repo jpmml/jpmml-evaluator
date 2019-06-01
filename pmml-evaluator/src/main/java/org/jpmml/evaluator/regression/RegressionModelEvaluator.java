@@ -29,6 +29,8 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.regression.CategoricalPredictor;
 import org.dmg.pmml.regression.NumericPredictor;
+import org.dmg.pmml.regression.PMMLAttributes;
+import org.dmg.pmml.regression.PMMLElements;
 import org.dmg.pmml.regression.PredictorTerm;
 import org.dmg.pmml.regression.RegressionModel;
 import org.dmg.pmml.regression.RegressionTable;
@@ -43,8 +45,6 @@ import org.jpmml.evaluator.InvalidElementListException;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.PMMLAttributes;
-import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
@@ -81,7 +81,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		FieldName targetName = regressionModel.getTargetField();
 		if(targetName != null && !Objects.equals(targetField.getFieldName(), targetName)){
-			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELDNAME, targetName);
+			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELD, targetName);
 		}
 
 		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
@@ -125,7 +125,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		FieldName targetName = regressionModel.getTargetField();
 		if(targetName != null && !Objects.equals(targetField.getFieldName(), targetName)){
-			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELDNAME, targetName);
+			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELD, targetName);
 		}
 
 		OpType opType = targetField.getOpType();

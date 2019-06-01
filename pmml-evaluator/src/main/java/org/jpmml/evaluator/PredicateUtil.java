@@ -34,11 +34,14 @@ import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.False;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.HasPredicate;
+import org.dmg.pmml.PMMLAttributes;
+import org.dmg.pmml.PMMLElements;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.True;
+import org.jpmml.model.XPathUtil;
 
 public class PredicateUtil {
 

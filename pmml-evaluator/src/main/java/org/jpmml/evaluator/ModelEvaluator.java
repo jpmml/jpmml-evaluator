@@ -60,11 +60,14 @@ import org.dmg.pmml.ModelVerification;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.PMMLAttributes;
+import org.dmg.pmml.PMMLElements;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.TransformationDictionary;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
+import org.jpmml.model.XPathUtil;
 
 /**
  * @see ModelEvaluatorBuilder

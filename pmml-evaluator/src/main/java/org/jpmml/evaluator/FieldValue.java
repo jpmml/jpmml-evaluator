@@ -39,6 +39,7 @@ import org.dmg.pmml.HasValueSet;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLObject;
 import org.jpmml.model.ToStringHelper;
+import org.jpmml.model.XPathUtil;
 
 /**
  * <p>

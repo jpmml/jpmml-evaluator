@@ -49,6 +49,8 @@ import org.dmg.pmml.regression.CategoricalPredictor;
 import org.dmg.pmml.support_vector_machine.Coefficient;
 import org.dmg.pmml.support_vector_machine.Coefficients;
 import org.dmg.pmml.support_vector_machine.Kernel;
+import org.dmg.pmml.support_vector_machine.PMMLAttributes;
+import org.dmg.pmml.support_vector_machine.PMMLElements;
 import org.dmg.pmml.support_vector_machine.SupportVector;
 import org.dmg.pmml.support_vector_machine.SupportVectorMachine;
 import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
@@ -74,8 +76,6 @@ import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.Numbers;
-import org.jpmml.evaluator.PMMLAttributes;
-import org.jpmml.evaluator.PMMLElements;
 import org.jpmml.evaluator.PMMLException;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.SparseArrayUtil;
@@ -85,8 +85,8 @@ import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
-import org.jpmml.evaluator.XPathUtil;
 import org.jpmml.model.ReflectionUtil;
+import org.jpmml.model.XPathUtil;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
 
@@ -407,7 +407,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 				FieldName name = categoricalPredictor.getName();
 				if(name == null){
-					throw new MissingAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
+					throw new MissingAttributeException(categoricalPredictor, org.dmg.pmml.regression.PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
 				}
 
 				FieldValue value = context.evaluate(name);
@@ -417,7 +417,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 				Number coefficient = categoricalPredictor.getCoefficient();
 				if(coefficient != null && coefficient.doubleValue() != 1d){
-					throw new InvalidAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_COEFFICIENT, coefficient);
+					throw new InvalidAttributeException(categoricalPredictor, org.dmg.pmml.regression.PMMLAttributes.CATEGORICALPREDICTOR_COEFFICIENT, coefficient);
 				}
 
 				boolean equals = value.equals(categoricalPredictor);

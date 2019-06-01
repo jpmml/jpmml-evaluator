@@ -45,8 +45,11 @@ import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMMLAttributes;
+import org.dmg.pmml.PMMLFunctions;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.TextIndex;
+import org.jpmml.model.XPathUtil;
 
 public class ExpressionUtil {
 
@@ -285,7 +288,7 @@ public class ExpressionUtil {
 		String function = apply.getFunction();
 
 		condition:
-		if(("if").equals(function)){
+		if((PMMLFunctions.IF).equals(function)){
 
 			if(arguments.hasNext()){
 				FieldValue flag = evaluate(arguments.next(), context);

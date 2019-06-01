@@ -25,6 +25,7 @@ import java.util.function.Predicate;
 
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
+import org.jpmml.model.XPathUtil;
 
 public class PMMLUtil {
 

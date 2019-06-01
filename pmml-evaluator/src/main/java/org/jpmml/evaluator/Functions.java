@@ -38,6 +38,7 @@ import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMMLFunctions;
 import org.jpmml.evaluator.functions.AbstractFunction;
 import org.jpmml.evaluator.functions.AbstractNumericFunction;
 import org.jpmml.evaluator.functions.AggregateFunction;
@@ -55,7 +56,7 @@ import org.jpmml.evaluator.functions.ValueListFunction;
 
 public interface Functions {
 
-	ArithmeticFunction PLUS = new ArithmeticFunction("+"){
+	ArithmeticFunction PLUS = new ArithmeticFunction(PMMLFunctions.ADD){
 
 		@Override
 		public Number evaluate(Number left, Number right){
@@ -68,7 +69,7 @@ public interface Functions {
 		}
 	};
 
-	ArithmeticFunction MINUS = new ArithmeticFunction("-"){
+	ArithmeticFunction MINUS = new ArithmeticFunction(PMMLFunctions.SUBTRACT){
 
 		@Override
 		public Number evaluate(Number left, Number right){
@@ -81,7 +82,7 @@ public interface Functions {
 		}
 	};
 
-	ArithmeticFunction MULTIPLY = new ArithmeticFunction("*"){
+	ArithmeticFunction MULTIPLY = new ArithmeticFunction(PMMLFunctions.MULTIPLY){
 
 		@Override
 		public Number evaluate(Number left, Number right){
@@ -94,7 +95,7 @@ public interface Functions {
 		}
 	};
 
-	ArithmeticFunction DIVIDE = new ArithmeticFunction("/"){
+	ArithmeticFunction DIVIDE = new ArithmeticFunction(PMMLFunctions.DIVIDE){
 
 		@Override
 		public Number evaluate(Number left, Number right){
@@ -107,7 +108,7 @@ public interface Functions {
 		}
 	};
 
-	ArithmeticFunction MODULO = new ArithmeticFunction("x-modulo"){
+	ArithmeticFunction MODULO = new ArithmeticFunction(PMMLFunctions.MODULO){
 
 		@Override
 		public Number evaluate(Number left, Number right){
@@ -123,7 +124,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateFunction MIN = new AggregateFunction("min"){
+	AggregateFunction MIN = new AggregateFunction(PMMLFunctions.MIN){
 
 		@Override
 		public Min createStatistic(){
@@ -131,7 +132,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateFunction MAX = new AggregateFunction("max"){
+	AggregateFunction MAX = new AggregateFunction(PMMLFunctions.MAX){
 
 		@Override
 		public Max createStatistic(){
@@ -139,7 +140,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateFunction AVG = new AggregateFunction("avg"){
+	AggregateFunction AVG = new AggregateFunction(PMMLFunctions.AVG){
 
 		@Override
 		public Mean createStatistic(){
@@ -157,7 +158,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateFunction SUM = new AggregateFunction("sum"){
+	AggregateFunction SUM = new AggregateFunction(PMMLFunctions.SUM){
 
 		@Override
 		public Sum createStatistic(){
@@ -165,7 +166,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateFunction PRODUCT = new AggregateFunction("product"){
+	AggregateFunction PRODUCT = new AggregateFunction(PMMLFunctions.PRODUCT){
 
 		@Override
 		public Product createStatistic(){
@@ -173,7 +174,7 @@ public interface Functions {
 		}
 	};
 
-	FpMathFunction LOG10 = new FpMathFunction("log10"){
+	FpMathFunction LOG10 = new FpMathFunction(PMMLFunctions.LOG10){
 
 		@Override
 		public Double evaluate(Number value){
@@ -181,7 +182,7 @@ public interface Functions {
 		}
 	};
 
-	FpMathFunction LN = new FpMathFunction("ln"){
+	FpMathFunction LN = new FpMathFunction(PMMLFunctions.LN){
 
 		@Override
 		public Double evaluate(Number value){
@@ -189,7 +190,7 @@ public interface Functions {
 		}
 	};
 
-	FpMathFunction LN1P = new FpMathFunction("x-ln1p"){
+	FpMathFunction LN1P = new FpMathFunction(PMMLFunctions.LN1P){
 
 		@Override
 		public Double evaluate(Number value){
@@ -197,7 +198,7 @@ public interface Functions {
 		}
 	};
 
-	FpMathFunction EXP = new FpMathFunction("exp"){
+	FpMathFunction EXP = new FpMathFunction(PMMLFunctions.EXP){
 
 		@Override
 		public Double evaluate(Number value){
@@ -205,7 +206,7 @@ public interface Functions {
 		}
 	};
 
-	FpMathFunction EXPM1 = new FpMathFunction("x-expm1"){
+	FpMathFunction EXPM1 = new FpMathFunction(PMMLFunctions.EXPM1){
 
 		@Override
 		public Double evaluate(Number value){
@@ -213,7 +214,7 @@ public interface Functions {
 		}
 	};
 
-	FpMathFunction SQRT = new FpMathFunction("sqrt"){
+	FpMathFunction SQRT = new FpMathFunction(PMMLFunctions.SQRT){
 
 		@Override
 		public Double evaluate(Number value){
@@ -221,7 +222,7 @@ public interface Functions {
 		}
 	};
 
-	MathFunction ABS = new MathFunction("abs"){
+	MathFunction ABS = new MathFunction(PMMLFunctions.ABS){
 
 		@Override
 		public Number evaluate(Number value){
@@ -234,7 +235,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractNumericFunction POW = new AbstractNumericFunction("pow"){
+	AbstractNumericFunction POW = new AbstractNumericFunction(PMMLFunctions.POW){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -252,7 +253,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractNumericFunction THRESHOLD = new AbstractNumericFunction("threshold"){
+	AbstractNumericFunction THRESHOLD = new AbstractNumericFunction(PMMLFunctions.THRESHOLD){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -270,7 +271,7 @@ public interface Functions {
 		}
 	};
 
-	MathFunction FLOOR = new MathFunction("floor"){
+	MathFunction FLOOR = new MathFunction(PMMLFunctions.FLOOR){
 
 		@Override
 		public Integer evaluate(Number number){
@@ -285,7 +286,7 @@ public interface Functions {
 		}
 	};
 
-	MathFunction CEIL = new MathFunction("ceil"){
+	MathFunction CEIL = new MathFunction(PMMLFunctions.CEIL){
 
 		@Override
 		public Integer evaluate(Number number){
@@ -300,7 +301,7 @@ public interface Functions {
 		}
 	};
 
-	MathFunction ROUND = new MathFunction("round"){
+	MathFunction ROUND = new MathFunction(PMMLFunctions.ROUND){
 
 		@Override
 		public Integer evaluate(Number number){
@@ -323,7 +324,7 @@ public interface Functions {
 		}
 	};
 
-	MathFunction RINT = new MathFunction("x-rint"){
+	MathFunction RINT = new MathFunction(PMMLFunctions.RINT){
 
 		@Override
 		public Double evaluate(Number number){
@@ -331,7 +332,7 @@ public interface Functions {
 		}
 	};
 
-	ValueFunction IS_MISSING = new ValueFunction("isMissing"){
+	ValueFunction IS_MISSING = new ValueFunction(PMMLFunctions.ISMISSING){
 
 		@Override
 		public Boolean evaluate(boolean isMissing){
@@ -339,7 +340,7 @@ public interface Functions {
 		}
 	};
 
-	ValueFunction IS_NOT_MISSING = new ValueFunction("isNotMissing"){
+	ValueFunction IS_NOT_MISSING = new ValueFunction(PMMLFunctions.ISNOTMISSING){
 
 		@Override
 		public Boolean evaluate(boolean isMissing){
@@ -347,7 +348,7 @@ public interface Functions {
 		}
 	};
 
-	EqualityFunction EQUAL = new EqualityFunction("equal"){
+	EqualityFunction EQUAL = new EqualityFunction(PMMLFunctions.EQUAL){
 
 		@Override
 		public Boolean evaluate(boolean equals){
@@ -355,7 +356,7 @@ public interface Functions {
 		}
 	};
 
-	EqualityFunction NOT_EQUAL = new EqualityFunction("notEqual"){
+	EqualityFunction NOT_EQUAL = new EqualityFunction(PMMLFunctions.NOTEQUAL){
 
 		@Override
 		public Boolean evaluate(boolean equals){
@@ -363,7 +364,7 @@ public interface Functions {
 		}
 	};
 
-	ComparisonFunction LESS_THAN = new ComparisonFunction("lessThan"){
+	ComparisonFunction LESS_THAN = new ComparisonFunction(PMMLFunctions.LESSTHAN){
 
 		@Override
 		public Boolean evaluate(int order){
@@ -371,7 +372,7 @@ public interface Functions {
 		}
 	};
 
-	ComparisonFunction LESS_OR_EQUAL = new ComparisonFunction("lessOrEqual"){
+	ComparisonFunction LESS_OR_EQUAL = new ComparisonFunction(PMMLFunctions.LESSOREQUAL){
 
 		@Override
 		public Boolean evaluate(int order){
@@ -379,7 +380,7 @@ public interface Functions {
 		}
 	};
 
-	ComparisonFunction GREATER_THAN = new ComparisonFunction("greaterThan"){
+	ComparisonFunction GREATER_THAN = new ComparisonFunction(PMMLFunctions.GREATERTHAN){
 
 		@Override
 		public Boolean evaluate(int order){
@@ -387,7 +388,7 @@ public interface Functions {
 		}
 	};
 
-	ComparisonFunction GREATER_OR_EQUAL = new ComparisonFunction("greaterOrEqual"){
+	ComparisonFunction GREATER_OR_EQUAL = new ComparisonFunction(PMMLFunctions.GREATEROREQUAL){
 
 		@Override
 		public Boolean evaluate(int order){
@@ -395,7 +396,7 @@ public interface Functions {
 		}
 	};
 
-	BinaryBooleanFunction AND = new BinaryBooleanFunction("and"){
+	BinaryBooleanFunction AND = new BinaryBooleanFunction(PMMLFunctions.AND){
 
 		@Override
 		public Boolean evaluate(Boolean left, Boolean right){
@@ -403,7 +404,7 @@ public interface Functions {
 		}
 	};
 
-	BinaryBooleanFunction OR = new BinaryBooleanFunction("or"){
+	BinaryBooleanFunction OR = new BinaryBooleanFunction(PMMLFunctions.OR){
 
 		@Override
 		public Boolean evaluate(Boolean left, Boolean right){
@@ -411,7 +412,7 @@ public interface Functions {
 		}
 	};
 
-	UnaryBooleanFunction NOT = new UnaryBooleanFunction("not"){
+	UnaryBooleanFunction NOT = new UnaryBooleanFunction(PMMLFunctions.NOT){
 
 		@Override
 		public Boolean evaluate(Boolean value){
@@ -419,7 +420,7 @@ public interface Functions {
 		}
 	};
 
-	ValueListFunction IS_IN = new ValueListFunction("isIn"){
+	ValueListFunction IS_IN = new ValueListFunction(PMMLFunctions.ISIN){
 
 		@Override
 		public Boolean evaluate(boolean isIn){
@@ -427,7 +428,7 @@ public interface Functions {
 		}
 	};
 
-	ValueListFunction IS_NOT_IN = new ValueListFunction("isNotIn"){
+	ValueListFunction IS_NOT_IN = new ValueListFunction(PMMLFunctions.ISNOTIN){
 
 		@Override
 		public Boolean evaluate(boolean isIn){
@@ -435,7 +436,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractFunction IF = new AbstractFunction("if"){
+	AbstractFunction IF = new AbstractFunction(PMMLFunctions.IF){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -458,7 +459,7 @@ public interface Functions {
 		}
 	};
 
-	StringFunction UPPERCASE = new StringFunction("uppercase"){
+	StringFunction UPPERCASE = new StringFunction(PMMLFunctions.UPPERCASE){
 
 		@Override
 		public String evaluate(String value){
@@ -466,7 +467,7 @@ public interface Functions {
 		}
 	};
 
-	StringFunction LOWERCASE = new StringFunction("lowercase"){
+	StringFunction LOWERCASE = new StringFunction(PMMLFunctions.LOWERCASE){
 
 		@Override
 		public String evaluate(String value){
@@ -474,7 +475,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractFunction SUBSTRING = new AbstractFunction("substring"){
+	AbstractFunction SUBSTRING = new AbstractFunction(PMMLFunctions.SUBSTRING){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -504,7 +505,7 @@ public interface Functions {
 		}
 	};
 
-	StringFunction TRIM_BLANKS = new StringFunction("trimBlanks"){
+	StringFunction TRIM_BLANKS = new StringFunction(PMMLFunctions.TRIMBLANKS){
 
 		@Override
 		public String evaluate(String value){
@@ -512,7 +513,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractFunction CONCAT = new AbstractFunction("concat"){
+	AbstractFunction CONCAT = new AbstractFunction(PMMLFunctions.CONCAT){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -527,7 +528,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractFunction REPLACE = new AbstractFunction("replace"){
+	AbstractFunction REPLACE = new AbstractFunction(PMMLFunctions.REPLACE){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -549,7 +550,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractFunction MATCHES = new AbstractFunction("matches"){
+	AbstractFunction MATCHES = new AbstractFunction(PMMLFunctions.MATCHES){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -568,7 +569,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractFunction FORMAT_NUMBER = new AbstractFunction("formatNumber"){
+	AbstractFunction FORMAT_NUMBER = new AbstractFunction(PMMLFunctions.FORMATNUMBER){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -593,7 +594,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractFunction FORMAT_DATETIME = new AbstractFunction("formatDatetime"){
+	AbstractFunction FORMAT_DATETIME = new AbstractFunction(PMMLFunctions.FORMATDATETIME){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -639,7 +640,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractFunction DATE_DAYS_SINCE_YEAR = new AbstractFunction("dateDaysSinceYear"){
+	AbstractFunction DATE_DAYS_SINCE_YEAR = new AbstractFunction(PMMLFunctions.DATEDAYSSINCEYEAR){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -655,7 +656,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractFunction DATE_SECONDS_SINCE_MIDNIGHT = new AbstractFunction("dateSecondsSinceMidnight"){
+	AbstractFunction DATE_SECONDS_SINCE_MIDNIGHT = new AbstractFunction(PMMLFunctions.DATESECONDSSINCEMIDNIGHT){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -669,7 +670,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractFunction DATE_SECONDS_SINCE_YEAR = new AbstractFunction("dateSecondsSinceYear"){
+	AbstractFunction DATE_SECONDS_SINCE_YEAR = new AbstractFunction(PMMLFunctions.DATESECONDSSINCEYEAR){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -685,7 +686,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractNumericFunction HYPOT = new AbstractNumericFunction("x-hypot"){
+	AbstractNumericFunction HYPOT = new AbstractNumericFunction(PMMLFunctions.HYPOT){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -701,7 +702,7 @@ public interface Functions {
 		}
 	};
 
-	TrigonometricFunction SIN = new TrigonometricFunction("x-sin"){
+	TrigonometricFunction SIN = new TrigonometricFunction(PMMLFunctions.SIN){
 
 		@Override
 		public Double evaluate(Number value){
@@ -709,7 +710,7 @@ public interface Functions {
 		}
 	};
 
-	TrigonometricFunction COS = new TrigonometricFunction("x-cos"){
+	TrigonometricFunction COS = new TrigonometricFunction(PMMLFunctions.COS){
 
 		@Override
 		public Double evaluate(Number value){
@@ -717,7 +718,7 @@ public interface Functions {
 		}
 	};
 
-	TrigonometricFunction TAN = new TrigonometricFunction("x-tan"){
+	TrigonometricFunction TAN = new TrigonometricFunction(PMMLFunctions.TAN){
 
 		@Override
 		public Double evaluate(Number value){
@@ -725,7 +726,7 @@ public interface Functions {
 		}
 	};
 
-	TrigonometricFunction ASIN = new TrigonometricFunction("x-asin"){
+	TrigonometricFunction ASIN = new TrigonometricFunction(PMMLFunctions.ASIN){
 
 		@Override
 		public Double evaluate(Number value){
@@ -733,7 +734,7 @@ public interface Functions {
 		}
 	};
 
-	TrigonometricFunction ACOS = new TrigonometricFunction("x-acos"){
+	TrigonometricFunction ACOS = new TrigonometricFunction(PMMLFunctions.ACOS){
 
 		@Override
 		public Double evaluate(Number value){
@@ -741,7 +742,7 @@ public interface Functions {
 		}
 	};
 
-	TrigonometricFunction ATAN = new TrigonometricFunction("x-atan"){
+	TrigonometricFunction ATAN = new TrigonometricFunction(PMMLFunctions.ATAN){
 
 		@Override
 		public Double evaluate(Number value){
@@ -749,7 +750,7 @@ public interface Functions {
 		}
 	};
 
-	AbstractNumericFunction ATAN2 = new AbstractNumericFunction("x-atan2"){
+	AbstractNumericFunction ATAN2 = new AbstractNumericFunction(PMMLFunctions.ATAN2){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
@@ -768,7 +769,7 @@ public interface Functions {
 		}
 	};
 
-	TrigonometricFunction SINH = new TrigonometricFunction("x-sinh"){
+	TrigonometricFunction SINH = new TrigonometricFunction(PMMLFunctions.SINH){
 
 		@Override
 		public Double evaluate(Number value){
@@ -776,7 +777,7 @@ public interface Functions {
 		}
 	};
 
-	TrigonometricFunction COSH = new TrigonometricFunction("x-cosh"){
+	TrigonometricFunction COSH = new TrigonometricFunction(PMMLFunctions.COSH){
 
 		@Override
 		public Double evaluate(Number value){
@@ -784,7 +785,7 @@ public interface Functions {
 		}
 	};
 
-	TrigonometricFunction TANH = new TrigonometricFunction("x-tanh"){
+	TrigonometricFunction TANH = new TrigonometricFunction(PMMLFunctions.TANH){
 
 		@Override
 		public Double evaluate(Number value){

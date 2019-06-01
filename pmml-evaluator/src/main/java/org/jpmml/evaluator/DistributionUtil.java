@@ -22,6 +22,7 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 import org.dmg.pmml.ContinuousDistribution;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.GaussianDistribution;
+import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PoissonDistribution;
 
 public class DistributionUtil {

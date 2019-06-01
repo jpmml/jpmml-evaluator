@@ -21,6 +21,8 @@ package org.jpmml.evaluator;
 import java.lang.reflect.Field;
 
 import org.dmg.pmml.PMMLObject;
+import org.jpmml.model.EnumUtil;
+import org.jpmml.model.XPathUtil;
 
 public class UnsupportedAttributeException extends UnsupportedMarkupException {
 
