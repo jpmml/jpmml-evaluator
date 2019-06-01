@@ -97,7 +97,7 @@ public class FunctionUtil {
 		ImmutableMap.Builder<String, Function> builder = new ImmutableMap.Builder<>();
 
 		List<? extends Function> functions = Arrays.asList(
-			Functions.PLUS, Functions.MINUS, Functions.MULTIPLY, Functions.DIVIDE,
+			Functions.ADD, Functions.SUBTRACT, Functions.MULTIPLY, Functions.DIVIDE,
 			Functions.MIN, Functions.MAX, Functions.AVG, Functions.SUM, Functions.PRODUCT,
 			Functions.LOG10, Functions.LN, Functions.EXP, Functions.SQRT, Functions.ABS, Functions.POW, Functions.THRESHOLD, Functions.FLOOR, Functions.CEIL, Functions.ROUND,
 			Functions.IS_MISSING, Functions.IS_NOT_MISSING,

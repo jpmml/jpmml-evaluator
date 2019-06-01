@@ -156,10 +156,10 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 					Scorecard.ReasonCodeAlgorithm reasonCodeAlgorithm = scorecard.getReasonCodeAlgorithm();
 					switch(reasonCodeAlgorithm){
 						case POINTS_ABOVE:
-							difference = Functions.MINUS.evaluate(partialScore, baselineScore);
+							difference = Functions.SUBTRACT.evaluate(partialScore, baselineScore);
 							break;
 						case POINTS_BELOW:
-							difference = Functions.MINUS.evaluate(baselineScore, partialScore);
+							difference = Functions.SUBTRACT.evaluate(baselineScore, partialScore);
 							break;
 						default:
 							throw new UnsupportedAttributeException(scorecard, reasonCodeAlgorithm);

@@ -34,24 +34,24 @@ public class FunctionTest {
 
 	@Test
 	public void evaluateArithmeticFunctions(){
-		assertEquals(4, evaluate(Functions.PLUS, 1, 3));
-		assertEquals(-2, evaluate(Functions.MINUS, 1, 3));
+		assertEquals(4, evaluate(Functions.ADD, 1, 3));
+		assertEquals(-2, evaluate(Functions.SUBTRACT, 1, 3));
 		assertEquals(3d, evaluate(Functions.MULTIPLY, 1, 3));
 		assertEquals(0, evaluate(Functions.DIVIDE, 1, 3));
 
-		assertEquals(null, evaluate(Functions.PLUS, 1, null));
-		assertEquals(null, evaluate(Functions.PLUS, null, 1));
+		assertEquals(null, evaluate(Functions.ADD, 1, null));
+		assertEquals(null, evaluate(Functions.ADD, null, 1));
 
-		assertEquals(4d, evaluate(Functions.PLUS, 1d, 3d));
-		assertEquals(-2d, evaluate(Functions.MINUS, 1d, 3d));
+		assertEquals(4d, evaluate(Functions.ADD, 1d, 3d));
+		assertEquals(-2d, evaluate(Functions.SUBTRACT, 1d, 3d));
 		assertEquals(3d, evaluate(Functions.MULTIPLY, 1d, 3d));
 		assertEquals((1d / 3d), evaluate(Functions.DIVIDE, 1d, 3d));
 
-		assertEquals(null, evaluate(Functions.PLUS, 1d, null));
-		assertEquals(null, evaluate(Functions.PLUS, null, 1d));
+		assertEquals(null, evaluate(Functions.ADD, 1d, null));
+		assertEquals(null, evaluate(Functions.ADD, null, 1d));
 
 		try {
-			evaluate(Functions.PLUS, true, true);
+			evaluate(Functions.ADD, true, true);
 
 			fail();
 		} catch(EvaluationException ee){

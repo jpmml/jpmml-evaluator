@@ -510,7 +510,7 @@ public class OutputUtil {
 	private Number getContinuousResidual(Object value, FieldValue expectedValue){
 		value = getPredictedValue(value);
 
-		return Functions.MINUS.evaluate(expectedValue.asNumber(), (Number)value);
+		return Functions.SUBTRACT.evaluate(expectedValue.asNumber(), (Number)value);
 	}
 
 	static
@@ -521,7 +521,7 @@ public class OutputUtil {
 
 		boolean equals = expectedValue.equalsValue(value);
 
-		return Functions.MINUS.evaluate(equals ? Numbers.DOUBLE_ONE : Numbers.DOUBLE_ZERO, hasProbability.getProbability(TypeUtil.format(value)));
+		return Functions.SUBTRACT.evaluate(equals ? Numbers.DOUBLE_ONE : Numbers.DOUBLE_ZERO, hasProbability.getProbability(TypeUtil.format(value)));
 	}
 
 	static

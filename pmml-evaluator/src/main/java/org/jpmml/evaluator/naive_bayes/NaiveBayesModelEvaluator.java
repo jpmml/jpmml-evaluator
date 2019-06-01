@@ -393,7 +393,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 					} else
 
 					{
-						countSum = Functions.PLUS.evaluate(countSum, count);
+						countSum = Functions.ADD.evaluate(countSum, count);
 					}
 
 					countSums.put((String)targetCategory, countSum);

@@ -56,7 +56,7 @@ import org.jpmml.evaluator.functions.ValueListFunction;
 
 public interface Functions {
 
-	ArithmeticFunction PLUS = new ArithmeticFunction(PMMLFunctions.ADD){
+	ArithmeticFunction ADD = new ArithmeticFunction(PMMLFunctions.ADD){
 
 		@Override
 		public Number evaluate(Number left, Number right){
@@ -69,7 +69,7 @@ public interface Functions {
 		}
 	};
 
-	ArithmeticFunction MINUS = new ArithmeticFunction(PMMLFunctions.SUBTRACT){
+	ArithmeticFunction SUBTRACT = new ArithmeticFunction(PMMLFunctions.SUBTRACT){
 
 		@Override
 		public Number evaluate(Number left, Number right){
