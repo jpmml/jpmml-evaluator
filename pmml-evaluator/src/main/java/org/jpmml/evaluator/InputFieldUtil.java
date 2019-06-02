@@ -33,7 +33,6 @@ import org.dmg.pmml.MissingValueTreatmentMethod;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethod;
 import org.dmg.pmml.PMMLAttributes;
-import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Value;
 
 public class InputFieldUtil {
@@ -267,12 +266,15 @@ public class InputFieldUtil {
 			return getStatus(dataField, miningField, value, compatible);
 		}
 
-		return (compatible ? Value.Property.VALID : Value.Property.INVALID);
+		if(!compatible){
+			return Value.Property.INVALID;
+		}
+
+		return Value.Property.VALID;
 	}
 
 	static
 	private Value.Property getStatus(DataField dataField, MiningField miningField, Object value, boolean compatible){
-		boolean hasValidSpace = false;
 
 		if(dataField.hasValues()){
 			DataType dataType = dataField.getDataType();
@@ -309,6 +311,8 @@ public class InputFieldUtil {
 					// Ignored
 				}
 			}
+
+			boolean hasValidSpace = false;
 
 			List<Value> pmmlValues = dataField.getValues();
 			for(int i = 0, max = pmmlValues.size(); i < max; i++){
@@ -364,6 +368,11 @@ public class InputFieldUtil {
 					return property;
 				}
 			}
+
+			// "If a field contains at least one Value element where the value of property is valid, then the set of Value elements completely defines the set of valid values"
+			if(hasValidSpace){
+				return Value.Property.INVALID;
+			}
 		} // End if
 
 		if(!compatible){
@@ -371,47 +380,37 @@ public class InputFieldUtil {
 		} // End if
 
 		if(dataField.hasIntervals()){
-			PMMLObject locatable = miningField;
-
-			OpType opType = miningField.getOpType();
+			OpType opType = miningField.getOpType(dataField.getOpType());
 			if(opType == null){
-				locatable = dataField;
-
-				opType = dataField.getOpType();
+				throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_OPTYPE);
 			}
 
 			switch(opType){
 				case CONTINUOUS:
-					{
-						RangeSet<Double> validRanges = FieldUtil.getValidRanges(dataField);
-
-						Double doubleValue;
-
-						if(value instanceof FieldValue){
-							FieldValue fieldValue = (FieldValue)value;
-
-							doubleValue = fieldValue.asDouble();
-						} else
-
-						{
-							throw new IllegalArgumentException();
-						}
-
-						// "If intervals are present, then a value that is outside the intervals is considered invalid"
-						return (validRanges.contains(doubleValue) ? Value.Property.VALID : Value.Property.INVALID);
-					}
-				case CATEGORICAL:
-				case ORDINAL:
+					break;
+				default:
 					// "Intervals are not allowed for non-continuous fields"
 					throw new InvalidElementException(dataField);
-				default:
-					throw new UnsupportedAttributeException(locatable, opType);
 			}
-		}
 
-		// "If a field contains at least one Value element where the value of property is valid, then the set of Value elements completely defines the set of valid values"
-		if(hasValidSpace){
-			return Value.Property.INVALID;
+			RangeSet<Double> validRanges = FieldUtil.getValidRanges(dataField);
+
+			Double doubleValue;
+
+			if(value instanceof FieldValue){
+				FieldValue fieldValue = (FieldValue)value;
+
+				doubleValue = fieldValue.asDouble();
+			} else
+
+			{
+				throw new IllegalArgumentException();
+			}
+
+			// "If intervals are present, then a value that is outside the intervals is considered invalid"
+			if(!validRanges.contains(doubleValue)){
+				return Value.Property.INVALID;
+			}
 		}
 
 		// "Any value is valid by default"
