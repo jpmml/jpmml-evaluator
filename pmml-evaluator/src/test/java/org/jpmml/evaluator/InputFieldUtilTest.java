@@ -70,6 +70,14 @@ public class InputFieldUtilTest {
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 
 		try {
+			prepare(dataField, miningField, Double.NaN);
+
+			fail();
+		} catch(InvalidResultException ire){
+			// Ignored
+		}
+
+		try {
 			prepare(dataField, miningField, "one");
 
 			fail();
@@ -78,6 +86,8 @@ public class InputFieldUtilTest {
 		}
 
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_IS);
+
+		assertEquals(Double.NaN, prepare(dataField, miningField, Double.NaN));
 
 		try {
 			prepare(dataField, miningField, "one");
@@ -89,9 +99,18 @@ public class InputFieldUtilTest {
 
 		miningField.setInvalidValueReplacement("0");
 
+		assertEquals(0d, prepare(dataField, miningField, Double.NaN));
 		assertEquals(0d, prepare(dataField, miningField, "one"));
 
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
+
+		try {
+			prepare(dataField, miningField, Double.NaN);
+
+			fail();
+		} catch(InvalidMarkupException ime){
+			// Ignored
+		}
 
 		try {
 			prepare(dataField, miningField, "one");
@@ -110,6 +129,7 @@ public class InputFieldUtilTest {
 		assertEquals(null, prepare(dataField, miningField, null));
 		assertEquals(null, prepare(dataField, miningField, "N/A"));
 
+		assertEquals(null, prepare(dataField, miningField, Double.NaN));
 		assertEquals(null, prepare(dataField, miningField, "one"));
 
 		miningField.setMissingValueReplacement("0");
@@ -117,6 +137,7 @@ public class InputFieldUtilTest {
 		assertEquals(0d, prepare(dataField, miningField, null));
 		assertEquals(0d, prepare(dataField, miningField, "N/A"));
 
+		assertEquals(0d, prepare(dataField, miningField, Double.NaN));
 		assertEquals(0d, prepare(dataField, miningField, "one"));
 
 		miningField.setOutlierTreatment(OutlierTreatmentMethod.AS_IS)

@@ -270,7 +270,7 @@ public class InputFieldUtil {
 			return Value.Property.INVALID;
 		}
 
-		return Value.Property.VALID;
+		return getStatus(value);
 	}
 
 	static
@@ -414,7 +414,39 @@ public class InputFieldUtil {
 		}
 
 		// "Any value is valid by default"
-		return Value.Property.VALID;
+		return getStatus(value);
+	}
+
+	static
+	private Value.Property getStatus(Object value){
+
+		if(value instanceof FieldValue){
+			FieldValue fieldValue = (FieldValue)value;
+
+			DataType dataType = fieldValue.getDataType();
+			switch(dataType){
+				case FLOAT:
+					Float floatValue = fieldValue.asFloat();
+					if(floatValue.isNaN()){
+						return Value.Property.INVALID;
+					}
+					break;
+				case DOUBLE:
+					Double doubleValue = fieldValue.asDouble();
+					if(doubleValue.isNaN()){
+						return Value.Property.INVALID;
+					}
+					break;
+				default:
+					break;
+			}
+
+			return Value.Property.VALID;
+		} else
+
+		{
+			throw new IllegalArgumentException();
+		}
 	}
 
 	static
