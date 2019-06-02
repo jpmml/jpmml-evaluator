@@ -450,12 +450,15 @@ if(targetValue instanceof HasEntityId){
 	BiMap<String, ? extends Entity> entities = hasEntityRegistry.getEntityRegistry();
 
 	Entity winner = entities.get(hasEntityId.getEntityId());
+}
 
-	// Test for "probability" result feature
-	if(targetValue instanceof HasProbability){
-		HasProbability hasProbability = (HasProbability)targetValue;
+// Test for "probability" result feature
+if(targetValue instanceof HasProbability){
+	HasProbability hasProbability = (HasProbability)targetValue;
 
-		Double winnerProbability = hasProbability.getProbability(winner.getId());
+	Set<String> categories = hasProbability.getCategories();
+	for(String category : categories){
+		Double categoryProbability = hasProbability.getProbability(category);
 	}
 }
 ```
