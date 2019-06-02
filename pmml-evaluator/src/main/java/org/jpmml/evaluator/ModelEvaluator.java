@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -62,12 +63,14 @@ import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PMMLElements;
+import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.TransformationDictionary;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
 import org.jpmml.model.XPathUtil;
+import org.jpmml.model.visitors.FieldResolver;
 
 /**
  * @see ModelEvaluatorBuilder
@@ -124,6 +127,9 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	transient
 	private Set<org.dmg.pmml.ResultFeature> resultFeatures = null;
+
+	transient
+	private Map<FieldName, Field<?>> resolvedFields = null;
 
 
 	protected ModelEvaluator(PMML pmml, M model){
@@ -714,26 +720,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		}
 	}
 
-	protected Field<?> resolveField(FieldName name){
-		Field<?> result = getDataField(name);
-
-		if(result == null){
-			result = resolveDerivedField(name);
-		}
-
-		return result;
-	}
-
-	protected DerivedField resolveDerivedField(FieldName name){
-		DerivedField result = getDerivedField(name);
-
-		if(result == null){
-			result = getLocalDerivedField(name);
-		}
-
-		return result;
-	}
-
 	protected boolean assessParentCompatibility(){
 		List<InputField> inputFields = getInputFields();
 
@@ -945,6 +931,44 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		}
 
 		return Sets.immutableEnumSet(resultFeatures);
+	}
+
+	protected Field<?> resolveField(FieldName name){
+
+		if(this.resolvedFields == null){
+			this.resolvedFields = resolveFields();
+		}
+
+		return this.resolvedFields.get(name);
+	}
+
+	private Map<FieldName, Field<?>> resolveFields(){
+		Map<FieldName, Field<?>> result = new HashMap<>();
+
+		PMML pmml = getPMML();
+		Model model = getModel();
+
+		FieldResolver fieldResolver = new FieldResolver(){
+
+			@Override
+			public PMMLObject popParent(){
+				PMMLObject parent = super.popParent();
+
+				if(Objects.equals(model, parent)){
+					Model model = (Model)parent;
+
+					Collection<Field<?>> fields = getFields(model);
+
+					result.putAll(org.jpmml.model.visitors.FieldUtil.nameMap(fields));
+				}
+
+				return parent;
+			}
+		};
+
+		fieldResolver.applyTo(pmml);
+
+		return result;
 	}
 
 	private void resetInputFields(){

@@ -587,7 +587,14 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			if(field instanceof DerivedField){
 				DerivedField derivedField = (DerivedField)field;
 
-				fieldLoaders.add(new DerivedFieldLoader(name, column, derivedField));
+				boolean inherited = (modelEvaluator.getDerivedField(name) == null) && (modelEvaluator.getLocalDerivedField(name) == null);
+
+				MiningField miningField = modelEvaluator.getMiningField(name);
+				if(miningField == null && inherited){
+					throw new InvisibleFieldException(name, instanceField);
+				}
+
+				fieldLoaders.add(new DerivedFieldLoader(name, column, derivedField, miningField));
 			} else
 
 			{
@@ -615,10 +622,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		for(KNNInput knnInput : knnInputs){
 			FieldName name = knnInput.getField();
 
-			DerivedField derivedField = modelEvaluator.resolveDerivedField(name);
-			if(derivedField == null){
+			Field<?> field = modelEvaluator.resolveField(name);
+			if(!(field instanceof DerivedField)){
 				continue;
 			}
+
+			DerivedField derivedField = (DerivedField)field;
 
 			Set<Integer> rowKeys = result.rowKeySet();
 			for(Integer rowKey : rowKeys){
@@ -830,16 +839,24 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		private DerivedField derivedField = null;
 
+		private MiningField miningField = null;
 
-		private DerivedFieldLoader(FieldName name, String column, DerivedField derivedField){
+
+		private DerivedFieldLoader(FieldName name, String column, DerivedField derivedField, MiningField miningField){
 			super(name, column);
 
 			setDerivedField(derivedField);
+			setMiningField(miningField);
 		}
 
 		@Override
 		public FieldValue prepare(Object value){
 			DerivedField derivedField = getDerivedField();
+			MiningField miningField = getMiningField();
+
+			if(miningField != null){
+				return InputFieldUtil.prepareInputValue(derivedField, miningField, value);
+			}
 
 			TypeInfo typeInfo = new TypeInfo(){
 
@@ -880,6 +897,14 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		private void setDerivedField(DerivedField derivedField){
 			this.derivedField = derivedField;
+		}
+
+		public MiningField getMiningField(){
+			return this.miningField;
+		}
+
+		private void setMiningField(MiningField miningField){
+			this.miningField = miningField;
 		}
 	}
 
