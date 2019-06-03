@@ -21,6 +21,9 @@ package org.jpmml.evaluator.regression;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
+import org.jpmml.evaluator.EvaluationContext;
+import org.jpmml.evaluator.EvaluationException;
+import org.jpmml.evaluator.FieldNameTable;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.ModelEvaluationContext;
@@ -29,6 +32,7 @@ import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class TransformationDictionaryTest extends ModelEvaluatorTest {
 
@@ -67,6 +71,78 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 
 		assertValueEquals(null, evaluate(name, createArguments("Value", 3, "Modifier", null)));
 		assertValueEquals(null, evaluate(name, createArguments("Value", 3, "Modifier", true)));
+	}
+
+	@Test
+	public void evaluateSelfRef() throws Exception {
+		FieldName name = FieldName.create("SelfRef");
+
+		Map<FieldName, ?> arguments = createArguments("Value", 1, "Modifier", false);
+
+		assertValueEquals(1d, evaluate(name, arguments));
+
+		arguments = createArguments("Value", 1, "Modifier", true);
+
+		try {
+			evaluate(name, arguments);
+
+			fail();
+		} catch(StackOverflowError see){
+			// Ignored
+		}
+
+		EvaluationContext.SYMBOLTABLE_PROVIDER.set(new FieldNameTable());
+
+		try {
+			evaluate(name, arguments);
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		} finally {
+			EvaluationContext.SYMBOLTABLE_PROVIDER.set(null);
+		} // End try
+
+		try {
+			evaluate(name, arguments);
+
+			fail();
+		} catch(StackOverflowError see){
+			// Ignored
+		}
+	}
+
+	@Test
+	public void evaluateRef() throws Exception {
+		FieldName name = FieldName.create("Ref");
+
+		Map<FieldName, ?> arguments = createArguments("Value", 1);
+
+		try {
+			evaluate(name, arguments);
+
+			fail();
+		} catch(StackOverflowError see){
+			// Ignored
+		}
+
+		EvaluationContext.SYMBOLTABLE_PROVIDER.set(new FieldNameTable());
+
+		try {
+			evaluate(name, arguments);
+		} catch(EvaluationException ee){
+			// Ignored
+		} finally {
+			EvaluationContext.SYMBOLTABLE_PROVIDER.set(null);
+		} // End try
+
+		try {
+			evaluate(name, arguments);
+
+			fail();
+		} catch(StackOverflowError see){
+			// Ignored
+		}
 	}
 
 	private FieldValue evaluate(FieldName name, Map<FieldName, ?> arguments) throws Exception {

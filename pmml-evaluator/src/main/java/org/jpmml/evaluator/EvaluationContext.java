@@ -111,7 +111,20 @@ public class EvaluationContext {
 			return value;
 		}
 
-		return resolve(name);
+		SymbolTable<FieldName> symbolTable = EvaluationContext.SYMBOLTABLE_PROVIDER.get();
+
+		if(symbolTable != null){
+			symbolTable.lock(name);
+		}
+
+		try {
+			return resolve(name);
+		} finally {
+
+			if(symbolTable != null){
+				symbolTable.release(name);
+			}
+		}
 	}
 
  	/**
@@ -215,6 +228,14 @@ public class EvaluationContext {
 		@Override
 		public OpType getOpType(){
 			return OpType.CONTINUOUS;
+		}
+	};
+
+	public static final ThreadLocal<SymbolTable<FieldName>> SYMBOLTABLE_PROVIDER = new ThreadLocal<SymbolTable<FieldName>>(){
+
+		@Override
+		public SymbolTable<FieldName> initialValue(){
+			return null;
 		}
 	};
 }

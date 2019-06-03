@@ -103,5 +103,24 @@
 				</InlineTable>
 			</MapValues>
 		</DerivedField>
+		<DerivedField name="SelfRef" dataType="double">
+			<Apply function="if">
+				<FieldRef field="Modifier"/>
+				<Apply function="+">
+					<FieldRef field="Value"/>
+					<FieldRef field="SelfRef"/>
+				</Apply>
+				<FieldRef field="Value"/>
+			</Apply>
+		</DerivedField>
+		<DerivedField name="Ref" dataType="double">
+			<Apply function="+">
+				<FieldRef field="Value"/>
+				<FieldRef field="BackRef"/>
+			</Apply>
+		</DerivedField>
+		<DerivedField name="BackRef" dataType="double">
+			<FieldRef field="Ref"/>
+		</DerivedField>
 	</TransformationDictionary>
 </PMML>
