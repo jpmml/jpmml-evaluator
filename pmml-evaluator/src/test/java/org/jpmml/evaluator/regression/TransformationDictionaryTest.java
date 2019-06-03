@@ -145,6 +145,29 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 		}
 	}
 
+	@Test
+	public void evaluateChain() throws Exception {
+		Map<FieldName, ?> arguments = createArguments("Value", 1);
+
+		EvaluationContext.SYMBOLTABLE_PROVIDER.set(new FieldNameTable(2));
+
+		try {
+			assertValueEquals(1d, evaluate(FieldName.create("StageOne"), arguments));
+
+			try {
+				evaluate(FieldName.create("StageThree"), arguments);
+
+				fail();
+			} catch(EvaluationException ee){
+				// Ignored
+			}
+		} finally {
+			EvaluationContext.SYMBOLTABLE_PROVIDER.set(null);
+		}
+
+		assertValueEquals(1d, evaluate(FieldName.create("StageThree"), arguments));
+	}
+
 	private FieldValue evaluate(FieldName name, Map<FieldName, ?> arguments) throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 

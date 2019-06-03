@@ -24,8 +24,25 @@ import org.dmg.pmml.FieldName;
 
 public class FieldNameTable extends HashSet<FieldName> implements SymbolTable<FieldName> {
 
+	private int capacity = Integer.MAX_VALUE;
+
+
+	public FieldNameTable(){
+	}
+
+	public FieldNameTable(int capacity){
+		setCapacity(capacity);
+	}
+
 	@Override
 	public void lock(FieldName name){
+		int capacity = getCapacity();
+
+		int size = size();
+		if(size >= capacity){
+			throw new EvaluationException("Field reference chain is too long");
+		}
+
 		boolean unique = add(name);
 		if(!unique){
 			throw new EvaluationException("Field " + EvaluationException.formatKey(name) + " references itself");
@@ -35,5 +52,18 @@ public class FieldNameTable extends HashSet<FieldName> implements SymbolTable<Fi
 	@Override
 	public void release(FieldName name){
 		remove(name);
+	}
+
+	public int getCapacity(){
+		return this.capacity;
+	}
+
+	private void setCapacity(int capacity){
+
+		if(capacity < 0){
+			throw new IllegalArgumentException();
+		}
+
+		this.capacity = capacity;
 	}
 }

@@ -122,5 +122,14 @@
 		<DerivedField name="BackRef" dataType="double">
 			<FieldRef field="Ref"/>
 		</DerivedField>
+		<DerivedField name="StageOne" dataType="double">
+			<FieldRef field="Value"/>
+		</DerivedField>
+		<DerivedField name="StageTwo" dataType="double">
+			<FieldRef field="StageOne"/>
+		</DerivedField>
+		<DerivedField name="StageThree" dataType="double">
+			<FieldRef field="StageTwo"/>
+		</DerivedField>
 	</TransformationDictionary>
 </PMML>
