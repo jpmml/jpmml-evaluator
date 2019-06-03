@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Villu Ruusmann
+ * Copyright (c) 2014 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,42 +18,41 @@
  */
 package org.jpmml.evaluator.functions;
 
-import org.dmg.pmml.DataType;
+import java.util.List;
+
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FieldValues;
-import org.jpmml.evaluator.FunctionException;
+import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class AbstractNumericFunction extends AbstractFunction {
+public class ValueSpaceFunction extends MultiaryFunction {
 
-	public AbstractNumericFunction(String name){
+	public ValueSpaceFunction(String name){
 		super(name);
 	}
 
+	abstract
+	public Boolean evaluate(boolean isIn);
+
 	@Override
-	protected FieldValue checkArgument(FieldValue argument, int index, String alias){
+	public FieldValue evaluate(List<FieldValue> arguments){
+		checkVariableArityArguments(arguments, 2);
 
-		if(FieldValueUtil.isMissing(argument)){
-			return FieldValues.MISSING_VALUE;
+		return evaluate(getOptionalArgument(arguments, 0), arguments.subList(1, arguments.size()));
+	}
+
+	private FieldValue evaluate(FieldValue value, List<FieldValue> values){
+		Boolean result;
+
+		if(FieldValueUtil.isMissing(value)){
+			result = evaluate(values.contains(FieldValues.MISSING_VALUE));
+		} else
+
+		{
+			result = evaluate(value.isIn(values));
 		}
 
-		DataType dataType = argument.getDataType();
-		switch(dataType){
-			case INTEGER:
-			case FLOAT:
-			case DOUBLE:
-				break;
-			default:
-				if(alias != null){
-					throw new FunctionException(this, "Expected a numeric \'" + alias + "\' value at position " + index + ", got " + dataType.value() + " value");
-				} else
-
-				{
-					throw new FunctionException(this, "Expected a numeric value at position " + index + ", got " + dataType.value() + " value");
-				}
-		}
-
-		return argument;
+		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 	}
 }

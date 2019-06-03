@@ -18,14 +18,12 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.List;
-
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class EqualityFunction extends AbstractFunction {
+public class EqualityFunction extends BinaryFunction {
 
 	public EqualityFunction(String name){
 		super(name);
@@ -35,13 +33,7 @@ public class EqualityFunction extends AbstractFunction {
 	public Boolean evaluate(boolean equals);
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkFixedArityArguments(arguments, 2);
-
-		return evaluate(getRequiredArgument(arguments, 0), getRequiredArgument(arguments, 1));
-	}
-
-	private FieldValue evaluate(FieldValue left, FieldValue right){
+	public FieldValue evaluate(FieldValue left, FieldValue right){
 		Boolean result = evaluate((left).equalsValue(right));
 
 		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);

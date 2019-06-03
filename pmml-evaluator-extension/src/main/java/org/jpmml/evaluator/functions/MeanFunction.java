@@ -18,8 +18,8 @@
  */
 package org.jpmml.evaluator.functions;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.dmg.pmml.DataType;
@@ -42,29 +42,17 @@ import org.jpmml.evaluator.TypeUtil;
  *
  * @see Mean
  */
-public class MeanFunction extends AbstractFunction {
+public class MeanFunction extends UnaryFunction {
 
 	public MeanFunction(){
 		this(MeanFunction.class.getName());
 	}
 
 	public MeanFunction(String name){
-		super(name);
+		super(name, Arrays.asList("values"));
 	}
 
-	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkFixedArityArguments(arguments, 1);
-
-		Collection<?> values = getRequiredArgument(arguments, 0, "values").asCollection();
-
-		Double result = evaluate(values);
-
-		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
-	}
-
-	static
-	private Double evaluate(Collection<?> values){
+	public Double evaluate(Collection<?> values){
 		Mean statistic = new Mean();
 
 		for(Object value : values){
@@ -74,5 +62,12 @@ public class MeanFunction extends AbstractFunction {
 		}
 
 		return statistic.getResult();
+	}
+
+	@Override
+	public FieldValue evaluate(FieldValue value){
+		Double result = evaluate(value.asCollection());
+
+		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 	}
 }

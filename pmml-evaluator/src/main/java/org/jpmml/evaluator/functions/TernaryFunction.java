@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2019 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -21,30 +21,25 @@ package org.jpmml.evaluator.functions;
 import java.util.List;
 
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class ValueFunction extends UnaryFunction {
+public class TernaryFunction extends AbstractFunction {
 
-	public ValueFunction(String name){
+	public TernaryFunction(String name){
 		super(name);
 	}
 
-	abstract
-	public Boolean evaluate(boolean isMissing);
-
-	@Override
-	public FieldValue evaluate(FieldValue value){
-		Boolean result = evaluate(FieldValueUtil.isMissing(value));
-
-		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
+	public TernaryFunction(String name, List<String> aliases){
+		super(name, aliases);
 	}
+
+	abstract
+	public FieldValue evaluate(FieldValue first, FieldValue second, FieldValue third);
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
-		checkFixedArityArguments(arguments, 1);
+		checkFixedArityArguments(arguments, 3);
 
-		return evaluate(getOptionalArgument(arguments, 0));
+		return evaluate(getRequiredArgument(arguments, 0), getRequiredArgument(arguments, 1), getRequiredArgument(arguments, 2));
 	}
 }

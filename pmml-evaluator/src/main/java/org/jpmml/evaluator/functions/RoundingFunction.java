@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2019 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,32 +18,25 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.List;
-
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class FpMathFunction extends AbstractNumericFunction {
+public class RoundingFunction extends UnaryMathFunction {
 
-	public FpMathFunction(String name){
+	public RoundingFunction(String name){
 		super(name);
 	}
 
+	@Override
 	abstract
-	public Double evaluate(Number value);
+	public Integer evaluate(Number value);
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkFixedArityArguments(arguments, 1);
-
-		return evaluate(getRequiredArgument(arguments, 0, "x"));
-	}
-
-	private FieldValue evaluate(FieldValue value){
+	public FieldValue evaluate(FieldValue value){
 		Number result = evaluate(value.asNumber());
 
-		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
+		return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, result);
 	}
 }

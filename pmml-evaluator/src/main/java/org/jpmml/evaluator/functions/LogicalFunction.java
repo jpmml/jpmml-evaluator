@@ -25,26 +25,25 @@ import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class ValueFunction extends UnaryFunction {
+public class LogicalFunction extends MultiaryFunction {
 
-	public ValueFunction(String name){
+	public LogicalFunction(String name){
 		super(name);
 	}
 
 	abstract
-	public Boolean evaluate(boolean isMissing);
-
-	@Override
-	public FieldValue evaluate(FieldValue value){
-		Boolean result = evaluate(FieldValueUtil.isMissing(value));
-
-		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
-	}
+	public Boolean evaluate(Boolean left, Boolean right);
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
-		checkFixedArityArguments(arguments, 1);
+		checkVariableArityArguments(arguments, 2);
 
-		return evaluate(getOptionalArgument(arguments, 0));
+		Boolean result = getRequiredArgument(arguments, 0).asBoolean();
+
+		for(int i = 1; i < arguments.size(); i++){
+			result = evaluate(result, getRequiredArgument(arguments, i).asBoolean());
+		}
+
+		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 	}
 }

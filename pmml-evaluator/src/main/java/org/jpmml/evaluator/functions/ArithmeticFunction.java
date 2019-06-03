@@ -29,7 +29,7 @@ import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UndefinedResultException;
 
 abstract
-public class ArithmeticFunction extends AbstractNumericFunction {
+public class ArithmeticFunction extends BinaryFunction {
 
 	public ArithmeticFunction(String name){
 		super(name);
@@ -39,13 +39,7 @@ public class ArithmeticFunction extends AbstractNumericFunction {
 	public Number evaluate(Number left, Number right);
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkFixedArityArguments(arguments, 2);
-
-		return evaluate(getOptionalArgument(arguments, 0), getOptionalArgument(arguments, 1));
-	}
-
-	private FieldValue evaluate(FieldValue left, FieldValue right){
+	public FieldValue evaluate(FieldValue left, FieldValue right){
 
 		// "If one of the input fields of a simple arithmetic function is a missing value, then the result evaluates to missing value"
 		if(FieldValueUtil.isMissing(left) || FieldValueUtil.isMissing(right)){
@@ -64,5 +58,12 @@ public class ArithmeticFunction extends AbstractNumericFunction {
 		}
 
 		return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
+	}
+
+	@Override
+	public FieldValue evaluate(List<FieldValue> arguments){
+		checkFixedArityArguments(arguments, 2);
+
+		return evaluate(getOptionalArgument(arguments, 0), getOptionalArgument(arguments, 1));
 	}
 }

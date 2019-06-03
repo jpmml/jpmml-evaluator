@@ -22,7 +22,7 @@ import java.util.List;
 
 import org.jpmml.evaluator.FieldValue;
 
-public class EchoFunction extends AbstractFunction {
+public class EchoFunction extends UnaryFunction {
 
 	public EchoFunction(){
 		this(EchoFunction.class.getName());
@@ -33,9 +33,14 @@ public class EchoFunction extends AbstractFunction {
 	}
 
 	@Override
+	public FieldValue evaluate(FieldValue value){
+		return value;
+	}
+
+	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
 		checkFixedArityArguments(arguments, 1);
 
-		return getOptionalArgument(arguments, 0);
+		return evaluate(getOptionalArgument(arguments, 0));
 	}
 }

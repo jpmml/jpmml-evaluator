@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2019 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -21,29 +21,25 @@ package org.jpmml.evaluator.functions;
 import java.util.List;
 
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class BinaryBooleanFunction extends AbstractFunction {
+public class BinaryFunction extends AbstractFunction {
 
-	public BinaryBooleanFunction(String name){
+	public BinaryFunction(String name){
 		super(name);
 	}
 
+	public BinaryFunction(String name, List<String> aliases){
+		super(name, aliases);
+	}
+
 	abstract
-	public Boolean evaluate(Boolean left, Boolean right);
+	public FieldValue evaluate(FieldValue left, FieldValue right);
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
-		checkVariableArityArguments(arguments, 2);
+		checkFixedArityArguments(arguments, 2);
 
-		Boolean result = getRequiredArgument(arguments, 0).asBoolean();
-
-		for(int i = 1; i < arguments.size(); i++){
-			result = evaluate(result, getRequiredArgument(arguments, i).asBoolean());
-		}
-
-		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
+		return evaluate(getRequiredArgument(arguments, 0), getRequiredArgument(arguments, 1));
 	}
 }

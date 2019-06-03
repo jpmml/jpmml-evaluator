@@ -29,7 +29,7 @@ import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.TypeUtil;
 
 abstract
-public class AggregateFunction extends AbstractNumericFunction {
+public class AggregateFunction extends MultiaryFunction {
 
 	public AggregateFunction(String name){
 		super(name);

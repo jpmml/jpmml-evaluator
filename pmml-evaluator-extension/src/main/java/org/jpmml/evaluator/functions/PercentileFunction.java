@@ -18,8 +18,8 @@
  */
 package org.jpmml.evaluator.functions;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.dmg.pmml.DataType;
@@ -46,34 +46,22 @@ import org.jpmml.evaluator.TypeUtil;
  *
  * @see Percentile
  */
-public class PercentileFunction extends AbstractFunction {
+public class PercentileFunction extends BinaryFunction {
 
 	public PercentileFunction(){
 		this(PercentileFunction.class.getName());
 	}
 
 	public PercentileFunction(String name){
-		super(name);
+		super(name, Arrays.asList("values", "percentile"));
 	}
 
-	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkFixedArityArguments(arguments, 2);
+	public Double evaluate(Collection<?> values, int percentile){
 
-		Collection<?> values = getRequiredArgument(arguments, 0, "values").asCollection();
-
-		int percentile = getRequiredArgument(arguments, 1, "percentile").asInteger();
 		if(percentile < 1 || percentile > 100){
 			throw new FunctionException(this, "Invalid \'percentile\' value " + percentile + ". Must be greater than 0 and equal or less than 100");
 		}
 
-		Double result = evaluate(values, percentile);
-
-		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
-	}
-
-	static
-	private Double evaluate(Collection<?> values, int percentile){
 		DoubleVector doubleValues = new ComplexDoubleVector(values.size());
 
 		for(Object value : values){
@@ -83,5 +71,12 @@ public class PercentileFunction extends AbstractFunction {
 		}
 
 		return doubleValues.doublePercentile(percentile);
+	}
+
+	@Override
+	public FieldValue evaluate(FieldValue left, FieldValue right){
+		Double result = evaluate(left.asCollection(), right.asInteger());
+
+		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 	}
 }

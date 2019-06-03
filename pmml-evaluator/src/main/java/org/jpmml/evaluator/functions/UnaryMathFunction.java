@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2019 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,17 +18,15 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.List;
-
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 
 abstract
-public class MathFunction extends AbstractNumericFunction {
+public class UnaryMathFunction extends UnaryFunction {
 
-	public MathFunction(String name){
+	public UnaryMathFunction(String name){
 		super(name);
 	}
 
@@ -36,21 +34,11 @@ public class MathFunction extends AbstractNumericFunction {
 	public Number evaluate(Number value);
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkFixedArityArguments(arguments, 1);
-
-		return evaluate(getRequiredArgument(arguments, 0, "x"));
-	}
-
-	private FieldValue evaluate(FieldValue value){
+	public FieldValue evaluate(FieldValue value){
 		DataType dataType = value.getDataType();
 
 		Number result = evaluate(value.asNumber());
 
-		return FieldValueUtil.create(getResultDataType(dataType), OpType.CONTINUOUS, result);
-	}
-
-	protected DataType getResultDataType(DataType dataType){
-		return dataType;
+		return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
 	}
 }

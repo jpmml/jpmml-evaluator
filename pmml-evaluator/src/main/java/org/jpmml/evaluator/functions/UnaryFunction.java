@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2019 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -21,29 +21,25 @@ package org.jpmml.evaluator.functions;
 import java.util.List;
 
 import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class StringFunction extends AbstractFunction {
+public class UnaryFunction extends AbstractFunction {
 
-	public StringFunction(String name){
+	public UnaryFunction(String name){
 		super(name);
 	}
 
+	public UnaryFunction(String name, List<String> aliases){
+		super(name, aliases);
+	}
+
 	abstract
-	public String evaluate(String value);
+	public FieldValue evaluate(FieldValue value);
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){
 		checkFixedArityArguments(arguments, 1);
 
 		return evaluate(getRequiredArgument(arguments, 0));
-	}
-
-	private FieldValue evaluate(FieldValue value){
-		String result = evaluate(value.asString());
-
-		return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
 	}
 }

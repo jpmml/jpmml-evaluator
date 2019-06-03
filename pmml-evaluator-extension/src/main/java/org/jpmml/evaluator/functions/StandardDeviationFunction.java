@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator.functions;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -43,34 +44,17 @@ import org.jpmml.evaluator.TypeUtil;
  *
  * @see StandardDeviation
  */
-public class StandardDeviationFunction extends AbstractFunction {
+public class StandardDeviationFunction extends MultiaryFunction {
 
 	public StandardDeviationFunction(){
 		this(StandardDeviationFunction.class.getName());
 	}
 
 	public StandardDeviationFunction(String name){
-		super(name);
+		super(name, Arrays.asList("values", "biasCorrected"));
 	}
 
-	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkVariableArityArguments(arguments, 1, 2);
-
-		Collection<?> values = getRequiredArgument(arguments, 0, "values").asCollection();
-
-		Boolean biasCorrected = Boolean.FALSE;
-		if(arguments.size() > 1){
-			biasCorrected = getRequiredArgument(arguments, 1, "biasCorrected").asBoolean();
-		}
-
-		Double result = evaluate(values, biasCorrected);
-
-		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
-	}
-
-	static
-	private Double evaluate(Collection<?> values, boolean biasCorrected){
+	public Double evaluate(Collection<?> values, boolean biasCorrected){
 		StandardDeviation statistic = new StandardDeviation();
 		statistic.setBiasCorrected(biasCorrected);
 
@@ -81,5 +65,22 @@ public class StandardDeviationFunction extends AbstractFunction {
 		}
 
 		return statistic.getResult();
+	}
+
+	@Override
+	public FieldValue evaluate(List<FieldValue> arguments){
+		checkVariableArityArguments(arguments, 1, 2);
+
+		Double result;
+
+		if(arguments.size() > 1){
+			result = evaluate(getRequiredArgument(arguments, 0).asCollection(), getRequiredArgument(arguments, 1).asBoolean());
+		} else
+
+		{
+			result = evaluate(getRequiredArgument(arguments, 0).asCollection(), Boolean.FALSE);
+		}
+
+		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 	}
 }

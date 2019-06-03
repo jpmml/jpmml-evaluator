@@ -18,14 +18,12 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.List;
-
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class UnaryBooleanFunction extends AbstractFunction {
+public class UnaryBooleanFunction extends UnaryFunction {
 
 	public UnaryBooleanFunction(String name){
 		super(name);
@@ -35,13 +33,7 @@ public class UnaryBooleanFunction extends AbstractFunction {
 	public Boolean evaluate(Boolean value);
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkFixedArityArguments(arguments, 1);
-
-		return evaluate(getRequiredArgument(arguments, 0));
-	}
-
-	private FieldValue evaluate(FieldValue value){
+	public FieldValue evaluate(FieldValue value){
 		Boolean result = evaluate(value.asBoolean());
 
 		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);

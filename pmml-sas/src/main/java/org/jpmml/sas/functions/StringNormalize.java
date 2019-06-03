@@ -18,30 +18,25 @@
  */
 package org.jpmml.sas.functions;
 
-import java.util.List;
+import java.util.Arrays;
 
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FunctionException;
 import org.jpmml.evaluator.TypeInfos;
-import org.jpmml.evaluator.functions.AbstractFunction;
+import org.jpmml.evaluator.functions.BinaryFunction;
 
-public class StringNormalize extends AbstractFunction {
+public class StringNormalize extends BinaryFunction {
 
 	public StringNormalize(){
-		super("SAS-EM-String-Normalize");
+		super("SAS-EM-String-Normalize", Arrays.asList("length", null));
 	}
 
-	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkFixedArityArguments(arguments, 2);
+	public String evaluate(int length, String string){
 
-		int length = getRequiredArgument(arguments, 0, "length").asInteger();
 		if(length < 0){
 			throw new FunctionException(this, "Invalid \'length\' value " + length);
 		}
-
-		String string = getRequiredArgument(arguments, 1).asString();
 
 		int offset = 0;
 
@@ -62,6 +57,13 @@ public class StringNormalize extends AbstractFunction {
 		// Convert to all uppercase characters
 		string = string.toUpperCase();
 
-		return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, string);
+		return string;
+	}
+
+	@Override
+	public FieldValue evaluate(FieldValue left, FieldValue right){
+		String result = evaluate(left.asInteger(), right.asString());
+
+		return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
 	}
 }
