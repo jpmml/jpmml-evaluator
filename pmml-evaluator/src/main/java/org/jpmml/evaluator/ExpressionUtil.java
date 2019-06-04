@@ -405,6 +405,12 @@ public class ExpressionUtil {
 
 		FieldValue result;
 
+		SymbolTable<String> symbolTable = EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.get();
+
+		if(symbolTable != null){
+			symbolTable.lock(function);
+		}
+
 		try {
 			result = evaluateFunction(function, values, context);
 		} catch(InvalidResultException ire){
@@ -421,6 +427,11 @@ public class ExpressionUtil {
 					return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, defaultValue);
 				default:
 					throw new UnsupportedAttributeException(apply, invalidValueTreatmentMethod);
+			}
+		} finally {
+
+			if(symbolTable != null){
+				symbolTable.release(function);
 			}
 		}
 

@@ -563,16 +563,16 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 		try {
 			if(fieldNameTable != null){
-				prevFieldNameTable = EvaluationContext.SYMBOLTABLE_PROVIDER.get();
+				prevFieldNameTable = EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.get();
 
-				EvaluationContext.SYMBOLTABLE_PROVIDER.set(fieldNameTable.fork());
+				EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(fieldNameTable.fork());
 			}
 
 			results = evaluateInternal(context);
 		} finally {
 
 			if(fieldNameTable != null){
-				EvaluationContext.SYMBOLTABLE_PROVIDER.set(prevFieldNameTable);
+				EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(prevFieldNameTable);
 			}
 		}
 

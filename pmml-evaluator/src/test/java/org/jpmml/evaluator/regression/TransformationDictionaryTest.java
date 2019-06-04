@@ -26,6 +26,7 @@ import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.FieldNameTable;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.FunctionNameTable;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
@@ -37,13 +38,75 @@ import static org.junit.Assert.fail;
 public class TransformationDictionaryTest extends ModelEvaluatorTest {
 
 	@Test
-	public void evaluateAmPm() throws Exception {
+	public void evaluateShift() throws Exception {
 		assertValueEquals("AM", evaluate(FieldName.create("Shift"), createArguments("StartTime", 34742)));
 	}
 
 	@Test
-	public void evaluateStategroup() throws Exception {
+	public void evaluateGroup() throws Exception {
 		assertValueEquals("West", evaluate(FieldName.create("Group"), createArguments("State", "CA")));
+	}
+
+	@Test
+	public void evaluatePower() throws Exception {
+		FieldName name = FieldName.create("Power");
+
+		Map<FieldName, ?> arguments = createArguments("Value", 2d, "Exponent", 1);
+
+		assertValueEquals(2d, evaluate(name, arguments));
+
+		arguments = createArguments("Value", 2d, "Exponent", 2);
+
+		assertValueEquals(4d, evaluate(name, arguments));
+
+		arguments = createArguments("Value", 2d, "Exponent", 5);
+
+		assertValueEquals(32d, evaluate(name, arguments));
+
+		EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.set(new FunctionNameTable(4));
+
+		try {
+			evaluate(name, arguments);
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		} finally {
+			EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.set(null);
+		}
+
+		assertValueEquals(32d, evaluate(name, arguments));
+
+		// XXX
+		arguments = createArguments("Value", 1d, "Exponent", 1024);
+
+		try {
+			evaluate(name, arguments);
+
+			fail();
+		} catch(StackOverflowError soe){
+			// Ignored
+		}
+
+		EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.set(new FunctionNameTable(16));
+
+		try {
+			evaluate(name, arguments);
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		} finally {
+			EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.set(null);
+		} // End try
+
+		try {
+			evaluate(name, arguments);
+
+			fail();
+		} catch(StackOverflowError soe){
+			// Ignored
+		}
 	}
 
 	@Test
@@ -87,11 +150,11 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 			evaluate(name, arguments);
 
 			fail();
-		} catch(StackOverflowError see){
+		} catch(StackOverflowError soe){
 			// Ignored
 		}
 
-		EvaluationContext.SYMBOLTABLE_PROVIDER.set(new FieldNameTable());
+		EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameTable());
 
 		try {
 			evaluate(name, arguments);
@@ -100,14 +163,14 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 		} catch(EvaluationException ee){
 			// Ignored
 		} finally {
-			EvaluationContext.SYMBOLTABLE_PROVIDER.set(null);
+			EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(null);
 		} // End try
 
 		try {
 			evaluate(name, arguments);
 
 			fail();
-		} catch(StackOverflowError see){
+		} catch(StackOverflowError soe){
 			// Ignored
 		}
 	}
@@ -122,25 +185,25 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 			evaluate(name, arguments);
 
 			fail();
-		} catch(StackOverflowError see){
+		} catch(StackOverflowError soe){
 			// Ignored
 		}
 
-		EvaluationContext.SYMBOLTABLE_PROVIDER.set(new FieldNameTable());
+		EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameTable());
 
 		try {
 			evaluate(name, arguments);
 		} catch(EvaluationException ee){
 			// Ignored
 		} finally {
-			EvaluationContext.SYMBOLTABLE_PROVIDER.set(null);
+			EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(null);
 		} // End try
 
 		try {
 			evaluate(name, arguments);
 
 			fail();
-		} catch(StackOverflowError see){
+		} catch(StackOverflowError soe){
 			// Ignored
 		}
 	}
@@ -149,7 +212,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 	public void evaluateChain() throws Exception {
 		Map<FieldName, ?> arguments = createArguments("Value", 1);
 
-		EvaluationContext.SYMBOLTABLE_PROVIDER.set(new FieldNameTable(2));
+		EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameTable(2));
 
 		try {
 			assertValueEquals(1d, evaluate(FieldName.create("StageOne"), arguments));
@@ -162,7 +225,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 				// Ignored
 			}
 		} finally {
-			EvaluationContext.SYMBOLTABLE_PROVIDER.set(null);
+			EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(null);
 		}
 
 		assertValueEquals(1d, evaluate(FieldName.create("StageThree"), arguments));

@@ -111,7 +111,7 @@ public class EvaluationContext {
 			return value;
 		}
 
-		SymbolTable<FieldName> symbolTable = EvaluationContext.SYMBOLTABLE_PROVIDER.get();
+		SymbolTable<FieldName> symbolTable = EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.get();
 
 		if(symbolTable != null){
 			symbolTable.lock(name);
@@ -231,10 +231,18 @@ public class EvaluationContext {
 		}
 	};
 
-	public static final ThreadLocal<SymbolTable<FieldName>> SYMBOLTABLE_PROVIDER = new ThreadLocal<SymbolTable<FieldName>>(){
+	public static final ThreadLocal<SymbolTable<FieldName>> FIELD_SYMBOLTABLE_PROVIDER = new ThreadLocal<SymbolTable<FieldName>>(){
 
 		@Override
 		public SymbolTable<FieldName> initialValue(){
+			return null;
+		}
+	};
+
+	public static final ThreadLocal<SymbolTable<String>> FUNCTION_SYMBOLTABLE_PROVIDER = new ThreadLocal<SymbolTable<String>>(){
+
+		@Override
+		public SymbolTable<String> initialValue(){
 			return null;
 		}
 	};
