@@ -23,10 +23,10 @@ import java.util.Map;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
-import org.jpmml.evaluator.FieldNameTable;
+import org.jpmml.evaluator.FieldNameSet;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.FunctionNameTable;
+import org.jpmml.evaluator.FunctionNameStack;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
@@ -63,7 +63,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 
 		assertValueEquals(32d, evaluate(name, arguments));
 
-		EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.set(new FunctionNameTable(4));
+		EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.set(new FunctionNameStack(4));
 
 		try {
 			evaluate(name, arguments);
@@ -88,7 +88,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 			// Ignored
 		}
 
-		EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.set(new FunctionNameTable(16));
+		EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.set(new FunctionNameStack(16));
 
 		try {
 			evaluate(name, arguments);
@@ -154,7 +154,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 			// Ignored
 		}
 
-		EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameTable());
+		EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameSet());
 
 		try {
 			evaluate(name, arguments);
@@ -189,7 +189,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 			// Ignored
 		}
 
-		EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameTable());
+		EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameSet());
 
 		try {
 			evaluate(name, arguments);
@@ -212,7 +212,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 	public void evaluateChain() throws Exception {
 		Map<FieldName, ?> arguments = createArguments("Value", 1);
 
-		EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameTable(2));
+		EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameSet(2));
 
 		try {
 			assertValueEquals(1d, evaluate(FieldName.create("StageOne"), arguments));

@@ -18,54 +18,48 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.HashSet;
+import java.util.ArrayDeque;
+import java.util.Objects;
 
-import org.dmg.pmml.FieldName;
+public class FunctionNameStack extends ArrayDeque<String> implements SymbolTable<String> {
 
-public class FieldNameTable extends HashSet<FieldName> implements SymbolTable<FieldName> {
-
-	private int capacity = Integer.MAX_VALUE;
+	private int capacity = 16;
 
 
-	public FieldNameTable(){
-		super();
-	}
-
-	public FieldNameTable(int capacity){
-		super(2 * capacity);
-
+	public FunctionNameStack(int capacity){
 		setCapacity(capacity);
 	}
 
-	public FieldNameTable(FieldNameTable parent){
+	public FunctionNameStack(FunctionNameStack parent){
 		super(parent);
 
 		setCapacity(parent.getCapacity());
 	}
 
 	@Override
-	public FieldNameTable fork(){
-		return new FieldNameTable(this);
+	public FunctionNameStack fork(){
+		return new FunctionNameStack(this);
 	}
 
 	@Override
-	public void lock(FieldName name){
+	public void lock(String name){
 		int capacity = getCapacity();
 
 		int size = size();
 		if(size >= capacity){
-			throw new EvaluationException("Field reference chain is too long");
+			throw new EvaluationException("Function call stack is too high");
 		}
 
-		boolean unique = add(name);
-		if(!unique){
-			throw new EvaluationException("Field " + EvaluationException.formatKey(name) + " references itself");
-		}
+		push(name);
 	}
 
 	@Override
-	public void release(FieldName name){
-		remove(name);
+	public void release(String name){
+		String tail = pop();
+
+		if(!Objects.equals(name, tail)){
+			throw new IllegalStateException();
+		}
 	}
 
 	public int getCapacity(){
