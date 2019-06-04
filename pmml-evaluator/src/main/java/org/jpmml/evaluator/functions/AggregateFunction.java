@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2019 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,62 +18,10 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.List;
-
-import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
-import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.FieldValues;
-import org.jpmml.evaluator.TypeUtil;
-
 abstract
-public class AggregateFunction extends MultiaryFunction {
+public class AggregateFunction extends MultiaryFunction implements MissingValueTolerant {
 
 	public AggregateFunction(String name){
 		super(name);
-	}
-
-	abstract
-	public StorelessUnivariateStatistic createStatistic();
-
-	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		StorelessUnivariateStatistic statistic = createStatistic();
-
-		DataType dataType = null;
-
-		for(int i = 0; i < arguments.size(); i++){
-			FieldValue value = getOptionalArgument(arguments, i);
-
-			// "Missing values in the input to an aggregate function are simply ignored"
-			if(FieldValueUtil.isMissing(value)){
-				continue;
-			}
-
-			statistic.increment((value.asNumber()).doubleValue());
-
-			if(dataType != null){
-				dataType = TypeUtil.getCommonDataType(dataType, value.getDataType());
-			} else
-
-			{
-				dataType = value.getDataType();
-			}
-		}
-
-		// "If all inputs are missing, then the result evaluates to a missing value"
-		if(statistic.getN() == 0){
-			return FieldValues.MISSING_VALUE;
-		}
-
-		Double result = statistic.getResult();
-
-		return FieldValueUtil.create(getResultDataType(dataType), OpType.CONTINUOUS, result);
-	}
-
-	protected DataType getResultDataType(DataType dataType){
-		return dataType;
 	}
 }

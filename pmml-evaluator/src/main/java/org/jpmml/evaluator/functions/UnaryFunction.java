@@ -40,6 +40,6 @@ public class UnaryFunction extends AbstractFunction {
 	public FieldValue evaluate(List<FieldValue> arguments){
 		checkFixedArityArguments(arguments, 1);
 
-		return evaluate(getRequiredArgument(arguments, 0));
+		return evaluate(getArgument(arguments, 0));
 	}
 }

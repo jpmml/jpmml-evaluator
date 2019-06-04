@@ -18,11 +18,9 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.List;
-
 import org.jpmml.evaluator.FieldValue;
 
-public class EchoFunction extends UnaryFunction {
+public class EchoFunction extends UnaryFunction implements MissingValueTolerant {
 
 	public EchoFunction(){
 		this(EchoFunction.class.getName());
@@ -35,12 +33,5 @@ public class EchoFunction extends UnaryFunction {
 	@Override
 	public FieldValue evaluate(FieldValue value){
 		return value;
-	}
-
-	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkFixedArityArguments(arguments, 1);
-
-		return evaluate(getOptionalArgument(arguments, 0));
 	}
 }

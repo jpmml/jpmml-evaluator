@@ -18,14 +18,12 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.List;
-
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class ValueFunction extends UnaryFunction {
+public class ValueFunction extends UnaryFunction implements MissingValueTolerant {
 
 	public ValueFunction(String name){
 		super(name);
@@ -39,12 +37,5 @@ public class ValueFunction extends UnaryFunction {
 		Boolean result = evaluate(FieldValueUtil.isMissing(value));
 
 		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
-	}
-
-	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkFixedArityArguments(arguments, 1);
-
-		return evaluate(getOptionalArgument(arguments, 0));
 	}
 }

@@ -26,7 +26,7 @@ import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class ValueSpaceFunction extends MultiaryFunction {
+public class ValueSpaceFunction extends MultiaryFunction implements MissingValueTolerant {
 
 	public ValueSpaceFunction(String name){
 		super(name);

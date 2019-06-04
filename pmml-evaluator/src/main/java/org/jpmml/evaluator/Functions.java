@@ -27,10 +27,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.IllegalFormatException;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.rank.Max;
@@ -40,7 +38,8 @@ import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLFunctions;
-import org.jpmml.evaluator.functions.AggregateFunction;
+import org.jpmml.evaluator.functions.AggregateMathFunction;
+import org.jpmml.evaluator.functions.AggregateStringFunction;
 import org.jpmml.evaluator.functions.ArithmeticFunction;
 import org.jpmml.evaluator.functions.BinaryFunction;
 import org.jpmml.evaluator.functions.ComparisonFunction;
@@ -128,7 +127,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateFunction MIN = new AggregateFunction(PMMLFunctions.MIN){
+	AggregateMathFunction MIN = new AggregateMathFunction(PMMLFunctions.MIN){
 
 		@Override
 		public Min createStatistic(){
@@ -136,7 +135,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateFunction MAX = new AggregateFunction(PMMLFunctions.MAX){
+	AggregateMathFunction MAX = new AggregateMathFunction(PMMLFunctions.MAX){
 
 		@Override
 		public Max createStatistic(){
@@ -144,7 +143,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateFunction AVG = new AggregateFunction(PMMLFunctions.AVG){
+	AggregateMathFunction AVG = new AggregateMathFunction(PMMLFunctions.AVG){
 
 		@Override
 		public Mean createStatistic(){
@@ -162,7 +161,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateFunction SUM = new AggregateFunction(PMMLFunctions.SUM){
+	AggregateMathFunction SUM = new AggregateMathFunction(PMMLFunctions.SUM){
 
 		@Override
 		public Sum createStatistic(){
@@ -170,7 +169,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateFunction PRODUCT = new AggregateFunction(PMMLFunctions.PRODUCT){
+	AggregateMathFunction PRODUCT = new AggregateMathFunction(PMMLFunctions.PRODUCT){
 
 		@Override
 		public Product createStatistic(){
@@ -504,16 +503,25 @@ public interface Functions {
 		}
 	};
 
-	MultiaryFunction CONCAT = new MultiaryFunction(PMMLFunctions.CONCAT){
+	AggregateStringFunction CONCAT = new AggregateStringFunction(PMMLFunctions.CONCAT){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){
 			checkVariableArityArguments(arguments, 2);
 
-			String result = arguments.stream()
-				.filter(Objects::nonNull)
-				.map(value -> value.asString())
-				.collect(Collectors.joining());
+			StringBuilder sb = new StringBuilder();
+
+			for(int i = 0; i < arguments.size(); i++){
+				FieldValue value = getOptionalArgument(arguments, i);
+
+				if(FieldValueUtil.isMissing(value)){
+					continue;
+				}
+
+				sb.append(value.asString());
+			}
+
+			String result = sb.toString();
 
 			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
 		}

@@ -64,6 +64,15 @@ public class AbstractFunction implements Function {
  		}
  	}
 
+	protected FieldValue getArgument(List<FieldValue> arguments, int index){
+
+		if(this instanceof MissingValueTolerant){
+			return getOptionalArgument(arguments, index);
+		}
+
+		return getRequiredArgument(arguments, index);
+	}
+
 	protected FieldValue getOptionalArgument(List<FieldValue> arguments, int index){
 		FieldValue argument = arguments.get(index);
 

@@ -18,28 +18,10 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.List;
-
-import org.jpmml.evaluator.FieldValue;
-
 abstract
-public class BinaryFunction extends AbstractFunction {
+public class AggregateStringFunction extends AggregateFunction {
 
-	public BinaryFunction(String name){
+	public AggregateStringFunction(String name){
 		super(name);
-	}
-
-	public BinaryFunction(String name, List<String> aliases){
-		super(name, aliases);
-	}
-
-	abstract
-	public FieldValue evaluate(FieldValue first, FieldValue second);
-
-	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkFixedArityArguments(arguments, 2);
-
-		return evaluate(getArgument(arguments, 0), getArgument(arguments, 1));
 	}
 }

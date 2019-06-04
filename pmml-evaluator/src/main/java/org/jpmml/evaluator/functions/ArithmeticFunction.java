@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.List;
-
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
@@ -29,7 +27,7 @@ import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UndefinedResultException;
 
 abstract
-public class ArithmeticFunction extends BinaryFunction {
+public class ArithmeticFunction extends BinaryFunction implements MissingValueTolerant {
 
 	public ArithmeticFunction(String name){
 		super(name);
@@ -58,12 +56,5 @@ public class ArithmeticFunction extends BinaryFunction {
 		}
 
 		return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
-	}
-
-	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkFixedArityArguments(arguments, 2);
-
-		return evaluate(getOptionalArgument(arguments, 0), getOptionalArgument(arguments, 1));
 	}
 }

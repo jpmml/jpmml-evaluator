@@ -40,6 +40,6 @@ public class TernaryFunction extends AbstractFunction {
 	public FieldValue evaluate(List<FieldValue> arguments){
 		checkFixedArityArguments(arguments, 3);
 
-		return evaluate(getRequiredArgument(arguments, 0), getRequiredArgument(arguments, 1), getRequiredArgument(arguments, 2));
+		return evaluate(getArgument(arguments, 0), getArgument(arguments, 1), getArgument(arguments, 2));
 	}
 }
