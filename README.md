@@ -15,6 +15,7 @@ Java Evaluator API for Predictive Model Markup Language (PMML).
     + [Querying the "data schema" of models](#querying-the-data-schema-of-models)
     + [Evaluating models](#evaluating-models)
 - [Example applications](#example-applications)
+- [Documentation](#documentation)
 - [Support](#support)
 - [License](#license)
 - [Additional information](#additional-information)
@@ -48,6 +49,7 @@ JPMML-Evaluator is *de facto* the reference implementation of the PMML specifica
   * Over 20 different result feature types.
 * Model verification according to the [ModelVerification](http://www.dmg.org/pmml/v4-3/ModelVerification.html) element.
 * Vendor extensions:
+  * Memory and security sandboxing.
   * Java-backed model, expression and predicate types - integrate any 3rd party Java library into PMML data flow.
   * MathML prediction reports.
 
@@ -517,6 +519,11 @@ Getting help:
 ```
 java -cp target/example-1.4-SNAPSHOT.jar <application class name> --help
 ```
+
+# Documentation #
+
+* [Upgrading from the Factory pattern to the Builder pattern](http://openscoring.io/blog/2018/12/06/jpmml_evaluator_api_builder_pattern/)
+* [Tracing and reporting predictions](http://openscoring.io/blog/2019/02/26/jpmml_evaluator_api_tracing_reporting_predictions/)
 
 # Support #
 
