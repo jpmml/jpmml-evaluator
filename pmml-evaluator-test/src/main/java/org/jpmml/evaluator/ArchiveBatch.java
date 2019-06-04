@@ -55,7 +55,9 @@ public class ArchiveBatch implements Batch {
 		VisitorBattery visitorBattery = new DefaultVisitorBattery();
 		visitorBattery.applyTo(pmml);
 
-		EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml);
+		EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml)
+			.setDerivedFieldGuard(new FieldNameSet(8))
+			.setFunctionGuard(new FunctionNameStack(4));
 
 		return evaluatorBuilder;
 	}

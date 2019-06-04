@@ -170,6 +170,13 @@ public class EvaluationExample extends Example {
 	private boolean filterOutput = false;
 
 	@Parameter (
+		names = {"--safe"},
+		description = "Guard against ill-fated derived field and function evaluations",
+		hidden = true
+	)
+	private boolean safe = false;
+
+	@Parameter (
 		names = "--optimize",
 		description = "Optimize PMML class model",
 		hidden = true
@@ -289,10 +296,16 @@ public class EvaluationExample extends Example {
 			System.out.println("\t" + "Other objects: " + numberFormat.format(objectCount - pmmlObjectCount));
 		}
 
-		EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml, this.modelName)
+		ModelEvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml, this.modelName)
 			.setModelEvaluatorFactory((ModelEvaluatorFactory)newInstance(this.modelEvaluatorFactoryClazz))
 			.setValueFactoryFactory((ValueFactoryFactory)newInstance(this.valueFactoryFactoryClazz))
 			.setOutputFilter(this.filterOutput ? OutputFilters.KEEP_FINAL_RESULTS : OutputFilters.KEEP_ALL);
+
+		if(this.safe){
+			evaluatorBuilder = evaluatorBuilder
+				.setDerivedFieldGuard(new FieldNameSet(8))
+				.setFunctionGuard(new FunctionNameStack(4));
+		}
 
 		Evaluator evaluator = evaluatorBuilder.build();
 
