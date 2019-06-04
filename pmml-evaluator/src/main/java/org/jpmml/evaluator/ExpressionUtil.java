@@ -32,6 +32,7 @@ import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.Constant;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.Discretize;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
@@ -48,6 +49,7 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PMMLFunctions;
 import org.dmg.pmml.PMMLObject;
+import org.dmg.pmml.ParameterField;
 import org.dmg.pmml.TextIndex;
 import org.jpmml.model.XPathUtil;
 
@@ -90,6 +92,33 @@ public class ExpressionUtil {
 	static
 	public <E extends PMMLObject & HasExpression<E>> FieldValue evaluateExpressionContainer(E hasExpression, EvaluationContext context){
 		return evaluate(ensureExpression(hasExpression), context);
+	}
+
+	static
+	public FieldValue evaluate(DefineFunction defineFunction, List<FieldValue> values, EvaluationContext context){
+		List<ParameterField> parameterFields = defineFunction.getParameterFields();
+
+		if(parameterFields.size() != values.size()){
+			throw new EvaluationException("Function " + PMMLException.formatKey(defineFunction.getName()) + " expects " + parameterFields.size() + " arguments, got " + values.size() + " arguments");
+		}
+
+		DefineFunctionEvaluationContext functionContext = new DefineFunctionEvaluationContext(defineFunction, context);
+
+		for(int i = 0; i < parameterFields.size(); i++){
+			ParameterField parameterField = parameterFields.get(i);
+			FieldValue value = values.get(i);
+
+			FieldName name = parameterField.getName();
+			if(name == null){
+				throw new MissingAttributeException(parameterField, PMMLAttributes.PARAMETERFIELD_NAME);
+			}
+
+			value = value.cast(parameterField);
+
+			functionContext.declare(name, value);
+		}
+
+		return ExpressionUtil.evaluateTypedExpressionContainer(defineFunction, functionContext);
 	}
 
 	static
@@ -286,6 +315,9 @@ public class ExpressionUtil {
 		Iterator<Expression> arguments = expressions.iterator();
 
 		String function = apply.getFunction();
+		if(function == null){
+			throw new MissingAttributeException(apply, PMMLAttributes.APPLY_FUNCTION);
+		}
 
 		condition:
 		if((PMMLFunctions.IF).equals(function)){
@@ -374,7 +406,7 @@ public class ExpressionUtil {
 		FieldValue result;
 
 		try {
-			result = FunctionUtil.evaluate(apply, values, context);
+			result = evaluateFunction(function, values, context);
 		} catch(InvalidResultException ire){
 			InvalidValueTreatmentMethod invalidValueTreatmentMethod = apply.getInvalidValueTreatment();
 
@@ -398,6 +430,21 @@ public class ExpressionUtil {
 		}
 
 		return result;
+	}
+
+	static
+	private FieldValue evaluateFunction(String name, List<FieldValue> values, EvaluationContext context){
+		Function function = FunctionRegistry.getFunction(name);
+		if(function != null){
+			return function.evaluate(values);
+		}
+
+		DefineFunction defineFunction = context.getDefineFunction(name);
+		if(defineFunction != null){
+			return evaluate(defineFunction, values, context);
+		}
+
+		throw new EvaluationException("Function " + PMMLException.formatKey(name) + " is not defined");
 	}
 
 	@SuppressWarnings (

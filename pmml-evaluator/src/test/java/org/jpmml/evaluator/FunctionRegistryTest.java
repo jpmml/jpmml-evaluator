@@ -22,7 +22,9 @@ import org.jpmml.evaluator.functions.EchoFunction;
 import org.jpmml.evaluator.functions.MaliciousEchoFunction;
 import org.junit.Test;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -30,6 +32,10 @@ public class FunctionRegistryTest {
 
 	@Test
 	public void getFunction(){
+		assertNotNull(FunctionRegistry.getFunction("if"));
+
+		assertNull(FunctionRegistry.getFunction("sin"));
+		assertNotNull(FunctionRegistry.getFunction("x-sin"));
 
 		try {
 			FunctionRegistry.getFunction(Thread.class.getName());

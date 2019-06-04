@@ -18,9 +18,13 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * <p>
@@ -49,22 +53,28 @@ public class FunctionRegistry {
 			return null;
 		} // End if
 
-		if(FunctionRegistry.functions.containsKey(name)){
-			Function function = FunctionRegistry.functions.get(name);
+		if(FunctionRegistry.pmmlFunctions.containsKey(name)){
+			Function function = FunctionRegistry.pmmlFunctions.get(name);
+
+			return function;
+		} // End if
+
+		if(FunctionRegistry.userDefinedFunctions.containsKey(name)){
+			Function function = FunctionRegistry.userDefinedFunctions.get(name);
 
 			return function;
 		}
 
 		Class<?> functionClazz;
 
-		if(FunctionRegistry.functionClazzes.containsKey(name)){
-			functionClazz = FunctionRegistry.functionClazzes.get(name);
+		if(FunctionRegistry.userDefinedFunctionClazzes.containsKey(name)){
+			functionClazz = FunctionRegistry.userDefinedFunctionClazzes.get(name);
 		} else
 
 		{
 			functionClazz = loadFunctionClass(name);
 
-			FunctionRegistry.functionClazzes.put(name, functionClazz);
+			FunctionRegistry.userDefinedFunctionClazzes.put(name, functionClazz);
 		} // End if
 
 		if(functionClazz != null){
@@ -100,7 +110,7 @@ public class FunctionRegistry {
 	 */
 	static
 	public void putFunction(String name, Function function){
-		FunctionRegistry.functions.put(Objects.requireNonNull(name), function);
+		FunctionRegistry.userDefinedFunctions.put(Objects.requireNonNull(name), function);
 	}
 
 	/**
@@ -110,13 +120,13 @@ public class FunctionRegistry {
 	 */
 	static
 	public void putFunction(String name, Class<? extends Function> functionClazz){
-		FunctionRegistry.functionClazzes.put(Objects.requireNonNull(name), checkClass(functionClazz));
+		FunctionRegistry.userDefinedFunctionClazzes.put(Objects.requireNonNull(name), checkClass(functionClazz));
 	}
 
 	static
 	public void removeFunction(String name){
-		FunctionRegistry.functions.remove(name);
-		FunctionRegistry.functionClazzes.remove(name);
+		FunctionRegistry.userDefinedFunctions.remove(name);
+		FunctionRegistry.userDefinedFunctionClazzes.remove(name);
 	}
 
 	static
@@ -148,7 +158,52 @@ public class FunctionRegistry {
 		return clazz;
 	}
 
-	private static final Map<String, Function> functions = new LinkedHashMap<>();
+	private static final Map<String, Function> pmmlFunctions;
 
-	private static final Map<String, Class<?>> functionClazzes = new LinkedHashMap<>();
+	static {
+		ImmutableMap.Builder<String, Function> builder = new ImmutableMap.Builder<>();
+
+		List<? extends Function> functions = Arrays.asList(
+			Functions.ADD, Functions.SUBTRACT, Functions.MULTIPLY, Functions.DIVIDE,
+			Functions.MIN, Functions.MAX, Functions.AVG, Functions.SUM, Functions.PRODUCT,
+			Functions.LOG10, Functions.LN, Functions.EXP, Functions.SQRT, Functions.ABS, Functions.POW, Functions.THRESHOLD, Functions.FLOOR, Functions.CEIL, Functions.ROUND,
+			Functions.IS_MISSING, Functions.IS_NOT_MISSING,
+			Functions.EQUAL, Functions.NOT_EQUAL,
+			Functions.LESS_THAN, Functions.LESS_OR_EQUAL, Functions.GREATER_THAN, Functions.GREATER_OR_EQUAL,
+			Functions.AND, Functions.OR,
+			Functions.NOT,
+			Functions.IS_IN, Functions.IS_NOT_IN,
+			Functions.IF,
+			Functions.UPPERCASE, Functions.LOWERCASE, Functions.SUBSTRING, Functions.TRIM_BLANKS,
+			Functions.CONCAT,
+			Functions.REPLACE, Functions.MATCHES,
+			Functions.FORMAT_NUMBER, Functions.FORMAT_DATETIME,
+			Functions.DATE_DAYS_SINCE_YEAR, Functions.DATE_SECONDS_SINCE_MIDNIGHT, Functions.DATE_SECONDS_SINCE_YEAR
+		);
+
+		for(Function function : functions){
+			builder.put(function.getName(), function);
+		}
+
+		List<? extends Function> extensionFunctions = Arrays.asList(
+			Functions.MODULO,
+			Functions.LN1P, Functions.EXPM1,
+			Functions.RINT,
+			Functions.HYPOT,
+			Functions.SIN, Functions.COS, Functions.TAN,
+			Functions.ASIN, Functions.ACOS, Functions.ATAN,
+			Functions.ATAN2,
+			Functions.SINH, Functions.COSH, Functions.TANH
+		);
+
+		for(Function extensionFunction : extensionFunctions){
+			builder.put(extensionFunction.getName(), extensionFunction);
+		}
+
+		pmmlFunctions = builder.build();
+	}
+
+	private static final Map<String, Function> userDefinedFunctions = new LinkedHashMap<>();
+
+	private static final Map<String, Class<?>> userDefinedFunctionClazzes = new LinkedHashMap<>();
 }
