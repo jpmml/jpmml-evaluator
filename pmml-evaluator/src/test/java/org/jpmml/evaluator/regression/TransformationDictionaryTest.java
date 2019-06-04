@@ -154,7 +154,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 			// Ignored
 		}
 
-		EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameSet());
+		EvaluationContext.DERIVEDFIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameSet());
 
 		try {
 			evaluate(name, arguments);
@@ -163,7 +163,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 		} catch(EvaluationException ee){
 			// Ignored
 		} finally {
-			EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(null);
+			EvaluationContext.DERIVEDFIELD_SYMBOLTABLE_PROVIDER.set(null);
 		} // End try
 
 		try {
@@ -189,14 +189,14 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 			// Ignored
 		}
 
-		EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameSet());
+		EvaluationContext.DERIVEDFIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameSet());
 
 		try {
 			evaluate(name, arguments);
 		} catch(EvaluationException ee){
 			// Ignored
 		} finally {
-			EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(null);
+			EvaluationContext.DERIVEDFIELD_SYMBOLTABLE_PROVIDER.set(null);
 		} // End try
 
 		try {
@@ -212,7 +212,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 	public void evaluateChain() throws Exception {
 		Map<FieldName, ?> arguments = createArguments("Value", 1);
 
-		EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameSet(2));
+		EvaluationContext.DERIVEDFIELD_SYMBOLTABLE_PROVIDER.set(new FieldNameSet(2));
 
 		try {
 			assertValueEquals(1d, evaluate(FieldName.create("StageOne"), arguments));
@@ -225,7 +225,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 				// Ignored
 			}
 		} finally {
-			EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(null);
+			EvaluationContext.DERIVEDFIELD_SYMBOLTABLE_PROVIDER.set(null);
 		}
 
 		assertValueEquals(1d, evaluate(FieldName.create("StageThree"), arguments));

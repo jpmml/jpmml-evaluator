@@ -95,7 +95,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 		if(miningField == null){
 			DerivedField localDerivedField = modelEvaluator.getLocalDerivedField(name);
 			if(localDerivedField != null){
-				FieldValue value = ExpressionUtil.evaluateTypedExpressionContainer(localDerivedField, this);
+				FieldValue value = ExpressionUtil.evaluate(localDerivedField, this);
 
 				return declare(name, value);
 			}
@@ -110,7 +110,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 				} else
 
 				{
-					value = ExpressionUtil.evaluateTypedExpressionContainer(derivedField, this);
+					value = ExpressionUtil.evaluate(derivedField, this);
 				}
 
 				return declare(name, value);

@@ -566,9 +566,9 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 		try {
 			if(fieldNameTable != null){
-				prevFieldNameTable = EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.get();
+				prevFieldNameTable = EvaluationContext.DERIVEDFIELD_SYMBOLTABLE_PROVIDER.get();
 
-				EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(fieldNameTable.fork());
+				EvaluationContext.DERIVEDFIELD_SYMBOLTABLE_PROVIDER.set(fieldNameTable.fork());
 			} // End if
 
 			if(functionNameTable != null){
@@ -581,7 +581,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		} finally {
 
 			if(fieldNameTable != null){
-				EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(prevFieldNameTable);
+				EvaluationContext.DERIVEDFIELD_SYMBOLTABLE_PROVIDER.set(prevFieldNameTable);
 			} // End if
 
 			if(functionNameTable != null){

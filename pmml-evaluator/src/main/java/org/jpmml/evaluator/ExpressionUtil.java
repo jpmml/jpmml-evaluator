@@ -33,6 +33,7 @@ import org.dmg.pmml.Apply;
 import org.dmg.pmml.Constant;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
+import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Discretize;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
@@ -79,6 +80,11 @@ public class ExpressionUtil {
 	}
 
 	static
+	public <E extends PMMLObject & HasExpression<E>> FieldValue evaluateExpressionContainer(E hasExpression, EvaluationContext context){
+		return evaluate(ensureExpression(hasExpression), context);
+	}
+
+	static
 	public <E extends PMMLObject & HasType<E> & HasExpression<E>> FieldValue evaluateTypedExpressionContainer(E hasTypedExpression, EvaluationContext context){
 		FieldValue value = evaluateExpressionContainer(hasTypedExpression, context);
 
@@ -90,8 +96,26 @@ public class ExpressionUtil {
 	}
 
 	static
-	public <E extends PMMLObject & HasExpression<E>> FieldValue evaluateExpressionContainer(E hasExpression, EvaluationContext context){
-		return evaluate(ensureExpression(hasExpression), context);
+	public FieldValue evaluate(DerivedField derivedField, EvaluationContext context){
+		FieldName name = derivedField.getName();
+		if(name == null){
+			throw new MissingAttributeException(derivedField, PMMLAttributes.DERIVEDFIELD_NAME);
+		}
+
+		SymbolTable<FieldName> symbolTable = EvaluationContext.DERIVEDFIELD_SYMBOLTABLE_PROVIDER.get();
+
+		if(symbolTable != null){
+			symbolTable.lock(name);
+		}
+
+		try {
+			return evaluateTypedExpressionContainer(derivedField, context);
+		} finally {
+
+			if(symbolTable != null){
+				symbolTable.release(name);
+			}
+		}
 	}
 
 	static
