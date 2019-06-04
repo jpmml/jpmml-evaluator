@@ -35,7 +35,7 @@ public class StringNormalize extends BinaryFunction {
 	public String evaluate(int length, String string){
 
 		if(length < 0){
-			throw new FunctionException(this, "Invalid \'length\' value " + length);
+			throw new FunctionException(this, "Invalid \"length\" value " + length);
 		}
 
 		int offset = 0;

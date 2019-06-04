@@ -59,7 +59,7 @@ public class PercentileFunction extends BinaryFunction {
 	public Double evaluate(Collection<?> values, int percentile){
 
 		if(percentile < 1 || percentile > 100){
-			throw new FunctionException(this, "Invalid \'percentile\' value " + percentile + ". Must be greater than 0 and equal or less than 100");
+			throw new FunctionException(this, "Invalid \"percentile\" value " + percentile + ". Must be greater than 0 and equal or less than 100");
 		}
 
 		DoubleVector doubleValues = new ComplexDoubleVector(values.size());
