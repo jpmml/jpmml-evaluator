@@ -28,10 +28,24 @@ public class FieldNameTable extends HashSet<FieldName> implements SymbolTable<Fi
 
 
 	public FieldNameTable(){
+		super();
 	}
 
 	public FieldNameTable(int capacity){
+		super(2 * capacity);
+
 		setCapacity(capacity);
+	}
+
+	public FieldNameTable(FieldNameTable parent){
+		super(parent);
+
+		setCapacity(parent.getCapacity());
+	}
+
+	@Override
+	public FieldNameTable fork(){
+		return new FieldNameTable(this);
 	}
 
 	@Override

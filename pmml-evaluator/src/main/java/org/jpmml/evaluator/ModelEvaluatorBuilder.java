@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
@@ -205,6 +206,20 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
 
 		configurationBuilder.setOutputFilter(outputFilter);
+
+		return this;
+	}
+
+	public SymbolTable<FieldName> getFieldNameTable(){
+		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
+
+		return configurationBuilder.getFieldNameTable();
+	}
+
+	public ModelEvaluatorBuilder setFieldNameTable(SymbolTable<FieldName> fieldNameTable){
+		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
+
+		configurationBuilder.setFieldNameTable(fieldNameTable);
 
 		return this;
 	}

@@ -549,12 +549,32 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+		Configuration configuration = getConfiguration();
+
 		arguments = processArguments(arguments);
 
 		ModelEvaluationContext context = createEvaluationContext();
 		context.setArguments(arguments);
 
-		Map<FieldName, ?> results = evaluateInternal(context);
+		SymbolTable<FieldName> prevFieldNameTable = null;
+		SymbolTable<FieldName> fieldNameTable = configuration.getFieldNameTable();
+
+		Map<FieldName, ?> results;
+
+		try {
+			if(fieldNameTable != null){
+				prevFieldNameTable = EvaluationContext.SYMBOLTABLE_PROVIDER.get();
+
+				EvaluationContext.SYMBOLTABLE_PROVIDER.set(fieldNameTable.fork());
+			}
+
+			results = evaluateInternal(context);
+		} finally {
+
+			if(fieldNameTable != null){
+				EvaluationContext.SYMBOLTABLE_PROVIDER.set(prevFieldNameTable);
+			}
+		}
 
 		results = processResults(results);
 

@@ -20,6 +20,8 @@ package org.jpmml.evaluator;
 
 import java.io.Serializable;
 
+import org.dmg.pmml.FieldName;
+
 /**
  * @see ConfigurationBuilder
  */
@@ -30,6 +32,8 @@ public class Configuration implements Serializable {
 	private ValueFactoryFactory valueFactoryFactory = null;
 
 	private OutputFilter outputFilter = null;
+
+	private SymbolTable<FieldName> fieldNameTable = null;
 
 
 	Configuration(){
@@ -57,6 +61,14 @@ public class Configuration implements Serializable {
 
 	void setOutputFilter(OutputFilter outputFilter){
 		this.outputFilter = outputFilter;
+	}
+
+	public SymbolTable<FieldName> getFieldNameTable(){
+		return this.fieldNameTable;
+	}
+
+	void setFieldNameTable(SymbolTable<FieldName> fieldNameTable){
+		this.fieldNameTable = fieldNameTable;
 	}
 
 	static

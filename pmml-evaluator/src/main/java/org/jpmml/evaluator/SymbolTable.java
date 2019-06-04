@@ -20,6 +20,8 @@ package org.jpmml.evaluator;
 
 public interface SymbolTable<K> {
 
+	SymbolTable<K> fork();
+
 	/**
 	 * @throws EvaluationException If the key cannot be locked.
 	 */
