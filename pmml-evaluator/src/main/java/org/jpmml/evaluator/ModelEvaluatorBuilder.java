@@ -224,6 +224,20 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		return this;
 	}
 
+	public SymbolTable<String> getFunctionNameTable(){
+		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
+
+		return configurationBuilder.getFunctionNameTable();
+	}
+
+	public ModelEvaluatorBuilder setFunctionNameTable(SymbolTable<String> functionNameTable){
+		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
+
+		configurationBuilder.setFunctionNameTable(functionNameTable);
+
+		return this;
+	}
+
 	public InputMapper getInputMapper(){
 		return this.inputMapper;
 	}

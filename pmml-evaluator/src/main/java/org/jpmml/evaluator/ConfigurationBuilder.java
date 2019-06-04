@@ -32,6 +32,8 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 
 	private SymbolTable<FieldName> fieldNameTable = null;
 
+	private SymbolTable<String> functionNameTable = null;
+
 
 	public ConfigurationBuilder(){
 	}
@@ -71,7 +73,10 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 		configuration.setOutputFilter(outputFilter);
 
 		SymbolTable<FieldName> fieldNameTable = getFieldNameTable();
+		SymbolTable<String> functionNameTable = getFunctionNameTable();
+
 		configuration.setFieldNameTable(fieldNameTable);
+		configuration.setFunctionNameTable(functionNameTable);
 
 		return configuration;
 	}
@@ -112,6 +117,16 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 
 	public ConfigurationBuilder setFieldNameTable(SymbolTable<FieldName> fieldNameTable){
 		this.fieldNameTable = fieldNameTable;
+
+		return this;
+	}
+
+	public SymbolTable<String> getFunctionNameTable(){
+		return this.functionNameTable;
+	}
+
+	public ConfigurationBuilder setFunctionNameTable(SymbolTable<String> functionNameTable){
+		this.functionNameTable = functionNameTable;
 
 		return this;
 	}

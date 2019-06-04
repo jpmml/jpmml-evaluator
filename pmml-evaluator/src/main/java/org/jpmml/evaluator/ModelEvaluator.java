@@ -551,13 +551,16 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
 		Configuration configuration = getConfiguration();
 
+		SymbolTable<FieldName> prevFieldNameTable = null;
+		SymbolTable<FieldName> fieldNameTable = configuration.getFieldNameTable();
+
+		SymbolTable<String> prevFunctionNameTable = null;
+		SymbolTable<String> functionNameTable = configuration.getFunctionNameTable();
+
 		arguments = processArguments(arguments);
 
 		ModelEvaluationContext context = createEvaluationContext();
 		context.setArguments(arguments);
-
-		SymbolTable<FieldName> prevFieldNameTable = null;
-		SymbolTable<FieldName> fieldNameTable = configuration.getFieldNameTable();
 
 		Map<FieldName, ?> results;
 
@@ -566,6 +569,12 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 				prevFieldNameTable = EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.get();
 
 				EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(fieldNameTable.fork());
+			} // End if
+
+			if(functionNameTable != null){
+				prevFunctionNameTable = EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.get();
+
+				EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.set(functionNameTable.fork());
 			}
 
 			results = evaluateInternal(context);
@@ -573,6 +582,10 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 			if(fieldNameTable != null){
 				EvaluationContext.FIELD_SYMBOLTABLE_PROVIDER.set(prevFieldNameTable);
+			} // End if
+
+			if(functionNameTable != null){
+				EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.set(prevFunctionNameTable);
 			}
 		}
 

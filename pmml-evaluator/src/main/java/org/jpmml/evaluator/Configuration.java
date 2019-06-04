@@ -35,6 +35,8 @@ public class Configuration implements Serializable {
 
 	private SymbolTable<FieldName> fieldNameTable = null;
 
+	private SymbolTable<String> functionNameTable = null;
+
 
 	Configuration(){
 	}
@@ -69,6 +71,14 @@ public class Configuration implements Serializable {
 
 	void setFieldNameTable(SymbolTable<FieldName> fieldNameTable){
 		this.fieldNameTable = fieldNameTable;
+	}
+
+	public SymbolTable<String> getFunctionNameTable(){
+		return this.functionNameTable;
+	}
+
+	void setFunctionNameTable(SymbolTable<String> functionNameTable){
+		this.functionNameTable = functionNameTable;
 	}
 
 	static
