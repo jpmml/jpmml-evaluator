@@ -61,8 +61,8 @@ public class StringNormalize extends BinaryFunction {
 	}
 
 	@Override
-	public FieldValue evaluate(FieldValue left, FieldValue right){
-		String result = evaluate(left.asInteger(), right.asString());
+	public FieldValue evaluate(FieldValue first, FieldValue second){
+		String result = evaluate(first.asInteger(), second.asString());
 
 		return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
 	}

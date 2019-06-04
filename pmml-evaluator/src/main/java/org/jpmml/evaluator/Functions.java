@@ -246,10 +246,10 @@ public interface Functions {
 		}
 
 		@Override
-		public FieldValue evaluate(FieldValue left, FieldValue right){
-			DataType dataType = TypeUtil.getCommonDataType(left.getDataType(), right.getDataType());
+		public FieldValue evaluate(FieldValue first, FieldValue second){
+			DataType dataType = TypeUtil.getCommonDataType(first.getDataType(), second.getDataType());
 
-			Double result = evaluate(left.asNumber(), right.asNumber());
+			Double result = evaluate(first.asNumber(), second.asNumber());
 
 			return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
 		}
@@ -264,10 +264,10 @@ public interface Functions {
 		}
 
 		@Override
-		public FieldValue evaluate(FieldValue left, FieldValue right){
-			DataType dataType = TypeUtil.getCommonDataType(left.getDataType(), right.getDataType());
+		public FieldValue evaluate(FieldValue first, FieldValue second){
+			DataType dataType = TypeUtil.getCommonDataType(first.getDataType(), second.getDataType());
 
-			Integer result = evaluate(left.asNumber(), right.asNumber());
+			Integer result = evaluate(first.asNumber(), second.asNumber());
 
 			return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
 		}
@@ -549,8 +549,8 @@ public interface Functions {
 		}
 
 		@Override
-		public FieldValue evaluate(FieldValue left, FieldValue right){
-			Boolean result = evaluate(left.asString(), right.asString());
+		public FieldValue evaluate(FieldValue first, FieldValue second){
+			Boolean result = evaluate(first.asString(), second.asString());
 
 			return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 		}
@@ -571,8 +571,8 @@ public interface Functions {
 		}
 
 		@Override
-		public FieldValue evaluate(FieldValue left, FieldValue right){
-			String result = evaluate(left.asNumber(), right.asString());
+		public FieldValue evaluate(FieldValue first, FieldValue second){
+			String result = evaluate(first.asNumber(), second.asString());
 
 			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
 		}
@@ -592,12 +592,12 @@ public interface Functions {
 		}
 
 		@Override
-		public FieldValue evaluate(FieldValue left, FieldValue right){
-			ZonedDateTime zonedDateTime = left.asZonedDateTime(ZoneId.systemDefault());
+		public FieldValue evaluate(FieldValue first, FieldValue second){
+			ZonedDateTime zonedDateTime = first.asZonedDateTime(ZoneId.systemDefault());
 
 			Date date = Date.from(zonedDateTime.toInstant());
 
-			String result = evaluate(date, right.asString());
+			String result = evaluate(date, second.asString());
 
 			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
 		}
@@ -631,8 +631,8 @@ public interface Functions {
 		}
 
 		@Override
-		public FieldValue evaluate(FieldValue left, FieldValue right){
-			DaysSinceDate result = evaluate(left.asLocalDate(), right.asInteger());
+		public FieldValue evaluate(FieldValue first, FieldValue second){
+			DaysSinceDate result = evaluate(first.asLocalDate(), second.asInteger());
 
 			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, result);
 		}
@@ -659,8 +659,8 @@ public interface Functions {
 		}
 
 		@Override
-		public FieldValue evaluate(FieldValue left, FieldValue right){
-			SecondsSinceDate result = evaluate(left.asLocalDateTime(), right.asInteger());
+		public FieldValue evaluate(FieldValue first, FieldValue second){
+			SecondsSinceDate result = evaluate(first.asLocalDateTime(), second.asInteger());
 
 			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, result);
 		}
@@ -673,8 +673,8 @@ public interface Functions {
 		}
 
 		@Override
-		public FieldValue evaluate(FieldValue left, FieldValue right){
-			Double result = evaluate(left.asNumber(), right.asNumber());
+		public FieldValue evaluate(FieldValue first, FieldValue second){
+			Double result = evaluate(first.asNumber(), second.asNumber());
 
 			return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 		}
@@ -735,8 +735,8 @@ public interface Functions {
 		}
 
 		@Override
-		public FieldValue evaluate(FieldValue left, FieldValue right){
-			Double result = evaluate(left.asNumber(), right.asNumber());
+		public FieldValue evaluate(FieldValue first, FieldValue second){
+			Double result = evaluate(first.asNumber(), second.asNumber());
 			if(result.isNaN()){
 				throw new NaNResultException();
 			}

@@ -33,8 +33,8 @@ public class EqualityFunction extends BinaryFunction {
 	public Boolean evaluate(boolean equals);
 
 	@Override
-	public FieldValue evaluate(FieldValue left, FieldValue right){
-		Boolean result = evaluate((left).equalsValue(right));
+	public FieldValue evaluate(FieldValue first, FieldValue second){
+		Boolean result = evaluate((first).equalsValue(second));
 
 		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 	}

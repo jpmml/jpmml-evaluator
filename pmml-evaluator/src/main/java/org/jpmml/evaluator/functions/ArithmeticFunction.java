@@ -39,19 +39,19 @@ public class ArithmeticFunction extends BinaryFunction {
 	public Number evaluate(Number left, Number right);
 
 	@Override
-	public FieldValue evaluate(FieldValue left, FieldValue right){
+	public FieldValue evaluate(FieldValue first, FieldValue second){
 
 		// "If one of the input fields of a simple arithmetic function is a missing value, then the result evaluates to missing value"
-		if(FieldValueUtil.isMissing(left) || FieldValueUtil.isMissing(right)){
+		if(FieldValueUtil.isMissing(first) || FieldValueUtil.isMissing(second)){
 			return FieldValues.MISSING_VALUE;
 		}
 
-		DataType dataType = TypeUtil.getCommonDataType(left.getDataType(), right.getDataType());
+		DataType dataType = TypeUtil.getCommonDataType(first.getDataType(), second.getDataType());
 
 		Number result;
 
 		try {
-			result = evaluate(left.asNumber(), right.asNumber());
+			result = evaluate(first.asNumber(), second.asNumber());
 		} catch(ArithmeticException ae){
 			throw new UndefinedResultException()
 				.initCause(ae);

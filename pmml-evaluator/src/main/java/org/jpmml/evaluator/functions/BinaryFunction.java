@@ -34,7 +34,7 @@ public class BinaryFunction extends AbstractFunction {
 	}
 
 	abstract
-	public FieldValue evaluate(FieldValue left, FieldValue right);
+	public FieldValue evaluate(FieldValue first, FieldValue second);
 
 	@Override
 	public FieldValue evaluate(List<FieldValue> arguments){

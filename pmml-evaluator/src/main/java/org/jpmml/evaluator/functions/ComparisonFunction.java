@@ -33,8 +33,8 @@ public class ComparisonFunction extends BinaryFunction {
 	public Boolean evaluate(int order);
 
 	@Override
-	public FieldValue evaluate(FieldValue left, FieldValue right){
-		Boolean result = evaluate((left).compareToValue(right));
+	public FieldValue evaluate(FieldValue first, FieldValue second){
+		Boolean result = evaluate((first).compareToValue(second));
 
 		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 	}

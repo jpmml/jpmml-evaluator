@@ -74,8 +74,8 @@ public class PercentileFunction extends BinaryFunction {
 	}
 
 	@Override
-	public FieldValue evaluate(FieldValue left, FieldValue right){
-		Double result = evaluate(left.asCollection(), right.asInteger());
+	public FieldValue evaluate(FieldValue first, FieldValue second){
+		Double result = evaluate(first.asCollection(), second.asInteger());
 
 		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 	}
