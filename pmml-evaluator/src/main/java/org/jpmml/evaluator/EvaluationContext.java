@@ -218,7 +218,7 @@ public class EvaluationContext {
 		}
 	};
 
-	public static final ThreadLocal<SymbolTable<FieldName>> DERIVEDFIELD_SYMBOLTABLE_PROVIDER = new ThreadLocal<SymbolTable<FieldName>>(){
+	public static final ThreadLocal<SymbolTable<FieldName>> DERIVEDFIELD_GUARD_PROVIDER = new ThreadLocal<SymbolTable<FieldName>>(){
 
 		@Override
 		public SymbolTable<FieldName> initialValue(){
@@ -226,7 +226,7 @@ public class EvaluationContext {
 		}
 	};
 
-	public static final ThreadLocal<SymbolTable<String>> FUNCTION_SYMBOLTABLE_PROVIDER = new ThreadLocal<SymbolTable<String>>(){
+	public static final ThreadLocal<SymbolTable<String>> FUNCTION_GUARD_PROVIDER = new ThreadLocal<SymbolTable<String>>(){
 
 		@Override
 		public SymbolTable<String> initialValue(){

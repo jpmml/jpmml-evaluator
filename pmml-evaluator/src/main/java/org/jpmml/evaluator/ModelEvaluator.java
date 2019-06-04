@@ -551,11 +551,11 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
 		Configuration configuration = getConfiguration();
 
-		SymbolTable<FieldName> prevFieldNameTable = null;
-		SymbolTable<FieldName> fieldNameTable = configuration.getFieldNameTable();
+		SymbolTable<FieldName> prevDerivedFieldGuard = null;
+		SymbolTable<FieldName> derivedFieldGuard = configuration.getDerivedFieldGuard();
 
-		SymbolTable<String> prevFunctionNameTable = null;
-		SymbolTable<String> functionNameTable = configuration.getFunctionNameTable();
+		SymbolTable<String> prevFunctionGuard = null;
+		SymbolTable<String> functionGuard = configuration.getFunctionGuard();
 
 		arguments = processArguments(arguments);
 
@@ -565,27 +565,27 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		Map<FieldName, ?> results;
 
 		try {
-			if(fieldNameTable != null){
-				prevFieldNameTable = EvaluationContext.DERIVEDFIELD_SYMBOLTABLE_PROVIDER.get();
+			if(derivedFieldGuard != null){
+				prevDerivedFieldGuard = EvaluationContext.DERIVEDFIELD_GUARD_PROVIDER.get();
 
-				EvaluationContext.DERIVEDFIELD_SYMBOLTABLE_PROVIDER.set(fieldNameTable.fork());
+				EvaluationContext.DERIVEDFIELD_GUARD_PROVIDER.set(derivedFieldGuard.fork());
 			} // End if
 
-			if(functionNameTable != null){
-				prevFunctionNameTable = EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.get();
+			if(functionGuard != null){
+				prevFunctionGuard = EvaluationContext.FUNCTION_GUARD_PROVIDER.get();
 
-				EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.set(functionNameTable.fork());
+				EvaluationContext.FUNCTION_GUARD_PROVIDER.set(functionGuard.fork());
 			}
 
 			results = evaluateInternal(context);
 		} finally {
 
-			if(fieldNameTable != null){
-				EvaluationContext.DERIVEDFIELD_SYMBOLTABLE_PROVIDER.set(prevFieldNameTable);
+			if(derivedFieldGuard != null){
+				EvaluationContext.DERIVEDFIELD_GUARD_PROVIDER.set(prevDerivedFieldGuard);
 			} // End if
 
-			if(functionNameTable != null){
-				EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.set(prevFunctionNameTable);
+			if(functionGuard != null){
+				EvaluationContext.FUNCTION_GUARD_PROVIDER.set(prevFunctionGuard);
 			}
 		}
 

@@ -30,9 +30,9 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 
 	private OutputFilter outputFilter = null;
 
-	private SymbolTable<FieldName> fieldNameTable = null;
+	private SymbolTable<FieldName> derivedFieldGuard = null;
 
-	private SymbolTable<String> functionNameTable = null;
+	private SymbolTable<String> functionGuard = null;
 
 
 	public ConfigurationBuilder(){
@@ -72,11 +72,11 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 
 		configuration.setOutputFilter(outputFilter);
 
-		SymbolTable<FieldName> fieldNameTable = getFieldNameTable();
-		SymbolTable<String> functionNameTable = getFunctionNameTable();
+		SymbolTable<FieldName> derivedFieldGuard = getDerivedFieldGuard();
+		SymbolTable<String> functionGuard = getFunctionGuard();
 
-		configuration.setFieldNameTable(fieldNameTable);
-		configuration.setFunctionNameTable(functionNameTable);
+		configuration.setDerivedFieldGuard(derivedFieldGuard);
+		configuration.setFunctionGuard(functionGuard);
 
 		return configuration;
 	}
@@ -111,22 +111,22 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 		return this;
 	}
 
-	public SymbolTable<FieldName> getFieldNameTable(){
-		return this.fieldNameTable;
+	public SymbolTable<FieldName> getDerivedFieldGuard(){
+		return this.derivedFieldGuard;
 	}
 
-	public ConfigurationBuilder setFieldNameTable(SymbolTable<FieldName> fieldNameTable){
-		this.fieldNameTable = fieldNameTable;
+	public ConfigurationBuilder setDerivedFieldGuard(SymbolTable<FieldName> derivedFieldGuard){
+		this.derivedFieldGuard = derivedFieldGuard;
 
 		return this;
 	}
 
-	public SymbolTable<String> getFunctionNameTable(){
-		return this.functionNameTable;
+	public SymbolTable<String> getFunctionGuard(){
+		return this.functionGuard;
 	}
 
-	public ConfigurationBuilder setFunctionNameTable(SymbolTable<String> functionNameTable){
-		this.functionNameTable = functionNameTable;
+	public ConfigurationBuilder setFunctionGuard(SymbolTable<String> functionGuard){
+		this.functionGuard = functionGuard;
 
 		return this;
 	}

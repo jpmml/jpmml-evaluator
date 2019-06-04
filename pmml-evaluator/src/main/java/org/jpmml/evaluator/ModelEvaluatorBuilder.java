@@ -210,30 +210,30 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		return this;
 	}
 
-	public SymbolTable<FieldName> getFieldNameTable(){
+	public SymbolTable<FieldName> getDerivedFieldGuard(){
 		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
 
-		return configurationBuilder.getFieldNameTable();
+		return configurationBuilder.getDerivedFieldGuard();
 	}
 
-	public ModelEvaluatorBuilder setFieldNameTable(SymbolTable<FieldName> fieldNameTable){
+	public ModelEvaluatorBuilder setDerivedFieldGuard(SymbolTable<FieldName> derivedFieldGuard){
 		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
 
-		configurationBuilder.setFieldNameTable(fieldNameTable);
+		configurationBuilder.setDerivedFieldGuard(derivedFieldGuard);
 
 		return this;
 	}
 
-	public SymbolTable<String> getFunctionNameTable(){
+	public SymbolTable<String> getFunctionGuard(){
 		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
 
-		return configurationBuilder.getFunctionNameTable();
+		return configurationBuilder.getFunctionGuard();
 	}
 
-	public ModelEvaluatorBuilder setFunctionNameTable(SymbolTable<String> functionNameTable){
+	public ModelEvaluatorBuilder setFunctionGuard(SymbolTable<String> functionGuard){
 		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
 
-		configurationBuilder.setFunctionNameTable(functionNameTable);
+		configurationBuilder.setFunctionGuard(functionGuard);
 
 		return this;
 	}

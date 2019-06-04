@@ -102,7 +102,7 @@ public class ExpressionUtil {
 			throw new MissingAttributeException(derivedField, PMMLAttributes.DERIVEDFIELD_NAME);
 		}
 
-		SymbolTable<FieldName> symbolTable = EvaluationContext.DERIVEDFIELD_SYMBOLTABLE_PROVIDER.get();
+		SymbolTable<FieldName> symbolTable = EvaluationContext.DERIVEDFIELD_GUARD_PROVIDER.get();
 
 		if(symbolTable != null){
 			symbolTable.lock(name);
@@ -429,7 +429,7 @@ public class ExpressionUtil {
 
 		FieldValue result;
 
-		SymbolTable<String> symbolTable = EvaluationContext.FUNCTION_SYMBOLTABLE_PROVIDER.get();
+		SymbolTable<String> symbolTable = EvaluationContext.FUNCTION_GUARD_PROVIDER.get();
 
 		if(symbolTable != null){
 			symbolTable.lock(function);

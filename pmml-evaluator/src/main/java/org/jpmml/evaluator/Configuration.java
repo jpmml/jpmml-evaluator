@@ -33,9 +33,9 @@ public class Configuration implements Serializable {
 
 	private OutputFilter outputFilter = null;
 
-	private SymbolTable<FieldName> fieldNameTable = null;
+	private SymbolTable<FieldName> derivedFieldGuard = null;
 
-	private SymbolTable<String> functionNameTable = null;
+	private SymbolTable<String> functionGuard = null;
 
 
 	Configuration(){
@@ -65,20 +65,20 @@ public class Configuration implements Serializable {
 		this.outputFilter = outputFilter;
 	}
 
-	public SymbolTable<FieldName> getFieldNameTable(){
-		return this.fieldNameTable;
+	public SymbolTable<FieldName> getDerivedFieldGuard(){
+		return this.derivedFieldGuard;
 	}
 
-	void setFieldNameTable(SymbolTable<FieldName> fieldNameTable){
-		this.fieldNameTable = fieldNameTable;
+	void setDerivedFieldGuard(SymbolTable<FieldName> derivedFieldGuard){
+		this.derivedFieldGuard = derivedFieldGuard;
 	}
 
-	public SymbolTable<String> getFunctionNameTable(){
-		return this.functionNameTable;
+	public SymbolTable<String> getFunctionGuard(){
+		return this.functionGuard;
 	}
 
-	void setFunctionNameTable(SymbolTable<String> functionNameTable){
-		this.functionNameTable = functionNameTable;
+	void setFunctionGuard(SymbolTable<String> functionGuard){
+		this.functionGuard = functionGuard;
 	}
 
 	static
