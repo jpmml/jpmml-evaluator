@@ -522,8 +522,8 @@ java -cp target/example-1.4-SNAPSHOT.jar <application class name> --help
 
 # Documentation #
 
-* [Upgrading from the Factory pattern to the Builder pattern](http://openscoring.io/blog/2018/12/06/jpmml_evaluator_api_builder_pattern/)
-* [Tracing and reporting predictions](http://openscoring.io/blog/2019/02/26/jpmml_evaluator_api_tracing_reporting_predictions/)
+* [Upgrading from the Factory pattern to the Builder pattern](https://openscoring.io/blog/2018/12/06/jpmml_evaluator_api_builder_pattern/)
+* [Tracing and reporting predictions](https://openscoring.io/blog/2019/02/26/jpmml_evaluator_api_tracing_reporting_predictions/)
 
 # Support #
 
