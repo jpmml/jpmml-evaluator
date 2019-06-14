@@ -991,8 +991,14 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 					Model model = (Model)parent;
 
 					Collection<Field<?>> fields = getFields(model);
+					for(Field<?> field : fields){
+						FieldName name = field.getName();
 
-					result.putAll(org.jpmml.model.visitors.FieldUtil.nameMap(fields));
+						Field<?> prevField = result.put(name, field);
+						if(prevField != null){
+							throw new DuplicateFieldException(name);
+						}
+					}
 				}
 
 				return parent;

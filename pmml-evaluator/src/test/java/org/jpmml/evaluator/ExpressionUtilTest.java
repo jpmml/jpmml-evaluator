@@ -158,9 +158,8 @@ public class ExpressionUtilTest {
 			Arrays.asList("1", "one")
 		);
 
-		MapValues mapValues = new MapValues("data:output")
-			.addFieldColumnPairs(new FieldColumnPair(name, "data:input"))
-			.setInlineTable(createInlineTable(rows, Arrays.asList("data:input", "data:output")));
+		MapValues mapValues = new MapValues("data:output", null, createInlineTable(rows, Arrays.asList("data:input", "data:output")))
+			.addFieldColumnPairs(new FieldColumnPair(name, "data:input"));
 
 		assertEquals("zero", evaluate(mapValues, name, "0"));
 		assertEquals("one", evaluate(mapValues, name, "1"));
@@ -181,17 +180,15 @@ public class ExpressionUtilTest {
 	public void evaluateTextIndex(){
 		FieldName name = FieldName.create("x");
 
-		TextIndex textIndex = new TextIndex(name)
-			.setWordSeparatorCharacterRE("[\\s\\-]")
-			.setExpression(new Constant("user friendly"));
+		TextIndex textIndex = new TextIndex(name, new Constant("user friendly"))
+			.setWordSeparatorCharacterRE("[\\s\\-]");
 
 		assertEquals(null, evaluate(textIndex, name, null));
 
 		assertEquals(1, evaluate(textIndex, name, "user friendly"));
 		assertEquals(1, evaluate(textIndex, name, "user-friendly"));
 
-		textIndex = new TextIndex(name)
-			.setExpression(new Constant("brown fox"));
+		textIndex = new TextIndex(name, new Constant("brown fox"));
 
 		String text = "The quick browny foxy jumps over the lazy dog. The brown fox runs away and to be with another brown foxy.";
 
@@ -207,9 +204,8 @@ public class ExpressionUtilTest {
 
 		assertEquals(3, evaluate(textIndex, name, text));
 
-		textIndex = new TextIndex(name)
-			.setMaxLevenshteinDistance(1)
-			.setExpression(new Constant("dog"));
+		textIndex = new TextIndex(name, new Constant("dog"))
+			.setMaxLevenshteinDistance(1);
 
 		text = "I have a doog. My dog is white. The doog is friendly.";
 
@@ -221,9 +217,8 @@ public class ExpressionUtilTest {
 
 		assertEquals(1, evaluate(textIndex, name, text));
 
-		textIndex = new TextIndex(name)
-			.setCaseSensitive(false)
-			.setExpression(new Constant("sun"));
+		textIndex = new TextIndex(name, new Constant("sun"))
+			.setCaseSensitive(false);
 
 		text = "The Sun was setting while the captain's son reached the bounty island, minutes after their ship had sunk to the bottom of the ocean.";
 
@@ -260,11 +255,10 @@ public class ExpressionUtilTest {
 
 		stepTwo.setInlineTable(createInlineTable(cells, stepTwo));
 
-		TextIndex textIndex = new TextIndex(name)
+		TextIndex textIndex = new TextIndex(name, new Constant("ui_good"))
 			.setLocalTermWeights(TextIndex.LocalTermWeights.BINARY)
 			.setCaseSensitive(false)
-			.addTextIndexNormalizations(stepOne, stepTwo)
-			.setExpression(new Constant("ui_good"));
+			.addTextIndexNormalizations(stepOne, stepTwo);
 
 		assertEquals(1, evaluate(textIndex, name, "Testing the app for a few days convinced me the interfaces are excellent!"));
 	}

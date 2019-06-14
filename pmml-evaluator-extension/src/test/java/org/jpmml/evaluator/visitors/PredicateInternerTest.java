@@ -40,11 +40,8 @@ public class PredicateInternerTest {
 	public void internSimplePredicate(){
 		FieldName name = FieldName.create("x");
 
-		Predicate left = new SimplePredicate(name, SimplePredicate.Operator.EQUAL)
-			.setValue("1");
-
-		Predicate right = new SimplePredicate(name, SimplePredicate.Operator.EQUAL)
-			.setValue("1");
+		Predicate left = new SimplePredicate(name, SimplePredicate.Operator.EQUAL, "1");
+		Predicate right = new SimplePredicate(name, SimplePredicate.Operator.EQUAL, "1");
 
 		checkTree(left, right);
 	}
@@ -54,7 +51,6 @@ public class PredicateInternerTest {
 		FieldName name = FieldName.create("x");
 
 		Predicate left = new SimpleSetPredicate(name, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "1"));
-
 		Predicate right = new SimpleSetPredicate(name, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "\"1\""));
 
 		checkTree(left, right);
@@ -63,22 +59,23 @@ public class PredicateInternerTest {
 	@Test
 	public void internTrue(){
 		checkTree(new True(), new True());
+		checkTree(new True(), True.INSTANCE);
 	}
 
 	@Test
 	public void internFalse(){
 		checkTree(new False(), new False());
+		checkTree(new False(), False.INSTANCE);
 	}
 
 	static
 	private void checkTree(Predicate left, Predicate right){
-		checkTree(createNode(left), createNode(right));
+		checkTree(new LeafNode(null, left), new LeafNode(null, right));
 	}
 
 	static
 	private void checkTree(Node leftChild, Node rightChild){
-		Node root = new BranchNode()
-			.setPredicate(new True())
+		Node root = new BranchNode(null, True.INSTANCE)
 			.addNodes(leftChild, rightChild);
 
 		TreeModel treeModel = new TreeModel()
@@ -90,13 +87,5 @@ public class PredicateInternerTest {
 		interner.applyTo(treeModel);
 
 		assertSame(leftChild.getPredicate(), rightChild.getPredicate());
-	}
-
-	static
-	private Node createNode(Predicate predicate){
-		Node node = new LeafNode()
-			.setPredicate(predicate);
-
-		return node;
 	}
 }

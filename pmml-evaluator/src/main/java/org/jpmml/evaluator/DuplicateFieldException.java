@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Villu Ruusmann
+ * Copyright (c) 2019 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -23,21 +23,21 @@ import org.dmg.pmml.PMMLObject;
 
 /**
  * <p>
- * Thrown to indicate that a field is not visible in the current context.
+ * Thrown to indicate that a field name resolves to more than one field in the current context.
  * </p>
  */
-public class InvisibleFieldException extends EvaluationException {
+public class DuplicateFieldException extends EvaluationException {
 
-	public InvisibleFieldException(FieldName name){
+	public DuplicateFieldException(FieldName name){
 		super(formatMessage(name));
 	}
 
-	public InvisibleFieldException(FieldName name, PMMLObject context){
+	public DuplicateFieldException(FieldName name, PMMLObject context){
 		super(formatMessage(name), context);
 	}
 
 	static
 	private String formatMessage(FieldName name){
-		return "Field " + formatKey(name) + " is not visible";
+		return "Field " + formatKey(name) + " has already been defined";
 	}
 }

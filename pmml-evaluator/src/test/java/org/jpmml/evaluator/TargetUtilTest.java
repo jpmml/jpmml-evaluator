@@ -151,8 +151,7 @@ public class TargetUtilTest {
 
 	static
 	private TreeModelEvaluator createTreeModelEvaluator(MiningFunction miningFunction, MathContext mathContext, Target target){
-		Node root = new LeafNode()
-			.setPredicate(new False());
+		Node root = new LeafNode(null, False.INSTANCE);
 
 		Targets targets = new Targets()
 			.addTargets(target);

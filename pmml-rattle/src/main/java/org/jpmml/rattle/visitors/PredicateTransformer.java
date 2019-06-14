@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.dmg.pmml.Array;
 import org.dmg.pmml.CompoundPredicate;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
@@ -70,9 +69,9 @@ public class PredicateTransformer extends PredicateFilterer {
 		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.getBooleanOperator();
 		switch(booleanOperator){
 			case IS_IN:
-				return createSimplePredicate(simpleSetPredicate.getField(), SimplePredicate.Operator.EQUAL, value);
+				return new SimplePredicate(simpleSetPredicate.getField(), SimplePredicate.Operator.EQUAL, value);
 			case IS_NOT_IN:
-				return createSimplePredicate(simpleSetPredicate.getField(), SimplePredicate.Operator.NOT_EQUAL, value);
+				return new SimplePredicate(simpleSetPredicate.getField(), SimplePredicate.Operator.NOT_EQUAL, value);
 			default:
 				break;
 		}
@@ -92,13 +91,5 @@ public class PredicateTransformer extends PredicateFilterer {
 		}
 
 		return compoundPredicate;
-	}
-
-	static
-	private SimplePredicate createSimplePredicate(FieldName field, SimplePredicate.Operator operator, String value){
-		SimplePredicate simplePredicate = new SimplePredicate(field, operator)
-			.setValue(value);
-
-		return simplePredicate;
 	}
 }

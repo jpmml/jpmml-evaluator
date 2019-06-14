@@ -47,7 +47,7 @@ public class PredicateUtilTest {
 	public void evaluateSimplePredicate(){
 		FieldName age = FieldName.create("age");
 
-		SimplePredicate simplePredicate = new SimplePredicate(age, SimplePredicate.Operator.IS_MISSING);
+		SimplePredicate simplePredicate = new SimplePredicate(age, SimplePredicate.Operator.IS_MISSING, null);
 
 		assertEquals(Boolean.FALSE, evaluate(simplePredicate, age, 30));
 		assertEquals(Boolean.TRUE, evaluate(simplePredicate, age, null));
@@ -90,8 +90,7 @@ public class PredicateUtilTest {
 	public void evaluateBooleanSimplePredicate(){
 		FieldName flag = FieldName.create("flag");
 
-		SimplePredicate simplePredicate = new SimplePredicate(flag, SimplePredicate.Operator.EQUAL)
-			.setValue("true");
+		SimplePredicate simplePredicate = new SimplePredicate(flag, SimplePredicate.Operator.EQUAL, "true");
 
 		assertEquals(Boolean.TRUE, evaluate(simplePredicate, flag, true));
 		assertEquals(Boolean.FALSE, evaluate(simplePredicate, flag, false));
@@ -136,15 +135,15 @@ public class PredicateUtilTest {
 		FieldName temperature = FieldName.create("temperature");
 		FieldName humidity = FieldName.create("humidity");
 
-		CompoundPredicate temperaturePredicate = new CompoundPredicate(CompoundPredicate.BooleanOperator.AND)
+		CompoundPredicate temperaturePredicate = new CompoundPredicate(CompoundPredicate.BooleanOperator.AND, null)
 			.addPredicates(
-				new SimplePredicate(temperature, SimplePredicate.Operator.LESS_THAN).setValue("90"),
-				new SimplePredicate(temperature, SimplePredicate.Operator.GREATER_THAN).setValue("50")
+				new SimplePredicate(temperature, SimplePredicate.Operator.LESS_THAN, "90"),
+				new SimplePredicate(temperature, SimplePredicate.Operator.GREATER_THAN, "50")
 			);
 
-		SimplePredicate humidityPredicate = new SimplePredicate(humidity, SimplePredicate.Operator.GREATER_OR_EQUAL).setValue("80");
+		SimplePredicate humidityPredicate = new SimplePredicate(humidity, SimplePredicate.Operator.GREATER_OR_EQUAL, "80");
 
-		CompoundPredicate compoundPredicate = new CompoundPredicate(CompoundPredicate.BooleanOperator.SURROGATE)
+		CompoundPredicate compoundPredicate = new CompoundPredicate(CompoundPredicate.BooleanOperator.SURROGATE, null)
 			.addPredicates(temperaturePredicate, humidityPredicate);
 
 		assertEquals(Boolean.TRUE, evaluate(compoundPredicate, temperature, 70, humidity, null));
@@ -159,10 +158,8 @@ public class PredicateUtilTest {
 
 	@Test
 	public void evaluateBooleanCompoundPredicate(){
-		CompoundPredicate compoundPredicate = new CompoundPredicate()
-			.addPredicates(new True(), new False());
-
-		compoundPredicate.setBooleanOperator(CompoundPredicate.BooleanOperator.AND);
+		CompoundPredicate compoundPredicate = new CompoundPredicate(CompoundPredicate.BooleanOperator.AND, null)
+			.addPredicates(True.INSTANCE, False.INSTANCE);
 
 		assertEquals(Boolean.FALSE, evaluate(compoundPredicate));
 
@@ -177,16 +174,12 @@ public class PredicateUtilTest {
 
 	@Test
 	public void evaluateTrue(){
-		True truePredicate = new True();
-
-		assertEquals(Boolean.TRUE, evaluate(truePredicate));
+		assertEquals(Boolean.TRUE, evaluate(True.INSTANCE));
 	}
 
 	@Test
 	public void evaluateFalse(){
-		False falsePredicate = new False();
-
-		assertEquals(Boolean.FALSE, evaluate(falsePredicate));
+		assertEquals(Boolean.FALSE, evaluate(False.INSTANCE));
 	}
 
 	@Test

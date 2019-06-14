@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.dmg.pmml.ComplexArray;
 import org.dmg.pmml.DataType;
+import org.jpmml.model.annotations.Property;
 
 public class RichComplexArray extends ComplexArray implements SetHolder {
 
@@ -60,7 +61,7 @@ public class RichComplexArray extends ComplexArray implements SetHolder {
 	}
 
 	@Override
-	public RichComplexArray setValue(Object value){
+	public RichComplexArray setValue(@Property("value") Object value){
 		throw new UnsupportedOperationException();
 	}
 

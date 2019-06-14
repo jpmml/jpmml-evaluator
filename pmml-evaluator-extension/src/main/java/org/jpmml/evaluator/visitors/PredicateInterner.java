@@ -58,22 +58,6 @@ public class PredicateInterner extends PredicateFilterer {
 		}
 	};
 
-	private ElementHashMap<True> truePredicateCache = new ElementHashMap<True>(){
-
-		@Override
-		public ElementKey createKey(True truePredicate){
-			return ElementKey.EMPTY;
-		}
-	};
-
-	private ElementHashMap<False> falsePredicateCache = new ElementHashMap<False>(){
-
-		@Override
-		public ElementKey createKey(False falsePredicate){
-			return ElementKey.EMPTY;
-		}
-	};
-
 
 	@Override
 	public void applyTo(Visitable visitable){
@@ -85,8 +69,6 @@ public class PredicateInterner extends PredicateFilterer {
 	public void reset(){
 		this.simplePredicateCache.clear();
 		this.simpleSetPredicateCache.clear();
-		this.truePredicateCache.clear();
-		this.falsePredicateCache.clear();
 	}
 
 	@Override
@@ -110,11 +92,11 @@ public class PredicateInterner extends PredicateFilterer {
 		} else
 
 		if(predicate instanceof True){
-			return intern((True)predicate);
+			return True.INSTANCE;
 		} else
 
 		if(predicate instanceof False){
-			return intern((False)predicate);
+			return False.INSTANCE;
 		}
 
 		return predicate;
@@ -126,13 +108,5 @@ public class PredicateInterner extends PredicateFilterer {
 
 	private SimpleSetPredicate intern(SimpleSetPredicate simpleSetPredicate){
 		return this.simpleSetPredicateCache.intern(simpleSetPredicate);
-	}
-
-	private True intern(True truePredicate){
-		return this.truePredicateCache.intern(truePredicate);
-	}
-
-	private False intern(False falsePredicate){
-		return this.falsePredicateCache.intern(falsePredicate);
 	}
 }

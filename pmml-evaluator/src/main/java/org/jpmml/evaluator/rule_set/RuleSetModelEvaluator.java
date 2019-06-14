@@ -31,6 +31,7 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.True;
 import org.dmg.pmml.rule_set.CompoundRule;
 import org.dmg.pmml.rule_set.PMMLAttributes;
 import org.dmg.pmml.rule_set.PMMLElements;
@@ -138,7 +139,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 			Value<V> value = valueFactory.newValue(defaultConfidence);
 
-			result.put(new SimpleRule(defaultScore), defaultScore, value);
+			result.put(new SimpleRule(defaultScore, True.INSTANCE), defaultScore, value);
 
 			return TargetUtil.evaluateClassification(targetField, result);
 		}

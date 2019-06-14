@@ -44,10 +44,9 @@ public class NodeResolverTest {
 		Node rightChild = new LeafNode()
 			.setId("2");
 
-		Node root = new BranchNode()
+		Node root = new BranchNode(null, True.INSTANCE)
 			.setId("0")
 			.setDefaultChild(rightChild.getId())
-			.setPredicate(new True())
 			.addNodes(leftChild, rightChild);
 
 		TreeModel treeModel = new TreeModel(MiningFunction.REGRESSION, new MiningSchema(), null)

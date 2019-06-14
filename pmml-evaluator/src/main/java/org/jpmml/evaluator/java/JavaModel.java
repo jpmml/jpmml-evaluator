@@ -39,8 +39,10 @@ import org.dmg.pmml.VisitorAction;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.model.annotations.CopyConstructor;
 import org.jpmml.model.annotations.Extension;
 import org.jpmml.model.annotations.Property;
+import org.jpmml.model.annotations.ValueConstructor;
 
 @XmlRootElement (
 	name = "X-JavaModel",
@@ -78,11 +80,13 @@ public class JavaModel extends Model {
 	public JavaModel(){
 	}
 
+	@ValueConstructor
 	public JavaModel(@Property("miningFunction") MiningFunction miningFunction, @Property("miningSchema") MiningSchema miningSchema){
 		setMiningFunction(miningFunction);
 		setMiningSchema(miningSchema);
 	}
 
+	@CopyConstructor
 	public JavaModel(Model model){
 		setModelName(model.getModelName());
 		setMiningFunction(model.getMiningFunction());

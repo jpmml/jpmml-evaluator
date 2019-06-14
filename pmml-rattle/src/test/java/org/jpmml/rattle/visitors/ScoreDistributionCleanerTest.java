@@ -34,8 +34,7 @@ public class ScoreDistributionCleanerTest {
 
 	@Test
 	public void clean(){
-		Node node = new ComplexNode()
-			.setPredicate(new True())
+		Node node = new ComplexNode(True.INSTANCE)
 			.setScore("1")
 			.addScoreDistributions(new ScoreDistribution("0", 0), new ScoreDistribution("1", 100));
 

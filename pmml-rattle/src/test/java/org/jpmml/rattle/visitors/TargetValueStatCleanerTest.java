@@ -20,7 +20,6 @@ package org.jpmml.rattle.visitors;
 
 import java.util.Arrays;
 
-import org.dmg.pmml.ContinuousDistribution;
 import org.dmg.pmml.GaussianDistribution;
 import org.dmg.pmml.naive_bayes.BayesInput;
 import org.dmg.pmml.naive_bayes.TargetValueStat;
@@ -33,8 +32,8 @@ public class TargetValueStatCleanerTest {
 
 	@Test
 	public void clean(){
-		TargetValueStat zero = createTargetValueStat("0", new GaussianDistribution(0d, 1d));
-		TargetValueStat one = createTargetValueStat("1", new GaussianDistribution(0d, 0d));
+		TargetValueStat zero = new TargetValueStat("0", new GaussianDistribution(0d, 1d));
+		TargetValueStat one = new TargetValueStat("1", new GaussianDistribution(0d, 0d));
 
 		TargetValueStats targetValueStats = new TargetValueStats()
 			.addTargetValueStats(zero, one);
@@ -48,13 +47,5 @@ public class TargetValueStatCleanerTest {
 		cleaner.applyTo(bayesInput);
 
 		assertEquals(Arrays.asList(zero), targetValueStats.getTargetValueStats());
-	}
-
-	static
-	private TargetValueStat createTargetValueStat(String value, ContinuousDistribution distribution){
-		TargetValueStat targetValueStat = new TargetValueStat(value)
-			.setContinuousDistribution(distribution);
-
-		return targetValueStat;
 	}
 }

@@ -129,25 +129,18 @@ public class ValueOptimizerTest {
 
 		NormDiscrete normDiscrete = new NormDiscrete(dataField.getName(), "1");
 
-		DerivedField derivedField = new DerivedField(OpType.CATEGORICAL, DataType.STRING)
-			.setName(FieldName.create("global(" + dataField.getName() + ")"))
-			.setExpression(normDiscrete);
+		DerivedField derivedField = new DerivedField(FieldName.create("global(" + dataField.getName() + ")"), OpType.CATEGORICAL, DataType.STRING, normDiscrete);
 
 		TransformationDictionary transformationDictionary = new TransformationDictionary()
 			.addDerivedFields(derivedField);
 
-		SimplePredicate simplePredicate = new SimplePredicate(derivedField.getName(), SimplePredicate.Operator.EQUAL)
-			.setValue("1");
+		SimplePredicate simplePredicate = new SimplePredicate(derivedField.getName(), SimplePredicate.Operator.EQUAL, "1");
 
-		Node child = new LeafNode()
-			.setScore("1")
-			.setPredicate(simplePredicate);
+		Node child = new LeafNode("1", simplePredicate);
 
 		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(dataField.getName(), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "0 1"));
 
-		Node root = new BranchNode()
-			.setScore("0")
-			.setPredicate(simpleSetPredicate)
+		Node root = new BranchNode("0", simpleSetPredicate)
 			.addNodes(child);
 
 		MiningField miningField = new MiningField(dataField.getName());

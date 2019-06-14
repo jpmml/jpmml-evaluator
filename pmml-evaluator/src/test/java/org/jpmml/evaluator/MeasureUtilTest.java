@@ -49,16 +49,14 @@ public class MeasureUtilTest {
 
 	@Test
 	public void evaluateSimilarity(){
-		ComparisonMeasure comparisonMeasure = new ComparisonMeasure(ComparisonMeasure.Kind.SIMILARITY);
-
-		List<ClusteringField> clusteringFields = createClusteringFields("one", "two", "three", "four");
-
 		BitSet flags = createFlags(Arrays.asList(0, 0, 1, 1));
 		BitSet referenceFlags = createFlags(Arrays.asList(0, 1, 0, 1));
 
-		comparisonMeasure.setMeasure(new SimpleMatching());
-
 		ValueFactory<?> valueFactory = MeasureUtilTest.valueFactoryFactory.newValueFactory(MathContext.DOUBLE);
+
+		ComparisonMeasure comparisonMeasure = new ComparisonMeasure(ComparisonMeasure.Kind.SIMILARITY, new SimpleMatching());
+
+		List<ClusteringField> clusteringFields = createClusteringFields("one", "two", "three", "four");
 
 		assertEquals(valueFactory.newValue(2d / 4d), MeasureUtil.evaluateSimilarity(valueFactory, comparisonMeasure, clusteringFields, flags, referenceFlags));
 

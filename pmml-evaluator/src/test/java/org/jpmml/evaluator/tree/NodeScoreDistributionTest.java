@@ -35,8 +35,7 @@ public class NodeScoreDistributionTest {
 
 	@Test
 	public void getProbability(){
-		Node node = new LeafNode()
-			.setScore("ham");
+		Node node = new LeafNode("ham", null);
 
 		BiMap<String, Node> entityRegistry = ImmutableBiMap.of("1", node);
 

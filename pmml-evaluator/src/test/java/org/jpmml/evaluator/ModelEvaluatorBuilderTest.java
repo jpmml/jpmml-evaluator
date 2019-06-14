@@ -74,8 +74,7 @@ public class ModelEvaluatorBuilderTest {
 
 	static
 	private ModelEvaluatorBuilder createModelEvaluatorBuilder(){
-		Node root = new LeafNode()
-			.setPredicate(new False());
+		Node root = new LeafNode(null, False.INSTANCE);
 
 		TreeModel treeModel = new TreeModel(MiningFunction.REGRESSION, new MiningSchema(), root);
 

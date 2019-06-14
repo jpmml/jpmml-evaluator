@@ -39,8 +39,7 @@ public class ScoreDistributionInternerTest {
 		Node leftChild = createNode(left);
 		Node rightChild = createNode(right);
 
-		Node root = new ComplexNode()
-			.setPredicate(new True())
+		Node root = new ComplexNode(True.INSTANCE)
 			.addNodes(leftChild, rightChild);
 
 		TreeModel treeModel = new TreeModel()
