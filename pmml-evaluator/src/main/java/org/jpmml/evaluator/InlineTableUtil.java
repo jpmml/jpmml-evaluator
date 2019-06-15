@@ -131,9 +131,9 @@ public class InlineTableUtil {
 	}
 
 	static
-	private String parseColumn(QName name){
-		String prefix = name.getPrefix();
-		String localPart = name.getLocalPart();
+	private String parseColumn(QName xmlName){
+		String prefix = xmlName.getPrefix();
+		String localPart = xmlName.getLocalPart();
 
 		if(prefix != null && !("").equals(prefix)){
 			return prefix + ":" + localPart;
@@ -170,17 +170,17 @@ public class InlineTableUtil {
 					continue;
 				}
 
-				QName name;
+				QName xmlName;
 
 				if(column.startsWith("data:")){
-					name = new QName("http://jpmml.org/jpmml-model/InlineTable", column.substring("data:".length()), "data");
+					xmlName = new QName("http://jpmml.org/jpmml-model/InlineTable", column.substring("data:".length()), "data");
 				} else
 
 				{
-					name = new QName("http://www.dmg.org/PMML-4_3", column);
+					xmlName = new QName("http://www.dmg.org/PMML-4_3", column);
 				}
 
-				JAXBElement<String> cell = new JAXBElement<>(name, String.class, value);
+				JAXBElement<String> cell = new JAXBElement<>(xmlName, String.class, value);
 
 				row.addContent(cell);
 			}
