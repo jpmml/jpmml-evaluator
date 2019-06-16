@@ -16,11 +16,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.visitors;
 
-import org.jpmml.evaluator.visitors.ElementInternerBattery;
-import org.jpmml.evaluator.visitors.ElementOptimizerBattery;
-import org.jpmml.evaluator.visitors.ValueOptimizer;
+import org.jpmml.evaluator.LoadingModelEvaluatorBuilder;
 import org.jpmml.model.VisitorBattery;
 import org.jpmml.model.visitors.AttributeInternerBattery;
 import org.jpmml.model.visitors.AttributeOptimizerBattery;

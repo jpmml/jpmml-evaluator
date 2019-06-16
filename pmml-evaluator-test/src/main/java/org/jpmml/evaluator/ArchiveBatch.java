@@ -27,6 +27,7 @@ import java.util.function.Predicate;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
+import org.jpmml.evaluator.visitors.DefaultVisitorBattery;
 import org.jpmml.model.PMMLUtil;
 import org.jpmml.model.VisitorBattery;
 
