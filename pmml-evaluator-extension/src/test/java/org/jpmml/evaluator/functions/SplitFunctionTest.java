@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2019 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -19,6 +19,7 @@
 package org.jpmml.evaluator.functions;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.jpmml.evaluator.FieldValue;
@@ -29,38 +30,28 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class StandardDeviationFunctionTest {
+public class SplitFunctionTest {
 
 	@Test
 	public void evaluate(){
-		List<Double> values = Arrays.asList(2d, 4d, 4d, 4d, 5d, 5d, 7d, 9d);
+		assertEquals(Arrays.asList(""), evaluate("", ";"));
+		assertEquals(Arrays.asList("", ""), evaluate(";", ";"));
+		assertEquals(Arrays.asList("", "", ""), evaluate(";;", ";"));
 
-		assertEquals(Math.sqrt(32d / 8d), (Double)evaluate(values), 1e-8);
-
-		assertEquals(Math.sqrt(32d / 7d), (Double)evaluate(values, true), 1e-8);
-		assertEquals(Math.sqrt(32d / 8d), (Double)evaluate(values, false), 1e-8);
+		assertEquals(Arrays.asList("A"), evaluate("A", ","));
+		assertEquals(Arrays.asList("", "A"), evaluate(",A", ","));
+		assertEquals(Arrays.asList("A", ""), evaluate("A,", ","));
+		assertEquals(Arrays.asList("", "A", ""), evaluate(",A,", ","));
 	}
 
-	static
-	private Number evaluate(List<Double> values){
-		Function standardDeviation = new StandardDeviationFunction();
+	public Collection<String> evaluate(String input, String pattern){
+		Function split = new SplitFunction();
 
 		List<FieldValue> arguments = Arrays.asList(
-			FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, values)
+			FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, input),
+			FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, pattern)
 		);
 
-		return (standardDeviation.evaluate(arguments)).asNumber();
-	}
-
-	static
-	private Number evaluate(List<Double> values, boolean flag){
-		Function standardDeviation = new StandardDeviationFunction();
-
-		List<FieldValue> arguments = Arrays.asList(
-			FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, values),
-			FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, flag)
-		);
-
-		return (standardDeviation.evaluate(arguments)).asNumber();
+		return (List)(split.evaluate(arguments)).asCollection();
 	}
 }

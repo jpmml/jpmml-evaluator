@@ -42,7 +42,9 @@ public class MeanFunctionTest {
 	private Number evaluate(List<Double> values){
 		Function mean = new MeanFunction();
 
-		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, values));
+		List<FieldValue> arguments = Arrays.asList(
+			FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, values)
+		);
 
 		return (mean.evaluate(arguments)).asNumber();
 	}

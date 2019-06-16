@@ -42,7 +42,10 @@ public class PercentileFunctionTest {
 	private Number evaluate(List<Double> values, int quantile){
 		Function percentile = new PercentileFunction();
 
-		List<FieldValue> arguments = Arrays.asList(FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, values), FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, quantile));
+		List<FieldValue> arguments = Arrays.asList(
+			FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, values),
+			FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, quantile)
+		);
 
 		return (percentile.evaluate(arguments)).asNumber();
 	}
