@@ -200,7 +200,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
+				<version>3.8.1</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -218,9 +218,6 @@
 						</goals>
 						<configuration>
 							<rules>
-								<requireJavaVersion>
-									<version>1.8</version>
-								</requireJavaVersion>
 								<requireMavenVersion>
 									<version>3.2</version>
 								</requireMavenVersion>
@@ -232,7 +229,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>3.1.1</version>
 				<configuration>
 					<javadocVersion>1.8</javadocVersion>
 				</configuration>
@@ -250,7 +247,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>3.1.0</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -263,7 +260,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.1</version>
+				<version>2.22.2</version>
 				<configuration>
 					<argLine>${jacoco.agent}</argLine>
 					<trimStackTrace>false</trimStackTrace>
@@ -272,7 +269,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.2</version>
+				<version>0.8.4</version>
 				<executions>
 					<execution>
 						<id>pre-unit-test</id>
