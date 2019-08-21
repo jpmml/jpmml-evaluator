@@ -35,6 +35,21 @@ public class TargetUtil {
 	}
 
 	static
+	public void computeResult(DataType dataType, Regression<?> regression){
+		regression.computeResult(dataType);
+	}
+
+	static
+	public void computeResult(DataType dataType, Classification<?> classification){
+		classification.computeResult(dataType);
+	}
+
+	static
+	public void computeResult(DataType dataType, Vote vote){
+		vote.computeResult(dataType);
+	}
+
+	static
 	public <V extends Number> Map<FieldName, ?> evaluateRegressionDefault(ValueFactory<V> valueFactory, TargetField targetField){
 		Target target = targetField.getTarget();
 
