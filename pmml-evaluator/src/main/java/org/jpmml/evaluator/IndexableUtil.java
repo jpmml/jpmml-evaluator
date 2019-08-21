@@ -34,10 +34,15 @@ public class IndexableUtil {
 
 	static
 	public <K, E extends PMMLObject & Indexable<K>> E findIndexable(List<E> elements, K key){
+		return findIndexable(elements, key, false);
+	}
+
+	static
+	public <K, E extends PMMLObject & Indexable<K>> E findIndexable(List<E> elements, K key, boolean nullable){
 
 		for(E element : elements){
 
-			if(Objects.equals(ensureKey(element, false), key)){
+			if(Objects.equals(ensureKey(element, nullable), key)){
 				return element;
 			}
 		}
@@ -66,11 +71,6 @@ public class IndexableUtil {
 
 		// Cannot use Guava's ImmutableMap, because it is null-hostile
 		return Collections.unmodifiableMap(result);
-	}
-
-	static
-	private <K, E extends PMMLObject & Indexable<K>> K ensureKey(E element){
-		return ensureKey(element, false);
 	}
 
 	static
