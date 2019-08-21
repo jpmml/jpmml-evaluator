@@ -91,18 +91,18 @@ JPMML-Evaluator is fast and memory efficient. It can deliver one million scoring
 
 JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository](https://repo1.maven.org/maven2/org/jpmml/).
 
-The current version is **1.4.11** (16 June, 2019).
+The current version is **1.4.12** (21 August, 2019).
 
 ```xml
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.4.11</version>
+	<version>1.4.12</version>
 </dependency>
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator-extension</artifactId>
-	<version>1.4.11</version>
+	<version>1.4.12</version>
 </dependency>
 ```
 
@@ -495,29 +495,29 @@ This module can be built using [Apache Maven](https://maven.apache.org/):
 mvn clean install
 ```
 
-The resulting uber-JAR file `target/pmml-evaluator-example-executable-1.4-SNAPSHOT.jar` contains the following command-line applications:
+The resulting uber-JAR file `target/pmml-evaluator-example-executable-1.5-SNAPSHOT.jar` contains the following command-line applications:
 * `org.jpmml.evaluator.EvaluationExample` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/EvaluationExample.java).
 * `org.jpmml.evaluator.RecordCountingExample` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/RecordCountingExample.java).
 * `org.jpmml.evaluator.TestingExample` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/TestingExample.java).
 
 Evaluating model `model.pmml` with data records from `input.csv`. The predictions are stored to `output.csv`:
 ```
-java -cp target/pmml-evaluator-example-executable-1.4-SNAPSHOT.jar org.jpmml.evaluator.EvaluationExample --model model.pmml --input input.csv --output output.csv
+java -cp target/pmml-evaluator-example-executable-1.5-SNAPSHOT.jar org.jpmml.evaluator.EvaluationExample --model model.pmml --input input.csv --output output.csv
 ```
 
 Evaluating model `model.pmml` with data records from `input.csv`. The predictions are verified against data records from `expected-output.csv`:
 ```
-java -cp target/pmml-evaluator-example-executable-1.4-SNAPSHOT.jar org.jpmml.evaluator.TestingExample --model model.pmml --input input.csv --expected-output expected-output.csv
+java -cp target/pmml-evaluator-example-executable-1.5-SNAPSHOT.jar org.jpmml.evaluator.TestingExample --model model.pmml --input input.csv --expected-output expected-output.csv
 ```
 
 Enhancing model `model.pmml` with verification data records from `input_expected-output.csv`:
 ```
-java -cp target/pmml-evaluator-example-executable-1.4-SNAPSHOT.jar org.jpmml.evaluator.EnhancementExample --model model.pmml --verification input_expected_output.csv
+java -cp target/pmml-evaluator-example-executable-1.5-SNAPSHOT.jar org.jpmml.evaluator.EnhancementExample --model model.pmml --verification input_expected_output.csv
 ```
 
 Getting help:
 ```
-java -cp target/pmml-evaluator-example-executable-1.4-SNAPSHOT.jar <application class name> --help
+java -cp target/pmml-evaluator-example-executable-1.5-SNAPSHOT.jar <application class name> --help
 ```
 
 # Documentation #
