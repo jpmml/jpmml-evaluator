@@ -18,13 +18,23 @@
  */
 package org.jpmml.evaluator;
 
-public interface Operation<V extends Number> {
+import java.util.Iterator;
+import java.util.List;
 
-	/**
-	 * @param value The input value.
-	 *
-	 * @return An output value,
-	 * or <code>null</code> if the operation evaluated to a missing value.
-	 */
-	Value<V> evaluate(Value<V> value, EvaluationContext context);
+public class JavaOperationUtil {
+
+	private JavaOperationUtil(){
+	}
+
+	static
+	public <V> V evaluate(V value, List<? extends JavaOperation<V>> javaOperations, EvaluationContext context){
+
+		for(Iterator<? extends JavaOperation<V>> it = javaOperations.iterator(); value != null && it.hasNext(); ){
+			JavaOperation<V> javaOperation = it.next();
+
+			value = javaOperation.evaluate(value, context);
+		}
+
+		return value;
+	}
 }
