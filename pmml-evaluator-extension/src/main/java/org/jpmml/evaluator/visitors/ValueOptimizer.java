@@ -49,7 +49,6 @@ import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.TargetValue;
 import org.dmg.pmml.TransformationDictionary;
 import org.dmg.pmml.Value;
-import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.baseline.FieldValue;
 import org.dmg.pmml.baseline.FieldValueCount;
@@ -91,10 +90,10 @@ public class ValueOptimizer extends FieldResolver {
 	}
 
 	@Override
-	public void applyTo(Visitable visitable){
-		this.dataTypes.clear();
+	public void reset(){
+		super.reset();
 
-		super.applyTo(visitable);
+		this.dataTypes.clear();
 	}
 
 	@Override
