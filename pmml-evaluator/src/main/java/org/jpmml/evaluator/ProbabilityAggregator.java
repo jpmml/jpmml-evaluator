@@ -245,7 +245,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 
 			ValueMap<String, V> result = new ValueMap<>();
 
-			Set<String> categories = hasProbability.getCategories();
+			Set<String> categories = keySet();
 			for(String category : categories){
 				Double probability = hasProbability.getProbability(category);
 
@@ -259,6 +259,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 
 		{
 			ProbabilityAggregator<V> aggregator = new ProbabilityAggregator.Average<>(valueFactory);
+			aggregator.init(keySet());
 
 			for(HasProbability hasProbability : hasProbabilities){
 				aggregator.add(hasProbability);

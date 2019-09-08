@@ -18,8 +18,10 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -37,6 +39,17 @@ public class KeyValueAggregator<K, V extends Number> {
 		this.valueFactory = valueFactory;
 
 		this.capacity = capacity;
+	}
+
+	public void init(Collection<K> keys){
+
+		if(this.map.size() > 0){
+			throw new IllegalStateException();
+		}
+
+		for(K key : keys){
+			ensureVector(key);
+		}
 	}
 
 	public void add(K key, Number value){
@@ -57,12 +70,24 @@ public class KeyValueAggregator<K, V extends Number> {
 		}
 	}
 
+	protected Vector<V> get(K key){
+		return this.map.get(key);
+	}
+
 	public void clear(){
 		this.map.clear();
 	}
 
-	protected Vector<V> get(K key){
-		return this.map.get(key);
+	protected Set<K> keySet(){
+		return this.map.keySet();
+	}
+
+	protected Collection<Vector<V>> values(){
+		return this.map.values();
+	}
+
+	protected Set<Map.Entry<K, Vector<V>>> entrySet(){
+		return this.map.entrySet();
 	}
 
 	protected Map<K, Value<V>> asTransformedMap(Function<Vector<V>, Value<V>> function){
