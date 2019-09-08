@@ -403,13 +403,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Number threshold = nearestNeighborModel.getThreshold();
 
-		VoteAggregator<Object, V> aggregator = new VoteAggregator<Object, V>(){
-
-			@Override
-			public ValueFactory<V> getValueFactory(){
-				return valueFactory;
-			}
-		};
+		VoteAggregator<Object, V> aggregator = new VoteAggregator<>(valueFactory);
 
 		NearestNeighborModel.CategoricalScoringMethod categoricalScoringMethod = nearestNeighborModel.getCategoricalScoringMethod();
 

@@ -33,13 +33,7 @@ public class VoteAggregatorTest {
 
 	@Test
 	public void sum(){
-		VoteAggregator<String, Double> aggregator = new VoteAggregator<String, Double>(){
-
-			@Override
-			public ValueFactory<Double> getValueFactory(){
-				return VoteAggregatorTest.this.valueFactory;
-			}
-		};
+		VoteAggregator<String, Double> aggregator = new VoteAggregator<>(this.valueFactory);
 		aggregator.add("A", 1d);
 		aggregator.add("B", 1d);
 		aggregator.add("C", 1d);

@@ -89,13 +89,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		VoteAggregator<String, V> reasonCodePoints = null;
 
 		if(useReasonCodes){
-			reasonCodePoints = new VoteAggregator<String, V>(){
-
-				@Override
-				public ValueFactory<V> getValueFactory(){
-					return valueFactory;
-				}
-			};
+			reasonCodePoints = new VoteAggregator<>(valueFactory);
 		}
 
 		Characteristics characteristics = scorecard.getCharacteristics();

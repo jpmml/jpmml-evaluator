@@ -32,13 +32,7 @@ public class ProbabilityAggregatorTest {
 
 	@Test
 	public void average(){
-		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(0){
-
-			@Override
-			public ValueFactory<Double> getValueFactory(){
-				return ProbabilityAggregatorTest.this.valueFactory;
-			}
-		};
+		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator.Average<>(this.valueFactory);
 
 		assertEquals(new ValueMap<>(), aggregator.averageMap());
 
@@ -50,13 +44,7 @@ public class ProbabilityAggregatorTest {
 
 	@Test
 	public void weightedAverage(){
-		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(0, this.valueFactory.newVector(0)){
-
-			@Override
-			public ValueFactory<Double> getValueFactory(){
-				return ProbabilityAggregatorTest.this.valueFactory;
-			}
-		};
+		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator.WeightedAverage<>(this.valueFactory);
 
 		assertEquals(new ValueMap<>(), aggregator.weightedAverageMap());
 
@@ -68,13 +56,7 @@ public class ProbabilityAggregatorTest {
 
 	@Test
 	public void median(){
-		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(3){
-
-			@Override
-			public ValueFactory<Double> getValueFactory(){
-				return ProbabilityAggregatorTest.this.valueFactory;
-			}
-		};
+		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator.Median<>(this.valueFactory, 3);
 
 		assertEquals(new ValueMap<>(), aggregator.medianMap(ProbabilityAggregatorTest.CATEGORIES));
 
@@ -90,13 +72,7 @@ public class ProbabilityAggregatorTest {
 
 	@Test
 	public void max(){
-		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator<Double>(5){
-
-			@Override
-			public ValueFactory<Double> getValueFactory(){
-				return ProbabilityAggregatorTest.this.valueFactory;
-			}
-		};
+		ProbabilityAggregator<Double> aggregator = new ProbabilityAggregator.Max<>(this.valueFactory, 5);
 
 		assertEquals(new ValueMap<>(), aggregator.maxMap(ProbabilityAggregatorTest.CATEGORIES));
 
