@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -72,6 +73,32 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 		this.size++;
 	}
 
+	/**
+	 * @param probabilities An array of numbers that sum to 1.
+	 *
+	 * @see #init(Collection)
+	 */
+	public void add(Number[] probabilities){
+
+		if(this.weights != null || this.hasProbabilities != null){
+			throw new IllegalStateException();
+		}
+
+		Collection<Vector<V>> mapValues = values();
+		if(mapValues.size() != probabilities.length){
+			throw new IllegalArgumentException();
+		}
+
+		Iterator<Vector<V>> it = mapValues.iterator();
+		for(int i = 0; it.hasNext(); i++){
+			Vector<V> values = it.next();
+
+			values.add(probabilities[i]);
+		}
+
+		this.size++;
+	}
+
 	public void add(HasProbability hasProbability, Number weight){
 
 		if(this.weights == null){
@@ -91,6 +118,44 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			Double probability = hasProbability.getProbability(category);
 
 			add(category, weight, probability);
+		}
+
+		this.size++;
+
+		this.weights.add(weight);
+	}
+
+	/**
+	 * @param probabilities An array of numbers that sum to 1.
+	 *
+	 * @see #init(Collection)
+	 */
+	public void add(Number[] probabilities, Number weight){
+
+		if(this.weights == null || this.hasProbabilities != null){
+			throw new IllegalStateException();
+		}
+
+		Collection<Vector<V>> mapValues = values();
+		if(mapValues.size() != probabilities.length){
+			throw new IllegalArgumentException();
+		} // End if
+
+		if(weight.doubleValue() < 0d){
+			throw new IllegalArgumentException();
+		}
+
+		Iterator<Vector<V>> it = mapValues.iterator();
+		for(int i = 0; it.hasNext(); i++){
+			Vector<V> values = it.next();
+
+			if(weight.doubleValue() != 1d){
+				values.add(weight, probabilities[i]);
+			} else
+
+			{
+				values.add(probabilities[i]);
+			}
 		}
 
 		this.size++;
