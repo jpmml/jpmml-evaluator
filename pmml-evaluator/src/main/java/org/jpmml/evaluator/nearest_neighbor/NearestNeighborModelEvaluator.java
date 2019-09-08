@@ -346,13 +346,13 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		switch(continuousScoringMethod){
 			case AVERAGE:
-				aggregator = new ValueAggregator<>(valueFactory.newVector(0));
+				aggregator = new ValueAggregator.UnivariateStatistic<>(valueFactory);
 				break;
 			case WEIGHTED_AVERAGE:
-				aggregator = new ValueAggregator<>(valueFactory.newVector(0), valueFactory.newVector(0), valueFactory.newVector(0));
+				aggregator = new ValueAggregator.WeightedUnivariateStatistic<>(valueFactory);
 				break;
 			case MEDIAN:
-				aggregator = new ValueAggregator<>(valueFactory.newVector(instanceResults.size()));
+				aggregator = new ValueAggregator.Median<>(valueFactory, instanceResults.size());
 				break;
 			default:
 				throw new UnsupportedAttributeException(nearestNeighborModel, continuousScoringMethod);
@@ -403,13 +403,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Number threshold = nearestNeighborModel.getThreshold();
 
-		VoteAggregator<Object, V> aggregator = new VoteAggregator<Object, V>(){
-
-			@Override
-			public ValueFactory<V> getValueFactory(){
-				return valueFactory;
-			}
-		};
+		VoteAggregator<Object, V> aggregator = new VoteAggregator<>(valueFactory);
 
 		NearestNeighborModel.CategoricalScoringMethod categoricalScoringMethod = nearestNeighborModel.getCategoricalScoringMethod();
 

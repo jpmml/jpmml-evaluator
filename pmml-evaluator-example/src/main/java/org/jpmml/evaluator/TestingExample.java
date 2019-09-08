@@ -124,7 +124,7 @@ public class TestingExample extends Example {
 
 	@Override
 	public void execute() throws Exception {
-		PMML pmml = readPMML(this.model);
+		PMML pmml = readPMML(this.model, true);
 
 		CsvUtil.Table inputTable = readTable(this.input, this.separator);
 

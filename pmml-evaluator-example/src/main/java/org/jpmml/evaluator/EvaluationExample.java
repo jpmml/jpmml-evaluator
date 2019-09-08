@@ -20,9 +20,6 @@ package org.jpmml.evaluator;
 
 import java.io.Console;
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,11 +30,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.validators.PositiveInteger;
@@ -248,21 +242,7 @@ public class EvaluationExample extends Example {
 			waitForUserInput();
 		}
 
-		PMML pmml;
-
-		if(isServiceJar(this.model, PMML.class)){
-			URL url = this.model.toURL();
-
-			try(URLClassLoader classLoader = new URLClassLoader(new URL[]{url})){
-				ServiceLoader<PMML> serviceLoader = ServiceLoader.load(PMML.class, classLoader);
-
-				pmml = Iterables.getOnlyElement(serviceLoader);
-			}
-		} else
-
-		{
-			pmml = readPMML(this.model);
-		} // End if
+		PMML pmml = readPMML(this.model, true);
 
 		if(this.cacheBuilderSpec != null){
 			CacheBuilderSpec cacheBuilderSpec = CacheBuilderSpec.parse(this.cacheBuilderSpec);
@@ -430,18 +410,6 @@ public class EvaluationExample extends Example {
 		}
 
 		reporter.close();
-	}
-
-	static
-	private boolean isServiceJar(File file, Class<?> clazz){
-
-		try(ZipFile zipFile = new ZipFile(file)){
-			ZipEntry serviceZipEntry = zipFile.getEntry("META-INF/services/" + clazz.getName());
-
-			return (serviceZipEntry != null);
-		} catch(IOException ioe){
-			return false;
-		}
 	}
 
 	static

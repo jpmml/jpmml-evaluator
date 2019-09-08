@@ -33,30 +33,38 @@ public class VoteAggregatorTest {
 
 	@Test
 	public void sum(){
-		VoteAggregator<String, Double> aggregator = new VoteAggregator<String, Double>(){
-
-			@Override
-			public ValueFactory<Double> getValueFactory(){
-				return VoteAggregatorTest.this.valueFactory;
-			}
-		};
-		aggregator.add("A", 1d);
-		aggregator.add("B", 1d);
-		aggregator.add("C", 1d);
+		VoteAggregator<String, Double> aggregator = new VoteAggregator<>(this.valueFactory);
+		aggregator.add("A");
+		aggregator.add("B");
+		aggregator.add("C");
 
 		assertEquals(new LinkedHashSet<>(Arrays.asList("A", "B", "C")), aggregator.getWinners());
+		assertEquals(new LinkedHashSet<>(Arrays.asList("A", "B", "C")), (aggregator.sumMap()).keySet());
 
-		aggregator.add("B", 0.5d);
+		aggregator.add("C");
 
-		checkValues(1d, 1d + 0.5d, 1d, aggregator.sumMap());
+		assertEquals(Collections.singleton("C"), aggregator.getWinners());
 
-		assertEquals(Collections.singleton("B"), aggregator.getWinners());
+		aggregator = new VoteAggregator<>(this.valueFactory);
+		aggregator.init(Arrays.asList("B", "A", "C"));
+		aggregator.add("A");
+		aggregator.add("B");
+		aggregator.add("C");
+
+		assertEquals(new LinkedHashSet<>(Arrays.asList("B", "A", "C")), aggregator.getWinners());
+		assertEquals(new LinkedHashSet<>(Arrays.asList("B", "A", "C")), (aggregator.sumMap()).keySet());
 
 		aggregator.add("A", 0.5d);
 
+		checkValues(1d + 0.5d, 1d, 1d, aggregator.sumMap());
+
+		assertEquals(Collections.singleton("A"), aggregator.getWinners());
+
+		aggregator.add("B", 0.5d);
+
 		checkValues(1d + 0.5d, 1d + 0.5d, 1d, aggregator.sumMap());
 
-		assertEquals(new LinkedHashSet<>(Arrays.asList("A", "B")), aggregator.getWinners());
+		assertEquals(new LinkedHashSet<>(Arrays.asList("B", "A")), aggregator.getWinners());
 	}
 
 	static

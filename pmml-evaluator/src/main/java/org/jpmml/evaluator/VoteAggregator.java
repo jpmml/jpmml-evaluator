@@ -24,11 +24,14 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-abstract
 public class VoteAggregator<K, V extends Number> extends KeyValueAggregator<K, V> {
 
-	public VoteAggregator(){
-		super(0);
+	public VoteAggregator(ValueFactory<V> valueFactory){
+		super(valueFactory, 0);
+	}
+
+	public void add(K key){
+		add(key, Numbers.DOUBLE_ONE);
 	}
 
 	public ValueMap<K, V> sumMap(){

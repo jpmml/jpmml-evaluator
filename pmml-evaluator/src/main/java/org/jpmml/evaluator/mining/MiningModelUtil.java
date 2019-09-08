@@ -47,17 +47,17 @@ public class MiningModelUtil {
 		switch(multipleModelMethod){
 			case AVERAGE:
 			case SUM:
-				aggregator = new ValueAggregator<>(valueFactory.newVector(0));
+				aggregator = new ValueAggregator.UnivariateStatistic<>(valueFactory);
 				break;
 			case MEDIAN:
-				aggregator = new ValueAggregator<>(valueFactory.newVector(segmentResults.size()));
+				aggregator = new ValueAggregator.Median<>(valueFactory, segmentResults.size());
 				break;
 			case WEIGHTED_AVERAGE:
 			case WEIGHTED_SUM:
-				aggregator = new ValueAggregator<>(valueFactory.newVector(0), valueFactory.newVector(0), valueFactory.newVector(0));
+				aggregator = new ValueAggregator.WeightedUnivariateStatistic<>(valueFactory);
 				break;
 			case WEIGHTED_MEDIAN:
-				aggregator = new ValueAggregator<>(valueFactory.newVector(segmentResults.size()), valueFactory.newVector(segmentResults.size()));
+				aggregator = new ValueAggregator.WeightedMedian<>(valueFactory, segmentResults.size());
 				break;
 			default:
 				throw new IllegalArgumentException();
@@ -143,13 +143,7 @@ public class MiningModelUtil {
 
 	static
 	public <V extends Number> ValueMap<String, V> aggregateVotes(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, List<SegmentResult> segmentResults){
-		VoteAggregator<String, V> aggregator = new VoteAggregator<String, V>(){
-
-			@Override
-			public ValueFactory<V> getValueFactory(){
-				return valueFactory;
-			}
-		};
+		VoteAggregator<String, V> aggregator = new VoteAggregator<>(valueFactory);
 
 		Fraction<V> missingFraction = null;
 
@@ -243,32 +237,16 @@ public class MiningModelUtil {
 
 		switch(multipleModelMethod){
 			case AVERAGE:
-				aggregator = new ProbabilityAggregator<V>(0){
-
-					@Override
-					public ValueFactory<V> getValueFactory(){
-						return valueFactory;
-					}
-				};
+				aggregator = new ProbabilityAggregator.Average<>(valueFactory);
 				break;
 			case WEIGHTED_AVERAGE:
-				aggregator = new ProbabilityAggregator<V>(0, valueFactory.newVector(0)){
-
-					@Override
-					public ValueFactory<V> getValueFactory(){
-						return valueFactory;
-					}
-				};
+				aggregator = new ProbabilityAggregator.WeightedAverage<>(valueFactory);
 				break;
 			case MEDIAN:
+				aggregator = new ProbabilityAggregator.Median<>(valueFactory, segmentResults.size());
+				break;
 			case MAX:
-				aggregator = new ProbabilityAggregator<V>(segmentResults.size()){
-
-					@Override
-					public ValueFactory<V> getValueFactory(){
-						return valueFactory;
-					}
-				};
+				aggregator = new ProbabilityAggregator.Max<>(valueFactory, segmentResults.size());
 				break;
 			default:
 				throw new IllegalArgumentException();

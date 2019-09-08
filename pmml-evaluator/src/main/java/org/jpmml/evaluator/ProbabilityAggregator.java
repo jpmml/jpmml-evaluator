@@ -21,13 +21,13 @@ package org.jpmml.evaluator;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
 
-abstract
 public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<String, V> {
 
 	private List<HasProbability> hasProbabilities = null;
@@ -37,18 +37,20 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 	private Vector<V> weights = null;
 
 
-	public ProbabilityAggregator(int capacity){
-		this(capacity, null);
+	protected ProbabilityAggregator(ValueFactory<V> valueFactory, int capacity){
+		this(valueFactory, capacity, false);
 	}
 
-	public ProbabilityAggregator(int capacity, Vector<V> weights){
-		super(capacity);
+	protected ProbabilityAggregator(ValueFactory<V> valueFactory, int capacity, boolean weighted){
+		super(valueFactory, capacity);
 
 		if(capacity > 0){
 			this.hasProbabilities = new ArrayList<>(capacity);
-		}
+		} // End if
 
-		this.weights = weights;
+		if(weighted){
+			this.weights = valueFactory.newVector(0);
+		}
 	}
 
 	public void add(HasProbability hasProbability){
@@ -66,6 +68,32 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			Double probability = hasProbability.getProbability(category);
 
 			add(category, probability);
+		}
+
+		this.size++;
+	}
+
+	/**
+	 * @param probabilities An array of numbers that sum to 1.
+	 *
+	 * @see #init(Collection)
+	 */
+	public void add(Number[] probabilities){
+
+		if(this.weights != null || this.hasProbabilities != null){
+			throw new IllegalStateException();
+		}
+
+		Collection<Vector<V>> mapValues = values();
+		if(mapValues.size() != probabilities.length){
+			throw new IllegalArgumentException();
+		}
+
+		Iterator<Vector<V>> it = mapValues.iterator();
+		for(int i = 0; it.hasNext(); i++){
+			Vector<V> values = it.next();
+
+			values.add(probabilities[i]);
 		}
 
 		this.size++;
@@ -90,6 +118,44 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			Double probability = hasProbability.getProbability(category);
 
 			add(category, weight, probability);
+		}
+
+		this.size++;
+
+		this.weights.add(weight);
+	}
+
+	/**
+	 * @param probabilities An array of numbers that sum to 1.
+	 *
+	 * @see #init(Collection)
+	 */
+	public void add(Number[] probabilities, Number weight){
+
+		if(this.weights == null || this.hasProbabilities != null){
+			throw new IllegalStateException();
+		}
+
+		Collection<Vector<V>> mapValues = values();
+		if(mapValues.size() != probabilities.length){
+			throw new IllegalArgumentException();
+		} // End if
+
+		if(weight.doubleValue() < 0d){
+			throw new IllegalArgumentException();
+		}
+
+		Iterator<Vector<V>> it = mapValues.iterator();
+		for(int i = 0; it.hasNext(); i++){
+			Vector<V> values = it.next();
+
+			if(weight.doubleValue() != 1d){
+				values.add(weight, probabilities[i]);
+			} else
+
+			{
+				values.add(probabilities[i]);
+			}
 		}
 
 		this.size++;
@@ -237,15 +303,14 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 	}
 
 	private ValueMap<String, V> averageMap(List<HasProbability> hasProbabilities){
+		ValueFactory<V> valueFactory = getValueFactory();
 
 		if(hasProbabilities.size() == 1){
 			HasProbability hasProbability = hasProbabilities.get(0);
 
-			ValueFactory<V> valueFactory = getValueFactory();
-
 			ValueMap<String, V> result = new ValueMap<>();
 
-			Set<String> categories = hasProbability.getCategories();
+			Set<String> categories = keySet();
 			for(String category : categories){
 				Double probability = hasProbability.getProbability(category);
 
@@ -258,13 +323,8 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 		} else
 
 		{
-			ProbabilityAggregator<V> aggregator = new ProbabilityAggregator<V>(0){
-
-				@Override
-				public ValueFactory<V> getValueFactory(){
-					return ProbabilityAggregator.this.getValueFactory();
-				}
-			};
+			ProbabilityAggregator<V> aggregator = new ProbabilityAggregator.Average<>(valueFactory);
+			aggregator.init(keySet());
 
 			for(HasProbability hasProbability : hasProbabilities){
 				aggregator.add(hasProbability);
@@ -295,5 +355,37 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 		}
 
 		return maxEntry;
+	}
+
+	static
+	public class Average<V extends Number> extends ProbabilityAggregator<V> {
+
+		public Average(ValueFactory<V> valueFactory){
+			super(valueFactory, 0);
+		}
+	}
+
+	static
+	public class WeightedAverage<V extends Number> extends ProbabilityAggregator<V> {
+
+		public WeightedAverage(ValueFactory<V> valueFactory){
+			super(valueFactory, 0, true);
+		}
+	}
+
+	static
+	public class Max<V extends Number> extends ProbabilityAggregator<V> {
+
+		public Max(ValueFactory<V> valueFactory, int capacity){
+			super(valueFactory, capacity);
+		}
+	}
+
+	static
+	public class Median<V extends Number> extends ProbabilityAggregator<V> {
+
+		public Median(ValueFactory<V> valueFactory, int capacity){
+			super(valueFactory, capacity);
+		}
 	}
 }

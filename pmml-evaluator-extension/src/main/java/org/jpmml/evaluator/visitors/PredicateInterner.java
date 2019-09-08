@@ -24,17 +24,17 @@ import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.True;
-import org.dmg.pmml.Visitable;
 import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.evaluator.ExtensionUtil;
 import org.jpmml.model.visitors.PredicateFilterer;
+import org.jpmml.model.visitors.Resettable;
 
 /**
  * <p>
  * A Visitor that interns {@link Predicate} elements.
  * </p>
  */
-public class PredicateInterner extends PredicateFilterer {
+public class PredicateInterner extends PredicateFilterer implements Resettable {
 
 	private ElementHashMap<SimplePredicate> simplePredicateCache = new ElementHashMap<SimplePredicate>(){
 
@@ -60,12 +60,6 @@ public class PredicateInterner extends PredicateFilterer {
 
 
 	@Override
-	public void applyTo(Visitable visitable){
-		reset();
-
-		super.applyTo(visitable);
-	}
-
 	public void reset(){
 		this.simplePredicateCache.clear();
 		this.simpleSetPredicateCache.clear();
