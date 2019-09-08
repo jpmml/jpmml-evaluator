@@ -25,8 +25,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -89,6 +92,20 @@ public class Example {
 
 	static
 	public PMML readPMML(File file) throws Exception {
+		return readPMML(file, false);
+	}
+
+	static
+	public PMML readPMML(File file, boolean acceptServiceJar) throws Exception {
+
+		if(acceptServiceJar){
+
+			if(isServiceJar(file, PMML.class)){
+				URL url = (file.toURI()).toURL();
+
+				return PMMLUtil.load(url);
+			}
+		}
 
 		try(InputStream is = new FileInputStream(file)){
 			return PMMLUtil.unmarshal(is);
@@ -189,5 +206,17 @@ public class Example {
 		};
 
 		return function;
+	}
+
+	static
+	private boolean isServiceJar(File file, Class<?> clazz){
+
+		try(ZipFile zipFile = new ZipFile(file)){
+			ZipEntry serviceZipEntry = zipFile.getEntry("META-INF/services/" + clazz.getName());
+
+			return (serviceZipEntry != null);
+		} catch(IOException ioe){
+			return false;
+		}
 	}
 }
