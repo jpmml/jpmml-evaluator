@@ -47,17 +47,17 @@ public class MiningModelUtil {
 		switch(multipleModelMethod){
 			case AVERAGE:
 			case SUM:
-				aggregator = new ValueAggregator<>(valueFactory.newVector(0));
+				aggregator = new ValueAggregator.UnivariateStatistic<>(valueFactory);
 				break;
 			case MEDIAN:
-				aggregator = new ValueAggregator<>(valueFactory.newVector(segmentResults.size()));
+				aggregator = new ValueAggregator.Median<>(valueFactory, segmentResults.size());
 				break;
 			case WEIGHTED_AVERAGE:
 			case WEIGHTED_SUM:
-				aggregator = new ValueAggregator<>(valueFactory.newVector(0), valueFactory.newVector(0), valueFactory.newVector(0));
+				aggregator = new ValueAggregator.WeightedUnivariateStatistic<>(valueFactory);
 				break;
 			case WEIGHTED_MEDIAN:
-				aggregator = new ValueAggregator<>(valueFactory.newVector(segmentResults.size()), valueFactory.newVector(segmentResults.size()));
+				aggregator = new ValueAggregator.WeightedMedian<>(valueFactory, segmentResults.size());
 				break;
 			default:
 				throw new IllegalArgumentException();

@@ -30,7 +30,7 @@ public class ValueAggregatorTest {
 
 	@Test
 	public void sumAndAverage(){
-		ValueAggregator<Double> aggregator = new ValueAggregator<>(this.valueFactory.newVector(0));
+		ValueAggregator<Double> aggregator = new ValueAggregator.UnivariateStatistic<>(this.valueFactory);
 
 		try {
 			aggregator.average();
@@ -51,7 +51,7 @@ public class ValueAggregatorTest {
 
 	@Test
 	public void weightedSumAndAverage(){
-		ValueAggregator<Double> aggregator = new ValueAggregator<>(this.valueFactory.newVector(0), this.valueFactory.newVector(0), this.valueFactory.newVector(0));
+		ValueAggregator<Double> aggregator = new ValueAggregator.WeightedUnivariateStatistic<>(this.valueFactory);
 
 		try {
 			aggregator.weightedAverage();
@@ -72,7 +72,7 @@ public class ValueAggregatorTest {
 
 	@Test
 	public void median(){
-		ValueAggregator<Double> aggregator = new ValueAggregator<>(this.valueFactory.newVector(3));
+		ValueAggregator<Double> aggregator = new ValueAggregator.Median<>(this.valueFactory, 3);
 
 		try {
 			aggregator.median();
@@ -94,7 +94,7 @@ public class ValueAggregatorTest {
 
 	@Test
 	public void weightedMedian(){
-		ValueAggregator<Double> aggregator = new ValueAggregator<>(this.valueFactory.newVector(3), this.valueFactory.newVector(3), this.valueFactory.newVector(3));
+		ValueAggregator<Double> aggregator = new ValueAggregator.WeightedMedian<>(this.valueFactory, 3);
 
 		try {
 			aggregator.weightedMedian();

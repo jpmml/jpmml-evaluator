@@ -31,15 +31,15 @@ public class ValueAggregator<V extends Number> {
 	private Vector<V> weightedValues = null;
 
 
-	public ValueAggregator(Vector<V> values){
-		this(values, null);
+	protected ValueAggregator(Vector<V> values){
+		this(values, null, null);
 	}
 
-	public ValueAggregator(Vector<V> values, Vector<V> weights){
+	protected ValueAggregator(Vector<V> values, Vector<V> weights){
 		this(values, weights, null);
 	}
 
-	public ValueAggregator(Vector<V> values, Vector<V> weights, Vector<V> weightedValues){
+	protected ValueAggregator(Vector<V> values, Vector<V> weights, Vector<V> weightedValues){
 		this.values = values;
 		this.weights = weights;
 
@@ -200,6 +200,38 @@ public class ValueAggregator<V extends Number> {
 		@Override
 		public int compareTo(Entry that){
 			return (this.value).compareTo(that.value);
+		}
+	}
+
+	static
+	public class UnivariateStatistic<V extends Number> extends ValueAggregator<V> {
+
+		public UnivariateStatistic(ValueFactory<V> valueFactory){
+			super(valueFactory.newVector(0));
+		}
+	}
+
+	static
+	public class WeightedUnivariateStatistic<V extends Number> extends ValueAggregator<V> {
+
+		public WeightedUnivariateStatistic(ValueFactory<V> valueFactory){
+			super(valueFactory.newVector(0), valueFactory.newVector(0), valueFactory.newVector(0));
+		}
+	}
+
+	static
+	public class Median<V extends Number> extends ValueAggregator<V> {
+
+		public Median(ValueFactory<V> valueFactory, int capacity){
+			super(valueFactory.newVector(capacity));
+		}
+	}
+
+	static
+	public class WeightedMedian<V extends Number> extends ValueAggregator<V> {
+
+		public WeightedMedian(ValueFactory<V> valueFactory, int capacity){
+			super(valueFactory.newVector(capacity), valueFactory.newVector(capacity));
 		}
 	}
 }
