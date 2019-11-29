@@ -69,6 +69,7 @@ import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.NormalizationUtil;
+import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
@@ -402,6 +403,16 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				threshold = neuralNetwork.getThreshold();
 			}
 
+			Number altitude = neuralLayer.getAltitude();
+			if(altitude == null){
+				altitude = neuralNetwork.getAltitude();
+			}
+
+			Number width = neuralLayer.getWidth();
+			if(width == null){
+				width = neuralNetwork.getWidth();
+			}
+
 			switch(activationFunction){
 				case THRESHOLD:
 					if(threshold == null){
@@ -420,6 +431,8 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				case ELLIOTT:
 				case ARCTAN:
 				case RECTIFIER:
+					break;
+				case RADIAL_BASIS:
 					break;
 				default:
 					throw new UnsupportedAttributeException(locatable, activationFunction);
@@ -450,12 +463,30 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 						throw new InvalidAttributeException(connection, PMMLAttributes.CONNECTION_FROM, id);
 					}
 
-					output.add(weight, input.getValue());
-				}
+					switch(activationFunction){
+						case THRESHOLD:
+						case LOGISTIC:
+						case TANH:
+						case IDENTITY:
+						case EXPONENTIAL:
+						case RECIPROCAL:
+						case SQUARE:
+						case GAUSS:
+						case SINE:
+						case COSINE:
+						case ELLIOTT:
+						case ARCTAN:
+						case RECTIFIER:
+							output.add(weight, input.getValue());
+							break;
+						case RADIAL_BASIS:
+							input = input.copy();
 
-				Number bias = neuron.getBias();
-				if(bias != null){
-					output.add(bias);
+							output.add((input.subtract(weight)).square());
+							break;
+						default:
+							throw new UnsupportedAttributeException(locatable, activationFunction);
+					}
 				}
 
 				switch(activationFunction){
@@ -472,7 +503,43 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 					case ELLIOTT:
 					case ARCTAN:
 					case RECTIFIER:
-						NeuralNetworkUtil.activateNeuronOutput(activationFunction, threshold, output);
+						{
+							Number neuronBias = neuron.getBias();
+							if(neuronBias != null){
+								output.add(neuronBias);
+							}
+
+							NeuralNetworkUtil.activateNeuronOutput(activationFunction, threshold, output);
+						}
+						break;
+					case RADIAL_BASIS:
+						{
+							Number neuronWidth = neuron.getWidth();
+							if(neuronWidth == null){
+
+								if(width == null){
+									throw new MissingAttributeException(neuralNetwork, PMMLAttributes.NEURALNETWORK_WIDTH);
+								}
+
+								neuronWidth = width;
+							}
+
+							Value<V> denominator = valueFactory.newValue(neuronWidth)
+								.square()
+								.multiply(Numbers.DOUBLE_MINUS_TWO);
+
+							output.divide(denominator);
+
+							if(altitude.doubleValue() != 1d){
+								Value<V> value = valueFactory.newValue(altitude)
+									.ln()
+									.multiply(connections.size());
+
+								output.add(value);
+							}
+
+							output.exp();
+						}
 						break;
 					default:
 						throw new UnsupportedAttributeException(locatable, activationFunction);

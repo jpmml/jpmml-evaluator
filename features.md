@@ -46,8 +46,7 @@ Supported model types:
 * [General regression](http://www.dmg.org/pmml/v4-3/GeneralRegression.html) (regression, Cox regression, classification).
 * [k-Nearest neighbors (k-NN)](http://www.dmg.org/pmml/v4-3/KNN.html) (regression, classification, clustering).
 * [Naive Bayes](http://www.dmg.org/pmml/v4-3/NaiveBayes.html) (classification).
-* [Neural network](http://www.dmg.org/pmml/v4-3/NeuralNetwork.html) (regression, classification):
-  * Except for the `radialBasis` value of the `activationFunction` attribute.
+* [Neural network](http://www.dmg.org/pmml/v4-3/NeuralNetwork.html) (regression, classification).
 * [Regression](http://www.dmg.org/pmml/v4-3/Regression.html) (regression, classification).
 * [Rule set](http://www.dmg.org/pmml/v4-3/RuleSet.html) (classification).
 * [Scorecard](http://www.dmg.org/pmml/v4-3/Scorecard.html) (regression).
