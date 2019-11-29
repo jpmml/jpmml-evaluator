@@ -113,6 +113,7 @@ Core types:
 * Interface `org.jpmml.evaluator.EvaluatorBuilder`
   * Class `org.jpmml.evaluator.ModelEvaluatorBuilder` - Builds a `ModelEvaluator` instance based on an `org.dmg.pmml.PMML` instance
     * Class `org.jpmml.evaluator.LoadingModelEvaluatorBuilder` - Builds a `ModelEvaluator` instance from a PMML byte stream or a PMML file
+    * Class `org.jpmml.evaluator.ServiceLoadingModelEvaluatorBuilder` - Builds a `ModelEvaluator` instance from a PMML service provider JAR file
 * Interface `org.jpmml.evaluator.Evaluator`
   * Abstract class `org.jpmml.evaluator.ModelEvaluator` - Implements model evaluator functionality based on an `org.dmg.pmml.Model` instance
     * Classes `org.jpmml.evaluator.<Model>Evaluator` (`GeneralRegressionModelEvaluator`, `MiningModelEvaluator`, `NeuralNetworkEvaluator`, `RegressionEvaluator`, `TreeModelEvaluator`, `SupportVectorMachineEvaluator` etc.)
