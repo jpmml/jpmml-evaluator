@@ -161,6 +161,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private <V extends Number> Map<FieldName, ?> evaluateCoxRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
+		TargetField targetField = getTargetField();
+
 		FieldName startTimeVariable = generalRegressionModel.getStartTimeVariable();
 		FieldName endTimeVariable = generalRegressionModel.getEndTimeVariable();
 		if(endTimeVariable == null){
@@ -185,7 +187,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			// "If the value does not have a corresponding BaselineStratum element, then the result is a missing value"
 			if(baselineStratum == null){
-				return null;
+				return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 			}
 
 			baselineCells = baselineStratum.getBaselineCells();
@@ -240,14 +242,14 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		// "If the value is greater than the maximum time, then the result is a missing value"
 		if(value.compareToValue(maxTime) > 0){
-			return null;
+			return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 		} // End if
 
 		// "If the value is less than the minimum time, then cumulative hazard is 0 and predicted survival is 1"
 		if(value.compareToValue(minTime) < 0){
 			Value<V> cumHazard = valueFactory.newValue(Numbers.DOUBLE_ZERO);
 
-			return TargetUtil.evaluateRegression(getTargetField(), cumHazard);
+			return TargetUtil.evaluateRegression(targetField, cumHazard);
 		}
 
 		Number time = value.asNumber();
@@ -267,14 +269,14 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		Value<V> s = computeReferencePoint(valueFactory);
 
 		if(r == null || s == null){
-			return null;
+			return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 		}
 
 		Value<V> cumHazard = r.subtract(s)
 			.exp()
 			.multiply(maxTimeCumHazard);
 
-		return TargetUtil.evaluateRegression(getTargetField(), cumHazard);
+		return TargetUtil.evaluateRegression(targetField, cumHazard);
 	}
 
 	private <V extends Number> Map<FieldName, ?> evaluateGeneralRegression(ValueFactory<V> valueFactory, EvaluationContext context){
