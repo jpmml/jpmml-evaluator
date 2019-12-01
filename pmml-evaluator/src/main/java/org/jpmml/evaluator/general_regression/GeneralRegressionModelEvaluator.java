@@ -324,7 +324,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		ValueMap<String, V> values = new ValueMap<>(2 * targetCategories.size());
 
-		Value<V> previousValue = null;
+		Value<V> previousLinkValue = null;
+		Value<V> previousCumulativeLinkValue = null;
 
 		for(int i = 0; i < targetCategories.size(); i++){
 			String targetCategory = targetCategories.get(i);
@@ -425,8 +426,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				switch(modelType){
 					case GENERALIZED_LINEAR:
 						value = valueFactory.newValue(Numbers.DOUBLE_ONE);
-						if(previousValue != null){
-							value.subtract(previousValue);
+						if(previousLinkValue != null){
+							value.subtract(previousLinkValue);
 						}
 						break;
 					case MULTINOMIAL_LOGISTIC:
@@ -448,12 +449,16 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			switch(modelType){
 				case GENERALIZED_LINEAR:
+					previousLinkValue = value;
+					break;
 				case MULTINOMIAL_LOGISTIC:
 					break;
 				case ORDINAL_MULTINOMIAL:
-					if(previousValue != null){
-						value.subtract(previousValue);
+					Value<V> cumulativeLinkValue = value.copy();
+					if(previousCumulativeLinkValue != null){
+						value.subtract(previousCumulativeLinkValue);
 					}
+					previousCumulativeLinkValue = cumulativeLinkValue;
 					break;
 				case REGRESSION:
 				case GENERAL_LINEAR:
@@ -464,8 +469,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 
 			values.put(targetCategory, value);
-
-			previousValue = value;
 		}
 
 		switch(modelType){
