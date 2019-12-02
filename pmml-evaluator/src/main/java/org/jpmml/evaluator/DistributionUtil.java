@@ -87,7 +87,7 @@ public class DistributionUtil {
 			return isNoOp((GaussianDistribution)distribution);
 		}
 
-		return true;
+		return false;
 	}
 
 	static

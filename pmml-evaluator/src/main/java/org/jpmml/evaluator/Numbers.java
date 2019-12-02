@@ -30,6 +30,7 @@ public interface Numbers {
 	Float FLOAT_ZERO = Float.valueOf(0f);
 	Float FLOAT_ONE = Float.valueOf(1f);
 
+	Double DOUBLE_MINUS_TWO = Double.valueOf(-2d);
 	Double DOUBLE_MINUS_ONE = Double.valueOf(-1d);
 	Double DOUBLE_ZERO = Double.valueOf(0d);
 	Double DOUBLE_ONE_HALF = Double.valueOf(0.5d);

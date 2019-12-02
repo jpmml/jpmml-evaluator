@@ -125,14 +125,33 @@ public class EvaluationExample extends Example {
 	private boolean sparse = false;
 
 	@Parameter (
-		names = {"--copy-columns"},
-		description = "Copy all columns from input CSV file to output CSV file",
+		names = {"--catch-errors"},
+		description = "Catch and process evaluation errors. If true, the main evaluation loop will run till completion",
 		arity = 1
 	)
 	@ParameterOrder (
 		value = 8
 	)
+	private boolean catchErrors = false;
+
+	@Parameter (
+		names = {"--copy-columns"},
+		description = "Copy all columns from input CSV file to output CSV file",
+		arity = 1
+	)
+	@ParameterOrder (
+		value = 9
+	)
 	private boolean copyColumns = true;
+
+	@Parameter (
+		names = {"--error-column"},
+		description = "The name of error column. This column is appended to output CSV file only in case of evaluation errors"
+	)
+	@ParameterOrder (
+		value = 10
+	)
+	private String errorColumn = "_error";
 
 	@Parameter (
 		names = {"--wait-before-init"},
@@ -150,14 +169,14 @@ public class EvaluationExample extends Example {
 
 	@Parameter (
 		names = {"--factory-class", "--modelevaluatorfactory-class"},
-		description = "Name of ModelEvaluatorFactory class",
+		description = "The name of ModelEvaluatorFactory class",
 		hidden = true
 	)
 	private String modelEvaluatorFactoryClazz = ModelEvaluatorFactory.class.getName();
 
 	@Parameter (
 		names = {"--valuefactoryfactory-class"},
-		description = "Name of ValueFactoryFactory class",
+		description = "The name of ValueFactoryFactory class",
 		hidden = true
 	)
 	private String valueFactoryFactoryClazz = ValueFactoryFactory.class.getName();
@@ -343,6 +362,8 @@ public class EvaluationExample extends Example {
 
 		List<Map<FieldName, ?>> outputRecords = new ArrayList<>(inputRecords.size());
 
+		FieldName errorColumn = null;
+
 		Timer timer = new Timer(new SlidingWindowReservoir(this.loop));
 
 		metricRegistry.register("main", timer);
@@ -362,15 +383,30 @@ public class EvaluationExample extends Example {
 				for(Map<FieldName, ?> inputRecord : inputRecords){
 					arguments.clear();
 
-					for(InputField inputField : inputFields){
-						FieldName name = inputField.getName();
+					Map<FieldName, ?> results;
 
-						FieldValue value = inputField.prepare(inputRecord.get(name));
+					try {
+						for(InputField inputField : inputFields){
+							FieldName name = inputField.getName();
 
-						arguments.put(name, value);
+							FieldValue value = inputField.prepare(inputRecord.get(name));
+
+							arguments.put(name, value);
+						}
+
+						results = evaluator.evaluate(arguments);
+					} catch(Exception e){
+
+						if(!this.catchErrors){
+							throw e;
+						}
+
+						if(errorColumn == null){
+							errorColumn = FieldName.create(this.errorColumn);
+						}
+
+						results = Collections.singletonMap(errorColumn, e.toString());
 					}
-
-					Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
 					outputRecords.add(results);
 				}
@@ -391,7 +427,13 @@ public class EvaluationExample extends Example {
 		CsvUtil.Table outputTable = new CsvUtil.Table();
 		outputTable.setSeparator(inputTable.getSeparator());
 
-		outputTable.addAll(BatchUtil.formatRecords(outputRecords, new ArrayList<>(Lists.transform(resultFields, ResultField::getName)), createCellFormatter(this.missingValues.size() > 0 ? this.missingValues.get(0) : null)));
+		List<FieldName> columns = new ArrayList<>(Lists.transform(resultFields, ResultField::getName));
+
+		if(errorColumn != null){
+			columns.add(errorColumn);
+		}
+
+		outputTable.addAll(BatchUtil.formatRecords(outputRecords, columns, createCellFormatter(outputTable.getSeparator(), this.missingValues.size() > 0 ? this.missingValues.get(0) : null)));
 
 		if((inputTable.size() == outputTable.size()) && this.copyColumns){
 

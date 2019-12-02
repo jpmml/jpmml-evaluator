@@ -190,7 +190,7 @@ public class Example {
 	}
 
 	static
-	public Function<Object, String> createCellFormatter(String missingValue){
+	public Function<Object, String> createCellFormatter(String separator, String missingValue){
 		Function<Object, String> function = new Function<Object, String>(){
 
 			@Override
@@ -201,7 +201,17 @@ public class Example {
 					return missingValue;
 				}
 
-				return object.toString();
+				String string = object.toString();
+
+				if(string.indexOf('\"') > -1){
+					string = string.replaceAll("\"", "\"\"");
+				} // End if
+
+				if(string.contains(separator)){
+					string = ("\"" + string + "\"");
+				}
+
+				return string;
 			}
 		};
 

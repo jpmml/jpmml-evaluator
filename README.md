@@ -91,18 +91,18 @@ JPMML-Evaluator is fast and memory efficient. It can deliver one million scoring
 
 JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository](https://repo1.maven.org/maven2/org/jpmml/).
 
-The current version is **1.4.13** (8 September, 2019).
+The current version is **1.4.14** (2 December, 2019).
 
 ```xml
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.4.13</version>
+	<version>1.4.14</version>
 </dependency>
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator-extension</artifactId>
-	<version>1.4.13</version>
+	<version>1.4.14</version>
 </dependency>
 ```
 
@@ -113,6 +113,7 @@ Core types:
 * Interface `org.jpmml.evaluator.EvaluatorBuilder`
   * Class `org.jpmml.evaluator.ModelEvaluatorBuilder` - Builds a `ModelEvaluator` instance based on an `org.dmg.pmml.PMML` instance
     * Class `org.jpmml.evaluator.LoadingModelEvaluatorBuilder` - Builds a `ModelEvaluator` instance from a PMML byte stream or a PMML file
+    * Class `org.jpmml.evaluator.ServiceLoadingModelEvaluatorBuilder` - Builds a `ModelEvaluator` instance from a PMML service provider JAR file
 * Interface `org.jpmml.evaluator.Evaluator`
   * Abstract class `org.jpmml.evaluator.ModelEvaluator` - Implements model evaluator functionality based on an `org.dmg.pmml.Model` instance
     * Classes `org.jpmml.evaluator.<Model>Evaluator` (`GeneralRegressionModelEvaluator`, `MiningModelEvaluator`, `NeuralNetworkEvaluator`, `RegressionEvaluator`, `TreeModelEvaluator`, `SupportVectorMachineEvaluator` etc.)
