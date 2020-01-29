@@ -33,7 +33,7 @@ public class ModelChainCompositionTest extends ModelChainTest {
 	public void getResultFields() throws Exception {
 		Evaluator evaluator = createModelEvaluator();
 
-		checkResultFields(Arrays.asList("Class", "PollenIndex"), Arrays.asList("Setosa Pollen Index", "Versicolor Pollen Index", "Virginica Pollen Index", "Pollen Index", "Segment Id", "Class Node", "Class Score"), evaluator);
+		checkResultFields(Arrays.asList("Class", "PollenIndex"), Arrays.asList("Setosa Pollen Index", "Versicolor Pollen Index", "Virginica Pollen Index", "Pollen Index", "Segment Id", "Class Node", "Class Score", "Class Score Code"), evaluator);
 	}
 
 	@Test
@@ -44,6 +44,7 @@ public class ModelChainCompositionTest extends ModelChainTest {
 		assertEquals("2.1", getOutput(result, "Segment Id"));
 		assertEquals("2", getOutput(result, "Class Node"));
 		assertEquals("setosa", getOutput(result, "Class Score"));
+		assertEquals("SE", getOutput(result, "Class Score Code"));
 	}
 
 	@Test
@@ -54,6 +55,7 @@ public class ModelChainCompositionTest extends ModelChainTest {
 		assertEquals("2.2", getOutput(result, "Segment Id"));
 		assertEquals("4", getOutput(result, "Class Node"));
 		assertEquals("versicolor", getOutput(result, "Class Score"));
+		assertEquals("VE", getOutput(result, "Class Score Code"));
 	}
 
 	@Test
@@ -64,5 +66,6 @@ public class ModelChainCompositionTest extends ModelChainTest {
 		assertEquals("2.3", getOutput(result, "Segment Id"));
 		assertEquals("5", getOutput(result, "Class Node"));
 		assertEquals("virginica", getOutput(result, "Class Score"));
+		assertEquals("VI", getOutput(result, "Class Score Code"));
 	}
 }

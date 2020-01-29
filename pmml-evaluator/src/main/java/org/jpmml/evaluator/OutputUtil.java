@@ -88,7 +88,19 @@ public class OutputUtil {
 
 			Object targetValue = null;
 
+			boolean requireTargetValue;
+
 			ResultFeature resultFeature = outputField.getResultFeature();
+			switch(resultFeature){
+				case TRANSFORMED_VALUE:
+				case DECISION:
+				case WARNING:
+					requireTargetValue = false;
+					break;
+				default:
+					requireTargetValue = true;
+					break;
+			}
 
 			String segmentId = outputField.getSegmentId();
 
@@ -110,51 +122,57 @@ public class OutputUtil {
 					continue outputFields;
 				} // End if
 
-				if(targetName != null){
+				if(requireTargetValue){
 
-					if(!segmentPredictions.containsKey(targetName)){
-						throw new MissingValueException(targetName, outputField);
+					if(targetName != null){
+
+						if(!segmentPredictions.containsKey(targetName)){
+							throw new MissingValueException(targetName, outputField);
+						}
+
+						targetValue = segmentPredictions.get(targetName);
+					} else
+
+					{
+						targetValue = segmentPredictions.getTargetValue();
 					}
-
-					targetValue = segmentPredictions.get(targetName);
-				} else
-
-				{
-					targetValue = segmentPredictions.getTargetValue();
 				}
 			} else
 
 			// Load the target value
 			{
-				switch(resultFeature){
-					case ENTITY_ID:
-						{
-							// "Result feature entityId returns the id of the winning segment"
-							if(model instanceof MiningModel){
-								targetValue = TypeUtil.cast(HasEntityId.class, predictions);
+				if(requireTargetValue){
 
-								break;
+					switch(resultFeature){
+						case ENTITY_ID:
+							{
+								// "Result feature entityId returns the id of the winning segment"
+								if(model instanceof MiningModel){
+									targetValue = TypeUtil.cast(HasEntityId.class, predictions);
+
+									break;
+								}
 							}
-						}
-						// Falls through
-					default:
-						{
-							if(targetName == null){
-								targetName = modelEvaluator.getTargetName();
-							} // End if
+							// Falls through
+						default:
+							{
+								if(targetName == null){
+									targetName = modelEvaluator.getTargetName();
+								} // End if
 
-							if(!predictions.containsKey(targetName)){
-								throw new MissingValueException(targetName, outputField);
+								if(!predictions.containsKey(targetName)){
+									throw new MissingValueException(targetName, outputField);
+								}
+
+								targetValue = predictions.get(targetName);
 							}
-
-							targetValue = predictions.get(targetName);
-						}
-						break;
+							break;
+					}
 				}
 			}
 
 			// "If the target value is missing, then the result delivered by this OutputField is missing"
-			if(targetValue == null){
+			if(requireTargetValue && targetValue == null){
 				continue outputFields;
 			}
 
