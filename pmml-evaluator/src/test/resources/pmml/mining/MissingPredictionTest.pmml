@@ -1,16 +1,16 @@
 <?xml version="1.0" ?>
 <PMML xmlns="http://www.dmg.org/PMML-4_3" version="4.3">
 	<DataDictionary>
+		<DataField name="x" optype="continuous" dataType="double"/>
 		<DataField name="y" optype="categorical" dataType="integer">
 			<Value value="0"/>
 			<Value value="1"/>
 		</DataField>
-		<DataField name="x" optype="continuous" dataType="double"/>
 	</DataDictionary>
 	<MiningModel functionName="classification">
 		<MiningSchema>
-			<MiningField name="y" usageType="target"/>
 			<MiningField name="x"/>
+			<MiningField name="y" usageType="target"/>
 		</MiningSchema>
 		<Segmentation multipleModelMethod="weightedMajorityVote" x-missingPredictionTreatment="continue" x-missingThreshold="0.5">
 			<Segment>

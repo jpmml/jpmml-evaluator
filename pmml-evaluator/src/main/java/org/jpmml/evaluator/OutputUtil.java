@@ -45,7 +45,9 @@ import org.dmg.pmml.association.Item;
 import org.dmg.pmml.association.ItemRef;
 import org.dmg.pmml.association.Itemset;
 import org.dmg.pmml.mining.MiningModel;
+import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
+import org.jpmml.evaluator.mining.MiningModelUtil;
 import org.jpmml.evaluator.mining.SegmentResult;
 
 public class OutputUtil {
@@ -104,7 +106,7 @@ public class OutputUtil {
 
 			String segmentId = outputField.getSegmentId();
 
-			SegmentResult segmentPredictions = null;
+			SegmentResult segmentPredictions;
 
 			// Load the target value of the specified segment
 			if(segmentId != null){
@@ -141,33 +143,54 @@ public class OutputUtil {
 
 			// Load the target value
 			{
+				segmentPredictions = null;
+
+				targetValue:
 				if(requireTargetValue){
 
-					switch(resultFeature){
-						case ENTITY_ID:
-							{
-								// "Result feature entityId returns the id of the winning segment"
-								if(model instanceof MiningModel){
+					if(model instanceof MiningModel){
+						MiningModel miningModel = (MiningModel)model;
+
+						switch(resultFeature){
+							case ENTITY_ID:
+								{
+									if(targetName != null){
+										throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_TARGETFIELD, targetName);
+									}
+
+									// "Result feature entityId returns the id of the winning segment"
 									targetValue = TypeUtil.cast(HasEntityId.class, predictions);
 
-									break;
+									break targetValue;
 								}
-							}
-							// Falls through
-						default:
-							{
-								if(targetName == null){
-									targetName = modelEvaluator.getTargetName();
-								} // End if
+							default:
+								{
+									if(targetName != null){
+										break;
+									}
 
-								if(!predictions.containsKey(targetName)){
-									throw new MissingValueException(targetName, outputField);
+									Segmentation segmentation = miningModel.getSegmentation();
+
+									SegmentResult segmentResult = MiningModelUtil.asSegmentResult(segmentation.getMultipleModelMethod(), predictions);
+									if(segmentResult != null){
+										targetValue = segmentResult.getTargetValue();
+
+										break targetValue;
+									}
 								}
+								break;
+						}
+					} // End if
 
-								targetValue = predictions.get(targetName);
-							}
-							break;
+					if(targetName == null){
+						targetName = modelEvaluator.getTargetName();
+					} // End if
+
+					if(!predictions.containsKey(targetName)){
+						throw new MissingValueException(targetName, outputField);
 					}
+
+					targetValue = predictions.get(targetName);
 				}
 			}
 
