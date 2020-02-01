@@ -64,6 +64,7 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PMMLElements;
 import org.dmg.pmml.PMMLObject;
+import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.TransformationDictionary;
@@ -107,6 +108,8 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	private Map<FieldName, org.dmg.pmml.OutputField> outputFields = Collections.emptyMap();
 
+	private Set<ResultFeature> resultFeatures = Collections.emptySet();
+
 	transient
 	private Boolean parentCompatible = null;
 
@@ -124,9 +127,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	transient
 	private List<OutputField> outputResultFields = null;
-
-	transient
-	private Set<org.dmg.pmml.ResultFeature> resultFeatures = null;
 
 	transient
 	private Map<FieldName, Field<?>> resolvedFields = null;
@@ -190,6 +190,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		Output output = model.getOutput();
 		if(output != null && output.hasOutputFields()){
 			this.outputFields = CacheUtil.getValue(output, ModelEvaluator.outputFieldCache);
+			this.resultFeatures = CacheUtil.getValue(output, ModelEvaluator.resultFeaturesCache);
 		}
 	}
 
@@ -285,6 +286,22 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	public org.dmg.pmml.OutputField getOutputField(FieldName name){
 		return this.outputFields.get(name);
+	}
+
+	/**
+	 * <p>
+	 * Indicates if this model evaluator provides the specified result feature.
+	 * </p>
+	 *
+	 * <p>
+	 * A result feature is first and foremost manifested through output fields.
+	 * However, selected result features may make a secondary manifestation through a target field.
+	 * </p>
+	 *
+	 * @see org.dmg.pmml.OutputField#getResultFeature()
+	 */
+	public boolean hasResultFeature(ResultFeature resultFeature){
+		return this.resultFeatures.contains(resultFeature);
 	}
 
 	/**
@@ -401,33 +418,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		}
 
 		return this.outputResultFields;
-	}
-
-	/**
-	 * <p>
-	 * Indicates if this model evaluator provides the specified result feature.
-	 * </p>
-	 *
-	 * <p>
-	 * A result feature is first and foremost manifested through output fields.
-	 * However, selected result features may make a secondary manifestation through a target field.
-	 * </p>
-	 *
-	 * @see org.dmg.pmml.OutputField#getResultFeature()
-	 */
-	public boolean hasResultFeature(org.dmg.pmml.ResultFeature resultFeature){
-		Set<org.dmg.pmml.ResultFeature> resultFeatures = getResultFeatures();
-
-		return resultFeatures.contains(resultFeature);
-	}
-
-	public Set<org.dmg.pmml.ResultFeature> getResultFeatures(){
-
-		if(this.resultFeatures == null){
-			this.resultFeatures = collectResultFeatures();
-		}
-
-		return this.resultFeatures;
 	}
 
 	protected EvaluationException createMiningSchemaException(String message){
@@ -740,11 +730,11 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	protected <V extends Number> Classification<V> createClassification(ValueMap<String, V> values){
 
-		if(hasResultFeature(org.dmg.pmml.ResultFeature.PROBABILITY) || hasResultFeature(org.dmg.pmml.ResultFeature.RESIDUAL)){
+		if(hasResultFeature(ResultFeature.PROBABILITY) || hasResultFeature(ResultFeature.RESIDUAL)){
 			return new ProbabilityDistribution<>(values);
 		} else
 
-		if(hasResultFeature(org.dmg.pmml.ResultFeature.CONFIDENCE)){
+		if(hasResultFeature(ResultFeature.CONFIDENCE)){
 			return new ConfidenceDistribution<>(values);
 		} else
 
@@ -797,7 +787,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 			for(OutputField outputField : outputFields){
 				org.dmg.pmml.OutputField pmmlOutputField = outputField.getField();
 
-				if(!(org.dmg.pmml.ResultFeature.RESIDUAL).equals(pmmlOutputField.getResultFeature())){
+				if(!(ResultFeature.RESIDUAL).equals(pmmlOutputField.getResultFeature())){
 					continue;
 				}
 
@@ -948,24 +938,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		return ImmutableList.copyOf(resultFields);
 	}
 
-	protected Set<org.dmg.pmml.ResultFeature> collectResultFeatures(){
-		M model = getModel();
-
-		Output output = model.getOutput();
-
-		Set<org.dmg.pmml.ResultFeature> resultFeatures = EnumSet.noneOf(org.dmg.pmml.ResultFeature.class);
-
-		if(output != null && output.hasOutputFields()){
-			List<org.dmg.pmml.OutputField> outputFields = output.getOutputFields();
-
-			for(org.dmg.pmml.OutputField outputField : outputFields){
-				resultFeatures.add(outputField.getResultFeature());
-			}
-		}
-
-		return Sets.immutableEnumSet(resultFeatures);
-	}
-
 	protected Field<?> resolveField(FieldName name){
 
 		if(this.resolvedFields == null){
@@ -1018,8 +990,6 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 	private void resetResultFields(){
 		this.targetResultFields = null;
 		this.outputResultFields = null;
-
-		this.resultFeatures = null;
 	}
 
 	public <V> V getValue(LoadingCache<M, V> cache){
@@ -1264,6 +1234,27 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		@Override
 		public Map<FieldName, org.dmg.pmml.OutputField> load(Output output){
 			return IndexableUtil.buildMap(output.getOutputFields());
+		}
+	});
+
+	private static final LoadingCache<Output, Set<ResultFeature>> resultFeaturesCache = CacheUtil.buildLoadingCache(new CacheLoader<Output, Set<ResultFeature>>(){
+
+		@Override
+		public Set<ResultFeature> load(Output output){
+			Set<ResultFeature> result = EnumSet.noneOf(ResultFeature.class);
+
+			List<org.dmg.pmml.OutputField> outputFields = output.getOutputFields();
+			for(org.dmg.pmml.OutputField outputField : outputFields){
+				String segmentId = outputField.getSegmentId();
+
+				if(segmentId != null){
+					continue;
+				}
+
+				result.add(outputField.getResultFeature());
+			}
+
+			return Sets.immutableEnumSet(result);
 		}
 	});
 

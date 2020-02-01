@@ -22,19 +22,23 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
-import org.jpmml.evaluator.Evaluator;
+import org.dmg.pmml.ResultFeature;
+import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class MultiTargetTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		Evaluator evaluator = createModelEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
+
+		assertTrue(evaluator.hasResultFeature(ResultFeature.PREDICTED_VALUE));
 
 		checkResultFields(Arrays.asList("y1", "y2"), Arrays.asList("decision"), evaluator);
 
