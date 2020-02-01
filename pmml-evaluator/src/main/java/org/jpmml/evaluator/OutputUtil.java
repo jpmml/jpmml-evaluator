@@ -64,9 +64,6 @@ public class OutputUtil {
 	 *
 	 * @return A map of {@link Evaluator#getTargetFields() target field} values together with {@link Evaluator#getOutputFields() output field} values.
 	 */
-	@SuppressWarnings (
-		value = {"fallthrough"}
-	)
 	static
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> predictions, ModelEvaluationContext context){
 		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();

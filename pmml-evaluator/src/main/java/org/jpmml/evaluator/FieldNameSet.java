@@ -59,7 +59,7 @@ public class FieldNameSet extends HashSet<FieldName> implements SymbolTable<Fiel
 
 		boolean unique = add(name);
 		if(!unique){
-			throw new EvaluationException("Field " + EvaluationException.formatKey(name) + " references itself");
+			throw new EvaluationException("Field " + PMMLException.formatKey(name) + " references itself");
 		}
 	}
 

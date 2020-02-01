@@ -741,15 +741,15 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 	protected <V extends Number> Classification<V> createClassification(ValueMap<String, V> values){
 
 		if(hasResultFeature(org.dmg.pmml.ResultFeature.PROBABILITY) || hasResultFeature(org.dmg.pmml.ResultFeature.RESIDUAL)){
-			return new ProbabilityDistribution<V>(values);
+			return new ProbabilityDistribution<>(values);
 		} else
 
 		if(hasResultFeature(org.dmg.pmml.ResultFeature.CONFIDENCE)){
-			return new ConfidenceDistribution<V>(values);
+			return new ConfidenceDistribution<>(values);
 		} else
 
 		{
-			return new Classification<V>(Classification.Type.VOTE, values);
+			return new Classification<>(Classification.Type.VOTE, values);
 		}
 	}
 

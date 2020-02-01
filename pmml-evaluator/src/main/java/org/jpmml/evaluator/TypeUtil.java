@@ -28,7 +28,7 @@ import java.util.Collection;
 import com.google.common.math.DoubleMath;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
-import org.jpmml.model.ValueUtil;;
+import org.jpmml.model.ValueUtil;
 
 public class TypeUtil {
 
@@ -423,6 +423,8 @@ public class TypeUtil {
 				case FLOAT:
 				case INTEGER:
 					return left;
+				default:
+					break;
 			}
 		} else
 
