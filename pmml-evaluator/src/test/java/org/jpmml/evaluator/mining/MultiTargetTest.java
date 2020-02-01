@@ -19,15 +19,20 @@
 package org.jpmml.evaluator.mining;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.ResultFeature;
+import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
+import org.jpmml.evaluator.ProbabilityDistribution;
+import org.jpmml.evaluator.tree.NodeScoreDistribution;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -49,6 +54,10 @@ public class MultiTargetTest extends ModelEvaluatorTest {
 		assertNotNull(getTarget(results, "y1"));
 		assertNull(getTarget(results, "y2"));
 
+		Classification<?> classification = (Classification<?>)results.get(FieldName.create("y1"));
+
+		assertTrue(classification instanceof NodeScoreDistribution);
+
 		assertEquals(0, getOutput(results, "decision"));
 
 		arguments = createArguments("x", 1.0d);
@@ -58,6 +67,33 @@ public class MultiTargetTest extends ModelEvaluatorTest {
 		assertNull(getTarget(results, "y1"));
 		assertNotNull(getTarget(results, "y2"));
 
+		classification = (Classification<?>)results.get(FieldName.create("y2"));
+
+		assertFalse(classification instanceof ProbabilityDistribution);
+
 		assertEquals(1, getOutput(results, "decision"));
+	}
+
+	@Test
+	public void evaluateWithProbability() throws Exception {
+		ModelEvaluator<?> evaluator = createModelEvaluator();
+
+		evaluator.addResultFeatures(EnumSet.of(ResultFeature.PROBABILITY));
+
+		Map<FieldName, ?> arguments = createArguments("x", -1.0d);
+
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+
+		Classification<?> classification = (Classification<?>)results.get(FieldName.create("y1"));
+
+		assertTrue(classification instanceof NodeScoreDistribution);
+
+		arguments = createArguments("x", 1.0d);
+
+		results = evaluator.evaluate(arguments);
+
+		classification = (Classification<?>)results.get(FieldName.create("y2"));
+
+		assertTrue(classification instanceof ProbabilityDistribution);
 	}
 }

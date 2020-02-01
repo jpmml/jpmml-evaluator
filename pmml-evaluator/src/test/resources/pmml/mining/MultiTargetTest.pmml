@@ -29,19 +29,20 @@
 					</MiningSchema>
 					<Node score="0">
 						<True/>
+						<ScoreDistribution value="0" recordCount="100"/>
+						<ScoreDistribution value="1" recordCount="0"/>
 					</Node>
 				</TreeModel>
 			</Segment>
 			<Segment>
 				<SimplePredicate field="x" operator="greaterOrEqual" value="0"/>
-				<TreeModel functionName="classification">
+				<RegressionModel functionName="classification">
 					<MiningSchema>
 						<MiningField name="y2" usageType="target"/>
 					</MiningSchema>
-					<Node score="1">
-						<True/>
-					</Node>
-				</TreeModel>
+					<RegressionTable intercept="1.0" targetCategory="1"/>
+					<RegressionTable intercept="0.0" targetCategory="0"/>
+				</RegressionModel>
 			</Segment>
 		</Segmentation>
 	</MiningModel>

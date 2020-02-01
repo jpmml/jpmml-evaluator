@@ -301,7 +301,17 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 	 * @see org.dmg.pmml.OutputField#getResultFeature()
 	 */
 	public boolean hasResultFeature(ResultFeature resultFeature){
-		return this.resultFeatures.contains(resultFeature);
+		Set<ResultFeature> resultFeatures = getResultFeatures();
+
+		return resultFeatures.contains(resultFeature);
+	}
+
+	public void addResultFeatures(Set<ResultFeature> resultFeatures){
+		this.resultFeatures = Sets.immutableEnumSet(Iterables.concat(this.resultFeatures, resultFeatures));
+	}
+
+	protected Set<ResultFeature> getResultFeatures(){
+		return this.resultFeatures;
 	}
 
 	/**
@@ -729,12 +739,13 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 	}
 
 	protected <V extends Number> Classification<V> createClassification(ValueMap<String, V> values){
+		Set<ResultFeature> resultFeatures = getResultFeatures();
 
-		if(hasResultFeature(ResultFeature.PROBABILITY) || hasResultFeature(ResultFeature.RESIDUAL)){
+		if(resultFeatures.contains(ResultFeature.PROBABILITY) || resultFeatures.contains(ResultFeature.RESIDUAL)){
 			return new ProbabilityDistribution<>(values);
 		} else
 
-		if(hasResultFeature(ResultFeature.CONFIDENCE)){
+		if(resultFeatures.contains(ResultFeature.CONFIDENCE)){
 			return new ConfidenceDistribution<>(values);
 		} else
 
