@@ -917,25 +917,23 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 		Output output = model.getOutput();
 
-		List<OutputField> resultFields = new ArrayList<>();
+		List<OutputField> outputFields = new ArrayList<>();
 
 		if(output != null && output.hasOutputFields()){
-			List<org.dmg.pmml.OutputField> outputFields = output.getOutputFields();
-
 			Predicate<org.dmg.pmml.OutputField> outputFilter = ensureOutputFilter();
 
-			outputFields:
-			for(org.dmg.pmml.OutputField outputField : outputFields){
+			List<org.dmg.pmml.OutputField> pmmlOutputFields = output.getOutputFields();
+			for(org.dmg.pmml.OutputField pmmlOutputField : pmmlOutputFields){
 
-				if(outputFilter.test(outputField)){
-					OutputField resultField = new OutputField(outputField);
+				if(outputFilter.test(pmmlOutputField)){
+					OutputField outputField = new OutputField(pmmlOutputField);
 
-					resultFields.add(resultField);
+					outputFields.add(outputField);
 				}
 			}
 		}
 
-		return ImmutableList.copyOf(resultFields);
+		return ImmutableList.copyOf(outputFields);
 	}
 
 	protected Field<?> resolveField(FieldName name){
@@ -1243,15 +1241,15 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		public Set<ResultFeature> load(Output output){
 			Set<ResultFeature> result = EnumSet.noneOf(ResultFeature.class);
 
-			List<org.dmg.pmml.OutputField> outputFields = output.getOutputFields();
-			for(org.dmg.pmml.OutputField outputField : outputFields){
-				String segmentId = outputField.getSegmentId();
+			List<org.dmg.pmml.OutputField> pmmlOutputFields = output.getOutputFields();
+			for(org.dmg.pmml.OutputField pmmlOutputField : pmmlOutputFields){
+				String segmentId = pmmlOutputField.getSegmentId();
 
 				if(segmentId != null){
 					continue;
 				}
 
-				result.add(outputField.getResultFeature());
+				result.add(pmmlOutputField.getResultFeature());
 			}
 
 			return Sets.immutableEnumSet(result);

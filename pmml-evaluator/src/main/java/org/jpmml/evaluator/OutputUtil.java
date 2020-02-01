@@ -77,9 +77,9 @@ public class OutputUtil {
 
 		OutputMap result = new OutputMap(predictions);
 
-		List<OutputField> outputFields = output.getOutputFields();
-
 		Predicate<OutputField> outputFilter = modelEvaluator.ensureOutputFilter();
+
+		List<OutputField> outputFields = output.getOutputFields();
 
 		outputFields:
 		for(OutputField outputField : outputFields){
