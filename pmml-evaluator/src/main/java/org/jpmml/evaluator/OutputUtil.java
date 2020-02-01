@@ -97,10 +97,18 @@ public class OutputUtil {
 				case TRANSFORMED_VALUE:
 				case DECISION:
 				case WARNING:
-					requireTargetValue = false;
+					{
+						if(targetName != null){
+							throw new MisplacedAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_TARGETFIELD, targetName);
+						}
+
+						requireTargetValue = false;
+					}
 					break;
 				default:
-					requireTargetValue = true;
+					{
+						requireTargetValue = true;
+					}
 					break;
 			}
 
@@ -112,7 +120,7 @@ public class OutputUtil {
 			if(segmentId != null){
 
 				if(!(model instanceof MiningModel)){
-					throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_SEGMENTID, segmentId);
+					throw new MisplacedAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_SEGMENTID, segmentId);
 				}
 
 				MiningModelEvaluationContext miningModelContext = (MiningModelEvaluationContext)context;
@@ -155,7 +163,7 @@ public class OutputUtil {
 							case ENTITY_ID:
 								{
 									if(targetName != null){
-										throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_TARGETFIELD, targetName);
+										throw new MisplacedAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_TARGETFIELD, targetName);
 									}
 
 									// "Result feature entityId returns the id of the winning segment"
