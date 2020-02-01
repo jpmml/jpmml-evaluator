@@ -164,8 +164,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
-			case SELECT_ALL:
 			case SELECT_FIRST:
+			case SELECT_ALL:
 			case MODEL_CHAIN:
 				return null;
 			default:
@@ -620,13 +620,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
-			case SELECT_ALL:
-				return selectAll(segmentResults);
 			case SELECT_FIRST:
 				if(segmentResults.size() > 0){
 					return segmentResults.get(0);
 				}
 				break;
+			case SELECT_ALL:
+				return selectAll(segmentResults);
 			case MODEL_CHAIN:
 				if(segmentResults.size() > 0){
 					return segmentResults.get(segmentResults.size() - 1);
@@ -675,11 +675,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
+			case SELECT_FIRST:
+				return createNestedOutputFields(getActiveHead(segments));
 			case SELECT_ALL:
 				// Ignored
 				break;
-			case SELECT_FIRST:
-				return createNestedOutputFields(getActiveHead(segments));
 			case MODEL_CHAIN:
 				return createNestedOutputFields(getActiveTail(segments));
 			default:
