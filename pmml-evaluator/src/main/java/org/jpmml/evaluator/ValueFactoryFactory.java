@@ -104,5 +104,5 @@ public class ValueFactoryFactory implements Serializable {
 		}
 
 		public static final DoubleValueFactory INSTANCE = new DoubleValueFactory();
-	};
+	}
 }

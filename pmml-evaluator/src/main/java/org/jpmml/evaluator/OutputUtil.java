@@ -45,7 +45,9 @@ import org.dmg.pmml.association.Item;
 import org.dmg.pmml.association.ItemRef;
 import org.dmg.pmml.association.Itemset;
 import org.dmg.pmml.mining.MiningModel;
+import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
+import org.jpmml.evaluator.mining.MiningModelUtil;
 import org.jpmml.evaluator.mining.SegmentResult;
 
 public class OutputUtil {
@@ -62,9 +64,6 @@ public class OutputUtil {
 	 *
 	 * @return A map of {@link Evaluator#getTargetFields() target field} values together with {@link Evaluator#getOutputFields() output field} values.
 	 */
-	@SuppressWarnings (
-		value = {"fallthrough"}
-	)
 	static
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> predictions, ModelEvaluationContext context){
 		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
@@ -78,9 +77,9 @@ public class OutputUtil {
 
 		OutputMap result = new OutputMap(predictions);
 
-		List<OutputField> outputFields = output.getOutputFields();
-
 		Predicate<OutputField> outputFilter = modelEvaluator.ensureOutputFilter();
+
+		List<OutputField> outputFields = output.getOutputFields();
 
 		outputFields:
 		for(OutputField outputField : outputFields){
@@ -88,17 +87,37 @@ public class OutputUtil {
 
 			Object targetValue = null;
 
+			boolean requireTargetValue;
+
 			ResultFeature resultFeature = outputField.getResultFeature();
+			switch(resultFeature){
+				case TRANSFORMED_VALUE:
+				case DECISION:
+				case WARNING:
+					{
+						if(targetName != null){
+							throw new MisplacedAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_TARGETFIELD, targetName);
+						}
+
+						requireTargetValue = false;
+					}
+					break;
+				default:
+					{
+						requireTargetValue = true;
+					}
+					break;
+			}
 
 			String segmentId = outputField.getSegmentId();
 
-			SegmentResult segmentPredictions = null;
+			SegmentResult segmentPredictions;
 
 			// Load the target value of the specified segment
 			if(segmentId != null){
 
 				if(!(model instanceof MiningModel)){
-					throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_SEGMENTID, segmentId);
+					throw new MisplacedAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_SEGMENTID, segmentId);
 				}
 
 				MiningModelEvaluationContext miningModelContext = (MiningModelEvaluationContext)context;
@@ -110,51 +129,78 @@ public class OutputUtil {
 					continue outputFields;
 				} // End if
 
-				if(targetName != null){
+				if(requireTargetValue){
 
-					if(!segmentPredictions.containsKey(targetName)){
-						throw new MissingValueException(targetName, outputField);
+					if(targetName != null){
+
+						if(!segmentPredictions.containsKey(targetName)){
+							throw new MissingValueException(targetName, outputField);
+						}
+
+						targetValue = segmentPredictions.get(targetName);
+					} else
+
+					{
+						targetValue = segmentPredictions.getTargetValue();
 					}
-
-					targetValue = segmentPredictions.get(targetName);
-				} else
-
-				{
-					targetValue = segmentPredictions.getTargetValue();
 				}
 			} else
 
 			// Load the target value
 			{
-				switch(resultFeature){
-					case ENTITY_ID:
-						{
-							// "Result feature entityId returns the id of the winning segment"
-							if(model instanceof MiningModel){
-								targetValue = TypeUtil.cast(HasEntityId.class, predictions);
+				segmentPredictions = null;
 
+				targetValue:
+				if(requireTargetValue){
+
+					if(model instanceof MiningModel){
+						MiningModel miningModel = (MiningModel)model;
+
+						switch(resultFeature){
+							case ENTITY_ID:
+								{
+									if(targetName != null){
+										throw new MisplacedAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_TARGETFIELD, targetName);
+									}
+
+									// "Result feature entityId returns the id of the winning segment"
+									targetValue = TypeUtil.cast(HasEntityId.class, predictions);
+
+									break targetValue;
+								}
+							default:
+								{
+									if(targetName != null){
+										break;
+									}
+
+									Segmentation segmentation = miningModel.getSegmentation();
+
+									SegmentResult segmentResult = MiningModelUtil.asSegmentResult(segmentation.getMultipleModelMethod(), predictions);
+									if(segmentResult != null){
+										targetValue = segmentResult.getTargetValue();
+
+										break targetValue;
+									}
+								}
 								break;
-							}
 						}
-						// Falls through
-					default:
-						{
-							if(targetName == null){
-								targetName = modelEvaluator.getTargetName();
-							} // End if
+					} // End if
 
-							if(!predictions.containsKey(targetName)){
-								throw new MissingValueException(targetName, outputField);
-							}
+					if(targetName == null){
+						targetName = modelEvaluator.getTargetName();
+					} // End if
 
-							targetValue = predictions.get(targetName);
-						}
-						break;
+					if(!predictions.containsKey(targetName)){
+						throw new MissingValueException(targetName, outputField);
+					}
+
+					targetValue = predictions.get(targetName);
 				}
 			}
 
 			// "If the target value is missing, then the result delivered by this OutputField is missing"
-			if(targetValue == null){
+			if(requireTargetValue && targetValue == null){
 				continue outputFields;
 			}
 

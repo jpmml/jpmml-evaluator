@@ -22,18 +22,24 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
-import org.jpmml.evaluator.Evaluator;
+import org.dmg.pmml.ResultFeature;
+import org.jpmml.evaluator.ModelEvaluator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class ModelChainCompositionTest extends ModelChainTest {
 
 	@Test
 	public void getResultFields() throws Exception {
-		Evaluator evaluator = createModelEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		checkResultFields(Arrays.asList("Class", "PollenIndex"), Arrays.asList("Setosa Pollen Index", "Versicolor Pollen Index", "Virginica Pollen Index", "Pollen Index", "Segment Id", "Class Node", "Class Score"), evaluator);
+		assertFalse(evaluator.hasResultFeature(ResultFeature.ENTITY_ID));
+		assertTrue(evaluator.hasResultFeature(ResultFeature.TRANSFORMED_VALUE));
+
+		checkResultFields(Arrays.asList("Class", "PollenIndex"), Arrays.asList("Setosa Pollen Index", "Versicolor Pollen Index", "Virginica Pollen Index", "Pollen Index", "Segment Id", "Class Node", "Class Score", "Class Score Code"), evaluator);
 	}
 
 	@Test
@@ -44,6 +50,7 @@ public class ModelChainCompositionTest extends ModelChainTest {
 		assertEquals("2.1", getOutput(result, "Segment Id"));
 		assertEquals("2", getOutput(result, "Class Node"));
 		assertEquals("setosa", getOutput(result, "Class Score"));
+		assertEquals("SE", getOutput(result, "Class Score Code"));
 	}
 
 	@Test
@@ -54,6 +61,7 @@ public class ModelChainCompositionTest extends ModelChainTest {
 		assertEquals("2.2", getOutput(result, "Segment Id"));
 		assertEquals("4", getOutput(result, "Class Node"));
 		assertEquals("versicolor", getOutput(result, "Class Score"));
+		assertEquals("VE", getOutput(result, "Class Score Code"));
 	}
 
 	@Test
@@ -64,5 +72,6 @@ public class ModelChainCompositionTest extends ModelChainTest {
 		assertEquals("2.3", getOutput(result, "Segment Id"));
 		assertEquals("5", getOutput(result, "Class Node"));
 		assertEquals("virginica", getOutput(result, "Class Score"));
+		assertEquals("VI", getOutput(result, "Class Score Code"));
 	}
 }

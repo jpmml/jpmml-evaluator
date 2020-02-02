@@ -25,6 +25,15 @@
 		<Output>
 			<OutputField name="Class Node" feature="entityId" segmentId="1"/>
 			<OutputField name="Class Score" feature="transformedValue" value="TransformedPredictedClass" segmentId="1"/>
+			<OutputField name="Class Score Code" feature="transformedValue">
+				<Apply function="uppercase">
+					<Apply function="substring">
+						<FieldRef field="Class Score"/>
+						<Constant>1</Constant>
+						<Constant>2</Constant>
+					</Apply>
+				</Apply>
+			</OutputField>
 		</Output>
 		<Segmentation multipleModelMethod="modelChain">
 			<Segment id="1">

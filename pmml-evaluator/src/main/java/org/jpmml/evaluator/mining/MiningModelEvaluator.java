@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +36,11 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
@@ -48,6 +51,7 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
+import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.True;
 import org.dmg.pmml.mining.MiningModel;
 import org.dmg.pmml.mining.PMMLAttributes;
@@ -88,6 +92,8 @@ import org.jpmml.model.XPathUtil;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 
+	private Map<String, Set<ResultFeature>> segmentResultFeatures = Collections.emptyMap();
+
 	private ConcurrentMap<String, ModelEvaluator<?>> segmentModelEvaluators = new ConcurrentHashMap<>();
 
 	transient
@@ -127,6 +133,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		if(localTransformations != null){
 			throw new UnsupportedElementException(localTransformations);
 		}
+
+		Output output = miningModel.getOutput();
+		if(output != null && output.hasOutputFields()){
+			this.segmentResultFeatures = CacheUtil.getValue(output, MiningModelEvaluator.segmentResultFeaturesCache);
+		}
+	}
+
+	protected Set<ResultFeature> getSegmentResultFeatures(String segmentId){
+		return this.segmentResultFeatures.get(segmentId);
 	}
 
 	@Override
@@ -149,8 +164,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
-			case SELECT_ALL:
 			case SELECT_FIRST:
+			case SELECT_ALL:
 			case MODEL_CHAIN:
 				return null;
 			default:
@@ -605,13 +620,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
-			case SELECT_ALL:
-				return selectAll(segmentResults);
 			case SELECT_FIRST:
 				if(segmentResults.size() > 0){
 					return segmentResults.get(0);
 				}
 				break;
+			case SELECT_ALL:
+				return selectAll(segmentResults);
 			case MODEL_CHAIN:
 				if(segmentResults.size() > 0){
 					return segmentResults.get(segmentResults.size() - 1);
@@ -660,11 +675,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
+			case SELECT_FIRST:
+				return createNestedOutputFields(getActiveHead(segments));
 			case SELECT_ALL:
 				// Ignored
 				break;
-			case SELECT_FIRST:
-				return createNestedOutputFields(getActiveHead(segments));
 			case MODEL_CHAIN:
 				return createNestedOutputFields(getActiveTail(segments));
 			default:
@@ -706,7 +721,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		ModelEvaluator<?> segmentModelEvaluator = this.segmentModelEvaluators.get(segmentId);
 
 		if(segmentModelEvaluator == null){
-			segmentModelEvaluator = createSegmentModelEvaluator(model);
+			segmentModelEvaluator = createSegmentModelEvaluator(segmentId, model);
 
 			this.segmentModelEvaluators.putIfAbsent(segmentId, segmentModelEvaluator);
 		}
@@ -714,12 +729,41 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return segmentModelEvaluator;
 	}
 
-	private ModelEvaluator<?> createSegmentModelEvaluator(Model model){
+	private ModelEvaluator<?> createSegmentModelEvaluator(String segmentId, Model model){
+		MiningModel miningModel = getModel();
+
+		Segmentation segmentation = miningModel.getSegmentation();
+
 		Configuration configuration = ensureConfiguration();
 
 		ModelEvaluatorFactory modelEvaluatorFactory = configuration.getModelEvaluatorFactory();
 
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(getPMML(), model);
+
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
+		switch(multipleModelMethod){
+			case SELECT_FIRST:
+			case SELECT_ALL:
+			case MODEL_CHAIN:
+				{
+					Set<ResultFeature> resultFeatures = getResultFeatures();
+
+					if(!resultFeatures.isEmpty()){
+						modelEvaluator.addResultFeatures(resultFeatures);
+					}
+				}
+				// Falls through
+			default:
+				{
+					Set<ResultFeature> segmentResultFeatures = getSegmentResultFeatures(segmentId);
+
+					if(segmentResultFeatures != null && !segmentResultFeatures.isEmpty()){
+						modelEvaluator.addResultFeatures(segmentResultFeatures);
+					}
+				}
+				break;
+		}
+
 		modelEvaluator.configure(configuration);
 
 		return modelEvaluator;
@@ -774,6 +818,36 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private static final Set<Segmentation.MultipleModelMethod> REGRESSION_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.AVERAGE, Segmentation.MultipleModelMethod.WEIGHTED_AVERAGE, Segmentation.MultipleModelMethod.MEDIAN, Segmentation.MultipleModelMethod.WEIGHTED_MEDIAN, Segmentation.MultipleModelMethod.SUM, Segmentation.MultipleModelMethod.WEIGHTED_SUM);
 	private static final Set<Segmentation.MultipleModelMethod> CLASSIFICATION_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.MAJORITY_VOTE, Segmentation.MultipleModelMethod.WEIGHTED_MAJORITY_VOTE, Segmentation.MultipleModelMethod.AVERAGE, Segmentation.MultipleModelMethod.WEIGHTED_AVERAGE, Segmentation.MultipleModelMethod.MEDIAN, Segmentation.MultipleModelMethod.MAX);
 	private static final Set<Segmentation.MultipleModelMethod> CLUSTERING_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.MAJORITY_VOTE, Segmentation.MultipleModelMethod.WEIGHTED_MAJORITY_VOTE);
+
+	private static final LoadingCache<Output, Map<String, Set<ResultFeature>>> segmentResultFeaturesCache = CacheUtil.buildLoadingCache(new CacheLoader<Output, Map<String, Set<ResultFeature>>>(){
+
+		@Override
+		public Map<String, Set<ResultFeature>> load(Output output){
+			Map<String, Set<ResultFeature>> result = new LinkedHashMap<>();
+
+			List<org.dmg.pmml.OutputField> pmmlOutputFields = output.getOutputFields();
+			for(org.dmg.pmml.OutputField pmmlOutputField : pmmlOutputFields){
+				String segmentId = pmmlOutputField.getSegmentId();
+
+				if(segmentId == null){
+					continue;
+				}
+
+				Set<ResultFeature> resultFeatures = result.get(segmentId);
+				if(resultFeatures == null){
+					resultFeatures = EnumSet.noneOf(ResultFeature.class);
+
+					result.put(segmentId, resultFeatures);
+				}
+
+				resultFeatures.add(pmmlOutputField.getResultFeature());
+			}
+
+			result.replaceAll((key, value) -> Sets.immutableEnumSet(value));
+
+			return ImmutableMap.copyOf(result);
+		}
+	});
 
 	private static final LoadingCache<MiningModel, BiMap<String, Segment>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<MiningModel, BiMap<String, Segment>>(){
 

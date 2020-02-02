@@ -21,8 +21,10 @@ package org.jpmml.evaluator.mining;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.FieldName;
 import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasProbability;
@@ -38,6 +40,28 @@ import org.jpmml.evaluator.VoteAggregator;
 public class MiningModelUtil {
 
 	private MiningModelUtil(){
+	}
+
+	static
+	public SegmentResult asSegmentResult(Segmentation.MultipleModelMethod multipleModelMethod, Map<FieldName, ?> predictions){
+
+		switch(multipleModelMethod){
+			case SELECT_FIRST:
+			case SELECT_ALL:
+			case MODEL_CHAIN:
+				{
+					if(predictions instanceof SegmentResult){
+						SegmentResult segmentResult = (SegmentResult)predictions;
+
+						return segmentResult;
+					}
+				}
+				break;
+			default:
+				break;
+		}
+
+		return null;
 	}
 
 	static

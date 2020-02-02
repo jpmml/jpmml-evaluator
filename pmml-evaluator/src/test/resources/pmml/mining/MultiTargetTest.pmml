@@ -1,0 +1,50 @@
+<?xml version="1.0" ?>
+<PMML xmlns="http://www.dmg.org/PMML-4_3" version="4.3">
+	<DataDictionary>
+		<DataField name="x" optype="continuous" dataType="double"/>
+		<DataField name="y1" optype="categorical" dataType="integer">
+			<Value value="0"/>
+			<Value value="1"/>
+		</DataField>
+		<DataField name="y2" optype="categorical" dataType="integer">
+			<Value value="0"/>
+			<Value value="1"/>
+		</DataField>
+	</DataDictionary>
+	<MiningModel functionName="classification">
+		<MiningSchema>
+			<MiningField name="x"/>
+			<MiningField name="y1" usageType="target"/>
+			<MiningField name="y2" usageType="target"/>
+		</MiningSchema>
+		<Output>
+			<OutputField name="decision" optype="categorical" dataType="integer" feature="predictedValue"/>
+		</Output>
+		<Segmentation multipleModelMethod="modelChain">
+			<Segment>
+				<SimplePredicate field="x" operator="lessThan" value="0"/>
+				<TreeModel functionName="classification">
+					<MiningSchema>
+						<MiningField name="y1" usageType="target"/>
+					</MiningSchema>
+					<Node score="0">
+						<True/>
+						<ScoreDistribution value="0" recordCount="100"/>
+						<ScoreDistribution value="1" recordCount="0"/>
+					</Node>
+				</TreeModel>
+			</Segment>
+			<Segment>
+				<SimplePredicate field="x" operator="greaterOrEqual" value="0"/>
+				<RegressionModel functionName="classification">
+					<MiningSchema>
+						<MiningField name="y2" usageType="target"/>
+					</MiningSchema>
+					<RegressionTable intercept="1.0" targetCategory="1"/>
+					<RegressionTable intercept="0.0" targetCategory="0"/>
+				</RegressionModel>
+			</Segment>
+		</Segmentation>
+	</MiningModel>
+</PMML>
+ 
