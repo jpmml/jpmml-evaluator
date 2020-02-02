@@ -523,8 +523,15 @@ java -cp target/pmml-evaluator-example-executable-1.4-SNAPSHOT.jar <application 
 
 # Documentation #
 
-* [Upgrading from the Factory pattern to the Builder pattern](https://openscoring.io/blog/2018/12/06/jpmml_evaluator_api_builder_pattern/)
+Up-to-date:
+
 * [Tracing and reporting predictions](https://openscoring.io/blog/2019/02/26/jpmml_evaluator_api_tracing_reporting_predictions/)
+* [Upgrading from the Factory pattern to the Builder pattern](https://openscoring.io/blog/2018/12/06/jpmml_evaluator_api_builder_pattern/)
+
+Slightly outdated:
+
+* [Preparing arguments for evaluation](https://openscoring.io/blog/2014/05/15/jpmml_evaluator_api_prepare_evaluate/)
+* [Testing PMML applications](https://openscoring.io/blog/2014/05/12/testing_pmml_applications/)
 
 # Support #
 
@@ -532,10 +539,12 @@ Limited public support is available via the [JPMML mailing list](https://groups.
 
 # License #
 
-JPMML-Evaluator is dual-licensed under the [GNU Affero General Public License (AGPL) version 3.0](https://www.gnu.org/licenses/agpl-3.0.html), and a commercial license.
+JPMML-Evaluator is licensed under the terms and conditions of the [GNU Affero General Public License, Version 3.0](https://www.gnu.org/licenses/agpl-3.0.html). For a quick summary of your rights ("Can") and obligations ("Cannot" and "Must") under AGPLv3, please refer to [TLDRLegal](https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)).
+
+If you would like to use JPMML-Evaluator in a proprietary software project, then it is possible to enter into a licensing agreement which makes JPMML-Evaluator available under the terms and conditions of the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause) instead. Please initiate the conversation by submitting the [Request for Quotation](http://openscoring.io/rfq/) web form, or e-mailing [info@openscoring.io](mailto:info@openscoring.io).
 
 # Additional information #
 
 JPMML-Evaluator is developed and maintained by Openscoring Ltd, Estonia.
 
-Interested in using JPMML software in your application? Please contact [info@openscoring.io](mailto:info@openscoring.io)
+Interested in using JPMML software in your software? Please contact [info@openscoring.io](mailto:info@openscoring.io)
