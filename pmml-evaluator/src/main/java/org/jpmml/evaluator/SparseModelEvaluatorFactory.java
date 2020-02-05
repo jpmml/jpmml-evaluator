@@ -45,104 +45,79 @@ import org.jpmml.evaluator.naive_bayes.NaiveBayesModelEvaluator;
 import org.jpmml.evaluator.nearest_neighbor.NearestNeighborModelEvaluator;
 import org.jpmml.evaluator.neural_network.NeuralNetworkEvaluator;
 import org.jpmml.evaluator.regression.RegressionModelEvaluator;
+import org.jpmml.evaluator.regression.SparseRegressionModelEvaluator;
 import org.jpmml.evaluator.rule_set.RuleSetModelEvaluator;
 import org.jpmml.evaluator.scorecard.ScorecardEvaluator;
 import org.jpmml.evaluator.support_vector_machine.SupportVectorMachineModelEvaluator;
 import org.jpmml.evaluator.tree.TreeModelEvaluator;
 
-public class ModelEvaluatorFactory implements Serializable {
+public class SparseModelEvaluatorFactory extends ModelEvaluatorFactory {
 
-	final
-	private Configuration configuration;
+	private SparseEvaluatorConfig sparseEvaluatorConfig;
 
-
-	protected ModelEvaluatorFactory(){
-		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
-			.setModelEvaluatorFactory(this);
-
-		this.configuration = configurationBuilder.build();
+	public SparseModelEvaluatorFactory(SparseEvaluatorConfig sparseEvaluatorConfig) {
+		super();
+		this.sparseEvaluatorConfig = sparseEvaluatorConfig;
 	}
 
-	public ModelEvaluator<?> newModelEvaluator(PMML pmml){
-		return newModelEvaluator(pmml, (String)null);
-	}
-
-	public ModelEvaluator<?> newModelEvaluator(PMML pmml, String modelName){
-		Objects.requireNonNull(pmml);
-
-		Model model = PMMLUtil.findModel(pmml, modelName);
-
-		return newModelEvaluator(pmml, model);
-	}
-
-	public ModelEvaluator<?> newModelEvaluator(PMML pmml, Model model){
-		ModelEvaluator<?> modelEvaluator = createModelEvaluator(pmml, model);
-		modelEvaluator.configure(this.configuration);
-
-		return modelEvaluator;
-	}
-
+	@Override
 	protected ModelEvaluator<?> createModelEvaluator(PMML pmml, Model model){
 		Objects.requireNonNull(pmml);
 		Objects.requireNonNull(model);
 
 		if(model instanceof AssociationModel){
-			return new AssociationModelEvaluator(pmml, (AssociationModel)model);
+			throw new UnsupportedOperationException(String.format("No support for sparse %s", model));
 		} else
 
 		if(model instanceof ClusteringModel){
-			 return new ClusteringModelEvaluator(pmml, (ClusteringModel)model);
+			throw new UnsupportedOperationException(String.format("No support for sparse %s", model));
 		} else
 
 		if(model instanceof GeneralRegressionModel){
-			return new GeneralRegressionModelEvaluator(pmml, (GeneralRegressionModel)model);
+			throw new UnsupportedOperationException(String.format("No support for sparse %s", model));
 		} else
 
 		if(model instanceof MiningModel){
-			return new MiningModelEvaluator(pmml, (MiningModel)model);
+			throw new UnsupportedOperationException(String.format("No support for sparse %s", model));
 		} else
 
 		if(model instanceof NaiveBayesModel){
-			return new NaiveBayesModelEvaluator(pmml, (NaiveBayesModel)model);
+			throw new UnsupportedOperationException(String.format("No support for sparse %s", model));
 		} else
 
 		if(model instanceof NearestNeighborModel){
-			return new NearestNeighborModelEvaluator(pmml, (NearestNeighborModel)model);
+			throw new UnsupportedOperationException(String.format("No support for sparse %s", model));
 		} else
 
 		if(model instanceof NeuralNetwork){
-			return new NeuralNetworkEvaluator(pmml, (NeuralNetwork)model);
+			throw new UnsupportedOperationException(String.format("No support for sparse %s", model));
 		} else
 
 		if(model instanceof RegressionModel){
-			return new RegressionModelEvaluator(pmml, (RegressionModel)model);
+			return new SparseRegressionModelEvaluator(pmml, (RegressionModel)model, sparseEvaluatorConfig);
 		} else
 
 		if(model instanceof RuleSetModel){
-			return new RuleSetModelEvaluator(pmml, (RuleSetModel)model);
+			throw new UnsupportedOperationException(String.format("No support for sparse %s", model));
 		} else
 
 		if(model instanceof Scorecard){
-			return new ScorecardEvaluator(pmml, (Scorecard)model);
+			throw new UnsupportedOperationException(String.format("No support for sparse %s", model));
 		} else
 
 		if(model instanceof SupportVectorMachineModel){
-			return new SupportVectorMachineModelEvaluator(pmml, (SupportVectorMachineModel)model);
+			throw new UnsupportedOperationException(String.format("No support for sparse %s", model));
 		} else
 
 		if(model instanceof TreeModel){
-			return new TreeModelEvaluator(pmml, (TreeModel)model);
+			throw new UnsupportedOperationException(String.format("No support for sparse %s", model));
 		} // End if
 
 		if(model instanceof JavaModel){
-			return new JavaModelEvaluator(pmml, (JavaModel)model);
+			throw new UnsupportedOperationException(String.format("No support for sparse %s", model));
 		}
 
 		throw new UnsupportedElementException(model);
 	}
 
-	static
-	public ModelEvaluatorFactory newInstance(){
-		return new ModelEvaluatorFactory();
-	}
 }
