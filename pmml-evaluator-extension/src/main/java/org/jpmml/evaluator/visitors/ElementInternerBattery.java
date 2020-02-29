@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator.visitors;
 
-import org.jpmml.model.VisitorBattery;
+import org.jpmml.model.visitors.VisitorBattery;
 
 public class ElementInternerBattery extends VisitorBattery {
 

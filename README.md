@@ -22,32 +22,32 @@ Java Evaluator API for Predictive Model Markup Language (PMML).
 
 # Features #
 
-JPMML-Evaluator is *de facto* the reference implementation of the PMML specification versions 3.0, 3.1, 3.2, 4.0, 4.1, 4.2 and 4.3 for the Java/JVM platform:
+JPMML-Evaluator is *de facto* the reference implementation of the PMML specification versions 3.0, 3.1, 3.2, 4.0, 4.1, 4.2, 4.3 and 4.4 for the Java/JVM platform:
 
-* Pre-processing of input fields according to the [DataDictionary](http://www.dmg.org/pmml/v4-3/DataDictionary.html) and [MiningSchema](http://www.dmg.org/pmml/v4-3/MiningSchema.html) elements:
+* Pre-processing of input fields according to the [DataDictionary](http://www.dmg.org/pmml/v4-4/DataDictionary.html) and [MiningSchema](http://www.dmg.org/pmml/v4-4/MiningSchema.html) elements:
   * Complete data type system.
   * Complete operational type system.
   * Treatment of outlier, missing and/or invalid values.
 * Model evaluation:
-  * [Association rules](http://www.dmg.org/pmml/v4-3/AssociationRules.html)
-  * [Cluster model](http://www.dmg.org/pmml/v4-3/ClusteringModel.html)
-  * [General regression](http://www.dmg.org/pmml/v4-3/GeneralRegression.html)
-  * [Naive Bayes](http://www.dmg.org/pmml/v4-3/NaiveBayes.html)
-  * [k-Nearest neighbors](http://www.dmg.org/pmml/v4-3/KNN.html)
-  * [Neural network](http://www.dmg.org/pmml/v4-3/NeuralNetwork.html)
-  * [Regression](http://www.dmg.org/pmml/v4-3/Regression.html)
-  * [Rule set](http://www.dmg.org/pmml/v4-3/RuleSet.html)
-  * [Scorecard](http://www.dmg.org/pmml/v4-3/Scorecard.html)
-  * [Support Vector Machine](http://www.dmg.org/pmml/v4-3/SupportVectorMachine.html)
-  * [Tree model](http://www.dmg.org/pmml/v4-3/TreeModel.html)
-  * [Ensemble model](http://www.dmg.org/pmml/v4-3/MultipleModels.html)
-* Post-processing of target fields according to the [Targets](http://www.dmg.org/pmml/v4-3/Targets.html) element:
+  * [Association rules](http://www.dmg.org/pmml/v4-4/AssociationRules.html)
+  * [Cluster model](http://www.dmg.org/pmml/v4-4/ClusteringModel.html)
+  * [General regression](http://www.dmg.org/pmml/v4-4/GeneralRegression.html)
+  * [Naive Bayes](http://www.dmg.org/pmml/v4-4/NaiveBayes.html)
+  * [k-Nearest neighbors](http://www.dmg.org/pmml/v4-4/KNN.html)
+  * [Neural network](http://www.dmg.org/pmml/v4-4/NeuralNetwork.html)
+  * [Regression](http://www.dmg.org/pmml/v4-4/Regression.html)
+  * [Rule set](http://www.dmg.org/pmml/v4-4/RuleSet.html)
+  * [Scorecard](http://www.dmg.org/pmml/v4-4/Scorecard.html)
+  * [Support Vector Machine](http://www.dmg.org/pmml/v4-4/SupportVectorMachine.html)
+  * [Tree model](http://www.dmg.org/pmml/v4-4/TreeModel.html)
+  * [Ensemble model](http://www.dmg.org/pmml/v4-4/MultipleModels.html)
+* Post-processing of target fields according to the [Targets](http://www.dmg.org/pmml/v4-4/Targets.html) element:
   * Rescaling and/or casting regression results.
   * Replacing a missing regression result with the default value.
   * Replacing a missing classification result with the map of prior probabilities.
-* Calculation of auxiliary output fields according to the [Output](http://www.dmg.org/pmml/v4-3/Output.html) element:
+* Calculation of auxiliary output fields according to the [Output](http://www.dmg.org/pmml/v4-4/Output.html) element:
   * Over 20 different result feature types.
-* Model verification according to the [ModelVerification](http://www.dmg.org/pmml/v4-3/ModelVerification.html) element.
+* Model verification according to the [ModelVerification](http://www.dmg.org/pmml/v4-4/ModelVerification.html) element.
 * Vendor extensions:
   * Memory and security sandboxing.
   * Java-backed model, expression and predicate types - integrate any 3rd party Java library into PMML data flow.
@@ -541,11 +541,11 @@ Limited public support is available via the [JPMML mailing list](https://groups.
 JPMML-Evaluator is licensed under the terms and conditions of the [GNU Affero General Public License, Version 3.0](https://www.gnu.org/licenses/agpl-3.0.html).
 For a quick summary of your rights ("Can") and obligations ("Cannot" and "Must") under AGPLv3, please refer to [TLDRLegal](https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)).
 
-If you would like to use JPMML-Evaluator in a proprietary software project, then it is possible to enter into a licensing agreement which makes it available under the terms and conditions of the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause) instead.
+If you would like to use JPMML-Evaluator in a proprietary software project, then it is possible to enter into a licensing agreement which makes JPMML-Evaluator available under the terms and conditions of the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause) instead.
 Please initiate the conversation by submitting the [Request for Quotation](https://openscoring.io/rfq/) web form, or sending an e-mail.
 
 # Additional information #
 
 JPMML-Evaluator is developed and maintained by Openscoring Ltd, Estonia.
 
-Interested in using JPMML software in your software? Please contact [info@openscoring.io](mailto:info@openscoring.io)
+Interested in using [Java PMML API](https://github.com/jpmml) software in your company? Please contact [info@openscoring.io](mailto:info@openscoring.io)

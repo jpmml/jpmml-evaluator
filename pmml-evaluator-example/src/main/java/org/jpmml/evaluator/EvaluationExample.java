@@ -48,12 +48,12 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
 import org.jpmml.evaluator.visitors.ElementInternerBattery;
 import org.jpmml.evaluator.visitors.ElementOptimizerBattery;
-import org.jpmml.model.VisitorBattery;
 import org.jpmml.model.visitors.AttributeInternerBattery;
 import org.jpmml.model.visitors.AttributeOptimizerBattery;
 import org.jpmml.model.visitors.ListFinalizerBattery;
 import org.jpmml.model.visitors.LocatorNullifier;
 import org.jpmml.model.visitors.MemoryMeasurer;
+import org.jpmml.model.visitors.VisitorBattery;
 
 public class EvaluationExample extends Example {
 

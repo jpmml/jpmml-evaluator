@@ -49,6 +49,16 @@ class VariableField extends Field<VariableField> {
 	}
 
 	@Override
+	public String getDisplayName(){
+		return null;
+	}
+
+	@Override
+	public VariableField setDisplayName(String displayName){
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public DataType getDataType(){
 		FieldName name = getName();
 

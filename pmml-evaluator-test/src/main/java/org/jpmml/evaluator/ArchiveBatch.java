@@ -29,7 +29,7 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.visitors.DefaultVisitorBattery;
 import org.jpmml.model.PMMLUtil;
-import org.jpmml.model.VisitorBattery;
+import org.jpmml.model.visitors.VisitorBattery;
 
 abstract
 public class ArchiveBatch implements Batch {

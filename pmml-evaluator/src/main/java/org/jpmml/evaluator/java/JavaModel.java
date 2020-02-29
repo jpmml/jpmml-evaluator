@@ -34,13 +34,14 @@ import org.dmg.pmml.ModelVerification;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Targets;
+import org.dmg.pmml.Version;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.model.annotations.Added;
 import org.jpmml.model.annotations.CopyConstructor;
-import org.jpmml.model.annotations.Extension;
 import org.jpmml.model.annotations.Property;
 import org.jpmml.model.annotations.ValueConstructor;
 
@@ -48,7 +49,7 @@ import org.jpmml.model.annotations.ValueConstructor;
 	name = "X-JavaModel",
 	namespace = "http://jpmml.org/jpmml-evaluator/"
 )
-@Extension
+@Added(Version.XPMML)
 abstract
 public class JavaModel extends Model {
 

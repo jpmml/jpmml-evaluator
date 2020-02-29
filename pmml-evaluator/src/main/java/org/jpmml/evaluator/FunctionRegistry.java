@@ -166,7 +166,7 @@ public class FunctionRegistry {
 		List<? extends Function> functions = Arrays.asList(
 			Functions.ADD, Functions.SUBTRACT, Functions.MULTIPLY, Functions.DIVIDE,
 			Functions.MIN, Functions.MAX, Functions.AVG, Functions.SUM, Functions.PRODUCT,
-			Functions.LOG10, Functions.LN, Functions.EXP, Functions.SQRT, Functions.ABS, Functions.POW, Functions.THRESHOLD, Functions.FLOOR, Functions.CEIL, Functions.ROUND,
+			Functions.LOG10, Functions.LN, Functions.EXP, Functions.SQRT, Functions.ABS, Functions.POW, Functions.THRESHOLD, Functions.FLOOR, Functions.CEIL, Functions.ROUND, Functions.MODULO,
 			Functions.IS_MISSING, Functions.IS_NOT_MISSING,
 			Functions.EQUAL, Functions.NOT_EQUAL,
 			Functions.LESS_THAN, Functions.LESS_OR_EQUAL, Functions.GREATER_THAN, Functions.GREATER_OR_EQUAL,
@@ -178,7 +178,9 @@ public class FunctionRegistry {
 			Functions.CONCAT,
 			Functions.REPLACE, Functions.MATCHES,
 			Functions.FORMAT_NUMBER, Functions.FORMAT_DATETIME,
-			Functions.DATE_DAYS_SINCE_YEAR, Functions.DATE_SECONDS_SINCE_MIDNIGHT, Functions.DATE_SECONDS_SINCE_YEAR
+			Functions.DATE_DAYS_SINCE_YEAR, Functions.DATE_SECONDS_SINCE_MIDNIGHT, Functions.DATE_SECONDS_SINCE_YEAR,
+			Functions.EXPM1, Functions.HYPOT, Functions.LN1P, Functions.RINT,
+			Functions.SIN, Functions.ASIN, Functions.SINH, Functions.COS, Functions.ACOS, Functions.COSH, Functions.TAN, Functions.ATAN, Functions.TANH
 		);
 
 		for(Function function : functions){
@@ -186,14 +188,7 @@ public class FunctionRegistry {
 		}
 
 		List<? extends Function> extensionFunctions = Arrays.asList(
-			Functions.MODULO,
-			Functions.LN1P, Functions.EXPM1,
-			Functions.RINT,
-			Functions.HYPOT,
-			Functions.SIN, Functions.COS, Functions.TAN,
-			Functions.ASIN, Functions.ACOS, Functions.ATAN,
-			Functions.ATAN2,
-			Functions.SINH, Functions.COSH, Functions.TANH
+			Functions.ATAN2
 		);
 
 		for(Function extensionFunction : extensionFunctions){

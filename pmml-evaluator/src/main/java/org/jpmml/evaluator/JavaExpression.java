@@ -21,15 +21,16 @@ package org.jpmml.evaluator;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.dmg.pmml.Expression;
+import org.dmg.pmml.Version;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
-import org.jpmml.model.annotations.Extension;
+import org.jpmml.model.annotations.Added;
 
 @XmlRootElement (
 	name = "X-JavaExpression",
 	namespace = "http://jpmml.org/jpmml-evaluator/"
 )
-@Extension
+@Added(Version.XPMML)
 abstract
 public class JavaExpression extends Expression {
 

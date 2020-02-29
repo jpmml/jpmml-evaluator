@@ -19,10 +19,10 @@
 package org.jpmml.evaluator.visitors;
 
 import org.jpmml.evaluator.LoadingModelEvaluatorBuilder;
-import org.jpmml.model.VisitorBattery;
 import org.jpmml.model.visitors.AttributeInternerBattery;
 import org.jpmml.model.visitors.AttributeOptimizerBattery;
 import org.jpmml.model.visitors.ListFinalizerBattery;
+import org.jpmml.model.visitors.VisitorBattery;
 
 /**
  * <p>

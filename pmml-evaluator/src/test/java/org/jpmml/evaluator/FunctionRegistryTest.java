@@ -34,8 +34,8 @@ public class FunctionRegistryTest {
 	public void getFunction(){
 		assertNotNull(FunctionRegistry.getFunction("if"));
 
-		assertNull(FunctionRegistry.getFunction("sin"));
-		assertNotNull(FunctionRegistry.getFunction("x-sin"));
+		assertNull(FunctionRegistry.getFunction("x-sin"));
+		assertNotNull(FunctionRegistry.getFunction("sin"));
 
 		try {
 			FunctionRegistry.getFunction(Thread.class.getName());
