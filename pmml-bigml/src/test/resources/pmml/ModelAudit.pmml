@@ -1,0 +1,1023 @@
+<?xml version="1.0" ?>
+<PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Header description="Model kind: mtree Model id: 5b1552bec7736e268f00046c">
+		<Application name="BigML"/>
+	</Header>
+	<DataDictionary>
+		<DataField dataType="integer" displayName="" name="Age" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000001"/>
+		</DataField>
+		<DataField dataType="string" displayName="" name="Employment" optype="categorical">
+			<Extension name="BigML-Field_ID" value="000002"/>
+			<Value value="Private"/>
+			<Value value="Consultant"/>
+			<Value value="PSLocal"/>
+			<Value value="SelfEmp"/>
+			<Value value="PSState"/>
+			<Value value="PSFederal"/>
+			<Value value="Volunteer"/>
+		</DataField>
+		<DataField dataType="string" displayName="" name="Education" optype="categorical">
+			<Extension name="BigML-Field_ID" value="000003"/>
+			<Value value="HSgrad"/>
+			<Value value="College"/>
+			<Value value="Bachelor"/>
+			<Value value="Master"/>
+			<Value value="Vocational"/>
+			<Value value="Yr11"/>
+			<Value value="Associate"/>
+			<Value value="Yr10"/>
+			<Value value="Yr7t8"/>
+			<Value value="Yr9"/>
+			<Value value="Doctorate"/>
+			<Value value="Professional"/>
+			<Value value="Yr5t6"/>
+			<Value value="Yr12"/>
+			<Value value="Preschool"/>
+			<Value value="Yr1t4"/>
+		</DataField>
+		<DataField dataType="string" displayName="" name="Marital" optype="categorical">
+			<Extension name="BigML-Field_ID" value="000004"/>
+			<Value value="Married"/>
+			<Value value="Absent"/>
+			<Value value="Divorced"/>
+			<Value value="Unmarried"/>
+			<Value value="Widowed"/>
+			<Value value="Married-spouse-absent"/>
+		</DataField>
+		<DataField dataType="string" displayName="" name="Occupation" optype="categorical">
+			<Extension name="BigML-Field_ID" value="000005"/>
+			<Value value="Executive"/>
+			<Value value="Professional"/>
+			<Value value="Clerical"/>
+			<Value value="Repair"/>
+			<Value value="Sales"/>
+			<Value value="Service"/>
+			<Value value="Machinist"/>
+			<Value value="Transport"/>
+			<Value value="Cleaner"/>
+			<Value value="Farming"/>
+			<Value value="Support"/>
+			<Value value="Protective"/>
+			<Value value="Home"/>
+			<Value value="Military"/>
+		</DataField>
+		<DataField dataType="double" displayName="" name="Income" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000006"/>
+		</DataField>
+		<DataField dataType="string" displayName="" name="Gender" optype="categorical">
+			<Extension name="BigML-Field_ID" value="000007"/>
+			<Value value="Male"/>
+			<Value value="Female"/>
+		</DataField>
+		<DataField dataType="double" displayName="" name="Deductions" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000008"/>
+		</DataField>
+		<DataField dataType="integer" displayName="" name="Hours" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000009"/>
+		</DataField>
+		<DataField dataType="string" displayName="" name="Account" optype="categorical">
+			<Extension name="BigML-Field_ID" value="00000a"/>
+			<Value value="UnitedStates"/>
+			<Value value="Mexico"/>
+			<Value value="Philippines"/>
+			<Value value="Vietnam"/>
+			<Value value="India"/>
+			<Value value="China"/>
+			<Value value="Germany"/>
+			<Value value="Guatemala"/>
+			<Value value="Ireland"/>
+			<Value value="England"/>
+			<Value value="Jamaica"/>
+			<Value value="Malaysia"/>
+			<Value value="Nicaragua"/>
+			<Value value="Taiwan"/>
+			<Value value="Indonesia"/>
+			<Value value="Iran"/>
+			<Value value="Singapore"/>
+			<Value value="Columbia"/>
+			<Value value="Cuba"/>
+			<Value value="Ecuador"/>
+			<Value value="Italy"/>
+			<Value value="Japan"/>
+			<Value value="Poland"/>
+			<Value value="Portugal"/>
+			<Value value="Canada"/>
+			<Value value="Fiji"/>
+			<Value value="Greece"/>
+			<Value value="Hong"/>
+			<Value value="Hungary"/>
+			<Value value="NewZealand"/>
+			<Value value="Scotland"/>
+			<Value value="Yugoslavia"/>
+		</DataField>
+		<DataField dataType="integer" displayName="" name="Adjustment" optype="continuous">
+			<Extension name="BigML-Field_ID" value="00000b"/>
+		</DataField>
+		<DataField dataType="string" displayName="" name="Adjusted" optype="categorical">
+			<Extension name="BigML-Field_ID" value="00000c"/>
+			<Value value="0"/>
+			<Value value="1"/>
+		</DataField>
+	</DataDictionary>
+	<TreeModel algorithmName="mtree" functionName="classification" missingValueStrategy="lastPrediction" modelName="Audit">
+		<MiningSchema>
+			<MiningField name="Age"/>
+			<MiningField name="Employment"/>
+			<MiningField name="Education"/>
+			<MiningField name="Marital"/>
+			<MiningField name="Occupation"/>
+			<MiningField name="Income"/>
+			<MiningField name="Gender"/>
+			<MiningField name="Deductions"/>
+			<MiningField name="Hours"/>
+			<MiningField name="Account"/>
+			<MiningField name="Adjustment"/>
+			<MiningField name="Adjusted" usageType="target"/>
+		</MiningSchema>
+		<ModelStats>
+			<UnivariateStats field="Age">
+				<Counts missingFreq="0" totalFreq="1859"/>
+				<NumericInfo maximum="83" mean="38.30662" median="37" minimum="17" standardDeviation="13.00185"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="15" rightMargin="20"/>
+					<Interval closure="closedOpen" leftMargin="20" rightMargin="25"/>
+					<Interval closure="closedOpen" leftMargin="25" rightMargin="30"/>
+					<Interval closure="closedOpen" leftMargin="30" rightMargin="35"/>
+					<Interval closure="closedOpen" leftMargin="35" rightMargin="40"/>
+					<Interval closure="closedOpen" leftMargin="40" rightMargin="45"/>
+					<Interval closure="closedOpen" leftMargin="45" rightMargin="50"/>
+					<Interval closure="closedOpen" leftMargin="50" rightMargin="55"/>
+					<Interval closure="closedOpen" leftMargin="55" rightMargin="60"/>
+					<Interval closure="closedOpen" leftMargin="60" rightMargin="65"/>
+					<Interval closure="closedOpen" leftMargin="65" rightMargin="70"/>
+					<Interval closure="closedOpen" leftMargin="70" rightMargin="75"/>
+					<Interval closure="closedOpen" leftMargin="75" rightMargin="80"/>
+					<Array n="14" type="int">81 221 259 254 220 242 198 140 123 63 39 11 5 3</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="Employment">
+				<Counts cardinality="7" missingFreq="0" totalFreq="1859"/>
+				<DiscrStats modalValue="Private">
+					<Array n="7" type="int">1382 147 115 74 71 69 1</Array>
+					<Array n="7" type="string">Private Consultant PSLocal SelfEmp PSState PSFederal Volunteer</Array>
+				</DiscrStats>
+			</UnivariateStats>
+			<UnivariateStats field="Education">
+				<Counts cardinality="16" missingFreq="0" totalFreq="1859"/>
+				<DiscrStats modalValue="HSgrad">
+					<Array n="16" type="int">624 412 322 93 79 65 64 54 32 24 23 22 19 15 6 5</Array>
+					<Array n="16" type="string">HSgrad College Bachelor Master Vocational Yr11 Associate Yr10 Yr7t8 Yr9 Doctorate Professional Yr5t6 Yr12 Preschool Yr1t4</Array>
+				</DiscrStats>
+			</UnivariateStats>
+			<UnivariateStats field="Marital">
+				<Counts cardinality="6" missingFreq="0" totalFreq="1859"/>
+				<DiscrStats modalValue="Married">
+					<Array n="6" type="int">858 619 253 62 46 21</Array>
+					<Array n="6" type="string">Married Absent Divorced Unmarried Widowed Married-spouse-absent</Array>
+				</DiscrStats>
+			</UnivariateStats>
+			<UnivariateStats field="Occupation">
+				<Counts cardinality="14" missingFreq="0" totalFreq="1859"/>
+				<DiscrStats modalValue="Executive">
+					<Array n="14" type="int">286 237 222 222 204 203 137 107 90 57 49 39 5 1</Array>
+					<Array n="14" type="string">Executive Professional Clerical Repair Sales Service Machinist Transport Cleaner Farming Support Protective Home Military</Array>
+				</DiscrStats>
+			</UnivariateStats>
+			<UnivariateStats field="Income">
+				<Counts missingFreq="0" totalFreq="1859"/>
+				<NumericInfo maximum="481259.5" mean="84216.34384" median="59390.97" minimum="609.72" standardDeviation="69635.71274"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="0" rightMargin="20000"/>
+					<Interval closure="closedOpen" leftMargin="20000" rightMargin="40000"/>
+					<Interval closure="closedOpen" leftMargin="40000" rightMargin="60000"/>
+					<Interval closure="closedOpen" leftMargin="60000" rightMargin="80000"/>
+					<Interval closure="closedOpen" leftMargin="80000" rightMargin="100000"/>
+					<Interval closure="closedOpen" leftMargin="100000" rightMargin="120000"/>
+					<Interval closure="closedOpen" leftMargin="120000" rightMargin="140000"/>
+					<Interval closure="closedOpen" leftMargin="140000" rightMargin="160000"/>
+					<Interval closure="closedOpen" leftMargin="160000" rightMargin="180000"/>
+					<Interval closure="closedOpen" leftMargin="180000" rightMargin="200000"/>
+					<Interval closure="closedOpen" leftMargin="200000" rightMargin="220000"/>
+					<Interval closure="closedOpen" leftMargin="220000" rightMargin="240000"/>
+					<Interval closure="closedOpen" leftMargin="240000" rightMargin="260000"/>
+					<Interval closure="closedOpen" leftMargin="260000" rightMargin="280000"/>
+					<Interval closure="closedOpen" leftMargin="280000" rightMargin="300000"/>
+					<Interval closure="closedOpen" leftMargin="300000" rightMargin="320000"/>
+					<Interval closure="closedOpen" leftMargin="320000" rightMargin="481259.5"/>
+					<Array n="18" type="int">151 451 337 203 161 124 82 74 65 61 41 30 24 21 14 5 7 8</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="Gender">
+				<Counts cardinality="2" missingFreq="0" totalFreq="1859"/>
+				<DiscrStats modalValue="Male">
+					<Array n="2" type="int">1282 577</Array>
+					<Array n="2" type="string">Male Female</Array>
+				</DiscrStats>
+			</UnivariateStats>
+			<UnivariateStats field="Deductions">
+				<Counts missingFreq="0" totalFreq="1859"/>
+				<NumericInfo maximum="2513.33333" mean="68.0477" median="0" minimum="0" standardDeviation="337.48524"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="0" rightMargin="100"/>
+					<Interval closure="closedOpen" leftMargin="100" rightMargin="200"/>
+					<Interval closure="closedOpen" leftMargin="200" rightMargin="300"/>
+					<Interval closure="closedOpen" leftMargin="300" rightMargin="400"/>
+					<Interval closure="closedOpen" leftMargin="400" rightMargin="500"/>
+					<Interval closure="closedOpen" leftMargin="500" rightMargin="600"/>
+					<Interval closure="closedOpen" leftMargin="600" rightMargin="700"/>
+					<Interval closure="closedOpen" leftMargin="700" rightMargin="800"/>
+					<Interval closure="closedOpen" leftMargin="800" rightMargin="900"/>
+					<Interval closure="closedOpen" leftMargin="900" rightMargin="1000"/>
+					<Interval closure="closedOpen" leftMargin="1000" rightMargin="1100"/>
+					<Interval closure="closedOpen" leftMargin="1100" rightMargin="1200"/>
+					<Interval closure="closedOpen" leftMargin="1200" rightMargin="1300"/>
+					<Interval closure="closedOpen" leftMargin="1300" rightMargin="1400"/>
+					<Interval closure="closedOpen" leftMargin="1400" rightMargin="1500"/>
+					<Interval closure="closedOpen" leftMargin="1500" rightMargin="1600"/>
+					<Interval closure="closedOpen" leftMargin="1600" rightMargin="1700"/>
+					<Interval closure="closedOpen" leftMargin="1700" rightMargin="1800"/>
+					<Interval closure="closedOpen" leftMargin="1800" rightMargin="1900"/>
+					<Interval closure="closedOpen" leftMargin="1900" rightMargin="2000"/>
+					<Interval closure="closedOpen" leftMargin="2000" rightMargin="2100"/>
+					<Interval closure="closedOpen" leftMargin="2100" rightMargin="2200"/>
+					<Interval closure="closedOpen" leftMargin="2200" rightMargin="2300"/>
+					<Interval closure="closedOpen" leftMargin="2300" rightMargin="2400"/>
+					<Interval closure="closedOpen" leftMargin="2400" rightMargin="2500"/>
+					<Array n="26" type="int">1780 0 0 0 1 0 1 0 1 3 6 12 2 5 3 7 0 0 9 18 0 2 4 1 3 1</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="Hours">
+				<Counts missingFreq="0" totalFreq="1859"/>
+				<NumericInfo maximum="99" mean="40.63314" median="40" minimum="1" standardDeviation="11.59144"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="0" rightMargin="5"/>
+					<Interval closure="closedOpen" leftMargin="5" rightMargin="10"/>
+					<Interval closure="closedOpen" leftMargin="10" rightMargin="15"/>
+					<Interval closure="closedOpen" leftMargin="15" rightMargin="20"/>
+					<Interval closure="closedOpen" leftMargin="20" rightMargin="25"/>
+					<Interval closure="closedOpen" leftMargin="25" rightMargin="30"/>
+					<Interval closure="closedOpen" leftMargin="30" rightMargin="35"/>
+					<Interval closure="closedOpen" leftMargin="35" rightMargin="40"/>
+					<Interval closure="closedOpen" leftMargin="40" rightMargin="45"/>
+					<Interval closure="closedOpen" leftMargin="45" rightMargin="50"/>
+					<Interval closure="closedOpen" leftMargin="50" rightMargin="55"/>
+					<Interval closure="closedOpen" leftMargin="55" rightMargin="60"/>
+					<Interval closure="closedOpen" leftMargin="60" rightMargin="65"/>
+					<Interval closure="closedOpen" leftMargin="65" rightMargin="70"/>
+					<Interval closure="closedOpen" leftMargin="70" rightMargin="75"/>
+					<Interval closure="closedOpen" leftMargin="75" rightMargin="80"/>
+					<Interval closure="closedOpen" leftMargin="80" rightMargin="85"/>
+					<Interval closure="closedOpen" leftMargin="85" rightMargin="90"/>
+					<Interval closure="closedOpen" leftMargin="90" rightMargin="95"/>
+					<Array n="20" type="int">4 9 23 42 83 61 84 133 892 160 175 54 94 10 18 2 7 1 0 7</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="Account">
+				<Counts cardinality="32" missingFreq="0" totalFreq="1859"/>
+				<DiscrStats modalValue="UnitedStates">
+					<Array n="32" type="int">1711 43 13 8 7 6 6 6 6 5 5 4 4 4 3 3 3 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1</Array>
+					<Array n="32" type="string">UnitedStates Mexico Philippines Vietnam India China Germany Guatemala Ireland England Jamaica Malaysia Nicaragua Taiwan Indonesia Iran Singapore Columbia Cuba Ecuador Italy Japan Poland Portugal Canada Fiji Greece Hong Hungary NewZealand Scotland Yugoslavia</Array>
+				</DiscrStats>
+			</UnivariateStats>
+			<UnivariateStats field="Adjustment">
+				<Counts missingFreq="0" totalFreq="1859"/>
+				<NumericInfo maximum="112243" mean="1979.04142" median="0" minimum="-1453" standardDeviation="7973.19333"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="-5000" rightMargin="0"/>
+					<Interval closure="closedOpen" leftMargin="0" rightMargin="5000"/>
+					<Interval closure="closedOpen" leftMargin="5000" rightMargin="10000"/>
+					<Interval closure="closedOpen" leftMargin="10000" rightMargin="15000"/>
+					<Interval closure="closedOpen" leftMargin="15000" rightMargin="20000"/>
+					<Interval closure="closedOpen" leftMargin="20000" rightMargin="25000"/>
+					<Interval closure="closedOpen" leftMargin="25000" rightMargin="30000"/>
+					<Interval closure="closedOpen" leftMargin="30000" rightMargin="35000"/>
+					<Interval closure="closedOpen" leftMargin="35000" rightMargin="40000"/>
+					<Interval closure="closedOpen" leftMargin="40000" rightMargin="45000"/>
+					<Interval closure="closedOpen" leftMargin="45000" rightMargin="50000"/>
+					<Interval closure="closedOpen" leftMargin="50000" rightMargin="55000"/>
+					<Interval closure="closedOpen" leftMargin="55000" rightMargin="60000"/>
+					<Interval closure="closedOpen" leftMargin="60000" rightMargin="65000"/>
+					<Interval closure="closedOpen" leftMargin="65000" rightMargin="70000"/>
+					<Interval closure="closedOpen" leftMargin="70000" rightMargin="75000"/>
+					<Interval closure="closedOpen" leftMargin="75000" rightMargin="112243"/>
+					<Array n="18" type="int">6 1603 149 46 40 2 3 0 0 0 0 0 0 0 0 0 1 9</Array>
+				</ContStats>
+			</UnivariateStats>
+		</ModelStats>
+		<Node recordCount="1859" score="0">
+			<True/>
+			<ScoreDistribution recordCount="1424" value="0"/>
+			<ScoreDistribution recordCount="435" value="1"/>
+			<Node recordCount="360" score="1">
+				<SimplePredicate field="Adjustment" operator="greaterThan" value="489"/>
+				<ScoreDistribution recordCount="360" value="1"/>
+			</Node>
+			<Node recordCount="1499" score="0">
+				<SimplePredicate field="Adjustment" operator="lessOrEqual" value="489"/>
+				<ScoreDistribution recordCount="1424" value="0"/>
+				<ScoreDistribution recordCount="75" value="1"/>
+				<Node recordCount="542" score="0">
+					<SimplePredicate field="Marital" operator="equal" value="Married"/>
+					<ScoreDistribution recordCount="481" value="0"/>
+					<ScoreDistribution recordCount="61" value="1"/>
+					<Node recordCount="536" score="0">
+						<SimplePredicate field="Adjustment" operator="greaterThan" value="-20"/>
+						<ScoreDistribution recordCount="481" value="0"/>
+						<ScoreDistribution recordCount="55" value="1"/>
+						<Node recordCount="6" score="1">
+							<SimplePredicate field="Deductions" operator="greaterThan" value="1727.5"/>
+							<ScoreDistribution recordCount="6" value="1"/>
+						</Node>
+						<Node recordCount="530" score="0">
+							<SimplePredicate field="Deductions" operator="lessOrEqual" value="1727.5"/>
+							<ScoreDistribution recordCount="481" value="0"/>
+							<ScoreDistribution recordCount="49" value="1"/>
+							<Node recordCount="80" score="0">
+								<SimplePredicate field="Education" operator="equal" value="Bachelor"/>
+								<ScoreDistribution recordCount="60" value="0"/>
+								<ScoreDistribution recordCount="20" value="1"/>
+								<Node recordCount="13" score="1">
+									<SimplePredicate field="Income" operator="greaterThan" value="61775.195"/>
+									<ScoreDistribution recordCount="7" value="1"/>
+									<ScoreDistribution recordCount="6" value="0"/>
+									<Node recordCount="4" score="0">
+										<SimplePredicate field="Occupation" operator="equal" value="Clerical"/>
+										<ScoreDistribution recordCount="4" value="0"/>
+									</Node>
+									<Node recordCount="9" score="1">
+										<SimplePredicate field="Occupation" operator="notEqual" value="Clerical"/>
+										<ScoreDistribution recordCount="7" value="1"/>
+										<ScoreDistribution recordCount="2" value="0"/>
+										<Node recordCount="3" score="0">
+											<SimplePredicate field="Age" operator="greaterThan" value="39"/>
+											<ScoreDistribution recordCount="2" value="0"/>
+											<ScoreDistribution recordCount="1" value="1"/>
+											<Node recordCount="1" score="1">
+												<SimplePredicate field="Occupation" operator="equal" value="Protective"/>
+												<ScoreDistribution recordCount="1" value="1"/>
+											</Node>
+											<Node recordCount="2" score="0">
+												<SimplePredicate field="Occupation" operator="notEqual" value="Protective"/>
+												<ScoreDistribution recordCount="2" value="0"/>
+											</Node>
+										</Node>
+										<Node recordCount="6" score="1">
+											<SimplePredicate field="Age" operator="lessOrEqual" value="39"/>
+											<ScoreDistribution recordCount="6" value="1"/>
+										</Node>
+									</Node>
+								</Node>
+								<Node recordCount="67" score="0">
+									<SimplePredicate field="Income" operator="lessOrEqual" value="61775.195"/>
+									<ScoreDistribution recordCount="54" value="0"/>
+									<ScoreDistribution recordCount="13" value="1"/>
+									<Node recordCount="8" score="0">
+										<SimplePredicate field="Occupation" operator="equal" value="Repair"/>
+										<ScoreDistribution recordCount="8" value="0"/>
+									</Node>
+									<Node recordCount="59" score="0">
+										<SimplePredicate field="Occupation" operator="notEqual" value="Repair"/>
+										<ScoreDistribution recordCount="46" value="0"/>
+										<ScoreDistribution recordCount="13" value="1"/>
+										<Node recordCount="37" score="0">
+											<SimplePredicate field="Employment" operator="equal" value="Private"/>
+											<ScoreDistribution recordCount="26" value="0"/>
+											<ScoreDistribution recordCount="11" value="1"/>
+											<Node recordCount="36" score="0">
+												<SimplePredicate field="Hours" operator="greaterThan" value="23"/>
+												<ScoreDistribution recordCount="26" value="0"/>
+												<ScoreDistribution recordCount="10" value="1"/>
+												<Node recordCount="14" score="0">
+													<SimplePredicate field="Hours" operator="greaterThan" value="41"/>
+													<ScoreDistribution recordCount="8" value="0"/>
+													<ScoreDistribution recordCount="6" value="1"/>
+													<Node recordCount="12" score="0">
+														<SimplePredicate field="Hours" operator="greaterThan" value="43"/>
+														<ScoreDistribution recordCount="8" value="0"/>
+														<ScoreDistribution recordCount="4" value="1"/>
+														<Node recordCount="2" score="1">
+															<SimplePredicate field="Age" operator="greaterThan" value="47"/>
+															<ScoreDistribution recordCount="2" value="1"/>
+														</Node>
+														<Node recordCount="10" score="0">
+															<SimplePredicate field="Age" operator="lessOrEqual" value="47"/>
+															<ScoreDistribution recordCount="8" value="0"/>
+															<ScoreDistribution recordCount="2" value="1"/>
+														</Node>
+													</Node>
+													<Node recordCount="2" score="1">
+														<SimplePredicate field="Hours" operator="lessOrEqual" value="43"/>
+														<ScoreDistribution recordCount="2" value="1"/>
+													</Node>
+												</Node>
+												<Node recordCount="22" score="0">
+													<SimplePredicate field="Hours" operator="lessOrEqual" value="41"/>
+													<ScoreDistribution recordCount="18" value="0"/>
+													<ScoreDistribution recordCount="4" value="1"/>
+													<Node recordCount="5" score="0">
+														<SimplePredicate field="Age" operator="greaterThan" value="44"/>
+														<ScoreDistribution recordCount="5" value="0"/>
+													</Node>
+													<Node recordCount="17" score="0">
+														<SimplePredicate field="Age" operator="lessOrEqual" value="44"/>
+														<ScoreDistribution recordCount="13" value="0"/>
+														<ScoreDistribution recordCount="4" value="1"/>
+														<Node recordCount="6" score="0">
+															<SimplePredicate field="Age" operator="greaterThan" value="38"/>
+															<ScoreDistribution recordCount="3" value="0"/>
+															<ScoreDistribution recordCount="3" value="1"/>
+															<Node recordCount="2" score="1">
+																<SimplePredicate field="Income" operator="greaterThan" value="37781.115"/>
+																<ScoreDistribution recordCount="2" value="1"/>
+															</Node>
+															<Node recordCount="4" score="0">
+																<SimplePredicate field="Income" operator="lessOrEqual" value="37781.115"/>
+																<ScoreDistribution recordCount="3" value="0"/>
+																<ScoreDistribution recordCount="1" value="1"/>
+																<Node recordCount="3" score="0">
+																	<SimplePredicate field="Hours" operator="greaterThan" value="37"/>
+																	<ScoreDistribution recordCount="3" value="0"/>
+																</Node>
+																<Node recordCount="1" score="1">
+																	<SimplePredicate field="Hours" operator="lessOrEqual" value="37"/>
+																	<ScoreDistribution recordCount="1" value="1"/>
+																</Node>
+															</Node>
+														</Node>
+														<Node recordCount="11" score="0">
+															<SimplePredicate field="Age" operator="lessOrEqual" value="38"/>
+															<ScoreDistribution recordCount="10" value="0"/>
+															<ScoreDistribution recordCount="1" value="1"/>
+														</Node>
+													</Node>
+												</Node>
+											</Node>
+											<Node recordCount="1" score="1">
+												<SimplePredicate field="Hours" operator="lessOrEqual" value="23"/>
+												<ScoreDistribution recordCount="1" value="1"/>
+											</Node>
+										</Node>
+										<Node recordCount="22" score="0">
+											<SimplePredicate field="Employment" operator="notEqual" value="Private"/>
+											<ScoreDistribution recordCount="20" value="0"/>
+											<ScoreDistribution recordCount="2" value="1"/>
+											<Node recordCount="1" score="1">
+												<SimplePredicate field="Hours" operator="greaterThan" value="69"/>
+												<ScoreDistribution recordCount="1" value="1"/>
+											</Node>
+											<Node recordCount="21" score="0">
+												<SimplePredicate field="Hours" operator="lessOrEqual" value="69"/>
+												<ScoreDistribution recordCount="20" value="0"/>
+												<ScoreDistribution recordCount="1" value="1"/>
+												<Node recordCount="1" score="1">
+													<SimplePredicate field="Occupation" operator="equal" value="Transport"/>
+													<ScoreDistribution recordCount="1" value="1"/>
+												</Node>
+												<Node recordCount="20" score="0">
+													<SimplePredicate field="Occupation" operator="notEqual" value="Transport"/>
+													<ScoreDistribution recordCount="20" value="0"/>
+												</Node>
+											</Node>
+										</Node>
+									</Node>
+								</Node>
+							</Node>
+							<Node recordCount="450" score="0">
+								<SimplePredicate field="Education" operator="notEqual" value="Bachelor"/>
+								<ScoreDistribution recordCount="421" value="0"/>
+								<ScoreDistribution recordCount="29" value="1"/>
+								<Node recordCount="3" score="1">
+									<SimplePredicate field="Adjustment" operator="greaterThan" value="215"/>
+									<ScoreDistribution recordCount="3" value="1"/>
+								</Node>
+								<Node recordCount="447" score="0">
+									<SimplePredicate field="Adjustment" operator="lessOrEqual" value="215"/>
+									<ScoreDistribution recordCount="421" value="0"/>
+									<ScoreDistribution recordCount="26" value="1"/>
+									<Node recordCount="284" score="0">
+										<SimplePredicate field="Age" operator="greaterThan" value="35"/>
+										<ScoreDistribution recordCount="261" value="0"/>
+										<ScoreDistribution recordCount="23" value="1"/>
+										<Node recordCount="79" score="0">
+											<SimplePredicate field="Age" operator="greaterThan" value="55"/>
+											<ScoreDistribution recordCount="77" value="0"/>
+											<ScoreDistribution recordCount="2" value="1"/>
+											<Node recordCount="1" score="1">
+												<SimplePredicate field="Account" operator="equal" value="Germany"/>
+												<ScoreDistribution recordCount="1" value="1"/>
+											</Node>
+											<Node recordCount="78" score="0">
+												<SimplePredicate field="Account" operator="notEqual" value="Germany"/>
+												<ScoreDistribution recordCount="77" value="0"/>
+												<ScoreDistribution recordCount="1" value="1"/>
+												<Node recordCount="10" score="0">
+													<SimplePredicate field="Employment" operator="equal" value="SelfEmp"/>
+													<ScoreDistribution recordCount="9" value="0"/>
+													<ScoreDistribution recordCount="1" value="1"/>
+												</Node>
+												<Node recordCount="68" score="0">
+													<SimplePredicate field="Employment" operator="notEqual" value="SelfEmp"/>
+													<ScoreDistribution recordCount="68" value="0"/>
+												</Node>
+											</Node>
+										</Node>
+										<Node recordCount="205" score="0">
+											<SimplePredicate field="Age" operator="lessOrEqual" value="55"/>
+											<ScoreDistribution recordCount="184" value="0"/>
+											<ScoreDistribution recordCount="21" value="1"/>
+											<Node recordCount="204" score="0">
+												<SimplePredicate field="Hours" operator="greaterThan" value="12"/>
+												<ScoreDistribution recordCount="184" value="0"/>
+												<ScoreDistribution recordCount="20" value="1"/>
+												<Node recordCount="1" score="1">
+													<SimplePredicate field="Income" operator="greaterThan" value="403071.42"/>
+													<ScoreDistribution recordCount="1" value="1"/>
+												</Node>
+												<Node recordCount="203" score="0">
+													<SimplePredicate field="Income" operator="lessOrEqual" value="403071.42"/>
+													<ScoreDistribution recordCount="184" value="0"/>
+													<ScoreDistribution recordCount="19" value="1"/>
+													<Node recordCount="180" score="0">
+														<SimplePredicate field="Hours" operator="greaterThan" value="39"/>
+														<ScoreDistribution recordCount="161" value="0"/>
+														<ScoreDistribution recordCount="19" value="1"/>
+														<Node recordCount="115" score="0">
+															<SimplePredicate field="Income" operator="greaterThan" value="28577.0104"/>
+															<ScoreDistribution recordCount="99" value="0"/>
+															<ScoreDistribution recordCount="16" value="1"/>
+															<Node recordCount="1" score="1">
+																<SimplePredicate field="Employment" operator="equal" value="PSState"/>
+																<ScoreDistribution recordCount="1" value="1"/>
+															</Node>
+															<Node recordCount="114" score="0">
+																<SimplePredicate field="Employment" operator="notEqual" value="PSState"/>
+																<ScoreDistribution recordCount="99" value="0"/>
+																<ScoreDistribution recordCount="15" value="1"/>
+																<Node recordCount="105" score="0">
+																	<SimplePredicate field="Account" operator="equal" value="UnitedStates"/>
+																	<ScoreDistribution recordCount="90" value="0"/>
+																	<ScoreDistribution recordCount="15" value="1"/>
+																	<Node recordCount="96" score="0">
+																		<SimplePredicate field="Age" operator="greaterThan" value="36"/>
+																		<ScoreDistribution recordCount="81" value="0"/>
+																		<ScoreDistribution recordCount="15" value="1"/>
+																		<Node recordCount="1" score="1">
+																			<SimplePredicate field="Education" operator="equal" value="Yr11"/>
+																			<ScoreDistribution recordCount="1" value="1"/>
+																		</Node>
+																		<Node recordCount="95" score="0">
+																			<SimplePredicate field="Education" operator="notEqual" value="Yr11"/>
+																			<ScoreDistribution recordCount="81" value="0"/>
+																			<ScoreDistribution recordCount="14" value="1"/>
+																			<Node recordCount="15" score="0">
+																				<SimplePredicate field="Income" operator="greaterThan" value="55007.9925"/>
+																				<ScoreDistribution recordCount="15" value="0"/>
+																			</Node>
+																			<Node recordCount="80" score="0">
+																				<SimplePredicate field="Income" operator="lessOrEqual" value="55007.9925"/>
+																				<ScoreDistribution recordCount="66" value="0"/>
+																				<ScoreDistribution recordCount="14" value="1"/>
+																				<Node recordCount="4" score="1">
+																					<SimplePredicate field="Income" operator="greaterThan" value="50464.324"/>
+																					<ScoreDistribution recordCount="3" value="1"/>
+																					<ScoreDistribution recordCount="1" value="0"/>
+																					<Node recordCount="1" score="0">
+																						<SimplePredicate field="Income" operator="greaterThan" value="53950.865"/>
+																						<ScoreDistribution recordCount="1" value="0"/>
+																					</Node>
+																					<Node recordCount="3" score="1">
+																						<SimplePredicate field="Income" operator="lessOrEqual" value="53950.865"/>
+																						<ScoreDistribution recordCount="3" value="1"/>
+																					</Node>
+																				</Node>
+																				<Node recordCount="76" score="0">
+																					<SimplePredicate field="Income" operator="lessOrEqual" value="50464.324"/>
+																					<ScoreDistribution recordCount="65" value="0"/>
+																					<ScoreDistribution recordCount="11" value="1"/>
+																					<Node recordCount="34" score="0">
+																						<SimplePredicate field="Income" operator="greaterThan" value="37925.1375"/>
+																						<ScoreDistribution recordCount="32" value="0"/>
+																						<ScoreDistribution recordCount="2" value="1"/>
+																						<Node recordCount="2" score="0">
+																							<SimplePredicate field="Education" operator="equal" value="Associate"/>
+																							<ScoreDistribution recordCount="1" value="0"/>
+																							<ScoreDistribution recordCount="1" value="1"/>
+																							<Node recordCount="1" score="0">
+																								<SimplePredicate field="Income" operator="greaterThan" value="47267.92"/>
+																								<ScoreDistribution recordCount="1" value="0"/>
+																							</Node>
+																							<Node recordCount="1" score="1">
+																								<SimplePredicate field="Income" operator="lessOrEqual" value="47267.92"/>
+																								<ScoreDistribution recordCount="1" value="1"/>
+																							</Node>
+																						</Node>
+																						<Node recordCount="32" score="0">
+																							<SimplePredicate field="Education" operator="notEqual" value="Associate"/>
+																							<ScoreDistribution recordCount="31" value="0"/>
+																							<ScoreDistribution recordCount="1" value="1"/>
+																							<Node recordCount="4" score="0">
+																								<SimplePredicate field="Income" operator="greaterThan" value="49792.56"/>
+																								<ScoreDistribution recordCount="3" value="0"/>
+																								<ScoreDistribution recordCount="1" value="1"/>
+																								<Node recordCount="3" score="0">
+																									<SimplePredicate field="Income" operator="greaterThan" value="50048.14"/>
+																									<ScoreDistribution recordCount="3" value="0"/>
+																								</Node>
+																								<Node recordCount="1" score="1">
+																									<SimplePredicate field="Income" operator="lessOrEqual" value="50048.14"/>
+																									<ScoreDistribution recordCount="1" value="1"/>
+																								</Node>
+																							</Node>
+																							<Node recordCount="28" score="0">
+																								<SimplePredicate field="Income" operator="lessOrEqual" value="49792.56"/>
+																								<ScoreDistribution recordCount="28" value="0"/>
+																							</Node>
+																						</Node>
+																					</Node>
+																					<Node recordCount="42" score="0">
+																						<SimplePredicate field="Income" operator="lessOrEqual" value="37925.1375"/>
+																						<ScoreDistribution recordCount="33" value="0"/>
+																						<ScoreDistribution recordCount="9" value="1"/>
+																						<Node recordCount="17" score="0">
+																							<SimplePredicate field="Income" operator="greaterThan" value="34196.05333"/>
+																							<ScoreDistribution recordCount="11" value="0"/>
+																							<ScoreDistribution recordCount="6" value="1"/>
+																							<Node recordCount="7" score="1">
+																								<SimplePredicate field="Hours" operator="greaterThan" value="43"/>
+																								<ScoreDistribution recordCount="4" value="1"/>
+																								<ScoreDistribution recordCount="3" value="0"/>
+																								<Node recordCount="2" score="1">
+																									<SimplePredicate field="Education" operator="equal" value="College"/>
+																									<ScoreDistribution recordCount="2" value="1"/>
+																								</Node>
+																								<Node recordCount="5" score="0">
+																									<SimplePredicate field="Education" operator="notEqual" value="College"/>
+																									<ScoreDistribution recordCount="3" value="0"/>
+																									<ScoreDistribution recordCount="2" value="1"/>
+																									<Node recordCount="2" score="0">
+																										<SimplePredicate field="Hours" operator="greaterThan" value="54"/>
+																										<ScoreDistribution recordCount="2" value="0"/>
+																									</Node>
+																									<Node recordCount="3" score="1">
+																										<SimplePredicate field="Hours" operator="lessOrEqual" value="54"/>
+																										<ScoreDistribution recordCount="2" value="1"/>
+																										<ScoreDistribution recordCount="1" value="0"/>
+																										<Node recordCount="2" score="1">
+																											<SimplePredicate field="Income" operator="greaterThan" value="34657.56"/>
+																											<ScoreDistribution recordCount="2" value="1"/>
+																										</Node>
+																										<Node recordCount="1" score="0">
+																											<SimplePredicate field="Income" operator="lessOrEqual" value="34657.56"/>
+																											<ScoreDistribution recordCount="1" value="0"/>
+																										</Node>
+																									</Node>
+																								</Node>
+																							</Node>
+																							<Node recordCount="10" score="0">
+																								<SimplePredicate field="Hours" operator="lessOrEqual" value="43"/>
+																								<ScoreDistribution recordCount="8" value="0"/>
+																								<ScoreDistribution recordCount="2" value="1"/>
+																								<Node recordCount="1" score="1">
+																									<SimplePredicate field="Occupation" operator="equal" value="Sales"/>
+																									<ScoreDistribution recordCount="1" value="1"/>
+																								</Node>
+																								<Node recordCount="9" score="0">
+																									<SimplePredicate field="Occupation" operator="notEqual" value="Sales"/>
+																									<ScoreDistribution recordCount="8" value="0"/>
+																									<ScoreDistribution recordCount="1" value="1"/>
+																								</Node>
+																							</Node>
+																						</Node>
+																						<Node recordCount="25" score="0">
+																							<SimplePredicate field="Income" operator="lessOrEqual" value="34196.05333"/>
+																							<ScoreDistribution recordCount="22" value="0"/>
+																							<ScoreDistribution recordCount="3" value="1"/>
+																							<Node recordCount="14" score="0">
+																								<SimplePredicate field="Education" operator="equal" value="HSgrad"/>
+																								<ScoreDistribution recordCount="11" value="0"/>
+																								<ScoreDistribution recordCount="3" value="1"/>
+																								<Node recordCount="11" score="0">
+																									<SimplePredicate field="Income" operator="greaterThan" value="30453.02"/>
+																									<ScoreDistribution recordCount="10" value="0"/>
+																									<ScoreDistribution recordCount="1" value="1"/>
+																								</Node>
+																								<Node recordCount="3" score="1">
+																									<SimplePredicate field="Income" operator="lessOrEqual" value="30453.02"/>
+																									<ScoreDistribution recordCount="2" value="1"/>
+																									<ScoreDistribution recordCount="1" value="0"/>
+																									<Node recordCount="2" score="1">
+																										<SimplePredicate field="Income" operator="greaterThan" value="29436.615"/>
+																										<ScoreDistribution recordCount="2" value="1"/>
+																									</Node>
+																									<Node recordCount="1" score="0">
+																										<SimplePredicate field="Income" operator="lessOrEqual" value="29436.615"/>
+																										<ScoreDistribution recordCount="1" value="0"/>
+																									</Node>
+																								</Node>
+																							</Node>
+																							<Node recordCount="11" score="0">
+																								<SimplePredicate field="Education" operator="notEqual" value="HSgrad"/>
+																								<ScoreDistribution recordCount="11" value="0"/>
+																							</Node>
+																						</Node>
+																					</Node>
+																				</Node>
+																			</Node>
+																		</Node>
+																	</Node>
+																	<Node recordCount="9" score="0">
+																		<SimplePredicate field="Age" operator="lessOrEqual" value="36"/>
+																		<ScoreDistribution recordCount="9" value="0"/>
+																	</Node>
+																</Node>
+																<Node recordCount="9" score="0">
+																	<SimplePredicate field="Account" operator="notEqual" value="UnitedStates"/>
+																	<ScoreDistribution recordCount="9" value="0"/>
+																</Node>
+															</Node>
+														</Node>
+														<Node recordCount="65" score="0">
+															<SimplePredicate field="Income" operator="lessOrEqual" value="28577.0104"/>
+															<ScoreDistribution recordCount="62" value="0"/>
+															<ScoreDistribution recordCount="3" value="1"/>
+															<Node recordCount="1" score="1">
+																<SimplePredicate field="Education" operator="equal" value="Doctorate"/>
+																<ScoreDistribution recordCount="1" value="1"/>
+															</Node>
+															<Node recordCount="64" score="0">
+																<SimplePredicate field="Education" operator="notEqual" value="Doctorate"/>
+																<ScoreDistribution recordCount="62" value="0"/>
+																<ScoreDistribution recordCount="2" value="1"/>
+																<Node recordCount="1" score="1">
+																	<SimplePredicate field="Occupation" operator="equal" value="Support"/>
+																	<ScoreDistribution recordCount="1" value="1"/>
+																</Node>
+																<Node recordCount="63" score="0">
+																	<SimplePredicate field="Occupation" operator="notEqual" value="Support"/>
+																	<ScoreDistribution recordCount="62" value="0"/>
+																	<ScoreDistribution recordCount="1" value="1"/>
+																	<Node recordCount="7" score="0">
+																		<SimplePredicate field="Occupation" operator="equal" value="Service"/>
+																		<ScoreDistribution recordCount="6" value="0"/>
+																		<ScoreDistribution recordCount="1" value="1"/>
+																	</Node>
+																	<Node recordCount="56" score="0">
+																		<SimplePredicate field="Occupation" operator="notEqual" value="Service"/>
+																		<ScoreDistribution recordCount="56" value="0"/>
+																	</Node>
+																</Node>
+															</Node>
+														</Node>
+													</Node>
+													<Node recordCount="23" score="0">
+														<SimplePredicate field="Hours" operator="lessOrEqual" value="39"/>
+														<ScoreDistribution recordCount="23" value="0"/>
+													</Node>
+												</Node>
+											</Node>
+											<Node recordCount="1" score="1">
+												<SimplePredicate field="Hours" operator="lessOrEqual" value="12"/>
+												<ScoreDistribution recordCount="1" value="1"/>
+											</Node>
+										</Node>
+									</Node>
+									<Node recordCount="163" score="0">
+										<SimplePredicate field="Age" operator="lessOrEqual" value="35"/>
+										<ScoreDistribution recordCount="160" value="0"/>
+										<ScoreDistribution recordCount="3" value="1"/>
+										<Node recordCount="1" score="1">
+											<SimplePredicate field="Education" operator="equal" value="Professional"/>
+											<ScoreDistribution recordCount="1" value="1"/>
+										</Node>
+										<Node recordCount="162" score="0">
+											<SimplePredicate field="Education" operator="notEqual" value="Professional"/>
+											<ScoreDistribution recordCount="160" value="0"/>
+											<ScoreDistribution recordCount="2" value="1"/>
+											<Node recordCount="18" score="0">
+												<SimplePredicate field="Occupation" operator="equal" value="Executive"/>
+												<ScoreDistribution recordCount="16" value="0"/>
+												<ScoreDistribution recordCount="2" value="1"/>
+												<Node recordCount="17" score="0">
+													<SimplePredicate field="Income" operator="greaterThan" value="5237.445"/>
+													<ScoreDistribution recordCount="16" value="0"/>
+													<ScoreDistribution recordCount="1" value="1"/>
+													<Node recordCount="1" score="1">
+														<SimplePredicate field="Education" operator="equal" value="Yr11"/>
+														<ScoreDistribution recordCount="1" value="1"/>
+													</Node>
+													<Node recordCount="16" score="0">
+														<SimplePredicate field="Education" operator="notEqual" value="Yr11"/>
+														<ScoreDistribution recordCount="16" value="0"/>
+													</Node>
+												</Node>
+												<Node recordCount="1" score="1">
+													<SimplePredicate field="Income" operator="lessOrEqual" value="5237.445"/>
+													<ScoreDistribution recordCount="1" value="1"/>
+												</Node>
+											</Node>
+											<Node recordCount="144" score="0">
+												<SimplePredicate field="Occupation" operator="notEqual" value="Executive"/>
+												<ScoreDistribution recordCount="144" value="0"/>
+											</Node>
+										</Node>
+									</Node>
+								</Node>
+							</Node>
+						</Node>
+					</Node>
+					<Node recordCount="6" score="1">
+						<SimplePredicate field="Adjustment" operator="lessOrEqual" value="-20"/>
+						<ScoreDistribution recordCount="6" value="1"/>
+					</Node>
+				</Node>
+				<Node recordCount="957" score="0">
+					<SimplePredicate field="Marital" operator="notEqual" value="Married"/>
+					<ScoreDistribution recordCount="943" value="0"/>
+					<ScoreDistribution recordCount="14" value="1"/>
+					<Node recordCount="3" score="1">
+						<SimplePredicate field="Adjustment" operator="greaterThan" value="76"/>
+						<ScoreDistribution recordCount="3" value="1"/>
+					</Node>
+					<Node recordCount="954" score="0">
+						<SimplePredicate field="Adjustment" operator="lessOrEqual" value="76"/>
+						<ScoreDistribution recordCount="943" value="0"/>
+						<ScoreDistribution recordCount="11" value="1"/>
+						<Node recordCount="603" score="0">
+							<SimplePredicate field="Age" operator="greaterThan" value="26"/>
+							<ScoreDistribution recordCount="592" value="0"/>
+							<ScoreDistribution recordCount="11" value="1"/>
+							<Node recordCount="225" score="0">
+								<SimplePredicate field="Marital" operator="equal" value="Divorced"/>
+								<ScoreDistribution recordCount="225" value="0"/>
+							</Node>
+							<Node recordCount="378" score="0">
+								<SimplePredicate field="Marital" operator="notEqual" value="Divorced"/>
+								<ScoreDistribution recordCount="367" value="0"/>
+								<ScoreDistribution recordCount="11" value="1"/>
+								<Node recordCount="176" score="0">
+									<SimplePredicate field="Income" operator="greaterThan" value="92638.8796"/>
+									<ScoreDistribution recordCount="175" value="0"/>
+									<ScoreDistribution recordCount="1" value="1"/>
+									<Node recordCount="27" score="0">
+										<SimplePredicate field="Occupation" operator="equal" value="Clerical"/>
+										<ScoreDistribution recordCount="26" value="0"/>
+										<ScoreDistribution recordCount="1" value="1"/>
+										<Node recordCount="4" score="0">
+											<SimplePredicate field="Income" operator="greaterThan" value="194386.39"/>
+											<ScoreDistribution recordCount="3" value="0"/>
+											<ScoreDistribution recordCount="1" value="1"/>
+											<Node recordCount="3" score="0">
+												<SimplePredicate field="Income" operator="greaterThan" value="214489.17"/>
+												<ScoreDistribution recordCount="3" value="0"/>
+											</Node>
+											<Node recordCount="1" score="1">
+												<SimplePredicate field="Income" operator="lessOrEqual" value="214489.17"/>
+												<ScoreDistribution recordCount="1" value="1"/>
+											</Node>
+										</Node>
+										<Node recordCount="23" score="0">
+											<SimplePredicate field="Income" operator="lessOrEqual" value="194386.39"/>
+											<ScoreDistribution recordCount="23" value="0"/>
+										</Node>
+									</Node>
+									<Node recordCount="149" score="0">
+										<SimplePredicate field="Occupation" operator="notEqual" value="Clerical"/>
+										<ScoreDistribution recordCount="149" value="0"/>
+									</Node>
+								</Node>
+								<Node recordCount="202" score="0">
+									<SimplePredicate field="Income" operator="lessOrEqual" value="92638.8796"/>
+									<ScoreDistribution recordCount="192" value="0"/>
+									<ScoreDistribution recordCount="10" value="1"/>
+									<Node recordCount="1" score="1">
+										<SimplePredicate field="Account" operator="equal" value="Philippines"/>
+										<ScoreDistribution recordCount="1" value="1"/>
+									</Node>
+									<Node recordCount="201" score="0">
+										<SimplePredicate field="Account" operator="notEqual" value="Philippines"/>
+										<ScoreDistribution recordCount="192" value="0"/>
+										<ScoreDistribution recordCount="9" value="1"/>
+										<Node recordCount="37" score="0">
+											<SimplePredicate field="Hours" operator="greaterThan" value="49"/>
+											<ScoreDistribution recordCount="32" value="0"/>
+											<ScoreDistribution recordCount="5" value="1"/>
+											<Node recordCount="11" score="0">
+												<SimplePredicate field="Occupation" operator="equal" value="Executive"/>
+												<ScoreDistribution recordCount="7" value="0"/>
+												<ScoreDistribution recordCount="4" value="1"/>
+												<Node recordCount="8" score="0">
+													<SimplePredicate field="Income" operator="greaterThan" value="55993.53"/>
+													<ScoreDistribution recordCount="4" value="0"/>
+													<ScoreDistribution recordCount="4" value="1"/>
+													<Node recordCount="5" score="0">
+														<SimplePredicate field="Income" operator="greaterThan" value="76228.715"/>
+														<ScoreDistribution recordCount="4" value="0"/>
+														<ScoreDistribution recordCount="1" value="1"/>
+													</Node>
+													<Node recordCount="3" score="1">
+														<SimplePredicate field="Income" operator="lessOrEqual" value="76228.715"/>
+														<ScoreDistribution recordCount="3" value="1"/>
+													</Node>
+												</Node>
+												<Node recordCount="3" score="0">
+													<SimplePredicate field="Income" operator="lessOrEqual" value="55993.53"/>
+													<ScoreDistribution recordCount="3" value="0"/>
+												</Node>
+											</Node>
+											<Node recordCount="26" score="0">
+												<SimplePredicate field="Occupation" operator="notEqual" value="Executive"/>
+												<ScoreDistribution recordCount="25" value="0"/>
+												<ScoreDistribution recordCount="1" value="1"/>
+												<Node recordCount="2" score="0">
+													<SimplePredicate field="Employment" operator="equal" value="Consultant"/>
+													<ScoreDistribution recordCount="1" value="0"/>
+													<ScoreDistribution recordCount="1" value="1"/>
+													<Node recordCount="1" score="0">
+														<SimplePredicate field="Hours" operator="greaterThan" value="52"/>
+														<ScoreDistribution recordCount="1" value="0"/>
+													</Node>
+													<Node recordCount="1" score="1">
+														<SimplePredicate field="Hours" operator="lessOrEqual" value="52"/>
+														<ScoreDistribution recordCount="1" value="1"/>
+													</Node>
+												</Node>
+												<Node recordCount="24" score="0">
+													<SimplePredicate field="Employment" operator="notEqual" value="Consultant"/>
+													<ScoreDistribution recordCount="24" value="0"/>
+												</Node>
+											</Node>
+										</Node>
+										<Node recordCount="164" score="0">
+											<SimplePredicate field="Hours" operator="lessOrEqual" value="49"/>
+											<ScoreDistribution recordCount="160" value="0"/>
+											<ScoreDistribution recordCount="4" value="1"/>
+											<Node recordCount="63" score="0">
+												<SimplePredicate field="Age" operator="greaterThan" value="42"/>
+												<ScoreDistribution recordCount="59" value="0"/>
+												<ScoreDistribution recordCount="4" value="1"/>
+												<Node recordCount="13" score="0">
+													<SimplePredicate field="Occupation" operator="equal" value="Professional"/>
+													<ScoreDistribution recordCount="10" value="0"/>
+													<ScoreDistribution recordCount="3" value="1"/>
+													<Node recordCount="7" score="0">
+														<SimplePredicate field="Education" operator="equal" value="Master"/>
+														<ScoreDistribution recordCount="7" value="0"/>
+													</Node>
+													<Node recordCount="6" score="0">
+														<SimplePredicate field="Education" operator="notEqual" value="Master"/>
+														<ScoreDistribution recordCount="3" value="0"/>
+														<ScoreDistribution recordCount="3" value="1"/>
+														<Node recordCount="4" score="0">
+															<SimplePredicate field="Income" operator="greaterThan" value="57857.475"/>
+															<ScoreDistribution recordCount="3" value="0"/>
+															<ScoreDistribution recordCount="1" value="1"/>
+															<Node recordCount="3" score="0">
+																<SimplePredicate field="Hours" operator="greaterThan" value="31"/>
+																<ScoreDistribution recordCount="3" value="0"/>
+															</Node>
+															<Node recordCount="1" score="1">
+																<SimplePredicate field="Hours" operator="lessOrEqual" value="31"/>
+																<ScoreDistribution recordCount="1" value="1"/>
+															</Node>
+														</Node>
+														<Node recordCount="2" score="1">
+															<SimplePredicate field="Income" operator="lessOrEqual" value="57857.475"/>
+															<ScoreDistribution recordCount="2" value="1"/>
+														</Node>
+													</Node>
+												</Node>
+												<Node recordCount="50" score="0">
+													<SimplePredicate field="Occupation" operator="notEqual" value="Professional"/>
+													<ScoreDistribution recordCount="49" value="0"/>
+													<ScoreDistribution recordCount="1" value="1"/>
+													<Node recordCount="38" score="0">
+														<SimplePredicate field="Income" operator="greaterThan" value="37730.555"/>
+														<ScoreDistribution recordCount="38" value="0"/>
+													</Node>
+													<Node recordCount="12" score="0">
+														<SimplePredicate field="Income" operator="lessOrEqual" value="37730.555"/>
+														<ScoreDistribution recordCount="11" value="0"/>
+														<ScoreDistribution recordCount="1" value="1"/>
+													</Node>
+												</Node>
+											</Node>
+											<Node recordCount="101" score="0">
+												<SimplePredicate field="Age" operator="lessOrEqual" value="42"/>
+												<ScoreDistribution recordCount="101" value="0"/>
+											</Node>
+										</Node>
+									</Node>
+								</Node>
+							</Node>
+						</Node>
+						<Node recordCount="351" score="0">
+							<SimplePredicate field="Age" operator="lessOrEqual" value="26"/>
+							<ScoreDistribution recordCount="351" value="0"/>
+						</Node>
+					</Node>
+				</Node>
+			</Node>
+		</Node>
+	</TreeModel>
+</PMML>

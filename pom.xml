@@ -38,10 +38,11 @@
 	</contributors>
 
 	<modules>
-		<!-- 
+		<!--
 		The pmml-evaluator module has compile-time (but not run-time) dependence on the pmml-evaluator-processor module.
 		The reactor is informed about it by ordering their <module> elements appropriately.
 		-->
+		<module>pmml-bigml</module>
 		<module>pmml-evaluator-processor</module>
 		<module>pmml-evaluator</module>
 		<module>pmml-evaluator-example</module>
@@ -67,6 +68,11 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-bigml</artifactId>
+				<version>1.4-SNAPSHOT</version>
+			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator</artifactId>

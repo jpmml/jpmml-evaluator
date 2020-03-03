@@ -1,0 +1,575 @@
+<?xml version="1.0" ?>
+<PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Header description="Model kind: mtree Model id: 5b155299c7736e26840004bc">
+		<Application name="BigML"/>
+	</Header>
+	<DataDictionary>
+		<DataField dataType="integer" displayName="" name="Prefix" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000000"/>
+		</DataField>
+		<DataField dataType="double" displayName="" name="Assignment" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000001"/>
+		</DataField>
+		<DataField dataType="double" displayName="" name="Tutorial" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000002"/>
+		</DataField>
+		<DataField dataType="double" displayName="" name="Midterm" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000003"/>
+		</DataField>
+		<DataField dataType="double" displayName="" name="TakeHome" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000004"/>
+		</DataField>
+		<DataField dataType="double" displayName="" name="Final" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000005"/>
+		</DataField>
+	</DataDictionary>
+	<TreeModel algorithmName="mtree" functionName="regression" missingValueStrategy="lastPrediction" modelName="Grades">
+		<MiningSchema>
+			<MiningField name="Prefix"/>
+			<MiningField name="Assignment"/>
+			<MiningField name="Tutorial"/>
+			<MiningField name="Midterm"/>
+			<MiningField name="TakeHome"/>
+			<MiningField name="Final" usageType="target"/>
+		</MiningSchema>
+		<ModelStats>
+			<UnivariateStats field="Prefix">
+				<Counts missingFreq="0" totalFreq="79"/>
+				<NumericInfo maximum="8" mean="7.37975" median="8" minimum="4" standardDeviation="0.83672"/>
+				<DiscrStats modalValue="8">
+					<Array n="5" type="int">1 2 6 27 43</Array>
+					<Array n="5" type="string">4 5 6 7 8</Array>
+				</DiscrStats>
+			</UnivariateStats>
+			<UnivariateStats field="Assignment">
+				<Counts missingFreq="0" totalFreq="79"/>
+				<NumericInfo maximum="100.83" mean="84.8557" median="90.1" minimum="28.14" standardDeviation="13.12612"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="25" rightMargin="30"/>
+					<Interval closure="closedOpen" leftMargin="30" rightMargin="35"/>
+					<Interval closure="closedOpen" leftMargin="35" rightMargin="40"/>
+					<Interval closure="closedOpen" leftMargin="40" rightMargin="45"/>
+					<Interval closure="closedOpen" leftMargin="45" rightMargin="50"/>
+					<Interval closure="closedOpen" leftMargin="50" rightMargin="55"/>
+					<Interval closure="closedOpen" leftMargin="55" rightMargin="60"/>
+					<Interval closure="closedOpen" leftMargin="60" rightMargin="65"/>
+					<Interval closure="closedOpen" leftMargin="65" rightMargin="70"/>
+					<Interval closure="closedOpen" leftMargin="70" rightMargin="75"/>
+					<Interval closure="closedOpen" leftMargin="75" rightMargin="80"/>
+					<Interval closure="closedOpen" leftMargin="80" rightMargin="85"/>
+					<Interval closure="closedOpen" leftMargin="85" rightMargin="90"/>
+					<Interval closure="closedOpen" leftMargin="90" rightMargin="95"/>
+					<Interval closure="closedOpen" leftMargin="95" rightMargin="100"/>
+					<Array n="16" type="int">1 0 0 0 0 1 3 2 4 4 3 12 9 22 17 1</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="Tutorial">
+				<Counts missingFreq="0" totalFreq="79"/>
+				<NumericInfo maximum="112.58" mean="89.69759" median="93.64" minimum="34.09" standardDeviation="15.33911"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="30" rightMargin="35"/>
+					<Interval closure="closedOpen" leftMargin="35" rightMargin="40"/>
+					<Interval closure="closedOpen" leftMargin="40" rightMargin="45"/>
+					<Interval closure="closedOpen" leftMargin="45" rightMargin="50"/>
+					<Interval closure="closedOpen" leftMargin="50" rightMargin="55"/>
+					<Interval closure="closedOpen" leftMargin="55" rightMargin="60"/>
+					<Interval closure="closedOpen" leftMargin="60" rightMargin="65"/>
+					<Interval closure="closedOpen" leftMargin="65" rightMargin="70"/>
+					<Interval closure="closedOpen" leftMargin="70" rightMargin="75"/>
+					<Interval closure="closedOpen" leftMargin="75" rightMargin="80"/>
+					<Interval closure="closedOpen" leftMargin="80" rightMargin="85"/>
+					<Interval closure="closedOpen" leftMargin="85" rightMargin="90"/>
+					<Interval closure="closedOpen" leftMargin="90" rightMargin="95"/>
+					<Interval closure="closedOpen" leftMargin="95" rightMargin="100"/>
+					<Interval closure="closedOpen" leftMargin="100" rightMargin="105"/>
+					<Interval closure="closedOpen" leftMargin="105" rightMargin="110"/>
+					<Array n="17" type="int">2 0 0 0 0 3 1 3 2 1 8 12 13 13 15 5 1</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="Midterm">
+				<Counts missingFreq="0" totalFreq="79"/>
+				<NumericInfo maximum="110" mean="67.99861" median="69.38" minimum="28.12" standardDeviation="20.30544"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="25" rightMargin="30"/>
+					<Interval closure="closedOpen" leftMargin="30" rightMargin="35"/>
+					<Interval closure="closedOpen" leftMargin="35" rightMargin="40"/>
+					<Interval closure="closedOpen" leftMargin="40" rightMargin="45"/>
+					<Interval closure="closedOpen" leftMargin="45" rightMargin="50"/>
+					<Interval closure="closedOpen" leftMargin="50" rightMargin="55"/>
+					<Interval closure="closedOpen" leftMargin="55" rightMargin="60"/>
+					<Interval closure="closedOpen" leftMargin="60" rightMargin="65"/>
+					<Interval closure="closedOpen" leftMargin="65" rightMargin="70"/>
+					<Interval closure="closedOpen" leftMargin="70" rightMargin="75"/>
+					<Interval closure="closedOpen" leftMargin="75" rightMargin="80"/>
+					<Interval closure="closedOpen" leftMargin="80" rightMargin="85"/>
+					<Interval closure="closedOpen" leftMargin="85" rightMargin="90"/>
+					<Interval closure="closedOpen" leftMargin="90" rightMargin="95"/>
+					<Interval closure="closedOpen" leftMargin="95" rightMargin="100"/>
+					<Interval closure="closedOpen" leftMargin="100" rightMargin="105"/>
+					<Interval closure="closedOpen" leftMargin="105" rightMargin="110"/>
+					<Array n="18" type="int">2 2 3 5 6 6 3 7 6 11 5 3 5 7 4 2 1 1</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="TakeHome">
+				<Counts missingFreq="0" totalFreq="79"/>
+				<NumericInfo maximum="107.41" mean="78.76165" median="86.11" minimum="16.91" standardDeviation="24.37138"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="15" rightMargin="20"/>
+					<Interval closure="closedOpen" leftMargin="20" rightMargin="25"/>
+					<Interval closure="closedOpen" leftMargin="25" rightMargin="30"/>
+					<Interval closure="closedOpen" leftMargin="30" rightMargin="35"/>
+					<Interval closure="closedOpen" leftMargin="35" rightMargin="40"/>
+					<Interval closure="closedOpen" leftMargin="40" rightMargin="45"/>
+					<Interval closure="closedOpen" leftMargin="45" rightMargin="50"/>
+					<Interval closure="closedOpen" leftMargin="50" rightMargin="55"/>
+					<Interval closure="closedOpen" leftMargin="55" rightMargin="60"/>
+					<Interval closure="closedOpen" leftMargin="60" rightMargin="65"/>
+					<Interval closure="closedOpen" leftMargin="65" rightMargin="70"/>
+					<Interval closure="closedOpen" leftMargin="70" rightMargin="75"/>
+					<Interval closure="closedOpen" leftMargin="75" rightMargin="80"/>
+					<Interval closure="closedOpen" leftMargin="80" rightMargin="85"/>
+					<Interval closure="closedOpen" leftMargin="85" rightMargin="90"/>
+					<Interval closure="closedOpen" leftMargin="90" rightMargin="95"/>
+					<Interval closure="closedOpen" leftMargin="95" rightMargin="100"/>
+					<Interval closure="closedOpen" leftMargin="100" rightMargin="105"/>
+					<Array n="19" type="int">3 3 0 0 0 2 1 4 3 8 0 4 2 6 10 7 12 9 5</Array>
+				</ContStats>
+			</UnivariateStats>
+		</ModelStats>
+		<Node recordCount="76" score="68.62224">
+			<True/>
+			<Node recordCount="25" score="90.1112">
+				<SimplePredicate field="Midterm" operator="greaterThan" value="75.47"/>
+				<Node recordCount="7" score="99.48429">
+					<SimplePredicate field="Midterm" operator="greaterThan" value="95.31"/>
+					<Node recordCount="3" score="106.29667">
+						<SimplePredicate field="TakeHome" operator="greaterThan" value="102.13"/>
+						<Node recordCount="2" score="108.335">
+							<SimplePredicate field="Midterm" operator="greaterThan" value="98.435"/>
+							<Node recordCount="1" score="108.89">
+								<SimplePredicate field="Tutorial" operator="greaterThan" value="98.3"/>
+							</Node>
+							<Node recordCount="1" score="107.78">
+								<SimplePredicate field="Tutorial" operator="lessOrEqual" value="98.3"/>
+							</Node>
+						</Node>
+						<Node recordCount="1" score="102.22">
+							<SimplePredicate field="Midterm" operator="lessOrEqual" value="98.435"/>
+						</Node>
+					</Node>
+					<Node recordCount="4" score="94.375">
+						<SimplePredicate field="TakeHome" operator="lessOrEqual" value="102.13"/>
+						<Node recordCount="1" score="88.89">
+							<SimplePredicate field="Tutorial" operator="greaterThan" value="105.45"/>
+						</Node>
+						<Node recordCount="3" score="96.20333">
+							<SimplePredicate field="Tutorial" operator="lessOrEqual" value="105.45"/>
+							<Node recordCount="1" score="102.78">
+								<SimplePredicate field="Tutorial" operator="greaterThan" value="98.1"/>
+							</Node>
+							<Node recordCount="2" score="92.915">
+								<SimplePredicate field="Tutorial" operator="lessOrEqual" value="98.1"/>
+								<Node recordCount="1" score="95">
+									<SimplePredicate field="Tutorial" operator="greaterThan" value="88.34"/>
+								</Node>
+								<Node recordCount="1" score="90.83">
+									<SimplePredicate field="Tutorial" operator="lessOrEqual" value="88.34"/>
+								</Node>
+							</Node>
+						</Node>
+					</Node>
+				</Node>
+				<Node recordCount="18" score="86.46611">
+					<SimplePredicate field="Midterm" operator="lessOrEqual" value="95.31"/>
+					<Node recordCount="6" score="80.83333">
+						<SimplePredicate field="Midterm" operator="greaterThan" value="90.935"/>
+						<Node recordCount="2" score="90.83">
+							<SimplePredicate field="Tutorial" operator="greaterThan" value="100.745"/>
+							<Node recordCount="1" score="87.22">
+								<SimplePredicate field="Tutorial" operator="greaterThan" value="103.425"/>
+							</Node>
+							<Node recordCount="1" score="94.44">
+								<SimplePredicate field="Tutorial" operator="lessOrEqual" value="103.425"/>
+							</Node>
+						</Node>
+						<Node recordCount="4" score="75.835">
+							<SimplePredicate field="Tutorial" operator="lessOrEqual" value="100.745"/>
+							<Node recordCount="3" score="71.39">
+								<SimplePredicate field="Tutorial" operator="greaterThan" value="89.615"/>
+								<Node recordCount="1" score="68.06">
+									<SimplePredicate field="Assignment" operator="greaterThan" value="93.16"/>
+								</Node>
+								<Node recordCount="2" score="73.055">
+									<SimplePredicate field="Assignment" operator="lessOrEqual" value="93.16"/>
+									<Node recordCount="1" score="72.22">
+										<SimplePredicate field="Tutorial" operator="greaterThan" value="96.055"/>
+									</Node>
+									<Node recordCount="1" score="73.89">
+										<SimplePredicate field="Tutorial" operator="lessOrEqual" value="96.055"/>
+									</Node>
+								</Node>
+							</Node>
+							<Node recordCount="1" score="89.17">
+								<SimplePredicate field="Tutorial" operator="lessOrEqual" value="89.615"/>
+							</Node>
+						</Node>
+					</Node>
+					<Node recordCount="12" score="89.2825">
+						<SimplePredicate field="Midterm" operator="lessOrEqual" value="90.935"/>
+						<Node recordCount="2" score="100.14">
+							<SimplePredicate field="Midterm" operator="greaterThan" value="90"/>
+							<Node recordCount="1" score="101.11">
+								<SimplePredicate field="Tutorial" operator="greaterThan" value="91.33"/>
+							</Node>
+							<Node recordCount="1" score="99.17">
+								<SimplePredicate field="Tutorial" operator="lessOrEqual" value="91.33"/>
+							</Node>
+						</Node>
+						<Node recordCount="10" score="87.111">
+							<SimplePredicate field="Midterm" operator="lessOrEqual" value="90"/>
+							<Node recordCount="2" score="81.11">
+								<SimplePredicate field="Tutorial" operator="greaterThan" value="100.63"/>
+								<Node recordCount="1" score="83.33">
+									<SimplePredicate field="Tutorial" operator="greaterThan" value="108.145"/>
+								</Node>
+								<Node recordCount="1" score="78.89">
+									<SimplePredicate field="Tutorial" operator="lessOrEqual" value="108.145"/>
+								</Node>
+							</Node>
+							<Node recordCount="8" score="88.61125">
+								<SimplePredicate field="Tutorial" operator="lessOrEqual" value="100.63"/>
+								<Node recordCount="7" score="89.52429">
+									<SimplePredicate field="Assignment" operator="greaterThan" value="88.62"/>
+									<Node recordCount="2" score="85.28">
+										<SimplePredicate field="TakeHome" operator="greaterThan" value="100.37"/>
+										<Node recordCount="1" score="85.56">
+											<SimplePredicate field="Tutorial" operator="greaterThan" value="94.625"/>
+										</Node>
+										<Node recordCount="1" score="85">
+											<SimplePredicate field="Tutorial" operator="lessOrEqual" value="94.625"/>
+										</Node>
+									</Node>
+									<Node recordCount="5" score="91.222">
+										<SimplePredicate field="TakeHome" operator="lessOrEqual" value="100.37"/>
+										<Node recordCount="2" score="92.5">
+											<SimplePredicate field="TakeHome" operator="greaterThan" value="93.24"/>
+											<Node recordCount="1" score="92.78">
+												<SimplePredicate field="Tutorial" operator="greaterThan" value="89.385"/>
+											</Node>
+											<Node recordCount="1" score="92.22">
+												<SimplePredicate field="Tutorial" operator="lessOrEqual" value="89.385"/>
+											</Node>
+										</Node>
+										<Node recordCount="3" score="90.37">
+											<SimplePredicate field="TakeHome" operator="lessOrEqual" value="93.24"/>
+											<Node recordCount="2" score="90">
+												<SimplePredicate field="Tutorial" operator="greaterThan" value="89.18"/>
+											</Node>
+											<Node recordCount="1" score="91.11">
+												<SimplePredicate field="Tutorial" operator="lessOrEqual" value="89.18"/>
+											</Node>
+										</Node>
+									</Node>
+								</Node>
+								<Node recordCount="1" score="82.22">
+									<SimplePredicate field="Assignment" operator="lessOrEqual" value="88.62"/>
+								</Node>
+							</Node>
+						</Node>
+					</Node>
+				</Node>
+			</Node>
+			<Node recordCount="51" score="58.08843">
+				<SimplePredicate field="Midterm" operator="lessOrEqual" value="75.47"/>
+				<Node recordCount="40" score="60.75675">
+					<SimplePredicate field="Midterm" operator="greaterThan" value="45.315"/>
+					<Node recordCount="31" score="63.30645">
+						<SimplePredicate field="TakeHome" operator="greaterThan" value="53.055"/>
+						<Node recordCount="23" score="61.29217">
+							<SimplePredicate field="TakeHome" operator="greaterThan" value="72.035"/>
+							<Node recordCount="1" score="39.72">
+								<SimplePredicate field="Midterm" operator="greaterThan" value="74.69"/>
+							</Node>
+							<Node recordCount="22" score="62.27273">
+								<SimplePredicate field="Midterm" operator="lessOrEqual" value="74.69"/>
+								<Node recordCount="20" score="63.6805">
+									<SimplePredicate field="Tutorial" operator="greaterThan" value="72.89"/>
+									<Node recordCount="19" score="64.75158">
+										<SimplePredicate field="TakeHome" operator="greaterThan" value="72.5"/>
+										<Node recordCount="17" score="63.38235">
+											<SimplePredicate field="Midterm" operator="greaterThan" value="50.315"/>
+											<Node recordCount="10" score="66.639">
+												<SimplePredicate field="Midterm" operator="greaterThan" value="62.5"/>
+												<Node recordCount="5" score="70.722">
+													<SimplePredicate field="Tutorial" operator="greaterThan" value="89.94"/>
+													<Node recordCount="3" score="64.99667">
+														<SimplePredicate field="Tutorial" operator="greaterThan" value="101.44"/>
+														<Node recordCount="1" score="68.33">
+															<SimplePredicate field="Tutorial" operator="greaterThan" value="104.6"/>
+														</Node>
+														<Node recordCount="2" score="63.33">
+															<SimplePredicate field="Tutorial" operator="lessOrEqual" value="104.6"/>
+														</Node>
+													</Node>
+													<Node recordCount="2" score="79.31">
+														<SimplePredicate field="Tutorial" operator="lessOrEqual" value="101.44"/>
+														<Node recordCount="1" score="83.06">
+															<SimplePredicate field="Tutorial" operator="greaterThan" value="95.865"/>
+														</Node>
+														<Node recordCount="1" score="75.56">
+															<SimplePredicate field="Tutorial" operator="lessOrEqual" value="95.865"/>
+														</Node>
+													</Node>
+												</Node>
+												<Node recordCount="5" score="62.556">
+													<SimplePredicate field="Tutorial" operator="lessOrEqual" value="89.94"/>
+													<Node recordCount="4" score="58.82">
+														<SimplePredicate field="Prefix" operator="greaterThan" value="6"/>
+														<Node recordCount="1" score="65.56">
+															<SimplePredicate field="Assignment" operator="greaterThan" value="93.53"/>
+														</Node>
+														<Node recordCount="3" score="56.57333">
+															<SimplePredicate field="Assignment" operator="lessOrEqual" value="93.53"/>
+															<Node recordCount="2" score="55.695">
+																<SimplePredicate field="Midterm" operator="greaterThan" value="69.375"/>
+																<Node recordCount="1" score="55">
+																	<SimplePredicate field="Tutorial" operator="greaterThan" value="85.29"/>
+																</Node>
+																<Node recordCount="1" score="56.39">
+																	<SimplePredicate field="Tutorial" operator="lessOrEqual" value="85.29"/>
+																</Node>
+															</Node>
+															<Node recordCount="1" score="58.33">
+																<SimplePredicate field="Midterm" operator="lessOrEqual" value="69.375"/>
+															</Node>
+														</Node>
+													</Node>
+													<Node recordCount="1" score="77.5">
+														<SimplePredicate field="Prefix" operator="lessOrEqual" value="6"/>
+													</Node>
+												</Node>
+											</Node>
+											<Node recordCount="7" score="58.73">
+												<SimplePredicate field="Midterm" operator="lessOrEqual" value="62.5"/>
+												<Node recordCount="5" score="55.944">
+													<SimplePredicate field="Tutorial" operator="greaterThan" value="95.71"/>
+													<Node recordCount="1" score="67.22">
+														<SimplePredicate field="Tutorial" operator="greaterThan" value="103.585"/>
+													</Node>
+													<Node recordCount="4" score="53.125">
+														<SimplePredicate field="Tutorial" operator="lessOrEqual" value="103.585"/>
+														<Node recordCount="3" score="49.63">
+															<SimplePredicate field="Prefix" operator="greaterThan" value="7"/>
+															<Node recordCount="2" score="50">
+																<SimplePredicate field="Tutorial" operator="greaterThan" value="96.205"/>
+															</Node>
+															<Node recordCount="1" score="48.89">
+																<SimplePredicate field="Tutorial" operator="lessOrEqual" value="96.205"/>
+															</Node>
+														</Node>
+														<Node recordCount="1" score="63.61">
+															<SimplePredicate field="Prefix" operator="lessOrEqual" value="7"/>
+														</Node>
+													</Node>
+												</Node>
+												<Node recordCount="2" score="65.695">
+													<SimplePredicate field="Tutorial" operator="lessOrEqual" value="95.71"/>
+													<Node recordCount="1" score="64.72">
+														<SimplePredicate field="Tutorial" operator="greaterThan" value="94.235"/>
+													</Node>
+													<Node recordCount="1" score="66.67">
+														<SimplePredicate field="Tutorial" operator="lessOrEqual" value="94.235"/>
+													</Node>
+												</Node>
+											</Node>
+										</Node>
+										<Node recordCount="2" score="76.39">
+											<SimplePredicate field="Midterm" operator="lessOrEqual" value="50.315"/>
+											<Node recordCount="1" score="80.56">
+												<SimplePredicate field="Tutorial" operator="greaterThan" value="93.13"/>
+											</Node>
+											<Node recordCount="1" score="72.22">
+												<SimplePredicate field="Tutorial" operator="lessOrEqual" value="93.13"/>
+											</Node>
+										</Node>
+									</Node>
+									<Node recordCount="1" score="43.33">
+										<SimplePredicate field="TakeHome" operator="lessOrEqual" value="72.5"/>
+									</Node>
+								</Node>
+								<Node recordCount="2" score="48.195">
+									<SimplePredicate field="Tutorial" operator="lessOrEqual" value="72.89"/>
+									<Node recordCount="1" score="45.56">
+										<SimplePredicate field="Tutorial" operator="greaterThan" value="64.285"/>
+									</Node>
+									<Node recordCount="1" score="50.83">
+										<SimplePredicate field="Tutorial" operator="lessOrEqual" value="64.285"/>
+									</Node>
+								</Node>
+							</Node>
+						</Node>
+						<Node recordCount="8" score="69.0975">
+							<SimplePredicate field="TakeHome" operator="lessOrEqual" value="72.035"/>
+							<Node recordCount="3" score="62.31667">
+								<SimplePredicate field="Assignment" operator="greaterThan" value="79.485"/>
+								<Node recordCount="2" score="64.585">
+									<SimplePredicate field="Tutorial" operator="greaterThan" value="91.875"/>
+									<Node recordCount="1" score="65.28">
+										<SimplePredicate field="Midterm" operator="greaterThan" value="63.745"/>
+									</Node>
+									<Node recordCount="1" score="63.89">
+										<SimplePredicate field="Midterm" operator="lessOrEqual" value="63.745"/>
+									</Node>
+								</Node>
+								<Node recordCount="1" score="57.78">
+									<SimplePredicate field="Tutorial" operator="lessOrEqual" value="91.875"/>
+								</Node>
+							</Node>
+							<Node recordCount="5" score="73.166">
+								<SimplePredicate field="Assignment" operator="lessOrEqual" value="79.485"/>
+								<Node recordCount="3" score="78.33333">
+									<SimplePredicate field="TakeHome" operator="greaterThan" value="58.61"/>
+									<Node recordCount="2" score="84.445">
+										<SimplePredicate field="Midterm" operator="greaterThan" value="66.25"/>
+										<Node recordCount="1" score="80">
+											<SimplePredicate field="Midterm" operator="greaterThan" value="69.69"/>
+										</Node>
+										<Node recordCount="1" score="88.89">
+											<SimplePredicate field="Midterm" operator="lessOrEqual" value="69.69"/>
+										</Node>
+									</Node>
+									<Node recordCount="1" score="66.11">
+										<SimplePredicate field="Midterm" operator="lessOrEqual" value="66.25"/>
+									</Node>
+								</Node>
+								<Node recordCount="2" score="65.415">
+									<SimplePredicate field="TakeHome" operator="lessOrEqual" value="58.61"/>
+									<Node recordCount="1" score="62.5">
+										<SimplePredicate field="Tutorial" operator="greaterThan" value="70.18"/>
+									</Node>
+									<Node recordCount="1" score="68.33">
+										<SimplePredicate field="Tutorial" operator="lessOrEqual" value="70.18"/>
+									</Node>
+								</Node>
+							</Node>
+						</Node>
+					</Node>
+					<Node recordCount="9" score="51.97444">
+						<SimplePredicate field="TakeHome" operator="lessOrEqual" value="53.055"/>
+						<Node recordCount="1" score="36.11">
+							<SimplePredicate field="Tutorial" operator="greaterThan" value="102.275"/>
+						</Node>
+						<Node recordCount="8" score="53.9575">
+							<SimplePredicate field="Tutorial" operator="lessOrEqual" value="102.275"/>
+							<Node recordCount="7" score="53.01429">
+								<SimplePredicate field="Midterm" operator="greaterThan" value="46.875"/>
+								<Node recordCount="4" score="50.345">
+									<SimplePredicate field="Assignment" operator="greaterThan" value="68.98"/>
+									<Node recordCount="2" score="48.61">
+										<SimplePredicate field="TakeHome" operator="greaterThan" value="20.025"/>
+										<Node recordCount="1" score="49.44">
+											<SimplePredicate field="Tutorial" operator="greaterThan" value="85.96"/>
+										</Node>
+										<Node recordCount="1" score="47.78">
+											<SimplePredicate field="Tutorial" operator="lessOrEqual" value="85.96"/>
+										</Node>
+									</Node>
+									<Node recordCount="2" score="52.08">
+										<SimplePredicate field="TakeHome" operator="lessOrEqual" value="20.025"/>
+										<Node recordCount="1" score="50.83">
+											<SimplePredicate field="Tutorial" operator="greaterThan" value="91.09"/>
+										</Node>
+										<Node recordCount="1" score="53.33">
+											<SimplePredicate field="Tutorial" operator="lessOrEqual" value="91.09"/>
+										</Node>
+									</Node>
+								</Node>
+								<Node recordCount="3" score="56.57333">
+									<SimplePredicate field="Assignment" operator="lessOrEqual" value="68.98"/>
+									<Node recordCount="1" score="61.39">
+										<SimplePredicate field="Tutorial" operator="greaterThan" value="63.885"/>
+									</Node>
+									<Node recordCount="2" score="54.165">
+										<SimplePredicate field="Tutorial" operator="lessOrEqual" value="63.885"/>
+										<Node recordCount="1" score="55.83">
+											<SimplePredicate field="Midterm" operator="greaterThan" value="65.63"/>
+										</Node>
+										<Node recordCount="1" score="52.5">
+											<SimplePredicate field="Midterm" operator="lessOrEqual" value="65.63"/>
+										</Node>
+									</Node>
+								</Node>
+							</Node>
+							<Node recordCount="1" score="60.56">
+								<SimplePredicate field="Midterm" operator="lessOrEqual" value="46.875"/>
+							</Node>
+						</Node>
+					</Node>
+				</Node>
+				<Node recordCount="11" score="48.38545">
+					<SimplePredicate field="Midterm" operator="lessOrEqual" value="45.315"/>
+					<Node recordCount="7" score="41.54857">
+						<SimplePredicate field="Tutorial" operator="greaterThan" value="70.66"/>
+						<Node recordCount="1" score="28.06">
+							<SimplePredicate field="TakeHome" operator="greaterThan" value="92.685"/>
+						</Node>
+						<Node recordCount="6" score="43.79667">
+							<SimplePredicate field="TakeHome" operator="lessOrEqual" value="92.685"/>
+							<Node recordCount="4" score="48.1275">
+								<SimplePredicate field="TakeHome" operator="greaterThan" value="51.295"/>
+								<Node recordCount="1" score="46.67">
+									<SimplePredicate field="Midterm" operator="greaterThan" value="40"/>
+								</Node>
+								<Node recordCount="3" score="48.61333">
+									<SimplePredicate field="Midterm" operator="lessOrEqual" value="40"/>
+									<Node recordCount="1" score="47.78">
+										<SimplePredicate field="Tutorial" operator="greaterThan" value="105.745"/>
+									</Node>
+									<Node recordCount="2" score="49.03">
+										<SimplePredicate field="Tutorial" operator="lessOrEqual" value="105.745"/>
+										<Node recordCount="1" score="49.17">
+											<SimplePredicate field="Tutorial" operator="greaterThan" value="92.845"/>
+										</Node>
+										<Node recordCount="1" score="48.89">
+											<SimplePredicate field="Tutorial" operator="lessOrEqual" value="92.845"/>
+										</Node>
+									</Node>
+								</Node>
+							</Node>
+							<Node recordCount="2" score="35.135">
+								<SimplePredicate field="TakeHome" operator="lessOrEqual" value="51.295"/>
+								<Node recordCount="1" score="35.83">
+									<SimplePredicate field="Tutorial" operator="greaterThan" value="82.645"/>
+								</Node>
+								<Node recordCount="1" score="34.44">
+									<SimplePredicate field="Tutorial" operator="lessOrEqual" value="82.645"/>
+								</Node>
+							</Node>
+						</Node>
+					</Node>
+					<Node recordCount="4" score="60.35">
+						<SimplePredicate field="Tutorial" operator="lessOrEqual" value="70.66"/>
+						<Node recordCount="2" score="48.615">
+							<SimplePredicate field="TakeHome" operator="greaterThan" value="67.685"/>
+							<Node recordCount="1" score="51.67">
+								<SimplePredicate field="Tutorial" operator="greaterThan" value="57.645"/>
+							</Node>
+							<Node recordCount="1" score="45.56">
+								<SimplePredicate field="Tutorial" operator="lessOrEqual" value="57.645"/>
+							</Node>
+						</Node>
+						<Node recordCount="2" score="72.085">
+							<SimplePredicate field="TakeHome" operator="lessOrEqual" value="67.685"/>
+							<Node recordCount="1" score="65.28">
+								<SimplePredicate field="Midterm" operator="greaterThan" value="42.19"/>
+							</Node>
+							<Node recordCount="1" score="78.89">
+								<SimplePredicate field="Midterm" operator="lessOrEqual" value="42.19"/>
+							</Node>
+						</Node>
+					</Node>
+				</Node>
+			</Node>
+		</Node>
+	</TreeModel>
+</PMML>

@@ -1,0 +1,305 @@
+<?xml version="1.0" ?>
+<PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Header description="Model kind: kmeans Model id: 5b1552a09252736252003ee1">
+		<Application name="BigML"/>
+	</Header>
+	<DataDictionary>
+		<DataField dataType="integer" displayName="" name="pregnancies" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000000"/>
+		</DataField>
+		<DataField dataType="integer" displayName="" name="plasma glucose" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000001"/>
+		</DataField>
+		<DataField dataType="integer" displayName="" name="blood pressure" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000002"/>
+		</DataField>
+		<DataField dataType="integer" displayName="" name="triceps skin thickness" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000003"/>
+		</DataField>
+		<DataField dataType="integer" displayName="" name="insulin" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000004"/>
+		</DataField>
+		<DataField dataType="double" displayName="" name="bmi" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000005"/>
+		</DataField>
+		<DataField dataType="double" displayName="" name="diabetes pedigree" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000006"/>
+		</DataField>
+		<DataField dataType="integer" displayName="" name="age" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000007"/>
+		</DataField>
+	</DataDictionary>
+	<ClusteringModel functionName="clustering" modelClass="centerBased" modelName="Diabetes" numberOfClusters="6">
+		<MiningSchema>
+			<MiningField name="pregnancies"/>
+			<MiningField name="plasma glucose"/>
+			<MiningField name="blood pressure"/>
+			<MiningField name="triceps skin thickness"/>
+			<MiningField name="insulin"/>
+			<MiningField name="bmi"/>
+			<MiningField name="diabetes pedigree"/>
+			<MiningField name="age"/>
+		</MiningSchema>
+		<Output>
+			<OutputField dataType="string" feature="predictedDisplayValue" name="cluster" optype="categorical"/>
+		</Output>
+		<ModelStats>
+			<UnivariateStats field="pregnancies">
+				<Counts missingFreq="0" totalFreq="768"/>
+				<NumericInfo maximum="17" mean="3.84505" median="3" minimum="0" standardDeviation="3.36958"/>
+				<DiscrStats modalValue="1">
+					<Array n="17" type="int">111 135 103 75 68 57 50 45 38 28 24 11 9 10 2 1 1</Array>
+					<Array n="17" type="string">0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 17</Array>
+				</DiscrStats>
+			</UnivariateStats>
+			<UnivariateStats field="plasma glucose">
+				<Counts missingFreq="0" totalFreq="768"/>
+				<NumericInfo maximum="199" mean="120.89453" median="117" minimum="0" standardDeviation="31.97262"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="0" rightMargin="10"/>
+					<Interval closure="closedOpen" leftMargin="10" rightMargin="20"/>
+					<Interval closure="closedOpen" leftMargin="20" rightMargin="30"/>
+					<Interval closure="closedOpen" leftMargin="30" rightMargin="40"/>
+					<Interval closure="closedOpen" leftMargin="40" rightMargin="50"/>
+					<Interval closure="closedOpen" leftMargin="50" rightMargin="60"/>
+					<Interval closure="closedOpen" leftMargin="60" rightMargin="70"/>
+					<Interval closure="closedOpen" leftMargin="70" rightMargin="80"/>
+					<Interval closure="closedOpen" leftMargin="80" rightMargin="90"/>
+					<Interval closure="closedOpen" leftMargin="90" rightMargin="100"/>
+					<Interval closure="closedOpen" leftMargin="100" rightMargin="110"/>
+					<Interval closure="closedOpen" leftMargin="110" rightMargin="120"/>
+					<Interval closure="closedOpen" leftMargin="120" rightMargin="130"/>
+					<Interval closure="closedOpen" leftMargin="130" rightMargin="140"/>
+					<Interval closure="closedOpen" leftMargin="140" rightMargin="150"/>
+					<Interval closure="closedOpen" leftMargin="150" rightMargin="160"/>
+					<Interval closure="closedOpen" leftMargin="160" rightMargin="170"/>
+					<Interval closure="closedOpen" leftMargin="170" rightMargin="180"/>
+					<Interval closure="closedOpen" leftMargin="180" rightMargin="190"/>
+					<Array n="20" type="int">5 0 0 0 1 3 7 25 63 93 117 94 102 61 54 41 31 25 28 18</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="blood pressure">
+				<Counts missingFreq="0" totalFreq="768"/>
+				<NumericInfo maximum="122" mean="69.10547" median="72" minimum="0" standardDeviation="19.35581"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="0" rightMargin="5"/>
+					<Interval closure="closedOpen" leftMargin="5" rightMargin="10"/>
+					<Interval closure="closedOpen" leftMargin="10" rightMargin="15"/>
+					<Interval closure="closedOpen" leftMargin="15" rightMargin="20"/>
+					<Interval closure="closedOpen" leftMargin="20" rightMargin="25"/>
+					<Interval closure="closedOpen" leftMargin="25" rightMargin="30"/>
+					<Interval closure="closedOpen" leftMargin="30" rightMargin="35"/>
+					<Interval closure="closedOpen" leftMargin="35" rightMargin="40"/>
+					<Interval closure="closedOpen" leftMargin="40" rightMargin="45"/>
+					<Interval closure="closedOpen" leftMargin="45" rightMargin="50"/>
+					<Interval closure="closedOpen" leftMargin="50" rightMargin="55"/>
+					<Interval closure="closedOpen" leftMargin="55" rightMargin="60"/>
+					<Interval closure="closedOpen" leftMargin="60" rightMargin="65"/>
+					<Interval closure="closedOpen" leftMargin="65" rightMargin="70"/>
+					<Interval closure="closedOpen" leftMargin="70" rightMargin="75"/>
+					<Interval closure="closedOpen" leftMargin="75" rightMargin="80"/>
+					<Interval closure="closedOpen" leftMargin="80" rightMargin="85"/>
+					<Interval closure="closedOpen" leftMargin="85" rightMargin="90"/>
+					<Interval closure="closedOpen" leftMargin="90" rightMargin="95"/>
+					<Interval closure="closedOpen" leftMargin="95" rightMargin="100"/>
+					<Interval closure="closedOpen" leftMargin="100" rightMargin="105"/>
+					<Interval closure="closedOpen" leftMargin="105" rightMargin="110"/>
+					<Interval closure="closedOpen" leftMargin="110" rightMargin="115"/>
+					<Interval closure="closedOpen" leftMargin="115" rightMargin="120"/>
+					<Array n="25" type="int">35 0 0 0 1 0 2 1 5 7 35 35 115 82 153 92 93 52 36 8 6 5 4 0 1</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="triceps skin thickness">
+				<Counts missingFreq="0" totalFreq="768"/>
+				<NumericInfo maximum="99" mean="20.53646" median="23" minimum="0" standardDeviation="15.95222"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="0" rightMargin="2"/>
+					<Interval closure="closedOpen" leftMargin="2" rightMargin="4"/>
+					<Interval closure="closedOpen" leftMargin="4" rightMargin="6"/>
+					<Interval closure="closedOpen" leftMargin="6" rightMargin="8"/>
+					<Interval closure="closedOpen" leftMargin="8" rightMargin="10"/>
+					<Interval closure="closedOpen" leftMargin="10" rightMargin="12"/>
+					<Interval closure="closedOpen" leftMargin="12" rightMargin="14"/>
+					<Interval closure="closedOpen" leftMargin="14" rightMargin="16"/>
+					<Interval closure="closedOpen" leftMargin="16" rightMargin="18"/>
+					<Interval closure="closedOpen" leftMargin="18" rightMargin="20"/>
+					<Interval closure="closedOpen" leftMargin="20" rightMargin="22"/>
+					<Interval closure="closedOpen" leftMargin="22" rightMargin="24"/>
+					<Interval closure="closedOpen" leftMargin="24" rightMargin="26"/>
+					<Interval closure="closedOpen" leftMargin="26" rightMargin="28"/>
+					<Interval closure="closedOpen" leftMargin="28" rightMargin="30"/>
+					<Interval closure="closedOpen" leftMargin="30" rightMargin="32"/>
+					<Interval closure="closedOpen" leftMargin="32" rightMargin="34"/>
+					<Interval closure="closedOpen" leftMargin="34" rightMargin="36"/>
+					<Interval closure="closedOpen" leftMargin="36" rightMargin="38"/>
+					<Interval closure="closedOpen" leftMargin="38" rightMargin="40"/>
+					<Interval closure="closedOpen" leftMargin="40" rightMargin="42"/>
+					<Interval closure="closedOpen" leftMargin="42" rightMargin="44"/>
+					<Interval closure="closedOpen" leftMargin="44" rightMargin="46"/>
+					<Interval closure="closedOpen" leftMargin="46" rightMargin="48"/>
+					<Interval closure="closedOpen" leftMargin="48" rightMargin="50"/>
+					<Interval closure="closedOpen" leftMargin="50" rightMargin="52"/>
+					<Interval closure="closedOpen" leftMargin="52" rightMargin="54"/>
+					<Interval closure="closedOpen" leftMargin="54" rightMargin="56"/>
+					<Interval closure="closedOpen" leftMargin="56" rightMargin="99"/>
+					<Array n="30" type="int">227 0 0 2 2 11 18 20 20 38 23 38 28 39 37 46 51 23 30 25 31 17 11 12 7 4 2 2 1 3</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="insulin">
+				<Counts missingFreq="0" totalFreq="768"/>
+				<NumericInfo maximum="846" mean="79.79948" median="30.5" minimum="0" standardDeviation="115.244"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="0" rightMargin="20"/>
+					<Interval closure="closedOpen" leftMargin="20" rightMargin="40"/>
+					<Interval closure="closedOpen" leftMargin="40" rightMargin="60"/>
+					<Interval closure="closedOpen" leftMargin="60" rightMargin="80"/>
+					<Interval closure="closedOpen" leftMargin="80" rightMargin="100"/>
+					<Interval closure="closedOpen" leftMargin="100" rightMargin="120"/>
+					<Interval closure="closedOpen" leftMargin="120" rightMargin="140"/>
+					<Interval closure="closedOpen" leftMargin="140" rightMargin="160"/>
+					<Interval closure="closedOpen" leftMargin="160" rightMargin="180"/>
+					<Interval closure="closedOpen" leftMargin="180" rightMargin="200"/>
+					<Interval closure="closedOpen" leftMargin="200" rightMargin="220"/>
+					<Interval closure="closedOpen" leftMargin="220" rightMargin="240"/>
+					<Interval closure="closedOpen" leftMargin="240" rightMargin="260"/>
+					<Interval closure="closedOpen" leftMargin="260" rightMargin="280"/>
+					<Interval closure="closedOpen" leftMargin="280" rightMargin="300"/>
+					<Interval closure="closedOpen" leftMargin="300" rightMargin="320"/>
+					<Interval closure="closedOpen" leftMargin="320" rightMargin="340"/>
+					<Interval closure="closedOpen" leftMargin="340" rightMargin="360"/>
+					<Interval closure="closedOpen" leftMargin="360" rightMargin="380"/>
+					<Interval closure="closedOpen" leftMargin="380" rightMargin="400"/>
+					<Interval closure="closedOpen" leftMargin="400" rightMargin="420"/>
+					<Interval closure="closedOpen" leftMargin="420" rightMargin="440"/>
+					<Interval closure="closedOpen" leftMargin="440" rightMargin="460"/>
+					<Interval closure="closedOpen" leftMargin="460" rightMargin="480"/>
+					<Interval closure="closedOpen" leftMargin="480" rightMargin="500"/>
+					<Interval closure="closedOpen" leftMargin="500" rightMargin="520"/>
+					<Interval closure="closedOpen" leftMargin="520" rightMargin="540"/>
+					<Interval closure="closedOpen" leftMargin="540" rightMargin="560"/>
+					<Interval closure="closedOpen" leftMargin="560" rightMargin="580"/>
+					<Interval closure="closedOpen" leftMargin="580" rightMargin="600"/>
+					<Interval closure="closedOpen" leftMargin="600" rightMargin="846"/>
+					<Array n="32" type="int">379 12 43 45 39 40 37 32 25 27 17 11 7 9 7 4 8 1 3 2 2 0 1 3 5 1 0 3 1 0 1 3</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="bmi">
+				<Counts missingFreq="0" totalFreq="768"/>
+				<NumericInfo maximum="67.1" mean="31.99258" median="32" minimum="0" standardDeviation="7.88416"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="0" rightMargin="5"/>
+					<Interval closure="closedOpen" leftMargin="5" rightMargin="10"/>
+					<Interval closure="closedOpen" leftMargin="10" rightMargin="15"/>
+					<Interval closure="closedOpen" leftMargin="15" rightMargin="20"/>
+					<Interval closure="closedOpen" leftMargin="20" rightMargin="25"/>
+					<Interval closure="closedOpen" leftMargin="25" rightMargin="30"/>
+					<Interval closure="closedOpen" leftMargin="30" rightMargin="35"/>
+					<Interval closure="closedOpen" leftMargin="35" rightMargin="40"/>
+					<Interval closure="closedOpen" leftMargin="40" rightMargin="45"/>
+					<Interval closure="closedOpen" leftMargin="45" rightMargin="50"/>
+					<Interval closure="closedOpen" leftMargin="50" rightMargin="55"/>
+					<Interval closure="closedOpen" leftMargin="55" rightMargin="60"/>
+					<Interval closure="closedOpen" leftMargin="60" rightMargin="65"/>
+					<Array n="14" type="int">11 0 0 13 93 179 224 150 62 27 5 3 0 1</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="diabetes pedigree">
+				<Counts missingFreq="0" totalFreq="768"/>
+				<NumericInfo maximum="2329" mean="428.23509" median="337" minimum="0.1" standardDeviation="340.48566"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="0" rightMargin="100"/>
+					<Interval closure="closedOpen" leftMargin="100" rightMargin="200"/>
+					<Interval closure="closedOpen" leftMargin="200" rightMargin="300"/>
+					<Interval closure="closedOpen" leftMargin="300" rightMargin="400"/>
+					<Interval closure="closedOpen" leftMargin="400" rightMargin="500"/>
+					<Interval closure="closedOpen" leftMargin="500" rightMargin="600"/>
+					<Interval closure="closedOpen" leftMargin="600" rightMargin="700"/>
+					<Interval closure="closedOpen" leftMargin="700" rightMargin="800"/>
+					<Interval closure="closedOpen" leftMargin="800" rightMargin="900"/>
+					<Interval closure="closedOpen" leftMargin="900" rightMargin="1000"/>
+					<Interval closure="closedOpen" leftMargin="1000" rightMargin="1100"/>
+					<Interval closure="closedOpen" leftMargin="1100" rightMargin="1200"/>
+					<Interval closure="closedOpen" leftMargin="1200" rightMargin="1300"/>
+					<Interval closure="closedOpen" leftMargin="1300" rightMargin="1400"/>
+					<Interval closure="closedOpen" leftMargin="1400" rightMargin="1500"/>
+					<Interval closure="closedOpen" leftMargin="1500" rightMargin="1600"/>
+					<Interval closure="closedOpen" leftMargin="1600" rightMargin="1700"/>
+					<Interval closure="closedOpen" leftMargin="1700" rightMargin="1800"/>
+					<Interval closure="closedOpen" leftMargin="1800" rightMargin="1900"/>
+					<Interval closure="closedOpen" leftMargin="1900" rightMargin="2000"/>
+					<Interval closure="closedOpen" leftMargin="2000" rightMargin="2100"/>
+					<Interval closure="closedOpen" leftMargin="2100" rightMargin="2200"/>
+					<Interval closure="closedOpen" leftMargin="2200" rightMargin="2300"/>
+					<Array n="24" type="int">84 102 157 95 77 65 53 38 31 19 9 13 9 5 3 0 2 2 1 0 0 1 1 1</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="age">
+				<Counts missingFreq="0" totalFreq="768"/>
+				<NumericInfo maximum="81" mean="33.24089" median="29" minimum="21" standardDeviation="11.76023"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="20" rightMargin="22"/>
+					<Interval closure="closedOpen" leftMargin="22" rightMargin="24"/>
+					<Interval closure="closedOpen" leftMargin="24" rightMargin="26"/>
+					<Interval closure="closedOpen" leftMargin="26" rightMargin="28"/>
+					<Interval closure="closedOpen" leftMargin="28" rightMargin="30"/>
+					<Interval closure="closedOpen" leftMargin="30" rightMargin="32"/>
+					<Interval closure="closedOpen" leftMargin="32" rightMargin="34"/>
+					<Interval closure="closedOpen" leftMargin="34" rightMargin="36"/>
+					<Interval closure="closedOpen" leftMargin="36" rightMargin="38"/>
+					<Interval closure="closedOpen" leftMargin="38" rightMargin="40"/>
+					<Interval closure="closedOpen" leftMargin="40" rightMargin="42"/>
+					<Interval closure="closedOpen" leftMargin="42" rightMargin="44"/>
+					<Interval closure="closedOpen" leftMargin="44" rightMargin="46"/>
+					<Interval closure="closedOpen" leftMargin="46" rightMargin="48"/>
+					<Interval closure="closedOpen" leftMargin="48" rightMargin="50"/>
+					<Interval closure="closedOpen" leftMargin="50" rightMargin="52"/>
+					<Interval closure="closedOpen" leftMargin="52" rightMargin="54"/>
+					<Interval closure="closedOpen" leftMargin="54" rightMargin="56"/>
+					<Interval closure="closedOpen" leftMargin="56" rightMargin="58"/>
+					<Interval closure="closedOpen" leftMargin="58" rightMargin="60"/>
+					<Interval closure="closedOpen" leftMargin="60" rightMargin="62"/>
+					<Interval closure="closedOpen" leftMargin="62" rightMargin="64"/>
+					<Interval closure="closedOpen" leftMargin="64" rightMargin="66"/>
+					<Interval closure="closedOpen" leftMargin="66" rightMargin="68"/>
+					<Interval closure="closedOpen" leftMargin="68" rightMargin="70"/>
+					<Interval closure="closedOpen" leftMargin="70" rightMargin="72"/>
+					<Interval closure="closedOpen" leftMargin="72" rightMargin="74"/>
+					<Interval closure="closedOpen" leftMargin="74" rightMargin="76"/>
+					<Interval closure="closedOpen" leftMargin="76" rightMargin="78"/>
+					<Interval closure="closedOpen" leftMargin="78" rightMargin="80"/>
+					<Array n="31" type="int">63 110 94 65 64 45 33 24 35 28 35 31 23 19 10 16 13 10 8 10 7 8 4 7 3 1 1 0 0 0 1</Array>
+				</ContStats>
+			</UnivariateStats>
+		</ModelStats>
+		<LocalTransformations/>
+		<ComparisonMeasure kind="distance">
+			<squaredEuclidean/>
+		</ComparisonMeasure>
+		<ClusteringField compareFunction="absDiff" field="pregnancies" fieldWeight="0.19847475509908602"/>
+		<ClusteringField compareFunction="absDiff" field="plasma glucose" fieldWeight="0.0022081700028779103"/>
+		<ClusteringField compareFunction="absDiff" field="blood pressure" fieldWeight="0.006021875802402746"/>
+		<ClusteringField compareFunction="absDiff" field="triceps skin thickness" fieldWeight="0.008860958166304207"/>
+		<ClusteringField compareFunction="absDiff" field="insulin" fieldWeight="1.6989643952467694E-4"/>
+		<ClusteringField compareFunction="absDiff" field="bmi" fieldWeight="0.03631739286729231"/>
+		<ClusteringField compareFunction="absDiff" field="diabetes pedigree" fieldWeight="1.9477544807104988E-5"/>
+		<ClusteringField compareFunction="absDiff" field="age" fieldWeight="0.016320411988085207"/>
+		<Cluster id="000000" name="Cluster 0" size="141">
+			<Array n="8" type="real">2.37144 145.81589 73.66731 33.87562 229.45258 37.31327 453.59908 29.92357</Array>
+		</Cluster>
+		<Cluster id="000001" name="Cluster 1" size="136">
+			<Array n="8" type="real">6.10376 131.65794 78.06129 0.98531 2.39486 31.12195 323.42602 44.79408</Array>
+		</Cluster>
+		<Cluster id="000002" name="Cluster 2" size="116">
+			<Array n="8" type="real">8.35151 128.03618 77.80049 32.94627 88.01566 34.16288 472.9736 45.07235</Array>
+		</Cluster>
+		<Cluster id="000003" name="Cluster 3" size="75">
+			<Array n="8" type="real">1.96419 116.49127 68.61266 24.55677 84.43231 32.40769 1037.51616 28.63493</Array>
+		</Cluster>
+		<Cluster id="000004" name="Cluster 4" size="264">
+			<Array n="8" type="real">2.05915 100.04772 67.61121 19.23206 42.69749 29.2704 294.8928 25.51922</Array>
+		</Cluster>
+		<Cluster id="000005" name="Cluster 5" size="36">
+			<Array n="8" type="real">3.55556 117 0.66667 2 0.69444 25.76389 339.33167 30.44444</Array>
+		</Cluster>
+	</ClusteringModel>
+</PMML>

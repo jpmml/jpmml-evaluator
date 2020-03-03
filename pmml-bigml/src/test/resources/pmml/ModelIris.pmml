@@ -1,0 +1,191 @@
+<?xml version="1.0" ?>
+<PMML version="4.3" xmlns="http://www.dmg.org/PMML-4_3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Header description="Model kind: mtree Model id: 5b1552ae9252736252003ee7">
+		<Application name="BigML"/>
+	</Header>
+	<DataDictionary>
+		<DataField dataType="double" displayName="" name="Sepal_Length" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000000"/>
+		</DataField>
+		<DataField dataType="double" displayName="" name="Sepal_Width" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000001"/>
+		</DataField>
+		<DataField dataType="double" displayName="" name="Petal_Length" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000002"/>
+		</DataField>
+		<DataField dataType="double" displayName="" name="Petal_Width" optype="continuous">
+			<Extension name="BigML-Field_ID" value="000003"/>
+		</DataField>
+		<DataField dataType="string" displayName="" name="Species" optype="categorical">
+			<Extension name="BigML-Field_ID" value="000004"/>
+			<Value value="setosa"/>
+			<Value value="versicolor"/>
+			<Value value="virginica"/>
+		</DataField>
+	</DataDictionary>
+	<TreeModel algorithmName="mtree" functionName="classification" missingValueStrategy="lastPrediction" modelName="Iris">
+		<MiningSchema>
+			<MiningField name="Sepal_Length"/>
+			<MiningField name="Sepal_Width"/>
+			<MiningField name="Petal_Length"/>
+			<MiningField name="Petal_Width"/>
+			<MiningField name="Species" usageType="target"/>
+		</MiningSchema>
+		<ModelStats>
+			<UnivariateStats field="Sepal_Length">
+				<Counts missingFreq="0" totalFreq="150"/>
+				<NumericInfo maximum="7.9" mean="5.84333" median="5.8" minimum="4.3" standardDeviation="0.82807"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="4.2" rightMargin="4.4"/>
+					<Interval closure="closedOpen" leftMargin="4.4" rightMargin="4.6"/>
+					<Interval closure="closedOpen" leftMargin="4.6" rightMargin="4.8"/>
+					<Interval closure="closedOpen" leftMargin="4.8" rightMargin="5"/>
+					<Interval closure="closedOpen" leftMargin="5" rightMargin="5.2"/>
+					<Interval closure="closedOpen" leftMargin="5.2" rightMargin="5.4"/>
+					<Interval closure="closedOpen" leftMargin="5.4" rightMargin="5.6"/>
+					<Interval closure="closedOpen" leftMargin="5.6" rightMargin="5.8"/>
+					<Interval closure="closedOpen" leftMargin="5.8" rightMargin="6"/>
+					<Interval closure="closedOpen" leftMargin="6" rightMargin="6.2"/>
+					<Interval closure="closedOpen" leftMargin="6.2" rightMargin="6.4"/>
+					<Interval closure="closedOpen" leftMargin="6.4" rightMargin="6.6"/>
+					<Interval closure="closedOpen" leftMargin="6.6" rightMargin="6.8"/>
+					<Interval closure="closedOpen" leftMargin="6.8" rightMargin="7"/>
+					<Interval closure="closedOpen" leftMargin="7" rightMargin="7.2"/>
+					<Interval closure="closedOpen" leftMargin="7.2" rightMargin="7.4"/>
+					<Interval closure="closedOpen" leftMargin="7.4" rightMargin="7.6"/>
+					<Interval closure="closedOpen" leftMargin="7.6" rightMargin="7.8"/>
+					<Array n="19" type="int">1 4 6 11 19 5 13 14 10 12 13 12 10 7 2 4 1 5 1</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="Sepal_Width">
+				<Counts missingFreq="0" totalFreq="150"/>
+				<NumericInfo maximum="4.4" mean="3.05733" median="3" minimum="2" standardDeviation="0.43587"/>
+				<DiscrStats modalValue="3">
+					<Array n="23" type="int">1 3 4 3 8 5 9 14 10 26 11 13 6 12 6 4 3 6 2 1 1 1 1</Array>
+					<Array n="23" type="string">2 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 3 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9 4 4.1 4.2 4.4</Array>
+				</DiscrStats>
+			</UnivariateStats>
+			<UnivariateStats field="Petal_Length">
+				<Counts missingFreq="0" totalFreq="150"/>
+				<NumericInfo maximum="6.9" mean="3.758" median="4.35" minimum="1" standardDeviation="1.7653"/>
+				<ContStats>
+					<Interval closure="closedOpen" leftMargin="1" rightMargin="1.2"/>
+					<Interval closure="closedOpen" leftMargin="1.2" rightMargin="1.4"/>
+					<Interval closure="closedOpen" leftMargin="1.4" rightMargin="1.6"/>
+					<Interval closure="closedOpen" leftMargin="1.6" rightMargin="1.8"/>
+					<Interval closure="closedOpen" leftMargin="1.8" rightMargin="2"/>
+					<Interval closure="closedOpen" leftMargin="2" rightMargin="2.2"/>
+					<Interval closure="closedOpen" leftMargin="2.2" rightMargin="2.4"/>
+					<Interval closure="closedOpen" leftMargin="2.4" rightMargin="2.6"/>
+					<Interval closure="closedOpen" leftMargin="2.6" rightMargin="2.8"/>
+					<Interval closure="closedOpen" leftMargin="2.8" rightMargin="3"/>
+					<Interval closure="closedOpen" leftMargin="3" rightMargin="3.2"/>
+					<Interval closure="closedOpen" leftMargin="3.2" rightMargin="3.4"/>
+					<Interval closure="closedOpen" leftMargin="3.4" rightMargin="3.6"/>
+					<Interval closure="closedOpen" leftMargin="3.6" rightMargin="3.8"/>
+					<Interval closure="closedOpen" leftMargin="3.8" rightMargin="4"/>
+					<Interval closure="closedOpen" leftMargin="4" rightMargin="4.2"/>
+					<Interval closure="closedOpen" leftMargin="4.2" rightMargin="4.4"/>
+					<Interval closure="closedOpen" leftMargin="4.4" rightMargin="4.6"/>
+					<Interval closure="closedOpen" leftMargin="4.6" rightMargin="4.8"/>
+					<Interval closure="closedOpen" leftMargin="4.8" rightMargin="5"/>
+					<Interval closure="closedOpen" leftMargin="5" rightMargin="5.2"/>
+					<Interval closure="closedOpen" leftMargin="5.2" rightMargin="5.4"/>
+					<Interval closure="closedOpen" leftMargin="5.4" rightMargin="5.6"/>
+					<Interval closure="closedOpen" leftMargin="5.6" rightMargin="5.8"/>
+					<Interval closure="closedOpen" leftMargin="5.8" rightMargin="6"/>
+					<Interval closure="closedOpen" leftMargin="6" rightMargin="6.2"/>
+					<Interval closure="closedOpen" leftMargin="6.2" rightMargin="6.4"/>
+					<Interval closure="closedOpen" leftMargin="6.4" rightMargin="6.6"/>
+					<Interval closure="closedOpen" leftMargin="6.6" rightMargin="6.8"/>
+					<Array n="30" type="int">2 9 26 11 2 0 0 0 0 0 1 2 2 2 4 8 6 12 8 9 12 4 5 9 5 5 1 1 3 1</Array>
+				</ContStats>
+			</UnivariateStats>
+			<UnivariateStats field="Petal_Width">
+				<Counts missingFreq="0" totalFreq="150"/>
+				<NumericInfo maximum="2.5" mean="1.19933" median="1.3" minimum="0.1" standardDeviation="0.76224"/>
+				<DiscrStats modalValue="0.2">
+					<Array n="22" type="int">5 29 7 7 1 1 7 3 5 13 8 12 4 2 12 5 6 6 3 8 3 3</Array>
+					<Array n="22" type="string">0.1 0.2 0.3 0.4 0.5 0.6 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.1 2.2 2.3 2.4 2.5</Array>
+				</DiscrStats>
+			</UnivariateStats>
+		</ModelStats>
+		<Node recordCount="150" score="setosa">
+			<True/>
+			<ScoreDistribution recordCount="50" value="setosa"/>
+			<ScoreDistribution recordCount="50" value="versicolor"/>
+			<ScoreDistribution recordCount="50" value="virginica"/>
+			<Node recordCount="100" score="versicolor">
+				<SimplePredicate field="Petal_Length" operator="greaterThan" value="2.45"/>
+				<ScoreDistribution recordCount="50" value="versicolor"/>
+				<ScoreDistribution recordCount="50" value="virginica"/>
+				<Node recordCount="46" score="virginica">
+					<SimplePredicate field="Petal_Width" operator="greaterThan" value="1.75"/>
+					<ScoreDistribution recordCount="45" value="virginica"/>
+					<ScoreDistribution recordCount="1" value="versicolor"/>
+					<Node recordCount="43" score="virginica">
+						<SimplePredicate field="Petal_Length" operator="greaterThan" value="4.85"/>
+						<ScoreDistribution recordCount="43" value="virginica"/>
+					</Node>
+					<Node recordCount="3" score="virginica">
+						<SimplePredicate field="Petal_Length" operator="lessOrEqual" value="4.85"/>
+						<ScoreDistribution recordCount="2" value="virginica"/>
+						<ScoreDistribution recordCount="1" value="versicolor"/>
+						<Node recordCount="1" score="versicolor">
+							<SimplePredicate field="Sepal_Width" operator="greaterThan" value="3.1"/>
+							<ScoreDistribution recordCount="1" value="versicolor"/>
+						</Node>
+						<Node recordCount="2" score="virginica">
+							<SimplePredicate field="Sepal_Width" operator="lessOrEqual" value="3.1"/>
+							<ScoreDistribution recordCount="2" value="virginica"/>
+						</Node>
+					</Node>
+				</Node>
+				<Node recordCount="54" score="versicolor">
+					<SimplePredicate field="Petal_Width" operator="lessOrEqual" value="1.75"/>
+					<ScoreDistribution recordCount="49" value="versicolor"/>
+					<ScoreDistribution recordCount="5" value="virginica"/>
+					<Node recordCount="6" score="virginica">
+						<SimplePredicate field="Petal_Length" operator="greaterThan" value="4.95"/>
+						<ScoreDistribution recordCount="4" value="virginica"/>
+						<ScoreDistribution recordCount="2" value="versicolor"/>
+						<Node recordCount="3" score="versicolor">
+							<SimplePredicate field="Petal_Width" operator="greaterThan" value="1.55"/>
+							<ScoreDistribution recordCount="2" value="versicolor"/>
+							<ScoreDistribution recordCount="1" value="virginica"/>
+							<Node recordCount="1" score="virginica">
+								<SimplePredicate field="Petal_Length" operator="greaterThan" value="5.45"/>
+								<ScoreDistribution recordCount="1" value="virginica"/>
+							</Node>
+							<Node recordCount="2" score="versicolor">
+								<SimplePredicate field="Petal_Length" operator="lessOrEqual" value="5.45"/>
+								<ScoreDistribution recordCount="2" value="versicolor"/>
+							</Node>
+						</Node>
+						<Node recordCount="3" score="virginica">
+							<SimplePredicate field="Petal_Width" operator="lessOrEqual" value="1.55"/>
+							<ScoreDistribution recordCount="3" value="virginica"/>
+						</Node>
+					</Node>
+					<Node recordCount="48" score="versicolor">
+						<SimplePredicate field="Petal_Length" operator="lessOrEqual" value="4.95"/>
+						<ScoreDistribution recordCount="47" value="versicolor"/>
+						<ScoreDistribution recordCount="1" value="virginica"/>
+						<Node recordCount="1" score="virginica">
+							<SimplePredicate field="Petal_Width" operator="greaterThan" value="1.65"/>
+							<ScoreDistribution recordCount="1" value="virginica"/>
+						</Node>
+						<Node recordCount="47" score="versicolor">
+							<SimplePredicate field="Petal_Width" operator="lessOrEqual" value="1.65"/>
+							<ScoreDistribution recordCount="47" value="versicolor"/>
+						</Node>
+					</Node>
+				</Node>
+			</Node>
+			<Node recordCount="50" score="setosa">
+				<SimplePredicate field="Petal_Length" operator="lessOrEqual" value="2.45"/>
+				<ScoreDistribution recordCount="50" value="setosa"/>
+			</Node>
+		</Node>
+	</TreeModel>
+</PMML>
