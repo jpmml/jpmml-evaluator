@@ -40,6 +40,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
@@ -62,7 +63,7 @@ public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
 			// Ignored
 		}
 
-		assertNotNull(targetValue.getPredictionReport());
+		assertNull(targetValue.getPredictionReport());
 
 		Collection<String> categories = targetValue.getCategories();
 
@@ -70,7 +71,7 @@ public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
 
 		for(String category : categories){
 			assertNotNull(targetValue.getAffinity(category));
-			assertNotNull(targetValue.getAffinityReport(category));
+			assertNull(targetValue.getAffinityReport(category));
 		}
 
 		assertEquals(Arrays.asList("3", "1", "4"), (targetValue.getEntityIdRanking()).subList(0, 3));

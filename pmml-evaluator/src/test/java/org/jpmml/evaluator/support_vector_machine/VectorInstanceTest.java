@@ -32,7 +32,6 @@ import java.util.Map;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.jpmml.evaluator.Regression;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -54,8 +53,6 @@ public class VectorInstanceTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		Regression<?> targetValue = (Regression<?>)results.get(evaluator.getTargetName());
-
-		return (Double)targetValue.getResult();
+		return (Double)results.get(evaluator.getTargetName());
 	}
 }

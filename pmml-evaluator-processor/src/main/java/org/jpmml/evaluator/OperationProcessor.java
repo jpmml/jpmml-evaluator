@@ -143,7 +143,7 @@ public class OperationProcessor extends AbstractProcessor {
 	private void createReportingValueClass(JCodeModel codeModel, String name, JPrimitiveType type) throws JClassAlreadyExistsException {
 		JClass reportClazz = codeModel.ref("org.jpmml.evaluator.Report");
 
-		JDefinedClass clazz = codeModel._class(JMod.PUBLIC, "org.jpmml.evaluator.Reporting" + name, ClassType.CLASS);
+		JDefinedClass clazz = codeModel._class(JMod.PUBLIC, "org.jpmml.evaluator.reporting.Reporting" + name, ClassType.CLASS);
 		clazz._extends(codeModel.ref("org.jpmml.evaluator." + name));
 		clazz._implements(codeModel.ref("org.jpmml.evaluator.HasReport"));
 
@@ -158,7 +158,7 @@ public class OperationProcessor extends AbstractProcessor {
 	}
 
 	private void createReportingVectorClass(JCodeModel codeModel, String name, JPrimitiveType type) throws JClassAlreadyExistsException {
-		JDefinedClass clazz = codeModel._class(JMod.ABSTRACT | JMod.PUBLIC, "org.jpmml.evaluator.Reporting" + name, ClassType.CLASS);
+		JDefinedClass clazz = codeModel._class(JMod.ABSTRACT | JMod.PUBLIC, "org.jpmml.evaluator.reporting.Reporting" + name, ClassType.CLASS);
 		clazz._extends(codeModel.ref("org.jpmml.evaluator." + name));
 
 		JFieldVar expressionField = clazz.field(JMod.PRIVATE, String.class, "expression", JExpr.lit(""));
@@ -543,7 +543,7 @@ public class OperationProcessor extends AbstractProcessor {
 		JCodeModel codeModel = clazz.owner();
 
 		if((codeModel.DOUBLE).equals(type)){
-			JClass valueClazz = codeModel.ref("org.jpmml.evaluator.ReportingDoubleValue");
+			JClass valueClazz = codeModel.ref("org.jpmml.evaluator.reporting.ReportingDoubleValue");
 
 			createGetMethod(clazz, valueClazz, JExpr.direct("doubleValue(index)"));
 
@@ -553,7 +553,7 @@ public class OperationProcessor extends AbstractProcessor {
 		} else
 
 		if((codeModel.FLOAT).equals(type)){
-			JClass valueClazz = codeModel.ref("org.jpmml.evaluator.ReportingFloatValue");
+			JClass valueClazz = codeModel.ref("org.jpmml.evaluator.reporting.ReportingFloatValue");
 
 			createGetMethod(clazz, valueClazz, JExpr.direct("floatValue(index)"));
 

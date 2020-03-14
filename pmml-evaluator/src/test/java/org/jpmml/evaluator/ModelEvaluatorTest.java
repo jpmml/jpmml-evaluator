@@ -37,20 +37,7 @@ public class ModelEvaluatorTest {
 
 	static
 	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz) throws Exception {
-		ReportingValueFactoryFactory valueFactoryFactory = ReportingValueFactoryFactory.newInstance();
-
-		ReportFactory reportFactory = new ReportFactory(){
-
-			@Override
-			public Report newReport(){
-				return new ComplexReport();
-			}
-		};
-
-		valueFactoryFactory.setReportFactory(reportFactory);
-
-		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
-			.setValueFactoryFactory(valueFactoryFactory);
+		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
 
 		Configuration configuration = configurationBuilder.build();
 

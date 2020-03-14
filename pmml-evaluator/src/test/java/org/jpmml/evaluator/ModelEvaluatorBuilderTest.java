@@ -38,7 +38,7 @@ public class ModelEvaluatorBuilderTest {
 		ModelEvaluatorBuilder modelEvaluatorBuilder = createModelEvaluatorBuilder();
 
 		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
-		ValueFactoryFactory valueFactoryFactory = ReportingValueFactoryFactory.newInstance();
+		ValueFactoryFactory valueFactoryFactory = ValueFactoryFactory.newInstance();
 
 		modelEvaluatorBuilder
 			.setModelEvaluatorFactory(modelEvaluatorFactory)
@@ -58,7 +58,7 @@ public class ModelEvaluatorBuilderTest {
 		ModelEvaluatorBuilder modelEvaluatorBuilder = createModelEvaluatorBuilder();
 
 		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
-		ValueFactoryFactory valueFactoryFactory = ReportingValueFactoryFactory.newInstance();
+		ValueFactoryFactory valueFactoryFactory = ValueFactoryFactory.newInstance();
 
 		modelEvaluatorBuilder
 			.setModelEvaluatorFactory(modelEvaluatorFactory)

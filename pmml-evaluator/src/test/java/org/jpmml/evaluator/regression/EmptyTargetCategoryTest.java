@@ -27,7 +27,7 @@ import org.jpmml.evaluator.ProbabilityDistribution;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class EmptyTargetCategoryTest extends ModelEvaluatorTest {
 
@@ -43,14 +43,11 @@ public class EmptyTargetCategoryTest extends ModelEvaluatorTest {
 
 		assertEquals("yes", targetValue.getResult());
 
-		assertNotNull(targetValue.getPredictionReport());
-
 		double value = (3d * -28.6617384d + 3d * -20.42027426d + 125.56601826d);
 
 		assertEquals(Math.exp(0d) / (Math.exp(0d) + Math.exp(value)), targetValue.getProbability("yes"), 1e-8);
 		assertEquals(Math.exp(value) / (Math.exp(0d) + Math.exp(value)), targetValue.getProbability("no"), 1e-8);
 
-		assertNotNull(targetValue.getProbabilityReport("yes"));
-		assertNotNull(targetValue.getProbabilityReport("no"));
+		assertNull(targetValue.getPredictionReport());
 	}
 }

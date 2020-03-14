@@ -16,9 +16,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.reporting;
 
 import org.dmg.pmml.MathContext;
+import org.jpmml.evaluator.Report;
+import org.jpmml.evaluator.ReportFactory;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueFactoryFactory;
+import org.jpmml.evaluator.Vector;
 
 public class ReportingValueFactoryFactory extends ValueFactoryFactory {
 

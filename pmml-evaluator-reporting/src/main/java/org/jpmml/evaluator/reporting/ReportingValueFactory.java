@@ -16,52 +16,37 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.reporting;
 
-import java.util.Collections;
-import java.util.List;
+import org.jpmml.evaluator.Report;
+import org.jpmml.evaluator.ReportFactory;
+import org.jpmml.evaluator.ValueFactory;
 
-public class SimpleReport extends Report {
+abstract
+public class ReportingValueFactory<V extends Number> extends ValueFactory<V> {
 
-	private Entry entry = null;
+	private ReportFactory reportFactory = null;
 
 
-	@Override
-	public SimpleReport copy(){
-		SimpleReport result = new SimpleReport();
-		result.setEntry(getEntry());
-
-		return result;
+	public ReportingValueFactory(ReportFactory reportFactory){
+		setReportFactory(reportFactory);
 	}
 
-	@Override
-	public void add(Entry entry){
-		setEntry(entry);
-	}
+	protected Report newReport(){
+		ReportFactory reportFactory = getReportFactory();
 
-	@Override
-	public boolean hasEntries(){
-		Entry entry = getEntry();
-
-		return (entry != null);
-	}
-
-	@Override
-	public List<Entry> getEntries(){
-		Entry entry = getEntry();
-
-		if(entry != null){
-			return Collections.singletonList(entry);
+		if(reportFactory == null){
+			return new SimpleReport();
 		}
 
-		return Collections.emptyList();
+		return reportFactory.newReport();
 	}
 
-	public Entry getEntry(){
-		return this.entry;
+	public ReportFactory getReportFactory(){
+		return this.reportFactory;
 	}
 
-	private void setEntry(Entry entry){
-		this.entry = entry;
+	private void setReportFactory(ReportFactory reportFactory){
+		this.reportFactory = reportFactory;
 	}
 }

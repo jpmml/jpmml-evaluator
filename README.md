@@ -303,7 +303,7 @@ Creating and configuring a `ModelEvaluatorBuilder` instance:
 ```java
 ModelEvaluatorBuilder modelEvaluatorBuilder = new ModelEvaluatorBuilder(pmml);
 	// Activate the generation of MathML prediction reports
-	//.setValueFactoryFactory(org.jpmml.evaluator.ReportingValueFactoryFactory.newInstance());
+	//.setValueFactoryFactory(org.jpmml.evaluator.reporting.ReportingValueFactoryFactory.newInstance());
 ```
 
 By default, the model evaluator builder selects the first scorable model from the `PMML` instance, and builds a corresponding `ModelEvaluator` instance.

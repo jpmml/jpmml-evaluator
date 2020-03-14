@@ -48,7 +48,7 @@ public class Report {
 		return (entries.size() > 0);
 	}
 
-	Entry headEntry(){
+	public Entry headEntry(){
 		List<Entry> entries = getEntries();
 
 		if(entries.size() < 1){
@@ -58,7 +58,7 @@ public class Report {
 		return entries.get(0);
 	}
 
-	Entry tailEntry(){
+	public Entry tailEntry(){
 		List<Entry> entries = getEntries();
 
 		if(entries.size() < 1){
