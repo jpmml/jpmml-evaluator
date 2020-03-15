@@ -187,7 +187,7 @@ Exception types:
 // Building a model evaluator from a PMML file
 Evaluator evaluator = new LoadingModelEvaluatorBuilder()
 	.setLocatable(false)
-	.setVisitors(new DefaultVisitorBattery())
+	.setVisitors(new DefaultModelEvaluatorBattery())
 	//.setOutputFilter(OutputFilters.KEEP_FINAL_RESULTS)
 	.load(new File("model.pmml"))
 	.build();
