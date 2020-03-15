@@ -52,15 +52,7 @@ import org.jpmml.evaluator.tree.TreeModelEvaluator;
 
 public class ModelEvaluatorFactory implements Serializable {
 
-	final
-	private Configuration configuration;
-
-
 	protected ModelEvaluatorFactory(){
-		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
-			.setModelEvaluatorFactory(this);
-
-		this.configuration = configurationBuilder.build();
 	}
 
 	public ModelEvaluator<?> newModelEvaluator(PMML pmml){
@@ -76,13 +68,6 @@ public class ModelEvaluatorFactory implements Serializable {
 	}
 
 	public ModelEvaluator<?> newModelEvaluator(PMML pmml, Model model){
-		ModelEvaluator<?> modelEvaluator = createModelEvaluator(pmml, model);
-		modelEvaluator.configure(this.configuration);
-
-		return modelEvaluator;
-	}
-
-	private ModelEvaluator<?> createModelEvaluator(PMML pmml, Model model){
 		Objects.requireNonNull(pmml);
 		Objects.requireNonNull(model);
 
