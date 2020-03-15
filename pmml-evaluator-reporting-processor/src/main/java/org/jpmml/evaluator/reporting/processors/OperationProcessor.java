@@ -69,6 +69,17 @@ import com.sun.codemodel.JPackage;
 import com.sun.codemodel.JPrimitiveType;
 import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
+import org.jpmml.evaluator.ComplexDoubleVector;
+import org.jpmml.evaluator.ComplexFloatVector;
+import org.jpmml.evaluator.DoubleValue;
+import org.jpmml.evaluator.FloatValue;
+import org.jpmml.evaluator.HasReport;
+import org.jpmml.evaluator.Operation;
+import org.jpmml.evaluator.Report;
+import org.jpmml.evaluator.SimpleDoubleVector;
+import org.jpmml.evaluator.SimpleFloatVector;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.Vector;
 
 @SupportedAnnotationTypes (
 	value = {"org.jpmml.evaluator.Operation"}
@@ -80,13 +91,13 @@ public class OperationProcessor extends AbstractProcessor {
 		JCodeModel codeModel = new JCodeModel();
 
 		try {
-			createReportingValueClass(codeModel, "DoubleValue", codeModel.DOUBLE);
-			createReportingValueClass(codeModel, "FloatValue", codeModel.FLOAT);
+			createReportingValueClass(codeModel, DoubleValue.class, codeModel.DOUBLE);
+			createReportingValueClass(codeModel, FloatValue.class, codeModel.FLOAT);
 
-			createReportingVectorClass(codeModel, "ComplexDoubleVector", codeModel.DOUBLE);
-			createReportingVectorClass(codeModel, "ComplexFloatVector", codeModel.FLOAT);
-			createReportingVectorClass(codeModel, "SimpleDoubleVector", codeModel.DOUBLE);
-			createReportingVectorClass(codeModel, "SimpleFloatVector", codeModel.FLOAT);
+			createReportingVectorClass(codeModel, ComplexDoubleVector.class, codeModel.DOUBLE);
+			createReportingVectorClass(codeModel, ComplexFloatVector.class, codeModel.FLOAT);
+			createReportingVectorClass(codeModel, SimpleDoubleVector.class, codeModel.DOUBLE);
+			createReportingVectorClass(codeModel, SimpleFloatVector.class, codeModel.FLOAT);
 
 			CodeWriter codeWriter = new CodeWriter(){
 
@@ -140,48 +151,48 @@ public class OperationProcessor extends AbstractProcessor {
 		return true;
 	}
 
-	private void createReportingValueClass(JCodeModel codeModel, String name, JPrimitiveType type) throws JClassAlreadyExistsException {
-		JClass reportClazz = codeModel.ref("org.jpmml.evaluator.Report");
+	private void createReportingValueClass(JCodeModel codeModel, Class<? extends Value<?>> valueClazz, JPrimitiveType type) throws JClassAlreadyExistsException {
+		JClass reportClazz = codeModel.ref(Report.class);
 
-		JDefinedClass clazz = codeModel._class(JMod.PUBLIC, "org.jpmml.evaluator.reporting.Reporting" + name, ClassType.CLASS);
-		clazz._extends(codeModel.ref("org.jpmml.evaluator." + name));
-		clazz._implements(codeModel.ref("org.jpmml.evaluator.HasReport"));
+		JDefinedClass reportingValueClazz = codeModel._class(JMod.PUBLIC, asReportingClass(valueClazz), ClassType.CLASS);
+		reportingValueClazz._extends(codeModel.ref(valueClazz));
+		reportingValueClazz._implements(codeModel.ref(HasReport.class));
 
-		JFieldVar reportField = clazz.field(JMod.PRIVATE, reportClazz, "report", JExpr._null());
+		JFieldVar reportField = reportingValueClazz.field(JMod.PRIVATE, reportClazz, "report", JExpr._null());
 
-		createCopyMethod(clazz);
-		createOperationMethods(clazz, name, type);
-		createReportMethod(clazz);
-		createExpressionMethods(clazz);
-		createAccessorMethods(clazz, reportField);
-		createFormatMethod(clazz, type);
+		createCopyMethod(reportingValueClazz);
+		createOperationMethods(reportingValueClazz, valueClazz, type);
+		createReportMethod(reportingValueClazz);
+		createExpressionMethods(reportingValueClazz);
+		createAccessorMethods(reportingValueClazz, reportField);
+		createFormatMethod(reportingValueClazz, type);
 	}
 
-	private void createReportingVectorClass(JCodeModel codeModel, String name, JPrimitiveType type) throws JClassAlreadyExistsException {
-		JDefinedClass clazz = codeModel._class(JMod.ABSTRACT | JMod.PUBLIC, "org.jpmml.evaluator.reporting.Reporting" + name, ClassType.CLASS);
-		clazz._extends(codeModel.ref("org.jpmml.evaluator." + name));
+	private void createReportingVectorClass(JCodeModel codeModel, Class<? extends Vector<?>> vectorClazz, JPrimitiveType type) throws JClassAlreadyExistsException {
+		JDefinedClass reportingVectorClazz = codeModel._class(JMod.ABSTRACT | JMod.PUBLIC, asReportingClass(vectorClazz), ClassType.CLASS);
+		reportingVectorClazz._extends(codeModel.ref(vectorClazz));
 
-		JFieldVar expressionField = clazz.field(JMod.PRIVATE, String.class, "expression", JExpr.lit(""));
+		JFieldVar expressionField = reportingVectorClazz.field(JMod.PRIVATE, String.class, "expression", JExpr.lit(""));
 
-		createNewReportMethod(clazz);
-		createOperationMethods(clazz, name, type);
-		createValueMethods(clazz, type);
-		createReportMethod(clazz);
-		createAccessorMethods(clazz, expressionField);
+		createNewReportMethod(reportingVectorClazz);
+		createOperationMethods(reportingVectorClazz, vectorClazz, type);
+		createValueMethods(reportingVectorClazz, type);
+		createReportMethod(reportingVectorClazz);
+		createAccessorMethods(reportingVectorClazz, expressionField);
 	}
 
-	private void createOperationMethods(JDefinedClass clazz, String name, JPrimitiveType type){
+	private void createOperationMethods(JDefinedClass reportingClazz, Class<?> clazz, JPrimitiveType type){
 		Elements elements = super.processingEnv.getElementUtils();
 		Types types = super.processingEnv.getTypeUtils();
 
-		TypeElement operationElement = elements.getTypeElement("org.jpmml.evaluator.Operation");
+		TypeElement operationElement = elements.getTypeElement(Operation.class.getName());
 
 		DeclaredType operationType = types.getDeclaredType(operationElement);
 
 		ExecutableElement valueMethod = getMethod(operationElement, "value");
 		ExecutableElement initialValueMethod = getMethod(operationElement, "initialValue");
 
-		TypeElement clazzElement = elements.getTypeElement("org.jpmml.evaluator." + name);
+		TypeElement clazzElement = elements.getTypeElement(clazz.getName());
 
 		for(int level = 0; clazzElement != null; level++){
 			TypeMirror superClazz = clazzElement.getSuperclass();
@@ -206,11 +217,11 @@ public class OperationProcessor extends AbstractProcessor {
 
 						switch(kind){
 							case CONSTRUCTOR:
-								createReportingConstructor(clazz, executableElement, (String)valueAttribute.getValue(), (initialValueAttribute != null ? (String)initialValueAttribute.getValue() : null), type);
-								createConstructor(clazz, executableElement, true);
+								createReportingConstructor(reportingClazz, executableElement, (String)valueAttribute.getValue(), (initialValueAttribute != null ? (String)initialValueAttribute.getValue() : null), type);
+								createConstructor(reportingClazz, executableElement, true);
 								break;
 							case METHOD:
-								createReportingMethod(clazz, executableElement, (String)valueAttribute.getValue(), (initialValueAttribute != null ? (String)initialValueAttribute.getValue() : null), type);
+								createReportingMethod(reportingClazz, executableElement, (String)valueAttribute.getValue(), (initialValueAttribute != null ? (String)initialValueAttribute.getValue() : null), type);
 								break;
 							default:
 								break;
@@ -224,8 +235,8 @@ public class OperationProcessor extends AbstractProcessor {
 
 						switch(kind){
 							case CONSTRUCTOR:
-								createConstructor(clazz, executableElement, false);
-								createConstructor(clazz, executableElement, true);
+								createConstructor(reportingClazz, executableElement, false);
+								createConstructor(reportingClazz, executableElement, true);
 								break;
 							default:
 								break;
@@ -274,6 +285,11 @@ public class OperationProcessor extends AbstractProcessor {
 	}
 
 	static
+	private String asReportingClass(Class<?> clazz){
+		return "org.jpmml.evaluator.reporting.Reporting" + clazz.getSimpleName();
+	}
+
+	static
 	private void createReportingConstructor(JDefinedClass clazz, ExecutableElement executableElement, String operation, String initialOperation, JPrimitiveType type){
 		JCodeModel codeModel = clazz.owner();
 
@@ -289,7 +305,7 @@ public class OperationProcessor extends AbstractProcessor {
 		body.add(createSuperInvocation(clazz, constructor));
 
 		if((clazz.name()).endsWith("Value")){
-			JClass reportClazz = codeModel.ref("org.jpmml.evaluator.Report");
+			JClass reportClazz = codeModel.ref(Report.class);
 
 			JVar reportParameter = constructor.param(reportClazz, "report");
 
@@ -319,7 +335,7 @@ public class OperationProcessor extends AbstractProcessor {
 		body.add(createSuperInvocation(clazz, constructor));
 
 		if((clazz.name()).endsWith("Value")){
-			JClass reportClazz = codeModel.ref("org.jpmml.evaluator.Report");
+			JClass reportClazz = codeModel.ref(Report.class);
 
 			JVar reportParameter = constructor.param(reportClazz, "report");
 
@@ -434,7 +450,7 @@ public class OperationProcessor extends AbstractProcessor {
 	private void createCopyMethod(JDefinedClass clazz){
 		JCodeModel codeModel = clazz.owner();
 
-		JClass reportClazz = codeModel.ref("org.jpmml.evaluator.Report");
+		JClass reportClazz = codeModel.ref(Report.class);
 
 		JMethod method = clazz.method(JMod.PUBLIC, clazz, "copy");
 		method.annotate(Override.class);
@@ -450,8 +466,8 @@ public class OperationProcessor extends AbstractProcessor {
 	private void createExpressionMethods(JDefinedClass clazz){
 		JCodeModel codeModel = clazz.owner();
 
-		JClass reportClazz = codeModel.ref("org.jpmml.evaluator.Report");
-		JClass reportEntryClazz = codeModel.ref("org.jpmml.evaluator.Report.Entry");
+		JClass reportClazz = codeModel.ref(Report.class);
+		JClass reportEntryClazz = codeModel.ref(Report.Entry.class);
 
 		if(true){
 			JMethod method = clazz.method(JMod.PRIVATE, boolean.class, "hasExpression");
@@ -487,8 +503,8 @@ public class OperationProcessor extends AbstractProcessor {
 		JBlock body = method.body();
 
 		if((clazz.name()).endsWith("Value")){
-			JClass reportClazz = codeModel.ref("org.jpmml.evaluator.Report");
-			JClass reportEntryClazz = codeModel.ref("org.jpmml.evaluator.Report.Entry");
+			JClass reportClazz = codeModel.ref(Report.class);
+			JClass reportEntryClazz = codeModel.ref(Report.Entry.class);
 
 			JVar reportVariable = body.decl(reportClazz, "report", JExpr.invoke("getReport"));
 			JVar entryVariable = body.decl(reportEntryClazz, "entry", JExpr._new(reportEntryClazz).arg(expressionParameter).arg(JExpr.invoke("getValue")));
@@ -533,7 +549,7 @@ public class OperationProcessor extends AbstractProcessor {
 	private void createNewReportMethod(JDefinedClass clazz){
 		JCodeModel codeModel = clazz.owner();
 
-		JClass reportClazz = codeModel.ref("org.jpmml.evaluator.Report");
+		JClass reportClazz = codeModel.ref(Report.class);
 
 		JMethod method = clazz.method(JMod.ABSTRACT | JMod.PROTECTED, reportClazz, "newReport");
 	}
@@ -543,7 +559,7 @@ public class OperationProcessor extends AbstractProcessor {
 		JCodeModel codeModel = clazz.owner();
 
 		if((codeModel.DOUBLE).equals(type)){
-			JClass valueClazz = codeModel.ref("org.jpmml.evaluator.reporting.ReportingDoubleValue");
+			JClass valueClazz = codeModel.ref(asReportingClass(DoubleValue.class));
 
 			createGetMethod(clazz, valueClazz, JExpr.direct("doubleValue(index)"));
 
@@ -553,7 +569,7 @@ public class OperationProcessor extends AbstractProcessor {
 		} else
 
 		if((codeModel.FLOAT).equals(type)){
-			JClass valueClazz = codeModel.ref("org.jpmml.evaluator.reporting.ReportingFloatValue");
+			JClass valueClazz = codeModel.ref(asReportingClass(FloatValue.class));
 
 			createGetMethod(clazz, valueClazz, JExpr.direct("floatValue(index)"));
 
