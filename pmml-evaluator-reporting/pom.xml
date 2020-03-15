@@ -98,7 +98,7 @@
 							<annotationProcessorPaths>
 								<path>
 									<groupId>org.jpmml</groupId>
-									<artifactId>pmml-evaluator-processor</artifactId>
+									<artifactId>pmml-evaluator-reporting-processor</artifactId>
 									<version>${project.version}</version>
 								</path>
 							</annotationProcessorPaths>

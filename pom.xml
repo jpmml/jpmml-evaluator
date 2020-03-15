@@ -39,10 +39,10 @@
 
 	<modules>
 		<!-- 
-		The pmml-evaluator-reporting module has compile-time (but not run-time) dependence on the pmml-evaluator-processor module.
+		The pmml-evaluator-reporting module has compile-time (but not run-time) dependence on the pmml-evaluator-reporting-processor module.
 		The reactor is informed about it by ordering their <module> elements appropriately.
 		-->
-		<module>pmml-evaluator-processor</module>
+		<module>pmml-evaluator-reporting-processor</module>
 		<module>pmml-evaluator</module>
 		<module>pmml-evaluator-example</module>
 		<module>pmml-evaluator-extension</module>
@@ -90,12 +90,12 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
-				<artifactId>pmml-evaluator-processor</artifactId>
+				<artifactId>pmml-evaluator-reporting</artifactId>
 				<version>1.5-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
-				<artifactId>pmml-evaluator-reporting</artifactId>
+				<artifactId>pmml-evaluator-reporting-processor</artifactId>
 				<version>1.5-SNAPSHOT</version>
 			</dependency>
 			<dependency>

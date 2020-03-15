@@ -9,10 +9,10 @@
 	</parent>
 
 	<groupId>org.jpmml</groupId>
-	<artifactId>pmml-evaluator-processor</artifactId>
+	<artifactId>pmml-evaluator-reporting-processor</artifactId>
 
-	<name>JPMML evaluator code generators</name>
-	<description>JPMML class model evaluator Java APT code generators</description>
+	<name>JPMML evaluator reporting code generators</name>
+	<description>JPMML class model evaluator reporting Java APT code generators</description>
 	
 	<licenses>
 		<license>
