@@ -93,7 +93,7 @@
 						</goals>
 						<configuration>
 							<annotationProcessors>
-								<annotationProcessor>org.jpmml.evaluator.OperationProcessor</annotationProcessor>
+								<annotationProcessor>org.jpmml.evaluator.reporting.processors.OperationProcessor</annotationProcessor>
 							</annotationProcessors>
 							<annotationProcessorPaths>
 								<path>
