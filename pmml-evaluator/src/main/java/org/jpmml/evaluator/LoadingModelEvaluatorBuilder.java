@@ -34,6 +34,7 @@ import javax.xml.validation.Schema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Visitor;
+import org.jpmml.evaluator.visitors.DefaultModelEvaluatorBattery;
 import org.jpmml.model.JAXBUtil;
 import org.jpmml.model.SAXUtil;
 import org.jpmml.model.filters.ImportFilter;
@@ -53,7 +54,7 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 
 	private boolean locatable = false;
 
-	private VisitorBattery visitors = null;
+	private VisitorBattery visitors = new DefaultModelEvaluatorBattery();
 
 
 	public LoadingModelEvaluatorBuilder(){
