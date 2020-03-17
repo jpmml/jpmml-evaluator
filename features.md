@@ -25,7 +25,7 @@ The JPMML-Evaluator library is hardwired to perform thorough "sanity" checking. 
   * Replacing a missing classification result with the map of prior probabilities.
 * Calculation of auxiliary output fields according to the [Output](http://www.dmg.org/pmml/v4-4/Output.html) element:
   * Over 20 different result feature types:
-    * Except for the `standardError` result feature.
+    * Except for `standardError` and `standardDeviation` result features.
 
 ##### Data manipulation #####
 
