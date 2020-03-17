@@ -186,8 +186,6 @@ Exception types:
 ```java
 // Building a model evaluator from a PMML file
 Evaluator evaluator = new LoadingModelEvaluatorBuilder()
-	.setLocatable(false)
-	//.setOutputFilter(OutputFilters.KEEP_FINAL_RESULTS)
 	.load(new File("model.pmml"))
 	.build();
 
@@ -246,78 +244,53 @@ evaluator = null;
 
 ### Loading models ###
 
-JPMML-Evaluator depends on the [JPMML-Model](https://github.com/jpmml/jpmml-model) library for PMML class model.
-
-Loading a PMML schema version 3.X or 4.X document into an `org.dmg.pmml.PMML` instance:
-```java
-org.dmg.pmml.PMML pmml;
-
-try(InputStream is = ...){
-	pmml = org.jpmml.model.PMMLUtil.unmarshal(is);
-}
-```
-
-The newly loaded `PMML` instance should tailored by applying appropriate `org.dmg.pmml.Visitor` implementation classes to it:
-* `org.jpmml.model.visitors.LocatorTransformer`. Transforms SAX Locator information to Java serializable representation. Recommended for development and testing environments.
-* `org.jpmml.model.visitors.LocatorNullifier`. Removes SAX Locator information. Recommended for production environments.
-* `org.jpmml.model.visitors.<Type>Interner`. Replaces all occurrences of the same PMML attribute value with the singleton attribute value.
-* `org.jpmml.evaluator.visitors.<Element>Optimizer`. Pre-parses a PMML element.
-* `org.jpmml.evaluator.visitors.<Element>Interner`. Replaces all occurrences of the same PMML element with the singleton element.
-
-To facilitate their discovery and use, visitor classes have been grouped into visitor battery classes:
-* `org.jpmml.model.visitors.AttributeInternerBattery`
-* `org.jpmml.model.visitors.AttributeOptimizerBattery`
-* `org.jpmml.model.visitors.ListFinalizerBattery`
-* `org.jpmml.evaluator.visitors.ElementInternerBattery`
-* `org.jpmml.evaluator.visitors.ElementOptimizerBattery`
-
-Creating and applying a custom visitor battery to reduce the memory consumption of a `PMML` instance in production environment:
-```java
-org.jpmml.model.VisitorBattery visitorBattery = new org.jpmml.model.VisitorBattery();
-
-// Getting rid of SAX Locator information
-visitorBattery.add(LocatorNullifier.class);
-
-// Pre-parsing PMML elements
-visitorBattery.addAll(new AttributeOptimizerBattery());
-visitorBattery.addAll(new ElementOptimizerBattery());
-
-// Getting rid of duplicate PMML attribute values and PMML elements
-visitorBattery.addAll(new AttributeInternerBattery());
-visitorBattery.addAll(new ElementInternerBattery());
-
-// Freezing the final representation of PMML elements
-visitorBattery.addAll(new ListFinalizerBattery());
-
-visitorBattery.applyTo(pmml);
-```
-
 The PMML standard defines large number of model types.
 The evaluation logic for each model type is encapsulated into a corresponding `ModelEvaluator` subclass.
 
-Even though `ModelEvaluator` subclasses can be instantiated directly, the recommended approach is to follow the Builder design pattern as implemented by the `ModelEvaluatorBuilder` builder class.
+Even though `ModelEvaluator` subclasses can be instantiated and configured directly, the recommended approach is to follow the Builder design pattern as implemented by the `ModelEvaluatorBuilder` builder class.
 
-Creating and configuring a `ModelEvaluatorBuilder` instance:
+A model evaluator builder provides configuration and loading services.
 
+The default configuration corresponds to most common needs.
+It can be overriden to customize the behaviour of model evaluators for more specific needs.
+A model evaluator is given a copy of the configuration that was effective when the `ModelEvaluatorBuilder#build()` method was invoked. It is not affected by later configuration changes.
+
+For example, creating two differently configured model evaluators from a `PMML` instance:
 ```java
+import org.jpmml.evaluator.reporting.ReportingValueFactoryFactory
+
+PMML pmml = ...;
+
 ModelEvaluatorBuilder modelEvaluatorBuilder = new ModelEvaluatorBuilder(pmml);
-	// Activate the generation of MathML prediction reports
-	//.setValueFactoryFactory(org.jpmml.evaluator.reporting.ReportingValueFactoryFactory.newInstance());
+
+Evaluator evaluator = modelEvaluatorBuilder.build();
+
+// Activate the generation of MathML prediction reports
+modelEvaluatorBuilder.setValueFactoryFactory(ReportingValueFactoryFactory.newInstance());
+
+Evaluator reportingEvaluator = modelEvaluatorBuilder.build();
 ```
 
-By default, the model evaluator builder selects the first scorable model from the `PMML` instance, and builds a corresponding `ModelEvaluator` instance.
-However, in order to promote loose coupling, it is advisable to cast the result to a much simplified `Evaluator` instance.
+Configurations and model evaluators are fairly lightweight, which makes them cheap to create and destroy.
+However, for maximum performance, it is advisable to maintain a one-to-one mapping between `PMML`, `ModelEvaluatorBuilder` and `ModelEvaluator` instances (ie. an application should load a PMML byte stream or file exactly once, and then maintain and reuse the resulting model evaluator as long as needed).
 
-Building an `Evaluator` instance:
+Some `ModelEvaluator` subclasses contain static caches that are lazily populated on a `PMML` instance basis.
+This may cause the first `ModelEvaluator#evaluate(Map<FieldName, ?>)` method invocation to take somewhat longer to complete (relative to all the subsequent method invocations).
+If the model contains model verification data, then this "warm-up cost" is paid once and for all during the initial `ModelEvaluator#verify()` method invocation.
 
-```java
-Evaluator evaluator = (Evaluator)modelEvaluatorBuilder.build();
-```
+### Thread safety ###
 
-Model evaluator instances are fairly lightweight, which makes them cheap to create and destroy.
-Nevertheless, long-running applications should maintain a one-to-one mapping between `PMML` and `Evaluator` instances for better performance.
+The `ModelEvaluatorBuilder` base class is thread safe.
+It is permitted to construct and configure a central `ModelEvaluatorBuilder` instance, and invoke its `ModelEvaluatorBuilder#build()` method concurrently.
 
-Model evaluator classes follow functional programming principles and are completely thread safe.
+Some `ModelEvaluatorBuilder` subclasses may extend the base class with functionality that is not thread safe.
+The case in point are all sorts of "loading" implementations, which modify the value of `ModelEvaluatorBuilder#pmml` and/or `ModelEvaluatorBuilder#model` fields.
+
+The `ModelEvaluator` base class and all its subclasses are completely thread safe.
+It is permitted to share a central `ModelEvaluator` instance between any number of threads, and invoke its `ModelEvaluator#evaluate(Map<FieldName, ?>)` method concurrently.
+
+The JPMML-Evaluator library follow functional programming principles.
+In a multi-threaded environment, its data throughput capabilities should scale linearly with respect to the number of threads.
 
 ### Querying the "data schema" of models ###
 
