@@ -80,17 +80,4 @@ public class Configuration implements Serializable {
 	void setFunctionGuard(SymbolTable<String> functionGuard){
 		this.functionGuard = functionGuard;
 	}
-
-	static
-	public Configuration getInstance(){
-		return Configuration.INSTANCE;
-	}
-
-	private static final Configuration INSTANCE;
-
-	static {
-		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-
-		INSTANCE = configurationBuilder.build();
-	}
 }

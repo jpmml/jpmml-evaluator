@@ -164,6 +164,8 @@ public class TargetUtilTest {
 		PMML pmml = new PMML(Version.PMML_4_3.getVersion(), new Header(), new DataDictionary())
 			.addModels(treeModel);
 
-		return new TreeModelEvaluator(pmml);
+		ModelEvaluatorBuilder modelEvaluatorBuilder = new ModelEvaluatorBuilder(pmml);
+
+		return (TreeModelEvaluator)modelEvaluatorBuilder.build();
 	}
 }

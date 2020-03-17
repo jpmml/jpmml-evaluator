@@ -86,7 +86,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	private M model = null;
 
-	private Configuration configuration = Configuration.getInstance();
+	private Configuration configuration = null;
 
 	private InputMapper inputMapper = null;
 
@@ -549,7 +549,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	@Override
 	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
-		Configuration configuration = getConfiguration();
+		Configuration configuration = ensureConfiguration();
 
 		SymbolTable<FieldName> prevDerivedFieldGuard = null;
 		SymbolTable<FieldName> derivedFieldGuard = configuration.getDerivedFieldGuard();
