@@ -37,7 +37,8 @@ public class DefaultModelEvaluatorBattery extends VisitorBattery {
 		// Convert PMML attributes and elements from their original representation to optimized representation.
 		// The optimization pass should improve performance
 		addAll(new AttributeOptimizerBattery());
-		add(ValueOptimizer.class);
+		add(ValueParser.class);
+		add(TargetCategoryParser.class);
 		addAll(new ElementOptimizerBattery());
 
 		// Identify unique PMML attributes and elements.

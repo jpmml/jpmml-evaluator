@@ -61,7 +61,7 @@ public class ModelEvaluatorTest {
 		ModelEvaluatorBuilder modelEvaluatorBuilder = new LoadingModelEvaluatorBuilder(){
 
 			{
-				setVisitors(null);
+				setVisitors(new TestModelEvaluatorBattery());
 				setModelEvaluatorFactory(configuration.getModelEvaluatorFactory());
 				setValueFactoryFactory(configuration.getValueFactoryFactory());
 				setOutputFilter(configuration.getOutputFilter());

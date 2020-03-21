@@ -885,8 +885,8 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 				MiningField.UsageType usageType = miningField.getUsageType();
 				switch(usageType){
-					case TARGET:
 					case PREDICTED:
+					case TARGET:
 						break;
 					default:
 						continue;

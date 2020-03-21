@@ -53,7 +53,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ValueOptimizerTest {
+public class ValueParserTest {
 
 	@Test
 	public void parseRegressionModel(){
@@ -88,8 +88,8 @@ public class ValueOptimizerTest {
 
 		List<DataField> dataFields = dataDictionary.getDataFields();
 
-		ValueOptimizer optimizer = new ValueOptimizer(ValueOptimizer.Mode.STRICT);
-		optimizer.applyTo(pmml);
+		ValueParser parser = new ValueParser(ValueParser.Mode.STRICT);
+		parser.applyTo(pmml);
 
 		dataField = dataFields.get(0);
 
@@ -107,7 +107,7 @@ public class ValueOptimizerTest {
 
 		dataField.setDataType(DataType.BOOLEAN);
 
-		optimizer.applyTo(pmml);
+		parser.applyTo(pmml);
 
 		assertEquals(Boolean.FALSE, falseValue.getValue());
 		assertEquals(Boolean.TRUE, trueValue.getValue());
@@ -157,8 +157,8 @@ public class ValueOptimizerTest {
 
 		List<DataField> dataFields = dataDictionary.getDataFields();
 
-		ValueOptimizer optimizer = new ValueOptimizer(ValueOptimizer.Mode.STRICT);
-		optimizer.applyTo(pmml);
+		ValueParser parser = new ValueParser(ValueParser.Mode.STRICT);
+		parser.applyTo(pmml);
 
 		dataField = dataFields.get(0);
 
@@ -173,7 +173,7 @@ public class ValueOptimizerTest {
 
 		dataField.setDataType(DataType.INTEGER);
 
-		optimizer.applyTo(pmml);
+		parser.applyTo(pmml);
 
 		dataField = dataFields.get(0);
 
@@ -188,7 +188,7 @@ public class ValueOptimizerTest {
 		dataField.setDataType(DataType.DOUBLE);
 		derivedField.setDataType(DataType.INTEGER);
 
-		optimizer.applyTo(pmml);
+		parser.applyTo(pmml);
 
 		dataField = dataFields.get(0);
 
@@ -202,7 +202,7 @@ public class ValueOptimizerTest {
 		dataField.setDataType(DataType.BOOLEAN);
 		derivedField.setDataType(DataType.DOUBLE);
 
-		optimizer.applyTo(pmml);
+		parser.applyTo(pmml);
 
 		dataField = dataFields.get(0);
 
@@ -215,7 +215,7 @@ public class ValueOptimizerTest {
 
 		derivedField.setDataType(DataType.BOOLEAN);
 
-		optimizer.applyTo(pmml);
+		parser.applyTo(pmml);
 
 		dataField = dataFields.get(0);
 

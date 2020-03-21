@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
-	<DataDictionary/>
+	<DataDictionary>
+		<DataField name="x1" optype="continuous" dataType="double"/>
+		<DataField name="x2" optype="categorical" dataType="double"/>
+		<DataField name="y" optype="categorical" dataType="integer"/>
+	</DataDictionary>
 	<NaiveBayesModel threshold="0.0" functionName="classification">
-		<MiningSchema/>
+		<MiningSchema>
+			<MiningField name="y" usageType="predicted"/>
+		</MiningSchema>
 		<BayesInputs>
 			<Extension>
-				<BayesInput>
+				<BayesInput fieldName="x1">
 					<TargetValueStats/>
 				</BayesInput>
 			</Extension>
-			<BayesInput>
+			<BayesInput fieldName="x2">
 				<PairCounts>
 					<TargetValueCounts/>
 				</PairCounts>
@@ -17,7 +23,8 @@
 		</BayesInputs>
 		<BayesOutput>
 			<TargetValueCounts>
-				<TargetValueCount/>
+				<TargetValueCount value="0"/>
+				<TargetValueCount value="1"/>
 			</TargetValueCounts>
 		</BayesOutput>
 	</NaiveBayesModel>
