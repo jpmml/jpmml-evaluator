@@ -45,19 +45,19 @@ public class TargetValueCountsTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> arguments = createArguments("age of individual", 24, "gender", "male", "no of claims", "2", "domicile", null, "age of car", 1d);
 
-		Map<FieldName, Map<String, Number>> fieldCountSums = evaluator.getFieldCountSums();
+		Map<FieldName, ? extends Map<?, Number>> fieldCountSums = evaluator.getFieldCountSums();
 
-		Map<String, Number> countSums = fieldCountSums.get(FieldName.create("gender"));
+		Map<?, Number> countSums = fieldCountSums.get(FieldName.create("gender"));
 
-		assertEquals((Double)8598d, countSums.get("100"));
-		assertEquals((Double)2533d, countSums.get("500"));
-		assertEquals((Double)1522d, countSums.get("1000"));
-		assertEquals((Double)697d, countSums.get("5000"));
-		assertEquals((Double)90d, countSums.get("10000"));
+		assertEquals((Double)8598d, countSums.get(100));
+		assertEquals((Double)2533d, countSums.get(500));
+		assertEquals((Double)1522d, countSums.get(1000));
+		assertEquals((Double)697d, countSums.get(5000));
+		assertEquals((Double)90d, countSums.get(10000));
 
 		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		Classification<String, ?> targetValue = (Classification)results.get(evaluator.getTargetName());
+		Classification<Integer, ?> targetValue = (Classification)results.get(evaluator.getTargetName());
 
 		double l0 = 8723d * 0.001d * 4273d / 8598d * 225d / 8561d * 830d / 8008d;
 		double l1 = 2557d * probability(24.936, 0.516, 24) * 1321d / 2533d * 10d / 2436d * 182d / 2266d;
@@ -67,11 +67,11 @@ public class TargetValueCountsTest extends ModelEvaluatorTest {
 
 		double denominator = (l0 + l1 + l2 + l3 + l4);
 
-		assertEquals(l0 / denominator, targetValue.getValue("100"), 1e-8);
-		assertEquals(l1 / denominator, targetValue.getValue("500"), 1e-8);
-		assertEquals(l2 / denominator, targetValue.getValue("1000"), 1e-8);
-		assertEquals(l3 / denominator, targetValue.getValue("5000"), 1e-8);
-		assertEquals(l4 / denominator, targetValue.getValue("10000"), 1e-8);
+		assertEquals(l0 / denominator, targetValue.getValue(100), 1e-8);
+		assertEquals(l1 / denominator, targetValue.getValue(500), 1e-8);
+		assertEquals(l2 / denominator, targetValue.getValue(1000), 1e-8);
+		assertEquals(l3 / denominator, targetValue.getValue(5000), 1e-8);
+		assertEquals(l4 / denominator, targetValue.getValue(10000), 1e-8);
 	}
 
 	static

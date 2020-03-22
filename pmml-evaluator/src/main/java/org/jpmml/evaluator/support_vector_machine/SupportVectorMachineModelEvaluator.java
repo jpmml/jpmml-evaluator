@@ -80,7 +80,6 @@ import org.jpmml.evaluator.PMMLException;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.SparseArrayUtil;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
@@ -199,9 +198,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 							throw new MisplacedAttributeException(supportVectorMachine, PMMLAttributes.SUPPORTVECTORMACHINE_ALTERNATETARGETCATEGORY, alternateTargetCategory);
 						}
 
-						targetCategory = TypeUtil.format(targetCategory);
-
-						values.put((String)targetCategory, value);
+						values.put(targetCategory, value);
 					}
 					break;
 				case ONE_AGAINST_ONE:
@@ -252,11 +249,9 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 							}
 						}
 
-						label = TypeUtil.format(label);
-
 						VoteMap<Object, V> votes = (VoteMap<Object, V>)values;
 
-						votes.increment((String)label);
+						votes.increment(label);
 					}
 					break;
 				default:

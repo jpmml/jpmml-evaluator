@@ -223,9 +223,9 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			throw new IllegalStateException();
 		}
 
-		Map<Object, Value<V>> maxMap = asTransformedMap(Vector::max);
+		Map<?, Value<V>> maxMap = asTransformedMap(Vector::max);
 
-		Map.Entry<Object, Value<V>> winnerEntry = getWinner(maxMap, categories);
+		Map.Entry<?, Value<V>> winnerEntry = getWinner(maxMap, categories);
 		if(winnerEntry == null){
 			return new ValueMap<>();
 		}
@@ -260,9 +260,9 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			throw new IllegalStateException();
 		}
 
-		Map<Object, Value<V>> medianMap = asTransformedMap(Vector::median);
+		Map<?, Value<V>> medianMap = asTransformedMap(Vector::median);
 
-		Map.Entry<Object, Value<V>> winnerEntry = getWinner(medianMap, categories);
+		Map.Entry<?, Value<V>> winnerEntry = getWinner(medianMap, categories);
 		if(winnerEntry == null){
 			return new ValueMap<>();
 		}
@@ -335,7 +335,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 	}
 
 	static
-	private <V extends Number> Map.Entry<Object, Value<V>> getWinner(Map<Object, Value<V>> values, Collection<?> categories){
+	private <V extends Number> Map.Entry<Object, Value<V>> getWinner(Map<?, Value<V>> values, Collection<?> categories){
 		Map.Entry<Object, Value<V>> maxEntry = null;
 
 		if(categories == null){

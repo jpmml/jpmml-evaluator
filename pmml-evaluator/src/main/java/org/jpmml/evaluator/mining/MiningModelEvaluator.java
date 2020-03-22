@@ -332,7 +332,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MEDIAN:
 			case MAX:
 				{
-					List<Object> targetCategories = (List)targetField.getCategories();
+					List<?> targetCategories = targetField.getCategories();
 					if(targetCategories != null && targetCategories.size() < 2){
 						throw new InvalidElementException(miningModel);
 					}

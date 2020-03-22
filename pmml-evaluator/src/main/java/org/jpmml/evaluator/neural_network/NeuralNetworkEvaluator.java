@@ -73,7 +73,6 @@ import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
@@ -290,9 +289,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 						throw new MissingAttributeException(normDiscrete, org.dmg.pmml.PMMLAttributes.NORMDISCRETE_VALUE);
 					}
 
-					targetCategory = TypeUtil.format(targetCategory);
-
-					result.put(entity, (String)targetCategory, value);
+					result.put(entity, targetCategory, value);
 				} else
 
 				{

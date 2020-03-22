@@ -50,7 +50,6 @@ import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UndefinedResultException;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
@@ -421,16 +420,14 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 				throw new MissingAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.SCOREDISTRIBUTION_VALUE);
 			}
 
-			targetCategory = TypeUtil.format(targetCategory);
-
-			result.put((String)targetCategory, value);
+			result.put(targetCategory, value);
 
 			Number confidence = scoreDistribution.getConfidence();
 			if(confidence != null){
 				value = valueFactory.newValue(confidence)
 					.multiply(missingValuePenalty);
 
-				result.putConfidence(TypeUtil.format(targetCategory), value);
+				result.putConfidence(targetCategory, value);
 			}
 		}
 

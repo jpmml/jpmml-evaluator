@@ -526,7 +526,7 @@ public class OutputUtil {
 	private Double getProbability(Object object, OutputField outputField){
 		HasProbability hasProbability = TypeUtil.cast(HasProbability.class, object);
 
-		String value = getCategoryValue(object, outputField);
+		Object value = getCategoryValue(object, outputField);
 
 		return hasProbability.getProbability(value);
 	}
@@ -535,21 +535,21 @@ public class OutputUtil {
 	private Double getConfidence(Object object, OutputField outputField){
 		HasConfidence hasConfidence = TypeUtil.cast(HasConfidence.class, object);
 
-		String value = getCategoryValue(object, outputField);
+		Object value = getCategoryValue(object, outputField);
 
 		return hasConfidence.getConfidence(value);
 	}
 
 	static
-	private String getCategoryValue(Object object, OutputField outputField){
+	private Object getCategoryValue(Object object, OutputField outputField){
 		Object value = outputField.getValue();
 
 		// "If the value attribute is not specified, then the predicted categorical value should be returned as a result"
 		if(value == null){
-			return TypeUtil.format(getPredictedValue(object));
+			return getPredictedValue(object);
 		}
 
-		return TypeUtil.format(value);
+		return value;
 	}
 
 	static
@@ -567,7 +567,7 @@ public class OutputUtil {
 
 		boolean equals = expectedValue.equalsValue(value);
 
-		return Functions.SUBTRACT.evaluate(equals ? Numbers.DOUBLE_ONE : Numbers.DOUBLE_ZERO, hasProbability.getProbability(TypeUtil.format(value)));
+		return Functions.SUBTRACT.evaluate(equals ? Numbers.DOUBLE_ONE : Numbers.DOUBLE_ZERO, hasProbability.getProbability(value));
 	}
 
 	static
@@ -626,9 +626,11 @@ public class OutputUtil {
 			return getElement(hasAffinityRanking.getAffinityRanking(), rank);
 		}
 
-		String value = getCategoryValue(object, outputField);
+		Object value = getCategoryValue(object, outputField);
 
-		return hasAffinity.getAffinity(value);
+		value = TypeUtil.format(value);
+
+		return hasAffinity.getAffinity((String)value);
 	}
 
 	static
@@ -736,7 +738,7 @@ public class OutputUtil {
 				{
 					HasProbability hasProbability = TypeUtil.cast(HasProbability.class, object);
 
-					String value = getCategoryValue(object, outputField);
+					Object value = getCategoryValue(object, outputField);
 
 					report = hasProbability.getProbabilityReport(value);
 				}
@@ -745,7 +747,7 @@ public class OutputUtil {
 				{
 					HasConfidence hasConfidence = TypeUtil.cast(HasConfidence.class, object);
 
-					String value = getCategoryValue(object, outputField);
+					Object value = getCategoryValue(object, outputField);
 
 					report = hasConfidence.getConfidenceReport(value);
 				}
@@ -754,9 +756,11 @@ public class OutputUtil {
 				{
 					HasAffinity hasAffinity = TypeUtil.cast(HasAffinity.class, object);
 
-					String value = getCategoryValue(object, outputField);
+					Object value = getCategoryValue(object, outputField);
 
-					report = hasAffinity.getAffinityReport(value);
+					value = TypeUtil.format(value);
+
+					report = hasAffinity.getAffinityReport((String)value);
 				}
 				break;
 			default:

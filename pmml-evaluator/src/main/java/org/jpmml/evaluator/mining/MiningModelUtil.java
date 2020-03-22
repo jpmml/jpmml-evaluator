@@ -204,28 +204,14 @@ public class MiningModelUtil {
 				}
 			}
 
-			String key;
-
-			try {
-				if(targetValue == null){
-					key = null;
-				} else
-
-				{
-					key = TypeUtil.format(targetValue);
-				}
-			} catch(TypeCheckException tce){
-				throw tce.ensureContext(segmentResult.getSegment());
-			}
-
 			switch(multipleModelMethod){
 				case MAJORITY_VOTE:
-					aggregator.add(key);
+					aggregator.add(targetValue);
 					break;
 				case WEIGHTED_MAJORITY_VOTE:
 					Number weight = segmentResult.getWeight();
 
-					aggregator.add(key, weight);
+					aggregator.add(targetValue, weight);
 					break;
 				default:
 					throw new IllegalArgumentException();

@@ -229,8 +229,6 @@ public class TargetUtil {
 				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_VALUE);
 			}
 
-			targetCategory = TypeUtil.format(targetCategory);
-
 			Number probability = targetValue.getPriorProbability();
 			if(probability == null){
 				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_PRIORPROBABILITY);
@@ -243,7 +241,7 @@ public class TargetUtil {
 
 			Value<V> value = valueFactory.newValue(probability);
 
-			values.put((String)targetCategory, value);
+			values.put(targetCategory, value);
 
 			sum.add(value);
 		}

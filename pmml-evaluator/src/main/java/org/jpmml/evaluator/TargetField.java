@@ -67,8 +67,8 @@ public class TargetField extends ResultField {
 	 * @see CategoricalResultFeature
 	 * @see CategoricalResultFeature#getCategories()
 	 */
-	public List<String> getCategories(){
-		List<String> categories = FieldUtil.getCategories(getField());
+	public List<Object> getCategories(){
+		List<Object> categories = FieldUtil.getCategories(getField());
 
 		if(categories != null && !categories.isEmpty()){
 			return categories;

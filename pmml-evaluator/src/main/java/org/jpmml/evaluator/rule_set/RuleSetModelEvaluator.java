@@ -53,7 +53,6 @@ import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UndefinedResultException;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
@@ -113,7 +112,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		RuleSelectionMethod ruleSelectionMethod = ruleSelectionMethods.get(0);
 
 		// Both the ordering of keys and values is significant
-		ListMultimap<String, SimpleRule> firedRules = LinkedListMultimap.create();
+		ListMultimap<Object, SimpleRule> firedRules = LinkedListMultimap.create();
 
 		evaluateRules(ruleSet.getRules(), firedRules, context);
 
@@ -149,8 +148,8 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 			throw new MissingAttributeException(ruleSelectionMethod, PMMLAttributes.RULESELECTIONMETHOD_CRITERION);
 		}
 
-		Set<String> keys = firedRules.keySet();
-		for(String key : keys){
+		Set<?> keys = firedRules.keySet();
+		for(Object key : keys){
 			List<SimpleRule> keyRules = firedRules.get(key);
 
 			switch(criterion){
@@ -219,7 +218,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 	}
 
 	static
-	private void evaluateRules(List<Rule> rules, ListMultimap<String, SimpleRule> firedRules, EvaluationContext context){
+	private void evaluateRules(List<Rule> rules, ListMultimap<Object, SimpleRule> firedRules, EvaluationContext context){
 
 		for(Rule rule : rules){
 			evaluateRule(rule, firedRules, context);
@@ -227,7 +226,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 	}
 
 	static
-	private void evaluateRule(Rule rule, ListMultimap<String, SimpleRule> firedRules, EvaluationContext context){
+	private void evaluateRule(Rule rule, ListMultimap<Object, SimpleRule> firedRules, EvaluationContext context){
 		Boolean status = PredicateUtil.evaluatePredicateContainer(rule, context);
 
 		if(status == null || !status.booleanValue()){
@@ -242,9 +241,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 				throw new MissingAttributeException(simpleRule, PMMLAttributes.SIMPLERULE_SCORE);
 			}
 
-			score = TypeUtil.format(score);
-
-			firedRules.put((String)score, simpleRule);
+			firedRules.put(score, simpleRule);
 		} else
 
 		if(rule instanceof CompoundRule){

@@ -48,7 +48,6 @@ import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
@@ -142,7 +141,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			throw new InvalidElementListException(regressionTables);
 		}
 
-		List<String> targetCategories = targetField.getCategories();
+		List<?> targetCategories = targetField.getCategories();
 		if(targetCategories != null && targetCategories.size() != regressionTables.size()){
 			throw new InvalidElementListException(regressionTables);
 		}
@@ -153,9 +152,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			Object targetCategory = regressionTable.getTargetCategory();
 			if(targetCategory == null){
 				throw new MissingAttributeException(regressionTable, PMMLAttributes.REGRESSIONTABLE_TARGETCATEGORY);
-			}
-
-			targetCategory = TypeUtil.format(targetCategory);
+			} // End if
 
 			if(targetCategories != null && targetCategories.indexOf(targetCategory) < 0){
 				throw new InvalidAttributeException(regressionTable, PMMLAttributes.REGRESSIONTABLE_TARGETCATEGORY, targetCategory);
@@ -168,7 +165,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 			}
 
-			values.put((String)targetCategory, value);
+			values.put(targetCategory, value);
 		}
 
 		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();

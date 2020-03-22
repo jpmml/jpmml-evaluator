@@ -95,13 +95,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private BiMap<String, Parameter> parameterRegistry = null;
 
 	transient
-	private Map<String, Map<String, Row>> ppMatrixMap = null;
+	private Map<Object, Map<String, Row>> ppMatrixMap = null;
 
 	transient
-	private Map<String, List<PCell>> paramMatrixMap = null;
+	private Map<Object, List<PCell>> paramMatrixMap = null;
 
 	transient
-	private List<String> targetCategories = null;
+	private List<Object> targetCategories = null;
 
 
 	public GeneralRegressionModelEvaluator(PMML pmml){
@@ -314,13 +314,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		TargetField targetField = getTargetField();
 
-		List<String> targetCategories = getTargetCategories();
+		List<?> targetCategories = getTargetCategories();
 
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
 
-		Map<String, Map<String, Row>> ppMatrixMap = getPPMatrixMap();
+		Map<?, Map<String, Row>> ppMatrixMap = getPPMatrixMap();
 
-		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
+		Map<?, List<PCell>> paramMatrixMap = getParamMatrixMap();
 
 		ValueMap<Object, V> values = new ValueMap<>(2 * targetCategories.size());
 
@@ -495,7 +495,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private <V extends Number> Value<V> computeDotProduct(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		Map<String, Map<String, Row>> ppMatrixMap = getPPMatrixMap();
+		Map<?, Map<String, Row>> ppMatrixMap = getPPMatrixMap();
 
 		Map<String, Row> parameterPredictorRows;
 
@@ -512,7 +512,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 		}
 
-		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
+		Map<?, List<PCell>> paramMatrixMap = getParamMatrixMap();
 
 		List<PCell> parameterCells = paramMatrixMap.get(null);
 
@@ -567,7 +567,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		BiMap<String, Parameter> parameters = getParameterRegistry();
 
-		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
+		Map<?, List<PCell>> paramMatrixMap = getParamMatrixMap();
 
 		Iterable<PCell> parameterCells = paramMatrixMap.get(null);
 
@@ -738,7 +738,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	 *
 	 * @return A map of predictor-to-parameter correlation matrices.
 	 */
-	private Map<String, Map<String, Row>> getPPMatrixMap(){
+	private Map<Object, Map<String, Row>> getPPMatrixMap(){
 
 		if(this.ppMatrixMap == null){
 			this.ppMatrixMap = getValue(GeneralRegressionModelEvaluator.ppMatrixCache);
@@ -750,7 +750,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	/**
 	 * @return A map of parameter matrices.
 	 */
-	private Map<String, List<PCell>> getParamMatrixMap(){
+	private Map<Object, List<PCell>> getParamMatrixMap(){
 
 		if(this.paramMatrixMap == null){
 			this.paramMatrixMap = getValue(GeneralRegressionModelEvaluator.paramMatrixCache);
@@ -759,7 +759,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return this.paramMatrixMap;
 	}
 
-	private List<String> getTargetCategories(){
+	private List<Object> getTargetCategories(){
 
 		if(this.targetCategories == null){
 			this.targetCategories = ImmutableList.copyOf(parseTargetCategories());
@@ -768,7 +768,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return this.targetCategories;
 	}
 
-	private List<String> parseTargetCategories(){
+	private List<Object> parseTargetCategories(){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -782,7 +782,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new InvalidElementException(generalRegressionModel);
 		}
 
-		List<String> targetCategories = targetField.getCategories();
+		List<Object> targetCategories = targetField.getCategories();
 		if(targetCategories == null || targetCategories.size() < 2){
 			throw new InvalidElementException(generalRegressionModel);
 		}
@@ -794,10 +794,10 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			case GENERALIZED_LINEAR:
 			case MULTINOMIAL_LOGISTIC:
 				if(targetReferenceCategory == null){
-					Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
+					Map<?, List<PCell>> paramMatrixMap = getParamMatrixMap();
 
 					// "The reference category is the one from DataDictionary that does not appear in the ParamMatrix"
-					Set<String> targetReferenceCategories = targetCategories.stream()
+					Set<?> targetReferenceCategories = targetCategories.stream()
 						.filter(targetCategory -> !paramMatrixMap.containsKey(targetCategory))
 						.collect(Collectors.toSet());
 
@@ -823,11 +823,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		if(targetReferenceCategory != null){
 			targetCategories = new ArrayList<>(targetCategories);
 
-			targetReferenceCategory = TypeUtil.format(targetReferenceCategory);
-
 			// Move the element from any position to the last position
 			if(targetCategories.remove(targetReferenceCategory)){
-				targetCategories.add((String)targetReferenceCategory);
+				targetCategories.add(targetReferenceCategory);
 			}
 		}
 
@@ -928,7 +926,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	static
-	private Map<String, Map<String, Row>> parsePPMatrix(GeneralRegressionModel generalRegressionModel){
+	private Map<Object, Map<String, Row>> parsePPMatrix(GeneralRegressionModel generalRegressionModel){
 		Function<List<PPCell>, Row> function = new Function<List<PPCell>, Row>(){
 
 			private BiMap<FieldName, Predictor> factors = CacheUtil.getValue(generalRegressionModel, GeneralRegressionModelEvaluator.factorCache);
@@ -970,12 +968,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		PPMatrix ppMatrix = generalRegressionModel.getPPMatrix();
 
-		ListMultimap<String, PPCell> targetCategoryMap = groupByTargetCategory(ppMatrix.getPPCells());
+		ListMultimap<?, PPCell> targetCategoryMap = groupByTargetCategory(ppMatrix.getPPCells());
 
-		Map<String, Map<String, Row>> result = new LinkedHashMap<>();
+		Map<Object, Map<String, Row>> result = new LinkedHashMap<>();
 
-		Collection<Map.Entry<String, List<PPCell>>> targetCategoryEntries = (asMap(targetCategoryMap)).entrySet();
-		for(Map.Entry<String, List<PPCell>> targetCategoryEntry : targetCategoryEntries){
+		Collection<? extends Map.Entry<?, List<PPCell>>> targetCategoryEntries = (asMap(targetCategoryMap)).entrySet();
+		for(Map.Entry<?, List<PPCell>> targetCategoryEntry : targetCategoryEntries){
 			Map<String, Row> predictorMap = new LinkedHashMap<>();
 
 			ListMultimap<String, PPCell> parameterNameMap = groupByParameterName(targetCategoryEntry.getValue());
@@ -992,10 +990,10 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	static
-	private Map<String, List<PCell>> parseParamMatrix(GeneralRegressionModel generalRegressionModel){
+	private Map<Object, List<PCell>> parseParamMatrix(GeneralRegressionModel generalRegressionModel){
 		ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
 
-		ListMultimap<String, PCell> targetCategoryCells = groupByTargetCategory(paramMatrix.getPCells());
+		ListMultimap<Object, PCell> targetCategoryCells = groupByTargetCategory(paramMatrix.getPCells());
 
 		return asMap(targetCategoryCells);
 	}
@@ -1004,7 +1002,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		value = {"rawtypes", "unchecked"}
 	)
 	static
-	private <C extends ParameterCell> Map<String, List<C>> asMap(ListMultimap<String, C> multimap){
+	private <K, C extends ParameterCell> Map<K, List<C>> asMap(ListMultimap<K, C> multimap){
 		return (Map)multimap.asMap();
 	}
 
@@ -1014,26 +1012,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	static
-	private <C extends ParameterCell> ListMultimap<String, C> groupByTargetCategory(List<C> cells){
-		Function<C, String> function = new Function<C, String>(){
-
-			@Override
-			public String apply(C parameterCell){
-				Object targetCategory = parameterCell.getTargetCategory();
-				if(targetCategory == null){
-					return null;
-				}
-
-				return TypeUtil.format(targetCategory);
-			}
-		};
-
-		return groupCells(cells, function);
+	private <C extends ParameterCell> ListMultimap<Object, C> groupByTargetCategory(List<C> cells){
+		return groupCells(cells, C::getTargetCategory);
 	}
 
 	static
-	private <C extends ParameterCell> ListMultimap<String, C> groupCells(List<C> cells, Function<C, String> function){
-		ListMultimap<String, C> result = ArrayListMultimap.create();
+	private <K, C extends ParameterCell> ListMultimap<K, C> groupCells(List<C> cells, Function<C, K> function){
+		ListMultimap<K, C> result = ArrayListMultimap.create();
 
 		for(C cell : cells){
 			result.put(function.apply(cell), cell);
@@ -1340,19 +1325,19 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 	});
 
-	private static final LoadingCache<GeneralRegressionModel, Map<String, Map<String, Row>>> ppMatrixCache = CacheUtil.buildLoadingCache(new CacheLoader<GeneralRegressionModel, Map<String, Map<String, Row>>>(){
+	private static final LoadingCache<GeneralRegressionModel, Map<Object, Map<String, Row>>> ppMatrixCache = CacheUtil.buildLoadingCache(new CacheLoader<GeneralRegressionModel, Map<Object, Map<String, Row>>>(){
 
 		@Override
-		public Map<String, Map<String, Row>> load(GeneralRegressionModel generalRegressionModel){
+		public Map<Object, Map<String, Row>> load(GeneralRegressionModel generalRegressionModel){
 			// Cannot use Guava's ImmutableMap, because it is null-hostile
 			return Collections.unmodifiableMap(parsePPMatrix(generalRegressionModel));
 		}
 	});
 
-	private static final LoadingCache<GeneralRegressionModel, Map<String, List<PCell>>> paramMatrixCache = CacheUtil.buildLoadingCache(new CacheLoader<GeneralRegressionModel, Map<String, List<PCell>>>(){
+	private static final LoadingCache<GeneralRegressionModel, Map<Object, List<PCell>>> paramMatrixCache = CacheUtil.buildLoadingCache(new CacheLoader<GeneralRegressionModel, Map<Object, List<PCell>>>(){
 
 		@Override
-		public Map<String, List<PCell>> load(GeneralRegressionModel generalRegressionModel){
+		public Map<Object, List<PCell>> load(GeneralRegressionModel generalRegressionModel){
 			// Cannot use Guava's ImmutableMap, because it is null-hostile
 			return Collections.unmodifiableMap(parseParamMatrix(generalRegressionModel));
 		}
