@@ -118,7 +118,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -147,7 +147,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			throw new InvalidElementListException(regressionTables);
 		}
 
-		ValueMap<String, V> values = new ValueMap<>(2 * regressionTables.size());
+		ValueMap<Object, V> values = new ValueMap<>(2 * regressionTables.size());
 
 		for(RegressionTable regressionTable : regressionTables){
 			Object targetCategory = regressionTable.getTargetCategory();
@@ -238,7 +238,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new UnsupportedAttributeException(regressionModel, normalizationMethod);
 		}
 
-		Classification<V> result = createClassification(values);
+		Classification<?, V> result = createClassification(values);
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}

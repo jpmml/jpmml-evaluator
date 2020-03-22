@@ -24,7 +24,7 @@ import org.jpmml.evaluator.ValueMap;
 abstract
 public class MiningProbabilityDistribution<V extends Number> extends ProbabilityDistribution<V> implements HasSegmentation {
 
-	MiningProbabilityDistribution(ValueMap<String, V> probabilities){
+	MiningProbabilityDistribution(ValueMap<Object, V> probabilities){
 		super(probabilities);
 	}
 }

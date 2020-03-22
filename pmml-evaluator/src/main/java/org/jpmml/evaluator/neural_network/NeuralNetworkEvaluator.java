@@ -219,7 +219,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
 		List<TargetField> targetFields = getTargetFields();
@@ -233,7 +233,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 			}
 
-			Map<FieldName, Classification<V>> results = new LinkedHashMap<>();
+			Map<FieldName, Classification<?, V>> results = new LinkedHashMap<>();
 
 			for(TargetField targetField : targetFields){
 				results.putAll(TargetUtil.evaluateClassificationDefault(valueFactory, targetField));
@@ -246,7 +246,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		BiMap<String, NeuralEntity> entityRegistry = getEntityRegistry();
 
-		Map<FieldName, Classification<V>> results = null;
+		Map<FieldName, Classification<?, V>> results = null;
 
 		for(TargetField targetField : targetFields){
 			FieldName name = targetField.getFieldName();
@@ -256,7 +256,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				throw new InvalidElementException(neuralNetwork);
 			}
 
-			NeuronProbabilityDistribution<V> result = new NeuronProbabilityDistribution<V>(new ValueMap<String, V>(2 * neuralOutputs.size())){
+			NeuronProbabilityDistribution<V> result = new NeuronProbabilityDistribution<V>(new ValueMap<Object, V>(2 * neuralOutputs.size())){
 
 				@Override
 				public BiMap<String, NeuralEntity> getEntityRegistry(){

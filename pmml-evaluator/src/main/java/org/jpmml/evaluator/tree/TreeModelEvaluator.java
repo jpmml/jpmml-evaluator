@@ -357,7 +357,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 	private <V extends Number> NodeScoreDistribution<V> createNodeScoreDistribution(ValueFactory<V> valueFactory, Node node, double missingValuePenalty){
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
 
-		NodeScoreDistribution<V> result = new NodeScoreDistribution<V>(new ValueMap<String, V>(2 * scoreDistributions.size()), node){
+		NodeScoreDistribution<V> result = new NodeScoreDistribution<V>(new ValueMap<Object, V>(2 * scoreDistributions.size()), node){
 
 			@Override
 			public BiMap<String, Node> getEntityRegistry(){
@@ -436,7 +436,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> implements Has
 
 		// "The predicted probabilities must sum to 1"
 		if(!sum.isOne()){
-			ValueMap<String, V> values = result.getValues();
+			ValueMap<Object, V> values = result.getValues();
 
 			if(sum.isZero()){
 				throw new UndefinedResultException();

@@ -31,7 +31,7 @@ package org.jpmml.evaluator;
  *
  * @see org.dmg.pmml.ResultFeature#PROBABILITY
  */
-public interface HasProbability extends CategoricalResultFeature {
+public interface HasProbability extends CategoricalResultFeature<Object> {
 
 	/**
 	 * <p>
@@ -43,10 +43,10 @@ public interface HasProbability extends CategoricalResultFeature {
 	 *
 	 * @see #getCategories()
 	 */
-	Double getProbability(String category);
+	Double getProbability(Object category);
 
 	/**
 	 * @see #getCategories()
 	 */
-	Report getProbabilityReport(String category);
+	Report getProbabilityReport(Object category);
 }

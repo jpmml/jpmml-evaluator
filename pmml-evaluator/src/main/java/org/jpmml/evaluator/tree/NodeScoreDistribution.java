@@ -37,14 +37,14 @@ import org.jpmml.evaluator.ValueMap;
 import org.jpmml.model.ToStringHelper;
 
 abstract
-public class NodeScoreDistribution<V extends Number> extends Classification<V> implements HasEntityId, HasEntityRegistry<Node>, HasDecisionPath, HasProbability, HasConfidence {
+public class NodeScoreDistribution<V extends Number> extends Classification<Object, V> implements HasEntityId, HasEntityRegistry<Node>, HasDecisionPath, HasProbability, HasConfidence {
 
 	private Node node = null;
 
-	private ValueMap<String, V> confidences = null;
+	private ValueMap<Object, V> confidences = null;
 
 
-	NodeScoreDistribution(ValueMap<String, V> probabilities,  Node node){
+	NodeScoreDistribution(ValueMap<Object, V> probabilities,  Node node){
 		super(Type.PROBABILITY, probabilities);
 
 		setNode(node);
@@ -61,7 +61,7 @@ public class NodeScoreDistribution<V extends Number> extends Classification<V> i
 
 	@Override
 	protected ToStringHelper toStringHelper(){
-		ValueMap<String, V> confidences = getConfidences();
+		ValueMap<Object, V> confidences = getConfidences();
 
 		ToStringHelper helper = super.toStringHelper()
 			.add("entityId", getEntityId())
@@ -78,23 +78,23 @@ public class NodeScoreDistribution<V extends Number> extends Classification<V> i
 	}
 
 	@Override
-	public Set<String> getCategories(){
+	public Set<Object> getCategories(){
 		return keySet();
 	}
 
 	@Override
-	public Double getProbability(String category){
+	public Double getProbability(Object category){
 		return getValue(category);
 	}
 
 	@Override
-	public Report getProbabilityReport(String category){
+	public Report getProbabilityReport(Object category){
 		return getValueReport(category);
 	}
 
 	@Override
-	public Double getConfidence(String category){
-		ValueMap<String, V> confidences = getConfidences();
+	public Double getConfidence(Object category){
+		ValueMap<Object, V> confidences = getConfidences();
 
 		Value<V> confidence = (confidences != null ? confidences.get(category) : null);
 
@@ -102,16 +102,16 @@ public class NodeScoreDistribution<V extends Number> extends Classification<V> i
 	}
 
 	@Override
-	public Report getConfidenceReport(String category){
-		ValueMap<String, V> confidences = getConfidences();
+	public Report getConfidenceReport(Object category){
+		ValueMap<Object, V> confidences = getConfidences();
 
 		Value<V> confidence = (confidences != null ? confidences.get(category) : null);
 
 		return ReportUtil.getReport(confidence);
 	}
 
-	void putConfidence(String category, Value<V> confidence){
-		ValueMap<String, V> confidences = getConfidences();
+	void putConfidence(Object category, Value<V> confidence){
+		ValueMap<Object, V> confidences = getConfidences();
 
 		if(confidences == null){
 			confidences = new ValueMap<>();
@@ -136,11 +136,11 @@ public class NodeScoreDistribution<V extends Number> extends Classification<V> i
 		this.node = node;
 	}
 
-	private ValueMap<String, V> getConfidences(){
+	private ValueMap<Object, V> getConfidences(){
 		return this.confidences;
 	}
 
-	private void setConfidences(ValueMap<String, V> confidences){
+	private void setConfidences(ValueMap<Object, V> confidences){
 
 		if(confidences == null){
 			throw new IllegalArgumentException();

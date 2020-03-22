@@ -33,7 +33,7 @@ import java.util.Set;
 
 import org.dmg.pmml.DataType;
 
-public class AffinityDistribution<V extends Number> extends Classification<V> implements HasEntityIdRanking, HasAffinityRanking, HasEntityAffinity {
+public class AffinityDistribution<V extends Number> extends Classification<String, V> implements HasEntityIdRanking, HasAffinityRanking, HasEntityAffinity {
 
 	public AffinityDistribution(Type type, ValueMap<String, V> values, Object result){
 		super(AffinityDistribution.validateType(type), values);

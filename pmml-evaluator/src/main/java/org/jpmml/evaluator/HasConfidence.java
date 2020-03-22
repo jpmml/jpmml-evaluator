@@ -28,7 +28,7 @@ package org.jpmml.evaluator;
  * Most notably, the confidences are not required to sum to 1 across all categories, whereas the probabilities are.
  * </p>
  */
-public interface HasConfidence extends CategoricalResultFeature {
+public interface HasConfidence extends CategoricalResultFeature<Object> {
 
 	/**
 	 * <p>
@@ -40,10 +40,10 @@ public interface HasConfidence extends CategoricalResultFeature {
 	 *
 	 * @see #getCategories()
 	 */
-	Double getConfidence(String category);
+	Double getConfidence(Object category);
 
 	/**
 	 * @see #getCategories()
 	 */
-	Report getConfidenceReport(String category);
+	Report getConfidenceReport(Object category);
 }

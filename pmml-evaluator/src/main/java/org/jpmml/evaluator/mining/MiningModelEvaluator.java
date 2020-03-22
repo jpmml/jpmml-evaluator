@@ -310,7 +310,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 				{
-					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
+					ValueMap<Object, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
 					if(values == null){
 						return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 					}
@@ -332,12 +332,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MEDIAN:
 			case MAX:
 				{
-					List<String> targetCategories = targetField.getCategories();
+					List<Object> targetCategories = (List)targetField.getCategories();
 					if(targetCategories != null && targetCategories.size() < 2){
 						throw new InvalidElementException(miningModel);
 					}
 
-					ValueMap<String, V> values = MiningModelUtil.aggregateProbabilities(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, targetCategories, segmentResults);
+					ValueMap<Object, V> values = MiningModelUtil.aggregateProbabilities(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, targetCategories, segmentResults);
 					if(values == null){
 						return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 					}
@@ -391,7 +391,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 				{
-					ValueMap<String, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
+					ValueMap<Object, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
 					if(values == null){
 						return Collections.singletonMap(getTargetName(), null);
 					}

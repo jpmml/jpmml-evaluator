@@ -35,7 +35,7 @@ package org.jpmml.evaluator;
  *
  * @see org.dmg.pmml.ResultFeature#AFFINITY
  */
-public interface HasAffinity extends CategoricalResultFeature {
+public interface HasAffinity extends CategoricalResultFeature<String> {
 
 	/**
 	 * <p>

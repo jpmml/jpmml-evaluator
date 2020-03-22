@@ -35,16 +35,16 @@ import org.jpmml.model.ToStringHelper;
  * @see MiningFunction#CLASSIFICATION
  * @see MiningFunction#CLUSTERING
  */
-public class Classification<V extends Number> extends AbstractComputable implements HasPrediction {
+public class Classification<K, V extends Number> extends AbstractComputable implements HasPrediction {
 
 	private Type type = null;
 
-	private ValueMap<String, V> values = null;
+	private ValueMap<K, V> values = null;
 
 	private Object result = null;
 
 
-	protected Classification(Type type, ValueMap<String, V> values){
+	protected Classification(Type type, ValueMap<K, V> values){
 		setType(type);
 		setValues(values);
 	}
@@ -64,16 +64,16 @@ public class Classification<V extends Number> extends AbstractComputable impleme
 	}
 
 	protected void computeResult(DataType dataType){
-		Map.Entry<String, Value<V>> entry = getWinner();
+		Map.Entry<K, Value<V>> entry = getWinner();
 
 		if(entry == null){
 			throw new EvaluationException("Empty classification");
 		}
 
-		String key = entry.getKey();
+		K key = entry.getKey();
 		Value<V> value = entry.getValue();
 
-		Object result = TypeUtil.parse(dataType, key);
+		Object result = TypeUtil.parseOrCast(dataType, key);
 
 		setResult(result);
 	}
@@ -85,13 +85,13 @@ public class Classification<V extends Number> extends AbstractComputable impleme
 
 	@Override
 	public Report getPredictionReport(){
-		Map.Entry<String, Value<V>> entry = getWinner();
+		Map.Entry<K, Value<V>> entry = getWinner();
 
 		if(entry == null){
 			return null;
 		}
 
-		String key = entry.getKey();
+		K key = entry.getKey();
 		Value<V> value = entry.getValue();
 
 		return ReportUtil.getReport(value);
@@ -100,7 +100,7 @@ public class Classification<V extends Number> extends AbstractComputable impleme
 	@Override
 	protected ToStringHelper toStringHelper(){
 		Type type = getType();
-		ValueMap<String, V> values = getValues();
+		ValueMap<K, V> values = getValues();
 
 		ToStringHelper helper = super.toStringHelper()
 			.add(type.entryKey(), values.entrySet());
@@ -108,8 +108,8 @@ public class Classification<V extends Number> extends AbstractComputable impleme
 		return helper;
 	}
 
-	public void put(String key, Value<V> value){
-		ValueMap<String, V> values = getValues();
+	public void put(K key, Value<V> value){
+		ValueMap<K, V> values = getValues();
 
 		if(values.containsKey(key)){
 			throw new EvaluationException("Value for key " + PMMLException.formatKey(key) + " has already been defined");
@@ -118,32 +118,32 @@ public class Classification<V extends Number> extends AbstractComputable impleme
 		values.put(key, value);
 	}
 
-	public Double getValue(String key){
+	public Double getValue(K key){
 		Type type = getType();
-		ValueMap<String, V> values = getValues();
+		ValueMap<K, V> values = getValues();
 
 		Value<V> value = values.get(key);
 
 		return type.getValue(value);
 	}
 
-	public Report getValueReport(String key){
-		ValueMap<String, V> values = getValues();
+	public Report getValueReport(K key){
+		ValueMap<K, V> values = getValues();
 
 		Value<V> value = values.get(key);
 
 		return ReportUtil.getReport(value);
 	}
 
-	protected Map.Entry<String, Value<V>> getWinner(){
+	protected Map.Entry<K, Value<V>> getWinner(){
 		return getWinner(getType(), entrySet());
 	}
 
-	protected List<Map.Entry<String, Value<V>>> getWinnerRanking(){
+	protected List<Map.Entry<K, Value<V>>> getWinnerRanking(){
 		return getWinnerList(getType(), entrySet());
 	}
 
-	protected List<String> getWinnerKeys(){
+	protected List<K> getWinnerKeys(){
 		return entryKeys(getWinnerRanking());
 	}
 
@@ -151,14 +151,14 @@ public class Classification<V extends Number> extends AbstractComputable impleme
 		return Lists.transform(entryValues(getWinnerRanking()), Value::doubleValue);
 	}
 
-	protected Set<String> keySet(){
-		ValueMap<String, V> values = getValues();
+	protected Set<K> keySet(){
+		ValueMap<K, V> values = getValues();
 
 		return values.keySet();
 	}
 
-	protected Set<Map.Entry<String, Value<V>>> entrySet(){
-		ValueMap<String, V> values = getValues();
+	protected Set<Map.Entry<K, Value<V>>> entrySet(){
+		ValueMap<K, V> values = getValues();
 
 		return values.entrySet();
 	}
@@ -176,11 +176,11 @@ public class Classification<V extends Number> extends AbstractComputable impleme
 		this.type = type;
 	}
 
-	public ValueMap<String, V> getValues(){
+	public ValueMap<K, V> getValues(){
 		return this.values;
 	}
 
-	private void setValues(ValueMap<String, V> values){
+	private void setValues(ValueMap<K, V> values){
 
 		if(values == null){
 			throw new IllegalArgumentException();
@@ -190,8 +190,8 @@ public class Classification<V extends Number> extends AbstractComputable impleme
 	}
 
 	static
-	public <V extends Number> Map.Entry<String, Value<V>> getWinner(Type type, Collection<Map.Entry<String, Value<V>>> entries){
-		Ordering<Map.Entry<String, Value<V>>> ordering = Classification.<V>createOrdering(type);
+	public <K, V extends Number> Map.Entry<K, Value<V>> getWinner(Type type, Collection<Map.Entry<K, Value<V>>> entries){
+		Ordering<Map.Entry<K, Value<V>>> ordering = Classification.<K, V>createOrdering(type);
 
 		try {
 			return ordering.max(entries);
@@ -201,15 +201,15 @@ public class Classification<V extends Number> extends AbstractComputable impleme
 	}
 
 	static
-	public <V extends Number> List<Map.Entry<String, Value<V>>> getWinnerList(Type type, Collection<Map.Entry<String, Value<V>>> entries){
-		Ordering<Map.Entry<String, Value<V>>> ordering = (Classification.<V>createOrdering(type)).reverse();
+	public <K, V extends Number> List<Map.Entry<K, Value<V>>> getWinnerList(Type type, Collection<Map.Entry<K, Value<V>>> entries){
+		Ordering<Map.Entry<K, Value<V>>> ordering = (Classification.<K, V>createOrdering(type)).reverse();
 
 		return ordering.sortedCopy(entries);
 	}
 
 	static
-	protected <V extends Number> Ordering<Map.Entry<String, Value<V>>> createOrdering(Type type){
-		return Ordering.from((Map.Entry<String, Value<V>> left, Map.Entry<String, Value<V>> right) -> type.compareValues(left.getValue(), right.getValue()));
+	protected <K, V extends Number> Ordering<Map.Entry<K, Value<V>>> createOrdering(Type type){
+		return Ordering.from((Map.Entry<K, Value<V>> left, Map.Entry<K, Value<V>> right) -> type.compareValues(left.getValue(), right.getValue()));
 	}
 
 	static

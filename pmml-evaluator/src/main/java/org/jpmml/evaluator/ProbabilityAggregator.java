@@ -28,7 +28,7 @@ import java.util.Set;
 
 import com.google.common.base.Function;
 
-public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<String, V> {
+public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<Object, V> {
 
 	private List<HasProbability> hasProbabilities = null;
 
@@ -63,8 +63,8 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			this.hasProbabilities.add(hasProbability);
 		}
 
-		Set<String> categories = hasProbability.getCategories();
-		for(String category : categories){
+		Set<?> categories = hasProbability.getCategories();
+		for(Object category : categories){
 			Double probability = hasProbability.getProbability(category);
 
 			add(category, probability);
@@ -113,8 +113,8 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			this.hasProbabilities.add(hasProbability);
 		}
 
-		Set<String> categories = hasProbability.getCategories();
-		for(String category : categories){
+		Set<?> categories = hasProbability.getCategories();
+		for(Object category : categories){
 			Double probability = hasProbability.getProbability(category);
 
 			add(category, weight, probability);
@@ -163,7 +163,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 		this.weights.add(weight);
 	}
 
-	public ValueMap<String, V> averageMap(){
+	public ValueMap<Object, V> averageMap(){
 
 		if(this.weights != null){
 			throw new IllegalStateException();
@@ -188,7 +188,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 		return new ValueMap<>(asTransformedMap(function));
 	}
 
-	public ValueMap<String, V> weightedAverageMap(){
+	public ValueMap<Object, V> weightedAverageMap(){
 
 		if(this.weights == null){
 			throw new IllegalStateException();
@@ -213,7 +213,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 		return new ValueMap<>(asTransformedMap(function));
 	}
 
-	public ValueMap<String, V> maxMap(Collection<String> categories){
+	public ValueMap<Object, V> maxMap(Collection<?> categories){
 
 		if(this.hasProbabilities == null){
 			throw new IllegalStateException();
@@ -223,14 +223,14 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			throw new IllegalStateException();
 		}
 
-		Map<String, Value<V>> maxMap = asTransformedMap(Vector::max);
+		Map<Object, Value<V>> maxMap = asTransformedMap(Vector::max);
 
-		Map.Entry<String, Value<V>> winnerEntry = getWinner(maxMap, categories);
+		Map.Entry<Object, Value<V>> winnerEntry = getWinner(maxMap, categories);
 		if(winnerEntry == null){
 			return new ValueMap<>();
 		}
 
-		String category = winnerEntry.getKey();
+		Object category = winnerEntry.getKey();
 		Value<V> maxProbability = winnerEntry.getValue();
 
 		List<HasProbability> contributors = new ArrayList<>();
@@ -250,7 +250,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 		return averageMap(contributors);
 	}
 
-	public ValueMap<String, V> medianMap(Collection<String> categories){
+	public ValueMap<Object, V> medianMap(Collection<?> categories){
 
 		if(this.hasProbabilities == null){
 			throw new IllegalStateException();
@@ -260,14 +260,14 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			throw new IllegalStateException();
 		}
 
-		Map<String, Value<V>> medianMap = asTransformedMap(Vector::median);
+		Map<Object, Value<V>> medianMap = asTransformedMap(Vector::median);
 
-		Map.Entry<String, Value<V>> winnerEntry = getWinner(medianMap, categories);
+		Map.Entry<Object, Value<V>> winnerEntry = getWinner(medianMap, categories);
 		if(winnerEntry == null){
 			return new ValueMap<>();
 		}
 
-		String category = winnerEntry.getKey();
+		Object category = winnerEntry.getKey();
 		Value<V> medianProbability = winnerEntry.getValue();
 
 		List<HasProbability> contributors = new ArrayList<>();
@@ -302,16 +302,16 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 		return averageMap(contributors);
 	}
 
-	private ValueMap<String, V> averageMap(List<HasProbability> hasProbabilities){
+	private ValueMap<Object, V> averageMap(List<HasProbability> hasProbabilities){
 		ValueFactory<V> valueFactory = getValueFactory();
 
 		if(hasProbabilities.size() == 1){
 			HasProbability hasProbability = hasProbabilities.get(0);
 
-			ValueMap<String, V> result = new ValueMap<>();
+			ValueMap<Object, V> result = new ValueMap<>();
 
-			Set<String> categories = keySet();
-			for(String category : categories){
+			Set<?> categories = keySet();
+			for(Object category : categories){
 				Double probability = hasProbability.getProbability(category);
 
 				Value<V> value = valueFactory.newValue(probability);
@@ -335,14 +335,14 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 	}
 
 	static
-	private <V extends Number> Map.Entry<String, Value<V>> getWinner(Map<String, Value<V>> values, Collection<String> categories){
-		Map.Entry<String, Value<V>> maxEntry = null;
+	private <V extends Number> Map.Entry<Object, Value<V>> getWinner(Map<Object, Value<V>> values, Collection<?> categories){
+		Map.Entry<Object, Value<V>> maxEntry = null;
 
 		if(categories == null){
 			categories = values.keySet();
 		}
 
-		for(String category : categories){
+		for(Object category : categories){
 			Value<V> value = values.get(category);
 
 			if(value == null){

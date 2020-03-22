@@ -20,24 +20,24 @@ package org.jpmml.evaluator;
 
 import java.util.Set;
 
-public class ConfidenceDistribution<V extends Number> extends Classification<V> implements HasConfidence {
+public class ConfidenceDistribution<V extends Number> extends Classification<Object, V> implements HasConfidence {
 
-	public ConfidenceDistribution(ValueMap<String, V> confidences){
+	public ConfidenceDistribution(ValueMap<Object, V> confidences){
 		super(Type.CONFIDENCE, confidences);
 	}
 
 	@Override
-	public Set<String> getCategories(){
+	public Set<Object> getCategories(){
 		return keySet();
 	}
 
 	@Override
-	public Double getConfidence(String category){
+	public Double getConfidence(Object category){
 		return getValue(category);
 	}
 
 	@Override
-	public Report getConfidenceReport(String category){
+	public Report getConfidenceReport(Object category){
 		return getValueReport(category);
 	}
 }

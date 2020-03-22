@@ -31,18 +31,18 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.ValueUtil;
 
-public class VoteDistribution<V extends Number> extends Classification<V> implements HasProbability {
+public class VoteDistribution<V extends Number> extends Classification<Object, V> implements HasProbability {
 
 	private Value<V> sum = null;
 
 
-	VoteDistribution(ValueMap<String, V> votes){
+	VoteDistribution(ValueMap<Object, V> votes){
 		super(Type.VOTE, votes);
 	}
 
 	@Override
 	protected void computeResult(DataType dataType){
-		ValueMap<String, V> values = getValues();
+		ValueMap<Object, V> values = getValues();
 
 		super.computeResult(dataType);
 
@@ -50,26 +50,26 @@ public class VoteDistribution<V extends Number> extends Classification<V> implem
 	}
 
 	@Override
-	public Set<String> getCategories(){
+	public Set<Object> getCategories(){
 		return keySet();
 	}
 
 	@Override
-	public Double getProbability(String category){
+	public Double getProbability(Object category){
 		Value<V> probability = computeProbability(category);
 
 		return Type.PROBABILITY.getValue(probability);
 	}
 
 	@Override
-	public Report getProbabilityReport(String category){
+	public Report getProbabilityReport(Object category){
 		Value<V> probability = computeProbability(category);
 
 		return ReportUtil.getReport(probability);
 	}
 
-	private Value<V> computeProbability(String category){
-		ValueMap<String, V> values = getValues();
+	private Value<V> computeProbability(Object category){
+		ValueMap<Object, V> values = getValues();
 
 		if(this.sum == null){
 			throw new EvaluationException("Vote distribution result has not been computed");

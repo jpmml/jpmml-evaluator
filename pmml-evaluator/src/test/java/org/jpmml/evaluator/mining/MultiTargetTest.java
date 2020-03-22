@@ -54,7 +54,7 @@ public class MultiTargetTest extends ModelEvaluatorTest {
 		assertNotNull(getTarget(results, "y1"));
 		assertNull(getTarget(results, "y2"));
 
-		Classification<?> classification = (Classification<?>)results.get(FieldName.create("y1"));
+		Classification<?, ?> classification = (Classification<?, ?>)results.get(FieldName.create("y1"));
 
 		assertTrue(classification instanceof NodeScoreDistribution);
 
@@ -67,7 +67,7 @@ public class MultiTargetTest extends ModelEvaluatorTest {
 		assertNull(getTarget(results, "y1"));
 		assertNotNull(getTarget(results, "y2"));
 
-		classification = (Classification<?>)results.get(FieldName.create("y2"));
+		classification = (Classification<?, ?>)results.get(FieldName.create("y2"));
 
 		assertFalse(classification instanceof ProbabilityDistribution);
 
@@ -84,7 +84,7 @@ public class MultiTargetTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		Classification<?> classification = (Classification<?>)results.get(FieldName.create("y1"));
+		Classification<?, ?> classification = (Classification<?, ?>)results.get(FieldName.create("y1"));
 
 		assertTrue(classification instanceof NodeScoreDistribution);
 
@@ -92,7 +92,7 @@ public class MultiTargetTest extends ModelEvaluatorTest {
 
 		results = evaluator.evaluate(arguments);
 
-		classification = (Classification<?>)results.get(FieldName.create("y2"));
+		classification = (Classification<?, ?>)results.get(FieldName.create("y2"));
 
 		assertTrue(classification instanceof ProbabilityDistribution);
 	}

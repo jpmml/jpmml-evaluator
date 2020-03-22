@@ -21,19 +21,22 @@ package org.jpmml.evaluator.clustering;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.BiMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.clustering.Cluster;
 import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.EntityClassification;
+import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.HasAffinityRanking;
 import org.jpmml.evaluator.HasDisplayValue;
 import org.jpmml.evaluator.HasEntityAffinity;
 import org.jpmml.evaluator.HasEntityIdRanking;
 import org.jpmml.evaluator.Report;
+import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 
 abstract
-public class ClusterAffinityDistribution<V extends Number> extends EntityClassification<Cluster, V> implements HasEntityIdRanking, HasDisplayValue, HasAffinityRanking, HasEntityAffinity {
+public class ClusterAffinityDistribution<V extends Number> extends EntityClassification<Cluster, String, V> implements HasEntityIdRanking, HasDisplayValue, HasAffinityRanking, HasEntityAffinity {
 
 	ClusterAffinityDistribution(Type type, ValueMap<String, V> affinities){
 		super(AffinityDistribution.validateType(type), affinities);
@@ -79,5 +82,13 @@ public class ClusterAffinityDistribution<V extends Number> extends EntityClassif
 	@Override
 	public Double getEntityAffinity(){
 		return getAffinity(getEntityId());
+	}
+
+	public void put(Cluster entity, Value<V> value){
+		BiMap<String, Cluster> entityRegistry = getEntityRegistry();
+
+		String id = EntityUtil.getId(entity, entityRegistry);
+
+		put(entity, id, value);
 	}
 }

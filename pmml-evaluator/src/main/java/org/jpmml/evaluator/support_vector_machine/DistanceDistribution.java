@@ -21,9 +21,9 @@ package org.jpmml.evaluator.support_vector_machine;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.ValueMap;
 
-public class DistanceDistribution<V extends Number> extends Classification<V> {
+public class DistanceDistribution<V extends Number> extends Classification<Object, V> {
 
-	DistanceDistribution(ValueMap<String, V> distances){
+	DistanceDistribution(ValueMap<Object, V> distances){
 		super(Type.DISTANCE, distances);
 	}
 }

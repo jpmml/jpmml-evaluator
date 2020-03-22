@@ -43,7 +43,7 @@ import org.dmg.pmml.nearest_neighbor.NearestNeighborModel;
  *
  * @see TargetField#getCategories()
  */
-public interface CategoricalResultFeature extends ResultFeature {
+public interface CategoricalResultFeature<K> extends ResultFeature {
 
 	/**
 	 * <p>
@@ -54,5 +54,5 @@ public interface CategoricalResultFeature extends ResultFeature {
 	 * The set of known categories either equals the set of all categories, or is a proper subset of it.
 	 * </p>
 	 */
-	Set<String> getCategories();
+	Set<K> getCategories();
 }

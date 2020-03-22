@@ -309,7 +309,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -322,13 +322,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		Map<String, List<PCell>> paramMatrixMap = getParamMatrixMap();
 
-		ValueMap<String, V> values = new ValueMap<>(2 * targetCategories.size());
+		ValueMap<Object, V> values = new ValueMap<>(2 * targetCategories.size());
 
 		Value<V> previousLinkValue = null;
 		Value<V> previousCumulativeLinkValue = null;
 
 		for(int i = 0; i < targetCategories.size(); i++){
-			String targetCategory = targetCategories.get(i);
+			Object targetCategory = targetCategories.get(i);
 
 			Value<V> value;
 
@@ -487,7 +487,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new UnsupportedAttributeException(generalRegressionModel, modelType);
 		}
 
-		Classification<V> result = createClassification(values);
+		Classification<?, V> result = createClassification(values);
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}

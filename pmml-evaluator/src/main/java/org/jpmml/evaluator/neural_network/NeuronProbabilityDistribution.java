@@ -27,24 +27,24 @@ import org.jpmml.evaluator.Report;
 import org.jpmml.evaluator.ValueMap;
 
 abstract
-public class NeuronProbabilityDistribution<V extends Number> extends EntityClassification<NeuralEntity, V> implements HasProbability {
+public class NeuronProbabilityDistribution<V extends Number> extends EntityClassification<NeuralEntity, Object, V> implements HasProbability {
 
-	NeuronProbabilityDistribution(ValueMap<String, V> probabilities){
+	NeuronProbabilityDistribution(ValueMap<Object, V> probabilities){
 		super(Type.PROBABILITY, probabilities);
 	}
 
 	@Override
-	public Set<String> getCategories(){
+	public Set<Object> getCategories(){
 		return keySet();
 	}
 
 	@Override
-	public Double getProbability(String category){
+	public Double getProbability(Object category){
 		return getValue(category);
 	}
 
 	@Override
-	public Report getProbabilityReport(String category){
+	public Report getProbabilityReport(Object category){
 		return getValueReport(category);
 	}
 }

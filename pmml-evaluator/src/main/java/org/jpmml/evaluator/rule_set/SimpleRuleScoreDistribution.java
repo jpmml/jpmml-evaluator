@@ -31,9 +31,9 @@ import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.ValueMap;
 
 abstract
-public class SimpleRuleScoreDistribution<V extends Number> extends EntityClassification<SimpleRule, V> implements HasConfidence {
+public class SimpleRuleScoreDistribution<V extends Number> extends EntityClassification<SimpleRule, Object, V> implements HasConfidence {
 
-	SimpleRuleScoreDistribution(ValueMap<String, V> confidences){
+	SimpleRuleScoreDistribution(ValueMap<Object, V> confidences){
 		super(Type.CONFIDENCE, confidences);
 	}
 
@@ -58,17 +58,17 @@ public class SimpleRuleScoreDistribution<V extends Number> extends EntityClassif
 	}
 
 	@Override
-	public Set<String> getCategories(){
+	public Set<Object> getCategories(){
 		return keySet();
 	}
 
 	@Override
-	public Double getConfidence(String category){
+	public Double getConfidence(Object category){
 		return getValue(category);
 	}
 
 	@Override
-	public Report getConfidenceReport(String category){
+	public Report getConfidenceReport(Object category){
 		return getValueReport(category);
 	}
 

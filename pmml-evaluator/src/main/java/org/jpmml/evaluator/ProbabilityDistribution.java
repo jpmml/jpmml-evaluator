@@ -20,24 +20,24 @@ package org.jpmml.evaluator;
 
 import java.util.Set;
 
-public class ProbabilityDistribution<V extends Number> extends Classification<V> implements HasProbability {
+public class ProbabilityDistribution<V extends Number> extends Classification<Object, V> implements HasProbability {
 
-	public ProbabilityDistribution(ValueMap<String, V> probabilities){
+	public ProbabilityDistribution(ValueMap<Object, V> probabilities){
 		super(Type.PROBABILITY, probabilities);
 	}
 
 	@Override
-	public Set<String> getCategories(){
+	public Set<Object> getCategories(){
 		return keySet();
 	}
 
 	@Override
-	public Double getProbability(String category){
+	public Double getProbability(Object category){
 		return getValue(category);
 	}
 
 	@Override
-	public Report getProbabilityReport(String category){
+	public Report getProbabilityReport(Object category){
 		return getValueReport(category);
 	}
 }

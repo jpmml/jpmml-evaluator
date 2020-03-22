@@ -40,7 +40,7 @@ public class TargetUtil {
 	}
 
 	static
-	public void computeResult(DataType dataType, Classification<?> classification){
+	public void computeResult(DataType dataType, Classification<?, ?> classification){
 		classification.computeResult(dataType);
 	}
 
@@ -111,7 +111,7 @@ public class TargetUtil {
 	}
 
 	static
-	public <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassificationDefault(ValueFactory<V> valueFactory, TargetField targetField){
+	public <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassificationDefault(ValueFactory<V> valueFactory, TargetField targetField){
 		Target target = targetField.getTarget();
 
 		if(target != null && target.hasTargetValues()){
@@ -126,7 +126,7 @@ public class TargetUtil {
 	}
 
 	static
-	public <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(TargetField targetField, Classification<V> classification){
+	public <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassification(TargetField targetField, Classification<?, V> classification){
 		DataField dataField = targetField.getField();
 
 		classification.computeResult(dataField.getDataType());
@@ -218,7 +218,7 @@ public class TargetUtil {
 			return null;
 		}
 
-		ValueMap<String, V> values = new ValueMap<>();
+		ValueMap<Object, V> values = new ValueMap<>();
 
 		Value<V> sum = valueFactory.newValue();
 

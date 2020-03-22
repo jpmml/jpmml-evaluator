@@ -132,7 +132,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 
 		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
@@ -149,7 +149,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 
 		// Probability calculations use logarithmic scale for greater numerical stability
-		ProbabilityMap<String, V> probabilities = new ProbabilityMap<String, V>(){
+		ProbabilityMap<Object, V> probabilities = new ProbabilityMap<Object, V>(){
 
 			@Override
 			public ValueFactory<V> getValueFactory(){
@@ -157,7 +157,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			}
 
 			@Override
-			public void multiply(String key, Number probability){
+			public void multiply(Object key, Number probability){
 				ValueFactory<V> valueFactory = getValueFactory();
 
 				Value<V> value = ensureValue(key);
@@ -247,7 +247,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 	}
 
-	private void calculateContinuousProbabilities(ProbabilityMap<String, ?> probabilities, TargetValueStats targetValueStats, Number threshold, FieldValue value){
+	private void calculateContinuousProbabilities(ProbabilityMap<Object, ?> probabilities, TargetValueStats targetValueStats, Number threshold, FieldValue value){
 		Number x = value.asNumber();
 
 		for(TargetValueStat targetValueStat : targetValueStats){
@@ -288,7 +288,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 	}
 
-	private void calculateDiscreteProbabilities(ProbabilityMap<String, ?> probabilities, TargetValueCounts targetValueCounts, Number threshold, Map<String, Number> countSums){
+	private void calculateDiscreteProbabilities(ProbabilityMap<Object, ?> probabilities, TargetValueCounts targetValueCounts, Number threshold, Map<String, Number> countSums){
 
 		for(TargetValueCount targetValueCount : targetValueCounts){
 			Object targetCategory = targetValueCount.getValue();
@@ -321,7 +321,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 	}
 
-	private void calculatePriorProbabilities(ProbabilityMap<String, ?> probabilities, TargetValueCounts targetValueCounts){
+	private void calculatePriorProbabilities(ProbabilityMap<Object, ?> probabilities, TargetValueCounts targetValueCounts){
 
 		for(TargetValueCount targetValueCount : targetValueCounts){
 			Object targetCategory = targetValueCount.getValue();

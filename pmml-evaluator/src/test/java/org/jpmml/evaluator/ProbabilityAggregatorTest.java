@@ -93,7 +93,7 @@ public class ProbabilityAggregatorTest {
 	}
 
 	static
-	private void checkValues(double a, double b, double c, ValueMap<String, Double> values){
+	private void checkValues(double a, double b, double c, ValueMap<Object, Double> values){
 		assertEquals(new DoubleValue(a), values.get("A"));
 		assertEquals(new DoubleValue(b), values.get("B"));
 		assertEquals(new DoubleValue(c), values.get("C"));
@@ -101,7 +101,7 @@ public class ProbabilityAggregatorTest {
 
 	static
 	private HasProbability createProbabilityDistribution(Double a, Double b, Double c){
-		ValueMap<String, Double> values = new ValueMap<>();
+		ValueMap<Object, Double> values = new ValueMap<>();
 
 		if(a != null){
 			values.put("A", new DoubleValue(a));
@@ -118,5 +118,5 @@ public class ProbabilityAggregatorTest {
 		return new ProbabilityDistribution<>(values);
 	}
 
-	private static final List<String> CATEGORIES = Arrays.asList("A", "B", "C");
+	private static final List<Object> CATEGORIES = Arrays.asList("A", "B", "C");
 }

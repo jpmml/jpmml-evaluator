@@ -738,7 +738,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 		throw new InvalidAttributeException(model, miningFunction);
 	}
 
-	protected <V extends Number> Classification<V> createClassification(ValueMap<String, V> values){
+	protected <V extends Number> Classification<Object, V> createClassification(ValueMap<Object, V> values){
 		Set<ResultFeature> resultFeatures = getResultFeatures();
 
 		if(resultFeatures.contains(ResultFeature.PROBABILITY) || resultFeatures.contains(ResultFeature.RESIDUAL)){

@@ -18,19 +18,18 @@
  */
 package org.jpmml.evaluator;
 
-import com.google.common.collect.BiMap;
 import org.dmg.pmml.Entity;
 import org.jpmml.model.ToStringHelper;
 
 abstract
-public class EntityClassification<E extends Entity<String>, V extends Number> extends Classification<V> implements HasEntityId, HasEntityRegistry<E> {
+public class EntityClassification<E extends Entity<String>, K, V extends Number> extends Classification<K, V> implements HasEntityId, HasEntityRegistry<E> {
 
 	private E entity = null;
 
 	private Value<V> entityValue = null;
 
 
-	protected EntityClassification(Type type, ValueMap<String, V> values){
+	protected EntityClassification(Type type, ValueMap<K, V> values){
 		super(type, values);
 	}
 
@@ -42,15 +41,7 @@ public class EntityClassification<E extends Entity<String>, V extends Number> ex
 		return helper;
 	}
 
-	public void put(E entity, Value<V> value){
-		BiMap<String, E> entityRegistry = getEntityRegistry();
-
-		String id = EntityUtil.getId(entity, entityRegistry);
-
-		put(entity, id, value);
-	}
-
-	public void put(E entity, String key, Value<V> value){
+	public void put(E entity, K key, Value<V> value){
 		Type type = getType();
 
 		if(this.entityValue == null || type.compareValues(value, this.entityValue) > 0){

@@ -38,7 +38,7 @@ public class MiningModelEvaluationContextTest extends ModelEvaluatorTest {
 
 		Map<FieldName, ?> results = evaluator.evaluateInternal(context);
 
-		Classification<?> targetValue = (Classification<?>)results.get(evaluator.getTargetName());
+		Classification<?, ?> targetValue = (Classification<?, ?>)results.get(evaluator.getTargetName());
 
 		assertEquals("under 50", targetValue.getResult());
 	}

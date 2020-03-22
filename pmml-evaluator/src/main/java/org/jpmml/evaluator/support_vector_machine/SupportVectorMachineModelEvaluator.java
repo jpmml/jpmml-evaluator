@@ -153,14 +153,14 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
 		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
 
 		Object alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
 
-		ValueMap<String, V> values;
+		ValueMap<Object, V> values;
 
 		SupportVectorMachineModel.ClassificationMethod classificationMethod = getClassificationMethod();
 		switch(classificationMethod){
@@ -168,7 +168,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				values = new ValueMap<>(2 * supportVectorMachines.size());
 				break;
 			case ONE_AGAINST_ONE:
-				values = new VoteMap<String, V>(2 * supportVectorMachines.size()){
+				values = new VoteMap<Object, V>(2 * supportVectorMachines.size()){
 
 					@Override
 					public ValueFactory<V> getValueFactory(){
@@ -254,7 +254,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 						label = TypeUtil.format(label);
 
-						VoteMap<String, V> votes = (VoteMap<String, V>)values;
+						VoteMap<Object, V> votes = (VoteMap<Object, V>)values;
 
 						votes.increment((String)label);
 					}
@@ -264,7 +264,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			}
 		}
 
-		Classification<V> result;
+		Classification<?, V> result;
 
 		switch(classificationMethod){
 			case ONE_AGAINST_ALL:

@@ -100,7 +100,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ? extends Classification<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		RuleSetModel ruleSetModel = getModel();
 
 		RuleSet ruleSet = ruleSetModel.getRuleSet();
@@ -117,7 +117,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 		evaluateRules(ruleSet.getRules(), firedRules, context);
 
-		SimpleRuleScoreDistribution<V> result = new SimpleRuleScoreDistribution<V>(new ValueMap<String, V>(2 * firedRules.size())){
+		SimpleRuleScoreDistribution<V> result = new SimpleRuleScoreDistribution<V>(new ValueMap<Object, V>(2 * firedRules.size())){
 
 			@Override
 			public BiMap<String, SimpleRule> getEntityRegistry(){

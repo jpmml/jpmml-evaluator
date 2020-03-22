@@ -166,8 +166,8 @@ public class MiningModelUtil {
 	}
 
 	static
-	public <V extends Number> ValueMap<String, V> aggregateVotes(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, List<SegmentResult> segmentResults){
-		VoteAggregator<String, V> aggregator = new VoteAggregator<>(valueFactory);
+	public <V extends Number> ValueMap<Object, V> aggregateVotes(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, List<SegmentResult> segmentResults){
+		VoteAggregator<Object, V> aggregator = new VoteAggregator<>(valueFactory);
 
 		Fraction<V> missingFraction = null;
 
@@ -232,7 +232,7 @@ public class MiningModelUtil {
 			}
 		}
 
-		ValueMap<String, V> result = aggregator.sumMap();
+		ValueMap<Object, V> result = aggregator.sumMap();
 
 		switch(missingPredictionTreatment){
 			case CONTINUE:
@@ -256,7 +256,7 @@ public class MiningModelUtil {
 	}
 
 	static
-	public <V extends Number> ValueMap<String, V> aggregateProbabilities(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, List<String> categories, List<SegmentResult> segmentResults){
+	public <V extends Number> ValueMap<Object, V> aggregateProbabilities(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, List<?> categories, List<SegmentResult> segmentResults){
 		ProbabilityAggregator<V> aggregator;
 
 		switch(multipleModelMethod){

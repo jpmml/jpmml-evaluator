@@ -431,7 +431,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			}
 		}
 
-		Set<Object> winners = aggregator.getWinners();
+		Set<?> winners = aggregator.getWinners();
 
 		// "In case of a tie, the category with the largest number of cases in the training data is the winner"
 		if(winners.size() > 1){
