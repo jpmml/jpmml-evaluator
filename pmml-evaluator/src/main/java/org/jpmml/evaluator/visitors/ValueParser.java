@@ -28,9 +28,14 @@ import org.dmg.pmml.Constant;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Discretize;
 import org.dmg.pmml.DiscretizeBin;
+import org.dmg.pmml.Expression;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.HasDataType;
+import org.dmg.pmml.HasDefaultValue;
+import org.dmg.pmml.HasMapMissingTo;
 import org.dmg.pmml.HasValue;
+import org.dmg.pmml.MapValues;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.PMMLAttributes;
@@ -110,22 +115,7 @@ public class ValueParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(Discretize discretize){
-		DataType dataType = discretize.getDataType();
-		if(dataType != null){
-			Object mapMissingTo = discretize.getMapMissingTo();
-			if(mapMissingTo != null){
-				mapMissingTo = parseOrCast(dataType, mapMissingTo);
-
-				discretize.setMapMissingTo(mapMissingTo);
-			}
-
-			Object defaultValue = discretize.getDefaultValue();
-			if(defaultValue != null){
-				defaultValue = parseOrCast(dataType, defaultValue);
-
-				discretize.setDefaultValue(defaultValue);
-			}
-		}
+		parseExpressionValues(discretize);
 
 		return super.visit(discretize);
 	}
@@ -155,6 +145,13 @@ public class ValueParser extends AbstractParser {
 	@Override
 	public VisitorAction visit(FieldValueCount fieldValueCount){
 		return super.visit(fieldValueCount);
+	}
+
+	@Override
+	public VisitorAction visit(MapValues mapValues){
+		parseExpressionValues(mapValues);
+
+		return super.visit(mapValues);
 	}
 
 	@Override
@@ -311,6 +308,25 @@ public class ValueParser extends AbstractParser {
 			value = parseOrCast(dataType, value);
 
 			hasValue.setValue(value);
+		}
+	}
+
+	private <E extends Expression & HasDataType<E> & HasDefaultValue<E, Object> & HasMapMissingTo<E, Object>> void parseExpressionValues(E expression){
+		DataType dataType = expression.getDataType();
+		if(dataType != null){
+			Object defaultValue = expression.getDefaultValue();
+			if(defaultValue != null){
+				defaultValue = parseOrCast(dataType, defaultValue);
+
+				expression.setDefaultValue(defaultValue);
+			}
+
+			Object mapMissingTo = expression.getMapMissingTo();
+			if(mapMissingTo != null){
+				mapMissingTo = parseOrCast(dataType, mapMissingTo);
+
+				expression.setMapMissingTo(mapMissingTo);
+			}
 		}
 	}
 
