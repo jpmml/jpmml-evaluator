@@ -20,16 +20,12 @@ package org.jpmml.evaluator.visitors;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Objects;
 import java.util.Set;
 
 import org.dmg.pmml.Array;
 import org.dmg.pmml.Constant;
-import org.dmg.pmml.DataDictionary;
-import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Discretize;
 import org.dmg.pmml.DiscretizeBin;
 import org.dmg.pmml.Field;
@@ -46,24 +42,17 @@ import org.dmg.pmml.Value;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.baseline.FieldValue;
 import org.dmg.pmml.baseline.FieldValueCount;
-import org.dmg.pmml.general_regression.BaseCumHazardTables;
 import org.dmg.pmml.general_regression.BaselineStratum;
 import org.dmg.pmml.general_regression.Category;
-import org.dmg.pmml.general_regression.GeneralRegressionModel;
 import org.dmg.pmml.general_regression.PPCell;
-import org.dmg.pmml.naive_bayes.BayesInput;
-import org.dmg.pmml.naive_bayes.BayesInputs;
 import org.dmg.pmml.naive_bayes.PairCounts;
 import org.dmg.pmml.regression.CategoricalPredictor;
 import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.RichComplexArray;
-import org.jpmml.evaluator.RichDataField;
 import org.jpmml.evaluator.TypeCheckException;
 import org.jpmml.evaluator.TypeUtil;
-import org.jpmml.evaluator.general_regression.RichBaseCumHazardTables;
-import org.jpmml.evaluator.naive_bayes.RichBayesInput;
 import org.jpmml.model.XPathUtil;
 
 public class ValueParser extends AbstractParser {
@@ -82,44 +71,6 @@ public class ValueParser extends AbstractParser {
 	@Override
 	public VisitorAction visit(BaselineStratum baselineStartum){
 		return super.visit(baselineStartum);
-	}
-
-	@Override
-	public VisitorAction visit(BayesInputs bayesInputs){
-
-		if(bayesInputs.hasBayesInputs()){
-			List<BayesInput> content = bayesInputs.getBayesInputs();
-
-			for(ListIterator<BayesInput> it = content.listIterator(); it.hasNext(); ){
-				BayesInput bayesInput = it.next();
-
-				FieldName name = bayesInput.getField();
-				if(name == null){
-					throw new MissingAttributeException(bayesInput, org.dmg.pmml.naive_bayes.PMMLAttributes.BAYESINPUT_FIELD);
-				}
-
-				DataType dataType;
-
-				DerivedField derivedField = bayesInput.getDerivedField();
-				if(derivedField != null){
-					dataType = derivedField.getDataType();
-
-					if(dataType == null){
-						throw new MissingAttributeException(derivedField, PMMLAttributes.DERIVEDFIELD_DATATYPE);
-					}
-				} else
-
-				{
-					dataType = resolveDataType(name);
-				} // End if
-
-				if(dataType != null){
-					it.set(new RichBayesInput(dataType, bayesInput));
-				}
-			}
-		}
-
-		return super.visit(bayesInputs);
 	}
 
 	@Override
@@ -155,20 +106,6 @@ public class ValueParser extends AbstractParser {
 		}
 
 		return super.visit(constant);
-	}
-
-	@Override
-	public VisitorAction visit(DataDictionary dataDictionary){
-
-		if(dataDictionary.hasDataFields()){
-			List<DataField> dataFields = dataDictionary.getDataFields();
-
-			for(ListIterator<DataField> it = dataFields.listIterator(); it.hasNext(); ){
-				it.set(new RichDataField(it.next()));
-			}
-		}
-
-		return super.visit(dataDictionary);
 	}
 
 	@Override
@@ -218,25 +155,6 @@ public class ValueParser extends AbstractParser {
 	@Override
 	public VisitorAction visit(FieldValueCount fieldValueCount){
 		return super.visit(fieldValueCount);
-	}
-
-	@Override
-	public VisitorAction visit(GeneralRegressionModel generalRegressionModel){
-		BaseCumHazardTables baseCumHazardTables = generalRegressionModel.getBaseCumHazardTables();
-
-		if(baseCumHazardTables != null){
-			FieldName baselineStrataVariable = generalRegressionModel.getBaselineStrataVariable();
-
-			if(baselineStrataVariable != null){
-				DataType dataType = resolveDataType(baselineStrataVariable);
-
-				if(dataType != null){
-					generalRegressionModel.setBaseCumHazardTables(new RichBaseCumHazardTables(dataType, baseCumHazardTables));
-				}
-			}
-		}
-
-		return super.visit(generalRegressionModel);
 	}
 
 	@Override

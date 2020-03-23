@@ -47,7 +47,6 @@ import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.RichComplexArray;
-import org.jpmml.evaluator.RichDataField;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -92,8 +91,6 @@ public class ValueParserTest {
 		parser.applyTo(pmml);
 
 		dataField = dataFields.get(0);
-
-		assertTrue(dataField instanceof RichDataField);
 
 		assertEquals("false", falseValue.getValue());
 		assertEquals("true", trueValue.getValue());
@@ -161,8 +158,6 @@ public class ValueParserTest {
 		parser.applyTo(pmml);
 
 		dataField = dataFields.get(0);
-
-		assertTrue(dataField instanceof RichDataField);
 
 		assertEquals("1", normDiscrete.getValue());
 		assertEquals("1", simplePredicate.getValue());

@@ -24,6 +24,7 @@ import org.jpmml.model.visitors.VisitorBattery;
 public class ElementOptimizerBattery extends VisitorBattery {
 
 	public ElementOptimizerBattery(){
+		add(MapHolderParser.class);
 		add(RowCleaner.class);
 	}
 }
