@@ -46,11 +46,12 @@ import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
+import org.jpmml.evaluator.visitors.AttributeFinalizerBattery;
 import org.jpmml.evaluator.visitors.AttributeInternerBattery;
 import org.jpmml.evaluator.visitors.AttributeOptimizerBattery;
+import org.jpmml.evaluator.visitors.ElementFinalizerBattery;
 import org.jpmml.evaluator.visitors.ElementInternerBattery;
 import org.jpmml.evaluator.visitors.ElementOptimizerBattery;
-import org.jpmml.evaluator.visitors.ListFinalizerBattery;
 import org.jpmml.model.visitors.LocatorNullifier;
 import org.jpmml.model.visitors.MemoryMeasurer;
 import org.jpmml.model.visitors.VisitorBattery;
@@ -285,8 +286,11 @@ public class EvaluationExample extends Example {
 		if(this.intern){
 			visitorBattery.addAll(new AttributeInternerBattery());
 			visitorBattery.addAll(new ElementInternerBattery());
+		} // End if
 
-			visitorBattery.addAll(new ListFinalizerBattery());
+		if(this.optimize || this.intern){
+			visitorBattery.addAll(new AttributeFinalizerBattery());
+			visitorBattery.addAll(new ElementFinalizerBattery());
 		}
 
 		visitorBattery.applyTo(pmml);

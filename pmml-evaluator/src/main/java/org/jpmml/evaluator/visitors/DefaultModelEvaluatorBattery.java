@@ -42,7 +42,8 @@ public class DefaultModelEvaluatorBattery extends VisitorBattery {
 		addAll(new AttributeInternerBattery());
 		addAll(new ElementInternerBattery());
 
-		// Replace mutable data structures with immutable ones
-		addAll(new ListFinalizerBattery());
+		// Finalize PMML attributes and elements in their current representation
+		addAll(new AttributeFinalizerBattery());
+		addAll(new ElementFinalizerBattery());
 	}
 }

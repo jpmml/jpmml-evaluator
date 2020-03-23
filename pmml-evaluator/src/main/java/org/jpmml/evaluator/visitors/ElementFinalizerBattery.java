@@ -23,9 +23,9 @@ import org.jpmml.model.visitors.ArrayListTrimmer;
 import org.jpmml.model.visitors.RowCleaner;
 import org.jpmml.model.visitors.VisitorBattery;
 
-public class ListFinalizerBattery extends VisitorBattery {
+public class ElementFinalizerBattery extends VisitorBattery {
 
-	public ListFinalizerBattery(){
+	public ElementFinalizerBattery(){
 		add(RowCleaner.class);
 		add(ArrayListTransformer.class);
 		add(ArrayListTrimmer.class);
