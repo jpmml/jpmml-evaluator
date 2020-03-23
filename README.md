@@ -336,10 +336,12 @@ for(TargetField targetField : targetFields){
 			break;
 		case CATEGORICAL:
 		case ORDINAL:
-			List<String> categories = targetField.getCategories();
-			for(String category : categories){
-				Object validTargetValue = TypeUtil.parse(dataType, category);
-			}
+			List<?> validTargetValues = targetField.getDiscreteDomain();
+
+			// The list of target category values for querying HasCategoricalResults subinterfaces (HasProbability, HasConfidence etc).
+			// The default element type is String.
+			// If the PMML instance is pre-parsed, then the element type changes to the appropriate Java primitive type
+			List<?> categories = targetField.getCategories();
 			break;
 		default:
 			break;
@@ -431,8 +433,8 @@ if(targetValue instanceof HasEntityId){
 if(targetValue instanceof HasProbability){
 	HasProbability hasProbability = (HasProbability)targetValue;
 
-	Set<String> categories = hasProbability.getCategories();
-	for(String category : categories){
+	Set<?> categories = hasProbability.getCategories();
+	for(Object category : categories){
 		Double categoryProbability = hasProbability.getProbability(category);
 	}
 }
