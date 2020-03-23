@@ -18,11 +18,12 @@
  */
 package org.jpmml.evaluator.visitors;
 
+import org.jpmml.model.visitors.RowCleaner;
 import org.jpmml.model.visitors.VisitorBattery;
 
 public class ElementOptimizerBattery extends VisitorBattery {
 
 	public ElementOptimizerBattery(){
-		add(NodeResolver.class);
+		add(RowCleaner.class);
 	}
 }

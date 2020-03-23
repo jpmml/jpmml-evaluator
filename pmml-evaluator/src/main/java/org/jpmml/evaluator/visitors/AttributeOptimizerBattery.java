@@ -23,8 +23,8 @@ import org.jpmml.model.visitors.VisitorBattery;
 public class AttributeOptimizerBattery extends VisitorBattery {
 
 	public AttributeOptimizerBattery(){
-		add(NodeScoreOptimizer.class);
 		add(ValueParser.class);
 		add(TargetCategoryParser.class);
+		add(NodeScoreOptimizer.class);
 	}
 }

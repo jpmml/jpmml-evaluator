@@ -23,5 +23,6 @@ import org.jpmml.model.visitors.VisitorBattery;
 public class AttributeFinalizerBattery extends VisitorBattery {
 
 	public AttributeFinalizerBattery(){
+		add(NodeResolver.class);
 	}
 }

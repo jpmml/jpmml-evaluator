@@ -20,13 +20,11 @@ package org.jpmml.evaluator.visitors;
 
 import org.jpmml.model.visitors.ArrayListTransformer;
 import org.jpmml.model.visitors.ArrayListTrimmer;
-import org.jpmml.model.visitors.RowCleaner;
 import org.jpmml.model.visitors.VisitorBattery;
 
 public class ElementFinalizerBattery extends VisitorBattery {
 
 	public ElementFinalizerBattery(){
-		add(RowCleaner.class);
 		add(ArrayListTransformer.class);
 		add(ArrayListTrimmer.class);
 	}
