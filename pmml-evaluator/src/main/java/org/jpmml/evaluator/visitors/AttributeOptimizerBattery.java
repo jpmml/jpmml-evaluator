@@ -24,7 +24,7 @@ public class AttributeOptimizerBattery extends VisitorBattery {
 
 	public AttributeOptimizerBattery(){
 		add(ValueParser.class);
+		add(NodeScoreParser.class);
 		add(TargetCategoryParser.class);
-		add(NodeScoreOptimizer.class);
 	}
 }
