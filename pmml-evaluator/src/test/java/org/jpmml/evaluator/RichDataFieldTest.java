@@ -28,7 +28,6 @@ import org.dmg.pmml.Value;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 
 public class RichDataFieldTest {
 
@@ -45,15 +44,15 @@ public class RichDataFieldTest {
 
 		RichDataField richDataField = new RichDataField(dataField);
 
-		Map<?, Value> valueMap = richDataField.getMap();
+		Map<?, Integer> valueMap = richDataField.getMap();
 
 		assertEquals(5, valueMap.size());
 
-		assertSame(invalidValue, valueMap.get("0"));
-		assertSame(validValueOne, valueMap.get("1"));
-		assertSame(validValueTwo, valueMap.get("2"));
-		assertSame(validValueThree, valueMap.get("3"));
-		assertSame(missingValue, valueMap.get("N/A"));
+		assertEquals(FieldValue.STATUS_UNKNOWN_INVALID, valueMap.get("0"));
+		assertEquals((Integer)1, valueMap.get("1"));
+		assertEquals((Integer)2, valueMap.get("2"));
+		assertEquals((Integer)3, valueMap.get("3"));
+		assertEquals(FieldValue.STATUS_MISSING, valueMap.get("N/A"));
 
 		dataField.setDataType(DataType.INTEGER);
 
@@ -63,10 +62,10 @@ public class RichDataFieldTest {
 
 		assertEquals(4, valueMap.size());
 
-		assertSame(invalidValue, valueMap.get(0));
-		assertSame(validValueOne, valueMap.get(1));
-		assertSame(validValueTwo, valueMap.get(2));
-		assertSame(validValueThree, valueMap.get(3));
+		assertEquals(FieldValue.STATUS_UNKNOWN_INVALID, valueMap.get(0));
+		assertEquals((Integer)1, valueMap.get(1));
+		assertEquals((Integer)2, valueMap.get(2));
+		assertEquals((Integer)3, valueMap.get(3));
 	}
 
 	static

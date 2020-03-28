@@ -31,10 +31,13 @@ import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Value;
 import org.jpmml.model.ReflectionUtil;
 
-public class RichDataField extends DataField implements MapHolder<Value> {
+public class RichDataField extends DataField implements ValueStatusHolder {
 
 	@XmlTransient
-	private Map<?, Value> valueMap = null;
+	private Map<?, Integer> valueMap = null;
+
+	@XmlTransient
+	private boolean hasValidValues = false;
 
 
 	public RichDataField(){
@@ -55,7 +58,7 @@ public class RichDataField extends DataField implements MapHolder<Value> {
 	}
 
 	@Override
-	public Map<?, Value> getMap(){
+	public Map<?, Integer> getMap(){
 
 		if(this.valueMap == null){
 			this.valueMap = ImmutableMap.copyOf(parseValues());
@@ -64,10 +67,17 @@ public class RichDataField extends DataField implements MapHolder<Value> {
 		return this.valueMap;
 	}
 
-	private Map<Object, Value> parseValues(){
+	@Override
+	public boolean hasValidValues(){
+		return this.hasValidValues;
+	}
+
+	private Map<Object, Integer> parseValues(){
 		DataType dataType = getDataType();
 
-		Map<Object, Value> result = new LinkedHashMap<>();
+		Map<Object, Integer> result = new LinkedHashMap<>();
+
+		int validIndex = 0;
 
 		List<Value> pmmlValues = getValues();
 		for(Value pmmlValue : pmmlValues){
@@ -80,12 +90,26 @@ public class RichDataField extends DataField implements MapHolder<Value> {
 			switch(property){
 				case VALID:
 					{
+						validIndex++;
+
 						Object value = TypeUtil.parseOrCast(dataType, objectValue);
 
-						result.put(value, pmmlValue);
+						result.put(value, validIndex);
 					}
 					break;
 				case INVALID:
+					{
+						Object value;
+
+						try {
+							value = TypeUtil.parseOrCast(dataType, objectValue);
+						} catch(IllegalArgumentException | TypeCheckException e){
+							continue;
+						}
+
+						result.put(value, FieldValue.STATUS_UNKNOWN_INVALID);
+					}
+					break;
 				case MISSING:
 					{
 						Object value;
@@ -96,13 +120,15 @@ public class RichDataField extends DataField implements MapHolder<Value> {
 							continue;
 						}
 
-						result.put(value, pmmlValue);
+						result.put(value, FieldValue.STATUS_MISSING);
 					}
 					break;
 				default:
 					throw new UnsupportedAttributeException(pmmlValue, property);
 			}
 		}
+
+		this.hasValidValues = (validIndex > 0);
 
 		return result;
 	}

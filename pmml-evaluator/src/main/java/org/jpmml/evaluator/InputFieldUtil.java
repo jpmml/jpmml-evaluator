@@ -27,6 +27,8 @@ import com.google.common.collect.RangeSet;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
+import org.dmg.pmml.HasContinuousDomain;
+import org.dmg.pmml.HasDiscreteDomain;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MissingValueTreatmentMethod;
@@ -34,6 +36,7 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethod;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Value;
+import org.jpmml.model.XPathUtil;
 
 public class InputFieldUtil {
 
@@ -88,10 +91,7 @@ public class InputFieldUtil {
 
 	static
 	public FieldValue prepareInputValue(Field<?> field, MiningField miningField, Object value){
-
-		if(FieldValueUtil.isMissing(value)){
-			return performMissingValueTreatment(field, miningField);
-		} // End if
+		InputTypeInfo typeInfo = getTypeInfo(field, miningField);
 
 		if(value instanceof Collection){
 			Collection<?> rawValues = (Collection<?>)value;
@@ -99,16 +99,16 @@ public class InputFieldUtil {
 			List<Object> pmmlValues = new ArrayList<>(rawValues.size());
 
 			for(Object rawValue : rawValues){
-				FieldValue fieldValue = prepareScalarInputValue(field, miningField, rawValue);
+				FieldValue fieldValue = prepareScalarInputValue(typeInfo, rawValue);
 
 				pmmlValues.add(FieldValueUtil.getValue(fieldValue));
 			}
 
-			return createInputValue(field, miningField, pmmlValues);
+			return createInputValue(typeInfo, pmmlValues);
 		} else
 
 		{
-			return prepareScalarInputValue(field, miningField, value);
+			return prepareScalarInputValue(typeInfo, value);
 		}
 	}
 
@@ -118,37 +118,52 @@ public class InputFieldUtil {
 	}
 
 	static
-	private FieldValue prepareScalarInputValue(Field<?> field, MiningField miningField, Object value){
+	private FieldValue prepareScalarInputValue(InputTypeInfo typeInfo, Object value){
+
+		if(FieldValueUtil.isMissing(value)){
+			return performMissingValueTreatment(typeInfo);
+		}
+
 		boolean compatible;
 
 		try {
-			value = createInputValue(field, miningField, value);
+			value = createInputValue(typeInfo, value);
 
+			// The value is a valid FieldValue
 			compatible = true;
 		} catch(IllegalArgumentException | TypeCheckException e){
+
+			// The value is an invalid FieldValue or Object
 			compatible = false;
 		}
 
-		Value.Property status = getStatus(field, miningField, value, compatible);
-		switch(status){
-			case VALID:
-				return performValidValueTreatment(field, miningField, (FieldValue)value);
-			case INVALID:
-				return performInvalidValueTreatment(field, miningField, value);
-			case MISSING:
-				return performMissingValueTreatment(field, miningField);
-			default:
-				throw new IllegalArgumentException();
+		int status = getStatus(typeInfo, value, compatible);
+
+		if(status > 0){
+			return performValidValueTreatment(typeInfo, (FieldValue)value);
+		} else
+
+		if(status == 0){
+			return performMissingValueTreatment(typeInfo);
+		} else
+
+		if(status < 0){
+			return performInvalidValueTreatment(typeInfo, value);
+		} else
+
+		{
+			throw new IllegalArgumentException();
 		}
 	}
 
 	static
-	public FieldValue performValidValueTreatment(Field<?> field, MiningField miningField, FieldValue value){
-		OutlierTreatmentMethod outlierTreatmentMethod = miningField.getOutlierTreatment();
+	private FieldValue performValidValueTreatment(InputTypeInfo typeInfo, FieldValue value){
+		MiningField miningField = typeInfo.getMiningField();
 
+		OutlierTreatmentMethod outlierTreatmentMethod = miningField.getOutlierTreatment();
 		switch(outlierTreatmentMethod){
 			case AS_IS:
-				return createInputValue(field, miningField, value);
+				return value;
 			case AS_MISSING_VALUES:
 			case AS_EXTREME_VALUES:
 				break;
@@ -166,76 +181,72 @@ public class InputFieldUtil {
 
 		if((lowValue != null && highValue != null) && NumberUtil.compare(lowValue, highValue) > 0){
 			throw new InvalidElementException(miningField);
-		} // End if
-
-		if(FieldValueUtil.isMissing(value)){
-			throw new TypeCheckException(Number.class, null);
 		}
 
 		switch(outlierTreatmentMethod){
 			case AS_MISSING_VALUES:
 				if(lowValue != null && value.compareToValue(lowValue) < 0){
-					return createMissingInputValue(field, miningField);
+					return createMissingInputValue(typeInfo);
 				} else
 
 				if(highValue != null && value.compareToValue(highValue) > 0){
-					return createMissingInputValue(field, miningField);
+					return createMissingInputValue(typeInfo);
 				}
 				break;
 			case AS_EXTREME_VALUES:
 				if(lowValue != null && value.compareToValue(lowValue) < 0){
-					return createInputValue(field, miningField, lowValue);
+					return createInputValue(typeInfo, lowValue);
 				} else
 
 				if(highValue != null && value.compareToValue(highValue) > 0){
-					return createInputValue(field, miningField, highValue);
+					return createInputValue(typeInfo, highValue);
 				}
 				break;
 			default:
 				throw new UnsupportedAttributeException(miningField, outlierTreatmentMethod);
 		}
 
-		return createInputValue(field, miningField, value);
+		return value;
 	}
 
 	static
-	public FieldValue performInvalidValueTreatment(Field<?> field, MiningField miningField, Object value){
-		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
-		Object invalidValueReplacement = miningField.getInvalidValueReplacement();
+	private FieldValue performInvalidValueTreatment(InputTypeInfo typeInfo, Object value){
+		MiningField miningField = typeInfo.getMiningField();
 
+		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
 		switch(invalidValueTreatmentMethod){
 			case AS_IS:
 				break;
 			case AS_MISSING:
 			case RETURN_INVALID:
+				Object invalidValueReplacement = miningField.getInvalidValueReplacement();
 				if(invalidValueReplacement != null){
 					throw new MisplacedAttributeException(miningField, PMMLAttributes.MININGFIELD_INVALIDVALUEREPLACEMENT, invalidValueReplacement);
 				}
 				break;
 			default:
 				throw new UnsupportedAttributeException(miningField, invalidValueTreatmentMethod);
-		}
+		} // End switch
 
 		switch(invalidValueTreatmentMethod){
 			case RETURN_INVALID:
+				Field<?> field = typeInfo.getField();
+
 				throw new InvalidResultException("Field " + PMMLException.formatKey(field.getName()) + " cannot accept user input value " + PMMLException.formatValue(value), miningField);
 			case AS_IS:
-				if(invalidValueReplacement != null){
-					return createInputValue(field, miningField, invalidValueReplacement);
-				}
-				return createInputValue(field, miningField, value);
+				return createInvalidInputValue(typeInfo, value);
 			case AS_MISSING:
-				return createMissingInputValue(field, miningField);
+				return createMissingInputValue(typeInfo);
 			default:
 				throw new UnsupportedAttributeException(miningField, invalidValueTreatmentMethod);
 		}
 	}
 
 	static
-	public FieldValue performMissingValueTreatment(Field<?> field, MiningField miningField){
-		MissingValueTreatmentMethod missingValueTreatmentMethod = miningField.getMissingValueTreatment();
-		Object missingValueReplacement = miningField.getMissingValueReplacement();
+	private FieldValue performMissingValueTreatment(InputTypeInfo typeInfo){
+		MiningField miningField = typeInfo.getMiningField();
 
+		MissingValueTreatmentMethod missingValueTreatmentMethod = miningField.getMissingValueTreatment();
 		if(missingValueTreatmentMethod == null){
 			missingValueTreatmentMethod = MissingValueTreatmentMethod.AS_IS;
 		}
@@ -246,11 +257,15 @@ public class InputFieldUtil {
 			case AS_MODE:
 			case AS_MEDIAN:
 			case AS_VALUE:
-				return createMissingInputValue(field, miningField);
+				return createMissingInputValue(typeInfo);
 			case RETURN_INVALID:
+				Field<?> field = typeInfo.getField();
+
+				Object missingValueReplacement = miningField.getMissingValueReplacement();
 				if(missingValueReplacement != null){
 					throw new MisplacedAttributeException(miningField, PMMLAttributes.MININGFIELD_MISSINGVALUEREPLACEMENT, missingValueReplacement);
 				}
+
 				throw new InvalidResultException("Field " + PMMLException.formatKey(field.getName()) + " requires user input value", miningField);
 			default:
 				throw new UnsupportedAttributeException(miningField, missingValueTreatmentMethod);
@@ -258,63 +273,39 @@ public class InputFieldUtil {
 	}
 
 	static
-	private Value.Property getStatus(Field<?> field, MiningField miningField, Object value, boolean compatible){
+	private Integer getStatus(InputTypeInfo typeInfo, Object value, boolean compatible){
+		Field<?> field = typeInfo.getField();
 
-		if(field instanceof DataField){
-			DataField dataField = (DataField)field;
+		values:
+		if(field instanceof HasDiscreteDomain){
+			HasDiscreteDomain<?> hasDiscreteDomain = (HasDiscreteDomain<?>)field;
 
-			return getStatus(dataField, miningField, value, compatible);
-		}
+			if(!hasDiscreteDomain.hasValues()){
+				break values;
+			}
 
-		if(!compatible){
-			return Value.Property.INVALID;
-		}
+			DataType dataType = typeInfo.getDataType();
 
-		return getStatus(value);
-	}
+			if(field instanceof ValueStatusHolder){
+				ValueStatusHolder valueStatusHolder = (ValueStatusHolder)field;
 
-	static
-	private Value.Property getStatus(DataField dataField, MiningField miningField, Object value, boolean compatible){
+				if(compatible){
+					FieldValue fieldValue = (FieldValue)value;
 
-		if(dataField.hasValues()){
-			DataType dataType = dataField.getDataType();
-			if(dataType == null){
-				throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_DATATYPE);
-			} // End if
-
-			if(dataField instanceof MapHolder){
-				MapHolder<?> mapHolder = (MapHolder<?>)dataField;
-
-				try {
-					Value pmmlValue;
-
-					if(value instanceof FieldValue){
-						FieldValue fieldValue = (FieldValue)value;
-
-						if(!(dataType).equals(fieldValue.getDataType())){
-							fieldValue = fieldValue.cast(dataField);
-						}
-
-						pmmlValue = (Value)mapHolder.get(fieldValue.getDataType(), fieldValue.getValue());
-					} else
-
-					{
-						value = TypeUtil.parseOrCast(dataType, value);
-
-						pmmlValue = (Value)mapHolder.get(dataType, value);
+					Integer index = valueStatusHolder.get(fieldValue.getDataType(), fieldValue.getValue());
+					if(index != null){
+						return index;
 					} // End if
 
-					if(pmmlValue != null){
-						return pmmlValue.getProperty();
+					if(valueStatusHolder.hasValidValues()){
+						return FieldValue.STATUS_UNKNOWN_INVALID;
 					}
-				} catch(IllegalArgumentException | TypeCheckException e){
-					// Ignored
 				}
 			}
 
-			boolean hasValidSpace = false;
+			int validIndex = 0;
 
-			List<Value> pmmlValues = dataField.getValues();
+			List<Value> pmmlValues = hasDiscreteDomain.getValues();
 			for(int i = 0, max = pmmlValues.size(); i < max; i++){
 				Value pmmlValue = pmmlValues.get(i);
 
@@ -323,17 +314,17 @@ public class InputFieldUtil {
 					throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
 				}
 
-				boolean equals;
-
 				Value.Property property = pmmlValue.getProperty();
 				switch(property){
 					case VALID:
 						{
-							hasValidSpace = true;
+							validIndex++;
 
 							if(!compatible){
 								continue;
-							} // End if
+							}
+
+							boolean equals;
 
 							if(value instanceof FieldValue){
 								FieldValue fieldValue = (FieldValue)value;
@@ -343,12 +334,18 @@ public class InputFieldUtil {
 
 							{
 								equals = TypeUtil.equals(dataType, value, simpleValue);
+							} // End if
+
+							if(equals){
+								return validIndex;
 							}
 						}
 						break;
 					case INVALID:
 					case MISSING:
 						{
+							boolean equals;
+
 							if(value instanceof FieldValue){
 								FieldValue fieldValue = (FieldValue)value;
 
@@ -357,43 +354,54 @@ public class InputFieldUtil {
 
 							{
 								equals = TypeUtil.equals(dataType, value, simpleValue);
+							} // End if
+
+							if(equals){
+
+								switch(property){
+									case INVALID:
+										return FieldValue.STATUS_UNKNOWN_INVALID;
+									case MISSING:
+										return FieldValue.STATUS_MISSING;
+									default:
+										throw new UnsupportedAttributeException(pmmlValue, property);
+								}
 							}
 						}
 						break;
 					default:
 						throw new UnsupportedAttributeException(pmmlValue, property);
 				}
-
-				if(equals){
-					return property;
-				}
 			}
 
 			// "If a field contains at least one Value element where the value of property is valid, then the set of Value elements completely defines the set of valid values"
-			if(hasValidSpace){
-				return Value.Property.INVALID;
+			if(validIndex > 0){
+				return FieldValue.STATUS_UNKNOWN_INVALID;
 			}
 		} // End if
 
 		if(!compatible){
-			return Value.Property.INVALID;
+			return FieldValue.STATUS_UNKNOWN_INVALID;
 		} // End if
 
-		if(dataField.hasIntervals()){
-			OpType opType = miningField.getOpType(dataField.getOpType());
-			if(opType == null){
-				throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_OPTYPE);
+		intervals:
+		if(field instanceof HasContinuousDomain){
+			HasContinuousDomain<?> hasContinuousDomain = (HasContinuousDomain<?>)field;
+
+			if(!hasContinuousDomain.hasIntervals()){
+				break intervals;
 			}
 
+			OpType opType = typeInfo.getOpType();
 			switch(opType){
 				case CONTINUOUS:
 					break;
 				default:
 					// "Intervals are not allowed for non-continuous fields"
-					throw new InvalidElementException(dataField);
+					throw new InvalidElementException(field);
 			}
 
-			RangeSet<Double> validRanges = FieldUtil.getValidRanges(dataField);
+			RangeSet<Double> validRanges = FieldUtil.getValidRanges((Field & HasContinuousDomain)field);
 
 			Double doubleValue;
 
@@ -409,16 +417,9 @@ public class InputFieldUtil {
 
 			// "If intervals are present, then a value that is outside the intervals is considered invalid"
 			if(!validRanges.contains(doubleValue)){
-				return Value.Property.INVALID;
+				return FieldValue.STATUS_UNKNOWN_INVALID;
 			}
-		}
-
-		// "Any value is valid by default"
-		return getStatus(value);
-	}
-
-	static
-	private Value.Property getStatus(Object value){
+		} // End if
 
 		if(value instanceof FieldValue){
 			FieldValue fieldValue = (FieldValue)value;
@@ -428,20 +429,21 @@ public class InputFieldUtil {
 				case FLOAT:
 					Float floatValue = fieldValue.asFloat();
 					if(floatValue.isNaN()){
-						return Value.Property.INVALID;
+						return FieldValue.STATUS_UNKNOWN_INVALID;
 					}
 					break;
 				case DOUBLE:
 					Double doubleValue = fieldValue.asDouble();
 					if(doubleValue.isNaN()){
-						return Value.Property.INVALID;
+						return FieldValue.STATUS_UNKNOWN_INVALID;
 					}
 					break;
 				default:
 					break;
 			}
 
-			return Value.Property.VALID;
+			// "Any value is valid by default"
+			return FieldValue.STATUS_UNKNOWN_VALID;
 		} else
 
 		{
@@ -450,13 +452,32 @@ public class InputFieldUtil {
 	}
 
 	static
-	private FieldValue createInputValue(Field<?> field, MiningField miningField, Object value){
+	private FieldValue createInvalidInputValue(InputTypeInfo typeInfo, Object value){
+		MiningField miningField = typeInfo.getMiningField();
+
+		Object invalidValueReplacement = miningField.getInvalidValueReplacement();
+		if(invalidValueReplacement != null){
+			return createInputValue(typeInfo, invalidValueReplacement);
+		}
+
+		return createInputValue(typeInfo, value);
+	}
+
+	static
+	private FieldValue createMissingInputValue(InputTypeInfo typeInfo){
+		MiningField miningField = typeInfo.getMiningField();
+
+		Object missingValueReplacement = miningField.getMissingValueReplacement();
+
+		return createInputValue(typeInfo, missingValueReplacement);
+	}
+
+	static
+	private FieldValue createInputValue(TypeInfo typeInfo, Object value){
 
 		if(FieldValueUtil.isMissing(value)){
 			return FieldValues.MISSING_VALUE;
-		}
-
-		TypeInfo typeInfo = FieldUtil.getTypeInfo(field, miningField);
+		} // End if
 
 		if(value instanceof FieldValue){
 			FieldValue fieldValue = (FieldValue)value;
@@ -470,9 +491,51 @@ public class InputFieldUtil {
 	}
 
 	static
-	private FieldValue createMissingInputValue(Field<?> field, MiningField miningField){
-		Object missingValueReplacement = miningField.getMissingValueReplacement();
+	private InputTypeInfo getTypeInfo(Field<?> field, MiningField miningField){
+		InputTypeInfo typeInfo = new InputTypeInfo(){
 
-		return createInputValue(field, miningField, missingValueReplacement);
+			@Override
+			public Field<?> getField(){
+				return field;
+			}
+
+			@Override
+			public MiningField getMiningField(){
+				return miningField;
+			}
+
+			@Override
+			public DataType getDataType(){
+				DataType dataType = FieldUtil.getDataType(field);
+				if(dataType == null){
+					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@dataType"), field);
+				}
+
+				return dataType;
+			}
+
+			@Override
+			public OpType getOpType(){
+				OpType opType = FieldUtil.getOpType(field, miningField);
+				if(opType == null){
+					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@optype"), field);
+				}
+
+				return opType;
+			}
+
+			@Override
+			public List<?> getOrdering(){
+				List<?> ordering = null;
+
+				if(field instanceof HasDiscreteDomain){
+					ordering = FieldUtil.getValidValues((Field & HasDiscreteDomain)field);
+				}
+
+				return ordering;
+			}
+		};
+
+		return typeInfo;
 	}
 }

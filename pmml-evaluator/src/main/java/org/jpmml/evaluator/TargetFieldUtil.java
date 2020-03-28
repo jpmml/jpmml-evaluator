@@ -45,17 +45,6 @@ public class TargetFieldUtil {
 
 			value = TypeUtil.parseOrCast(dataType, value);
 
-			if(dataField instanceof MapHolder){
-				MapHolder<?> mapHolder = (MapHolder<?>)dataField;
-
-				Value pmmlValue = (Value)mapHolder.get(dataType, value);
-				if(pmmlValue != null && (Value.Property.VALID).equals(pmmlValue.getProperty())){
-					return pmmlValue;
-				}
-
-				return null;
-			}
-
 			List<Value> pmmlValues = dataField.getValues();
 			for(int i = 0, max = pmmlValues.size(); i < max; i++){
 				Value pmmlValue = pmmlValues.get(i);

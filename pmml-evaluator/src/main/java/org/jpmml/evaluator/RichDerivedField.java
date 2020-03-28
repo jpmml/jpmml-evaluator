@@ -31,10 +31,10 @@ import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Value;
 import org.jpmml.model.ReflectionUtil;
 
-public class RichDerivedField extends DerivedField implements MapHolder<Value> {
+public class RichDerivedField extends DerivedField implements ValueStatusHolder {
 
 	@XmlTransient
-	private Map<?, Value> valueMap = null;
+	private Map<?, Integer> valueMap = null;
 
 
 	public RichDerivedField(){
@@ -55,7 +55,7 @@ public class RichDerivedField extends DerivedField implements MapHolder<Value> {
 	}
 
 	@Override
-	public Map<?, Value> getMap(){
+	public Map<?, Integer> getMap(){
 
 		if(this.valueMap == null){
 			this.valueMap = ImmutableMap.copyOf(parseValues());
@@ -64,10 +64,17 @@ public class RichDerivedField extends DerivedField implements MapHolder<Value> {
 		return this.valueMap;
 	}
 
-	private Map<Object, Value> parseValues(){
+	@Override
+	public boolean hasValidValues(){
+		return hasValues();
+	}
+
+	private Map<Object, Integer> parseValues(){
 		DataType dataType = getDataType();
 
-		Map<Object, Value> result = new LinkedHashMap<>();
+		Map<Object, Integer> result = new LinkedHashMap<>();
+
+		int validIndex = 0;
 
 		List<Value> pmmlValues = getValues();
 		for(Value pmmlValue : pmmlValues){
@@ -80,9 +87,11 @@ public class RichDerivedField extends DerivedField implements MapHolder<Value> {
 			switch(property){
 				case VALID:
 					{
+						validIndex++;
+
 						Object value = TypeUtil.parseOrCast(dataType, objectValue);
 
-						result.put(value, pmmlValue);
+						result.put(value, validIndex);
 					}
 					break;
 				case INVALID:

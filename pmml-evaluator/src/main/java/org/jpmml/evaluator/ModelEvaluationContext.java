@@ -126,7 +126,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 				if(parent != null){
 					FieldValue value = parent.evaluate(name);
 
-					return declare(name, performValueTreatment(dataField, miningField, value));
+					return declare(name, inheritOrPrepareInputValue(dataField, miningField, value));
 				}
 
 				Object value = arguments.get(name);
@@ -139,7 +139,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 				if(field != null){
 					FieldValue value = parent.evaluate(name);
 
-					return declare(name, performValueTreatment(field, miningField, value));
+					return declare(name, inheritOrPrepareInputValue(field, miningField, value));
 				}
 			}
 		}
@@ -201,18 +201,12 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	static
-	private FieldValue performValueTreatment(Field<?> field, MiningField miningField, FieldValue value){
+	private FieldValue inheritOrPrepareInputValue(Field<?> field, MiningField miningField, FieldValue value){
 
 		if(InputFieldUtil.isDefault(field, miningField)){
 			return value;
-		} // End if
-
-		if(FieldValueUtil.isMissing(value)){
-			return InputFieldUtil.performMissingValueTreatment(field, miningField);
-		} else
-
-		{
-			return InputFieldUtil.performValidValueTreatment(field, miningField, value);
 		}
+
+		return InputFieldUtil.prepareInputValue(field, miningField, FieldValueUtil.getValue(value));
 	}
 }

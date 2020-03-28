@@ -393,4 +393,8 @@ public class FieldValue implements TypeInfo, Serializable {
 
 		return value;
 	}
+
+	static final Integer STATUS_UNKNOWN_VALID = Integer.MAX_VALUE;
+	static final Integer STATUS_MISSING = 0;
+	static final Integer STATUS_UNKNOWN_INVALID = Integer.MIN_VALUE;
 }
