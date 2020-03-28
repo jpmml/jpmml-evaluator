@@ -26,7 +26,12 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldName;
+import org.dmg.pmml.HasDerivedFields;
+import org.dmg.pmml.LocalTransformations;
+import org.dmg.pmml.Output;
+import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMMLAttributes;
+import org.dmg.pmml.TransformationDictionary;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.general_regression.BaseCumHazardTables;
 import org.dmg.pmml.general_regression.GeneralRegressionModel;
@@ -34,6 +39,8 @@ import org.dmg.pmml.naive_bayes.BayesInput;
 import org.dmg.pmml.naive_bayes.BayesInputs;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.RichDataField;
+import org.jpmml.evaluator.RichDerivedField;
+import org.jpmml.evaluator.RichOutputField;
 import org.jpmml.evaluator.general_regression.RichBaseCumHazardTables;
 import org.jpmml.evaluator.naive_bayes.RichBayesInput;
 
@@ -84,7 +91,11 @@ public class MapHolderParser extends AbstractParser {
 			List<DataField> dataFields = dataDictionary.getDataFields();
 
 			for(ListIterator<DataField> it = dataFields.listIterator(); it.hasNext(); ){
-				it.set(new RichDataField(it.next()));
+				DataField dataField = it.next();
+
+				if(dataField.hasValues()){
+					it.set(new RichDataField(dataField));
+				}
 			}
 		}
 
@@ -108,5 +119,52 @@ public class MapHolderParser extends AbstractParser {
 		}
 
 		return super.visit(generalRegressionModel);
+	}
+
+	@Override
+	public VisitorAction visit(LocalTransformations localTransformations){
+		processDerivedFields(localTransformations);
+
+		return super.visit(localTransformations);
+	}
+
+	@Override
+	public VisitorAction visit(Output output){
+
+		if(output.hasOutputFields()){
+			List<OutputField> outputFields = output.getOutputFields();
+
+			for(ListIterator<OutputField> it = outputFields.listIterator(); it.hasNext(); ){
+				OutputField outputField = it.next();
+
+				if(outputField.hasValues()){
+					it.set(new RichOutputField(outputField));
+				}
+			}
+		}
+
+		return super.visit(output);
+	}
+
+	@Override
+	public VisitorAction visit(TransformationDictionary transformationDictionary){
+		processDerivedFields(transformationDictionary);
+
+		return super.visit(transformationDictionary);
+	}
+
+	private void processDerivedFields(HasDerivedFields<?> hasDerivedFields){
+
+		if(hasDerivedFields.hasDerivedFields()){
+			List<DerivedField> derivedFields = hasDerivedFields.getDerivedFields();
+
+			for(ListIterator<DerivedField> it = derivedFields.listIterator(); it.hasNext(); ){
+				DerivedField derivedField = it.next();
+
+				if(derivedField.hasValues()){
+					it.set(new RichDerivedField(derivedField));
+				}
+			}
+		}
 	}
 }

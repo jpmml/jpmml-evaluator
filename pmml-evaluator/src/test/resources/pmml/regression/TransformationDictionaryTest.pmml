@@ -81,13 +81,13 @@
 				<FieldRef field="State"/>
 			</Apply>
 		</DerivedField>
-		<DerivedField name="Power" dataType="double">
+		<DerivedField name="Power" optype="continuous" dataType="double">
 			<Apply function="POW">
 				<FieldRef field="Value"/>
 				<FieldRef field="Exponent"/>
 			</Apply>
 		</DerivedField>
-		<DerivedField name="SimpleTable" dataType="string">
+		<DerivedField name="SimpleTable" optype="categorical" dataType="string">
 			<MapValues outputColumn="data:output">
 				<FieldColumnPair field="Value" column="data:input"/>
 				<InlineTable>
@@ -104,7 +104,7 @@
 				</InlineTable>
 			</MapValues>
 		</DerivedField>
-		<DerivedField name="ComplexTable" dataType="string">
+		<DerivedField name="ComplexTable" optype="categorical" dataType="string">
 			<MapValues outputColumn="output">
 				<FieldColumnPair field="Value" column="input"/>
 				<FieldColumnPair field="Modifier" column="flag"/>
@@ -132,7 +132,7 @@
 				</InlineTable>
 			</MapValues>
 		</DerivedField>
-		<DerivedField name="SelfRef" dataType="double">
+		<DerivedField name="SelfRef" optype="continuous" dataType="double">
 			<Apply function="if">
 				<FieldRef field="Modifier"/>
 				<Apply function="+">
@@ -142,22 +142,22 @@
 				<FieldRef field="Value"/>
 			</Apply>
 		</DerivedField>
-		<DerivedField name="Ref" dataType="double">
+		<DerivedField name="Ref" optype="continuous" dataType="double">
 			<Apply function="+">
 				<FieldRef field="Value"/>
 				<FieldRef field="BackRef"/>
 			</Apply>
 		</DerivedField>
-		<DerivedField name="BackRef" dataType="double">
+		<DerivedField name="BackRef" optype="continuous" dataType="double">
 			<FieldRef field="Ref"/>
 		</DerivedField>
-		<DerivedField name="StageOne" dataType="double">
+		<DerivedField name="StageOne" optype="continuous" dataType="double">
 			<FieldRef field="Value"/>
 		</DerivedField>
-		<DerivedField name="StageTwo" dataType="double">
+		<DerivedField name="StageTwo" optype="continuous" dataType="double">
 			<FieldRef field="StageOne"/>
 		</DerivedField>
-		<DerivedField name="StageThree" dataType="double">
+		<DerivedField name="StageThree" optype="continuous" dataType="double">
 			<FieldRef field="StageTwo"/>
 		</DerivedField>
 	</TransformationDictionary>
