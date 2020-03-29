@@ -18,24 +18,10 @@
  */
 package org.jpmml.evaluator.functions;
 
-import org.jpmml.evaluator.FieldValue;
-import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.TypeInfos;
-
 abstract
 public class ValueFunction extends UnaryFunction implements MissingValueTolerant {
 
 	public ValueFunction(String name){
 		super(name);
-	}
-
-	abstract
-	public Boolean evaluate(boolean isMissing);
-
-	@Override
-	public FieldValue evaluate(FieldValue value){
-		Boolean result = evaluate(FieldValueUtil.isMissing(value));
-
-		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 	}
 }

@@ -185,11 +185,38 @@ public class FunctionTest {
 
 	@Test
 	public void evaluateValueFunctions(){
-		assertEquals(true, evaluate(Functions.IS_MISSING, (String)null));
-		assertEquals(false, evaluate(Functions.IS_MISSING, "value"));
+		ScalarValue value = (ScalarValue)FieldValues.MISSING_VALUE;
 
-		assertEquals(true, evaluate(Functions.IS_NOT_MISSING, "value"));
-		assertEquals(false, evaluate(Functions.IS_NOT_MISSING, (String)null));
+		assertEquals(true, evaluate(Functions.IS_MISSING, value));
+		assertEquals(false, evaluate(Functions.IS_NOT_MISSING, value));
+		assertEquals(false, evaluate(Functions.IS_VALID, value));
+		assertEquals(false, evaluate(Functions.IS_NOT_VALID, value));
+
+		value = (ScalarValue)FieldValue.create(TypeInfos.CATEGORICAL_STRING, "value");
+
+		value.setValid(true);
+
+		assertEquals(false, evaluate(Functions.IS_MISSING, value));
+		assertEquals(true, evaluate(Functions.IS_NOT_MISSING, value));
+		assertEquals(true, evaluate(Functions.IS_VALID, value));
+		assertEquals(false, evaluate(Functions.IS_NOT_VALID, value));
+
+		value.setValid(false);
+
+		assertEquals(false, evaluate(Functions.IS_MISSING, value));
+		assertEquals(true, evaluate(Functions.IS_NOT_MISSING, value));
+		assertEquals(false, evaluate(Functions.IS_VALID, value));
+		assertEquals(true, evaluate(Functions.IS_NOT_VALID, value));
+
+		value = (ScalarValue)FieldValue.create(TypeInfos.CONTINUOUS_FLOAT, Float.NaN);
+
+		assertEquals(false, evaluate(Functions.IS_VALID, value));
+		assertEquals(true, evaluate(Functions.IS_NOT_VALID, value));
+
+		value = (ScalarValue)FieldValue.create(TypeInfos.CONTINUOUS_DOUBLE, Double.NaN);
+
+		assertEquals(false, evaluate(Functions.IS_VALID, value));
+		assertEquals(true, evaluate(Functions.IS_NOT_VALID, value));
 	}
 
 	@Test
@@ -396,5 +423,10 @@ public class FunctionTest {
 	static
 	private FieldValue evaluate(Function function, List<?> arguments){
 		return function.evaluate(Lists.transform(arguments, argument -> FieldValueUtil.create(argument)));
+	}
+
+	static
+	private FieldValue evaluate(Function function, ScalarValue... arguments){
+		return function.evaluate(Arrays.asList(arguments));
 	}
 }

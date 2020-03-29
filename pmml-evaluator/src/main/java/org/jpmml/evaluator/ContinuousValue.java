@@ -119,6 +119,11 @@ public class ContinuousValue extends ScalarValue {
 
 		ContinuousFloat(Object value){
 			super(DataType.FLOAT, value);
+
+			Float floatValue = (Float)getValue();
+			if(floatValue.isNaN()){
+				setValid(false);
+			}
 		}
 
 		@Override
@@ -157,6 +162,11 @@ public class ContinuousValue extends ScalarValue {
 
 		ContinuousDouble(Object value){
 			super(DataType.DOUBLE, value);
+
+			Double doubleValue = (Double)getValue();
+			if(doubleValue.isNaN()){
+				setValid(false);
+			}
 		}
 
 		@Override

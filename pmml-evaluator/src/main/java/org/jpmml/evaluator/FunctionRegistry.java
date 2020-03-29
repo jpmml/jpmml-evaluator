@@ -167,7 +167,7 @@ public class FunctionRegistry {
 			Functions.ADD, Functions.SUBTRACT, Functions.MULTIPLY, Functions.DIVIDE,
 			Functions.MIN, Functions.MAX, Functions.AVG, Functions.SUM, Functions.PRODUCT,
 			Functions.LOG10, Functions.LN, Functions.EXP, Functions.SQRT, Functions.ABS, Functions.POW, Functions.THRESHOLD, Functions.FLOOR, Functions.CEIL, Functions.ROUND, Functions.MODULO,
-			Functions.IS_MISSING, Functions.IS_NOT_MISSING,
+			Functions.IS_MISSING, Functions.IS_NOT_MISSING, Functions.IS_VALID, Functions.IS_NOT_VALID,
 			Functions.EQUAL, Functions.NOT_EQUAL,
 			Functions.LESS_THAN, Functions.LESS_OR_EQUAL, Functions.GREATER_THAN, Functions.GREATER_OR_EQUAL,
 			Functions.AND, Functions.OR,

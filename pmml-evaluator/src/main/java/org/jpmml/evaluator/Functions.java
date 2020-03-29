@@ -326,16 +326,40 @@ public interface Functions {
 	ValueFunction IS_MISSING = new ValueFunction(PMMLFunctions.ISMISSING){
 
 		@Override
-		public Boolean evaluate(boolean isMissing){
-			return Boolean.valueOf(isMissing);
+		public FieldValue evaluate(FieldValue value){
+			Boolean result = FieldValueUtil.isMissing(value);
+
+			return FieldValue.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 		}
 	};
 
 	ValueFunction IS_NOT_MISSING = new ValueFunction(PMMLFunctions.ISNOTMISSING){
 
 		@Override
-		public Boolean evaluate(boolean isMissing){
-			return Boolean.valueOf(!isMissing);
+		public FieldValue evaluate(FieldValue value){
+			Boolean result = !FieldValueUtil.isMissing(value);
+
+			return FieldValue.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
+		}
+	};
+
+	ValueFunction IS_VALID = new ValueFunction(PMMLFunctions.ISVALID){
+
+		@Override
+		public FieldValue evaluate(FieldValue value){
+			Boolean result = !FieldValueUtil.isMissing(value) && value.isValid();
+
+			return FieldValue.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
+		}
+	};
+
+	ValueFunction IS_NOT_VALID = new ValueFunction(PMMLFunctions.ISNOTVALID){
+
+		@Override
+		public FieldValue evaluate(FieldValue value){
+			Boolean result = !FieldValueUtil.isMissing(value) && !value.isValid();
+
+			return FieldValue.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 		}
 	};
 

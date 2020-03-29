@@ -424,22 +424,8 @@ public class InputFieldUtil {
 		if(value instanceof FieldValue){
 			FieldValue fieldValue = (FieldValue)value;
 
-			DataType dataType = fieldValue.getDataType();
-			switch(dataType){
-				case FLOAT:
-					Float floatValue = fieldValue.asFloat();
-					if(floatValue.isNaN()){
-						return FieldValue.STATUS_UNKNOWN_INVALID;
-					}
-					break;
-				case DOUBLE:
-					Double doubleValue = fieldValue.asDouble();
-					if(doubleValue.isNaN()){
-						return FieldValue.STATUS_UNKNOWN_INVALID;
-					}
-					break;
-				default:
-					break;
+			if(!fieldValue.isValid()){
+				return FieldValue.STATUS_UNKNOWN_INVALID;
 			}
 
 			// "Any value is valid by default"
@@ -461,7 +447,9 @@ public class InputFieldUtil {
 		}
 
 		ScalarValue fieldValue = (ScalarValue)createInputValue(typeInfo, value);
-		fieldValue.setValid(false);
+		if(fieldValue.isValid()){
+			fieldValue.setValid(false);
+		}
 
 		return fieldValue;
 	}
