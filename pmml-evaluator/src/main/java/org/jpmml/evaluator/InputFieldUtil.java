@@ -118,7 +118,7 @@ public class InputFieldUtil {
 	}
 
 	static
-	private FieldValue prepareScalarInputValue(InputTypeInfo typeInfo, Object value){
+	private ScalarValue prepareScalarInputValue(InputTypeInfo typeInfo, Object value){
 
 		if(FieldValueUtil.isMissing(value)){
 			return performMissingValueTreatment(typeInfo);
@@ -129,18 +129,18 @@ public class InputFieldUtil {
 		try {
 			value = createInputValue(typeInfo, value);
 
-			// The value is a valid FieldValue
+			// The value is a valid ScalarValue
 			compatible = true;
 		} catch(IllegalArgumentException | TypeCheckException e){
 
-			// The value is an invalid FieldValue or Object
+			// The value is an invalid ScalarValue or Object
 			compatible = false;
 		}
 
 		int status = getStatus(typeInfo, value, compatible);
 
 		if(status > 0){
-			return performValidValueTreatment(typeInfo, (FieldValue)value);
+			return performValidValueTreatment(typeInfo, (ScalarValue)value);
 		} else
 
 		if(status == 0){
@@ -157,7 +157,7 @@ public class InputFieldUtil {
 	}
 
 	static
-	private FieldValue performValidValueTreatment(InputTypeInfo typeInfo, FieldValue value){
+	private ScalarValue performValidValueTreatment(InputTypeInfo typeInfo, ScalarValue value){
 		MiningField miningField = typeInfo.getMiningField();
 
 		OutlierTreatmentMethod outlierTreatmentMethod = miningField.getOutlierTreatment();
@@ -195,11 +195,11 @@ public class InputFieldUtil {
 				break;
 			case AS_EXTREME_VALUES:
 				if(lowValue != null && value.compareToValue(lowValue) < 0){
-					return createInputValue(typeInfo, lowValue);
+					return (ScalarValue)createInputValue(typeInfo, lowValue);
 				} else
 
 				if(highValue != null && value.compareToValue(highValue) > 0){
-					return createInputValue(typeInfo, highValue);
+					return (ScalarValue)createInputValue(typeInfo, highValue);
 				}
 				break;
 			default:
@@ -210,7 +210,7 @@ public class InputFieldUtil {
 	}
 
 	static
-	private FieldValue performInvalidValueTreatment(InputTypeInfo typeInfo, Object value){
+	private ScalarValue performInvalidValueTreatment(InputTypeInfo typeInfo, Object value){
 		MiningField miningField = typeInfo.getMiningField();
 
 		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
@@ -243,7 +243,7 @@ public class InputFieldUtil {
 	}
 
 	static
-	private FieldValue performMissingValueTreatment(InputTypeInfo typeInfo){
+	private ScalarValue performMissingValueTreatment(InputTypeInfo typeInfo){
 		MiningField miningField = typeInfo.getMiningField();
 
 		MissingValueTreatmentMethod missingValueTreatmentMethod = miningField.getMissingValueTreatment();
@@ -452,32 +452,34 @@ public class InputFieldUtil {
 	}
 
 	static
-	private FieldValue createInvalidInputValue(InputTypeInfo typeInfo, Object value){
+	private ScalarValue createInvalidInputValue(InputTypeInfo typeInfo, Object value){
 		MiningField miningField = typeInfo.getMiningField();
 
 		Object invalidValueReplacement = miningField.getInvalidValueReplacement();
 		if(invalidValueReplacement != null){
-			return createInputValue(typeInfo, invalidValueReplacement);
+			return (ScalarValue)createInputValue(typeInfo, invalidValueReplacement);
 		}
 
-		return createInputValue(typeInfo, value);
+		ScalarValue fieldValue = (ScalarValue)createInputValue(typeInfo, value);
+		fieldValue.setValid(false);
+
+		return fieldValue;
 	}
 
 	static
-	private FieldValue createMissingInputValue(InputTypeInfo typeInfo){
+	private ScalarValue createMissingInputValue(InputTypeInfo typeInfo){
 		MiningField miningField = typeInfo.getMiningField();
 
 		Object missingValueReplacement = miningField.getMissingValueReplacement();
+		if(missingValueReplacement != null){
+			return (ScalarValue)createInputValue(typeInfo, missingValueReplacement);
+		}
 
-		return createInputValue(typeInfo, missingValueReplacement);
+		return (ScalarValue)FieldValues.MISSING_VALUE;
 	}
 
 	static
 	private FieldValue createInputValue(TypeInfo typeInfo, Object value){
-
-		if(FieldValueUtil.isMissing(value)){
-			return FieldValues.MISSING_VALUE;
-		} // End if
 
 		if(value instanceof FieldValue){
 			FieldValue fieldValue = (FieldValue)value;

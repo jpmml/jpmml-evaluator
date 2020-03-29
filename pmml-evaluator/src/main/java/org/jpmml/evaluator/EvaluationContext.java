@@ -212,6 +212,10 @@ public class EvaluationContext {
 
 	private static final FieldValue UNDECLARED_VALUE = new ScalarValue(DataType.DOUBLE, Double.NaN){
 
+		{
+			setValid(false);
+		}
+
 		@Override
 		public OpType getOpType(){
 			return OpType.CONTINUOUS;

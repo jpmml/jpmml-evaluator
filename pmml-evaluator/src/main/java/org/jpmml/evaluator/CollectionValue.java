@@ -58,6 +58,11 @@ public class CollectionValue extends FieldValue {
 	}
 
 	@Override
+	public boolean isValid(){
+		throw new EvaluationException("Collection value cannot be queried for validity");
+	}
+
+	@Override
 	public int compareToValue(Object value){
 		throw new EvaluationException("Collection value cannot be used in comparison operations");
 	}

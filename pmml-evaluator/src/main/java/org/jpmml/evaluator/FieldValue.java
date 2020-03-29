@@ -73,6 +73,9 @@ public class FieldValue implements TypeInfo, Serializable {
 	}
 
 	abstract
+	public boolean isValid();
+
+	abstract
 	public int compareToValue(Object value);
 
 	abstract
@@ -319,6 +322,7 @@ public class FieldValue implements TypeInfo, Serializable {
 		ToStringHelper helper = new ToStringHelper(this)
 			.add("opType", getOpType())
 			.add("dataType", getDataType())
+			.add("valid", isValid())
 			.add("value", getValue());
 
 		return helper;

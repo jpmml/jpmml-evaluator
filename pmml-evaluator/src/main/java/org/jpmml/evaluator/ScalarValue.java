@@ -23,8 +23,20 @@ import org.dmg.pmml.DataType;
 abstract
 public class ScalarValue extends FieldValue implements Comparable<ScalarValue> {
 
+	private boolean valid = true;
+
+
 	ScalarValue(DataType dataType, Object value){
 		super(dataType, filterValue(TypeUtil.parseOrCast(dataType, value)));
+	}
+
+	@Override
+	public boolean isValid(){
+		return this.valid;
+	}
+
+	void setValid(boolean valid){
+		this.valid = valid;
 	}
 
 	@Override
