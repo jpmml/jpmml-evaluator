@@ -54,7 +54,8 @@ Supported model types:
   * Except for `aggregateNodes` and `weightedConfidence` values of the `missingValueStrategy` attribute.
 * [Support Vector Machine (SVM)](http://www.dmg.org/pmml/v4-4/SupportVectorMachine.html) (regression, classification):
   * Except for the `Coefficients` value of the `svmRepresentation` attribute.
-* [Ensemble model (ensembles of all of the above model types)](http://www.dmg.org/pmml/v4-4/MultipleModels.html) (regression, classification, clustering).
+* [Ensemble model (ensembles of all of the above model types)](http://www.dmg.org/pmml/v4-4/MultipleModels.html) (regression, classification, clustering):
+  * Except for the `VariableWeight` element.
 
 Not yet supported model types:
 

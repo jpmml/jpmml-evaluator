@@ -126,7 +126,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 		// Return the default prediction when no rules in the ruleset fire
 		if(firedRules.size() == 0){
-			String defaultScore = ruleSet.getDefaultScore();
+			Object defaultScore = ruleSet.getDefaultScore();
 			if(defaultScore == null){
 				throw new MissingAttributeException(ruleSet, PMMLAttributes.RULESET_DEFAULTSCORE);
 			}

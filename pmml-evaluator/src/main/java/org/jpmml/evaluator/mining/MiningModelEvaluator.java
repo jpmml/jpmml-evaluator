@@ -58,6 +58,7 @@ import org.dmg.pmml.mining.PMMLAttributes;
 import org.dmg.pmml.mining.PMMLElements;
 import org.dmg.pmml.mining.Segment;
 import org.dmg.pmml.mining.Segmentation;
+import org.dmg.pmml.mining.VariableWeight;
 import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.EntityUtil;
@@ -127,6 +128,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		if(!segmentation.hasSegments()){
 			throw new MissingElementException(segmentation, PMMLElements.SEGMENTATION_SEGMENTS);
+		}
+
+		List<Segment> segments = segmentation.getSegments();
+		for(Segment segment : segments){
+			VariableWeight variableWeight = segment.getVariableWeight();
+
+			if(variableWeight != null){
+				throw new UnsupportedElementException(variableWeight);
+			}
 		}
 
 		LocalTransformations localTransformations = segmentation.getLocalTransformations();

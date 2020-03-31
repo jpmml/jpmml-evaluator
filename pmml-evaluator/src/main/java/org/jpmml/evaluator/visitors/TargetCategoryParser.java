@@ -44,6 +44,7 @@ import org.dmg.pmml.general_regression.PPCell;
 import org.dmg.pmml.naive_bayes.TargetValueCount;
 import org.dmg.pmml.naive_bayes.TargetValueStat;
 import org.dmg.pmml.regression.RegressionTable;
+import org.dmg.pmml.rule_set.RuleSet;
 import org.dmg.pmml.rule_set.SimpleRule;
 import org.dmg.pmml.support_vector_machine.SupportVectorMachine;
 import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
@@ -168,6 +169,13 @@ public class TargetCategoryParser extends AbstractParser {
 		regressionTable.setTargetCategory(parseTargetValue(regressionTable.getTargetCategory()));
 
 		return super.visit(regressionTable);
+	}
+
+	@Override
+	public VisitorAction visit(RuleSet ruleSet){
+		ruleSet.setDefaultScore(parseTargetValue(ruleSet.getDefaultScore()));
+
+		return super.visit(ruleSet);
 	}
 
 	@Override
