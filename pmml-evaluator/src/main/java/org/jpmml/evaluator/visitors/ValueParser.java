@@ -53,6 +53,7 @@ import org.dmg.pmml.general_regression.PPCell;
 import org.dmg.pmml.naive_bayes.PairCounts;
 import org.dmg.pmml.regression.CategoricalPredictor;
 import org.jpmml.evaluator.ArrayUtil;
+import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.RichComplexArray;
@@ -97,17 +98,21 @@ public class ValueParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(Constant constant){
-		Object value = constant.getValue();
+		boolean missing = constant.isMissing();
 
-		DataType dataType = constant.getDataType();
-		if(dataType == null){
-			dataType = TypeUtil.getConstantDataType(value);
-		} // End if
+		if(!missing){
+			Object value = constant.getValue();
 
-		if(value != null){
-			value = parseOrCast(dataType, value);
+			if(!ExpressionUtil.isEmptyContent(value)){
+				DataType dataType = constant.getDataType();
+				if(dataType == null){
+					dataType = TypeUtil.getConstantDataType(value);
+				}
 
-			constant.setValue(value);
+				value = parseOrCast(dataType, value);
+
+				constant.setValue(value);
+			}
 		}
 
 		return super.visit(constant);

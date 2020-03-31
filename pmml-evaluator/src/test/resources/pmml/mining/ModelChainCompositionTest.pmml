@@ -50,7 +50,7 @@
 							<Apply function="replace">
 								<FieldRef field="PredictedClass"/>
 								<Constant>Iris-</Constant>
-								<Constant/>
+								<Constant dataType="string"/>
 							</Apply>
 						</OutputField>
 					</Output>

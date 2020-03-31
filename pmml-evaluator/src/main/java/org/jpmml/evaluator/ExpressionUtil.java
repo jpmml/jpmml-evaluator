@@ -203,10 +203,41 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateConstant(Constant constant){
-		DataType dataType = getConstantDataType(constant);
+		boolean missing = constant.isMissing();
+		if(missing){
+			return FieldValues.MISSING_VALUE;
+		}
+
+		Object value = constant.getValue();
+
+		DataType dataType = constant.getDataType();
+		if(dataType != null){
+
+			if(isEmptyContent(value)){
+
+				switch(dataType){
+					// "If the data type is string, then the empty content will be interpreted as an empty string"
+					case STRING:
+						return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, "");
+					// "If the data type is something other than string, then the empty content will be interpreted as a missing value of the specified data type"
+					default:
+						return FieldValues.MISSING_VALUE;
+				}
+			}
+		} else
+
+		{
+			if(isEmptyContent(value)){
+				return FieldValues.MISSING_VALUE;
+			}
+
+			dataType = TypeUtil.getConstantDataType(value);
+
+		}
+
 		OpType opType = TypeUtil.getOpType(dataType);
 
-		return FieldValueUtil.create(dataType, opType, constant.getValue());
+		return FieldValueUtil.create(dataType, opType, value);
 	}
 
 	static
@@ -540,12 +571,7 @@ public class ExpressionUtil {
 	}
 
 	static
-	public DataType getConstantDataType(Constant constant){
-		DataType dataType = constant.getDataType();
-		if(dataType == null){
-			return TypeUtil.getConstantDataType(constant.getValue());
-		}
-
-		return dataType;
+	public boolean isEmptyContent(Object value){
+		return (value == null) || ("").equals(value);
 	}
 }

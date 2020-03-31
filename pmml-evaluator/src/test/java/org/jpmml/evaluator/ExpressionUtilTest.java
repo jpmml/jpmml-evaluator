@@ -56,28 +56,50 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateConstant(){
-		Constant constant = new Constant("3");
+		Constant emptyString = new Constant()
+			.setDataType(DataType.STRING);
 
-		assertEquals(DataType.INTEGER, ExpressionUtil.getConstantDataType(constant));
+		assertEquals("", evaluate(emptyString));
 
-		assertEquals(3, evaluate(constant));
+		emptyString.setMissing(true);
+
+		assertEquals(null, evaluate(emptyString));
 
 		Constant stringThree = new Constant("3")
 			.setDataType(DataType.STRING);
 
-		assertEquals(DataType.STRING, ExpressionUtil.getConstantDataType(stringThree));
-
 		assertEquals("3", evaluate(stringThree));
+
+		stringThree.setMissing(true);
+
+		assertEquals(null, evaluate(stringThree));
 
 		Constant integerThree = new Constant("3")
 			.setDataType(DataType.INTEGER);
 
 		assertEquals(3, evaluate(integerThree));
 
+		integerThree.setMissing(true);
+
+		assertEquals(null, evaluate(integerThree));
+
 		Constant floatThree = new Constant("3")
 			.setDataType(DataType.FLOAT);
 
 		assertEquals(3f, evaluate(floatThree));
+
+		floatThree.setMissing(true);
+
+		assertEquals(null, evaluate(floatThree));
+
+		Constant doubleThree = new Constant("3")
+			.setDataType(DataType.DOUBLE);
+
+		assertEquals(3d, evaluate(doubleThree));
+
+		doubleThree.setMissing(true);
+
+		assertEquals(null, evaluate(doubleThree));
 	}
 
 	@Test
