@@ -208,12 +208,12 @@ public class FunctionTest {
 		assertEquals(false, evaluate(Functions.IS_VALID, value));
 		assertEquals(true, evaluate(Functions.IS_NOT_VALID, value));
 
-		value = (ScalarValue)FieldValue.create(TypeInfos.CONTINUOUS_FLOAT, Float.NaN);
+		value = (ScalarValue)FieldValue.create(TypeInfos.CONTINUOUS_FLOAT, "NaN");
 
 		assertEquals(false, evaluate(Functions.IS_VALID, value));
 		assertEquals(true, evaluate(Functions.IS_NOT_VALID, value));
 
-		value = (ScalarValue)FieldValue.create(TypeInfos.CONTINUOUS_DOUBLE, Double.NaN);
+		value = (ScalarValue)FieldValue.create(TypeInfos.CONTINUOUS_DOUBLE, "NaN");
 
 		assertEquals(false, evaluate(Functions.IS_VALID, value));
 		assertEquals(true, evaluate(Functions.IS_NOT_VALID, value));

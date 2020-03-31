@@ -166,6 +166,18 @@ public class TypeUtil {
 				default:
 					break;
 			}
+
+			if(("NaN").equalsIgnoreCase(value)){
+				return Float.NaN;
+			} else
+
+			if(("-INF").equalsIgnoreCase(value)){
+				return Float.NEGATIVE_INFINITY;
+			} else
+
+			if(("INF").equalsIgnoreCase(value)){
+				return Float.POSITIVE_INFINITY;
+			}
 		}
 
 		try {
@@ -205,6 +217,18 @@ public class TypeUtil {
 					return Numbers.DOUBLE_TWO;
 				default:
 					break;
+			}
+
+			if(("NaN").equalsIgnoreCase(value)){
+				return Double.NaN;
+			} else
+
+			if(("-INF").equalsIgnoreCase(value)){
+				return Double.NEGATIVE_INFINITY;
+			} else
+
+			if(("INF").equalsIgnoreCase(value)){
+				return Double.POSITIVE_INFINITY;
 			}
 		}
 
@@ -905,21 +929,25 @@ public class TypeUtil {
 	}
 
 	static
-	public DataType getConstantDataType(String string){
+	public DataType getConstantDataType(String value){
 
-		if(("").equals(string)){
+		if(("").equals(value)){
 			return DataType.STRING;
+		} else
+
+		if(("NaN").equalsIgnoreCase(value) || ("INF").equalsIgnoreCase(value) || ("-INF").equalsIgnoreCase(value)){
+			return DataType.DOUBLE;
 		}
 
 		try {
-			if(string.indexOf('.') > -1){
-				Double.parseDouble(string);
+			if(value.indexOf('.') > -1){
+				Double.parseDouble(value);
 
 				return DataType.DOUBLE;
 			} else
 
 			{
-				Long.parseLong(string);
+				Long.parseLong(value);
 
 				return DataType.INTEGER;
 			}

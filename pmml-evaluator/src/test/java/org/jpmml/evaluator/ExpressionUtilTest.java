@@ -103,6 +103,17 @@ public class ExpressionUtilTest {
 	}
 
 	@Test
+	public void evaluateConstantNaN(){
+		Constant constant = new Constant("NaN");
+
+		assertEquals(Double.NaN, evaluate(constant));
+
+		constant.setDataType(DataType.FLOAT);
+
+		assertEquals(Float.NaN, evaluate(constant));
+	}
+
+	@Test
 	public void evaluateFieldRef(){
 		FieldName name = FieldName.create("x");
 
