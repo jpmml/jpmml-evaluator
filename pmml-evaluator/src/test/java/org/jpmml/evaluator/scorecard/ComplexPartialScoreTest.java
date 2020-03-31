@@ -34,9 +34,9 @@ public class ComplexPartialScoreTest extends ModelEvaluatorTest {
 		double score = (-9d) + (-1d);
 
 		assertEquals((score + 3d), evaluateScore(null), 1e-8);
-		assertEquals((score + ((0.03f * 1000d) + 11d)), evaluateScore(1000d), 1e-8);
+		assertEquals((score + ((0.03d * 1000d) + 11d)), evaluateScore(1000d), 1e-8);
 		assertEquals((score + 5d), evaluateScore(1500d), 1e-8);
-		assertEquals((score + ((0.01f * 3000d) - 18d)), evaluateScore(3000d), 1e-8);
+		assertEquals((score + ((0.01d * 3000d) - 18d)), evaluateScore(3000d), 1e-8);
 	}
 
 	private Double evaluateScore(Double income) throws Exception {

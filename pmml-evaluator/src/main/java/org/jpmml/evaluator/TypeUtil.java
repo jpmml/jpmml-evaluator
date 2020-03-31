@@ -907,11 +907,15 @@ public class TypeUtil {
 	static
 	public DataType getConstantDataType(String string){
 
+		if(("").equals(string)){
+			return DataType.STRING;
+		}
+
 		try {
 			if(string.indexOf('.') > -1){
 				Double.parseDouble(string);
 
-				return DataType.FLOAT;
+				return DataType.DOUBLE;
 			} else
 
 			{
