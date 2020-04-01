@@ -159,7 +159,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	@Override
-	protected DataField getDataField(){
+	protected DataField getDefaultDataField(){
 		MiningFunction miningFunction = getMiningFunction();
 
 		switch(miningFunction){
@@ -168,7 +168,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			case MIXED:
 				return null;
 			default:
-				return super.getDataField();
+				return super.getDefaultDataField();
 		}
 	}
 

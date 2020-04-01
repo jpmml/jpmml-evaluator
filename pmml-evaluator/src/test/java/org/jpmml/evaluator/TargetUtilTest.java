@@ -69,7 +69,7 @@ public class TargetUtilTest {
 
 		evaluator = createTreeModelEvaluator(MiningFunction.REGRESSION, MathContext.DOUBLE, target);
 
-		dataField = evaluator.getDataField();
+		dataField = evaluator.getDefaultDataField();
 
 		assertEquals(OpType.CONTINUOUS, dataField.getOpType());
 		assertEquals(DataType.DOUBLE, dataField.getDataType());

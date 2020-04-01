@@ -167,7 +167,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	protected DataField getDataField(){
+	protected DataField getDefaultDataField(){
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.getSegmentation();
@@ -179,7 +179,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MODEL_CHAIN:
 				return null;
 			default:
-				return super.getDataField();
+				return super.getDefaultDataField();
 		}
 	}
 

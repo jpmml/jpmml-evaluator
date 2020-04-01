@@ -229,7 +229,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 	public DataField getDataField(FieldName name){
 
 		if(Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name)){
-			return getDataField();
+			return getDefaultDataField();
 		}
 
 		return this.dataFields.get(name);
@@ -238,7 +238,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 	/**
 	 * @return A synthetic {@link DataField} element describing the default target field.
 	 */
-	protected DataField getDataField(){
+	protected DataField getDefaultDataField(){
 		MiningFunction miningFunction = getMiningFunction();
 
 		switch(miningFunction){
@@ -907,7 +907,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 		synthesis:
 		if(targetFields.isEmpty()){
-			DataField dataField = getDataField();
+			DataField dataField = getDefaultDataField();
 
 			if(dataField == null){
 				break synthesis;
