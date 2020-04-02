@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMMLAttributes;
@@ -66,8 +65,6 @@ public class TargetUtil {
 
 	static
 	public <V extends Number> Map<FieldName, ?> evaluateRegression(TargetField targetField, Value<V> value){
-		DataField dataField = targetField.getField();
-
 		value = evaluateRegressionInternal(targetField, value);
 
 		if(value instanceof HasReport){
@@ -76,16 +73,14 @@ public class TargetUtil {
 			return evaluateRegression(targetField, result);
 		}
 
-		Object result = TypeUtil.cast(dataField.getDataType(), value.getValue());
+		Object result = TypeUtil.cast(targetField.getDataType(), value.getValue());
 
 		return Collections.singletonMap(targetField.getFieldName(), result);
 	}
 
 	static
 	public <V extends Number> Map<FieldName, ? extends Regression<V>> evaluateRegression(TargetField targetField, Regression<V> regression){
-		DataField dataField = targetField.getField();
-
-		regression.computeResult(dataField.getDataType());
+		regression.computeResult(targetField.getDataType());
 
 		return Collections.singletonMap(targetField.getFieldName(), regression);
 	}
@@ -103,9 +98,7 @@ public class TargetUtil {
 
 	static
 	public Map<FieldName, ? extends Vote> evaluateVote(TargetField targetField, Vote vote){
-		DataField dataField = targetField.getField();
-
-		vote.computeResult(dataField.getDataType());
+		vote.computeResult(targetField.getDataType());
 
 		return Collections.singletonMap(targetField.getFieldName(), vote);
 	}
@@ -127,9 +120,7 @@ public class TargetUtil {
 
 	static
 	public <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassification(TargetField targetField, Classification<?, V> classification){
-		DataField dataField = targetField.getField();
-
-		classification.computeResult(dataField.getDataType());
+		classification.computeResult(targetField.getDataType());
 
 		return Collections.singletonMap(targetField.getFieldName(), classification);
 	}
