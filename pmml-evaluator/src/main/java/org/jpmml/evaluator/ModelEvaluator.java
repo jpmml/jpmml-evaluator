@@ -915,7 +915,7 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 			Target target = getTarget(dataField.getName());
 
-			TargetField targetField = new TargetField(dataField, null, target);
+			TargetField targetField = new DefaultTargetField(dataField, target);
 
 			targetFields.add(targetField);
 		}
