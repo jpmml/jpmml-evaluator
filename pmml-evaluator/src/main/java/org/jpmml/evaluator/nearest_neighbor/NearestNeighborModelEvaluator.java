@@ -159,7 +159,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	@Override
-	protected DataField getDefaultDataField(){
+	public DataField getDefaultDataField(){
 		MiningFunction miningFunction = getMiningFunction();
 
 		switch(miningFunction){

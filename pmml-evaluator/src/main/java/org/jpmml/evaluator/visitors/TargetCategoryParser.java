@@ -18,8 +18,14 @@
  */
 package org.jpmml.evaluator.visitors;
 
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Iterables;
@@ -41,6 +47,8 @@ import org.dmg.pmml.general_regression.GeneralRegressionModel;
 import org.dmg.pmml.general_regression.PCell;
 import org.dmg.pmml.general_regression.PCovCell;
 import org.dmg.pmml.general_regression.PPCell;
+import org.dmg.pmml.mining.MiningModel;
+import org.dmg.pmml.mining.Segmentation;
 import org.dmg.pmml.naive_bayes.TargetValueCount;
 import org.dmg.pmml.naive_bayes.TargetValueStat;
 import org.dmg.pmml.regression.RegressionTable;
@@ -50,24 +58,37 @@ import org.dmg.pmml.support_vector_machine.SupportVectorMachine;
 import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
+import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.MissingAttributeException;
+import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.TypeUtil;
+import org.jpmml.model.XPathUtil;
 
 public class TargetCategoryParser extends AbstractParser {
 
-	private Set<FieldName> targetNames = new HashSet<>();
+	private Deque<Map<FieldName, DataType>> targetDataTypes = new ArrayDeque<>();
+
+	private DataType dataType = null;
 
 
 	@Override
 	public void reset(){
 		super.reset();
 
-		this.targetNames.clear();
+		this.targetDataTypes.clear();
+
+		this.dataType = null;
 	}
 
 	@Override
 	public void pushParent(PMMLObject parent){
 		super.pushParent(parent);
+
+		if(parent instanceof MiningModel){
+			MiningModel miningModel = (MiningModel)parent;
+
+			processMiningModel(miningModel);
+		} else
 
 		if(parent instanceof Model){
 			Model model = (Model)parent;
@@ -81,7 +102,9 @@ public class TargetCategoryParser extends AbstractParser {
 		PMMLObject parent = super.popParent();
 
 		if(parent instanceof Model){
-			this.targetNames.clear();
+			this.targetDataTypes.pop();
+
+			this.dataType = null;
 		}
 
 		return parent;
@@ -124,16 +147,7 @@ public class TargetCategoryParser extends AbstractParser {
 			case CONFIDENCE:
 			case AFFINITY:
 				{
-					Object value = outputField.getValue();
-
-					FieldName targetName = outputField.getTargetField();
-					if(targetName != null){
-						outputField.setValue(parseTargetValue(targetName, value));
-					} else
-
-					{
-						outputField.setValue(parseTargetValue(value));
-					}
+					outputField.setValue(parseTargetValue(outputField.getTargetField(), outputField.getValue()));
 				}
 				break;
 			default:
@@ -221,10 +235,7 @@ public class TargetCategoryParser extends AbstractParser {
 	public VisitorAction visit(TargetValue targetValue){
 		Target target = (Target)getParent();
 
-		FieldName targetName = target.getField();
-		if(targetName != null){
-			targetValue.setValue(parseTargetValue(targetName, targetValue.getValue()));
-		}
+		targetValue.setValue(parseTargetValue(target.getField(), targetValue.getValue()));
 
 		return super.visit(targetValue);
 	}
@@ -253,12 +264,40 @@ public class TargetCategoryParser extends AbstractParser {
 		return super.visit(targetValueStat);
 	}
 
+	private void processMiningModel(MiningModel miningModel){
+		Segmentation segmentation = miningModel.getSegmentation();
+
+		if(segmentation != null){
+			Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
+
+			switch(multipleModelMethod){
+				case SELECT_FIRST:
+				case SELECT_ALL:
+				case MODEL_CHAIN:
+					{
+						this.targetDataTypes.push(Collections.singletonMap(Evaluator.DEFAULT_TARGET_NAME, null));
+
+						this.dataType = null;
+
+						return;
+					}
+				default:
+					break;
+			}
+		}
+
+		processModel(miningModel);
+	}
+
 	private void processModel(Model model){
 		MiningSchema miningSchema = model.getMiningSchema();
+		if(miningSchema == null){
+			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(model.getClass()) + "/" + XPathUtil.formatElement(MiningSchema.class)), model);
+		}
 
-		this.targetNames.clear();
+		Map<FieldName, DataType> targetDataTypes = new LinkedHashMap<>();
 
-		if(miningSchema != null && miningSchema.hasMiningFields()){
+		if(miningSchema.hasMiningFields()){
 			List<MiningField> miningFields = miningSchema.getMiningFields();
 
 			for(MiningField miningField : miningFields){
@@ -271,33 +310,68 @@ public class TargetCategoryParser extends AbstractParser {
 				switch(usageType){
 					case PREDICTED:
 					case TARGET:
-						this.targetNames.add(name);
+						DataType dataType = resolveTargetDataType(name);
+
+						targetDataTypes.put(name, dataType);
 						break;
 					default:
 						break;
 				}
 			}
 		}
+
+		this.targetDataTypes.push(targetDataTypes);
+
+		this.dataType = getDataType();
+	}
+
+	private DataType getDataType(){
+		Iterator<Map<FieldName, DataType>> it = this.targetDataTypes.iterator();
+
+		while(it.hasNext()){
+			Map<FieldName, DataType> targetDataTypes = it.next();
+
+			if(targetDataTypes.size() > 0){
+				// Cannot use EnumSet, because it is null-hostile
+				Set<DataType> dataTypes = new HashSet<>(targetDataTypes.values());
+
+				if(dataTypes.size() == 1){
+					return Iterables.getOnlyElement(dataTypes);
+				}
+
+				return null;
+			}
+		}
+
+		return null;
 	}
 
 	private Object parseTargetValue(Object value){
 
-		if(value == null || this.targetNames.size() != 1){
+		if(value == null){
 			return value;
+		} // End if
+
+		if(this.dataType != null){
+			return TypeUtil.parseOrCast(this.dataType, value);
 		}
 
-		FieldName targetName = Iterables.getOnlyElement(this.targetNames);
-
-		return parseTargetValue(targetName, value);
+		return value;
 	}
 
 	private Object parseTargetValue(FieldName targetName, Object value){
 
-		if(value == null || targetName == null){
+		if(targetName == null){
+			return parseTargetValue(value);
+		} // End if
+
+		if(value == null){
 			return value;
 		}
 
-		DataType dataType = resolveDataType(targetName);
+		Map<FieldName, DataType> targetDataTypes = this.targetDataTypes.peekFirst();
+
+		DataType dataType = targetDataTypes.get(targetName);
 		if(dataType != null){
 			return TypeUtil.parseOrCast(dataType, value);
 		}

@@ -48,6 +48,7 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.Model;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
@@ -61,6 +62,7 @@ import org.dmg.pmml.mining.Segmentation;
 import org.dmg.pmml.mining.VariableWeight;
 import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Configuration;
+import org.jpmml.evaluator.DefaultTargetField;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
@@ -167,7 +169,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	protected DataField getDefaultDataField(){
+	public DataField getDefaultDataField(){
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.getSegmentation();
@@ -742,6 +744,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private ModelEvaluator<?> createSegmentModelEvaluator(String segmentId, Model model){
 		MiningModel miningModel = getModel();
 
+		MiningFunction miningFunction = miningModel.getMiningFunction();
+
 		Segmentation segmentation = miningModel.getSegmentation();
 
 		Configuration configuration = ensureConfiguration();
@@ -772,6 +776,24 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					}
 				}
 				break;
+		}
+
+		MiningFunction segmentMiningFunction = model.getMiningFunction();
+
+		if((MiningFunction.CLASSIFICATION).equals(miningFunction) && (MiningFunction.CLASSIFICATION).equals(segmentMiningFunction)){
+			List<TargetField> targetFields = getTargetFields();
+			List<TargetField> segmentTargetFields = modelEvaluator.getTargetFields();
+
+			if(targetFields.size() == 1 && segmentTargetFields.size() == 1){
+				TargetField targetField = targetFields.get(0);
+				TargetField segmentTargetField = segmentTargetFields.get(0);
+
+				if(segmentTargetField instanceof DefaultTargetField){
+					DefaultTargetField defaultTargetField = (DefaultTargetField)segmentTargetField;
+
+					modelEvaluator.setDefaultDataField(new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CATEGORICAL, targetField.getDataType()));
+				}
+			}
 		}
 
 		modelEvaluator.configure(configuration);

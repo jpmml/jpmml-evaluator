@@ -94,6 +94,8 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 
 	private ValueFactory<?> valueFactory = null;
 
+	private DataField defaultDataField = null;
+
 	private Map<FieldName, DataField> dataFields = Collections.emptyMap();
 
 	private Map<FieldName, DerivedField> derivedFields = Collections.emptyMap();
@@ -238,9 +240,13 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 	/**
 	 * @return A synthetic {@link DataField} element describing the default target field.
 	 */
-	protected DataField getDefaultDataField(){
-		MiningFunction miningFunction = getMiningFunction();
+	public DataField getDefaultDataField(){
 
+		if(this.defaultDataField != null){
+			return this.defaultDataField;
+		}
+
+		MiningFunction miningFunction = getMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
 				MathContext mathContext = getMathContext();
@@ -257,6 +263,10 @@ public class ModelEvaluator<M extends Model> implements Evaluator, HasModel<M>, 
 			default:
 				return null;
 		}
+	}
+
+	public void setDefaultDataField(DataField defaultDataField){
+		this.defaultDataField = defaultDataField;
 	}
 
 	public DerivedField getDerivedField(FieldName name){

@@ -29,6 +29,8 @@ import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.TransformationDictionary;
+import org.jpmml.evaluator.DuplicateFieldException;
+import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.model.visitors.FieldResolver;
 
 abstract
@@ -84,6 +86,34 @@ class AbstractParser extends FieldResolver {
 						break;
 					}
 				}
+			}
+
+			this.dataTypes.put(name, dataType);
+		}
+
+		return dataType;
+	}
+
+	protected DataType resolveTargetDataType(FieldName name){
+		DataType dataType = this.dataTypes.get(name);
+
+		if(dataType == null && !this.dataTypes.containsKey(name)){
+			Collection<Field<?>> fields = getFields();
+
+			for(Field<?> field : fields){
+
+				if((name).equals(field.getName())){
+
+					if(dataType != null){
+						throw new DuplicateFieldException(name);
+					}
+
+					dataType = field.getDataType();
+				}
+			}
+
+			if(dataType == null){
+				throw new MissingFieldException(name);
 			}
 
 			this.dataTypes.put(name, dataType);
