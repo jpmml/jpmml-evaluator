@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
@@ -30,22 +29,7 @@ public class ModelEvaluatorFactory extends ModelManagerFactory<ModelEvaluator<?>
 		super((Class)ModelEvaluator.class);
 	}
 
-	public ModelEvaluator<?> newModelEvaluator(PMML pmml){
-		return newModelEvaluator(pmml, (String)null);
-	}
-
-	public ModelEvaluator<?> newModelEvaluator(PMML pmml, String modelName){
-		Objects.requireNonNull(pmml);
-
-		Model model = PMMLUtil.findModel(pmml, modelName);
-
-		return newModelEvaluator(pmml, model);
-	}
-
 	public ModelEvaluator<?> newModelEvaluator(PMML pmml, Model model){
-		Objects.requireNonNull(pmml);
-		Objects.requireNonNull(model);
-
 		return newModelManager(pmml, model);
 	}
 
