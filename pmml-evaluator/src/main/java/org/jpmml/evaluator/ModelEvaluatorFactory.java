@@ -23,36 +23,11 @@ import java.util.Objects;
 
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.association.AssociationModel;
-import org.dmg.pmml.clustering.ClusteringModel;
-import org.dmg.pmml.general_regression.GeneralRegressionModel;
-import org.dmg.pmml.mining.MiningModel;
-import org.dmg.pmml.naive_bayes.NaiveBayesModel;
-import org.dmg.pmml.nearest_neighbor.NearestNeighborModel;
-import org.dmg.pmml.neural_network.NeuralNetwork;
-import org.dmg.pmml.regression.RegressionModel;
-import org.dmg.pmml.rule_set.RuleSetModel;
-import org.dmg.pmml.scorecard.Scorecard;
-import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
-import org.dmg.pmml.tree.TreeModel;
-import org.jpmml.evaluator.association.AssociationModelEvaluator;
-import org.jpmml.evaluator.clustering.ClusteringModelEvaluator;
-import org.jpmml.evaluator.general_regression.GeneralRegressionModelEvaluator;
-import org.jpmml.evaluator.java.JavaModel;
-import org.jpmml.evaluator.java.JavaModelEvaluator;
-import org.jpmml.evaluator.mining.MiningModelEvaluator;
-import org.jpmml.evaluator.naive_bayes.NaiveBayesModelEvaluator;
-import org.jpmml.evaluator.nearest_neighbor.NearestNeighborModelEvaluator;
-import org.jpmml.evaluator.neural_network.NeuralNetworkEvaluator;
-import org.jpmml.evaluator.regression.RegressionModelEvaluator;
-import org.jpmml.evaluator.rule_set.RuleSetModelEvaluator;
-import org.jpmml.evaluator.scorecard.ScorecardEvaluator;
-import org.jpmml.evaluator.support_vector_machine.SupportVectorMachineModelEvaluator;
-import org.jpmml.evaluator.tree.TreeModelEvaluator;
 
-public class ModelEvaluatorFactory implements Serializable {
+public class ModelEvaluatorFactory extends ModelManagerFactory<ModelEvaluator<?>> implements Serializable {
 
 	protected ModelEvaluatorFactory(){
+		super((Class)ModelEvaluator.class);
 	}
 
 	public ModelEvaluator<?> newModelEvaluator(PMML pmml){
@@ -71,59 +46,7 @@ public class ModelEvaluatorFactory implements Serializable {
 		Objects.requireNonNull(pmml);
 		Objects.requireNonNull(model);
 
-		if(model instanceof AssociationModel){
-			return new AssociationModelEvaluator(pmml, (AssociationModel)model);
-		} else
-
-		if(model instanceof ClusteringModel){
-			 return new ClusteringModelEvaluator(pmml, (ClusteringModel)model);
-		} else
-
-		if(model instanceof GeneralRegressionModel){
-			return new GeneralRegressionModelEvaluator(pmml, (GeneralRegressionModel)model);
-		} else
-
-		if(model instanceof MiningModel){
-			return new MiningModelEvaluator(pmml, (MiningModel)model);
-		} else
-
-		if(model instanceof NaiveBayesModel){
-			return new NaiveBayesModelEvaluator(pmml, (NaiveBayesModel)model);
-		} else
-
-		if(model instanceof NearestNeighborModel){
-			return new NearestNeighborModelEvaluator(pmml, (NearestNeighborModel)model);
-		} else
-
-		if(model instanceof NeuralNetwork){
-			return new NeuralNetworkEvaluator(pmml, (NeuralNetwork)model);
-		} else
-
-		if(model instanceof RegressionModel){
-			return new RegressionModelEvaluator(pmml, (RegressionModel)model);
-		} else
-
-		if(model instanceof RuleSetModel){
-			return new RuleSetModelEvaluator(pmml, (RuleSetModel)model);
-		} else
-
-		if(model instanceof Scorecard){
-			return new ScorecardEvaluator(pmml, (Scorecard)model);
-		} else
-
-		if(model instanceof SupportVectorMachineModel){
-			return new SupportVectorMachineModelEvaluator(pmml, (SupportVectorMachineModel)model);
-		} else
-
-		if(model instanceof TreeModel){
-			return new TreeModelEvaluator(pmml, (TreeModel)model);
-		} // End if
-
-		if(model instanceof JavaModel){
-			return new JavaModelEvaluator(pmml, (JavaModel)model);
-		}
-
-		throw new UnsupportedElementException(model);
+		return newModelManager(pmml, model);
 	}
 
 	static

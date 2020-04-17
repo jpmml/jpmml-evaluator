@@ -1,0 +1,13 @@
+org.jpmml.evaluator.association.AssociationModelEvaluator
+org.jpmml.evaluator.clustering.ClusteringModelEvaluator
+org.jpmml.evaluator.general_regression.GeneralRegressionModelEvaluator
+org.jpmml.evaluator.java.JavaModelEvaluator
+org.jpmml.evaluator.mining.MiningModelEvaluator
+org.jpmml.evaluator.naive_bayes.NaiveBayesModelEvaluator
+org.jpmml.evaluator.nearest_neighbor.NearestNeighborModelEvaluator
+org.jpmml.evaluator.neural_network.NeuralNetworkEvaluator
+org.jpmml.evaluator.regression.RegressionModelEvaluator
+org.jpmml.evaluator.rule_set.RuleSetModelEvaluator
+org.jpmml.evaluator.scorecard.ScorecardEvaluator
+org.jpmml.evaluator.support_vector_machine.SupportVectorMachineModelEvaluator
+org.jpmml.evaluator.tree.TreeModelEvaluator 
