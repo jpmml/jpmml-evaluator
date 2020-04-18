@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,10 +35,6 @@ public class EvaluationContext {
 
 	private Map<FieldName, FieldValue> values = new HashMap<>();
 
-	private FieldName[] indexedNames = null;
-
-	private FieldValue[] indexedValues = null;
-
 	private List<String> warnings = null;
 
 
@@ -53,29 +48,11 @@ public class EvaluationContext {
 
 		if(clearValues){
 			this.values.clear();
-
-			this.indexedNames = null;
-			this.indexedValues = null;
 		} // End if
 
 		if(this.warnings != null){
 			this.warnings.clear();
 		}
-	}
-
-	public void setIndex(List<FieldName> names){
-
-		if(names == null){
-			this.indexedNames = null;
-			this.indexedValues = null;
-
-			return;
-		}
-
-		this.indexedNames = names.toArray(new FieldName[names.size()]);
-		this.indexedValues = new FieldValue[names.size()];
-
-		Arrays.fill(this.indexedValues, EvaluationContext.UNDECLARED_VALUE);
 	}
 
 	/**
@@ -112,29 +89,6 @@ public class EvaluationContext {
 		}
 
 		return resolve(name);
-	}
-
- 	/**
- 	 * <p>
-	 * Looks up a field value by name index.
-	 * </p>
-	 */
-	public FieldValue evaluate(int index){
-
-		if(this.indexedNames == null){
-			throw new IllegalStateException();
-		}
-
-		FieldValue value = this.indexedValues[index];
-		if(value == EvaluationContext.UNDECLARED_VALUE){
-			FieldName name = this.indexedNames[index];
-
-			value = evaluate(name);
-
-			this.indexedValues[index] = value;
-		}
-
-		return value;
 	}
 
 	public List<FieldValue> evaluateAll(List<FieldName> names){

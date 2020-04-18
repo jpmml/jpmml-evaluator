@@ -53,27 +53,6 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 		}
 
 		assertEquals(value, context.evaluate(name));
-
-		try {
-			context.evaluate(0);
-
-			fail();
-		} catch(IllegalStateException ise){
-			// Ignored
-		}
-
-		context.setIndex(Collections.singletonList(name));
-
-		assertEquals(value, context.evaluate(0));
-
-		try {
-			context.evaluate(1);
-
-			fail();
-		} catch(IndexOutOfBoundsException aioobe){
-			// Ignored
-		}
-
 		assertEquals(Arrays.asList(value), context.evaluateAll(Arrays.asList(name)));
 
 		context.reset(false);
@@ -85,7 +64,6 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 		assertEquals(value, context.lookup(name));
 
 		assertEquals(value, context.evaluate(name));
-		assertEquals(value, context.evaluate(0));
 		assertEquals(Arrays.asList(value), context.evaluateAll(Arrays.asList(name)));
 
 		context.reset(true);
@@ -99,14 +77,6 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 		}
 
 		assertEquals(FieldValues.MISSING_VALUE, context.evaluate(name));
-
-		try {
-			context.evaluate(0);
-
-			fail();
-		} catch(IllegalStateException ise){
-			// Ignored
-		}
 	}
 
 	@Test
@@ -127,15 +97,6 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 		}
 
 		assertEquals(FieldValues.MISSING_VALUE, context.evaluate(name));
-
-		try {
-			context.evaluate(0);
-
-			fail();
-		} catch(IllegalStateException ise){
-			// Ignored
-		}
-
 		assertEquals(Arrays.asList(FieldValues.MISSING_VALUE), context.evaluateAll(Arrays.asList(name)));
  	}
 }
