@@ -229,7 +229,7 @@ public class MiningModelUtil {
 					Collection<Value<V>> voteSums = result.values();
 
 					// "The missing result is returned if it gets the most (possibly weighted) votes"
-					if(voteSums.size() > 0 && (missingVoteSum).compareTo(Collections.max(voteSums)) > 0){
+					if(!voteSums.isEmpty() && (missingVoteSum).compareTo(Collections.max(voteSums)) > 0){
 						return null;
 					}
 				}

@@ -89,7 +89,7 @@ public class ModelManagerFactory<S extends ModelManager<?>> {
 		while(modelClazz != null){
 			List<Class<? extends S>> modelServiceProviderClazzes = serviceProviderClazzes.get(modelClazz);
 
-			if(modelServiceProviderClazzes != null && modelServiceProviderClazzes.size() > 0){
+			if(modelServiceProviderClazzes != null && !modelServiceProviderClazzes.isEmpty()){
 				return modelServiceProviderClazzes;
 			}
 

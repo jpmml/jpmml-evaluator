@@ -331,7 +331,7 @@ public class TargetCategoryParser extends AbstractParser {
 		while(it.hasNext()){
 			Map<FieldName, DataType> targetDataTypes = it.next();
 
-			if(targetDataTypes.size() > 0){
+			if(!targetDataTypes.isEmpty()){
 				// Cannot use EnumSet, because it is null-hostile
 				Set<DataType> dataTypes = new HashSet<>(targetDataTypes.values());
 

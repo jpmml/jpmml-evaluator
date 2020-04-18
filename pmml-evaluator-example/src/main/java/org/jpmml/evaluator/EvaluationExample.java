@@ -256,7 +256,7 @@ public class EvaluationExample extends Example {
 
 		CsvUtil.Table inputTable = readTable(this.input, this.separator);
 
-		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, createCellParser(this.missingValues.size() > 0 ? new HashSet<>(this.missingValues) : null));
+		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, createCellParser(!this.missingValues.isEmpty() ? new HashSet<>(this.missingValues) : null));
 
 		if(this.waitBeforeInit){
 			waitForUserInput();
@@ -344,16 +344,16 @@ public class EvaluationExample extends Example {
 			groupFields = hasGroupfields.getGroupFields();
 		} // End if
 
-		if(inputRecords.size() > 0){
+		if(!inputRecords.isEmpty()){
 			Map<FieldName, ?> inputRecord = inputRecords.get(0);
 
 			Sets.SetView<FieldName> missingInputFields = Sets.difference(new LinkedHashSet<>(Lists.transform(inputFields, InputField::getName)), inputRecord.keySet());
-			if((missingInputFields.size() > 0) && !this.sparse){
+			if(!missingInputFields.isEmpty() && !this.sparse){
 				throw new IllegalArgumentException("Missing input field(s): " + missingInputFields);
 			}
 
 			Sets.SetView<FieldName> missingGroupFields = Sets.difference(new LinkedHashSet<>(Lists.transform(groupFields, InputField::getName)), inputRecord.keySet());
-			if(missingGroupFields.size() > 0){
+			if(!missingGroupFields.isEmpty()){
 				throw new IllegalArgumentException("Missing group field(s): " + missingGroupFields);
 			}
 		} // End if
@@ -437,7 +437,7 @@ public class EvaluationExample extends Example {
 			columns.add(errorColumn);
 		}
 
-		outputTable.addAll(BatchUtil.formatRecords(outputRecords, columns, createCellFormatter(outputTable.getSeparator(), this.missingValues.size() > 0 ? this.missingValues.get(0) : null)));
+		outputTable.addAll(BatchUtil.formatRecords(outputRecords, columns, createCellFormatter(outputTable.getSeparator(), !this.missingValues.isEmpty() ? this.missingValues.get(0) : null)));
 
 		if((inputTable.size() == outputTable.size()) && this.copyColumns){
 

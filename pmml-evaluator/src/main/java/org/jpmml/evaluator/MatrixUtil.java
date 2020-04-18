@@ -78,7 +78,7 @@ public class MatrixUtil {
 			case SYMMETRIC:
 				{
 					// "The content must be represented by Arrays"
-					if(arrays.size() > 0){
+					if(!arrays.isEmpty()){
 
 						// Make sure the specified coordinates target the lower left triangle
 						if(column > row){
@@ -94,11 +94,11 @@ public class MatrixUtil {
 				break;
 			case ANY:
 				{
-					if(arrays.size() > 0){
+					if(!arrays.isEmpty()){
 						return getArrayValue(arrays, row, column);
 					} // End if
 
-					if(matCells.size() > 0){
+					if(!matCells.isEmpty()){
 
 						if(row < 1 || column < 1){
 							throw new IndexOutOfBoundsException();
@@ -175,18 +175,18 @@ public class MatrixUtil {
 				break;
 			case SYMMETRIC:
 				{
-					if(arrays.size() > 0){
+					if(!arrays.isEmpty()){
 						return arrays.size();
 					}
 				}
 				break;
 			case ANY:
 				{
-					if(arrays.size() > 0){
+					if(!arrays.isEmpty()){
 						return arrays.size();
 					} // End if
 
-					if(matCells.size() > 0){
+					if(!matCells.isEmpty()){
 						MatCell matCell = Collections.max(matCells, MatrixUtil.rowComparator);
 
 						return matCell.getRow();
@@ -226,20 +226,20 @@ public class MatrixUtil {
 				break;
 			case SYMMETRIC:
 				{
-					if(arrays.size() > 0){
+					if(!arrays.isEmpty()){
 						return arrays.size();
 					}
 				}
 				break;
 			case ANY:
 				{
-					if(arrays.size() > 0){
+					if(!arrays.isEmpty()){
 						Array array = arrays.get(arrays.size() - 1);
 
 						return ArrayUtil.getSize(array);
 					} // End if
 
-					if(matCells.size() > 0){
+					if(!matCells.isEmpty()){
 						MatCell matCell = Collections.max(matCells, MatrixUtil.columnComparator);
 
 						return matCell.getCol();

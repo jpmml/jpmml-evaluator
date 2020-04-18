@@ -108,7 +108,7 @@ public class BatchUtil {
 				}
 			}
 
-			if(duplicateHeaderCells.size() > 0){
+			if(!duplicateHeaderCells.isEmpty()){
 				throw new IllegalArgumentException("Expected unique cell names, got non-unique cell name(s) " + duplicateHeaderCells);
 			}
 		}

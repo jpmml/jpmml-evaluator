@@ -331,7 +331,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		if(resultMapper != null){
 
-			if(results.size() == 0){
+			if(results.isEmpty()){
 				return results;
 			} else
 
@@ -398,7 +398,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		ResultMapper resultMapper = getResultMapper();
 
 		List<OutputField> outputFields = super.createOutputFields();
-		if(outputFields.size() > 0){
+		if(!outputFields.isEmpty()){
 			Predicate<org.dmg.pmml.OutputField> outputFilter = ensureOutputFilter();
 
 			outputFields = new ArrayList<>(outputFields);

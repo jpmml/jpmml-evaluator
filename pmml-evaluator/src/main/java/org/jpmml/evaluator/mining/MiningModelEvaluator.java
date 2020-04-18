@@ -194,7 +194,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	public FieldName getTargetName(){
 		List<TargetField> targetFields = super.getTargetFields();
 
-		if(targetFields.size() == 0){
+		if(targetFields.isEmpty()){
 			return Evaluator.DEFAULT_TARGET_NAME;
 		}
 
@@ -216,7 +216,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		List<OutputField> outputFields = super.createOutputFields();
 
 		List<OutputField> nestedOutputFields = createNestedOutputFields();
-		if(nestedOutputFields.size() > 0){
+		if(!nestedOutputFields.isEmpty()){
 			// Depth-first ordering
 			return ImmutableList.copyOf(Iterables.concat(nestedOutputFields, outputFields));
 		}
@@ -588,7 +588,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			}
 
 			List<String> segmentWarnings = segmentContext.getWarnings();
-			if(segmentWarnings.size() > 0){
+			if(!segmentWarnings.isEmpty()){
 
 				for(String segmentWarning : segmentWarnings){
 					context.addWarning(segmentWarning);
@@ -633,14 +633,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case SELECT_FIRST:
-				if(segmentResults.size() > 0){
+				if(!segmentResults.isEmpty()){
 					return segmentResults.get(0);
 				}
 				break;
 			case SELECT_ALL:
 				return selectAll(segmentResults);
 			case MODEL_CHAIN:
-				if(segmentResults.size() > 0){
+				if(!segmentResults.isEmpty()){
 					return segmentResults.get(segmentResults.size() - 1);
 				}
 				break;
@@ -652,7 +652,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 
 		// "If no segments have predicates that evaluate to true, then the result is a missing value"
-		if(segmentResults.size() == 0){
+		if(segmentResults.isEmpty()){
 			return Collections.singletonMap(getTargetName(), null);
 		}
 

@@ -146,7 +146,7 @@ public class TestingExample extends Example {
 
 		Predicate<FieldName> predicate;
 
-		if(this.ignoredFields != null && this.ignoredFields.size() > 0){
+		if(this.ignoredFields != null && !this.ignoredFields.isEmpty()){
 			predicate = (FieldName name) -> !this.ignoredFields.contains(name);
 		} else
 

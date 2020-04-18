@@ -67,7 +67,7 @@ public class InvalidMarkupInspector extends MarkupInspector<InvalidMarkupExcepti
 				List<?> collection = (List<?>)value;
 
 				// The getter method may have initialized the field with an empty ArrayList instance
-				if(collection.size() == 0){
+				if(collection.isEmpty()){
 					value = null;
 				}
 			} // End if

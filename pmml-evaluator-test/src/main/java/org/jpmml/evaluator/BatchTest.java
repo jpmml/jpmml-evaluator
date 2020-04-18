@@ -41,7 +41,7 @@ public class BatchTest {
 		}
 
 		List<Conflict> conflicts = BatchUtil.evaluate(batch, equivalence);
-		if(conflicts.size() > 0){
+		if(!conflicts.isEmpty()){
 
 			for(Conflict conflict : conflicts){
 				log(conflict);

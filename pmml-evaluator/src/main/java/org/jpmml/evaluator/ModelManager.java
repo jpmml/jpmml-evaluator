@@ -369,7 +369,7 @@ public class ModelManager<M extends Model> implements HasModel<M> {
 		List<InputField> inputFields = getActiveFields();
 
 		List<OutputField> outputFields = getOutputFields();
-		if(outputFields.size() > 0){
+		if(!outputFields.isEmpty()){
 			List<ResidualInputField> residualInputFields = null;
 
 			for(OutputField outputField : outputFields){
@@ -408,7 +408,7 @@ public class ModelManager<M extends Model> implements HasModel<M> {
 				residualInputFields.add(residualInputField);
 			}
 
-			if(residualInputFields != null && residualInputFields.size() > 0){
+			if(residualInputFields != null && !residualInputFields.isEmpty()){
 				inputFields = ImmutableList.copyOf(Iterables.concat(inputFields, residualInputFields));
 			}
 		}

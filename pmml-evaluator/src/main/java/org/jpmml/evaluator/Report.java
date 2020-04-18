@@ -45,13 +45,13 @@ public class Report {
 	public boolean hasEntries(){
 		List<Entry> entries = getEntries();
 
-		return (entries.size() > 0);
+		return !entries.isEmpty();
 	}
 
 	public Entry headEntry(){
 		List<Entry> entries = getEntries();
 
-		if(entries.size() < 1){
+		if(entries.isEmpty()){
 			throw new IllegalStateException();
 		}
 
@@ -61,7 +61,7 @@ public class Report {
 	public Entry tailEntry(){
 		List<Entry> entries = getEntries();
 
-		if(entries.size() < 1){
+		if(entries.isEmpty()){
 			throw new IllegalStateException();
 		}
 

@@ -191,7 +191,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 
 			baselineCells = baselineStratum.getBaselineCells();
-			if(baselineCells.size() < 1){
+			if(baselineCells.isEmpty()){
 				throw new MissingElementException(baselineStratum, PMMLElements.BASELINESTRATUM_BASELINECELLS);
 			}
 
@@ -203,7 +203,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		{
 			baselineCells = baseCumHazardTables.getBaselineCells();
-			if(baselineCells.size() < 1){
+			if(baselineCells.isEmpty()){
 				throw new MissingElementException(baseCumHazardTables, PMMLElements.BASECUMHAZARDTABLES_BASELINECELLS);
 			}
 

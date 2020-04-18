@@ -143,7 +143,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	protected List<TargetField> createTargetFields(){
 		List<TargetField> targetFields = super.createTargetFields();
 
-		if(targetFields.size() > 0){
+		if(!targetFields.isEmpty()){
 			throw createMiningSchemaException("Expected 0 target fields, got " + targetFields.size() + " target fields");
 		}
 
@@ -238,7 +238,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 			FieldValue value = context.evaluate(name);
 
-			if(groupFields.size() == 0){
+			if(groupFields.isEmpty()){
 
 				if(FieldValueUtil.isMissing(value)){
 					continue;
@@ -405,9 +405,9 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			if(name == null){
 
 				// Categorical data style: no group fields, one or more active fields
-				if(groupFields.size() == 0){
+				if(groupFields.isEmpty()){
 
-					if(activeFields.size() < 1){
+					if(activeFields.isEmpty()){
 						throw modelEvaluator.createMiningSchemaException("Expected 1 or more active field(s), got " + activeFields.size() + " active fields");
 					}
 

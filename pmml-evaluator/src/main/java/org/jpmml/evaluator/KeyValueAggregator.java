@@ -43,7 +43,7 @@ public class KeyValueAggregator<K, V extends Number> {
 
 	public void init(Collection<K> keys){
 
-		if(this.map.size() > 0){
+		if(!this.map.isEmpty()){
 			throw new IllegalStateException();
 		}
 

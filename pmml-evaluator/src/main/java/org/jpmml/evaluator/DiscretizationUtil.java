@@ -192,7 +192,7 @@ public class DiscretizationUtil {
 
 			Set<Integer> valueRows = valueRowsMap.get(FieldValueUtil.getValue(value));
 
-			if(valueRows != null && valueRows.size() > 0){
+			if(valueRows != null && !valueRows.isEmpty()){
 
 				if(rows == null){
 					rows = (entries.size() > 1 ? new HashSet<>(valueRows) : valueRows);
@@ -212,7 +212,7 @@ public class DiscretizationUtil {
 			}
 		}
 
-		if(rows != null && rows.size() > 0){
+		if(rows != null && !rows.isEmpty()){
 			Table<Integer, String, Object> content = InlineTableUtil.getContent(inlineTable);
 
 			// "It is an error if the table entries used for matching are not unique"

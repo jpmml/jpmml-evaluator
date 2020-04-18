@@ -101,7 +101,7 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 
 		locatorHandler.applyTo(pmml);
 
-		if(visitors != null && visitors.size() > 0){
+		if(visitors != null && !visitors.isEmpty()){
 			visitors.applyTo(pmml);
 		}
 

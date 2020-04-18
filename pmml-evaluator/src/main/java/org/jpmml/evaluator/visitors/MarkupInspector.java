@@ -65,7 +65,7 @@ public class MarkupInspector<E extends PMMLException> extends AbstractVisitor {
 		super.applyTo(visitable);
 
 		List<E> exceptions = getExceptions();
-		if(exceptions.size() > 0){
+		if(!exceptions.isEmpty()){
 			throw exceptions.get(0);
 		}
 	}

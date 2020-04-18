@@ -55,7 +55,7 @@ class OutputMap extends LinkedHashMap<FieldName, Object> {
 
 	public void clearPrivate(){
 
-		if(this.privateFields != null && this.privateFields.size() > 0){
+		if(this.privateFields != null && !this.privateFields.isEmpty()){
 			Set<FieldName> fields = keySet();
 
 			fields.removeAll(this.privateFields);
