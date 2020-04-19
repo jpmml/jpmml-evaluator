@@ -41,6 +41,8 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 
 	public ModelEvaluationContext(ModelEvaluator<?> modelEvaluator){
+		super(modelEvaluator.getNumberOfVisibleFields());
+
 		setModelEvaluator(modelEvaluator);
 	}
 

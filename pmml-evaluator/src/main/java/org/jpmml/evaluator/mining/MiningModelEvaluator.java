@@ -225,6 +225,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
+	protected int getNumberOfVisibleFields(){
+		return -1;
+	}
+
+	@Override
 	public ModelEvaluationContext createEvaluationContext(){
 		return new MiningModelEvaluationContext(this);
 	}

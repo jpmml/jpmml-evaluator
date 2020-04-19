@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,8 +31,11 @@ import java.util.concurrent.Callable;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
@@ -99,7 +101,7 @@ public class ModelManager<M extends Model> implements HasModel<M> {
 	private List<OutputField> outputResultFields = null;
 
 	transient
-	private Map<FieldName, Field<?>> resolvedFields = null;
+	private ListMultimap<FieldName, Field<?>> visibleFields = null;
 
 
 	protected ModelManager(PMML pmml, M model){
@@ -358,12 +360,30 @@ public class ModelManager<M extends Model> implements HasModel<M> {
 	}
 
 	protected Field<?> resolveField(FieldName name){
+		ListMultimap<FieldName, Field<?>> visibleFields = getVisibleFields();
 
-		if(this.resolvedFields == null){
-			this.resolvedFields = resolveFields();
+		List<Field<?>> fields = visibleFields.get(name);
+
+		if(fields.isEmpty()){
+			return null;
+		} else
+
+		if(fields.size() == 1){
+			return fields.get(0);
+		} else
+
+		{
+			throw new DuplicateFieldException(name);
+		}
+	}
+
+	protected ListMultimap<FieldName, Field<?>> getVisibleFields(){
+
+		if(this.visibleFields == null){
+			this.visibleFields = collectVisibleFields();
 		}
 
-		return this.resolvedFields.get(name);
+		return this.visibleFields;
 	}
 
 	protected EvaluationException createMiningSchemaException(String message){
@@ -529,11 +549,11 @@ public class ModelManager<M extends Model> implements HasModel<M> {
 		return ImmutableList.copyOf(outputFields);
 	}
 
-	private Map<FieldName, Field<?>> resolveFields(){
+	private ListMultimap<FieldName, Field<?>> collectVisibleFields(){
 		PMML pmml = getPMML();
 		Model model = getModel();
 
-		Map<FieldName, Field<?>> result = new HashMap<>();
+		ListMultimap<FieldName, Field<?>> visibleFields = ArrayListMultimap.create();
 
 		FieldResolver fieldResolver = new FieldResolver(){
 
@@ -546,12 +566,7 @@ public class ModelManager<M extends Model> implements HasModel<M> {
 
 					Collection<Field<?>> fields = getFields(model);
 					for(Field<?> field : fields){
-						FieldName name = field.getName();
-
-						Field<?> prevField = result.put(name, field);
-						if(prevField != null){
-							throw new DuplicateFieldException(name);
-						}
+						visibleFields.put(field.getName(), field);
 					}
 				}
 
@@ -561,7 +576,7 @@ public class ModelManager<M extends Model> implements HasModel<M> {
 
 		fieldResolver.applyTo(pmml);
 
-		return result;
+		return ImmutableListMultimap.copyOf(visibleFields);
 	}
 
 	public <V> V getValue(LoadingCache<M, V> cache){

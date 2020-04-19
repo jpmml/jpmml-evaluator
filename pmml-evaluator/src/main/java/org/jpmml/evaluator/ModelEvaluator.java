@@ -36,6 +36,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
@@ -79,6 +80,9 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	transient
 	private Boolean pure = null;
+
+	transient
+	private Integer numberOfVisibleFields = null;
 
 
 	protected ModelEvaluator(PMML pmml, M model){
@@ -139,6 +143,17 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		}
 
 		return this.pure;
+	}
+
+	protected int getNumberOfVisibleFields(){
+
+		if(this.numberOfVisibleFields == null){
+			ListMultimap<FieldName, Field<?>> visibleFields = getVisibleFields();
+
+			this.numberOfVisibleFields = visibleFields.size();
+		}
+
+		return this.numberOfVisibleFields;
 	}
 
 	@Override

@@ -33,12 +33,24 @@ import org.dmg.pmml.OpType;
 abstract
 public class EvaluationContext {
 
-	private Map<FieldName, FieldValue> values = new HashMap<>();
+	private Map<FieldName, FieldValue> values = null;
 
 	private List<String> warnings = null;
 
 
 	EvaluationContext(){
+		this.values = new HashMap<>();
+	}
+
+	EvaluationContext(int numberOfVisibleFields){
+
+		if(numberOfVisibleFields <= 256){
+			this.values = new HashMap<>(Math.max(2 * numberOfVisibleFields, 16));
+		} else
+
+		{
+			this.values = new HashMap<>(numberOfVisibleFields);
+		}
 	}
 
 	abstract
