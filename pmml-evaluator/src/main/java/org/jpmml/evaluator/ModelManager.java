@@ -347,14 +347,6 @@ public class ModelManager<M extends Model> implements HasModel<M> {
 		return this.outputResultFields;
 	}
 
-	protected EvaluationException createMiningSchemaException(String message){
-		M model = getModel();
-
-		MiningSchema miningSchema = model.getMiningSchema();
-
-		return new EvaluationException(message, miningSchema);
-	}
-
 	protected void resetInputFields(){
 		this.inputFields = null;
 		this.activeInputFields = null;
@@ -363,6 +355,23 @@ public class ModelManager<M extends Model> implements HasModel<M> {
 	protected void resetResultFields(){
 		this.targetResultFields = null;
 		this.outputResultFields = null;
+	}
+
+	protected Field<?> resolveField(FieldName name){
+
+		if(this.resolvedFields == null){
+			this.resolvedFields = resolveFields();
+		}
+
+		return this.resolvedFields.get(name);
+	}
+
+	protected EvaluationException createMiningSchemaException(String message){
+		M model = getModel();
+
+		MiningSchema miningSchema = model.getMiningSchema();
+
+		return new EvaluationException(message, miningSchema);
 	}
 
 	protected List<InputField> createInputFields(){
@@ -518,15 +527,6 @@ public class ModelManager<M extends Model> implements HasModel<M> {
 		}
 
 		return ImmutableList.copyOf(outputFields);
-	}
-
-	protected Field<?> resolveField(FieldName name){
-
-		if(this.resolvedFields == null){
-			this.resolvedFields = resolveFields();
-		}
-
-		return this.resolvedFields.get(name);
 	}
 
 	private Map<FieldName, Field<?>> resolveFields(){
