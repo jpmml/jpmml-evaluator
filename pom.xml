@@ -48,7 +48,7 @@
 		<module>pmml-evaluator-extension</module>
 		<module>pmml-evaluator-jacoco</module>
 		<module>pmml-evaluator-reporting</module>
-		<module>pmml-evaluator-test</module>
+		<module>pmml-evaluator-testing</module>
 		<module>pmml-knime</module>
 		<module>pmml-rapidminer</module>
 		<module>pmml-rattle</module>
@@ -100,7 +100,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
-				<artifactId>pmml-evaluator-test</artifactId>
+				<artifactId>pmml-evaluator-testing</artifactId>
 				<version>1.5-SNAPSHOT</version>
 			</dependency>
 			<dependency>

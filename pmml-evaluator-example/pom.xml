@@ -41,7 +41,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-evaluator-test</artifactId>
+			<artifactId>pmml-evaluator-testing</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jpmml</groupId>

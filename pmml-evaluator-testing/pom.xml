@@ -9,9 +9,9 @@
 	</parent>
 
 	<groupId>org.jpmml</groupId>
-	<artifactId>pmml-evaluator-test</artifactId>
+	<artifactId>pmml-evaluator-testing</artifactId>
 
-	<name>JPMML evaluator test harness</name>
+	<name>JPMML evaluator batch testing harness</name>
 	<description>JPMML class model evaluator batch testing harness</description>
 
 	<licenses>

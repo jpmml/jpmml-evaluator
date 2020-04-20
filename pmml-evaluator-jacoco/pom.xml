@@ -30,7 +30,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-evaluator-test</artifactId>
+			<artifactId>pmml-evaluator-testing</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jpmml</groupId>
@@ -79,7 +79,7 @@
 										<fileset file="${rootdir}/pmml-evaluator/target/jacoco.exec" />
 										<fileset file="${rootdir}/pmml-evaluator-extension/target/jacoco.exec" />
 										<fileset file="${rootdir}/pmml-evaluator-reporting/target/jacoco.exec" />
-										<fileset file="${rootdir}/pmml-evaluator-test/target/jacoco.exec" />
+										<fileset file="${rootdir}/pmml-evaluator-testing/target/jacoco.exec" />
 										<fileset file="${rootdir}/pmml-knime/target/jacoco.exec" />
 										<fileset file="${rootdir}/pmml-rapidminer/target/jacoco.exec" />
 										<fileset file="${rootdir}/pmml-rattle/target/jacoco.exec" />
@@ -89,13 +89,13 @@
 										<classfiles>
 											<fileset dir="${rootdir}/pmml-evaluator/target/classes" />
 											<fileset dir="${rootdir}/pmml-evaluator-extension/target/classes" />
-											<fileset dir="${rootdir}/pmml-evaluator-test/target/classes" />
+											<fileset dir="${rootdir}/pmml-evaluator-testing/target/classes" />
 										</classfiles>
 										<sourcefiles>
 											<fileset dir="${rootdir}/pmml-evaluator/src/main/java" />
 											<fileset dir="${rootdir}/pmml-evaluator-extension/src/main/java" />
 											<fileset dir="${rootdir}/pmml-evaluator-reporting/target/generated-sources/apt" />
-											<fileset dir="${rootdir}/pmml-evaluator-test/src/main/java" />
+											<fileset dir="${rootdir}/pmml-evaluator-testing/src/main/java" />
 										</sourcefiles>
 									</structure>
 									<html destdir="${basedir}/target/jacoco-report/html" />
