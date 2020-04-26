@@ -35,6 +35,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import org.dmg.pmml.PMML;
+import org.jpmml.evaluator.testing.CsvUtil;
 import org.jpmml.model.PMMLUtil;
 
 abstract

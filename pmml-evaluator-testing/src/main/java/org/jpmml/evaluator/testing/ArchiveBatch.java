@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.testing;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +27,11 @@ import java.util.function.Predicate;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
+import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.EvaluatorBuilder;
+import org.jpmml.evaluator.FieldNameSet;
+import org.jpmml.evaluator.FunctionNameStack;
+import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.visitors.DefaultModelEvaluatorBattery;
 import org.jpmml.model.PMMLUtil;
 import org.jpmml.model.visitors.VisitorBattery;

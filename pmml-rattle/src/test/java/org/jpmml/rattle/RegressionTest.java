@@ -21,8 +21,8 @@ package org.jpmml.rattle;
 import java.util.function.Predicate;
 
 import org.dmg.pmml.FieldName;
-import org.jpmml.evaluator.IntegrationTest;
-import org.jpmml.evaluator.PMMLEquivalence;
+import org.jpmml.evaluator.testing.IntegrationTest;
+import org.jpmml.evaluator.testing.PMMLEquivalence;
 import org.junit.Test;
 
 public class RegressionTest extends IntegrationTest {

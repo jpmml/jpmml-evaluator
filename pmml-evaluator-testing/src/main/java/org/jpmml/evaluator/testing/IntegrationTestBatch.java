@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.testing;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +33,10 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
+import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.EvaluatorBuilder;
+import org.jpmml.evaluator.ModelEvaluatorBuilder;
+import org.jpmml.evaluator.OutputFilters;
 import org.jpmml.evaluator.visitors.InvalidMarkupInspector;
 import org.jpmml.evaluator.visitors.UnsupportedMarkupInspector;
 import org.jpmml.model.visitors.LocatorTransformer;

@@ -46,6 +46,8 @@ import com.google.common.collect.Sets;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
+import org.jpmml.evaluator.testing.BatchUtil;
+import org.jpmml.evaluator.testing.CsvUtil;
 import org.jpmml.evaluator.visitors.AttributeFinalizerBattery;
 import org.jpmml.evaluator.visitors.AttributeInternerBattery;
 import org.jpmml.evaluator.visitors.AttributeOptimizerBattery;

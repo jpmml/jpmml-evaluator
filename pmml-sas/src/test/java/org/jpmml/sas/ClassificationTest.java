@@ -29,11 +29,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
-import org.jpmml.evaluator.Batch;
-import org.jpmml.evaluator.FilterBatch;
-import org.jpmml.evaluator.IntegrationTest;
-import org.jpmml.evaluator.IntegrationTestBatch;
-import org.jpmml.evaluator.PMMLEquivalence;
+import org.jpmml.evaluator.testing.Batch;
+import org.jpmml.evaluator.testing.FilterBatch;
+import org.jpmml.evaluator.testing.IntegrationTest;
+import org.jpmml.evaluator.testing.IntegrationTestBatch;
+import org.jpmml.evaluator.testing.PMMLEquivalence;
 import org.jpmml.sas.visitors.ExpressionCorrector;
 import org.junit.Test;
 

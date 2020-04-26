@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.testing;
 
+import org.jpmml.evaluator.testing.FloatEquivalence;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

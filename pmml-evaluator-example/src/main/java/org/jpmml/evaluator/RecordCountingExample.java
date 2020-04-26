@@ -41,6 +41,8 @@ import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.mining.HasSegmentation;
 import org.jpmml.evaluator.mining.MiningModelEvaluator;
 import org.jpmml.evaluator.mining.SegmentResult;
+import org.jpmml.evaluator.testing.BatchUtil;
+import org.jpmml.evaluator.testing.CsvUtil;
 import org.jpmml.evaluator.tree.HasDecisionPath;
 import org.jpmml.model.visitors.AbstractVisitor;
 

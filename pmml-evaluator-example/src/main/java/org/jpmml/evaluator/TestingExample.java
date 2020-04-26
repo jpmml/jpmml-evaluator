@@ -29,6 +29,11 @@ import java.util.function.Predicate;
 import com.beust.jcommander.Parameter;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
+import org.jpmml.evaluator.testing.Batch;
+import org.jpmml.evaluator.testing.BatchUtil;
+import org.jpmml.evaluator.testing.Conflict;
+import org.jpmml.evaluator.testing.CsvUtil;
+import org.jpmml.evaluator.testing.PMMLEquivalence;
 
 public class TestingExample extends Example {
 

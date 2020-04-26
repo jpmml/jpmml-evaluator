@@ -16,11 +16,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.testing;
 
 import java.util.Objects;
 
 import com.google.common.base.Equivalence;
+import org.jpmml.evaluator.Computable;
+import org.jpmml.evaluator.EvaluatorUtil;
+import org.jpmml.evaluator.TypeUtil;
 
 public class RealNumberEquivalence extends Equivalence<Object> {
 

@@ -18,8 +18,8 @@
  */
 package org.jpmml.rapidminer;
 
-import org.jpmml.evaluator.IntegrationTest;
-import org.jpmml.evaluator.PMMLEquivalence;
+import org.jpmml.evaluator.testing.IntegrationTest;
+import org.jpmml.evaluator.testing.PMMLEquivalence;
 import org.junit.Test;
 
 public class RegressionTest extends IntegrationTest {

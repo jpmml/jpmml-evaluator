@@ -38,6 +38,7 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.Row;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
+import org.jpmml.evaluator.testing.CsvUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
