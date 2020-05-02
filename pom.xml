@@ -164,7 +164,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>[19.0, 28.2-jar]</version>
+				<version>[19.0, 29.0-jre]</version>
 				<exclusions>
 					<exclusion>
 						<groupId>com.google.code.findbugs</groupId>
