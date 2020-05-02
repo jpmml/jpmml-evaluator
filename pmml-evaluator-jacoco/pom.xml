@@ -124,27 +124,39 @@
 								<artifactItem>
 									<groupId>org.jacoco</groupId>
 									<artifactId>org.jacoco.ant</artifactId>
-									<version>0.8.0</version>
+									<version>0.8.5</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.jacoco</groupId>
 									<artifactId>org.jacoco.agent</artifactId>
-									<version>0.8.0</version>
+									<version>0.8.5</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.jacoco</groupId>
 									<artifactId>org.jacoco.core</artifactId>
-									<version>0.8.0</version>
+									<version>0.8.5</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.jacoco</groupId>
 									<artifactId>org.jacoco.report</artifactId>
-									<version>0.8.0</version>
+									<version>0.8.5</version>
+								</artifactItem>
+
+								<!-- Inherited from org.jacoco:org.jacoco.build dependency -->
+								<artifactItem>
+									<groupId>org.ow2.asm</groupId>
+									<artifactId>asm</artifactId>
+									<version>7.2</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.ow2.asm</groupId>
-									<artifactId>asm-debug-all</artifactId>
-									<version>6.0_BETA</version>
+									<artifactId>asm-commons</artifactId>
+									<version>7.2</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.ow2.asm</groupId>
+									<artifactId>asm-tree</artifactId>
+									<version>7.2</version>
 								</artifactItem>
 							</artifactItems>
 							<outputDirectory>${basedir}/target/jacoco-libs</outputDirectory>
