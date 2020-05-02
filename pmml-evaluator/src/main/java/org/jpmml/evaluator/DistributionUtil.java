@@ -59,6 +59,10 @@ public class DistributionUtil {
 		Number variance = gaussianDistribution.getVariance();
 		if(variance == null){
 			throw new MissingAttributeException(gaussianDistribution, PMMLAttributes.GAUSSIANDISTRIBUTION_VARIANCE);
+		} // End if
+
+		if(variance.doubleValue() <= 0d){
+			throw new InvalidAttributeException(gaussianDistribution, PMMLAttributes.GAUSSIANDISTRIBUTION_VARIANCE, variance);
 		}
 
 		NormalDistribution distribution = new NormalDistribution(mean.doubleValue(), Math.sqrt(variance.doubleValue()));
@@ -78,25 +82,5 @@ public class DistributionUtil {
 		x = (Number)TypeUtil.cast(DataType.INTEGER, x);
 
 		return distribution.probability(x.intValue());
-	}
-
-	static
-	public boolean isNoOp(ContinuousDistribution distribution){
-
-		if(distribution instanceof GaussianDistribution){
-			return isNoOp((GaussianDistribution)distribution);
-		}
-
-		return false;
-	}
-
-	static
-	public boolean isNoOp(GaussianDistribution gaussianDistribution){
-		Number variance = gaussianDistribution.getVariance();
-		if(variance == null){
-			throw new MissingAttributeException(gaussianDistribution, PMMLAttributes.GAUSSIANDISTRIBUTION_VARIANCE);
-		}
-
-		return variance.doubleValue() <= 0d;
 	}
 }

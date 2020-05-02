@@ -21,12 +21,9 @@ package org.jpmml.evaluator;
 import org.dmg.pmml.ContinuousDistribution;
 import org.dmg.pmml.GaussianDistribution;
 import org.dmg.pmml.PoissonDistribution;
-import org.dmg.pmml.UniformDistribution;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class DistributionUtilTest {
 
@@ -48,28 +45,5 @@ public class DistributionUtilTest {
 		assertEquals(0.17546737d, DistributionUtil.probability(distribution, 5), 1e-8);
 		assertEquals(0.10444486d, DistributionUtil.probability(distribution, 7), 1e-8);
 		assertEquals(0.03626558d, DistributionUtil.probability(distribution, 9), 1e-8);
-	}
-
-	@Test
-	public void isNoOp(){
-		ContinuousDistribution distribution = new GaussianDistribution(1d, 1d);
-
-		assertFalse(DistributionUtil.isNoOp(distribution));
-
-		distribution = new GaussianDistribution(0d, 1d);
-
-		assertFalse(DistributionUtil.isNoOp(distribution));
-
-		distribution = new GaussianDistribution(0d, 0d);
-
-		assertTrue(DistributionUtil.isNoOp(distribution));
-
-		distribution = new PoissonDistribution(0d);
-
-		assertFalse(DistributionUtil.isNoOp(distribution));
-
-		distribution = new UniformDistribution(0d, 1d);
-
-		assertFalse(DistributionUtil.isNoOp(distribution));
 	}
 }

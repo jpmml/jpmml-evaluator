@@ -264,11 +264,6 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 			// "For Naive Bayes models, continuous distribution types are restricted to Gaussian and Poisson distributions"
 			if((distribution instanceof GaussianDistribution) || (distribution instanceof PoissonDistribution)){
-
-				if(DistributionUtil.isNoOp(distribution)){
-					continue;
-				}
-
 				probability = DistributionUtil.probability(distribution, x);
 			} else
 
