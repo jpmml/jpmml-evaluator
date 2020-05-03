@@ -117,7 +117,7 @@
 										<Can-Retransform-Classes>true</Can-Retransform-Classes>
 										<Premain-Class>org.jpmml.agent.Main</Premain-Class>
 										<!-- org.jpmml:pmml-evaluator-example -->
-										<Main-Class>org.jpmml.evaluator.EvaluationExample</Main-Class>
+										<Main-Class>org.jpmml.evaluator.example.EvaluationExample</Main-Class>
 									</manifestEntries>
 								</transformer>
 							</transformers>

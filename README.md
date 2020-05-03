@@ -471,23 +471,23 @@ mvn clean install
 ```
 
 The resulting uber-JAR file `target/pmml-evaluator-example-executable-1.5-SNAPSHOT.jar` contains the following command-line applications:
-* `org.jpmml.evaluator.EvaluationExample` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/EvaluationExample.java).
-* `org.jpmml.evaluator.RecordCountingExample` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/RecordCountingExample.java).
-* `org.jpmml.evaluator.TestingExample` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/TestingExample.java).
+* `org.jpmml.evaluator.example.EvaluationExample` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/example/EvaluationExample.java).
+* `org.jpmml.evaluator.example.RecordCountingExample` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/example/RecordCountingExample.java).
+* `org.jpmml.evaluator.example.TestingExample` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator-example/src/main/java/org/jpmml/evaluator/example/TestingExample.java).
 
 Evaluating model `model.pmml` with data records from `input.csv`. The predictions are stored to `output.csv`:
 ```
-java -cp target/pmml-evaluator-example-executable-1.5-SNAPSHOT.jar org.jpmml.evaluator.EvaluationExample --model model.pmml --input input.csv --output output.csv
+java -cp target/pmml-evaluator-example-executable-1.5-SNAPSHOT.jar org.jpmml.evaluator.example.EvaluationExample --model model.pmml --input input.csv --output output.csv
 ```
 
 Evaluating model `model.pmml` with data records from `input.csv`. The predictions are verified against data records from `expected-output.csv`:
 ```
-java -cp target/pmml-evaluator-example-executable-1.5-SNAPSHOT.jar org.jpmml.evaluator.TestingExample --model model.pmml --input input.csv --expected-output expected-output.csv
+java -cp target/pmml-evaluator-example-executable-1.5-SNAPSHOT.jar org.jpmml.evaluator.example.TestingExample --model model.pmml --input input.csv --expected-output expected-output.csv
 ```
 
 Enhancing model `model.pmml` with verification data records from `input_expected-output.csv`:
 ```
-java -cp target/pmml-evaluator-example-executable-1.5-SNAPSHOT.jar org.jpmml.evaluator.EnhancementExample --model model.pmml --verification input_expected_output.csv
+java -cp target/pmml-evaluator-example-executable-1.5-SNAPSHOT.jar org.jpmml.evaluator.example.EnhancementExample --model model.pmml --verification input_expected_output.csv
 ```
 
 Getting help:

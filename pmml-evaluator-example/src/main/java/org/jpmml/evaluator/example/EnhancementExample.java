@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.example;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,6 +38,8 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.Row;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
+import org.jpmml.evaluator.ModelEvaluator;
+import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.testing.CsvUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

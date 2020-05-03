@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.example;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,6 +35,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import org.dmg.pmml.PMML;
+import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.testing.CsvUtil;
 import org.jpmml.model.PMMLUtil;
 

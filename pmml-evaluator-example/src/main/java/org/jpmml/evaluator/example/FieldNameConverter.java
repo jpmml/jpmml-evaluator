@@ -16,20 +16,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.example;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.beust.jcommander.IStringConverter;
+import org.dmg.pmml.FieldName;
 
-@Retention (
-	value = RetentionPolicy.RUNTIME
-)
-@Target (
-	value = {ElementType.FIELD}
-)
-@interface ParameterOrder {
+public class FieldNameConverter implements IStringConverter<FieldName> {
 
-	int value();
+	@Override
+	public FieldName convert(String value){
+		FieldName name = FieldName.create(value);
+
+		return name;
+	}
 }

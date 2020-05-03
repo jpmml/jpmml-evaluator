@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.example;
 
+import org.jpmml.evaluator.example.SeparatorConverter;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

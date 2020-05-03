@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.example;
 
 import java.io.File;
 import java.util.Arrays;
@@ -38,6 +38,11 @@ import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.mining.Segment;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
+import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.FieldValue;
+import org.jpmml.evaluator.InputField;
+import org.jpmml.evaluator.TargetField;
+import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.mining.HasSegmentation;
 import org.jpmml.evaluator.mining.MiningModelEvaluator;
 import org.jpmml.evaluator.mining.SegmentResult;
