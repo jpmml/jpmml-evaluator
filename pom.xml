@@ -49,10 +49,6 @@
 		<module>pmml-evaluator-jacoco</module>
 		<module>pmml-evaluator-reporting</module>
 		<module>pmml-evaluator-testing</module>
-		<module>pmml-knime</module>
-		<module>pmml-rapidminer</module>
-		<module>pmml-rattle</module>
-		<module>pmml-sas</module>
 	</modules>
 
 	<scm>
@@ -101,26 +97,6 @@
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-testing</artifactId>
-				<version>1.5-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jpmml</groupId>
-				<artifactId>pmml-knime</artifactId>
-				<version>1.5-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jpmml</groupId>
-				<artifactId>pmml-rapidminer</artifactId>
-				<version>1.5-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jpmml</groupId>
-				<artifactId>pmml-rattle</artifactId>
-				<version>1.5-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jpmml</groupId>
-				<artifactId>pmml-sas</artifactId>
 				<version>1.5-SNAPSHOT</version>
 			</dependency>
 
