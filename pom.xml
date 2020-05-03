@@ -46,7 +46,6 @@
 		<module>pmml-evaluator</module>
 		<module>pmml-evaluator-example</module>
 		<module>pmml-evaluator-extension</module>
-		<module>pmml-evaluator-jacoco</module>
 		<module>pmml-evaluator-reporting</module>
 		<module>pmml-evaluator-testing</module>
 	</modules>
@@ -77,11 +76,6 @@
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-extension</artifactId>
-				<version>1.5-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jpmml</groupId>
-				<artifactId>pmml-evaluator-jacoco</artifactId>
 				<version>1.5-SNAPSHOT</version>
 			</dependency>
 			<dependency>
