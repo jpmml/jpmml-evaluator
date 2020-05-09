@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
@@ -40,15 +41,13 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 
 abstract
-public class ModelManagerFactory<S extends ModelManager<?>> {
+public class ModelManagerFactory<S extends ModelManager<?>> implements Serializable {
 
 	private Class<S> serviceClazz = null;
 
+	transient
 	private ListMultimap<Class<? extends Model>, Class<? extends S>> serviceProviderClazzes = null;
 
-
-	protected ModelManagerFactory(){
-	}
 
 	protected ModelManagerFactory(Class<S> serviceClazz){
 		setServiceClass(serviceClazz);

@@ -18,12 +18,10 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.Serializable;
-
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 
-public class ModelEvaluatorFactory extends ModelManagerFactory<ModelEvaluator<?>> implements Serializable {
+public class ModelEvaluatorFactory extends ModelManagerFactory<ModelEvaluator<?>> {
 
 	protected ModelEvaluatorFactory(){
 		super((Class)ModelEvaluator.class);

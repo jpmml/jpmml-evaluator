@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -64,7 +65,7 @@ import org.jpmml.model.XPathUtil;
 import org.jpmml.model.visitors.FieldResolver;
 
 abstract
-public class ModelManager<M extends Model> implements HasModel<M> {
+public class ModelManager<M extends Model> implements HasModel<M>, Serializable {
 
 	private PMML pmml = null;
 

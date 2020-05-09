@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,7 +64,7 @@ import org.dmg.pmml.VerificationFields;
 	value = {"unused"}
 )
 abstract
-public class ModelEvaluator<M extends Model> extends ModelManager<M> implements Evaluator, Serializable {
+public class ModelEvaluator<M extends Model> extends ModelManager<M> implements Evaluator {
 
 	private Configuration configuration = null;
 

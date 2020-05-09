@@ -18,14 +18,12 @@
  */
 package org.jpmml.evaluator.testing;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-import com.google.common.io.ByteStreams;
 import org.dmg.pmml.Application;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningSchema;
@@ -39,6 +37,7 @@ import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.OutputFilters;
 import org.jpmml.evaluator.visitors.InvalidMarkupInspector;
 import org.jpmml.evaluator.visitors.UnsupportedMarkupInspector;
+import org.jpmml.model.SerializationUtil;
 import org.jpmml.model.visitors.LocatorTransformer;
 
 abstract
@@ -144,10 +143,10 @@ public class IntegrationTestBatch extends ArchiveBatch {
 	}
 
 	static
-	protected void ensureSerializability(Object object) throws IOException {
+	protected void ensureSerializability(Evaluator evaluator) throws Exception {
 
-		try(ObjectOutputStream oos = new ObjectOutputStream(ByteStreams.nullOutputStream())){
-			oos.writeObject(object);
+		if(evaluator instanceof Serializable){
+			SerializationUtil.clone((Evaluator & Serializable)evaluator);
 		}
 	}
 }

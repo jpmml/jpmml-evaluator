@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import org.dmg.pmml.FieldName;
+import org.jpmml.model.SerializationUtil;
 
 import static org.junit.Assert.assertEquals;
 
@@ -73,7 +74,11 @@ public class ModelEvaluatorTest {
 		}
 			.load(is);
 
+		modelEvaluatorBuilder = SerializationUtil.clone(modelEvaluatorBuilder);
+
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorBuilder.build();
+
+		modelEvaluator = SerializationUtil.clone(modelEvaluator);
 
 		return modelEvaluator;
 	}

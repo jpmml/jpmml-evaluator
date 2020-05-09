@@ -134,8 +134,9 @@ public class FunctionRegistry {
 		Class<?> clazz;
 
 		try {
-			ClassLoader classLoader = (Thread.currentThread()).getContextClassLoader();
+			Thread thread = Thread.currentThread();
 
+			ClassLoader classLoader = thread.getContextClassLoader();
 			if(classLoader == null){
 				classLoader = (FunctionRegistry.class).getClassLoader();
 			}

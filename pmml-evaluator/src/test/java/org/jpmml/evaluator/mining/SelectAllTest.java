@@ -23,18 +23,11 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.Model;
-import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.Computable;
-import org.jpmml.evaluator.Configuration;
-import org.jpmml.evaluator.ConfigurationBuilder;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasEntityId;
-import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.jpmml.evaluator.tree.TreeModelEvaluator;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -44,21 +37,11 @@ public class SelectAllTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		CountingModelEvaluatorFactory modelEvaluatorFactory = new CountingModelEvaluatorFactory();
-
-		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
-			.setModelEvaluatorFactory(modelEvaluatorFactory);
-
-		Configuration configuration = configurationBuilder.build();
-
-		Evaluator evaluator = createModelEvaluator(configuration);
+		Evaluator evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> arguments = createArguments("sepal_length", 5.1d, "sepal_width", 3.5d, "petal_length", 1.4d, "petal_width", 0.2d);
 
 		Map<FieldName, ?> results = evaluator.evaluate(arguments);
-
-		assertEquals(1, modelEvaluatorFactory.getMiningModelCount());
-		assertEquals(5, modelEvaluatorFactory.getTreeModelCount());
 
 		assertEquals(1, results.size());
 
@@ -71,41 +54,5 @@ public class SelectAllTest extends ModelEvaluatorTest {
 		}
 
 		assertEquals(Arrays.asList("setosa", "setosa", "setosa", "setosa", "versicolor"), EvaluatorUtil.decode(species));
-	}
-
-	static
-	private class CountingModelEvaluatorFactory extends ModelEvaluatorFactory {
-
-		private int miningModelCount = 0;
-
-		private int treeModelCount = 0;
-
-
-		@Override
-		public ModelEvaluator<?> newModelEvaluator(PMML pmml, Model model){
-			ModelEvaluator<?> modelEvaluator = super.newModelEvaluator(pmml, model);
-
-			if(modelEvaluator instanceof MiningModelEvaluator){
-				this.miningModelCount++;
-			} else
-
-			if(modelEvaluator instanceof TreeModelEvaluator){
-				this.treeModelCount++;
-			} else
-
-			{
-				throw new AssertionError();
-			}
-
-			return modelEvaluator;
-		}
-
-		public int getMiningModelCount(){
-			return this.miningModelCount;
-		}
-
-		public int getTreeModelCount(){
-			return this.treeModelCount;
-		}
 	}
 }
