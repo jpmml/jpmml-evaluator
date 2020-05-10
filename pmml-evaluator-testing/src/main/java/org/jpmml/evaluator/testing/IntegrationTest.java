@@ -20,6 +20,7 @@ package org.jpmml.evaluator.testing;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
@@ -28,31 +29,42 @@ import org.dmg.pmml.FieldName;
 abstract
 public class IntegrationTest extends BatchTest {
 
+	private Equivalence<Object> equivalence = null;
+
+
 	public IntegrationTest(Equivalence<Object> equivalence){
-		super(equivalence);
+		setEquivalence(Objects.requireNonNull(equivalence));
 	}
 
 	public void evaluate(String name, String dataset) throws Exception {
-		evaluate(name, dataset, x -> true, null);
-	}
-
-	public void evaluate(String name, String dataset, Equivalence<Object> equivalence) throws Exception {
-		evaluate(name, dataset, x -> true, equivalence);
+		evaluate(name, dataset, null, null);
 	}
 
 	public void evaluate(String name, String dataset, Predicate<FieldName> predicate) throws Exception {
 		evaluate(name, dataset, predicate, null);
 	}
 
+	public void evaluate(String name, String dataset, Equivalence<Object> equivalence) throws Exception {
+		evaluate(name, dataset, null, equivalence);
+	}
+
 	public void evaluate(String name, String dataset, Predicate<FieldName> predicate, Equivalence<Object> equivalence) throws Exception {
 
-		try(Batch batch = createBatch(name, dataset, predicate)){
-			evaluate(batch, equivalence);
+		if(predicate == null){
+			predicate = (x -> true);
+		} // End if
+
+		if(equivalence == null){
+			equivalence = getEquivalence();
+		}
+
+		try(Batch batch = createBatch(name, dataset, predicate, equivalence)){
+			evaluate(batch);
 		}
 	}
 
-	protected Batch createBatch(String name, String dataset, Predicate<FieldName> predicate){
-		Batch result = new IntegrationTestBatch(name, dataset, predicate){
+	protected Batch createBatch(String name, String dataset, Predicate<FieldName> predicate, Equivalence<Object> equivalence){
+		Batch result = new IntegrationTestBatch(name, dataset, predicate, equivalence){
 
 			@Override
 			public IntegrationTest getIntegrationTest(){
@@ -61,6 +73,14 @@ public class IntegrationTest extends BatchTest {
 		};
 
 		return result;
+	}
+
+	public Equivalence<Object> getEquivalence(){
+		return this.equivalence;
+	}
+
+	private void setEquivalence(Equivalence<Object> equivalence){
+		this.equivalence = equivalence;
 	}
 
 	static

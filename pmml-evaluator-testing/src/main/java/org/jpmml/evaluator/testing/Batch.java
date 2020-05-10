@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import com.google.common.base.Equivalence;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 
@@ -55,4 +56,14 @@ public interface Batch extends AutoCloseable {
 	 * </p>
 	 */
 	Predicate<FieldName> getPredicate();
+
+	/**
+	 * <p>
+	 * The equivalence.
+	 * </p>
+	 *
+	 * @see PMMLEquivalence
+	 * @see RealNumberEquivalence
+	 */
+	Equivalence<Object> getEquivalence();
 }

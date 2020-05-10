@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
+import com.google.common.base.Equivalence;
 import org.dmg.pmml.Application;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningSchema;
@@ -45,8 +46,8 @@ public class IntegrationTestBatch extends ArchiveBatch {
 	private Evaluator evaluator = null;
 
 
-	public IntegrationTestBatch(String name, String dataset, Predicate<FieldName> predicate){
-		super(name, dataset, predicate);
+	public IntegrationTestBatch(String name, String dataset, Predicate<FieldName> predicate, Equivalence<Object> equivalence){
+		super(name, dataset, predicate, equivalence);
 	}
 
 	abstract

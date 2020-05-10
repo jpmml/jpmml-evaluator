@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import com.google.common.base.Equivalence;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 
@@ -60,6 +61,13 @@ public class FilterBatch implements Batch {
 		Batch batch = getBatch();
 
 		return batch.getPredicate();
+	}
+
+	@Override
+	public Equivalence<Object> getEquivalence(){
+		Batch batch = getBatch();
+
+		return batch.getEquivalence();
 	}
 
 	@Override

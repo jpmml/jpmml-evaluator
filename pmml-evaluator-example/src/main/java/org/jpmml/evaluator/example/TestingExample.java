@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import com.beust.jcommander.Parameter;
+import com.google.common.base.Equivalence;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.Evaluator;
@@ -163,10 +164,12 @@ public class TestingExample extends Example {
 			predicate = (FieldName name) -> true;
 		}
 
+		Equivalence<Object> equivalence = new PMMLEquivalence(this.precision, this.zeroThreshold);
+
 		List<Conflict> conflicts;
 
-		try(Batch batch = createBatch(evaluator, inputRecords, outputRecords, predicate)){
-			conflicts = BatchUtil.evaluate(batch, new PMMLEquivalence(this.precision, this.zeroThreshold));
+		try(Batch batch = createBatch(evaluator, inputRecords, outputRecords, predicate, equivalence)){
+			conflicts = BatchUtil.evaluate(batch);
 		}
 
 		for(Conflict conflict : conflicts){
@@ -175,7 +178,7 @@ public class TestingExample extends Example {
 	}
 
 	static
-	private Batch createBatch(Evaluator evaluator, List<? extends Map<FieldName, ?>> input, List<? extends Map<FieldName, ?>> output, Predicate<FieldName> predicate){
+	private Batch createBatch(Evaluator evaluator, List<? extends Map<FieldName, ?>> input, List<? extends Map<FieldName, ?>> output, Predicate<FieldName> predicate, Equivalence<Object> equivalence){
 		Batch batch = new Batch(){
 
 			@Override
@@ -196,6 +199,11 @@ public class TestingExample extends Example {
 			@Override
 			public Predicate<FieldName> getPredicate(){
 				return predicate;
+			}
+
+			@Override
+			public Equivalence<Object> getEquivalence(){
+				return equivalence;
 			}
 
 			@Override

@@ -42,12 +42,8 @@ public class BatchUtil {
 	private BatchUtil(){
 	}
 
-	/**
-	 * @see PMMLEquivalence
-	 * @see RealNumberEquivalence
-	 */
 	static
-	public List<Conflict> evaluate(Batch batch, Equivalence<Object> equivalence) throws Exception {
+	public List<Conflict> evaluate(Batch batch) throws Exception {
 		Evaluator evaluator = batch.getEvaluator();
 
 		List<? extends Map<FieldName, ?>> input = batch.getInput();
@@ -64,6 +60,8 @@ public class BatchUtil {
 		}
 
 		Predicate<FieldName> predicate = (batch.getPredicate()).and(name -> !Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name));
+
+		Equivalence<Object> equivalence = batch.getEquivalence();
 
 		List<Conflict> conflicts = new ArrayList<>();
 

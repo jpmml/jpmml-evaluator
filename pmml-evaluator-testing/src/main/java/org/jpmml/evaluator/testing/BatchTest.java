@@ -20,27 +20,14 @@ package org.jpmml.evaluator.testing;
 
 import java.util.List;
 
-import com.google.common.base.Equivalence;
-
 import static org.junit.Assert.fail;
 
 abstract
 public class BatchTest {
 
-	private Equivalence<Object> equivalence = null;
+	public void evaluate(Batch batch) throws Exception {
+		List<Conflict> conflicts = BatchUtil.evaluate(batch);
 
-
-	public BatchTest(Equivalence<Object> equivalence){
-		setEquivalence(equivalence);
-	}
-
-	public void evaluate(Batch batch, Equivalence<Object> equivalence) throws Exception {
-
-		if(equivalence == null){
-			equivalence = getEquivalence();
-		}
-
-		List<Conflict> conflicts = BatchUtil.evaluate(batch, equivalence);
 		if(!conflicts.isEmpty()){
 
 			for(Conflict conflict : conflicts){
@@ -53,18 +40,5 @@ public class BatchTest {
 
 	public void log(Conflict conflict){
 		System.err.println(conflict);
-	}
-
-	public Equivalence<Object> getEquivalence(){
-		return this.equivalence;
-	}
-
-	private void setEquivalence(Equivalence<Object> equivalence){
-
-		if(equivalence == null){
-			throw new IllegalArgumentException();
-		}
-
-		this.equivalence = equivalence;
 	}
 }

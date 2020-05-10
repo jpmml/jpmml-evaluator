@@ -22,9 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.google.common.base.Equivalence;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.Evaluator;
@@ -45,11 +47,14 @@ public class ArchiveBatch implements Batch {
 
 	private Predicate<FieldName> predicate = null;
 
+	private Equivalence<Object> equivalence = null;
 
-	public ArchiveBatch(String name, String dataset, Predicate<FieldName> predicate){
-		setName(name);
-		setDataset(dataset);
-		setPredicate(predicate);
+
+	public ArchiveBatch(String name, String dataset, Predicate<FieldName> predicate, Equivalence<Object> equivalence){
+		setName(Objects.requireNonNull(name));
+		setDataset(Objects.requireNonNull(dataset));
+		setPredicate(Objects.requireNonNull(predicate));
+		setEquivalence(Objects.requireNonNull(equivalence));
 	}
 
 	abstract
@@ -149,11 +154,15 @@ public class ArchiveBatch implements Batch {
 	}
 
 	private void setPredicate(Predicate<FieldName> predicate){
-
-		if(predicate == null){
-			throw new IllegalArgumentException();
-		}
-
 		this.predicate = predicate;
+	}
+
+	@Override
+	public Equivalence<Object> getEquivalence(){
+		return this.equivalence;
+	}
+
+	private void setEquivalence(Equivalence<Object> equivalence){
+		this.equivalence = equivalence;
 	}
 }
