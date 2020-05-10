@@ -266,7 +266,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				result = new DistanceDistribution<>(values);
 				break;
 			case ONE_AGAINST_ONE:
-				result = new VoteDistribution<>(values);
+				result = new VoteProbabilityDistribution<>(values);
 				break;
 			default:
 				throw new UnsupportedAttributeException(supportVectorMachineModel, classificationMethod);

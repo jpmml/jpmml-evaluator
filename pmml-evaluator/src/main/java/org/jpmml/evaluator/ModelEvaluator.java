@@ -537,7 +537,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		} else
 
 		{
-			return new Classification<>(Classification.Type.VOTE, values);
+			return new VoteDistribution<>(values);
 		}
 	}
 

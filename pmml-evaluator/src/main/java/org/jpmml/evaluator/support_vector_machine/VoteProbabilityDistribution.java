@@ -21,7 +21,6 @@ package org.jpmml.evaluator.support_vector_machine;
 import java.util.Set;
 
 import org.dmg.pmml.DataType;
-import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.Report;
@@ -30,14 +29,15 @@ import org.jpmml.evaluator.UndefinedResultException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.ValueUtil;
+import org.jpmml.evaluator.VoteDistribution;
 
-public class VoteDistribution<V extends Number> extends Classification<Object, V> implements HasProbability {
+public class VoteProbabilityDistribution<V extends Number> extends VoteDistribution<V> implements HasProbability {
 
 	private Value<V> sum = null;
 
 
-	VoteDistribution(ValueMap<Object, V> votes){
-		super(Type.VOTE, votes);
+	VoteProbabilityDistribution(ValueMap<Object, V> votes){
+		super(votes);
 	}
 
 	@Override
