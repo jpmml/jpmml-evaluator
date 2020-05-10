@@ -24,7 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -36,6 +35,9 @@ import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasGroupFields;
+import org.jpmml.evaluator.OutputField;
+import org.jpmml.evaluator.ResultField;
+import org.jpmml.evaluator.TargetField;
 
 public class BatchUtil {
 
@@ -59,7 +61,29 @@ public class BatchUtil {
 			throw new IllegalArgumentException("Expected the same number of data rows, got " + input.size() + " input data rows and " + output.size() + " expected output data rows");
 		}
 
-		Predicate<FieldName> predicate = (batch.getPredicate()).and(name -> !Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name));
+		Predicate<ResultField> predicate = batch.getPredicate();
+
+		Set<FieldName> names = new LinkedHashSet<>();
+
+		List<TargetField> targetFields = evaluator.getTargetFields();
+		for(TargetField targetField : targetFields){
+
+			if(targetField.isSynthetic()){
+				continue;
+			} // End if
+
+			if(predicate.test(targetField)){
+				names.add(targetField.getName());
+			}
+		}
+
+		List<OutputField> outputFields = evaluator.getOutputFields();
+		for(OutputField outputField : outputFields){
+
+			if(predicate.test(outputField)){
+				names.add(outputField.getName());
+			}
+		}
 
 		Equivalence<Object> equivalence = batch.getEquivalence();
 
@@ -69,11 +93,11 @@ public class BatchUtil {
 			Map<FieldName, ?> arguments = input.get(i);
 
 			Map<FieldName, ?> expectedResults = output.get(i);
-			expectedResults = Maps.filterKeys(expectedResults, predicate::test);
+			expectedResults = Maps.filterKeys(expectedResults, names::contains);
 
 			try {
 				Map<FieldName, ?> actualResults = evaluator.evaluate(arguments);
-				actualResults = Maps.filterKeys(actualResults, predicate::test);
+				actualResults = Maps.filterKeys(actualResults, names::contains);
 
 				MapDifference<FieldName, ?> difference = Maps.<FieldName, Object>difference(expectedResults, actualResults, equivalence);
 				if(!difference.areEqual()){

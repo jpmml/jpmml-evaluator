@@ -25,6 +25,7 @@ import java.util.function.Predicate;
 import com.google.common.base.Equivalence;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.ResultField;
 
 public class FilterBatch implements Batch {
 
@@ -57,7 +58,7 @@ public class FilterBatch implements Batch {
 	}
 
 	@Override
-	public Predicate<FieldName> getPredicate(){
+	public Predicate<ResultField> getPredicate(){
 		Batch batch = getBatch();
 
 		return batch.getPredicate();

@@ -20,11 +20,13 @@ package org.jpmml.evaluator.testing;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
 import org.dmg.pmml.FieldName;
+import org.jpmml.evaluator.ResultField;
 
 abstract
 public class IntegrationTest extends BatchTest {
@@ -40,7 +42,7 @@ public class IntegrationTest extends BatchTest {
 		evaluate(name, dataset, null, null);
 	}
 
-	public void evaluate(String name, String dataset, Predicate<FieldName> predicate) throws Exception {
+	public void evaluate(String name, String dataset, Predicate<ResultField> predicate) throws Exception {
 		evaluate(name, dataset, predicate, null);
 	}
 
@@ -48,10 +50,10 @@ public class IntegrationTest extends BatchTest {
 		evaluate(name, dataset, null, equivalence);
 	}
 
-	public void evaluate(String name, String dataset, Predicate<FieldName> predicate, Equivalence<Object> equivalence) throws Exception {
+	public void evaluate(String name, String dataset, Predicate<ResultField> predicate, Equivalence<Object> equivalence) throws Exception {
 
 		if(predicate == null){
-			predicate = (x -> true);
+			predicate = (resultField -> true);
 		} // End if
 
 		if(equivalence == null){
@@ -63,7 +65,7 @@ public class IntegrationTest extends BatchTest {
 		}
 	}
 
-	protected Batch createBatch(String name, String dataset, Predicate<FieldName> predicate, Equivalence<Object> equivalence){
+	protected Batch createBatch(String name, String dataset, Predicate<ResultField> predicate, Equivalence<Object> equivalence){
 		Batch result = new IntegrationTestBatch(name, dataset, predicate, equivalence){
 
 			@Override
@@ -84,17 +86,17 @@ public class IntegrationTest extends BatchTest {
 	}
 
 	static
-	public Predicate<FieldName> excludeFields(FieldName... names){
-		return excludeFields(Arrays.asList(names));
+	public Predicate<ResultField> excludeFields(FieldName... names){
+		return excludeFields(new LinkedHashSet<>(Arrays.asList(names)));
 	}
 
 	static
-	public Predicate<FieldName> excludeFields(Collection<FieldName> names){
-		Predicate<FieldName> predicate = new Predicate<FieldName>(){
+	public Predicate<ResultField> excludeFields(Collection<FieldName> names){
+		Predicate<ResultField> predicate = new Predicate<ResultField>(){
 
 			@Override
-			public boolean test(FieldName name){
-				return !names.contains(name);
+			public boolean test(ResultField resultField){
+				return !names.contains(resultField.getName());
 			}
 		};
 

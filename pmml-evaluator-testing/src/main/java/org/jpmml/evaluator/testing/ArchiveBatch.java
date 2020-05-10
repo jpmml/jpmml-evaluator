@@ -34,6 +34,7 @@ import org.jpmml.evaluator.EvaluatorBuilder;
 import org.jpmml.evaluator.FieldNameSet;
 import org.jpmml.evaluator.FunctionNameStack;
 import org.jpmml.evaluator.ModelEvaluatorBuilder;
+import org.jpmml.evaluator.ResultField;
 import org.jpmml.evaluator.visitors.DefaultModelEvaluatorBattery;
 import org.jpmml.model.PMMLUtil;
 import org.jpmml.model.visitors.VisitorBattery;
@@ -45,12 +46,12 @@ public class ArchiveBatch implements Batch {
 
 	private String dataset = null;
 
-	private Predicate<FieldName> predicate = null;
+	private Predicate<ResultField> predicate = null;
 
 	private Equivalence<Object> equivalence = null;
 
 
-	public ArchiveBatch(String name, String dataset, Predicate<FieldName> predicate, Equivalence<Object> equivalence){
+	public ArchiveBatch(String name, String dataset, Predicate<ResultField> predicate, Equivalence<Object> equivalence){
 		setName(Objects.requireNonNull(name));
 		setDataset(Objects.requireNonNull(dataset));
 		setPredicate(Objects.requireNonNull(predicate));
@@ -149,11 +150,11 @@ public class ArchiveBatch implements Batch {
 	}
 
 	@Override
-	public Predicate<FieldName> getPredicate(){
+	public Predicate<ResultField> getPredicate(){
 		return this.predicate;
 	}
 
-	private void setPredicate(Predicate<FieldName> predicate){
+	private void setPredicate(Predicate<ResultField> predicate){
 		this.predicate = predicate;
 	}
 

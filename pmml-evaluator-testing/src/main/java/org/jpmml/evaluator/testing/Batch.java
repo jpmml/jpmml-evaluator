@@ -25,6 +25,7 @@ import java.util.function.Predicate;
 import com.google.common.base.Equivalence;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.ResultField;
 
 public interface Batch extends AutoCloseable {
 
@@ -55,7 +56,7 @@ public interface Batch extends AutoCloseable {
 	 * (between expected and actual output data records).
 	 * </p>
 	 */
-	Predicate<FieldName> getPredicate();
+	Predicate<ResultField> getPredicate();
 
 	/**
 	 * <p>

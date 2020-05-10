@@ -34,6 +34,7 @@ import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorBuilder;
 import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
+import org.jpmml.evaluator.ResultField;
 import org.jpmml.evaluator.testing.Batch;
 import org.jpmml.evaluator.testing.BatchUtil;
 import org.jpmml.evaluator.testing.Conflict;
@@ -154,14 +155,14 @@ public class TestingExample extends Example {
 
 		List<? extends Map<FieldName, ?>> outputRecords = BatchUtil.parseRecords(outputTable, cellParser);
 
-		Predicate<FieldName> predicate;
+		Predicate<ResultField> predicate;
 
 		if(this.ignoredFields != null && !this.ignoredFields.isEmpty()){
-			predicate = (FieldName name) -> !this.ignoredFields.contains(name);
+			predicate = (ResultField resultField) -> !this.ignoredFields.contains(resultField.getName());
 		} else
 
 		{
-			predicate = (FieldName name) -> true;
+			predicate = (ResultField resultField) -> true;
 		}
 
 		Equivalence<Object> equivalence = new PMMLEquivalence(this.precision, this.zeroThreshold);
@@ -178,7 +179,7 @@ public class TestingExample extends Example {
 	}
 
 	static
-	private Batch createBatch(Evaluator evaluator, List<? extends Map<FieldName, ?>> input, List<? extends Map<FieldName, ?>> output, Predicate<FieldName> predicate, Equivalence<Object> equivalence){
+	private Batch createBatch(Evaluator evaluator, List<? extends Map<FieldName, ?>> input, List<? extends Map<FieldName, ?>> output, Predicate<ResultField> predicate, Equivalence<Object> equivalence){
 		Batch batch = new Batch(){
 
 			@Override
@@ -197,7 +198,7 @@ public class TestingExample extends Example {
 			}
 
 			@Override
-			public Predicate<FieldName> getPredicate(){
+			public Predicate<ResultField> getPredicate(){
 				return predicate;
 			}
 

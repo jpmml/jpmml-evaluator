@@ -26,7 +26,6 @@ import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
 import org.dmg.pmml.Application;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Visitor;
@@ -35,6 +34,7 @@ import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorBuilder;
 import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.OutputFilters;
+import org.jpmml.evaluator.ResultField;
 import org.jpmml.evaluator.visitors.InvalidMarkupInspector;
 import org.jpmml.evaluator.visitors.UnsupportedMarkupInspector;
 import org.jpmml.model.SerializationUtil;
@@ -46,7 +46,7 @@ public class IntegrationTestBatch extends ArchiveBatch {
 	private Evaluator evaluator = null;
 
 
-	public IntegrationTestBatch(String name, String dataset, Predicate<FieldName> predicate, Equivalence<Object> equivalence){
+	public IntegrationTestBatch(String name, String dataset, Predicate<ResultField> predicate, Equivalence<Object> equivalence){
 		super(name, dataset, predicate, equivalence);
 	}
 
