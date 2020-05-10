@@ -28,7 +28,6 @@ import org.dmg.pmml.Application;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.evaluator.Evaluator;
@@ -71,26 +70,36 @@ public class IntegrationTestBatch extends ArchiveBatch {
 		return modelEvaluatorBuilder;
 	}
 
+	/**
+	 * @see #validateEvaluator(Evaluator)
+	 */
 	@Override
 	public Evaluator getEvaluator() throws Exception {
 
-		if(this.evaluator == null){
-			Evaluator evaluator =  super.getEvaluator();
-
-			ensureSerializability(evaluator);
-
-			this.evaluator = evaluator;
+		if(this.evaluator != null){
+			throw new IllegalStateException();
 		}
 
-		return this.evaluator;
+		Evaluator evaluator =  super.getEvaluator();
+
+		validateEvaluator(evaluator);
+
+		this.evaluator = evaluator;
+
+		return evaluator;
 	}
 
+	/**
+	 * @see #validatePMML(PMML)
+	 */
 	@Override
 	public PMML getPMML() throws Exception {
 		PMML pmml = super.getPMML();
 
 		LocatorTransformer locatorTransformer = new LocatorTransformer();
 		locatorTransformer.applyTo(pmml);
+
+		validatePMML(pmml);
 
 		return pmml;
 	}
@@ -99,17 +108,24 @@ public class IntegrationTestBatch extends ArchiveBatch {
 	public void close() throws Exception {
 
 		if(this.evaluator != null){
+			Evaluator evaluator = this.evaluator;
 
 			try {
-				ensureSerializability(this.evaluator);
+				validateEvaluator(evaluator);
 			} finally {
 				this.evaluator = null;
 			}
 		}
 	}
 
-	static
-	protected void ensureValidity(PMMLObject object){
+	protected void validateEvaluator(Evaluator evaluator) throws Exception {
+
+		if(evaluator instanceof Serializable){
+			SerializationUtil.clone((Serializable)evaluator);
+		}
+	}
+
+	protected void validatePMML(PMML pmml) throws Exception {
 		List<Visitor> visitors = Arrays.<Visitor>asList(
 			new UnsupportedMarkupInspector(),
 			new InvalidMarkupInspector(){
@@ -138,15 +154,7 @@ public class IntegrationTestBatch extends ArchiveBatch {
 		);
 
 		for(Visitor visitor : visitors){
-			visitor.applyTo(object);
-		}
-	}
-
-	static
-	protected void ensureSerializability(Evaluator evaluator) throws Exception {
-
-		if(evaluator instanceof Serializable){
-			SerializationUtil.clone((Evaluator & Serializable)evaluator);
+			visitor.applyTo(pmml);
 		}
 	}
 }
