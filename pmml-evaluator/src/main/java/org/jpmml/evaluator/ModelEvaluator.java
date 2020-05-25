@@ -86,6 +86,15 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	protected ModelEvaluator(PMML pmml, M model){
 		super(pmml, model);
+
+		MathContext mathContext = model.getMathContext();
+		switch(mathContext){
+			case FLOAT:
+			case DOUBLE:
+				break;
+			default:
+				throw new UnsupportedAttributeException(model, mathContext);
+		}
 	}
 
 	/**

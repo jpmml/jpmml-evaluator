@@ -68,8 +68,19 @@ public class ModelManagerFactory<S extends ModelManager<?>> implements Serializa
 				} catch(InvocationTargetException ite){
 					Throwable cause = ite.getCause();
 
-					if(cause instanceof UnsupportedMarkupException){
-						continue;
+					if(cause instanceof PMMLException){
+
+						// Invalid here, invalid everywhere
+						if(cause instanceof InvalidMarkupException){
+							// Ignored
+						} else
+
+						// Unsupported here, might be supported somewhere else
+						if(cause instanceof UnsupportedMarkupException){
+							continue;
+						}
+
+						throw (PMMLException)cause;
 					}
 
 					throw ite;
@@ -77,6 +88,8 @@ public class ModelManagerFactory<S extends ModelManager<?>> implements Serializa
 			}
 		} catch(ReflectiveOperationException | IOException e){
 			throw new IllegalArgumentException(e);
+		} catch(PMMLException pe){
+			throw pe;
 		}
 
 		throw new UnsupportedElementException(model);
