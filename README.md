@@ -516,7 +516,6 @@ JPMML-Evaluator is licensed under the terms and conditions of the [GNU Affero Ge
 For a quick summary of your rights ("Can") and obligations ("Cannot" and "Must") under AGPLv3, please refer to [TLDRLegal](https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)).
 
 If you would like to use JPMML-Evaluator in a proprietary software project, then it is possible to enter into a licensing agreement which makes JPMML-Evaluator available under the terms and conditions of the [BSD 3-Clause License](https://opensource.org/licenses/BSD-3-Clause) instead.
-Please initiate the conversation by submitting the [Request for Quotation](https://openscoring.io/rfq/) web form, or sending an e-mail.
 
 # Additional information #
 
