@@ -400,6 +400,11 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				threshold = neuralNetwork.getThreshold();
 			}
 
+			Number leakage = neuralLayer.getLeakage();
+			if(leakage == null){
+				leakage = neuralNetwork.getLeakage();
+			}
+
 			Number altitude = neuralLayer.getAltitude();
 			if(altitude == null){
 				altitude = neuralNetwork.getAltitude();
@@ -506,7 +511,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 								output.add(neuronBias);
 							}
 
-							NeuralNetworkUtil.activateNeuronOutput(activationFunction, threshold, output);
+							NeuralNetworkUtil.activateNeuronOutput(activationFunction, threshold, leakage, output);
 						}
 						break;
 					case RADIAL_BASIS:

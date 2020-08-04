@@ -21,6 +21,7 @@ package org.jpmml.evaluator.neural_network;
 import java.util.Collection;
 
 import org.dmg.pmml.neural_network.NeuralNetwork;
+import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueUtil;
 
@@ -30,7 +31,7 @@ public class NeuralNetworkUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> activateNeuronOutput(NeuralNetwork.ActivationFunction activationFunction, Number threshold, Value<V> value){
+	public <V extends Number> Value<V> activateNeuronOutput(NeuralNetwork.ActivationFunction activationFunction, Number threshold, Number leakage, Value<V> value){
 
 		switch(activationFunction){
 			case THRESHOLD:
@@ -61,6 +62,16 @@ public class NeuralNetworkUtil {
 			case ARCTAN:
 				return value.arctan();
 			case RECTIFIER:
+				if(leakage != null){
+
+					if(value.compareTo(Numbers.DOUBLE_ZERO) > 0){
+						return value;
+					} else
+
+					{
+						return value.multiply(leakage);
+					}
+				}
 				return value.relu();
 			default:
 				throw new IllegalArgumentException();
