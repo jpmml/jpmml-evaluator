@@ -22,12 +22,14 @@ package org.jpmml.evaluator;
  * @see org.dmg.pmml.ResultFeature#CLUSTER_AFFINITY
  * @see org.dmg.pmml.ResultFeature#ENTITY_AFFINITY
  */
-public interface HasEntityAffinity extends ResultFeature {
+public interface HasEntityAffinity extends HasEntityId {
 
 	/**
 	 * <p>
 	 * Gets the affinity towards the winning entity.
 	 * </p>
+	 *
+	 * @see HasEntityId#getEntityId()
 	 */
 	Double getEntityAffinity();
 }

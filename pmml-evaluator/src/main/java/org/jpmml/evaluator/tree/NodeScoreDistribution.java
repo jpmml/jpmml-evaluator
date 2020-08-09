@@ -26,7 +26,6 @@ import org.dmg.pmml.tree.Node;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.HasConfidence;
-import org.jpmml.evaluator.HasEntityId;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.Report;
@@ -37,7 +36,7 @@ import org.jpmml.evaluator.ValueMap;
 import org.jpmml.model.ToStringHelper;
 
 abstract
-public class NodeScoreDistribution<V extends Number> extends Classification<Object, V> implements HasEntityId, HasEntityRegistry<Node>, HasDecisionPath, HasProbability, HasConfidence {
+public class NodeScoreDistribution<V extends Number> extends Classification<Object, V> implements HasEntityRegistry<Node>, HasDecisionPath, HasProbability, HasConfidence {
 
 	private Node node = null;
 

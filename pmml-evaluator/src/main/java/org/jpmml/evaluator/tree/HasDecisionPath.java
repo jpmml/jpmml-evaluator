@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
-import org.jpmml.evaluator.ResultFeature;
+import org.jpmml.evaluator.HasEntityId;
 
-public interface HasDecisionPath extends ResultFeature {
+public interface HasDecisionPath extends HasEntityId {
 
 	/**
 	 * <p>

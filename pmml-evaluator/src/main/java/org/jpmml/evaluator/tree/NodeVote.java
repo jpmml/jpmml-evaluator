@@ -21,14 +21,13 @@ package org.jpmml.evaluator.tree;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.tree.Node;
 import org.jpmml.evaluator.EntityUtil;
-import org.jpmml.evaluator.HasEntityId;
 import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.Vote;
 import org.jpmml.model.ToStringHelper;
 
 abstract
-public class NodeVote extends Vote implements HasEntityId, HasEntityRegistry<Node>, HasDecisionPath {
+public class NodeVote extends Vote implements HasEntityRegistry<Node>, HasDecisionPath {
 
 	private Node node = null;
 
