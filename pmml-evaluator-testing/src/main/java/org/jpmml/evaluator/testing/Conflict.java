@@ -55,7 +55,20 @@ public class Conflict {
 
 		MapDifference<FieldName, ?> difference = getDifference();
 		if(difference != null){
-			helper.add("difference", getDifference());
+			Map<FieldName, ?> onlyOnLeft = difference.entriesOnlyOnLeft();
+			if(!onlyOnLeft.isEmpty()){
+				helper.add("expected but absent", onlyOnLeft);
+			}
+
+			Map<FieldName, ?> onlyOnRight = difference.entriesOnlyOnRight();
+			if(!onlyOnRight.isEmpty()){
+				helper.add("not expected but present", onlyOnRight);
+			}
+
+			Map<FieldName, ? extends MapDifference.ValueDifference<?>> differing = difference.entriesDiffering();
+			if(!differing.isEmpty()){
+				helper.add("differing (expected vs. actual)", differing);
+			}
 		}
 
 		Exception exception = getException();
