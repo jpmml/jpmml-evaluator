@@ -30,15 +30,21 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import org.dmg.pmml.Model;
+import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.ResultFeature;
+import org.jpmml.evaluator.annotations.Functionality;
 
 abstract
 public class ModelManagerFactory<S extends ModelManager<?>> implements Serializable {
@@ -54,17 +60,49 @@ public class ModelManagerFactory<S extends ModelManager<?>> implements Serializa
 	}
 
 	public S newModelManager(PMML pmml, Model model){
+		return newModelManager(pmml, model, null);
+	}
+
+	public S newModelManager(PMML pmml, Model model, Set<ResultFeature> extraResultFeatures){
 		Objects.requireNonNull(pmml);
 		Objects.requireNonNull(model);
+
+		Set<ResultFeature> resultFeatures = EnumSet.noneOf(ResultFeature.class);
+
+		Output output = model.getOutput();
+		if(output != null && output.hasOutputFields()){
+			resultFeatures.addAll(CacheUtil.getValue(output, ModelManager.resultFeaturesCache));
+		} // End if
+
+		if(extraResultFeatures != null && !extraResultFeatures.isEmpty()){
+			resultFeatures.addAll(extraResultFeatures);
+		}
 
 		try {
 			List<Class<? extends S>> modelManagerClasses = getServiceProviderClasses(model.getClass());
 
+			modelManagers:
 			for(Class<? extends S> modelManagerClazz : modelManagerClasses){
+				Functionality functionality = modelManagerClazz.getAnnotation(Functionality.class);
+
+				if(functionality != null){
+					Set<ResultFeature> providedResultFeatures = EnumSet.copyOf(Arrays.asList(functionality.value()));
+
+					if(!providedResultFeatures.containsAll(resultFeatures)){
+						continue modelManagers;
+					}
+				}
+
 				Constructor<?> constructor = findConstructor(modelManagerClazz);
 
 				try {
-					return (S)constructor.newInstance(pmml, model);
+					S modelManager = (S)constructor.newInstance(pmml, model);
+
+					if(extraResultFeatures != null && !extraResultFeatures.isEmpty()){
+						modelManager.addResultFeatures(extraResultFeatures);
+					}
+
+					return modelManager;
 				} catch(InvocationTargetException ite){
 					Throwable cause = ite.getCause();
 
@@ -122,7 +160,7 @@ public class ModelManagerFactory<S extends ModelManager<?>> implements Serializa
 	}
 
 	private void setServiceClass(Class<S> serviceClazz){
-		this.serviceClazz = serviceClazz;
+		this.serviceClazz = Objects.requireNonNull(serviceClazz);
 	}
 
 	public ListMultimap<Class<? extends Model>, Class<? extends S>> getServiceProviderClasses() throws ClassNotFoundException, IOException {

@@ -753,11 +753,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
-		Configuration configuration = ensureConfiguration();
-
-		ModelEvaluatorFactory modelEvaluatorFactory = configuration.getModelEvaluatorFactory();
-
-		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(getPMML(), model);
+		Set<ResultFeature> extraResultFeatures = EnumSet.noneOf(ResultFeature.class);
 
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
@@ -768,7 +764,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					Set<ResultFeature> resultFeatures = getResultFeatures();
 
 					if(!resultFeatures.isEmpty()){
-						modelEvaluator.addResultFeatures(resultFeatures);
+						extraResultFeatures.addAll(resultFeatures);
 					}
 				}
 				// Falls through
@@ -777,11 +773,17 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					Set<ResultFeature> segmentResultFeatures = getSegmentResultFeatures(segmentId);
 
 					if(segmentResultFeatures != null && !segmentResultFeatures.isEmpty()){
-						modelEvaluator.addResultFeatures(segmentResultFeatures);
+						extraResultFeatures.addAll(segmentResultFeatures);
 					}
 				}
 				break;
 		}
+
+		Configuration configuration = ensureConfiguration();
+
+		ModelEvaluatorFactory modelEvaluatorFactory = configuration.getModelEvaluatorFactory();
+
+		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(getPMML(), model, extraResultFeatures);
 
 		MiningFunction segmentMiningFunction = model.getMiningFunction();
 

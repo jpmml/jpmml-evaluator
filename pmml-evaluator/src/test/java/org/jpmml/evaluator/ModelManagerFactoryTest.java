@@ -37,10 +37,10 @@ public class ModelManagerFactoryTest {
 
 	@Test
 	public void newModelManager(){
-		ModelManagerFactory<ModelManager<?>> modelManagerFactory = new ModelManagerFactory<ModelManager<?>>(null){
+		ModelManagerFactory<TreeModelManager> modelManagerFactory = new ModelManagerFactory<TreeModelManager>(TreeModelManager.class){
 
 			@Override
-			public List<Class<? extends ModelManager<?>>> getServiceProviderClasses(Class<? extends Model> modelClazz){
+			public List<Class<? extends TreeModelManager>> getServiceProviderClasses(Class<? extends Model> modelClazz){
 				return Arrays.asList(RegressorManager.class, ClassifierManager.class);
 			}
 		};
@@ -78,7 +78,16 @@ public class ModelManagerFactoryTest {
 	}
 
 	static
-	public class RegressorManager extends ModelManager<TreeModel> {
+	abstract
+	public class TreeModelManager extends ModelManager<TreeModel> {
+
+		public TreeModelManager(PMML pmml, TreeModel treeModel){
+			super(pmml, treeModel);
+		}
+	}
+
+	static
+	public class RegressorManager extends TreeModelManager {
 
 		public RegressorManager(PMML pmml, TreeModel treeModel){
 			super(pmml, treeModel);
@@ -94,7 +103,7 @@ public class ModelManagerFactoryTest {
 	}
 
 	static
-	public class ClassifierManager extends ModelManager<TreeModel> {
+	public class ClassifierManager extends TreeModelManager {
 
 		public ClassifierManager(PMML pmml, TreeModel treeModel){
 			super(pmml, treeModel);

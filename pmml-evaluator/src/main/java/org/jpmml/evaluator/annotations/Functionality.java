@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Villu Ruusmann
+ * Copyright (c) 2020 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -16,30 +16,22 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator;
+package org.jpmml.evaluator.annotations;
 
-import java.util.Set;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.dmg.pmml.Model;
-import org.dmg.pmml.PMML;
 import org.dmg.pmml.ResultFeature;
 
-public class ModelEvaluatorFactory extends ModelManagerFactory<ModelEvaluator<?>> {
+@Retention (
+	value = RetentionPolicy.RUNTIME
+)
+@Target (
+	value = {ElementType.TYPE}
+)
+public @interface Functionality {
 
-	protected ModelEvaluatorFactory(){
-		super((Class)ModelEvaluator.class);
-	}
-
-	public ModelEvaluator<?> newModelEvaluator(PMML pmml, Model model){
-		return newModelManager(pmml, model);
-	}
-
-	public ModelEvaluator<?> newModelEvaluator(PMML pmml, Model model, Set<ResultFeature> extraResultFeatures){
-		return newModelManager(pmml, model, extraResultFeatures);
-	}
-
-	static
-	public ModelEvaluatorFactory newInstance(){
-		return new ModelEvaluatorFactory();
-	}
+	ResultFeature[] value();
 }

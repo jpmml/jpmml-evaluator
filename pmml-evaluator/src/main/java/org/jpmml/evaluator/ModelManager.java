@@ -670,7 +670,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		}
 	});
 
-	private static final LoadingCache<Output, Set<ResultFeature>> resultFeaturesCache = CacheUtil.buildLoadingCache(new CacheLoader<Output, Set<ResultFeature>>(){
+	static final LoadingCache<Output, Set<ResultFeature>> resultFeaturesCache = CacheUtil.buildLoadingCache(new CacheLoader<Output, Set<ResultFeature>>(){
 
 		@Override
 		public Set<ResultFeature> load(Output output){
