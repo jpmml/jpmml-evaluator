@@ -19,5 +19,8 @@
 				</Node>
 			</Node>
 		</Node>
+		<Output>
+			<OutputField name="nodeId" feature="entityId" dataType="string" optype="categorical"/>
+		</Output>
 	</TreeModel>
 </PMML>

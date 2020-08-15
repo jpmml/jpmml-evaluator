@@ -767,16 +767,28 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 						extraResultFeatures.addAll(resultFeatures);
 					}
 				}
-				// Falls through
-			default:
+				break;
+			case AVERAGE:
+			case WEIGHTED_AVERAGE:
+			case MEDIAN:
+			case MAX:
 				{
-					Set<ResultFeature> segmentResultFeatures = getSegmentResultFeatures(segmentId);
-
-					if(segmentResultFeatures != null && !segmentResultFeatures.isEmpty()){
-						extraResultFeatures.addAll(segmentResultFeatures);
+					switch(miningFunction){
+						case CLASSIFICATION:
+							extraResultFeatures.add(ResultFeature.PROBABILITY);
+							break;
+						default:
+							break;
 					}
 				}
 				break;
+			default:
+				break;
+		}
+
+		Set<ResultFeature> segmentResultFeatures = getSegmentResultFeatures(segmentId);
+		if(segmentResultFeatures != null && !segmentResultFeatures.isEmpty()){
+			extraResultFeatures.addAll(segmentResultFeatures);
 		}
 
 		Configuration configuration = ensureConfiguration();

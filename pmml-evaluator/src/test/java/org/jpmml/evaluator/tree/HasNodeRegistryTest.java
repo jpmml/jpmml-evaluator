@@ -60,7 +60,7 @@ public class HasNodeRegistryTest {
 		PMML pmml = new PMML(Version.PMML_4_3.getVersion(), new Header(), new DataDictionary())
 			.addModels(new TreeModel(MiningFunction.REGRESSION, new MiningSchema(), node1a));
 
-		HasNodeRegistry hasNodeRegistry = new TreeModelEvaluator(pmml);
+		HasNodeRegistry hasNodeRegistry = new ComplexTreeModelEvaluator(pmml);
 
 		BiMap<Node, String> nodeRegistry = (hasNodeRegistry.getEntityRegistry()).inverse();
 

@@ -86,7 +86,8 @@ public class ModelManagerFactory<S extends ModelManager<?>> implements Serializa
 				Functionality functionality = modelManagerClazz.getAnnotation(Functionality.class);
 
 				if(functionality != null){
-					Set<ResultFeature> providedResultFeatures = EnumSet.copyOf(Arrays.asList(functionality.value()));
+					Set<ResultFeature> providedResultFeatures = EnumSet.noneOf(ResultFeature.class);
+					providedResultFeatures.addAll(Arrays.asList(functionality.value()));
 
 					if(!providedResultFeatures.containsAll(resultFeatures)){
 						continue modelManagers;

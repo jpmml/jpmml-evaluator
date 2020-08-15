@@ -25,6 +25,7 @@ import java.util.Map;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.ResultFeature;
 import org.jpmml.evaluator.Classification;
+import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.jpmml.evaluator.ProbabilityDistribution;
@@ -54,9 +55,9 @@ public class MultiTargetTest extends ModelEvaluatorTest {
 		assertNotNull(getTarget(results, "y1"));
 		assertNull(getTarget(results, "y2"));
 
-		Classification<?, ?> classification = (Classification<?, ?>)results.get(FieldName.create("y1"));
+		Object classification = results.get(FieldName.create("y1"));
 
-		assertTrue(classification instanceof NodeScoreDistribution);
+		assertFalse(classification instanceof HasProbability);
 
 		assertEquals(0, getOutput(results, "decision"));
 
@@ -67,9 +68,9 @@ public class MultiTargetTest extends ModelEvaluatorTest {
 		assertNull(getTarget(results, "y1"));
 		assertNotNull(getTarget(results, "y2"));
 
-		classification = (Classification<?, ?>)results.get(FieldName.create("y2"));
+		classification = results.get(FieldName.create("y2"));
 
-		assertFalse(classification instanceof ProbabilityDistribution);
+		assertFalse(classification instanceof HasProbability);
 
 		assertEquals(1, getOutput(results, "decision"));
 	}
