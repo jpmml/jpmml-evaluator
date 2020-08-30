@@ -20,13 +20,16 @@ package org.jpmml.evaluator;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.ResultFeature;
 
 public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 
@@ -35,6 +38,8 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	private Model model = null;
 
 	private ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+
+	private Set<ResultFeature> extraResultFeatures = EnumSet.noneOf(ResultFeature.class);
 
 	private InputMapper inputMapper = null;
 
@@ -104,7 +109,9 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 
 		ModelEvaluatorFactory modelEvaluatorFactory = configuration.getModelEvaluatorFactory();
 
-		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml, model);
+		Set<ResultFeature> extraResultFeatures = getExtraResultFeatures();
+
+		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml, model, extraResultFeatures);
 		modelEvaluator.configure(configuration);
 
 		InputMapper inputMapper = getInputMapper();
@@ -234,6 +241,16 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
 
 		configurationBuilder.setFunctionGuard(functionGuard);
+
+		return this;
+	}
+
+	public Set<ResultFeature> getExtraResultFeatures(){
+		return this.extraResultFeatures;
+	}
+
+	public ModelEvaluatorBuilder setExtraResultFeatures(Set<ResultFeature> extraResultFeatures){
+		this.extraResultFeatures = extraResultFeatures;
 
 		return this;
 	}
