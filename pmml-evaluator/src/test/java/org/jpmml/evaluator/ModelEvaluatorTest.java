@@ -36,7 +36,6 @@ public class ModelEvaluatorTest {
 		return createModelEvaluator(getClass());
 	}
 
-	static
 	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz) throws Exception {
 		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
 
@@ -49,7 +48,6 @@ public class ModelEvaluatorTest {
 		return createModelEvaluator(getClass(), configuration);
 	}
 
-	static
 	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz, Configuration configuration) throws Exception {
 
 		try(InputStream is = getInputStream(clazz)){
@@ -57,9 +55,22 @@ public class ModelEvaluatorTest {
 		}
 	}
 
-	static
 	public ModelEvaluator<?> createModelEvaluator(InputStream is, Configuration configuration) throws Exception {
-		ModelEvaluatorBuilder modelEvaluatorBuilder = new LoadingModelEvaluatorBuilder(){
+		ModelEvaluatorBuilder modelEvaluatorBuilder = createLoadingModelEvaluatorBuilder(configuration)
+			.load(is);
+
+		modelEvaluatorBuilder = SerializationUtil.clone(modelEvaluatorBuilder);
+
+		ModelEvaluator<?> modelEvaluator = modelEvaluatorBuilder.build();
+
+		modelEvaluator = SerializationUtil.clone(modelEvaluator);
+
+		return modelEvaluator;
+	}
+
+	static
+	private LoadingModelEvaluatorBuilder createLoadingModelEvaluatorBuilder(Configuration configuration){
+		LoadingModelEvaluatorBuilder modelEvaluatorBuilder = new LoadingModelEvaluatorBuilder(){
 
 			{
 				setVisitors(new TestModelEvaluatorBattery());
@@ -71,16 +82,9 @@ public class ModelEvaluatorTest {
 			@Override
 			protected void checkSchema(ModelEvaluator<?> modelEvaluator){
 			}
-		}
-			.load(is);
+		};
 
-		modelEvaluatorBuilder = SerializationUtil.clone(modelEvaluatorBuilder);
-
-		ModelEvaluator<?> modelEvaluator = modelEvaluatorBuilder.build();
-
-		modelEvaluator = SerializationUtil.clone(modelEvaluator);
-
-		return modelEvaluator;
+		return modelEvaluatorBuilder;
 	}
 
 	static
