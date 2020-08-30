@@ -57,7 +57,7 @@ public class HasNodeRegistryTest {
 
 		node2b.addNodes(node3c, node3d);
 
-		PMML pmml = new PMML(Version.PMML_4_3.getVersion(), new Header(), new DataDictionary())
+		PMML pmml = new PMML(Version.PMML_4_4.getVersion(), new Header(), new DataDictionary())
 			.addModels(new TreeModel(MiningFunction.REGRESSION, new MiningSchema(), node1a));
 
 		HasNodeRegistry hasNodeRegistry = new ComplexTreeModelEvaluator(pmml);

@@ -161,7 +161,7 @@ public class TargetUtilTest {
 			.setMathContext(mathContext)
 			.setTargets(targets);
 
-		PMML pmml = new PMML(Version.PMML_4_3.getVersion(), new Header(), new DataDictionary())
+		PMML pmml = new PMML(Version.PMML_4_4.getVersion(), new Header(), new DataDictionary())
 			.addModels(treeModel);
 
 		ModelEvaluatorBuilder modelEvaluatorBuilder = new ModelEvaluatorBuilder(pmml);

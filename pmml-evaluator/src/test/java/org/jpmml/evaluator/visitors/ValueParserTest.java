@@ -82,7 +82,7 @@ public class ValueParserTest {
 		RegressionModel regressionModel = new RegressionModel(MiningFunction.REGRESSION, miningSchema, null)
 			.addRegressionTables(regressionTable);
 
-		PMML pmml = new PMML(Version.PMML_4_3.getVersion(), new Header(), dataDictionary)
+		PMML pmml = new PMML(Version.PMML_4_4.getVersion(), new Header(), dataDictionary)
 			.addModels(regressionModel);
 
 		List<DataField> dataFields = dataDictionary.getDataFields();
@@ -148,7 +148,7 @@ public class ValueParserTest {
 		TreeModel treeModel = new TreeModel(MiningFunction.REGRESSION, miningSchema, null)
 			.setNode(root);
 
-		PMML pmml = new PMML(Version.PMML_4_3.getVersion(), new Header(), dataDictionary)
+		PMML pmml = new PMML(Version.PMML_4_4.getVersion(), new Header(), dataDictionary)
 			.setTransformationDictionary(transformationDictionary)
 			.addModels(treeModel);
 

@@ -40,7 +40,7 @@ public class UnsupportedMarkupInspectorTest {
 			.setModelClass(ClusteringModel.ModelClass.DISTRIBUTION_BASED)
 			.setCenterFields(new CustomCenterFields());
 
-		PMML pmml = new PMML(Version.PMML_4_3.getVersion(), new Header(), new DataDictionary())
+		PMML pmml = new PMML(Version.PMML_4_4.getVersion(), new Header(), new DataDictionary())
 			.addModels(clusteringModel);
 
 		UnsupportedMarkupInspector inspector = new UnsupportedMarkupInspector();

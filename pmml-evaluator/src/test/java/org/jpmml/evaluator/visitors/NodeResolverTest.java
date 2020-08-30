@@ -52,7 +52,7 @@ public class NodeResolverTest {
 		TreeModel treeModel = new TreeModel(MiningFunction.REGRESSION, new MiningSchema(), null)
 			.setNode(root);
 
-		PMML pmml = new PMML(Version.PMML_4_3.getVersion(), new Header(), new DataDictionary())
+		PMML pmml = new PMML(Version.PMML_4_4.getVersion(), new Header(), new DataDictionary())
 			.addModels(treeModel);
 
 		NodeResolver resolver = new NodeResolver();
