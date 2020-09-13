@@ -27,6 +27,7 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -34,6 +35,43 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ResourceUtilTest {
+
+	@Test
+	public void readWriteStrings() throws IOException {
+		String[] values = {"a", "b", "c"};
+		String[][] valueArrays = {{"a", "a"}, {"b", "b"}, {"c", "c"}};
+		List<String>[] valueLists = new List[]{Arrays.asList("a"), Arrays.asList("b", "b"), Arrays.asList("c", "c", "c")};
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+		DataOutput dataOutput = new DataOutputStream(os);
+
+		ResourceUtil.writeStrings(dataOutput, values);
+		ResourceUtil.writeStringArrays(dataOutput, valueArrays);
+		ResourceUtil.writeStringLists(dataOutput, valueLists);
+
+		os.close();
+
+		ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+
+		DataInput dataInput = new DataInputStream(is);
+
+		String[] clonedValues = ResourceUtil.readStrings(dataInput, 3);
+		String[][] clonedValueArrays = ResourceUtil.readStringArrays(dataInput, 3, 2);
+		List<String>[] clonedValueLists = ResourceUtil.readStringLists(dataInput);
+
+		assertTrue(Arrays.equals(values, clonedValues));
+		assertTrue(Arrays.deepEquals(valueArrays, clonedValueArrays));
+		assertTrue(Arrays.deepEquals(valueLists, clonedValueLists));
+
+		try {
+			dataInput.readByte();
+
+			fail();
+		} catch(EOFException eofe){
+			// Ignored
+		}
+	}
 
 	@Test
 	public void readWriteDoubles() throws IOException {
@@ -63,7 +101,7 @@ public class ResourceUtilTest {
 			dataInput.readByte();
 
 			fail();
-		} catch(EOFException ee){
+		} catch(EOFException eofe){
 			// Ignored
 		}
 	}
