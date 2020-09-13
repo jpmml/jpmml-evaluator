@@ -46,6 +46,7 @@
 		<module>pmml-evaluator</module>
 		<module>pmml-evaluator-example</module>
 		<module>pmml-evaluator-extension</module>
+		<module>pmml-evaluator-kryo</module>
 		<module>pmml-evaluator-reporting</module>
 		<module>pmml-evaluator-testing</module>
 	</modules>
@@ -80,6 +81,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-evaluator-kryo</artifactId>
+				<version>1.5-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-reporting</artifactId>
 				<version>1.5-SNAPSHOT</version>
 			</dependency>
@@ -102,6 +108,11 @@
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model</artifactId>
+				<version>1.5.3</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-model-kryo</artifactId>
 				<version>1.5.3</version>
 			</dependency>
 			<dependency>

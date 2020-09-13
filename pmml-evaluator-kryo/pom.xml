@@ -9,10 +9,10 @@
 	</parent>
 
 	<groupId>org.jpmml</groupId>
-	<artifactId>pmml-evaluator-testing</artifactId>
+	<artifactId>pmml-evaluator-kryo</artifactId>
 
-	<name>JPMML evaluator batch testing harness</name>
-	<description>JPMML class model evaluator batch testing harness</description>
+	<name>JPMML evaluator Kryo SerDe</name>
+	<description>JPMML class model evaluator Kryo serializers and deserializers</description>
 
 	<licenses>
 		<license>
@@ -27,28 +27,21 @@
 			<groupId>org.jpmml</groupId>
 			<artifactId>pmml-evaluator</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-evaluator-extension</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-evaluator-kryo</artifactId>
-		</dependency>
 
 		<dependency>
 			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-model-metro</artifactId>
+			<artifactId>pmml-model-kryo</artifactId>
 		</dependency>
+
 		<dependency>
-			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-model-moxy</artifactId>
+			<groupId>de.javakaffee</groupId>
+			<artifactId>kryo-serializers</artifactId>
+			<version>0.45</version>
 		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>

@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
+import com.esotericsoftware.kryo.Kryo;
 import com.google.common.base.Equivalence;
 import org.dmg.pmml.Application;
 import org.dmg.pmml.MiningSchema;
@@ -35,6 +36,7 @@ import org.jpmml.evaluator.EvaluatorBuilder;
 import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.OutputFilters;
 import org.jpmml.evaluator.ResultField;
+import org.jpmml.evaluator.kryo.KryoUtil;
 import org.jpmml.evaluator.visitors.InvalidMarkupInspector;
 import org.jpmml.evaluator.visitors.UnsupportedMarkupInspector;
 import org.jpmml.model.SerializationUtil;
@@ -122,7 +124,16 @@ public class IntegrationTestBatch extends ArchiveBatch {
 	protected void validateEvaluator(Evaluator evaluator) throws Exception {
 
 		if(evaluator instanceof Serializable){
-			SerializationUtil.clone((Serializable)evaluator);
+			Serializable serializable = (Serializable)evaluator;
+
+			SerializationUtil.clone(serializable);
+
+			Kryo kryo = new Kryo();
+
+			KryoUtil.init(kryo);
+			KryoUtil.register(kryo);
+
+			KryoUtil.clone(kryo, serializable);
 		}
 	}
 
