@@ -93,6 +93,9 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 	private Map<String, Object> vectorMap = null;
 
 
+	private SupportVectorMachineModelEvaluator(){
+	}
+
 	public SupportVectorMachineModelEvaluator(PMML pmml){
 		this(pmml, PMMLUtil.findModel(pmml, SupportVectorMachineModel.class));
 	}

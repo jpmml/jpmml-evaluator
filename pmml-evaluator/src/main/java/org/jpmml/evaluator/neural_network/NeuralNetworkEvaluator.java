@@ -88,6 +88,9 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	private BiMap<String, NeuralEntity> entityRegistry = null;
 
 
+	private NeuralNetworkEvaluator(){
+	}
+
 	public NeuralNetworkEvaluator(PMML pmml){
 		this(pmml, PMMLUtil.findModel(pmml, NeuralNetwork.class));
 	}

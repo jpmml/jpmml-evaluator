@@ -47,6 +47,9 @@ public class RichBayesInput extends BayesInput implements MapHolder<TargetValueC
 	private Map<?, TargetValueCounts> targetValueCountMap = null;
 
 
+	private RichBayesInput(){
+	}
+
 	public RichBayesInput(DataType dataType){
 		setDataType(dataType);
 	}

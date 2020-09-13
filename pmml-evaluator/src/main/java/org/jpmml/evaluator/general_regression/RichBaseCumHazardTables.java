@@ -44,6 +44,9 @@ public class RichBaseCumHazardTables extends BaseCumHazardTables implements MapH
 	private Map<?, BaselineStratum> baselineStratumMap = null;
 
 
+	private RichBaseCumHazardTables(){
+	}
+
 	public RichBaseCumHazardTables(DataType dataType){
 		setDataType(dataType);
 	}

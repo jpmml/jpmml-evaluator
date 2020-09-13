@@ -103,6 +103,9 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private BiMap<String, Segment> entityRegistry = null;
 
 
+	private MiningModelEvaluator(){
+	}
+
 	public MiningModelEvaluator(PMML pmml){
 		this(pmml, PMMLUtil.findModel(pmml, MiningModel.class));
 	}

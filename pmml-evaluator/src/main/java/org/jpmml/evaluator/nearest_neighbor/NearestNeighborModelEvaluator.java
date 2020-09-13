@@ -117,6 +117,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Map<Integer, List<FieldValue>> instanceValues = null;
 
 
+	private NearestNeighborModelEvaluator(){
+	}
+
 	public NearestNeighborModelEvaluator(PMML pmml){
 		this(pmml, PMMLUtil.findModel(pmml, NearestNeighborModel.class));
 	}

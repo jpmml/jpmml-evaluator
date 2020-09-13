@@ -26,6 +26,9 @@ public class FunctionNameStack extends ArrayDeque<String> implements SymbolTable
 	private int capacity = 16;
 
 
+	public FunctionNameStack(){
+	}
+
 	public FunctionNameStack(int capacity){
 		setCapacity(capacity);
 	}

@@ -104,6 +104,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private List<Object> targetCategories = null;
 
 
+	private GeneralRegressionModelEvaluator(){
+	}
+
 	public GeneralRegressionModelEvaluator(PMML pmml){
 		this(pmml, PMMLUtil.findModel(pmml, GeneralRegressionModel.class));
 	}

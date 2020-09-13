@@ -88,6 +88,9 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	private List<ItemValue> itemValues = null;
 
 
+	private AssociationModelEvaluator(){
+	}
+
 	public AssociationModelEvaluator(PMML pmml){
 		this(pmml, PMMLUtil.findModel(pmml, AssociationModel.class));
 	}

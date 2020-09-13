@@ -105,6 +105,9 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 	private ListMultimap<FieldName, Field<?>> visibleFields = null;
 
 
+	protected ModelManager(){
+	}
+
 	protected ModelManager(PMML pmml, M model){
 		setPMML(Objects.requireNonNull(pmml));
 		setModel(Objects.requireNonNull(model));

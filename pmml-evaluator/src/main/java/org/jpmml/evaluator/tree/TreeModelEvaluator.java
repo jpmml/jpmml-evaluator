@@ -34,6 +34,9 @@ import org.jpmml.evaluator.PMMLUtil;
 abstract
 public class TreeModelEvaluator extends ModelEvaluator<TreeModel> {
 
+	protected TreeModelEvaluator(){
+	}
+
 	public TreeModelEvaluator(PMML pmml){
 		this(pmml, PMMLUtil.findModel(pmml, TreeModel.class));
 	}

@@ -48,6 +48,9 @@ import org.jpmml.evaluator.annotations.Functionality;
 )
 public class SimpleTreeModelEvaluator extends TreeModelEvaluator {
 
+	private SimpleTreeModelEvaluator(){
+	}
+
 	public SimpleTreeModelEvaluator(PMML pmml){
 		this(pmml, PMMLUtil.findModel(pmml, TreeModel.class));
 	}

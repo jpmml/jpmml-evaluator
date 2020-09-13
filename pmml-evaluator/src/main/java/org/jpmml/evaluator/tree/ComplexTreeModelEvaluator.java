@@ -62,6 +62,9 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 	private BiMap<String, Node> entityRegistry = null;
 
 
+	private ComplexTreeModelEvaluator(){
+	}
+
 	public ComplexTreeModelEvaluator(PMML pmml){
 		this(pmml, PMMLUtil.findModel(pmml, TreeModel.class));
 	}

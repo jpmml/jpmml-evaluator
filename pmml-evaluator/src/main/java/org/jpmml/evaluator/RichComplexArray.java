@@ -35,6 +35,9 @@ public class RichComplexArray extends ComplexArray implements SetHolder {
 	private DataType dataType = null;
 
 
+	private RichComplexArray(){
+	}
+
 	public RichComplexArray(DataType dataType){
 		setDataType(dataType);
 	}

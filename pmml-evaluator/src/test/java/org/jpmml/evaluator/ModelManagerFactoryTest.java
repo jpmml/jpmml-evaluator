@@ -81,6 +81,9 @@ public class ModelManagerFactoryTest {
 	abstract
 	public class TreeModelManager extends ModelManager<TreeModel> {
 
+		private TreeModelManager(){
+		}
+
 		public TreeModelManager(PMML pmml, TreeModel treeModel){
 			super(pmml, treeModel);
 		}
@@ -88,6 +91,9 @@ public class ModelManagerFactoryTest {
 
 	static
 	public class RegressorManager extends TreeModelManager {
+
+		private RegressorManager(){
+		}
 
 		public RegressorManager(PMML pmml, TreeModel treeModel){
 			super(pmml, treeModel);

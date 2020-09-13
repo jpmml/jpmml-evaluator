@@ -54,6 +54,9 @@ import org.jpmml.evaluator.VoteAggregator;
 
 public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
+	private ScorecardEvaluator(){
+	}
+
 	public ScorecardEvaluator(PMML pmml){
 		this(pmml, PMMLUtil.findModel(pmml, Scorecard.class));
 	}

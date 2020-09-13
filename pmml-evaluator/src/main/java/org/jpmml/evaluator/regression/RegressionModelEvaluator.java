@@ -55,6 +55,9 @@ import org.jpmml.evaluator.ValueMap;
 
 public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
+	private RegressionModelEvaluator(){
+	}
+
 	public RegressionModelEvaluator(PMML pmml){
 		this(pmml, PMMLUtil.findModel(pmml, RegressionModel.class));
 	}

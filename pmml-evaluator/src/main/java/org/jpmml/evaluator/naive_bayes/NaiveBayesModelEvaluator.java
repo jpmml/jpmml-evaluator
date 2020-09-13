@@ -94,6 +94,9 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	private Map<FieldName, Map<Object, Number>> fieldCountSums = null;
 
 
+	private NaiveBayesModelEvaluator(){
+	}
+
 	public NaiveBayesModelEvaluator(PMML pmml){
 		this(pmml, PMMLUtil.findModel(pmml, NaiveBayesModel.class));
 	}

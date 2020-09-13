@@ -66,6 +66,9 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 	private BiMap<String, SimpleRule> entityRegistry = null;
 
 
+	private RuleSetModelEvaluator(){
+	}
+
 	public RuleSetModelEvaluator(PMML pmml){
 		this(pmml, PMMLUtil.findModel(pmml, RuleSetModel.class));
 	}

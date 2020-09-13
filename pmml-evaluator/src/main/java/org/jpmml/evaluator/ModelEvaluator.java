@@ -84,6 +84,9 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	private Integer numberOfVisibleFields = null;
 
 
+	protected ModelEvaluator(){
+	}
+
 	protected ModelEvaluator(PMML pmml, M model){
 		super(pmml, model);
 

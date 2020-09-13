@@ -29,6 +29,9 @@ import org.jpmml.evaluator.ValueFactory;
 
 public class JavaModelEvaluator extends ModelEvaluator<JavaModel> {
 
+	private JavaModelEvaluator(){
+	}
+
 	public JavaModelEvaluator(PMML pmml){
 		this(pmml, PMMLUtil.findModel(pmml, JavaModel.class));
 	}
