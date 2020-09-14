@@ -19,12 +19,18 @@
 package org.jpmml.evaluator;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.dmg.pmml.InlineTable;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TextUtilTest {
 
@@ -168,6 +174,92 @@ public class TextUtilTest {
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(0, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
 		assertEquals(1, termFrequency(textTokens, termTokens, true, 4, false, Integer.MAX_VALUE));
+	}
+
+	@Test
+	public void termFrequencyTable(){
+		List<String> textTokens = Arrays.asList("a", "b", "A", "c");
+		Set<List<String>> termTokenSet = new HashSet<List<String>>(){
+
+			{
+				add(Arrays.asList("a"));
+				add(Arrays.asList("a", "b"));
+				add(Arrays.asList("a", "b", "c"));
+			}
+		};
+
+		Map<List<String>, Integer> expectedTermFrequencyTable = new HashMap<>();
+		expectedTermFrequencyTable.put(Arrays.asList("a"), 2);
+
+		Map<List<String>, Integer> termFrequencyTable = TextUtil.termFrequencyTable(textTokens, termTokenSet, false, 0, 1);
+
+		assertEquals(expectedTermFrequencyTable, termFrequencyTable);
+
+		expectedTermFrequencyTable.put(Arrays.asList("a", "b"), 1);
+
+		termFrequencyTable = TextUtil.termFrequencyTable(textTokens, termTokenSet, false, 0, 2);
+
+		assertEquals(expectedTermFrequencyTable, termFrequencyTable);
+
+		expectedTermFrequencyTable = new HashMap<>();
+		expectedTermFrequencyTable.put(Arrays.asList("a"), 4);
+
+		termFrequencyTable = TextUtil.termFrequencyTable(textTokens, termTokenSet, false, 1, 1);
+
+		assertEquals(expectedTermFrequencyTable, termFrequencyTable);
+
+		termFrequencyTable = TextUtil.termFrequencyTable(textTokens, termTokenSet, true, 1, 1);
+
+		assertEquals(expectedTermFrequencyTable, termFrequencyTable);
+
+		expectedTermFrequencyTable.put(Arrays.asList("a", "b"), 2);
+
+		termFrequencyTable = TextUtil.termFrequencyTable(textTokens, termTokenSet, false, 1, 2);
+
+		assertEquals(expectedTermFrequencyTable, termFrequencyTable);
+
+		expectedTermFrequencyTable.put(Arrays.asList("a", "b"), 1);
+
+		termFrequencyTable = TextUtil.termFrequencyTable(textTokens, termTokenSet, true, 1, 2);
+
+		assertEquals(expectedTermFrequencyTable, termFrequencyTable);
+	}
+
+	@Test
+	public void matches(){
+		List<String> leftTokens = Arrays.asList("A", "B", "C");
+		List<String> rightTokens = Arrays.asList("a", "b", "c");
+
+		assertFalse(TextUtil.matches(leftTokens, rightTokens, true, 0));
+
+		assertTrue(TextUtil.matches(leftTokens, rightTokens, false, 0));
+
+		rightTokens = Arrays.asList("A", "X", "C");
+
+		assertFalse(TextUtil.matches(leftTokens, rightTokens, true, 0));
+		assertTrue(TextUtil.matches(leftTokens, rightTokens, true, 1));
+
+		rightTokens = Arrays.asList("A", "XX", "C");
+
+		assertFalse(TextUtil.matches(leftTokens, rightTokens, true, 1));
+		assertTrue(TextUtil.matches(leftTokens, rightTokens, true, 2));
+
+		rightTokens = Arrays.asList("a", "x", "c");
+
+		assertFalse(TextUtil.matches(leftTokens, rightTokens, true, 0));
+		assertFalse(TextUtil.matches(leftTokens, rightTokens, true, 2));
+		assertTrue(TextUtil.matches(leftTokens, rightTokens, true, 3));
+
+		assertFalse(TextUtil.matches(leftTokens, rightTokens, false, 0));
+		assertTrue(TextUtil.matches(leftTokens, rightTokens, false, 1));
+
+		rightTokens = Arrays.asList("a", "xx", "c");
+
+		assertFalse(TextUtil.matches(leftTokens, rightTokens, true, 3));
+		assertTrue(TextUtil.matches(leftTokens, rightTokens, true, 4));
+
+		assertFalse(TextUtil.matches(leftTokens, rightTokens, false, 1));
+		assertTrue(TextUtil.matches(leftTokens, rightTokens, false, 2));
 	}
 
 	static

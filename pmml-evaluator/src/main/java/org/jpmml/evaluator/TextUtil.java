@@ -18,8 +18,11 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -246,6 +249,30 @@ public class TextUtil {
 	}
 
 	static
+	public Map<List<String>, Integer> termFrequencyTable(TextIndex textIndex, List<String> textTokens, Set<List<String>> termTokenSet, int maxLength){
+		boolean caseSensitive = textIndex.isCaseSensitive();
+
+		int maxLevenshteinDistance = textIndex.getMaxLevenshteinDistance();
+		if(maxLevenshteinDistance < 0){
+			throw new InvalidAttributeException(textIndex, PMMLAttributes.TEXTINDEX_MAXLEVENSHTEINDISTANCE, maxLevenshteinDistance);
+		}
+
+		return termFrequencyTable(textTokens, termTokenSet, caseSensitive, maxLevenshteinDistance, maxLength);
+	}
+
+	static
+	public boolean matches(TextIndex textIndex, List<String> leftTokens, List<String> rightTokens){
+		boolean caseSensitive = textIndex.isCaseSensitive();
+
+		int maxLevenshteinDistance = textIndex.getMaxLevenshteinDistance();
+		if(maxLevenshteinDistance < 0){
+			throw new InvalidAttributeException(textIndex, PMMLAttributes.TEXTINDEX_MAXLEVENSHTEINDISTANCE, maxLevenshteinDistance);
+		}
+
+		return matches(leftTokens, rightTokens, caseSensitive, maxLevenshteinDistance);
+	}
+
+	static
 	int termFrequency(List<String> textTokens, List<String> termTokens, boolean caseSensitive, int maxLevenshteinDistance, boolean bestHits, int maxFrequency){
 		int frequency = 0;
 
@@ -323,6 +350,84 @@ public class TextUtil {
 		}
 
 		return Math.min(maxFrequency, frequency);
+	}
+
+	static
+	Map<List<String>, Integer> termFrequencyTable(List<String> textTokens, Set<List<String>> termTokenSet, boolean caseSensitive, int maxLevenshteinDistance, int maxLength){
+		Map<List<String>, Integer> result = new LinkedHashMap<>();
+
+		for(int i = 0, max = textTokens.size(); i < max; i++){
+
+			for(int length = 1; length <= maxLength; length++){
+
+				if((i + length) > max){
+					break;
+				}
+
+				List<String> tokens = textTokens.subList(i, i + length);
+
+				if(caseSensitive && maxLevenshteinDistance == 0){
+					boolean matches = termTokenSet.contains(tokens);
+
+					if(matches){
+						result.merge(tokens, 1, Integer::sum);
+					}
+				} else
+
+				{
+					termTokenSet.stream()
+						.filter(termTokens -> matches(tokens, termTokens, caseSensitive, maxLevenshteinDistance))
+						.forEach(termTokens -> result.merge(termTokens, 1, Integer::sum));
+				}
+			}
+		}
+
+		return result;
+	}
+
+	static
+	boolean matches(List<String> leftTokens, List<String> rightTokens, boolean caseSensitive, int maxLevenshteinDistance){
+
+		if(leftTokens.size() != rightTokens.size()){
+			return false;
+		}
+
+		int levenshteinDistance = 0;
+
+		for(int i = 0, max = leftTokens.size(); i < max; i++){
+			int threshold = (maxLevenshteinDistance - levenshteinDistance);
+
+			String leftToken = leftTokens.get(i);
+			String rightToken = rightTokens.get(i);
+
+			if(threshold == 0){
+				boolean equals;
+
+				if(caseSensitive){
+					equals = (leftToken).equals(rightToken);
+				} else
+
+				{
+					equals = (leftToken).equalsIgnoreCase(rightToken);
+				} // End if
+
+				if(!equals){
+					return false;
+				}
+			} else
+
+			{
+				int tokenLevenshteinDistance = LevenshteinDistanceUtil.limitedCompare(leftToken, rightToken, caseSensitive, threshold);
+
+				if(tokenLevenshteinDistance < 0){
+					return false;
+				}
+
+				levenshteinDistance += tokenLevenshteinDistance;
+			}
+		}
+
+		return true;
 	}
 
 	static
