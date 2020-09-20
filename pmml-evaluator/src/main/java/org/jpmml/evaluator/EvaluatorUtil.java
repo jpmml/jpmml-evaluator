@@ -28,6 +28,7 @@ import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimaps;
 import org.dmg.pmml.FieldName;
 
 public class EvaluatorUtil {
@@ -161,7 +162,7 @@ public class EvaluatorUtil {
 		Collection<Map.Entry<Object, ListMultimap<K, Object>>> entries = groupedRows.entrySet();
 		for(Map.Entry<Object, ListMultimap<K, Object>> entry : entries){
 			Map<K, Object> resultRow = new LinkedHashMap<>();
-			resultRow.putAll((entry.getValue()).asMap());
+			resultRow.putAll(Multimaps.asMap(entry.getValue()));
 
 			// The value of the "group by" column is a single Object, not a Collection (ie. java.util.List) of Objects
 			resultRow.put(groupKey, entry.getKey());

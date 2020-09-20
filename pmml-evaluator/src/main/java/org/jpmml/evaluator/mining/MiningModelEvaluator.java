@@ -40,6 +40,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
@@ -853,7 +854,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			}
 		}
 
-		return result.asMap();
+		return Multimaps.asMap(result);
 	}
 
 	static

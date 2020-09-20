@@ -30,6 +30,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimaps;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Expression;
@@ -614,7 +615,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			result.put(name, neuralOutput);
 		}
 
-		return (Map)result.asMap();
+		return Multimaps.asMap(result);
 	}
 
 	private static final LoadingCache<NeuralNetwork, BiMap<String, NeuralEntity>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<NeuralNetwork, BiMap<String, NeuralEntity>>(){

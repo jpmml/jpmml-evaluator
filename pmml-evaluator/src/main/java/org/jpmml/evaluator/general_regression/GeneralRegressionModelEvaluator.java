@@ -39,6 +39,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimaps;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Matrix;
@@ -975,13 +976,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		Map<Object, Map<String, Row>> result = new LinkedHashMap<>();
 
-		Collection<? extends Map.Entry<?, List<PPCell>>> targetCategoryEntries = (asMap(targetCategoryMap)).entrySet();
+		Collection<? extends Map.Entry<?, List<PPCell>>> targetCategoryEntries = (Multimaps.asMap(targetCategoryMap)).entrySet();
 		for(Map.Entry<?, List<PPCell>> targetCategoryEntry : targetCategoryEntries){
 			Map<String, Row> predictorMap = new LinkedHashMap<>();
 
 			ListMultimap<String, PPCell> parameterNameMap = groupByParameterName(targetCategoryEntry.getValue());
 
-			Collection<Map.Entry<String, List<PPCell>>> parameterNameEntries = (asMap(parameterNameMap)).entrySet();
+			Collection<Map.Entry<String, List<PPCell>>> parameterNameEntries = (Multimaps.asMap(parameterNameMap)).entrySet();
 			for(Map.Entry<String, List<PPCell>> parameterNameEntry : parameterNameEntries){
 				predictorMap.put(parameterNameEntry.getKey(), function.apply(parameterNameEntry.getValue()));
 			}
@@ -998,15 +999,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		ListMultimap<Object, PCell> targetCategoryCells = groupByTargetCategory(paramMatrix.getPCells());
 
-		return asMap(targetCategoryCells);
-	}
-
-	@SuppressWarnings (
-		value = {"rawtypes", "unchecked"}
-	)
-	static
-	private <K, C extends ParameterCell> Map<K, List<C>> asMap(ListMultimap<K, C> multimap){
-		return (Map)multimap.asMap();
+		return Multimaps.asMap(targetCategoryCells);
 	}
 
 	static
