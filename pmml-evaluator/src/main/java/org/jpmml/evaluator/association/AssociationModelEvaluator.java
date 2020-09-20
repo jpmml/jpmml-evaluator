@@ -72,19 +72,14 @@ import org.jpmml.evaluator.ValueFactory;
 
 public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> implements HasGroupFields, HasEntityRegistry<AssociationRule> {
 
-	transient
 	private List<InputField> groupInputFields = null;
 
-	transient
 	private BiMap<String, AssociationRule> entityRegistry = null;
 
-	transient
 	private Map<String, Item> items = null;
 
-	transient
 	private Map<String, Itemset> itemsets = null;
 
-	transient
 	private List<ItemValue> itemValues = null;
 
 

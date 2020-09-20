@@ -89,19 +89,14 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 	private Set<ResultFeature> resultFeatures = Collections.emptySet();
 
-	transient
 	private List<InputField> inputFields = null;
 
-	transient
 	private List<InputField> activeInputFields = null;
 
-	transient
 	private List<TargetField> targetResultFields = null;
 
-	transient
 	private List<OutputField> outputResultFields = null;
 
-	transient
 	private ListMultimap<FieldName, Field<?>> visibleFields = null;
 
 

@@ -70,7 +70,6 @@ import org.jpmml.evaluator.ValueMap;
 
 public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> implements HasEntityRegistry<Cluster> {
 
-	transient
 	private BiMap<String, Cluster> entityRegistry = null;
 
 

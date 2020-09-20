@@ -82,10 +82,8 @@ import org.jpmml.model.XPathUtil;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<NeuralEntity> {
 
-	transient
 	private Map<FieldName, List<NeuralOutput>> neuralOutputMap = null;
 
-	transient
 	private BiMap<String, NeuralEntity> entityRegistry = null;
 
 

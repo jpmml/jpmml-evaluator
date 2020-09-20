@@ -87,10 +87,8 @@ import org.jpmml.model.XPathUtil;
 
 public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
-	transient
 	private List<BayesInput> bayesInputs = null;
 
-	transient
 	private Map<FieldName, Map<Object, Number>> fieldCountSums = null;
 
 

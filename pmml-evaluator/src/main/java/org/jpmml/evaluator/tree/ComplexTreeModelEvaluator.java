@@ -58,7 +58,6 @@ import org.jpmml.evaluator.ValueMap;
 
 public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements HasNodeRegistry {
 
-	transient
 	private BiMap<String, Node> entityRegistry = null;
 
 

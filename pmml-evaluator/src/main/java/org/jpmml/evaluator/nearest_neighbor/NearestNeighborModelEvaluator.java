@@ -107,13 +107,10 @@ import org.jpmml.model.visitors.FieldReferenceFinder;
 
 public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighborModel> {
 
-	transient
 	private Table<Integer, FieldName, FieldValue> trainingInstances = null;
 
-	transient
 	private Map<Integer, BitSet> instanceFlags = null;
 
-	transient
 	private Map<Integer, List<FieldValue>> instanceValues = null;
 
 

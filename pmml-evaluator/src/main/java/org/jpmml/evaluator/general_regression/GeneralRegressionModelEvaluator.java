@@ -92,16 +92,12 @@ import org.jpmml.evaluator.ValueUtil;
 
 public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegressionModel> {
 
-	transient
 	private BiMap<String, Parameter> parameterRegistry = null;
 
-	transient
 	private Map<Object, Map<String, Row>> ppMatrixMap = null;
 
-	transient
 	private Map<Object, List<PCell>> paramMatrixMap = null;
 
-	transient
 	private List<Object> targetCategories = null;
 
 

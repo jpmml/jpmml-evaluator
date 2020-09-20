@@ -89,7 +89,6 @@ import org.jpmml.model.XPathUtil;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
 
-	transient
 	private Map<String, Object> vectorMap = null;
 
 

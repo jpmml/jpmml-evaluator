@@ -74,13 +74,10 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	private ValueFactory<?> valueFactory = null;
 
-	transient
 	private Boolean parentCompatible = null;
 
-	transient
 	private Boolean pure = null;
 
-	transient
 	private Integer numberOfVisibleFields = null;
 
 

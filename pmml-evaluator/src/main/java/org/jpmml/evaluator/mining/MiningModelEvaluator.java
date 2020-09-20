@@ -100,7 +100,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	private ConcurrentMap<String, ModelEvaluator<?>> segmentModelEvaluators = new ConcurrentHashMap<>();
 
-	transient
 	private BiMap<String, Segment> entityRegistry = null;
 
 

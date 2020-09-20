@@ -62,7 +62,6 @@ import org.jpmml.evaluator.ValueMap;
 
 public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implements HasEntityRegistry<SimpleRule> {
 
-	transient
 	private BiMap<String, SimpleRule> entityRegistry = null;
 
 
