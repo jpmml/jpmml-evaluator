@@ -23,6 +23,9 @@ import org.dmg.pmml.Target;
 
 public class DefaultTargetField extends TargetField {
 
+	private DefaultTargetField(){
+	}
+
 	public DefaultTargetField(DataField dataField, Target target){
 		super(dataField, null, target);
 	}

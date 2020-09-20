@@ -23,6 +23,9 @@ import org.dmg.pmml.MiningField;
 
 public class ResidualInputField extends InputField {
 
+	private ResidualInputField(){
+	}
+
 	public ResidualInputField(DataField dataField, MiningField miningField){
 		super(dataField, miningField);
 	}

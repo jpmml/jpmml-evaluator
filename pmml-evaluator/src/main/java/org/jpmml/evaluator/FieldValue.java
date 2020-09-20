@@ -67,6 +67,9 @@ public class FieldValue implements TypeInfo, Serializable {
 	private Object value = null;
 
 
+	FieldValue(){
+	}
+
 	FieldValue(DataType dataType, Object value){
 		setDataType(Objects.requireNonNull(dataType));
 		setValue(Objects.requireNonNull(value));

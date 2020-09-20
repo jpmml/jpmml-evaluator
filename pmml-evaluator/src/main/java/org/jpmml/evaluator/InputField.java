@@ -34,6 +34,9 @@ public class InputField extends ModelField {
 	private MiningField miningField = null;
 
 
+	InputField(){
+	}
+
 	public InputField(Field<?> field, MiningField miningField){
 		super(field);
 

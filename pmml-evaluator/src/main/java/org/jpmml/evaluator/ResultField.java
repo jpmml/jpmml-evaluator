@@ -23,6 +23,9 @@ import org.dmg.pmml.Field;
 abstract
 public class ResultField extends ModelField {
 
+	ResultField(){
+	}
+
 	public ResultField(Field<?> field){
 		super(field);
 	}

@@ -31,6 +31,9 @@ public class OrdinalValue extends DiscreteValue {
 	private List<?> ordering = null;
 
 
+	OrdinalValue(){
+	}
+
 	OrdinalValue(DataType dataType, List<?> ordering, Object value){
 		super(dataType, value);
 
@@ -134,6 +137,9 @@ public class OrdinalValue extends DiscreteValue {
 
 	static
 	private class OrdinalString extends OrdinalValue {
+
+		private OrdinalString(){
+		}
 
 		OrdinalString(List<?> ordering, Object value){
 			super(DataType.STRING, ordering, value);

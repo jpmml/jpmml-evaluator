@@ -32,6 +32,9 @@ class VariableField extends Field<VariableField> {
 	private FieldName name = null;
 
 
+	private VariableField(){
+	}
+
 	VariableField(FieldName name){
 		setName(Objects.requireNonNull(name));
 	}

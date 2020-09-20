@@ -23,6 +23,9 @@ import org.dmg.pmml.DataType;
 abstract
 public class DiscreteValue extends ScalarValue {
 
+	DiscreteValue(){
+	}
+
 	DiscreteValue(DataType dataType, Object value){
 		super(dataType, value);
 	}

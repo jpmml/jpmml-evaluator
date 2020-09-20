@@ -40,6 +40,9 @@ public class ModelField implements Serializable {
 	private FieldName name = null;
 
 
+	ModelField(){
+	}
+
 	public ModelField(Field<?> field){
 		setField(Objects.requireNonNull(field));
 	}

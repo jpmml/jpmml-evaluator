@@ -26,6 +26,9 @@ public class ScalarValue extends FieldValue implements Comparable<ScalarValue> {
 	private boolean valid = true;
 
 
+	ScalarValue(){
+	}
+
 	ScalarValue(DataType dataType, Object value){
 		super(dataType, filterValue(TypeUtil.parseOrCast(dataType, value)));
 	}

@@ -33,6 +33,9 @@ public class CollectionValue extends FieldValue {
 	private List<?> ordering = null;
 
 
+	private CollectionValue(){
+	}
+
 	CollectionValue(DataType dataType, OpType opType, Collection<?> value){
 		this(dataType, opType, null, value);
 	}

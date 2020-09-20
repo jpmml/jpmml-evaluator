@@ -33,6 +33,9 @@ public class TargetField extends ResultField {
 	private Target target = null;
 
 
+	TargetField(){
+	}
+
 	public TargetField(DataField dataField, MiningField miningField, Target target){
 		super(dataField);
 

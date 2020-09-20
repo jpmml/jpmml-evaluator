@@ -27,6 +27,9 @@ public class OutputField extends ResultField {
 	private int depth = 0;
 
 
+	private OutputField(){
+	}
+
 	public OutputField(org.dmg.pmml.OutputField outputField){
 		this(outputField, 0);
 	}

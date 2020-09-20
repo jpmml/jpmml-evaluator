@@ -25,6 +25,9 @@ import org.dmg.pmml.OpType;
 
 public class CategoricalValue extends DiscreteValue {
 
+	private CategoricalValue(){
+	}
+
 	CategoricalValue(DataType dataType, Object value){
 		super(dataType, value);
 	}
@@ -64,6 +67,9 @@ public class CategoricalValue extends DiscreteValue {
 	static
 	private class CategoricalString extends CategoricalValue {
 
+		private CategoricalString(){
+		}
+
 		CategoricalString(Object value){
 			super(DataType.STRING, value);
 		}
@@ -86,6 +92,9 @@ public class CategoricalValue extends DiscreteValue {
 
 	static
 	private class CategoricalBoolean extends CategoricalValue {
+
+		private CategoricalBoolean(){
+		}
 
 		CategoricalBoolean(Object value){
 			super(DataType.BOOLEAN, value);
