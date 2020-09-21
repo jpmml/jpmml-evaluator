@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator.general_regression;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1021,7 +1022,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	static
-	private class Row {
+	private class Row implements Serializable {
 
 		private List<FactorHandler> factorHandlers = new ArrayList<>();
 
@@ -1110,10 +1111,14 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		abstract
-		private class PredictorHandler {
+		static
+		private class PredictorHandler implements Serializable {
 
 			private PPCell ppCell = null;
 
+
+			private PredictorHandler(){
+			}
 
 			private PredictorHandler(PPCell ppCell){
 				setPPCell(ppCell);
@@ -1142,10 +1147,14 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 		}
 
+		static
 		private class FactorHandler extends PredictorHandler {
 
 			private Object category = null;
 
+
+			private FactorHandler(){
+			}
 
 			private FactorHandler(PPCell ppCell){
 				super(ppCell);
@@ -1176,6 +1185,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 		}
 
+		static
 		private class ContrastMatrixHandler extends FactorHandler {
 
 			private Matrix matrix = null;
@@ -1184,6 +1194,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			private List<FieldValue> parsedCategories = null;
 
+
+			private ContrastMatrixHandler(){
+			}
 
 			private ContrastMatrixHandler(PPCell ppCell, Matrix matrix, List<Object> categories){
 				super(ppCell);
@@ -1250,10 +1263,14 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 		}
 
+		static
 		private class CovariateHandler extends PredictorHandler {
 
 			private Number exponent = null;
 
+
+			private CovariateHandler(){
+			}
 
 			private CovariateHandler(PPCell ppCell){
 				super(ppCell);
