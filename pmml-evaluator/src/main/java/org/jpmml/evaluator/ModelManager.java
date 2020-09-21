@@ -35,6 +35,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
@@ -616,7 +617,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		@Override
 		public Map<FieldName, DataField> load(DataDictionary dataDictionary){
-			return IndexableUtil.buildMap(dataDictionary.getDataFields());
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(dataDictionary.getDataFields()));
 		}
 	});
 
@@ -624,7 +625,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		@Override
 		public Map<FieldName, DerivedField> load(TransformationDictionary transformationDictionary){
-			return IndexableUtil.buildMap(transformationDictionary.getDerivedFields());
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDerivedFields()));
 		}
 	});
 
@@ -632,7 +633,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		@Override
 		public Map<String, DefineFunction> load(TransformationDictionary transformationDictionary){
-			return IndexableUtil.buildMap(transformationDictionary.getDefineFunctions());
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDefineFunctions()));
 		}
 	});
 
@@ -640,7 +641,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		@Override
 		public Map<FieldName, MiningField> load(MiningSchema miningSchema){
-			return IndexableUtil.buildMap(miningSchema.getMiningFields());
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(miningSchema.getMiningFields()));
 		}
 	});
 
@@ -648,7 +649,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		@Override
 		public Map<FieldName, DerivedField> load(LocalTransformations localTransformations){
-			return IndexableUtil.buildMap(localTransformations.getDerivedFields());
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(localTransformations.getDerivedFields()));
 		}
 	});
 
@@ -656,7 +657,8 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		@Override
 		public Map<FieldName, Target> load(Targets targets){
-			return IndexableUtil.buildMap(targets.getTargets(), true);
+			// Cannot use Guava's ImmutableMap, because it is null-hostile
+			return Collections.unmodifiableMap(IndexableUtil.buildMap(targets.getTargets(), true));
 		}
 	});
 
@@ -664,7 +666,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		@Override
 		public Map<FieldName, org.dmg.pmml.OutputField> load(Output output){
-			return IndexableUtil.buildMap(output.getOutputFields());
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(output.getOutputFields()));
 		}
 	});
 

@@ -36,6 +36,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -1321,8 +1322,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		@Override
 		public Map<Object, Map<String, Row>> load(GeneralRegressionModel generalRegressionModel){
+			Map<Object, Map<String, Row>> ppMatrix = parsePPMatrix(generalRegressionModel);
+
+			ppMatrix = ppMatrix.entrySet().stream()
+				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableMap.copyOf(entry.getValue())));
+
 			// Cannot use Guava's ImmutableMap, because it is null-hostile
-			return Collections.unmodifiableMap(parsePPMatrix(generalRegressionModel));
+			return Collections.unmodifiableMap(ppMatrix);
 		}
 	});
 
@@ -1330,8 +1336,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		@Override
 		public Map<Object, List<PCell>> load(GeneralRegressionModel generalRegressionModel){
+			Map<Object, List<PCell>> paramMatrix = parseParamMatrix(generalRegressionModel);
+
+			paramMatrix = paramMatrix.entrySet().stream()
+				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableList.copyOf(entry.getValue())));
+
 			// Cannot use Guava's ImmutableMap, because it is null-hostile
-			return Collections.unmodifiableMap(parseParamMatrix(generalRegressionModel));
+			return Collections.unmodifiableMap(paramMatrix);
 		}
 	});
 }

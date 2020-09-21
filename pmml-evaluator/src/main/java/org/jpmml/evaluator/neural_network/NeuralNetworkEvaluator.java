@@ -23,12 +23,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
 import org.dmg.pmml.DataField;
@@ -580,7 +583,12 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	private Map<FieldName, List<NeuralOutput>> getNeuralOutputMap(){
 
 		if(this.neuralOutputMap == null){
-			this.neuralOutputMap = parseNeuralOutputs();
+			Map<FieldName, List<NeuralOutput>> neuralOutputMap = parseNeuralOutputs();
+
+			neuralOutputMap = neuralOutputMap.entrySet().stream()
+				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableList.copyOf(entry.getValue())));
+
+			this.neuralOutputMap = ImmutableMap.copyOf(neuralOutputMap);
 		}
 
 		return this.neuralOutputMap;

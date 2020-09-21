@@ -34,6 +34,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
@@ -523,7 +524,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		@Override
 		public Map<String, Item> load(AssociationModel associationModel){
-			return IndexableUtil.buildMap(associationModel.getItems());
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(associationModel.getItems()));
 		}
 	});
 
@@ -531,7 +532,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		@Override
 		public Map<String, Itemset> load(AssociationModel associationModel){
-			return IndexableUtil.buildMap(associationModel.getItemsets());
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(associationModel.getItemsets()));
 		}
 	});
 

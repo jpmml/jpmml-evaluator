@@ -37,15 +37,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Function;
 import com.google.common.cache.Cache;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultiset;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Table;
@@ -516,7 +519,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			@Override
 			public Table<Integer, FieldName, FieldValue> call(){
-				return parseTrainingInstances(modelEvaluator);
+				return ImmutableTable.copyOf(parseTrainingInstances(modelEvaluator));
 			}
 		};
 	}
@@ -667,27 +670,19 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			@Override
 			public Map<Integer, BitSet> call(){
-				return loadInstanceFlags(modelEvaluator);
+				return ImmutableMap.copyOf(loadInstanceFlags(modelEvaluator));
 			}
 		};
 	}
 
 	static
 	private Map<Integer, BitSet> loadInstanceFlags(NearestNeighborModelEvaluator modelEvaluator){
-		Map<Integer, BitSet> result = new LinkedHashMap<>();
+		Map<Integer, List<FieldValue>> instanceValues = modelEvaluator.getValue(NearestNeighborModelEvaluator.instanceValueCache, createInstanceValueLoader(modelEvaluator));
 
-		Map<Integer, List<FieldValue>> valueMap = modelEvaluator.getValue(NearestNeighborModelEvaluator.instanceValueCache, createInstanceValueLoader(modelEvaluator));
+		Map<Integer, BitSet> instanceFlags = instanceValues.entrySet().stream()
+			.collect(Collectors.toMap(entry -> entry.getKey(), entry -> MeasureUtil.toBitSet(entry.getValue())));
 
-		Maps.EntryTransformer<Integer, List<FieldValue>, BitSet> transformer = new Maps.EntryTransformer<Integer, List<FieldValue>, BitSet>(){
-
-			@Override
-			public BitSet transformEntry(Integer key, List<FieldValue> value){
-				return MeasureUtil.toBitSet(value);
-			}
-		};
-		result.putAll(Maps.transformEntries(valueMap, transformer));
-
-		return result;
+		return instanceFlags;
 	}
 
 	private Map<Integer, List<FieldValue>> getInstanceValues(){
@@ -705,7 +700,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			@Override
 			public Map<Integer, List<FieldValue>> call(){
-				return loadInstanceValues(modelEvaluator);
+				Map<Integer, List<FieldValue>> instanceValues = loadInstanceValues(modelEvaluator);
+
+				instanceValues = instanceValues.entrySet().stream()
+					.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableList.copyOf(entry.getValue())));
+
+				return ImmutableMap.copyOf(instanceValues);
 			}
 		};
 	}

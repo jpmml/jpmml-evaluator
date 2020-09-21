@@ -32,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -484,7 +485,12 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		@Override
 		public Map<FieldName, Map<Object, Number>> load(NaiveBayesModel naiveBayesModel){
-			return ImmutableMap.copyOf(calculateFieldCountSums(naiveBayesModel));
+			Map<FieldName, Map<Object, Number>> fieldCountSums = calculateFieldCountSums(naiveBayesModel);
+
+			fieldCountSums = fieldCountSums.entrySet().stream()
+				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableMap.copyOf(entry.getValue())));
+
+			return ImmutableMap.copyOf(fieldCountSums);
 		}
 	});
 }
