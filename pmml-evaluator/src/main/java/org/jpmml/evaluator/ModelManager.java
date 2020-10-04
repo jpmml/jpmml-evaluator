@@ -128,7 +128,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		MiningFunction miningFunction = model.getMiningFunction();
 		if(miningFunction == null){
-			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@miningFunction"), model);
+			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@functionName"), model);
 		}
 
 		MiningSchema miningSchema = model.getMiningSchema();
