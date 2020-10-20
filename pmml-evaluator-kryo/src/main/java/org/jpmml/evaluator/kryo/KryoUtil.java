@@ -50,6 +50,7 @@ public class KryoUtil {
 		ImmutableListSerializer.registerSerializers(kryo);
 		ImmutableMapSerializer.registerSerializers(kryo);
 		ImmutableSetSerializer.registerSerializers(kryo);
+		ImmutableBiMapSerializer.registerSerializers(kryo);
 		ImmutableMultimapSerializer.registerSerializers(kryo);
 		ImmutableTableSerializer.registerSerializers(kryo);
 

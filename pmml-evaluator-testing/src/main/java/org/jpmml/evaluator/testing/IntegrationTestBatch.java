@@ -33,6 +33,7 @@ import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorBuilder;
+import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.OutputFilters;
 import org.jpmml.evaluator.ResultField;
@@ -126,6 +127,12 @@ public class IntegrationTestBatch extends ArchiveBatch {
 	}
 
 	protected void validateEvaluator(Evaluator evaluator) throws Exception {
+
+		if(evaluator instanceof HasEntityRegistry){
+			HasEntityRegistry<?> hasEntityRegistry = (HasEntityRegistry<?>)evaluator;
+
+			hasEntityRegistry.getEntityRegistry();
+		} // End if
 
 		if(Boolean.parseBoolean(this.testJavaSerializability)){
 			SerializationUtil.clone((Serializable)evaluator);
