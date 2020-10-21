@@ -66,6 +66,17 @@ public class ImmutableBiMapSerializer extends Serializer<ImmutableBiMap<Object, 
 
 		// regular
 		kryo.register(ImmutableBiMap.of(key1, value1, key2, value2).getClass(), serializer);
+
+		ImmutableBiMap.Builder<Object, Object> jdkBiMapBuilder = ImmutableBiMap.builder();
+
+		for(int i = 0; i <= 1024; i++){
+			jdkBiMapBuilder.put(new PreHashedValue(0, i), new PreHashedValue(1, String.valueOf(i)));
+		}
+
+		ImmutableBiMap<?, ?> jdkBiMap = jdkBiMapBuilder.build();
+
+		// regular, JDK-backed
+		kryo.register(jdkBiMap.getClass(), serializer);
 	}
 
 	private static final boolean DOES_NOT_ACCEPT_NULL = true;

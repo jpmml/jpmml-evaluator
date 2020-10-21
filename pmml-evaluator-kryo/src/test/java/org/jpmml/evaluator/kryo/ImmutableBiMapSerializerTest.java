@@ -86,5 +86,20 @@ public class ImmutableBiMapSerializerTest {
 		assertEquals(doubletonBiMap.getClass(), tripletonBiMap.getClass());
 
 		assertEquals(tripletonBiMap, clonedTripletonBiMap);
+
+		Map<Object, Object> jdkMap = new LinkedHashMap<>();
+
+		for(int i = 0; i <= 1024; i++){
+			jdkMap.put(new PreHashedValue(0, i), new PreHashedValue(1, String.valueOf(i)));
+		}
+
+		ImmutableBiMap<Object, Object> jdkBiMap = ImmutableBiMap.copyOf(jdkMap);
+
+		ImmutableBiMap<Object, Object> clonedJdkBiMap = KryoUtil.clone(this.kryo, jdkBiMap);
+
+		assertNotEquals(emptyBiMap.getClass(), jdkBiMap.getClass());
+		assertNotEquals(singletonBiMap.getClass(), jdkBiMap.getClass());
+
+		assertEquals(jdkBiMap, clonedJdkBiMap);
 	}
 }
