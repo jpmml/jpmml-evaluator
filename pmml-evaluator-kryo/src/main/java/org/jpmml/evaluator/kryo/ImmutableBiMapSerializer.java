@@ -80,5 +80,5 @@ public class ImmutableBiMapSerializer extends Serializer<ImmutableBiMap<Object, 
 	}
 
 	private static final boolean DOES_NOT_ACCEPT_NULL = true;
-    private static final boolean IMMUTABLE = true;
+	private static final boolean IMMUTABLE = true;
 }
