@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator.kryo;
 
-import java.io.Serializable;
-
 import com.esotericsoftware.kryo.Kryo;
 import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
 import de.javakaffee.kryoserializers.guava.ImmutableListSerializer;
@@ -58,7 +56,7 @@ public class KryoUtil {
 	}
 
 	static
-	public <S extends Serializable> S clone(Kryo kryo, S object){
+	public <E> E clone(Kryo kryo, E object){
 		return org.jpmml.model.kryo.KryoUtil.clone(kryo, object);
 	}
 }

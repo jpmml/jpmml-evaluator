@@ -106,7 +106,7 @@ import org.jpmml.evaluator.ValueAggregator;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.VoteAggregator;
-import org.jpmml.model.visitors.FieldReferenceFinder;
+import org.jpmml.model.visitors.ActiveFieldFinder;
 
 public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighborModel> {
 
@@ -532,10 +532,10 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Set<FieldName> names = new HashSet<>();
 
-		FieldReferenceFinder variableFinder = new FieldReferenceFinder();
-		variableFinder.applyTo(nearestNeighborModel);
+		ActiveFieldFinder activeFieldFinder = new ActiveFieldFinder();
+		activeFieldFinder.applyTo(nearestNeighborModel);
 
-		names.addAll(variableFinder.getFieldNames());
+		names.addAll(activeFieldFinder.getFieldNames());
 
 		List<TargetField> targetFields = modelEvaluator.getTargetFields();
 		for(TargetField targetField : targetFields){

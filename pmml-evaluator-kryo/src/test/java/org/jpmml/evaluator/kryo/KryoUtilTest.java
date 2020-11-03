@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator.kryo;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -63,11 +62,11 @@ public class KryoUtilTest {
 		map.put(1, "one");
 		map.put(2, "two");
 
-		KryoUtil.clone(this.kryo, (Serializable)Collections.unmodifiableSet(new HashSet<>(map.keySet())));
-		KryoUtil.clone(this.kryo, (Serializable)Collections.unmodifiableSet(new LinkedHashSet<>(map.keySet())));
-		KryoUtil.clone(this.kryo, (Serializable)Collections.unmodifiableList(new ArrayList<>(map.values())));
-		KryoUtil.clone(this.kryo, (Serializable)Collections.unmodifiableMap(new HashMap<>(map)));
-		KryoUtil.clone(this.kryo, (Serializable)Collections.unmodifiableMap(new LinkedHashMap<>(map)));
+		KryoUtil.clone(this.kryo, Collections.unmodifiableSet(new HashSet<>(map.keySet())));
+		KryoUtil.clone(this.kryo, Collections.unmodifiableSet(new LinkedHashSet<>(map.keySet())));
+		KryoUtil.clone(this.kryo, Collections.unmodifiableList(new ArrayList<>(map.values())));
+		KryoUtil.clone(this.kryo, Collections.unmodifiableMap(new HashMap<>(map)));
+		KryoUtil.clone(this.kryo, Collections.unmodifiableMap(new LinkedHashMap<>(map)));
 	}
 
 	@Test

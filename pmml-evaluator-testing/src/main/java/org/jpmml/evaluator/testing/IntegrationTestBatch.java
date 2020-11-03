@@ -19,7 +19,6 @@
 package org.jpmml.evaluator.testing;
 
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -135,7 +134,7 @@ public class IntegrationTestBatch extends ArchiveBatch {
 		} // End if
 
 		if(Boolean.parseBoolean(this.testJavaSerializability)){
-			SerializationUtil.clone((Serializable)evaluator);
+			SerializationUtil.clone(evaluator);
 		} // End if
 
 		if(Boolean.parseBoolean(this.testKryoSerializability)){
@@ -144,7 +143,7 @@ public class IntegrationTestBatch extends ArchiveBatch {
 			KryoUtil.init(kryo);
 			KryoUtil.register(kryo);
 
-			KryoUtil.clone(kryo, (Serializable)evaluator);
+			KryoUtil.clone(kryo, evaluator);
 		}
 	}
 
