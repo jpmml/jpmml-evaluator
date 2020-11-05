@@ -54,7 +54,7 @@
 									<artifactId>pmml-evaluator</artifactId>
 									<version>${project.version}</version>
 									<classifier>sources</classifier>
-									<outputDirectory>target/downloaded-sources</outputDirectory>
+									<outputDirectory>${project.build.directory}/downloaded-sources</outputDirectory>
 									<includes>org/jpmml/evaluator/DoubleValue.java,org/jpmml/evaluator/*DoubleVector.java,org/jpmml/evaluator/FloatValue.java,org/jpmml/evaluator/*FloatVector.java,org/jpmml/evaluator/Value.java,org/jpmml/evaluator/Vector.java</includes>
 								</artifactItem>
 							</artifactItems>
@@ -74,8 +74,8 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>target/downloaded-sources</source>
-								<source>target/generated-sources/apt</source>
+								<source>${project.build.directory}/downloaded-sources</source>
+								<source>${project.build.directory}/generated-sources/apt</source>
 							</sources>
 						</configuration>
 					</execution>
@@ -105,7 +105,7 @@
 							<includes>
 								<include>org/jpmml/evaluator/*.java</include>
 							</includes>
-							<generatedSourcesDirectory>target/generated-sources/apt</generatedSourcesDirectory>
+							<generatedSourcesDirectory>${project.build.directory}/generated-sources/apt</generatedSourcesDirectory>
 							<proc>only</proc>
 							<fork>true</fork>
 						</configuration>
