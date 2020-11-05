@@ -175,7 +175,7 @@ public class FunctionRegistry {
 			Functions.NOT,
 			Functions.IS_IN, Functions.IS_NOT_IN,
 			Functions.IF,
-			Functions.UPPERCASE, Functions.LOWERCASE, Functions.SUBSTRING, Functions.TRIM_BLANKS,
+			Functions.UPPERCASE, Functions.LOWERCASE, Functions.STRING_LENGTH, Functions.SUBSTRING, Functions.TRIM_BLANKS,
 			Functions.CONCAT,
 			Functions.REPLACE, Functions.MATCHES,
 			Functions.FORMAT_NUMBER, Functions.FORMAT_DATETIME,

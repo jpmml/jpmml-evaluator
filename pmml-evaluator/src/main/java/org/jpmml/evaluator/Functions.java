@@ -490,6 +490,16 @@ public interface Functions {
 		}
 	};
 
+	UnaryFunction STRING_LENGTH = new UnaryFunction(PMMLFunctions.STRINGLENGTH){
+
+		@Override
+		public FieldValue evaluate(FieldValue value){
+			String string = value.asString();
+
+			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, string.length());
+		}
+	};
+
 	TernaryFunction SUBSTRING = new TernaryFunction(PMMLFunctions.SUBSTRING, Arrays.asList("input", "startPos", "length")){
 
 		public String evaluate(String string, int position, int length){

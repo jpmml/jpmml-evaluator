@@ -310,6 +310,9 @@ public class FunctionTest {
 		assertEquals("VALUE", evaluate(Functions.UPPERCASE, "Value"));
 		assertEquals("value", evaluate(Functions.LOWERCASE, "Value"));
 
+		assertEquals(0, evaluate(Functions.STRING_LENGTH, ""));
+		assertEquals(5, evaluate(Functions.STRING_LENGTH, "aBc9x"));
+
 		assertEquals("Bc9", evaluate(Functions.SUBSTRING, "aBc9x", 2, 3));
 
 		assertEquals("", evaluate(Functions.SUBSTRING, "", 1, 0));
