@@ -113,6 +113,29 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 		return this;
 	}
 
+	public <E extends Exception> LoadingModelEvaluatorBuilder transform(PMMLTransformer<E> transformer) throws E {
+		PMML pmml = getPMML();
+		Model model = getModel();
+
+		if((pmml == null) || (model == null)){
+			throw new IllegalStateException();
+		}
+
+		String modelName = model.getModelName();
+
+		PMML transformedPMML = transformer.apply(pmml);
+		if(transformedPMML == null){
+			return this;
+		}
+
+		Model transformedModel = PMMLUtil.findModel(transformedPMML, modelName);
+
+		setPMML(transformedPMML);
+		setModel(transformedModel);
+
+		return this;
+	}
+
 	@Override
 	public LoadingModelEvaluatorBuilder clone(){
 		return (LoadingModelEvaluatorBuilder)super.clone();
