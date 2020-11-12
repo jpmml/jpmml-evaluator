@@ -531,11 +531,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		FieldName instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
 
 		Set<FieldName> names = new HashSet<>();
-
-		ActiveFieldFinder activeFieldFinder = new ActiveFieldFinder();
-		activeFieldFinder.applyTo(nearestNeighborModel);
-
-		names.addAll(activeFieldFinder.getFieldNames());
+		names.addAll(ActiveFieldFinder.getFieldNames(nearestNeighborModel));
 
 		List<TargetField> targetFields = modelEvaluator.getTargetFields();
 		for(TargetField targetField : targetFields){
