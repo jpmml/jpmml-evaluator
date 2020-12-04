@@ -30,6 +30,7 @@ import java.util.Map;
 
 import com.beust.jcommander.Parameter;
 import com.google.common.base.Joiner;
+
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
@@ -121,7 +122,13 @@ public class RecordCountingExample extends Example {
 			NodeAdapter.NODE_TRANSFORMER_PROVIDER.remove();
 		}
 
-		CsvUtil.Table table = readTable(this.input, this.separator);
+		String separator = this.separator;
+
+		CsvUtil.Table table = readTable(this.input, separator);
+
+		if(separator == null){
+			separator = table.getSeparator();
+		}
 
 		ModelEvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml);
 
@@ -179,10 +186,9 @@ public class RecordCountingExample extends Example {
 			}
 		}
 
+		Joiner joiner = Joiner.on(separator);
+
 		Visitor visitor = new AbstractVisitor(){
-
-			private Joiner joiner = Joiner.on(RecordCountingExample.this.separator);
-
 
 			@Override
 			public VisitorAction visit(PMML pmml){
@@ -224,7 +230,15 @@ public class RecordCountingExample extends Example {
 			}
 
 			private void printRow(Object... cells){
-				System.out.println(this.joiner.join(cells));
+
+				for(int i = 0; i < cells.length; i++){
+
+					if(cells[i] == null){
+						cells[i] = RecordCountingExample.this.missingValues.get(0);
+					}
+				}
+
+				System.out.println(joiner.join(cells));
 			}
 		};
 
