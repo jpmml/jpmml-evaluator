@@ -35,16 +35,19 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
+import org.dmg.pmml.adapters.NodeAdapter;
 import org.dmg.pmml.mining.Segment;
+import org.dmg.pmml.tree.ComplexNode;
 import org.dmg.pmml.tree.Node;
+import org.dmg.pmml.tree.NodeTransformer;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.InputField;
+import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.mining.HasSegmentation;
-import org.jpmml.evaluator.mining.MiningModelEvaluator;
 import org.jpmml.evaluator.mining.SegmentResult;
 import org.jpmml.evaluator.testing.BatchUtil;
 import org.jpmml.evaluator.testing.CsvUtil;
@@ -100,11 +103,29 @@ public class RecordCountingExample extends Example {
 
 	@Override
 	public void execute() throws Exception {
-		PMML pmml = readPMML(this.model);
+		PMML pmml;
+
+		try {
+			NodeTransformer complexNodeTransformer = new NodeTransformer(){
+
+				@Override
+				public Node fromComplexNode(ComplexNode complexNode){
+					return complexNode;
+				}
+			};
+
+			NodeAdapter.NODE_TRANSFORMER_PROVIDER.set(complexNodeTransformer);
+
+			pmml = readPMML(this.model);
+		} finally {
+			NodeAdapter.NODE_TRANSFORMER_PROVIDER.remove();
+		}
 
 		CsvUtil.Table table = readTable(this.input, this.separator);
 
-		Evaluator evaluator = new MiningModelEvaluator(pmml);
+		ModelEvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml);
+
+		Evaluator evaluator = evaluatorBuilder.build();
 
 		// Perform self-testing
 		evaluator.verify();
