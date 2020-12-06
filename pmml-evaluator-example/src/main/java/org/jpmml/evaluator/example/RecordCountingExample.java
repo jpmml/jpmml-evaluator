@@ -38,7 +38,6 @@ import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.adapters.NodeAdapter;
 import org.dmg.pmml.mining.Segment;
-import org.dmg.pmml.tree.ComplexNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.NodeTransformer;
 import org.dmg.pmml.tree.TreeModel;
@@ -106,20 +105,14 @@ public class RecordCountingExample extends Example {
 	public void execute() throws Exception {
 		PMML pmml;
 
+		NodeTransformer defaultNodeTransformer = NodeAdapter.NODE_TRANSFORMER_PROVIDER.get();
+
 		try {
-			NodeTransformer complexNodeTransformer = new NodeTransformer(){
-
-				@Override
-				public Node fromComplexNode(ComplexNode complexNode){
-					return complexNode;
-				}
-			};
-
-			NodeAdapter.NODE_TRANSFORMER_PROVIDER.set(complexNodeTransformer);
+			NodeAdapter.NODE_TRANSFORMER_PROVIDER.set(null);
 
 			pmml = readPMML(this.model);
 		} finally {
-			NodeAdapter.NODE_TRANSFORMER_PROVIDER.remove();
+			NodeAdapter.NODE_TRANSFORMER_PROVIDER.set(defaultNodeTransformer);
 		}
 
 		String separator = this.separator;
