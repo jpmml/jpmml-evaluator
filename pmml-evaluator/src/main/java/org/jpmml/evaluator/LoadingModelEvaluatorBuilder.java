@@ -34,6 +34,9 @@ import javax.xml.validation.Schema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Visitor;
+import org.dmg.pmml.adapters.NodeAdapter;
+import org.dmg.pmml.tree.NodeTransformer;
+import org.dmg.pmml.tree.SimplifyingNodeTransformer;
 import org.jpmml.evaluator.visitors.DefaultModelEvaluatorBattery;
 import org.jpmml.model.JAXBUtil;
 import org.jpmml.model.SAXUtil;
@@ -53,6 +56,8 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 	private List<? extends XMLFilter> filters = null;
 
 	private boolean locatable = false;
+
+	private boolean mutable = false;
 
 	private VisitorBattery visitors = new DefaultModelEvaluatorBattery();
 
@@ -83,6 +88,7 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 		ValidationEventHandler validationEventHandler = getValidationEventHandler();
 		List<? extends XMLFilter> filters = getFilters();
 		boolean locatable = getLocatable();
+		boolean mutable = getMutable();
 		VisitorBattery visitors = getVisitors();
 
 		Unmarshaller unmarshaller = JAXBUtil.createUnmarshaller();
@@ -95,7 +101,17 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 
 		Source source = SAXUtil.createFilteredSource(is, filters.toArray(new XMLFilter[filters.size()]));
 
-		PMML pmml = (PMML)unmarshaller.unmarshal(source);
+		PMML pmml;
+
+		NodeTransformer defaultNodeTransformer = NodeAdapter.NODE_TRANSFORMER_PROVIDER.get();
+
+		try {
+			NodeAdapter.NODE_TRANSFORMER_PROVIDER.set(mutable ? null : SimplifyingNodeTransformer.INSTANCE);
+
+			pmml = (PMML)unmarshaller.unmarshal(source);
+		} finally {
+			NodeAdapter.NODE_TRANSFORMER_PROVIDER.set(defaultNodeTransformer);
+		}
 
 		Visitor locatorHandler = (locatable ? new LocatorTransformer() : new LocatorNullifier());
 
@@ -188,6 +204,21 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 	 */
 	public LoadingModelEvaluatorBuilder setLocatable(boolean locatable){
 		this.locatable = locatable;
+
+		return this;
+	}
+
+	public boolean getMutable(){
+		return this.mutable;
+	}
+
+	/**
+	 * <p>
+	 * Should polymorphic PMML class model objects use types that favour mutability over memory efficiency?
+	 * </p>
+	 */
+	public LoadingModelEvaluatorBuilder setMutable(boolean mutable){
+		this.mutable = mutable;
 
 		return this;
 	}
