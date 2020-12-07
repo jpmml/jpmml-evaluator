@@ -16,90 +16,96 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.tree;
+package org.jpmml.evaluator.mining;
 
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.dmg.pmml.DataDictionary;
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Header;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
-import org.dmg.pmml.OpType;
-import org.dmg.pmml.Output;
-import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.True;
 import org.dmg.pmml.Version;
+import org.dmg.pmml.mining.MiningModel;
+import org.dmg.pmml.mining.Segment;
+import org.dmg.pmml.mining.Segmentation;
 import org.dmg.pmml.tree.ComplexNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
+import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.EvaluatorBuilder;
+import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorBuilder;
+import org.jpmml.evaluator.tree.HasDecisionPath;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class TreeModelEvaluatorTest {
+public class MiningModelEvaluatorTest {
 
 	@Test
 	public void build(){
 		PMML pmml = createPMML();
 
-		TreeModelEvaluator treeModelEvaluator = build(pmml, EnumSet.noneOf(ResultFeature.class));
+		Evaluator evaluator = build(pmml, Collections.emptySet());
 
-		assertTrue(treeModelEvaluator instanceof SimpleTreeModelEvaluator);
+		Object targetValue = evaluateDefault(evaluator);
 
-		treeModelEvaluator = build(pmml, EnumSet.of(ResultFeature.ENTITY_ID));
+		assertFalse(targetValue instanceof HasDecisionPath);
 
-		assertTrue(treeModelEvaluator instanceof ComplexTreeModelEvaluator);
+		evaluator = build(pmml, EnumSet.of(ResultFeature.ENTITY_ID));
 
-		OutputField predictedValueField = new OutputField(FieldName.create("prediction"), OpType.CONTINUOUS, DataType.DOUBLE)
-			.setResultFeature(ResultFeature.PREDICTED_VALUE);
+		targetValue = evaluateDefault(evaluator);
 
-		pmml = createPMML(predictedValueField);
-
-		treeModelEvaluator = build(pmml, EnumSet.noneOf(ResultFeature.class));
-
-		assertTrue(treeModelEvaluator instanceof SimpleTreeModelEvaluator);
-
-		OutputField entityIdField = new OutputField(FieldName.create("nodeId"), OpType.CATEGORICAL, DataType.STRING)
-			.setResultFeature(ResultFeature.ENTITY_ID);
-
-		pmml = createPMML(predictedValueField, entityIdField);
-
-		treeModelEvaluator = build(pmml, EnumSet.noneOf(ResultFeature.class));
-
-		assertTrue(treeModelEvaluator instanceof ComplexTreeModelEvaluator);
+		assertTrue(targetValue instanceof HasDecisionPath);
 	}
 
 	static
-	private PMML createPMML(OutputField... outputFields){
+	private PMML createPMML(){
 		Node root = new ComplexNode(True.INSTANCE)
 			.setScore(1d);
 
 		TreeModel treeModel = new TreeModel(MiningFunction.REGRESSION, new MiningSchema(), root);
 
-		if(outputFields.length > 0){
-			Output output = new Output()
-				.addOutputFields(outputFields);
+		Segmentation segmentation = new Segmentation(Segmentation.MultipleModelMethod.MODEL_CHAIN, null)
+			.addSegments(new Segment(True.INSTANCE, treeModel));
 
-			treeModel.setOutput(output);
-		}
+		MiningModel miningModel = new MiningModel(MiningFunction.REGRESSION, new MiningSchema())
+			.setSegmentation(segmentation);
 
 		PMML pmml = new PMML(Version.PMML_4_4.getVersion(), new Header(), new DataDictionary())
-			.addModels(treeModel);
+			.addModels(miningModel);
 
 		return pmml;
 	}
 
 	static
-	private TreeModelEvaluator build(PMML pmml, Set<ResultFeature> extraResultFeatures){
-		ModelEvaluatorBuilder modelEvaluatorBuilder = new ModelEvaluatorBuilder(pmml)
+	private Evaluator build(PMML pmml, Set<ResultFeature> extraResultFeatures){
+		EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml){
+
+			@Override
+			public void checkSchema(ModelEvaluator<?> modelEvaluator){
+				// Ignored
+			}
+		}
 			.setExtraResultFeatures(extraResultFeatures);
 
-		return (TreeModelEvaluator)modelEvaluatorBuilder.build();
+		return evaluatorBuilder.build();
+	}
+
+	static
+	private Object evaluateDefault(Evaluator evaluator){
+		Map<FieldName, ?> results = evaluator.evaluate(Collections.emptyMap());
+
+		assertTrue(results.containsKey(Evaluator.DEFAULT_TARGET_NAME));
+
+		return results.get(Evaluator.DEFAULT_TARGET_NAME);
 	}
 }
