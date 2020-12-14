@@ -1,4 +1,4 @@
-JPMML-Evaluator [![Build Status](https://travis-ci.org/jpmml/jpmml-evaluator.png?branch=master)](https://travis-ci.org/jpmml/jpmml-evaluator)
+JPMML-Evaluator [![Build Status](https://github.com/jpmml/jpmml-evaluator/workflows/maven/badge.svg)](https://github.com/jpmml/jpmml-evaluator/actions?query=workflow%3A%22maven%22)
 ===============
 
 Java Evaluator API for Predictive Model Markup Language (PMML).
