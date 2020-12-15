@@ -25,7 +25,6 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
@@ -40,6 +39,7 @@ import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+
 import org.dmg.pmml.Model;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
@@ -248,16 +248,13 @@ public class ModelManagerFactory<S extends ModelManager<?>> implements Serializa
 		Constructor<?>[] constructors = serviceProviderClass.getConstructors();
 
 		for(Constructor<?> constructor : constructors){
-			Parameter[] parameters = constructor.getParameters();
+			Class<?>[] parameterTypes = constructor.getParameterTypes();
 
-			if(parameters.length != 2){
+			if(parameterTypes.length != 2){
 				continue;
 			}
 
-			Parameter pmmlParameter = parameters[0];
-			Parameter modelParameter = parameters[1];
-
-			if((PMML.class).isAssignableFrom(pmmlParameter.getType()) && (Model.class).isAssignableFrom(modelParameter.getType())){
+			if((PMML.class).isAssignableFrom(parameterTypes[0]) && (Model.class).isAssignableFrom(parameterTypes[1])){
 				return constructor;
 			}
 		}
