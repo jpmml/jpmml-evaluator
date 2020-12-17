@@ -38,16 +38,26 @@ public class ResourceUtil {
 	public FieldName[] readFieldNames(DataInput dataInput, int count) throws IOException {
 		String[] strings = readStrings(dataInput, count);
 
-		return Arrays.stream(strings)
-			.map(string -> FieldName.create(string))
-			.toArray(FieldName[]::new);
+		FieldName[] result = new FieldName[strings.length];
+
+		for(int i = 0; i < strings.length; i++){
+			String string = strings[i];
+
+			result[i] = FieldName.create(string);
+		}
+
+		return result;
 	}
 
 	static
 	public void writeFieldNames(DataOutput dataOutput, FieldName[] names) throws IOException {
-		String[] strings = Arrays.stream(names)
-			.map(name -> name.getValue())
-			.toArray(String[]::new);
+		String[] strings = new String[names.length];
+
+		for(int i = 0; i < names.length; i++){
+			FieldName name = names[i];
+
+			strings[i] = name.getValue();
+		}
 
 		writeStrings(dataOutput, strings);
 	}
@@ -56,16 +66,26 @@ public class ResourceUtil {
 	public QName[] readQNames(DataInput dataInput, int count) throws IOException {
 		String[][] stringArrays = readStringArrays(dataInput, count, 3);
 
-		return Arrays.stream(stringArrays)
-			.map(stringArray -> new QName(stringArray[0], stringArray[1], stringArray[2]))
-			.toArray(QName[]::new);
+		QName[] result = new QName[stringArrays.length];
+
+		for(int i = 0; i < stringArrays.length; i++){
+			String[] stringArray = stringArrays[i];
+
+			result[i] = new QName(stringArray[0], stringArray[1], stringArray[2]);
+		}
+
+		return result;
 	}
 
 	static
 	public void writeQNames(DataOutput dataOutput, QName[] names) throws IOException {
-		String[][] stringArrays = Arrays.stream(names)
-			.map(name -> new String[]{name.getNamespaceURI(), name.getLocalPart(), name.getPrefix()})
-			.toArray(String[][]::new);
+		String[][] stringArrays = new String[names.length][3];
+
+		for(int i = 0; i < names.length; i++){
+			QName name = names[i];
+
+			stringArrays[i] = new String[]{name.getNamespaceURI(), name.getLocalPart(), name.getPrefix()};
+		}
 
 		writeStringArrays(dataOutput, stringArrays);
 	}

@@ -29,12 +29,78 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
+import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ResourceUtilTest {
+
+	@Test
+	public void readWriteFieldNames() throws IOException {
+		FieldName[] names = {FieldName.create("a"), FieldName.create("b"), FieldName.create("c")};
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+		DataOutput dataOutput = new DataOutputStream(os);
+
+		ResourceUtil.writeFieldNames(dataOutput, names);
+
+		os.close();
+
+		ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+
+		DataInput dataInput = new DataInputStream(is);
+
+		FieldName[] clonedNames = ResourceUtil.readFieldNames(dataInput, 3);
+
+		assertTrue(Arrays.equals(names, clonedNames));
+
+		for(int i = 0; i < names.length; i++){
+			assertSame(names[i], clonedNames[i]);
+		}
+
+		try {
+			dataInput.readByte();
+
+			fail();
+		} catch(EOFException eofe){
+			// Ignored
+		}
+	}
+
+	@Test
+	public void readWriteQNames() throws IOException {
+		QName[] names = new QName[]{new QName("a"), new QName("b"), new QName("c")};
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+		DataOutput dataOutput = new DataOutputStream(os);
+
+		ResourceUtil.writeQNames(dataOutput, names);
+
+		os.close();
+
+		ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+
+		DataInput dataInput = new DataInputStream(is);
+
+		QName[] clonedNames = ResourceUtil.readQNames(dataInput, 3);
+
+		assertTrue(Arrays.equals(names, clonedNames));
+
+		try {
+			dataInput.readByte();
+
+			fail();
+		} catch(EOFException eofe){
+			// Ignored
+		}
+	}
 
 	@Test
 	public void readWriteStrings() throws IOException {
