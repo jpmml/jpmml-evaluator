@@ -105,7 +105,7 @@ public class CsvUtil {
 			}
 		}
 
-		throw new IllegalArgumentException();
+		throw new IllegalArgumentException("Missing CSV separator");
 	}
 
 	static
