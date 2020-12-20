@@ -283,6 +283,24 @@
 							</signature>
 						</configuration>
 					</execution>
+					<execution>
+						<id>android-24</id>
+						<phase>test</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<ignores>
+								<ignore>java.time.*</ignore>
+								<ignore>java.util.Date</ignore>
+							</ignores>
+							<signature>
+								<groupId>net.sf.androidscents.signature</groupId>
+								<artifactId>android-api-level-24</artifactId>
+								<version>7.0_r2</version>
+							</signature>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
