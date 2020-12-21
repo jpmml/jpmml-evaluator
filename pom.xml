@@ -271,7 +271,8 @@
 				<executions>
 					<execution>
 						<id>android-26</id>
-						<phase>test</phase>
+						<!-- Sniff main classes only -->
+						<phase>process-classes</phase>
 						<goals>
 							<goal>check</goal>
 						</goals>
@@ -285,7 +286,8 @@
 					</execution>
 					<execution>
 						<id>android-24</id>
-						<phase>test</phase>
+						<!-- Sniff main classes only -->
+						<phase>process-classes</phase>
 						<goals>
 							<goal>check</goal>
 						</goals>
