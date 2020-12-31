@@ -18,10 +18,10 @@
  */
 package org.jpmml.evaluator.rule_set;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -32,6 +32,8 @@ import com.google.common.collect.ListMultimap;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.True;
+import org.dmg.pmml.Visitor;
+import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.rule_set.CompoundRule;
 import org.dmg.pmml.rule_set.PMMLAttributes;
 import org.dmg.pmml.rule_set.PMMLElements;
@@ -59,6 +61,7 @@ import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
+import org.jpmml.model.visitors.AbstractVisitor;
 
 public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implements HasEntityRegistry<SimpleRule> {
 
@@ -261,43 +264,20 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 		@Override
 		public BiMap<String, SimpleRule> load(RuleSetModel ruleSetModel){
-			ImmutableBiMap.Builder<String, SimpleRule> builder = new ImmutableBiMap.Builder<>();
+			List<SimpleRule> simpleRules = new ArrayList<>();
 
-			RuleSet ruleSet = ruleSetModel.getRuleSet();
+			Visitor visitor = new AbstractVisitor(){
 
-			builder = collectRules(ruleSet.getRules(), new AtomicInteger(1), builder);
+				@Override
+				public VisitorAction visit(SimpleRule simpleRule){
+					simpleRules.add(simpleRule);
 
-			return builder.build();
-		}
+					return super.visit(simpleRule);
+				}
+			};
+			visitor.applyTo(ruleSetModel);
 
-		private ImmutableBiMap.Builder<String, SimpleRule> collectRule(Rule rule, AtomicInteger index, ImmutableBiMap.Builder<String, SimpleRule> builder){
-
-			if(rule instanceof SimpleRule){
-				SimpleRule simpleRule = (SimpleRule)rule;
-
-				builder = EntityUtil.put(simpleRule, index, builder);
-			} else
-
-			if(rule instanceof CompoundRule){
-				CompoundRule compoundRule = (CompoundRule)rule;
-
-				builder = collectRules(compoundRule.getRules(), index, builder);
-			} else
-
-			{
-				throw new UnsupportedElementException(rule);
-			}
-
-			return builder;
-		}
-
-		private ImmutableBiMap.Builder<String, SimpleRule> collectRules(List<Rule> rules, AtomicInteger index, ImmutableBiMap.Builder<String, SimpleRule> builder){
-
-			for(Rule rule : rules){
-				builder = collectRule(rule, index, builder);
-			}
-
-			return builder;
+			return ImmutableBiMap.copyOf(EntityUtil.buildBiMap(simpleRules));
 		}
 	});
 }

@@ -27,6 +27,7 @@ import java.util.Map;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.Array;
@@ -310,7 +311,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 		@Override
 		public BiMap<String, Cluster> load(ClusteringModel clusteringModel){
-			return EntityUtil.buildBiMap(clusteringModel.getClusters());
+			return ImmutableBiMap.copyOf(EntityUtil.buildBiMap(clusteringModel.getClusters()));
 		}
 	});
 }

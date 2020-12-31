@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.google.common.cache.CacheLoader;
@@ -45,6 +44,8 @@ import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
+import org.dmg.pmml.Visitor;
+import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.neural_network.Connection;
 import org.dmg.pmml.neural_network.NeuralEntity;
 import org.dmg.pmml.neural_network.NeuralInput;
@@ -82,6 +83,7 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.model.XPathUtil;
+import org.jpmml.model.visitors.AbstractVisitor;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<NeuralEntity> {
 
@@ -628,27 +630,20 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		@Override
 		public BiMap<String, NeuralEntity> load(NeuralNetwork neuralNetwork){
-			ImmutableBiMap.Builder<String, NeuralEntity> builder = new ImmutableBiMap.Builder<>();
+			List<NeuralEntity> neuralEntities = new ArrayList<>();
 
-			AtomicInteger index = new AtomicInteger(1);
+			Visitor visitor = new AbstractVisitor(){
 
-			NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
-			for(NeuralInput neuralInput : neuralInputs){
-				builder = EntityUtil.put(neuralInput, index, builder);
-			}
+				@Override
+				public VisitorAction visit(NeuralEntity neuralEntity){
+					neuralEntities.add(neuralEntity);
 
-			List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
-			for(NeuralLayer neuralLayer : neuralLayers){
-				List<Neuron> neurons = neuralLayer.getNeurons();
-
-				for(int i = 0; i < neurons.size(); i++){
-					Neuron neuron = neurons.get(i);
-
-					builder = EntityUtil.put(neuron, index, builder);
+					return super.visit(neuralEntity);
 				}
-			}
+			};
+			visitor.applyTo(neuralNetwork);
 
-			return builder.build();
+			return ImmutableBiMap.copyOf(EntityUtil.buildBiMap(neuralEntities));
 		}
 	});
 }

@@ -18,10 +18,10 @@
  */
 package org.jpmml.evaluator.tree;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -33,6 +33,8 @@ import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.ScoreDistribution;
+import org.dmg.pmml.Visitor;
+import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.PMMLAttributes;
 import org.dmg.pmml.tree.PMMLElements;
@@ -55,6 +57,7 @@ import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
+import org.jpmml.model.visitors.AbstractVisitor;
 
 public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements HasNodeRegistry {
 
@@ -526,26 +529,20 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 
 		@Override
 		public BiMap<String, Node> load(TreeModel treeModel){
-			ImmutableBiMap.Builder<String, Node> builder = new ImmutableBiMap.Builder<>();
+			List<Node> nodes = new ArrayList<>();
 
-			builder = collectNodes(treeModel.getNode(), new AtomicInteger(1), builder);
+			Visitor visitor = new AbstractVisitor(){
 
-			return builder.build();
-		}
+				@Override
+				public VisitorAction visit(Node node){
+					nodes.add(node);
 
-		private ImmutableBiMap.Builder<String, Node> collectNodes(Node node, AtomicInteger index, ImmutableBiMap.Builder<String, Node> builder){
-			builder = EntityUtil.put(node, index, builder);
+					return super.visit(node);
+				}
+			};
+			visitor.applyTo(treeModel);
 
-			if(!node.hasNodes()){
-				return builder;
-			}
-
-			List<Node> children = node.getNodes();
-			for(Node child : children){
-				builder = collectNodes(child, index, builder);
-			}
-
-			return builder;
+			return ImmutableBiMap.copyOf(EntityUtil.buildBiMap(nodes));
 		}
 	});
 }

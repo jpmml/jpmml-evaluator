@@ -19,11 +19,11 @@
 package org.jpmml.evaluator;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.collect.BiMap;
-import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.HashBiMap;
 import org.dmg.pmml.Entity;
+import org.jpmml.model.XPathUtil;
 
 public class EntityUtil {
 
@@ -51,33 +51,26 @@ public class EntityUtil {
 	}
 
 	static
-	public <E extends Entity<?>> ImmutableBiMap<String, E> buildBiMap(List<E> entities){
-		ImmutableBiMap.Builder<String, E> builder = new ImmutableBiMap.Builder<>();
+	public <E extends Entity<?>> BiMap<String, E> buildBiMap(List<E> entities){
+		BiMap<String, E> result = HashBiMap.create(entities.size());
 
-		builder = putAll(entities, new AtomicInteger(1), builder);
+		for(int i = 0; i < entities.size(); i++){
+			E entity = entities.get(i);
 
-		return builder.build();
-	}
+			String key = String.valueOf(i + 1);
 
-	static
-	public <E extends Entity<?>> ImmutableBiMap.Builder<String, E> put(E entity, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
-		String implicitId = String.valueOf(index.getAndIncrement());
+			Object id = entity.getId();
+			if(id != null){
+				key = TypeUtil.format(id);
+			} // End if
 
-		Object id = entity.getId();
-		if(id == null){
-			id = implicitId;
+			if(result.containsKey(key)){
+				throw new InvalidAttributeException(InvalidAttributeException.formatMessage(XPathUtil.formatElement(entity.getClass()) + "@id=" + key), entity);
+			}
+
+			result.put(key, entity);
 		}
 
-		return builder.put(TypeUtil.format(id), entity);
-	}
-
-	static
-	public <E extends Entity<?>> ImmutableBiMap.Builder<String, E> putAll(List<E> entities, AtomicInteger index, ImmutableBiMap.Builder<String, E> builder){
-
-		for(E entity : entities){
-			builder = put(entity, index, builder);
-		}
-
-		return builder;
+		return result;
 	}
 }

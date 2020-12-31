@@ -33,6 +33,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.dmg.pmml.DataType;
@@ -516,7 +517,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		@Override
 		public BiMap<String, AssociationRule> load(AssociationModel associationModel){
-			return EntityUtil.buildBiMap(associationModel.getAssociationRules());
+			return ImmutableBiMap.copyOf(EntityUtil.buildBiMap(associationModel.getAssociationRules()));
 		}
 	});
 
