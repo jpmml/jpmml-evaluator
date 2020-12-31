@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import org.dmg.pmml.CompoundPredicate;
@@ -39,7 +37,6 @@ import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.PMMLAttributes;
 import org.dmg.pmml.tree.PMMLElements;
 import org.dmg.pmml.tree.TreeModel;
-import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
@@ -61,7 +58,7 @@ import org.jpmml.model.visitors.AbstractVisitor;
 
 public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements HasNodeRegistry {
 
-	private BiMap<String, Node> entityRegistry = null;
+	private BiMap<String, Node> entityRegistry = ImmutableBiMap.of();
 
 
 	private ComplexTreeModelEvaluator(){
@@ -77,16 +74,17 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 		Node root = treeModel.getNode();
 		if(root == null){
 			throw new MissingElementException(treeModel, PMMLElements.TREEMODEL_NODE);
+		} else
+
+		{
+			List<Node> nodes = collectNodes(treeModel);
+
+			this.entityRegistry = ImmutableBiMap.copyOf(EntityUtil.buildBiMap(nodes));
 		}
 	}
 
 	@Override
 	public BiMap<String, Node> getEntityRegistry(){
-
-		if(this.entityRegistry == null){
-			this.entityRegistry = getValue(ComplexTreeModelEvaluator.entityCache);
-		}
-
 		return this.entityRegistry;
 	}
 
@@ -457,6 +455,24 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 	}
 
 	static
+	private List<Node> collectNodes(TreeModel treeModel){
+		List<Node> result = new ArrayList<>();
+
+		Visitor visitor = new AbstractVisitor(){
+
+			@Override
+			public VisitorAction visit(Node node){
+				result.add(node);
+
+				return super.visit(node);
+			}
+		};
+		visitor.applyTo(treeModel);
+
+		return result;
+	}
+
+	static
 	private class Trail {
 
 		private Node lastPrediction = null;
@@ -524,25 +540,4 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 			this.missingLevels = missingLevels;
 		}
 	}
-
-	private static final LoadingCache<TreeModel, BiMap<String, Node>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<TreeModel, BiMap<String, Node>>(){
-
-		@Override
-		public BiMap<String, Node> load(TreeModel treeModel){
-			List<Node> nodes = new ArrayList<>();
-
-			Visitor visitor = new AbstractVisitor(){
-
-				@Override
-				public VisitorAction visit(Node node){
-					nodes.add(node);
-
-					return super.visit(node);
-				}
-			};
-			visitor.applyTo(treeModel);
-
-			return ImmutableBiMap.copyOf(EntityUtil.buildBiMap(nodes));
-		}
-	});
 }

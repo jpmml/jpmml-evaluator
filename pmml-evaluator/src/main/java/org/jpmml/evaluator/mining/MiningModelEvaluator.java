@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import com.google.common.base.Function;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
@@ -62,7 +59,6 @@ import org.dmg.pmml.mining.PMMLElements;
 import org.dmg.pmml.mining.Segment;
 import org.dmg.pmml.mining.Segmentation;
 import org.dmg.pmml.mining.VariableWeight;
-import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.DefaultTargetField;
 import org.jpmml.evaluator.EntityUtil;
@@ -101,7 +97,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	private ConcurrentMap<String, ModelEvaluator<?>> segmentModelEvaluators = new ConcurrentHashMap<>();
 
-	private BiMap<String, Segment> entityRegistry = null;
+	private BiMap<String, Segment> entityRegistry = ImmutableBiMap.of();
 
 
 	private MiningModelEvaluator(){
@@ -134,14 +130,19 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		if(!segmentation.hasSegments()){
 			throw new MissingElementException(segmentation, PMMLElements.SEGMENTATION_SEGMENTS);
-		}
+		} else
 
-		List<Segment> segments = segmentation.getSegments();
-		for(Segment segment : segments){
-			VariableWeight variableWeight = segment.getVariableWeight();
+		{
+			List<Segment> segments = segmentation.getSegments();
 
-			if(variableWeight != null){
-				throw new UnsupportedElementException(variableWeight);
+			this.entityRegistry = ImmutableBiMap.copyOf(EntityUtil.buildBiMap(segments));
+
+			for(Segment segment : segments){
+				VariableWeight variableWeight = segment.getVariableWeight();
+
+				if(variableWeight != null){
+					throw new UnsupportedElementException(variableWeight);
+				}
 			}
 		}
 
@@ -152,7 +153,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Output output = miningModel.getOutput();
 		if(output != null && output.hasOutputFields()){
-			this.segmentResultFeatures = CacheUtil.getValue(output, MiningModelEvaluator.segmentResultFeaturesCache);
+			Map<String, Set<ResultFeature>> segmentResultFeatures = collectSegmentResultFeatures(output);
+
+			segmentResultFeatures.replaceAll((key, value) -> Sets.immutableEnumSet(value));
+
+			this.segmentResultFeatures = ImmutableMap.copyOf(segmentResultFeatures);
 		}
 	}
 
@@ -207,11 +212,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 	@Override
 	public BiMap<String, Segment> getEntityRegistry(){
-
-		if(this.entityRegistry == null){
-			this.entityRegistry = getValue(MiningModelEvaluator.entityCache);
-		}
-
 		return this.entityRegistry;
 	}
 
@@ -867,44 +867,4 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private static final Set<Segmentation.MultipleModelMethod> REGRESSION_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.AVERAGE, Segmentation.MultipleModelMethod.WEIGHTED_AVERAGE, Segmentation.MultipleModelMethod.MEDIAN, Segmentation.MultipleModelMethod.WEIGHTED_MEDIAN, Segmentation.MultipleModelMethod.SUM, Segmentation.MultipleModelMethod.WEIGHTED_SUM);
 	private static final Set<Segmentation.MultipleModelMethod> CLASSIFICATION_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.MAJORITY_VOTE, Segmentation.MultipleModelMethod.WEIGHTED_MAJORITY_VOTE, Segmentation.MultipleModelMethod.AVERAGE, Segmentation.MultipleModelMethod.WEIGHTED_AVERAGE, Segmentation.MultipleModelMethod.MEDIAN, Segmentation.MultipleModelMethod.MAX);
 	private static final Set<Segmentation.MultipleModelMethod> CLUSTERING_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.MAJORITY_VOTE, Segmentation.MultipleModelMethod.WEIGHTED_MAJORITY_VOTE);
-
-	private static final LoadingCache<Output, Map<String, Set<ResultFeature>>> segmentResultFeaturesCache = CacheUtil.buildLoadingCache(new CacheLoader<Output, Map<String, Set<ResultFeature>>>(){
-
-		@Override
-		public Map<String, Set<ResultFeature>> load(Output output){
-			Map<String, Set<ResultFeature>> result = new LinkedHashMap<>();
-
-			List<org.dmg.pmml.OutputField> pmmlOutputFields = output.getOutputFields();
-			for(org.dmg.pmml.OutputField pmmlOutputField : pmmlOutputFields){
-				String segmentId = pmmlOutputField.getSegmentId();
-
-				if(segmentId == null){
-					continue;
-				}
-
-				Set<ResultFeature> resultFeatures = result.get(segmentId);
-				if(resultFeatures == null){
-					resultFeatures = EnumSet.noneOf(ResultFeature.class);
-
-					result.put(segmentId, resultFeatures);
-				}
-
-				resultFeatures.add(pmmlOutputField.getResultFeature());
-			}
-
-			result.replaceAll((key, value) -> Sets.immutableEnumSet(value));
-
-			return ImmutableMap.copyOf(result);
-		}
-	});
-
-	private static final LoadingCache<MiningModel, BiMap<String, Segment>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<MiningModel, BiMap<String, Segment>>(){
-
-		@Override
-		public BiMap<String, Segment> load(MiningModel miningModel){
-			Segmentation segmentation = miningModel.getSegmentation();
-
-			return ImmutableBiMap.copyOf(EntityUtil.buildBiMap(segmentation.getSegments()));
-		}
-	});
 }

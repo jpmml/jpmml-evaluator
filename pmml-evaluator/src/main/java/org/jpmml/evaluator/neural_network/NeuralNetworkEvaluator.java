@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
@@ -57,7 +55,6 @@ import org.dmg.pmml.neural_network.NeuralOutputs;
 import org.dmg.pmml.neural_network.Neuron;
 import org.dmg.pmml.neural_network.PMMLAttributes;
 import org.dmg.pmml.neural_network.PMMLElements;
-import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
@@ -89,7 +86,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 	private Map<FieldName, List<NeuralOutput>> neuralOutputMap = null;
 
-	private BiMap<String, NeuralEntity> entityRegistry = null;
+	private BiMap<String, NeuralEntity> entityRegistry = ImmutableBiMap.of();
 
 
 	private NeuralNetworkEvaluator(){
@@ -113,6 +110,12 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		if(!neuralNetwork.hasNeuralLayers()){
 			throw new MissingElementException(neuralNetwork, PMMLElements.NEURALNETWORK_NEURALLAYERS);
+		} // End if
+
+		{
+			List<NeuralEntity> neuralEntities = collectNeuralEntities(neuralNetwork);
+
+			this.entityRegistry = ImmutableBiMap.copyOf(EntityUtil.buildBiMap(neuralEntities));
 		}
 
 		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
@@ -132,11 +135,6 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 	@Override
 	public BiMap<String, NeuralEntity> getEntityRegistry(){
-
-		if(this.entityRegistry == null){
-			this.entityRegistry = getValue(NeuralNetworkEvaluator.entityCache);
-		}
-
 		return this.entityRegistry;
 	}
 
@@ -626,24 +624,21 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return Multimaps.asMap(result);
 	}
 
-	private static final LoadingCache<NeuralNetwork, BiMap<String, NeuralEntity>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<NeuralNetwork, BiMap<String, NeuralEntity>>(){
+	static
+	private List<NeuralEntity> collectNeuralEntities(NeuralNetwork neuralNetwork){
+		List<NeuralEntity> result = new ArrayList<>();
 
-		@Override
-		public BiMap<String, NeuralEntity> load(NeuralNetwork neuralNetwork){
-			List<NeuralEntity> neuralEntities = new ArrayList<>();
+		Visitor visitor = new AbstractVisitor(){
 
-			Visitor visitor = new AbstractVisitor(){
+			@Override
+			public VisitorAction visit(NeuralEntity neuralEntity){
+				result.add(neuralEntity);
 
-				@Override
-				public VisitorAction visit(NeuralEntity neuralEntity){
-					neuralEntities.add(neuralEntity);
+				return super.visit(neuralEntity);
+			}
+		};
+		visitor.applyTo(neuralNetwork);
 
-					return super.visit(neuralEntity);
-				}
-			};
-			visitor.applyTo(neuralNetwork);
-
-			return ImmutableBiMap.copyOf(EntityUtil.buildBiMap(neuralEntities));
-		}
-	});
+		return result;
+	}
 }

@@ -27,11 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
@@ -49,7 +45,6 @@ import org.dmg.pmml.association.Item;
 import org.dmg.pmml.association.ItemRef;
 import org.dmg.pmml.association.Itemset;
 import org.dmg.pmml.association.PMMLAttributes;
-import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
@@ -76,11 +71,11 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 	private List<InputField> groupInputFields = null;
 
-	private BiMap<String, AssociationRule> entityRegistry = null;
+	private BiMap<String, AssociationRule> entityRegistry = ImmutableBiMap.of();
 
-	private Map<String, Item> items = null;
+	private Map<String, Item> items = Collections.emptyMap();
 
-	private Map<String, Itemset> itemsets = null;
+	private Map<String, Itemset> itemsets = Collections.emptyMap();
 
 	private List<ItemValue> itemValues = null;
 
@@ -98,6 +93,18 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		Targets targets = associationModel.getTargets();
 		if(targets != null){
 			throw new MisplacedElementException(targets);
+		} // End if
+
+		if(associationModel.hasAssociationRules()){
+			this.entityRegistry = ImmutableBiMap.copyOf(EntityUtil.buildBiMap(associationModel.getAssociationRules()));
+		} // End if
+
+		if(associationModel.hasItems()){
+			this.items = ImmutableMap.copyOf(IndexableUtil.buildMap(associationModel.getItems(), PMMLAttributes.ITEM_ID));
+		} // End if
+
+		if(associationModel.hasItemsets()){
+			this.itemsets = ImmutableMap.copyOf(IndexableUtil.buildMap(associationModel.getItemsets(), PMMLAttributes.ITEMSET_ID));
 		}
 	}
 
@@ -131,11 +138,6 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 	@Override
 	public BiMap<String, AssociationRule> getEntityRegistry(){
-
-		if(this.entityRegistry == null){
-			this.entityRegistry = getValue(AssociationModelEvaluator.entityCache);
-		}
-
 		return this.entityRegistry;
 	}
 
@@ -340,41 +342,20 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	private Map<String, Item> getItems(){
-
-		if(this.items == null){
-			this.items = getValue(AssociationModelEvaluator.itemCache);
-		}
-
 		return this.items;
 	}
 
 	private Map<String, Itemset> getItemsets(){
-
-		if(this.itemsets == null){
-			this.itemsets = getValue(AssociationModelEvaluator.itemsetCache);
-		}
-
 		return this.itemsets;
 	}
 
 	private List<ItemValue> getItemValues(){
 
 		if(this.itemValues == null){
-			this.itemValues = getValue(AssociationModelEvaluator.itemValueCache, createItemValueLoader(this));
+			this.itemValues = ImmutableList.copyOf(parseItemValues(this));
 		}
 
 		return this.itemValues;
-	}
-
-	static
-	private Callable<List<ItemValue>> createItemValueLoader(AssociationModelEvaluator modelEvaluator){
-		return new Callable<List<ItemValue>>(){
-
-			@Override
-			public List<ItemValue> call(){
-				return parseItemValues(modelEvaluator);
-			}
-		};
 	}
 
 	static
@@ -469,7 +450,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			result.add(itemValue);
 		}
 
-		return ImmutableList.copyOf(result);
+		return result;
 	}
 
 	static
@@ -512,32 +493,6 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			this.category = category;
 		}
 	}
-
-	private static final LoadingCache<AssociationModel, BiMap<String, AssociationRule>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<AssociationModel, BiMap<String, AssociationRule>>(){
-
-		@Override
-		public BiMap<String, AssociationRule> load(AssociationModel associationModel){
-			return ImmutableBiMap.copyOf(EntityUtil.buildBiMap(associationModel.getAssociationRules()));
-		}
-	});
-
-	private static final LoadingCache<AssociationModel, Map<String, Item>> itemCache = CacheUtil.buildLoadingCache(new CacheLoader<AssociationModel, Map<String, Item>>(){
-
-		@Override
-		public Map<String, Item> load(AssociationModel associationModel){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(associationModel.getItems(), PMMLAttributes.ITEM_ID));
-		}
-	});
-
-	private static final LoadingCache<AssociationModel, Map<String, Itemset>> itemsetCache = CacheUtil.buildLoadingCache(new CacheLoader<AssociationModel, Map<String, Itemset>>(){
-
-		@Override
-		public Map<String, Itemset> load(AssociationModel associationModel){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(associationModel.getItemsets(), PMMLAttributes.ITEMSET_ID));
-		}
-	});
-
-	private static final Cache<AssociationModel, List<ItemValue>> itemValueCache = CacheUtil.buildCache();
 
 	// IBM SPSS-style schema
 	private static final FieldValue STRING_TRUE = FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, "T");

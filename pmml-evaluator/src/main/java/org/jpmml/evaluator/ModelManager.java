@@ -23,19 +23,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
@@ -114,16 +112,16 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		} // End if
 
 		if(dataDictionary.hasDataFields()){
-			this.dataFields = CacheUtil.getValue(dataDictionary, ModelManager.dataFieldCache);
+			this.dataFields = ImmutableMap.copyOf(IndexableUtil.buildMap(dataDictionary.getDataFields(), PMMLAttributes.DATAFIELD_NAME));
 		}
 
 		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
 		if(transformationDictionary != null && transformationDictionary.hasDerivedFields()){
-			this.derivedFields = CacheUtil.getValue(transformationDictionary, ModelManager.derivedFieldCache);
+			this.derivedFields = ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDerivedFields(), PMMLAttributes.DERIVEDFIELD_NAME));
 		} // End if
 
 		if(transformationDictionary != null && transformationDictionary.hasDefineFunctions()){
-			this.defineFunctions = CacheUtil.getValue(transformationDictionary, ModelManager.defineFunctionCache);
+			this.defineFunctions = ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDefineFunctions(), PMMLAttributes.DEFINEFUNCTION_NAME));
 		}
 
 		MiningFunction miningFunction = model.getMiningFunction();
@@ -137,23 +135,25 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		} // End if
 
 		if(miningSchema.hasMiningFields()){
-			this.miningFields = CacheUtil.getValue(miningSchema, ModelManager.miningFieldCache);
+			this.miningFields = ImmutableMap.copyOf(IndexableUtil.buildMap(miningSchema.getMiningFields(), PMMLAttributes.MININGFIELD_NAME));
 		}
 
 		LocalTransformations localTransformations = model.getLocalTransformations();
 		if(localTransformations != null && localTransformations.hasDerivedFields()){
-			this.localDerivedFields = CacheUtil.getValue(localTransformations, ModelManager.localDerivedFieldCache);
+			this.localDerivedFields = ImmutableMap.copyOf(IndexableUtil.buildMap(localTransformations.getDerivedFields(), PMMLAttributes.DERIVEDFIELD_NAME));
 		}
 
 		Targets targets = model.getTargets();
 		if(targets != null && targets.hasTargets()){
-			this.targets = CacheUtil.getValue(targets, ModelManager.targetCache);
+			// Cannot use Guava's ImmutableMap, because it is null-hostile
+			this.targets = Collections.unmodifiableMap(IndexableUtil.buildMap(targets.getTargets(), PMMLAttributes.TARGET_FIELD, true));
 		}
 
 		Output output = model.getOutput();
 		if(output != null && output.hasOutputFields()){
-			this.outputFields = CacheUtil.getValue(output, ModelManager.outputFieldCache);
-			this.resultFeatures = CacheUtil.getValue(output, ModelManager.resultFeaturesCache);
+			this.outputFields = ImmutableMap.copyOf(IndexableUtil.buildMap(output.getOutputFields(), PMMLAttributes.OUTPUTFIELD_NAME));
+
+			this.resultFeatures = ImmutableSet.copyOf(collectResultFeatures(output));
 		}
 	}
 
@@ -570,18 +570,6 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		return ImmutableListMultimap.copyOf(visibleFields);
 	}
 
-	public <V> V getValue(LoadingCache<M, V> cache){
-		M model = getModel();
-
-		return CacheUtil.getValue(model, cache);
-	}
-
-	public <V> V getValue(Cache<M, V> cache, Callable<? extends V> loader){
-		M model = getModel();
-
-		return CacheUtil.getValue(model, cache, loader);
-	}
-
 	@Override
 	public PMML getPMML(){
 		return this.pmml;
@@ -600,74 +588,13 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		this.model = model;
 	}
 
-	private static final DataField DEFAULT_TARGET_CONTINUOUS_FLOAT = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.FLOAT);
-	private static final DataField DEFAULT_TARGET_CONTINUOUS_DOUBLE = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.DOUBLE);
-	private static final DataField DEFAULT_TARGET_CATEGORICAL_STRING = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CATEGORICAL, DataType.STRING);
+	static
+	protected Set<ResultFeature> collectResultFeatures(Output output){
+		Set<ResultFeature> result = EnumSet.noneOf(ResultFeature.class);
 
-	private static final LoadingCache<DataDictionary, Map<FieldName, DataField>> dataFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<DataDictionary, Map<FieldName, DataField>>(){
-
-		@Override
-		public Map<FieldName, DataField> load(DataDictionary dataDictionary){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(dataDictionary.getDataFields(), PMMLAttributes.DATAFIELD_NAME));
-		}
-	});
-
-	private static final LoadingCache<TransformationDictionary, Map<FieldName, DerivedField>> derivedFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<TransformationDictionary, Map<FieldName, DerivedField>>(){
-
-		@Override
-		public Map<FieldName, DerivedField> load(TransformationDictionary transformationDictionary){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDerivedFields(), PMMLAttributes.DERIVEDFIELD_NAME));
-		}
-	});
-
-	private static final LoadingCache<TransformationDictionary, Map<String, DefineFunction>> defineFunctionCache = CacheUtil.buildLoadingCache(new CacheLoader<TransformationDictionary, Map<String, DefineFunction>>(){
-
-		@Override
-		public Map<String, DefineFunction> load(TransformationDictionary transformationDictionary){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDefineFunctions(), PMMLAttributes.DEFINEFUNCTION_NAME));
-		}
-	});
-
-	private static final LoadingCache<MiningSchema, Map<FieldName, MiningField>> miningFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<MiningSchema, Map<FieldName, MiningField>>(){
-
-		@Override
-		public Map<FieldName, MiningField> load(MiningSchema miningSchema){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(miningSchema.getMiningFields(), PMMLAttributes.MININGFIELD_NAME));
-		}
-	});
-
-	private static final LoadingCache<LocalTransformations, Map<FieldName, DerivedField>> localDerivedFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<LocalTransformations, Map<FieldName, DerivedField>>(){
-
-		@Override
-		public Map<FieldName, DerivedField> load(LocalTransformations localTransformations){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(localTransformations.getDerivedFields(), PMMLAttributes.DERIVEDFIELD_NAME));
-		}
-	});
-
-	private static final LoadingCache<Targets, Map<FieldName, Target>> targetCache = CacheUtil.buildLoadingCache(new CacheLoader<Targets, Map<FieldName, Target>>(){
-
-		@Override
-		public Map<FieldName, Target> load(Targets targets){
-			// Cannot use Guava's ImmutableMap, because it is null-hostile
-			return Collections.unmodifiableMap(IndexableUtil.buildMap(targets.getTargets(), PMMLAttributes.TARGET_FIELD, true));
-		}
-	});
-
-	private static final LoadingCache<Output, Map<FieldName, org.dmg.pmml.OutputField>> outputFieldCache = CacheUtil.buildLoadingCache(new CacheLoader<Output, Map<FieldName, org.dmg.pmml.OutputField>>(){
-
-		@Override
-		public Map<FieldName, org.dmg.pmml.OutputField> load(Output output){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(output.getOutputFields(), PMMLAttributes.OUTPUTFIELD_NAME));
-		}
-	});
-
-	static final LoadingCache<Output, Set<ResultFeature>> resultFeaturesCache = CacheUtil.buildLoadingCache(new CacheLoader<Output, Set<ResultFeature>>(){
-
-		@Override
-		public Set<ResultFeature> load(Output output){
-			Set<ResultFeature> result = EnumSet.noneOf(ResultFeature.class);
-
+		if(output != null && output.hasOutputFields()){
 			List<org.dmg.pmml.OutputField> pmmlOutputFields = output.getOutputFields();
+
 			for(org.dmg.pmml.OutputField pmmlOutputField : pmmlOutputFields){
 				String segmentId = pmmlOutputField.getSegmentId();
 
@@ -677,8 +604,37 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 				result.add(pmmlOutputField.getResultFeature());
 			}
-
-			return Sets.immutableEnumSet(result);
 		}
-	});
+
+		return result;
+	}
+
+	static
+	protected Map<String, Set<ResultFeature>> collectSegmentResultFeatures(Output output){
+		Map<String, Set<ResultFeature>> result = new LinkedHashMap<>();
+
+		List<org.dmg.pmml.OutputField> pmmlOutputFields = output.getOutputFields();
+		for(org.dmg.pmml.OutputField pmmlOutputField : pmmlOutputFields){
+			String segmentId = pmmlOutputField.getSegmentId();
+
+			if(segmentId == null){
+				continue;
+			}
+
+			Set<ResultFeature> resultFeatures = result.get(segmentId);
+			if(resultFeatures == null){
+				resultFeatures = EnumSet.noneOf(ResultFeature.class);
+
+				result.put(segmentId, resultFeatures);
+			}
+
+			resultFeatures.add(pmmlOutputField.getResultFeature());
+		}
+
+		return result;
+	}
+
+	private static final DataField DEFAULT_TARGET_CONTINUOUS_FLOAT = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.FLOAT);
+	private static final DataField DEFAULT_TARGET_CONTINUOUS_DOUBLE = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.DOUBLE);
+	private static final DataField DEFAULT_TARGET_CATEGORICAL_STRING = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CATEGORICAL, DataType.STRING);
 }

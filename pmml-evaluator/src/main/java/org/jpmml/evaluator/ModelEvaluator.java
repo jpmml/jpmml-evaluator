@@ -31,8 +31,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
@@ -173,7 +171,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			return this;
 		}
 
-		VerificationBatch batch = CacheUtil.getValue(modelVerification, ModelEvaluator.batchCache);
+		VerificationBatch batch = parseModelVerification(modelVerification);
 
 		List<? extends Map<FieldName, ?>> records = batch.getRecords();
 
@@ -753,12 +751,4 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			this.records = records;
 		}
 	}
-
-	private static final LoadingCache<ModelVerification, VerificationBatch> batchCache = CacheUtil.buildLoadingCache(new CacheLoader<ModelVerification, VerificationBatch>(){
-
-		@Override
-		public VerificationBatch load(ModelVerification modelVerification){
-			return parseModelVerification(modelVerification);
-		}
-	});
 }

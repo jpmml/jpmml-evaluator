@@ -36,11 +36,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Function;
-import com.google.common.cache.Cache;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableList;
@@ -75,7 +73,6 @@ import org.dmg.pmml.nearest_neighbor.PMMLAttributes;
 import org.dmg.pmml.nearest_neighbor.PMMLElements;
 import org.dmg.pmml.nearest_neighbor.TrainingInstances;
 import org.jpmml.evaluator.AffinityDistribution;
-import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
@@ -507,21 +504,10 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Table<Integer, FieldName, FieldValue> getTrainingInstances(){
 
 		if(this.trainingInstances == null){
-			this.trainingInstances = getValue(NearestNeighborModelEvaluator.trainingInstanceCache, createTrainingInstanceLoader(this));
+			this.trainingInstances = ImmutableTable.copyOf(parseTrainingInstances(this));
 		}
 
 		return this.trainingInstances;
-	}
-
-	static
-	private Callable<Table<Integer, FieldName, FieldValue>> createTrainingInstanceLoader(NearestNeighborModelEvaluator modelEvaluator){
-		return new Callable<Table<Integer, FieldName, FieldValue>>(){
-
-			@Override
-			public Table<Integer, FieldName, FieldValue> call(){
-				return ImmutableTable.copyOf(parseTrainingInstances(modelEvaluator));
-			}
-		};
 	}
 
 	static
@@ -654,26 +640,15 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Map<Integer, BitSet> getInstanceFlags(){
 
 		if(this.instanceFlags == null){
-			this.instanceFlags = getValue(NearestNeighborModelEvaluator.instanceFlagCache, createInstanceFlagLoader(this));
+			this.instanceFlags = ImmutableMap.copyOf(loadInstanceFlags(this));
 		}
 
 		return this.instanceFlags;
 	}
 
 	static
-	private Callable<Map<Integer, BitSet>> createInstanceFlagLoader(NearestNeighborModelEvaluator modelEvaluator){
-		return new Callable<Map<Integer, BitSet>>(){
-
-			@Override
-			public Map<Integer, BitSet> call(){
-				return ImmutableMap.copyOf(loadInstanceFlags(modelEvaluator));
-			}
-		};
-	}
-
-	static
 	private Map<Integer, BitSet> loadInstanceFlags(NearestNeighborModelEvaluator modelEvaluator){
-		Map<Integer, List<FieldValue>> instanceValues = modelEvaluator.getValue(NearestNeighborModelEvaluator.instanceValueCache, createInstanceValueLoader(modelEvaluator));
+		Map<Integer, List<FieldValue>> instanceValues = modelEvaluator.getInstanceValues();
 
 		Map<Integer, BitSet> instanceFlags = instanceValues.entrySet().stream()
 			.collect(Collectors.toMap(entry -> entry.getKey(), entry -> MeasureUtil.toBitSet(entry.getValue())));
@@ -684,26 +659,15 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private Map<Integer, List<FieldValue>> getInstanceValues(){
 
 		if(this.instanceValues == null){
-			this.instanceValues = getValue(NearestNeighborModelEvaluator.instanceValueCache, createInstanceValueLoader(this));
+			Map<Integer, List<FieldValue>> instanceValues = loadInstanceValues(this);
+
+			instanceValues = instanceValues.entrySet().stream()
+				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableList.copyOf(entry.getValue())));
+
+			this.instanceValues = ImmutableMap.copyOf(instanceValues);
 		}
 
 		return this.instanceValues;
-	}
-
-	static
-	private Callable<Map<Integer, List<FieldValue>>> createInstanceValueLoader(NearestNeighborModelEvaluator modelEvaluator){
-		return new Callable<Map<Integer, List<FieldValue>>>(){
-
-			@Override
-			public Map<Integer, List<FieldValue>> call(){
-				Map<Integer, List<FieldValue>> instanceValues = loadInstanceValues(modelEvaluator);
-
-				instanceValues = instanceValues.entrySet().stream()
-					.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableList.copyOf(entry.getValue())));
-
-				return ImmutableMap.copyOf(instanceValues);
-			}
-		};
 	}
 
 	static
@@ -712,7 +676,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Map<Integer, List<FieldValue>> result = new LinkedHashMap<>();
 
-		Table<Integer, FieldName, FieldValue> table = modelEvaluator.getValue(NearestNeighborModelEvaluator.trainingInstanceCache, createTrainingInstanceLoader(modelEvaluator));
+		Table<Integer, FieldName, FieldValue> table = modelEvaluator.getTrainingInstances();
 
 		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
 
@@ -976,10 +940,4 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			}
 		}
 	}
-
-	private static final Cache<NearestNeighborModel, Table<Integer, FieldName, FieldValue>> trainingInstanceCache = CacheUtil.buildCache();
-
-	private static final Cache<NearestNeighborModel, Map<Integer, BitSet>> instanceFlagCache = CacheUtil.buildCache();
-
-	private static final Cache<NearestNeighborModel, Map<Integer, List<FieldValue>>> instanceValueCache = CacheUtil.buildCache();
 }

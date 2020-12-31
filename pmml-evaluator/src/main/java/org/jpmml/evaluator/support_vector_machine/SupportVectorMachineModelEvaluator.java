@@ -28,13 +28,12 @@
 package org.jpmml.evaluator.support_vector_machine;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Floats;
@@ -59,7 +58,6 @@ import org.dmg.pmml.support_vector_machine.VectorDictionary;
 import org.dmg.pmml.support_vector_machine.VectorFields;
 import org.dmg.pmml.support_vector_machine.VectorInstance;
 import org.jpmml.evaluator.ArrayUtil;
-import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
@@ -89,7 +87,7 @@ import org.jpmml.model.XPathUtil;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
 
-	private Map<String, Object> vectorMap = null;
+	private Map<String, Object> vectorMap = Collections.emptyMap();
 
 
 	private SupportVectorMachineModelEvaluator(){
@@ -128,6 +126,8 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		if(!supportVectorMachineModel.hasSupportVectorMachines()){
 			throw new MissingElementException(supportVectorMachineModel, PMMLElements.SUPPORTVECTORMACHINEMODEL_SUPPORTVECTORMACHINES);
 		}
+
+		this.vectorMap = ImmutableMap.copyOf(parseVectorDictionary(supportVectorMachineModel));
 	}
 
 	@Override
@@ -431,11 +431,6 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 	}
 
 	private Map<String, Object> getVectorMap(){
-
-		if(this.vectorMap == null){
-			this.vectorMap = getValue(SupportVectorMachineModelEvaluator.vectorCache);
-		}
-
 		return this.vectorMap;
 	}
 
@@ -498,12 +493,4 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				throw new UnsupportedAttributeException(supportVectorMachineModel, mathContext);
 		}
 	}
-
-	private static final LoadingCache<SupportVectorMachineModel, Map<String, Object>> vectorCache = CacheUtil.buildLoadingCache(new CacheLoader<SupportVectorMachineModel, Map<String, Object>>(){
-
-		@Override
-		public Map<String, Object> load(SupportVectorMachineModel supportVectorMachineModel){
-			return ImmutableMap.copyOf(parseVectorDictionary(supportVectorMachineModel));
-		}
-	});
 }

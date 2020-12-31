@@ -28,14 +28,13 @@
 package org.jpmml.evaluator.naive_bayes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.math3.util.Precision;
@@ -59,7 +58,6 @@ import org.dmg.pmml.naive_bayes.TargetValueCount;
 import org.dmg.pmml.naive_bayes.TargetValueCounts;
 import org.dmg.pmml.naive_bayes.TargetValueStat;
 import org.dmg.pmml.naive_bayes.TargetValueStats;
-import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.DiscretizationUtil;
 import org.jpmml.evaluator.DistributionUtil;
@@ -88,9 +86,9 @@ import org.jpmml.model.XPathUtil;
 
 public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
-	private List<BayesInput> bayesInputs = null;
+	private List<BayesInput> bayesInputs = Collections.emptyList();
 
-	private Map<FieldName, Map<Object, Number>> fieldCountSums = null;
+	private Map<FieldName, Map<Object, Number>> fieldCountSums = Collections.emptyMap();
 
 
 	private NaiveBayesModelEvaluator(){
@@ -125,6 +123,15 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		if(!targetValueCounts.hasTargetValueCounts()){
 			throw new MissingElementException(targetValueCounts, PMMLElements.TARGETVALUECOUNTS_TARGETVALUECOUNTS);
 		}
+
+		this.bayesInputs = ImmutableList.copyOf(parseBayesInputs(naiveBayesModel));
+
+		Map<FieldName, Map<Object, Number>> fieldCountSums = calculateFieldCountSums(this.bayesInputs);
+
+		fieldCountSums = fieldCountSums.entrySet().stream()
+			.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableMap.copyOf(entry.getValue())));
+
+		this.fieldCountSums = ImmutableMap.copyOf(fieldCountSums);
 	}
 
 	@Override
@@ -333,28 +340,17 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	}
 
 	protected List<BayesInput> getBayesInputs(){
-
-		if(this.bayesInputs == null){
-			this.bayesInputs = getValue(NaiveBayesModelEvaluator.bayesInputCache);
-		}
-
 		return this.bayesInputs;
 	}
 
 	protected Map<FieldName, Map<Object, Number>> getFieldCountSums(){
-
-		if(this.fieldCountSums == null){
-			this.fieldCountSums = getValue(NaiveBayesModelEvaluator.fieldCountSumCache);
-		}
-
 		return this.fieldCountSums;
 	}
 
 	static
-	private Map<FieldName, Map<Object, Number>> calculateFieldCountSums(NaiveBayesModel naiveBayesModel){
+	private Map<FieldName, Map<Object, Number>> calculateFieldCountSums(List<BayesInput> bayesInputs){
 		Map<FieldName, Map<Object, Number>> result = new LinkedHashMap<>();
 
-		List<BayesInput> bayesInputs = CacheUtil.getValue(naiveBayesModel, NaiveBayesModelEvaluator.bayesInputCache);
 		for(BayesInput bayesInput : bayesInputs){
 			FieldName name = bayesInput.getField();
 
@@ -472,25 +468,4 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	private TargetValueCounts getTargetValueCounts(BayesOutput bayesOutput){
 		return bayesOutput.getTargetValueCounts();
 	}
-
-	private static final LoadingCache<NaiveBayesModel, List<BayesInput>> bayesInputCache = CacheUtil.buildLoadingCache(new CacheLoader<NaiveBayesModel, List<BayesInput>>(){
-
-		@Override
-		public List<BayesInput> load(NaiveBayesModel naiveBayesModel){
-			return ImmutableList.copyOf(parseBayesInputs(naiveBayesModel));
-		}
-	});
-
-	private static final LoadingCache<NaiveBayesModel, Map<FieldName, Map<Object, Number>>> fieldCountSumCache = CacheUtil.buildLoadingCache(new CacheLoader<NaiveBayesModel, Map<FieldName, Map<Object, Number>>>(){
-
-		@Override
-		public Map<FieldName, Map<Object, Number>> load(NaiveBayesModel naiveBayesModel){
-			Map<FieldName, Map<Object, Number>> fieldCountSums = calculateFieldCountSums(naiveBayesModel);
-
-			fieldCountSums = fieldCountSums.entrySet().stream()
-				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableMap.copyOf(entry.getValue())));
-
-			return ImmutableMap.copyOf(fieldCountSums);
-		}
-	});
 }

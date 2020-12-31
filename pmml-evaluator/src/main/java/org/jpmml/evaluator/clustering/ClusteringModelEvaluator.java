@@ -21,14 +21,15 @@ package org.jpmml.evaluator.clustering;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.ComparisonMeasure;
@@ -48,7 +49,6 @@ import org.dmg.pmml.clustering.MissingValueWeights;
 import org.dmg.pmml.clustering.PMMLAttributes;
 import org.dmg.pmml.clustering.PMMLElements;
 import org.jpmml.evaluator.ArrayUtil;
-import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
@@ -71,7 +71,9 @@ import org.jpmml.evaluator.ValueMap;
 
 public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> implements HasEntityRegistry<Cluster> {
 
-	private BiMap<String, Cluster> entityRegistry = null;
+	private BiMap<String, Cluster> entityRegistry = ImmutableBiMap.of();
+
+	private Map<Cluster, ?> clusterCentroids = Collections.emptyMap();
 
 
 	private ClusteringModelEvaluator(){
@@ -83,6 +85,11 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 	public ClusteringModelEvaluator(PMML pmml, ClusteringModel clusteringModel){
 		super(pmml, clusteringModel);
+
+		Targets targets = clusteringModel.getTargets();
+		if(targets != null){
+			throw new MisplacedElementException(targets);
+		}
 
 		ComparisonMeasure comparisonMeasure = clusteringModel.getComparisonMeasure();
 		if(comparisonMeasure == null){
@@ -108,11 +115,33 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 		if(!clusteringModel.hasClusters()){
 			throw new MissingElementException(clusteringModel, PMMLElements.CLUSTERINGMODEL_CLUSTERS);
-		}
+		} else
 
-		Targets targets = clusteringModel.getTargets();
-		if(targets != null){
-			throw new MisplacedElementException(targets);
+		{
+			List<Cluster> clusters = clusteringModel.getClusters();
+
+			this.entityRegistry = ImmutableBiMap.copyOf(EntityUtil.buildBiMap(clusters));
+
+			Map<Cluster, List<FieldValue>> clusterValues = parseClusterValues(clusters);
+
+			Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
+
+			if(measure instanceof Distance){
+				clusterValues.replaceAll((key, value) -> ImmutableList.copyOf(value));
+
+				this.clusterCentroids = ImmutableMap.copyOf(clusterValues);
+			} else
+
+			if(measure instanceof Similarity){
+				Map<Cluster, BitSet> clusterFlags = clusterValues.entrySet().stream()
+					.collect(Collectors.toMap(entry -> entry.getKey(), entry -> MeasureUtil.toBitSet(entry.getValue())));
+
+				this.clusterCentroids = ImmutableMap.copyOf(clusterFlags);
+			} else
+
+			{
+				throw new UnsupportedElementException(measure);
+			}
 		}
 	}
 
@@ -131,11 +160,6 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 	@Override
 	public BiMap<String, Cluster> getEntityRegistry(){
-
-		if(this.entityRegistry == null){
-			this.entityRegistry = getValue(ClusteringModelEvaluator.entityCache);
-		}
-
 		return this.entityRegistry;
 	}
 
@@ -145,16 +169,27 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 		ComparisonMeasure comparisonMeasure = clusteringModel.getComparisonMeasure();
 
-		List<ClusteringField> clusteringFields = getCenterClusteringFields();
+		List<ClusteringField> clusteringFields = clusteringModel.getClusteringFields();
 
 		List<FieldValue> values = new ArrayList<>(clusteringFields.size());
 
+		clusteringFields:
 		for(int i = 0, max = clusteringFields.size(); i < max; i++){
 			ClusteringField clusteringField = clusteringFields.get(i);
 
 			FieldName name = clusteringField.getField();
 			if(name == null){
 				throw new MissingAttributeException(clusteringField, PMMLAttributes.CLUSTERINGFIELD_FIELD);
+			}
+
+			ClusteringField.CenterField centerField = clusteringField.getCenterField();
+			switch(centerField){
+				case TRUE:
+					break;
+				case FALSE:
+					continue clusteringFields;
+				default:
+					throw new UnsupportedAttributeException(clusteringField, centerField);
 			}
 
 			FieldValue value = context.evaluate(name);
@@ -194,7 +229,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		BitSet flags = MeasureUtil.toBitSet(values);
 
 		for(Cluster cluster : clusters){
-			BitSet clusterFlags = CacheUtil.getValue(cluster, ClusteringModelEvaluator.clusterFlagCache);
+			BitSet clusterFlags = (BitSet)getClusterCentroid(cluster);
 
 			if(flags.size() != clusterFlags.size()){
 				throw new InvalidElementException(cluster);
@@ -234,7 +269,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		ClusterAffinityDistribution<V> result = createClusterAffinityDistribution(Classification.Type.DISTANCE, clusters);
 
 		for(Cluster cluster : clusters){
-			List<FieldValue> clusterValues = CacheUtil.getValue(cluster, ClusteringModelEvaluator.clusterValueCache);
+			List<FieldValue> clusterValues = (List<FieldValue>)getClusterCentroid(cluster);
 
 			if(values.size() != clusterValues.size()){
 				throw new InvalidElementException(cluster);
@@ -243,31 +278,6 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			Value<V> distance = MeasureUtil.evaluateDistance(valueFactory, comparisonMeasure, clusteringFields, values, clusterValues, adjustment);
 
 			result.put(cluster, distance);
-		}
-
-		return result;
-	}
-
-	private List<ClusteringField> getCenterClusteringFields(){
-		ClusteringModel clusteringModel = getModel();
-
-		List<ClusteringField> clusteringFields = clusteringModel.getClusteringFields();
-
-		List<ClusteringField> result = new ArrayList<>(clusteringFields.size());
-
-		for(int i = 0, max = clusteringFields.size(); i < max; i++){
-			ClusteringField clusteringField = clusteringFields.get(i);
-
-			ClusteringField.CenterField centerField = clusteringField.getCenterField();
-			switch(centerField){
-				case TRUE:
-					result.add(clusteringField);
-					break;
-				case FALSE:
-					break;
-				default:
-					throw new UnsupportedAttributeException(clusteringField, centerField);
-			}
 		}
 
 		return result;
@@ -285,33 +295,25 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		return result;
 	}
 
-	private static final LoadingCache<Cluster, List<FieldValue>> clusterValueCache = CacheUtil.buildLoadingCache(new CacheLoader<Cluster, List<FieldValue>>(){
+	private Object getClusterCentroid(Cluster cluster){
+		return this.clusterCentroids.get(cluster);
+	}
 
-		@Override
-		public List<FieldValue> load(Cluster cluster){
+	static
+	private Map<Cluster, List<FieldValue>> parseClusterValues(List<Cluster> clusters){
+		Map<Cluster, List<FieldValue>> result = new HashMap<>();
+
+		for(Cluster cluster : clusters){
 			Array array = cluster.getArray();
+			if(array == null){
+				throw new MissingElementException(cluster, PMMLElements.CLUSTER_ARRAY);
+			}
 
 			List<? extends Number> values = ArrayUtil.asNumberList(array);
 
-			return ImmutableList.copyOf(Lists.transform(values, value -> FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, value)));
+			result.put(cluster, new ArrayList<>(Lists.transform(values, value -> FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, value))));
 		}
-	});
 
-	private static final LoadingCache<Cluster, BitSet> clusterFlagCache = CacheUtil.buildLoadingCache(new CacheLoader<Cluster, BitSet>(){
-
-		@Override
-		public BitSet load(Cluster cluster){
-			List<FieldValue> values = CacheUtil.getValue(cluster, ClusteringModelEvaluator.clusterValueCache);
-
-			return MeasureUtil.toBitSet(values);
-		}
-	});
-
-	private static final LoadingCache<ClusteringModel, BiMap<String, Cluster>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<ClusteringModel, BiMap<String, Cluster>>(){
-
-		@Override
-		public BiMap<String, Cluster> load(ClusteringModel clusteringModel){
-			return ImmutableBiMap.copyOf(EntityUtil.buildBiMap(clusteringModel.getClusters()));
-		}
-	});
+		return result;
+	}
 }

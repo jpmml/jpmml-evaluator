@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.LinkedListMultimap;
@@ -42,7 +40,6 @@ import org.dmg.pmml.rule_set.RuleSelectionMethod;
 import org.dmg.pmml.rule_set.RuleSet;
 import org.dmg.pmml.rule_set.RuleSetModel;
 import org.dmg.pmml.rule_set.SimpleRule;
-import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
@@ -65,7 +62,7 @@ import org.jpmml.model.visitors.AbstractVisitor;
 
 public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implements HasEntityRegistry<SimpleRule> {
 
-	private BiMap<String, SimpleRule> entityRegistry = null;
+	private BiMap<String, SimpleRule> entityRegistry = ImmutableBiMap.of();
 
 
 	private RuleSetModelEvaluator(){
@@ -85,6 +82,12 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 		if(!ruleSet.hasRuleSelectionMethods()){
 			throw new MissingElementException(ruleSet, PMMLElements.RULESET_RULESELECTIONMETHODS);
+		} // End if
+
+		if(ruleSet.hasRules()){
+			List<SimpleRule> simpleRules = collectSimpleRules(ruleSetModel);
+
+			this.entityRegistry = ImmutableBiMap.copyOf(EntityUtil.buildBiMap(simpleRules));
 		}
 	}
 
@@ -95,11 +98,6 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 	@Override
 	public BiMap<String, SimpleRule> getEntityRegistry(){
-
-		if(this.entityRegistry == null){
-			this.entityRegistry = getValue(RuleSetModelEvaluator.entityCache);
-		}
-
 		return this.entityRegistry;
 	}
 
@@ -260,24 +258,21 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		}
 	}
 
-	private static final LoadingCache<RuleSetModel, BiMap<String, SimpleRule>> entityCache = CacheUtil.buildLoadingCache(new CacheLoader<RuleSetModel, BiMap<String, SimpleRule>>(){
+	static
+	private List<SimpleRule> collectSimpleRules(RuleSetModel ruleSetModel){
+		List<SimpleRule> result = new ArrayList<>();
 
-		@Override
-		public BiMap<String, SimpleRule> load(RuleSetModel ruleSetModel){
-			List<SimpleRule> simpleRules = new ArrayList<>();
+		Visitor visitor = new AbstractVisitor(){
 
-			Visitor visitor = new AbstractVisitor(){
+			@Override
+			public VisitorAction visit(SimpleRule simpleRule){
+				result.add(simpleRule);
 
-				@Override
-				public VisitorAction visit(SimpleRule simpleRule){
-					simpleRules.add(simpleRule);
+				return super.visit(simpleRule);
+			}
+		};
+		visitor.applyTo(ruleSetModel);
 
-					return super.visit(simpleRule);
-				}
-			};
-			visitor.applyTo(ruleSetModel);
-
-			return ImmutableBiMap.copyOf(EntityUtil.buildBiMap(simpleRules));
-		}
-	});
+		return result;
+	}
 }

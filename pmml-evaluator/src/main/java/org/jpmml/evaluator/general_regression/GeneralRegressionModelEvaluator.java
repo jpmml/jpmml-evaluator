@@ -30,8 +30,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Function;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -64,7 +62,6 @@ import org.dmg.pmml.general_regression.ParameterCell;
 import org.dmg.pmml.general_regression.ParameterList;
 import org.dmg.pmml.general_regression.Predictor;
 import org.dmg.pmml.general_regression.PredictorList;
-import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.FieldValue;
@@ -94,11 +91,11 @@ import org.jpmml.evaluator.ValueUtil;
 
 public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegressionModel> {
 
-	private BiMap<String, Parameter> parameterRegistry = null;
+	private BiMap<String, Parameter> parameterRegistry = ImmutableBiMap.of();
 
-	private Map<Object, Map<String, Row>> ppMatrixMap = null;
+	private Map<Object, Map<String, Row>> ppMatrixMap = Collections.emptyMap();
 
-	private Map<Object, List<PCell>> paramMatrixMap = null;
+	private Map<Object, List<PCell>> paramMatrixMap = Collections.emptyMap();
 
 	private List<Object> targetCategories = null;
 
@@ -118,19 +115,56 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			throw new MissingAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_MODELTYPE);
 		}
 
+		BiMap<FieldName, Predictor> factorRegistry = ImmutableBiMap.of();
+		BiMap<FieldName, Predictor> covariateRegistry = ImmutableBiMap.of();
+
 		ParameterList parameterList = generalRegressionModel.getParameterList();
 		if(parameterList == null){
 			throw new MissingElementException(generalRegressionModel, PMMLElements.GENERALREGRESSIONMODEL_PARAMETERLIST);
+		} else
+
+		{
+			this.parameterRegistry = ImmutableBiMap.copyOf(parseParameterRegistry(parameterList));
+
+			PredictorList factorList = generalRegressionModel.getFactorList();
+			if(factorList != null && factorList.hasPredictors()){
+				factorRegistry = ImmutableBiMap.copyOf(parsePredictorRegistry(factorList));
+			}
+
+			PredictorList covariateList = generalRegressionModel.getCovariateList();
+			if(covariateList != null && covariateList.hasPredictors()){
+				covariateRegistry = ImmutableBiMap.copyOf(parsePredictorRegistry(covariateList));
+			}
 		}
 
 		PPMatrix ppMatrix = generalRegressionModel.getPPMatrix();
 		if(ppMatrix == null){
 			throw new MissingElementException(generalRegressionModel, PMMLElements.GENERALREGRESSIONMODEL_PPMATRIX);
+		} else
+
+		{
+			Map<Object, Map<String, Row>> ppMatrixMap = parsePPMatrix(ppMatrix, factorRegistry, covariateRegistry);
+
+			ppMatrixMap = ppMatrixMap.entrySet().stream()
+				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableMap.copyOf(entry.getValue())));
+
+			// Cannot use Guava's ImmutableMap, because it is null-hostile
+			this.ppMatrixMap = Collections.unmodifiableMap(ppMatrixMap);
 		}
 
 		ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
 		if(paramMatrix == null){
 			throw new MissingElementException(generalRegressionModel, PMMLElements.GENERALREGRESSIONMODEL_PARAMMATRIX);
+		} else
+
+		{
+			Map<Object, List<PCell>> paramMatrixMap = parseParamMatrix(paramMatrix);
+
+			paramMatrixMap = paramMatrixMap.entrySet().stream()
+				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableList.copyOf(entry.getValue())));
+
+			// Cannot use Guava's ImmutableMap, because it is null-hostile
+			this.paramMatrixMap = Collections.unmodifiableMap(paramMatrixMap);
 		}
 	}
 
@@ -718,11 +752,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	public BiMap<String, Parameter> getParameterRegistry(){
-
-		if(this.parameterRegistry == null){
-			this.parameterRegistry = getValue(GeneralRegressionModelEvaluator.parameterCache);
-		}
-
 		return this.parameterRegistry;
 	}
 
@@ -741,11 +770,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	 * @return A map of predictor-to-parameter correlation matrices.
 	 */
 	private Map<Object, Map<String, Row>> getPPMatrixMap(){
-
-		if(this.ppMatrixMap == null){
-			this.ppMatrixMap = getValue(GeneralRegressionModelEvaluator.ppMatrixCache);
-		}
-
 		return this.ppMatrixMap;
 	}
 
@@ -753,11 +777,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	 * @return A map of parameter matrices.
 	 */
 	private Map<Object, List<PCell>> getParamMatrixMap(){
-
-		if(this.paramMatrixMap == null){
-			this.paramMatrixMap = getValue(GeneralRegressionModelEvaluator.paramMatrixCache);
-		}
-
 		return this.paramMatrixMap;
 	}
 
@@ -915,26 +934,22 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private BiMap<FieldName, Predictor> parsePredictorRegistry(PredictorList predictorList){
 		BiMap<FieldName, Predictor> result = HashBiMap.create();
 
-		if(predictorList == null || !predictorList.hasPredictors()){
-			return result;
-		}
-
 		List<Predictor> predictors = predictorList.getPredictors();
 		for(Predictor predictor : predictors){
-			result.put(predictor.getField(), predictor);
+			FieldName name = predictor.getField();
+			if(name == null){
+				throw new MissingAttributeException(predictor, PMMLAttributes.PREDICTOR_FIELD);
+			}
+
+			result.put(name, predictor);
 		}
 
 		return result;
 	}
 
 	static
-	private Map<Object, Map<String, Row>> parsePPMatrix(GeneralRegressionModel generalRegressionModel){
+	private Map<Object, Map<String, Row>> parsePPMatrix(PPMatrix ppMatrix, BiMap<FieldName, Predictor> factors, BiMap<FieldName, Predictor> covariates){
 		Function<List<PPCell>, Row> function = new Function<List<PPCell>, Row>(){
-
-			private BiMap<FieldName, Predictor> factors = CacheUtil.getValue(generalRegressionModel, GeneralRegressionModelEvaluator.factorCache);
-
-			private BiMap<FieldName, Predictor> covariates = CacheUtil.getValue(generalRegressionModel, GeneralRegressionModelEvaluator.covariateCache);
-
 
 			@Override
 			public Row apply(List<PPCell> ppCells){
@@ -947,14 +962,14 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 						throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_FIELD);
 					}
 
-					Predictor factor = this.factors.get(name);
+					Predictor factor = factors.get(name);
 					if(factor != null){
 						result.addFactor(ppCell, factor);
 
 						continue ppCells;
 					}
 
-					Predictor covariate = this.covariates.get(name);
+					Predictor covariate = covariates.get(name);
 					if(covariate != null){
 						result.addCovariate(ppCell);
 
@@ -967,8 +982,6 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				return result;
 			}
 		};
-
-		PPMatrix ppMatrix = generalRegressionModel.getPPMatrix();
 
 		ListMultimap<?, PPCell> targetCategoryMap = groupByTargetCategory(ppMatrix.getPPCells());
 
@@ -992,9 +1005,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	static
-	private Map<Object, List<PCell>> parseParamMatrix(GeneralRegressionModel generalRegressionModel){
-		ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
-
+	private Map<Object, List<PCell>> parseParamMatrix(ParamMatrix paramMatrix){
 		ListMultimap<Object, PCell> targetCategoryCells = groupByTargetCategory(paramMatrix.getPCells());
 
 		return Multimaps.asMap(targetCategoryCells);
@@ -1310,56 +1321,4 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 		}
 	}
-
-	private static final LoadingCache<GeneralRegressionModel, BiMap<String, Parameter>> parameterCache = CacheUtil.buildLoadingCache(new CacheLoader<GeneralRegressionModel, BiMap<String, Parameter>>(){
-
-		@Override
-		public BiMap<String, Parameter> load(GeneralRegressionModel generalRegressionModel){
-			return ImmutableBiMap.copyOf(parseParameterRegistry(generalRegressionModel.getParameterList()));
-		}
-	});
-
-	private static final LoadingCache<GeneralRegressionModel, BiMap<FieldName, Predictor>> factorCache = CacheUtil.buildLoadingCache(new CacheLoader<GeneralRegressionModel, BiMap<FieldName, Predictor>>(){
-
-		@Override
-		public BiMap<FieldName, Predictor> load(GeneralRegressionModel generalRegressionModel){
-			return ImmutableBiMap.copyOf(parsePredictorRegistry(generalRegressionModel.getFactorList()));
-		}
-	});
-
-	private static final LoadingCache<GeneralRegressionModel, BiMap<FieldName, Predictor>> covariateCache = CacheUtil.buildLoadingCache(new CacheLoader<GeneralRegressionModel, BiMap<FieldName, Predictor>>(){
-
-		@Override
-		public BiMap<FieldName, Predictor> load(GeneralRegressionModel generalRegressionModel){
-			return ImmutableBiMap.copyOf(parsePredictorRegistry(generalRegressionModel.getCovariateList()));
-		}
-	});
-
-	private static final LoadingCache<GeneralRegressionModel, Map<Object, Map<String, Row>>> ppMatrixCache = CacheUtil.buildLoadingCache(new CacheLoader<GeneralRegressionModel, Map<Object, Map<String, Row>>>(){
-
-		@Override
-		public Map<Object, Map<String, Row>> load(GeneralRegressionModel generalRegressionModel){
-			Map<Object, Map<String, Row>> ppMatrix = parsePPMatrix(generalRegressionModel);
-
-			ppMatrix = ppMatrix.entrySet().stream()
-				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableMap.copyOf(entry.getValue())));
-
-			// Cannot use Guava's ImmutableMap, because it is null-hostile
-			return Collections.unmodifiableMap(ppMatrix);
-		}
-	});
-
-	private static final LoadingCache<GeneralRegressionModel, Map<Object, List<PCell>>> paramMatrixCache = CacheUtil.buildLoadingCache(new CacheLoader<GeneralRegressionModel, Map<Object, List<PCell>>>(){
-
-		@Override
-		public Map<Object, List<PCell>> load(GeneralRegressionModel generalRegressionModel){
-			Map<Object, List<PCell>> paramMatrix = parseParamMatrix(generalRegressionModel);
-
-			paramMatrix = paramMatrix.entrySet().stream()
-				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableList.copyOf(entry.getValue())));
-
-			// Cannot use Guava's ImmutableMap, because it is null-hostile
-			return Collections.unmodifiableMap(paramMatrix);
-		}
-	});
 }

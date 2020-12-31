@@ -39,7 +39,6 @@ import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-
 import org.dmg.pmml.Model;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
@@ -67,12 +66,9 @@ public class ModelManagerFactory<S extends ModelManager<?>> implements Serializa
 		Objects.requireNonNull(pmml);
 		Objects.requireNonNull(model);
 
-		Set<ResultFeature> resultFeatures = EnumSet.noneOf(ResultFeature.class);
-
 		Output output = model.getOutput();
-		if(output != null && output.hasOutputFields()){
-			resultFeatures.addAll(CacheUtil.getValue(output, ModelManager.resultFeaturesCache));
-		} // End if
+
+		Set<ResultFeature> resultFeatures = ModelManager.collectResultFeatures(output);
 
 		if(extraResultFeatures != null && !extraResultFeatures.isEmpty()){
 			resultFeatures.addAll(extraResultFeatures);
