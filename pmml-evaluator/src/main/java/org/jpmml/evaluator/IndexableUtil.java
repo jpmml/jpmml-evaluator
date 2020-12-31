@@ -18,10 +18,10 @@
  */
 package org.jpmml.evaluator;
 
+import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import org.dmg.pmml.Indexable;
 import org.dmg.pmml.PMMLObject;
@@ -32,53 +32,28 @@ public class IndexableUtil {
 	}
 
 	static
-	public <K, E extends PMMLObject & Indexable<K>> E findIndexable(List<E> elements, K key){
-		return findIndexable(elements, key, false);
+	public <K, E extends PMMLObject & Indexable<K>> Map<K, E> buildMap(List<E> elements, Field keyField){
+		return buildMap(elements, keyField, false);
 	}
 
 	static
-	public <K, E extends PMMLObject & Indexable<K>> E findIndexable(List<E> elements, K key, boolean nullable){
-
-		for(E element : elements){
-
-			if(Objects.equals(ensureKey(element, nullable), key)){
-				return element;
-			}
-		}
-
-		return null;
-	}
-
-	static
-	public <K, E extends PMMLObject & Indexable<K>> Map<K, E> buildMap(List<E> elements){
-		return buildMap(elements, false);
-	}
-
-	static
-	public <K, E extends PMMLObject & Indexable<K>> Map<K, E> buildMap(List<E> elements, boolean nullable){
+	public <K, E extends PMMLObject & Indexable<K>> Map<K, E> buildMap(List<E> elements, Field keyField, boolean nullable){
 		Map<K, E> result = new LinkedHashMap<>();
 
 		for(E element : elements){
-			K key = ensureKey(element, nullable);
+			K key = element.getKey();
+
+			if(key == null && !nullable){
+				throw new MissingAttributeException(element, keyField);
+			} // End if
 
 			if(result.containsKey(key)){
-				throw new InvalidElementException(element);
+				throw new InvalidAttributeException(element, keyField, key);
 			}
 
 			result.put(key, element);
 		}
 
 		return result;
-	}
-
-	static
-	private <K, E extends PMMLObject & Indexable<K>> K ensureKey(E element, boolean nullable){
-		K key = element.getKey();
-
-		if(key == null && !nullable){
-			throw new InvalidElementException(element);
-		}
-
-		return key;
 	}
 }

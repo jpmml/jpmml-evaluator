@@ -524,7 +524,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		@Override
 		public Map<String, Item> load(AssociationModel associationModel){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(associationModel.getItems()));
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(associationModel.getItems(), PMMLAttributes.ITEM_ID));
 		}
 	});
 
@@ -532,7 +532,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		@Override
 		public Map<String, Itemset> load(AssociationModel associationModel){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(associationModel.getItemsets()));
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(associationModel.getItemsets(), PMMLAttributes.ITEMSET_ID));
 		}
 	});
 

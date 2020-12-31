@@ -137,15 +137,6 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		} // End if
 
 		if(miningSchema.hasMiningFields()){
-			List<MiningField> miningFields = miningSchema.getMiningFields();
-
-			for(MiningField miningField : miningFields){
-				FieldName name = miningField.getName();
-				if(name == null){
-					throw new MissingAttributeException(miningField, PMMLAttributes.MININGFIELD_NAME);
-				}
-			}
-
 			this.miningFields = CacheUtil.getValue(miningSchema, ModelManager.miningFieldCache);
 		}
 
@@ -617,7 +608,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		@Override
 		public Map<FieldName, DataField> load(DataDictionary dataDictionary){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(dataDictionary.getDataFields()));
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(dataDictionary.getDataFields(), PMMLAttributes.DATAFIELD_NAME));
 		}
 	});
 
@@ -625,7 +616,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		@Override
 		public Map<FieldName, DerivedField> load(TransformationDictionary transformationDictionary){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDerivedFields()));
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDerivedFields(), PMMLAttributes.DERIVEDFIELD_NAME));
 		}
 	});
 
@@ -633,7 +624,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		@Override
 		public Map<String, DefineFunction> load(TransformationDictionary transformationDictionary){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDefineFunctions()));
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDefineFunctions(), PMMLAttributes.DEFINEFUNCTION_NAME));
 		}
 	});
 
@@ -641,7 +632,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		@Override
 		public Map<FieldName, MiningField> load(MiningSchema miningSchema){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(miningSchema.getMiningFields()));
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(miningSchema.getMiningFields(), PMMLAttributes.MININGFIELD_NAME));
 		}
 	});
 
@@ -649,7 +640,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		@Override
 		public Map<FieldName, DerivedField> load(LocalTransformations localTransformations){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(localTransformations.getDerivedFields()));
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(localTransformations.getDerivedFields(), PMMLAttributes.DERIVEDFIELD_NAME));
 		}
 	});
 
@@ -658,7 +649,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		@Override
 		public Map<FieldName, Target> load(Targets targets){
 			// Cannot use Guava's ImmutableMap, because it is null-hostile
-			return Collections.unmodifiableMap(IndexableUtil.buildMap(targets.getTargets(), true));
+			return Collections.unmodifiableMap(IndexableUtil.buildMap(targets.getTargets(), PMMLAttributes.TARGET_FIELD, true));
 		}
 	});
 
@@ -666,7 +657,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		@Override
 		public Map<FieldName, org.dmg.pmml.OutputField> load(Output output){
-			return ImmutableMap.copyOf(IndexableUtil.buildMap(output.getOutputFields()));
+			return ImmutableMap.copyOf(IndexableUtil.buildMap(output.getOutputFields(), PMMLAttributes.OUTPUTFIELD_NAME));
 		}
 	});
 
