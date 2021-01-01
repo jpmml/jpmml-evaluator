@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator.association;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
@@ -454,7 +455,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	static
-	private class ItemValue {
+	private class ItemValue implements Serializable {
 
 		private String id = null;
 
@@ -462,6 +463,9 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		private String category = null;
 
+
+		private ItemValue(){
+		}
 
 		private ItemValue(String id, FieldName field, String category){
 			setId(id);
