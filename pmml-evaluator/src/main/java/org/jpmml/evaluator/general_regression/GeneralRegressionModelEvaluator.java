@@ -1097,7 +1097,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					}
 				};
 
-				List<Object> values = Lists.transform(categories.getCategories(), function);
+				List<Object> values = new ArrayList<>(Lists.transform(categories.getCategories(), function));
 
 				factorHandlers.add(new ContrastMatrixHandler(ppCell, matrix, values));
 			} else
