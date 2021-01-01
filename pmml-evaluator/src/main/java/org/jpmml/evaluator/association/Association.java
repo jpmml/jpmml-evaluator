@@ -35,7 +35,7 @@ import org.jpmml.model.ToStringHelper;
  * @see MiningFunction#ASSOCIATION_RULES
  */
 abstract
-public class Association extends AbstractComputable implements HasRuleValues, HasEntityRegistry<AssociationRule> {
+public class Association extends AbstractComputable implements HasEntityRegistry<AssociationRule>, HasRuleValues {
 
 	private List<AssociationRule> associationRules = null;
 

@@ -84,9 +84,9 @@ import org.jpmml.model.visitors.AbstractVisitor;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<NeuralEntity> {
 
-	private Map<FieldName, List<NeuralOutput>> neuralOutputMap = null;
-
 	private BiMap<String, NeuralEntity> entityRegistry = ImmutableBiMap.of();
+
+	private Map<FieldName, List<NeuralOutput>> neuralOutputMap = null;
 
 
 	private NeuralNetworkEvaluator(){

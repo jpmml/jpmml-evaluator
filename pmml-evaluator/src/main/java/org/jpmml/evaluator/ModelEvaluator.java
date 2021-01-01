@@ -667,6 +667,21 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	static
+	private <F extends ModelField> List<F> updateNames(List<F> fields, java.util.function.Function<FieldName, FieldName> mapper){
+
+		for(F field : fields){
+			FieldName name = field.getFieldName();
+
+			FieldName mappedName = mapper.apply(name);
+			if(mappedName != null && !Objects.equals(mappedName, name)){
+				field.setName(mappedName);
+			}
+		}
+
+		return fields;
+	}
+
+	static
 	private VerificationBatch parseModelVerification(ModelVerification modelVerification){
 		VerificationBatch result = new VerificationBatch();
 
@@ -720,21 +735,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		result.setRecords(records);
 
 		return result;
-	}
-
-	static
-	private <F extends ModelField> List<F> updateNames(List<F> fields, java.util.function.Function<FieldName, FieldName> mapper){
-
-		for(F field : fields){
-			FieldName name = field.getFieldName();
-
-			FieldName mappedName = mapper.apply(name);
-			if(mappedName != null && !Objects.equals(mappedName, name)){
-				field.setName(mappedName);
-			}
-		}
-
-		return fields;
 	}
 
 	static

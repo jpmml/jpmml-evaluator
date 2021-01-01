@@ -510,6 +510,29 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return this.trainingInstances;
 	}
 
+	private Map<Integer, List<FieldValue>> getInstanceValues(){
+
+		if(this.instanceValues == null){
+			Map<Integer, List<FieldValue>> instanceValues = parseInstanceValues(this);
+
+			instanceValues = instanceValues.entrySet().stream()
+				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableList.copyOf(entry.getValue())));
+
+			this.instanceValues = ImmutableMap.copyOf(instanceValues);
+		}
+
+		return this.instanceValues;
+	}
+
+	private Map<Integer, BitSet> getInstanceFlags(){
+
+		if(this.instanceFlags == null){
+			this.instanceFlags = ImmutableMap.copyOf(parseInstanceFlags(this));
+		}
+
+		return this.instanceFlags;
+	}
+
 	static
 	private Table<Integer, FieldName, FieldValue> parseTrainingInstances(NearestNeighborModelEvaluator modelEvaluator){
 		NearestNeighborModel nearestNeighborModel = modelEvaluator.getModel();
@@ -637,41 +660,8 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return result;
 	}
 
-	private Map<Integer, BitSet> getInstanceFlags(){
-
-		if(this.instanceFlags == null){
-			this.instanceFlags = ImmutableMap.copyOf(loadInstanceFlags(this));
-		}
-
-		return this.instanceFlags;
-	}
-
 	static
-	private Map<Integer, BitSet> loadInstanceFlags(NearestNeighborModelEvaluator modelEvaluator){
-		Map<Integer, List<FieldValue>> instanceValues = modelEvaluator.getInstanceValues();
-
-		Map<Integer, BitSet> instanceFlags = instanceValues.entrySet().stream()
-			.collect(Collectors.toMap(entry -> entry.getKey(), entry -> MeasureUtil.toBitSet(entry.getValue())));
-
-		return instanceFlags;
-	}
-
-	private Map<Integer, List<FieldValue>> getInstanceValues(){
-
-		if(this.instanceValues == null){
-			Map<Integer, List<FieldValue>> instanceValues = loadInstanceValues(this);
-
-			instanceValues = instanceValues.entrySet().stream()
-				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableList.copyOf(entry.getValue())));
-
-			this.instanceValues = ImmutableMap.copyOf(instanceValues);
-		}
-
-		return this.instanceValues;
-	}
-
-	static
-	private Map<Integer, List<FieldValue>> loadInstanceValues(NearestNeighborModelEvaluator modelEvaluator){
+	private Map<Integer, List<FieldValue>> parseInstanceValues(NearestNeighborModelEvaluator modelEvaluator){
 		NearestNeighborModel nearestNeighborModel = modelEvaluator.getModel();
 
 		Map<Integer, List<FieldValue>> result = new LinkedHashMap<>();
@@ -696,6 +686,16 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 
 		return result;
+	}
+
+	static
+	private Map<Integer, BitSet> parseInstanceFlags(NearestNeighborModelEvaluator modelEvaluator){
+		Map<Integer, List<FieldValue>> instanceValues = modelEvaluator.getInstanceValues();
+
+		Map<Integer, BitSet> instanceFlags = instanceValues.entrySet().stream()
+			.collect(Collectors.toMap(entry -> entry.getKey(), entry -> MeasureUtil.toBitSet(entry.getValue())));
+
+		return instanceFlags;
 	}
 
 	static

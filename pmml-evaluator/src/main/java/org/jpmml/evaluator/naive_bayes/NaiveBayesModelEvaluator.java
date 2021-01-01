@@ -108,6 +108,17 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		if(!bayesInputs.hasBayesInputs() && !bayesInputs.hasExtensions()){
 			throw new MissingElementException(bayesInputs, PMMLElements.BAYESINPUTS_BAYESINPUTS);
+		} else
+
+		{
+			this.bayesInputs = ImmutableList.copyOf(parseBayesInputs(bayesInputs));
+
+			Map<FieldName, Map<Object, Number>> fieldCountSums = calculateFieldCountSums(this.bayesInputs);
+
+			fieldCountSums = fieldCountSums.entrySet().stream()
+				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableMap.copyOf(entry.getValue())));
+
+			this.fieldCountSums = ImmutableMap.copyOf(fieldCountSums);
 		}
 
 		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
@@ -123,15 +134,6 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		if(!targetValueCounts.hasTargetValueCounts()){
 			throw new MissingElementException(targetValueCounts, PMMLElements.TARGETVALUECOUNTS_TARGETVALUECOUNTS);
 		}
-
-		this.bayesInputs = ImmutableList.copyOf(parseBayesInputs(naiveBayesModel));
-
-		Map<FieldName, Map<Object, Number>> fieldCountSums = calculateFieldCountSums(this.bayesInputs);
-
-		fieldCountSums = fieldCountSums.entrySet().stream()
-			.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableMap.copyOf(entry.getValue())));
-
-		this.fieldCountSums = ImmutableMap.copyOf(fieldCountSums);
 	}
 
 	@Override
@@ -391,8 +393,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	}
 
 	static
-	private List<BayesInput> parseBayesInputs(NaiveBayesModel naiveBayesModel){
-		BayesInputs bayesInputs = naiveBayesModel.getBayesInputs();
+	private List<BayesInput> parseBayesInputs(BayesInputs bayesInputs){
 
 		if(!bayesInputs.hasExtensions()){
 			return bayesInputs.getBayesInputs();

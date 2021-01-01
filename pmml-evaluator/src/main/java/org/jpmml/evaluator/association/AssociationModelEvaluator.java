@@ -70,13 +70,13 @@ import org.jpmml.evaluator.ValueFactory;
 
 public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> implements HasGroupFields, HasEntityRegistry<AssociationRule> {
 
-	private List<InputField> groupInputFields = null;
-
 	private BiMap<String, AssociationRule> entityRegistry = ImmutableBiMap.of();
 
 	private Map<String, Item> items = Collections.emptyMap();
 
 	private Map<String, Itemset> itemsets = Collections.emptyMap();
+
+	private List<InputField> groupInputFields = null;
 
 	private List<ItemValue> itemValues = null;
 
@@ -202,6 +202,11 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		Association association = new Association(associationRules, antecedentFlags, consequentFlags){
 
 			@Override
+			public BiMap<String, AssociationRule> getEntityRegistry(){
+				return AssociationModelEvaluator.this.getEntityRegistry();
+			}
+
+			@Override
 			public Map<String, Item> getItems(){
 				return AssociationModelEvaluator.this.getItems();
 			}
@@ -209,11 +214,6 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			@Override
 			public Map<String, Itemset> getItemsets(){
 				return AssociationModelEvaluator.this.getItemsets();
-			}
-
-			@Override
-			public BiMap<String, AssociationRule> getEntityRegistry(){
-				return AssociationModelEvaluator.this.getEntityRegistry();
 			}
 		};
 
@@ -224,8 +224,6 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	 * @return A set of {@link Item#getId() Item identifiers}.
 	 */
 	Set<String> getActiveItemIds(EvaluationContext context){
-		AssociationModel associationModel = getModel();
-
 		List<InputField> activeFields = getActiveFields();
 		List<InputField> groupFields = getGroupFields();
 
@@ -326,22 +324,6 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		return result;
 	}
 
-	static
-	private boolean isSubset(Set<String> items, Itemset itemset){
-		boolean result = true;
-
-		List<ItemRef> itemRefs = itemset.getItemRefs();
-		for(ItemRef itemRef : itemRefs){
-			result &= items.contains(itemRef.getItemRef());
-
-			if(!result){
-				return false;
-			}
-		}
-
-		return result;
-	}
-
 	private Map<String, Item> getItems(){
 		return this.items;
 	}
@@ -357,6 +339,22 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		}
 
 		return this.itemValues;
+	}
+
+	static
+	private boolean isSubset(Set<String> items, Itemset itemset){
+		boolean result = true;
+
+		List<ItemRef> itemRefs = itemset.getItemRefs();
+		for(ItemRef itemRef : itemRefs){
+			result &= items.contains(itemRef.getItemRef());
+
+			if(!result){
+				return false;
+			}
+		}
+
+		return result;
 	}
 
 	static

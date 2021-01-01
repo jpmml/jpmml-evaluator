@@ -93,11 +93,11 @@ import org.jpmml.model.XPathUtil;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
 
+	private BiMap<String, Segment> entityRegistry = ImmutableBiMap.of();
+
 	private Map<String, Set<ResultFeature>> segmentResultFeatures = Collections.emptyMap();
 
 	private ConcurrentMap<String, ModelEvaluator<?>> segmentModelEvaluators = new ConcurrentHashMap<>();
-
-	private BiMap<String, Segment> entityRegistry = ImmutableBiMap.of();
 
 
 	private MiningModelEvaluator(){
