@@ -38,6 +38,7 @@ import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Row;
 import org.dmg.pmml.TableLocator;
+import org.dmg.pmml.Version;
 import org.w3c.dom.Element;
 
 public class InlineTableUtil {
@@ -177,7 +178,7 @@ public class InlineTableUtil {
 				} else
 
 				{
-					xmlName = new QName("http://www.dmg.org/PMML-4_3", column);
+					xmlName = new QName(Version.PMML_4_4.getNamespaceURI(), column);
 				}
 
 				JAXBElement<String> cell = new JAXBElement<>(xmlName, String.class, value);
