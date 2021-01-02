@@ -33,7 +33,6 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
@@ -153,7 +152,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		if(output != null && output.hasOutputFields()){
 			this.outputFields = ImmutableMap.copyOf(IndexableUtil.buildMap(output.getOutputFields(), PMMLAttributes.OUTPUTFIELD_NAME));
 
-			this.resultFeatures = ImmutableSet.copyOf(collectResultFeatures(output));
+			this.resultFeatures = Sets.immutableEnumSet(collectResultFeatures(output));
 		}
 	}
 
@@ -276,7 +275,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 	public List<InputField> getInputFields(){
 
 		if(this.inputFields == null){
-			this.inputFields = createInputFields();
+			this.inputFields = ImmutableList.copyOf(createInputFields());
 		}
 
 		return this.inputFields;
@@ -285,7 +284,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 	public List<InputField> getActiveFields(){
 
 		if(this.activeInputFields == null){
-			this.activeInputFields = createInputFields(MiningField.UsageType.ACTIVE);
+			this.activeInputFields = ImmutableList.copyOf(createInputFields(MiningField.UsageType.ACTIVE));
 		}
 
 		return this.activeInputFields;
@@ -294,7 +293,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 	public List<TargetField> getTargetFields(){
 
 		if(this.targetResultFields == null){
-			this.targetResultFields = createTargetFields();
+			this.targetResultFields = ImmutableList.copyOf(createTargetFields());
 		}
 
 		return this.targetResultFields;
@@ -334,7 +333,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 	public List<OutputField> getOutputFields(){
 
 		if(this.outputResultFields == null){
-			this.outputResultFields = createOutputFields();
+			this.outputResultFields = ImmutableList.copyOf(createOutputFields());
 		}
 
 		return this.outputResultFields;
@@ -390,7 +389,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 		List<OutputField> outputFields = getOutputFields();
 		if(!outputFields.isEmpty()){
-			List<ResidualInputField> residualInputFields = null;
+			List<InputField> expandedInputFields = null;
 
 			for(OutputField outputField : outputFields){
 				org.dmg.pmml.OutputField pmmlOutputField = outputField.getField();
@@ -421,15 +420,15 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 				ResidualInputField residualInputField = new ResidualInputField(dataField, miningField);
 
-				if(residualInputFields == null){
-					residualInputFields = new ArrayList<>();
+				if(expandedInputFields == null){
+					expandedInputFields = new ArrayList<>(inputFields);
 				}
 
-				residualInputFields.add(residualInputField);
+				expandedInputFields.add(residualInputField);
 			}
 
-			if(residualInputFields != null && !residualInputFields.isEmpty()){
-				inputFields = ImmutableList.copyOf(Iterables.concat(inputFields, residualInputFields));
+			if(expandedInputFields != null){
+				return expandedInputFields;
 			}
 		}
 
@@ -464,7 +463,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 			}
 		}
 
-		return ImmutableList.copyOf(inputFields);
+		return inputFields;
 	}
 
 	protected List<TargetField> createTargetFields(){
@@ -517,7 +516,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 			targetFields.add(targetField);
 		}
 
-		return ImmutableList.copyOf(targetFields);
+		return targetFields;
 	}
 
 	protected List<OutputField> createOutputFields(){
@@ -537,7 +536,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 			}
 		}
 
-		return ImmutableList.copyOf(outputFields);
+		return outputFields;
 	}
 
 	private ListMultimap<FieldName, Field<?>> collectVisibleFields(){

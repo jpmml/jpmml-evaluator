@@ -18,11 +18,11 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.ImmutableList;
 import org.jpmml.model.TermUtil;
 
 public class TextTokenizer {
@@ -67,7 +67,7 @@ public class TextTokenizer {
 			tokens = tmpTokens;
 		}
 
-		return ImmutableList.copyOf(tokens);
+		return Arrays.asList(tokens);
 	}
 
 	public Pattern getPattern(){

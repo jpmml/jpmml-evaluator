@@ -31,7 +31,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
@@ -422,8 +421,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		if(!outputFields.isEmpty()){
 			Predicate<org.dmg.pmml.OutputField> outputFilter = ensureOutputFilter();
 
-			outputFields = new ArrayList<>(outputFields);
-
 			Iterator<OutputField> it = outputFields.iterator();
 			while(it.hasNext()){
 				OutputField outputField = it.next();
@@ -434,8 +431,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 					it.remove();
 				}
 			}
-
-			outputFields = ImmutableList.copyOf(outputFields);
 		} // End if
 
 		if(resultMapper != null){

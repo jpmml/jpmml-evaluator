@@ -33,7 +33,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -114,9 +113,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			this.bayesInputs = ImmutableList.copyOf(parseBayesInputs(bayesInputs));
 
 			Map<FieldName, Map<Object, Number>> fieldCountSums = calculateFieldCountSums(this.bayesInputs);
-
-			fieldCountSums = fieldCountSums.entrySet().stream()
-				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableMap.copyOf(entry.getValue())));
+			fieldCountSums.replaceAll((key, value) -> ImmutableMap.copyOf(value));
 
 			this.fieldCountSums = ImmutableMap.copyOf(fieldCountSums);
 		}

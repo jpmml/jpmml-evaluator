@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
@@ -584,9 +583,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		if(this.neuralOutputMap == null){
 			Map<FieldName, List<NeuralOutput>> neuralOutputMap = parseNeuralOutputs();
-
-			neuralOutputMap = neuralOutputMap.entrySet().stream()
-				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableList.copyOf(entry.getValue())));
+			neuralOutputMap.replaceAll((key, value) -> ImmutableList.copyOf(value));
 
 			this.neuralOutputMap = ImmutableMap.copyOf(neuralOutputMap);
 		}
@@ -621,7 +618,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			result.put(name, neuralOutput);
 		}
 
-		return Multimaps.asMap(result);
+		return new LinkedHashMap<>(Multimaps.asMap(result));
 	}
 
 	static

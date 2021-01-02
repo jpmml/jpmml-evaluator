@@ -33,7 +33,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
@@ -154,7 +153,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		Output output = miningModel.getOutput();
 		if(output != null && output.hasOutputFields()){
 			Map<String, Set<ResultFeature>> segmentResultFeatures = collectSegmentResultFeatures(output);
-
 			segmentResultFeatures.replaceAll((key, value) -> Sets.immutableEnumSet(value));
 
 			this.segmentResultFeatures = ImmutableMap.copyOf(segmentResultFeatures);
@@ -222,7 +220,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		List<OutputField> nestedOutputFields = createNestedOutputFields();
 		if(!nestedOutputFields.isEmpty()){
 			// Depth-first ordering
-			return ImmutableList.copyOf(Iterables.concat(nestedOutputFields, outputFields));
+			outputFields.addAll(0, nestedOutputFields);
 		}
 
 		return outputFields;
@@ -735,7 +733,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			}
 		}
 
-		return ImmutableList.copyOf(result);
+		return result;
 	}
 
 	private ModelEvaluator<?> ensureSegmentModelEvaluator(String segmentId, Model model){

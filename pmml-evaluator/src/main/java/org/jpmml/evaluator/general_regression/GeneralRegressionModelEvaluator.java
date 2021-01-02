@@ -128,12 +128,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 			PredictorList factorList = generalRegressionModel.getFactorList();
 			if(factorList != null && factorList.hasPredictors()){
-				factorRegistry = ImmutableBiMap.copyOf(parsePredictorRegistry(factorList));
+				factorRegistry = parsePredictorRegistry(factorList);
 			}
 
 			PredictorList covariateList = generalRegressionModel.getCovariateList();
 			if(covariateList != null && covariateList.hasPredictors()){
-				covariateRegistry = ImmutableBiMap.copyOf(parsePredictorRegistry(covariateList));
+				covariateRegistry = parsePredictorRegistry(covariateList);
 			}
 		}
 
@@ -144,9 +144,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		{
 			Map<Object, Map<String, Row>> ppMatrixMap = parsePPMatrix(ppMatrix, factorRegistry, covariateRegistry);
-
-			ppMatrixMap = ppMatrixMap.entrySet().stream()
-				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableMap.copyOf(entry.getValue())));
+			ppMatrixMap.replaceAll((key, value) -> ImmutableMap.copyOf(value));
 
 			// Cannot use Guava's ImmutableMap, because it is null-hostile
 			this.ppMatrixMap = Collections.unmodifiableMap(ppMatrixMap);
@@ -159,9 +157,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		{
 			Map<Object, List<PCell>> paramMatrixMap = parseParamMatrix(paramMatrix);
-
-			paramMatrixMap = paramMatrixMap.entrySet().stream()
-				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableList.copyOf(entry.getValue())));
+			paramMatrixMap.replaceAll((key, value) -> ImmutableList.copyOf(value));
 
 			// Cannot use Guava's ImmutableMap, because it is null-hostile
 			this.paramMatrixMap = Collections.unmodifiableMap(paramMatrixMap);
@@ -1008,7 +1004,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private Map<Object, List<PCell>> parseParamMatrix(ParamMatrix paramMatrix){
 		ListMultimap<Object, PCell> targetCategoryCells = groupByTargetCategory(paramMatrix.getPCells());
 
-		return Multimaps.asMap(targetCategoryCells);
+		return new LinkedHashMap<>(Multimaps.asMap(targetCategoryCells));
 	}
 
 	static
@@ -1239,7 +1235,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			public int getIndex(FieldValue value){
 
 				if(this.parsedCategories == null){
-					this.parsedCategories = ImmutableList.copyOf(parseCategories(value));
+					this.parsedCategories = parseCategories(value);
 				}
 
 				return this.parsedCategories.indexOf(value);
@@ -1254,7 +1250,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			private List<FieldValue> parseCategories(TypeInfo typeInfo){
 				List<Object> categories = getCategories();
 
-				return Lists.transform(categories, category -> FieldValueUtil.create(typeInfo, category));
+				return new ArrayList<>(Lists.transform(categories, category -> FieldValueUtil.create(typeInfo, category)));
 			}
 
 			public Matrix getMatrix(){

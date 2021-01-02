@@ -514,9 +514,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		if(this.instanceValues == null){
 			Map<Integer, List<FieldValue>> instanceValues = parseInstanceValues(this);
-
-			instanceValues = instanceValues.entrySet().stream()
-				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> ImmutableList.copyOf(entry.getValue())));
+			instanceValues.replaceAll((key, value) -> ImmutableList.copyOf(value));
 
 			this.instanceValues = ImmutableMap.copyOf(instanceValues);
 		}
