@@ -275,7 +275,9 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 	public List<InputField> getInputFields(){
 
 		if(this.inputFields == null){
-			this.inputFields = ImmutableList.copyOf(createInputFields());
+			List<InputField> inputFields = filterInputFields(createInputFields());
+
+			this.inputFields = ImmutableList.copyOf(inputFields);
 		}
 
 		return this.inputFields;
@@ -284,7 +286,9 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 	public List<InputField> getActiveFields(){
 
 		if(this.activeInputFields == null){
-			this.activeInputFields = ImmutableList.copyOf(createInputFields(MiningField.UsageType.ACTIVE));
+			List<InputField> activeInputFields = filterInputFields(createInputFields(MiningField.UsageType.ACTIVE));
+
+			this.activeInputFields = ImmutableList.copyOf(activeInputFields);
 		}
 
 		return this.activeInputFields;
@@ -293,7 +297,9 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 	public List<TargetField> getTargetFields(){
 
 		if(this.targetResultFields == null){
-			this.targetResultFields = ImmutableList.copyOf(createTargetFields());
+			List<TargetField> targetResultFields = filterTargetFields(createTargetFields());
+
+			this.targetResultFields = ImmutableList.copyOf(targetResultFields);
 		}
 
 		return this.targetResultFields;
@@ -333,7 +339,9 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 	public List<OutputField> getOutputFields(){
 
 		if(this.outputResultFields == null){
-			this.outputResultFields = ImmutableList.copyOf(createOutputFields());
+			List<OutputField> outputResultFields = filterOutputFields(createOutputFields());
+
+			this.outputResultFields = ImmutableList.copyOf(outputResultFields);
 		}
 
 		return this.outputResultFields;
@@ -466,6 +474,10 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		return inputFields;
 	}
 
+	protected List<InputField> filterInputFields(List<InputField> inputFields){
+		return inputFields;
+	}
+
 	protected List<TargetField> createTargetFields(){
 		M model = getModel();
 
@@ -519,6 +531,10 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		return targetFields;
 	}
 
+	protected List<TargetField> filterTargetFields(List<TargetField> targetFields){
+		return targetFields;
+	}
+
 	protected List<OutputField> createOutputFields(){
 		M model = getModel();
 
@@ -536,6 +552,10 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 			}
 		}
 
+		return outputFields;
+	}
+
+	protected List<OutputField> filterOutputFields(List<OutputField> outputFields){
 		return outputFields;
 	}
 

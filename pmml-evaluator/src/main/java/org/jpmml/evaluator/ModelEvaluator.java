@@ -375,11 +375,8 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	@Override
-	protected List<InputField> createInputFields(){
+	protected List<InputField> filterInputFields(List<InputField> inputFields){
 		InputMapper inputMapper = getInputMapper();
-
-		List<InputField> inputFields = super.createInputFields();
-
 		if(inputMapper != null){
 			inputFields = updateNames(inputFields, inputMapper);
 		}
@@ -388,24 +385,8 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	@Override
-	protected List<InputField> createInputFields(MiningField.UsageType usageType){
-		InputMapper inputMapper = getInputMapper();
-
-		List<InputField> inputFields = super.createInputFields(usageType);
-
-		if(inputMapper != null){
-			inputFields = updateNames(inputFields, inputMapper);
-		}
-
-		return inputFields;
-	}
-
-	@Override
-	protected List<TargetField> createTargetFields(){
+	protected List<TargetField> filterTargetFields(List<TargetField> targetFields){
 		ResultMapper resultMapper = getResultMapper();
-
-		List<TargetField> targetFields = super.createTargetFields();
-
 		if(resultMapper != null){
 			targetFields = updateNames(targetFields, resultMapper);
 		}
@@ -414,10 +395,9 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	@Override
-	protected List<OutputField> createOutputFields(){
+	protected List<OutputField> filterOutputFields(List<OutputField> outputFields){
 		ResultMapper resultMapper = getResultMapper();
 
-		List<OutputField> outputFields = super.createOutputFields();
 		if(!outputFields.isEmpty()){
 			Predicate<org.dmg.pmml.OutputField> outputFilter = ensureOutputFilter();
 
