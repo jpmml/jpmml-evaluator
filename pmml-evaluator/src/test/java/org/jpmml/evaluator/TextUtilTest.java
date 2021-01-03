@@ -26,13 +26,64 @@ import java.util.Map;
 import java.util.Set;
 
 import org.dmg.pmml.InlineTable;
+import org.dmg.pmml.TextIndex;
+import org.dmg.pmml.TextIndexNormalization;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class TextUtilTest {
+
+	@Test
+	public void processTerms(){
+		TextIndex textIndex = new TextIndex();
+
+		TextUtil.TermProcessor termProcessor = new TextUtil.TermProcessor(textIndex, new String("brown fox"));
+
+		List<String> firstTokens = termProcessor.process();
+
+		assertEquals(Arrays.asList("brown", "fox"), firstTokens);
+
+		termProcessor = new TextUtil.TermProcessor(textIndex, new String("brown fox"));
+
+		List<String> secondTokens = termProcessor.process();
+
+		assertSame(firstTokens, secondTokens);
+
+		textIndex = new TextIndex();
+
+		termProcessor = new TextUtil.TermProcessor(textIndex, new String("brown fox"));
+
+		List<String> thirdTokens = termProcessor.process();
+
+		assertEquals(firstTokens, thirdTokens);
+		assertNotSame(firstTokens, thirdTokens);
+
+		assertEquals(secondTokens, thirdTokens);
+		assertNotSame(firstTokens, thirdTokens);
+	}
+
+	@Test
+	public void processTexts(){
+		TextIndex textIndex = new TextIndex()
+			.addTextIndexNormalizations(new TextIndexNormalization());
+
+		TextUtil.TextProcessor textProcessor = new TextUtil.TextProcessor(textIndex, new String("The quick brown fox jumps over the lazy dog"));
+
+		List<String> firstTokens = textProcessor.process();
+
+		assertEquals(Arrays.asList("The", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"), firstTokens);
+
+		textProcessor = new TextUtil.TextProcessor(textIndex, new String("The quick brown fox jumps over the lazy dog"));
+
+		List<String> secondTokens = textProcessor.process();
+
+		assertSame(firstTokens, secondTokens);
+	}
 
 	@Test
 	public void normalize(){

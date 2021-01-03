@@ -436,12 +436,13 @@ public class TextUtil {
 
 		private TextIndex textIndex = null;
 
-		private FieldValue value = null;
+		private String value = null;
 
 
-		public StringProcessor(TextIndex textIndex, FieldValue value){
+		public StringProcessor(TextIndex textIndex, String value){
 			setTextIndex(Objects.requireNonNull(textIndex));
-			setValue(Objects.requireNonNull(value));
+			// The value should generate a cache hit both in identity comparison and object equality comparison modes
+			setValue(Strings.INTERNER.intern(Objects.requireNonNull(value)));
 		}
 
 		abstract
@@ -455,11 +456,11 @@ public class TextUtil {
 			this.textIndex = textIndex;
 		}
 
-		public FieldValue getValue(){
+		public String getValue(){
 			return this.value;
 		}
 
-		private void setValue(FieldValue value){
+		private void setValue(String value){
 			this.value = value;
 		}
 	}
@@ -467,20 +468,20 @@ public class TextUtil {
 	static
 	class TextProcessor extends StringProcessor {
 
-		TextProcessor(TextIndex textIndex, FieldValue value){
+		TextProcessor(TextIndex textIndex, String value){
 			super(textIndex, value);
 		}
 
 		@Override
 		public List<String> process(){
 			TextIndex textIndex = getTextIndex();
-			FieldValue value = getValue();
+			String value = getValue();
 
-			Cache<FieldValue, List<String>> textTokenCache = CacheUtil.getValue(textIndex, TextUtil.textTokenCaches, TextUtil.textTokenCacheLoader);
+			Cache<String, List<String>> textTokenCache = CacheUtil.getValue(textIndex, TextUtil.textTokenCaches, TextUtil.textTokenCacheLoader);
 
 			List<String> tokens = textTokenCache.getIfPresent(value);
 			if(tokens == null){
-				String string = TextUtil.normalize(textIndex, value.asString());
+				String string = TextUtil.normalize(textIndex, value);
 
 				tokens = TextUtil.tokenize(textIndex, string);
 
@@ -494,22 +495,20 @@ public class TextUtil {
 	static
 	class TermProcessor extends StringProcessor {
 
-		TermProcessor(TextIndex textIndex, FieldValue value){
+		TermProcessor(TextIndex textIndex, String value){
 			super(textIndex, value);
 		}
 
 		@Override
 		public List<String> process(){
 			TextIndex textIndex = getTextIndex();
-			FieldValue value = getValue();
+			String value = getValue();
 
-			Cache<FieldValue, List<String>> termTokenCache = CacheUtil.getValue(textIndex, TextUtil.termTokenCaches, TextUtil.termTokenCacheLoader);
+			Cache<String, List<String>> termTokenCache = CacheUtil.getValue(textIndex, TextUtil.termTokenCaches, TextUtil.termTokenCacheLoader);
 
 			List<String> tokens = termTokenCache.getIfPresent(value);
 			if(tokens == null){
-				String string = value.asString();
-
-				tokens = TextUtil.tokenize(textIndex, string);
+				tokens = TextUtil.tokenize(textIndex, value);
 
 				termTokenCache.put(value, tokens);
 			}
@@ -518,22 +517,22 @@ public class TextUtil {
 		}
 	}
 
-	private static final Cache<TextIndex, Cache<FieldValue, List<String>>> textTokenCaches = CacheUtil.buildCache();
+	private static final Cache<TextIndex, Cache<String, List<String>>> textTokenCaches = CacheUtil.buildCache();
 
-	private static final Callable<Cache<FieldValue, List<String>>> textTokenCacheLoader = new Callable<Cache<FieldValue, List<String>>>(){
+	private static final Callable<Cache<String, List<String>>> textTokenCacheLoader = new Callable<Cache<String, List<String>>>(){
 
 		@Override
-		public Cache<FieldValue, List<String>> call(){
+		public Cache<String, List<String>> call(){
 			return CacheUtil.buildCache();
 		}
 	};
 
-	private static final Cache<TextIndex, Cache<FieldValue, List<String>>> termTokenCaches = CacheUtil.buildCache();
+	private static final Cache<TextIndex, Cache<String, List<String>>> termTokenCaches = CacheUtil.buildCache();
 
-	private static final Callable<Cache<FieldValue, List<String>>> termTokenCacheLoader = new Callable<Cache<FieldValue, List<String>>>(){
+	private static final Callable<Cache<String, List<String>>> termTokenCacheLoader = new Callable<Cache<String, List<String>>>(){
 
 		@Override
-		public Cache<FieldValue, List<String>> call(){
+		public Cache<String, List<String>> call(){
 			return CacheUtil.buildCache();
 		}
 	};

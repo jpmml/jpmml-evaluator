@@ -337,11 +337,11 @@ public class ExpressionUtil {
 			return FieldValues.MISSING_VALUE;
 		}
 
-		TextUtil.TextProcessor textProcessor = new TextUtil.TextProcessor(textIndex, textValue);
+		TextUtil.TextProcessor textProcessor = new TextUtil.TextProcessor(textIndex, textValue.asString());
 
 		List<String> textTokens = textProcessor.process();
 
-		TextUtil.TermProcessor termProcessor = new TextUtil.TermProcessor(textIndex, termValue);
+		TextUtil.TermProcessor termProcessor = new TextUtil.TermProcessor(textIndex, termValue.asString());
 
 		List<String> termTokens = termProcessor.process();
 
