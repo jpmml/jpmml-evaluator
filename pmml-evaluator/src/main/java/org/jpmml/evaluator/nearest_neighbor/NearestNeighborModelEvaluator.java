@@ -109,9 +109,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 	private Table<Integer, FieldName, FieldValue> trainingInstances = null;
 
-	private Map<Integer, BitSet> instanceFlags = null;
-
-	private Map<Integer, List<FieldValue>> instanceValues = null;
+	private Map<Integer, ?> trainingInstanceCentroids = null;
 
 
 	private NearestNeighborModelEvaluator(){
@@ -301,13 +299,13 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private <V extends Number> List<InstanceResult<V>> evaluateSimilarity(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
 		BitSet flags = MeasureUtil.toBitSet(values);
 
-		Map<Integer, BitSet> flagMap = getInstanceFlags();
+		Map<Integer, ?> centroidMap = getTrainingInstanceCentroids();
 
-		List<InstanceResult<V>> result = new ArrayList<>(flagMap.size());
+		List<InstanceResult<V>> result = new ArrayList<>(centroidMap.size());
 
-		Set<Integer> rowKeys = flagMap.keySet();
+		Set<Integer> rowKeys = centroidMap.keySet();
 		for(Integer rowKey : rowKeys){
-			BitSet instanceFlags = flagMap.get(rowKey);
+			BitSet instanceFlags = (BitSet)centroidMap.get(rowKey);
 
 			Value<V> similarity = MeasureUtil.evaluateSimilarity(valueFactory, comparisonMeasure, knnInputs, flags, instanceFlags);
 
@@ -318,15 +316,15 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private <V extends Number> List<InstanceResult<V>> evaluateDistance(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, List<KNNInput> knnInputs, List<FieldValue> values){
-		Map<Integer, List<FieldValue>> valueMap = getInstanceValues();
+		Map<Integer, ?> centroidMap = getTrainingInstanceCentroids();
 
-		List<InstanceResult<V>> result = new ArrayList<>(valueMap.size());
+		List<InstanceResult<V>> result = new ArrayList<>(centroidMap.size());
 
 		Value<V> adjustment = MeasureUtil.calculateAdjustment(valueFactory, values);
 
-		Set<Integer> rowKeys = valueMap.keySet();
+		Set<Integer> rowKeys = centroidMap.keySet();
 		for(Integer rowKey : rowKeys){
-			List<FieldValue> instanceValues = valueMap.get(rowKey);
+			List<FieldValue> instanceValues = (List<FieldValue>)centroidMap.get(rowKey);
 
 			Value<V> distance = MeasureUtil.evaluateDistance(valueFactory, comparisonMeasure, knnInputs, values, instanceValues, adjustment);
 
@@ -510,25 +508,32 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return this.trainingInstances;
 	}
 
-	private Map<Integer, List<FieldValue>> getInstanceValues(){
+	private Map<Integer, ?> getTrainingInstanceCentroids(){
 
-		if(this.instanceValues == null){
-			Map<Integer, List<FieldValue>> instanceValues = parseInstanceValues(this);
-			instanceValues.replaceAll((key, value) -> ImmutableList.copyOf(value));
+		if(this.trainingInstanceCentroids == null){
+			NearestNeighborModel nearestNeightborModel = getModel();
 
-			this.instanceValues = ImmutableMap.copyOf(instanceValues);
+			ComparisonMeasure comparisonMeasure = nearestNeightborModel.getComparisonMeasure();
+
+			Map<Integer, List<FieldValue>> trainingInstanceValues = parseTrainingInstanceValues(this);
+
+			Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
+
+			if(measure instanceof Distance){
+				trainingInstanceValues.replaceAll((key, value) -> ImmutableList.copyOf(value));
+
+				this.trainingInstanceCentroids = ImmutableMap.copyOf(trainingInstanceValues);
+			} else
+
+			if(measure instanceof Similarity){
+				Map<Integer, BitSet> trainingInstanceFlags = trainingInstanceValues.entrySet().stream()
+					.collect(Collectors.toMap(entry -> entry.getKey(), entry -> MeasureUtil.toBitSet(entry.getValue())));
+
+				this.trainingInstanceCentroids = ImmutableMap.copyOf(trainingInstanceFlags);
+			}
 		}
 
-		return this.instanceValues;
-	}
-
-	private Map<Integer, BitSet> getInstanceFlags(){
-
-		if(this.instanceFlags == null){
-			this.instanceFlags = ImmutableMap.copyOf(parseInstanceFlags(this));
-		}
-
-		return this.instanceFlags;
+		return this.trainingInstanceCentroids;
 	}
 
 	static
@@ -659,7 +664,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	static
-	private Map<Integer, List<FieldValue>> parseInstanceValues(NearestNeighborModelEvaluator modelEvaluator){
+	private Map<Integer, List<FieldValue>> parseTrainingInstanceValues(NearestNeighborModelEvaluator modelEvaluator){
 		NearestNeighborModel nearestNeighborModel = modelEvaluator.getModel();
 
 		Map<Integer, List<FieldValue>> result = new LinkedHashMap<>();
@@ -684,16 +689,6 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 
 		return result;
-	}
-
-	static
-	private Map<Integer, BitSet> parseInstanceFlags(NearestNeighborModelEvaluator modelEvaluator){
-		Map<Integer, List<FieldValue>> instanceValues = modelEvaluator.getInstanceValues();
-
-		Map<Integer, BitSet> instanceFlags = instanceValues.entrySet().stream()
-			.collect(Collectors.toMap(entry -> entry.getKey(), entry -> MeasureUtil.toBitSet(entry.getValue())));
-
-		return instanceFlags;
 	}
 
 	static
