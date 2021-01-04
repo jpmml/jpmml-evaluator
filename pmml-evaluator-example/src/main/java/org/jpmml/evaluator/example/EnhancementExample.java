@@ -33,6 +33,7 @@ import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.ModelVerification;
+import org.dmg.pmml.Namespaces;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Row;
@@ -185,7 +186,7 @@ public class EnhancementExample extends Example {
 					continue;
 				}
 
-				Element element = document.createElementNS("http://jpmml.org/jpmml-model/InlineTable", ("data:" + tagName));
+				Element element = document.createElementNS(Namespaces.JPMML_INLINETABLE, ("data:" + tagName));
 				element.setTextContent(value);
 
 				row.addContent(element);

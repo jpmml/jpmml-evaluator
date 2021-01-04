@@ -35,10 +35,10 @@ import org.dmg.pmml.Cell;
 import org.dmg.pmml.Extension;
 import org.dmg.pmml.HasTable;
 import org.dmg.pmml.InlineTable;
+import org.dmg.pmml.Namespaces;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Row;
 import org.dmg.pmml.TableLocator;
-import org.dmg.pmml.Version;
 import org.w3c.dom.Element;
 
 public class InlineTableUtil {
@@ -174,11 +174,11 @@ public class InlineTableUtil {
 				QName xmlName;
 
 				if(column.startsWith("data:")){
-					xmlName = new QName("http://jpmml.org/jpmml-model/InlineTable", column.substring("data:".length()), "data");
+					xmlName = new QName(Namespaces.JPMML_INLINETABLE, column.substring("data:".length()), "data");
 				} else
 
 				{
-					xmlName = new QName(Version.PMML_4_4.getNamespaceURI(), column);
+					xmlName = new QName(Namespaces.PMML_LATEST, column);
 				}
 
 				JAXBElement<String> cell = new JAXBElement<>(xmlName, String.class, value);
