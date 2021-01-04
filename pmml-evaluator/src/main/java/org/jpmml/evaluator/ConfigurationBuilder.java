@@ -44,7 +44,8 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 		try {
 			return (ConfigurationBuilder)super.clone();
 		} catch(CloneNotSupportedException cnse){
-			throw new InternalError(cnse);
+			throw (InternalError)new InternalError()
+				.initCause(cnse);
 		}
 	}
 

@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
@@ -399,7 +398,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		ResultMapper resultMapper = getResultMapper();
 
 		if(!outputFields.isEmpty()){
-			Predicate<org.dmg.pmml.OutputField> outputFilter = ensureOutputFilter();
+			OutputFilter outputFilter = ensureOutputFilter();
 
 			Iterator<OutputField> it = outputFields.iterator();
 			while(it.hasNext()){
@@ -583,7 +582,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return configuration.getValueFactoryFactory();
 	}
 
-	protected Predicate<org.dmg.pmml.OutputField> ensureOutputFilter(){
+	protected OutputFilter ensureOutputFilter(){
 		Configuration configuration = ensureConfiguration();
 
 		return configuration.getOutputFilter();

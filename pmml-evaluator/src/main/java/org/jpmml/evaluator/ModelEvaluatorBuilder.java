@@ -87,7 +87,8 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		try {
 			modelEvaluatorBuilder = (ModelEvaluatorBuilder)super.clone();
 		} catch(CloneNotSupportedException cnse){
-			throw new InternalError(cnse);
+			throw (InternalError)new InternalError()
+				.initCause(cnse);
 		}
 
 		modelEvaluatorBuilder.configurationBuilder = modelEvaluatorBuilder.configurationBuilder.clone();

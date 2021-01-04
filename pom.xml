@@ -303,6 +303,35 @@
 							</signature>
 						</configuration>
 					</execution>
+					<execution>
+						<id>android-21</id>
+						<!-- Sniff main classes only -->
+						<phase>process-classes</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<ignores>
+								<ignore>java.lang.Integer</ignore>
+								<ignore>java.lang.Long</ignore>
+								<ignore>java.lang.Math</ignore>
+								<ignore>java.time.*</ignore>
+								<ignore>java.util.Collection</ignore>
+								<ignore>java.util.Date</ignore>
+								<ignore>java.util.List</ignore>
+								<ignore>java.util.Map</ignore>
+								<ignore>java.util.Optional</ignore>
+								<ignore>java.util.Set</ignore>
+								<ignore>java.util.function.*</ignore>
+								<ignore>java.util.stream.*</ignore>
+							</ignores>
+							<signature>
+								<groupId>net.sf.androidscents.signature</groupId>
+								<artifactId>android-api-level-21</artifactId>
+								<version>5.0.1_r2</version>
+							</signature>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>

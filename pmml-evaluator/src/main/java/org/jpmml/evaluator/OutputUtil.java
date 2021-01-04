@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Ordering;
@@ -77,7 +76,7 @@ public class OutputUtil {
 
 		OutputMap result = new OutputMap(predictions);
 
-		Predicate<OutputField> outputFilter = modelEvaluator.ensureOutputFilter();
+		OutputFilter outputFilter = modelEvaluator.ensureOutputFilter();
 
 		List<OutputField> outputFields = output.getOutputFields();
 

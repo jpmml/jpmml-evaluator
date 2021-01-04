@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -34,16 +35,32 @@ public class ServiceLoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 	}
 
 	public ServiceLoadingModelEvaluatorBuilder loadService(URL url) throws IOException {
+		URLClassLoader clazzLoader = new URLClassLoader(new URL[]{url});
 
-		try(URLClassLoader clazzLoader = new URLClassLoader(new URL[]{url})){
+		try {
 			return loadService(clazzLoader, (String)null);
+		} finally {
+
+			if(clazzLoader instanceof Closeable){
+				Closeable closeable = (Closeable)clazzLoader;
+
+				closeable.close();
+			}
 		}
 	}
 
 	public ServiceLoadingModelEvaluatorBuilder loadService(URL url, String modelName) throws IOException {
+		URLClassLoader clazzLoader = new URLClassLoader(new URL[]{url});
 
-		try(URLClassLoader clazzLoader = new URLClassLoader(new URL[]{url})){
+		try {
 			return loadService(clazzLoader, modelName);
+		} finally {
+
+			if(clazzLoader instanceof Closeable){
+				Closeable closeable = (Closeable)clazzLoader;
+
+				closeable.close();
+			}
 		}
 	}
 

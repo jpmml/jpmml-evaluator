@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.dmg.pmml.Aggregate;
@@ -538,7 +537,7 @@ public class ExpressionUtil {
 
 		values = values.stream()
 			// "Missing values are ignored"
-			.filter(Objects::nonNull)
+			.filter(object -> !FieldValueUtil.isMissing(object))
 			.map(object -> FieldValueUtil.create(value, object))
 			.collect(Collectors.toList());
 
