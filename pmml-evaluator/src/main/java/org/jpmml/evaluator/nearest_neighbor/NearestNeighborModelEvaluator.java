@@ -36,17 +36,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultiset;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Table;
@@ -520,16 +519,19 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
 
 			if(measure instanceof Distance){
-				trainingInstanceValues.replaceAll((key, value) -> ImmutableList.copyOf(value));
-
-				this.trainingInstanceCentroids = ImmutableMap.copyOf(trainingInstanceValues);
+				this.trainingInstanceCentroids = ImmutableMap.copyOf(toImmutableListMap(trainingInstanceValues));
 			} else
 
 			if(measure instanceof Similarity){
-				Map<Integer, BitSet> trainingInstanceFlags = trainingInstanceValues.entrySet().stream()
-					.collect(Collectors.toMap(entry -> entry.getKey(), entry -> MeasureUtil.toBitSet(entry.getValue())));
+				Function<List<FieldValue>, BitSet> function = new Function<List<FieldValue>, BitSet>(){
 
-				this.trainingInstanceCentroids = ImmutableMap.copyOf(trainingInstanceFlags);
+					@Override
+					public BitSet apply(List<FieldValue> values){
+						return MeasureUtil.toBitSet(values);
+					}
+				};
+
+				this.trainingInstanceCentroids = ImmutableMap.copyOf(Maps.transformValues(trainingInstanceValues, function));
 			}
 		}
 

@@ -21,10 +21,12 @@ package org.jpmml.evaluator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import org.dmg.pmml.ComplexArray;
 import org.dmg.pmml.DataType;
 import org.jpmml.model.annotations.Property;
@@ -56,9 +58,15 @@ public class RichComplexArray extends ComplexArray implements SetHolder {
 	public RichComplexArray setValue(Set<?> values){
 		DataType dataType = getDataType();
 
-		values = values.stream()
-			.map(value -> TypeUtil.parseOrCast(dataType, value))
-			.collect(Collectors.toSet());
+		Function<Object, Object> function = new Function<Object, Object>(){
+
+			@Override
+			public Object apply(Object value){
+				return TypeUtil.parseOrCast(dataType, value);
+			}
+		};
+
+		values = Sets.newHashSet(Iterables.transform(values, function));
 
 		return (RichComplexArray)super.setValue(values);
 	}

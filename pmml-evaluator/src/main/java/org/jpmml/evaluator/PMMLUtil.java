@@ -20,9 +20,8 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
 
+import com.google.common.base.Predicate;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 import org.jpmml.model.XPathUtil;
@@ -37,11 +36,27 @@ public class PMMLUtil {
 		Model model;
 
 		if(modelName != null){
-			model = PMMLUtil.findModel(pmml, (Model object) -> Objects.equals(object.getModelName(), modelName), "<Model>@modelName=" + modelName);
+			Predicate<Model> predicate = new Predicate<Model>(){
+
+				@Override
+				public boolean apply(Model model){
+					return Objects.equals(model.getModelName(), modelName);
+				}
+			};
+
+			model = PMMLUtil.findModel(pmml, predicate, "<Model>@modelName=" + modelName);
 		} else
 
 		{
-			model = PMMLUtil.findModel(pmml, (Model object) -> object.isScorable(), "<Model>@isScorable=true");
+			Predicate<Model> predicate = new Predicate<Model>(){
+
+				@Override
+				public boolean apply(Model model){
+					return model.isScorable();
+				}
+			};
+
+			model = PMMLUtil.findModel(pmml, predicate, "<Model>@isScorable=true");
 		}
 
 		return model;
@@ -49,28 +64,33 @@ public class PMMLUtil {
 
 	static
 	public <M extends Model> M findModel(PMML pmml, Class<? extends M> clazz){
-		Model model = findModel(pmml, (Model object) -> clazz.isInstance(object) && object.isScorable(), XPathUtil.formatElement(clazz) + "@isScorable=true");
+		Predicate<Model> predicate = new Predicate<Model>(){
+
+			@Override
+			public boolean apply(Model model){
+				return clazz.isInstance(model) && model.isScorable();
+			}
+		};
+
+		Model model = findModel(pmml, predicate, XPathUtil.formatElement(clazz) + "@isScorable=true");
 
 		return clazz.cast(model);
 	}
 
 	static
-	public Model findModel(PMML pmml, Predicate<Model> predicate, String predicateXPath){
+	private Model findModel(PMML pmml, Predicate<Model> predicate, String predicateXPath){
 
-		if(!pmml.hasModels()){
-			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(pmml.getClass()) + "/" + predicateXPath), pmml);
+		if(pmml.hasModels()){
+			List<Model> models = pmml.getModels();
+
+			for(Model model : models){
+
+				if(predicate.apply(model)){
+					return model;
+				}
+			}
 		}
 
-		List<Model> models = pmml.getModels();
-
-		Optional<Model> result = models.stream()
-			.filter(predicate)
-			.findAny();
-
-		if(!result.isPresent()){
-			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(pmml.getClass()) + "/" + predicateXPath), pmml);
-		}
-
-		return result.get();
+		throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(pmml.getClass()) + "/" + predicateXPath), pmml);
 	}
 }

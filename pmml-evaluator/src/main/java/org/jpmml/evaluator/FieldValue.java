@@ -27,7 +27,6 @@ import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 import org.dmg.pmml.Array;
 import org.dmg.pmml.DataType;
@@ -161,26 +160,30 @@ public class FieldValue implements TypeInfo, Serializable {
 
 		List<?> values = ArrayUtil.getContent(array);
 
-		return values.stream()
-			.anyMatch(value -> equalsValue(value));
+		for(Object value : values){
+
+			if(equalsValue(value)){
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public boolean isIn(Collection<FieldValue> values){
-		Predicate<FieldValue> predicate = new Predicate<FieldValue>(){
 
-			@Override
-			public boolean test(FieldValue value){
+		for(FieldValue value : values){
 
-				if(FieldValueUtil.isMissing(value)){
-					return false;
-				}
+			if(FieldValueUtil.isMissing(value)){
+				continue;
+			} // End if
 
-				return equalsValue(value);
+			if(equalsValue(value)){
+				return true;
 			}
-		};
+		}
 
-		return values.stream()
-			.anyMatch(predicate);
+		return false;
 	}
 
 	public boolean equalsValue(Object value){

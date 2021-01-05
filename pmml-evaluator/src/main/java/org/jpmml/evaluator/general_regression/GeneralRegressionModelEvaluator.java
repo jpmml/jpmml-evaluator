@@ -27,19 +27,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Matrix;
@@ -143,11 +143,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		} else
 
 		{
-			Map<Object, Map<String, Row>> ppMatrixMap = parsePPMatrix(ppMatrix, factorRegistry, covariateRegistry);
-			ppMatrixMap.replaceAll((key, value) -> ImmutableMap.copyOf(value));
-
 			// Cannot use Guava's ImmutableMap, because it is null-hostile
-			this.ppMatrixMap = Collections.unmodifiableMap(ppMatrixMap);
+			this.ppMatrixMap = Collections.unmodifiableMap(new LinkedHashMap<>(toImmutableMapMap(parsePPMatrix(ppMatrix, factorRegistry, covariateRegistry))));
 		}
 
 		ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
@@ -156,11 +153,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		} else
 
 		{
-			Map<Object, List<PCell>> paramMatrixMap = parseParamMatrix(paramMatrix);
-			paramMatrixMap.replaceAll((key, value) -> ImmutableList.copyOf(value));
-
 			// Cannot use Guava's ImmutableMap, because it is null-hostile
-			this.paramMatrixMap = Collections.unmodifiableMap(paramMatrixMap);
+			this.paramMatrixMap = Collections.unmodifiableMap(new LinkedHashMap<>(toImmutableListMap(parseParamMatrix(paramMatrix))));
 		}
 	}
 
@@ -265,8 +259,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			}
 		};
 
-		BaselineCell minBaselineCell = baselineCells.stream()
-			.min(comparator).get();
+		BaselineCell minBaselineCell = Collections.min(baselineCells, comparator);
 
 		Number minTime = minBaselineCell.getTime();
 
@@ -287,9 +280,15 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		Number time = value.asNumber();
 
 		// "Select the BaselineCell element that has the largest time attribute value that is not greater than the value"
-		BaselineCell maxTimeBaselineCell = baselineCells.stream()
-			.filter(baselineCell -> NumberUtil.compare(baselineCell.getTime(), time) <= 0)
-			.max(comparator).get();
+		Predicate<BaselineCell> predicate = new Predicate<BaselineCell>(){
+
+			@Override
+			public boolean apply(BaselineCell baselineCell){
+				return NumberUtil.compare(baselineCell.getTime(), time) <= 0;
+			}
+		};
+
+		BaselineCell maxTimeBaselineCell = Collections.max(Lists.newArrayList(Iterables.filter(baselineCells, predicate)), comparator);
 
 		Number maxTimeCumHazard = maxTimeBaselineCell.getCumHazard();
 		if(maxTimeCumHazard == null){
@@ -814,9 +813,15 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					Map<?, List<PCell>> paramMatrixMap = getParamMatrixMap();
 
 					// "The reference category is the one from DataDictionary that does not appear in the ParamMatrix"
-					Set<?> targetReferenceCategories = targetCategories.stream()
-						.filter(targetCategory -> !paramMatrixMap.containsKey(targetCategory))
-						.collect(Collectors.toSet());
+					Predicate<Object> predicate = new Predicate<Object>(){
+
+						@Override
+						public boolean apply(Object targetCategory){
+							return !paramMatrixMap.containsKey(targetCategory);
+						}
+					};
+
+					Set<?> targetReferenceCategories = Sets.newHashSet(Iterables.filter(targetCategories, predicate));
 
 					if(targetReferenceCategories.size() != 1){
 						ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();

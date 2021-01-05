@@ -24,13 +24,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
+import com.google.common.base.Function;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.ComparisonMeasure;
 import org.dmg.pmml.DataType;
@@ -127,16 +127,19 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
 
 			if(measure instanceof Distance){
-				clusterValues.replaceAll((key, value) -> ImmutableList.copyOf(value));
-
-				this.clusterCentroids = ImmutableMap.copyOf(clusterValues);
+				this.clusterCentroids = ImmutableMap.copyOf(toImmutableListMap(clusterValues));
 			} else
 
 			if(measure instanceof Similarity){
-				Map<Cluster, BitSet> clusterFlags = clusterValues.entrySet().stream()
-					.collect(Collectors.toMap(entry -> entry.getKey(), entry -> MeasureUtil.toBitSet(entry.getValue())));
+				Function<List<FieldValue>, BitSet> function = new Function<List<FieldValue>, BitSet>(){
 
-				this.clusterCentroids = ImmutableMap.copyOf(clusterFlags);
+					@Override
+					public BitSet apply(List<FieldValue> values){
+						return MeasureUtil.toBitSet(values);
+					}
+				};
+
+				this.clusterCentroids = ImmutableMap.copyOf(Maps.transformValues(clusterValues, function));
 			} else
 
 			{

@@ -112,10 +112,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		{
 			this.bayesInputs = ImmutableList.copyOf(parseBayesInputs(bayesInputs));
 
-			Map<FieldName, Map<Object, Number>> fieldCountSums = calculateFieldCountSums(this.bayesInputs);
-			fieldCountSums.replaceAll((key, value) -> ImmutableMap.copyOf(value));
-
-			this.fieldCountSums = ImmutableMap.copyOf(fieldCountSums);
+			this.fieldCountSums = ImmutableMap.copyOf(toImmutableMapMap(calculateFieldCountSums(this.bayesInputs)));
 		}
 
 		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();

@@ -370,14 +370,21 @@ public class TextUtil {
 					boolean matches = termTokenSet.contains(tokens);
 
 					if(matches){
-						result.merge(tokens, 1, Integer::sum);
+						Integer count = result.get(tokens);
+
+						result.put(tokens, count != null ? count + 1 : 1);
 					}
 				} else
 
 				{
-					termTokenSet.stream()
-						.filter(termTokens -> matches(tokens, termTokens, caseSensitive, maxLevenshteinDistance))
-						.forEach(termTokens -> result.merge(termTokens, 1, Integer::sum));
+					for(List<String> termTokens : termTokenSet){
+
+						if(matches(tokens, termTokens, caseSensitive, maxLevenshteinDistance)){
+							Integer count = result.get(termTokens);
+
+							result.put(termTokens, count != null ? count + 1 : 1);
+						}
+					}
 				}
 			}
 		}

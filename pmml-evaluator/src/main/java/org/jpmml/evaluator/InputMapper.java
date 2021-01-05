@@ -19,8 +19,8 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
-import java.util.function.Function;
 
+import com.google.common.base.Function;
 import org.dmg.pmml.FieldName;
 
 public interface InputMapper extends Function<FieldName, FieldName>, Serializable {

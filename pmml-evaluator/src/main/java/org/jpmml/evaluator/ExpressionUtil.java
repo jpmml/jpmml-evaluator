@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
@@ -525,7 +524,7 @@ public class ExpressionUtil {
 
 		// The JPMML library operates with single records, so it's impossible to implement "proper" aggregation over multiple records.
 		// It is assumed that application developers have performed the aggregation beforehand
-		Collection<?> values = value.asCollection();
+		Collection<?> objects = value.asCollection();
 
 		FieldName groupName = aggregate.getGroupField();
 		if(groupName != null){
@@ -535,11 +534,17 @@ public class ExpressionUtil {
 			TypeUtil.getDataType(FieldValueUtil.getValue(groupValue));
 		}
 
-		values = values.stream()
+		List<FieldValue> values = new ArrayList<>(objects.size());
+
+		for(Object object : objects){
+
 			// "Missing values are ignored"
-			.filter(object -> !FieldValueUtil.isMissing(object))
-			.map(object -> FieldValueUtil.create(value, object))
-			.collect(Collectors.toList());
+			if(FieldValueUtil.isMissing(object)){
+				continue;
+			}
+
+			values.add(FieldValueUtil.create(value, object));
+		}
 
 		Aggregate.Function function = aggregate.getFunction();
 		if(function == null){
@@ -550,13 +555,13 @@ public class ExpressionUtil {
 			case COUNT:
 				return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, values.size());
 			case SUM:
-				return Functions.SUM.evaluate((List<FieldValue>)values);
+				return Functions.SUM.evaluate(values);
 			case AVERAGE:
-				return Functions.AVG.evaluate((List<FieldValue>)values);
+				return Functions.AVG.evaluate(values);
 			case MIN:
-				return Collections.min((List<ScalarValue>)values);
+				return Collections.<ScalarValue>min((List)values);
 			case MAX:
-				return Collections.max((List<ScalarValue>)values);
+				return Collections.<ScalarValue>max((List)values);
 			default:
 				throw new UnsupportedAttributeException(aggregate, function);
 		}

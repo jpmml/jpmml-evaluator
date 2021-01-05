@@ -26,7 +26,6 @@ import java.util.Map;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
@@ -582,10 +581,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	private Map<FieldName, List<NeuralOutput>> getNeuralOutputMap(){
 
 		if(this.neuralOutputMap == null){
-			Map<FieldName, List<NeuralOutput>> neuralOutputMap = parseNeuralOutputs();
-			neuralOutputMap.replaceAll((key, value) -> ImmutableList.copyOf(value));
-
-			this.neuralOutputMap = ImmutableMap.copyOf(neuralOutputMap);
+			this.neuralOutputMap = ImmutableMap.copyOf(toImmutableListMap(parseNeuralOutputs()));
 		}
 
 		return this.neuralOutputMap;

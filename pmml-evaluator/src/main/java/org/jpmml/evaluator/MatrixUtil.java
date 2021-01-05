@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 import org.dmg.pmml.Array;
 import org.dmg.pmml.DataType;
@@ -136,14 +135,12 @@ public class MatrixUtil {
 
 	static
 	private Number getMatCellValue(List<MatCell> matCells, int row, int column){
-		Optional<MatCell> result = matCells.stream()
-			.filter(matCell -> (matCell.getRow() == row) && (matCell.getCol() == column))
-			.findFirst();
 
-		if(result.isPresent()){
-			MatCell matCell = result.get();
+		for(MatCell matCell : matCells){
 
-			return (Number)TypeUtil.parseOrCast(DataType.DOUBLE, matCell.getValue());
+			if((matCell.getRow() == row) && (matCell.getCol() == column)){
+				return (Number)TypeUtil.parseOrCast(DataType.DOUBLE, matCell.getValue());
+			}
 		}
 
 		return null;

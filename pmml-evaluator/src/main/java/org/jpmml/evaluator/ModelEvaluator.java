@@ -641,7 +641,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	static
-	private <F extends ModelField> List<F> updateNames(List<F> fields, java.util.function.Function<FieldName, FieldName> mapper){
+	private <F extends ModelField> List<F> updateNames(List<F> fields, com.google.common.base.Function<FieldName, FieldName> mapper){
 
 		for(F field : fields){
 			FieldName name = field.getFieldName();

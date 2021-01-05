@@ -20,11 +20,12 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import com.google.common.base.Function;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.PMMLAttributes;
@@ -99,15 +100,29 @@ public class ArrayUtil {
 		if(value instanceof List){
 			List<?> list = (List<?>)value;
 
-			tokens = Lists.transform(list, TypeUtil::format);
+			Function<Object, String> function = new Function<Object, String>(){
+
+				@Override
+				public String apply(Object value){
+					return TypeUtil.format(value);
+				}
+			};
+
+			tokens = Lists.transform(list, function);
 		} else
 
 		if(value instanceof Set){
 			Set<?> set = (Set<?>)value;
 
-			tokens = set.stream()
-				.map(TypeUtil::format)
-				.collect(Collectors.toList());
+			Function<Object, String> function = new Function<Object, String>(){
+
+				@Override
+				public String apply(Object value){
+					return TypeUtil.format(value);
+				}
+			};
+
+			tokens = Lists.newArrayList(Iterables.transform(set, function));
 		} else
 
 		{
@@ -119,16 +134,41 @@ public class ArrayUtil {
 			throw new InvalidElementException(array);
 		}
 
+		Function<String, ?> function;
+
 		switch(type){
 			case INT:
-				return Lists.transform(tokens, token -> Numbers.INTEGER_INTERNER.intern(Integer.parseInt(token)));
+				function = new Function<String, Integer>(){
+
+					@Override
+					public Integer apply(String string){
+						return Numbers.INTEGER_INTERNER.intern(Integer.parseInt(string));
+					}
+				};
+				break;
 			case REAL:
-				return Lists.transform(tokens, token -> Numbers.DOUBLE_INTERNER.intern(Double.parseDouble(token)));
+				function = new Function<String, Double>(){
+
+					@Override
+					public Double apply(String string){
+						return Numbers.DOUBLE_INTERNER.intern(Double.parseDouble(string));
+					}
+				};
+				break;
 			case STRING:
-				return Lists.transform(tokens, token -> Strings.INTERNER.intern(token));
+				function = new Function<String, String>(){
+
+					@Override
+					public String apply(String string){
+						return Strings.INTERNER.intern(string);
+					}
+				};
+				break;
 			default:
 				throw new UnsupportedAttributeException(array, type);
 		}
+
+		return Lists.transform(tokens, function);
 	}
 
 	private static final LoadingCache<Array, List<?>> contentCache = CacheUtil.buildLoadingCache(new CacheLoader<Array, List<?>>(){

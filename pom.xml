@@ -316,14 +316,8 @@
 								<ignore>java.lang.Long</ignore>
 								<ignore>java.lang.Math</ignore>
 								<ignore>java.time.*</ignore>
-								<ignore>java.util.Collection</ignore>
 								<ignore>java.util.Date</ignore>
-								<ignore>java.util.List</ignore>
 								<ignore>java.util.Map</ignore>
-								<ignore>java.util.Optional</ignore>
-								<ignore>java.util.Set</ignore>
-								<ignore>java.util.function.*</ignore>
-								<ignore>java.util.stream.*</ignore>
 							</ignores>
 							<signature>
 								<groupId>net.sf.androidscents.signature</groupId>

@@ -29,12 +29,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
@@ -651,6 +654,52 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		}
 
 		return result;
+	}
+
+	static
+	protected <K, V> Map<K, ? extends List<V>> toImmutableListMap(Map<K, List<V>> map){
+		Function<List<V>, ImmutableList<V>> function = new Function<List<V>, ImmutableList<V>>(){
+
+			@Override
+			public ImmutableList<V> apply(List<V> list){
+				return ImmutableList.copyOf(list);
+			}
+		};
+
+		return Maps.transformValues(map, function);
+	}
+
+	static
+	protected <K, V> Map<K, ? extends Set<V>> toImmutableSetMap(Map<K, Set<V>> map){
+		Function<Set<V>, ImmutableSet<V>> function = new Function<Set<V>, ImmutableSet<V>>(){
+
+			@Override
+			public ImmutableSet<V> apply(Set<V> set){
+
+				if(set instanceof EnumSet){
+					EnumSet<?> enumSet = (EnumSet<?>)set;
+
+					return (ImmutableSet)Sets.immutableEnumSet(enumSet);
+				}
+
+				return ImmutableSet.copyOf(set);
+			}
+		};
+
+		return Maps.transformValues(map, function);
+	}
+
+	static
+	protected <K1, K2, V2> Map<K1, ? extends Map<K2, V2>> toImmutableMapMap(Map<K1, Map<K2, V2>> map){
+		Function<Map<K2, V2>, ImmutableMap<K2, V2>> function = new Function<Map<K2, V2>, ImmutableMap<K2, V2>>(){
+
+			@Override
+			public ImmutableMap<K2, V2> apply(Map<K2, V2> map){
+				return ImmutableMap.copyOf(map);
+			}
+		};
+
+		return Maps.transformValues(map, function);
 	}
 
 	private static final DataField DEFAULT_TARGET_CONTINUOUS_FLOAT = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.FLOAT);

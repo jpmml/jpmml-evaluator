@@ -38,7 +38,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
@@ -152,10 +151,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Output output = miningModel.getOutput();
 		if(output != null && output.hasOutputFields()){
-			Map<String, Set<ResultFeature>> segmentResultFeatures = collectSegmentResultFeatures(output);
-			segmentResultFeatures.replaceAll((key, value) -> Sets.immutableEnumSet(value));
-
-			this.segmentResultFeatures = ImmutableMap.copyOf(segmentResultFeatures);
+			this.segmentResultFeatures = ImmutableMap.copyOf(toImmutableSetMap(collectSegmentResultFeatures(output)));
 		}
 	}
 
