@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,23 +32,23 @@ import org.dmg.pmml.OpType;
 abstract
 public class EvaluationContext {
 
-	private Map<FieldName, FieldValue> values = null;
+	private FieldValueMap values = null;
 
 	private List<String> warnings = null;
 
 
 	EvaluationContext(){
-		this.values = new HashMap<>();
+		this.values = new FieldValueMap();
 	}
 
 	EvaluationContext(int numberOfVisibleFields){
 
 		if(numberOfVisibleFields <= 256){
-			this.values = new HashMap<>(Math.max(2 * numberOfVisibleFields, 16));
+			this.values = new FieldValueMap(Math.max(2 * numberOfVisibleFields, 16));
 		} else
 
 		{
-			this.values = new HashMap<>(numberOfVisibleFields);
+			this.values = new FieldValueMap(numberOfVisibleFields);
 		}
 	}
 
@@ -76,7 +75,7 @@ public class EvaluationContext {
 	 * @throws MissingValueException If the field value has not been declared.
 	 */
 	public FieldValue lookup(FieldName name){
-		Map<FieldName, FieldValue> values = getValues();
+		FieldValueMap values = getValues();
 
 		FieldValue value = values.getOrDefault(name, EvaluationContext.UNDECLARED_VALUE);
 		if(value != EvaluationContext.UNDECLARED_VALUE){
@@ -93,7 +92,7 @@ public class EvaluationContext {
 	 * </p>
 	 */
 	public FieldValue evaluate(FieldName name){
-		Map<FieldName, FieldValue> values = getValues();
+		FieldValueMap values = getValues();
 
 		FieldValue value = values.getOrDefault(name, EvaluationContext.UNDECLARED_VALUE);
 		if(value != EvaluationContext.UNDECLARED_VALUE){
@@ -131,7 +130,7 @@ public class EvaluationContext {
 	}
 
 	public FieldValue declare(FieldName name, FieldValue value){
-		Map<FieldName, FieldValue> values = getValues();
+		FieldValueMap values = getValues();
 
 		// XXX: Fails to detect a situation where the name was already associated with a missing value (null)
 		FieldValue prevValue = values.putIfAbsent(name, value);
@@ -163,7 +162,7 @@ public class EvaluationContext {
 		this.warnings.add(warning);
 	}
 
-	public Map<FieldName, FieldValue> getValues(){
+	public FieldValueMap getValues(){
 		return this.values;
 	}
 

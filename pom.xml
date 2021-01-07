@@ -317,7 +317,6 @@
 								<ignore>java.lang.Math</ignore>
 								<ignore>java.time.*</ignore>
 								<ignore>java.util.Date</ignore>
-								<ignore>java.util.Map</ignore>
 							</ignores>
 							<signature>
 								<groupId>net.sf.androidscents.signature</groupId>
