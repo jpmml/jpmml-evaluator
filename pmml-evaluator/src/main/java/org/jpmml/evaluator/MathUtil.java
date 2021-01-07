@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Villu Ruusmann
+ * Copyright (c) 2021 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,28 +18,19 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.ComplexValue;
+public class MathUtil {
 
-abstract
-class Period<P extends Period<P>> extends Number implements ComplexValue, Comparable<P> {
-
-	@Override
-	public Long toSimpleValue(){
-		return Long.valueOf(longValue());
+	private MathUtil(){
 	}
 
-	@Override
-	public int intValue(){
-		return MathUtil.toIntExact(longValue());
-	}
+	static
+	public int toIntExact(long value){
+		int result = (int)value;
 
-	@Override
-	public float floatValue(){
-		return longValue();
-	}
+		if(result != value){
+			throw new ArithmeticException("Integer overflow");
+		}
 
-	@Override
-	public double doubleValue(){
-		return longValue();
+		return result;
 	}
 }

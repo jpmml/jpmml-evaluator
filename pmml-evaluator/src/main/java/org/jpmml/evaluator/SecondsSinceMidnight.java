@@ -30,6 +30,8 @@ import java.time.temporal.TemporalQuery;
 import java.time.temporal.TemporalUnit;
 import java.time.temporal.ValueRange;
 
+import com.google.common.primitives.Longs;
+
 public class SecondsSinceMidnight extends SimplePeriod<SecondsSinceMidnight> {
 
 	private long seconds = 0;
@@ -51,7 +53,7 @@ public class SecondsSinceMidnight extends SimplePeriod<SecondsSinceMidnight> {
 
 	@Override
 	public int hashCode(){
-		return Long.hashCode(getSeconds());
+		return Longs.hashCode(getSeconds());
 	}
 
 	@Override

@@ -22,6 +22,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+import com.google.common.primitives.Longs;
+
 public class SecondsSinceDate extends ComplexPeriod<SecondsSinceDate> {
 
 	private long seconds = 0;
@@ -54,7 +56,7 @@ public class SecondsSinceDate extends ComplexPeriod<SecondsSinceDate> {
 
 	@Override
 	public int hashCode(){
-		return (31 * getEpoch().hashCode()) + Long.hashCode(getSeconds());
+		return (31 * getEpoch().hashCode()) + Longs.hashCode(getSeconds());
 	}
 
 	@Override

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.math.IntMath;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.rank.Max;
 import org.apache.commons.math3.stat.descriptive.rank.Min;
@@ -65,7 +66,7 @@ public interface Functions {
 		public Number evaluate(Number left, Number right){
 
 			if(left instanceof Integer && right instanceof Integer){
-				return Math.addExact(left.intValue(), right.intValue());
+				return IntMath.checkedAdd(left.intValue(), right.intValue());
 			}
 
 			return (left.doubleValue() + right.doubleValue());
@@ -78,7 +79,7 @@ public interface Functions {
 		public Number evaluate(Number left, Number right){
 
 			if(left instanceof Integer && right instanceof Integer){
-				return Math.subtractExact(left.intValue(), right.intValue());
+				return IntMath.checkedSubtract(left.intValue(), right.intValue());
 			}
 
 			return (left.doubleValue() - right.doubleValue());
@@ -91,7 +92,7 @@ public interface Functions {
 		public Number evaluate(Number left, Number right){
 
 			if(left instanceof Integer && right instanceof Integer){
-				return Math.multiplyExact(left.intValue(), right.intValue());
+				return IntMath.checkedMultiply(left.intValue(), right.intValue());
 			}
 
 			return (left.doubleValue() * right.doubleValue());
@@ -117,7 +118,15 @@ public interface Functions {
 		public Number evaluate(Number left, Number right){
 
 			if(left instanceof Integer && right instanceof Integer){
-				return Math.floorMod(left.intValue(), right.intValue());
+				int leftValue = left.intValue();
+				int rightValue = right.intValue();
+
+				int floorDivResult = (leftValue / rightValue);
+				if((leftValue ^ rightValue) < 0 && (leftValue != floorDivResult * rightValue)){
+					floorDivResult--;
+				}
+
+				return leftValue - floorDivResult * rightValue;
 			}
 
 			double leftValue = left.doubleValue();
@@ -278,7 +287,7 @@ public interface Functions {
 		public Integer evaluate(Number number){
 			long result = (long)Math.floor(number.doubleValue());
 
-			return Math.toIntExact(result);
+			return MathUtil.toIntExact(result);
 		}
 	};
 
@@ -288,7 +297,7 @@ public interface Functions {
 		public Integer evaluate(Number number){
 			long result = (long)Math.ceil(number.doubleValue());
 
-			return Math.toIntExact(result);
+			return MathUtil.toIntExact(result);
 		}
 	};
 
@@ -306,7 +315,7 @@ public interface Functions {
 				result = (long)Math.round(number.doubleValue());
 			}
 
-			return Math.toIntExact(result);
+			return MathUtil.toIntExact(result);
 		}
 	};
 

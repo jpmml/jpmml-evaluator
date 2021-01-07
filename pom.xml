@@ -312,9 +312,6 @@
 						</goals>
 						<configuration>
 							<ignores>
-								<ignore>java.lang.Integer</ignore>
-								<ignore>java.lang.Long</ignore>
-								<ignore>java.lang.Math</ignore>
 								<ignore>java.time.*</ignore>
 								<ignore>java.util.Date</ignore>
 							</ignores>

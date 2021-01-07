@@ -142,7 +142,7 @@ public class TypeUtil {
 	private Integer parseInteger(String value, long parsedValue){
 
 		try {
-			return Math.toIntExact(parsedValue);
+			return MathUtil.toIntExact(parsedValue);
 		} catch(ArithmeticException ae){
 			throw new IllegalArgumentException(value, ae);
 		}
@@ -654,7 +654,7 @@ public class TypeUtil {
 	private Integer toInteger(Number value){
 
 		try {
-			return Math.toIntExact(value.longValue());
+			return MathUtil.toIntExact(value.longValue());
 		} catch(ArithmeticException ae){
 			throw new TypeCheckException(DataType.INTEGER, value)
 				.initCause(ae);

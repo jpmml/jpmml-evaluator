@@ -21,6 +21,8 @@ package org.jpmml.evaluator;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+import com.google.common.primitives.Longs;
+
 public class DaysSinceDate extends ComplexPeriod<DaysSinceDate> {
 
 	private long days = 0;
@@ -53,7 +55,7 @@ public class DaysSinceDate extends ComplexPeriod<DaysSinceDate> {
 
 	@Override
 	public int hashCode(){
-		return (31 * getEpoch().hashCode()) + Long.hashCode(getDays());
+		return (31 * getEpoch().hashCode()) + Longs.hashCode(getDays());
 	}
 
 	@Override
