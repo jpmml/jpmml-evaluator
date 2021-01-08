@@ -18,12 +18,14 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.dmg.pmml.TextIndex;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -47,7 +49,7 @@ public class RegExUtilTest {
 		TextIndex textIndex = new TextIndex();
 
 		try {
-			RegExUtil.compile("[", textIndex);
+			RegExUtil.compile(regex, textIndex);
 
 			fail();
 		} catch(EvaluationException ee){
@@ -56,5 +58,12 @@ public class RegExUtilTest {
 			assertEquals(textIndex, ee.getContext());
 			assertTrue(cause instanceof PatternSyntaxException);
 		}
+
+		regex = "\\s+";
+
+		Pattern firstPattern = RegExUtil.compile(new String(regex), null);
+		Pattern secondPattern = RegExUtil.compile(new String(regex), null);
+
+		assertSame(firstPattern, secondPattern);
 	}
 }
