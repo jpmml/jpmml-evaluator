@@ -31,7 +31,6 @@ import com.google.common.cache.Cache;
 import com.google.common.collect.Table;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.PMMLAttributes;
-import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Row;
 import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.TextIndexNormalization;
@@ -65,18 +64,7 @@ public class TextUtil {
 		} // End if
 
 		if(tokenize){
-			PMMLObject locatable = textIndexNormalization;
-
-			String wordSeparatorCharacterRE = textIndexNormalization.getWordSeparatorCharacterRE();
-			if(wordSeparatorCharacterRE == null){
-				locatable = textIndex;
-
-				wordSeparatorCharacterRE = textIndex.getWordSeparatorCharacterRE();
-			}
-
-			Pattern pattern = RegExUtil.compile(wordSeparatorCharacterRE, locatable);
-
-			tokenizer = new TextTokenizer(pattern);
+			tokenizer = createTextTokenizer(textIndex, textIndexNormalization);
 		}
 
 		Boolean caseSensitive = textIndexNormalization.isCaseSensitive();
@@ -184,11 +172,7 @@ public class TextUtil {
 		boolean tokenize = textIndex.isTokenize();
 
 		if(tokenize){
-			String wordSeparatorCharacterRE = textIndex.getWordSeparatorCharacterRE();
-
-			Pattern pattern = RegExUtil.compile(wordSeparatorCharacterRE, textIndex);
-
-			TextTokenizer tokenizer = new TextTokenizer(pattern);
+			TextTokenizer tokenizer = createTextTokenizer(textIndex, null);
 
 			return tokenizer.tokenize(text);
 		} else
@@ -435,6 +419,77 @@ public class TextUtil {
 		}
 
 		return true;
+	}
+
+	static
+	private TextTokenizer createTextTokenizer(TextIndex textIndex, TextIndexNormalization textIndexNormalization){
+
+		if(textIndexNormalization != null){
+			String wordRE = textIndexNormalization.getWordRE();
+			String wordSeparatorCharacterRE = textIndexNormalization.getWordSeparatorCharacterRE();
+
+			if(wordRE != null){
+
+				if(wordSeparatorCharacterRE != null){
+					throw new MisplacedAttributeException(textIndexNormalization, PMMLAttributes.TEXTINDEXNORMALIZATION_WORDSEPARATORCHARACTERRE, wordSeparatorCharacterRE);
+				}
+
+				return createTextMatcher(textIndex, textIndexNormalization);
+			} else
+
+			if(wordSeparatorCharacterRE != null){
+				return createTextSplitter(textIndex, textIndexNormalization);
+			}
+		}
+
+		String wordRE = textIndex.getWordRE();
+		String wordSeparatorCharacterRE = textIndex.getWordSeparatorCharacterRE();
+
+		if(wordRE != null){
+
+			if(wordSeparatorCharacterRE != null){
+				throw new MisplacedAttributeException(textIndex, PMMLAttributes.TEXTINDEX_WORDSEPARATORCHARACTERRE, wordSeparatorCharacterRE);
+			}
+
+			return createTextMatcher(textIndex, null);
+		}
+
+		return createTextSplitter(textIndex, null);
+	}
+
+	static
+	private TextSplitter createTextSplitter(TextIndex textIndex, TextIndexNormalization textIndexNormalization){
+
+		if(textIndexNormalization != null){
+			String wordSeparatorCharacterRE = textIndexNormalization.getWordSeparatorCharacterRE();
+
+			if(wordSeparatorCharacterRE != null){
+				return new TextSplitter(wordSeparatorCharacterRE, textIndexNormalization);
+			}
+		}
+
+		String wordSeparatorCharacterRE = textIndex.getWordSeparatorCharacterRE();
+
+		return new TextSplitter(wordSeparatorCharacterRE, textIndex);
+	}
+
+	static
+	private TextMatcher createTextMatcher(TextIndex textIndex, TextIndexNormalization textIndexNormalization){
+
+		if(textIndexNormalization != null){
+			String wordRE = textIndexNormalization.getWordRE();
+
+			if(wordRE != null){
+				return new TextMatcher(wordRE, textIndexNormalization);
+			}
+		}
+
+		String wordRE = textIndex.getWordRE();
+		if(wordRE == null){
+			throw new MissingAttributeException(textIndex, PMMLAttributes.TEXTINDEX_WORDRE);
+		}
+
+		return new TextMatcher(wordRE, textIndex);
 	}
 
 	static

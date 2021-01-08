@@ -18,57 +18,22 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
-import org.jpmml.model.TermUtil;
-
+abstract
 public class TextTokenizer {
 
 	private Pattern pattern = null;
 
 
 	public TextTokenizer(Pattern pattern){
-		setPattern(pattern);
+		setPattern(Objects.requireNonNull(pattern));
 	}
 
-	public List<String> tokenize(String string){
-		Pattern pattern = getPattern();
-
-		if(("").equals(string)){
-			return Collections.emptyList();
-		}
-
-		String[] tokens = pattern.split(string, -1);
-
-		int count = 0;
-
-		for(int i = 0, max = tokens.length; i < max; i++){
-			String token = tokens[i];
-
-			if(token.length() > 0){
-				token = TermUtil.trimPunctuation(token);
-
-				if(token.length() > 0){
-					tokens[count] = token;
-
-					count++;
-				}
-			}
-		}
-
-		if(count < tokens.length){
-			String[] tmpTokens = new String[count];
-
-			System.arraycopy(tokens, 0, tmpTokens, 0, count);
-
-			tokens = tmpTokens;
-		}
-
-		return Arrays.asList(tokens);
-	}
+	abstract
+	public List<String> tokenize(String string);
 
 	public Pattern getPattern(){
 		return this.pattern;

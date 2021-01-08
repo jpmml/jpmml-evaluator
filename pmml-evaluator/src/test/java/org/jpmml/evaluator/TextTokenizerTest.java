@@ -29,10 +29,10 @@ import static org.junit.Assert.assertEquals;
 public class TextTokenizerTest {
 
 	@Test
-	public void tokenize(){
+	public void split(){
 		Pattern pattern = Pattern.compile("\\s+");
 
-		TextTokenizer tokenizer = new TextTokenizer(pattern);
+		TextTokenizer tokenizer = new TextSplitter(pattern);
 
 		assertEquals(Collections.emptyList(), tokenizer.tokenize(""));
 
@@ -45,6 +45,33 @@ public class TextTokenizerTest {
 		assertEquals(Collections.emptyList(), tokenizer.tokenize(" , , "));
 
 		assertEquals(Arrays.asList("one", "two", "three"), tokenizer.tokenize("one two three"));
-		assertEquals(Arrays.asList("one", "two", "three"), tokenizer.tokenize("one!, \u00BFtwo?, three."));
+		assertEquals(Arrays.asList("one", "two", "three"), tokenizer.tokenize("one!,\t\u00BFtwo?,\tthree."));
+	}
+
+	@Test
+	public void match(){
+		Pattern pattern = Pattern.compile("\\S+");
+
+		TextTokenizer tokenizer = new TextMatcher(pattern);
+
+		assertEquals(Collections.emptyList(), tokenizer.tokenize(""));
+
+		assertEquals(Collections.emptyList(), tokenizer.tokenize(" "));
+		assertEquals(Collections.emptyList(), tokenizer.tokenize("\t\t\t"));
+
+		assertEquals(Arrays.asList(","), tokenizer.tokenize(","));
+		assertEquals(Arrays.asList(",,"), tokenizer.tokenize(",,"));
+		assertEquals(Arrays.asList(",", ","), tokenizer.tokenize(", ,"));
+		assertEquals(Arrays.asList(",", ","), tokenizer.tokenize(" , , "));
+
+		assertEquals(Arrays.asList("one", "two", "three"), tokenizer.tokenize("one two three"));
+		assertEquals(Arrays.asList("one!,", "\u00BFtwo?,", "three."), tokenizer.tokenize("one!,\t\u00BFtwo?,\tthree."));
+
+		pattern = Pattern.compile("\\w{4,}");
+
+		tokenizer = new TextMatcher(pattern);
+
+		assertEquals(Arrays.asList("three", "four", "five", "seven"), tokenizer.tokenize("one two three four five six seven"));
+		assertEquals(Arrays.asList("three"), tokenizer.tokenize("one!,\t\u00BFtwo?,\tthree."));
 	}
 }
