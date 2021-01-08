@@ -18,9 +18,10 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.dmg.pmml.PMMLObject;
@@ -48,32 +49,39 @@ public class TextSplitter extends TextTokenizer {
 			return Collections.emptyList();
 		}
 
-		String[] tokens = pattern.split(string, -1);
+		Matcher matcher = pattern.matcher(string);
 
-		int count = 0;
+		if(!matcher.find()){
+			String token = TermUtil.trimPunctuation(string);
 
-		for(int i = 0, max = tokens.length; i < max; i++){
-			String token = tokens[i];
+			if(!token.isEmpty()){
+				return Collections.singletonList(token);
+			}
 
-			if(token.length() > 0){
- 				token = TermUtil.trimPunctuation(token);
-
- 				if(token.length() > 0){
-					tokens[count] = token;
-
- 					count++;
- 				}
- 			}
+			return Collections.emptyList();
 		}
 
-		if(count < tokens.length){
-			String[] tmpTokens = new String[count];
+		List<String> tokens = new ArrayList<>(Math.max(string.length() / 4, 16));
 
-			System.arraycopy(tokens, 0, tmpTokens, 0, count);
+		int index = 0;
 
-			tokens = tmpTokens;
+		do {
+			int start = matcher.start();
+			int end = matcher.end();
+
+			String token = TermUtil.trimPunctuation(string.substring(index, start));
+			if(!token.isEmpty()){
+				tokens.add(token);
+			}
+
+			index = end;
+		} while(matcher.find());
+
+		String token = TermUtil.trimPunctuation(string.substring(index));
+		if(!token.isEmpty()){
+			tokens.add(token);
 		}
 
-		return Arrays.asList(tokens);
+		return tokens;
 	}
 }

@@ -44,6 +44,11 @@ public class TextTokenizerTest {
 		assertEquals(Collections.emptyList(), tokenizer.tokenize(", ,"));
 		assertEquals(Collections.emptyList(), tokenizer.tokenize(" , , "));
 
+		assertEquals(Arrays.asList("one"), tokenizer.tokenize("one"));
+		assertEquals(Arrays.asList("one"), tokenizer.tokenize(" one"));
+		assertEquals(Arrays.asList("one"), tokenizer.tokenize("one "));
+		assertEquals(Arrays.asList("one"), tokenizer.tokenize("\u00BFone?"));
+
 		assertEquals(Arrays.asList("one", "two", "three"), tokenizer.tokenize("one two three"));
 		assertEquals(Arrays.asList("one", "two", "three"), tokenizer.tokenize("one!,\t\u00BFtwo?,\tthree."));
 	}
