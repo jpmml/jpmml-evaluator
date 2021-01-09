@@ -446,11 +446,6 @@ public class TextUtil {
 		String wordSeparatorCharacterRE = textIndex.getWordSeparatorCharacterRE();
 
 		if(wordRE != null){
-
-			if(wordSeparatorCharacterRE != null){
-				throw new MisplacedAttributeException(textIndex, PMMLAttributes.TEXTINDEX_WORDSEPARATORCHARACTERRE, wordSeparatorCharacterRE);
-			}
-
 			return createTextMatcher(textIndex, null);
 		}
 
