@@ -38,18 +38,11 @@ public class EvaluationContext {
 
 
 	EvaluationContext(){
-		this.values = new FieldValueMap();
+		this.values = FieldValueMap.create();
 	}
 
 	EvaluationContext(int numberOfVisibleFields){
-
-		if(numberOfVisibleFields <= 256){
-			this.values = new FieldValueMap(Math.max(2 * numberOfVisibleFields, 16));
-		} else
-
-		{
-			this.values = new FieldValueMap(numberOfVisibleFields);
-		}
+		this.values = FieldValueMap.create(numberOfVisibleFields);
 	}
 
 	abstract

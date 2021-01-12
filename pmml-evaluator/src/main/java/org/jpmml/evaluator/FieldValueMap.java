@@ -19,10 +19,12 @@
 package org.jpmml.evaluator;
 
 import java.util.HashMap;
+import java.util.Map;
 
+import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 import org.dmg.pmml.FieldName;
 
-class FieldValueMap extends HashMap<FieldName, FieldValue> implements JDK8Map<FieldName, FieldValue> {
+class FieldValueMap extends HashMap<FieldName, FieldValue> {
 
 	FieldValueMap(){
 	}
@@ -31,7 +33,61 @@ class FieldValueMap extends HashMap<FieldName, FieldValue> implements JDK8Map<Fi
 		super(capacity);
 	}
 
-	FieldValueMap(int capacity, float loadFactor){
-		super(capacity, loadFactor);
+	@Override
+	@IgnoreJRERequirement
+	public FieldValue getOrDefault(Object name, FieldValue defaultValue){
+		return super.getOrDefault(name, defaultValue);
+	}
+
+	@Override
+	@IgnoreJRERequirement
+	public FieldValue putIfAbsent(FieldName name, FieldValue value){
+		return super.putIfAbsent(name, value);
+	}
+
+	static
+	public FieldValueMap create(){
+
+		if(FieldValueMap.JDK8_API){
+			return new FieldValueMap();
+		}
+
+		return new AndroidFieldValueMap();
+	}
+
+	static
+	public FieldValueMap create(int numberOfVisibleFields){
+		int initialCapacity;
+
+		if(numberOfVisibleFields <= 256){
+			initialCapacity = Math.max(2 * numberOfVisibleFields, 16);
+		} else
+
+		{
+			initialCapacity = numberOfVisibleFields;
+		} // End if
+
+		if(FieldValueMap.JDK8_API){
+			return new FieldValueMap(initialCapacity);
+		}
+
+		return new AndroidFieldValueMap(initialCapacity);
+	}
+
+	protected static boolean JDK8_API;
+
+	static {
+		boolean jdk8_api;
+
+		try {
+			Map.class.getMethod("getOrDefault", Object.class, Object.class);
+			Map.class.getMethod("putIfAbsent", Object.class, Object.class);
+
+			jdk8_api = true;
+		} catch(ReflectiveOperationException roe){
+			jdk8_api = false;
+		}
+
+		JDK8_API = jdk8_api;
 	}
 }

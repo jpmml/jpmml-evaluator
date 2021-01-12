@@ -18,28 +18,38 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Map;
+import org.dmg.pmml.FieldName;
 
-interface JDK8Map<K, V> extends Map<K, V> {
+/**
+ * <p>
+ * Android 5.0 and 6.0 compatible implementation of {@link FieldValueMap}.
+ * </p>
+ */
+class AndroidFieldValueMap extends FieldValueMap {
+
+	AndroidFieldValueMap(){
+	}
+
+	AndroidFieldValueMap(int initialCapacity){
+		super(initialCapacity);
+	}
 
 	@Override
-	default
-	public V getOrDefault(Object key, V defaultValue){
+	public FieldValue getOrDefault(Object name, FieldValue defaultValue){
 
-		if(containsKey(key)){
-			return get(key);
+		if(containsKey(name)){
+			return get(name);
 		}
 
 		return defaultValue;
 	}
 
 	@Override
-	default
-	public V putIfAbsent(K key, V value){
-		V prevValue = get(key);
+	public FieldValue putIfAbsent(FieldName name, FieldValue value){
+		FieldValue prevValue = get(name);
 
 		if(prevValue == null){
-			return put(key, value);
+			return put(name, value);
 		}
 
 		return prevValue;
