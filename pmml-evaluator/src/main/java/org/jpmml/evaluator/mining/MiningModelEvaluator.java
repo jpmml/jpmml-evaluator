@@ -636,16 +636,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 		switch(multipleModelMethod){
 			case SELECT_FIRST:
-				if(!segmentResults.isEmpty()){
-					return segmentResults.get(0);
-				}
-				break;
 			case SELECT_ALL:
-				return selectAll(segmentResults);
 			case MODEL_CHAIN:
-				if(!segmentResults.isEmpty()){
-					return segmentResults.get(segmentResults.size() - 1);
-				}
 				break;
 			default:
 				if(!(multipleModelMethods).contains(multipleModelMethod)){
@@ -659,7 +651,16 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			return Collections.singletonMap(getTargetName(), null);
 		}
 
-		return null;
+		switch(multipleModelMethod){
+			case SELECT_FIRST:
+				return segmentResults.get(0);
+			case SELECT_ALL:
+				return selectAll(segmentResults);
+			case MODEL_CHAIN:
+				return segmentResults.get(segmentResults.size() - 1);
+			default:
+				return null;
+		}
 	}
 
 	private List<Segment> getActiveHead(List<Segment> segments){
