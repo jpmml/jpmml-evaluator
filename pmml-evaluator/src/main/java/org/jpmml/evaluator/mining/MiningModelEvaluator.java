@@ -465,6 +465,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		Segmentation segmentation = miningModel.getSegmentation();
 
+		Segmentation.MissingPredictionTreatment missingPredictionTreatment = segmentation.getMissingPredictionTreatment();
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
 
 		Model lastModel = null;
@@ -555,47 +556,71 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 			context.putResult(segmentId, segmentResult);
 
-			switch(multipleModelMethod){
-				case MODEL_CHAIN:
-					{
-						Model segmentModel = segmentModelEvaluator.getModel();
-
-						Output segmentOutput = segmentModel.getOutput();
-						if(segmentOutput == null || !segmentOutput.hasOutputFields()){
-							break;
-						}
-
-						List<org.dmg.pmml.OutputField> pmmlSegmentOutputFields = segmentOutput.getOutputFields();
-						for(org.dmg.pmml.OutputField pmmlSegmentOutputField : pmmlSegmentOutputFields){
-							FieldName name = pmmlSegmentOutputField.getName();
-							if(name == null){
-								throw new MissingAttributeException(pmmlSegmentOutputField, org.dmg.pmml.PMMLAttributes.OUTPUTFIELD_NAME);
-							}
-
-							context.putOutputField(name, pmmlSegmentOutputField);
-
-							FieldValue value;
-
-							try {
-								value = segmentContext.lookup(name);
-							} catch(MissingValueException mve){
-								throw mve.ensureContext(segment);
-							}
-
-							context.declare(name, value);
-						}
-					}
-					break;
-				default:
-					break;
-			}
-
 			List<String> segmentWarnings = segmentContext.getWarnings();
 			if(!segmentWarnings.isEmpty()){
 
 				for(String segmentWarning : segmentWarnings){
 					context.addWarning(segmentWarning);
 				}
+			}
+
+			switch(multipleModelMethod){
+				case SELECT_FIRST:
+				case SELECT_ALL:
+				case MODEL_CHAIN:
+					Object targetValue = segmentResult.getTargetValue();
+
+					if(targetValue == null){
+
+						switch(missingPredictionTreatment){
+							case RETURN_MISSING:
+								return Collections.emptyList();
+							case SKIP_SEGMENT:
+								// XXX
+								throw new UnsupportedAttributeException(segmentation, missingPredictionTreatment);
+							case CONTINUE:
+								break;
+							default:
+								throw new UnsupportedAttributeException(segmentation, missingPredictionTreatment);
+						}
+					}
+					break;
+				default:
+					break;
+			} // End switch
+
+			switch(multipleModelMethod){
+				case MODEL_CHAIN:
+					{
+						Model segmentModel = segmentModelEvaluator.getModel();
+
+						Output segmentOutput = segmentModel.getOutput();
+						if(segmentOutput != null && segmentOutput.hasOutputFields()){
+							List<org.dmg.pmml.OutputField> pmmlSegmentOutputFields = segmentOutput.getOutputFields();
+
+							for(org.dmg.pmml.OutputField pmmlSegmentOutputField : pmmlSegmentOutputFields){
+								FieldName name = pmmlSegmentOutputField.getName();
+								if(name == null){
+									throw new MissingAttributeException(pmmlSegmentOutputField, org.dmg.pmml.PMMLAttributes.OUTPUTFIELD_NAME);
+								}
+
+								context.putOutputField(name, pmmlSegmentOutputField);
+
+								FieldValue value;
+
+								try {
+									value = segmentContext.lookup(name);
+								} catch(MissingValueException mve){
+									throw mve.ensureContext(segment);
+								}
+
+								context.declare(name, value);
+							}
+						}
+					}
+					break;
+				default:
+					break;
 			}
 
 			boolean clearValues = !segmentModelEvaluator.isPure();
