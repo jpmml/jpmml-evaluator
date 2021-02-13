@@ -47,6 +47,8 @@
 		<module>pmml-evaluator-example</module>
 		<module>pmml-evaluator-extension</module>
 		<module>pmml-evaluator-kryo</module>
+		<module>pmml-evaluator-metro</module>
+		<module>pmml-evaluator-moxy</module>
 		<module>pmml-evaluator-reporting</module>
 		<module>pmml-evaluator-testing</module>
 	</modules>
@@ -82,6 +84,16 @@
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-kryo</artifactId>
+				<version>1.5-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-evaluator-metro</artifactId>
+				<version>1.5-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-evaluator-moxy</artifactId>
 				<version>1.5-SNAPSHOT</version>
 			</dependency>
 			<dependency>
@@ -124,16 +136,6 @@
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model-moxy</artifactId>
 				<version>1.5.12</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.eclipse.persistence</groupId>
-						<artifactId>org.eclipse.persistence.moxy</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.glassfish.jaxb</groupId>
-						<artifactId>jaxb-runtime</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 
 			<dependency>

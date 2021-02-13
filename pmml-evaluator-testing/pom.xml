@@ -35,14 +35,13 @@
 			<groupId>org.jpmml</groupId>
 			<artifactId>pmml-evaluator-kryo</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-model-metro</artifactId>
+			<artifactId>pmml-evaluator-metro</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-model-moxy</artifactId>
+			<artifactId>pmml-evaluator-moxy</artifactId>
 		</dependency>
 
 		<dependency>
