@@ -93,16 +93,40 @@ JPMML-Evaluator library JAR files (together with accompanying Java source and Ja
 
 The current version is **1.5.11** (12 January, 2021).
 
+### Java SE 8 ###
+
+Java SE 8 provides a JAXB runtime.
+
 ```xml
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
 	<version>1.5.11</version>
 </dependency>
+```
+
+### Java SE 9 and newer ###
+
+Java SE 9 and newer do not provide a JAXB runtime.
+A standalone application needs to be packaged with full JAXB API and implementation classes. An embedded application should consult with the application container about the availability of JAXB classes, and fill the gaps, if any.
+
+Choosing JPMML-Evaluator with [GlassFish Metro](https://metro.java.net) JAXB runtime:
+
+```xml
 <dependency>
 	<groupId>org.jpmml</groupId>
-	<artifactId>pmml-evaluator-extension</artifactId>
-	<version>1.5.11</version>
+	<artifactId>pmml-evaluator-metro</artifactId>
+	<version>1.5-SNAPSHOT</version>
+</dependency>
+```
+
+Alternatively, choosing JPMML-Evaluator with [EclipseLink MOXy](https://www.eclipse.org/eclipselink) JAXB runtime:
+
+```xml
+<dependency>
+	<groupId>org.jpmml</groupId>
+	<artifactId>pmml-evaluator-moxy</artifactId>
+	<version>1.5-SNAPSHOT</version>
 </dependency>
 ```
 
