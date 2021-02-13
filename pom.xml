@@ -200,6 +200,13 @@
 				<version>1.19</version>
 			</dependency>
 
+			<!-- Inherited from org.jpmml:pmml-model-metro and org.jpmml:pmml-model-moxy dependencies -->
+			<dependency>
+				<groupId>org.glassfish.jaxb</groupId>
+				<artifactId>jaxb-runtime</artifactId>
+				<version>2.3.3</version>
+			</dependency>
+
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
