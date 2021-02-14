@@ -8,7 +8,8 @@ org.jpmml.evaluator.nearest_neighbor.NearestNeighborModelEvaluator
 org.jpmml.evaluator.neural_network.NeuralNetworkEvaluator
 org.jpmml.evaluator.regression.RegressionModelEvaluator
 org.jpmml.evaluator.rule_set.RuleSetModelEvaluator
-org.jpmml.evaluator.scorecard.ScorecardEvaluator
+org.jpmml.evaluator.scorecard.SimpleScorecardEvaluator
+org.jpmml.evaluator.scorecard.ComplexScorecardEvaluator
 org.jpmml.evaluator.support_vector_machine.SupportVectorMachineModelEvaluator
 org.jpmml.evaluator.tree.SimpleTreeModelEvaluator 
 org.jpmml.evaluator.tree.ComplexTreeModelEvaluator 
