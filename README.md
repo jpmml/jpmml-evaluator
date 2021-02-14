@@ -108,9 +108,10 @@ Java SE 8 provides a JAXB runtime.
 ### Java SE 9 and newer ###
 
 Java SE 9 and newer do not provide a JAXB runtime.
-A standalone application needs to be packaged with full JAXB API and implementation classes. An embedded application should consult with the application container about the availability of JAXB classes, and fill the gaps, if any.
 
-Choosing JPMML-Evaluator with [GlassFish Metro](https://metro.java.net) JAXB runtime:
+A standalone application needs to be packaged with full JAXB API and implementation classes. An embedded application should consult with the intended application container regarding the availability of JAXB classes, and fill the gaps, if any.
+
+Using JPMML-Evaluator with [GlassFish Metro](https://metro.java.net) JAXB runtime (XML only):
 
 ```xml
 <dependency>
@@ -120,7 +121,7 @@ Choosing JPMML-Evaluator with [GlassFish Metro](https://metro.java.net) JAXB run
 </dependency>
 ```
 
-Alternatively, choosing JPMML-Evaluator with [EclipseLink MOXy](https://www.eclipse.org/eclipselink) JAXB runtime:
+Alternatively, using JPMML-Evaluator with [EclipseLink MOXy](https://www.eclipse.org/eclipselink) JAXB runtime (XML and JSON):
 
 ```xml
 <dependency>
