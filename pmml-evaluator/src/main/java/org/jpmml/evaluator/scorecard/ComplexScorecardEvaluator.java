@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator.scorecard;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -68,6 +69,8 @@ public class ComplexScorecardEvaluator extends ScorecardEvaluator {
 
 		Value<V> score = valueFactory.newValue(scorecard.getInitialScore());
 
+		List<PartialScore> partialScores = new ArrayList<>();
+
 		VoteAggregator<String, V> reasonCodePoints = null;
 
 		if(useReasonCodes){
@@ -89,7 +92,7 @@ public class ComplexScorecardEvaluator extends ScorecardEvaluator {
 				}
 			}
 
-			Number partialScore = null;
+			PartialScore partialScore = null;
 
 			List<Attribute> attributes = characteristic.getAttributes();
 			for(Attribute attribute : attributes){
@@ -98,12 +101,14 @@ public class ComplexScorecardEvaluator extends ScorecardEvaluator {
 					continue;
 				}
 
-				partialScore = evaluatePartialScore(attribute, context);
-				if(partialScore == null){
+				Number value = evaluatePartialScore(attribute, context);
+				if(value == null){
 					return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 				}
 
-				score.add(partialScore);
+				partialScore = new PartialScore(characteristic, attribute, value);
+
+				score.add(value);
 
 				if(useReasonCodes){
 					String reasonCode = attribute.getReasonCode();
@@ -120,10 +125,10 @@ public class ComplexScorecardEvaluator extends ScorecardEvaluator {
 					Scorecard.ReasonCodeAlgorithm reasonCodeAlgorithm = scorecard.getReasonCodeAlgorithm();
 					switch(reasonCodeAlgorithm){
 						case POINTS_ABOVE:
-							difference = Functions.SUBTRACT.evaluate(partialScore, baselineScore);
+							difference = Functions.SUBTRACT.evaluate(value, baselineScore);
 							break;
 						case POINTS_BELOW:
-							difference = Functions.SUBTRACT.evaluate(baselineScore, partialScore);
+							difference = Functions.SUBTRACT.evaluate(baselineScore, value);
 							break;
 						default:
 							throw new UnsupportedAttributeException(scorecard, reasonCodeAlgorithm);
@@ -140,10 +145,12 @@ public class ComplexScorecardEvaluator extends ScorecardEvaluator {
 				throw new UndefinedResultException()
 					.ensureContext(characteristic);
 			}
+
+			partialScores.add(partialScore);
 		}
 
 		if(useReasonCodes){
-			ReasonCodeRanking<V> result = createReasonCodeRanking(targetField, score, reasonCodePoints.sumMap());
+			ReasonCodeRanking<V> result = createReasonCodeRanking(targetField, score, partialScores, reasonCodePoints.sumMap());
 
 			return TargetUtil.evaluateRegression(targetField, result);
 		}
@@ -152,7 +159,7 @@ public class ComplexScorecardEvaluator extends ScorecardEvaluator {
 	}
 
 	static
-	private <V extends Number> ReasonCodeRanking<V> createReasonCodeRanking(TargetField targetField, Value<V> score, ValueMap<String, V> reasonCodePoints){
+	private <V extends Number> ReasonCodeRanking<V> createReasonCodeRanking(TargetField targetField, Value<V> score, List<PartialScore> partialScores, ValueMap<String, V> reasonCodePoints){
 		score = TargetUtil.evaluateRegressionInternal(targetField, score);
 
 		Collection<Map.Entry<String, Value<V>>> entrySet = reasonCodePoints.entrySet();
@@ -165,6 +172,6 @@ public class ComplexScorecardEvaluator extends ScorecardEvaluator {
 			}
 		}
 
-		return new ReasonCodeRanking<>(score, reasonCodePoints);
+		return new ReasonCodeRanking<>(score, partialScores, reasonCodePoints);
 	}
 }

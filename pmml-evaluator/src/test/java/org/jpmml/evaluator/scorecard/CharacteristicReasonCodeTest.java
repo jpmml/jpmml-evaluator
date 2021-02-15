@@ -31,6 +31,10 @@ public class CharacteristicReasonCodeTest extends ReasonCodeTest {
 	public void evaluate() throws Exception {
 		Map<FieldName, ?> result = evaluateExample();
 
+		ReasonCodeRanking<?> targetValue = (ReasonCodeRanking<?>)result.get(FieldName.create("overallScore"));
+
+		assertEquals(3, (targetValue.getPartialScores()).size());
+
 		assertEquals(29d, getOutput(result, "Final Score"));
 
 		assertEquals("RC2", getOutput(result, "Reason Code 1"));

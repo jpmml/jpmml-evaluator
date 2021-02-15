@@ -30,12 +30,15 @@ import org.jpmml.model.ToStringHelper;
 
 public class ReasonCodeRanking<V extends Number> extends Regression<V> implements HasReasonCodeRanking {
 
+	private List<PartialScore> partialScores = null;
+
 	private ValueMap<String, V> reasonCodePoints = null;
 
 
-	ReasonCodeRanking(Value<V> value, ValueMap<String, V> reasonCodePoints){
+	ReasonCodeRanking(Value<V> value, List<PartialScore> partialScores, ValueMap<String, V> reasonCodePoints){
 		super(value);
 
+		setPartialScores(partialScores);
 		setReasonCodePoints(reasonCodePoints);
 	}
 
@@ -55,6 +58,19 @@ public class ReasonCodeRanking<V extends Number> extends Regression<V> implement
 		ValueMap<String, V> reasonCodePoints = getReasonCodePoints();
 
 		return Classification.entryKeys(Classification.getWinnerList(Classification.Type.VOTE, reasonCodePoints.entrySet()));
+	}
+
+	public List<PartialScore> getPartialScores(){
+		return this.partialScores;
+	}
+
+	private void setPartialScores(List<PartialScore> partialScores){
+
+		if(partialScores == null){
+			throw new IllegalArgumentException();
+		}
+
+		this.partialScores = partialScores;
 	}
 
 	public ValueMap<String, V> getReasonCodePoints(){
