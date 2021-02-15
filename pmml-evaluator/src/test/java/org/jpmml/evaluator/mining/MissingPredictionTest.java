@@ -18,16 +18,13 @@
  */
 package org.jpmml.evaluator.mining;
 
-import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.mining.MiningModel;
-import org.dmg.pmml.mining.Segment;
-import org.dmg.pmml.mining.Segmentation;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
+import org.jpmml.evaluator.tree.NoTrueChildStrategyTransformer;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -36,15 +33,11 @@ public class MissingPredictionTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		MiningModelEvaluator evaluator = (MiningModelEvaluator)createModelEvaluator();
-
-		MiningModel miningModel = evaluator.getModel();
-
-		Segmentation segmentation = miningModel.getSegmentation();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		assertEquals(null, evaluate(evaluator, null));
 
-		segmentation.setMissingThreshold(0.25);
+		evaluator = createModelEvaluator(new MissingThresholdTransformer(0.25d));
 
 		assertEquals(null, evaluate(evaluator, 0d));
 		assertEquals(null, evaluate(evaluator, 1d));
@@ -52,13 +45,13 @@ public class MissingPredictionTest extends ModelEvaluatorTest {
 		assertEquals((Integer)1, evaluate(evaluator, 3d));
 		assertEquals((Integer)1, evaluate(evaluator, 4d));
 
-		segmentation.setMissingThreshold(0.5d);
+		evaluator = createModelEvaluator(new MissingThresholdTransformer(0.5d));
 
 		assertEquals(null, evaluate(evaluator, 1d));
 		assertEquals((Integer)1, evaluate(evaluator, 2d));
 		assertEquals((Integer)1, evaluate(evaluator, 3d));
 
-		segmentation.setMissingThreshold(0.75d);
+		evaluator = createModelEvaluator(new MissingThresholdTransformer(0.75d));
 
 		// Two votes for the missing pseudo-category vs. one vote for the "1" category
 		assertEquals(null, evaluate(evaluator, 1d));
@@ -66,12 +59,7 @@ public class MissingPredictionTest extends ModelEvaluatorTest {
 		assertEquals((Integer)1, evaluate(evaluator, 2d));
 		assertEquals((Integer)1, evaluate(evaluator, 3d));
 
-		List<Segment> segments = segmentation.getSegments();
-		for(Segment segment : segments){
-			TreeModel treeModel = (TreeModel)segment.getModel();
-
-			treeModel.setNoTrueChildStrategy(TreeModel.NoTrueChildStrategy.RETURN_LAST_PREDICTION);
-		}
+		evaluator = createModelEvaluator(new MissingThresholdTransformer(0.75d), new NoTrueChildStrategyTransformer(TreeModel.NoTrueChildStrategy.RETURN_LAST_PREDICTION));
 
 		assertEquals(null, evaluate(evaluator, null));
 

@@ -31,7 +31,7 @@ import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.tree.TreeModel;
-import org.jpmml.evaluator.HasEntityId;
+import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void returnNullPrediction() throws Exception {
-		HasEntityId targetValue = evaluate(TreeModel.NoTrueChildStrategy.RETURN_NULL_PREDICTION, 0d);
+		NodeVote targetValue = evaluate(TreeModel.NoTrueChildStrategy.RETURN_NULL_PREDICTION, 0d);
 
 		assertNull(targetValue);
 
@@ -57,7 +57,7 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void returnLastPrediction() throws Exception {
-		HasEntityId targetValue = evaluate(TreeModel.NoTrueChildStrategy.RETURN_LAST_PREDICTION, 0d);
+		NodeVote targetValue = evaluate(TreeModel.NoTrueChildStrategy.RETURN_LAST_PREDICTION, 0d);
 
 		// The root Node evaluates to true, but it cannot be returned as a result, because it does not specify a score attribute
 		assertNull(targetValue);
@@ -71,16 +71,13 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 		assertEquals("3", targetValue.getEntityId());
 	}
 
-	private HasEntityId evaluate(TreeModel.NoTrueChildStrategy noTrueChildStrategy, Double value) throws Exception {
-		TreeModelEvaluator evaluator = (TreeModelEvaluator)createModelEvaluator();
-
-		TreeModel treeModel = evaluator.getModel()
-			.setNoTrueChildStrategy(noTrueChildStrategy);
+	private NodeVote evaluate(TreeModel.NoTrueChildStrategy noTrueChildStrategy, Double value) throws Exception {
+		ModelEvaluator<?> evaluator = createModelEvaluator(new NoTrueChildStrategyTransformer(noTrueChildStrategy));
 
 		Map<FieldName, ?> arguments = createArguments("probability", value);
 
 		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
-		return (HasEntityId)results.get(evaluator.getTargetName());
+		return (NodeVote)results.get(evaluator.getTargetName());
 	}
 }

@@ -32,32 +32,36 @@ import static org.junit.Assert.assertEquals;
 abstract
 public class ModelEvaluatorTest {
 
-	public ModelEvaluator<?> createModelEvaluator() throws Exception {
-		return createModelEvaluator(getClass());
+	public ModelEvaluator<?> createModelEvaluator(PMMLTransformer<?>... transformers) throws Exception {
+		return createModelEvaluator(getClass(), transformers);
 	}
 
-	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz) throws Exception {
+	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz, PMMLTransformer<?>... transformers) throws Exception {
 		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
 
 		Configuration configuration = configurationBuilder.build();
 
-		return createModelEvaluator(clazz, configuration);
+		return createModelEvaluator(clazz, configuration, transformers);
 	}
 
-	public ModelEvaluator<?> createModelEvaluator(Configuration configuration) throws Exception {
-		return createModelEvaluator(getClass(), configuration);
+	public ModelEvaluator<?> createModelEvaluator(Configuration configuration, PMMLTransformer<?>... transformers) throws Exception {
+		return createModelEvaluator(getClass(), configuration, transformers);
 	}
 
-	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz, Configuration configuration) throws Exception {
+	public ModelEvaluator<?> createModelEvaluator(Class<? extends ModelEvaluatorTest> clazz, Configuration configuration, PMMLTransformer<?>... transformers) throws Exception {
 
 		try(InputStream is = getInputStream(clazz)){
-			return createModelEvaluator(is, configuration);
+			return createModelEvaluator(is, configuration, transformers);
 		}
 	}
 
-	public ModelEvaluator<?> createModelEvaluator(InputStream is, Configuration configuration) throws Exception {
-		ModelEvaluatorBuilder modelEvaluatorBuilder = createLoadingModelEvaluatorBuilder(configuration)
+	public ModelEvaluator<?> createModelEvaluator(InputStream is, Configuration configuration, PMMLTransformer<?>... transformers) throws Exception {
+		LoadingModelEvaluatorBuilder modelEvaluatorBuilder = createLoadingModelEvaluatorBuilder(configuration)
 			.load(is);
+
+		for(PMMLTransformer<?> transformer : transformers){
+			modelEvaluatorBuilder = modelEvaluatorBuilder.transform(transformer);
+		}
 
 		modelEvaluatorBuilder = SerializationUtil.clone(modelEvaluatorBuilder);
 

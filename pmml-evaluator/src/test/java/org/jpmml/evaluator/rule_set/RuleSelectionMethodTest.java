@@ -18,53 +18,35 @@
  */
 package org.jpmml.evaluator.rule_set;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.rule_set.RuleSelectionMethod;
-import org.dmg.pmml.rule_set.RuleSet;
-import org.dmg.pmml.rule_set.RuleSetModel;
+import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 
 abstract
 public class RuleSelectionMethodTest extends ModelEvaluatorTest {
 
-	public String getRuleId(RuleSelectionMethod.Criterion criterion, Map<FieldName, ?> arguments) throws Exception {
-		RuleSetModelEvaluator evaluator = (RuleSetModelEvaluator)createModelEvaluator();
-
-		RuleSetModel ruleSetModel = evaluator.getModel();
-
-		RuleSet ruleSet = ruleSetModel.getRuleSet();
-
-		List<RuleSelectionMethod> ruleSelectionMethods = ruleSet.getRuleSelectionMethods();
-
-		// Move the specified criterion to the first place in the list
-		for(Iterator<RuleSelectionMethod> it = ruleSelectionMethods.iterator(); it.hasNext(); ){
-			RuleSelectionMethod ruleSelectionMethod = it.next();
-
-			if((ruleSelectionMethod.getCriterion()).equals(criterion)){
-				break;
-			}
-
-			it.remove();
-		}
-
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
-
-		SimpleRuleScoreDistribution<?> targetValue = (SimpleRuleScoreDistribution<?>)results.get(evaluator.getTargetName());
-
-		return targetValue.getEntityId();
-	}
-
 	public String getScore(Map<FieldName, ?> arguments) throws Exception {
-		RuleSetModelEvaluator evaluator = (RuleSetModelEvaluator)createModelEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 
 		SimpleRuleScoreDistribution<?> targetValue = (SimpleRuleScoreDistribution<?>)results.get(evaluator.getTargetName());
 
 		return (String)targetValue.getResult();
+	}
+
+	public String getRuleId(RuleSelectionMethod.Criterion criterion, Map<FieldName, ?> arguments) throws Exception {
+		RuleSelectionMethod ruleSelectionMethod = new RuleSelectionMethod(criterion);
+
+		ModelEvaluator<?> evaluator = createModelEvaluator(new RuleSelectionMethodTransformer(ruleSelectionMethod));
+
+		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+
+		SimpleRuleScoreDistribution<?> targetValue = (SimpleRuleScoreDistribution<?>)results.get(evaluator.getTargetName());
+
+		return targetValue.getEntityId();
 	}
 }

@@ -18,14 +18,9 @@
  */
 package org.jpmml.evaluator.regression;
 
-import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.Model;
-import org.dmg.pmml.Target;
-import org.dmg.pmml.TargetValue;
-import org.dmg.pmml.Targets;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
@@ -38,8 +33,6 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 	@Test
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
-
-		Model model = evaluator.getModel();
 
 		Map<FieldName, ?> arguments = createArguments("input", null);
 
@@ -55,12 +48,7 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 		assertEquals(0.02d, getOutput(results, "P_responseYes"));
 		assertEquals(0.98d, getOutput(results, "P_responseNo"));
 
-		Targets targets = model.getTargets();
-		for(Target target : targets){
-			List<TargetValue> targetValues = target.getTargetValues();
-
-			targetValues.clear();
-		}
+		evaluator = createModelEvaluator(new RemoveTargetValuesTransformer());
 
 		results = evaluator.evaluate(arguments);
 

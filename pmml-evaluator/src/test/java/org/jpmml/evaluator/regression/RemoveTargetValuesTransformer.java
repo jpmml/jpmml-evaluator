@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2021 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -16,23 +16,39 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.scorecard;
+package org.jpmml.evaluator.regression;
 
-import java.util.Map;
+import java.util.List;
 
-import org.dmg.pmml.FieldName;
-import org.jpmml.evaluator.Evaluator;
-import org.jpmml.evaluator.ModelEvaluatorTest;
+import org.dmg.pmml.PMML;
+import org.dmg.pmml.Target;
+import org.dmg.pmml.TargetValue;
+import org.dmg.pmml.Visitor;
+import org.dmg.pmml.VisitorAction;
 import org.jpmml.evaluator.PMMLTransformer;
+import org.jpmml.model.visitors.AbstractVisitor;
 
-abstract
-public class ReasonCodeTest extends ModelEvaluatorTest {
+public class RemoveTargetValuesTransformer implements PMMLTransformer<Exception> {
 
-	public Map<FieldName, ?> evaluateExample(PMMLTransformer<?>... transformers) throws Exception {
-		Evaluator evaluator = createModelEvaluator(transformers);
+	@Override
+	public PMML apply(PMML pmml){
+		Visitor visitor = new AbstractVisitor(){
 
-		Map<FieldName, ?> arguments = createArguments("department", "engineering", "age", 25, "income", 500d);
+			@Override
+			public VisitorAction visit(Target target){
 
-		return evaluator.evaluate(arguments);
+				if(target.hasTargetValues()){
+					List<TargetValue> targetValues = target.getTargetValues();
+
+					targetValues.clear();
+				}
+
+				return super.visit(target);
+			}
+		};
+
+		visitor.applyTo(pmml);
+
+		return pmml;
 	}
 }

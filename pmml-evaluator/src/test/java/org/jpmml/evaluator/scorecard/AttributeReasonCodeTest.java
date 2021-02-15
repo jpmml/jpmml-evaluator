@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 public class AttributeReasonCodeTest extends ReasonCodeTest {
 
 	@Test
-	public void evaluate() throws Exception {
+	public void evaluateComplex() throws Exception {
 		Map<FieldName, ?> results = evaluateExample();
 
 		HasPartialScores targetValue = (HasPartialScores)results.get(FieldName.create("overallScore"));
@@ -40,5 +40,14 @@ public class AttributeReasonCodeTest extends ReasonCodeTest {
 		assertEquals("RC2_3", getOutput(results, "Reason Code 1"));
 		assertEquals("RC1", getOutput(results, "Reason Code 2"));
 		assertEquals(null, getOutput(results, "Reason Code 3"));
+	}
+
+	@Test
+	public void evaluateSimple() throws Exception {
+		Map<FieldName, ?> results = evaluateExample(new DisableReasonCodesTransformer());
+
+		Object targetValue = results.get(FieldName.create("overallScore"));
+
+		assertEquals(29d, targetValue);
 	}
 }

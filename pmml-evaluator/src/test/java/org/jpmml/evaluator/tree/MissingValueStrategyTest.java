@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.tree.TreeModel;
+import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
@@ -114,11 +115,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 	}
 
 	private NodeScoreDistribution<?> evaluate(TreeModel.MissingValueStrategy missingValueStrategy, Double missingValuePenalty, Map<FieldName, ?> arguments) throws Exception {
-		TreeModelEvaluator evaluator = (TreeModelEvaluator)createModelEvaluator();
-
-		TreeModel treeModel = evaluator.getModel()
-			.setMissingValueStrategy(missingValueStrategy)
-			.setMissingValuePenalty(missingValuePenalty);
+		ModelEvaluator<?> evaluator = createModelEvaluator(new MissingValueStrategyTransformer(missingValueStrategy, missingValuePenalty));
 
 		Map<FieldName, ?> results = evaluator.evaluate(arguments);
 

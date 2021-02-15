@@ -32,11 +32,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.InlineTable;
-import org.dmg.pmml.Row;
-import org.dmg.pmml.nearest_neighbor.NearestNeighborModel;
-import org.dmg.pmml.nearest_neighbor.TrainingInstances;
 import org.jpmml.evaluator.AffinityDistribution;
+import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
@@ -46,12 +43,9 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		NearestNeighborModelEvaluator evaluator = (NearestNeighborModelEvaluator)createModelEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator(new NumberOfNeighborsTransformer(1));
 
 		checkTargetFields(Arrays.asList("species", "species_class"), evaluator);
-
-		NearestNeighborModel nearestNeighborModel = evaluator.getModel()
-			.setNumberOfNeighbors(1); // XXX
 
 		Map<FieldName, ?> arguments = createArguments("sepal length", 7d, "sepal width", 3.2d, "petal length", 4.7d, "petal width", 1.4d);
 
@@ -71,9 +65,7 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluateFirstVsRest() throws Exception {
-		NearestNeighborModelEvaluator evaluator = (NearestNeighborModelEvaluator)createModelEvaluator();
-
-		removeRow(evaluator, 0);
+		ModelEvaluator<?> evaluator = createModelEvaluator(new RemoveTrainingInstanceTransformer(0));
 
 		Map<FieldName, ?> arguments = createArguments("sepal length", 5.1d, "sepal width", 3.5d, "petal length", 1.4d, "petal width", 0.2d);
 
@@ -100,9 +92,7 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluateLastVsRest() throws Exception {
-		NearestNeighborModelEvaluator evaluator = (NearestNeighborModelEvaluator)createModelEvaluator();
-
-		removeRow(evaluator, 149);
+		ModelEvaluator<?> evaluator = createModelEvaluator(new RemoveTrainingInstanceTransformer(149));
 
 		Map<FieldName, ?> arguments = createArguments("sepal length", 5.9d, "sepal width", 3.0d, "petal length", 5.1d, "petal width", 1.8d);
 
@@ -121,22 +111,5 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 		AffinityDistribution<?> speciesClass = (AffinityDistribution<?>)results.get(FieldName.create("species_class"));
 
 		assertEquals("Iris-virginica", speciesClass.getResult());
-	}
-
-	static
-	private void removeRow(NearestNeighborModelEvaluator evaluator, int index){
-		NearestNeighborModel nearestNeighborModel = evaluator.getModel();
-
-		TrainingInstances trainingInstances = nearestNeighborModel.getTrainingInstances();
-
-		InlineTable inlineTable = trainingInstances.getInlineTable();
-
-		List<Row> rows = inlineTable.getRows();
-
-		assertEquals(150, rows.size());
-
-		trainingInstances.setRecordCount(149);
-
-		rows.remove(index);
 	}
 }
