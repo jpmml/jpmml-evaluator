@@ -29,16 +29,16 @@ public class CharacteristicReasonCodeTest extends ReasonCodeTest {
 
 	@Test
 	public void evaluate() throws Exception {
-		Map<FieldName, ?> result = evaluateExample();
+		Map<FieldName, ?> results = evaluateExample();
 
-		ReasonCodeRanking<?> targetValue = (ReasonCodeRanking<?>)result.get(FieldName.create("overallScore"));
+		ReasonCodeRanking<?> targetValue = (ReasonCodeRanking<?>)results.get(FieldName.create("overallScore"));
 
 		assertEquals(3, (targetValue.getPartialScores()).size());
 
-		assertEquals(29d, getOutput(result, "Final Score"));
+		assertEquals(29d, getOutput(results, "Final Score"));
 
-		assertEquals("RC2", getOutput(result, "Reason Code 1"));
-		assertEquals("RC1", getOutput(result, "Reason Code 2"));
-		assertEquals(null, getOutput(result, "Reason Code 3"));
+		assertEquals("RC2", getOutput(results, "Reason Code 1"));
+		assertEquals("RC1", getOutput(results, "Reason Code 2"));
+		assertEquals(null, getOutput(results, "Reason Code 3"));
 	}
 }

@@ -38,22 +38,22 @@ public class ModelChainEfficientCompositionTest extends ModelChainTest {
 
 	@Test
 	public void evaluateSetosa() throws Exception {
-		Map<FieldName, ?> result = evaluateExample(1.4, 0.2);
+		Map<FieldName, ?> results = evaluateExample(1.4, 0.2);
 
-		assertEquals(0.3, getOutput(result, "Setosa Pollen Index"));
+		assertEquals(0.3, getOutput(results, "Setosa Pollen Index"));
 	}
 
 	@Test
 	public void evaluateVersicolor() throws Exception {
-		Map<FieldName, ?> result = evaluateExample(4.7, 1.4);
+		Map<FieldName, ?> results = evaluateExample(4.7, 1.4);
 
-		assertEquals(0.2, getOutput(result, "Versicolor Pollen Index"));
+		assertEquals(0.2, getOutput(results, "Versicolor Pollen Index"));
 	}
 
 	@Test
 	public void evaluateVirginica() throws Exception {
-		Map<FieldName, ?> result = evaluateExample(6, 2.5);
+		Map<FieldName, ?> results = evaluateExample(6, 2.5);
 
-		assertEquals(0.1, getOutput(result, "Virginica Pollen Index"));
+		assertEquals(0.1, getOutput(results, "Virginica Pollen Index"));
 	}
 }

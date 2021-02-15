@@ -53,10 +53,10 @@ public class ModelChainSimpleTest extends ModelChainTest {
 
 	@Test
 	public void evaluateSetosa() throws Exception {
-		Map<FieldName, ?> result = evaluateExample(1.4, 0.2);
+		Map<FieldName, ?> results = evaluateExample(1.4, 0.2);
 
-		assertEquals(1 + 1, result.size());
+		assertEquals(1 + 1, results.size());
 
-		assertEquals(0.8d + 0.3d, getTarget(result, "PollenIndex"));
+		assertEquals(0.8d + 0.3d, getTarget(results, "PollenIndex"));
 	}
 }

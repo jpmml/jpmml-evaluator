@@ -44,34 +44,34 @@ public class ModelChainCompositionTest extends ModelChainTest {
 
 	@Test
 	public void evaluateSetosa() throws Exception {
-		Map<FieldName, ?> result = evaluateExample(1.4, 0.2);
+		Map<FieldName, ?> results = evaluateExample(1.4, 0.2);
 
-		assertEquals(0.3, getOutput(result, "Setosa Pollen Index"));
-		assertEquals("2.1", getOutput(result, "Segment Id"));
-		assertEquals("2", getOutput(result, "Class Node"));
-		assertEquals("setosa", getOutput(result, "Class Score"));
-		assertEquals("SE", getOutput(result, "Class Score Code"));
+		assertEquals(0.3, getOutput(results, "Setosa Pollen Index"));
+		assertEquals("2.1", getOutput(results, "Segment Id"));
+		assertEquals("2", getOutput(results, "Class Node"));
+		assertEquals("setosa", getOutput(results, "Class Score"));
+		assertEquals("SE", getOutput(results, "Class Score Code"));
 	}
 
 	@Test
 	public void evaluateVersicolor() throws Exception {
-		Map<FieldName, ?> result = evaluateExample(4.7, 1.4);
+		Map<FieldName, ?> results = evaluateExample(4.7, 1.4);
 
-		assertEquals(0.2, getOutput(result, "Versicolor Pollen Index"));
-		assertEquals("2.2", getOutput(result, "Segment Id"));
-		assertEquals("4", getOutput(result, "Class Node"));
-		assertEquals("versicolor", getOutput(result, "Class Score"));
-		assertEquals("VE", getOutput(result, "Class Score Code"));
+		assertEquals(0.2, getOutput(results, "Versicolor Pollen Index"));
+		assertEquals("2.2", getOutput(results, "Segment Id"));
+		assertEquals("4", getOutput(results, "Class Node"));
+		assertEquals("versicolor", getOutput(results, "Class Score"));
+		assertEquals("VE", getOutput(results, "Class Score Code"));
 	}
 
 	@Test
 	public void evaluateVirginica() throws Exception {
-		Map<FieldName, ?> result = evaluateExample(6, 2.5);
+		Map<FieldName, ?> results = evaluateExample(6, 2.5);
 
-		assertEquals(0.1, getOutput(result, "Virginica Pollen Index"));
-		assertEquals("2.3", getOutput(result, "Segment Id"));
-		assertEquals("5", getOutput(result, "Class Node"));
-		assertEquals("virginica", getOutput(result, "Class Score"));
-		assertEquals("VI", getOutput(result, "Class Score Code"));
+		assertEquals(0.1, getOutput(results, "Virginica Pollen Index"));
+		assertEquals("2.3", getOutput(results, "Segment Id"));
+		assertEquals("5", getOutput(results, "Class Node"));
+		assertEquals("virginica", getOutput(results, "Class Score"));
+		assertEquals("VI", getOutput(results, "Class Score Code"));
 	}
 }
