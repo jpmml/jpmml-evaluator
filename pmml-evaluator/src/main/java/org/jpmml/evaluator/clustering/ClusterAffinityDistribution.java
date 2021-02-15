@@ -61,6 +61,10 @@ public class ClusterAffinityDistribution<V extends Number> extends EntityClassif
 	public String getDisplayValue(){
 		Cluster cluster = getEntity();
 
+		if(cluster == null){
+			throw new IllegalStateException();
+		}
+
 		return cluster.getName();
 	}
 

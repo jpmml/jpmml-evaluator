@@ -59,6 +59,10 @@ public class EntityClassification<E extends Entity<String>, K, V extends Number>
 	public String getEntityId(){
 		E entity = getEntity();
 
+		if(entity == null){
+			throw new IllegalStateException();
+		}
+
 		return EntityUtil.getId(entity, this);
 	}
 

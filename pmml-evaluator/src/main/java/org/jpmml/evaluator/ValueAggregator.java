@@ -125,7 +125,7 @@ public class ValueAggregator<V extends Number> {
 	public Value<V> weightedSum(){
 
 		if(this.weights == null || this.weightedValues == null){
-			throw new IllegalArgumentException();
+			throw new IllegalStateException();
 		}
 
 		return this.weightedValues.sum();
