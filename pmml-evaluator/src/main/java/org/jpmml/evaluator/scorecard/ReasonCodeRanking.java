@@ -19,6 +19,7 @@
 package org.jpmml.evaluator.scorecard;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.Classification.Type;
@@ -38,8 +39,8 @@ public class ReasonCodeRanking<V extends Number> extends Regression<V> implement
 	ReasonCodeRanking(Value<V> value, List<PartialScore> partialScores, ValueMap<String, V> reasonCodePoints){
 		super(value);
 
-		setPartialScores(partialScores);
-		setReasonCodePoints(reasonCodePoints);
+		setPartialScores(Objects.requireNonNull(partialScores));
+		setReasonCodePoints(Objects.requireNonNull(reasonCodePoints));
 	}
 
 	@Override
@@ -65,11 +66,6 @@ public class ReasonCodeRanking<V extends Number> extends Regression<V> implement
 	}
 
 	private void setPartialScores(List<PartialScore> partialScores){
-
-		if(partialScores == null){
-			throw new IllegalArgumentException();
-		}
-
 		this.partialScores = partialScores;
 	}
 
@@ -78,11 +74,6 @@ public class ReasonCodeRanking<V extends Number> extends Regression<V> implement
 	}
 
 	private void setReasonCodePoints(ValueMap<String, V> reasonCodePoints){
-
-		if(reasonCodePoints == null){
-			throw new IllegalArgumentException();
-		}
-
 		this.reasonCodePoints = reasonCodePoints;
 	}
 }

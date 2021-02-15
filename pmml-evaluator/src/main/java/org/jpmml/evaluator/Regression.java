@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Objects;
+
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.MiningFunction;
 
@@ -32,7 +34,7 @@ public class Regression<V extends Number> extends AbstractComputable implements 
 
 
 	protected Regression(Value<V> value){
-		setValue(value);
+		setValue(Objects.requireNonNull(value));
 	}
 
 	@Override
@@ -74,11 +76,6 @@ public class Regression<V extends Number> extends AbstractComputable implements 
 	}
 
 	private void setValue(Value<V> value){
-
-		if(value == null){
-			throw new IllegalArgumentException();
-		}
-
 		this.value = value;
 	}
 }

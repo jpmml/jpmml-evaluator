@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator.tree;
 
+import java.util.Objects;
+
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.tree.Node;
 import org.jpmml.evaluator.EntityUtil;
@@ -33,7 +35,7 @@ public class NodeVote extends Vote implements HasEntityRegistry<Node>, HasDecisi
 
 
 	NodeVote(Node node){
-		setNode(node);
+		setNode(Objects.requireNonNull(node));
 	}
 
 	@Override
@@ -66,11 +68,6 @@ public class NodeVote extends Vote implements HasEntityRegistry<Node>, HasDecisi
 	}
 
 	private void setNode(Node node){
-
-		if(node == null){
-			throw new IllegalArgumentException();
-		}
-
 		this.node = node;
 	}
 }

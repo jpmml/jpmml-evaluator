@@ -19,6 +19,7 @@
 package org.jpmml.evaluator.tree;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import org.dmg.pmml.DataType;
@@ -46,7 +47,7 @@ public class NodeScoreDistribution<V extends Number> extends Classification<Obje
 	NodeScoreDistribution(ValueMap<Object, V> probabilities,  Node node){
 		super(Type.PROBABILITY, probabilities);
 
-		setNode(node);
+		setNode(Objects.requireNonNull(node));
 	}
 
 	@Override
@@ -127,11 +128,6 @@ public class NodeScoreDistribution<V extends Number> extends Classification<Obje
 	}
 
 	private void setNode(Node node){
-
-		if(node == null){
-			throw new IllegalArgumentException();
-		}
-
 		this.node = node;
 	}
 
@@ -140,11 +136,6 @@ public class NodeScoreDistribution<V extends Number> extends Classification<Obje
 	}
 
 	private void setConfidences(ValueMap<Object, V> confidences){
-
-		if(confidences == null){
-			throw new IllegalArgumentException();
-		}
-
 		this.confidences = confidences;
 	}
 }

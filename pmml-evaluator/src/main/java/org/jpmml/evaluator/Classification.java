@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
@@ -45,8 +46,8 @@ public class Classification<K, V extends Number> extends AbstractComputable impl
 
 
 	protected Classification(Type type, ValueMap<K, V> values){
-		setType(type);
-		setValues(values);
+		setType(Objects.requireNonNull(type));
+		setValues(Objects.requireNonNull(values));
 	}
 
 	@Override
@@ -168,11 +169,6 @@ public class Classification<K, V extends Number> extends AbstractComputable impl
 	}
 
 	private void setType(Type type){
-
-		if(type == null){
-			throw new IllegalArgumentException();
-		}
-
 		this.type = type;
 	}
 
@@ -181,11 +177,6 @@ public class Classification<K, V extends Number> extends AbstractComputable impl
 	}
 
 	private void setValues(ValueMap<K, V> values){
-
-		if(values == null){
-			throw new IllegalArgumentException();
-		}
-
 		this.values = values;
 	}
 

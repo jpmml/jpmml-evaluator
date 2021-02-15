@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator.tree;
 
+import java.util.Objects;
+
 import org.dmg.pmml.tree.Node;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.HasEntityRegistry;
@@ -34,7 +36,7 @@ public class NodeScore<V extends Number> extends Regression<V> implements HasEnt
 	NodeScore(Value<V> value, Node node){
 		super(value);
 
-		setNode(node);
+		setNode(Objects.requireNonNull(node));
 	}
 
 	@Override
@@ -58,11 +60,6 @@ public class NodeScore<V extends Number> extends Regression<V> implements HasEnt
 	}
 
 	private void setNode(Node node){
-
-		if(node == null){
-			throw new IllegalArgumentException();
-		}
-
 		this.node = node;
 	}
 }

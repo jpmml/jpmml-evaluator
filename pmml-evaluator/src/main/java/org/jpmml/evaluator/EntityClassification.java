@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Objects;
+
 import org.dmg.pmml.Entity;
 import org.jpmml.model.ToStringHelper;
 
@@ -45,7 +47,7 @@ public class EntityClassification<E extends Entity<String>, K, V extends Number>
 		Type type = getType();
 
 		if(this.entityValue == null || type.compareValues(value, this.entityValue) > 0){
-			setEntity(entity);
+			setEntity(Objects.requireNonNull(entity));
 
 			this.entityValue = value;
 		}
@@ -65,11 +67,6 @@ public class EntityClassification<E extends Entity<String>, K, V extends Number>
 	}
 
 	protected void setEntity(E entity){
-
-		if(entity == null){
-			throw new IllegalArgumentException();
-		}
-
 		this.entity = entity;
 	}
 }

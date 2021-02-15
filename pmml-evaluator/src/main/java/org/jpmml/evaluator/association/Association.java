@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.OutputField;
@@ -45,10 +46,10 @@ public class Association extends AbstractComputable implements HasEntityRegistry
 
 
 	protected Association(List<AssociationRule> associationRules, BitSet antecedentFlags, BitSet consequentFlags){
-		setAssociationRules(associationRules);
+		setAssociationRules(Objects.requireNonNull(associationRules));
 
-		setAntecedentFlags(antecedentFlags);
-		setConsequentFlags(consequentFlags);
+		setAntecedentFlags(Objects.requireNonNull(antecedentFlags));
+		setConsequentFlags(Objects.requireNonNull(consequentFlags));
 	}
 
 	/**
@@ -114,11 +115,6 @@ public class Association extends AbstractComputable implements HasEntityRegistry
 	}
 
 	private void setAssociationRules(List<AssociationRule> associationRules){
-
-		if(associationRules == null){
-			throw new IllegalArgumentException();
-		}
-
 		this.associationRules = associationRules;
 	}
 
@@ -127,11 +123,6 @@ public class Association extends AbstractComputable implements HasEntityRegistry
 	}
 
 	private void setAntecedentFlags(BitSet antecedentFlags){
-
-		if(antecedentFlags == null){
-			throw new IllegalArgumentException();
-		}
-
 		this.antecedentFlags = antecedentFlags;
 	}
 
@@ -140,11 +131,6 @@ public class Association extends AbstractComputable implements HasEntityRegistry
 	}
 
 	private void setConsequentFlags(BitSet consequentFlags){
-
-		if(consequentFlags == null){
-			throw new IllegalArgumentException();
-		}
-
 		this.consequentFlags = consequentFlags;
 	}
 }
