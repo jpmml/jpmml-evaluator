@@ -29,7 +29,7 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.model.ToStringHelper;
 
-public class ReasonCodeRanking<V extends Number> extends Regression<V> implements HasReasonCodeRanking {
+public class ReasonCodeRanking<V extends Number> extends Regression<V> implements HasReasonCodeRanking, HasPartialScores {
 
 	private List<PartialScore> partialScores = null;
 
@@ -61,6 +61,7 @@ public class ReasonCodeRanking<V extends Number> extends Regression<V> implement
 		return Classification.entryKeys(Classification.getWinnerList(Classification.Type.VOTE, reasonCodePoints.entrySet()));
 	}
 
+	@Override
 	public List<PartialScore> getPartialScores(){
 		return this.partialScores;
 	}

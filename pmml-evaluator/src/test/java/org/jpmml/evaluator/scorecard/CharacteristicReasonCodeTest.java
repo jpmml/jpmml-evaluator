@@ -31,7 +31,7 @@ public class CharacteristicReasonCodeTest extends ReasonCodeTest {
 	public void evaluate() throws Exception {
 		Map<FieldName, ?> results = evaluateExample();
 
-		ReasonCodeRanking<?> targetValue = (ReasonCodeRanking<?>)results.get(FieldName.create("overallScore"));
+		HasPartialScores targetValue = (HasPartialScores)results.get(FieldName.create("overallScore"));
 
 		assertEquals(3, (targetValue.getPartialScores()).size());
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2021 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,27 +18,11 @@
  */
 package org.jpmml.evaluator.scorecard;
 
-import java.util.Map;
+import java.util.List;
 
-import org.dmg.pmml.FieldName;
-import org.junit.Test;
+import org.jpmml.evaluator.ResultFeature;
 
-import static org.junit.Assert.assertEquals;
+public interface HasPartialScores extends ResultFeature {
 
-public class AttributeReasonCodeTest extends ReasonCodeTest {
-
-	@Test
-	public void evaluate() throws Exception {
-		Map<FieldName, ?> results = evaluateExample();
-
-		HasPartialScores targetValue = (HasPartialScores)results.get(FieldName.create("overallScore"));
-
-		assertEquals(3, (targetValue.getPartialScores()).size());
-
-		assertEquals(29d, getOutput(results, "Final Score"));
-
-		assertEquals("RC2_3", getOutput(results, "Reason Code 1"));
-		assertEquals("RC1", getOutput(results, "Reason Code 2"));
-		assertEquals(null, getOutput(results, "Reason Code 3"));
-	}
+	List<PartialScore> getPartialScores();
 }
