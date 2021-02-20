@@ -209,6 +209,8 @@ public class ExpressionUtil {
 		Object value = constant.getValue();
 
 		DataType dataType = constant.getDataType();
+
+		// The dataType attribute is set
 		if(dataType != null){
 
 			if(isEmptyContent(value)){
@@ -224,9 +226,11 @@ public class ExpressionUtil {
 			}
 		} else
 
+		// The dataType attribute is not set
 		{
+			// "If the content is empty, then the constant will be interpreted as an empty string"
 			if(isEmptyContent(value)){
-				return FieldValues.MISSING_VALUE;
+				return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, "");
 			}
 
 			dataType = TypeUtil.getConstantDataType(value);

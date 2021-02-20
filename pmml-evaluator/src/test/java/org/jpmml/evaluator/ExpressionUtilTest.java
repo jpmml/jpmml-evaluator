@@ -56,8 +56,11 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateConstant(){
-		Constant emptyString = new Constant()
-			.setDataType(DataType.STRING);
+		Constant emptyString = new Constant();
+
+		assertEquals("", evaluate(emptyString));
+
+		emptyString.setDataType(DataType.STRING);
 
 		assertEquals("", evaluate(emptyString));
 
@@ -73,6 +76,11 @@ public class ExpressionUtilTest {
 		stringThree.setMissing(true);
 
 		assertEquals(null, evaluate(stringThree));
+
+		Constant emptyInteger = new Constant()
+			.setDataType(DataType.INTEGER);
+
+		assertEquals(null, evaluate(emptyInteger));
 
 		Constant integerThree = new Constant("3")
 			.setDataType(DataType.INTEGER);
