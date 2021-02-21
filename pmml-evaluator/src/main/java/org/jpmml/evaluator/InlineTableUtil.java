@@ -132,7 +132,7 @@ public class InlineTableUtil {
 	}
 
 	static
-	private String parseColumn(QName xmlName){
+	public String parseColumn(QName xmlName){
 		String prefix = xmlName.getPrefix();
 		String localPart = xmlName.getLocalPart();
 

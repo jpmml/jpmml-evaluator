@@ -18,22 +18,28 @@
  */
 package org.jpmml.evaluator.visitors;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.ImmutableSet;
 import org.dmg.pmml.Array;
+import org.dmg.pmml.Cell;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.FieldColumnPair;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Header;
+import org.dmg.pmml.InlineTable;
+import org.dmg.pmml.MapValues;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.Row;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.TransformationDictionary;
@@ -46,7 +52,10 @@ import org.dmg.pmml.tree.BranchNode;
 import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
+import org.jpmml.evaluator.InlineTableUtil;
 import org.jpmml.evaluator.RichComplexArray;
+import org.jpmml.model.inlinetable.InputCell;
+import org.jpmml.model.inlinetable.OutputCell;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -66,6 +75,28 @@ public class ValueParserTest {
 		DataDictionary dataDictionary = new DataDictionary()
 			.addDataFields(dataField);
 
+		Cell inputCell = new InputCell()
+			.setValue("true");
+
+		Cell outputCell = new OutputCell()
+			.setValue("1");
+
+		InlineTable inlineTable = new InlineTable()
+			.addRows(new Row(Arrays.asList(inputCell, outputCell)));
+
+		FieldColumnPair fieldColumnPair = new FieldColumnPair()
+			.setField(dataField.getName())
+			.setColumn(InlineTableUtil.parseColumn(inputCell.getName()));
+
+		MapValues mapValues = new MapValues(InlineTableUtil.parseColumn(outputCell.getName()), null, inlineTable)
+			.setDefaultValue("0")
+			.addFieldColumnPairs(fieldColumnPair);
+
+		DerivedField derivedField = new DerivedField(FieldName.create("double(x1)"), OpType.CATEGORICAL, DataType.DOUBLE, mapValues);
+
+		TransformationDictionary transformationDictionary = new TransformationDictionary()
+			.addDerivedFields(derivedField);
+
 		CategoricalPredictor falseTerm = new CategoricalPredictor(dataField.getName(), "false", -1d);
 		CategoricalPredictor trueTerm = new CategoricalPredictor(dataField.getName(), "true", 1d);
 
@@ -83,6 +114,7 @@ public class ValueParserTest {
 			.addRegressionTables(regressionTable);
 
 		PMML pmml = new PMML(Version.PMML_4_4.getVersion(), new Header(), dataDictionary)
+			.setTransformationDictionary(transformationDictionary)
 			.addModels(regressionModel);
 
 		List<DataField> dataFields = dataDictionary.getDataFields();
@@ -96,6 +128,11 @@ public class ValueParserTest {
 		assertEquals("true", trueValue.getValue());
 		assertEquals("N/A", invalidValue.getValue());
 
+		assertEquals("true", inputCell.getValue());
+		assertEquals("1", outputCell.getValue());
+
+		assertEquals("0", mapValues.getDefaultValue());
+
 		assertEquals("false", falseTerm.getValue());
 		assertEquals("true", trueTerm.getValue());
 
@@ -104,11 +141,18 @@ public class ValueParserTest {
 
 		dataField.setDataType(DataType.BOOLEAN);
 
+		mapValues.setDataType(DataType.FLOAT);
+
 		parser.applyTo(pmml);
 
 		assertEquals(Boolean.FALSE, falseValue.getValue());
 		assertEquals(Boolean.TRUE, trueValue.getValue());
 		assertEquals("N/A", invalidValue.getValue());
+
+		assertEquals(Boolean.TRUE, inputCell.getValue());
+		assertEquals(1f, outputCell.getValue());
+
+		assertEquals(0f, mapValues.getDefaultValue());
 
 		assertEquals(Boolean.FALSE, falseTerm.getValue());
 		assertEquals(Boolean.TRUE, trueTerm.getValue());

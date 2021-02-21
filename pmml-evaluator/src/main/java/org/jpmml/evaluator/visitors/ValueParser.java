@@ -18,30 +18,37 @@
  */
 package org.jpmml.evaluator.visitors;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import org.dmg.pmml.Array;
+import org.dmg.pmml.Cell;
 import org.dmg.pmml.Constant;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Discretize;
 import org.dmg.pmml.DiscretizeBin;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.Field;
+import org.dmg.pmml.FieldColumnPair;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.HasDataType;
 import org.dmg.pmml.HasDefaultValue;
 import org.dmg.pmml.HasFieldReference;
 import org.dmg.pmml.HasMapMissingTo;
+import org.dmg.pmml.HasTable;
 import org.dmg.pmml.HasValue;
+import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PMMLElements;
 import org.dmg.pmml.PMMLObject;
+import org.dmg.pmml.Row;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.Value;
@@ -55,6 +62,7 @@ import org.dmg.pmml.naive_bayes.PairCounts;
 import org.dmg.pmml.regression.CategoricalPredictor;
 import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.evaluator.ExpressionUtil;
+import org.jpmml.evaluator.InlineTableUtil;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.RichComplexArray;
@@ -151,6 +159,40 @@ public class ValueParser extends AbstractParser {
 	@Override
 	public VisitorAction visit(MapValues mapValues){
 		parseExpressionValues(mapValues);
+
+		Map<String, DataType> dataTypes = new HashMap<>();
+
+		String outputColumn = mapValues.getOutputColumn();
+		if(outputColumn == null){
+			throw new MissingAttributeException(mapValues, PMMLAttributes.MAPVALUES_OUTPUTCOLUMN);
+		}
+
+		DataType outputDataType = mapValues.getDataType();
+		if(outputDataType != null){
+			dataTypes.put(outputColumn, outputDataType);
+		} // End if
+
+		if(mapValues.hasFieldColumnPairs()){
+			List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
+
+			for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
+				FieldName name = fieldColumnPair.getField();
+				if(name == null){
+					throw new MissingAttributeException(fieldColumnPair, PMMLAttributes.FIELDCOLUMNPAIR_FIELD);
+				}
+
+				String column = fieldColumnPair.getColumn();
+				if(column == null){
+					throw new MissingAttributeException(fieldColumnPair, PMMLAttributes.FIELDCOLUMNPAIR_COLUMN);
+				}
+
+				DataType dataType = resolveDataType(name);
+
+				dataTypes.put(column, dataType);
+			}
+		}
+
+		parseCellValues(mapValues, dataTypes);
 
 		return super.visit(mapValues);
 	}
@@ -318,6 +360,36 @@ public class ValueParser extends AbstractParser {
 				mapMissingTo = parseOrCast(dataType, mapMissingTo);
 
 				expression.setMapMissingTo(mapMissingTo);
+			}
+		}
+	}
+
+	private <E extends PMMLObject & HasTable<E>> void parseCellValues(E hasTable, Map<String, DataType> dataTypes){
+		InlineTable inlineTable = InlineTableUtil.getInlineTable(hasTable);
+
+		if(inlineTable != null && inlineTable.hasRows()){
+			List<Row> rows = inlineTable.getRows();
+
+			for(Row row : rows){
+				List<Object> cells = row.getContent();
+
+				for(Object cell : cells){
+
+					if(cell instanceof Cell){
+						Cell pmmlCell = (Cell)cell;
+
+						String column = InlineTableUtil.parseColumn(pmmlCell.getName());
+
+						DataType dataType = dataTypes.get(column);
+						if(dataType != null){
+							Object value = pmmlCell.getValue();
+
+							value = parseOrCast(dataType, value);
+
+							pmmlCell.setValue(value);
+						}
+					}
+				}
 			}
 		}
 	}
