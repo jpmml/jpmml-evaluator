@@ -33,6 +33,7 @@ import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.HasDataType;
 import org.dmg.pmml.HasDefaultValue;
+import org.dmg.pmml.HasFieldReference;
 import org.dmg.pmml.HasMapMissingTo;
 import org.dmg.pmml.HasValue;
 import org.dmg.pmml.MapValues;
@@ -81,12 +82,7 @@ public class ValueParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(CategoricalPredictor categoricalPredictor){
-		FieldName name = categoricalPredictor.getField();
-		if(name == null){
-			throw new MissingAttributeException(categoricalPredictor, org.dmg.pmml.regression.PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
-		}
-
-		parseValue(name, categoricalPredictor);
+		parseValue(categoricalPredictor);
 
 		return super.visit(categoricalPredictor);
 	}
@@ -188,12 +184,7 @@ public class ValueParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(NormDiscrete normDiscrete){
-		FieldName name = normDiscrete.getField();
-		if(name == null){
-			throw new MissingAttributeException(normDiscrete, PMMLAttributes.NORMDISCRETE_FIELD);
-		}
-
-		parseValue(name, normDiscrete);
+		parseValue(normDiscrete);
 
 		return super.visit(normDiscrete);
 	}
@@ -205,25 +196,16 @@ public class ValueParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(PPCell ppCell){
-		FieldName name = ppCell.getField();
-		if(name == null){
-			throw new MissingAttributeException(ppCell, org.dmg.pmml.general_regression.PMMLAttributes.PPCELL_FIELD);
-		}
-
-		parseValue(name, ppCell);
+		parseValue(ppCell);
 
 		return super.visit(ppCell);
 	}
 
 	@Override
 	public VisitorAction visit(SimplePredicate simplePredicate){
-		FieldName name = simplePredicate.getField();
-		if(name == null){
-			throw new MissingAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_FIELD);
-		} // End if
 
 		if(simplePredicate.hasValue()){
-			parseValue(name, simplePredicate);
+			parseValue(simplePredicate);
 		}
 
 		return super.visit(simplePredicate);
@@ -302,7 +284,12 @@ public class ValueParser extends AbstractParser {
 		return super.visit(value);
 	}
 
-	private <E extends PMMLObject & HasValue<E>> void parseValue(FieldName name, E hasValue){
+	private <E extends PMMLObject & HasFieldReference<E> & HasValue<E>> void parseValue(E hasValue){
+		FieldName name = hasValue.getField();
+		if(name == null){
+			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(hasValue.getClass()) + "@field"), hasValue);
+		}
+
 		Object value = hasValue.getValue();
 		if(value == null){
 			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(hasValue.getClass()) + "@value"), hasValue);
