@@ -178,13 +178,21 @@ Target value types:
     * Class `org.jpmml.evaluator.Regression`
     * Class `org.jpmml.evaluator.Vote`
 * Interface `org.jpmml.evaluator.ResultFeature`
-  * Marker interface `org.jpmml.evaluator.HasCategoricalResult`
-    * Marker interface `org.jpmml.evaluator.HasAffinity`
-    * Marker interface `org.jpmml.evaluator.HasConfidence`
-    * Marker interface `org.jpmml.evaluator.HasProbability`
-  * Marker interface `org.jpmml.evaluator.HasDecisionPath`
-  * Marker interface `org.jpmml.evaluator.HasEntityId`
-  * Marker interface `org.jpmml.evaluator.HasPrediction`
+  * Interface `org.jpmml.evaluator.HasCategoricalResult`
+    * Interface `org.jpmml.evaluator.HasAffinity`
+      * Interface `org.jpmml.evaluator.HasAffinityRanking`
+    * Interface `org.jpmml.evaluator.HasConfidence`
+    * Interface `org.jpmml.evaluator.HasProbability`
+  * Interface `org.jpmml.evaluator.HasDisplayValue`
+  * Interface `org.jpmml.evaluator.HasEntityId`
+    * Interface `org.jpmml.evaluator.HasEntityAffinity`
+    * Interface `org.jpmml.evaluator.HasEntityIdRanking`
+  * Interface `org.jpmml.evaluator.HasPrediction`
+  * Interface `org.jpmml.evaluator.HasReasonCodeRanking`
+  * Interface `org.jpmml.evaluator.HasRuleValues`
+  * Interface `org.jpmml.evaluator.mining.HasSegmentation`
+  * Interface `org.jpmml.evaluator.scorecard.HasPartialScores`
+  * Interface `org.jpmml.evaluator.tree.HasDecisionPath`
 * Abstract class `org.jpmml.evaluator.Report`
 * Utility class `org.jpmml.evaluator.ReportUtil`
 
