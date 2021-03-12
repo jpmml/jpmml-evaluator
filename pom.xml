@@ -10,7 +10,7 @@
 
 	<groupId>org.jpmml</groupId>
 	<artifactId>jpmml-evaluator</artifactId>
-	<version>1.5.14</version>
+	<version>1.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>JPMML-Evaluator</name>
@@ -69,47 +69,47 @@
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator</artifactId>
-				<version>1.5.14</version>
+				<version>1.5-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-example</artifactId>
-				<version>1.5.14</version>
+				<version>1.5-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-extension</artifactId>
-				<version>1.5.14</version>
+				<version>1.5-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-kryo</artifactId>
-				<version>1.5.14</version>
+				<version>1.5-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-metro</artifactId>
-				<version>1.5.14</version>
+				<version>1.5-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-moxy</artifactId>
-				<version>1.5.14</version>
+				<version>1.5-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-reporting</artifactId>
-				<version>1.5.14</version>
+				<version>1.5-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-reporting-processor</artifactId>
-				<version>1.5.14</version>
+				<version>1.5-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-testing</artifactId>
-				<version>1.5.14</version>
+				<version>1.5-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
