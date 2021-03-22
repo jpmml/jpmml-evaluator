@@ -98,7 +98,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 		TargetField targetField = getTargetField();
 
-		Value<V> score = valueFactory.newValue(scorecard.getInitialScore());
+		Value<V> value = valueFactory.newValue(scorecard.getInitialScore());
 
 		List<PartialScore> partialScores = new ArrayList<>();
 
@@ -128,14 +128,14 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 					continue;
 				}
 
-				Number value = evaluatePartialScore(attribute, context);
-				if(value == null){
+				Number score = evaluatePartialScore(attribute, context);
+				if(score == null){
 					return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 				}
 
-				partialScore = new PartialScore(characteristic, attribute, value);
+				partialScore = new PartialScore(characteristic, attribute, score);
 
-				score.add(value);
+				value.add(score);
 
 				if(useReasonCodes){
 					String reasonCode = attribute.getReasonCode(characteristic.getReasonCode());
@@ -148,10 +148,10 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 					Scorecard.ReasonCodeAlgorithm reasonCodeAlgorithm = scorecard.getReasonCodeAlgorithm();
 					switch(reasonCodeAlgorithm){
 						case POINTS_ABOVE:
-							difference = Functions.SUBTRACT.evaluate(value, baselineScore);
+							difference = Functions.SUBTRACT.evaluate(score, baselineScore);
 							break;
 						case POINTS_BELOW:
-							difference = Functions.SUBTRACT.evaluate(baselineScore, value);
+							difference = Functions.SUBTRACT.evaluate(baselineScore, score);
 							break;
 						default:
 							throw new UnsupportedAttributeException(scorecard, reasonCodeAlgorithm);
@@ -173,12 +173,12 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		}
 
 		if(useReasonCodes){
-			ComplexScorecardScore<V> result = createComplexScorecardScore(targetField, score, partialScores, reasonCodePoints.sumMap());
+			ComplexScorecardScore<V> result = createComplexScorecardScore(targetField, value, partialScores, reasonCodePoints.sumMap());
 
 			return TargetUtil.evaluateRegression(targetField, result);
 		}
 
-		Regression<V> result = createSimpleScorecardScore(targetField, score, partialScores);
+		Regression<V> result = createSimpleScorecardScore(targetField, value, partialScores);
 
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
@@ -208,26 +208,28 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 	}
 
 	static
-	private <V extends Number> SimpleScorecardScore<V> createSimpleScorecardScore(TargetField targetField, Value<V> score, List<PartialScore> partialScores){
-		score = TargetUtil.evaluateRegressionInternal(targetField, score);
+	private <V extends Number> SimpleScorecardScore<V> createSimpleScorecardScore(TargetField targetField, Value<V> value, List<PartialScore> partialScores){
+		value = TargetUtil.evaluateRegressionInternal(targetField, value);
 
-		return new SimpleScorecardScore<>(score, partialScores);
+		return new SimpleScorecardScore<>(value, partialScores);
 	}
 
 	static
-	private <V extends Number> ComplexScorecardScore<V> createComplexScorecardScore(TargetField targetField, Value<V> score, List<PartialScore> partialScores, ValueMap<String, V> reasonCodePoints){
-		score = TargetUtil.evaluateRegressionInternal(targetField, score);
+	private <V extends Number> ComplexScorecardScore<V> createComplexScorecardScore(TargetField targetField, Value<V> value, List<PartialScore> partialScores, ValueMap<String, V> reasonCodePoints){
+		value = TargetUtil.evaluateRegressionInternal(targetField, value);
 
 		Collection<Map.Entry<String, Value<V>>> entrySet = reasonCodePoints.entrySet();
 		for(Iterator<Map.Entry<String, Value<V>>> it = entrySet.iterator(); it.hasNext(); ){
 			Map.Entry<String, Value<V>> entry = it.next();
 
-			Value<V> value = entry.getValue();
-			if(value.compareTo(Numbers.DOUBLE_ZERO) < 0){
+			String reasonCode = entry.getKey();
+			Value<V> points = entry.getValue();
+
+			if(points.compareTo(Numbers.DOUBLE_ZERO) < 0){
 				it.remove();
 			}
 		}
 
-		return new ComplexScorecardScore<>(score, partialScores, reasonCodePoints);
+		return new ComplexScorecardScore<>(value, partialScores, reasonCodePoints);
 	}
 }
