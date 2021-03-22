@@ -19,29 +19,12 @@
 package org.jpmml.evaluator.scorecard;
 
 import java.util.List;
-import java.util.Objects;
 
-import org.jpmml.evaluator.Regression;
 import org.jpmml.evaluator.Value;
 
-abstract
-public class ScorecardScore<V extends Number> extends Regression<V> implements HasPartialScores {
+public class SimpleScorecardScore<V extends Number> extends ScorecardScore<V> {
 
-	private List<PartialScore> partialScores = null;
-
-
-	protected ScorecardScore(Value<V> value, List<PartialScore> partialScores){
-		super(value);
-
-		setPartialScores(Objects.requireNonNull(partialScores));
-	}
-
-	@Override
-	public List<PartialScore> getPartialScores(){
-		return this.partialScores;
-	}
-
-	private void setPartialScores(List<PartialScore> partialScores){
-		this.partialScores = partialScores;
+	SimpleScorecardScore(Value<V> score, List<PartialScore> partialScores){
+		super(score, partialScores);
 	}
 }

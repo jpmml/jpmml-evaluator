@@ -28,12 +28,12 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.model.ToStringHelper;
 
-public class ReasonCodeRanking<V extends Number> extends ScorecardScore<V> implements HasReasonCodeRanking {
+public class ComplexScorecardScore<V extends Number> extends ScorecardScore<V> implements HasReasonCodeRanking {
 
 	private ValueMap<String, V> reasonCodePoints = null;
 
 
-	ReasonCodeRanking(Value<V> value, List<PartialScore> partialScores, ValueMap<String, V> reasonCodePoints){
+	ComplexScorecardScore(Value<V> value, List<PartialScore> partialScores, ValueMap<String, V> reasonCodePoints){
 		super(value, partialScores);
 
 		setReasonCodePoints(Objects.requireNonNull(reasonCodePoints));

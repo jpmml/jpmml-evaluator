@@ -173,12 +173,12 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		}
 
 		if(useReasonCodes){
-			ReasonCodeRanking<V> result = createReasonCodeRanking(targetField, score, partialScores, reasonCodePoints.sumMap());
+			ComplexScorecardScore<V> result = createComplexScorecardScore(targetField, score, partialScores, reasonCodePoints.sumMap());
 
 			return TargetUtil.evaluateRegression(targetField, result);
 		}
 
-		Regression<V> result = new ScorecardScore<>(score, partialScores);
+		Regression<V> result = createSimpleScorecardScore(targetField, score, partialScores);
 
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
@@ -208,7 +208,14 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 	}
 
 	static
-	private <V extends Number> ReasonCodeRanking<V> createReasonCodeRanking(TargetField targetField, Value<V> score, List<PartialScore> partialScores, ValueMap<String, V> reasonCodePoints){
+	private <V extends Number> SimpleScorecardScore<V> createSimpleScorecardScore(TargetField targetField, Value<V> score, List<PartialScore> partialScores){
+		score = TargetUtil.evaluateRegressionInternal(targetField, score);
+
+		return new SimpleScorecardScore<>(score, partialScores);
+	}
+
+	static
+	private <V extends Number> ComplexScorecardScore<V> createComplexScorecardScore(TargetField targetField, Value<V> score, List<PartialScore> partialScores, ValueMap<String, V> reasonCodePoints){
 		score = TargetUtil.evaluateRegressionInternal(targetField, score);
 
 		Collection<Map.Entry<String, Value<V>>> entrySet = reasonCodePoints.entrySet();
@@ -221,6 +228,6 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			}
 		}
 
-		return new ReasonCodeRanking<>(score, partialScores, reasonCodePoints);
+		return new ComplexScorecardScore<>(score, partialScores, reasonCodePoints);
 	}
 }
