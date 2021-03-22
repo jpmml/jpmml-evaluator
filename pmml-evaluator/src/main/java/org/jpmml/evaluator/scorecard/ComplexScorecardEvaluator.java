@@ -82,11 +82,7 @@ public class ComplexScorecardEvaluator extends ScorecardEvaluator {
 			Number baselineScore = null;
 
 			if(useReasonCodes){
-				baselineScore = characteristic.getBaselineScore();
-				if(baselineScore == null){
-					baselineScore = scorecard.getBaselineScore();
-				} // End if
-
+				baselineScore = characteristic.getBaselineScore(scorecard.getBaselineScore());
 				if(baselineScore == null){
 					throw new MissingAttributeException(characteristic, PMMLAttributes.CHARACTERISTIC_BASELINESCORE);
 				}
@@ -111,11 +107,7 @@ public class ComplexScorecardEvaluator extends ScorecardEvaluator {
 				score.add(value);
 
 				if(useReasonCodes){
-					String reasonCode = attribute.getReasonCode();
-					if(reasonCode == null){
-						reasonCode = characteristic.getReasonCode();
-					} // End if
-
+					String reasonCode = attribute.getReasonCode(characteristic.getReasonCode());
 					if(reasonCode == null){
 						throw new MissingAttributeException(attribute, PMMLAttributes.ATTRIBUTE_REASONCODE);
 					}
