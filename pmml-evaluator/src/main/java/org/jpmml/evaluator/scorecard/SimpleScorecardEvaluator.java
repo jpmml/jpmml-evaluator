@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator.scorecard;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import org.dmg.pmml.scorecard.Scorecard;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
+import org.jpmml.evaluator.Regression;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UndefinedResultException;
@@ -71,9 +73,11 @@ public class SimpleScorecardEvaluator extends ScorecardEvaluator {
 
 		Value<V> score = valueFactory.newValue(scorecard.getInitialScore());
 
+		List<PartialScore> partialScores = new ArrayList<>();
+
 		Characteristics characteristics = scorecard.getCharacteristics();
 		for(Characteristic characteristic : characteristics){
-			Number partialScore = null;
+			PartialScore partialScore = null;
 
 			List<Attribute> attributes = characteristic.getAttributes();
 			for(Attribute attribute : attributes){
@@ -82,12 +86,14 @@ public class SimpleScorecardEvaluator extends ScorecardEvaluator {
 					continue;
 				}
 
-				partialScore = evaluatePartialScore(attribute, context);
-				if(partialScore == null){
+				Number value = evaluatePartialScore(attribute, context);
+				if(value == null){
 					return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 				}
 
-				score.add(partialScore);
+				partialScore = new PartialScore(characteristic, attribute, value);
+
+				score.add(value);
 
 				break;
 			}
@@ -99,6 +105,8 @@ public class SimpleScorecardEvaluator extends ScorecardEvaluator {
 			}
 		}
 
-		return TargetUtil.evaluateRegression(targetField, score);
+		Regression<V> result = new ScorecardScore<>(score, partialScores);
+
+		return TargetUtil.evaluateRegression(targetField, result);
 	}
 }

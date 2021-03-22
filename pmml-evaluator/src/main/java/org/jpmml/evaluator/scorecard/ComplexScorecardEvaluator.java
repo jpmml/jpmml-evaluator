@@ -37,6 +37,7 @@ import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
+import org.jpmml.evaluator.Regression;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UndefinedResultException;
@@ -147,7 +148,9 @@ public class ComplexScorecardEvaluator extends ScorecardEvaluator {
 			return TargetUtil.evaluateRegression(targetField, result);
 		}
 
-		return TargetUtil.evaluateRegression(targetField, score);
+		Regression<V> result = new ScorecardScore<>(score, partialScores);
+
+		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
 	static

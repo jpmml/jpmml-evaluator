@@ -20,6 +20,7 @@ package org.jpmml.evaluator.scorecard;
 
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.scorecard.Attribute;
+import org.dmg.pmml.scorecard.Characteristic;
 import org.dmg.pmml.scorecard.Characteristics;
 import org.dmg.pmml.scorecard.ComplexPartialScore;
 import org.dmg.pmml.scorecard.PMMLAttributes;
@@ -54,6 +55,15 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 		if(!characteristics.hasCharacteristics()){
 			throw new MissingElementException(characteristics, PMMLElements.CHARACTERISTICS_CHARACTERISTICS);
+		} else
+
+		{
+			for(Characteristic characteristic : characteristics){
+
+				if(!characteristic.hasAttributes()){
+					throw new MissingElementException(characteristic, PMMLElements.CHARACTERISTIC_ATTRIBUTES);
+				}
+			}
 		}
 	}
 
