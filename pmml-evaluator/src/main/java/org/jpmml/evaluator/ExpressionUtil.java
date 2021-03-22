@@ -133,9 +133,15 @@ public class ExpressionUtil {
 			FieldName name = parameterField.getName();
 			if(name == null){
 				throw new MissingAttributeException(parameterField, PMMLAttributes.PARAMETERFIELD_NAME);
-			}
+			} // End if
 
-			value = value.cast(parameterField);
+			if(FieldValueUtil.isMissing(value)){
+				value = FieldValues.MISSING_VALUE;
+			} else
+
+			{
+				value = value.cast(parameterField);
+			}
 
 			functionContext.declare(name, value);
 		}
