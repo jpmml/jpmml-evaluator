@@ -18,6 +18,13 @@
  */
 package org.jpmml.evaluator.scorecard;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.scorecard.Attribute;
 import org.dmg.pmml.scorecard.Characteristic;
@@ -30,15 +37,26 @@ import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.Functions;
 import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
+import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.PMMLUtil;
+import org.jpmml.evaluator.PredicateUtil;
+import org.jpmml.evaluator.Regression;
+import org.jpmml.evaluator.TargetField;
+import org.jpmml.evaluator.TargetUtil;
+import org.jpmml.evaluator.UndefinedResultException;
+import org.jpmml.evaluator.UnsupportedAttributeException;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.evaluator.ValueMap;
+import org.jpmml.evaluator.VoteAggregator;
 
-abstract
 public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
-	protected ScorecardEvaluator(){
+	private ScorecardEvaluator(){
 	}
 
 	public ScorecardEvaluator(PMML pmml){
@@ -72,8 +90,101 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		return "Scorecard";
 	}
 
+	@Override
+	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+		Scorecard scorecard = getModel();
+
+		boolean useReasonCodes = scorecard.isUseReasonCodes();
+
+		TargetField targetField = getTargetField();
+
+		Value<V> score = valueFactory.newValue(scorecard.getInitialScore());
+
+		List<PartialScore> partialScores = new ArrayList<>();
+
+		VoteAggregator<String, V> reasonCodePoints = null;
+
+		if(useReasonCodes){
+			reasonCodePoints = new VoteAggregator<>(valueFactory);
+		}
+
+		Characteristics characteristics = scorecard.getCharacteristics();
+		for(Characteristic characteristic : characteristics){
+			Number baselineScore = null;
+
+			if(useReasonCodes){
+				baselineScore = characteristic.getBaselineScore(scorecard.getBaselineScore());
+				if(baselineScore == null){
+					throw new MissingAttributeException(characteristic, PMMLAttributes.CHARACTERISTIC_BASELINESCORE);
+				}
+			}
+
+			PartialScore partialScore = null;
+
+			List<Attribute> attributes = characteristic.getAttributes();
+			for(Attribute attribute : attributes){
+				Boolean status = PredicateUtil.evaluatePredicateContainer(attribute, context);
+				if(status == null || !status.booleanValue()){
+					continue;
+				}
+
+				Number value = evaluatePartialScore(attribute, context);
+				if(value == null){
+					return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
+				}
+
+				partialScore = new PartialScore(characteristic, attribute, value);
+
+				score.add(value);
+
+				if(useReasonCodes){
+					String reasonCode = attribute.getReasonCode(characteristic.getReasonCode());
+					if(reasonCode == null){
+						throw new MissingAttributeException(attribute, PMMLAttributes.ATTRIBUTE_REASONCODE);
+					}
+
+					Number difference;
+
+					Scorecard.ReasonCodeAlgorithm reasonCodeAlgorithm = scorecard.getReasonCodeAlgorithm();
+					switch(reasonCodeAlgorithm){
+						case POINTS_ABOVE:
+							difference = Functions.SUBTRACT.evaluate(value, baselineScore);
+							break;
+						case POINTS_BELOW:
+							difference = Functions.SUBTRACT.evaluate(baselineScore, value);
+							break;
+						default:
+							throw new UnsupportedAttributeException(scorecard, reasonCodeAlgorithm);
+					}
+
+					reasonCodePoints.add(reasonCode, difference);
+				}
+
+				break;
+			}
+
+			// "If not even a single Attribute evaluates to "true" for a given Characteristic, then the scorecard as a whole returns an invalid value"
+			if(partialScore == null){
+				throw new UndefinedResultException()
+					.ensureContext(characteristic);
+			}
+
+			partialScores.add(partialScore);
+		}
+
+		if(useReasonCodes){
+			ReasonCodeRanking<V> result = createReasonCodeRanking(targetField, score, partialScores, reasonCodePoints.sumMap());
+
+			return TargetUtil.evaluateRegression(targetField, result);
+		}
+
+		Regression<V> result = new ScorecardScore<>(score, partialScores);
+
+		return TargetUtil.evaluateRegression(targetField, result);
+	}
+
 	static
-	protected Number evaluatePartialScore(Attribute attribute, EvaluationContext context){
+	private Number evaluatePartialScore(Attribute attribute, EvaluationContext context){
 		ComplexPartialScore complexPartialScore = attribute.getComplexPartialScore();
 
 		// "If both are defined, the ComplexPartialScore element takes precedence over the partialScore attribute for computing the score points"
@@ -94,5 +205,22 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 			return partialScore;
 		}
+	}
+
+	static
+	private <V extends Number> ReasonCodeRanking<V> createReasonCodeRanking(TargetField targetField, Value<V> score, List<PartialScore> partialScores, ValueMap<String, V> reasonCodePoints){
+		score = TargetUtil.evaluateRegressionInternal(targetField, score);
+
+		Collection<Map.Entry<String, Value<V>>> entrySet = reasonCodePoints.entrySet();
+		for(Iterator<Map.Entry<String, Value<V>>> it = entrySet.iterator(); it.hasNext(); ){
+			Map.Entry<String, Value<V>> entry = it.next();
+
+			Value<V> value = entry.getValue();
+			if(value.compareTo(Numbers.DOUBLE_ZERO) < 0){
+				it.remove();
+			}
+		}
+
+		return new ReasonCodeRanking<>(score, partialScores, reasonCodePoints);
 	}
 }
