@@ -43,12 +43,7 @@ public class PartialScore {
 		Characteristic characteristic = getCharacteristic();
 		Attribute attribute = getAttribute();
 
-		String reasonCode = attribute.getReasonCode();
-		if(reasonCode == null){
-			reasonCode = characteristic.getReasonCode();
-		}
-
-		return reasonCode;
+		return attribute.getReasonCode(characteristic.getReasonCode());
 	}
 
 	public Characteristic getCharacteristic(){

@@ -391,32 +391,17 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			if(activationFunction == null){
 				locatable = neuralNetwork;
 
-				activationFunction = neuralNetwork.getActivationFunction();
+				activationFunction = neuralLayer.getActivationFunction(neuralNetwork.getActivationFunction());
 			} // End if
 
 			if(activationFunction == null){
 				throw new MissingAttributeException(neuralNetwork, PMMLAttributes.NEURALNETWORK_ACTIVATIONFUNCTION);
 			}
 
-			Number threshold = neuralLayer.getThreshold();
-			if(threshold == null){
-				threshold = neuralNetwork.getThreshold();
-			}
-
-			Number leakage = neuralLayer.getLeakage();
-			if(leakage == null){
-				leakage = neuralNetwork.getLeakage();
-			}
-
-			Number altitude = neuralLayer.getAltitude();
-			if(altitude == null){
-				altitude = neuralNetwork.getAltitude();
-			}
-
-			Number width = neuralLayer.getWidth();
-			if(width == null){
-				width = neuralNetwork.getWidth();
-			}
+			Number threshold = neuralLayer.getThreshold(neuralNetwork.getThreshold());
+			Number leakage = neuralLayer.getLeakage(neuralNetwork.getLeakage());
+			Number altitude = neuralLayer.getAltitude(neuralNetwork.getAltitude());
+			Number width = neuralLayer.getWidth(neuralNetwork.getWidth());
 
 			switch(activationFunction){
 				case THRESHOLD:
@@ -561,7 +546,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			if(normalizationMethod == null){
 				locatable = neuralNetwork;
 
-				normalizationMethod = neuralNetwork.getNormalizationMethod();
+				normalizationMethod = neuralLayer.getNormalizationMethod(neuralNetwork.getNormalizationMethod());
 			}
 
 			switch(normalizationMethod){

@@ -31,6 +31,7 @@ import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.Constant;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.Discretize;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
@@ -43,6 +44,7 @@ import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLFunctions;
+import org.dmg.pmml.ParameterField;
 import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.TextIndex.CountHits;
 import org.dmg.pmml.TextIndexNormalization;
@@ -393,6 +395,57 @@ public class ExpressionUtilTest {
 	}
 
 	@Test
+	public void evaluateApplyUserDefinedFunction(){
+		ParameterField parameterField = new ParameterField(FieldName.create("input"));
+
+		Expression expression = new Apply(PMMLFunctions.IF)
+			.addExpressions(new Apply(PMMLFunctions.ISMISSING)
+				.addExpressions(new FieldRef(parameterField.getName())))
+			.addExpressions(new Constant("missing"), new Constant("not missing"));
+
+		DefineFunction defineFunction = new DefineFunction("format", OpType.CATEGORICAL, DataType.STRING, null, expression)
+			.addParameterFields(parameterField);
+
+		FieldName name = FieldName.create("x");
+
+		FieldRef fieldRef = new FieldRef(name);
+
+		Apply apply = new Apply(defineFunction.getName())
+			.addExpressions(fieldRef);
+
+		EvaluationContext context = new VirtualEvaluationContext(){
+
+			@Override
+			public DefineFunction getDefineFunction(String name){
+
+				if((name).equals(defineFunction.getName())){
+					return defineFunction;
+				}
+
+				return super.getDefineFunction(name);
+			}
+		};
+
+		context.declare(name, FieldValues.MISSING_VALUE);
+
+		assertEquals("missing", evaluate(apply, context));
+
+		context.reset(true);
+
+		context.declare(name, FieldValues.CATEGORICAL_BOOLEAN_TRUE);
+
+		assertEquals("not missing", evaluate(apply, context));
+
+		try {
+			context.declare(name, FieldValues.CATEGORICAL_BOOLEAN_FALSE);
+
+			fail();
+		} catch(DuplicateValueException dve){
+			// Ignored
+		}
+	}
+
+	@Test
 	public void evaluateApplyJavaFunction(){
 		FieldName name = FieldName.create("x");
 
@@ -511,6 +564,11 @@ public class ExpressionUtilTest {
 		EvaluationContext context = new VirtualEvaluationContext();
 		context.declareAll(arguments);
 
+		return evaluate(expression, context);
+	}
+
+	static
+	private Object evaluate(Expression expression, EvaluationContext context){
 		FieldValue result = ExpressionUtil.evaluate(expression, context);
 
 		return FieldValueUtil.getValue(result);

@@ -40,8 +40,6 @@ import org.dmg.pmml.gaussian_process.GaussianProcessModel;
 import org.dmg.pmml.general_regression.Categories;
 import org.dmg.pmml.general_regression.Predictor;
 import org.dmg.pmml.mining.Segmentation;
-import org.dmg.pmml.neural_network.NeuralLayer;
-import org.dmg.pmml.neural_network.NeuralNetwork;
 import org.dmg.pmml.regression.Regression;
 import org.dmg.pmml.sequence.SequenceModel;
 import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
@@ -154,39 +152,6 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 		report(new UnsupportedElementException(lag));
 
 		return VisitorAction.SKIP;
-	}
-
-	@Override
-	public VisitorAction visit(NeuralNetwork neuralNetwork){
-		NeuralNetwork.ActivationFunction activationFunction = neuralNetwork.getActivationFunction();
-
-		switch(activationFunction){
-			case RADIAL_BASIS:
-				report(new UnsupportedAttributeException(neuralNetwork, activationFunction));
-				break;
-			default:
-				break;
-		}
-
-		return super.visit(neuralNetwork);
-	}
-
-	@Override
-	public VisitorAction visit(NeuralLayer neuralLayer){
-		NeuralNetwork.ActivationFunction activationFunction = neuralLayer.getActivationFunction();
-
-		if(activationFunction != null){
-
-			switch(activationFunction){
-				case RADIAL_BASIS:
-					report(new UnsupportedAttributeException(neuralLayer, activationFunction));
-					break;
-				default:
-					break;
-			}
-		}
-
-		return super.visit(neuralLayer);
 	}
 
 	@Override

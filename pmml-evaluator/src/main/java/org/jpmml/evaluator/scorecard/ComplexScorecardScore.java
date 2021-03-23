@@ -24,22 +24,18 @@ import java.util.Objects;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.Classification.Type;
 import org.jpmml.evaluator.HasReasonCodeRanking;
-import org.jpmml.evaluator.Regression;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.model.ToStringHelper;
 
-public class ReasonCodeRanking<V extends Number> extends Regression<V> implements HasReasonCodeRanking, HasPartialScores {
-
-	private List<PartialScore> partialScores = null;
+public class ComplexScorecardScore<V extends Number> extends ScorecardScore<V> implements HasReasonCodeRanking {
 
 	private ValueMap<String, V> reasonCodePoints = null;
 
 
-	ReasonCodeRanking(Value<V> value, List<PartialScore> partialScores, ValueMap<String, V> reasonCodePoints){
-		super(value);
+	ComplexScorecardScore(Value<V> value, List<PartialScore> partialScores, ValueMap<String, V> reasonCodePoints){
+		super(value, partialScores);
 
-		setPartialScores(Objects.requireNonNull(partialScores));
 		setReasonCodePoints(Objects.requireNonNull(reasonCodePoints));
 	}
 
@@ -59,15 +55,6 @@ public class ReasonCodeRanking<V extends Number> extends Regression<V> implement
 		ValueMap<String, V> reasonCodePoints = getReasonCodePoints();
 
 		return Classification.entryKeys(Classification.getWinnerList(Classification.Type.VOTE, reasonCodePoints.entrySet()));
-	}
-
-	@Override
-	public List<PartialScore> getPartialScores(){
-		return this.partialScores;
-	}
-
-	private void setPartialScores(List<PartialScore> partialScores){
-		this.partialScores = partialScores;
 	}
 
 	public ValueMap<String, V> getReasonCodePoints(){

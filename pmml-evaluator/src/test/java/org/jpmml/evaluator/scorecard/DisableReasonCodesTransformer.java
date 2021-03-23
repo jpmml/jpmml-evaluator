@@ -25,51 +25,47 @@ import org.dmg.pmml.Output;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.ResultFeature;
-import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.scorecard.Scorecard;
 import org.jpmml.evaluator.PMMLTransformer;
 import org.jpmml.model.visitors.AbstractVisitor;
 
-public class DisableReasonCodesTransformer implements PMMLTransformer<Exception> {
+public class DisableReasonCodesTransformer extends AbstractVisitor implements PMMLTransformer<RuntimeException> {
 
 	@Override
 	public PMML apply(PMML pmml){
-		Visitor visitor = new AbstractVisitor(){
-
-			@Override
-			public VisitorAction visit(Scorecard scorecard){
-				scorecard.setUseReasonCodes(false);
-
-				return super.visit(scorecard);
-			}
-
-			@Override
-			public VisitorAction visit(Output output){
-
-				if(output.hasOutputFields()){
-					List<OutputField> outputFields = output.getOutputFields();
-
-					for(ListIterator<OutputField> it = outputFields.listIterator(); it.hasNext(); ){
-						OutputField outputField = it.next();
-
-						ResultFeature resultFeature = outputField.getResultFeature();
-						switch(resultFeature){
-							case REASON_CODE:
-								it.remove();
-								break;
-							default:
-								break;
-						}
-					}
-				}
-
-				return super.visit(output);
-			}
-		};
-
-		visitor.applyTo(pmml);
+		applyTo(pmml);
 
 		return pmml;
+	}
+
+	@Override
+	public VisitorAction visit(Scorecard scorecard){
+		scorecard.setUseReasonCodes(false);
+
+		return super.visit(scorecard);
+	}
+
+	@Override
+	public VisitorAction visit(Output output){
+
+		if(output.hasOutputFields()){
+			List<OutputField> outputFields = output.getOutputFields();
+
+			for(ListIterator<OutputField> it = outputFields.listIterator(); it.hasNext(); ){
+				OutputField outputField = it.next();
+
+				ResultFeature resultFeature = outputField.getResultFeature();
+				switch(resultFeature){
+					case REASON_CODE:
+						it.remove();
+						break;
+					default:
+						break;
+				}
+			}
+		}
+
+		return super.visit(output);
 	}
 }

@@ -21,19 +21,23 @@ package org.jpmml.evaluator.scorecard;
 import java.util.Map;
 
 import org.dmg.pmml.FieldName;
+import org.jpmml.evaluator.EvaluatorUtil;
+import org.jpmml.evaluator.HasReasonCodeRanking;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class CharacteristicReasonCodeTest extends ReasonCodeTest {
 
 	@Test
-	public void evaluateComplex() throws Exception {
+	public <T extends HasPartialScores & HasReasonCodeRanking> void evaluateComplex() throws Exception {
 		Map<FieldName, ?> results = evaluateExample();
 
-		HasPartialScores targetValue = (HasPartialScores)results.get(FieldName.create("overallScore"));
+		T targetValue = (T)results.get(FieldName.create("overallScore"));
 
 		assertEquals(3, (targetValue.getPartialScores()).size());
+		assertEquals(2, (targetValue.getReasonCodeRanking()).size());
 
 		assertEquals(29d, getOutput(results, "Final Score"));
 
@@ -46,8 +50,10 @@ public class CharacteristicReasonCodeTest extends ReasonCodeTest {
 	public void evaluateSimple() throws Exception {
 		Map<FieldName, ?> results = evaluateExample(new DisableReasonCodesTransformer());
 
-		Object targetValue = results.get(FieldName.create("overallScore"));
+		HasPartialScores targetValue = (HasPartialScores)results.get(FieldName.create("overallScore"));
 
-		assertEquals(29d, targetValue);
+		assertFalse(targetValue instanceof HasReasonCodeRanking);
+
+		assertEquals(29d, EvaluatorUtil.decode(targetValue));
 	}
 }
