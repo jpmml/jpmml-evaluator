@@ -357,6 +357,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		for(InstanceResult<V> instanceResult : instanceResults){
 			FieldValue value = table.get(instanceResult.getId(), name);
+
 			if(FieldValueUtil.isMissing(value)){
 				throw new MissingValueException(name);
 			}
@@ -406,6 +407,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		for(InstanceResult<V> instanceResult : instanceResults){
 			FieldValue value = table.get(instanceResult.getId(), name);
+
 			if(FieldValueUtil.isMissing(value)){
 				throw new MissingValueException(name);
 			}
@@ -461,6 +463,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			@Override
 			public String apply(Integer row){
 				FieldValue value = table.get(row, name);
+
 				if(FieldValueUtil.isMissing(value)){
 					throw new MissingValueException(name);
 				}
