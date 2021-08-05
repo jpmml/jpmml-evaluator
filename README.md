@@ -532,6 +532,7 @@ java -cp target/pmml-evaluator-example-executable-1.6-SNAPSHOT.jar <application 
 
 Up-to-date:
 
+* [Benchmarking Scikit-Learn against JPMML-Evaluator in Java and Python environments](https://openscoring.io/blog/2021/08/04/benchmarking_sklearn_jpmml_evaluator/)
 * [Tracing and reporting predictions](https://openscoring.io/blog/2019/02/26/jpmml_evaluator_api_tracing_reporting_predictions/)
 * [Upgrading from the Factory pattern to the Builder pattern](https://openscoring.io/blog/2018/12/06/jpmml_evaluator_api_builder_pattern/)
 
