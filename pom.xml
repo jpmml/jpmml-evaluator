@@ -197,7 +197,7 @@
 			<dependency>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>animal-sniffer-annotations</artifactId>
-				<version>1.19</version>
+				<version>1.20</version>
 			</dependency>
 
 			<!-- Inherited from org.jpmml:pmml-model-metro and org.jpmml:pmml-model-moxy dependencies -->
@@ -242,7 +242,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.2.0</version>
+				<version>3.3.1</version>
 				<configuration>
 					<javadocVersion>1.8</javadocVersion>
 				</configuration>
@@ -282,7 +282,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>animal-sniffer-maven-plugin</artifactId>
-				<version>1.19</version>
+				<version>1.20</version>
 				<executions>
 					<execution>
 						<id>android-26</id>
@@ -323,7 +323,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.6</version>
+				<version>0.8.7</version>
 				<executions>
 					<execution>
 						<id>pre-unit-test</id>
