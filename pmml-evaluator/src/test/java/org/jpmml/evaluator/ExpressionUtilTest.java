@@ -40,6 +40,7 @@ import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MapValues;
+import org.dmg.pmml.NamespacePrefixes;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
@@ -201,8 +202,8 @@ public class ExpressionUtilTest {
 			Arrays.asList("1", "one")
 		);
 
-		MapValues mapValues = new MapValues("data:output", null, createInlineTable(rows, Arrays.asList("data:input", "data:output")))
-			.addFieldColumnPairs(new FieldColumnPair(name, "data:input"));
+		MapValues mapValues = new MapValues(NamespacePrefixes.JPMML_INLINETABLE + ":output", null, createInlineTable(rows, Arrays.asList(NamespacePrefixes.JPMML_INLINETABLE + ":input", NamespacePrefixes.JPMML_INLINETABLE + ":output")))
+			.addFieldColumnPairs(new FieldColumnPair(name, NamespacePrefixes.JPMML_INLINETABLE + ":input"));
 
 		assertEquals("zero", evaluate(mapValues, name, "0"));
 		assertEquals("one", evaluate(mapValues, name, "1"));
