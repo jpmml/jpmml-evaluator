@@ -568,9 +568,16 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				case SELECT_FIRST:
 				case SELECT_ALL:
 				case MODEL_CHAIN:
-					Object targetValue = segmentResult.getTargetValue();
+					boolean hasAllTargetValues = true;
 
-					if(targetValue == null){
+					List<TargetField> targetFields = segmentResult.getTargetFields();
+					for(TargetField targetField : targetFields){
+						Object targetValue = segmentResult.get(targetField.getFieldName());
+
+						hasAllTargetValues &= (targetValue != null);
+					}
+
+					if(!hasAllTargetValues){
 
 						switch(missingPredictionTreatment){
 							case RETURN_MISSING:
