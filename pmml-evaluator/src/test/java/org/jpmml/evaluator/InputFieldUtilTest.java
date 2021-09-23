@@ -99,6 +99,12 @@ public class InputFieldUtilTest {
 
 		miningField.setInvalidValueReplacement("0");
 
+		// XXX: Non-standard behaviour
+		assertEquals(0d, prepare(dataField, miningField, Double.NaN));
+		assertEquals(0d, prepare(dataField, miningField, "one"));
+
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_VALUE);
+
 		assertEquals(0d, prepare(dataField, miningField, Double.NaN));
 		assertEquals(0d, prepare(dataField, miningField, "one"));
 
@@ -283,6 +289,12 @@ public class InputFieldUtilTest {
 		}
 
 		miningField.setInvalidValueReplacement("0");
+
+		// XXX: Non-standard behaviour
+		assertEquals(0, prepare(dataField, miningField, "one"));
+		assertEquals(0, prepare(dataField, miningField, 1.5d));
+
+		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_VALUE);
 
 		assertEquals(0, prepare(dataField, miningField, "one"));
 		assertEquals(0, prepare(dataField, miningField, 1.5d));
