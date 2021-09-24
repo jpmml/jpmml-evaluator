@@ -71,8 +71,10 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	 * @see Model#getModelName()
 	 */
 	public ModelEvaluatorBuilder(PMML pmml, String modelName){
+		Model model = (pmml != null ? PMMLUtil.findModel(pmml, modelName) : null);
+
 		setPMML(Objects.requireNonNull(pmml));
-		setModel(PMMLUtil.findModel(pmml, modelName));
+		setModel(Objects.requireNonNull(model));
 	}
 
 	public ModelEvaluatorBuilder(PMML pmml, Model model){
