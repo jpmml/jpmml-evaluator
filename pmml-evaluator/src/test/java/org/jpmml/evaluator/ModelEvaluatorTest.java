@@ -74,21 +74,14 @@ public class ModelEvaluatorTest {
 
 	static
 	private LoadingModelEvaluatorBuilder createLoadingModelEvaluatorBuilder(Configuration configuration){
-		LoadingModelEvaluatorBuilder modelEvaluatorBuilder = new LoadingModelEvaluatorBuilder(){
+		ModelEvaluatorBuilder modelEvaluatorBuilder = new LoadingModelEvaluatorBuilder()
+			.setVisitors(new TestModelEvaluatorBattery())
+			.setModelEvaluatorFactory(configuration.getModelEvaluatorFactory())
+			.setValueFactoryFactory(configuration.getValueFactoryFactory())
+			.setOutputFilter(configuration.getOutputFilter())
+			.setCheckSchema(false);
 
-			{
-				setVisitors(new TestModelEvaluatorBattery());
-				setModelEvaluatorFactory(configuration.getModelEvaluatorFactory());
-				setValueFactoryFactory(configuration.getValueFactoryFactory());
-				setOutputFilter(configuration.getOutputFilter());
-			}
-
-			@Override
-			protected void checkSchema(ModelEvaluator<?> modelEvaluator){
-			}
-		};
-
-		return modelEvaluatorBuilder;
+		return (LoadingModelEvaluatorBuilder)modelEvaluatorBuilder;
 	}
 
 	static

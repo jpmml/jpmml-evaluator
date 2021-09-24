@@ -46,6 +46,8 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 
 	private ResultMapper resultMapper = null;
 
+	private boolean checkSchema = true;
+
 
 	protected ModelEvaluatorBuilder(){
 	}
@@ -124,7 +126,10 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		modelEvaluator.setInputMapper(inputMapper);
 		modelEvaluator.setResultMapper(resultMapper);
 
-		checkSchema(modelEvaluator);
+		boolean checkSchema = getCheckSchema();
+		if(checkSchema){
+			checkSchema(modelEvaluator);
+		}
 
 		return modelEvaluator;
 	}
@@ -321,6 +326,21 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	 */
 	public ModelEvaluatorBuilder setResultMapper(ResultMapper resultMapper){
 		this.resultMapper = resultMapper;
+
+		return this;
+	}
+
+	public boolean getCheckSchema(){
+		return this.checkSchema;
+	}
+
+	/**
+	 * <p>
+	 * Should the "data schema" of models be checked for the most common signs of insanity?
+	 * </p>
+	 */
+	public ModelEvaluatorBuilder setCheckSchema(boolean checkSchema){
+		this.checkSchema = checkSchema;
 
 		return this;
 	}

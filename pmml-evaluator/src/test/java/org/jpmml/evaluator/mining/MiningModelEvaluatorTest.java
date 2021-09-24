@@ -40,7 +40,6 @@ import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorBuilder;
-import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.tree.HasDecisionPath;
 import org.junit.Test;
@@ -88,14 +87,9 @@ public class MiningModelEvaluatorTest {
 
 	static
 	private Evaluator build(PMML pmml, Set<ResultFeature> extraResultFeatures){
-		EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml){
-
-			@Override
-			public void checkSchema(ModelEvaluator<?> modelEvaluator){
-				// Ignored
-			}
-		}
-			.setExtraResultFeatures(extraResultFeatures);
+		EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml)
+			.setExtraResultFeatures(extraResultFeatures)
+			.setCheckSchema(false);
 
 		return evaluatorBuilder.build();
 	}
