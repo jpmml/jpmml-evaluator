@@ -488,6 +488,8 @@ public class ExpressionUtil {
 					throw ire;
 				case AS_MISSING:
 					return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, defaultValue);
+				case AS_VALUE:
+					throw new InvalidAttributeException(apply, invalidValueTreatmentMethod);
 				default:
 					throw new UnsupportedAttributeException(apply, invalidValueTreatmentMethod);
 			}

@@ -213,15 +213,32 @@ public class InputFieldUtil {
 	private ScalarValue performInvalidValueTreatment(InputTypeInfo typeInfo, Object value){
 		MiningField miningField = typeInfo.getMiningField();
 
+		Object invalidValueReplacement = miningField.getInvalidValueReplacement();
+
 		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
 		switch(invalidValueTreatmentMethod){
 			case AS_IS:
+				// XXX: Non-standard behaviour
+				if(invalidValueReplacement != null){
+					// The JPMML family of libraries introduced invalid value replacement as a vendor extension in PMML schema version 4.3;
+					// the implementation was based on the MiningField@(x-)invalidValueReplacement attribute alone:
+					// <MiningField name="x" invalidValueTreatment="asIs" x-invalidValueReplacement="0"/>
+					// DMG.org introduced invalid value replacement in PMML schema version 4.4;
+					// the implementation uses an invalid value treatment method enum constant "asValue" to signal the availability of the MiningField@invalidValueReplacement attribute:
+					// <MiningField name="x" invalidValueTreatment="asValue" invalidValueReplacement="0"/>
+					// According to the PMML specification, the MiningField@invalidValueReplacement attribute should not be used with the IVTM enum constant "asIs".
+					break;
+				}
 				break;
 			case AS_MISSING:
 			case RETURN_INVALID:
-				Object invalidValueReplacement = miningField.getInvalidValueReplacement();
 				if(invalidValueReplacement != null){
 					throw new MisplacedAttributeException(miningField, PMMLAttributes.MININGFIELD_INVALIDVALUEREPLACEMENT, invalidValueReplacement);
+				}
+				break;
+			case AS_VALUE:
+				if(invalidValueReplacement == null){
+					throw new MissingAttributeException(miningField, PMMLAttributes.MININGFIELD_INVALIDVALUEREPLACEMENT);
 				}
 				break;
 			default:
@@ -237,6 +254,8 @@ public class InputFieldUtil {
 				return createInvalidInputValue(typeInfo, value);
 			case AS_MISSING:
 				return createMissingInputValue(typeInfo);
+			case AS_VALUE:
+				return createInvalidInputValue(typeInfo, value);
 			default:
 				throw new UnsupportedAttributeException(miningField, invalidValueTreatmentMethod);
 		}

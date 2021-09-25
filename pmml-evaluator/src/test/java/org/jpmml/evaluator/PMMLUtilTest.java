@@ -31,6 +31,14 @@ public class PMMLUtilTest {
 	public void findModel(){
 		PMML pmml = new PMML();
 
+		try {
+			PMMLUtil.findModel(pmml, (String)null);
+
+			fail();
+		} catch(MissingElementException mee){
+			// Ignored
+		}
+
 		TreeModel firstTreeModel = new TreeModel()
 			.setModelName("first");
 
@@ -39,13 +47,25 @@ public class PMMLUtilTest {
 
 		pmml.addModels(firstTreeModel, secondTreeModel);
 
+		assertSame(firstTreeModel, PMMLUtil.findModel(pmml, (String)null));
+		assertSame(firstTreeModel, PMMLUtil.findModel(pmml, "first"));
 		assertSame(firstTreeModel, PMMLUtil.findModel(pmml, TreeModel.class));
 
 		firstTreeModel.setScorable(false);
 
+		assertSame(secondTreeModel, PMMLUtil.findModel(pmml, (String)null));
+		assertSame(secondTreeModel, PMMLUtil.findModel(pmml, "second"));
 		assertSame(secondTreeModel, PMMLUtil.findModel(pmml, TreeModel.class));
 
 		secondTreeModel.setScorable(false);
+
+		try {
+			PMMLUtil.findModel(pmml, (String)null);
+
+			fail();
+		} catch(MissingElementException mee){
+			// Ignored
+		} // End try
 
 		try {
 			PMMLUtil.findModel(pmml, TreeModel.class);

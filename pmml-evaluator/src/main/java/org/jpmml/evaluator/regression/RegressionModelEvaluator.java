@@ -172,70 +172,84 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		}
 
 		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
-		switch(normalizationMethod){
-			case NONE:
-				if((OpType.CATEGORICAL).equals(opType)){
 
-					if(values.size() == 2){
-						RegressionModelUtil.computeBinomialProbabilities(normalizationMethod, values);
-					} else
+		switch(opType){
+			case CATEGORICAL:
 
-					{
-						RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, values);
+				if(values.size() == 2){
+
+					switch(normalizationMethod){
+						case NONE:
+						case LOGIT:
+						case PROBIT:
+						case CLOGLOG:
+						case LOGLOG:
+						case CAUCHIT:
+							RegressionModelUtil.computeBinomialProbabilities(normalizationMethod, values);
+							break;
+						case SIMPLEMAX:
+						case SOFTMAX:
+							// XXX: Non-standard behaviour
+							if(isDefault(regressionTables.get(1)) && (RegressionModel.NormalizationMethod.SOFTMAX).equals(normalizationMethod)){
+								RegressionModelUtil.computeBinomialProbabilities(RegressionModel.NormalizationMethod.LOGIT, values);
+							} else
+
+							{
+								RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, values);
+							}
+							break;
+						case EXP:
+							throw new InvalidAttributeException(regressionModel, normalizationMethod);
+						default:
+							throw new UnsupportedAttributeException(regressionModel, normalizationMethod);
 					}
 				} else
 
 				{
-					RegressionModelUtil.computeOrdinalProbabilities(normalizationMethod, values);
-				}
-				break;
-			case SIMPLEMAX:
-			case SOFTMAX:
-				if((OpType.CATEGORICAL).equals(opType)){
+					switch(normalizationMethod){
+						case NONE:
+						case SIMPLEMAX:
+						case SOFTMAX:
+							RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, values);
+							break;
+						case LOGIT:
+						case PROBIT:
+						case CLOGLOG:
+						case EXP:
+						case LOGLOG:
+						case CAUCHIT:
+							// XXX: Non-standard behaviour
+							if((RegressionModel.NormalizationMethod.LOGIT).equals(normalizationMethod)){
+								RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, values);
 
-					// XXX: Non-standard behaviour
-					if((values.size() == 2 && isDefault(regressionTables.get(1)) && (RegressionModel.NormalizationMethod.SOFTMAX).equals(normalizationMethod))){
-						RegressionModelUtil.computeBinomialProbabilities(RegressionModel.NormalizationMethod.LOGIT, values);
-					} else
-
-					{
-						RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, values);
+								break;
+							}
+							throw new InvalidAttributeException(regressionModel, normalizationMethod);
+						default:
+							throw new UnsupportedAttributeException(regressionModel, normalizationMethod);
 					}
-				} else
-
-				{
-					throw new InvalidElementException(regressionModel);
 				}
 				break;
-			case LOGIT:
-			case PROBIT:
-			case CLOGLOG:
-			case LOGLOG:
-			case CAUCHIT:
-				if((OpType.CATEGORICAL).equals(opType)){
-
-					if(values.size() == 2){
-						RegressionModelUtil.computeBinomialProbabilities(normalizationMethod, values);
-					} else
-
-					// XXX: Non-standard behaviour
-					if(values.size() > 2 && (RegressionModel.NormalizationMethod.LOGIT).equals(normalizationMethod)){
-						RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, values);
-					} else
-
-					{
-						throw new InvalidElementException(regressionModel);
-					}
-				} else
-
-				{
-					RegressionModelUtil.computeOrdinalProbabilities(normalizationMethod, values);
+			case ORDINAL:
+				switch(normalizationMethod){
+					case NONE:
+					case LOGIT:
+					case PROBIT:
+					case CLOGLOG:
+					case LOGLOG:
+					case CAUCHIT:
+						RegressionModelUtil.computeOrdinalProbabilities(normalizationMethod, values);
+						break;
+					case SIMPLEMAX:
+					case SOFTMAX:
+					case EXP:
+						throw new InvalidAttributeException(regressionModel, normalizationMethod);
+					default:
+						throw new UnsupportedAttributeException(regressionModel, normalizationMethod);
 				}
 				break;
-			case EXP:
-				throw new InvalidAttributeException(regressionModel, normalizationMethod);
 			default:
-				throw new UnsupportedAttributeException(regressionModel, normalizationMethod);
+				throw new InvalidElementException(regressionModel);
 		}
 
 		Classification<?, V> result = createClassification(values);

@@ -35,7 +35,8 @@ import org.dmg.pmml.Cell;
 import org.dmg.pmml.Extension;
 import org.dmg.pmml.HasTable;
 import org.dmg.pmml.InlineTable;
-import org.dmg.pmml.Namespaces;
+import org.dmg.pmml.NamespacePrefixes;
+import org.dmg.pmml.NamespaceURIs;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Row;
 import org.dmg.pmml.TableLocator;
@@ -173,12 +174,12 @@ public class InlineTableUtil {
 
 				QName xmlName;
 
-				if(column.startsWith("data:")){
-					xmlName = new QName(Namespaces.JPMML_INLINETABLE, column.substring("data:".length()), "data");
+				if(column.startsWith(NamespacePrefixes.JPMML_INLINETABLE + ":")){
+					xmlName = new QName(NamespaceURIs.JPMML_INLINETABLE, column.substring((NamespacePrefixes.JPMML_INLINETABLE + ":").length()), NamespacePrefixes.JPMML_INLINETABLE);
 				} else
 
 				{
-					xmlName = new QName(Namespaces.PMML_LATEST, column);
+					xmlName = new QName(NamespaceURIs.PMML_LATEST, column);
 				}
 
 				JAXBElement<String> cell = new JAXBElement<>(xmlName, String.class, value);
