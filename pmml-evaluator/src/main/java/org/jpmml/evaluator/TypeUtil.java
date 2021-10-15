@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -646,6 +648,10 @@ public class TypeUtil {
 
 			return toInteger(number);
 		}
+		
+		if(value instanceof BigInteger) {
+			return ((BigInteger)value).intValue();
+		}
 
 		throw new TypeCheckException(DataType.INTEGER, value);
 	}
@@ -697,6 +703,14 @@ public class TypeUtil {
 			Number number = (Number)value;
 
 			return toFloat(number.floatValue());
+		}
+		
+		if(value instanceof BigInteger) {
+			return ((BigInteger)value).floatValue();
+		}
+		
+		if(value instanceof BigDecimal) {
+			return ((BigDecimal)value).floatValue();
 		}
 
 		throw new TypeCheckException(DataType.FLOAT, value);
@@ -750,6 +764,14 @@ public class TypeUtil {
 			Number number = (Number)value;
 
 			return toDouble(number.doubleValue());
+		}
+		
+		if(value instanceof BigInteger) {
+			return ((BigInteger)value).doubleValue();
+		}
+		
+		if(value instanceof BigDecimal) {
+			return ((BigDecimal)value).doubleValue();
 		}
 
 		throw new TypeCheckException(DataType.DOUBLE, value);
