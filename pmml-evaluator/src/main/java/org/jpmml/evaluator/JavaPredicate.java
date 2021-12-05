@@ -18,8 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.Version;
 import org.dmg.pmml.Visitor;

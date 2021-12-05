@@ -402,7 +402,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			if(object instanceof CategoricalPredictor){
 				CategoricalPredictor categoricalPredictor = (CategoricalPredictor)object;
 
-				FieldName name = categoricalPredictor.getName();
+				FieldName name = categoricalPredictor.getField();
 				if(name == null){
 					throw new MissingAttributeException(categoricalPredictor, org.dmg.pmml.regression.PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
 				}

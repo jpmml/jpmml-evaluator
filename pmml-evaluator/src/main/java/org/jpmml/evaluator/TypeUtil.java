@@ -18,17 +18,23 @@
  */
 package org.jpmml.evaluator;
 
-import java.time.DateTimeException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 
 import com.google.common.math.DoubleMath;
 import org.dmg.pmml.ComplexValue;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
+import org.jpmml.model.temporals.ComplexPeriod;
+import org.jpmml.model.temporals.Date;
+import org.jpmml.model.temporals.DateTime;
+import org.jpmml.model.temporals.DateTimeUtil;
+import org.jpmml.model.temporals.DaysSinceDate;
+import org.jpmml.model.temporals.Epochs;
+import org.jpmml.model.temporals.Instant;
+import org.jpmml.model.temporals.Period;
+import org.jpmml.model.temporals.SecondsSinceDate;
+import org.jpmml.model.temporals.SecondsSinceMidnight;
+import org.jpmml.model.temporals.Time;
 
 public class TypeUtil {
 
@@ -81,29 +87,45 @@ public class TypeUtil {
 			case BOOLEAN:
 				return parseBoolean(value);
 			case DATE:
-				return parseDate(value);
+				return DateTimeUtil.parseDate(value);
 			case TIME:
-				return parseTime(value);
+				return DateTimeUtil.parseTime(value);
 			case DATE_TIME:
-				return parseDateTime(value);
+				return DateTimeUtil.parseDateTime(value);
 			case DATE_DAYS_SINCE_0:
 				throw new NotImplementedException();
 			case DATE_DAYS_SINCE_1960:
-				return parseDaysSinceDate(Epochs.YEAR_1960, value);
+				return DateTimeUtil.parseDaysSinceDate(Epochs.YEAR_1960, value);
 			case DATE_DAYS_SINCE_1970:
-				return parseDaysSinceDate(Epochs.YEAR_1970, value);
+				return DateTimeUtil.parseDaysSinceDate(Epochs.YEAR_1970, value);
 			case DATE_DAYS_SINCE_1980:
-				return parseDaysSinceDate(Epochs.YEAR_1980, value);
+				return DateTimeUtil.parseDaysSinceDate(Epochs.YEAR_1980, value);
+			case DATE_DAYS_SINCE_1990:
+				return DateTimeUtil.parseDaysSinceDate(Epochs.YEAR_1990, value);
+			case DATE_DAYS_SINCE_2000:
+				return DateTimeUtil.parseDaysSinceDate(Epochs.YEAR_2000, value);
+			case DATE_DAYS_SINCE_2010:
+				return DateTimeUtil.parseDaysSinceDate(Epochs.YEAR_2010, value);
+			case DATE_DAYS_SINCE_2020:
+				return DateTimeUtil.parseDaysSinceDate(Epochs.YEAR_2020, value);
 			case TIME_SECONDS:
-				return parseSecondsSinceMidnight(value);
+				return DateTimeUtil.parseSecondsSinceMidnight(value);
 			case DATE_TIME_SECONDS_SINCE_0:
 				throw new NotImplementedException();
 			case DATE_TIME_SECONDS_SINCE_1960:
-				return parseSecondsSinceDate(Epochs.YEAR_1960, value);
+				return DateTimeUtil.parseSecondsSinceDate(Epochs.YEAR_1960, value);
 			case DATE_TIME_SECONDS_SINCE_1970:
-				return parseSecondsSinceDate(Epochs.YEAR_1970, value);
+				return DateTimeUtil.parseSecondsSinceDate(Epochs.YEAR_1970, value);
 			case DATE_TIME_SECONDS_SINCE_1980:
-				return parseSecondsSinceDate(Epochs.YEAR_1980, value);
+				return DateTimeUtil.parseSecondsSinceDate(Epochs.YEAR_1980, value);
+			case DATE_TIME_SECONDS_SINCE_1990:
+				return DateTimeUtil.parseSecondsSinceDate(Epochs.YEAR_1990, value);
+			case DATE_TIME_SECONDS_SINCE_2000:
+				return DateTimeUtil.parseSecondsSinceDate(Epochs.YEAR_2000, value);
+			case DATE_TIME_SECONDS_SINCE_2010:
+				return DateTimeUtil.parseSecondsSinceDate(Epochs.YEAR_2010, value);
+			case DATE_TIME_SECONDS_SINCE_2020:
+				return DateTimeUtil.parseSecondsSinceDate(Epochs.YEAR_2020, value);
 			default:
 				throw new IllegalArgumentException();
 		}
@@ -281,56 +303,6 @@ public class TypeUtil {
 	}
 
 	static
-	private LocalDate parseDate(String value){
-
-		try {
-			return LocalDate.parse(value);
-		} catch(DateTimeException dte){
-			throw new IllegalArgumentException(value, dte);
-		}
-	}
-
-	static
-	private LocalTime parseTime(String value){
-
-		try {
-			return LocalTime.parse(value);
-		} catch(DateTimeException dte){
-			throw new IllegalArgumentException(value, dte);
-		}
-	}
-
-	static
-	private LocalDateTime parseDateTime(String value){
-
-		try {
-			return LocalDateTime.parse(value);
-		} catch(DateTimeException dte){
-			throw new IllegalArgumentException(value, dte);
-		}
-	}
-
-	static
-	public DaysSinceDate parseDaysSinceDate(LocalDate epoch, String value){
-		return new DaysSinceDate(epoch, parseDate(value));
-	}
-
-	static
-	private SecondsSinceMidnight parseSecondsSinceMidnight(String value){
-
-		try {
-			return SecondsSinceMidnight.parse(value);
-		} catch(DateTimeException dte){
-			throw new IllegalArgumentException(value, dte);
-		}
-	}
-
-	static
-	private SecondsSinceDate parseSecondsSinceDate(LocalDate epoch, String value){
-		return new SecondsSinceDate(epoch, parseDateTime(value));
-	}
-
-	static
 	public boolean equals(DataType dataType, Object value, Object referenceValue){
 
 		try {
@@ -374,32 +346,23 @@ public class TypeUtil {
 			return DataType.BOOLEAN;
 		} else
 
-		if(value instanceof LocalDate){
-			return DataType.DATE;
+		if(value instanceof Instant){
+			Instant<?> instant = (Instant<?>)value;
+
+			return instant.getDataType();
 		} else
 
-		if(value instanceof LocalTime){
-			return DataType.TIME;
-		} else
+		if(value instanceof Period){
+			Period<?> period = (Period<?>)value;
 
-		if(value instanceof LocalDateTime){
-			return DataType.DATE_TIME;
-		} else
+			DataType dataType = period.getDataType();
+			if(dataType == null){
+				ComplexPeriod<?> complexPeriod = (ComplexPeriod<?>)period;
 
-		if(value instanceof DaysSinceDate){
-			DaysSinceDate period = (DaysSinceDate)value;
+				throw new EvaluationException("Non-standard epoch " + complexPeriod.getEpoch());
+			}
 
-			return getDaysDataType(period.getEpoch());
-		} else
-
-		if(value instanceof SecondsSinceMidnight){
-			return DataType.TIME_SECONDS;
-		} else
-
-		if(value instanceof SecondsSinceDate){
-			SecondsSinceDate period = (SecondsSinceDate)value;
-
-			return getSecondsDataType(period.getEpoch());
+			return dataType;
 		}
 
 		throw new EvaluationException("No PMML data type for Java data type " + (value != null ? (value.getClass()).getName() : null));
@@ -505,11 +468,19 @@ public class TypeUtil {
 			case DATE_DAYS_SINCE_1960:
 			case DATE_DAYS_SINCE_1970:
 			case DATE_DAYS_SINCE_1980:
+			case DATE_DAYS_SINCE_1990:
+			case DATE_DAYS_SINCE_2000:
+			case DATE_DAYS_SINCE_2010:
+			case DATE_DAYS_SINCE_2020:
 			case TIME_SECONDS:
 			case DATE_TIME_SECONDS_SINCE_0:
 			case DATE_TIME_SECONDS_SINCE_1960:
 			case DATE_TIME_SECONDS_SINCE_1970:
 			case DATE_TIME_SECONDS_SINCE_1980:
+			case DATE_TIME_SECONDS_SINCE_1990:
+			case DATE_TIME_SECONDS_SINCE_2000:
+			case DATE_TIME_SECONDS_SINCE_2010:
+			case DATE_TIME_SECONDS_SINCE_2020:
 				return OpType.CONTINUOUS;
 			default:
 				throw new IllegalArgumentException();
@@ -547,6 +518,14 @@ public class TypeUtil {
 				return toDaysSinceDate(Epochs.YEAR_1970, value);
 			case DATE_DAYS_SINCE_1980:
 				return toDaysSinceDate(Epochs.YEAR_1980, value);
+			case DATE_DAYS_SINCE_1990:
+				return toDaysSinceDate(Epochs.YEAR_1990, value);
+			case DATE_DAYS_SINCE_2000:
+				return toDaysSinceDate(Epochs.YEAR_2000, value);
+			case DATE_DAYS_SINCE_2010:
+				return toDaysSinceDate(Epochs.YEAR_2010, value);
+			case DATE_DAYS_SINCE_2020:
+				return toDaysSinceDate(Epochs.YEAR_2020, value);
 			case TIME_SECONDS:
 				return toSecondsSinceMidnight(value);
 			case DATE_TIME_SECONDS_SINCE_0:
@@ -557,6 +536,14 @@ public class TypeUtil {
 				return toSecondsSinceDate(Epochs.YEAR_1970, value);
 			case DATE_TIME_SECONDS_SINCE_1980:
 				return toSecondsSinceDate(Epochs.YEAR_1980, value);
+			case DATE_TIME_SECONDS_SINCE_1990:
+				return toSecondsSinceDate(Epochs.YEAR_1990, value);
+			case DATE_TIME_SECONDS_SINCE_2000:
+				return toSecondsSinceDate(Epochs.YEAR_2000, value);
+			case DATE_TIME_SECONDS_SINCE_2010:
+				return toSecondsSinceDate(Epochs.YEAR_2010, value);
+			case DATE_TIME_SECONDS_SINCE_2020:
+				return toSecondsSinceDate(Epochs.YEAR_2020, value);
 			default:
 				throw new IllegalArgumentException();
 		}
@@ -572,13 +559,6 @@ public class TypeUtil {
 		return clazz.cast(value);
 	}
 
-	/**
-	 * <p>
-	 * Casts the specified value to String data type.
-	 * </p>
-	 *
-	 * @see DataType#STRING
-	 */
 	static
 	private String toString(Object value){
 
@@ -601,13 +581,6 @@ public class TypeUtil {
 		throw new TypeCheckException(DataType.STRING, value);
 	}
 
-	/**
-	 * <p>
-	 * Casts the specified value to Integer data type.
-	 * </p>
-	 *
-	 * @see DataType#INTEGER
-	 */
 	static
 	private Integer toInteger(Object value){
 
@@ -641,10 +614,10 @@ public class TypeUtil {
 			return (flag.booleanValue() ? Numbers.INTEGER_ONE : Numbers.INTEGER_ZERO);
 		} else
 
-		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
-			Number number = (Number)value;
+		if(value instanceof Period<?>){
+			Period<?> period = (Period<?>)value;
 
-			return toInteger(number);
+			return toInteger(period);
 		}
 
 		throw new TypeCheckException(DataType.INTEGER, value);
@@ -661,13 +634,6 @@ public class TypeUtil {
 		}
 	}
 
-	/**
-	 * <p>
-	 * Casts the specified value to Float data type.
-	 * </p>
-	 *
-	 * @see DataType#FLOAT
-	 */
 	static
 	private Float toFloat(Object value){
 
@@ -693,10 +659,10 @@ public class TypeUtil {
 			return (flag.booleanValue() ? Numbers.FLOAT_ONE : Numbers.FLOAT_ZERO);
 		} else
 
-		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
-			Number number = (Number)value;
+		if(value instanceof Period){
+			Period<?> period = (Period<?>)value;
 
-			return toFloat(number.floatValue());
+			return toFloat(period.floatValue());
 		}
 
 		throw new TypeCheckException(DataType.FLOAT, value);
@@ -720,13 +686,6 @@ public class TypeUtil {
 		return value;
 	}
 
-	/**
-	 * <p>
-	 * Casts the specified value to Double data type.
-	 * </p>
-	 *
-	 * @see DataType#DOUBLE
-	 */
 	static
 	private Double toDouble(Object value){
 
@@ -746,10 +705,10 @@ public class TypeUtil {
 			return (flag.booleanValue() ? Numbers.DOUBLE_ONE : Numbers.DOUBLE_ZERO);
 		} else
 
-		if((value instanceof DaysSinceDate) || (value instanceof SecondsSinceDate) || (value instanceof SecondsSinceMidnight)){
-			Number number = (Number)value;
+		if(value instanceof Period<?>){
+			Period<?> period = (Period<?>)value;
 
-			return toDouble(number.doubleValue());
+			return toDouble(period.doubleValue());
 		}
 
 		throw new TypeCheckException(DataType.DOUBLE, value);
@@ -781,9 +740,6 @@ public class TypeUtil {
 		return value;
 	}
 
-	/**
-	 * @see DataType#BOOLEAN
-	 */
 	static
 	private Boolean toBoolean(Object value){
 
@@ -806,83 +762,78 @@ public class TypeUtil {
 		throw new TypeCheckException(DataType.BOOLEAN, value);
 	}
 
-	/**
-	 * @see DataType#DATE
-	 */
 	static
-	private LocalDate toDate(Object value){
+	private Date toDate(Object value){
 
-		if(value instanceof LocalDate){
-			return (LocalDate)value;
+		if(value instanceof Date){
+			return (Date)value;
 		} else
 
-		if(value instanceof LocalDateTime){
-			LocalDateTime instant = (LocalDateTime)value;
+		if(value instanceof DateTime){
+			DateTime dateTime = (DateTime)value;
 
-			return instant.toLocalDate();
+			return dateTime.toDate();
+		}
+
+		try {
+			return Date.valueOf(value);
+		} catch(IllegalArgumentException iae){
+			// Ignored
 		}
 
 		throw new TypeCheckException(DataType.DATE, value);
 	}
 
-	/**
-	 * @see DataType#TIME
-	 */
 	static
-	private LocalTime toTime(Object value){
+	private Time toTime(Object value){
 
-		if(value instanceof LocalTime){
-			return (LocalTime)value;
+		if(value instanceof Time){
+			return (Time)value;
 		} else
 
-		if(value instanceof LocalDateTime){
-			LocalDateTime instant = (LocalDateTime)value;
+		if(value instanceof DateTime){
+			DateTime dateTime = (DateTime)value;
 
-			return instant.toLocalTime();
+			return dateTime.toTime();
+		}
+
+		try {
+			return Time.valueOf(value);
+		} catch(IllegalArgumentException iae){
+			// Ignored
 		}
 
 		throw new TypeCheckException(DataType.TIME, value);
 	}
 
-	/**
-	 * @see DataType#DATE_TIME
-	 */
 	static
-	private LocalDateTime toDateTime(Object value){
+	private DateTime toDateTime(Object value){
 
-		if(value instanceof LocalDateTime){
-			return (LocalDateTime)value;
+		if(value instanceof DateTime){
+			return (DateTime)value;
+		}
+
+		try {
+			return DateTime.valueOf(value);
+		} catch(IllegalArgumentException iae){
+			// Ignored
 		}
 
 		throw new TypeCheckException(DataType.DATE_TIME, value);
 	}
 
-	/**
-	 * @see DataType#DATE_DAYS_SINCE_1960
-	 * @see DataType#DATE_DAYS_SINCE_1970
-	 * @see DataType#DATE_DAYS_SINCE_1980
-	 */
 	static
-	private DaysSinceDate toDaysSinceDate(LocalDate epoch, Object value){
+	private DaysSinceDate toDaysSinceDate(Date epoch, Object value){
 
 		if(value instanceof DaysSinceDate){
 			DaysSinceDate period = (DaysSinceDate)value;
 
-			if((epoch).equals(period.getEpoch())){
-				return period;
-			}
-
-			long days = ChronoUnit.DAYS.between(epoch, period.getEpoch()) + period.getDays();
-
-			return new DaysSinceDate(epoch, days);
+			return period.forEpoch(epoch);
 		}
 
-		throw new TypeCheckException(getDaysDataType(epoch), value);
+		throw new TypeCheckException(DaysSinceDate.class, value);
 	}
 
-	/**
-	 * @see DataType#TIME_SECONDS
-	 */
 	static
 	private SecondsSinceMidnight toSecondsSinceMidnight(Object value){
 
@@ -890,30 +841,19 @@ public class TypeUtil {
 			return (SecondsSinceMidnight)value;
 		}
 
-		throw new TypeCheckException(DataType.TIME_SECONDS, value);
+		throw new TypeCheckException(SecondsSinceMidnight.class, value);
 	}
 
-	/**
-	 * @see DataType#DATE_TIME_SECONDS_SINCE_1960
-	 * @see DataType#DATE_TIME_SECONDS_SINCE_1970
-	 * @see DataType#DATE_TIME_SECONDS_SINCE_1980
-	 */
 	static
-	private SecondsSinceDate toSecondsSinceDate(LocalDate epoch, Object value){
+	private SecondsSinceDate toSecondsSinceDate(Date epoch, Object value){
 
 		if(value instanceof SecondsSinceDate){
 			SecondsSinceDate period = (SecondsSinceDate)value;
 
-			if((epoch).equals(period.getEpoch())){
-				return period;
-			}
-
-			long seconds = ChronoUnit.SECONDS.between(epoch.atStartOfDay(), (period.getEpoch()).atStartOfDay()) + period.getSeconds();
-
-			return new SecondsSinceDate(epoch, seconds);
+			return period.forEpoch(epoch);
 		}
 
-		throw new TypeCheckException(getSecondsDataType(epoch), value);
+		throw new TypeCheckException(SecondsSinceDate.class, value);
 	}
 
 	static
@@ -954,41 +894,5 @@ public class TypeUtil {
 		} catch(NumberFormatException nfe){
 			return DataType.STRING;
 		}
-	}
-
-	static
-	private DataType getDaysDataType(LocalDate epoch){
-
-		if((Epochs.YEAR_1960).equals(epoch)){
-			return DataType.DATE_DAYS_SINCE_1960;
-		} else
-
-		if((Epochs.YEAR_1970).equals(epoch)){
-			return DataType.DATE_DAYS_SINCE_1970;
-		} else
-
-		if((Epochs.YEAR_1980).equals(epoch)){
-			return DataType.DATE_DAYS_SINCE_1980;
-		}
-
-		throw new EvaluationException("Non-standard epoch " + epoch);
-	}
-
-	static
-	private DataType getSecondsDataType(LocalDate epoch){
-
-		if((Epochs.YEAR_1960).equals(epoch)){
-			return DataType.DATE_TIME_SECONDS_SINCE_1960;
-		} else
-
-		if((Epochs.YEAR_1970).equals(epoch)){
-			return DataType.DATE_TIME_SECONDS_SINCE_1970;
-		} else
-
-		if((Epochs.YEAR_1980).equals(epoch)){
-			return DataType.DATE_TIME_SECONDS_SINCE_1980;
-		}
-
-		throw new EvaluationException("Non-standard epoch " + epoch);
 	}
 }

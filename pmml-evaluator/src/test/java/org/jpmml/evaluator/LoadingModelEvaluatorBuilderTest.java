@@ -23,10 +23,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.transform.stream.StreamResult;
 
 import com.google.common.collect.Iterables;
+import jakarta.xml.bind.JAXBException;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Header;

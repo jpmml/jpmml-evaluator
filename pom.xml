@@ -115,27 +115,27 @@
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-agent</artifactId>
-				<version>1.5.16</version>
+				<version>1.6.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model</artifactId>
-				<version>1.5.16</version>
+				<version>1.6.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model-kryo</artifactId>
-				<version>1.5.16</version>
+				<version>1.6.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model-metro</artifactId>
-				<version>1.5.16</version>
+				<version>1.6.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model-moxy</artifactId>
-				<version>1.5.16</version>
+				<version>1.6.0</version>
 			</dependency>
 
 			<dependency>
@@ -204,7 +204,7 @@
 			<dependency>
 				<groupId>org.glassfish.jaxb</groupId>
 				<artifactId>jaxb-runtime</artifactId>
-				<version>2.3.5</version>
+				<version>3.0.2</version>
 			</dependency>
 
 			<dependency>
@@ -307,10 +307,6 @@
 							<goal>check</goal>
 						</goals>
 						<configuration>
-							<ignores>
-								<ignore>java.time.*</ignore>
-								<ignore>java.util.Date</ignore>
-							</ignores>
 							<signature>
 								<groupId>net.sf.androidscents.signature</groupId>
 								<artifactId>android-api-level-21</artifactId>

@@ -20,8 +20,7 @@ package org.jpmml.evaluator.java;
 
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
+import jakarta.xml.bind.annotation.XmlRootElement;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MathContext;

@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
 import com.google.common.cache.CacheLoader;
@@ -31,6 +30,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
+import jakarta.xml.bind.JAXBElement;
 import org.dmg.pmml.Cell;
 import org.dmg.pmml.Extension;
 import org.dmg.pmml.HasTable;

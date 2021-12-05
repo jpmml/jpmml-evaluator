@@ -19,11 +19,6 @@
 package org.jpmml.evaluator;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -39,6 +34,10 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLObject;
 import org.jpmml.model.ToStringHelper;
 import org.jpmml.model.XPathUtil;
+import org.jpmml.model.temporals.Date;
+import org.jpmml.model.temporals.DateTime;
+import org.jpmml.model.temporals.Instant;
+import org.jpmml.model.temporals.Time;
 
 /**
  * <p>
@@ -249,40 +248,42 @@ public class FieldValue implements TypeInfo, Serializable {
 		return (Boolean)getValue(DataType.BOOLEAN);
 	}
 
-	public LocalDateTime asLocalDateTime(){
-		return (LocalDateTime)getValue(DataType.DATE_TIME);
+	public Date asDate(){
+		return (Date)getValue(DataType.DATE);
 	}
 
-	public LocalDate asLocalDate(){
-		return (LocalDate)getValue(DataType.DATE);
+	public Time asTime(){
+		return (Time)getValue(DataType.TIME);
 	}
 
-	public LocalTime asLocalTime(){
-		return (LocalTime)getValue(DataType.TIME);
+	public DateTime asDateTime(){
+		return (DateTime)getValue(DataType.DATE_TIME);
 	}
 
-	public ZonedDateTime asZonedDateTime(ZoneId zoneId){
+	public Instant<?> asInstant(){
+		DataType dataType = getDataType();
+
+		switch(dataType){
+			case DATE:
+			case TIME:
+			case DATE_TIME:
+				return TypeUtil.cast(Instant.class, getValue());
+			default:
+				break;
+		}
 
 		try {
-			LocalDateTime dateTime = asLocalDateTime();
-
-			return dateTime.atZone(zoneId);
+			return asDateTime();
 		} catch(TypeCheckException tceDateTime){
 
 			try {
-				LocalDate localDate = asLocalDate();
-				LocalTime localTime = LocalTime.MIDNIGHT;
-
-				return ZonedDateTime.of(localDate, localTime, zoneId);
+				return asDate();
 			} catch(TypeCheckException tceDate){
 				// Ignored
-			}
+			} // End try
 
 			try {
-				LocalDate localDate = LocalDate.now();
-				LocalTime localTime = asLocalTime();
-
-				return ZonedDateTime.of(localDate, localTime, zoneId);
+				return asTime();
 			} catch(TypeCheckException tceTime){
 				// Ignored
 			}

@@ -54,8 +54,8 @@ import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.InlineTableUtil;
 import org.jpmml.evaluator.RichComplexArray;
-import org.jpmml.model.inlinetable.InputCell;
-import org.jpmml.model.inlinetable.OutputCell;
+import org.jpmml.model.cells.InputCell;
+import org.jpmml.model.cells.OutputCell;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

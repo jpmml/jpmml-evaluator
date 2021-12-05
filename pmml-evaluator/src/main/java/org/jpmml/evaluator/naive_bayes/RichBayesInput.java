@@ -23,9 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import com.google.common.collect.ImmutableMap;
+import jakarta.xml.bind.annotation.XmlTransient;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.naive_bayes.BayesInput;
 import org.dmg.pmml.naive_bayes.PMMLAttributes;

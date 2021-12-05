@@ -22,9 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import com.google.common.collect.ImmutableMap;
+import jakarta.xml.bind.annotation.XmlTransient;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMMLAttributes;

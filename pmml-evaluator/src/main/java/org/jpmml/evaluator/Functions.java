@@ -18,13 +18,7 @@
  */
 package org.jpmml.evaluator;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -57,6 +51,10 @@ import org.jpmml.evaluator.functions.UnaryMathFunction;
 import org.jpmml.evaluator.functions.UnaryStringFunction;
 import org.jpmml.evaluator.functions.ValueFunction;
 import org.jpmml.evaluator.functions.ValueSpaceFunction;
+import org.jpmml.model.temporals.DaysSinceDate;
+import org.jpmml.model.temporals.Instant;
+import org.jpmml.model.temporals.SecondsSinceDate;
+import org.jpmml.model.temporals.SecondsSinceMidnight;
 
 public interface Functions {
 
@@ -631,11 +629,11 @@ public interface Functions {
 
 	BinaryFunction FORMAT_DATETIME = new BinaryFunction(PMMLFunctions.FORMATDATETIME, Arrays.asList("input", "pattern")){
 
-		public String evaluate(Date input, String pattern){
+		public String evaluate(Instant<?> input, String pattern){
 			pattern = translatePattern(pattern);
 
 			try {
-				return String.format(pattern, input);
+				return input.format(pattern);
 			} catch(IllegalFormatException ife){
 				throw new FunctionException(this, "Invalid \"pattern\" value")
 					.initCause(ife);
@@ -644,11 +642,7 @@ public interface Functions {
 
 		@Override
 		public FieldValue evaluate(FieldValue first, FieldValue second){
-			ZonedDateTime zonedDateTime = first.asZonedDateTime(ZoneId.systemDefault());
-
-			Date date = Date.from(zonedDateTime.toInstant());
-
-			String result = evaluate(date, second.asString());
+			String result = evaluate(first.asInstant(), second.asString());
 
 			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
 		}
@@ -677,13 +671,9 @@ public interface Functions {
 
 	BinaryFunction DATE_DAYS_SINCE_YEAR = new BinaryFunction(PMMLFunctions.DATEDAYSSINCEYEAR, Arrays.asList("input", "referenceYear")){
 
-		public DaysSinceDate evaluate(LocalDate input, int year){
-			return new DaysSinceDate(LocalDate.of(year, 1, 1), input);
-		}
-
 		@Override
 		public FieldValue evaluate(FieldValue first, FieldValue second){
-			DaysSinceDate result = evaluate(first.asLocalDate(), second.asInteger());
+			DaysSinceDate result = (first.asDate()).toDaysSinceYear(second.asInteger());
 
 			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, result);
 		}
@@ -691,13 +681,9 @@ public interface Functions {
 
 	UnaryFunction DATE_SECONDS_SINCE_MIDNIGHT = new UnaryFunction(PMMLFunctions.DATESECONDSSINCEMIDNIGHT, Arrays.asList("input")){
 
-		public SecondsSinceMidnight evaluate(LocalTime input){
-			return new SecondsSinceMidnight(input.toSecondOfDay());
-		}
-
 		@Override
 		public FieldValue evaluate(FieldValue value){
-			SecondsSinceMidnight result = evaluate(value.asLocalTime());
+			SecondsSinceMidnight result = (value.asTime()).toSecondsSinceMidnight();
 
 			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, result);
 		}
@@ -705,13 +691,9 @@ public interface Functions {
 
 	BinaryFunction DATE_SECONDS_SINCE_YEAR = new BinaryFunction(PMMLFunctions.DATESECONDSSINCEYEAR, Arrays.asList("input", "referenceYear")){
 
-		public SecondsSinceDate evaluate(LocalDateTime input, int year){
-			return new SecondsSinceDate(LocalDate.of(year, 1, 1), input);
-		}
-
 		@Override
 		public FieldValue evaluate(FieldValue first, FieldValue second){
-			SecondsSinceDate result = evaluate(first.asLocalDateTime(), second.asInteger());
+			SecondsSinceDate result = (first.asDateTime()).toSecondsSinceYear(second.asInteger());
 
 			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, result);
 		}

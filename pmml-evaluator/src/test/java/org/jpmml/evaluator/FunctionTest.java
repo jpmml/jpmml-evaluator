@@ -18,13 +18,13 @@
  */
 package org.jpmml.evaluator;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import org.jpmml.model.temporals.Date;
+import org.jpmml.model.temporals.DateTime;
+import org.jpmml.model.temporals.Time;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -369,18 +369,18 @@ public class FunctionTest {
 	public void evaluateFormatFunctions(){
 		assertEquals("  2", evaluate(Functions.FORMAT_NUMBER, 2, "%3d"));
 
-		assertEquals("08/20/04", evaluate(Functions.FORMAT_DATETIME, LocalDate.of(2004, 8, 20), "%m/%d/%y"));
+		assertEquals("08/20/04", evaluate(Functions.FORMAT_DATETIME, new Date(2004, 8, 20), "%m/%d/%y"));
 	}
 
 	@Test
 	public void evaluateDateTimeFunctions(){
-		assertEquals(15796, evaluate(Functions.DATE_DAYS_SINCE_YEAR, LocalDate.of(2003, 4, 1), 1960));
-		assertEquals(15796, evaluate(Functions.DATE_DAYS_SINCE_YEAR, LocalDateTime.of(2003, 4, 1, 0, 0, 0), 1960));
+		assertEquals(15796, evaluate(Functions.DATE_DAYS_SINCE_YEAR, new Date(2003, 4, 1), 1960));
+		assertEquals(15796, evaluate(Functions.DATE_DAYS_SINCE_YEAR, new DateTime(2003, 4, 1, 0, 0, 0), 1960));
 
-		assertEquals(19410, evaluate(Functions.DATE_SECONDS_SINCE_MIDNIGHT, LocalTime.of(5, 23, 30)));
-		assertEquals(19410, evaluate(Functions.DATE_SECONDS_SINCE_MIDNIGHT, LocalDateTime.of(1960, 1, 1, 5, 23, 30)));
+		assertEquals(19410, evaluate(Functions.DATE_SECONDS_SINCE_MIDNIGHT, new Time(5, 23, 30)));
+		assertEquals(19410, evaluate(Functions.DATE_SECONDS_SINCE_MIDNIGHT, new DateTime(1960, 1, 1, 5, 23, 30)));
 
-		assertEquals(185403, evaluate(Functions.DATE_SECONDS_SINCE_YEAR, LocalDateTime.of(1960, 1, 3, 3, 30, 3), 1960));
+		assertEquals(185403, evaluate(Functions.DATE_SECONDS_SINCE_YEAR, new DateTime(1960, 1, 3, 3, 30, 3), 1960));
 	}
 
 	@Test

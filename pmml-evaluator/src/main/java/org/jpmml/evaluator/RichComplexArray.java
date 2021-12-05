@@ -22,11 +22,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import jakarta.xml.bind.annotation.XmlTransient;
 import org.dmg.pmml.ComplexArray;
 import org.dmg.pmml.DataType;
 import org.jpmml.model.annotations.Property;
