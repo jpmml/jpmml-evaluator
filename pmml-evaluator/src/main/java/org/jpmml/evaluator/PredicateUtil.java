@@ -32,7 +32,6 @@ import java.util.List;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.False;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.HasPredicate;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PMMLElements;
@@ -108,7 +107,7 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, EvaluationContext context){
-		FieldName name = simplePredicate.getField();
+		String name = simplePredicate.getField();
 		if(name == null){
 			throw new MissingAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_FIELD);
 		}
@@ -177,7 +176,7 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext context){
-		FieldName name = simpleSetPredicate.getField();
+		String name = simpleSetPredicate.getField();
 		if(name == null){
 			throw new MissingAttributeException(simpleSetPredicate, PMMLAttributes.SIMPLESETPREDICATE_FIELD);
 		}

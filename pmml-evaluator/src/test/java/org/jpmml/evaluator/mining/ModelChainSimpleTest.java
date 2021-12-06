@@ -21,7 +21,6 @@ package org.jpmml.evaluator.mining;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.ConfigurationBuilder;
 import org.jpmml.evaluator.ModelEvaluator;
@@ -53,7 +52,7 @@ public class ModelChainSimpleTest extends ModelChainTest {
 
 	@Test
 	public void evaluateSetosa() throws Exception {
-		Map<FieldName, ?> results = evaluateExample(1.4, 0.2);
+		Map<String, ?> results = evaluateExample(1.4, 0.2);
 
 		assertEquals(1 + 1, results.size());
 

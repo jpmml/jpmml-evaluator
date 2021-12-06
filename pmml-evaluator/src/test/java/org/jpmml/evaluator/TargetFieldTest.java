@@ -20,7 +20,6 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Target;
@@ -33,34 +32,30 @@ public class TargetFieldTest {
 
 	@Test
 	public void getName(){
-		FieldName name = FieldName.create("y");
-
-		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE);
+		DataField dataField = new DataField("y", OpType.CONTINUOUS, DataType.DOUBLE);
 
 		TargetField targetField = new TargetField(dataField, null, null);
 
-		assertEquals(name, targetField.getName());
+		assertEquals("y", targetField.getName());
 
-		targetField.setName(FieldName.create("label"));
+		targetField.setName("label");
 
-		assertNotEquals(name, targetField.getName());
+		assertNotEquals("y", targetField.getName());
 
 		targetField.setName(null);
 
-		assertEquals(name, targetField.getName());
+		assertEquals("y", targetField.getName());
 	}
 
 	@Test
 	public void getOpType(){
-		FieldName name = FieldName.create("y");
+		DataField dataField = new DataField("y", OpType.CONTINUOUS, DataType.DOUBLE);
 
-		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE);
-
-		MiningField miningField = new MiningField(name)
+		MiningField miningField = new MiningField(dataField.getName())
 			.setOpType(OpType.CATEGORICAL);
 
 		Target target = new Target()
-			.setField(name)
+			.setField(dataField.getName())
 			.setOpType(OpType.CONTINUOUS);
 
 		TargetField targetField = new TargetField(dataField, null, null);

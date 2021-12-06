@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMMLObject;
 
 /**
@@ -28,16 +27,16 @@ import org.dmg.pmml.PMMLObject;
  */
 public class MissingFieldException extends EvaluationException {
 
-	public MissingFieldException(FieldName name){
+	public MissingFieldException(String name){
 		super(formatMessage(name));
 	}
 
-	public MissingFieldException(FieldName name, PMMLObject context){
+	public MissingFieldException(String name, PMMLObject context){
 		super(formatMessage(name), context);
 	}
 
 	static
-	private String formatMessage(FieldName name){
+	private String formatMessage(String name){
 		return "Field " + formatKey(name) + " is not defined";
 	}
 }

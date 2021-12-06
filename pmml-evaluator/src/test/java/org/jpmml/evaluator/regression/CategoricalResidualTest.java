@@ -20,7 +20,6 @@ package org.jpmml.evaluator.regression;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -33,18 +32,16 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("input", (2d * 0.8d), "target", "yes");
+		Map<String, ?> arguments = createArguments("input", (2d * 0.8d), "target", "yes");
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		FieldName name = FieldName.create("residual");
-
-		assertEquals(0.2d, (Double)getOutput(results, name), 1e-8);
+		assertEquals(0.2d, (Double)getOutput(results, "residual"), 1e-8);
 
 		arguments = createArguments("input", (2d * 0.8d), "target", "no");
 
 		results = evaluator.evaluate(arguments);
 
-		assertEquals(-0.8d, (Double)getOutput(results, name), 1e-8);
+		assertEquals(-0.8d, (Double)getOutput(results, "residual"), 1e-8);
 	}
 }

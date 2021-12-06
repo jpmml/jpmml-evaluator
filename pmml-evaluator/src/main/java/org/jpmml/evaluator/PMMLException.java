@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMMLObject;
 import org.xml.sax.Locator;
 
@@ -95,13 +94,6 @@ public class PMMLException extends RuntimeException {
 
 	static
 	public String formatKey(Object object){
-
-		if(object instanceof FieldName){
-			FieldName name = (FieldName)object;
-
-			object = name.getValue();
-		} // End if
-
 		return format(object);
 	}
 

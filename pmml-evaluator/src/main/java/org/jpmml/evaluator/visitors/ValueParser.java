@@ -34,7 +34,6 @@ import org.dmg.pmml.DiscretizeBin;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.FieldColumnPair;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.HasDataType;
 import org.dmg.pmml.HasDefaultValue;
 import org.dmg.pmml.HasFieldReference;
@@ -176,7 +175,7 @@ public class ValueParser extends AbstractParser {
 			List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
 
 			for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
-				FieldName name = fieldColumnPair.getField();
+				String name = fieldColumnPair.getField();
 				if(name == null){
 					throw new MissingAttributeException(fieldColumnPair, PMMLAttributes.FIELDCOLUMNPAIR_FIELD);
 				}
@@ -199,7 +198,7 @@ public class ValueParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(MiningField miningField){
-		FieldName name = miningField.getName();
+		String name = miningField.getName();
 		if(name == null){
 			throw new MissingAttributeException(miningField, PMMLAttributes.MININGFIELD_NAME);
 		}
@@ -255,7 +254,7 @@ public class ValueParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(SimpleSetPredicate simpleSetPredicate){
-		FieldName name = simpleSetPredicate.getField();
+		String name = simpleSetPredicate.getField();
 		if(name == null){
 			throw new MissingAttributeException(simpleSetPredicate, PMMLAttributes.SIMPLESETPREDICATE_FIELD);
 		}
@@ -327,7 +326,7 @@ public class ValueParser extends AbstractParser {
 	}
 
 	private <E extends PMMLObject & HasFieldReference<E> & HasValue<E>> void parseValue(E hasValue){
-		FieldName name = hasValue.getField();
+		String name = hasValue.getField();
 		if(name == null){
 			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(hasValue.getClass()) + "@field"), hasValue);
 		}

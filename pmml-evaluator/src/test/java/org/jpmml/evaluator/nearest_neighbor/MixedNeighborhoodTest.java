@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
@@ -47,15 +46,15 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 
 		checkTargetFields(Arrays.asList("species", "species_class"), evaluator);
 
-		Map<FieldName, ?> arguments = createArguments("sepal length", 7d, "sepal width", 3.2d, "petal length", 4.7d, "petal width", 1.4d);
+		Map<String, ?> arguments = createArguments("sepal length", 7d, "sepal width", 3.2d, "petal length", 4.7d, "petal width", 1.4d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		AffinityDistribution<?> species = (AffinityDistribution<?>)results.get(FieldName.create("species"));
+		AffinityDistribution<?> species = (AffinityDistribution<?>)results.get("species");
 		assertEquals(20d, species.getResult());
 		assertEquals("51", (species.getEntityIdRanking()).get(0));
 
-		AffinityDistribution<?> speciesClass = (AffinityDistribution<?>)results.get(FieldName.create("species_class"));
+		AffinityDistribution<?> speciesClass = (AffinityDistribution<?>)results.get("species_class");
 		assertEquals("Iris-versicolor", speciesClass.getResult());
 		assertEquals("51", (speciesClass.getEntityIdRanking()).get(0));
 
@@ -67,11 +66,11 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 	public void evaluateFirstVsRest() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator(new RemoveTrainingInstanceTransformer(0));
 
-		Map<FieldName, ?> arguments = createArguments("sepal length", 5.1d, "sepal width", 3.5d, "petal length", 1.4d, "petal width", 0.2d);
+		Map<String, ?> arguments = createArguments("sepal length", 5.1d, "sepal width", 3.5d, "petal length", 1.4d, "petal width", 0.2d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		AffinityDistribution<?> species = (AffinityDistribution<?>)results.get(FieldName.create("species"));
+		AffinityDistribution<?> species = (AffinityDistribution<?>)results.get("species");
 
 		assertEquals(10d, species.getResult());
 
@@ -81,7 +80,7 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 		assertEquals((Double)0.02d, speciesAffinityRanking.get(1), 1e-13);
 		assertEquals((Double)0.02d, speciesAffinityRanking.get(2), 1e-13);
 
-		AffinityDistribution<?> speciesClass = (AffinityDistribution<?>)results.get(FieldName.create("species_class"));
+		AffinityDistribution<?> speciesClass = (AffinityDistribution<?>)results.get("species_class");
 
 		assertEquals("Iris-setosa", speciesClass.getResult());
 
@@ -94,11 +93,11 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 	public void evaluateLastVsRest() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator(new RemoveTrainingInstanceTransformer(149));
 
-		Map<FieldName, ?> arguments = createArguments("sepal length", 5.9d, "sepal width", 3.0d, "petal length", 5.1d, "petal width", 1.8d);
+		Map<String, ?> arguments = createArguments("sepal length", 5.9d, "sepal width", 3.0d, "petal length", 5.1d, "petal width", 1.8d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		AffinityDistribution<?> species = (AffinityDistribution<?>)results.get(FieldName.create("species"));
+		AffinityDistribution<?> species = (AffinityDistribution<?>)results.get("species");
 
 		assertEquals(30d, species.getResult());
 
@@ -108,7 +107,7 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 		assertEquals((Double)0.10d, speciesAffinityRanking.get(1), 1e-13);
 		assertEquals((Double)0.11d, speciesAffinityRanking.get(2), 1e-13);
 
-		AffinityDistribution<?> speciesClass = (AffinityDistribution<?>)results.get(FieldName.create("species_class"));
+		AffinityDistribution<?> speciesClass = (AffinityDistribution<?>)results.get("species_class");
 
 		assertEquals("Iris-virginica", speciesClass.getResult());
 	}

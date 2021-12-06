@@ -23,7 +23,6 @@ import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.ParameterField;
@@ -41,7 +40,7 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	public FieldValue prepare(FieldName name, Object value){
+	public FieldValue prepare(String name, Object value){
 		ParameterField parameterField = findParameterField(name);
 		if(parameterField == null){
 			throw new MissingFieldException(name);
@@ -67,7 +66,7 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 		return parent.getDefineFunction(name);
 	}
 
-	private ParameterField findParameterField(FieldName name){
+	private ParameterField findParameterField(String name){
 		DefineFunction defineFunction = getDefineFunction();
 
 		if(defineFunction.hasParameterFields()){

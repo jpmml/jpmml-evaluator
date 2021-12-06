@@ -20,7 +20,6 @@ package org.jpmml.evaluator.tree;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -33,9 +32,9 @@ public class DefaultChildTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("Integer", null, "Double", 76.45d);
+		Map<String, ?> arguments = createArguments("Integer", null, "Double", 76.45d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		NodeScoreDistribution<?> targetValue = (NodeScoreDistribution<?>)results.get(evaluator.getTargetName());
 

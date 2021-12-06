@@ -21,27 +21,26 @@ package org.jpmml.evaluator.testing;
 import java.util.Map;
 
 import com.google.common.collect.MapDifference;
-import org.dmg.pmml.FieldName;
 import org.jpmml.model.ToStringHelper;
 
 public class Conflict {
 
 	private Integer id = null;
 
-	private Map<FieldName, ?> arguments = null;
+	private Map<String, ?> arguments = null;
 
-	private MapDifference<FieldName, ?> difference = null;
+	private MapDifference<String, ?> difference = null;
 
 	private Exception exception = null;
 
 
-	public Conflict(Integer id, Map<FieldName, ?> arguments, MapDifference<FieldName, ?> difference){
+	public Conflict(Integer id, Map<String, ?> arguments, MapDifference<String, ?> difference){
 		setId(id);
 		setArguments(arguments);
 		setDifference(difference);
 	}
 
-	public Conflict(Integer id, Map<FieldName, ?> arguments, Exception exception){
+	public Conflict(Integer id, Map<String, ?> arguments, Exception exception){
 		setId(id);
 		setArguments(arguments);
 		setException(exception);
@@ -53,19 +52,19 @@ public class Conflict {
 			.add("id", getId())
 			.add("arguments", getArguments());
 
-		MapDifference<FieldName, ?> difference = getDifference();
+		MapDifference<String, ?> difference = getDifference();
 		if(difference != null){
-			Map<FieldName, ?> onlyOnLeft = difference.entriesOnlyOnLeft();
+			Map<String, ?> onlyOnLeft = difference.entriesOnlyOnLeft();
 			if(!onlyOnLeft.isEmpty()){
 				helper.add("expected but absent", onlyOnLeft);
 			}
 
-			Map<FieldName, ?> onlyOnRight = difference.entriesOnlyOnRight();
+			Map<String, ?> onlyOnRight = difference.entriesOnlyOnRight();
 			if(!onlyOnRight.isEmpty()){
 				helper.add("not expected but present", onlyOnRight);
 			}
 
-			Map<FieldName, ? extends MapDifference.ValueDifference<?>> differing = difference.entriesDiffering();
+			Map<String, ? extends MapDifference.ValueDifference<?>> differing = difference.entriesDiffering();
 			if(!differing.isEmpty()){
 				helper.add("differing (expected vs. actual)", differing);
 			}
@@ -87,19 +86,19 @@ public class Conflict {
 		this.id = id;
 	}
 
-	public Map<FieldName, ?> getArguments(){
+	public Map<String, ?> getArguments(){
 		return this.arguments;
 	}
 
-	private void setArguments(Map<FieldName, ?> arguments){
+	private void setArguments(Map<String, ?> arguments){
 		this.arguments = arguments;
 	}
 
-	public MapDifference<FieldName, ?> getDifference(){
+	public MapDifference<String, ?> getDifference(){
 		return this.difference;
 	}
 
-	private void setDifference(MapDifference<FieldName, ?> difference){
+	private void setDifference(MapDifference<String, ?> difference){
 		this.difference = difference;
 	}
 

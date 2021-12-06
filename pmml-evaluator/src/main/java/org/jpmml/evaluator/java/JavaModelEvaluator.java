@@ -20,7 +20,6 @@ package org.jpmml.evaluator.java;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
@@ -46,14 +45,14 @@ public class JavaModelEvaluator extends ModelEvaluator<JavaModel> {
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		JavaModel javaModel = getModel();
 
 		return javaModel.evaluateRegression(valueFactory, context);
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		JavaModel javaModel = getModel();
 
 		return javaModel.evaluateClassification(valueFactory, context);

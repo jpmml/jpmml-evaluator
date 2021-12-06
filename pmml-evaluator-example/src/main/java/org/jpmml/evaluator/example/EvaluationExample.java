@@ -43,7 +43,6 @@ import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
 import org.jpmml.evaluator.CacheUtil;
@@ -273,7 +272,7 @@ public class EvaluationExample extends Example {
 
 		CsvUtil.Table inputTable = readTable(this.input, this.separator);
 
-		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, createCellParser(!this.missingValues.isEmpty() ? new HashSet<>(this.missingValues) : null));
+		List<? extends Map<String, ?>> inputRecords = BatchUtil.parseRecords(inputTable, createCellParser(!this.missingValues.isEmpty() ? new HashSet<>(this.missingValues) : null));
 
 		if(this.waitBeforeInit){
 			waitForUserInput();
@@ -362,14 +361,14 @@ public class EvaluationExample extends Example {
 		} // End if
 
 		if(!inputRecords.isEmpty()){
-			Map<FieldName, ?> inputRecord = inputRecords.get(0);
+			Map<String, ?> inputRecord = inputRecords.get(0);
 
-			Sets.SetView<FieldName> missingInputFields = Sets.difference(new LinkedHashSet<>(Lists.transform(inputFields, InputField::getName)), inputRecord.keySet());
+			Sets.SetView<String> missingInputFields = Sets.difference(new LinkedHashSet<>(Lists.transform(inputFields, InputField::getName)), inputRecord.keySet());
 			if(!missingInputFields.isEmpty() && !this.sparse){
 				throw new IllegalArgumentException("Missing input field(s): " + missingInputFields);
 			}
 
-			Sets.SetView<FieldName> missingGroupFields = Sets.difference(new LinkedHashSet<>(Lists.transform(groupFields, InputField::getName)), inputRecord.keySet());
+			Sets.SetView<String> missingGroupFields = Sets.difference(new LinkedHashSet<>(Lists.transform(groupFields, InputField::getName)), inputRecord.keySet());
 			if(!missingGroupFields.isEmpty()){
 				throw new IllegalArgumentException("Missing group field(s): " + missingGroupFields);
 			}
@@ -381,9 +380,9 @@ public class EvaluationExample extends Example {
 			inputRecords = EvaluatorUtil.groupRows(hasGroupFields, inputRecords);
 		}
 
-		List<Map<FieldName, ?>> outputRecords = new ArrayList<>(inputRecords.size());
+		List<Map<String, ?>> outputRecords = new ArrayList<>(inputRecords.size());
 
-		FieldName errorColumn = null;
+		String errorColumn = null;
 
 		Timer timer = new Timer(new SlidingWindowReservoir(this.loop));
 
@@ -399,16 +398,16 @@ public class EvaluationExample extends Example {
 			try {
 				outputRecords.clear();
 
-				Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
+				Map<String, FieldValue> arguments = new LinkedHashMap<>();
 
-				for(Map<FieldName, ?> inputRecord : inputRecords){
+				for(Map<String, ?> inputRecord : inputRecords){
 					arguments.clear();
 
-					Map<FieldName, ?> results;
+					Map<String, ?> results;
 
 					try {
 						for(InputField inputField : inputFields){
-							FieldName name = inputField.getName();
+							String name = inputField.getName();
 
 							FieldValue value = inputField.prepare(inputRecord.get(name));
 
@@ -423,7 +422,7 @@ public class EvaluationExample extends Example {
 						}
 
 						if(errorColumn == null){
-							errorColumn = FieldName.create(this.errorColumn);
+							errorColumn = this.errorColumn;
 						}
 
 						results = Collections.singletonMap(errorColumn, e.toString());
@@ -448,7 +447,7 @@ public class EvaluationExample extends Example {
 		CsvUtil.Table outputTable = new CsvUtil.Table();
 		outputTable.setSeparator(inputTable.getSeparator());
 
-		List<FieldName> columns = new ArrayList<>(Lists.transform(resultFields, ResultField::getName));
+		List<String> columns = new ArrayList<>(Lists.transform(resultFields, ResultField::getName));
 
 		if(errorColumn != null){
 			columns.add(errorColumn);

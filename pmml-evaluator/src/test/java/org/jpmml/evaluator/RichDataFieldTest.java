@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Value;
 import org.junit.Test;
@@ -39,7 +38,7 @@ public class RichDataFieldTest {
 		Value validValueThree = createValue("3", null);
 		Value missingValue = createValue("N/A", Value.Property.MISSING);
 
-		DataField dataField = new DataField(FieldName.create("x"), OpType.CATEGORICAL, DataType.STRING)
+		DataField dataField = new DataField("x", OpType.CATEGORICAL, DataType.STRING)
 			.addValues(invalidValue, validValueOne, validValueTwo, validValueThree, missingValue);
 
 		RichDataField richDataField = new RichDataField(dataField);

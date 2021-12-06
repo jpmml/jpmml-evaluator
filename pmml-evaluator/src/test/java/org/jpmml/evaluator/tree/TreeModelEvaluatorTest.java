@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Header;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
@@ -56,7 +55,7 @@ public class TreeModelEvaluatorTest {
 
 		assertTrue(treeModelEvaluator instanceof ComplexTreeModelEvaluator);
 
-		OutputField predictedValueField = new OutputField(FieldName.create("prediction"), OpType.CONTINUOUS, DataType.DOUBLE)
+		OutputField predictedValueField = new OutputField("prediction", OpType.CONTINUOUS, DataType.DOUBLE)
 			.setResultFeature(ResultFeature.PREDICTED_VALUE);
 
 		pmml = createPMML(predictedValueField);
@@ -65,7 +64,7 @@ public class TreeModelEvaluatorTest {
 
 		assertTrue(treeModelEvaluator instanceof SimpleTreeModelEvaluator);
 
-		OutputField entityIdField = new OutputField(FieldName.create("nodeId"), OpType.CATEGORICAL, DataType.STRING)
+		OutputField entityIdField = new OutputField("nodeId", OpType.CATEGORICAL, DataType.STRING)
 			.setResultFeature(ResultFeature.ENTITY_ID);
 
 		pmml = createPMML(predictedValueField, entityIdField);

@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMMLObject;
 
 /**
@@ -28,16 +27,16 @@ import org.dmg.pmml.PMMLObject;
  */
 public class DuplicateFieldException extends EvaluationException {
 
-	public DuplicateFieldException(FieldName name){
+	public DuplicateFieldException(String name){
 		super(formatMessage(name));
 	}
 
-	public DuplicateFieldException(FieldName name, PMMLObject context){
+	public DuplicateFieldException(String name, PMMLObject context){
 		super(formatMessage(name), context);
 	}
 
 	static
-	private String formatMessage(FieldName name){
+	private String formatMessage(String name){
 		return "Field " + formatKey(name) + " has already been defined";
 	}
 }

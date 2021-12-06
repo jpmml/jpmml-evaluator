@@ -21,7 +21,6 @@ package org.jpmml.evaluator.tree;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.ConfigurationBuilder;
 import org.jpmml.evaluator.ModelEvaluator;
@@ -43,9 +42,9 @@ public class ClassificationOutputTest extends ModelEvaluatorTest {
 
 		checkResultFields(Arrays.asList("result"), Arrays.asList("output_predictedValue", "output_predictedDisplayValue", "output_probability"), evaluator);
 
-		Map<FieldName, ?> arguments = createArguments("flag", false);
+		Map<String, ?> arguments = createArguments("flag", false);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		assertEquals(1 + 3, results.size());
 

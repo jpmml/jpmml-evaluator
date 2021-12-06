@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.ResultFeature;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.HasProbability;
@@ -48,14 +47,14 @@ public class MultiTargetTest extends ModelEvaluatorTest {
 
 		checkResultFields(Arrays.asList("y1", "y2"), Arrays.asList("decision"), evaluator);
 
-		Map<FieldName, ?> arguments = createArguments("x", -1.0d);
+		Map<String, ?> arguments = createArguments("x", -1.0d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		assertNotNull(getTarget(results, "y1"));
 		assertNull(getTarget(results, "y2"));
 
-		Object classification = results.get(FieldName.create("y1"));
+		Object classification = results.get("y1");
 
 		assertFalse(classification instanceof HasProbability);
 
@@ -68,7 +67,7 @@ public class MultiTargetTest extends ModelEvaluatorTest {
 		assertNull(getTarget(results, "y1"));
 		assertNotNull(getTarget(results, "y2"));
 
-		classification = results.get(FieldName.create("y2"));
+		classification = results.get("y2");
 
 		assertFalse(classification instanceof HasProbability);
 
@@ -81,11 +80,11 @@ public class MultiTargetTest extends ModelEvaluatorTest {
 
 		evaluator.addResultFeatures(EnumSet.of(ResultFeature.PROBABILITY));
 
-		Map<FieldName, ?> arguments = createArguments("x", -1.0d);
+		Map<String, ?> arguments = createArguments("x", -1.0d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		Classification<?, ?> classification = (Classification<?, ?>)results.get(FieldName.create("y1"));
+		Classification<?, ?> classification = (Classification<?, ?>)results.get("y1");
 
 		assertTrue(classification instanceof NodeScoreDistribution);
 
@@ -93,7 +92,7 @@ public class MultiTargetTest extends ModelEvaluatorTest {
 
 		results = evaluator.evaluate(arguments);
 
-		classification = (Classification<?, ?>)results.get(FieldName.create("y2"));
+		classification = (Classification<?, ?>)results.get("y2");
 
 		assertTrue(classification instanceof ProbabilityDistribution);
 	}

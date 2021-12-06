@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMMLObject;
 
 /**
@@ -28,16 +27,16 @@ import org.dmg.pmml.PMMLObject;
  */
 public class InvisibleFieldException extends EvaluationException {
 
-	public InvisibleFieldException(FieldName name){
+	public InvisibleFieldException(String name){
 		super(formatMessage(name));
 	}
 
-	public InvisibleFieldException(FieldName name, PMMLObject context){
+	public InvisibleFieldException(String name, PMMLObject context){
 		super(formatMessage(name), context);
 	}
 
 	static
-	private String formatMessage(FieldName name){
+	private String formatMessage(String name){
 		return "Field " + formatKey(name) + " is not visible";
 	}
 }

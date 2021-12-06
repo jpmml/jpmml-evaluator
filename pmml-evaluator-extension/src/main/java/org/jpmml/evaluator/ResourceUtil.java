@@ -27,39 +27,9 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.dmg.pmml.FieldName;
-
 public class ResourceUtil {
 
 	private ResourceUtil(){
-	}
-
-	static
-	public FieldName[] readFieldNames(DataInput dataInput, int count) throws IOException {
-		String[] strings = readStrings(dataInput, count);
-
-		FieldName[] result = new FieldName[strings.length];
-
-		for(int i = 0; i < strings.length; i++){
-			String string = strings[i];
-
-			result[i] = FieldName.create(string);
-		}
-
-		return result;
-	}
-
-	static
-	public void writeFieldNames(DataOutput dataOutput, FieldName[] names) throws IOException {
-		String[] strings = new String[names.length];
-
-		for(int i = 0; i < names.length; i++){
-			FieldName name = names[i];
-
-			strings[i] = name.getValue();
-		}
-
-		writeStrings(dataOutput, strings);
 	}
 
 	static

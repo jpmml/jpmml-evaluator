@@ -20,7 +20,6 @@ package org.jpmml.evaluator.visitors;
 
 import org.dmg.pmml.Array;
 import org.dmg.pmml.False;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
@@ -38,20 +37,16 @@ public class PredicateInternerTest {
 
 	@Test
 	public void internSimplePredicate(){
-		FieldName name = FieldName.create("x");
-
-		Predicate left = new SimplePredicate(name, SimplePredicate.Operator.EQUAL, "1");
-		Predicate right = new SimplePredicate(name, SimplePredicate.Operator.EQUAL, "1");
+		Predicate left = new SimplePredicate("x", SimplePredicate.Operator.EQUAL, "1");
+		Predicate right = new SimplePredicate("x", SimplePredicate.Operator.EQUAL, "1");
 
 		checkTree(left, right);
 	}
 
 	@Test
 	public void internSimpleSetPredicate(){
-		FieldName name = FieldName.create("x");
-
-		Predicate left = new SimpleSetPredicate(name, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "1"));
-		Predicate right = new SimpleSetPredicate(name, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "\"1\""));
+		Predicate left = new SimpleSetPredicate("x", SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "1"));
+		Predicate right = new SimpleSetPredicate("x", SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "\"1\""));
 
 		checkTree(left, right);
 	}

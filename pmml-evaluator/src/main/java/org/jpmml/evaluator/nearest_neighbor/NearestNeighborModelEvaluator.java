@@ -55,7 +55,6 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Distance;
 import org.dmg.pmml.Field;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.MiningField;
@@ -106,7 +105,7 @@ import org.jpmml.model.visitors.ActiveFieldFinder;
 
 public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighborModel> {
 
-	private Table<Integer, FieldName, FieldValue> trainingInstances = null;
+	private Table<Integer, String, FieldValue> trainingInstances = null;
 
 	private Map<Integer, ?> trainingInstanceCentroids = null;
 
@@ -170,20 +169,20 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, AffinityDistribution<V>> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateMixed(valueFactory, context);
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, AffinityDistribution<V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateMixed(valueFactory, context);
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, AffinityDistribution<V>> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
+		Table<Integer, String, FieldValue> table = getTrainingInstances();
 
 		List<InstanceResult<V>> instanceResults = evaluateInstanceRows(valueFactory, context);
 
@@ -206,16 +205,16 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			}
 		};
 
-		FieldName instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
+		String instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
 		if(instanceIdVariable != null){
 			function = createIdentifierResolver(instanceIdVariable, table);
 		}
 
-		Map<FieldName, AffinityDistribution<V>> results = new LinkedHashMap<>();
+		Map<String, AffinityDistribution<V>> results = new LinkedHashMap<>();
 
 		List<TargetField> targetFields = getTargetFields();
 		for(TargetField targetField : targetFields){
-			FieldName name = targetField.getFieldName();
+			String name = targetField.getFieldName();
 
 			Object value;
 
@@ -242,14 +241,14 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, AffinityDistribution<V>> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, AffinityDistribution<V>> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		Table<Integer, FieldName, FieldValue> table = getTrainingInstances();
+		Table<Integer, String, FieldValue> table = getTrainingInstances();
 
 		List<InstanceResult<V>> instanceResults = evaluateInstanceRows(valueFactory, context);
 
-		FieldName instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
+		String instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
 		if(instanceIdVariable == null){
 			throw new MissingAttributeException(nearestNeighborModel, PMMLAttributes.NEARESTNEIGHBORMODEL_INSTANCEIDVARIABLE);
 		}
@@ -270,7 +269,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
 		for(KNNInput knnInput : knnInputs){
-			FieldName name = knnInput.getField();
+			String name = knnInput.getField();
 			if(name == null){
 				throw new MissingAttributeException(knnInput, PMMLAttributes.KNNINPUT_FIELD);
 			}
@@ -333,7 +332,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return result;
 	}
 
-	private <V extends Number> V calculateContinuousTarget(ValueFactory<V> valueFactory, FieldName name, List<InstanceResult<V>> instanceResults, Table<Integer, FieldName, FieldValue> table){
+	private <V extends Number> V calculateContinuousTarget(ValueFactory<V> valueFactory, String name, List<InstanceResult<V>> instanceResults, Table<Integer, String, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Number threshold = nearestNeighborModel.getThreshold();
@@ -396,7 +395,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	@SuppressWarnings (
 		value = {"rawtypes", "unchecked"}
 	)
-	private <V extends Number> Object calculateCategoricalTarget(ValueFactory<V> valueFactory, FieldName name, List<InstanceResult<V>> instanceResults, Table<Integer, FieldName, FieldValue> table){
+	private <V extends Number> Object calculateCategoricalTarget(ValueFactory<V> valueFactory, String name, List<InstanceResult<V>> instanceResults, Table<Integer, String, FieldValue> table){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
 		Number threshold = nearestNeighborModel.getThreshold();
@@ -457,7 +456,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		return Iterables.getFirst(winners, null);
 	}
 
-	private Function<Integer, String> createIdentifierResolver(FieldName name, Table<Integer, FieldName, FieldValue> table){
+	private Function<Integer, String> createIdentifierResolver(String name, Table<Integer, String, FieldValue> table){
 		Function<Integer, String> function = new Function<Integer, String>(){
 
 			@Override
@@ -501,7 +500,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		}
 	}
 
-	private Table<Integer, FieldName, FieldValue> getTrainingInstances(){
+	private Table<Integer, String, FieldValue> getTrainingInstances(){
 
 		if(this.trainingInstances == null){
 			this.trainingInstances = ImmutableTable.copyOf(parseTrainingInstances(this));
@@ -542,12 +541,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	static
-	private Table<Integer, FieldName, FieldValue> parseTrainingInstances(NearestNeighborModelEvaluator modelEvaluator){
+	private Table<Integer, String, FieldValue> parseTrainingInstances(NearestNeighborModelEvaluator modelEvaluator){
 		NearestNeighborModel nearestNeighborModel = modelEvaluator.getModel();
 
-		FieldName instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
+		String instanceIdVariable = nearestNeighborModel.getInstanceIdVariable();
 
-		Set<FieldName> names = new HashSet<>();
+		Set<String> names = new HashSet<>();
 		names.addAll(ActiveFieldFinder.getFieldNames(nearestNeighborModel));
 
 		List<TargetField> targetFields = modelEvaluator.getTargetFields();
@@ -561,7 +560,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		InstanceFields instanceFields = trainingInstances.getInstanceFields();
 		for(InstanceField instanceField : instanceFields){
-			FieldName name = instanceField.getField();
+			String name = instanceField.getField();
 			if(name == null){
 				throw new MissingAttributeException(instanceField, PMMLAttributes.INSTANCEFIELD_FIELD);
 			}
@@ -612,7 +611,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			}
 		}
 
-		Table<Integer, FieldName, FieldValue> result = HashBasedTable.create();
+		Table<Integer, String, FieldValue> result = HashBasedTable.create();
 
 		InlineTable inlineTable = InlineTableUtil.getInlineTable(trainingInstances);
 		if(inlineTable != null){
@@ -630,7 +629,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
 		for(KNNInput knnInput : knnInputs){
-			FieldName name = knnInput.getField();
+			String name = knnInput.getField();
 
 			Field<?> field = modelEvaluator.resolveField(name);
 			if(!(field instanceof DerivedField)){
@@ -641,7 +640,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			Set<Integer> rowKeys = result.rowKeySet();
 			for(Integer rowKey : rowKeys){
-				Map<FieldName, FieldValue> rowValues = result.row(rowKey);
+				Map<String, FieldValue> rowValues = result.row(rowKey);
 
 				if(rowValues.containsKey(name)){
 					continue;
@@ -674,7 +673,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Map<Integer, List<FieldValue>> result = new LinkedHashMap<>();
 
-		Table<Integer, FieldName, FieldValue> table = modelEvaluator.getTrainingInstances();
+		Table<Integer, String, FieldValue> table = modelEvaluator.getTrainingInstances();
 
 		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
 
@@ -682,7 +681,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		for(Integer rowKey : rowKeys){
 			List<FieldValue> values = new ArrayList<>();
 
-			Map<FieldName, FieldValue> rowValues = table.row(rowKey);
+			Map<String, FieldValue> rowValues = table.row(rowKey);
 
 			for(KNNInput knnInput : knnInputs){
 				FieldValue value = rowValues.get(knnInput.getField());
@@ -700,12 +699,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	abstract
 	private class FieldLoader {
 
-		private FieldName name = null;
+		private String name = null;
 
 		private String column = null;
 
 
-		private FieldLoader(FieldName name, String column){
+		private FieldLoader(String name, String column){
 			setName(name);
 			setColumn(column);
 		}
@@ -719,11 +718,11 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			return prepare(value);
 		}
 
-		public FieldName getName(){
+		public String getName(){
 			return this.name;
 		}
 
-		private void setName(FieldName name){
+		private void setName(String name){
 			this.name = name;
 		}
 
@@ -739,7 +738,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	static
 	private class IdentifierLoader extends FieldLoader {
 
-		private IdentifierLoader(FieldName name, String column){
+		private IdentifierLoader(String name, String column){
 			super(name, column);
 		}
 
@@ -757,7 +756,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		private MiningField miningField = null;
 
 
-		private DataFieldLoader(FieldName name, String column, DataField dataField, MiningField miningField){
+		private DataFieldLoader(String name, String column, DataField dataField, MiningField miningField){
 			super(name, column);
 
 			setDataField(dataField);
@@ -794,7 +793,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		private MiningField miningField = null;
 
 
-		private DerivedFieldLoader(FieldName name, String column, DerivedField derivedField, MiningField miningField){
+		private DerivedFieldLoader(String name, String column, DerivedField derivedField, MiningField miningField){
 			super(name, column);
 
 			setDerivedField(derivedField);

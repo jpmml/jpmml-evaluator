@@ -18,15 +18,13 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.FieldName;
-
 public class VirtualEvaluationContext extends EvaluationContext {
 
 	public VirtualEvaluationContext(){
 	}
 
 	@Override
-	protected FieldValue prepare(FieldName name, Object value){
+	protected FieldValue prepare(String name, Object value){
 		return FieldValueUtil.create(value);
 	}
 }

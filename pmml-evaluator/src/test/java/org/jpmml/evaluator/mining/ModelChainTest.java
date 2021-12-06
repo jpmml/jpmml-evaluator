@@ -20,7 +20,6 @@ package org.jpmml.evaluator.mining;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.ConfigurationBuilder;
 import org.jpmml.evaluator.Evaluator;
@@ -30,7 +29,7 @@ import org.jpmml.evaluator.OutputFilters;
 abstract
 public class ModelChainTest extends ModelEvaluatorTest {
 
-	public Map<FieldName, ?> evaluateExample(double petalLength, double petalWidth) throws Exception {
+	public Map<String, ?> evaluateExample(double petalLength, double petalWidth) throws Exception {
 		ConfigurationBuilder configurationBuilder = new ConfigurationBuilder()
 			.setOutputFilter(OutputFilters.KEEP_FINAL_RESULTS);
 
@@ -38,7 +37,7 @@ public class ModelChainTest extends ModelEvaluatorTest {
 
 		Evaluator evaluator = createModelEvaluator(configuration);
 
-		Map<FieldName, ?> arguments = createArguments("petal_length", petalLength, "petal_width", petalWidth, "temperature", 0d, "cloudiness", 0d);
+		Map<String, ?> arguments = createArguments("petal_length", petalLength, "petal_width", petalWidth, "temperature", 0d, "cloudiness", 0d);
 
 		return evaluator.evaluate(arguments);
 	}

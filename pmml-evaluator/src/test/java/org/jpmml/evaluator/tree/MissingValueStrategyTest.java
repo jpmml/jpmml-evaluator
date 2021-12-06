@@ -21,7 +21,6 @@ package org.jpmml.evaluator.tree;
 import java.util.Collections;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
@@ -34,7 +33,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void nullPrediction() throws Exception {
-		Map<FieldName, ?> arguments = createArguments("outlook", "sunny", "temperature", null, "humidity", null);
+		Map<String, ?> arguments = createArguments("outlook", "sunny", "temperature", null, "humidity", null);
 
 		NodeScoreDistribution<?> targetValue = evaluate(TreeModel.MissingValueStrategy.NULL_PREDICTION, arguments);
 
@@ -50,7 +49,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void lastPrediction() throws Exception {
-		Map<FieldName, ?> arguments = createArguments("outlook", "sunny", "temperature", null, "humidity", null);
+		Map<String, ?> arguments = createArguments("outlook", "sunny", "temperature", null, "humidity", null);
 
 		NodeScoreDistribution<?> targetValue = evaluate(TreeModel.MissingValueStrategy.LAST_PREDICTION, arguments);
 
@@ -74,7 +73,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void defaultChildSinglePenalty() throws Exception {
-		Map<FieldName, ?> arguments = createArguments("outlook", null, "temperature", 40d, "humidity", 70d);
+		Map<String, ?> arguments = createArguments("outlook", null, "temperature", 40d, "humidity", 70d);
 
 		NodeScoreDistribution<?> targetValue = evaluate(TreeModel.MissingValueStrategy.DEFAULT_CHILD, 0.8d, arguments);
 
@@ -93,7 +92,7 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 	@Test
 	public void defaultChildMultiplePenalties() throws Exception {
-		Map<FieldName, ?> arguments = createArguments("outlook", null, "temperature", null, "humidity", 70d);
+		Map<String, ?> arguments = createArguments("outlook", null, "temperature", null, "humidity", 70d);
 
 		NodeScoreDistribution<?> targetValue = evaluate(TreeModel.MissingValueStrategy.DEFAULT_CHILD, 0.8d, arguments);
 
@@ -110,14 +109,14 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 		assertEquals((Double)(0.05d * missingValuePenalty), targetValue.getConfidence("no play"));
 	}
 
-	private NodeScoreDistribution<?> evaluate(TreeModel.MissingValueStrategy missingValueStrategy, Map<FieldName, ?> arguments) throws Exception {
+	private NodeScoreDistribution<?> evaluate(TreeModel.MissingValueStrategy missingValueStrategy, Map<String, ?> arguments) throws Exception {
 		return evaluate(missingValueStrategy, null, arguments);
 	}
 
-	private NodeScoreDistribution<?> evaluate(TreeModel.MissingValueStrategy missingValueStrategy, Double missingValuePenalty, Map<FieldName, ?> arguments) throws Exception {
+	private NodeScoreDistribution<?> evaluate(TreeModel.MissingValueStrategy missingValueStrategy, Double missingValuePenalty, Map<String, ?> arguments) throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator(new MissingValueStrategyTransformer(missingValueStrategy, missingValuePenalty));
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		return (NodeScoreDistribution<?>)results.get(evaluator.getTargetName());
 	}

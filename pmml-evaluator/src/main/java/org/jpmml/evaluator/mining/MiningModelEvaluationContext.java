@@ -23,7 +23,6 @@ import java.util.Map;
 
 import com.google.common.collect.BiMap;
 import org.dmg.pmml.DerivedField;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.mining.Segment;
 import org.jpmml.evaluator.ModelEvaluationContext;
@@ -32,7 +31,7 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 
 	private Map<String, SegmentResult> results = null;
 
-	private Map<FieldName, OutputField> outputFields = null;
+	private Map<String, OutputField> outputFields = null;
 
 
 	public MiningModelEvaluationContext(MiningModelEvaluator miningModelEvaluator){
@@ -69,7 +68,7 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 		this.results.put(id, result);
 	}
 
-	public OutputField getOutputField(FieldName name){
+	public OutputField getOutputField(String name){
 
 		if(this.outputFields == null){
 			return null;
@@ -78,7 +77,7 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 		return this.outputFields.get(name);
 	}
 
-	void putOutputField(FieldName name, OutputField outputField){
+	void putOutputField(String name, OutputField outputField){
 
 		if(this.outputFields == null){
 			this.outputFields = new HashMap<>();
@@ -87,7 +86,7 @@ public class MiningModelEvaluationContext extends ModelEvaluationContext {
 		this.outputFields.put(name, outputField);
 	}
 
-	public DerivedField getLocalDerivedField(FieldName name){
+	public DerivedField getLocalDerivedField(String name){
 		MiningModelEvaluator miningModelEvaluator = getModelEvaluator();
 
 		return miningModelEvaluator.getLocalDerivedField(name);

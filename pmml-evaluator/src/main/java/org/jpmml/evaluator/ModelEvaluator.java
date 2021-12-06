@@ -40,7 +40,6 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Field;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningField;
@@ -152,7 +151,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	protected int getNumberOfVisibleFields(){
 
 		if(this.numberOfVisibleFields == null){
-			ListMultimap<FieldName, Field<?>> visibleFields = getVisibleFields();
+			ListMultimap<String, Field<?>> visibleFields = getVisibleFields();
 
 			this.numberOfVisibleFields = visibleFields.size();
 		}
@@ -171,7 +170,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		VerificationBatch batch = parseModelVerification(modelVerification);
 
-		List<? extends Map<FieldName, ?>> records = batch.getRecords();
+		List<? extends Map<String, ?>> records = batch.getRecords();
 
 		List<InputField> inputFields = getInputFields();
 
@@ -184,15 +183,15 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		List<TargetField> targetFields = getTargetFields();
 		List<OutputField> outputFields = getOutputFields();
 
-		SetView<FieldName> intersection = Sets.intersection(batch.keySet(), new LinkedHashSet<>(Lists.transform(outputFields, OutputField::getFieldName)));
+		SetView<String> intersection = Sets.intersection(batch.keySet(), new LinkedHashSet<>(Lists.transform(outputFields, OutputField::getFieldName)));
 
 		boolean disjoint = intersection.isEmpty();
 
-		for(Map<FieldName, ?> record : records){
-			Map<FieldName, Object> arguments = new LinkedHashMap<>();
+		for(Map<String, ?> record : records){
+			Map<String, Object> arguments = new LinkedHashMap<>();
 
 			for(InputField inputField : inputFields){
-				FieldName name = inputField.getFieldName();
+				String name = inputField.getFieldName();
 
 				FieldValue value = inputField.prepare(record.get(name));
 
@@ -202,7 +201,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			ModelEvaluationContext context = createEvaluationContext();
 			context.setArguments(arguments);
 
-			Map<FieldName, ?> results = evaluateInternal(context);
+			Map<String, ?> results = evaluateInternal(context);
 
 			// "If there exist VerificationField elements that refer to OutputField elements,
 			// then any VerificationField element that refers to a MiningField element whose "usageType=target" should be ignored,
@@ -210,7 +209,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			if(!disjoint){
 
 				for(OutputField outputField : outputFields){
-					FieldName name = outputField.getFieldName();
+					String name = outputField.getFieldName();
 
 					VerificationField verificationField = batch.get(name);
 					if(verificationField == null){
@@ -225,7 +224,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			// then any VerificationField element that refers to a MiningField element whose "usageType=target" should be considered to represent an expected output"
 			{
 				for(TargetField targetField : targetFields){
-					FieldName name = targetField.getFieldName();
+					String name = targetField.getFieldName();
 
 					VerificationField verificationField = batch.get(name);
 					if(verificationField == null){
@@ -270,11 +269,11 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments){
+	public Map<String, ?> evaluate(Map<String, ?> arguments){
 		Configuration configuration = ensureConfiguration();
 
-		SymbolTable<FieldName> prevDerivedFieldGuard = null;
-		SymbolTable<FieldName> derivedFieldGuard = configuration.getDerivedFieldGuard();
+		SymbolTable<String> prevDerivedFieldGuard = null;
+		SymbolTable<String> derivedFieldGuard = configuration.getDerivedFieldGuard();
 
 		SymbolTable<String> prevFunctionGuard = null;
 		SymbolTable<String> functionGuard = configuration.getFunctionGuard();
@@ -284,7 +283,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		ModelEvaluationContext context = createEvaluationContext();
 		context.setArguments(arguments);
 
-		Map<FieldName, ?> results;
+		Map<String, ?> results;
 
 		try {
 			if(derivedFieldGuard != null){
@@ -316,19 +315,19 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return results;
 	}
 
-	protected Map<FieldName, ?> processArguments(Map<FieldName, ?> arguments){
+	protected Map<String, ?> processArguments(Map<String, ?> arguments){
 		InputMapper inputMapper = getInputMapper();
 
 		if(inputMapper != null){
-			Map<FieldName, Object> remappedArguments = new AbstractMap<FieldName, Object>(){
+			Map<String, Object> remappedArguments = new AbstractMap<String, Object>(){
 
 				@Override
 				public Object get(Object key){
-					return arguments.get(inputMapper.apply((FieldName)key));
+					return arguments.get(inputMapper.apply((String)key));
 				}
 
 				@Override
-				public Set<Map.Entry<FieldName, Object>> entrySet(){
+				public Set<Map.Entry<String, Object>> entrySet(){
 					throw new UnsupportedOperationException();
 				}
 			};
@@ -339,7 +338,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return arguments;
 	}
 
-	protected Map<FieldName, ?> processResults(Map<FieldName, ?> results){
+	protected Map<String, ?> processResults(Map<String, ?> results){
 		ResultMapper resultMapper = getResultMapper();
 
 		if(results instanceof OutputMap){
@@ -355,15 +354,15 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			} else
 
 			if(results.size() == 1){
-				Map.Entry<FieldName, ?> entry = Iterables.getOnlyElement(results.entrySet());
+				Map.Entry<String, ?> entry = Iterables.getOnlyElement(results.entrySet());
 
 				return Collections.singletonMap(resultMapper.apply(entry.getKey()), entry.getValue());
 			}
 
-			Map<FieldName, Object> remappedResults = new LinkedHashMap<>(2 * results.size());
+			Map<String, Object> remappedResults = new LinkedHashMap<>(2 * results.size());
 
-			Collection<? extends Map.Entry<FieldName, ?>> entries = results.entrySet();
-			for(Map.Entry<FieldName, ?> entry : entries){
+			Collection<? extends Map.Entry<String, ?>> entries = results.entrySet();
+			for(Map.Entry<String, ?> entry : entries){
 				remappedResults.put(resultMapper.apply(entry.getKey()), entry.getValue());
 			}
 
@@ -419,7 +418,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return outputFields;
 	}
 
-	public Map<FieldName, ?> evaluateInternal(ModelEvaluationContext context){
+	public Map<String, ?> evaluateInternal(ModelEvaluationContext context){
 		M model = getModel();
 
 		if(!model.isScorable()){
@@ -438,7 +437,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 				throw new UnsupportedAttributeException(model, mathContext);
 		}
 
-		Map<FieldName, ?> predictions;
+		Map<String, ?> predictions;
 
 		MiningFunction miningFunction = model.getMiningFunction();
 		switch(miningFunction){
@@ -470,35 +469,35 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		return OutputUtil.evaluate(predictions, context);
 	}
 
-	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateDefault();
 	}
 
-	protected <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateDefault();
 	}
 
-	protected <V extends Number> Map<FieldName, ?> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateDefault();
 	}
 
-	protected <V extends Number> Map<FieldName, ?> evaluateAssociationRules(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateAssociationRules(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateDefault();
 	}
 
-	protected <V extends Number> Map<FieldName, ?> evaluateSequences(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateSequences(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateDefault();
 	}
 
-	protected <V extends Number> Map<FieldName, ?> evaluateTimeSeries(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateTimeSeries(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateDefault();
 	}
 
-	protected <V extends Number> Map<FieldName, ?> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateDefault();
 	}
 
-	private <V extends Number> Map<FieldName, ?> evaluateDefault(){
+	private <V extends Number> Map<String, ?> evaluateDefault(){
 		Model model = getModel();
 
 		MiningFunction miningFunction = model.getMiningFunction();
@@ -641,12 +640,12 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	static
-	private <F extends ModelField> List<F> updateNames(List<F> fields, com.google.common.base.Function<FieldName, FieldName> mapper){
+	private <F extends ModelField> List<F> updateNames(List<F> fields, com.google.common.base.Function<String, String> mapper){
 
 		for(F field : fields){
-			FieldName name = field.getFieldName();
+			String name = field.getFieldName();
 
-			FieldName mappedName = mapper.apply(name);
+			String mappedName = mapper.apply(name);
 			if(mappedName != null && !Objects.equals(mappedName, name)){
 				field.setName(mappedName);
 			}
@@ -675,20 +674,20 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		Table<Integer, String, Object> table = InlineTableUtil.getContent(inlineTable);
 
-		List<Map<FieldName, Object>> records = new ArrayList<>();
+		List<Map<String, Object>> records = new ArrayList<>();
 
 		Set<Integer> rowKeys = table.rowKeySet();
 		for(Integer rowKey : rowKeys){
 			Map<String, Object> row = table.row(rowKey);
 
-			Map<FieldName, Object> record = new LinkedHashMap<>();
+			Map<String, Object> record = new LinkedHashMap<>();
 
 			for(VerificationField verificationField : verificationFields){
-				FieldName name = verificationField.getField();
+				String name = verificationField.getField();
 				String column = verificationField.getColumn();
 
 				if(column == null){
-					column = name.getValue();
+					column = name;
 				} // End if
 
 				if(!row.containsKey(column)){
@@ -712,16 +711,16 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	static
-	private class VerificationBatch extends LinkedHashMap<FieldName, VerificationField> {
+	private class VerificationBatch extends LinkedHashMap<String, VerificationField> {
 
-		private List<Map<FieldName, Object>> records = null;
+		private List<Map<String, Object>> records = null;
 
 
-		public List<Map<FieldName, Object>> getRecords(){
+		public List<Map<String, Object>> getRecords(){
 			return this.records;
 		}
 
-		private void setRecords(List<Map<FieldName, Object>> records){
+		private void setRecords(List<Map<String, Object>> records){
 			this.records = records;
 		}
 	}

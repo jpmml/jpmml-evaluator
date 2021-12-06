@@ -20,7 +20,6 @@ package org.jpmml.evaluator.scorecard;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasReasonCodeRanking;
 import org.junit.Test;
@@ -32,9 +31,9 @@ public class AttributeReasonCodeTest extends ReasonCodeTest {
 
 	@Test
 	public <T extends HasPartialScores & HasReasonCodeRanking> void evaluateComplex() throws Exception {
-		Map<FieldName, ?> results = evaluateExample();
+		Map<String, ?> results = evaluateExample();
 
-		T targetValue = (T)results.get(FieldName.create("overallScore"));
+		T targetValue = (T)results.get("overallScore");
 
 		assertEquals(3, (targetValue.getPartialScores()).size());
 		assertEquals(2, (targetValue.getReasonCodeRanking()).size());
@@ -48,9 +47,9 @@ public class AttributeReasonCodeTest extends ReasonCodeTest {
 
 	@Test
 	public void evaluateSimple() throws Exception {
-		Map<FieldName, ?> results = evaluateExample(new DisableReasonCodesTransformer());
+		Map<String, ?> results = evaluateExample(new DisableReasonCodesTransformer());
 
-		HasPartialScores targetValue = (HasPartialScores)results.get(FieldName.create("overallScore"));
+		HasPartialScores targetValue = (HasPartialScores)results.get("overallScore");
 
 		assertFalse(targetValue instanceof HasReasonCodeRanking);
 

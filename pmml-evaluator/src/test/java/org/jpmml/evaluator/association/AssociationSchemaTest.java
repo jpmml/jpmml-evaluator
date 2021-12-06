@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Iterables;
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -35,7 +34,7 @@ abstract
 public class AssociationSchemaTest extends ModelEvaluatorTest {
 
 	abstract
-	public Map<FieldName, ?> createItemArguments(List<String> items);
+	public Map<String, ?> createItemArguments(List<String> items);
 
 	@Test
 	public void evaluate() throws Exception {
@@ -51,9 +50,9 @@ public class AssociationSchemaTest extends ModelEvaluatorTest {
 
 		checkTargetFields(Collections.emptyList(), evaluator);
 
-		Map<FieldName, ?> arguments = createItemArguments(items);
+		Map<String, ?> arguments = createItemArguments(items);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		assertEquals(recommendations, getOutput(results, "Recommendation"));
 		assertEquals(exclusiveRecommendations, getOutput(results, "Exclusive_Recommendation"));

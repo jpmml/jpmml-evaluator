@@ -31,7 +31,6 @@ import java.util.function.Predicate;
 import com.google.common.base.Equivalence;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasGroupFields;
@@ -48,8 +47,8 @@ public class BatchUtil {
 	public List<Conflict> evaluate(Batch batch) throws Exception {
 		Evaluator evaluator = batch.getEvaluator();
 
-		List<? extends Map<FieldName, ?>> input = batch.getInput();
-		List<? extends Map<FieldName, ?>> output = batch.getOutput();
+		List<? extends Map<String, ?>> input = batch.getInput();
+		List<? extends Map<String, ?>> output = batch.getOutput();
 
 		if(evaluator instanceof HasGroupFields){
 			HasGroupFields hasGroupFields = (HasGroupFields)evaluator;
@@ -63,7 +62,7 @@ public class BatchUtil {
 
 		Predicate<ResultField> predicate = batch.getPredicate();
 
-		Set<FieldName> names = new LinkedHashSet<>();
+		Set<String> names = new LinkedHashSet<>();
 
 		List<TargetField> targetFields = evaluator.getTargetFields();
 		for(TargetField targetField : targetFields){
@@ -90,16 +89,16 @@ public class BatchUtil {
 		List<Conflict> conflicts = new ArrayList<>();
 
 		for(int i = 0; i < input.size(); i++){
-			Map<FieldName, ?> arguments = input.get(i);
+			Map<String, ?> arguments = input.get(i);
 
-			Map<FieldName, ?> expectedResults = output.get(i);
+			Map<String, ?> expectedResults = output.get(i);
 			expectedResults = Maps.filterKeys(expectedResults, names::contains);
 
 			try {
-				Map<FieldName, ?> actualResults = evaluator.evaluate(arguments);
+				Map<String, ?> actualResults = evaluator.evaluate(arguments);
 				actualResults = Maps.filterKeys(actualResults, names::contains);
 
-				MapDifference<FieldName, ?> difference = Maps.<FieldName, Object>difference(expectedResults, actualResults, equivalence);
+				MapDifference<String, ?> difference = Maps.<String, Object>difference(expectedResults, actualResults, equivalence);
 				if(!difference.areEqual()){
 					Conflict conflict = new Conflict(i, arguments, difference);
 
@@ -116,8 +115,8 @@ public class BatchUtil {
 	}
 
 	static
-	public List<Map<FieldName, String>> parseRecords(List<List<String>> table, Function<String, String> function){
-		List<Map<FieldName, String>> records = new ArrayList<>(table.size() - 1);
+	public List<Map<String, String>> parseRecords(List<List<String>> table, Function<String, String> function){
+		List<Map<String, String>> records = new ArrayList<>(table.size() - 1);
 
 		List<String> headerRow = table.get(0);
 
@@ -145,10 +144,10 @@ public class BatchUtil {
 				throw new IllegalArgumentException("Expected " + headerRow.size() + " cells, got " + bodyRow.size() + " cells (data record " + (row - 1) + ")");
 			}
 
-			Map<FieldName, String> record = new LinkedHashMap<>();
+			Map<String, String> record = new LinkedHashMap<>();
 
 			for(int column = 0; column < headerRow.size(); column++){
-				FieldName name = FieldName.create(headerRow.get(column));
+				String name = headerRow.get(column);
 				String value = function.apply(bodyRow.get(column));
 
 				record.put(name, value);
@@ -161,21 +160,21 @@ public class BatchUtil {
 	}
 
 	static
-	public List<List<String>> formatRecords(List<Map<FieldName, ?>> records, List<FieldName> names, Function<Object, String> function){
+	public List<List<String>> formatRecords(List<Map<String, ?>> records, List<String> names, Function<Object, String> function){
 		List<List<String>> table = new ArrayList<>(1 + records.size());
 
 		List<String> headerRow = new ArrayList<>(names.size());
 
-		for(FieldName name : names){
-			headerRow.add(name != null ? name.getValue() : "(null)");
+		for(String name : names){
+			headerRow.add(name != null ? name : "(null)");
 		}
 
 		table.add(headerRow);
 
-		for(Map<FieldName, ?> record : records){
+		for(Map<String, ?> record : records){
 			List<String> bodyRow = new ArrayList<>(names.size());
 
-			for(FieldName name : names){
+			for(String name : names){
 				bodyRow.add(function.apply(record.get(name)));
 			}
 

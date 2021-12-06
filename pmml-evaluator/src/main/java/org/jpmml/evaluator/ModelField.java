@@ -23,7 +23,6 @@ import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
 import org.jpmml.model.ToStringHelper;
 
@@ -37,7 +36,7 @@ public class ModelField implements Serializable {
 
 	private Field<?> field = null;
 
-	private FieldName name = null;
+	private String name = null;
 
 
 	ModelField(){
@@ -54,7 +53,7 @@ public class ModelField implements Serializable {
 	 *
 	 * @see getFieldName()
 	 */
-	public FieldName getName(){
+	public String getName(){
 
 		if(this.name == null){
 			return getFieldName();
@@ -71,7 +70,7 @@ public class ModelField implements Serializable {
 	 * @param name The new name of the model field.
 	 * Use <code>null</code> to restore the origial name of the model field.
 	 */
-	void setName(FieldName name){
+	void setName(String name){
 		this.name = name;
 	}
 
@@ -80,7 +79,7 @@ public class ModelField implements Serializable {
 	 * The name of this model field in PMML space.
 	 * </p>
 	 */
-	public FieldName getFieldName(){
+	public String getFieldName(){
 		Field<?> field = getField();
 
 		return field.getName();

@@ -29,7 +29,6 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldColumnPair;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Header;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.MapValues;
@@ -69,7 +68,7 @@ public class ValueParserTest {
 		Value trueValue = new Value("true");
 		Value invalidValue = new Value("N/A");
 
-		DataField dataField = new DataField(FieldName.create("x1"), OpType.CATEGORICAL, DataType.STRING)
+		DataField dataField = new DataField("x1", OpType.CATEGORICAL, DataType.STRING)
 			.addValues(falseValue, trueValue, invalidValue);
 
 		DataDictionary dataDictionary = new DataDictionary()
@@ -92,7 +91,7 @@ public class ValueParserTest {
 			.setDefaultValue("0")
 			.addFieldColumnPairs(fieldColumnPair);
 
-		DerivedField derivedField = new DerivedField(FieldName.create("double(x1)"), OpType.CATEGORICAL, DataType.DOUBLE, mapValues);
+		DerivedField derivedField = new DerivedField("double(x1)", OpType.CATEGORICAL, DataType.DOUBLE, mapValues);
 
 		TransformationDictionary transformationDictionary = new TransformationDictionary()
 			.addDerivedFields(derivedField);
@@ -163,14 +162,14 @@ public class ValueParserTest {
 
 	@Test
 	public void parseTreeModel(){
-		DataField dataField = new DataField(FieldName.create("x1"), OpType.CATEGORICAL, DataType.STRING);
+		DataField dataField = new DataField("x1", OpType.CATEGORICAL, DataType.STRING);
 
 		DataDictionary dataDictionary = new DataDictionary()
 			.addDataFields(dataField);
 
 		NormDiscrete normDiscrete = new NormDiscrete(dataField.getName(), "1");
 
-		DerivedField derivedField = new DerivedField(FieldName.create("global(" + dataField.getName() + ")"), OpType.CATEGORICAL, DataType.STRING, normDiscrete);
+		DerivedField derivedField = new DerivedField("global(" + dataField.getName() + ")", OpType.CATEGORICAL, DataType.STRING, normDiscrete);
 
 		TransformationDictionary transformationDictionary = new TransformationDictionary()
 			.addDerivedFields(derivedField);

@@ -35,7 +35,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Target;
@@ -130,12 +129,12 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	 * @return <code>null</code> Always.
 	 */
 	@Override
-	public Target getTarget(FieldName name){
+	public Target getTarget(String name){
 		return null;
 	}
 
 	@Override
-	public FieldName getTargetName(){
+	public String getTargetName(){
 		return Evaluator.DEFAULT_TARGET_NAME;
 	}
 
@@ -156,7 +155,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, Association> evaluateAssociationRules(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, Association> evaluateAssociationRules(ValueFactory<V> valueFactory, EvaluationContext context){
 		AssociationModel associationModel = getModel();
 
 		Set<String> activeItems = getActiveItemIds(context);
@@ -231,12 +230,12 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		Set<String> result = new HashSet<>();
 
-		Map<FieldName, Set<FieldValue>> explodedValues = null;
+		Map<String, Set<FieldValue>> explodedValues = null;
 
 		List<ItemValue> itemValues = getItemValues();
 		for(ItemValue itemValue : itemValues){
 			String id = itemValue.getId();
-			FieldName name = itemValue.getField();
+			String name = itemValue.getField();
 			String category = itemValue.getCategory();
 
 			FieldValue value = context.evaluate(name);
@@ -380,7 +379,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				throw new MissingAttributeException(item, PMMLAttributes.ITEM_VALUE);
 			}
 
-			FieldName name = item.getField();
+			String name = item.getField();
 			String category = item.getCategory();
 
 			parser:
@@ -393,7 +392,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 						throw modelEvaluator.createMiningSchemaException("Expected 1 or more active field(s), got " + activeFields.size() + " active fields");
 					}
 
-					name = FieldName.create(value);
+					name = value;
 					category = null;
 
 					Field<?> field = modelEvaluator.resolveField(name);
@@ -403,7 +402,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 					int index = value.indexOf('=');
 					if(index > -1){
-						name = FieldName.create(value.substring(0, index));
+						name = value.substring(0, index);
 						category = value.substring(index + 1);
 
 						field = modelEvaluator.resolveField(name);
@@ -459,7 +458,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		private String id = null;
 
-		private FieldName field = null;
+		private String field = null;
 
 		private String category = null;
 
@@ -467,7 +466,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		private ItemValue(){
 		}
 
-		private ItemValue(String id, FieldName field, String category){
+		private ItemValue(String id, String field, String category){
 			setId(id);
 			setField(field);
 			setCategory(category);
@@ -481,11 +480,11 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			this.id = id;
 		}
 
-		private FieldName getField(){
+		private String getField(){
 			return this.field;
 		}
 
-		private void setField(FieldName field){
+		private void setField(String field){
 			this.field = field;
 		}
 

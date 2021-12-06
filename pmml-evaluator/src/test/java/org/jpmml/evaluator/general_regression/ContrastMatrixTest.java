@@ -20,7 +20,6 @@ package org.jpmml.evaluator.general_regression;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -33,15 +32,12 @@ public class ContrastMatrixTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("gender", "f", "educ", 19d, "jobcat", "3", "salbegin", 45000d);
+		Map<String, ?> arguments = createArguments("gender", "f", "educ", 19d, "jobcat", "3", "salbegin", 45000d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
-
-		FieldName lowField = FieldName.create("Probability_Low");
-		FieldName highField = FieldName.create("Probability_High");
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		// Expected values have been calculated by hand
-		assertEquals(0.81956470d, (Double)getOutput(results, lowField), 1e-8);
-		assertEquals(0.18043530d, (Double)getOutput(results, highField), 1e-8);
+		assertEquals(0.81956470d, (Double)getOutput(results, "Probability_Low"), 1e-8);
+		assertEquals(0.18043530d, (Double)getOutput(results, "Probability_High"), 1e-8);
 	}
 }

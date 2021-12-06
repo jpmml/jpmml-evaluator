@@ -20,7 +20,6 @@ package org.jpmml.evaluator.general_regression;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -33,9 +32,9 @@ public class EmptyPPMatrixTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		Evaluator evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments();
+		Map<String, ?> arguments = createArguments();
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		assertEquals((Double)0d, getTarget(results, "high_time"));
 	}

@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.dmg.pmml.DataDictionary;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Header;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
@@ -96,7 +95,7 @@ public class MiningModelEvaluatorTest {
 
 	static
 	private Object evaluateDefault(Evaluator evaluator){
-		Map<FieldName, ?> results = evaluator.evaluate(Collections.emptyMap());
+		Map<String, ?> results = evaluator.evaluate(Collections.emptyMap());
 
 		assertTrue(results.containsKey(Evaluator.DEFAULT_TARGET_NAME));
 

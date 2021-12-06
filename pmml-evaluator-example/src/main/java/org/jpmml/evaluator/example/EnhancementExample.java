@@ -28,7 +28,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import com.beust.jcommander.Parameter;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.Model;
@@ -123,9 +122,7 @@ public class EnhancementExample extends Example {
 			List<String> headerRow = table.get(0);
 
 			for(int column = 0; column < headerRow.size(); column++){
-				String field = headerRow.get(column);
-
-				FieldName name = FieldName.create(field);
+				String name = headerRow.get(column);
 
 				MiningField miningField = modelEvaluator.getMiningField(name);
 				if(miningField == null){
@@ -140,14 +137,14 @@ public class EnhancementExample extends Example {
 
 				VerificationField verificationField = new VerificationField(name);
 
-				if(field.contains(" ")){
-					verificationField.setColumn(field.replace(" ", "_x0020_"));
+				if(name.contains(" ")){
+					verificationField.setColumn(name.replace(" ", "_x0020_"));
 
 					tagNames.add(verificationField.getColumn());
 				} else
 
 				{
-					tagNames.add(field);
+					tagNames.add(name);
 				}
 
 				verificationFields.addVerificationFields(verificationField);

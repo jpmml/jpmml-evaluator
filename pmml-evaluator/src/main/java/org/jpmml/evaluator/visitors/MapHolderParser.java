@@ -25,7 +25,6 @@ import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.HasDerivedFields;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Output;
@@ -55,7 +54,7 @@ public class MapHolderParser extends AbstractParser {
 			for(ListIterator<BayesInput> it = content.listIterator(); it.hasNext(); ){
 				BayesInput bayesInput = it.next();
 
-				FieldName name = bayesInput.getField();
+				String name = bayesInput.getField();
 				if(name == null){
 					throw new MissingAttributeException(bayesInput, org.dmg.pmml.naive_bayes.PMMLAttributes.BAYESINPUT_FIELD);
 				}
@@ -107,7 +106,7 @@ public class MapHolderParser extends AbstractParser {
 		BaseCumHazardTables baseCumHazardTables = generalRegressionModel.getBaseCumHazardTables();
 
 		if(baseCumHazardTables != null){
-			FieldName baselineStrataVariable = generalRegressionModel.getBaselineStrataVariable();
+			String baselineStrataVariable = generalRegressionModel.getBaselineStrataVariable();
 
 			if(baselineStrataVariable != null){
 				DataType dataType = resolveDataType(baselineStrataVariable);

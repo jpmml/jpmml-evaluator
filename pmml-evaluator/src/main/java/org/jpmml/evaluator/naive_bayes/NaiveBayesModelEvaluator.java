@@ -42,7 +42,6 @@ import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Discretize;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.Extension;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.GaussianDistribution;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PoissonDistribution;
@@ -87,7 +86,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 	private List<BayesInput> bayesInputs = Collections.emptyList();
 
-	private Map<FieldName, Map<Object, Number>> fieldCountSums = Collections.emptyMap();
+	private Map<String, Map<Object, Number>> fieldCountSums = Collections.emptyMap();
 
 
 	private NaiveBayesModelEvaluator(){
@@ -136,14 +135,14 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 
 		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
 
 		TargetField targetField = getTargetField();
 
-		FieldName targetName = bayesOutput.getField();
+		String targetName = bayesOutput.getField();
 		if(targetName == null){
 			throw new MissingAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD);
 		} // End if
@@ -184,11 +183,11 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			throw new MissingAttributeException(naiveBayesModel, PMMLAttributes.NAIVEBAYESMODEL_THRESHOLD);
 		}
 
-		Map<FieldName, ? extends Map<?, Number>> fieldCountSums = getFieldCountSums();
+		Map<String, ? extends Map<?, Number>> fieldCountSums = getFieldCountSums();
 
 		List<BayesInput> bayesInputs = getBayesInputs();
 		for(BayesInput bayesInput : bayesInputs){
-			FieldName name = bayesInput.getField();
+			String name = bayesInput.getField();
 			if(name == null){
 				throw new MissingAttributeException(bayesInput, PMMLAttributes.BAYESINPUT_FIELD);
 			}
@@ -339,16 +338,16 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		return this.bayesInputs;
 	}
 
-	protected Map<FieldName, Map<Object, Number>> getFieldCountSums(){
+	protected Map<String, Map<Object, Number>> getFieldCountSums(){
 		return this.fieldCountSums;
 	}
 
 	static
-	private Map<FieldName, Map<Object, Number>> calculateFieldCountSums(List<BayesInput> bayesInputs){
-		Map<FieldName, Map<Object, Number>> result = new LinkedHashMap<>();
+	private Map<String, Map<Object, Number>> calculateFieldCountSums(List<BayesInput> bayesInputs){
+		Map<String, Map<Object, Number>> result = new LinkedHashMap<>();
 
 		for(BayesInput bayesInput : bayesInputs){
-			FieldName name = bayesInput.getField();
+			String name = bayesInput.getField();
 
 			Map<Object, Number> countSums = new LinkedHashMap<>();
 

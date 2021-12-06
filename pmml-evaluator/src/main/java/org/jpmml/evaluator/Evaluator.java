@@ -20,7 +20,6 @@ package org.jpmml.evaluator;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.Model;
 
@@ -160,12 +159,12 @@ public interface Evaluator extends HasInputFields, HasResultFields {
 	 *
 	 * @see Computable
 	 */
-	Map<FieldName, ?> evaluate(Map<FieldName, ?> arguments);
+	Map<String, ?> evaluate(Map<String, ?> arguments);
 
 	/**
 	 * <p>
 	 * The name of the default target field.
 	 * </p>
 	 */
-	FieldName DEFAULT_TARGET_NAME = null;
+	String DEFAULT_TARGET_NAME = null;
 }

@@ -30,7 +30,6 @@ package org.jpmml.evaluator.naive_bayes;
 import java.util.Map;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -43,11 +42,11 @@ public class TargetValueCountsTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		NaiveBayesModelEvaluator evaluator = (NaiveBayesModelEvaluator)createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("age of individual", 24, "gender", "male", "no of claims", "2", "domicile", null, "age of car", 1d);
+		Map<String, ?> arguments = createArguments("age of individual", 24, "gender", "male", "no of claims", "2", "domicile", null, "age of car", 1d);
 
-		Map<FieldName, ? extends Map<?, Number>> fieldCountSums = evaluator.getFieldCountSums();
+		Map<String, ? extends Map<?, Number>> fieldCountSums = evaluator.getFieldCountSums();
 
-		Map<?, Number> countSums = fieldCountSums.get(FieldName.create("gender"));
+		Map<?, Number> countSums = fieldCountSums.get("gender");
 
 		assertEquals((Double)8598d, countSums.get(100));
 		assertEquals((Double)2533d, countSums.get(500));
@@ -55,7 +54,7 @@ public class TargetValueCountsTest extends ModelEvaluatorTest {
 		assertEquals((Double)697d, countSums.get(5000));
 		assertEquals((Double)90d, countSums.get(10000));
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		Classification<Integer, ?> targetValue = (Classification)results.get(evaluator.getTargetName());
 

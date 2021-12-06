@@ -20,7 +20,6 @@ package org.jpmml.evaluator.regression;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.jpmml.evaluator.ProbabilityDistribution;
@@ -35,9 +34,9 @@ public class EmptyTargetCategoryTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("x1", 3d, "x2", 3d);
+		Map<String, ?> arguments = createArguments("x1", 3d, "x2", 3d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		ProbabilityDistribution<?> targetValue = (ProbabilityDistribution<?>)results.get(evaluator.getTargetName());
 

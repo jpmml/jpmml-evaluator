@@ -22,30 +22,29 @@ import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
 
 class VariableField extends Field<VariableField> {
 
-	private FieldName name = null;
+	private String name = null;
 
 
 	private VariableField(){
 	}
 
-	VariableField(FieldName name){
+	VariableField(String name){
 		setName(Objects.requireNonNull(name));
 	}
 
 	@Override
-	public FieldName getName(){
+	public String getName(){
 		return this.name;
 	}
 
 	@Override
-	public VariableField setName(FieldName name){
+	public VariableField setName(String name){
 		this.name = name;
 
 		return this;
@@ -63,7 +62,7 @@ class VariableField extends Field<VariableField> {
 
 	@Override
 	public DataType getDataType(){
-		FieldName name = getName();
+		String name = getName();
 
 		throw new MissingFieldException(name);
 	}
@@ -75,7 +74,7 @@ class VariableField extends Field<VariableField> {
 
 	@Override
 	public OpType getOpType(){
-		FieldName name = getName();
+		String name = getName();
 
 		throw new MissingFieldException(name);
 	}

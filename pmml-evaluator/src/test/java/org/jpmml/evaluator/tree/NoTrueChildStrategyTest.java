@@ -29,7 +29,6 @@ package org.jpmml.evaluator.tree;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
@@ -74,9 +73,9 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 	private NodeVote evaluate(TreeModel.NoTrueChildStrategy noTrueChildStrategy, Double value) throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator(new NoTrueChildStrategyTransformer(noTrueChildStrategy));
 
-		Map<FieldName, ?> arguments = createArguments("probability", value);
+		Map<String, ?> arguments = createArguments("probability", value);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		return (NodeVote)results.get(evaluator.getTargetName());
 	}

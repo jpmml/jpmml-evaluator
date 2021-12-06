@@ -29,7 +29,6 @@ package org.jpmml.evaluator.support_vector_machine;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -49,9 +48,9 @@ public class VectorInstanceTest extends ModelEvaluatorTest {
 	private double evaluate(double x1, double x2) throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("x1", x1, "x2", x2);
+		Map<String, ?> arguments = createArguments("x1", x1, "x2", x2);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		return (Double)results.get(evaluator.getTargetName());
 	}

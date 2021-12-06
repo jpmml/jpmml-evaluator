@@ -22,9 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
-import org.dmg.pmml.FieldName;
 
-class FieldValueMap extends HashMap<FieldName, FieldValue> {
+class FieldValueMap extends HashMap<String, FieldValue> {
 
 	FieldValueMap(){
 	}
@@ -41,7 +40,7 @@ class FieldValueMap extends HashMap<FieldName, FieldValue> {
 
 	@Override
 	@IgnoreJRERequirement
-	public FieldValue putIfAbsent(FieldName name, FieldValue value){
+	public FieldValue putIfAbsent(String name, FieldValue value){
 		return super.putIfAbsent(name, value);
 	}
 

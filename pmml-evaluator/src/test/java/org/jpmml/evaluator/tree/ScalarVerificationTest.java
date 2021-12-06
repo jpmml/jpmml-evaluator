@@ -21,7 +21,6 @@ package org.jpmml.evaluator.tree;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.InputMapper;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
@@ -38,9 +37,9 @@ public class ScalarVerificationTest extends ModelEvaluatorTest {
 
 		evaluator.verify();
 
-		Map<FieldName, ?> arguments = createArguments("sepal length", 5.1, "sepal width", 3.5, "petal length", 1.4, "petal width", 0.2);
+		Map<String, ?> arguments = createArguments("sepal length", 5.1, "sepal width", 3.5, "petal length", 1.4, "petal width", 0.2);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		assertEquals(1 + 4, results.size());
 
@@ -60,12 +59,8 @@ public class ScalarVerificationTest extends ModelEvaluatorTest {
 		InputMapper inputMapper = new InputMapper(){
 
 			@Override
-			public FieldName apply(FieldName name){
-				String value = name.getValue();
-
-				value = (value.toUpperCase()).replace(' ', '.');
-
-				return FieldName.create(value);
+			public String apply(String name){
+				return (name.toUpperCase()).replace(' ', '.');
 			}
 		};
 
@@ -79,17 +74,15 @@ public class ScalarVerificationTest extends ModelEvaluatorTest {
 		ResultMapper resultMapper = new ResultMapper(){
 
 			@Override
-			public FieldName apply(FieldName name){
-				String value = name.getValue();
+			public String apply(String name){
+				String result = name.toUpperCase();
 
-				value = value.toUpperCase();
-
-				int index = value.indexOf(' ');
+				int index = result.indexOf(' ');
 				if(index > -1){
-					value = value.substring(0, index) + "(" + value.substring(index + 1) +  ")";
+					result = result.substring(0, index) + "(" + result.substring(index + 1) +  ")";
 				}
 
-				return FieldName.create(value);
+				return result;
 			}
 		};
 
@@ -102,9 +95,9 @@ public class ScalarVerificationTest extends ModelEvaluatorTest {
 
 		evaluator.verify();
 
-		Map<FieldName, ?> arguments = createArguments("SEPAL.LENGTH", 5.1, "SEPAL.WIDTH", 3.5, "PETAL.LENGTH", 1.4, "PETAL.WIDTH", 0.2);
+		Map<String, ?> arguments = createArguments("SEPAL.LENGTH", 5.1, "SEPAL.WIDTH", 3.5, "PETAL.LENGTH", 1.4, "PETAL.WIDTH", 0.2);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		assertEquals(1 + 4, results.size());
 

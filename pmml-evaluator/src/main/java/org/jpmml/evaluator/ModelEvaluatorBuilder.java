@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.Output;
@@ -234,7 +233,7 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 		return this;
 	}
 
-	public SymbolTable<FieldName> getDerivedFieldGuard(){
+	public SymbolTable<String> getDerivedFieldGuard(){
 		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
 
 		return configurationBuilder.getDerivedFieldGuard();
@@ -247,7 +246,7 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	 *
 	 * @see FieldNameSet
 	 */
-	public ModelEvaluatorBuilder setDerivedFieldGuard(SymbolTable<FieldName> derivedFieldGuard){
+	public ModelEvaluatorBuilder setDerivedFieldGuard(SymbolTable<String> derivedFieldGuard){
 		ConfigurationBuilder configurationBuilder = getConfigurationBuilder();
 
 		configurationBuilder.setDerivedFieldGuard(derivedFieldGuard);

@@ -21,7 +21,6 @@ package org.jpmml.evaluator.mining;
 import java.util.List;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.InputField;
@@ -60,9 +59,9 @@ public class ModelNestingTest extends ModelEvaluatorTest {
 
 		assertEquals(Evaluator.DEFAULT_TARGET_NAME, evaluator.getTargetName());
 
-		Map<FieldName, ?> arguments = createArguments("input", 2d);
+		Map<String, ?> arguments = createArguments("input", 2d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		assertEquals(3, results.size());
 

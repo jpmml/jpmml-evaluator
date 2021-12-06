@@ -30,7 +30,6 @@ import java.util.Set;
 
 import com.google.common.collect.Iterables;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
@@ -66,7 +65,7 @@ import org.jpmml.model.XPathUtil;
 
 public class TargetCategoryParser extends AbstractParser {
 
-	private Deque<Map<FieldName, DataType>> targetDataTypes = new ArrayDeque<>();
+	private Deque<Map<String, DataType>> targetDataTypes = new ArrayDeque<>();
 
 	private DataType dataType = null;
 
@@ -295,13 +294,13 @@ public class TargetCategoryParser extends AbstractParser {
 			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(model.getClass()) + "/" + XPathUtil.formatElement(MiningSchema.class)), model);
 		}
 
-		Map<FieldName, DataType> targetDataTypes = new LinkedHashMap<>();
+		Map<String, DataType> targetDataTypes = new LinkedHashMap<>();
 
 		if(miningSchema.hasMiningFields()){
 			List<MiningField> miningFields = miningSchema.getMiningFields();
 
 			for(MiningField miningField : miningFields){
-				FieldName name = miningField.getName();
+				String name = miningField.getName();
 				if(name == null){
 					throw new MissingAttributeException(miningField, PMMLAttributes.MININGFIELD_NAME);
 				}
@@ -326,10 +325,10 @@ public class TargetCategoryParser extends AbstractParser {
 	}
 
 	private DataType getDataType(){
-		Iterator<Map<FieldName, DataType>> it = this.targetDataTypes.iterator();
+		Iterator<Map<String, DataType>> it = this.targetDataTypes.iterator();
 
 		while(it.hasNext()){
-			Map<FieldName, DataType> targetDataTypes = it.next();
+			Map<String, DataType> targetDataTypes = it.next();
 
 			if(!targetDataTypes.isEmpty()){
 				// Cannot use EnumSet, because it is null-hostile
@@ -359,7 +358,7 @@ public class TargetCategoryParser extends AbstractParser {
 		return value;
 	}
 
-	private Object parseTargetValue(FieldName targetName, Object value){
+	private Object parseTargetValue(String targetName, Object value){
 
 		if(targetName == null){
 			return parseTargetValue(value);
@@ -369,7 +368,7 @@ public class TargetCategoryParser extends AbstractParser {
 			return value;
 		}
 
-		Map<FieldName, DataType> targetDataTypes = this.targetDataTypes.peekFirst();
+		Map<String, DataType> targetDataTypes = this.targetDataTypes.peekFirst();
 
 		DataType dataType = targetDataTypes.get(targetName);
 		if(dataType != null){

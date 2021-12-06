@@ -23,26 +23,24 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.dmg.pmml.FieldName;
+class OutputMap extends LinkedHashMap<String, Object> {
 
-class OutputMap extends LinkedHashMap<FieldName, Object> {
+	private Map<String, ?> predictions = null;
 
-	private Map<FieldName, ?> predictions = null;
-
-	private Set<FieldName> privateFields = null;
+	private Set<String> privateFields = null;
 
 
-	OutputMap(Map<FieldName, ?> predictions){
+	OutputMap(Map<String, ?> predictions){
 		super(predictions);
 
 		setPredictions(predictions);
 	}
 
-	public Object putPublic(FieldName name, Object value){
+	public Object putPublic(String name, Object value){
 		return put(name, value);
 	}
 
-	public Object putPrivate(FieldName name, Object value){
+	public Object putPrivate(String name, Object value){
 
 		if(this.privateFields == null){
 			this.privateFields = new HashSet<>();
@@ -56,7 +54,7 @@ class OutputMap extends LinkedHashMap<FieldName, Object> {
 	public void clearPrivate(){
 
 		if(this.privateFields != null && !this.privateFields.isEmpty()){
-			Set<FieldName> fields = keySet();
+			Set<String> fields = keySet();
 
 			fields.removeAll(this.privateFields);
 		}
@@ -64,11 +62,11 @@ class OutputMap extends LinkedHashMap<FieldName, Object> {
 		this.privateFields = null;
 	}
 
-	public Map<FieldName, ?> getPredictions(){
+	public Map<String, ?> getPredictions(){
 		return this.predictions;
 	}
 
-	private void setPredictions(Map<FieldName, ?> predictions){
+	private void setPredictions(Map<String, ?> predictions){
 		this.predictions = predictions;
 	}
 }

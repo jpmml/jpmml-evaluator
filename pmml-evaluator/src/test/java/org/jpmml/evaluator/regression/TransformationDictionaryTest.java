@@ -20,7 +20,6 @@ package org.jpmml.evaluator.regression;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.FieldNameSet;
@@ -39,34 +38,32 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluateShift() throws Exception {
-		assertValueEquals("AM", evaluate(FieldName.create("Shift"), createArguments("StartTime", 34742)));
+		assertValueEquals("AM", evaluate("Shift", createArguments("StartTime", 34742)));
 	}
 
 	@Test
 	public void evaluateGroup() throws Exception {
-		assertValueEquals("West", evaluate(FieldName.create("Group"), createArguments("State", "CA")));
+		assertValueEquals("West", evaluate("Group", createArguments("State", "CA")));
 	}
 
 	@Test
 	public void evaluatePower() throws Exception {
-		FieldName name = FieldName.create("Power");
+		Map<String, ?> arguments = createArguments("Value", 2d, "Exponent", 1);
 
-		Map<FieldName, ?> arguments = createArguments("Value", 2d, "Exponent", 1);
-
-		assertValueEquals(2d, evaluate(name, arguments));
+		assertValueEquals(2d, evaluate("Power", arguments));
 
 		arguments = createArguments("Value", 2d, "Exponent", 2);
 
-		assertValueEquals(4d, evaluate(name, arguments));
+		assertValueEquals(4d, evaluate("Power", arguments));
 
 		arguments = createArguments("Value", 2d, "Exponent", 5);
 
-		assertValueEquals(32d, evaluate(name, arguments));
+		assertValueEquals(32d, evaluate("Power", arguments));
 
 		EvaluationContext.FUNCTION_GUARD_PROVIDER.set(new FunctionNameStack(4));
 
 		try {
-			evaluate(name, arguments);
+			evaluate("Power", arguments);
 
 			fail();
 		} catch(EvaluationException ee){
@@ -75,13 +72,13 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 			EvaluationContext.FUNCTION_GUARD_PROVIDER.set(null);
 		}
 
-		assertValueEquals(32d, evaluate(name, arguments));
+		assertValueEquals(32d, evaluate("Power", arguments));
 
 		// XXX
 		arguments = createArguments("Value", 1d, "Exponent", 1024);
 
 		try {
-			evaluate(name, arguments);
+			evaluate("Power", arguments);
 
 			fail();
 		} catch(StackOverflowError soe){
@@ -91,7 +88,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 		EvaluationContext.FUNCTION_GUARD_PROVIDER.set(new FunctionNameStack(16));
 
 		try {
-			evaluate(name, arguments);
+			evaluate("Power", arguments);
 
 			fail();
 		} catch(EvaluationException ee){
@@ -101,7 +98,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 		} // End try
 
 		try {
-			evaluate(name, arguments);
+			evaluate("Power", arguments);
 
 			fail();
 		} catch(StackOverflowError soe){
@@ -111,43 +108,37 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluateSimpleTable() throws Exception {
-		FieldName name = FieldName.create("SimpleTable");
+		assertValueEquals(null, evaluate("SimpleTable", createArguments("Value", null)));
 
-		assertValueEquals(null, evaluate(name, createArguments("Value", null)));
+		assertValueEquals("first", evaluate("SimpleTable", createArguments("Value", 1)));
+		assertValueEquals("second", evaluate("SimpleTable", createArguments("Value", 2)));
 
-		assertValueEquals("first", evaluate(name, createArguments("Value", 1)));
-		assertValueEquals("second", evaluate(name, createArguments("Value", 2)));
-
-		assertValueEquals(null, evaluate(name, createArguments("Value", 3)));
+		assertValueEquals(null, evaluate("SimpleTable", createArguments("Value", 3)));
 	}
 
 	@Test
 	public void evaluateComplexTable() throws Exception {
-		FieldName name = FieldName.create("ComplexTable");
+		assertValueEquals(null, evaluate("ComplexTable", createArguments("Value", null, "Modifier", null)));
 
-		assertValueEquals(null, evaluate(name, createArguments("Value", null, "Modifier", null)));
+		assertValueEquals("firstTrue", evaluate("ComplexTable", createArguments("Value", 1, "Modifier", true)));
+		assertValueEquals("firstFalse", evaluate("ComplexTable", createArguments("Value", 1, "Modifier", false)));
+		assertValueEquals("secondTrue", evaluate("ComplexTable", createArguments("Value", 2, "Modifier", true)));
+		assertValueEquals("secondFalse", evaluate("ComplexTable", createArguments("Value", 2, "Modifier", false)));
 
-		assertValueEquals("firstTrue", evaluate(name, createArguments("Value", 1, "Modifier", true)));
-		assertValueEquals("firstFalse", evaluate(name, createArguments("Value", 1, "Modifier", false)));
-		assertValueEquals("secondTrue", evaluate(name, createArguments("Value", 2, "Modifier", true)));
-		assertValueEquals("secondFalse", evaluate(name, createArguments("Value", 2, "Modifier", false)));
-
-		assertValueEquals(null, evaluate(name, createArguments("Value", 3, "Modifier", null)));
-		assertValueEquals(null, evaluate(name, createArguments("Value", 3, "Modifier", true)));
+		assertValueEquals(null, evaluate("ComplexTable", createArguments("Value", 3, "Modifier", null)));
+		assertValueEquals(null, evaluate("ComplexTable", createArguments("Value", 3, "Modifier", true)));
 	}
 
 	@Test
 	public void evaluateSelfRef() throws Exception {
-		FieldName name = FieldName.create("SelfRef");
+		Map<String, ?> arguments = createArguments("Value", 1, "Modifier", false);
 
-		Map<FieldName, ?> arguments = createArguments("Value", 1, "Modifier", false);
-
-		assertValueEquals(1d, evaluate(name, arguments));
+		assertValueEquals(1d, evaluate("SelfRef", arguments));
 
 		arguments = createArguments("Value", 1, "Modifier", true);
 
 		try {
-			evaluate(name, arguments);
+			evaluate("SelfRef", arguments);
 
 			fail();
 		} catch(StackOverflowError soe){
@@ -157,7 +148,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 		EvaluationContext.DERIVEDFIELD_GUARD_PROVIDER.set(new FieldNameSet());
 
 		try {
-			evaluate(name, arguments);
+			evaluate("SelfRef", arguments);
 
 			fail();
 		} catch(EvaluationException ee){
@@ -167,7 +158,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 		} // End try
 
 		try {
-			evaluate(name, arguments);
+			evaluate("SelfRef", arguments);
 
 			fail();
 		} catch(StackOverflowError soe){
@@ -177,12 +168,10 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluateRef() throws Exception {
-		FieldName name = FieldName.create("Ref");
-
-		Map<FieldName, ?> arguments = createArguments("Value", 1);
+		Map<String, ?> arguments = createArguments("Value", 1);
 
 		try {
-			evaluate(name, arguments);
+			evaluate("Ref", arguments);
 
 			fail();
 		} catch(StackOverflowError soe){
@@ -192,7 +181,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 		EvaluationContext.DERIVEDFIELD_GUARD_PROVIDER.set(new FieldNameSet());
 
 		try {
-			evaluate(name, arguments);
+			evaluate("Ref", arguments);
 		} catch(EvaluationException ee){
 			// Ignored
 		} finally {
@@ -200,7 +189,7 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 		} // End try
 
 		try {
-			evaluate(name, arguments);
+			evaluate("Ref", arguments);
 
 			fail();
 		} catch(StackOverflowError soe){
@@ -210,15 +199,15 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluateChain() throws Exception {
-		Map<FieldName, ?> arguments = createArguments("Value", 1);
+		Map<String, ?> arguments = createArguments("Value", 1);
 
 		EvaluationContext.DERIVEDFIELD_GUARD_PROVIDER.set(new FieldNameSet(2));
 
 		try {
-			assertValueEquals(1d, evaluate(FieldName.create("StageOne"), arguments));
+			assertValueEquals(1d, evaluate("StageOne", arguments));
 
 			try {
-				evaluate(FieldName.create("StageThree"), arguments);
+				evaluate("StageThree", arguments);
 
 				fail();
 			} catch(EvaluationException ee){
@@ -228,10 +217,10 @@ public class TransformationDictionaryTest extends ModelEvaluatorTest {
 			EvaluationContext.DERIVEDFIELD_GUARD_PROVIDER.set(null);
 		}
 
-		assertValueEquals(1d, evaluate(FieldName.create("StageThree"), arguments));
+		assertValueEquals(1d, evaluate("StageThree", arguments));
 	}
 
-	private FieldValue evaluate(FieldName name, Map<FieldName, ?> arguments) throws Exception {
+	private FieldValue evaluate(String name, Map<String, ?> arguments) throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
 		ModelEvaluationContext context = evaluator.createEvaluationContext();

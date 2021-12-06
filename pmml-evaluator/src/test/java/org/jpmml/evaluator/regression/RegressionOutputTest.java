@@ -21,7 +21,6 @@ package org.jpmml.evaluator.regression;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.ConfigurationBuilder;
 import org.jpmml.evaluator.ModelEvaluator;
@@ -43,9 +42,9 @@ public class RegressionOutputTest extends ModelEvaluatorTest {
 
 		checkResultFields(Arrays.asList("result"), Arrays.asList("RawResult", "RawIntegerResult", "FinalResult", "FinalIntegerResult", "BusinessDecision"), evaluator);
 
-		Map<FieldName, ?> arguments = createArguments("input", 4d);
+		Map<String, ?> arguments = createArguments("input", 4d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		assertEquals(1 + 5, results.size());
 

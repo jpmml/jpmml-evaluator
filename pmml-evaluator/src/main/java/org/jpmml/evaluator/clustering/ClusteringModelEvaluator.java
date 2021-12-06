@@ -35,7 +35,6 @@ import org.dmg.pmml.Array;
 import org.dmg.pmml.ComparisonMeasure;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Distance;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Measure;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Similarity;
@@ -157,7 +156,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 	 * @return <code>null</code> Always.
 	 */
 	@Override
-	public Target getTarget(FieldName name){
+	public Target getTarget(String name){
 		return null;
 	}
 
@@ -167,7 +166,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ClusterAffinityDistribution<V>> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ClusterAffinityDistribution<V>> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
 		ClusteringModel clusteringModel = getModel();
 
 		ComparisonMeasure comparisonMeasure = clusteringModel.getComparisonMeasure();
@@ -180,7 +179,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		for(int i = 0, max = clusteringFields.size(); i < max; i++){
 			ClusteringField clusteringField = clusteringFields.get(i);
 
-			FieldName name = clusteringField.getField();
+			String name = clusteringField.getField();
 			if(name == null){
 				throw new MissingAttributeException(clusteringField, PMMLAttributes.CLUSTERINGFIELD_FIELD);
 			}

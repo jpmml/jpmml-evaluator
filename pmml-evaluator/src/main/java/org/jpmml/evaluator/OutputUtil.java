@@ -29,7 +29,6 @@ import com.google.common.collect.Ordering;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Expression;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
@@ -64,7 +63,7 @@ public class OutputUtil {
 	 * @return A map of {@link Evaluator#getTargetFields() target field} values together with {@link Evaluator#getOutputFields() output field} values.
 	 */
 	static
-	public Map<FieldName, ?> evaluate(Map<FieldName, ?> predictions, ModelEvaluationContext context){
+	public Map<String, ?> evaluate(Map<String, ?> predictions, ModelEvaluationContext context){
 		ModelEvaluator<?> modelEvaluator = context.getModelEvaluator();
 
 		Model model = modelEvaluator.getModel();
@@ -82,7 +81,7 @@ public class OutputUtil {
 
 		outputFields:
 		for(OutputField outputField : outputFields){
-			FieldName targetName = outputField.getTargetField();
+			String targetName = outputField.getTargetField();
 
 			Object targetValue = null;
 
@@ -242,7 +241,7 @@ public class OutputUtil {
 								throw new MisplacedElementException(expression);
 							}
 
-							value = segmentPredictions.get(FieldName.create((String)name));
+							value = segmentPredictions.get((String)name);
 
 							break;
 						}
@@ -379,7 +378,7 @@ public class OutputUtil {
 					break;
 				case REPORT:
 					{
-						FieldName reportName = outputField.getReportField();
+						String reportName = outputField.getReportField();
 						if(reportName == null){
 							throw new MissingAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_REPORTFIELD);
 						}
@@ -401,7 +400,7 @@ public class OutputUtil {
 					throw new UnsupportedAttributeException(outputField, resultFeature);
 			}
 
-			FieldName outputName = outputField.getName();
+			String outputName = outputField.getName();
 			if(outputName == null){
 				throw new MissingAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_NAME);
 			}

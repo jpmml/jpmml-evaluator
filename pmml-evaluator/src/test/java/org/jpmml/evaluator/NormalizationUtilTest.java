@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LinearNorm;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.OutlierTreatmentMethod;
@@ -76,7 +75,7 @@ public class NormalizationUtilTest {
 
 	static
 	private NormContinuous createNormContinuous(){
-		NormContinuous result = new NormContinuous(FieldName.create("x"), null)
+		NormContinuous result = new NormContinuous("x", null)
 			.addLinearNorms(
 				new LinearNorm(BEGIN[0], BEGIN[1]),
 				new LinearNorm(MIDPOINT[0], MIDPOINT[1]),

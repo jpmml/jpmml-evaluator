@@ -30,8 +30,6 @@ import java.util.Map;
 
 import com.beust.jcommander.Parameter;
 import com.google.common.base.Joiner;
-
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Visitor;
@@ -130,26 +128,26 @@ public class RecordCountingExample extends Example {
 		// Perform self-testing
 		evaluator.verify();
 
-		List<? extends Map<FieldName, ?>> records = BatchUtil.parseRecords(table, createCellParser(new HashSet<>(this.missingValues)));
+		List<? extends Map<String, ?>> records = BatchUtil.parseRecords(table, createCellParser(new HashSet<>(this.missingValues)));
 
 		List<InputField> inputFields = evaluator.getInputFields();
 		List<TargetField> targetFields = evaluator.getTargetFields();
 
-		for(Map<FieldName, ?> record : records){
-			Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
+		for(Map<String, ?> record : records){
+			Map<String, FieldValue> arguments = new LinkedHashMap<>();
 
 			for(InputField inputField : inputFields){
-				FieldName name = inputField.getName();
+				String name = inputField.getName();
 
 				FieldValue value = inputField.prepare(record.get(name));
 
 				arguments.put(name, value);
 			}
 
-			Map<FieldName, ?> results = evaluator.evaluate(arguments);
+			Map<String, ?> results = evaluator.evaluate(arguments);
 
 			for(TargetField targetField : targetFields){
-				FieldName name = targetField.getName();
+				String name = targetField.getName();
 
 				Object value = results.get(name);
 

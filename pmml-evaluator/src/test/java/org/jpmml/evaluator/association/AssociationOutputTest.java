@@ -21,7 +21,6 @@ package org.jpmml.evaluator.association;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -34,9 +33,9 @@ public class AssociationOutputTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("item", Arrays.asList("Cracker", "Coke"));
+		Map<String, ?> arguments = createArguments("item", Arrays.asList("Cracker", "Coke"));
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		assertEquals("1", getOutput(results, "entityId"));
 
@@ -52,7 +51,7 @@ public class AssociationOutputTest extends ModelEvaluatorTest {
 	}
 
 	static
-	private void checkValue(Object expected, Map<FieldName, ?> result, String name){
+	private void checkValue(Object expected, Map<String, ?> result, String name){
 		assertEquals(expected, getOutput(result, name));
 		assertEquals(expected, getOutput(result, "deprecated_" + name));
 	}

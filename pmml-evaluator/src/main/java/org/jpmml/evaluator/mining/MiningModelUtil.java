@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasProbability;
@@ -43,7 +42,7 @@ public class MiningModelUtil {
 	}
 
 	static
-	public SegmentResult asSegmentResult(Segmentation.MultipleModelMethod multipleModelMethod, Map<FieldName, ?> predictions){
+	public SegmentResult asSegmentResult(Segmentation.MultipleModelMethod multipleModelMethod, Map<String, ?> predictions){
 
 		switch(multipleModelMethod){
 			case SELECT_FIRST:

@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.FieldName;
-
 /**
  * <p>
  * Android 5.0 and 6.0 compatible implementation of {@link FieldValueMap}.
@@ -45,7 +43,7 @@ class AndroidFieldValueMap extends FieldValueMap {
 	}
 
 	@Override
-	public FieldValue putIfAbsent(FieldName name, FieldValue value){
+	public FieldValue putIfAbsent(String name, FieldValue value){
 		FieldValue prevValue = get(name);
 
 		if(prevValue == null){

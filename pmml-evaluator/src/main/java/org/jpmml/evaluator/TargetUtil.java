@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
@@ -49,7 +48,7 @@ public class TargetUtil {
 	}
 
 	static
-	public <V extends Number> Map<FieldName, ?> evaluateRegressionDefault(ValueFactory<V> valueFactory, TargetField targetField){
+	public <V extends Number> Map<String, ?> evaluateRegressionDefault(ValueFactory<V> valueFactory, TargetField targetField){
 		Target target = targetField.getTarget();
 
 		if(target != null && target.hasTargetValues()){
@@ -64,7 +63,7 @@ public class TargetUtil {
 	}
 
 	static
-	public <V extends Number> Map<FieldName, ?> evaluateRegression(TargetField targetField, Value<V> value){
+	public <V extends Number> Map<String, ?> evaluateRegression(TargetField targetField, Value<V> value){
 		value = evaluateRegressionInternal(targetField, value);
 
 		if(value instanceof HasReport){
@@ -79,7 +78,7 @@ public class TargetUtil {
 	}
 
 	static
-	public <V extends Number> Map<FieldName, ? extends Regression<V>> evaluateRegression(TargetField targetField, Regression<V> regression){
+	public <V extends Number> Map<String, ? extends Regression<V>> evaluateRegression(TargetField targetField, Regression<V> regression){
 		regression.computeResult(targetField.getDataType());
 
 		return Collections.singletonMap(targetField.getFieldName(), regression);
@@ -97,14 +96,14 @@ public class TargetUtil {
 	}
 
 	static
-	public Map<FieldName, ? extends Vote> evaluateVote(TargetField targetField, Vote vote){
+	public Map<String, ? extends Vote> evaluateVote(TargetField targetField, Vote vote){
 		vote.computeResult(targetField.getDataType());
 
 		return Collections.singletonMap(targetField.getFieldName(), vote);
 	}
 
 	static
-	public <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassificationDefault(ValueFactory<V> valueFactory, TargetField targetField){
+	public <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassificationDefault(ValueFactory<V> valueFactory, TargetField targetField){
 		Target target = targetField.getTarget();
 
 		if(target != null && target.hasTargetValues()){
@@ -119,7 +118,7 @@ public class TargetUtil {
 	}
 
 	static
-	public <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassification(TargetField targetField, Classification<?, V> classification){
+	public <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassification(TargetField targetField, Classification<?, V> classification){
 		classification.computeResult(targetField.getDataType());
 
 		return Collections.singletonMap(targetField.getFieldName(), classification);

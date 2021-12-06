@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.util.List;
 
 import org.dmg.pmml.DataField;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Target;
@@ -49,7 +48,7 @@ public class TargetField extends ResultField {
 	 * @see #isSynthetic()
 	 */
 	@Override
-	public FieldName getFieldName(){
+	public String getFieldName(){
 		return super.getFieldName();
 	}
 

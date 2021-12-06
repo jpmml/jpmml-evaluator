@@ -20,8 +20,6 @@ package org.jpmml.evaluator;
 
 import java.io.Serializable;
 
-import org.dmg.pmml.FieldName;
-
 public class ConfigurationBuilder implements Cloneable, Serializable {
 
 	private ModelEvaluatorFactory modelEvaluatorFactory = null;
@@ -30,7 +28,7 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 
 	private OutputFilter outputFilter = null;
 
-	private SymbolTable<FieldName> derivedFieldGuard = null;
+	private SymbolTable<String> derivedFieldGuard = null;
 
 	private SymbolTable<String> functionGuard = null;
 
@@ -73,7 +71,7 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 
 		configuration.setOutputFilter(outputFilter);
 
-		SymbolTable<FieldName> derivedFieldGuard = getDerivedFieldGuard();
+		SymbolTable<String> derivedFieldGuard = getDerivedFieldGuard();
 		SymbolTable<String> functionGuard = getFunctionGuard();
 
 		configuration.setDerivedFieldGuard(derivedFieldGuard);
@@ -112,11 +110,11 @@ public class ConfigurationBuilder implements Cloneable, Serializable {
 		return this;
 	}
 
-	public SymbolTable<FieldName> getDerivedFieldGuard(){
+	public SymbolTable<String> getDerivedFieldGuard(){
 		return this.derivedFieldGuard;
 	}
 
-	public ConfigurationBuilder setDerivedFieldGuard(SymbolTable<FieldName> derivedFieldGuard){
+	public ConfigurationBuilder setDerivedFieldGuard(SymbolTable<String> derivedFieldGuard){
 		this.derivedFieldGuard = derivedFieldGuard;
 
 		return this;

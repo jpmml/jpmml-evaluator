@@ -28,7 +28,6 @@ import java.util.function.Predicate;
 
 import com.beust.jcommander.Parameter;
 import com.google.common.base.Equivalence;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorBuilder;
@@ -94,13 +93,12 @@ public class TestingExample extends Example {
 
 	@Parameter (
 		names = {"--ignored-fields"},
-		description = "Ignored Model fields",
-		converter = FieldNameConverter.class
+		description = "Ignored Model fields"
 	)
 	@ParameterOrder (
 		value = 6
 	)
-	private List<FieldName> ignoredFields = new ArrayList<>();
+	private List<String> ignoredFields = new ArrayList<>();
 
 	@Parameter (
 		names = {"--precision"},
@@ -151,9 +149,9 @@ public class TestingExample extends Example {
 
 		java.util.function.Function<String, String> cellParser = createCellParser(new HashSet<>(this.missingValues));
 
-		List<? extends Map<FieldName, ?>> inputRecords = BatchUtil.parseRecords(inputTable, cellParser);
+		List<? extends Map<String, ?>> inputRecords = BatchUtil.parseRecords(inputTable, cellParser);
 
-		List<? extends Map<FieldName, ?>> outputRecords = BatchUtil.parseRecords(outputTable, cellParser);
+		List<? extends Map<String, ?>> outputRecords = BatchUtil.parseRecords(outputTable, cellParser);
 
 		Predicate<ResultField> predicate;
 
@@ -179,7 +177,7 @@ public class TestingExample extends Example {
 	}
 
 	static
-	private Batch createBatch(Evaluator evaluator, List<? extends Map<FieldName, ?>> input, List<? extends Map<FieldName, ?>> output, Predicate<ResultField> predicate, Equivalence<Object> equivalence){
+	private Batch createBatch(Evaluator evaluator, List<? extends Map<String, ?>> input, List<? extends Map<String, ?>> output, Predicate<ResultField> predicate, Equivalence<Object> equivalence){
 		Batch batch = new Batch(){
 
 			@Override
@@ -188,12 +186,12 @@ public class TestingExample extends Example {
 			}
 
 			@Override
-			public List<? extends Map<FieldName, ?>> getInput(){
+			public List<? extends Map<String, ?>> getInput(){
 				return input;
 			}
 
 			@Override
-			public List<? extends Map<FieldName, ?>> getOutput(){
+			public List<? extends Map<String, ?>> getOutput(){
 				return output;
 			}
 

@@ -24,7 +24,6 @@ import java.util.Map;
 
 import com.google.common.collect.Iterables;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.CollectionValue;
 import org.jpmml.evaluator.Evaluator;
@@ -39,7 +38,7 @@ import static org.junit.Assert.assertTrue;
 public class TransactionalSchemaTest extends AssociationSchemaTest {
 
 	@Override
-	public Map<FieldName, ?> createItemArguments(List<String> items){
+	public Map<String, ?> createItemArguments(List<String> items){
 		return createArguments("item", items);
 	}
 
@@ -49,7 +48,7 @@ public class TransactionalSchemaTest extends AssociationSchemaTest {
 
 		InputField inputField = Iterables.getOnlyElement(evaluator.getInputFields());
 
-		assertEquals(FieldName.create("item"), inputField.getName());
+		assertEquals("item", inputField.getName());
 
 		FieldValue value = inputField.prepare("Cracker");
 

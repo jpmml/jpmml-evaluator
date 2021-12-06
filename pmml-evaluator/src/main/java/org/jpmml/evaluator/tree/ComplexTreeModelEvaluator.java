@@ -27,7 +27,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.EmbeddedModel;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.ScoreDistribution;
@@ -99,7 +98,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		TargetField targetField = getTargetField();
 
 		Trail trail = new Trail();
@@ -115,7 +114,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		TreeModel treeModel = getModel();
 
 		TargetField targetField = getTargetField();

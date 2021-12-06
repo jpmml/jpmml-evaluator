@@ -26,7 +26,6 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Field;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OutputField;
 import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
@@ -37,7 +36,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 	private MiningModelEvaluationContext parent = null;
 
-	private Map<FieldName, ?> arguments = Collections.emptyMap();
+	private Map<String, ?> arguments = Collections.emptyMap();
 
 
 	public ModelEvaluationContext(ModelEvaluator<?> modelEvaluator){
@@ -54,7 +53,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	protected FieldValue prepare(FieldName name, Object value){
+	protected FieldValue prepare(String name, Object value){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
 		DataField dataField = modelEvaluator.getDataField(name);
@@ -86,7 +85,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
-	protected FieldValue resolve(FieldName name){
+	protected FieldValue resolve(String name){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
 		MiningModelEvaluationContext parent = getParent();
@@ -123,7 +122,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 		{
 			DataField dataField = modelEvaluator.getDataField(name);
 			if(dataField != null){
-				Map<FieldName, ?> arguments = getArguments();
+				Map<String, ?> arguments = getArguments();
 
 				if(parent != null){
 					FieldValue value = parent.evaluate(name);
@@ -174,16 +173,16 @@ public class ModelEvaluationContext extends EvaluationContext {
 		this.parent = parent;
 	}
 
-	public Map<FieldName, ?> getArguments(){
+	public Map<String, ?> getArguments(){
 		return this.arguments;
 	}
 
-	public void setArguments(Map<FieldName, ?> arguments){
+	public void setArguments(Map<String, ?> arguments){
 		this.arguments = Objects.requireNonNull(arguments);
 	}
 
 	static
-	private Field<?> resolveField(FieldName name, MiningModelEvaluationContext context){
+	private Field<?> resolveField(String name, MiningModelEvaluationContext context){
 
 		while(context != null){
 			OutputField outputField = context.getOutputField(name);

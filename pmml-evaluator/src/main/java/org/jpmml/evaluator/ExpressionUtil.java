@@ -35,7 +35,6 @@ import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Discretize;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.HasExpression;
 import org.dmg.pmml.HasFieldReference;
@@ -58,8 +57,8 @@ public class ExpressionUtil {
 	}
 
 	static
-	public <E extends Expression & HasFieldReference<E>> FieldName ensureField(E hasField){
-		FieldName name = hasField.getField();
+	public <E extends Expression & HasFieldReference<E>> String ensureField(E hasField){
+		String name = hasField.getField();
 		if(name == null){
 			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(hasField.getClass()) + "@field"), hasField);
 		}
@@ -95,12 +94,12 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluate(DerivedField derivedField, EvaluationContext context){
-		FieldName name = derivedField.getName();
+		String name = derivedField.getName();
 		if(name == null){
 			throw new MissingAttributeException(derivedField, PMMLAttributes.DERIVEDFIELD_NAME);
 		}
 
-		SymbolTable<FieldName> symbolTable = EvaluationContext.DERIVEDFIELD_GUARD_PROVIDER.get();
+		SymbolTable<String> symbolTable = EvaluationContext.DERIVEDFIELD_GUARD_PROVIDER.get();
 
 		if(symbolTable != null){
 			symbolTable.lock(name);
@@ -130,7 +129,7 @@ public class ExpressionUtil {
 			ParameterField parameterField = parameterFields.get(i);
 			FieldValue value = values.get(i);
 
-			FieldName name = parameterField.getName();
+			String name = parameterField.getName();
 			if(name == null){
 				throw new MissingAttributeException(parameterField, PMMLAttributes.PARAMETERFIELD_NAME);
 			} // End if
@@ -308,7 +307,7 @@ public class ExpressionUtil {
 
 		List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
 		for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
-			FieldName name = fieldColumnPair.getField();
+			String name = fieldColumnPair.getField();
 			if(name == null){
 				throw new MissingAttributeException(fieldColumnPair, PMMLAttributes.FIELDCOLUMNPAIR_FIELD);
 			}
@@ -331,7 +330,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateTextIndex(TextIndex textIndex, EvaluationContext context){
-		FieldName textName = textIndex.getTextField();
+		String textName = textIndex.getTextField();
 		if(textName == null){
 			throw new MissingAttributeException(textIndex, PMMLAttributes.TEXTINDEX_TEXTFIELD);
 		}
@@ -538,7 +537,7 @@ public class ExpressionUtil {
 		// It is assumed that application developers have performed the aggregation beforehand
 		Collection<?> objects = value.asCollection();
 
-		FieldName groupName = aggregate.getGroupField();
+		String groupName = aggregate.getGroupField();
 		if(groupName != null){
 			FieldValue groupValue = context.evaluate(groupName);
 

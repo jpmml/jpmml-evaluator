@@ -20,7 +20,6 @@ package org.jpmml.evaluator.scorecard;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.jpmml.evaluator.PMMLTransformer;
@@ -28,10 +27,10 @@ import org.jpmml.evaluator.PMMLTransformer;
 abstract
 public class ReasonCodeTest extends ModelEvaluatorTest {
 
-	public Map<FieldName, ?> evaluateExample(PMMLTransformer<?>... transformers) throws Exception {
+	public Map<String, ?> evaluateExample(PMMLTransformer<?>... transformers) throws Exception {
 		Evaluator evaluator = createModelEvaluator(transformers);
 
-		Map<FieldName, ?> arguments = createArguments("department", "engineering", "age", 25, "income", 500d);
+		Map<String, ?> arguments = createArguments("department", "engineering", "age", 25, "income", 500d);
 
 		return evaluator.evaluate(arguments);
 	}

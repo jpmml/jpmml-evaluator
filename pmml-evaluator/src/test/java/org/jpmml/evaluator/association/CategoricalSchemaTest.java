@@ -22,17 +22,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
-
 public class CategoricalSchemaTest extends AssociationSchemaTest {
 
 	@Override
-	public Map<FieldName, ?> createItemArguments(List<String> items){
-		Map<FieldName, String> result = new HashMap<>();
+	public Map<String, ?> createItemArguments(List<String> items){
+		Map<String, String> result = new HashMap<>();
 
 		String[] fields = {"Banana", "Coke", "Cracker", "Nachos", "Pear", "Water"};
 		for(String field : fields){
-			result.put(FieldName.create(field), items.contains(field) ? "T" : "F");
+			result.put(field, items.contains(field) ? "T" : "F");
 		}
 
 		return result;

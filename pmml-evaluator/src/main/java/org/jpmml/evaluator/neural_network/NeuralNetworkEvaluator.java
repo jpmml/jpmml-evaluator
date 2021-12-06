@@ -33,7 +33,6 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.Field;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.HasFieldReference;
 import org.dmg.pmml.NormContinuous;
@@ -84,7 +83,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 	private BiMap<String, NeuralEntity> entityRegistry = ImmutableBiMap.of();
 
-	private Map<FieldName, List<NeuralOutput>> neuralOutputMap = null;
+	private Map<String, List<NeuralOutput>> neuralOutputMap = null;
 
 
 	private NeuralNetworkEvaluator(){
@@ -137,7 +136,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
 		List<TargetField> targetFields = getTargetFields();
@@ -151,7 +150,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 			}
 
-			Map<FieldName, Object> results = new LinkedHashMap<>();
+			Map<String, Object> results = new LinkedHashMap<>();
 
 			for(TargetField targetField : targetFields){
 				results.putAll(TargetUtil.evaluateRegressionDefault(valueFactory, targetField));
@@ -160,12 +159,12 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			return results;
 		}
 
-		Map<FieldName, List<NeuralOutput>> neuralOutputMap = getNeuralOutputMap();
+		Map<String, List<NeuralOutput>> neuralOutputMap = getNeuralOutputMap();
 
-		Map<FieldName, Object> results = null;
+		Map<String, Object> results = null;
 
 		for(TargetField targetField : targetFields){
-			FieldName name = targetField.getFieldName();
+			String name = targetField.getFieldName();
 
 			List<NeuralOutput> neuralOutputs = neuralOutputMap.get(name);
 			if(neuralOutputs == null){
@@ -221,7 +220,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		NeuralNetwork neuralNetwork = getModel();
 
 		List<TargetField> targetFields = getTargetFields();
@@ -235,7 +234,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 			}
 
-			Map<FieldName, Classification<?, V>> results = new LinkedHashMap<>();
+			Map<String, Classification<?, V>> results = new LinkedHashMap<>();
 
 			for(TargetField targetField : targetFields){
 				results.putAll(TargetUtil.evaluateClassificationDefault(valueFactory, targetField));
@@ -244,14 +243,14 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			return results;
 		}
 
-		Map<FieldName, List<NeuralOutput>> neuralOutputMap = getNeuralOutputMap();
+		Map<String, List<NeuralOutput>> neuralOutputMap = getNeuralOutputMap();
 
 		BiMap<String, NeuralEntity> entityRegistry = getEntityRegistry();
 
-		Map<FieldName, Classification<?, V>> results = null;
+		Map<String, Classification<?, V>> results = null;
 
 		for(TargetField targetField : targetFields){
-			FieldName name = targetField.getFieldName();
+			String name = targetField.getFieldName();
 
 			List<NeuralOutput> neuralOutputs = neuralOutputMap.get(name);
 			if(neuralOutputs == null){
@@ -325,7 +324,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		if(expression instanceof FieldRef){
 			FieldRef fieldRef = (FieldRef)expression;
 
-			FieldName name = fieldRef.getField();
+			String name = fieldRef.getField();
 			if(name == null){
 				throw new MissingAttributeException(fieldRef, org.dmg.pmml.PMMLAttributes.FIELDREF_FIELD);
 			}
@@ -563,7 +562,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return result;
 	}
 
-	private Map<FieldName, List<NeuralOutput>> getNeuralOutputMap(){
+	private Map<String, List<NeuralOutput>> getNeuralOutputMap(){
 
 		if(this.neuralOutputMap == null){
 			this.neuralOutputMap = ImmutableMap.copyOf(toImmutableListMap(parseNeuralOutputs()));
@@ -572,14 +571,14 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		return this.neuralOutputMap;
 	}
 
-	private Map<FieldName, List<NeuralOutput>> parseNeuralOutputs(){
+	private Map<String, List<NeuralOutput>> parseNeuralOutputs(){
 		NeuralNetwork neuralNetwork = getModel();
 
-		ListMultimap<FieldName, NeuralOutput> result = ArrayListMultimap.create();
+		ListMultimap<String, NeuralOutput> result = ArrayListMultimap.create();
 
 		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
 		for(NeuralOutput neuralOutput : neuralOutputs){
-			FieldName name;
+			String name;
 
 			Expression expression = getOutputExpression(neuralOutput);
 

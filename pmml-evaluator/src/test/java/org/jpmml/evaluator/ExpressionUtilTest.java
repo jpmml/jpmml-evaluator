@@ -35,7 +35,6 @@ import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.Discretize;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
@@ -126,159 +125,145 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateFieldRef(){
-		FieldName name = FieldName.create("x");
+		FieldRef fieldRef = new FieldRef("x");
 
-		FieldRef fieldRef = new FieldRef(name);
-
-		assertEquals("3", evaluate(fieldRef, name, "3"));
-		assertEquals(null, evaluate(fieldRef, name, null));
+		assertEquals("3", evaluate(fieldRef, "x", "3"));
+		assertEquals(null, evaluate(fieldRef, "x", null));
 
 		fieldRef.setMapMissingTo("Missing");
 
-		assertEquals("Missing", evaluate(fieldRef, name, null));
+		assertEquals("Missing", evaluate(fieldRef, "x", null));
 	}
 
 	@Test
 	public void evaluateNormContinuous(){
-		FieldName name = FieldName.create("x");
-
-		NormContinuous normContinuous = new NormContinuous(name, null)
+		NormContinuous normContinuous = new NormContinuous("x", null)
 			.setMapMissingTo(5d);
 
-		assertEquals(5d, evaluate(normContinuous, name, null));
+		assertEquals(5d, evaluate(normContinuous, "x", null));
 	}
 
 	@Test
 	public void evaluateNormDiscrete(){
-		FieldName name = FieldName.create("x");
-
 		Double equals = 1d;
 		Double notEquals = 0d;
 
-		NormDiscrete stringThree = new NormDiscrete(name, "3");
+		NormDiscrete stringThree = new NormDiscrete("x", "3");
 
-		assertEquals(equals, evaluate(stringThree, name, "3"));
-		assertEquals(notEquals, evaluate(stringThree, name, "1"));
+		assertEquals(equals, evaluate(stringThree, "x", "3"));
+		assertEquals(notEquals, evaluate(stringThree, "x", "1"));
 
 		stringThree.setMapMissingTo(5d);
 
-		assertEquals(5d, evaluate(stringThree, name, null));
+		assertEquals(5d, evaluate(stringThree, "x", null));
 
-		NormDiscrete integerThree = new NormDiscrete(name, "3");
+		NormDiscrete integerThree = new NormDiscrete("x", "3");
 
-		assertEquals(equals, evaluate(integerThree, name, 3));
-		assertEquals(notEquals, evaluate(integerThree, name, 1));
+		assertEquals(equals, evaluate(integerThree, "x", 3));
+		assertEquals(notEquals, evaluate(integerThree, "x", 1));
 
-		NormDiscrete floatThree = new NormDiscrete(name, "3.0");
+		NormDiscrete floatThree = new NormDiscrete("x", "3.0");
 
-		assertEquals(equals, evaluate(floatThree, name, 3f));
-		assertEquals(notEquals, evaluate(floatThree, name, 1f));
+		assertEquals(equals, evaluate(floatThree, "x", 3f));
+		assertEquals(notEquals, evaluate(floatThree, "x", 1f));
 	}
 
 	@Test
 	public void evaluateDiscretize(){
-		FieldName name = FieldName.create("x");
+		Discretize discretize = new Discretize("x");
 
-		Discretize discretize = new Discretize(name);
-
-		assertEquals(null, evaluate(discretize, name, null));
+		assertEquals(null, evaluate(discretize, "x", null));
 
 		discretize.setMapMissingTo("Missing");
 
-		assertEquals("Missing", evaluate(discretize, name, null));
-		assertEquals(null, evaluate(discretize, name, 3));
+		assertEquals("Missing", evaluate(discretize, "x", null));
+		assertEquals(null, evaluate(discretize, "x", 3));
 
 		discretize.setDefaultValue("Default");
 
-		assertEquals("Default", evaluate(discretize, name, 3));
+		assertEquals("Default", evaluate(discretize, "x", 3));
 	}
 
 	@Test
 	public void evaluateMapValues(){
-		FieldName name = FieldName.create("x");
-
 		List<List<String>> rows = Arrays.asList(
 			Arrays.asList("0", "zero"),
 			Arrays.asList("1", "one")
 		);
 
 		MapValues mapValues = new MapValues(NamespacePrefixes.JPMML_INLINETABLE + ":output", null, createInlineTable(rows, Arrays.asList(NamespacePrefixes.JPMML_INLINETABLE + ":input", NamespacePrefixes.JPMML_INLINETABLE + ":output")))
-			.addFieldColumnPairs(new FieldColumnPair(name, NamespacePrefixes.JPMML_INLINETABLE + ":input"));
+			.addFieldColumnPairs(new FieldColumnPair("x", NamespacePrefixes.JPMML_INLINETABLE + ":input"));
 
-		assertEquals("zero", evaluate(mapValues, name, "0"));
-		assertEquals("one", evaluate(mapValues, name, "1"));
-		assertEquals(null, evaluate(mapValues, name, "3"));
+		assertEquals("zero", evaluate(mapValues, "x", "0"));
+		assertEquals("one", evaluate(mapValues, "x", "1"));
+		assertEquals(null, evaluate(mapValues, "x", "3"));
 
-		assertEquals(null, evaluate(mapValues, name, null));
+		assertEquals(null, evaluate(mapValues, "x", null));
 
 		mapValues.setMapMissingTo("Missing");
 
-		assertEquals("Missing", evaluate(mapValues, name, null));
+		assertEquals("Missing", evaluate(mapValues, "x", null));
 
 		mapValues.setDefaultValue("Default");
 
-		assertEquals("Default", evaluate(mapValues, name, "3"));
+		assertEquals("Default", evaluate(mapValues, "x", "3"));
 	}
 
 	@Test
 	public void evaluateTextIndex(){
-		FieldName name = FieldName.create("x");
-
-		TextIndex textIndex = new TextIndex(name, new Constant("user friendly"))
+		TextIndex textIndex = new TextIndex("x", new Constant("user friendly"))
 			.setWordSeparatorCharacterRE("[\\s\\-]");
 
-		assertEquals(null, evaluate(textIndex, name, null));
+		assertEquals(null, evaluate(textIndex, "x", null));
 
-		assertEquals(1, evaluate(textIndex, name, "user friendly"));
-		assertEquals(1, evaluate(textIndex, name, "user-friendly"));
+		assertEquals(1, evaluate(textIndex, "x", "user friendly"));
+		assertEquals(1, evaluate(textIndex, "x", "user-friendly"));
 
-		textIndex = new TextIndex(name, new Constant("brown fox"));
+		textIndex = new TextIndex("x", new Constant("brown fox"));
 
 		String text = "The quick browny foxy jumps over the lazy dog. The brown fox runs away and to be with another brown foxy.";
 
 		textIndex.setMaxLevenshteinDistance(0);
 
-		assertEquals(1, evaluate(textIndex, name, text));
+		assertEquals(1, evaluate(textIndex, "x", text));
 
 		textIndex.setMaxLevenshteinDistance(1);
 
-		assertEquals(2, evaluate(textIndex, name, text));
+		assertEquals(2, evaluate(textIndex, "x", text));
 
 		textIndex.setMaxLevenshteinDistance(2);
 
-		assertEquals(3, evaluate(textIndex, name, text));
+		assertEquals(3, evaluate(textIndex, "x", text));
 
-		textIndex = new TextIndex(name, new Constant("dog"))
+		textIndex = new TextIndex("x", new Constant("dog"))
 			.setMaxLevenshteinDistance(1);
 
 		text = "I have a doog. My dog is white. The doog is friendly.";
 
 		textIndex.setCountHits(CountHits.ALL_HITS);
 
-		assertEquals(3, evaluate(textIndex, name, text));
+		assertEquals(3, evaluate(textIndex, "x", text));
 
 		textIndex.setCountHits(CountHits.BEST_HITS);
 
-		assertEquals(1, evaluate(textIndex, name, text));
+		assertEquals(1, evaluate(textIndex, "x", text));
 
-		textIndex = new TextIndex(name, new Constant("sun"))
+		textIndex = new TextIndex("x", new Constant("sun"))
 			.setCaseSensitive(false);
 
 		text = "The Sun was setting while the captain's son reached the bounty island, minutes after their ship had sunk to the bottom of the ocean.";
 
 		textIndex.setMaxLevenshteinDistance(0);
 
-		assertEquals(1, evaluate(textIndex, name, text));
+		assertEquals(1, evaluate(textIndex, "x", text));
 
 		textIndex.setMaxLevenshteinDistance(1);
 
-		assertEquals(3, evaluate(textIndex, name, text));
+		assertEquals(3, evaluate(textIndex, "x", text));
 	}
 
 	@Test
 	public void evaluateTextIndexNormalization(){
-		FieldName name = FieldName.create("x");
-
 		TextIndexNormalization stepOne = new TextIndexNormalization();
 
 		List<List<String>> cells = Arrays.asList(
@@ -299,35 +284,33 @@ public class ExpressionUtilTest {
 
 		stepTwo.setInlineTable(createInlineTable(cells, stepTwo));
 
-		TextIndex textIndex = new TextIndex(name, new Constant("ui_good"))
+		TextIndex textIndex = new TextIndex("x", new Constant("ui_good"))
 			.setLocalTermWeights(TextIndex.LocalTermWeights.BINARY)
 			.setCaseSensitive(false)
 			.addTextIndexNormalizations(stepOne, stepTwo);
 
-		assertEquals(1, evaluate(textIndex, name, "Testing the app for a few days convinced me the interfaces are excellent!"));
+		assertEquals(1, evaluate(textIndex, "x", "Testing the app for a few days convinced me the interfaces are excellent!"));
 	}
 
 	@Test
 	public void evaluateApply(){
-		FieldName name = FieldName.create("x");
-
 		Apply apply = new Apply(PMMLFunctions.DIVIDE)
-			.addExpressions(new FieldRef(name), new Constant("0"));
+			.addExpressions(new FieldRef("x"), new Constant("0"));
 
-		assertEquals(null, evaluate(apply, name, null));
+		assertEquals(null, evaluate(apply, "x", null));
 
 		apply.setDefaultValue("-1");
 
-		assertEquals("-1", evaluate(apply, name, null));
+		assertEquals("-1", evaluate(apply, "x", null));
 
 		apply.setMapMissingTo("missing");
 
-		assertEquals("missing", evaluate(apply, name, null));
+		assertEquals("missing", evaluate(apply, "x", null));
 
 		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.RETURN_INVALID);
 
 		try {
-			evaluate(apply, name, 1);
+			evaluate(apply, "x", 1);
 
 			fail();
 		} catch(InvalidResultException ire){
@@ -337,7 +320,7 @@ public class ExpressionUtilTest {
 		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_IS);
 
 		try {
-			evaluate(apply, name, 1);
+			evaluate(apply, "x", 1);
 
 			fail();
 		} catch(InvalidResultException ire){
@@ -346,21 +329,19 @@ public class ExpressionUtilTest {
 
 		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
 
-		assertEquals("-1", evaluate(apply, name, 1));
+		assertEquals("-1", evaluate(apply, "x", 1));
 	}
 
 	@Test
 	public void evaluateApplyCondition(){
-		FieldName name = FieldName.create("x");
-
 		Apply condition = new Apply(PMMLFunctions.ISNOTMISSING)
-			.addExpressions(new FieldRef(name));
+			.addExpressions(new FieldRef("x"));
 
 		Apply apply = new Apply(PMMLFunctions.IF)
 			.addExpressions(condition);
 
 		try {
-			evaluate(apply, name, null);
+			evaluate(apply, "x", null);
 
 			fail();
 		} catch(FunctionException fe){
@@ -368,26 +349,26 @@ public class ExpressionUtilTest {
 		}
 
 		Expression thenPart = new Apply(PMMLFunctions.ABS)
-			.addExpressions(new FieldRef(name));
+			.addExpressions(new FieldRef("x"));
 
 		apply.addExpressions(thenPart);
 
-		assertEquals(1, evaluate(apply, name, 1));
-		assertEquals(1, evaluate(apply, name, -1));
+		assertEquals(1, evaluate(apply, "x", 1));
+		assertEquals(1, evaluate(apply, "x", -1));
 
-		assertEquals(null, evaluate(apply, name, null));
+		assertEquals(null, evaluate(apply, "x", null));
 
 		Expression elsePart = new Constant("-1")
 			.setDataType(DataType.DOUBLE);
 
 		apply.addExpressions(elsePart);
 
-		assertEquals(-1d, evaluate(apply, name, null));
+		assertEquals(-1d, evaluate(apply, "x", null));
 
-		apply.addExpressions(new FieldRef(name));
+		apply.addExpressions(new FieldRef("x"));
 
 		try {
-			evaluate(apply, name, null);
+			evaluate(apply, "x", null);
 
 			fail();
 		} catch(FunctionException fe){
@@ -397,7 +378,7 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateApplyUserDefinedFunction(){
-		ParameterField parameterField = new ParameterField(FieldName.create("input"));
+		ParameterField parameterField = new ParameterField("input");
 
 		Expression expression = new Apply(PMMLFunctions.IF)
 			.addExpressions(new Apply(PMMLFunctions.ISMISSING)
@@ -407,9 +388,7 @@ public class ExpressionUtilTest {
 		DefineFunction defineFunction = new DefineFunction("format", OpType.CATEGORICAL, DataType.STRING, null, expression)
 			.addParameterFields(parameterField);
 
-		FieldName name = FieldName.create("x");
-
-		FieldRef fieldRef = new FieldRef(name);
+		FieldRef fieldRef = new FieldRef("x");
 
 		Apply apply = new Apply(defineFunction.getName())
 			.addExpressions(fieldRef);
@@ -427,18 +406,18 @@ public class ExpressionUtilTest {
 			}
 		};
 
-		context.declare(name, FieldValues.MISSING_VALUE);
+		context.declare("x", FieldValues.MISSING_VALUE);
 
 		assertEquals("missing", evaluate(apply, context));
 
 		context.reset(true);
 
-		context.declare(name, FieldValues.CATEGORICAL_BOOLEAN_TRUE);
+		context.declare("x", FieldValues.CATEGORICAL_BOOLEAN_TRUE);
 
 		assertEquals("not missing", evaluate(apply, context));
 
 		try {
-			context.declare(name, FieldValues.CATEGORICAL_BOOLEAN_FALSE);
+			context.declare("x", FieldValues.CATEGORICAL_BOOLEAN_FALSE);
 
 			fail();
 		} catch(DuplicateValueException dve){
@@ -448,9 +427,7 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateApplyJavaFunction(){
-		FieldName name = FieldName.create("x");
-
-		FieldRef fieldRef = new FieldRef(name);
+		FieldRef fieldRef = new FieldRef("x");
 
 		Apply apply = new Apply(EchoFunction.class.getName())
 			.addExpressions(fieldRef);
@@ -463,39 +440,35 @@ public class ExpressionUtilTest {
 			assertEquals(fieldRef, ee.getContext());
 		}
 
-		assertEquals("Hello World!", evaluate(apply, name, "Hello World!"));
+		assertEquals("Hello World!", evaluate(apply, "x", "Hello World!"));
 	}
 
 	@Test
 	public void evaluateAggregateArithmetic(){
-		FieldName name = FieldName.create("x");
-
 		List<Integer> values = Arrays.asList(1, 2, 3);
 
-		Aggregate aggregate = new Aggregate(name, Aggregate.Function.COUNT);
+		Aggregate aggregate = new Aggregate("x", Aggregate.Function.COUNT);
 
-		assertEquals(3, evaluate(aggregate, name, values));
+		assertEquals(3, evaluate(aggregate, "x", values));
 
 		aggregate.setFunction(Aggregate.Function.SUM);
 
-		assertEquals(6, evaluate(aggregate, name, values));
+		assertEquals(6, evaluate(aggregate, "x", values));
 
 		aggregate.setFunction(Aggregate.Function.AVERAGE);
 
-		assertEquals(2d, evaluate(aggregate, name, values));
+		assertEquals(2d, evaluate(aggregate, "x", values));
 	}
 
 	@Test
 	public void evaluateAggregate(){
-		FieldName name = FieldName.create("x");
-
 		TypeInfo typeInfo = new SimpleTypeInfo(DataType.DATE, OpType.ORDINAL);
 
 		List<?> values = Arrays.asList(TypeUtil.parse(DataType.DATE, "2013-01-01"), TypeUtil.parse(DataType.DATE, "2013-02-01"), TypeUtil.parse(DataType.DATE, "2013-03-01"));
 
-		Map<FieldName, FieldValue> arguments = Collections.singletonMap(name, FieldValue.create(typeInfo, values));
+		Map<String, FieldValue> arguments = Collections.singletonMap("x", FieldValue.create(typeInfo, values));
 
-		Aggregate aggregate = new Aggregate(name, Aggregate.Function.COUNT);
+		Aggregate aggregate = new Aggregate("x", Aggregate.Function.COUNT);
 
 		assertEquals(3, evaluate(aggregate, arguments));
 
@@ -509,7 +482,7 @@ public class ExpressionUtilTest {
 
 		typeInfo = new SimpleTypeInfo(DataType.DATE, OpType.ORDINAL, Lists.reverse(values));
 
-		arguments = Collections.singletonMap(name, FieldValue.create(typeInfo, values));
+		arguments = Collections.singletonMap("x", FieldValue.create(typeInfo, values));
 
 		aggregate.setFunction(Aggregate.Function.MIN);
 
@@ -555,13 +528,13 @@ public class ExpressionUtilTest {
 
 	static
 	private Object evaluate(Expression expression, Object... objects){
-		Map<FieldName, ?> arguments = ModelEvaluatorTest.createArguments(objects);
+		Map<String, ?> arguments = ModelEvaluatorTest.createArguments(objects);
 
 		return evaluate(expression, arguments);
 	}
 
 	static
-	private Object evaluate(Expression expression, Map<FieldName, ?> arguments){
+	private Object evaluate(Expression expression, Map<String, ?> arguments){
 		EvaluationContext context = new VirtualEvaluationContext();
 		context.declareAll(arguments);
 

@@ -26,7 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -78,8 +77,8 @@ public class EvaluatorUtilTest {
 			}
 		};
 
-		assertEquals(Collections.singletonMap((String)null, "value"), EvaluatorUtil.decodeAll(Collections.singletonMap((FieldName)null, value)));
-		assertEquals(Collections.singletonMap("key", "value"), EvaluatorUtil.decodeAll(Collections.singletonMap(FieldName.create("key"), value)));
+		assertEquals(Collections.singletonMap(null, "value"), EvaluatorUtil.decodeAll(Collections.singletonMap(null, value)));
+		assertEquals(Collections.singletonMap("key", "value"), EvaluatorUtil.decodeAll(Collections.singletonMap("key", value)));
 
 		Computable invalidValue = new Computable(){
 
@@ -89,19 +88,19 @@ public class EvaluatorUtilTest {
 			}
 		};
 
-		assertEquals(Collections.emptyMap(), EvaluatorUtil.decodeAll(Collections.singletonMap((FieldName)null, invalidValue)));
-		assertEquals(Collections.emptyMap(), EvaluatorUtil.decodeAll(Collections.singletonMap(FieldName.create("key"), invalidValue)));
+		assertEquals(Collections.emptyMap(), EvaluatorUtil.decodeAll(Collections.singletonMap(null, invalidValue)));
+		assertEquals(Collections.emptyMap(), EvaluatorUtil.decodeAll(Collections.singletonMap("key", invalidValue)));
 
-		Map<FieldName, Object> results = new LinkedHashMap<>();
-		results.put((FieldName)null, invalidValue);
-		results.put(FieldName.create("decision"), Boolean.TRUE);
+		Map<String, Object> results = new LinkedHashMap<>();
+		results.put(null, invalidValue);
+		results.put("decision", Boolean.TRUE);
 
 		assertEquals(Collections.singletonMap("decision", Boolean.TRUE), EvaluatorUtil.decodeAll(results));
 	}
 
 	@Test
 	public void groupRows(){
-		List<Map<FieldName, Object>> table = new ArrayList<>();
+		List<Map<String, Object>> table = new ArrayList<>();
 		table.add(createRow("1", "Cracker"));
 		table.add(createRow("2", "Cracker"));
 		table.add(createRow("1", "Coke"));
@@ -110,7 +109,7 @@ public class EvaluatorUtilTest {
 		table.add(createRow("3", "Coke"));
 		table.add(createRow("2", "Water"));
 
-		table = EvaluatorUtil.groupRows(FieldName.create("transaction"), table);
+		table = EvaluatorUtil.groupRows("transaction", table);
 
 		checkGroupedRow(table.get(0), "1", Arrays.asList("Cracker", "Coke"));
 		checkGroupedRow(table.get(1), "2", Arrays.asList("Cracker", "Water"));
@@ -118,19 +117,19 @@ public class EvaluatorUtilTest {
 	}
 
 	static
-	private Map<FieldName, Object> createRow(String transaction, String item){
-		Map<FieldName, Object> result = new HashMap<>();
-		result.put(FieldName.create("transaction"), transaction);
-		result.put(FieldName.create("item"), item);
+	private Map<String, Object> createRow(String transaction, String item){
+		Map<String, Object> result = new HashMap<>();
+		result.put("transaction", transaction);
+		result.put("item", item);
 
 		return result;
 	}
 
 	static
-	private void checkGroupedRow(Map<FieldName, Object> row, String transaction, List<String> items){
+	private void checkGroupedRow(Map<String, Object> row, String transaction, List<String> items){
 		assertEquals(2, row.size());
 
-		assertEquals(transaction, row.get(FieldName.create("transaction")));
-		assertEquals(items, row.get(FieldName.create("item")));
+		assertEquals(transaction, row.get("transaction"));
+		assertEquals(items, row.get("item"));
 	}
 }

@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -35,7 +34,7 @@ public class CategoricalValueTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		AssociationModelEvaluator evaluator = (AssociationModelEvaluator)createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("Water", true, "Cracker", "false", "Bread", "true");
+		Map<String, ?> arguments = createArguments("Water", true, "Cracker", "false", "Bread", "true");
 
 		checkActiveItems(ImmutableSet.of("1", "3"), evaluator, arguments);
 
@@ -49,7 +48,7 @@ public class CategoricalValueTest extends ModelEvaluatorTest {
 	}
 
 	static
-	private void checkActiveItems(Set<String> items, AssociationModelEvaluator evaluator, Map<FieldName, ?> arguments){
+	private void checkActiveItems(Set<String> items, AssociationModelEvaluator evaluator, Map<String, ?> arguments){
 		ModelEvaluationContext context = evaluator.createEvaluationContext();
 		context.setArguments(arguments);
 

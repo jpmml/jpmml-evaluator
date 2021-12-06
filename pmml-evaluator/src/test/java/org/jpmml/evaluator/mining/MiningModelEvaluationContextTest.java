@@ -20,7 +20,6 @@ package org.jpmml.evaluator.mining;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -34,9 +33,9 @@ public class MiningModelEvaluationContextTest extends ModelEvaluatorTest {
 		MiningModelEvaluator evaluator = (MiningModelEvaluator)createModelEvaluator();
 
 		MiningModelEvaluationContext context = new MiningModelEvaluationContext(evaluator);
-		context.declare(FieldName.create("Age"), 35);
+		context.declare("Age", 35);
 
-		Map<FieldName, ?> results = evaluator.evaluateInternal(context);
+		Map<String, ?> results = evaluator.evaluateInternal(context);
 
 		Classification<?, ?> targetValue = (Classification<?, ?>)results.get(evaluator.getTargetName());
 

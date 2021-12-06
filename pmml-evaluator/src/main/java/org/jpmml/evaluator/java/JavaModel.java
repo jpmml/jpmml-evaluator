@@ -21,7 +21,6 @@ package org.jpmml.evaluator.java;
 import java.util.Map;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
@@ -102,15 +101,15 @@ public class JavaModel extends Model {
 		setModelVerification(model.getModelVerification());
 	}
 
-	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateDefault();
 	}
 
-	protected <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateDefault();
 	}
 
-	private Map<FieldName, ?> evaluateDefault(){
+	private Map<String, ?> evaluateDefault(){
 		MiningFunction miningFunction = getMiningFunction();
 
 		throw new InvalidAttributeException(this, miningFunction);

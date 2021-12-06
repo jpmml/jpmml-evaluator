@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
@@ -76,12 +75,12 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		TargetField targetField = getTargetField();
 
-		FieldName targetName = regressionModel.getTargetField();
+		String targetName = regressionModel.getTargetField();
 		if(targetName != null && !Objects.equals(targetField.getFieldName(), targetName)){
 			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELD, targetName);
 		}
@@ -120,12 +119,12 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
 		TargetField targetField = getTargetField();
 
-		FieldName targetName = regressionModel.getTargetField();
+		String targetName = regressionModel.getTargetField();
 		if(targetName != null && !Objects.equals(targetField.getFieldName(), targetName)){
 			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELD, targetName);
 		}
@@ -263,7 +262,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		if(regressionTable.hasNumericPredictors()){
 			List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
 			for(NumericPredictor numericPredictor : numericPredictors){
-				FieldName name = numericPredictor.getField();
+				String name = numericPredictor.getField();
 				if(name == null){
 					throw new MissingAttributeException(numericPredictor, PMMLAttributes.NUMERICPREDICTOR_FIELD);
 				}
@@ -294,11 +293,11 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		if(regressionTable.hasCategoricalPredictors()){
 			// A categorical field is represented by a list of CategoricalPredictor elements.
 			// The iteration over this list can be terminated right after finding the first and only match
-			FieldName matchedName = null;
+			String matchedName = null;
 
 			List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
 			for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
-				FieldName name = categoricalPredictor.getField();
+				String name = categoricalPredictor.getField();
 				if(name == null){
 					throw new MissingAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
 				}

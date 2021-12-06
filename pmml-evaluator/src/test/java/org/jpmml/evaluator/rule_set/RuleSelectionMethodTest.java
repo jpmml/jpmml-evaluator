@@ -20,7 +20,6 @@ package org.jpmml.evaluator.rule_set;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.rule_set.RuleSelectionMethod;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
@@ -28,22 +27,22 @@ import org.jpmml.evaluator.ModelEvaluatorTest;
 abstract
 public class RuleSelectionMethodTest extends ModelEvaluatorTest {
 
-	public String getScore(Map<FieldName, ?> arguments) throws Exception {
+	public String getScore(Map<String, ?> arguments) throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		SimpleRuleScoreDistribution<?> targetValue = (SimpleRuleScoreDistribution<?>)results.get(evaluator.getTargetName());
 
 		return (String)targetValue.getResult();
 	}
 
-	public String getRuleId(RuleSelectionMethod.Criterion criterion, Map<FieldName, ?> arguments) throws Exception {
+	public String getRuleId(RuleSelectionMethod.Criterion criterion, Map<String, ?> arguments) throws Exception {
 		RuleSelectionMethod ruleSelectionMethod = new RuleSelectionMethod(criterion);
 
 		ModelEvaluator<?> evaluator = createModelEvaluator(new RuleSelectionMethodTransformer(ruleSelectionMethod));
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		SimpleRuleScoreDistribution<?> targetValue = (SimpleRuleScoreDistribution<?>)results.get(evaluator.getTargetName());
 

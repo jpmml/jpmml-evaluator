@@ -20,7 +20,6 @@ package org.jpmml.evaluator.mining;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
@@ -70,9 +69,9 @@ public class MissingPredictionTest extends ModelEvaluatorTest {
 
 	static
 	private Integer evaluate(ModelEvaluator<?> evaluator, Double x){
-		Map<FieldName, ?> arguments = createArguments("x", x);
+		Map<String, ?> arguments = createArguments("x", x);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		return (Integer)getTarget(results, "y");
 	}

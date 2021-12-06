@@ -27,7 +27,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorBuilder;
@@ -90,12 +89,12 @@ public class ArchiveBatch implements Batch {
 	}
 
 	@Override
-	public List<Map<FieldName, String>> getInput() throws IOException {
+	public List<Map<String, String>> getInput() throws IOException {
 		return loadRecords("/csv/" + getDataset() + ".csv");
 	}
 
 	@Override
-	public List<Map<FieldName, String>> getOutput() throws IOException {
+	public List<Map<String, String>> getOutput() throws IOException {
 		return loadRecords("/csv/" + (getName() + getDataset()) + ".csv");
 	}
 
@@ -110,7 +109,7 @@ public class ArchiveBatch implements Batch {
 		}
 	}
 
-	protected List<Map<FieldName, String>> loadRecords(String path) throws IOException {
+	protected List<Map<String, String>> loadRecords(String path) throws IOException {
 		List<List<String>> table;
 
 		try(InputStream is = open(path)){

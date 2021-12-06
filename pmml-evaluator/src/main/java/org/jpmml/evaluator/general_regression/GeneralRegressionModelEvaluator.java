@@ -41,7 +41,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Matrix;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
@@ -115,8 +114,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			throw new MissingAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_MODELTYPE);
 		}
 
-		BiMap<FieldName, Predictor> factorRegistry = ImmutableBiMap.of();
-		BiMap<FieldName, Predictor> covariateRegistry = ImmutableBiMap.of();
+		BiMap<String, Predictor> factorRegistry = ImmutableBiMap.of();
+		BiMap<String, Predictor> covariateRegistry = ImmutableBiMap.of();
 
 		ParameterList parameterList = generalRegressionModel.getParameterList();
 		if(parameterList == null){
@@ -172,7 +171,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
@@ -184,13 +183,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 	}
 
-	private <V extends Number> Map<FieldName, ?> evaluateCoxRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	private <V extends Number> Map<String, ?> evaluateCoxRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		TargetField targetField = getTargetField();
 
-		FieldName startTimeVariable = generalRegressionModel.getStartTimeVariable();
-		FieldName endTimeVariable = generalRegressionModel.getEndTimeVariable();
+		String startTimeVariable = generalRegressionModel.getStartTimeVariable();
+		String endTimeVariable = generalRegressionModel.getEndTimeVariable();
 		if(endTimeVariable == null){
 			throw new MissingAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_ENDTIMEVARIABLE);
 		}
@@ -204,7 +203,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		Number maxTime;
 
-		FieldName baselineStrataVariable = generalRegressionModel.getBaselineStrataVariable();
+		String baselineStrataVariable = generalRegressionModel.getBaselineStrataVariable();
 
 		if(baselineStrataVariable != null){
 			FieldValue value = getVariable(baselineStrataVariable, context);
@@ -310,7 +309,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return TargetUtil.evaluateRegression(targetField, cumHazard);
 	}
 
-	private <V extends Number> Map<FieldName, ?> evaluateGeneralRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	private <V extends Number> Map<String, ?> evaluateGeneralRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -340,7 +339,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
 		TargetField targetField = getTargetField();
@@ -856,7 +855,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 	static
 	private Number getOffset(GeneralRegressionModel generalRegressionModel, EvaluationContext context){
-		FieldName offsetVariable = generalRegressionModel.getOffsetVariable();
+		String offsetVariable = generalRegressionModel.getOffsetVariable();
 
 		if(offsetVariable != null){
 			FieldValue value = getVariable(offsetVariable, context);
@@ -869,7 +868,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 	static
 	private Integer getTrials(GeneralRegressionModel generalRegressionModel, EvaluationContext context){
-		FieldName trialsVariable = generalRegressionModel.getTrialsVariable();
+		String trialsVariable = generalRegressionModel.getTrialsVariable();
 
 		if(trialsVariable != null){
 			FieldValue value = getVariable(trialsVariable, context);
@@ -881,7 +880,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	static
-	private FieldValue getVariable(FieldName name, EvaluationContext context){
+	private FieldValue getVariable(String name, EvaluationContext context){
 		FieldValue value = context.evaluate(name);
 
 		if(FieldValueUtil.isMissing(value)){
@@ -932,12 +931,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	static
-	private BiMap<FieldName, Predictor> parsePredictorRegistry(PredictorList predictorList){
-		BiMap<FieldName, Predictor> result = HashBiMap.create();
+	private BiMap<String, Predictor> parsePredictorRegistry(PredictorList predictorList){
+		BiMap<String, Predictor> result = HashBiMap.create();
 
 		List<Predictor> predictors = predictorList.getPredictors();
 		for(Predictor predictor : predictors){
-			FieldName name = predictor.getField();
+			String name = predictor.getField();
 			if(name == null){
 				throw new MissingAttributeException(predictor, PMMLAttributes.PREDICTOR_FIELD);
 			}
@@ -949,7 +948,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	}
 
 	static
-	private Map<Object, Map<String, Row>> parsePPMatrix(PPMatrix ppMatrix, BiMap<FieldName, Predictor> factors, BiMap<FieldName, Predictor> covariates){
+	private Map<Object, Map<String, Row>> parsePPMatrix(PPMatrix ppMatrix, BiMap<String, Predictor> factors, BiMap<String, Predictor> covariates){
 		Function<List<PPCell>, Row> function = new Function<List<PPCell>, Row>(){
 
 			@Override
@@ -958,7 +957,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 				ppCells:
 				for(PPCell ppCell : ppCells){
-					FieldName name = ppCell.getField();
+					String name = ppCell.getField();
 					if(name == null){
 						throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_FIELD);
 					}
@@ -1135,7 +1134,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			private PredictorHandler(PPCell ppCell){
 				setPPCell(ppCell);
 
-				FieldName name = ppCell.getField();
+				String name = ppCell.getField();
 				if(name == null){
 					throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_FIELD);
 				}
@@ -1144,7 +1143,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			abstract
 			public <V extends Number> Value<V> updateProduct(Value<V> product, FieldValue value);
 
-			public FieldName getField(){
+			public String getField(){
 				PPCell ppCell = getPPCell();
 
 				return ppCell.getField();

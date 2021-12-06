@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMMLObject;
@@ -36,7 +35,7 @@ import org.jpmml.model.visitors.FieldResolver;
 abstract
 class AbstractParser extends FieldResolver {
 
-	private Map<FieldName, DataType> dataTypes = new HashMap<>();
+	private Map<String, DataType> dataTypes = new HashMap<>();
 
 
 	@Override
@@ -65,7 +64,7 @@ class AbstractParser extends FieldResolver {
 		return parent;
 	}
 
-	protected DataType resolveDataType(FieldName name){
+	protected DataType resolveDataType(String name){
 		DataType dataType = this.dataTypes.get(name);
 
 		if(dataType == null && !this.dataTypes.containsKey(name)){
@@ -94,7 +93,7 @@ class AbstractParser extends FieldResolver {
 		return dataType;
 	}
 
-	protected DataType resolveTargetDataType(FieldName name){
+	protected DataType resolveTargetDataType(String name){
 		DataType dataType = this.dataTypes.get(name);
 
 		if(dataType == null && !this.dataTypes.containsKey(name)){

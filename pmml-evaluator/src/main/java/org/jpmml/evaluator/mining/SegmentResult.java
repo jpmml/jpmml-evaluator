@@ -20,9 +20,9 @@ package org.jpmml.evaluator.mining;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.collect.ForwardingMap;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.mining.Segment;
 import org.jpmml.evaluator.HasEntityId;
 import org.jpmml.evaluator.HasResultFields;
@@ -31,14 +31,14 @@ import org.jpmml.evaluator.OutputField;
 import org.jpmml.evaluator.TargetField;
 
 abstract
-public class SegmentResult extends ForwardingMap<FieldName, Object> implements HasEntityId, HasResultFields {
+public class SegmentResult extends ForwardingMap<String, Object> implements HasEntityId, HasResultFields {
 
 	private Segment segment = null;
 
-	private Map<FieldName, ?> results = null;
+	private Map<String, ?> results = null;
 
 
-	SegmentResult(Segment segment, Map<FieldName, ?> results){
+	SegmentResult(Segment segment, Map<String, ?> results){
 		setSegment(segment);
 		setResults(results);
 	}
@@ -50,8 +50,8 @@ public class SegmentResult extends ForwardingMap<FieldName, Object> implements H
 	@SuppressWarnings (
 		value = {"rawtypes", "unchecked"}
 	)
-	public Map<FieldName, Object> delegate(){
-		Map<FieldName, ?> results = getResults();
+	public Map<String, Object> delegate(){
+		Map<String, ?> results = getResults();
 
 		return (Map)results;
 	}
@@ -73,7 +73,7 @@ public class SegmentResult extends ForwardingMap<FieldName, Object> implements H
 	public Object getTargetValue(){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
-		FieldName targetName = modelEvaluator.getTargetName();
+		String targetName = modelEvaluator.getTargetName();
 
 		return get(targetName);
 	}
@@ -89,14 +89,14 @@ public class SegmentResult extends ForwardingMap<FieldName, Object> implements H
 	}
 
 	private void setSegment(Segment segment){
-		this.segment = segment;
+		this.segment = Objects.requireNonNull(segment);
 	}
 
-	public Map<FieldName, ?> getResults(){
+	public Map<String, ?> getResults(){
 		return this.results;
 	}
 
-	private void setResults(Map<FieldName, ?> results){
-		this.results = results;
+	private void setResults(Map<String, ?> results){
+		this.results = Objects.requireNonNull(results);
 	}
 }

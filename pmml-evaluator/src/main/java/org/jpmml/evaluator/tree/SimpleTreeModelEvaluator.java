@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Targets;
@@ -76,16 +75,16 @@ public class SimpleTreeModelEvaluator extends TreeModelEvaluator {
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateAny(context);
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateAny(context);
 	}
 
-	private Map<FieldName, ?> evaluateAny(EvaluationContext context){
+	private Map<String, ?> evaluateAny(EvaluationContext context){
 		TargetField targetField = getTargetField();
 
 		Object result = null;

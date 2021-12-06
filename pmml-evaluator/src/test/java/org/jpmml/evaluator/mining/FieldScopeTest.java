@@ -20,7 +20,6 @@ package org.jpmml.evaluator.mining;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -33,9 +32,9 @@ public class FieldScopeTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		Evaluator evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("input", null);
+		Map<String, ?> arguments = createArguments("input", null);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		assertEquals(1000d, getTarget(results, "prediction"));
 

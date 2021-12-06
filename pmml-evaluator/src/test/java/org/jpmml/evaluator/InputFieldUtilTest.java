@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Interval;
 import org.dmg.pmml.Interval.Closure;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
@@ -43,11 +42,9 @@ public class InputFieldUtilTest {
 
 	@Test
 	public void isDefault(){
-		FieldName name = FieldName.create("x");
+		DataField dataField = new DataField("x", OpType.CONTINUOUS, DataType.DOUBLE);
 
-		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE);
-
-		MiningField miningField = new MiningField(name);
+		MiningField miningField = new MiningField(dataField.getName());
 
 		assertTrue(InputFieldUtil.isDefault(dataField, miningField));
 
@@ -58,11 +55,9 @@ public class InputFieldUtilTest {
 
 	@Test
 	public void prepareContinuousInputValue(){
-		FieldName name = FieldName.create("x");
+		DataField dataField = new DataField("x", OpType.CONTINUOUS, DataType.DOUBLE);
 
-		DataField dataField = new DataField(name, OpType.CONTINUOUS, DataType.DOUBLE);
-
-		MiningField miningField = new MiningField(name);
+		MiningField miningField = new MiningField(dataField.getName());
 
 		assertEquals(1d, prepare(dataField, miningField, "1"));
 		assertEquals(1d, prepare(dataField, miningField, 1));
@@ -245,11 +240,9 @@ public class InputFieldUtilTest {
 
 	@Test
 	public void prepareCategoricalInputValue(){
-		FieldName name = FieldName.create("x");
+		DataField dataField = new DataField("x", OpType.CATEGORICAL, DataType.INTEGER);
 
-		DataField dataField = new DataField(name, OpType.CATEGORICAL, DataType.INTEGER);
-
-		MiningField miningField = new MiningField(name);
+		MiningField miningField = new MiningField(dataField.getName());
 
 		assertEquals(1, prepare(dataField, miningField, "1"));
 		assertEquals(1, prepare(dataField, miningField, 1));

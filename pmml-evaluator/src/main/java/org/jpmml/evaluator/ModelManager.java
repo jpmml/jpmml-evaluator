@@ -45,7 +45,6 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Field;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningField;
@@ -74,19 +73,19 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 	private DataField defaultDataField = null;
 
-	private Map<FieldName, DataField> dataFields = Collections.emptyMap();
+	private Map<String, DataField> dataFields = Collections.emptyMap();
 
-	private Map<FieldName, DerivedField> derivedFields = Collections.emptyMap();
+	private Map<String, DerivedField> derivedFields = Collections.emptyMap();
 
 	private Map<String, DefineFunction> defineFunctions = Collections.emptyMap();
 
-	private Map<FieldName, MiningField> miningFields = Collections.emptyMap();
+	private Map<String, MiningField> miningFields = Collections.emptyMap();
 
-	private Map<FieldName, DerivedField> localDerivedFields = Collections.emptyMap();
+	private Map<String, DerivedField> localDerivedFields = Collections.emptyMap();
 
-	private Map<FieldName, Target> targets = Collections.emptyMap();
+	private Map<String, Target> targets = Collections.emptyMap();
 
-	private Map<FieldName, org.dmg.pmml.OutputField> outputFields = Collections.emptyMap();
+	private Map<String, org.dmg.pmml.OutputField> outputFields = Collections.emptyMap();
 
 	private Set<ResultFeature> resultFeatures = Collections.emptySet();
 
@@ -98,7 +97,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 	private List<OutputField> outputResultFields = null;
 
-	private ListMultimap<FieldName, Field<?>> visibleFields = null;
+	private ListMultimap<String, Field<?>> visibleFields = null;
 
 
 	protected ModelManager(){
@@ -171,7 +170,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		return model.getMathContext();
 	}
 
-	public DataField getDataField(FieldName name){
+	public DataField getDataField(String name){
 
 		if(Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name)){
 			return getDefaultDataField();
@@ -212,7 +211,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		this.defaultDataField = defaultDataField;
 	}
 
-	public DerivedField getDerivedField(FieldName name){
+	public DerivedField getDerivedField(String name){
 		return this.derivedFields.get(name);
 	}
 
@@ -220,7 +219,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		return this.defineFunctions.get(name);
 	}
 
-	public MiningField getMiningField(FieldName name){
+	public MiningField getMiningField(String name){
 
 		if(Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name)){
 			return null;
@@ -233,11 +232,11 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		return !this.localDerivedFields.isEmpty();
 	}
 
-	public DerivedField getLocalDerivedField(FieldName name){
+	public DerivedField getLocalDerivedField(String name){
 		return this.localDerivedFields.get(name);
 	}
 
-	public Target getTarget(FieldName name){
+	public Target getTarget(String name){
 		return this.targets.get(name);
 	}
 
@@ -245,7 +244,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		return !this.outputFields.isEmpty();
 	}
 
-	public org.dmg.pmml.OutputField getOutputField(FieldName name){
+	public org.dmg.pmml.OutputField getOutputField(String name){
 		return this.outputFields.get(name);
 	}
 
@@ -320,13 +319,13 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		return targetField;
 	}
 
-	public FieldName getTargetName(){
+	public String getTargetName(){
 		TargetField targetField = getTargetField();
 
 		return targetField.getFieldName();
 	}
 
-	TargetField findTargetField(FieldName name){
+	TargetField findTargetField(String name){
 		List<TargetField> targetFields = getTargetFields();
 
 		for(TargetField targetField : targetFields){
@@ -360,8 +359,8 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		this.outputResultFields = null;
 	}
 
-	protected Field<?> resolveField(FieldName name){
-		ListMultimap<FieldName, Field<?>> visibleFields = getVisibleFields();
+	protected Field<?> resolveField(String name){
+		ListMultimap<String, Field<?>> visibleFields = getVisibleFields();
 
 		List<Field<?>> fields = visibleFields.get(name);
 
@@ -378,7 +377,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		}
 	}
 
-	protected ListMultimap<FieldName, Field<?>> getVisibleFields(){
+	protected ListMultimap<String, Field<?>> getVisibleFields(){
 
 		if(this.visibleFields == null){
 			this.visibleFields = collectVisibleFields();
@@ -414,7 +413,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 					throw new UnsupportedElementException(pmmlOutputField);
 				}
 
-				FieldName targetName = pmmlOutputField.getTargetField();
+				String targetName = pmmlOutputField.getTargetField();
 				if(targetName == null){
 					targetName = getTargetName();
 				}
@@ -457,7 +456,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 			List<MiningField> miningFields = miningSchema.getMiningFields();
 
 			for(MiningField miningField : miningFields){
-				FieldName name = miningField.getName();
+				String name = miningField.getName();
 
 				if(!(miningField.getUsageType()).equals(usageType)){
 					continue;
@@ -492,7 +491,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 			List<MiningField> miningFields = miningSchema.getMiningFields();
 
 			for(MiningField miningField : miningFields){
-				FieldName name = miningField.getName();
+				String name = miningField.getName();
 
 				MiningField.UsageType usageType = miningField.getUsageType();
 				switch(usageType){
@@ -562,11 +561,11 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		return outputFields;
 	}
 
-	private ListMultimap<FieldName, Field<?>> collectVisibleFields(){
+	private ListMultimap<String, Field<?>> collectVisibleFields(){
 		PMML pmml = getPMML();
 		Model model = getModel();
 
-		ListMultimap<FieldName, Field<?>> visibleFields = ArrayListMultimap.create();
+		ListMultimap<String, Field<?>> visibleFields = ArrayListMultimap.create();
 
 		FieldResolver fieldResolver = new FieldResolver(){
 

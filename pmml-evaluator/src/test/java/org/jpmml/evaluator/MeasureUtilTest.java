@@ -35,7 +35,6 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.BinarySimilarity;
 import org.dmg.pmml.ComparisonMeasure;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Jaccard;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.SimpleMatching;
@@ -78,7 +77,7 @@ public class MeasureUtilTest {
 		List<ClusteringField> result = new ArrayList<>(names.length);
 
 		for(String name : names){
-			ClusteringField clusteringField = new ClusteringField(FieldName.create(name));
+			ClusteringField clusteringField = new ClusteringField(name);
 
 			result.add(clusteringField);
 		}

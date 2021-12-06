@@ -29,26 +29,10 @@ import java.util.Set;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
-import org.dmg.pmml.FieldName;
 
 public class EvaluatorUtil {
 
 	private EvaluatorUtil(){
-	}
-
-	static
-	public Map<FieldName, ?> encodeKeys(Map<String, ?> map){
-		Map<FieldName, Object> result = new LinkedHashMap<>(2 * map.size());
-
-		Collection<? extends Map.Entry<String, ?>> entries = map.entrySet();
-		for(Map.Entry<String, ?> entry : entries){
-			String name = entry.getKey();
-			Object value = entry.getValue();
-
-			result.put(name != null ? FieldName.create(name) : null, value);
-		}
-
-		return result;
 	}
 
 	/**
@@ -89,16 +73,16 @@ public class EvaluatorUtil {
 
 	/**
 	 * <p>
-	 * Decouples a {@link Map} instance from the current runtime environment by decoding both its keys and values.
+	 * Decouples a {@link Map} instance from the current runtime environment by decoding its values.
 	 * </p>
 	 */
 	static
-	public Map<String, ?> decodeAll(Map<FieldName, ?> map){
+	public Map<String, ?> decodeAll(Map<String, ?> map){
 		Map<String, Object> result = new LinkedHashMap<>(2 * map.size());
 
-		Collection<? extends Map.Entry<FieldName, ?>> entries = map.entrySet();
-		for(Map.Entry<FieldName, ?> entry : entries){
-			FieldName name = entry.getKey();
+		Collection<? extends Map.Entry<String, ?>> entries = map.entrySet();
+		for(Map.Entry<String, ?> entry : entries){
+			String name = entry.getKey();
 			Object value = entry.getValue();
 
 			try {
@@ -107,14 +91,14 @@ public class EvaluatorUtil {
 				continue;
 			}
 
-			result.put(name != null ? name.getValue() : null, value);
+			result.put(name, value);
 		}
 
 		return result;
 	}
 
 	static
-	public List<? extends Map<FieldName, ?>> groupRows(HasGroupFields hasGroupFields, List<? extends Map<FieldName, ?>> table){
+	public List<? extends Map<String, ?>> groupRows(HasGroupFields hasGroupFields, List<? extends Map<String, ?>> table){
 		List<InputField> groupFields = hasGroupFields.getGroupFields();
 
 		if(groupFields.size() == 1){

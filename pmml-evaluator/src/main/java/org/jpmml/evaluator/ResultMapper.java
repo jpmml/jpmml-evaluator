@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.io.Serializable;
 
 import com.google.common.base.Function;
-import org.dmg.pmml.FieldName;
 
-public interface ResultMapper extends Function<FieldName, FieldName>, Serializable {
+public interface ResultMapper extends Function<String, String>, Serializable {
 }

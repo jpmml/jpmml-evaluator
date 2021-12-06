@@ -21,7 +21,6 @@ package org.jpmml.evaluator.mining;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 import org.junit.Test;
 
@@ -38,21 +37,21 @@ public class ModelChainEfficientCompositionTest extends ModelChainTest {
 
 	@Test
 	public void evaluateSetosa() throws Exception {
-		Map<FieldName, ?> results = evaluateExample(1.4, 0.2);
+		Map<String, ?> results = evaluateExample(1.4, 0.2);
 
 		assertEquals(0.3, getOutput(results, "Setosa Pollen Index"));
 	}
 
 	@Test
 	public void evaluateVersicolor() throws Exception {
-		Map<FieldName, ?> results = evaluateExample(4.7, 1.4);
+		Map<String, ?> results = evaluateExample(4.7, 1.4);
 
 		assertEquals(0.2, getOutput(results, "Versicolor Pollen Index"));
 	}
 
 	@Test
 	public void evaluateVirginica() throws Exception {
-		Map<FieldName, ?> results = evaluateExample(6, 2.5);
+		Map<String, ?> results = evaluateExample(6, 2.5);
 
 		assertEquals(0.1, getOutput(results, "Virginica Pollen Index"));
 	}

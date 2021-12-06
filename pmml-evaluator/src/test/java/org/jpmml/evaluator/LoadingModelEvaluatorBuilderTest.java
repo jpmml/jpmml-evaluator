@@ -28,7 +28,6 @@ import javax.xml.transform.stream.StreamResult;
 import com.google.common.collect.Iterables;
 import jakarta.xml.bind.JAXBException;
 import org.dmg.pmml.DataDictionary;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Header;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
@@ -116,7 +115,7 @@ public class LoadingModelEvaluatorBuilderTest {
 					}
 
 					@Override
-					public <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+					public <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 						Value<V> value = valueFactory.newValue(score);
 
 						return Collections.singletonMap(Evaluator.DEFAULT_TARGET_NAME, value.getValue());
@@ -140,8 +139,8 @@ public class LoadingModelEvaluatorBuilderTest {
 
 		assertNotEquals(modelEvaluator.getClass(), javaModelEvaluator.getClass());
 
-		Map<FieldName, ?> results = modelEvaluator.evaluate(Collections.emptyMap());
-		Map<FieldName, ?> javaResults = javaModelEvaluator.evaluate(Collections.emptyMap());
+		Map<String, ?> results = modelEvaluator.evaluate(Collections.emptyMap());
+		Map<String, ?> javaResults = javaModelEvaluator.evaluate(Collections.emptyMap());
 
 		assertEquals(results, javaResults);
 	}

@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.OpType;
 
 abstract
@@ -46,7 +45,7 @@ public class EvaluationContext {
 	}
 
 	abstract
-	protected FieldValue prepare(FieldName name, Object value);
+	protected FieldValue prepare(String name, Object value);
 
 	protected void reset(boolean clearValues){
 
@@ -67,7 +66,7 @@ public class EvaluationContext {
 	 *
 	 * @throws MissingValueException If the field value has not been declared.
 	 */
-	public FieldValue lookup(FieldName name){
+	public FieldValue lookup(String name){
 		FieldValueMap values = getValues();
 
 		FieldValue value = values.getOrDefault(name, EvaluationContext.UNDECLARED_VALUE);
@@ -84,7 +83,7 @@ public class EvaluationContext {
 	 * If the field value has not been declared, then makes full effort to resolve and declare it.
 	 * </p>
 	 */
-	public FieldValue evaluate(FieldName name){
+	public FieldValue evaluate(String name){
 		FieldValueMap values = getValues();
 
 		FieldValue value = values.getOrDefault(name, EvaluationContext.UNDECLARED_VALUE);
@@ -95,10 +94,10 @@ public class EvaluationContext {
 		return resolve(name);
 	}
 
-	public List<FieldValue> evaluateAll(List<FieldName> names){
+	public List<FieldValue> evaluateAll(List<String> names){
 		List<FieldValue> values = new ArrayList<>(names.size());
 
-		for(FieldName name : names){
+		for(String name : names){
 			FieldValue value = evaluate(name);
 
 			values.add(value);
@@ -107,11 +106,11 @@ public class EvaluationContext {
 		return values;
 	}
 
-	protected FieldValue resolve(FieldName name){
+	protected FieldValue resolve(String name){
 		throw new MissingFieldException(name);
 	}
 
-	public FieldValue declare(FieldName name, Object value){
+	public FieldValue declare(String name, Object value){
 
 		if(value instanceof FieldValue){
 			return declare(name, (FieldValue)value);
@@ -122,7 +121,7 @@ public class EvaluationContext {
 		return declare(name, (FieldValue)value);
 	}
 
-	public FieldValue declare(FieldName name, FieldValue value){
+	public FieldValue declare(String name, FieldValue value){
 		FieldValueMap values = getValues();
 
 		// XXX: Fails to detect a situation where the name was already associated with a missing value (null)
@@ -134,10 +133,10 @@ public class EvaluationContext {
 		return value;
 	}
 
-	public void declareAll(Map<FieldName, ?> values){
-		Collection<? extends Map.Entry<FieldName, ?>> entries = values.entrySet();
+	public void declareAll(Map<String, ?> values){
+		Collection<? extends Map.Entry<String, ?>> entries = values.entrySet();
 
-		for(Map.Entry<FieldName, ?> entry : entries){
+		for(Map.Entry<String, ?> entry : entries){
 			declare(entry.getKey(), entry.getValue());
 		}
 	}
@@ -180,10 +179,10 @@ public class EvaluationContext {
 		}
 	};
 
-	public static final ThreadLocal<SymbolTable<FieldName>> DERIVEDFIELD_GUARD_PROVIDER = new ThreadLocal<SymbolTable<FieldName>>(){
+	public static final ThreadLocal<SymbolTable<String>> DERIVEDFIELD_GUARD_PROVIDER = new ThreadLocal<SymbolTable<String>>(){
 
 		@Override
-		public SymbolTable<FieldName> initialValue(){
+		public SymbolTable<String> initialValue(){
 			return null;
 		}
 	};

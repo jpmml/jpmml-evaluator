@@ -25,7 +25,6 @@ import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.False;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Header;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
@@ -63,7 +62,7 @@ public class TargetUtilTest {
 		assertEquals(OpType.CONTINUOUS, dataField.getOpType());
 		assertEquals(DataType.FLOAT, dataField.getDataType());
 
-		Map<FieldName, ?> results = evaluator.evaluate(Collections.emptyMap());
+		Map<String, ?> results = evaluator.evaluate(Collections.emptyMap());
 
 		assertEquals((float)Math.PI, results.get(dataField.getName()));
 
@@ -100,7 +99,7 @@ public class TargetUtilTest {
 		assertEquals(OpType.CATEGORICAL, dataField.getOpType());
 		assertEquals(DataType.STRING, dataField.getDataType());
 
-		Map<FieldName, ?> results = evaluator.evaluate(Collections.emptyMap());
+		Map<String, ?> results = evaluator.evaluate(Collections.emptyMap());
 
 		HasProbability hasProbability = (HasProbability)results.get(dataField.getName());
 
@@ -125,7 +124,7 @@ public class TargetUtilTest {
 	@Test
 	public void processValue(){
 		Target target = new Target()
-			.setField(FieldName.create("amount"))
+			.setField("amount")
 			.setRescaleFactor(3.14d)
 			.setRescaleConstant(10d);
 

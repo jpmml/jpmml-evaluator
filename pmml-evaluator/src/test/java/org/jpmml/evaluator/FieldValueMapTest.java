@@ -20,7 +20,6 @@ package org.jpmml.evaluator;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
@@ -45,7 +44,7 @@ public class FieldValueMapTest {
 		} // End try
 
 		try {
-			Map.class.getMethod("getOrDefault", FieldName.class, FieldValue.class);
+			Map.class.getMethod("getOrDefault", String.class, FieldValue.class);
 
 			fail();
 		} catch(ReflectiveOperationException roe){
@@ -55,7 +54,7 @@ public class FieldValueMapTest {
 		assertNotNull(Map.class.getMethod("putIfAbsent", Object.class, Object.class));
 
 		try {
-			Map.class.getMethod("putIfAbsent", FieldName.class, FieldValue.class);
+			Map.class.getMethod("putIfAbsent", String.class, FieldValue.class);
 
 			fail();
 		} catch(ReflectiveOperationException roe){

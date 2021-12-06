@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ResultField;
 
@@ -44,14 +43,14 @@ public class FilterBatch implements Batch {
 	}
 
 	@Override
-	public List<? extends Map<FieldName, ?>> getInput() throws Exception {
+	public List<? extends Map<String, ?>> getInput() throws Exception {
 		Batch batch = getBatch();
 
 		return batch.getInput();
 	}
 
 	@Override
-	public List<? extends Map<FieldName, ?>> getOutput() throws Exception {
+	public List<? extends Map<String, ?>> getOutput() throws Exception {
 		Batch batch = getBatch();
 
 		return batch.getOutput();

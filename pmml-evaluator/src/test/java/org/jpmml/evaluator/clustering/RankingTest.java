@@ -21,7 +21,6 @@ package org.jpmml.evaluator.clustering;
 import java.util.Collections;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -36,9 +35,9 @@ public class RankingTest extends ModelEvaluatorTest {
 
 		checkTargetFields(Collections.singletonList(null), evaluator);
 
-		Map<FieldName, ?> arguments = createArguments("input", 1d);
+		Map<String, ?> arguments = createArguments("input", 1d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		ClusterAffinityDistribution<?> affinityDistribution = (ClusterAffinityDistribution<?>)results.get(evaluator.getTargetName());
 
@@ -50,7 +49,7 @@ public class RankingTest extends ModelEvaluatorTest {
 	}
 
 	static
-	private void checkValue(String id, Double affinity, Map<FieldName, ?> result, String suffix){
+	private void checkValue(String id, Double affinity, Map<String, ?> result, String suffix){
 		assertEquals(id, getOutput(result, "id_" + suffix));
 		assertEquals(affinity, getOutput(result, "affinity_" + suffix));
 	}

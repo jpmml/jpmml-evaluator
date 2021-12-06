@@ -41,7 +41,6 @@ import com.google.common.collect.Multimaps;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
-import org.dmg.pmml.FieldName;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.Model;
@@ -194,7 +193,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public FieldName getTargetName(){
+	public String getTargetName(){
 		List<TargetField> targetFields = super.getTargetFields();
 
 		if(targetFields.isEmpty()){
@@ -233,17 +232,17 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public Map<FieldName, ?> evaluateInternal(ModelEvaluationContext context){
+	public Map<String, ?> evaluateInternal(ModelEvaluationContext context){
 		return super.evaluateInternal((MiningModelEvaluationContext)context);
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		MiningModel miningModel = getModel();
 
 		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
-		Map<FieldName, ?> predictions = getSegmentationResult(REGRESSION_METHODS, segmentResults);
+		Map<String, ?> predictions = getSegmentationResult(REGRESSION_METHODS, segmentResults);
 		if(predictions != null){
 			return predictions;
 		}
@@ -298,12 +297,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		MiningModel miningModel = getModel();
 
 		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
-		Map<FieldName, ?> predictions = getSegmentationResult(CLASSIFICATION_METHODS, segmentResults);
+		Map<String, ?> predictions = getSegmentationResult(CLASSIFICATION_METHODS, segmentResults);
 		if(predictions != null){
 			return predictions;
 		}
@@ -381,12 +380,12 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ?> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
 		MiningModel miningModel = getModel();
 
 		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
-		Map<FieldName, ?> predictions = getSegmentationResult(CLUSTERING_METHODS, segmentResults);
+		Map<String, ?> predictions = getSegmentationResult(CLUSTERING_METHODS, segmentResults);
 		if(predictions != null){
 			return predictions;
 		}
@@ -441,16 +440,16 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ?> evaluateAssociationRules(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateAssociationRules(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateAny(valueFactory, context);
 	}
 
 	@Override
-	protected <V extends Number> Map<FieldName, ?> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> Map<String, ?> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateAny(valueFactory, context);
 	}
 
-	private <V extends Number> Map<FieldName, ?> evaluateAny(ValueFactory<V> valueFactory, EvaluationContext context){
+	private <V extends Number> Map<String, ?> evaluateAny(ValueFactory<V> valueFactory, EvaluationContext context){
 		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
 		return getSegmentationResult(Collections.emptySet(), segmentResults);
@@ -533,7 +532,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				segmentContext = modelContext;
 			}
 
-			Map<FieldName, ?> results;
+			Map<String, ?> results;
 
 			try {
 				results = segmentModelEvaluator.evaluateInternal(segmentContext);
@@ -606,7 +605,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 							List<org.dmg.pmml.OutputField> pmmlSegmentOutputFields = segmentOutput.getOutputFields();
 
 							for(org.dmg.pmml.OutputField pmmlSegmentOutputField : pmmlSegmentOutputFields){
-								FieldName name = pmmlSegmentOutputField.getName();
+								String name = pmmlSegmentOutputField.getName();
 								if(name == null){
 									throw new MissingAttributeException(pmmlSegmentOutputField, org.dmg.pmml.PMMLAttributes.OUTPUTFIELD_NAME);
 								}
@@ -660,7 +659,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return segmentResults;
 	}
 
-	private Map<FieldName, ?> getSegmentationResult(Set<Segmentation.MultipleModelMethod> multipleModelMethods, List<SegmentResult> segmentResults){
+	private Map<String, ?> getSegmentationResult(Set<Segmentation.MultipleModelMethod> multipleModelMethods, List<SegmentResult> segmentResults){
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.getSegmentation();
@@ -846,10 +845,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	static
-	private Map<FieldName, ?> selectAll(List<SegmentResult> segmentResults){
-		ListMultimap<FieldName, Object> result = ArrayListMultimap.create();
+	private Map<String, ?> selectAll(List<SegmentResult> segmentResults){
+		ListMultimap<String, Object> result = ArrayListMultimap.create();
 
-		Set<FieldName> keys = null;
+		Set<String> keys = null;
 
 		for(SegmentResult segmentResult : segmentResults){
 
@@ -870,7 +869,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				throw new EvaluationException("Field sets " + Iterables.transform(keys, function) + " and " + Iterables.transform(segmentResult.keySet(), function) + " do not match");
 			}
 
-			for(FieldName key : keys){
+			for(String key : keys){
 				result.put(key, segmentResult.get(key));
 			}
 		}

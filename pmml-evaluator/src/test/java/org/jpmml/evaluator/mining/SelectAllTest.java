@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.ModelEvaluatorTest;
@@ -36,13 +35,13 @@ public class SelectAllTest extends ModelEvaluatorTest {
 	public void evaluate() throws Exception {
 		Evaluator evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("sepal_length", 5.1d, "sepal_width", 3.5d, "petal_length", 1.4d, "petal_width", 0.2d);
+		Map<String, ?> arguments = createArguments("sepal_length", 5.1d, "sepal_width", 3.5d, "petal_length", 1.4d, "petal_width", 0.2d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		assertEquals(1, results.size());
 
-		Collection<?> species = (Collection<?>)results.get(FieldName.create("species"));
+		Collection<?> species = (Collection<?>)results.get("species");
 
 		assertEquals(5, species.size());
 

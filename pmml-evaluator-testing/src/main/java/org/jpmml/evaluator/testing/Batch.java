@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ResultField;
 
@@ -38,7 +37,7 @@ public interface Batch extends AutoCloseable {
 	 *
 	 * @see Evaluator#getInputFields()
 	 */
-	List<? extends Map<FieldName, ?>> getInput() throws Exception;
+	List<? extends Map<String, ?>> getInput() throws Exception;
 
 	/**
 	 * <p>
@@ -48,7 +47,7 @@ public interface Batch extends AutoCloseable {
 	 * @see Evaluator#getTargetFields()
 	 * @see Evaluator#getOutputFields()
 	 */
-	List<? extends Map<FieldName, ?>> getOutput() throws Exception;
+	List<? extends Map<String, ?>> getOutput() throws Exception;
 
 	/**
 	 * <p>

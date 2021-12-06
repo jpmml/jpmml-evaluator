@@ -25,7 +25,6 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.ResultField;
 
 abstract
@@ -86,12 +85,12 @@ public class IntegrationTest extends BatchTest {
 	}
 
 	static
-	public Predicate<ResultField> excludeFields(FieldName... names){
+	public Predicate<ResultField> excludeFields(String... names){
 		return excludeFields(new LinkedHashSet<>(Arrays.asList(names)));
 	}
 
 	static
-	public Predicate<ResultField> excludeFields(Collection<FieldName> names){
+	public Predicate<ResultField> excludeFields(Collection<String> names){
 		Predicate<ResultField> predicate = new Predicate<ResultField>(){
 
 			@Override

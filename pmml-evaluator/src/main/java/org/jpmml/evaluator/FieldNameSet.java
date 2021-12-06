@@ -20,9 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.HashSet;
 
-import org.dmg.pmml.FieldName;
-
-public class FieldNameSet extends HashSet<FieldName> implements SymbolTable<FieldName> {
+public class FieldNameSet extends HashSet<String> implements SymbolTable<String> {
 
 	private int capacity = Integer.MAX_VALUE;
 
@@ -49,7 +47,7 @@ public class FieldNameSet extends HashSet<FieldName> implements SymbolTable<Fiel
 	}
 
 	@Override
-	public void lock(FieldName name){
+	public void lock(String name){
 		int capacity = getCapacity();
 
 		int size = size();
@@ -64,7 +62,7 @@ public class FieldNameSet extends HashSet<FieldName> implements SymbolTable<Fiel
 	}
 
 	@Override
-	public void release(FieldName name){
+	public void release(String name){
 		remove(name);
 	}
 

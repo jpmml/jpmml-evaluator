@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Iterables;
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
@@ -55,18 +54,16 @@ public class ContinuousResidualTest extends ModelEvaluatorTest {
 
 		assertTrue(inputField instanceof ResidualInputField);
 
-		Map<FieldName, ?> arguments = createArguments("input", 0.8d, "target", 3d);
+		Map<String, ?> arguments = createArguments("input", 0.8d, "target", 3d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		FieldName name = FieldName.create("residual");
-
-		assertEquals(2.6d, (Double)getOutput(results, name), 1e-8);
+		assertEquals(2.6d, (Double)getOutput(results, "residual"), 1e-8);
 
 		arguments = createArguments("input", 0.8d, "target", null);
 
 		results = evaluator.evaluate(arguments);
 
-		assertEquals(1.6d, (Double)getOutput(results, name), 1e-8);
+		assertEquals(1.6d, (Double)getOutput(results, "residual"), 1e-8);
 	}
 }

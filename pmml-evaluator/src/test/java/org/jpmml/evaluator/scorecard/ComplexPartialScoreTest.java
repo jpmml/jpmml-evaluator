@@ -20,7 +20,6 @@ package org.jpmml.evaluator.scorecard;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -42,9 +41,9 @@ public class ComplexPartialScoreTest extends ModelEvaluatorTest {
 	private Double evaluateScore(Double income) throws Exception {
 		Evaluator evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("department", null, "age", null, "income", income);
+		Map<String, ?> arguments = createArguments("department", null, "age", null, "income", income);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		return (Double)getOutput(results, "Final Score");
 	}

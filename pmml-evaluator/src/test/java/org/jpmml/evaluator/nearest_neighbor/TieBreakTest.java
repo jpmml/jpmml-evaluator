@@ -29,7 +29,6 @@ package org.jpmml.evaluator.nearest_neighbor;
 
 import java.util.Map;
 
-import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
@@ -42,9 +41,9 @@ public class TieBreakTest extends ModelEvaluatorTest {
 	public void firstLevel() throws Exception {
 		Evaluator evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("input", 1.5d);
+		Map<String, ?> arguments = createArguments("input", 1.5d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		assertEquals("medium", getTarget(results, "output"));
 	}
@@ -53,9 +52,9 @@ public class TieBreakTest extends ModelEvaluatorTest {
 	public void secondLevel() throws Exception {
 		Evaluator evaluator = createModelEvaluator();
 
-		Map<FieldName, ?> arguments = createArguments("input", 3.5d);
+		Map<String, ?> arguments = createArguments("input", 3.5d);
 
-		Map<FieldName, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		assertEquals("high", getTarget(results, "output"));
 	}

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import org.dmg.pmml.FieldName;
 import org.jpmml.model.SerializationUtil;
 
 import static org.junit.Assert.assertEquals;
@@ -96,8 +95,8 @@ public class ModelEvaluatorTest {
 	}
 
 	static
-	public Map<FieldName, ?> createArguments(Object... objects){
-		Map<FieldName, Object> result = new HashMap<>();
+	public Map<String, ?> createArguments(Object... objects){
+		Map<String, Object> result = new HashMap<>();
 
 		if(objects.length % 2 != 0){
 			throw new IllegalArgumentException();
@@ -107,51 +106,39 @@ public class ModelEvaluatorTest {
 			Object key = objects[i * 2];
 			Object value = objects[i * 2 + 1];
 
-			result.put(toFieldName(key), value);
+			result.put((String)key, value);
 		}
 
 		return result;
 	}
 
 	static
-	public FieldName toFieldName(Object object){
-
-		if(object instanceof String){
-			String string = (String)object;
-
-			return FieldName.create(string);
-		}
-
-		return (FieldName)object;
-	}
-
-	static
-	public Object getTarget(Map<FieldName, ?> results, Object name){
-		Object value = results.get(toFieldName(name));
+	public Object getTarget(Map<String, ?> results, String name){
+		Object value = results.get(name);
 
 		return EvaluatorUtil.decode(value);
 	}
 
 	static
-	public Object getOutput(Map<FieldName, ?> results, Object name){
-		Object value = results.get(toFieldName(name));
+	public Object getOutput(Map<String, ?> results, String name){
+		Object value = results.get(name);
 
 		return value;
 	}
 
 	static
-	public void checkTargetFields(List<?> targetNames, Evaluator evaluator){
+	public void checkTargetFields(List<String> targetNames, Evaluator evaluator){
 		List<TargetField> targetFields = evaluator.getTargetFields();
 
-		assertEquals(Lists.transform(targetNames, ModelEvaluatorTest::toFieldName), Lists.transform(targetFields, TargetField::getName));
+		assertEquals(targetNames, Lists.transform(targetFields, TargetField::getName));
 	}
 
 	static
-	public void checkResultFields(List<?> targetNames, List<?> outputNames, Evaluator evaluator){
+	public void checkResultFields(List<String> targetNames, List<String> outputNames, Evaluator evaluator){
 		List<TargetField> targetFields = evaluator.getTargetFields();
 		List<OutputField> outputFields = evaluator.getOutputFields();
 
-		assertEquals(Lists.transform(targetNames, ModelEvaluatorTest::toFieldName), Lists.transform(targetFields, TargetField::getName));
-		assertEquals(Lists.transform(outputNames, ModelEvaluatorTest::toFieldName), Lists.transform(outputFields, OutputField::getName));
+		assertEquals(targetNames, Lists.transform(targetFields, TargetField::getName));
+		assertEquals(outputNames, Lists.transform(outputFields, OutputField::getName));
 	}
 }
