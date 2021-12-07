@@ -62,11 +62,6 @@ public class FieldUtil {
 	}
 
 	static
-	public DataType getDataType(Field<?> field){
-		return field.getDataType();
-	}
-
-	static
 	public OpType getOpType(Field<?> field, MiningField miningField){
 		OpType opType = field.getOpType();
 
@@ -92,6 +87,11 @@ public class FieldUtil {
 		}
 
 		return opType;
+	}
+
+	static
+	public DataType getDataType(Field<?> field){
+		return field.getDataType();
 	}
 
 	static

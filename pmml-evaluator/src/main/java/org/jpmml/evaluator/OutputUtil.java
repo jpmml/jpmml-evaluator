@@ -408,6 +408,18 @@ public class OutputUtil {
 			TypeInfo typeInfo = new TypeInfo(){
 
 				@Override
+				public OpType getOpType(){
+					OpType opType = outputField.getOpType();
+					if(opType == null){
+						DataType dataType = getDataType();
+
+						opType = TypeUtil.getOpType(dataType);
+					}
+
+					return opType;
+				}
+
+				@Override
 				public DataType getDataType(){
 					DataType dataType = outputField.getDataType();
 					if(dataType == null){
@@ -424,18 +436,6 @@ public class OutputUtil {
 					}
 
 					return dataType;
-				}
-
-				@Override
-				public OpType getOpType(){
-					OpType opType = outputField.getOpType();
-					if(opType == null){
-						DataType dataType = getDataType();
-
-						opType = TypeUtil.getOpType(dataType);
-					}
-
-					return opType;
 				}
 
 				@Override

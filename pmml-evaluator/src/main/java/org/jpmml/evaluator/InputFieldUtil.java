@@ -514,16 +514,6 @@ public class InputFieldUtil {
 			}
 
 			@Override
-			public DataType getDataType(){
-				DataType dataType = FieldUtil.getDataType(field);
-				if(dataType == null){
-					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@dataType"), field);
-				}
-
-				return dataType;
-			}
-
-			@Override
 			public OpType getOpType(){
 				OpType opType = FieldUtil.getOpType(field, miningField);
 				if(opType == null){
@@ -531,6 +521,16 @@ public class InputFieldUtil {
 				}
 
 				return opType;
+			}
+
+			@Override
+			public DataType getDataType(){
+				DataType dataType = FieldUtil.getDataType(field);
+				if(dataType == null){
+					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@dataType"), field);
+				}
+
+				return dataType;
 			}
 
 			@Override

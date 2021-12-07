@@ -91,16 +91,16 @@ public class ModelField implements Serializable {
 		return field.getDisplayName();
 	}
 
-	public DataType getDataType(){
-		Field<?> field = getField();
-
-		return field.getDataType();
-	}
-
 	public OpType getOpType(){
 		Field<?> field = getField();
 
 		return field.getOpType();
+	}
+
+	public DataType getDataType(){
+		Field<?> field = getField();
+
+		return field.getDataType();
 	}
 
 	@Override
@@ -115,8 +115,8 @@ public class ModelField implements Serializable {
 			.add("name", getName())
 			.add("fieldName", getFieldName())
 			.add("displayName", getDisplayName())
-			.add("dataType", getDataType())
-			.add("opType", getOpType());
+			.add("opType", getOpType())
+			.add("dataType", getDataType());
 
 		return helper;
 	}

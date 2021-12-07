@@ -25,9 +25,9 @@ import org.dmg.pmml.OpType;
 
 public interface TypeInfo {
 
-	DataType getDataType();
-
 	OpType getOpType();
+
+	DataType getDataType();
 
 	default
 	List<?> getOrdering(){

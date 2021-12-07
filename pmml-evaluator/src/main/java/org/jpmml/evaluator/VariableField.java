@@ -61,18 +61,6 @@ class VariableField extends Field<VariableField> {
 	}
 
 	@Override
-	public DataType getDataType(){
-		String name = getName();
-
-		throw new MissingFieldException(name);
-	}
-
-	@Override
-	public VariableField setDataType(DataType dataType){
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public OpType getOpType(){
 		String name = getName();
 
@@ -81,6 +69,18 @@ class VariableField extends Field<VariableField> {
 
 	@Override
 	public VariableField setOpType(OpType opType){
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public DataType getDataType(){
+		String name = getName();
+
+		throw new MissingFieldException(name);
+	}
+
+	@Override
+	public VariableField setDataType(DataType dataType){
 		throw new UnsupportedOperationException();
 	}
 

@@ -45,19 +45,19 @@ public class OutputField extends ResultField {
 	}
 
 	/**
-	 * @return The data type, or <code>null</code>.
-	 */
-	@Override
-	public DataType getDataType(){
-		return super.getDataType();
-	}
-
-	/**
 	 * @return The operational type, or <code>null</code>.
 	 */
 	@Override
 	public OpType getOpType(){
 		return super.getOpType();
+	}
+
+	/**
+	 * @return The data type, or <code>null</code>.
+	 */
+	@Override
+	public DataType getDataType(){
+		return super.getDataType();
 	}
 
 	/**

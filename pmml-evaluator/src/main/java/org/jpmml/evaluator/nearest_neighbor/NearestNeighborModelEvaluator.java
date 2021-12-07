@@ -812,16 +812,6 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			TypeInfo typeInfo = new TypeInfo(){
 
 				@Override
-				public DataType getDataType(){
-					DataType dataType = derivedField.getDataType();
-					if(dataType == null){
-						throw new MissingAttributeException(derivedField, org.dmg.pmml.PMMLAttributes.DERIVEDFIELD_DATATYPE);
-					}
-
-					return dataType;
-				}
-
-				@Override
 				public OpType getOpType(){
 					OpType opType = derivedField.getOpType();
 					if(opType == null){
@@ -829,6 +819,16 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 					}
 
 					return opType;
+				}
+
+				@Override
+				public DataType getDataType(){
+					DataType dataType = derivedField.getDataType();
+					if(dataType == null){
+						throw new MissingAttributeException(derivedField, org.dmg.pmml.PMMLAttributes.DERIVEDFIELD_DATATYPE);
+					}
+
+					return dataType;
 				}
 
 				@Override

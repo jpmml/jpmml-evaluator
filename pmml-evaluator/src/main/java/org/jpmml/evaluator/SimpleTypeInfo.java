@@ -26,9 +26,9 @@ import org.dmg.pmml.OpType;
 
 public class SimpleTypeInfo implements TypeInfo {
 
-	private DataType dataType = null;
-
 	private OpType opType = null;
+
+	private DataType dataType = null;
 
 	private List<?> ordering = null;
 
@@ -38,18 +38,9 @@ public class SimpleTypeInfo implements TypeInfo {
 	}
 
 	public SimpleTypeInfo(OpType opType, DataType dataType, List<?> ordering){
-		setDataType(Objects.requireNonNull(dataType));
 		setOpType(Objects.requireNonNull(opType));
+		setDataType(Objects.requireNonNull(dataType));
 		setOrdering(ordering);
-	}
-
-	@Override
-	public DataType getDataType(){
-		return this.dataType;
-	}
-
-	private void setDataType(DataType dataType){
-		this.dataType = dataType;
 	}
 
 	@Override
@@ -59,6 +50,15 @@ public class SimpleTypeInfo implements TypeInfo {
 
 	private void setOpType(OpType opType){
 		this.opType = opType;
+	}
+
+	@Override
+	public DataType getDataType(){
+		return this.dataType;
+	}
+
+	private void setDataType(DataType dataType){
+		this.dataType = dataType;
 	}
 
 	@Override
