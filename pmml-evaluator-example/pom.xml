@@ -33,10 +33,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-evaluator-extension</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jpmml</groupId>
 			<artifactId>pmml-evaluator-metro</artifactId>
 		</dependency>
 		<dependency>
