@@ -683,18 +683,18 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			Map<String, Object> record = new LinkedHashMap<>();
 
 			for(VerificationField verificationField : verificationFields){
-				String name = verificationField.getField();
+				String fieldName = verificationField.getField();
 				String column = verificationField.getColumn();
 
 				if(column == null){
-					column = name;
+					column = fieldName;
 				} // End if
 
 				if(!row.containsKey(column)){
 					continue;
 				}
 
-				record.put(name, row.get(column));
+				record.put(fieldName, row.get(column));
 			}
 
 			records.add(record);

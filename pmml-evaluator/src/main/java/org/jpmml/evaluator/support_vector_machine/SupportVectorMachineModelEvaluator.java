@@ -388,11 +388,11 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			if(object instanceof FieldRef){
 				FieldRef fieldRef = (FieldRef)object;
 
-				String name = fieldRef.getField();
+				String fieldName = fieldRef.getField();
 
 				FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
 				if(FieldValueUtil.isMissing(value)){
-					throw new MissingValueException(name, vectorFields);
+					throw new MissingValueException(fieldName, vectorFields);
 				}
 
 				result.add(value.asNumber());
@@ -401,14 +401,14 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			if(object instanceof CategoricalPredictor){
 				CategoricalPredictor categoricalPredictor = (CategoricalPredictor)object;
 
-				String name = categoricalPredictor.getField();
-				if(name == null){
+				String fieldName = categoricalPredictor.getField();
+				if(fieldName == null){
 					throw new MissingAttributeException(categoricalPredictor, org.dmg.pmml.regression.PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
 				}
 
-				FieldValue value = context.evaluate(name);
+				FieldValue value = context.evaluate(fieldName);
 				if(FieldValueUtil.isMissing(value)){
-					throw new MissingValueException(name, categoricalPredictor);
+					throw new MissingValueException(fieldName, categoricalPredictor);
 				}
 
 				Number coefficient = categoricalPredictor.getCoefficient();

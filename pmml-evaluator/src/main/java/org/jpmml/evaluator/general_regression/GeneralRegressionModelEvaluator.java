@@ -936,12 +936,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		List<Predictor> predictors = predictorList.getPredictors();
 		for(Predictor predictor : predictors){
-			String name = predictor.getField();
-			if(name == null){
+			String fieldName = predictor.getField();
+			if(fieldName == null){
 				throw new MissingAttributeException(predictor, PMMLAttributes.PREDICTOR_FIELD);
 			}
 
-			result.put(name, predictor);
+			result.put(fieldName, predictor);
 		}
 
 		return result;
@@ -957,26 +957,26 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 				ppCells:
 				for(PPCell ppCell : ppCells){
-					String name = ppCell.getField();
-					if(name == null){
+					String fieldName = ppCell.getField();
+					if(fieldName == null){
 						throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_FIELD);
 					}
 
-					Predictor factor = factors.get(name);
+					Predictor factor = factors.get(fieldName);
 					if(factor != null){
 						result.addFactor(ppCell, factor);
 
 						continue ppCells;
 					}
 
-					Predictor covariate = covariates.get(name);
+					Predictor covariate = covariates.get(fieldName);
 					if(covariate != null){
 						result.addCovariate(ppCell);
 
 						continue ppCells;
 					}
 
-					throw new InvalidAttributeException(ppCell, PMMLAttributes.PPCELL_FIELD, name);
+					throw new InvalidAttributeException(ppCell, PMMLAttributes.PPCELL_FIELD, fieldName);
 				}
 
 				return result;
@@ -1134,8 +1134,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			private PredictorHandler(PPCell ppCell){
 				setPPCell(ppCell);
 
-				String name = ppCell.getField();
-				if(name == null){
+				String fieldName = ppCell.getField();
+				if(fieldName == null){
 					throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_FIELD);
 				}
 			}

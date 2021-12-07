@@ -81,7 +81,7 @@ public class OutputUtil {
 
 		outputFields:
 		for(OutputField outputField : outputFields){
-			String targetName = outputField.getTargetField();
+			String targetFieldName = outputField.getTargetField();
 
 			Object targetValue = null;
 
@@ -93,8 +93,8 @@ public class OutputUtil {
 				case DECISION:
 				case WARNING:
 					{
-						if(targetName != null){
-							throw new MisplacedAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_TARGETFIELD, targetName);
+						if(targetFieldName != null){
+							throw new MisplacedAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_TARGETFIELD, targetFieldName);
 						}
 
 						requireTargetValue = false;
@@ -129,13 +129,13 @@ public class OutputUtil {
 
 				if(requireTargetValue){
 
-					if(targetName != null){
+					if(targetFieldName != null){
 
-						if(!segmentPredictions.containsKey(targetName)){
-							throw new MissingValueException(targetName, outputField);
+						if(!segmentPredictions.containsKey(targetFieldName)){
+							throw new MissingValueException(targetFieldName, outputField);
 						}
 
-						targetValue = segmentPredictions.get(targetName);
+						targetValue = segmentPredictions.get(targetFieldName);
 					} else
 
 					{
@@ -157,8 +157,8 @@ public class OutputUtil {
 						switch(resultFeature){
 							case ENTITY_ID:
 								{
-									if(targetName != null){
-										throw new MisplacedAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_TARGETFIELD, targetName);
+									if(targetFieldName != null){
+										throw new MisplacedAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_TARGETFIELD, targetFieldName);
 									}
 
 									// "Result feature entityId returns the id of the winning segment"
@@ -168,7 +168,7 @@ public class OutputUtil {
 								}
 							default:
 								{
-									if(targetName != null){
+									if(targetFieldName != null){
 										break;
 									}
 
@@ -185,15 +185,15 @@ public class OutputUtil {
 						}
 					} // End if
 
-					if(targetName == null){
-						targetName = modelEvaluator.getTargetName();
+					if(targetFieldName == null){
+						targetFieldName = modelEvaluator.getTargetName();
 					} // End if
 
-					if(!predictions.containsKey(targetName)){
-						throw new MissingValueException(targetName, outputField);
+					if(!predictions.containsKey(targetFieldName)){
+						throw new MissingValueException(targetFieldName, outputField);
 					}
 
-					targetValue = predictions.get(targetName);
+					targetValue = predictions.get(targetFieldName);
 				}
 			}
 
@@ -217,9 +217,9 @@ public class OutputUtil {
 							throw new UnsupportedElementException(outputField);
 						}
 
-						TargetField targetField = modelEvaluator.findTargetField(targetName);
+						TargetField targetField = modelEvaluator.findTargetField(targetFieldName);
 						if(targetField == null){
-							throw new MissingFieldException(targetName, outputField);
+							throw new MissingFieldException(targetFieldName, outputField);
 						}
 
 						value = getPredictedDisplayValue(targetValue, targetField);
@@ -271,14 +271,14 @@ public class OutputUtil {
 							throw new UnsupportedElementException(outputField);
 						}
 
-						FieldValue expectedTargetValue = context.evaluate(targetName);
+						FieldValue expectedTargetValue = context.evaluate(targetFieldName);
 						if(FieldValueUtil.isMissing(expectedTargetValue)){
-							throw new MissingValueException(targetName, outputField);
+							throw new MissingValueException(targetFieldName, outputField);
 						}
 
-						TargetField targetField = modelEvaluator.findTargetField(targetName);
+						TargetField targetField = modelEvaluator.findTargetField(targetFieldName);
 						if(targetField == null){
-							throw new MissingFieldException(targetName, outputField);
+							throw new MissingFieldException(targetFieldName, outputField);
 						}
 
 						OpType opType = targetField.getOpType();
@@ -378,14 +378,14 @@ public class OutputUtil {
 					break;
 				case REPORT:
 					{
-						String reportName = outputField.getReportField();
-						if(reportName == null){
+						String reportFieldName = outputField.getReportField();
+						if(reportFieldName == null){
 							throw new MissingAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_REPORTFIELD);
 						}
 
-						OutputField reportOutputField = modelEvaluator.getOutputField(reportName);
+						OutputField reportOutputField = modelEvaluator.getOutputField(reportFieldName);
 						if(reportOutputField == null){
-							throw new MissingFieldException(reportName);
+							throw new MissingFieldException(reportFieldName);
 						}
 
 						value = getReport(targetValue, reportOutputField);
@@ -400,8 +400,8 @@ public class OutputUtil {
 					throw new UnsupportedAttributeException(outputField, resultFeature);
 			}
 
-			String outputName = outputField.getName();
-			if(outputName == null){
+			String name = outputField.getName();
+			if(name == null){
 				throw new MissingAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_NAME);
 			}
 
@@ -449,14 +449,14 @@ public class OutputUtil {
 			FieldValue outputValue = FieldValueUtil.create(typeInfo, value);
 
 			// The result of one output field becomes available to other output fields
-			context.declare(outputName, outputValue);
+			context.declare(name, outputValue);
 
 			if(outputFilter.test(outputField)){
-				result.putPublic(outputName, FieldValueUtil.getValue(outputValue));
+				result.putPublic(name, FieldValueUtil.getValue(outputValue));
 			} else
 
 			{
-				result.putPrivate(outputName, FieldValueUtil.getValue(outputValue));
+				result.putPrivate(name, FieldValueUtil.getValue(outputValue));
 			}
 		}
 

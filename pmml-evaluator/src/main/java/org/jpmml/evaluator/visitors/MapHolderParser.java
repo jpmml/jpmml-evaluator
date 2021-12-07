@@ -54,8 +54,8 @@ public class MapHolderParser extends AbstractParser {
 			for(ListIterator<BayesInput> it = content.listIterator(); it.hasNext(); ){
 				BayesInput bayesInput = it.next();
 
-				String name = bayesInput.getField();
-				if(name == null){
+				String fieldName = bayesInput.getField();
+				if(fieldName == null){
 					throw new MissingAttributeException(bayesInput, org.dmg.pmml.naive_bayes.PMMLAttributes.BAYESINPUT_FIELD);
 				}
 
@@ -71,7 +71,7 @@ public class MapHolderParser extends AbstractParser {
 				} else
 
 				{
-					dataType = resolveDataType(name);
+					dataType = resolveDataType(fieldName);
 				} // End if
 
 				if(dataType != null){

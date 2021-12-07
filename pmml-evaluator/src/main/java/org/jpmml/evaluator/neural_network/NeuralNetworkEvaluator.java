@@ -324,14 +324,14 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		if(expression instanceof FieldRef){
 			FieldRef fieldRef = (FieldRef)expression;
 
-			String name = fieldRef.getField();
-			if(name == null){
+			String fieldName = fieldRef.getField();
+			if(fieldName == null){
 				throw new MissingAttributeException(fieldRef, org.dmg.pmml.PMMLAttributes.FIELDREF_FIELD);
 			}
 
-			Field<?> field = resolveField(name);
+			Field<?> field = resolveField(fieldName);
 			if(field == null){
-				throw new MissingFieldException(name, fieldRef);
+				throw new MissingFieldException(fieldName, fieldRef);
 			} // End if
 
 			if(field instanceof DataField){
@@ -347,7 +347,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			} else
 
 			{
-				throw new InvalidAttributeException(fieldRef, org.dmg.pmml.PMMLAttributes.FIELDREF_FIELD, name);
+				throw new InvalidAttributeException(fieldRef, org.dmg.pmml.PMMLAttributes.FIELDREF_FIELD, fieldName);
 			}
 		}
 
@@ -578,15 +578,15 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
 		for(NeuralOutput neuralOutput : neuralOutputs){
-			String name;
+			String fieldName;
 
 			Expression expression = getOutputExpression(neuralOutput);
 
 			if(expression instanceof HasFieldReference){
 				HasFieldReference<?> hasFieldReference = (HasFieldReference<?>)expression;
 
-				name = hasFieldReference.getField();
-				if(name == null){
+				fieldName = hasFieldReference.getField();
+				if(fieldName == null){
 					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement((Class)hasFieldReference.getClass()) + "@field"), expression);
 				}
 			} else
@@ -595,7 +595,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				throw new MisplacedElementException(expression);
 			}
 
-			result.put(name, neuralOutput);
+			result.put(fieldName, neuralOutput);
 		}
 
 		return new LinkedHashMap<>(Multimaps.asMap(result));

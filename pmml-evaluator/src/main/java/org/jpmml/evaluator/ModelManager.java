@@ -413,19 +413,19 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 					throw new UnsupportedElementException(pmmlOutputField);
 				}
 
-				String targetName = pmmlOutputField.getTargetField();
-				if(targetName == null){
-					targetName = getTargetName();
+				String targetFieldName = pmmlOutputField.getTargetField();
+				if(targetFieldName == null){
+					targetFieldName = getTargetName();
 				}
 
-				DataField dataField = getDataField(targetName);
+				DataField dataField = getDataField(targetFieldName);
 				if(dataField == null){
-					throw new MissingFieldException(targetName, pmmlOutputField);
+					throw new MissingFieldException(targetFieldName, pmmlOutputField);
 				}
 
-				MiningField miningField = getMiningField(targetName);
+				MiningField miningField = getMiningField(targetFieldName);
 				if(miningField == null){
-					throw new InvisibleFieldException(targetName, pmmlOutputField);
+					throw new InvisibleFieldException(targetFieldName, pmmlOutputField);
 				}
 
 				ResidualInputField residualInputField = new ResidualInputField(dataField, miningField);
@@ -456,15 +456,15 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 			List<MiningField> miningFields = miningSchema.getMiningFields();
 
 			for(MiningField miningField : miningFields){
-				String name = miningField.getName();
+				String fieldName = miningField.getName();
 
 				if(!(miningField.getUsageType()).equals(usageType)){
 					continue;
 				}
 
-				Field<?> field = getDataField(name);
+				Field<?> field = getDataField(fieldName);
 				if(field == null){
-					field = new VariableField(name);
+					field = new VariableField(fieldName);
 				}
 
 				InputField inputField = new InputField(field, miningField);
@@ -491,7 +491,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 			List<MiningField> miningFields = miningSchema.getMiningFields();
 
 			for(MiningField miningField : miningFields){
-				String name = miningField.getName();
+				String fieldName = miningField.getName();
 
 				MiningField.UsageType usageType = miningField.getUsageType();
 				switch(usageType){
@@ -502,12 +502,12 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 						continue;
 				}
 
-				DataField dataField = getDataField(name);
+				DataField dataField = getDataField(fieldName);
 				if(dataField == null){
-					throw new MissingFieldException(name, miningField);
+					throw new MissingFieldException(fieldName, miningField);
 				}
 
-				Target target = getTarget(name);
+				Target target = getTarget(fieldName);
 
 				TargetField targetField = new TargetField(dataField, miningField, target);
 

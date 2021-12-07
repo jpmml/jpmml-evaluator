@@ -80,9 +80,9 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		TargetField targetField = getTargetField();
 
-		String targetName = regressionModel.getTargetField();
-		if(targetName != null && !Objects.equals(targetField.getFieldName(), targetName)){
-			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELD, targetName);
+		String targetFieldName = regressionModel.getTargetField();
+		if(targetFieldName != null && !Objects.equals(targetField.getFieldName(), targetFieldName)){
+			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELD, targetFieldName);
 		}
 
 		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
@@ -124,9 +124,9 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		TargetField targetField = getTargetField();
 
-		String targetName = regressionModel.getTargetField();
-		if(targetName != null && !Objects.equals(targetField.getFieldName(), targetName)){
-			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELD, targetName);
+		String targetFieldName = regressionModel.getTargetField();
+		if(targetFieldName != null && !Objects.equals(targetField.getFieldName(), targetFieldName)){
+			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELD, targetFieldName);
 		}
 
 		OpType opType = targetField.getOpType();
@@ -262,8 +262,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		if(regressionTable.hasNumericPredictors()){
 			List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
 			for(NumericPredictor numericPredictor : numericPredictors){
-				String name = numericPredictor.getField();
-				if(name == null){
+				String fieldName = numericPredictor.getField();
+				if(fieldName == null){
 					throw new MissingAttributeException(numericPredictor, PMMLAttributes.NUMERICPREDICTOR_FIELD);
 				}
 
@@ -272,7 +272,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 					throw new MissingAttributeException(numericPredictor, PMMLAttributes.NUMERICPREDICTOR_COEFFICIENT);
 				}
 
-				FieldValue value = context.evaluate(name);
+				FieldValue value = context.evaluate(fieldName);
 
 				// "If the input value is missing, then the result evaluates to a missing value"
 				if(FieldValueUtil.isMissing(value)){
@@ -293,12 +293,12 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		if(regressionTable.hasCategoricalPredictors()){
 			// A categorical field is represented by a list of CategoricalPredictor elements.
 			// The iteration over this list can be terminated right after finding the first and only match
-			String matchedName = null;
+			String matchedFieldName = null;
 
 			List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
 			for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
-				String name = categoricalPredictor.getField();
-				if(name == null){
+				String fieldName = categoricalPredictor.getField();
+				if(fieldName == null){
 					throw new MissingAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
 				}
 
@@ -307,27 +307,27 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 					throw new MissingAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_COEFFICIENT);
 				}
 
-				if(matchedName != null){
+				if(matchedFieldName != null){
 
-					if((matchedName).equals(name)){
+					if((matchedFieldName).equals(fieldName)){
 						continue;
 					}
 
-					matchedName = null;
+					matchedFieldName = null;
 				}
 
-				FieldValue value = context.evaluate(name);
+				FieldValue value = context.evaluate(fieldName);
 
 				// "If the input value is missing, then the categorical field is ignored"
 				if(FieldValueUtil.isMissing(value)){
-					matchedName = name;
+					matchedFieldName = fieldName;
 
 					continue;
 				}
 
 				boolean equals = value.equals(categoricalPredictor);
 				if(equals){
-					matchedName = name;
+					matchedFieldName = fieldName;
 
 					result.add(coefficient);
 				}

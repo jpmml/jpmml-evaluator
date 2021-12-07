@@ -58,12 +58,12 @@ public class ExpressionUtil {
 
 	static
 	public <E extends Expression & HasFieldReference<E>> String ensureField(E hasField){
-		String name = hasField.getField();
-		if(name == null){
+		String fieldName = hasField.getField();
+		if(fieldName == null){
 			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(hasField.getClass()) + "@field"), hasField);
 		}
 
-		return name;
+		return fieldName;
 	}
 
 	static
@@ -307,8 +307,8 @@ public class ExpressionUtil {
 
 		List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
 		for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
-			String name = fieldColumnPair.getField();
-			if(name == null){
+			String fieldName = fieldColumnPair.getField();
+			if(fieldName == null){
 				throw new MissingAttributeException(fieldColumnPair, PMMLAttributes.FIELDCOLUMNPAIR_FIELD);
 			}
 
@@ -317,7 +317,7 @@ public class ExpressionUtil {
 				throw new MissingAttributeException(fieldColumnPair, PMMLAttributes.FIELDCOLUMNPAIR_COLUMN);
 			}
 
-			FieldValue value = context.evaluate(name);
+			FieldValue value = context.evaluate(fieldName);
 			if(FieldValueUtil.isMissing(value)){
 				return FieldValueUtil.create(mapValues.getDataType(DataType.STRING), OpType.CATEGORICAL, mapValues.getMapMissingTo());
 			}

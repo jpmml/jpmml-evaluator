@@ -379,11 +379,11 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				throw new MissingAttributeException(item, PMMLAttributes.ITEM_VALUE);
 			}
 
-			String name = item.getField();
+			String fieldName = item.getField();
 			String category = item.getCategory();
 
 			parser:
-			if(name == null){
+			if(fieldName == null){
 
 				// Categorical data style: no group fields, one or more active fields
 				if(groupFields.isEmpty()){
@@ -392,20 +392,20 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 						throw modelEvaluator.createMiningSchemaException("Expected 1 or more active field(s), got " + activeFields.size() + " active fields");
 					}
 
-					name = value;
+					fieldName = value;
 					category = null;
 
-					Field<?> field = modelEvaluator.resolveField(name);
+					Field<?> field = modelEvaluator.resolveField(fieldName);
 					if(field != null){
 						break parser;
 					}
 
 					int index = value.indexOf('=');
 					if(index > -1){
-						name = value.substring(0, index);
+						fieldName = value.substring(0, index);
 						category = value.substring(index + 1);
 
-						field = modelEvaluator.resolveField(name);
+						field = modelEvaluator.resolveField(fieldName);
 						if(field != null){
 							break parser;
 						}
@@ -423,7 +423,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 					InputField activeField = activeFields.get(0);
 
-					name = activeField.getFieldName();
+					fieldName = activeField.getFieldName();
 					category = value;
 				} else
 
@@ -445,7 +445,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 				}
 			}
 
-			ItemValue itemValue = new ItemValue(id, name, category);
+			ItemValue itemValue = new ItemValue(id, fieldName, category);
 
 			result.add(itemValue);
 		}

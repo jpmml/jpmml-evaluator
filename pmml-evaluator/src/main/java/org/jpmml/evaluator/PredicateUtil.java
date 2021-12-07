@@ -107,8 +107,8 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, EvaluationContext context){
-		String name = simplePredicate.getField();
-		if(name == null){
+		String fieldName = simplePredicate.getField();
+		if(fieldName == null){
 			throw new MissingAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_FIELD);
 		}
 
@@ -133,7 +133,7 @@ public class PredicateUtil {
 				break;
 		}
 
-		FieldValue value = context.evaluate(name);
+		FieldValue value = context.evaluate(fieldName);
 
 		switch(operator){
 			case IS_MISSING:
@@ -176,8 +176,8 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext context){
-		String name = simpleSetPredicate.getField();
-		if(name == null){
+		String fieldName = simpleSetPredicate.getField();
+		if(fieldName == null){
 			throw new MissingAttributeException(simpleSetPredicate, PMMLAttributes.SIMPLESETPREDICATE_FIELD);
 		}
 
@@ -186,7 +186,7 @@ public class PredicateUtil {
 			throw new MissingAttributeException(simpleSetPredicate, PMMLAttributes.SIMPLESETPREDICATE_BOOLEANOPERATOR);
 		}
 
-		FieldValue value = context.evaluate(name);
+		FieldValue value = context.evaluate(fieldName);
 
 		if(FieldValueUtil.isMissing(value)){
 			return null;

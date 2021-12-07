@@ -269,12 +269,12 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
 		for(KNNInput knnInput : knnInputs){
-			String name = knnInput.getField();
-			if(name == null){
+			String fieldName = knnInput.getField();
+			if(fieldName == null){
 				throw new MissingAttributeException(knnInput, PMMLAttributes.KNNINPUT_FIELD);
 			}
 
-			FieldValue value = context.evaluate(name);
+			FieldValue value = context.evaluate(fieldName);
 
 			values.add(value);
 		}
@@ -560,54 +560,54 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		InstanceFields instanceFields = trainingInstances.getInstanceFields();
 		for(InstanceField instanceField : instanceFields){
-			String name = instanceField.getField();
-			if(name == null){
+			String fieldName = instanceField.getField();
+			if(fieldName == null){
 				throw new MissingAttributeException(instanceField, PMMLAttributes.INSTANCEFIELD_FIELD);
 			}
 
 			String column = instanceField.getColumn();
 
-			if(instanceIdVariable != null && (instanceIdVariable).equals(name)){
-				fieldLoaders.add(new IdentifierLoader(name, column));
+			if(instanceIdVariable != null && (instanceIdVariable).equals(fieldName)){
+				fieldLoaders.add(new IdentifierLoader(fieldName, column));
 
 				continue;
 			} // End if
 
-			if(!names.contains(name)){
+			if(!names.contains(fieldName)){
 				continue;
 			}
 
-			Field<?> field = modelEvaluator.resolveField(name);
+			Field<?> field = modelEvaluator.resolveField(fieldName);
 			if(field == null){
-				throw new MissingFieldException(name, instanceField);
+				throw new MissingFieldException(fieldName, instanceField);
 			} // End if
 
 			if(field instanceof DataField){
 				DataField dataField = (DataField)field;
 
-				MiningField miningField = modelEvaluator.getMiningField(name);
+				MiningField miningField = modelEvaluator.getMiningField(fieldName);
 				if(miningField == null){
-					throw new InvisibleFieldException(name, instanceField);
+					throw new InvisibleFieldException(fieldName, instanceField);
 				}
 
-				fieldLoaders.add(new DataFieldLoader(name, column, dataField, miningField));
+				fieldLoaders.add(new DataFieldLoader(fieldName, column, dataField, miningField));
 			} else
 
 			if(field instanceof DerivedField){
 				DerivedField derivedField = (DerivedField)field;
 
-				boolean inherited = (modelEvaluator.getDerivedField(name) == null) && (modelEvaluator.getLocalDerivedField(name) == null);
+				boolean inherited = (modelEvaluator.getDerivedField(fieldName) == null) && (modelEvaluator.getLocalDerivedField(fieldName) == null);
 
-				MiningField miningField = modelEvaluator.getMiningField(name);
+				MiningField miningField = modelEvaluator.getMiningField(fieldName);
 				if(miningField == null && inherited){
-					throw new InvisibleFieldException(name, instanceField);
+					throw new InvisibleFieldException(fieldName, instanceField);
 				}
 
-				fieldLoaders.add(new DerivedFieldLoader(name, column, derivedField, miningField));
+				fieldLoaders.add(new DerivedFieldLoader(fieldName, column, derivedField, miningField));
 			} else
 
 			{
-				throw new InvalidAttributeException(instanceField, PMMLAttributes.INSTANCEFIELD_FIELD, name);
+				throw new InvalidAttributeException(instanceField, PMMLAttributes.INSTANCEFIELD_FIELD, fieldName);
 			}
 		}
 
@@ -629,9 +629,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
 		for(KNNInput knnInput : knnInputs){
-			String name = knnInput.getField();
+			String fieldName = knnInput.getField();
 
-			Field<?> field = modelEvaluator.resolveField(name);
+			Field<?> field = modelEvaluator.resolveField(fieldName);
 			if(!(field instanceof DerivedField)){
 				continue;
 			}
@@ -642,7 +642,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			for(Integer rowKey : rowKeys){
 				Map<String, FieldValue> rowValues = result.row(rowKey);
 
-				if(rowValues.containsKey(name)){
+				if(rowValues.containsKey(fieldName)){
 					continue;
 				}
 
@@ -651,7 +651,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 				FieldValue value = ExpressionUtil.evaluate(derivedField, context);
 
-				result.put(rowKey, name, value);
+				result.put(rowKey, fieldName, value);
 			}
 		}
 

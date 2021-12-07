@@ -179,8 +179,8 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		for(int i = 0, max = clusteringFields.size(); i < max; i++){
 			ClusteringField clusteringField = clusteringFields.get(i);
 
-			String name = clusteringField.getField();
-			if(name == null){
+			String fieldName = clusteringField.getField();
+			if(fieldName == null){
 				throw new MissingAttributeException(clusteringField, PMMLAttributes.CLUSTERINGFIELD_FIELD);
 			}
 
@@ -194,7 +194,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 					throw new UnsupportedAttributeException(clusteringField, centerField);
 			}
 
-			FieldValue value = context.evaluate(name);
+			FieldValue value = context.evaluate(fieldName);
 
 			values.add(value);
 		}

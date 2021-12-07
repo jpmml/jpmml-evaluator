@@ -142,13 +142,13 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		TargetField targetField = getTargetField();
 
-		String targetName = bayesOutput.getField();
-		if(targetName == null){
+		String targetFieldName = bayesOutput.getField();
+		if(targetFieldName == null){
 			throw new MissingAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD);
 		} // End if
 
-		if(targetName != null && !Objects.equals(targetField.getFieldName(), targetName)){
-			throw new InvalidAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD, targetName);
+		if(targetFieldName != null && !Objects.equals(targetField.getFieldName(), targetFieldName)){
+			throw new InvalidAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD, targetFieldName);
 		}
 
 		// Probability calculations use logarithmic scale for greater numerical stability
@@ -187,12 +187,12 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		List<BayesInput> bayesInputs = getBayesInputs();
 		for(BayesInput bayesInput : bayesInputs){
-			String name = bayesInput.getField();
-			if(name == null){
+			String fieldName = bayesInput.getField();
+			if(fieldName == null){
 				throw new MissingAttributeException(bayesInput, PMMLAttributes.BAYESINPUT_FIELD);
 			}
 
-			FieldValue value = context.evaluate(name);
+			FieldValue value = context.evaluate(fieldName);
 
 			// "Missing values are ignored"
 			if(FieldValueUtil.isMissing(value)){
@@ -215,7 +215,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				}
 			}
 
-			Map<?, Number> countSums = fieldCountSums.get(name);
+			Map<?, Number> countSums = fieldCountSums.get(fieldName);
 
 			TargetValueCounts targetValueCounts = getTargetValueCounts(bayesInput, value);
 			if(targetValueCounts != null){
@@ -347,7 +347,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		Map<String, Map<Object, Number>> result = new LinkedHashMap<>();
 
 		for(BayesInput bayesInput : bayesInputs){
-			String name = bayesInput.getField();
+			String fieldName = bayesInput.getField();
 
 			Map<Object, Number> countSums = new LinkedHashMap<>();
 
@@ -379,7 +379,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				}
 			}
 
-			result.put(name, countSums);
+			result.put(fieldName, countSums);
 		}
 
 		return result;

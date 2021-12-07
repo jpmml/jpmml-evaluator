@@ -300,8 +300,8 @@ public class TargetCategoryParser extends AbstractParser {
 			List<MiningField> miningFields = miningSchema.getMiningFields();
 
 			for(MiningField miningField : miningFields){
-				String name = miningField.getName();
-				if(name == null){
+				String fieldName = miningField.getName();
+				if(fieldName == null){
 					throw new MissingAttributeException(miningField, PMMLAttributes.MININGFIELD_NAME);
 				}
 
@@ -309,9 +309,9 @@ public class TargetCategoryParser extends AbstractParser {
 				switch(usageType){
 					case PREDICTED:
 					case TARGET:
-						DataType dataType = resolveTargetDataType(name);
+						DataType dataType = resolveTargetDataType(fieldName);
 
-						targetDataTypes.put(name, dataType);
+						targetDataTypes.put(fieldName, dataType);
 						break;
 					default:
 						break;

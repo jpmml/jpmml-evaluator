@@ -122,11 +122,11 @@ public class EnhancementExample extends Example {
 			List<String> headerRow = table.get(0);
 
 			for(int column = 0; column < headerRow.size(); column++){
-				String name = headerRow.get(column);
+				String fieldName = headerRow.get(column);
 
-				MiningField miningField = modelEvaluator.getMiningField(name);
+				MiningField miningField = modelEvaluator.getMiningField(fieldName);
 				if(miningField == null){
-					OutputField outputField = modelEvaluator.getOutputField(name);
+					OutputField outputField = modelEvaluator.getOutputField(fieldName);
 
 					if(outputField == null){
 						tagNames.add(null);
@@ -135,16 +135,16 @@ public class EnhancementExample extends Example {
 					}
 				}
 
-				VerificationField verificationField = new VerificationField(name);
+				VerificationField verificationField = new VerificationField(fieldName);
 
-				if(name.contains(" ")){
-					verificationField.setColumn(name.replace(" ", "_x0020_"));
+				if(fieldName.contains(" ")){
+					verificationField.setColumn(fieldName.replace(" ", "_x0020_"));
 
 					tagNames.add(verificationField.getColumn());
 				} else
 
 				{
-					tagNames.add(name);
+					tagNames.add(fieldName);
 				}
 
 				verificationFields.addVerificationFields(verificationField);

@@ -175,8 +175,8 @@ public class ValueParser extends AbstractParser {
 			List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
 
 			for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
-				String name = fieldColumnPair.getField();
-				if(name == null){
+				String fieldName = fieldColumnPair.getField();
+				if(fieldName == null){
 					throw new MissingAttributeException(fieldColumnPair, PMMLAttributes.FIELDCOLUMNPAIR_FIELD);
 				}
 
@@ -185,7 +185,7 @@ public class ValueParser extends AbstractParser {
 					throw new MissingAttributeException(fieldColumnPair, PMMLAttributes.FIELDCOLUMNPAIR_COLUMN);
 				}
 
-				DataType dataType = resolveDataType(name);
+				DataType dataType = resolveDataType(fieldName);
 
 				dataTypes.put(column, dataType);
 			}
@@ -198,12 +198,12 @@ public class ValueParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(MiningField miningField){
-		String name = miningField.getName();
-		if(name == null){
+		String fieldName = miningField.getName();
+		if(fieldName == null){
 			throw new MissingAttributeException(miningField, PMMLAttributes.MININGFIELD_NAME);
 		}
 
-		DataType dataType = resolveDataType(name);
+		DataType dataType = resolveDataType(fieldName);
 		if(dataType != null){
 			Object missingValueReplacement = miningField.getMissingValueReplacement();
 			if(missingValueReplacement != null){
@@ -254,8 +254,8 @@ public class ValueParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(SimpleSetPredicate simpleSetPredicate){
-		String name = simpleSetPredicate.getField();
-		if(name == null){
+		String fieldName = simpleSetPredicate.getField();
+		if(fieldName == null){
 			throw new MissingAttributeException(simpleSetPredicate, PMMLAttributes.SIMPLESETPREDICATE_FIELD);
 		}
 
@@ -264,7 +264,7 @@ public class ValueParser extends AbstractParser {
 			throw new MissingElementException(simpleSetPredicate, PMMLElements.SIMPLESETPREDICATE_ARRAY);
 		}
 
-		DataType dataType = resolveDataType(name);
+		DataType dataType = resolveDataType(fieldName);
 		if(dataType != null){
 			Set<?> values;
 
@@ -326,8 +326,8 @@ public class ValueParser extends AbstractParser {
 	}
 
 	private <E extends PMMLObject & HasFieldReference<E> & HasValue<E>> void parseValue(E hasValue){
-		String name = hasValue.getField();
-		if(name == null){
+		String fieldName = hasValue.getField();
+		if(fieldName == null){
 			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(hasValue.getClass()) + "@field"), hasValue);
 		}
 
@@ -336,7 +336,7 @@ public class ValueParser extends AbstractParser {
 			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(hasValue.getClass()) + "@value"), hasValue);
 		}
 
-		DataType dataType = resolveDataType(name);
+		DataType dataType = resolveDataType(fieldName);
 		if(dataType != null){
 			value = parseOrCast(dataType, value);
 
