@@ -57,7 +57,7 @@ public class DiscretizationUtil {
 	public FieldValue discretize(Discretize discretize, FieldValue value){
 		Object result = discretize(discretize, value.asDouble());
 
-		return FieldValueUtil.create(discretize.getDataType(DataType.STRING), OpType.CATEGORICAL, result);
+		return FieldValueUtil.create(OpType.CATEGORICAL, discretize.getDataType(DataType.STRING), result);
 	}
 
 	static
@@ -92,11 +92,11 @@ public class DiscretizationUtil {
 					throw new InvalidElementException(inlineTable);
 				}
 
-				return FieldValueUtil.create(dataType, OpType.CATEGORICAL, result);
+				return FieldValueUtil.create(OpType.CATEGORICAL, dataType, result);
 			}
 		}
 
-		return FieldValueUtil.create(dataType, OpType.CATEGORICAL, mapValues.getDefaultValue());
+		return FieldValueUtil.create(OpType.CATEGORICAL, dataType, mapValues.getDefaultValue());
 	}
 
 	static

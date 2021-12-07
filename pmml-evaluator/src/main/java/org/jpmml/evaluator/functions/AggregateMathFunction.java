@@ -70,7 +70,7 @@ public class AggregateMathFunction extends AggregateFunction {
 
 		Double result = statistic.getResult();
 
-		return FieldValueUtil.create(getResultDataType(dataType), OpType.CONTINUOUS, result);
+		return FieldValueUtil.create(OpType.CONTINUOUS, getResultDataType(dataType), result);
 	}
 
 	protected DataType getResultDataType(DataType dataType){

@@ -56,7 +56,7 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 			throw new MissingAttributeException(parameterField, PMMLAttributes.PARAMETERFIELD_OPTYPE);
 		}
 
-		return FieldValueUtil.create(dataType, opType, value);
+		return FieldValueUtil.create(opType, dataType, value);
 	}
 
 	@Override

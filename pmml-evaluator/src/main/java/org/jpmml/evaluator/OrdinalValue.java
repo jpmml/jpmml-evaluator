@@ -112,7 +112,7 @@ public class OrdinalValue extends DiscreteValue {
 		} // End if
 
 		if(value instanceof Collection){
-			return new CollectionValue(dataType, OpType.ORDINAL, ordering, (Collection<?>)value);
+			return new CollectionValue(OpType.ORDINAL, dataType, ordering, (Collection<?>)value);
 		}
 
 		switch(dataType){

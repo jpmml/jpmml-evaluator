@@ -23,17 +23,17 @@ import org.dmg.pmml.OpType;
 
 public interface TypeInfos {
 
-	TypeInfo CATEGORICAL_STRING = new SimpleTypeInfo(DataType.STRING, OpType.CATEGORICAL);
-	TypeInfo ORDINAL_STRING = new SimpleTypeInfo(DataType.STRING, OpType.ORDINAL);
+	TypeInfo CATEGORICAL_STRING = new SimpleTypeInfo(OpType.CATEGORICAL, DataType.STRING);
+	TypeInfo ORDINAL_STRING = new SimpleTypeInfo(OpType.ORDINAL, DataType.STRING);
 
-	TypeInfo CATEGORICAL_INTEGER = new SimpleTypeInfo(DataType.INTEGER, OpType.CATEGORICAL);
-	TypeInfo CONTINUOUS_INTEGER = new SimpleTypeInfo(DataType.INTEGER, OpType.CONTINUOUS);
+	TypeInfo CATEGORICAL_INTEGER = new SimpleTypeInfo(OpType.CATEGORICAL, DataType.INTEGER);
+	TypeInfo CONTINUOUS_INTEGER = new SimpleTypeInfo(OpType.CONTINUOUS, DataType.INTEGER);
 
-	TypeInfo CATEGORICAL_FLOAT = new SimpleTypeInfo(DataType.FLOAT, OpType.CATEGORICAL);
-	TypeInfo CONTINUOUS_FLOAT = new SimpleTypeInfo(DataType.FLOAT, OpType.CONTINUOUS);
+	TypeInfo CATEGORICAL_FLOAT = new SimpleTypeInfo(OpType.CATEGORICAL, DataType.FLOAT);
+	TypeInfo CONTINUOUS_FLOAT = new SimpleTypeInfo(OpType.CONTINUOUS, DataType.FLOAT);
 
-	TypeInfo CATEGORICAL_DOUBLE = new SimpleTypeInfo(DataType.DOUBLE, OpType.CATEGORICAL);
-	TypeInfo CONTINUOUS_DOUBLE = new SimpleTypeInfo(DataType.DOUBLE, OpType.CONTINUOUS);
+	TypeInfo CATEGORICAL_DOUBLE = new SimpleTypeInfo(OpType.CATEGORICAL, DataType.DOUBLE);
+	TypeInfo CONTINUOUS_DOUBLE = new SimpleTypeInfo(OpType.CONTINUOUS, DataType.DOUBLE);
 
-	TypeInfo CATEGORICAL_BOOLEAN = new SimpleTypeInfo(DataType.BOOLEAN, OpType.CATEGORICAL);
+	TypeInfo CATEGORICAL_BOOLEAN = new SimpleTypeInfo(OpType.CATEGORICAL, DataType.BOOLEAN);
 }

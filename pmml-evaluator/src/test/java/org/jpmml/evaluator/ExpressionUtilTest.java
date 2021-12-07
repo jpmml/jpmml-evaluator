@@ -462,7 +462,7 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateAggregate(){
-		TypeInfo typeInfo = new SimpleTypeInfo(DataType.DATE, OpType.ORDINAL);
+		TypeInfo typeInfo = new SimpleTypeInfo(OpType.ORDINAL, DataType.DATE);
 
 		List<?> values = Arrays.asList(TypeUtil.parse(DataType.DATE, "2013-01-01"), TypeUtil.parse(DataType.DATE, "2013-02-01"), TypeUtil.parse(DataType.DATE, "2013-03-01"));
 
@@ -480,7 +480,7 @@ public class ExpressionUtilTest {
 
 		assertEquals(values.get(2), evaluate(aggregate, arguments));
 
-		typeInfo = new SimpleTypeInfo(DataType.DATE, OpType.ORDINAL, Lists.reverse(values));
+		typeInfo = new SimpleTypeInfo(OpType.ORDINAL, DataType.DATE, Lists.reverse(values));
 
 		arguments = Collections.singletonMap("x", FieldValue.create(typeInfo, values));
 

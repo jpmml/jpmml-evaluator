@@ -118,7 +118,7 @@ public class FieldValueTest {
 		assertTrue(louder.compareTo(louder) == 0);
 		assertTrue(louder.compareTo(insane) > 0);
 
-		TypeInfo typeInfo = new SimpleTypeInfo(DataType.STRING, OpType.ORDINAL, Arrays.asList("loud", "louder", "insane"));
+		TypeInfo typeInfo = new SimpleTypeInfo(OpType.ORDINAL, DataType.STRING, Arrays.asList("loud", "louder", "insane"));
 
 		loud = (OrdinalValue)FieldValueUtil.create(typeInfo, loud.getValue());
 		louder = (OrdinalValue)FieldValueUtil.create(typeInfo, louder.getValue());
@@ -170,7 +170,7 @@ public class FieldValueTest {
 		assertTrue(zero.compareToValue(one) < 0);
 
 		try {
-			TypeInfo typeInfo = new SimpleTypeInfo(zero.getDataType(), OpType.CATEGORICAL);
+			TypeInfo typeInfo = new SimpleTypeInfo(OpType.CATEGORICAL, zero.getDataType());
 
 			FieldValue categoricalZero = zero.cast(typeInfo);
 
@@ -182,7 +182,7 @@ public class FieldValueTest {
 		}
 
 		try {
-			TypeInfo typeInfo = new SimpleTypeInfo(DataType.DOUBLE, zero.getOpType());
+			TypeInfo typeInfo = new SimpleTypeInfo(zero.getOpType(), DataType.DOUBLE);
 
 			FieldValue doubleZero = zero.cast(typeInfo);
 
@@ -235,8 +235,8 @@ public class FieldValueTest {
 
 	@Test
 	public void ordinalInteger(){
-		OrdinalValue zero = (OrdinalValue)FieldValueUtil.create(DataType.INTEGER, OpType.ORDINAL, 0);
-		OrdinalValue one = (OrdinalValue)FieldValueUtil.create(DataType.INTEGER, OpType.ORDINAL, 1);
+		OrdinalValue zero = (OrdinalValue)FieldValueUtil.create(OpType.ORDINAL, DataType.INTEGER, 0);
+		OrdinalValue one = (OrdinalValue)FieldValueUtil.create(OpType.ORDINAL, DataType.INTEGER, 1);
 
 		assertTrue(zero.equalsValue("0"));
 		assertTrue(zero.equalsValue("0.0"));
@@ -251,7 +251,7 @@ public class FieldValueTest {
 		assertTrue(one.compareTo(zero) > 0);
 		assertTrue(one.compareTo(one) == 0);
 
-		TypeInfo typeInfo = new SimpleTypeInfo(DataType.INTEGER, OpType.ORDINAL, Arrays.asList(1, 0));
+		TypeInfo typeInfo = new SimpleTypeInfo(OpType.ORDINAL, DataType.INTEGER, Arrays.asList(1, 0));
 
 		zero = (OrdinalValue)FieldValueUtil.create(typeInfo, zero.getValue());
 
@@ -406,14 +406,14 @@ public class FieldValueTest {
 
 	@Test
 	public void categoricalDaysSinceDate(){
-		FieldValue period = FieldValueUtil.create(DataType.DATE_DAYS_SINCE_1960, OpType.CATEGORICAL, "1960-01-03");
+		FieldValue period = FieldValueUtil.create(OpType.CATEGORICAL, DataType.DATE_DAYS_SINCE_1960, "1960-01-03");
 
 		assertEquals((Integer)2, period.asInteger());
 	}
 
 	@Test
 	public void categoricalSecondsSinceDate(){
-		FieldValue period = FieldValueUtil.create(DataType.DATE_TIME_SECONDS_SINCE_1960, OpType.CATEGORICAL, "1960-01-03T03:30:03");
+		FieldValue period = FieldValueUtil.create(OpType.CATEGORICAL, DataType.DATE_TIME_SECONDS_SINCE_1960, "1960-01-03T03:30:03");
 
 		assertEquals((Integer)185403, period.asInteger());
 	}

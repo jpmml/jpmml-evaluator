@@ -39,7 +39,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 		ModelEvaluationContext context = evaluator.createEvaluationContext();
 		context.setArguments(Collections.singletonMap("x", 1d));
 
-		FieldValue value = FieldValueUtil.create(DataType.DOUBLE, OpType.CONTINUOUS, 1d);
+		FieldValue value = FieldValueUtil.create(OpType.CONTINUOUS, DataType.DOUBLE, 1d);
 
 		try {
 			context.lookup("x");

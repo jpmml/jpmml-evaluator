@@ -244,7 +244,7 @@ public class ExpressionUtil {
 
 		OpType opType = TypeUtil.getOpType(dataType);
 
-		return FieldValueUtil.create(dataType, opType, value);
+		return FieldValueUtil.create(opType, dataType, value);
 	}
 
 	static
@@ -295,7 +295,7 @@ public class ExpressionUtil {
 		FieldValue value = context.evaluate(ensureField(discretize));
 
 		if(FieldValueUtil.isMissing(value)){
-			return FieldValueUtil.create(discretize.getDataType(DataType.STRING), OpType.CATEGORICAL, discretize.getMapMissingTo());
+			return FieldValueUtil.create(OpType.CATEGORICAL, discretize.getDataType(DataType.STRING), discretize.getMapMissingTo());
 		}
 
 		return DiscretizationUtil.discretize(discretize, value);
@@ -319,7 +319,7 @@ public class ExpressionUtil {
 
 			FieldValue value = context.evaluate(fieldName);
 			if(FieldValueUtil.isMissing(value)){
-				return FieldValueUtil.create(mapValues.getDataType(DataType.STRING), OpType.CATEGORICAL, mapValues.getMapMissingTo());
+				return FieldValueUtil.create(OpType.CATEGORICAL, mapValues.getDataType(DataType.STRING), mapValues.getMapMissingTo());
 			}
 
 			values.put(column, value);

@@ -108,7 +108,7 @@ public class FieldValue implements TypeInfo, Serializable {
 			return this;
 		}
 
-		return FieldValue.create(dataType, opType, getValue());
+		return FieldValue.create(opType, dataType, getValue());
 	}
 
 	public FieldValue cast(TypeInfo typeInfo){
@@ -353,9 +353,9 @@ public class FieldValue implements TypeInfo, Serializable {
 	}
 
 	static
-	public FieldValue create(DataType dataType, OpType opType, Object value){
+	public FieldValue create(OpType opType, DataType dataType, Object value){
 
-		if(dataType == null || opType == null){
+		if(opType == null || dataType == null){
 			throw new IllegalArgumentException();
 		}
 
@@ -376,7 +376,7 @@ public class FieldValue implements TypeInfo, Serializable {
 
 		if(typeInfo == null){
 			throw new IllegalArgumentException();
-		} // End if
+		}
 
 		DataType dataType = typeInfo.getDataType();
 		OpType opType = typeInfo.getOpType();

@@ -55,6 +55,6 @@ public class ArithmeticFunction extends BinaryFunction implements MissingValueTo
 				.initCause(ae);
 		}
 
-		return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
+		return FieldValueUtil.create(OpType.CONTINUOUS, dataType, result);
 	}
 }

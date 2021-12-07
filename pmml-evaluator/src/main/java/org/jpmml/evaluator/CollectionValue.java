@@ -36,11 +36,11 @@ public class CollectionValue extends FieldValue {
 	private CollectionValue(){
 	}
 
-	CollectionValue(DataType dataType, OpType opType, Collection<?> value){
-		this(dataType, opType, null, value);
+	CollectionValue(OpType opType, DataType dataType, Collection<?> value){
+		this(opType, dataType, null, value);
 	}
 
-	CollectionValue(DataType dataType, OpType opType, List<?> ordering, Collection<?> value){
+	CollectionValue(OpType opType, DataType dataType, List<?> ordering, Collection<?> value){
 		super(dataType, value);
 
 		setOpType(Objects.requireNonNull(opType));

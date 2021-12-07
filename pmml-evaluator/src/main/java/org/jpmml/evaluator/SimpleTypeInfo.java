@@ -33,11 +33,11 @@ public class SimpleTypeInfo implements TypeInfo {
 	private List<?> ordering = null;
 
 
-	public SimpleTypeInfo(DataType dataType, OpType opType){
-		this(dataType, opType, null);
+	public SimpleTypeInfo(OpType opType, DataType dataType){
+		this(opType, dataType, null);
 	}
 
-	public SimpleTypeInfo(DataType dataType, OpType opType, List<?> ordering){
+	public SimpleTypeInfo(OpType opType, DataType dataType, List<?> ordering){
 		setDataType(Objects.requireNonNull(dataType));
 		setOpType(Objects.requireNonNull(opType));
 		setOrdering(ordering);

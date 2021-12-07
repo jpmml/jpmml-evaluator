@@ -39,6 +39,6 @@ public class UnaryMathFunction extends UnaryFunction {
 
 		Number result = evaluate(value.asNumber());
 
-		return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
+		return FieldValueUtil.create(OpType.CONTINUOUS, dataType, result);
 	}
 }

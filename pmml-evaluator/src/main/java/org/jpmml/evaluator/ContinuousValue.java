@@ -64,7 +64,7 @@ public class ContinuousValue extends ScalarValue {
 	public FieldValue create(DataType dataType, Object value){
 
 		if(value instanceof Collection){
-			return new CollectionValue(dataType, OpType.CONTINUOUS, (Collection<?>)value);
+			return new CollectionValue(OpType.CONTINUOUS, dataType, (Collection<?>)value);
 		}
 
 		switch(dataType){

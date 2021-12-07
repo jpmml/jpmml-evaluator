@@ -257,7 +257,7 @@ public interface Functions {
 
 			Double result = evaluate(first.asNumber(), second.asNumber());
 
-			return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
+			return FieldValueUtil.create(OpType.CONTINUOUS, dataType, result);
 		}
 	};
 
@@ -275,7 +275,7 @@ public interface Functions {
 
 			Integer result = evaluate(first.asNumber(), second.asNumber());
 
-			return FieldValueUtil.create(dataType, OpType.CONTINUOUS, result);
+			return FieldValueUtil.create(OpType.CONTINUOUS, dataType, result);
 		}
 	};
 

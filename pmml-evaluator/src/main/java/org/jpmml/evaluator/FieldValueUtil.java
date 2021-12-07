@@ -49,17 +49,17 @@ public class FieldValueUtil {
 
 		OpType opType = TypeUtil.getOpType(dataType);
 
-		return FieldValue.create(dataType, opType, value);
+		return FieldValue.create(opType, dataType, value);
 	}
 
 	static
-	public FieldValue create(DataType dataType, OpType opType, Object value){
+	public FieldValue create(OpType opType, DataType dataType, Object value){
 
 		if(value == null){
 			return FieldValues.MISSING_VALUE;
 		}
 
-		return FieldValue.create(dataType, opType, value);
+		return FieldValue.create(opType, dataType, value);
 	}
 
 	static

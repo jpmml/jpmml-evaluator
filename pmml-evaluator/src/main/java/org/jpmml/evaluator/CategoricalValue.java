@@ -51,7 +51,7 @@ public class CategoricalValue extends DiscreteValue {
 	public FieldValue create(DataType dataType, Object value){
 
 		if(value instanceof Collection){
-			return new CollectionValue(dataType, OpType.CATEGORICAL, (Collection<?>)value);
+			return new CollectionValue(OpType.CATEGORICAL, dataType, (Collection<?>)value);
 		}
 
 		switch(dataType){
