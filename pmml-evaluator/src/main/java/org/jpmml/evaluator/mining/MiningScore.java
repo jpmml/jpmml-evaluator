@@ -22,7 +22,7 @@ import org.jpmml.evaluator.Regression;
 import org.jpmml.evaluator.Value;
 
 abstract
-public class MiningScore<V extends Number> extends Regression<V> implements HasSegmentation {
+public class MiningScore<V extends Number> extends Regression<V> implements HasSegmentResults {
 
 	MiningScore(Value<V> value){
 		super(value);

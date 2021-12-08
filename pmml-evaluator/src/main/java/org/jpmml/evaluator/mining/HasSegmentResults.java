@@ -22,7 +22,7 @@ import java.util.Collection;
 
 import org.jpmml.evaluator.ResultFeature;
 
-public interface HasSegmentation extends ResultFeature {
+public interface HasSegmentResults extends ResultFeature {
 
 	Collection<? extends SegmentResult> getSegmentResults();
 }

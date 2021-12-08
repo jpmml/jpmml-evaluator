@@ -23,7 +23,7 @@ import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.ValueMap;
 
 abstract
-public class MiningVoteDistribution<V extends Number> extends Classification<Object, V> implements HasSegmentation {
+public class MiningVoteDistribution<V extends Number> extends Classification<Object, V> implements HasSegmentResults {
 
 	MiningVoteDistribution(ValueMap<Object, V> votes){
 		super(Type.VOTE, votes);

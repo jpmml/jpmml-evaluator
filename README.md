@@ -190,7 +190,7 @@ Target value types:
   * Interface `org.jpmml.evaluator.HasPrediction`
   * Interface `org.jpmml.evaluator.HasReasonCodeRanking`
   * Interface `org.jpmml.evaluator.HasRuleValues`
-  * Interface `org.jpmml.evaluator.mining.HasSegmentation`
+  * Interface `org.jpmml.evaluator.mining.HasSegmentResults`
   * Interface `org.jpmml.evaluator.scorecard.HasPartialScores`
   * Interface `org.jpmml.evaluator.tree.HasDecisionPath`
 * Abstract class `org.jpmml.evaluator.Report`

@@ -45,7 +45,7 @@ import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
-import org.jpmml.evaluator.mining.HasSegmentation;
+import org.jpmml.evaluator.mining.HasSegmentResults;
 import org.jpmml.evaluator.mining.SegmentResult;
 import org.jpmml.evaluator.testing.BatchUtil;
 import org.jpmml.evaluator.testing.CsvUtil;
@@ -151,9 +151,9 @@ public class RecordCountingExample extends Example {
 
 				Object value = results.get(name);
 
-				HasSegmentation hasSegmentation = TypeUtil.cast(HasSegmentation.class, value);
+				HasSegmentResults hasSegmentResults = TypeUtil.cast(HasSegmentResults.class, value);
 
-				Collection<? extends SegmentResult> segmentResults = hasSegmentation.getSegmentResults();
+				Collection<? extends SegmentResult> segmentResults = hasSegmentResults.getSegmentResults();
 				for(SegmentResult segmentResult : segmentResults){
 					Object segmentValue = segmentResult.getTargetValue();
 
