@@ -45,9 +45,9 @@ import org.jpmml.model.visitors.LocatorTransformer;
 abstract
 public class IntegrationTestBatch extends ArchiveBatch {
 
-	private String testJavaSerializability = System.getProperty(IntegrationTestBatch.class.getName() + ".testJavaSerializability", "true");
+	private String checkJavaSerializability = System.getProperty(IntegrationTestBatch.class.getName() + "." + "checkJavaSerializability", "true");
 
-	private String testKryoSerializability = System.getProperty(IntegrationTestBatch.class.getName() + ".testKryoSerializability", "true");
+	private String checkKryoSerializability = System.getProperty(IntegrationTestBatch.class.getName() + "." + "checkKryoSerializability", "true");
 
 	private Evaluator evaluator = null;
 
@@ -133,11 +133,11 @@ public class IntegrationTestBatch extends ArchiveBatch {
 			hasEntityRegistry.getEntityRegistry();
 		} // End if
 
-		if(Boolean.parseBoolean(this.testJavaSerializability)){
+		if(Boolean.parseBoolean(this.checkJavaSerializability)){
 			SerializationUtil.clone(evaluator);
 		} // End if
 
-		if(Boolean.parseBoolean(this.testKryoSerializability)){
+		if(Boolean.parseBoolean(this.checkKryoSerializability)){
 			Kryo kryo = new Kryo();
 
 			KryoUtil.init(kryo);
