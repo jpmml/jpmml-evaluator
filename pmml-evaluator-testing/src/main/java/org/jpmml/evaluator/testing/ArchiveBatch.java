@@ -89,12 +89,12 @@ public class ArchiveBatch implements Batch {
 	}
 
 	@Override
-	public List<Map<String, String>> getInput() throws IOException {
+	public List<? extends Map<String, ?>> getInput() throws IOException {
 		return loadRecords("/csv/" + getDataset() + ".csv");
 	}
 
 	@Override
-	public List<Map<String, String>> getOutput() throws IOException {
+	public List<? extends Map<String, ?>> getOutput() throws IOException {
 		return loadRecords("/csv/" + (getName() + getDataset()) + ".csv");
 	}
 
