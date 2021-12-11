@@ -20,6 +20,7 @@ package org.jpmml.evaluator.regression;
 
 import java.util.Map;
 
+import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.jpmml.evaluator.ProbabilityDistribution;
@@ -28,7 +29,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class EmptyTargetCategoryTest extends ModelEvaluatorTest {
+public class EmptyTargetCategoryTest extends ModelEvaluatorTest implements Deltas {
 
 	@Test
 	public void evaluate() throws Exception {
@@ -44,8 +45,8 @@ public class EmptyTargetCategoryTest extends ModelEvaluatorTest {
 
 		double value = (3d * -28.6617384d + 3d * -20.42027426d + 125.56601826d);
 
-		assertEquals(Math.exp(0d) / (Math.exp(0d) + Math.exp(value)), targetValue.getProbability("yes"), 1e-8);
-		assertEquals(Math.exp(value) / (Math.exp(0d) + Math.exp(value)), targetValue.getProbability("no"), 1e-8);
+		assertEquals(Math.exp(0d) / (Math.exp(0d) + Math.exp(value)), targetValue.getProbability("yes"), DOUBLE_EXACT);
+		assertEquals(Math.exp(value) / (Math.exp(0d) + Math.exp(value)), targetValue.getProbability("no"), DOUBLE_EXACT);
 
 		assertNull(targetValue.getPredictionReport());
 	}

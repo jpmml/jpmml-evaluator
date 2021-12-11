@@ -32,13 +32,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.jpmml.evaluator.AffinityDistribution;
+import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class MixedNeighborhoodTest extends ModelEvaluatorTest {
+public class MixedNeighborhoodTest extends ModelEvaluatorTest implements Deltas {
 
 	@Test
 	public void evaluate() throws Exception {
@@ -76,9 +77,9 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 
 		List<Double> speciesAffinityRanking = species.getAffinityRanking();
 
-		assertEquals((Double)0.01d, speciesAffinityRanking.get(0), 1e-13);
-		assertEquals((Double)0.02d, speciesAffinityRanking.get(1), 1e-13);
-		assertEquals((Double)0.02d, speciesAffinityRanking.get(2), 1e-13);
+		assertEquals((Double)0.01d, speciesAffinityRanking.get(0), DOUBLE_EXACT);
+		assertEquals((Double)0.02d, speciesAffinityRanking.get(1), DOUBLE_EXACT);
+		assertEquals((Double)0.02d, speciesAffinityRanking.get(2), DOUBLE_EXACT);
 
 		AffinityDistribution<?> speciesClass = (AffinityDistribution<?>)results.get("species_class");
 
@@ -103,9 +104,9 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 
 		List<Double> speciesAffinityRanking = species.getAffinityRanking();
 
-		assertEquals((Double)0.08d, speciesAffinityRanking.get(0), 1e-13);
-		assertEquals((Double)0.10d, speciesAffinityRanking.get(1), 1e-13);
-		assertEquals((Double)0.11d, speciesAffinityRanking.get(2), 1e-13);
+		assertEquals((Double)0.08d, speciesAffinityRanking.get(0), DOUBLE_EXACT);
+		assertEquals((Double)0.10d, speciesAffinityRanking.get(1), DOUBLE_EXACT);
+		assertEquals((Double)0.11d, speciesAffinityRanking.get(2), DOUBLE_EXACT);
 
 		AffinityDistribution<?> speciesClass = (AffinityDistribution<?>)results.get("species_class");
 

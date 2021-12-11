@@ -31,12 +31,13 @@ import java.util.Map;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.jpmml.evaluator.Classification;
+import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class TargetValueCountsTest extends ModelEvaluatorTest {
+public class TargetValueCountsTest extends ModelEvaluatorTest implements Deltas {
 
 	@Test
 	public void evaluate() throws Exception {
@@ -66,11 +67,11 @@ public class TargetValueCountsTest extends ModelEvaluatorTest {
 
 		double denominator = (l0 + l1 + l2 + l3 + l4);
 
-		assertEquals(l0 / denominator, targetValue.getValue(100), 1e-8);
-		assertEquals(l1 / denominator, targetValue.getValue(500), 1e-8);
-		assertEquals(l2 / denominator, targetValue.getValue(1000), 1e-8);
-		assertEquals(l3 / denominator, targetValue.getValue(5000), 1e-8);
-		assertEquals(l4 / denominator, targetValue.getValue(10000), 1e-8);
+		assertEquals(l0 / denominator, targetValue.getValue(100), DOUBLE_EXACT);
+		assertEquals(l1 / denominator, targetValue.getValue(500), DOUBLE_EXACT);
+		assertEquals(l2 / denominator, targetValue.getValue(1000), DOUBLE_EXACT);
+		assertEquals(l3 / denominator, targetValue.getValue(5000), DOUBLE_EXACT);
+		assertEquals(l4 / denominator, targetValue.getValue(10000), DOUBLE_EXACT);
 	}
 
 	static

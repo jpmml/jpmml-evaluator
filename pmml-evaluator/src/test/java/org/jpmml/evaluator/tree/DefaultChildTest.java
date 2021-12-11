@@ -20,13 +20,14 @@ package org.jpmml.evaluator.tree;
 
 import java.util.Map;
 
+import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class DefaultChildTest extends ModelEvaluatorTest {
+public class DefaultChildTest extends ModelEvaluatorTest implements Deltas {
 
 	@Test
 	public void evaluate() throws Exception {
@@ -41,8 +42,8 @@ public class DefaultChildTest extends ModelEvaluatorTest {
 		assertEquals("Result1", targetValue.getResult());
 		assertEquals("10", targetValue.getEntityId());
 
-		assertEquals(21d / 42d, targetValue.getProbability("Result1"), 1e-8);
-		assertEquals(15d / 42d, targetValue.getProbability("Result2"), 1e-8);
-		assertEquals(6d / 42d, targetValue.getProbability("Result3"), 1e-8);
+		assertEquals(21d / 42d, targetValue.getProbability("Result1"), DOUBLE_EXACT);
+		assertEquals(15d / 42d, targetValue.getProbability("Result2"), DOUBLE_EXACT);
+		assertEquals(6d / 42d, targetValue.getProbability("Result3"), DOUBLE_EXACT);
 	}
 }

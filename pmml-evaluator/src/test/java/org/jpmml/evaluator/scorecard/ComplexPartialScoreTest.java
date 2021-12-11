@@ -20,22 +20,23 @@ package org.jpmml.evaluator.scorecard;
 
 import java.util.Map;
 
+import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class ComplexPartialScoreTest extends ModelEvaluatorTest {
+public class ComplexPartialScoreTest extends ModelEvaluatorTest implements Deltas {
 
 	@Test
 	public void evaluate() throws Exception {
 		double score = (-9d) + (-1d);
 
-		assertEquals((score + 3d), evaluateScore(null), 1e-8);
-		assertEquals((score + ((0.03d * 1000d) + 11d)), evaluateScore(1000d), 1e-8);
-		assertEquals((score + 5d), evaluateScore(1500d), 1e-8);
-		assertEquals((score + ((0.01d * 3000d) - 18d)), evaluateScore(3000d), 1e-8);
+		assertEquals((score + 3d), evaluateScore(null), DOUBLE_EXACT);
+		assertEquals((score + ((0.03d * 1000d) + 11d)), evaluateScore(1000d), DOUBLE_EXACT);
+		assertEquals((score + 5d), evaluateScore(1500d), DOUBLE_INEXACT);
+		assertEquals((score + ((0.01d * 3000d) - 18d)), evaluateScore(3000d), DOUBLE_EXACT);
 	}
 
 	private Double evaluateScore(Double income) throws Exception {

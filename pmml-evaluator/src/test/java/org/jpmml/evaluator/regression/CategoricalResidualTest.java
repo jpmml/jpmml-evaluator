@@ -20,13 +20,14 @@ package org.jpmml.evaluator.regression;
 
 import java.util.Map;
 
+import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class CategoricalResidualTest extends ModelEvaluatorTest {
+public class CategoricalResidualTest extends ModelEvaluatorTest implements Deltas {
 
 	@Test
 	public void evaluate() throws Exception {
@@ -36,12 +37,12 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals(0.2d, (Double)results.get("residual"), 1e-8);
+		assertEquals(0.2d, (Double)results.get("residual"), DOUBLE_EXACT);
 
 		arguments = createArguments("input", (2d * 0.8d), "target", "no");
 
 		results = evaluator.evaluate(arguments);
 
-		assertEquals(-0.8d, (Double)results.get("residual"), 1e-8);
+		assertEquals(-0.8d, (Double)results.get("residual"), DOUBLE_EXACT);
 	}
 }

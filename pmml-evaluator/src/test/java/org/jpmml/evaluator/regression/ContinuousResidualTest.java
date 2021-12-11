@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Iterables;
+import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
@@ -32,7 +33,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ContinuousResidualTest extends ModelEvaluatorTest {
+public class ContinuousResidualTest extends ModelEvaluatorTest implements Deltas {
 
 	@Test
 	public void evaluate() throws Exception {
@@ -58,12 +59,12 @@ public class ContinuousResidualTest extends ModelEvaluatorTest {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals(2.6d, (Double)results.get("residual"), 1e-8);
+		assertEquals(2.6d, (Double)results.get("residual"), DOUBLE_EXACT);
 
 		arguments = createArguments("input", 0.8d, "target", null);
 
 		results = evaluator.evaluate(arguments);
 
-		assertEquals(1.6d, (Double)results.get("residual"), 1e-8);
+		assertEquals(1.6d, (Double)results.get("residual"), DOUBLE_EXACT);
 	}
 }

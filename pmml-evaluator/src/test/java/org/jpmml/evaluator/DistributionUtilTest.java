@@ -25,25 +25,25 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class DistributionUtilTest {
+public class DistributionUtilTest implements Deltas {
 
 	@Test
 	public void estimateDensity(){
 		ContinuousDistribution distribution = new GaussianDistribution(5d, Math.pow(1.5d, 2d));
 
-		assertEquals(0.00759732d, DistributionUtil.probability(distribution, 1d), 1e-8);
-		assertEquals(0.10934005d, DistributionUtil.probability(distribution, 3d), 1e-8);
-		assertEquals(0.26596152d, DistributionUtil.probability(distribution, 5d), 1e-8);
+		assertEquals(0.00759732d, DistributionUtil.probability(distribution, 1d), DOUBLE_INEXACT);
+		assertEquals(0.10934005d, DistributionUtil.probability(distribution, 3d), DOUBLE_INEXACT);
+		assertEquals(0.26596152d, DistributionUtil.probability(distribution, 5d), DOUBLE_INEXACT);
 	}
 
 	@Test
 	public void estimateMass(){
 		ContinuousDistribution distribution = new PoissonDistribution(5d);
 
-		assertEquals(0.03368973d, DistributionUtil.probability(distribution, 1), 1e-8);
-		assertEquals(0.14037390d, DistributionUtil.probability(distribution, 3), 1e-8);
-		assertEquals(0.17546737d, DistributionUtil.probability(distribution, 5), 1e-8);
-		assertEquals(0.10444486d, DistributionUtil.probability(distribution, 7), 1e-8);
-		assertEquals(0.03626558d, DistributionUtil.probability(distribution, 9), 1e-8);
+		assertEquals(0.03368973d, DistributionUtil.probability(distribution, 1), DOUBLE_INEXACT);
+		assertEquals(0.14037390d, DistributionUtil.probability(distribution, 3), DOUBLE_INEXACT);
+		assertEquals(0.17546737d, DistributionUtil.probability(distribution, 5), DOUBLE_INEXACT);
+		assertEquals(0.10444486d, DistributionUtil.probability(distribution, 7), DOUBLE_INEXACT);
+		assertEquals(0.03626558d, DistributionUtil.probability(distribution, 9), DOUBLE_INEXACT);
 	}
 }

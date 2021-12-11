@@ -21,6 +21,7 @@ package org.jpmml.evaluator.functions;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.Function;
@@ -29,16 +30,16 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class StandardDeviationFunctionTest {
+public class StandardDeviationFunctionTest implements Deltas {
 
 	@Test
 	public void evaluate(){
 		List<Double> values = Arrays.asList(2d, 4d, 4d, 4d, 5d, 5d, 7d, 9d);
 
-		assertEquals(Math.sqrt(32d / 8d), (Double)evaluate(values), 1e-8);
+		assertEquals(Math.sqrt(32d / 8d), (Double)evaluate(values), DOUBLE_EXACT);
 
-		assertEquals(Math.sqrt(32d / 7d), (Double)evaluate(values, true), 1e-8);
-		assertEquals(Math.sqrt(32d / 8d), (Double)evaluate(values, false), 1e-8);
+		assertEquals(Math.sqrt(32d / 7d), (Double)evaluate(values, true), DOUBLE_EXACT);
+		assertEquals(Math.sqrt(32d / 8d), (Double)evaluate(values, false), DOUBLE_EXACT);
 	}
 
 	static

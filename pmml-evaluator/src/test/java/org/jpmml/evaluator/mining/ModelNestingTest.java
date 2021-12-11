@@ -21,6 +21,7 @@ package org.jpmml.evaluator.mining;
 import java.util.List;
 import java.util.Map;
 
+import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.InputField;
@@ -35,7 +36,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
-public class ModelNestingTest extends ModelEvaluatorTest {
+public class ModelNestingTest extends ModelEvaluatorTest implements Deltas {
 
 	@Test
 	public void evaluate() throws Exception {
@@ -65,7 +66,7 @@ public class ModelNestingTest extends ModelEvaluatorTest {
 
 		assertEquals(3, results.size());
 
-		assertEquals(2d * 2d, (Double)results.get(Evaluator.DEFAULT_TARGET_NAME), 1e-8d);
+		assertEquals(2d * 2d, (Double)results.get(Evaluator.DEFAULT_TARGET_NAME), DOUBLE_EXACT);
 
 		assertNotNull((Double)results.get("output"));
 		assertNull(results.get("report(output)"));

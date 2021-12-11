@@ -20,13 +20,14 @@ package org.jpmml.evaluator.general_regression;
 
 import java.util.Map;
 
+import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class ContrastMatrixTest extends ModelEvaluatorTest {
+public class ContrastMatrixTest extends ModelEvaluatorTest implements Deltas {
 
 	@Test
 	public void evaluate() throws Exception {
@@ -37,7 +38,7 @@ public class ContrastMatrixTest extends ModelEvaluatorTest {
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		// Expected values have been calculated by hand
-		assertEquals(0.81956470d, (Double)results.get("Probability_Low"), 1e-8);
-		assertEquals(0.18043530d, (Double)results.get("Probability_High"), 1e-8);
+		assertEquals(0.81956470d, (Double)results.get("Probability_Low"), DOUBLE_INEXACT);
+		assertEquals(0.18043530d, (Double)results.get("Probability_High"), DOUBLE_INEXACT);
 	}
 }

@@ -26,25 +26,25 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class NormalizationUtilTest {
+public class NormalizationUtilTest implements Deltas {
 
 	@Test
 	public void normalize(){
 		NormContinuous normContinuous = createNormContinuous();
 
-		assertEquals(BEGIN[1], (double)NormalizationUtil.normalize(normContinuous, BEGIN[0]), 1e-8);
-		assertEquals(interpolate(1.212d, BEGIN, MIDPOINT), (double)NormalizationUtil.normalize(normContinuous, 1.212d), 1e-8);
-		assertEquals(MIDPOINT[1], (double)NormalizationUtil.normalize(normContinuous, MIDPOINT[0]), 1e-8);
-		assertEquals(interpolate(6.5d, MIDPOINT, END), (double)NormalizationUtil.normalize(normContinuous, 6.5d), 1e-8);
-		assertEquals(END[1], (double)NormalizationUtil.normalize(normContinuous, END[0]), 1e-8);
+		assertEquals(BEGIN[1], (double)NormalizationUtil.normalize(normContinuous, BEGIN[0]), DOUBLE_EXACT);
+		assertEquals(interpolate(1.212d, BEGIN, MIDPOINT), (double)NormalizationUtil.normalize(normContinuous, 1.212d), DOUBLE_EXACT);
+		assertEquals(MIDPOINT[1], (double)NormalizationUtil.normalize(normContinuous, MIDPOINT[0]), DOUBLE_EXACT);
+		assertEquals(interpolate(6.5d, MIDPOINT, END), (double)NormalizationUtil.normalize(normContinuous, 6.5d), DOUBLE_EXACT);
+		assertEquals(END[1], (double)NormalizationUtil.normalize(normContinuous, END[0]), DOUBLE_EXACT);
 	}
 
 	@Test
 	public void normalizeOutliers(){
 		NormContinuous normContinuous = createNormContinuous();
 
-		assertEquals(interpolate(-1d, BEGIN, MIDPOINT), (double)NormalizationUtil.normalize(normContinuous, -1d), 1e-8);
-		assertEquals(interpolate(12.2d, MIDPOINT, END), (double)NormalizationUtil.normalize(normContinuous, 12.2d), 1e-8);
+		assertEquals(interpolate(-1d, BEGIN, MIDPOINT), (double)NormalizationUtil.normalize(normContinuous, -1d), DOUBLE_EXACT);
+		assertEquals(interpolate(12.2d, MIDPOINT, END), (double)NormalizationUtil.normalize(normContinuous, 12.2d), DOUBLE_EXACT);
 
 		normContinuous.setOutliers(OutlierTreatmentMethod.AS_MISSING_VALUES);
 
@@ -53,19 +53,19 @@ public class NormalizationUtilTest {
 
 		normContinuous.setOutliers(OutlierTreatmentMethod.AS_EXTREME_VALUES);
 
-		assertEquals(BEGIN[1], (double)NormalizationUtil.normalize(normContinuous, -1d), 1e-8);
-		assertEquals(END[1], (double)NormalizationUtil.normalize(normContinuous, 12.2d), 1e-8);
+		assertEquals(BEGIN[1], (double)NormalizationUtil.normalize(normContinuous, -1d), DOUBLE_EXACT);
+		assertEquals(END[1], (double)NormalizationUtil.normalize(normContinuous, 12.2d), DOUBLE_EXACT);
 	}
 
 	@Test
 	public void denormalize(){
 		NormContinuous normContinuous = createNormContinuous();
 
-		assertEquals(BEGIN[0], (double)NormalizationUtil.denormalize(normContinuous, BEGIN[1]), 1e-8);
-		assertEquals(0.3d, (double)NormalizationUtil.denormalize(normContinuous, interpolate(0.3d, BEGIN, MIDPOINT)), 1e-8);
-		assertEquals(MIDPOINT[0], (double)NormalizationUtil.denormalize(normContinuous, MIDPOINT[1]), 1e-8);
-		assertEquals(7.123d, (double)NormalizationUtil.denormalize(normContinuous, interpolate(7.123d, MIDPOINT, END)), 1e-8);
-		assertEquals(END[0], (double)NormalizationUtil.denormalize(normContinuous, END[1]), 1e-8);
+		assertEquals(BEGIN[0], (double)NormalizationUtil.denormalize(normContinuous, BEGIN[1]), DOUBLE_EXACT);
+		assertEquals(0.3d, (double)NormalizationUtil.denormalize(normContinuous, interpolate(0.3d, BEGIN, MIDPOINT)), DOUBLE_EXACT);
+		assertEquals(MIDPOINT[0], (double)NormalizationUtil.denormalize(normContinuous, MIDPOINT[1]), DOUBLE_EXACT);
+		assertEquals(7.123d, (double)NormalizationUtil.denormalize(normContinuous, interpolate(7.123d, MIDPOINT, END)), DOUBLE_EXACT);
+		assertEquals(END[0], (double)NormalizationUtil.denormalize(normContinuous, END[1]), DOUBLE_EXACT);
 	}
 
 	static

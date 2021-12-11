@@ -30,7 +30,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class FunctionTest {
+public class FunctionTest implements Deltas {
 
 	@Test
 	public void evaluateArithmeticFunctions(){
@@ -76,7 +76,7 @@ public class FunctionTest {
 		assertEquals(2, evaluate(Functions.MODULO, 11, 3));
 		assertEquals(-5, evaluate(Functions.MODULO, 9, -7));
 		assertEquals(-4, evaluate(Functions.MODULO, -4, -9));
-		assertEquals(0.3d, (Double)evaluate(Functions.MODULO, -17.2d, 0.5d), 1e-13);
+		assertEquals(0.3d, (Double)evaluate(Functions.MODULO, -17.2d, 0.5d), DOUBLE_EXACT);
 
 		assertEquals(1, evaluate(Functions.MODULO, 10, 3));
 		assertEquals(-2, evaluate(Functions.MODULO, 10, -3));
@@ -88,12 +88,12 @@ public class FunctionTest {
 		assertEquals(0, evaluate(Functions.MODULO, -6, 2));
 		assertEquals(-0, evaluate(Functions.MODULO, -6, -2));
 
-		assertEquals(0.9d, (Double)evaluate(Functions.MODULO, 4.5d, 1.2d), 1e-13);
-		assertEquals(-0.3d, (Double)evaluate(Functions.MODULO, 4.5d, -1.2d), 1e-13);
-		assertEquals(0.3d, (Double)evaluate(Functions.MODULO, -4.5d, 1.2d), 1e-13);
-		assertEquals(-0.9d, (Double)evaluate(Functions.MODULO, -4.5d, -1.2d), 1e-13);
+		assertEquals(0.9d, (Double)evaluate(Functions.MODULO, 4.5d, 1.2d), DOUBLE_EXACT);
+		assertEquals(-0.3d, (Double)evaluate(Functions.MODULO, 4.5d, -1.2d), DOUBLE_EXACT);
+		assertEquals(0.3d, (Double)evaluate(Functions.MODULO, -4.5d, 1.2d), DOUBLE_EXACT);
+		assertEquals(-0.9d, (Double)evaluate(Functions.MODULO, -4.5d, -1.2d), DOUBLE_EXACT);
 
-		assertEquals(3.0e0d, (Double)evaluate(Functions.MODULO, 1.23e2d, 0.6e1d), 1e-13);
+		assertEquals(3.0e0d, (Double)evaluate(Functions.MODULO, 1.23e2d, 0.6e1d), DOUBLE_EXACT);
 	}
 
 	@Test
@@ -387,17 +387,17 @@ public class FunctionTest {
 	public void evaluateTrigonometricFunctions(){
 		Double angle = Math.toRadians(30);
 
-		assertEquals(0.5d, (Double)evaluate(Functions.SIN, angle), 1e-8);
-		assertEquals(angle, (Double)evaluate(Functions.ASIN, 0.5d), 1e-8);
-		assertEquals(0.54785347d, (Double)evaluate(Functions.SINH, angle), 1e-8);
+		assertEquals(0.5d, (Double)evaluate(Functions.SIN, angle), DOUBLE_INEXACT);
+		assertEquals(angle, (Double)evaluate(Functions.ASIN, 0.5d), DOUBLE_INEXACT);
+		assertEquals(0.54785347d, (Double)evaluate(Functions.SINH, angle), DOUBLE_INEXACT);
 
-		assertEquals(0.8660254d, (Double)evaluate(Functions.COS, angle), 1e-8);
-		assertEquals(angle, (Double)evaluate(Functions.ACOS, 0.8660254d), 1e-8);
-		assertEquals(1.14023832d, (Double)evaluate(Functions.COSH, angle), 1e-8);
+		assertEquals(0.8660254d, (Double)evaluate(Functions.COS, angle), DOUBLE_INEXACT);
+		assertEquals(angle, (Double)evaluate(Functions.ACOS, 0.8660254d), DOUBLE_INEXACT);
+		assertEquals(1.14023832d, (Double)evaluate(Functions.COSH, angle), DOUBLE_INEXACT);
 
-		assertEquals(0.57735027d, (Double)evaluate(Functions.TAN, angle), 1e-8);
-		assertEquals(angle, (Double)evaluate(Functions.ATAN, 0.57735027d), 1e-8);
-		assertEquals(0.48047278d, (Double)evaluate(Functions.TANH, angle), 1e-8);
+		assertEquals(0.57735027d, (Double)evaluate(Functions.TAN, angle), DOUBLE_INEXACT);
+		assertEquals(angle, (Double)evaluate(Functions.ATAN, 0.57735027d), DOUBLE_INEXACT);
+		assertEquals(0.48047278d, (Double)evaluate(Functions.TANH, angle), DOUBLE_INEXACT);
 
 		try {
 			evaluate(Functions.ASIN, 2d);

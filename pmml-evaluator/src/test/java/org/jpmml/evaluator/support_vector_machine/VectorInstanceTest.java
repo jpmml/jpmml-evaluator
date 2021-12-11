@@ -29,20 +29,21 @@ package org.jpmml.evaluator.support_vector_machine;
 
 import java.util.Map;
 
+import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class VectorInstanceTest extends ModelEvaluatorTest {
+public class VectorInstanceTest extends ModelEvaluatorTest implements Deltas {
 
 	@Test
 	public void evaluate() throws Exception {
-		assertEquals(0.1004236d, evaluate(0d, 0d), 1e-8);
-		assertEquals(0.8995764d, evaluate(0d, 1d), 1e-8);
-		assertEquals(0.8995764d, evaluate(1d, 0d), 1e-8);
-		assertEquals(0.1004236d, evaluate(1d, 1d), 1e-8);
+		assertEquals(0.1004236d, evaluate(0d, 0d), DOUBLE_INEXACT);
+		assertEquals(0.8995764d, evaluate(0d, 1d), DOUBLE_INEXACT);
+		assertEquals(0.8995764d, evaluate(1d, 0d), DOUBLE_INEXACT);
+		assertEquals(0.1004236d, evaluate(1d, 1d), DOUBLE_INEXACT);
 	}
 
 	private double evaluate(double x1, double x2) throws Exception {
