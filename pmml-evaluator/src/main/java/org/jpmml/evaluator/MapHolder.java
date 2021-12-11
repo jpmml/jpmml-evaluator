@@ -32,7 +32,7 @@ public interface MapHolder<V> {
 	public V get(DataType dataType, Object key){
 		Map<?, V> map = getMap();
 
-		if(!(getDataType()).equals(dataType)){
+		if(getDataType() != dataType){
 			throw new TypeCheckException(getDataType(), key);
 		}
 

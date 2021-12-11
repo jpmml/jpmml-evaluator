@@ -126,7 +126,7 @@ public class CategoricalValue extends DiscreteValue {
 			if(value instanceof ScalarValue){
 				ScalarValue that = (ScalarValue)value;
 
-				if((DataType.BOOLEAN).equals(that.getDataType())){
+				if(this.getDataType() == that.getDataType()){
 					return Boolean.compare(this.asBoolean(), that.asBoolean());
 				}
 			}

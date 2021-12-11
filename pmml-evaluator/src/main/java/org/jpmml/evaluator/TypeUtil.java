@@ -385,7 +385,7 @@ public class TypeUtil {
 			} else
 
 			{
-				if(!(result).equals(dataType)){
+				if(result != dataType){
 					throw new TypeCheckException(result, value);
 				}
 			}
@@ -408,7 +408,7 @@ public class TypeUtil {
 	static
 	public DataType getCommonDataType(DataType left, DataType right){
 
-		if((left).equals(right)){
+		if(left == right){
 
 			switch(left){
 				case DOUBLE:
@@ -420,27 +420,27 @@ public class TypeUtil {
 			}
 		} else
 
-		if((DataType.DOUBLE).equals(left)){
+		if(left == DataType.DOUBLE){
 
-			if((DataType.FLOAT).equals(right) || (DataType.INTEGER).equals(right)){
+			if((right == DataType.FLOAT) || (right == DataType.INTEGER)){
 				return left;
 			}
 		} else
 
-		if((DataType.FLOAT).equals(left)){
+		if(left == DataType.FLOAT){
 
-			if((DataType.DOUBLE).equals(right)){
+			if(right == DataType.DOUBLE){
 				return right;
 			} else
 
-			if((DataType.INTEGER).equals(right)){
+			if(right == DataType.INTEGER){
 				return left;
 			}
 		} else
 
-		if((DataType.INTEGER).equals(left)){
+		if(left == DataType.INTEGER){
 
-			if((DataType.DOUBLE).equals(right) || (DataType.FLOAT).equals(right)){
+			if((right == DataType.DOUBLE) || (right == DataType.FLOAT)){
 				return right;
 			}
 		}

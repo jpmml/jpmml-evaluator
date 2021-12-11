@@ -55,7 +55,7 @@ public class ScalarValue extends FieldValue implements Comparable<ScalarValue> {
 		if(value instanceof ScalarValue){
 			ScalarValue that = (ScalarValue)value;
 
-			if((this.getDataType()).equals(that.getDataType())){
+			if(this.getDataType() == that.getDataType()){
 				return ((Comparable)this.getValue()).compareTo(that.getValue());
 			}
 		}
@@ -69,7 +69,7 @@ public class ScalarValue extends FieldValue implements Comparable<ScalarValue> {
 		if(value instanceof ScalarValue){
 			ScalarValue that = (ScalarValue)value;
 
-			if((this.getDataType()).equals(that.getDataType())){
+			if(this.getDataType() == that.getDataType()){
 				return (this.getValue()).equals(that.getValue());
 			}
 		}
@@ -80,7 +80,7 @@ public class ScalarValue extends FieldValue implements Comparable<ScalarValue> {
 	@Override
 	public int compareTo(ScalarValue that){
 
-		if(!(this.getOpType()).equals(that.getOpType()) || !(this.getDataType()).equals(that.getDataType())){
+		if((this.getOpType() != that.getOpType()) || (this.getDataType() != that.getDataType())){
 			throw new ClassCastException();
 		}
 

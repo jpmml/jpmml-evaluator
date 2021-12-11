@@ -160,7 +160,7 @@ public interface Functions {
 		@Override
 		public DataType getResultDataType(DataType dataType){
 
-			if((DataType.INTEGER).equals(dataType)){
+			if(dataType == DataType.INTEGER){
 				return DataType.DOUBLE;
 			}
 

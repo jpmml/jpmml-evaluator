@@ -289,7 +289,7 @@ public class ValueParser extends AbstractParser {
 			} catch(IllegalArgumentException | TypeCheckException e){
 				Mode mode = getMode();
 
-				if((Mode.LOOSE).equals(mode)){
+				if(mode == Mode.LOOSE){
 					return super.visit(simpleSetPredicate);
 				}
 
@@ -399,7 +399,7 @@ public class ValueParser extends AbstractParser {
 			return TypeUtil.parseOrCast(dataType, value);
 		} catch(IllegalArgumentException | TypeCheckException e){
 
-			if((Mode.LOOSE).equals(this.mode)){
+			if(this.mode == Mode.LOOSE){
 				return value;
 			}
 

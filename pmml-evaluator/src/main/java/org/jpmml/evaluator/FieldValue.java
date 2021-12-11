@@ -93,7 +93,7 @@ public class FieldValue implements TypeInfo, Serializable {
 		} else
 
 		{
-			equal &= (getDataType()).equals(dataType);
+			equal &= (getDataType() == dataType);
 		} // End if
 
 		if(opType == null){
@@ -101,7 +101,7 @@ public class FieldValue implements TypeInfo, Serializable {
 		} else
 
 		{
-			equal &= (getOpType()).equals(opType);
+			equal &= (getOpType() == opType);
 		} // End if
 
 		if(equal){
@@ -115,7 +115,7 @@ public class FieldValue implements TypeInfo, Serializable {
 		DataType dataType = typeInfo.getDataType();
 		OpType opType = typeInfo.getOpType();
 
-		if((getDataType()).equals(dataType) && (getOpType()).equals(opType)){
+		if((getDataType() == dataType) && (getOpType() == opType)){
 			return this;
 		}
 
@@ -294,7 +294,7 @@ public class FieldValue implements TypeInfo, Serializable {
 
 	Object getValue(DataType dataType){
 
-		if((getDataType()).equals(dataType)){
+		if(getDataType() == dataType){
 			return getValue();
 		}
 
@@ -312,7 +312,7 @@ public class FieldValue implements TypeInfo, Serializable {
 		if(object instanceof FieldValue){
 			FieldValue that = (FieldValue)object;
 
-			return (this.getOpType()).equals(that.getOpType()) && (this.getDataType()).equals(that.getDataType()) && (this.getValue()).equals(that.getValue());
+			return (this.getOpType() == that.getOpType()) && (this.getDataType() == that.getDataType()) && (this.getValue()).equals(that.getValue());
 		}
 
 		return false;

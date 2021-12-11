@@ -823,7 +823,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		MiningFunction segmentMiningFunction = model.getMiningFunction();
 
-		if((MiningFunction.CLASSIFICATION).equals(miningFunction) && (MiningFunction.CLASSIFICATION).equals(segmentMiningFunction)){
+		if((miningFunction == MiningFunction.CLASSIFICATION) && (segmentMiningFunction == MiningFunction.CLASSIFICATION)){
 			List<TargetField> targetFields = getTargetFields();
 			List<TargetField> segmentTargetFields = modelEvaluator.getTargetFields();
 
@@ -885,7 +885,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@functionName"), model);
 		} // End if
 
-		if(!(miningFunction).equals(parentMiningFunction)){
+		if(miningFunction != parentMiningFunction){
 			throw new InvalidAttributeException(InvalidAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@functionName=" + miningFunction.value()), model);
 		}
 	}

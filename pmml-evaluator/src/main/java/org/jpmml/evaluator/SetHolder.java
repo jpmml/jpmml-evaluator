@@ -32,7 +32,7 @@ public interface SetHolder {
 	boolean contains(DataType dataType, Object value){
 		Set<?> set = getSet();
 
-		if(!(getDataType()).equals(dataType)){
+		if(getDataType() != dataType){
 			throw new TypeCheckException(getDataType(), value);
 		}
 

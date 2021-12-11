@@ -74,7 +74,7 @@ class AbstractParser extends FieldResolver {
 
 				if((name).equals(field.getName())){
 
-					if((dataType == null) || (dataType).equals(field.getDataType())){
+					if((dataType == null) || (dataType == field.getDataType())){
 						dataType = field.getDataType();
 					} else
 

@@ -189,7 +189,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 						case SIMPLEMAX:
 						case SOFTMAX:
 							// XXX: Non-standard behaviour
-							if(isDefault(regressionTables.get(1)) && (RegressionModel.NormalizationMethod.SOFTMAX).equals(normalizationMethod)){
+							if(isDefault(regressionTables.get(1)) && (normalizationMethod == RegressionModel.NormalizationMethod.SOFTMAX)){
 								RegressionModelUtil.computeBinomialProbabilities(RegressionModel.NormalizationMethod.LOGIT, values);
 							} else
 

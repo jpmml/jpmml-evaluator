@@ -364,7 +364,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 			for(OutputField outputField : outputFields){
 				org.dmg.pmml.OutputField pmmlOutputField = outputField.getField();
 
-				if(!(ResultFeature.RESIDUAL).equals(pmmlOutputField.getResultFeature())){
+				if(pmmlOutputField.getResultFeature() != ResultFeature.RESIDUAL){
 					continue;
 				}
 
@@ -418,7 +418,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 			for(MiningField miningField : miningFields){
 				String fieldName = miningField.getName();
 
-				if(!(miningField.getUsageType()).equals(usageType)){
+				if(miningField.getUsageType() != usageType){
 					continue;
 				}
 
