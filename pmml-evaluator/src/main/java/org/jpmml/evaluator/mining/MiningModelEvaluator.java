@@ -285,7 +285,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		value = TargetUtil.evaluateRegressionInternal(targetField, value);
 
-		Regression<V> result = new MiningScore<V>(value){
+		Regression<V> result = new AggregateScore<V>(value){
 
 			@Override
 			public Collection<? extends SegmentResult> getSegmentResults(){
@@ -332,7 +332,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					// Convert from votes to probabilities
 					ValueUtil.normalizeSimpleMax(values);
 
-					result = new MiningProbabilityDistribution<V>(values){
+					result = new AggregateProbabilityDistribution<V>(values){
 
 						@Override
 						public Collection<? extends SegmentResult> getSegmentResults(){
@@ -356,7 +356,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 						return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 					}
 
-					result = new MiningProbabilityDistribution<V>(values){
+					result = new AggregateProbabilityDistribution<V>(values){
 
 						@Override
 						public Collection<? extends SegmentResult> getSegmentResults(){
@@ -399,7 +399,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
 		}
 
-		MiningVoteDistribution<V> result;
+		AggregateVoteDistribution<V> result;
 
 		switch(multipleModelMethod){
 			case MAJORITY_VOTE:
@@ -410,7 +410,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 						return Collections.singletonMap(getTargetName(), null);
 					}
 
-					result = new MiningVoteDistribution<V>(values){
+					result = new AggregateVoteDistribution<V>(values){
 
 						@Override
 						public Collection<? extends SegmentResult> getSegmentResults(){

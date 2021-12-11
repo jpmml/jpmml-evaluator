@@ -18,13 +18,13 @@
  */
 package org.jpmml.evaluator.mining;
 
-import org.jpmml.evaluator.Regression;
-import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ProbabilityDistribution;
+import org.jpmml.evaluator.ValueMap;
 
 abstract
-public class MiningScore<V extends Number> extends Regression<V> implements HasSegmentResults {
+public class AggregateProbabilityDistribution<V extends Number> extends ProbabilityDistribution<V> implements HasSegmentResults {
 
-	MiningScore(Value<V> value){
-		super(value);
+	AggregateProbabilityDistribution(ValueMap<Object, V> probabilities){
+		super(probabilities);
 	}
 }

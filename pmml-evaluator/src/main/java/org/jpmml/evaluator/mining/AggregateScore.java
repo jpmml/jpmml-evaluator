@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Villu Ruusmann
+ * Copyright (c) 2018 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,19 +18,13 @@
  */
 package org.jpmml.evaluator.mining;
 
-import org.dmg.pmml.DataType;
-import org.jpmml.evaluator.Classification;
-import org.jpmml.evaluator.ValueMap;
+import org.jpmml.evaluator.Regression;
+import org.jpmml.evaluator.Value;
 
 abstract
-public class MiningVoteDistribution<V extends Number> extends Classification<Object, V> implements HasSegmentResults {
+public class AggregateScore<V extends Number> extends Regression<V> implements HasSegmentResults {
 
-	MiningVoteDistribution(ValueMap<Object, V> votes){
-		super(Type.VOTE, votes);
-	}
-
-	@Override
-	protected void computeResult(DataType dataType){
-		super.computeResult(dataType);
+	AggregateScore(Value<V> value){
+		super(value);
 	}
 }
