@@ -43,13 +43,13 @@ public class ScalarVerificationTest extends ModelEvaluatorTest {
 
 		assertEquals(1 + 4, results.size());
 
-		assertEquals("setosa", getTarget(results, "species"));
+		assertEquals("setosa", decode(results.get("species")));
 
-		assertEquals("setosa", getOutput(results, "predicted species"));
+		assertEquals("setosa", results.get("predicted species"));
 
-		assertEquals(1.0, getOutput(results, "probability setosa"));
-		assertEquals(0.0, getOutput(results, "probability versicolor"));
-		assertEquals(0.0, getOutput(results, "probability virginica"));
+		assertEquals(1.0, results.get("probability setosa"));
+		assertEquals(0.0, results.get("probability versicolor"));
+		assertEquals(0.0, results.get("probability virginica"));
 	}
 
 	@Test
@@ -101,12 +101,12 @@ public class ScalarVerificationTest extends ModelEvaluatorTest {
 
 		assertEquals(1 + 4, results.size());
 
-		assertEquals("setosa", getTarget(results, "SPECIES"));
+		assertEquals("setosa", decode(results.get("SPECIES")));
 
-		assertEquals("setosa", getOutput(results, "PREDICTED(SPECIES)"));
+		assertEquals("setosa", results.get("PREDICTED(SPECIES)"));
 
-		assertEquals(1.0, getOutput(results, "PROBABILITY(SETOSA)"));
-		assertEquals(0.0, getOutput(results, "PROBABILITY(VERSICOLOR)"));
-		assertEquals(0.0, getOutput(results, "PROBABILITY(VIRGINICA)"));
+		assertEquals(1.0, results.get("PROBABILITY(SETOSA)"));
+		assertEquals(0.0, results.get("PROBABILITY(VERSICOLOR)"));
+		assertEquals(0.0, results.get("PROBABILITY(VIRGINICA)"));
 	}
 }

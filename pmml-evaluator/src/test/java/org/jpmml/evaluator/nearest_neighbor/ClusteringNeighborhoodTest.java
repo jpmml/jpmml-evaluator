@@ -75,8 +75,8 @@ public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
 
 		assertEquals(Arrays.asList("3", "1", "4"), (targetValue.getEntityIdRanking()).subList(0, 3));
 
-		assertEquals("3", getOutput(results, "neighbor1"));
-		assertEquals("1", getOutput(results, "neighbor2"));
-		assertEquals("4", getOutput(results, "neighbor3"));
+		assertEquals("3", results.get("neighbor1"));
+		assertEquals("1", results.get("neighbor2"));
+		assertEquals("4", results.get("neighbor3"));
 	}
 }

@@ -51,27 +51,27 @@ public class MultiTargetTest extends ModelEvaluatorTest {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		assertNotNull(getTarget(results, "y1"));
-		assertNull(getTarget(results, "y2"));
+		assertNotNull(results.get("y1"));
+		assertNull(decode(results.get("y2")));
 
 		Object classification = results.get("y1");
 
 		assertFalse(classification instanceof HasProbability);
 
-		assertEquals(0, getOutput(results, "decision"));
+		assertEquals(0, results.get("decision"));
 
 		arguments = createArguments("x", 1.0d);
 
 		results = evaluator.evaluate(arguments);
 
-		assertNull(getTarget(results, "y1"));
-		assertNotNull(getTarget(results, "y2"));
+		assertNull(decode(results.get("y1")));
+		assertNotNull(decode(results.get("y2")));
 
 		classification = results.get("y2");
 
 		assertFalse(classification instanceof HasProbability);
 
-		assertEquals(1, getOutput(results, "decision"));
+		assertEquals(1, results.get("decision"));
 	}
 
 	@Test

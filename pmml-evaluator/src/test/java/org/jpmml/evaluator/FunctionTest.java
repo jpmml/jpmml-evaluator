@@ -25,9 +25,9 @@ import com.google.common.collect.Lists;
 import org.jpmml.model.temporals.Date;
 import org.jpmml.model.temporals.DateTime;
 import org.jpmml.model.temporals.Time;
-import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class FunctionTest {
@@ -36,7 +36,7 @@ public class FunctionTest {
 	public void evaluateArithmeticFunctions(){
 		assertEquals(4, evaluate(Functions.ADD, 1, 3));
 		assertEquals(-2, evaluate(Functions.SUBTRACT, 1, 3));
-		assertEquals(3d, evaluate(Functions.MULTIPLY, 1, 3));
+		assertEquals(3, evaluate(Functions.MULTIPLY, 1, 3));
 		assertEquals(0, evaluate(Functions.DIVIDE, 1, 3));
 
 		assertEquals(null, evaluate(Functions.ADD, 1, null));
@@ -76,7 +76,7 @@ public class FunctionTest {
 		assertEquals(2, evaluate(Functions.MODULO, 11, 3));
 		assertEquals(-5, evaluate(Functions.MODULO, 9, -7));
 		assertEquals(-4, evaluate(Functions.MODULO, -4, -9));
-		assertEquals(0.3d, evaluate(Functions.MODULO, -17.2d, 0.5d), 1e-13);
+		assertEquals(0.3d, (Double)evaluate(Functions.MODULO, -17.2d, 0.5d), 1e-13);
 
 		assertEquals(1, evaluate(Functions.MODULO, 10, 3));
 		assertEquals(-2, evaluate(Functions.MODULO, 10, -3));
@@ -88,12 +88,12 @@ public class FunctionTest {
 		assertEquals(0, evaluate(Functions.MODULO, -6, 2));
 		assertEquals(-0, evaluate(Functions.MODULO, -6, -2));
 
-		assertEquals(0.9d, evaluate(Functions.MODULO, 4.5d, 1.2d), 1e-13);
-		assertEquals(-0.3d, evaluate(Functions.MODULO, 4.5d, -1.2d), 1e-13);
-		assertEquals(0.3d, evaluate(Functions.MODULO, -4.5d, 1.2d), 1e-13);
-		assertEquals(-0.9d, evaluate(Functions.MODULO, -4.5d, -1.2d), 1e-13);
+		assertEquals(0.9d, (Double)evaluate(Functions.MODULO, 4.5d, 1.2d), 1e-13);
+		assertEquals(-0.3d, (Double)evaluate(Functions.MODULO, 4.5d, -1.2d), 1e-13);
+		assertEquals(0.3d, (Double)evaluate(Functions.MODULO, -4.5d, 1.2d), 1e-13);
+		assertEquals(-0.9d, (Double)evaluate(Functions.MODULO, -4.5d, -1.2d), 1e-13);
 
-		assertEquals(3.0e0d, evaluate(Functions.MODULO, 1.23e2d, 0.6e1d), 1e-13);
+		assertEquals(3.0e0d, (Double)evaluate(Functions.MODULO, 1.23e2d, 0.6e1d), 1e-13);
 	}
 
 	@Test
@@ -387,17 +387,17 @@ public class FunctionTest {
 	public void evaluateTrigonometricFunctions(){
 		Double angle = Math.toRadians(30);
 
-		assertEquals(0.5d, evaluate(Functions.SIN, angle), 1e-8);
-		assertEquals(angle, evaluate(Functions.ASIN, 0.5d), 1e-8);
-		assertEquals(0.54785347d, evaluate(Functions.SINH, angle), 1e-8);
+		assertEquals(0.5d, (Double)evaluate(Functions.SIN, angle), 1e-8);
+		assertEquals(angle, (Double)evaluate(Functions.ASIN, 0.5d), 1e-8);
+		assertEquals(0.54785347d, (Double)evaluate(Functions.SINH, angle), 1e-8);
 
-		assertEquals(0.8660254d, evaluate(Functions.COS, angle), 1e-8);
-		assertEquals(angle, evaluate(Functions.ACOS, 0.8660254d), 1e-8);
-		assertEquals(1.14023832d, evaluate(Functions.COSH, angle), 1e-8);
+		assertEquals(0.8660254d, (Double)evaluate(Functions.COS, angle), 1e-8);
+		assertEquals(angle, (Double)evaluate(Functions.ACOS, 0.8660254d), 1e-8);
+		assertEquals(1.14023832d, (Double)evaluate(Functions.COSH, angle), 1e-8);
 
-		assertEquals(0.57735027d, evaluate(Functions.TAN, angle), 1e-8);
-		assertEquals(angle, evaluate(Functions.ATAN, 0.57735027d), 1e-8);
-		assertEquals(0.48047278d, evaluate(Functions.TANH, angle), 1e-8);
+		assertEquals(0.57735027d, (Double)evaluate(Functions.TAN, angle), 1e-8);
+		assertEquals(angle, (Double)evaluate(Functions.ATAN, 0.57735027d), 1e-8);
+		assertEquals(0.48047278d, (Double)evaluate(Functions.TANH, angle), 1e-8);
 
 		try {
 			evaluate(Functions.ASIN, 2d);
@@ -409,27 +409,21 @@ public class FunctionTest {
 	}
 
 	static
-	private void assertEquals(Object expected, FieldValue actual){
-		Assert.assertEquals(FieldValueUtil.create(actual, expected), actual);
-	}
-
-	static
-	private void assertEquals(Number expected, FieldValue actual, double delta){
-		Assert.assertEquals(expected.doubleValue(), (actual.asNumber()).doubleValue(), delta);
-	}
-
-	static
-	private FieldValue evaluate(Function function, Object... arguments){
+	private Object evaluate(Function function, Object... arguments){
 		return evaluate(function, Arrays.asList(arguments));
 	}
 
 	static
-	private FieldValue evaluate(Function function, List<?> arguments){
-		return function.evaluate(Lists.transform(arguments, argument -> FieldValueUtil.create(argument)));
+	private Object evaluate(Function function, List<?> arguments){
+		FieldValue value = function.evaluate(Lists.transform(arguments, argument -> FieldValueUtil.create(argument)));
+
+		return FieldValueUtil.getValue(value);
 	}
 
 	static
-	private FieldValue evaluate(Function function, ScalarValue... arguments){
-		return function.evaluate(Arrays.asList(arguments));
+	private Object evaluate(Function function, ScalarValue... arguments){
+		FieldValue value = function.evaluate(Arrays.asList(arguments));
+
+		return FieldValueUtil.getValue(value);
 	}
 }

@@ -73,6 +73,6 @@ public class MissingPredictionTest extends ModelEvaluatorTest {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		return (Integer)getTarget(results, "y");
+		return (Integer)decode(results.get("y"));
 	}
 }

@@ -37,7 +37,7 @@ public class ContrastMatrixTest extends ModelEvaluatorTest {
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
 		// Expected values have been calculated by hand
-		assertEquals(0.81956470d, (Double)getOutput(results, "Probability_Low"), 1e-8);
-		assertEquals(0.18043530d, (Double)getOutput(results, "Probability_High"), 1e-8);
+		assertEquals(0.81956470d, (Double)results.get("Probability_Low"), 1e-8);
+		assertEquals(0.18043530d, (Double)results.get("Probability_High"), 1e-8);
 	}
 }

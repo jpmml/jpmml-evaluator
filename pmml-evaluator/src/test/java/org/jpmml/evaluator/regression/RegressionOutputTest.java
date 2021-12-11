@@ -48,13 +48,13 @@ public class RegressionOutputTest extends ModelEvaluatorTest {
 
 		assertEquals(1 + 5, results.size());
 
-		assertEquals(8d, getTarget(results, "result"));
+		assertEquals(8d, results.get("result"));
 
-		assertEquals(8d, getOutput(results, "RawResult"));
-		assertEquals(8, getOutput(results, "RawIntegerResult"));
-		assertEquals(35d, getOutput(results, "FinalResult"));
-		assertEquals(35, getOutput(results, "FinalIntegerResult"));
-		assertEquals("waive", getOutput(results, "BusinessDecision"));
+		assertEquals(8d, results.get("RawResult"));
+		assertEquals(8, results.get("RawIntegerResult"));
+		assertEquals(35d, results.get("FinalResult"));
+		assertEquals(35, results.get("FinalIntegerResult"));
+		assertEquals("waive", results.get("BusinessDecision"));
 
 		configurationBuilder.setOutputFilter(OutputFilters.KEEP_FINAL_RESULTS);
 

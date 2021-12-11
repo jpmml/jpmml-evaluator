@@ -39,13 +39,13 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		assertEquals(5, results.size());
 
-		assertEquals("NO", getTarget(results, Evaluator.DEFAULT_TARGET_NAME));
+		assertEquals("NO", decode(results.get(Evaluator.DEFAULT_TARGET_NAME)));
 
-		assertEquals("NO", getOutput(results, "I_response"));
-		assertEquals("No", getOutput(results, "U_response"));
+		assertEquals("NO", results.get("I_response"));
+		assertEquals("No", results.get("U_response"));
 
-		assertEquals(0.02d, getOutput(results, "P_responseYes"));
-		assertEquals(0.98d, getOutput(results, "P_responseNo"));
+		assertEquals(0.02d, results.get("P_responseYes"));
+		assertEquals(0.98d, results.get("P_responseNo"));
 
 		evaluator = createModelEvaluator(new RemoveTargetValuesTransformer());
 
@@ -53,6 +53,6 @@ public class PriorProbabilitiesTest extends ModelEvaluatorTest {
 
 		assertEquals(1, results.size());
 
-		assertEquals(null, getTarget(results, Evaluator.DEFAULT_TARGET_NAME));
+		assertEquals(null, decode(results.get(Evaluator.DEFAULT_TARGET_NAME)));
 	}
 }

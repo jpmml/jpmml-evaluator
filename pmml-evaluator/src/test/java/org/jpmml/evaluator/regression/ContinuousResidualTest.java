@@ -58,12 +58,12 @@ public class ContinuousResidualTest extends ModelEvaluatorTest {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals(2.6d, (Double)getOutput(results, "residual"), 1e-8);
+		assertEquals(2.6d, (Double)results.get("residual"), 1e-8);
 
 		arguments = createArguments("input", 0.8d, "target", null);
 
 		results = evaluator.evaluate(arguments);
 
-		assertEquals(1.6d, (Double)getOutput(results, "residual"), 1e-8);
+		assertEquals(1.6d, (Double)results.get("residual"), 1e-8);
 	}
 }

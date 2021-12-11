@@ -48,11 +48,11 @@ public class ClassificationOutputTest extends ModelEvaluatorTest {
 
 		assertEquals(1 + 3, results.size());
 
-		assertEquals("0", getTarget(results, "result"));
+		assertEquals("0", decode(results.get("result")));
 
-		assertEquals("0", getOutput(results, "output_predictedValue"));
-		assertEquals("zero", getOutput(results, "output_predictedDisplayValue"));
-		assertEquals(1d, getOutput(results, "output_probability"));
+		assertEquals("0", results.get("output_predictedValue"));
+		assertEquals("zero", results.get("output_predictedDisplayValue"));
+		assertEquals(1d, results.get("output_probability"));
 
 		configurationBuilder.setOutputFilter(OutputFilters.KEEP_FINAL_RESULTS);
 

@@ -58,8 +58,8 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest {
 		assertEquals("Iris-versicolor", speciesClass.getResult());
 		assertEquals("51", (speciesClass.getEntityIdRanking()).get(0));
 
-		assertEquals(20d, getOutput(results, "output_1"));
-		assertEquals("Iris-versicolor", getOutput(results, "output_2"));
+		assertEquals(20d, results.get("output_1"));
+		assertEquals("Iris-versicolor", results.get("output_2"));
 	}
 
 	@Test

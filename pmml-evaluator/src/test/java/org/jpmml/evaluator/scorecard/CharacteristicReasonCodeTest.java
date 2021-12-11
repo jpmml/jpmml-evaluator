@@ -38,11 +38,11 @@ public class CharacteristicReasonCodeTest extends ReasonCodeTest {
 		assertEquals(3, (targetValue.getPartialScores()).size());
 		assertEquals(2, (targetValue.getReasonCodeRanking()).size());
 
-		assertEquals(29d, getOutput(results, "Final Score"));
+		assertEquals(29d, results.get("Final Score"));
 
-		assertEquals("RC2", getOutput(results, "Reason Code 1"));
-		assertEquals("RC1", getOutput(results, "Reason Code 2"));
-		assertEquals(null, getOutput(results, "Reason Code 3"));
+		assertEquals("RC2", results.get("Reason Code 1"));
+		assertEquals("RC1", results.get("Reason Code 2"));
+		assertEquals(null, results.get("Reason Code 3"));
 	}
 
 	@Test

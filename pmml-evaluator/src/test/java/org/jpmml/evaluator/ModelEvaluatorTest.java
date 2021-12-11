@@ -27,6 +27,7 @@ import com.google.common.collect.Lists;
 import org.jpmml.model.SerializationUtil;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 abstract
 public class ModelEvaluatorTest {
@@ -113,17 +114,13 @@ public class ModelEvaluatorTest {
 	}
 
 	static
-	public Object getTarget(Map<String, ?> results, String name){
-		Object value = results.get(name);
+	public Object decode(Object value){
+
+		if(value != null){
+			assertTrue(value instanceof Computable);
+		}
 
 		return EvaluatorUtil.decode(value);
-	}
-
-	static
-	public Object getOutput(Map<String, ?> results, String name){
-		Object value = results.get(name);
-
-		return value;
 	}
 
 	static

@@ -65,9 +65,9 @@ public class ModelNestingTest extends ModelEvaluatorTest {
 
 		assertEquals(3, results.size());
 
-		assertEquals(2d * 2d, (Double)getTarget(results, Evaluator.DEFAULT_TARGET_NAME), 1e-8d);
+		assertEquals(2d * 2d, (Double)results.get(Evaluator.DEFAULT_TARGET_NAME), 1e-8d);
 
-		assertNotNull((Double)getOutput(results, "output"));
-		assertNull(getOutput(results, "report(output)"));
+		assertNotNull((Double)results.get("output"));
+		assertNull(results.get("report(output)"));
 	}
 }

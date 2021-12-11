@@ -45,32 +45,32 @@ public class ModelChainCompositionTest extends ModelChainTest {
 	public void evaluateSetosa() throws Exception {
 		Map<String, ?> results = evaluateExample(1.4, 0.2);
 
-		assertEquals(0.3, getOutput(results, "Setosa Pollen Index"));
-		assertEquals("2.1", getOutput(results, "Segment Id"));
-		assertEquals("2", getOutput(results, "Class Node"));
-		assertEquals("setosa", getOutput(results, "Class Score"));
-		assertEquals("SE", getOutput(results, "Class Score Code"));
+		assertEquals(0.3, results.get("Setosa Pollen Index"));
+		assertEquals("2.1", results.get("Segment Id"));
+		assertEquals("2", results.get("Class Node"));
+		assertEquals("setosa", results.get("Class Score"));
+		assertEquals("SE", results.get("Class Score Code"));
 	}
 
 	@Test
 	public void evaluateVersicolor() throws Exception {
 		Map<String, ?> results = evaluateExample(4.7, 1.4);
 
-		assertEquals(0.2, getOutput(results, "Versicolor Pollen Index"));
-		assertEquals("2.2", getOutput(results, "Segment Id"));
-		assertEquals("4", getOutput(results, "Class Node"));
-		assertEquals("versicolor", getOutput(results, "Class Score"));
-		assertEquals("VE", getOutput(results, "Class Score Code"));
+		assertEquals(0.2, results.get("Versicolor Pollen Index"));
+		assertEquals("2.2", results.get("Segment Id"));
+		assertEquals("4", results.get("Class Node"));
+		assertEquals("versicolor", results.get("Class Score"));
+		assertEquals("VE", results.get("Class Score Code"));
 	}
 
 	@Test
 	public void evaluateVirginica() throws Exception {
 		Map<String, ?> results = evaluateExample(6, 2.5);
 
-		assertEquals(0.1, getOutput(results, "Virginica Pollen Index"));
-		assertEquals("2.3", getOutput(results, "Segment Id"));
-		assertEquals("5", getOutput(results, "Class Node"));
-		assertEquals("virginica", getOutput(results, "Class Score"));
-		assertEquals("VI", getOutput(results, "Class Score Code"));
+		assertEquals(0.1, results.get("Virginica Pollen Index"));
+		assertEquals("2.3", results.get("Segment Id"));
+		assertEquals("5", results.get("Class Node"));
+		assertEquals("virginica", results.get("Class Score"));
+		assertEquals("VI", results.get("Class Score Code"));
 	}
 }

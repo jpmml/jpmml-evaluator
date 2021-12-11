@@ -45,7 +45,7 @@ public class TieBreakTest extends ModelEvaluatorTest {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals("medium", getTarget(results, "output"));
+		assertEquals("medium", decode(results.get("output")));
 	}
 
 	@Test
@@ -56,6 +56,6 @@ public class TieBreakTest extends ModelEvaluatorTest {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals("high", getTarget(results, "output"));
+		assertEquals("high", decode(results.get("output")));
 	}
 }

@@ -56,6 +56,6 @@ public class ModelChainSimpleTest extends ModelChainTest {
 
 		assertEquals(1 + 1, results.size());
 
-		assertEquals(0.8d + 0.3d, getTarget(results, "PollenIndex"));
+		assertEquals(0.8d + 0.3d, results.get("PollenIndex"));
 	}
 }

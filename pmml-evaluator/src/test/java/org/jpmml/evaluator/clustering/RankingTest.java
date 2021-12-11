@@ -49,8 +49,8 @@ public class RankingTest extends ModelEvaluatorTest {
 	}
 
 	static
-	private void checkValue(String id, Double affinity, Map<String, ?> result, String suffix){
-		assertEquals(id, getOutput(result, "id_" + suffix));
-		assertEquals(affinity, getOutput(result, "affinity_" + suffix));
+	private void checkValue(String id, Double affinity, Map<String, ?> results, String suffix){
+		assertEquals(id, results.get("id_" + suffix));
+		assertEquals(affinity, results.get("affinity_" + suffix));
 	}
 }

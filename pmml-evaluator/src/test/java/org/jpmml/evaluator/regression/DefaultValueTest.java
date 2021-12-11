@@ -39,7 +39,7 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 
 		assertEquals(1, results.size());
 
-		assertEquals(432.21d, getTarget(results, Evaluator.DEFAULT_TARGET_NAME));
+		assertEquals(432.21d, results.get(Evaluator.DEFAULT_TARGET_NAME));
 
 		evaluator = createModelEvaluator(new RemoveTargetValuesTransformer());
 
@@ -47,6 +47,6 @@ public class DefaultValueTest extends ModelEvaluatorTest {
 
 		assertEquals(1, results.size());
 
-		assertEquals(null, getTarget(results, Evaluator.DEFAULT_TARGET_NAME));
+		assertEquals(null, decode(results.get(Evaluator.DEFAULT_TARGET_NAME)));
 	}
 }

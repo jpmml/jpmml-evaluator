@@ -37,7 +37,7 @@ public class AssociationOutputTest extends ModelEvaluatorTest {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals("1", getOutput(results, "entityId"));
+		assertEquals("1", results.get("entityId"));
 
 		checkValue(Arrays.asList("Cracker"), results, "antecedent");
 		checkValue(Arrays.asList("Water"), results, "consequent");
@@ -51,8 +51,8 @@ public class AssociationOutputTest extends ModelEvaluatorTest {
 	}
 
 	static
-	private void checkValue(Object expected, Map<String, ?> result, String name){
-		assertEquals(expected, getOutput(result, name));
-		assertEquals(expected, getOutput(result, "deprecated_" + name));
+	private void checkValue(Object expected, Map<String, ?> results, String name){
+		assertEquals(expected, results.get(name));
+		assertEquals(expected, results.get("deprecated_" + name));
 	}
 }

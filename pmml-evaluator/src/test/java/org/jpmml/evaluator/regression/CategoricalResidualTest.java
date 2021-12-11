@@ -36,12 +36,12 @@ public class CategoricalResidualTest extends ModelEvaluatorTest {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals(0.2d, (Double)getOutput(results, "residual"), 1e-8);
+		assertEquals(0.2d, (Double)results.get("residual"), 1e-8);
 
 		arguments = createArguments("input", (2d * 0.8d), "target", "no");
 
 		results = evaluator.evaluate(arguments);
 
-		assertEquals(-0.8d, (Double)getOutput(results, "residual"), 1e-8);
+		assertEquals(-0.8d, (Double)results.get("residual"), 1e-8);
 	}
 }
