@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,20 +28,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.LocalTransformations;
@@ -55,29 +49,19 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLAttributes;
-import org.dmg.pmml.PMMLElements;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
-import org.dmg.pmml.TransformationDictionary;
 import org.jpmml.model.XPathUtil;
 import org.jpmml.model.visitors.FieldResolver;
 
 abstract
-public class ModelManager<M extends Model> implements HasModel<M>, Serializable {
-
-	private PMML pmml = null;
+public class ModelManager<M extends Model> extends PMMLManager implements HasModel<M> {
 
 	private M model = null;
 
 	private DataField defaultDataField = null;
-
-	private Map<String, DataField> dataFields = Collections.emptyMap();
-
-	private Map<String, DerivedField> derivedFields = Collections.emptyMap();
-
-	private Map<String, DefineFunction> defineFunctions = Collections.emptyMap();
 
 	private Map<String, MiningField> miningFields = Collections.emptyMap();
 
@@ -104,26 +88,9 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 	}
 
 	protected ModelManager(PMML pmml, M model){
-		setPMML(Objects.requireNonNull(pmml));
+		super(pmml);
+
 		setModel(Objects.requireNonNull(model));
-
-		DataDictionary dataDictionary = pmml.getDataDictionary();
-		if(dataDictionary == null){
-			throw new MissingElementException(pmml, PMMLElements.PMML_DATADICTIONARY);
-		} // End if
-
-		if(dataDictionary.hasDataFields()){
-			this.dataFields = ImmutableMap.copyOf(IndexableUtil.buildMap(dataDictionary.getDataFields(), PMMLAttributes.DATAFIELD_NAME));
-		}
-
-		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
-		if(transformationDictionary != null && transformationDictionary.hasDerivedFields()){
-			this.derivedFields = ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDerivedFields(), PMMLAttributes.DERIVEDFIELD_NAME));
-		} // End if
-
-		if(transformationDictionary != null && transformationDictionary.hasDefineFunctions()){
-			this.defineFunctions = ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDefineFunctions(), PMMLAttributes.DEFINEFUNCTION_NAME));
-		}
 
 		MiningFunction miningFunction = model.getMiningFunction();
 		if(miningFunction == null){
@@ -170,13 +137,14 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		return model.getMathContext();
 	}
 
+	@Override
 	public DataField getDataField(String name){
 
 		if(Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name)){
 			return getDefaultDataField();
 		}
 
-		return this.dataFields.get(name);
+		return super.getDataField(name);
 	}
 
 	/**
@@ -211,14 +179,6 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		this.defaultDataField = defaultDataField;
 	}
 
-	public DerivedField getDerivedField(String name){
-		return this.derivedFields.get(name);
-	}
-
-	public DefineFunction getDefineFunction(String name){
-		return this.defineFunctions.get(name);
-	}
-
 	public MiningField getMiningField(String name){
 
 		if(Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name)){
@@ -250,7 +210,7 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 
 	/**
 	 * <p>
-	 * Indicates if this model evaluator provides the specified result feature.
+	 * Indicates if this model manager provides the specified result feature.
 	 * </p>
 	 *
 	 * <p>
@@ -592,15 +552,6 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 	}
 
 	@Override
-	public PMML getPMML(){
-		return this.pmml;
-	}
-
-	private void setPMML(PMML pmml){
-		this.pmml = pmml;
-	}
-
-	@Override
 	public M getModel(){
 		return this.model;
 	}
@@ -653,52 +604,6 @@ public class ModelManager<M extends Model> implements HasModel<M>, Serializable 
 		}
 
 		return result;
-	}
-
-	static
-	protected <K, V> Map<K, ? extends List<V>> toImmutableListMap(Map<K, List<V>> map){
-		Function<List<V>, ImmutableList<V>> function = new Function<List<V>, ImmutableList<V>>(){
-
-			@Override
-			public ImmutableList<V> apply(List<V> list){
-				return ImmutableList.copyOf(list);
-			}
-		};
-
-		return Maps.transformValues(map, function);
-	}
-
-	static
-	protected <K, V> Map<K, ? extends Set<V>> toImmutableSetMap(Map<K, Set<V>> map){
-		Function<Set<V>, ImmutableSet<V>> function = new Function<Set<V>, ImmutableSet<V>>(){
-
-			@Override
-			public ImmutableSet<V> apply(Set<V> set){
-
-				if(set instanceof EnumSet){
-					EnumSet<?> enumSet = (EnumSet<?>)set;
-
-					return (ImmutableSet)Sets.immutableEnumSet(enumSet);
-				}
-
-				return ImmutableSet.copyOf(set);
-			}
-		};
-
-		return Maps.transformValues(map, function);
-	}
-
-	static
-	protected <K1, K2, V2> Map<K1, ? extends Map<K2, V2>> toImmutableMapMap(Map<K1, Map<K2, V2>> map){
-		Function<Map<K2, V2>, ImmutableMap<K2, V2>> function = new Function<Map<K2, V2>, ImmutableMap<K2, V2>>(){
-
-			@Override
-			public ImmutableMap<K2, V2> apply(Map<K2, V2> map){
-				return ImmutableMap.copyOf(map);
-			}
-		};
-
-		return Maps.transformValues(map, function);
 	}
 
 	private static final DataField DEFAULT_TARGET_CONTINUOUS_FLOAT = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.FLOAT);
