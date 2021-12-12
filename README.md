@@ -166,7 +166,7 @@ Core methods:
   * `#getInputFields()`
   * `#getTargetFields()`
   * `#getOutputFields()`
-  * `#evaluate(Map<FieldName, ?>)`
+  * `#evaluate(Map<String, ?>)`
 * `InputField`
   * `#prepare(Object)`
 
@@ -226,47 +226,33 @@ Evaluator evaluator = new LoadingModelEvaluatorBuilder()
 evaluator.verify();
 
 // Printing input (x1, x2, .., xn) fields
-List<? extends InputField> inputFields = evaluator.getInputFields();
+List<InputField> inputFields = evaluator.getInputFields();
 System.out.println("Input fields: " + inputFields);
 
 // Printing primary result (y) field(s)
-List<? extends TargetField> targetFields = evaluator.getTargetFields();
+List<TargetField> targetFields = evaluator.getTargetFields();
 System.out.println("Target field(s): " + targetFields);
 
 // Printing secondary result (eg. probability(y), decision(y)) fields
-List<? extends OutputField> outputFields = evaluator.getOutputFields();
+List<OutputField> outputFields = evaluator.getOutputFields();
 System.out.println("Output fields: " + outputFields);
 
 // Iterating through columnar data (eg. a CSV file, an SQL result set)
 while(true){
 	// Reading a record from the data source
-	Map<String, ?> inputRecord = readRecord();
-	if(inputRecord == null){
+	Map<String, ?> arguments = readRecord();
+	if(arguments == null){
 		break;
 	}
 
-	Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
-
-	// Mapping the record field-by-field from data source schema to PMML schema
-	for(InputField inputField : inputFields){
-		FieldName inputName = inputField.getName();
-
-		Object rawValue = inputRecord.get(inputName.getValue());
-
-		// Transforming an arbitrary user-supplied value to a known-good PMML value
-		FieldValue inputValue = inputField.prepare(rawValue);
-
-		arguments.put(inputName, inputValue);
-	}
-
-	// Evaluating the model with known-good arguments
-	Map<FieldName, ?> results = evaluator.evaluate(arguments);
+	// Evaluating the model
+	Map<String, ?> results = evaluator.evaluate(arguments);
 
 	// Decoupling results from the JPMML-Evaluator runtime environment
-	Map<String, ?> resultRecord = EvaluatorUtil.decodeAll(results);
+	results = EvaluatorUtil.decodeAll(results);
 
 	// Writing a record to the data sink
-	writeRecord(resultRecord);
+	writeRecord(results);
 }
 
 // Making the model evaluator eligible for garbage collection
@@ -308,7 +294,7 @@ Configurations and model evaluators are fairly lightweight, which makes them che
 However, for maximum performance, it is advisable to maintain a one-to-one mapping between `PMML`, `ModelEvaluatorBuilder` and `ModelEvaluator` instances (ie. an application should load a PMML byte stream or file exactly once, and then maintain and reuse the resulting model evaluator as long as needed).
 
 Some `ModelEvaluator` subclasses contain static caches that are lazily populated on a `PMML` instance basis.
-This may cause the first `ModelEvaluator#evaluate(Map<FieldName, ?>)` method invocation to take somewhat longer to complete (relative to all the subsequent method invocations).
+This may cause the first `ModelEvaluator#evaluate(Map<String, ?>)` method invocation to take somewhat longer to complete (relative to all the subsequent method invocations).
 If the model contains model verification data, then this "warm-up cost" is paid once and for all during the initial `ModelEvaluator#verify()` method invocation.
 
 ### Thread safety ###
@@ -320,7 +306,7 @@ Some `ModelEvaluatorBuilder` subclasses may extend the base class with functiona
 The case in point are all sorts of "loading" implementations, which modify the value of `ModelEvaluatorBuilder#pmml` and/or `ModelEvaluatorBuilder#model` fields.
 
 The `ModelEvaluator` base class and all its subclasses are completely thread safe.
-It is permitted to share a central `ModelEvaluator` instance between any number of threads, and invoke its `ModelEvaluator#evaluate(Map<FieldName, ?>)` method concurrently.
+It is permitted to share a central `ModelEvaluator` instance between any number of threads, and invoke its `ModelEvaluator#evaluate(Map<String, ?>)` method concurrently.
 
 The JPMML-Evaluator library follow functional programming principles.
 In a multi-threaded environment, its data throughput capabilities should scale linearly with respect to the number of threads.
@@ -417,13 +403,13 @@ Preparing the argument map:
 ```java
 Map<String, ?> inputDataRecord = ...;
 
-Map<FieldName, FieldValue> arguments = new LinkedHashMap<>();
+Map<String, FieldValue> arguments = new LinkedHashMap<>();
 
-List<? extends InputField> inputFields = evaluator.getInputFields();
+List<InputField> inputFields = evaluator.getInputFields();
 for(InputField inputField : inputFields){
-	FieldName inputName = inputField.getName();
+	String inputName = inputField.getName();
 
-	Object rawValue = inputDataRecord.get(inputName.getValue());
+	Object rawValue = inputDataRecord.get(inputName);
 
 	// Transforming an arbitrary user-supplied value to a known-good PMML value
 	// The user-supplied value is passed through: 1) outlier treatment, 2) missing value treatment, 3) invalid value treatment and 4) type conversion
@@ -435,14 +421,14 @@ for(InputField inputField : inputFields){
 
 Performing the evaluation:
 ```java
-Map<FieldName, ?> results = evaluator.evaluate(arguments);
+Map<String, ?> results = evaluator.evaluate(arguments);
 ```
 
 Extracting primary results from the result map:
-```
-List<? extends TargetField> targetFields = evaluator.getTargetFields();
+```java
+List<TargetField> targetFields = evaluator.getTargetFields();
 for(TargetField targetField : targetFields){
-	FieldName targetName = targetField.getName();
+	String targetName = targetField.getName();
 
 	Object targetValue = results.get(targetName);
 }
@@ -483,10 +469,10 @@ if(targetValue instanceof Computable){
 ```
 
 Extracting secondary results from the result map:
-```
-List<? extends OutputField> outputFields = evaluator.getOutputFields();
+```java
+List<OutputField> outputFields = evaluator.getOutputFields();
 for(OutputField outputField : outputFields){
-	FieldName outputName = outputField.getName();
+	String outputName = outputField.getName();
 
 	Object outputValue = results.get(outputName);
 }

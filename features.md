@@ -76,7 +76,7 @@ Not yet supported model types:
 
 # Inspection API #
 
-The class model object can be inspected for unsupported PMML elements and attributes using a visitor class `org.jpmml.evaluator.visitors.UnsupportedMarkupInspector` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator/src/main/java/org/jpmml/evaluator/visitors/UnsupportedMarkupInspector.java). This visitor collects all unsupported markup as instances of `org.jpmml.manager.UnsupportedMarkupException`.
+The class model object can be inspected for unsupported PMML elements and attributes using a visitor class `org.jpmml.evaluator.visitors.UnsupportedMarkupInspector` [(source)](https://github.com/jpmml/jpmml-evaluator/blob/master/pmml-evaluator/src/main/java/org/jpmml/evaluator/visitors/UnsupportedMarkupInspector.java). This visitor collects all unsupported markup as instances of `org.jpmml.evaluator.UnsupportedMarkupException`.
 
 The class model object is safe for evaluation using the JPMML-Evaluator library if the collection of exceptions is empty:
 ```java

@@ -41,11 +41,11 @@ import org.dmg.pmml.Model;
  * Transforming an user-supplied map of arguments to a known-good PMML map of arguments:
  * <pre>
  * Map&lt;String, ?&gt; userArguments = ...;
- * Map&lt;FieldName, FieldValue&gt; arguments = new LinkedHashMap&lt;&gt;();
- * List&lt;? extends InputField&gt; inputFields = evaluator.getInputFields();
+ * Map&lt;String, FieldValue&gt; arguments = new LinkedHashMap&lt;&gt;();
+ * List&lt;InputField&gt; inputFields = evaluator.getInputFields();
  * for(InputField inputField : inputFields){
- *   FieldName inputName = inputField.getName();
- *   Object rawValue = userArguments.get(inputName.getValue());
+ *   String inputName = inputField.getName();
+ *   Object rawValue = userArguments.get(inputName);
  *   FieldValue inputValue = inputField.prepare(rawValue);
  *   arguments.put(inputName, inputValue);
  * }
@@ -53,16 +53,16 @@ import org.dmg.pmml.Model;
  *
  * <strong>Performing the evaluation</strong>
  * <pre>
- * Map&lt;FieldName, ?&gt; results = evaluator.evaluate(arguments);
+ * Map&lt;String, ?&gt; results = evaluator.evaluate(arguments);
  * </pre>
  *
  * <strong>Processing results</strong>
  * <br>
  * Retrieving the values of {@link #getTargetFields() target fields} (ie. primary results):
  * <pre>
- * List&lt;? extends TargetField&gt; targetFields = evaluator.getTargetFields();
+ * List&lt;TargetField&gt; targetFields = evaluator.getTargetFields();
  * for(TargetField targetField : targetFields){
- *   FieldName targetName = targetField.getName();
+ *   String targetName = targetField.getName();
  *   Object targetValue = results.get(targetName);
  * }
  * </pre>
@@ -77,9 +77,9 @@ import org.dmg.pmml.Model;
  *
  * Retrieving the values of {@link #getOutputFields() output fields} (ie. secondary results):
  * <pre>
- * List&lt;? extends OutputField&gt; outputFields = evaluator.getOutputFields();
+ * List&lt;OutputField&gt; outputFields = evaluator.getOutputFields();
  * for(OutputField outputField : outputFields){
- *   FieldName outputName = outputField.getName();
+ *   String outputName = outputField.getName();
  *   Object outputValue = results.get(outputName);
  * }
  * </pre>
