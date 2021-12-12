@@ -91,7 +91,7 @@ JPMML-Evaluator is fast and memory efficient. It can deliver one million scoring
 
 JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository](https://repo1.maven.org/maven2/org/jpmml/).
 
-The current version is **1.5.16** (25 September, 2021).
+The current version is **1.6.0** (12 December, 2021).
 
 ### Java SE 8 ###
 
@@ -101,7 +101,7 @@ Java SE 8 provides a JAXB runtime.
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<version>1.5.16</version>
+	<version>1.6.0</version>
 </dependency>
 ```
 
@@ -117,7 +117,7 @@ Using JPMML-Evaluator with [GlassFish Metro](https://metro.java.net) JAXB runtim
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator-metro</artifactId>
-	<version>1.5.16</version>
+	<version>1.6.0</version>
 </dependency>
 ```
 
@@ -127,7 +127,7 @@ Alternatively, using JPMML-Evaluator with [EclipseLink MOXy](https://www.eclipse
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator-moxy</artifactId>
-	<version>1.5.16</version>
+	<version>1.6.0</version>
 </dependency>
 ```
 
