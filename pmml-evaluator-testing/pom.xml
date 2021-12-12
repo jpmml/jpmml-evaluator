@@ -41,6 +41,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.jpmml</groupId>
+			<artifactId>pmml-model-jackson</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>provided</scope>

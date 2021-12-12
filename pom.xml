@@ -118,6 +118,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-model-jackson</artifactId>
+				<version>1.6.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model-kryo</artifactId>
 				<version>1.6.0</version>
 			</dependency>
@@ -192,13 +197,6 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>animal-sniffer-annotations</artifactId>
 				<version>1.20</version>
-			</dependency>
-
-			<!-- Inherited from org.jpmml:pmml-model-metro and org.jpmml:pmml-model-moxy dependencies -->
-			<dependency>
-				<groupId>org.glassfish.jaxb</groupId>
-				<artifactId>jaxb-runtime</artifactId>
-				<version>3.0.2</version>
 			</dependency>
 
 			<dependency>
