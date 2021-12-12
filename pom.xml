@@ -45,6 +45,7 @@
 		<module>pmml-evaluator-reporting-processor</module>
 		<module>pmml-evaluator</module>
 		<module>pmml-evaluator-example</module>
+		<module>pmml-evaluator-jackson</module>
 		<module>pmml-evaluator-kryo</module>
 		<module>pmml-evaluator-metro</module>
 		<module>pmml-evaluator-moxy</module>
@@ -73,6 +74,11 @@
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-example</artifactId>
+				<version>1.6-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-evaluator-jackson</artifactId>
 				<version>1.6-SNAPSHOT</version>
 			</dependency>
 			<dependency>
