@@ -51,7 +51,7 @@ public class ModelField implements Serializable {
 	 * The name of this model field in user application space.
 	 * </p>
 	 *
-	 * @see getFieldName()
+	 * @see #getFieldName()
 	 */
 	public String getName(){
 

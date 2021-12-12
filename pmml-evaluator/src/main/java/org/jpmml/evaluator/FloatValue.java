@@ -460,8 +460,8 @@ public class FloatValue extends Value<Float> {
 	 *
 	 * The function <code>exp(float)</code> can be reasonably emulated as <code>(float)Math#pow(2.7182817d, double)</code>.
 	 *
-	 * The constant <code>2.7182817d</code> has to be hard-coded as double literal, because a float value,
-	 * which could be either hard-coded as float literal or computed as <code>(float)Math#E</code>,
+	 * The constant <code>2.7182817d</code> has to be hard-coded as double literal, because a float value
+	 * (which could be either hard-coded as float literal or computed as <code>(float)Math#E</code>)
 	 * would be promoted to a double value <code>2.7182817459106445d</code> (via a widening primitive conversion) by the method invocation expression.
 	 */
 	static

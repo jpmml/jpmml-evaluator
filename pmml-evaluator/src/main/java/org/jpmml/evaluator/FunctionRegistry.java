@@ -39,7 +39,7 @@ public class FunctionRegistry {
 	/**
 	 * <p>
 	 * Gets a function for a name.
-	 * <p>
+	 * </p>
 	 *
 	 * <p>
 	 * First, if the name is registered with a singleton function instance, returns that instance.

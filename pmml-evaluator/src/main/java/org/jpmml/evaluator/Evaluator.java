@@ -28,7 +28,7 @@ import org.dmg.pmml.Model;
  * Performs the evaluation of a {@link Model}.
  * </p>
  *
- * <h3>Building and verifying an Evaluator instance</h3>
+ * <strong>Building and verifying an Evaluator instance</strong>
  * <pre>
  * PMML pmml = ...;
  * EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml);
@@ -36,7 +36,8 @@ import org.dmg.pmml.Model;
  * evaluator.verify();
  * </pre>
  *
- * <h3>Preparing arguments</h3>
+ * <strong>Preparing arguments</strong>
+ * <br>
  * Transforming an user-supplied map of arguments to a known-good PMML map of arguments:
  * <pre>
  * Map&lt;String, ?&gt; userArguments = ...;
@@ -50,12 +51,13 @@ import org.dmg.pmml.Model;
  * }
  * </pre>
  *
- * <h3>Performing the evaluation</h3>
+ * <strong>Performing the evaluation</strong>
  * <pre>
  * Map&lt;FieldName, ?&gt; results = evaluator.evaluate(arguments);
  * </pre>
  *
- * <h3>Processing results</h3>
+ * <strong>Processing results</strong>
+ * <br>
  * Retrieving the values of {@link #getTargetFields() target fields} (ie. primary results):
  * <pre>
  * List&lt;? extends TargetField&gt; targetFields = evaluator.getTargetFields();
@@ -82,7 +84,8 @@ import org.dmg.pmml.Model;
  * }
  * </pre>
  *
- * <h3>Handling exceptions</h3>
+ * <strong>Handling exceptions</strong>
+ * <br>
  * A code block that does exception-prone work should be surrounded with two levels of try-catch statements.
  * The inner try statement should catch {@link EvaluationException} instances that indicate "local" problems, which are related to individual data records.
  * The outer try statement should catch {@link InvalidMarkupException} and {@link UnsupportedMarkupException} instances that indicate "global" problems, which are related to the class model object.
@@ -109,8 +112,8 @@ import org.dmg.pmml.Model;
  * @see HasGroupFields
  * @see HasOrderFields
  *
- * @see HasModel
  * @see HasPMML
+ * @see HasModel
  */
 public interface Evaluator extends HasInputFields, HasResultFields {
 
