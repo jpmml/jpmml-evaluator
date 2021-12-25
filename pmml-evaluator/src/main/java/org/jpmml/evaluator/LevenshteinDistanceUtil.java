@@ -49,14 +49,14 @@ class LevenshteinDistanceUtil {
 	 * limitedCompare("hippo", "elephant", 6) = -1
 	 * </pre>
 	 *
-	 * @param left the first string, must not be null
-	 * @param right the second string, must not be null
+	 * @param left the first CharSequence, must not be null
+	 * @param right the second CharSequence, must not be null
 	 * @param threshold the target threshold, must not be negative
 	 * @return result distance, or -1
 	 */
 	static int limitedCompare(CharSequence left, CharSequence right, final boolean caseSensitive, final int threshold) { // NOPMD
 		if (left == null || right == null) {
-			throw new IllegalArgumentException("Strings must not be null");
+			throw new IllegalArgumentException("CharSequences must not be null");
 		}
 		if (threshold < 0) {
 			throw new IllegalArgumentException("Threshold must not be negative");
@@ -132,6 +132,11 @@ class LevenshteinDistanceUtil {
 			m = right.length();
 		}
 
+		// the edit distance cannot be less than the length difference
+		if (m - n > threshold) {
+			return -1;
+		}
+
 		int[] p = new int[n + 1]; // 'previous' cost array, horizontally
 		int[] d = new int[n + 1]; // cost array, horizontally
 		int[] tempD; // placeholder to assist in swapping p and d
@@ -155,12 +160,6 @@ class LevenshteinDistanceUtil {
 			final int min = Math.max(1, j - threshold);
 			final int max = j > Integer.MAX_VALUE - threshold ? n : Math.min(
 					n, j + threshold);
-
-			// the stripe may lead off of the table if s and t are of different
-			// sizes
-			if (min > max) {
-				return -1;
-			}
 
 			// ignore entry left of leftmost
 			if (min > 1) {
