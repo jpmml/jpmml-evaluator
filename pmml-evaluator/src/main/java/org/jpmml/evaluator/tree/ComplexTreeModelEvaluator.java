@@ -34,15 +34,10 @@ import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.PMMLAttributes;
-import org.dmg.pmml.tree.PMMLElements;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
-import org.jpmml.evaluator.InvalidAttributeException;
-import org.jpmml.evaluator.MisplacedAttributeException;
-import org.jpmml.evaluator.MissingAttributeException;
-import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
@@ -53,6 +48,9 @@ import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.MisplacedAttributeException;
+import org.jpmml.model.MissingAttributeException;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements HasNodeRegistry {
@@ -70,16 +68,9 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 	public ComplexTreeModelEvaluator(PMML pmml, TreeModel treeModel){
 		super(pmml, treeModel);
 
-		Node root = treeModel.getNode();
-		if(root == null){
-			throw new MissingElementException(treeModel, PMMLElements.TREEMODEL_NODE);
-		} else
+		List<Node> nodes = collectNodes(treeModel);
 
-		{
-			List<Node> nodes = collectNodes(treeModel);
-
-			this.entityRegistry = ImmutableBiMap.copyOf(EntityUtil.buildBiMap(nodes));
-		}
+		this.entityRegistry = ImmutableBiMap.copyOf(EntityUtil.buildBiMap(nodes));
 	}
 
 	@Override
@@ -151,7 +142,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 	private Node evaluateTree(Trail trail, EvaluationContext context){
 		TreeModel treeModel = getModel();
 
-		Node root = treeModel.getNode();
+		Node root = treeModel.requireNode();
 
 		Boolean status = evaluateNode(trail, root, context);
 
@@ -177,7 +168,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 			throw new UnsupportedElementException(embeddedModel);
 		}
 
-		Predicate predicate = PredicateUtil.ensurePredicate(node);
+		Predicate predicate = node.requirePredicate();
 
 		// A compound predicate whose boolean operator is "surrogate" represents a special case
 		if(predicate instanceof CompoundPredicate){
@@ -379,20 +370,14 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 					throw new MisplacedAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY, probability);
 				}
 
-				Number recordCount = scoreDistribution.getRecordCount();
-				if(recordCount == null){
-					throw new MissingAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.SCOREDISTRIBUTION_RECORDCOUNT);
-				}
+				Number recordCount = scoreDistribution.requireRecordCount();
 
 				sum.add(recordCount);
 
 				value = valueFactory.newValue(recordCount);
 			}
 
-			Object targetCategory = scoreDistribution.getValue();
-			if(targetCategory == null){
-				throw new MissingAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.SCOREDISTRIBUTION_VALUE);
-			}
+			Object targetCategory = scoreDistribution.requireValue();
 
 			result.put(targetCategory, value);
 
@@ -424,7 +409,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 	private List<Node> getPath(Node node){
 		TreeModel treeModel = getModel();
 
-		Node root = treeModel.getNode();
+		Node root = treeModel.requireNode();
 
 		return getPathBetween(root, node);
 	}

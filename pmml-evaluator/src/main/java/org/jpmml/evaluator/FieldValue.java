@@ -31,9 +31,7 @@ import org.dmg.pmml.HasType;
 import org.dmg.pmml.HasValue;
 import org.dmg.pmml.HasValueSet;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.PMMLObject;
 import org.jpmml.model.ToStringHelper;
-import org.jpmml.model.XPathUtil;
 import org.jpmml.model.temporals.Date;
 import org.jpmml.model.temporals.DateTime;
 import org.jpmml.model.temporals.Instant;
@@ -128,7 +126,7 @@ public class FieldValue implements TypeInfo, Serializable {
 	 * </p>
 	 */
 	public int compareTo(HasValue<?> hasValue){
-		return compareToValue(ensureValue(hasValue));
+		return compareToValue(hasValue.requireValue());
 	}
 
 	/**
@@ -137,7 +135,7 @@ public class FieldValue implements TypeInfo, Serializable {
 	 * </p>
 	 */
 	public boolean equals(HasValue<?> hasValue){
-		return equalsValue(ensureValue(hasValue));
+		return equalsValue(hasValue.requireValue());
 	}
 
 	/**
@@ -146,10 +144,7 @@ public class FieldValue implements TypeInfo, Serializable {
 	 * </p>
 	 */
 	public boolean isIn(HasValueSet<?> hasValueSet){
-		Array array = hasValueSet.getArray();
-		if(array == null){
-			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement((Class)hasValueSet.getClass()) + "/" + XPathUtil.formatElement(Array.class)), (PMMLObject)hasValueSet);
-		} // End if
+		Array array = hasValueSet.requireArray();
 
 		if(array instanceof SetHolder){
 			SetHolder setHolder = (SetHolder)array;
@@ -393,16 +388,6 @@ public class FieldValue implements TypeInfo, Serializable {
 			default:
 				throw new IllegalArgumentException();
 		}
-	}
-
-	static
-	private Object ensureValue(HasValue<?> hasValue){
-		Object value = hasValue.getValue();
-		if(value == null){
-			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement((Class)hasValue.getClass()) + "@value"), (PMMLObject)hasValue);
-		}
-
-		return value;
 	}
 
 	static final Integer STATUS_UNKNOWN_VALID = Integer.MAX_VALUE;

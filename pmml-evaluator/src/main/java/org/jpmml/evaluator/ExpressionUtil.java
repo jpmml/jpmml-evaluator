@@ -37,19 +37,18 @@ import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
 import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.HasExpression;
-import org.dmg.pmml.HasFieldReference;
 import org.dmg.pmml.HasType;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PMMLFunctions;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.ParameterField;
 import org.dmg.pmml.TextIndex;
-import org.jpmml.model.XPathUtil;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.PMMLException;
 
 public class ExpressionUtil {
 
@@ -57,28 +56,8 @@ public class ExpressionUtil {
 	}
 
 	static
-	public <E extends Expression & HasFieldReference<E>> String ensureField(E hasField){
-		String fieldName = hasField.getField();
-		if(fieldName == null){
-			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(hasField.getClass()) + "@field"), hasField);
-		}
-
-		return fieldName;
-	}
-
-	static
-	public <E extends PMMLObject & HasExpression<E>> Expression ensureExpression(E hasExpression){
-		Expression expression = hasExpression.getExpression();
-		if(expression == null){
-			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(hasExpression.getClass()) + "/<Expression>"), hasExpression);
-		}
-
-		return expression;
-	}
-
-	static
 	public <E extends PMMLObject & HasExpression<E>> FieldValue evaluateExpressionContainer(E hasExpression, EvaluationContext context){
-		return evaluate(ensureExpression(hasExpression), context);
+		return evaluate(hasExpression.requireExpression(), context);
 	}
 
 	static
@@ -94,10 +73,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluate(DerivedField derivedField, EvaluationContext context){
-		String name = derivedField.getName();
-		if(name == null){
-			throw new MissingAttributeException(derivedField, PMMLAttributes.DERIVEDFIELD_NAME);
-		}
+		String name = derivedField.requireName();
 
 		SymbolTable<String> symbolTable = EvaluationContext.DERIVEDFIELD_GUARD_PROVIDER.get();
 
@@ -120,7 +96,7 @@ public class ExpressionUtil {
 		List<ParameterField> parameterFields = defineFunction.getParameterFields();
 
 		if(parameterFields.size() != values.size()){
-			throw new EvaluationException("Function " + PMMLException.formatKey(defineFunction.getName()) + " expects " + parameterFields.size() + " arguments, got " + values.size() + " arguments");
+			throw new EvaluationException("Function " + EvaluationException.formatKey(defineFunction.getName()) + " expects " + parameterFields.size() + " arguments, got " + values.size() + " arguments");
 		}
 
 		DefineFunctionEvaluationContext functionContext = new DefineFunctionEvaluationContext(defineFunction, context);
@@ -129,11 +105,6 @@ public class ExpressionUtil {
 			ParameterField parameterField = parameterFields.get(i);
 			FieldValue value = values.get(i);
 
-			String name = parameterField.getName();
-			if(name == null){
-				throw new MissingAttributeException(parameterField, PMMLAttributes.PARAMETERFIELD_NAME);
-			} // End if
-
 			if(FieldValueUtil.isMissing(value)){
 				value = FieldValues.MISSING_VALUE;
 			} else
@@ -141,6 +112,8 @@ public class ExpressionUtil {
 			{
 				value = value.cast(parameterField);
 			}
+
+			String name = parameterField.requireName();
 
 			functionContext.declare(name, value);
 		}
@@ -249,7 +222,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateFieldRef(FieldRef fieldRef, EvaluationContext context){
-		FieldValue value = context.evaluate(ensureField(fieldRef));
+		FieldValue value = context.evaluate(fieldRef.requireField());
 
 		if(FieldValueUtil.isMissing(value)){
 			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, fieldRef.getMapMissingTo());
@@ -260,7 +233,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateNormContinuous(NormContinuous normContinuous, EvaluationContext context){
-		FieldValue value = context.evaluate(ensureField(normContinuous));
+		FieldValue value = context.evaluate(normContinuous.requireField());
 
 		if(FieldValueUtil.isMissing(value)){
 			return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, normContinuous.getMapMissingTo());
@@ -271,7 +244,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateNormDiscrete(NormDiscrete normDiscrete, EvaluationContext context){
-		FieldValue value = context.evaluate(ensureField(normDiscrete));
+		FieldValue value = context.evaluate(normDiscrete.requireField());
 
 		if(FieldValueUtil.isMissing(value)){
 			return FieldValueUtil.create(TypeInfos.CATEGORICAL_DOUBLE, normDiscrete.getMapMissingTo());
@@ -292,7 +265,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateDiscretize(Discretize discretize, EvaluationContext context){
-		FieldValue value = context.evaluate(ensureField(discretize));
+		FieldValue value = context.evaluate(discretize.requireField());
 
 		if(FieldValueUtil.isMissing(value)){
 			return FieldValueUtil.create(OpType.CATEGORICAL, discretize.getDataType(DataType.STRING), discretize.getMapMissingTo());
@@ -307,15 +280,8 @@ public class ExpressionUtil {
 
 		List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
 		for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
-			String fieldName = fieldColumnPair.getField();
-			if(fieldName == null){
-				throw new MissingAttributeException(fieldColumnPair, PMMLAttributes.FIELDCOLUMNPAIR_FIELD);
-			}
-
-			String column = fieldColumnPair.getColumn();
-			if(column == null){
-				throw new MissingAttributeException(fieldColumnPair, PMMLAttributes.FIELDCOLUMNPAIR_COLUMN);
-			}
+			String fieldName = fieldColumnPair.requireField();
+			String column = fieldColumnPair.requireColumn();
 
 			FieldValue value = context.evaluate(fieldName);
 			if(FieldValueUtil.isMissing(value)){
@@ -330,11 +296,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateTextIndex(TextIndex textIndex, EvaluationContext context){
-		String textName = textIndex.getTextField();
-		if(textName == null){
-			throw new MissingAttributeException(textIndex, PMMLAttributes.TEXTINDEX_TEXTFIELD);
-		}
-
+		String textName = textIndex.requireTextField();
 		FieldValue textValue = context.evaluate(textName);
 
 		FieldValue termValue = ExpressionUtil.evaluateExpressionContainer(textIndex, context);
@@ -370,16 +332,12 @@ public class ExpressionUtil {
 	public FieldValue evaluateApply(Apply apply, EvaluationContext context){
 		String mapMissingTo = apply.getMapMissingTo();
 
+		String function = apply.requireFunction();
 		List<Expression> expressions = apply.getExpressions();
 
 		List<FieldValue> values = new ArrayList<>(expressions.size());
 
 		Iterator<Expression> arguments = expressions.iterator();
-
-		String function = apply.getFunction();
-		if(function == null){
-			throw new MissingAttributeException(apply, PMMLAttributes.APPLY_FUNCTION);
-		}
 
 		condition:
 		if((PMMLFunctions.IF).equals(function)){
@@ -519,7 +477,7 @@ public class ExpressionUtil {
 			return evaluate(defineFunction, values, context);
 		}
 
-		throw new EvaluationException("Function " + PMMLException.formatKey(name) + " is not defined");
+		throw new EvaluationException("Function " + EvaluationException.formatKey(name) + " is not defined");
 	}
 
 	@SuppressWarnings (
@@ -527,7 +485,7 @@ public class ExpressionUtil {
 	)
 	static
 	public FieldValue evaluateAggregate(Aggregate aggregate, EvaluationContext context){
-		FieldValue value = context.evaluate(ensureField(aggregate));
+		FieldValue value = context.evaluate(aggregate.requireField());
 
 		if(FieldValueUtil.isMissing(value)){
 			return FieldValues.MISSING_VALUE;
@@ -557,11 +515,7 @@ public class ExpressionUtil {
 			values.add(FieldValueUtil.create(value, object));
 		}
 
-		Aggregate.Function function = aggregate.getFunction();
-		if(function == null){
-			throw new MissingAttributeException(aggregate, PMMLAttributes.AGGREGATE_FUNCTION);
-		}
-
+		Aggregate.Function function = aggregate.requireFunction();
 		switch(function){
 			case COUNT:
 				return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, values.size());

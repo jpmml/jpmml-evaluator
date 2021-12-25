@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Value;
 
 public class TargetFieldUtil {
@@ -38,10 +37,7 @@ public class TargetFieldUtil {
 		} // End if
 
 		if(dataField.hasValues()){
-			DataType dataType = dataField.getDataType();
-			if(dataType == null){
-				throw new MissingAttributeException(dataField, PMMLAttributes.DATAFIELD_DATATYPE);
-			}
+			DataType dataType = dataField.requireDataType();
 
 			value = TypeUtil.parseOrCast(dataType, value);
 
@@ -49,10 +45,7 @@ public class TargetFieldUtil {
 			for(int i = 0, max = pmmlValues.size(); i < max; i++){
 				Value pmmlValue = pmmlValues.get(i);
 
-				Object simpleValue = pmmlValue.getValue();
-				if(simpleValue == null){
-					throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
-				}
+				Object simpleValue = pmmlValue.requireValue();
 
 				Value.Property property = pmmlValue.getProperty();
 				switch(property){

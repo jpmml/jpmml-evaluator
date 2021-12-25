@@ -23,6 +23,7 @@ import java.util.List;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.dmg.pmml.Entity;
+import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.XPathUtil;
 
 public class EntityUtil {

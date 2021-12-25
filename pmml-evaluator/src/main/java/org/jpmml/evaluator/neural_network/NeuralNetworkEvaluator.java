@@ -51,7 +51,6 @@ import org.dmg.pmml.neural_network.NeuralOutput;
 import org.dmg.pmml.neural_network.NeuralOutputs;
 import org.dmg.pmml.neural_network.Neuron;
 import org.dmg.pmml.neural_network.PMMLAttributes;
-import org.dmg.pmml.neural_network.PMMLElements;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
@@ -59,12 +58,6 @@ import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasEntityRegistry;
-import org.jpmml.evaluator.InvalidAttributeException;
-import org.jpmml.evaluator.InvalidElementException;
-import org.jpmml.evaluator.InvalidElementListException;
-import org.jpmml.evaluator.MisplacedElementException;
-import org.jpmml.evaluator.MissingAttributeException;
-import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.NormalizationUtil;
@@ -76,7 +69,11 @@ import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
-import org.jpmml.model.XPathUtil;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.InvalidElementListException;
+import org.jpmml.model.MisplacedElementException;
+import org.jpmml.model.MissingAttributeException;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<NeuralEntity> {
@@ -96,33 +93,18 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	public NeuralNetworkEvaluator(PMML pmml, NeuralNetwork neuralNetwork){
 		super(pmml, neuralNetwork);
 
-		NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
-		if(neuralInputs == null){
-			throw new MissingElementException(neuralNetwork, PMMLElements.NEURALNETWORK_NEURALINPUTS);
-		} // End if
+		@SuppressWarnings("unused")
+		List<NeuralInput> neuralInputs = (neuralNetwork.requireNeuralInputs()).requireNeuralInputs();
 
-		if(!neuralInputs.hasNeuralInputs()){
-			throw new MissingElementException(neuralInputs, PMMLElements.NEURALINPUTS_NEURALINPUTS);
-		} // End if
+		@SuppressWarnings("unused")
+		List<NeuralLayer> neuralLayers = neuralNetwork.requireNeuralLayers();
 
-		if(!neuralNetwork.hasNeuralLayers()){
-			throw new MissingElementException(neuralNetwork, PMMLElements.NEURALNETWORK_NEURALLAYERS);
-		} // End if
+		List<NeuralEntity> neuralEntities = collectNeuralEntities(neuralNetwork);
 
-		{
-			List<NeuralEntity> neuralEntities = collectNeuralEntities(neuralNetwork);
+		this.entityRegistry = ImmutableBiMap.copyOf(EntityUtil.buildBiMap(neuralEntities));
 
-			this.entityRegistry = ImmutableBiMap.copyOf(EntityUtil.buildBiMap(neuralEntities));
-		}
-
-		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
-		if(neuralOutputs == null){
-			throw new MissingElementException(neuralNetwork, PMMLElements.NEURALNETWORK_NEURALOUTPUTS);
-		} // End if
-
-		if(!neuralOutputs.hasNeuralOutputs()){
-			throw new MissingElementException(neuralOutputs, PMMLElements.NEURALOUTPUTS_NEURALOUTPUTS);
-		}
+		@SuppressWarnings("unused")
+		List<NeuralOutput> neuralOutputs = (neuralNetwork.requireNeuralOutputs()).requireNeuralOutputs();
 	}
 
 	@Override
@@ -177,10 +159,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 			NeuralOutput neuralOutput = neuralOutputs.get(0);
 
-			String id = neuralOutput.getOutputNeuron();
-			if(id == null){
-				throw new MissingAttributeException(neuralOutput, PMMLAttributes.NEURALOUTPUT_OUTPUTNEURON);
-			}
+			String id = neuralOutput.requireOutputNeuron();
 
 			Value<V> value = values.get(id);
 			if(value == null){
@@ -266,10 +245,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			};
 
 			for(NeuralOutput neuralOutput : neuralOutputs){
-				String id = neuralOutput.getOutputNeuron();
-				if(id == null){
-					throw new MissingAttributeException(neuralOutput, PMMLAttributes.NEURALOUTPUT_OUTPUTNEURON);
-				}
+				String id = neuralOutput.requireOutputNeuron();
 
 				NeuralEntity entity = entityRegistry.get(id);
 				if(entity == null){
@@ -286,10 +262,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				if(expression instanceof NormDiscrete){
 					NormDiscrete normDiscrete = (NormDiscrete)expression;
 
-					Object targetCategory = normDiscrete.getValue();
-					if(targetCategory == null){
-						throw new MissingAttributeException(normDiscrete, org.dmg.pmml.PMMLAttributes.NORMDISCRETE_VALUE);
-					}
+					Object targetCategory = normDiscrete.requireValue();
 
 					result.put(entity, targetCategory, value);
 				} else
@@ -314,20 +287,14 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 	}
 
 	private Expression getOutputExpression(NeuralOutput neuralOutput){
-		DerivedField derivedField = neuralOutput.getDerivedField();
-		if(derivedField == null){
-			throw new MissingElementException(neuralOutput, PMMLElements.NEURALOUTPUT_DERIVEDFIELD);
-		}
+		DerivedField derivedField = neuralOutput.requireDerivedField();
 
-		Expression expression = ExpressionUtil.ensureExpression(derivedField);
+		Expression expression = derivedField.requireExpression();
 
 		if(expression instanceof FieldRef){
 			FieldRef fieldRef = (FieldRef)expression;
 
-			String fieldName = fieldRef.getField();
-			if(fieldName == null){
-				throw new MissingAttributeException(fieldRef, org.dmg.pmml.PMMLAttributes.FIELDREF_FIELD);
-			}
+			String fieldName = fieldRef.requireField();
 
 			Field<?> field = resolveField(fieldName);
 			if(field == null){
@@ -341,7 +308,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			if(field instanceof DerivedField){
 				DerivedField targetDerivedField = (DerivedField)field;
 
-				Expression targetExpression = ExpressionUtil.ensureExpression(targetDerivedField);
+				Expression targetExpression = targetDerivedField.requireExpression();
 
 				return targetExpression;
 			} else
@@ -361,12 +328,9 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		ValueMap<String, V> result = new ValueMap<>(2 * entityRegistry.size());
 
-		NeuralInputs neuralInputs = neuralNetwork.getNeuralInputs();
+		NeuralInputs neuralInputs = neuralNetwork.requireNeuralInputs();
 		for(NeuralInput neuralInput : neuralInputs){
-			DerivedField derivedField = neuralInput.getDerivedField();
-			if(derivedField == null){
-				throw new MissingElementException(neuralInput, PMMLElements.NEURALINPUT_DERIVEDFIELD);
-			}
+			DerivedField derivedField = neuralInput.requireDerivedField();
 
 			FieldValue value = ExpressionUtil.evaluateTypedExpressionContainer(derivedField, context);
 			if(FieldValueUtil.isMissing(value)){
@@ -380,7 +344,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		List<Value<V>> outputs = new ArrayList<>();
 
-		List<NeuralLayer> neuralLayers = neuralNetwork.getNeuralLayers();
+		List<NeuralLayer> neuralLayers = neuralNetwork.requireNeuralLayers();
 		for(NeuralLayer neuralLayer : neuralLayers){
 			outputs.clear();
 
@@ -437,15 +401,8 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				for(int j = 0; j < connections.size(); j++){
 					Connection connection = connections.get(j);
 
-					String id = connection.getFrom();
-					if(id == null){
-						throw new MissingAttributeException(connection, PMMLAttributes.CONNECTION_FROM);
-					}
-
-					Number weight = connection.getWeight();
-					if(weight == null){
-						throw new MissingAttributeException(connection, PMMLAttributes.CONNECTION_WEIGHT);
-					}
+					String id = connection.requireFrom();
+					Number weight = connection.requireWeight();
 
 					Value<V> input = result.get(id);
 					if(input == null){
@@ -576,7 +533,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		ListMultimap<String, NeuralOutput> result = ArrayListMultimap.create();
 
-		NeuralOutputs neuralOutputs = neuralNetwork.getNeuralOutputs();
+		NeuralOutputs neuralOutputs = neuralNetwork.requireNeuralOutputs();
 		for(NeuralOutput neuralOutput : neuralOutputs){
 			String fieldName;
 
@@ -585,10 +542,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			if(expression instanceof HasFieldReference){
 				HasFieldReference<?> hasFieldReference = (HasFieldReference<?>)expression;
 
-				fieldName = hasFieldReference.getField();
-				if(fieldName == null){
-					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement((Class)hasFieldReference.getClass()) + "@field"), expression);
-				}
+				fieldName = hasFieldReference.requireField();
 			} else
 
 			{

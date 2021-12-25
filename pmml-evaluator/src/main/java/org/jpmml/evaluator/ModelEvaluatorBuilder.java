@@ -30,6 +30,8 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.ResultFeature;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.MissingElementException;
 
 public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 
@@ -136,7 +138,7 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	protected void checkSchema(ModelEvaluator<?> modelEvaluator){
 		Model model = modelEvaluator.getModel();
 
-		MiningSchema miningSchema = model.getMiningSchema();
+		MiningSchema miningSchema = model.requireMiningSchema();
 
 		List<InputField> inputFields = modelEvaluator.getInputFields();
 		List<InputField> groupFields = Collections.emptyList();

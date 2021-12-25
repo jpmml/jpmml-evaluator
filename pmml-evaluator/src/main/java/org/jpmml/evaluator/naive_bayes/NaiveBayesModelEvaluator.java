@@ -60,16 +60,11 @@ import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.DiscretizationUtil;
 import org.jpmml.evaluator.DistributionUtil;
 import org.jpmml.evaluator.EvaluationContext;
-import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.Functions;
-import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.MapHolder;
-import org.jpmml.evaluator.MisplacedElementException;
-import org.jpmml.evaluator.MissingAttributeException;
-import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.NumberUtil;
 import org.jpmml.evaluator.PMMLUtil;
@@ -80,7 +75,9 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueUtil;
 import org.jpmml.evaluator.VerificationUtil;
-import org.jpmml.model.XPathUtil;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.MisplacedElementException;
+import org.jpmml.model.MissingElementException;
 
 public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
@@ -99,11 +96,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	public NaiveBayesModelEvaluator(PMML pmml, NaiveBayesModel naiveBayesModel){
 		super(pmml, naiveBayesModel);
 
-		BayesInputs bayesInputs = naiveBayesModel.getBayesInputs();
-		if(bayesInputs == null){
-			throw new MissingElementException(naiveBayesModel, PMMLElements.NAIVEBAYESMODEL_BAYESINPUTS);
-		} // End if
-
+		BayesInputs bayesInputs = naiveBayesModel.requireBayesInputs();
 		if(!bayesInputs.hasBayesInputs() && !bayesInputs.hasExtensions()){
 			throw new MissingElementException(bayesInputs, PMMLElements.BAYESINPUTS_BAYESINPUTS);
 		} else
@@ -114,19 +107,10 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 			this.fieldCountSums = ImmutableMap.copyOf(toImmutableMapMap(calculateFieldCountSums(this.bayesInputs)));
 		}
 
-		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
-		if(bayesOutput == null){
-			throw new MissingElementException(naiveBayesModel, PMMLElements.NAIVEBAYESMODEL_BAYESOUTPUT);
-		}
+		BayesOutput bayesOutput = naiveBayesModel.requireBayesOutput();
 
-		TargetValueCounts targetValueCounts = bayesOutput.getTargetValueCounts();
-		if(targetValueCounts == null){
-			throw new MissingElementException(bayesOutput, PMMLElements.BAYESOUTPUT_TARGETVALUECOUNTS);
-		} // End if
-
-		if(!targetValueCounts.hasTargetValueCounts()){
-			throw new MissingElementException(targetValueCounts, PMMLElements.TARGETVALUECOUNTS_TARGETVALUECOUNTS);
-		}
+		@SuppressWarnings("unused")
+		List<TargetValueCount> targetValueCounts = (bayesOutput.requireTargetValueCounts()).requireTargetValueCounts();
 	}
 
 	@Override
@@ -138,15 +122,11 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	protected <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 
-		BayesOutput bayesOutput = naiveBayesModel.getBayesOutput();
+		BayesOutput bayesOutput = naiveBayesModel.requireBayesOutput();
 
 		TargetField targetField = getTargetField();
 
-		String targetFieldName = bayesOutput.getField();
-		if(targetFieldName == null){
-			throw new MissingAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD);
-		} // End if
-
+		String targetFieldName = bayesOutput.getTargetField();
 		if(targetFieldName != null && !Objects.equals(targetField.getFieldName(), targetFieldName)){
 			throw new InvalidAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD, targetFieldName);
 		}
@@ -173,24 +153,18 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		};
 
 		{
-			TargetValueCounts targetValueCounts = getTargetValueCounts(bayesOutput);
+			TargetValueCounts targetValueCounts = bayesOutput.requireTargetValueCounts();
 
 			calculatePriorProbabilities(probabilities, targetValueCounts);
 		}
 
-		Number threshold = naiveBayesModel.getThreshold();
-		if(threshold == null){
-			throw new MissingAttributeException(naiveBayesModel, PMMLAttributes.NAIVEBAYESMODEL_THRESHOLD);
-		}
+		Number threshold = naiveBayesModel.requireThreshold();
 
 		Map<String, ? extends Map<?, Number>> fieldCountSums = getFieldCountSums();
 
 		List<BayesInput> bayesInputs = getBayesInputs();
 		for(BayesInput bayesInput : bayesInputs){
-			String fieldName = bayesInput.getField();
-			if(fieldName == null){
-				throw new MissingAttributeException(bayesInput, PMMLAttributes.BAYESINPUT_FIELD);
-			}
+			String fieldName = bayesInput.requireField();
 
 			FieldValue value = context.evaluate(fieldName);
 
@@ -232,7 +206,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	}
 
 	private FieldValue discretize(DerivedField derivedField, FieldValue value){
-		Expression expression = ExpressionUtil.ensureExpression(derivedField);
+		Expression expression = derivedField.requireExpression();
 
 		if(expression instanceof Discretize){
 			Discretize discretize = (Discretize)expression;
@@ -254,15 +228,8 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		Number x = value.asNumber();
 
 		for(TargetValueStat targetValueStat : targetValueStats){
-			Object targetCategory = targetValueStat.getValue();
-			if(targetCategory == null){
-				throw new MissingAttributeException(targetValueStat, PMMLAttributes.TARGETVALUESTAT_VALUE);
-			}
-
-			ContinuousDistribution distribution = targetValueStat.getContinuousDistribution();
-			if(distribution == null){
-				throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(targetValueStat.getClass()) + "/<ContinuousDistribution>"), targetValueStat);
-			} // End if
+			Object targetCategory = targetValueStat.requireValue();
+			ContinuousDistribution distribution = targetValueStat.requireContinuousDistribution();
 
 			Number probability;
 
@@ -287,15 +254,8 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	private void calculateDiscreteProbabilities(ProbabilityMap<Object, ?> probabilities, TargetValueCounts targetValueCounts, Number threshold, Map<?, Number> countSums){
 
 		for(TargetValueCount targetValueCount : targetValueCounts){
-			Object targetCategory = targetValueCount.getValue();
-			if(targetCategory == null){
-				throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_VALUE);
-			}
-
-			Number count = targetValueCount.getCount();
-			if(count == null){
-				throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_COUNT);
-			}
+			Object targetCategory = targetValueCount.requireValue();
+			Number count = targetValueCount.requireCount();
 
 			Number probability;
 
@@ -318,15 +278,8 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	private void calculatePriorProbabilities(ProbabilityMap<Object, ?> probabilities, TargetValueCounts targetValueCounts){
 
 		for(TargetValueCount targetValueCount : targetValueCounts){
-			Object targetCategory = targetValueCount.getValue();
-			if(targetCategory == null){
-				throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_VALUE);
-			}
-
-			Number count = targetValueCount.getCount();
-			if(count == null){
-				throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_COUNT);
-			}
+			Object targetCategory = targetValueCount.requireValue();
+			Number count = targetValueCount.requireCount();
 
 			Number probability = count;
 
@@ -347,7 +300,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		Map<String, Map<Object, Number>> result = new LinkedHashMap<>();
 
 		for(BayesInput bayesInput : bayesInputs){
-			String fieldName = bayesInput.getField();
+			String fieldName = bayesInput.requireField();
 
 			Map<Object, Number> countSums = new LinkedHashMap<>();
 
@@ -356,15 +309,8 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
 
 				for(TargetValueCount targetValueCount : targetValueCounts){
-					Object targetCategory = targetValueCount.getValue();
-					if(targetCategory == null){
-						throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_VALUE);
-					}
-
-					Number count = targetValueCount.getCount();
-					if(count == null){
-						throw new MissingAttributeException(targetValueCount, PMMLAttributes.TARGETVALUECOUNT_COUNT);
-					}
+					Object targetCategory = targetValueCount.requireValue();
+					Number count = targetValueCount.requireCount();
 
 					Number countSum = countSums.get(targetCategory);
 					if(countSum == null){
@@ -389,7 +335,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	private List<BayesInput> parseBayesInputs(BayesInputs bayesInputs){
 
 		if(!bayesInputs.hasExtensions()){
-			return bayesInputs.getBayesInputs();
+			return bayesInputs.requireBayesInputs();
 		}
 
 		List<BayesInput> result = new ArrayList<>(bayesInputs.getBayesInputs());
@@ -440,26 +386,15 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		List<PairCounts> pairCounts = bayesInput.getPairCounts();
 		for(PairCounts pairCount : pairCounts){
-			Object category = pairCount.getValue();
-			if(category == null){
-				throw new MissingAttributeException(pairCount, PMMLAttributes.PAIRCOUNTS_VALUE);
-			} // End if
+			Object category = pairCount.requireValue();
 
 			if(value.equalsValue(category)){
-				TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
-				if(targetValueCounts == null){
-					throw new MissingElementException(pairCount, PMMLElements.PAIRCOUNTS_TARGETVALUECOUNTS);
-				}
+				TargetValueCounts targetValueCounts = pairCount.requireTargetValueCounts();
 
 				return targetValueCounts;
 			}
 		}
 
 		return null;
-	}
-
-	static
-	private TargetValueCounts getTargetValueCounts(BayesOutput bayesOutput){
-		return bayesOutput.getTargetValueCounts();
 	}
 }

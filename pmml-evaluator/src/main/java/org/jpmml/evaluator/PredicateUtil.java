@@ -29,18 +29,19 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
-import org.dmg.pmml.Array;
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.False;
 import org.dmg.pmml.HasPredicate;
 import org.dmg.pmml.PMMLAttributes;
-import org.dmg.pmml.PMMLElements;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.True;
-import org.jpmml.model.XPathUtil;
+import org.jpmml.model.InvalidElementListException;
+import org.jpmml.model.MisplacedAttributeException;
+import org.jpmml.model.MissingAttributeException;
+import org.jpmml.model.PMMLException;
 
 public class PredicateUtil {
 
@@ -48,18 +49,8 @@ public class PredicateUtil {
 	}
 
 	static
-	public <E extends PMMLObject & HasPredicate<E>> Predicate ensurePredicate(E hasPredicate){
-		Predicate predicate = hasPredicate.getPredicate();
-		if(predicate == null){
-			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(hasPredicate.getClass()) + "/<Predicate>"), hasPredicate);
-		}
-
-		return predicate;
-	}
-
-	static
 	public <E extends PMMLObject & HasPredicate<E>> Boolean evaluatePredicateContainer(E hasPredicate, EvaluationContext context){
-		return evaluate(ensurePredicate(hasPredicate), context);
+		return evaluate(hasPredicate.requirePredicate(), context);
 	}
 
 	/**
@@ -107,16 +98,9 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, EvaluationContext context){
-		String fieldName = simplePredicate.getField();
-		if(fieldName == null){
-			throw new MissingAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_FIELD);
-		}
+		String fieldName = simplePredicate.requireField();
 
-		SimplePredicate.Operator operator = simplePredicate.getOperator();
-		if(operator == null){
-			throw new MissingAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_OPERATOR);
-		}
-
+		SimplePredicate.Operator operator = simplePredicate.requireOperator();
 		switch(operator){
 			case IS_MISSING:
 			case IS_NOT_MISSING:
@@ -176,15 +160,7 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext context){
-		String fieldName = simpleSetPredicate.getField();
-		if(fieldName == null){
-			throw new MissingAttributeException(simpleSetPredicate, PMMLAttributes.SIMPLESETPREDICATE_FIELD);
-		}
-
-		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.getBooleanOperator();
-		if(booleanOperator == null){
-			throw new MissingAttributeException(simpleSetPredicate, PMMLAttributes.SIMPLESETPREDICATE_BOOLEANOPERATOR);
-		}
+		String fieldName = simpleSetPredicate.requireField();
 
 		FieldValue value = context.evaluate(fieldName);
 
@@ -192,11 +168,7 @@ public class PredicateUtil {
 			return null;
 		}
 
-		Array array = simpleSetPredicate.getArray();
-		if(array == null){
-			throw new MissingElementException(simpleSetPredicate, PMMLElements.SIMPLESETPREDICATE_ARRAY);
-		}
-
+		SimpleSetPredicate.BooleanOperator booleanOperator = simpleSetPredicate.requireBooleanOperator();
 		switch(booleanOperator){
 			case IS_IN:
 				return value.isIn(simpleSetPredicate);
@@ -216,16 +188,7 @@ public class PredicateUtil {
 
 	static
 	public CompoundPredicateResult evaluateCompoundPredicateInternal(CompoundPredicate compoundPredicate, EvaluationContext context){
-		CompoundPredicate.BooleanOperator booleanOperator = compoundPredicate.getBooleanOperator();
-		if(booleanOperator == null){
-			throw new MissingAttributeException(compoundPredicate, PMMLAttributes.COMPOUNDPREDICATE_BOOLEANOPERATOR);
-		} // End if
-
-		if(!compoundPredicate.hasPredicates()){
-			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(compoundPredicate.getClass()) + "/<Predicate>"), compoundPredicate);
-		}
-
-		List<Predicate> predicates = compoundPredicate.getPredicates();
+		List<Predicate> predicates = compoundPredicate.requirePredicates();
 		if(predicates.size() < 2){
 			throw new InvalidElementListException(predicates);
 		}
@@ -234,6 +197,7 @@ public class PredicateUtil {
 
 		Boolean result = evaluate(predicate, context);
 
+		CompoundPredicate.BooleanOperator booleanOperator = compoundPredicate.requireBooleanOperator();
 		switch(booleanOperator){
 			case AND:
 			case OR:

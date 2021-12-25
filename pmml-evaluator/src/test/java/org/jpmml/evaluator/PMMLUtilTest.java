@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.tree.TreeModel;
+import org.jpmml.model.MissingElementException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertSame;

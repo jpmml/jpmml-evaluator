@@ -67,7 +67,7 @@ public class MiningModelEvaluatorTest {
 
 	static
 	private PMML createPMML(){
-		Node root = new ComplexNode(True.INSTANCE)
+		Node root = new ComplexNode(null, True.INSTANCE)
 			.setScore(1d);
 
 		TreeModel treeModel = new TreeModel(MiningFunction.REGRESSION, new MiningSchema(), root);

@@ -45,8 +45,6 @@ import org.dmg.pmml.clustering.Cluster;
 import org.dmg.pmml.clustering.ClusteringField;
 import org.dmg.pmml.clustering.ClusteringModel;
 import org.dmg.pmml.clustering.MissingValueWeights;
-import org.dmg.pmml.clustering.PMMLAttributes;
-import org.dmg.pmml.clustering.PMMLElements;
 import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EntityUtil;
@@ -54,11 +52,7 @@ import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasEntityRegistry;
-import org.jpmml.evaluator.InvalidElementException;
 import org.jpmml.evaluator.MeasureUtil;
-import org.jpmml.evaluator.MisplacedElementException;
-import org.jpmml.evaluator.MissingAttributeException;
-import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TypeInfos;
@@ -67,6 +61,8 @@ import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.MisplacedElementException;
 
 public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> implements HasEntityRegistry<Cluster> {
 
@@ -90,12 +86,9 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			throw new MisplacedElementException(targets);
 		}
 
-		ComparisonMeasure comparisonMeasure = clusteringModel.getComparisonMeasure();
-		if(comparisonMeasure == null){
-			throw new MissingElementException(clusteringModel, PMMLElements.CLUSTERINGMODEL_COMPARISONMEASURE);
-		}
+		ComparisonMeasure comparisonMeasure = clusteringModel.requireComparisonMeasure();
 
-		ClusteringModel.ModelClass modelClass = clusteringModel.getModelClass();
+		ClusteringModel.ModelClass modelClass = clusteringModel.requireModelClass();
 		switch(modelClass){
 			case CENTER_BASED:
 				break;
@@ -108,42 +101,35 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 			throw new UnsupportedElementException(centerFields);
 		}
 
-		if(!clusteringModel.hasClusteringFields()){
-			throw new MissingElementException(clusteringModel, PMMLElements.CLUSTERINGMODEL_CLUSTERINGFIELDS);
-		} // End if
+		@SuppressWarnings("unused")
+		List<ClusteringField> clusteringFields = clusteringModel.requireClusteringFields();
 
-		if(!clusteringModel.hasClusters()){
-			throw new MissingElementException(clusteringModel, PMMLElements.CLUSTERINGMODEL_CLUSTERS);
+		List<Cluster> clusters = clusteringModel.requireClusters();
+
+		this.entityRegistry = ImmutableBiMap.copyOf(EntityUtil.buildBiMap(clusters));
+
+		Map<Cluster, List<FieldValue>> clusterValues = parseClusterValues(clusters);
+
+		Measure measure = comparisonMeasure.requireMeasure();
+
+		if(measure instanceof Distance){
+			this.clusterCentroids = ImmutableMap.copyOf(toImmutableListMap(clusterValues));
+		} else
+
+		if(measure instanceof Similarity){
+			Function<List<FieldValue>, BitSet> function = new Function<List<FieldValue>, BitSet>(){
+
+				@Override
+				public BitSet apply(List<FieldValue> values){
+					return MeasureUtil.toBitSet(values);
+				}
+			};
+
+			this.clusterCentroids = ImmutableMap.copyOf(Maps.transformValues(clusterValues, function));
 		} else
 
 		{
-			List<Cluster> clusters = clusteringModel.getClusters();
-
-			this.entityRegistry = ImmutableBiMap.copyOf(EntityUtil.buildBiMap(clusters));
-
-			Map<Cluster, List<FieldValue>> clusterValues = parseClusterValues(clusters);
-
-			Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
-
-			if(measure instanceof Distance){
-				this.clusterCentroids = ImmutableMap.copyOf(toImmutableListMap(clusterValues));
-			} else
-
-			if(measure instanceof Similarity){
-				Function<List<FieldValue>, BitSet> function = new Function<List<FieldValue>, BitSet>(){
-
-					@Override
-					public BitSet apply(List<FieldValue> values){
-						return MeasureUtil.toBitSet(values);
-					}
-				};
-
-				this.clusterCentroids = ImmutableMap.copyOf(Maps.transformValues(clusterValues, function));
-			} else
-
-			{
-				throw new UnsupportedElementException(measure);
-			}
+			throw new UnsupportedElementException(measure);
 		}
 	}
 
@@ -169,9 +155,9 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 	protected <V extends Number> Map<String, ClusterAffinityDistribution<V>> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
 		ClusteringModel clusteringModel = getModel();
 
-		ComparisonMeasure comparisonMeasure = clusteringModel.getComparisonMeasure();
+		ComparisonMeasure comparisonMeasure = clusteringModel.requireComparisonMeasure();
 
-		List<ClusteringField> clusteringFields = clusteringModel.getClusteringFields();
+		List<ClusteringField> clusteringFields = clusteringModel.requireClusteringFields();
 
 		List<FieldValue> values = new ArrayList<>(clusteringFields.size());
 
@@ -179,10 +165,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		for(int i = 0, max = clusteringFields.size(); i < max; i++){
 			ClusteringField clusteringField = clusteringFields.get(i);
 
-			String fieldName = clusteringField.getField();
-			if(fieldName == null){
-				throw new MissingAttributeException(clusteringField, PMMLAttributes.CLUSTERINGFIELD_FIELD);
-			}
+			String fieldName = clusteringField.requireField();
 
 			ClusteringField.CenterField centerField = clusteringField.getCenterField();
 			switch(centerField){
@@ -201,7 +184,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 
 		ClusterAffinityDistribution<V> result;
 
-		Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
+		Measure measure = comparisonMeasure.requireMeasure();
 
 		if(measure instanceof Similarity){
 			result = evaluateSimilarity(valueFactory, comparisonMeasure, clusteringFields, values);
@@ -224,7 +207,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 	private <V extends Number> ClusterAffinityDistribution<V> evaluateSimilarity(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
 		ClusteringModel clusteringModel = getModel();
 
-		List<Cluster> clusters = clusteringModel.getClusters();
+		List<Cluster> clusters = clusteringModel.requireClusters();
 
 		ClusterAffinityDistribution<V> result = createClusterAffinityDistribution(Classification.Type.SIMILARITY, clusters);
 
@@ -248,13 +231,13 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 	private <V extends Number> ClusterAffinityDistribution<V> evaluateDistance(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, List<ClusteringField> clusteringFields, List<FieldValue> values){
 		ClusteringModel clusteringModel = getModel();
 
-		List<Cluster> clusters = clusteringModel.getClusters();
+		List<Cluster> clusters = clusteringModel.requireClusters();
 
 		Value<V> adjustment;
 
 		MissingValueWeights missingValueWeights = clusteringModel.getMissingValueWeights();
 		if(missingValueWeights != null){
-			Array array = missingValueWeights.getArray();
+			Array array = missingValueWeights.requireArray();
 
 			List<? extends Number> adjustmentValues = ArrayUtil.asNumberList(array);
 			if(values.size() != adjustmentValues.size()){
@@ -306,10 +289,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		Map<Cluster, List<FieldValue>> result = new HashMap<>();
 
 		for(Cluster cluster : clusters){
-			Array array = cluster.getArray();
-			if(array == null){
-				throw new MissingElementException(cluster, PMMLElements.CLUSTER_ARRAY);
-			}
+			Array array = cluster.requireArray();
 
 			List<? extends Number> values = ArrayUtil.asNumberList(array);
 

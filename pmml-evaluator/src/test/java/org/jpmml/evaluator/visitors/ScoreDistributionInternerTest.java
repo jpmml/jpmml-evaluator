@@ -39,7 +39,7 @@ public class ScoreDistributionInternerTest {
 		Node leftChild = createNode(left);
 		Node rightChild = createNode(right);
 
-		Node root = new ComplexNode(True.INSTANCE)
+		Node root = new ComplexNode(null, True.INSTANCE)
 			.addNodes(leftChild, rightChild);
 
 		TreeModel treeModel = new TreeModel()
@@ -59,7 +59,7 @@ public class ScoreDistributionInternerTest {
 
 	static
 	private Node createNode(ScoreDistribution event){
-		ScoreDistribution noEvent = new ScoreDistribution("no-event", 1d - NumberUtil.asDouble(event.getRecordCount()));
+		ScoreDistribution noEvent = new ScoreDistribution("no-event", 1d - NumberUtil.asDouble(event.requireRecordCount()));
 
 		Node node = new ComplexNode()
 			.addScoreDistributions(event, noEvent);

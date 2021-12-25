@@ -50,6 +50,7 @@ import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.UnsupportedMarkupException;
+import org.jpmml.model.visitors.MarkupInspector;
 
 /**
  * <p>
@@ -78,7 +79,7 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 
 	@Override
 	public VisitorAction visit(Apply apply){
-		String function = apply.getFunction();
+		String function = apply.requireFunction();
 
 		switch(function){
 			case PMMLFunctions.ERF:

@@ -31,6 +31,7 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethod;
 import org.dmg.pmml.Value;
 import org.dmg.pmml.Value.Property;
+import org.jpmml.model.InvalidMarkupException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -44,7 +45,7 @@ public class InputFieldUtilTest {
 	public void isDefault(){
 		DataField dataField = new DataField("x", OpType.CONTINUOUS, DataType.DOUBLE);
 
-		MiningField miningField = new MiningField(dataField.getName());
+		MiningField miningField = new MiningField(dataField);
 
 		assertTrue(InputFieldUtil.isDefault(dataField, miningField));
 
@@ -57,7 +58,7 @@ public class InputFieldUtilTest {
 	public void prepareContinuousInputValue(){
 		DataField dataField = new DataField("x", OpType.CONTINUOUS, DataType.DOUBLE);
 
-		MiningField miningField = new MiningField(dataField.getName());
+		MiningField miningField = new MiningField(dataField);
 
 		assertEquals(1d, prepare(dataField, miningField, "1"));
 		assertEquals(1d, prepare(dataField, miningField, 1));
@@ -242,7 +243,7 @@ public class InputFieldUtilTest {
 	public void prepareCategoricalInputValue(){
 		DataField dataField = new DataField("x", OpType.CATEGORICAL, DataType.INTEGER);
 
-		MiningField miningField = new MiningField(dataField.getName());
+		MiningField miningField = new MiningField(dataField);
 
 		assertEquals(1, prepare(dataField, miningField, "1"));
 		assertEquals(1, prepare(dataField, miningField, 1));

@@ -37,6 +37,6 @@ public class DuplicateFieldException extends EvaluationException {
 
 	static
 	private String formatMessage(String name){
-		return "Field " + formatKey(name) + " has already been defined";
+		return "Field " + EvaluationException.formatKey(name) + " has already been defined";
 	}
 }

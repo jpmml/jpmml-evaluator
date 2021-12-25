@@ -29,14 +29,12 @@ import org.dmg.pmml.HasDerivedFields;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.OutputField;
-import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.TransformationDictionary;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.general_regression.BaseCumHazardTables;
 import org.dmg.pmml.general_regression.GeneralRegressionModel;
 import org.dmg.pmml.naive_bayes.BayesInput;
 import org.dmg.pmml.naive_bayes.BayesInputs;
-import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.RichDataField;
 import org.jpmml.evaluator.RichDerivedField;
 import org.jpmml.evaluator.RichOutputField;
@@ -54,20 +52,13 @@ public class MapHolderParser extends AbstractParser {
 			for(ListIterator<BayesInput> it = content.listIterator(); it.hasNext(); ){
 				BayesInput bayesInput = it.next();
 
-				String fieldName = bayesInput.getField();
-				if(fieldName == null){
-					throw new MissingAttributeException(bayesInput, org.dmg.pmml.naive_bayes.PMMLAttributes.BAYESINPUT_FIELD);
-				}
+				String fieldName = bayesInput.requireField();
 
 				DataType dataType;
 
 				DerivedField derivedField = bayesInput.getDerivedField();
 				if(derivedField != null){
-					dataType = derivedField.getDataType();
-
-					if(dataType == null){
-						throw new MissingAttributeException(derivedField, PMMLAttributes.DERIVEDFIELD_DATATYPE);
-					}
+					dataType = derivedField.requireDataType();
 				} else
 
 				{

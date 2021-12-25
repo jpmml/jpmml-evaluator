@@ -30,14 +30,14 @@ import org.dmg.pmml.ComparisonMeasure;
 import org.dmg.pmml.Distance;
 import org.dmg.pmml.Euclidean;
 import org.dmg.pmml.Jaccard;
-import org.dmg.pmml.Measure;
 import org.dmg.pmml.Minkowski;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Similarity;
 import org.dmg.pmml.SimpleMatching;
 import org.dmg.pmml.SquaredEuclidean;
 import org.dmg.pmml.Tanimoto;
-import org.jpmml.model.XPathUtil;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.InvalidElementException;
 
 public class MeasureUtil {
 
@@ -45,18 +45,8 @@ public class MeasureUtil {
 	}
 
 	static
-	public Measure ensureMeasure(ComparisonMeasure comparisonMeasure){
-		Measure measure = comparisonMeasure.getMeasure();
-		if(measure == null){
-			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(comparisonMeasure.getClass()) + "/<Measure>"), comparisonMeasure);
-		}
-
-		return measure;
-	}
-
-	static
 	public <V extends Number> Value<V> evaluateSimilarity(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, List<? extends ComparisonField<?>> comparisonFields, BitSet flags, BitSet referenceFlags){
-		Similarity measure = TypeUtil.cast(Similarity.class, comparisonMeasure.getMeasure());
+		Similarity measure = TypeUtil.cast(Similarity.class, comparisonMeasure.requireMeasure());
 
 		int a11 = 0;
 		int a10 = 0;
@@ -111,25 +101,10 @@ public class MeasureUtil {
 		if(measure instanceof BinarySimilarity){
 			BinarySimilarity binarySimilarity = (BinarySimilarity)measure;
 
-			Number c00 = binarySimilarity.getC00Parameter();
-			if(c00 == null){
-				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_C00PARAMETER);
-			}
-
-			Number c01 = binarySimilarity.getC01Parameter();
-			if(c01 == null){
-				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_C01PARAMETER);
-			}
-
-			Number c10 = binarySimilarity.getC10Parameter();
-			if(c10 == null){
-				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_C10PARAMETER);
-			}
-
-			Number c11 = binarySimilarity.getC11Parameter();
-			if(c11 == null){
-				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_C11PARAMETER);
-			}
+			Number c00 = binarySimilarity.requireC00Parameter();
+			Number c01 = binarySimilarity.requireC01Parameter();
+			Number c10 = binarySimilarity.requireC10Parameter();
+			Number c11 = binarySimilarity.requireC11Parameter();
 
 			numerator
 				.add(c11, a11)
@@ -137,25 +112,10 @@ public class MeasureUtil {
 				.add(c01, a01)
 				.add(c00, a00);
 
-			Number d00 = binarySimilarity.getD00Parameter();
-			if(d00 == null){
-				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_D00PARAMETER);
-			}
-
-			Number d01 = binarySimilarity.getD01Parameter();
-			if(d01 == null){
-				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_D01PARAMETER);
-			}
-
-			Number d10 = binarySimilarity.getD10Parameter();
-			if(d10 == null){
-				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_D10PARAMETER);
-			}
-
-			Number d11 = binarySimilarity.getD11Parameter();
-			if(d11 == null){
-				throw new MissingAttributeException(binarySimilarity, PMMLAttributes.BINARYSIMILARITY_D11PARAMETER);
-			}
+			Number d00 = binarySimilarity.requireD00Parameter();
+			Number d01 = binarySimilarity.requireD01Parameter();
+			Number d10 = binarySimilarity.requireD10Parameter();
+			Number d11 = binarySimilarity.requireD11Parameter();
 
 			denominator
 				.add(d11, a11)
@@ -191,7 +151,7 @@ public class MeasureUtil {
 			} else
 
 			{
-				throw new EvaluationException("Expected " + PMMLException.formatValue(Boolean.FALSE) + " or " + PMMLException.formatValue(Boolean.TRUE) + ", got " + PMMLException.formatValue(value));
+				throw new EvaluationException("Expected " + EvaluationException.formatValue(Boolean.FALSE) + " or " + EvaluationException.formatValue(Boolean.TRUE) + ", got " + EvaluationException.formatValue(value));
 			}
 		}
 
@@ -200,7 +160,7 @@ public class MeasureUtil {
 
 	static
 	public <V extends Number> Value<V> evaluateDistance(ValueFactory<V> valueFactory, ComparisonMeasure comparisonMeasure, List<? extends ComparisonField<?>> comparisonFields, List<FieldValue> values, List<FieldValue> referenceValues, Value<V> adjustment){
-		Distance measure = TypeUtil.cast(Distance.class, comparisonMeasure.getMeasure());
+		Distance measure = TypeUtil.cast(Distance.class, comparisonMeasure.requireMeasure());
 
 		Number innerPower;
 		Number outerPower;
@@ -221,11 +181,7 @@ public class MeasureUtil {
 		if(measure instanceof Minkowski){
 			Minkowski minkowski = (Minkowski)measure;
 
-			Number p = minkowski.getPParameter();
-			if(p == null){
-				throw new MissingAttributeException(minkowski, PMMLAttributes.MINKOWSKI_PPARAMETER);
-			} // End if
-
+			Number p = minkowski.requirePParameter();
 			if(p.doubleValue() < 0d){
 				throw new InvalidAttributeException(minkowski, PMMLAttributes.MINKOWSKI_PPARAMETER, p);
 			}

@@ -47,10 +47,11 @@ import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.ModelVerification;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.PMMLElements;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.InvalidElementException;
 
 /**
  * @see ModelEvaluatorBuilder
@@ -260,7 +261,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		boolean acceptable = VerificationUtil.acceptable(expected, actual, precision.doubleValue(), zeroThreshold.doubleValue());
 		if(!acceptable){
-			throw new EvaluationException("Values " + PMMLException.formatValue(expected) + " and " + PMMLException.formatValue(actual) + " do not match");
+			throw new EvaluationException("Values " + EvaluationException.formatValue(expected) + " and " + EvaluationException.formatValue(actual) + " do not match");
 		}
 	}
 
@@ -439,7 +440,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		Map<String, ?> predictions;
 
-		MiningFunction miningFunction = model.getMiningFunction();
+		MiningFunction miningFunction = model.requireMiningFunction();
 		switch(miningFunction){
 			case REGRESSION:
 				predictions = evaluateRegression(valueFactory, context);
@@ -500,7 +501,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	private <V extends Number> Map<String, ?> evaluateDefault(){
 		Model model = getModel();
 
-		MiningFunction miningFunction = model.getMiningFunction();
+		MiningFunction miningFunction = model.requireMiningFunction();
 
 		throw new InvalidAttributeException(model, miningFunction);
 	}
@@ -658,19 +659,12 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	private VerificationBatch parseModelVerification(ModelVerification modelVerification){
 		VerificationBatch result = new VerificationBatch();
 
-		VerificationFields verificationFields = modelVerification.getVerificationFields();
-		if(verificationFields == null){
-			throw new MissingElementException(modelVerification, PMMLElements.MODELVERIFICATION_VERIFICATIONFIELDS);
-		}
-
+		VerificationFields verificationFields = modelVerification.requireVerificationFields();
 		for(VerificationField verificationField : verificationFields){
-			result.put(verificationField.getField(), verificationField);
+			result.put(verificationField.requireField(), verificationField);
 		}
 
-		InlineTable inlineTable = modelVerification.getInlineTable();
-		if(inlineTable == null){
-			throw new MissingElementException(modelVerification, PMMLElements.MODELVERIFICATION_INLINETABLE);
-		}
+		InlineTable inlineTable = modelVerification.requireInlineTable();
 
 		Table<Integer, String, Object> table = InlineTableUtil.getContent(inlineTable);
 
@@ -683,7 +677,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			Map<String, Object> record = new LinkedHashMap<>();
 
 			for(VerificationField verificationField : verificationFields){
-				String fieldName = verificationField.getField();
+				String fieldName = verificationField.requireField();
 				String column = verificationField.getColumn();
 
 				if(column == null){

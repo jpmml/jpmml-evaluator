@@ -40,7 +40,7 @@ public class PredicateInterner extends PredicateFilterer implements Resettable {
 
 		@Override
 		public ElementKey createKey(SimplePredicate simplePredicate){
-			Object[] content = {simplePredicate.getField(), simplePredicate.getOperator(), simplePredicate.getValue()};
+			Object[] content = {simplePredicate.requireField(), simplePredicate.requireOperator(), simplePredicate.getValue()};
 
 			return new ElementKey(content);
 		}
@@ -50,9 +50,9 @@ public class PredicateInterner extends PredicateFilterer implements Resettable {
 
 		@Override
 		public ElementKey createKey(SimpleSetPredicate simpleSetPredicate){
-			Array array = simpleSetPredicate.getArray();
+			Array array = simpleSetPredicate.requireArray();
 
-			Object[] content = {simpleSetPredicate.getField(), simpleSetPredicate.getBooleanOperator(), ArrayUtil.getContent(array)};
+			Object[] content = {simpleSetPredicate.requireField(), simpleSetPredicate.requireBooleanOperator(), ArrayUtil.getContent(array)};
 
 			return new ElementKey(content);
 		}

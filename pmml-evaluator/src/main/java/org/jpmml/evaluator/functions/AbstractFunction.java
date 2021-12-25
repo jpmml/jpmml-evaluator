@@ -21,11 +21,11 @@ package org.jpmml.evaluator.functions;
 import java.util.List;
 import java.util.Objects;
 
+import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.Function;
 import org.jpmml.evaluator.FunctionException;
-import org.jpmml.evaluator.PMMLException;
 
 abstract
 public class AbstractFunction implements Function {
@@ -92,7 +92,7 @@ public class AbstractFunction implements Function {
 			} // End if
 
 			if(alias != null){
-				throw new FunctionException(this, "Missing " + PMMLException.formatKey(alias) + " value at position " + index);
+				throw new FunctionException(this, "Missing " + EvaluationException.formatKey(alias) + " value at position " + index);
 			} else
 
 			{

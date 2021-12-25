@@ -40,6 +40,8 @@ import org.dmg.pmml.NamespaceURIs;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Row;
 import org.dmg.pmml.TableLocator;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.MisplacedElementException;
 import org.w3c.dom.Element;
 
 public class InlineTableUtil {

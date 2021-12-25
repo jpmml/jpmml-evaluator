@@ -38,7 +38,6 @@ import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLAttributes;
-import org.dmg.pmml.PMMLElements;
 import org.dmg.pmml.TransformationDictionary;
 
 abstract
@@ -59,11 +58,7 @@ public class PMMLManager implements HasPMML, Serializable {
 	protected PMMLManager(PMML pmml){
 		setPMML(Objects.requireNonNull(pmml));
 
-		DataDictionary dataDictionary = pmml.getDataDictionary();
-		if(dataDictionary == null){
-			throw new MissingElementException(pmml, PMMLElements.PMML_DATADICTIONARY);
-		} // End if
-
+		DataDictionary dataDictionary = pmml.requireDataDictionary();
 		if(dataDictionary.hasDataFields()){
 			this.dataFields = ImmutableMap.copyOf(IndexableUtil.buildMap(dataDictionary.getDataFields(), PMMLAttributes.DATAFIELD_NAME));
 		}

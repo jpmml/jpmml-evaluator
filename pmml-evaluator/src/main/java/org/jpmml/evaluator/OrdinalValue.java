@@ -129,7 +129,7 @@ public class OrdinalValue extends DiscreteValue {
 		int rightIndex = ordering.indexOf(right);
 
 		if((leftIndex | rightIndex) < 0){
-			throw new EvaluationException("Values " + PMMLException.formatValue(left) + " and " + PMMLException.formatValue(right) + " cannot be ordered");
+			throw new EvaluationException("Values " + EvaluationException.formatValue(left) + " and " + EvaluationException.formatValue(right) + " cannot be ordered");
 		}
 
 		return (leftIndex - rightIndex);

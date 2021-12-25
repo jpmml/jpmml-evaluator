@@ -28,16 +28,15 @@
 package org.jpmml.evaluator;
 
 import org.dmg.pmml.PMMLObject;
+import org.jpmml.model.MarkupException;
 
 /**
  * <p>
  * Thrown to indicate that the class model object is not supported.
  * </p>
- *
- * @see InvalidMarkupException
  */
 abstract
-public class UnsupportedMarkupException extends PMMLException {
+public class UnsupportedMarkupException extends MarkupException {
 
 	public UnsupportedMarkupException(String message){
 		super(message);

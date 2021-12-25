@@ -84,7 +84,7 @@ public class LoadingModelEvaluatorBuilderTest {
 				try {
 					TreeModel treeModel = (TreeModel)Iterables.getOnlyElement(models);
 
-					MiningFunction miningFunction = treeModel.getMiningFunction();
+					MiningFunction miningFunction = treeModel.requireMiningFunction();
 					switch(miningFunction){
 						case REGRESSION:
 							break;
@@ -97,7 +97,7 @@ public class LoadingModelEvaluatorBuilderTest {
 						throw new IllegalArgumentException();
 					}
 
-					Predicate predicate = root.getPredicate();
+					Predicate predicate = root.requirePredicate();
 					if(!(predicate instanceof True)){
 						throw new IllegalArgumentException();
 					}
@@ -122,7 +122,7 @@ public class LoadingModelEvaluatorBuilderTest {
 					}
 				};
 
-				PMML javaPMML = new PMML(pmml.getVersion(), pmml.getHeader(), pmml.getDataDictionary())
+				PMML javaPMML = new PMML(pmml.requireVersion(), pmml.requireHeader(), pmml.requireDataDictionary())
 					.addModels(javaModel);
 
 				return javaPMML;

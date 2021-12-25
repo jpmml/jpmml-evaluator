@@ -36,8 +36,10 @@ import org.dmg.pmml.Version;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.evaluator.EvaluationContext;
-import org.jpmml.evaluator.InvalidAttributeException;
 import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.MissingAttributeException;
+import org.jpmml.model.MissingElementException;
 import org.jpmml.model.annotations.Added;
 import org.jpmml.model.annotations.CopyConstructor;
 import org.jpmml.model.annotations.Property;
@@ -110,7 +112,7 @@ public class JavaModel extends Model {
 	}
 
 	private Map<String, ?> evaluateDefault(){
-		MiningFunction miningFunction = getMiningFunction();
+		MiningFunction miningFunction = requireMiningFunction();
 
 		throw new InvalidAttributeException(this, miningFunction);
 	}
@@ -125,6 +127,16 @@ public class JavaModel extends Model {
 		this.modelName = modelName;
 
 		return this;
+	}
+
+	@Override
+	public MiningFunction requireMiningFunction(){
+
+		if(this.miningFunction == null){
+			throw new MissingAttributeException(MissingAttributeException.formatMessage("JavaModel@functionName"), this);
+		}
+
+		return this.miningFunction;
 	}
 
 	@Override
@@ -183,6 +195,16 @@ public class JavaModel extends Model {
 		this.mathContext = mathContext;
 
 		return this;
+	}
+
+	@Override
+	public MiningSchema requireMiningSchema(){
+
+		if(this.miningSchema == null){
+			throw new MissingElementException(MissingElementException.formatMessage("JavaModel/MiningSchema"), this);
+		}
+
+		return this.miningSchema;
 	}
 
 	@Override

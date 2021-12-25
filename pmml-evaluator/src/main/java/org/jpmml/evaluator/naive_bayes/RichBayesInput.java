@@ -27,13 +27,9 @@ import com.google.common.collect.ImmutableMap;
 import jakarta.xml.bind.annotation.XmlTransient;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.naive_bayes.BayesInput;
-import org.dmg.pmml.naive_bayes.PMMLAttributes;
-import org.dmg.pmml.naive_bayes.PMMLElements;
 import org.dmg.pmml.naive_bayes.PairCounts;
 import org.dmg.pmml.naive_bayes.TargetValueCounts;
 import org.jpmml.evaluator.MapHolder;
-import org.jpmml.evaluator.MissingAttributeException;
-import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.model.ReflectionUtil;
 
@@ -85,17 +81,11 @@ public class RichBayesInput extends BayesInput implements MapHolder<TargetValueC
 
 		List<PairCounts> pairCounts = getPairCounts();
 		for(PairCounts pairCount : pairCounts){
-			Object category = pairCount.getValue();
-			if(category == null){
-				throw new MissingAttributeException(pairCount, PMMLAttributes.PAIRCOUNTS_VALUE);
-			}
+			Object category = pairCount.requireValue();
 
 			Object value = TypeUtil.parseOrCast(dataType, category);
 
-			TargetValueCounts targetValueCounts = pairCount.getTargetValueCounts();
-			if(targetValueCounts == null){
-				throw new MissingElementException(pairCount, PMMLElements.PAIRCOUNTS_TARGETVALUECOUNTS);
-			}
+			TargetValueCounts targetValueCounts = pairCount.requireTargetValueCounts();
 
 			result.put(value, targetValueCounts);
 		}

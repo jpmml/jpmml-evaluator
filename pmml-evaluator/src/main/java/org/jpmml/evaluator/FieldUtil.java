@@ -36,9 +36,9 @@ import org.dmg.pmml.HasDiscreteDomain;
 import org.dmg.pmml.Interval;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Value;
+import org.jpmml.model.MissingAttributeException;
 import org.jpmml.model.XPathUtil;
 
 public class FieldUtil {
@@ -102,10 +102,7 @@ public class FieldUtil {
 			List<Value> pmmlValues = dataField.getValues();
 
 			for(Value pmmlValue : pmmlValues){
-				Object simpleValue = pmmlValue.getValue();
-				if(simpleValue == null){
-					throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
-				}
+				Object simpleValue = pmmlValue.requireValue();
 
 				Value.Property property = pmmlValue.getProperty();
 				switch(property){
@@ -134,10 +131,7 @@ public class FieldUtil {
 			List<Value> pmmlValues = field.getValues();
 
 			for(Value pmmlValue : pmmlValues){
-				Object simpleValue = pmmlValue.getValue();
-				if(simpleValue == null){
-					throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
-				}
+				Object simpleValue = pmmlValue.requireValue();
 
 				Value.Property property = pmmlValue.getProperty();
 				switch(property){

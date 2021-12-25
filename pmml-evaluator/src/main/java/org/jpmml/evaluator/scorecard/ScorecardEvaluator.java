@@ -30,15 +30,12 @@ import org.dmg.pmml.scorecard.Characteristic;
 import org.dmg.pmml.scorecard.Characteristics;
 import org.dmg.pmml.scorecard.ComplexPartialScore;
 import org.dmg.pmml.scorecard.PMMLAttributes;
-import org.dmg.pmml.scorecard.PMMLElements;
 import org.dmg.pmml.scorecard.Scorecard;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.Functions;
-import org.jpmml.evaluator.MissingAttributeException;
-import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.PMMLUtil;
@@ -52,6 +49,7 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.VoteAggregator;
+import org.jpmml.model.MissingAttributeException;
 
 public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
@@ -65,22 +63,10 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 	public ScorecardEvaluator(PMML pmml, Scorecard scorecard){
 		super(pmml, scorecard);
 
-		Characteristics characteristics = scorecard.getCharacteristics();
-		if(characteristics == null){
-			throw new MissingElementException(scorecard, PMMLElements.SCORECARD_CHARACTERISTICS);
-		} // End if
-
-		if(!characteristics.hasCharacteristics()){
-			throw new MissingElementException(characteristics, PMMLElements.CHARACTERISTICS_CHARACTERISTICS);
-		} else
-
-		{
-			for(Characteristic characteristic : characteristics){
-
-				if(!characteristic.hasAttributes()){
-					throw new MissingElementException(characteristic, PMMLElements.CHARACTERISTIC_ATTRIBUTES);
-				}
-			}
+		List<Characteristic> characteristics = (scorecard.requireCharacteristics()).requireCharacteristics();
+		for(Characteristic characteristic : characteristics){
+			@SuppressWarnings("unused")
+			List<Attribute> attributes = characteristic.requireAttributes();
 		}
 	}
 
@@ -107,7 +93,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			reasonCodePoints = new VoteAggregator<>(valueFactory);
 		}
 
-		Characteristics characteristics = scorecard.getCharacteristics();
+		Characteristics characteristics = scorecard.requireCharacteristics();
 		for(Characteristic characteristic : characteristics){
 			PartialScore partialScore = evaluateCharacteristic(characteristic, context);
 
@@ -161,7 +147,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 	static
 	private PartialScore evaluateCharacteristic(Characteristic characteristic, EvaluationContext context){
-		List<Attribute> attributes = characteristic.getAttributes();
+		List<Attribute> attributes = characteristic.requireAttributes();
 
 		for(Attribute attribute : attributes){
 			Boolean status = PredicateUtil.evaluatePredicateContainer(attribute, context);
@@ -196,10 +182,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 		} else
 
 		{
-			Number partialScore = attribute.getPartialScore();
-			if(partialScore == null){
-				throw new MissingAttributeException(attribute, PMMLAttributes.ATTRIBUTE_PARTIALSCORE);
-			}
+			Number partialScore = attribute.requirePartialScore();
 
 			return partialScore;
 		}

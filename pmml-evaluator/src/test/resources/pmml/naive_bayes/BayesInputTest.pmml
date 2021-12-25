@@ -12,12 +12,18 @@
 		<BayesInputs>
 			<Extension>
 				<BayesInput fieldName="x1">
-					<TargetValueStats/>
+					<TargetValueStats>
+						<TargetValueStat value="0"/>
+						<TargetValueStat value="1"/>
+					</TargetValueStats>
 				</BayesInput>
 			</Extension>
 			<BayesInput fieldName="x2">
 				<PairCounts>
-					<TargetValueCounts/>
+					<TargetValueCounts>
+						<TargetValueCount value="0" count="1"/>
+						<TargetValueCount value="1" count="10"/>
+					</TargetValueCounts>
 				</PairCounts>
 			</BayesInput>
 		</BayesInputs>

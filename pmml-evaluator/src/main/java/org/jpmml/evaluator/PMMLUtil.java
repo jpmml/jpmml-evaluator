@@ -24,6 +24,7 @@ import java.util.Objects;
 import com.google.common.base.Predicate;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
+import org.jpmml.model.MissingElementException;
 import org.jpmml.model.XPathUtil;
 
 public class PMMLUtil {

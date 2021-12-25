@@ -47,6 +47,11 @@ import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
 import org.jpmml.evaluator.mining.MiningModelUtil;
 import org.jpmml.evaluator.mining.SegmentResult;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.MisplacedAttributeException;
+import org.jpmml.model.MisplacedElementException;
+import org.jpmml.model.MissingAttributeException;
 
 public class OutputUtil {
 
@@ -172,9 +177,9 @@ public class OutputUtil {
 										break;
 									}
 
-									Segmentation segmentation = miningModel.getSegmentation();
+									Segmentation segmentation = miningModel.requireSegmentation();
 
-									SegmentResult segmentResult = MiningModelUtil.asSegmentResult(segmentation.getMultipleModelMethod(), predictions);
+									SegmentResult segmentResult = MiningModelUtil.asSegmentResult(segmentation.requireMultipleModelMethod(), predictions);
 									if(segmentResult != null){
 										targetValue = segmentResult.getTargetValue();
 
@@ -229,10 +234,7 @@ public class OutputUtil {
 				case DECISION:
 					{
 						if(segmentId != null){
-							Object name = outputField.getValue();
-							if(name == null){
-								throw new MissingAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_VALUE);
-							}
+							Object name = outputField.requireValue();
 
 							name = TypeUtil.format(name);
 
@@ -400,10 +402,7 @@ public class OutputUtil {
 					throw new UnsupportedAttributeException(outputField, resultFeature);
 			}
 
-			String name = outputField.getName();
-			if(name == null){
-				throw new MissingAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_NAME);
-			}
+			String name = outputField.requireName();
 
 			TypeInfo typeInfo = new TypeInfo(){
 
@@ -797,24 +796,24 @@ public class OutputUtil {
 
 				switch(this.rankBasis){
 					case CONFIDENCE:
-						leftValue = getConfidence(left);
-						rightValue = getConfidence(right);
+						leftValue = left.requireConfidence();
+						rightValue = right.requireConfidence();
 						break;
 					case SUPPORT:
-						leftValue = getSupport(left);
-						rightValue = getSupport(right);
+						leftValue = left.requireSupport();
+						rightValue = right.requireSupport();
 						break;
 					case LIFT:
-						leftValue = getLift(left);
-						rightValue = getLift(right);
+						leftValue = left.requireLift();
+						rightValue = right.requireLift();
 						break;
 					case LEVERAGE:
-						leftValue = getLeverage(left);
-						rightValue = getLeverage(right);
+						leftValue = left.requireLeverage();
+						rightValue = right.requireLeverage();
 						break;
 					case AFFINITY:
-						leftValue = getAffinity(left);
-						rightValue = getAffinity(right);
+						leftValue = left.requireAffinity();
+						rightValue = right.requireAffinity();
 						break;
 					default:
 						throw new UnsupportedAttributeException(outputField, this.rankBasis);
@@ -830,51 +829,6 @@ public class OutputUtil {
 					default:
 						throw new UnsupportedAttributeException(outputField, this.rankOrder);
 				}
-			}
-
-			private Number getConfidence(AssociationRule associationRule){
-				Number confidence = associationRule.getConfidence();
-				if(confidence == null){
-					throw new MissingAttributeException(associationRule, org.dmg.pmml.association.PMMLAttributes.ASSOCIATIONRULE_CONFIDENCE);
-				}
-
-				return confidence;
-			}
-
-			private Number getSupport(AssociationRule associationRule){
-				Number support = associationRule.getSupport();
-				if(support == null){
-					throw new MissingAttributeException(associationRule, org.dmg.pmml.association.PMMLAttributes.ASSOCIATIONRULE_SUPPORT);
-				}
-
-				return support;
-			}
-
-			private Number getLift(AssociationRule associationRule){
-				Number lift = associationRule.getLift();
-				if(lift == null){
-					throw new MissingAttributeException(associationRule, org.dmg.pmml.association.PMMLAttributes.ASSOCIATIONRULE_LIFT);
-				}
-
-				return lift;
-			}
-
-			private Number getLeverage(AssociationRule associationRule){
-				Number leverage = associationRule.getLeverage();
-				if(leverage == null){
-					throw new MissingAttributeException(associationRule, org.dmg.pmml.association.PMMLAttributes.ASSOCIATIONRULE_LEVERAGE);
-				}
-
-				return leverage;
-			}
-
-			private Number getAffinity(AssociationRule associationRule){
-				Number affinity = associationRule.getAffinity();
-				if(affinity == null){
-					throw new MissingAttributeException(associationRule, org.dmg.pmml.association.PMMLAttributes.ASSOCIATIONRULE_AFFINITY);
-				}
-
-				return affinity;
 			}
 		};
 
@@ -945,7 +899,7 @@ public class OutputUtil {
 		for(int i = 0, max = itemRefs.size(); i < max; i++){
 			ItemRef itemRef = itemRefs.get(i);
 
-			Item item = items.get(itemRef.getItemRef());
+			Item item = items.get(itemRef.requireItemRef());
 
 			result.add(item.getValue());
 		}

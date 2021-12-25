@@ -28,6 +28,7 @@ import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.tree.TreeModel;
+import org.jpmml.model.MissingMarkupException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -60,7 +61,7 @@ public class ModelManagerFactoryTest {
 			modelManager = modelManagerFactory.newModelManager(pmml, treeModel);
 
 			fail();
-		} catch(InvalidMarkupException ime){
+		} catch(MissingMarkupException ime){
 			// Ignored
 		}
 
@@ -98,7 +99,7 @@ public class ModelManagerFactoryTest {
 		public RegressorManager(PMML pmml, TreeModel treeModel){
 			super(pmml, treeModel);
 
-			MiningFunction miningFunction = treeModel.getMiningFunction();
+			MiningFunction miningFunction = treeModel.requireMiningFunction();
 			switch(miningFunction){
 				case REGRESSION:
 					break;
@@ -114,7 +115,7 @@ public class ModelManagerFactoryTest {
 		public ClassifierManager(PMML pmml, TreeModel treeModel){
 			super(pmml, treeModel);
 
-			MiningFunction miningFunction = treeModel.getMiningFunction();
+			MiningFunction miningFunction = treeModel.requireMiningFunction();
 			switch(miningFunction){
 				case CLASSIFICATION:
 					break;

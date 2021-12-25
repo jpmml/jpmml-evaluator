@@ -21,11 +21,9 @@ package org.jpmml.evaluator.rule_set;
 import java.util.Set;
 
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.rule_set.PMMLAttributes;
 import org.dmg.pmml.rule_set.SimpleRule;
 import org.jpmml.evaluator.EntityClassification;
 import org.jpmml.evaluator.HasConfidence;
-import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.Report;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.ValueMap;
@@ -42,10 +40,7 @@ public class SimpleRuleScoreDistribution<V extends Number> extends EntityClassif
 		SimpleRule simpleRule = getEntity();
 
 		if(simpleRule != null){
-			Object score = simpleRule.getScore();
-			if(score == null){
-				throw new MissingAttributeException(simpleRule, PMMLAttributes.SIMPLERULE_SCORE);
-			}
+			Object score = simpleRule.requireScore();
 
 			Object result = TypeUtil.parseOrCast(dataType, score);
 

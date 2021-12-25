@@ -51,11 +51,11 @@ public class TargetFieldTest {
 	public void getOpType(){
 		DataField dataField = new DataField("y", OpType.CONTINUOUS, DataType.DOUBLE);
 
-		MiningField miningField = new MiningField(dataField.getName())
+		MiningField miningField = new MiningField(dataField)
 			.setOpType(OpType.CATEGORICAL);
 
 		Target target = new Target()
-			.setField(dataField.getName())
+			.setTargetField(dataField.requireName())
 			.setOpType(OpType.CONTINUOUS);
 
 		TargetField targetField = new TargetField(dataField, null, null);

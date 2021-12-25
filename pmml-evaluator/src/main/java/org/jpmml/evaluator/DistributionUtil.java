@@ -24,6 +24,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.GaussianDistribution;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PoissonDistribution;
+import org.jpmml.model.InvalidAttributeException;
 
 public class DistributionUtil {
 
@@ -51,15 +52,8 @@ public class DistributionUtil {
 
 	static
 	public double probability(GaussianDistribution gaussianDistribution, Number x){
-		Number mean = gaussianDistribution.getMean();
-		if(mean == null){
-			throw new MissingAttributeException(gaussianDistribution, PMMLAttributes.GAUSSIANDISTRIBUTION_MEAN);
-		}
-
-		Number variance = gaussianDistribution.getVariance();
-		if(variance == null){
-			throw new MissingAttributeException(gaussianDistribution, PMMLAttributes.GAUSSIANDISTRIBUTION_VARIANCE);
-		} // End if
+		Number mean = gaussianDistribution.requireMean();
+		Number variance = gaussianDistribution.requireVariance();
 
 		if(variance.doubleValue() <= 0d){
 			throw new InvalidAttributeException(gaussianDistribution, PMMLAttributes.GAUSSIANDISTRIBUTION_VARIANCE, variance);
@@ -72,10 +66,7 @@ public class DistributionUtil {
 
 	static
 	public double probability(PoissonDistribution poissonDistribution, Number x){
-		Number mean = poissonDistribution.getMean();
-		if(mean == null){
-			throw new MissingAttributeException(poissonDistribution, PMMLAttributes.POISSONDISTRIBUTION_MEAN);
-		}
+		Number mean = poissonDistribution.requireMean();
 
 		org.apache.commons.math3.distribution.PoissonDistribution distribution = new org.apache.commons.math3.distribution.PoissonDistribution(null, mean.doubleValue(), org.apache.commons.math3.distribution.PoissonDistribution.DEFAULT_EPSILON, org.apache.commons.math3.distribution.PoissonDistribution.DEFAULT_MAX_ITERATIONS);
 

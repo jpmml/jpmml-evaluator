@@ -38,7 +38,7 @@ public class MiningFieldInterner extends AbstractVisitor {
 
 		@Override
 		public ElementKey createKey(MiningField miningField){
-			Object[] content = {miningField.getName()};
+			Object[] content = {miningField.requireName()};
 
 			return new ElementKey(content);
 		}

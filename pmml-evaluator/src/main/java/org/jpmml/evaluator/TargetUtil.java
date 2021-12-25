@@ -26,6 +26,9 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.InvalidElementListException;
+import org.jpmml.model.MissingAttributeException;
 
 public class TargetUtil {
 
@@ -160,10 +163,7 @@ public class TargetUtil {
 
 		List<TargetValue> targetValues = target.getTargetValues();
 		for(TargetValue targetValue : targetValues){
-			Object simpleValue = targetValue.getValue();
-			if(simpleValue == null){
-				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_VALUE);
-			} // End if
+			Object simpleValue = targetValue.requireValue();
 
 			if((value).equals(TypeUtil.parseOrCast(dataType, simpleValue))){
 				return targetValue;
@@ -214,10 +214,7 @@ public class TargetUtil {
 
 		List<TargetValue> targetValues = target.getTargetValues();
 		for(TargetValue targetValue : targetValues){
-			Object targetCategory = targetValue.getValue();
-			if(targetCategory == null){
-				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_VALUE);
-			}
+			Object targetCategory = targetValue.requireValue();
 
 			Number probability = targetValue.getPriorProbability();
 			if(probability == null){

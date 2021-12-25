@@ -26,7 +26,6 @@ import com.google.common.collect.ImmutableMap;
 import jakarta.xml.bind.annotation.XmlTransient;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Value;
 import org.jpmml.model.ReflectionUtil;
 
@@ -47,16 +46,6 @@ public class RichDataField extends DataField implements ValueStatusHolder {
 	}
 
 	@Override
-	public DataType getDataType(){
-		DataType dataType = super.getDataType();
-		if(dataType == null){
-			throw new MissingAttributeException(this, PMMLAttributes.DATAFIELD_DATATYPE);
-		}
-
-		return dataType;
-	}
-
-	@Override
 	public Map<?, Integer> getMap(){
 
 		if(this.valueMap == null){
@@ -72,7 +61,7 @@ public class RichDataField extends DataField implements ValueStatusHolder {
 	}
 
 	private Map<Object, Integer> parseValues(){
-		DataType dataType = getDataType();
+		DataType dataType = requireDataType();
 
 		Map<Object, Integer> result = new LinkedHashMap<>();
 
@@ -80,10 +69,7 @@ public class RichDataField extends DataField implements ValueStatusHolder {
 
 		List<Value> pmmlValues = getValues();
 		for(Value pmmlValue : pmmlValues){
-			Object objectValue = pmmlValue.getValue();
-			if(objectValue == null){
-				throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
-			}
+			Object objectValue = pmmlValue.requireValue();
 
 			Value.Property property = pmmlValue.getProperty();
 			switch(property){

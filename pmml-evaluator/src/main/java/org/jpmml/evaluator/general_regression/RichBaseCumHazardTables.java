@@ -28,9 +28,7 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.general_regression.BaseCumHazardTables;
 import org.dmg.pmml.general_regression.BaselineStratum;
-import org.dmg.pmml.general_regression.PMMLAttributes;
 import org.jpmml.evaluator.MapHolder;
-import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.model.ReflectionUtil;
 
@@ -82,10 +80,7 @@ public class RichBaseCumHazardTables extends BaseCumHazardTables implements MapH
 
 		List<BaselineStratum> baselineStrata = getBaselineStrata();
 		for(BaselineStratum baselineStratum : baselineStrata){
-			Object category = baselineStratum.getValue();
-			if(category == null){
-				throw new MissingAttributeException(baselineStratum, PMMLAttributes.BASELINESTRATUM_VALUE);
-			}
+			Object category = baselineStratum.requireValue();
 
 			Object value = TypeUtil.parseOrCast(dataType, category);
 

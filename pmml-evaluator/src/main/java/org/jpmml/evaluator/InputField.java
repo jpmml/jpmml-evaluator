@@ -28,6 +28,7 @@ import org.dmg.pmml.HasContinuousDomain;
 import org.dmg.pmml.HasDiscreteDomain;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
+import org.jpmml.model.InvalidMarkupException;
 
 public class InputField extends ModelField {
 
@@ -42,7 +43,7 @@ public class InputField extends ModelField {
 
 		setMiningField(Objects.requireNonNull(miningField));
 
-		if(!Objects.equals(field.getName(), miningField.getName())){
+		if(!Objects.equals(field.requireName(), miningField.requireName())){
 			throw new IllegalArgumentException();
 		}
 	}

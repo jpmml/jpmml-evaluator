@@ -39,6 +39,11 @@ class VariableField extends Field<VariableField> {
 	}
 
 	@Override
+	public String requireName(){
+		return getName();
+	}
+
+	@Override
 	public String getName(){
 		return this.name;
 	}

@@ -191,7 +191,7 @@ public class ExpressionUtilTest {
 			Arrays.asList("1", "one")
 		);
 
-		MapValues mapValues = new MapValues(NamespacePrefixes.JPMML_INLINETABLE + ":output", null, createInlineTable(rows, Arrays.asList(NamespacePrefixes.JPMML_INLINETABLE + ":input", NamespacePrefixes.JPMML_INLINETABLE + ":output")))
+		MapValues mapValues = new MapValues(NamespacePrefixes.JPMML_INLINETABLE + ":output", createInlineTable(rows, Arrays.asList(NamespacePrefixes.JPMML_INLINETABLE + ":input", NamespacePrefixes.JPMML_INLINETABLE + ":output")))
 			.addFieldColumnPairs(new FieldColumnPair("x", NamespacePrefixes.JPMML_INLINETABLE + ":input"));
 
 		assertEquals("zero", evaluate(mapValues, "x", "0"));
@@ -382,7 +382,7 @@ public class ExpressionUtilTest {
 
 		Expression expression = new Apply(PMMLFunctions.IF)
 			.addExpressions(new Apply(PMMLFunctions.ISMISSING)
-				.addExpressions(new FieldRef(parameterField.getName())))
+				.addExpressions(new FieldRef(parameterField)))
 			.addExpressions(new Constant("missing"), new Constant("not missing"));
 
 		DefineFunction defineFunction = new DefineFunction("format", OpType.CATEGORICAL, DataType.STRING, null, expression)
@@ -390,7 +390,7 @@ public class ExpressionUtilTest {
 
 		FieldRef fieldRef = new FieldRef("x");
 
-		Apply apply = new Apply(defineFunction.getName())
+		Apply apply = new Apply(defineFunction.requireName())
 			.addExpressions(fieldRef);
 
 		EvaluationContext context = new VirtualEvaluationContext(){
@@ -398,7 +398,7 @@ public class ExpressionUtilTest {
 			@Override
 			public DefineFunction getDefineFunction(String name){
 
-				if((name).equals(defineFunction.getName())){
+				if((name).equals(defineFunction.requireName())){
 					return defineFunction;
 				}
 

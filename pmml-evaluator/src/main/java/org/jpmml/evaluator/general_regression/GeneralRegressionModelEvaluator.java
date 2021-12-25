@@ -52,7 +52,6 @@ import org.dmg.pmml.general_regression.Category;
 import org.dmg.pmml.general_regression.GeneralRegressionModel;
 import org.dmg.pmml.general_regression.PCell;
 import org.dmg.pmml.general_regression.PMMLAttributes;
-import org.dmg.pmml.general_regression.PMMLElements;
 import org.dmg.pmml.general_regression.PPCell;
 import org.dmg.pmml.general_regression.PPMatrix;
 import org.dmg.pmml.general_regression.ParamMatrix;
@@ -65,13 +64,8 @@ import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.InvalidAttributeException;
-import org.jpmml.evaluator.InvalidElementException;
 import org.jpmml.evaluator.MapHolder;
 import org.jpmml.evaluator.MatrixUtil;
-import org.jpmml.evaluator.MisplacedAttributeException;
-import org.jpmml.evaluator.MissingAttributeException;
-import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.NumberUtil;
@@ -87,6 +81,10 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.ValueUtil;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.MisplacedAttributeException;
+import org.jpmml.model.MissingAttributeException;
 
 public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegressionModel> {
 
@@ -109,59 +107,42 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	public GeneralRegressionModelEvaluator(PMML pmml, GeneralRegressionModel generalRegressionModel){
 		super(pmml, generalRegressionModel);
 
-		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
-		if(modelType == null){
-			throw new MissingAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_MODELTYPE);
-		}
+		@SuppressWarnings("unused")
+		GeneralRegressionModel.ModelType modelType = generalRegressionModel.requireModelType();
 
 		BiMap<String, Predictor> factorRegistry = ImmutableBiMap.of();
 		BiMap<String, Predictor> covariateRegistry = ImmutableBiMap.of();
 
-		ParameterList parameterList = generalRegressionModel.getParameterList();
-		if(parameterList == null){
-			throw new MissingElementException(generalRegressionModel, PMMLElements.GENERALREGRESSIONMODEL_PARAMETERLIST);
-		} else
+		ParameterList parameterList = generalRegressionModel.requireParameterList();
 
-		{
-			this.parameterRegistry = ImmutableBiMap.copyOf(parseParameterRegistry(parameterList));
+		this.parameterRegistry = ImmutableBiMap.copyOf(parseParameterRegistry(parameterList));
 
-			PredictorList factorList = generalRegressionModel.getFactorList();
-			if(factorList != null && factorList.hasPredictors()){
-				factorRegistry = parsePredictorRegistry(factorList);
-			}
-
-			PredictorList covariateList = generalRegressionModel.getCovariateList();
-			if(covariateList != null && covariateList.hasPredictors()){
-				covariateRegistry = parsePredictorRegistry(covariateList);
-			}
+		PredictorList factorList = generalRegressionModel.getFactorList();
+		if(factorList != null && factorList.hasPredictors()){
+			factorRegistry = parsePredictorRegistry(factorList);
 		}
 
-		PPMatrix ppMatrix = generalRegressionModel.getPPMatrix();
-		if(ppMatrix == null){
-			throw new MissingElementException(generalRegressionModel, PMMLElements.GENERALREGRESSIONMODEL_PPMATRIX);
-		} else
-
-		{
-			// Cannot use Guava's ImmutableMap, because it is null-hostile
-			this.ppMatrixMap = Collections.unmodifiableMap(new LinkedHashMap<>(toImmutableMapMap(parsePPMatrix(ppMatrix, factorRegistry, covariateRegistry))));
+		PredictorList covariateList = generalRegressionModel.getCovariateList();
+		if(covariateList != null && covariateList.hasPredictors()){
+			covariateRegistry = parsePredictorRegistry(covariateList);
 		}
 
-		ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
-		if(paramMatrix == null){
-			throw new MissingElementException(generalRegressionModel, PMMLElements.GENERALREGRESSIONMODEL_PARAMMATRIX);
-		} else
+		PPMatrix ppMatrix = generalRegressionModel.requirePPMatrix();
 
-		{
-			// Cannot use Guava's ImmutableMap, because it is null-hostile
-			this.paramMatrixMap = Collections.unmodifiableMap(new LinkedHashMap<>(toImmutableListMap(parseParamMatrix(paramMatrix))));
-		}
+		// Cannot use Guava's ImmutableMap, because it is null-hostile
+		this.ppMatrixMap = Collections.unmodifiableMap(new LinkedHashMap<>(toImmutableMapMap(parsePPMatrix(ppMatrix, factorRegistry, covariateRegistry))));
+
+		ParamMatrix paramMatrix = generalRegressionModel.requireParamMatrix();
+
+		// Cannot use Guava's ImmutableMap, because it is null-hostile
+		this.paramMatrixMap = Collections.unmodifiableMap(new LinkedHashMap<>(toImmutableListMap(parseParamMatrix(paramMatrix))));
 	}
 
 	@Override
 	public String getSummary(){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
+		GeneralRegressionModel.ModelType modelType = generalRegressionModel.requireModelType();
 		switch(modelType){
 			case COX_REGRESSION:
 				return "Cox regression";
@@ -174,7 +155,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
+		GeneralRegressionModel.ModelType modelType = generalRegressionModel.requireModelType();
 		switch(modelType){
 			case COX_REGRESSION:
 				return evaluateCoxRegression(valueFactory, context);
@@ -194,10 +175,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			throw new MissingAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_ENDTIMEVARIABLE);
 		}
 
-		BaseCumHazardTables baseCumHazardTables = generalRegressionModel.getBaseCumHazardTables();
-		if(baseCumHazardTables == null){
-			throw new MissingElementException(generalRegressionModel, PMMLElements.GENERALREGRESSIONMODEL_BASECUMHAZARDTABLES);
-		}
+		BaseCumHazardTables baseCumHazardTables = generalRegressionModel.requireBaseCumHazardTables();
 
 		List<BaselineCell> baselineCells;
 
@@ -215,46 +193,23 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 			}
 
-			baselineCells = baselineStratum.getBaselineCells();
-			if(baselineCells.isEmpty()){
-				throw new MissingElementException(baselineStratum, PMMLElements.BASELINESTRATUM_BASELINECELLS);
-			}
-
-			maxTime = baselineStratum.getMaxTime();
-			if(maxTime == null){
-				throw new MissingAttributeException(baselineStratum, PMMLAttributes.BASELINESTRATUM_MAXTIME);
-			}
+			baselineCells = baselineStratum.requireBaselineCells();
+			maxTime = baselineStratum.requireMaxTime();
 		} else
 
 		{
-			baselineCells = baseCumHazardTables.getBaselineCells();
-			if(baselineCells.isEmpty()){
-				throw new MissingElementException(baseCumHazardTables, PMMLElements.BASECUMHAZARDTABLES_BASELINECELLS);
-			}
-
-			maxTime = baseCumHazardTables.getMaxTime();
-			if(maxTime == null){
-				throw new MissingAttributeException(baseCumHazardTables, PMMLAttributes.BASECUMHAZARDTABLES_MAXTIME);
-			}
+			baselineCells = baseCumHazardTables.requireBaselineCells();
+			maxTime = baseCumHazardTables.requireMaxTime();
 		}
 
 		Comparator<BaselineCell> comparator = new Comparator<BaselineCell>(){
 
 			@Override
 			public int compare(BaselineCell left, BaselineCell right){
-				Number leftTime = getTime(left);
-				Number rightTime = getTime(right);
+				Number leftTime = left.requireTime();
+				Number rightTime = right.requireTime();
 
 				return NumberUtil.compare(leftTime, rightTime);
-			}
-
-			private Number getTime(BaselineCell baselineCell){
-				Number time = baselineCell.getTime();
-				if(time == null){
-					throw new MissingAttributeException(baselineCell, PMMLAttributes.BASELINECELL_TIME);
-				}
-
-				return time;
 			}
 		};
 
@@ -319,7 +274,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 		}
 
-		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
+		GeneralRegressionModel.ModelType modelType = generalRegressionModel.requireModelType();
 		switch(modelType){
 			case REGRESSION:
 			case GENERAL_LINEAR:
@@ -346,7 +301,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		List<?> targetCategories = getTargetCategories();
 
-		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
+		GeneralRegressionModel.ModelType modelType = generalRegressionModel.requireModelType();
 
 		Map<?, Map<String, Row>> ppMatrixMap = getPPMatrixMap();
 
@@ -559,15 +514,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		Value<V> result = null;
 
 		for(PCell parameterCell : parameterCells){
-			String parameterName = parameterCell.getParameterName();
-			if(parameterName == null){
-				throw new MissingAttributeException(parameterCell, PMMLAttributes.PCELL_PARAMETERNAME);
-			}
-
-			Number beta = parameterCell.getBeta();
-			if(beta == null){
-				throw new MissingAttributeException(parameterCell, PMMLAttributes.PCELL_BETA);
-			} // End if
+			String parameterName = parameterCell.requireParameterName();
+			Number beta = parameterCell.requireBeta();
 
 			if(result == null){
 				result = valueFactory.newValue();
@@ -610,15 +558,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		Value<V> result = null;
 
 		for(PCell parameterCell : parameterCells){
-			String parameterName = parameterCell.getParameterName();
-			if(parameterName == null){
-				throw new MissingAttributeException(parameterCell, PMMLAttributes.PCELL_PARAMETERNAME);
-			}
-
-			Number beta = parameterCell.getBeta();
-			if(beta == null){
-				throw new MissingAttributeException(parameterCell, PMMLAttributes.PCELL_BETA);
-			} // End if
+			String parameterName = parameterCell.requireParameterName();
+			Number beta = parameterCell.requireBeta();
 
 			if(result == null){
 				result = valueFactory.newValue();
@@ -640,10 +581,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private <V extends Number> Value<V> computeLink(Value<V> value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		GeneralRegressionModel.LinkFunction linkFunction = generalRegressionModel.getLinkFunction();
-		if(linkFunction == null){
-			throw new MissingAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_LINKFUNCTION);
-		}
+		GeneralRegressionModel.LinkFunction linkFunction = generalRegressionModel.requireLinkFunction();
 
 		Number distParameter = generalRegressionModel.getDistParameter();
 		Number linkParameter = generalRegressionModel.getLinkParameter();
@@ -720,10 +658,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private <V extends Number> Value<V> computeCumulativeLink(Value<V> value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		GeneralRegressionModel.CumulativeLinkFunction cumulativeLinkFunction = generalRegressionModel.getCumulativeLinkFunction();
-		if(cumulativeLinkFunction == null){
-			throw new MissingAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_CUMULATIVELINKFUNCTION);
-		}
+		GeneralRegressionModel.CumulativeLinkFunction cumulativeLinkFunction = generalRegressionModel.requireCumulativeLinkFunction();
 
 		Number offset = getOffset(generalRegressionModel, context);
 		if(offset != null){
@@ -804,7 +739,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		Object targetReferenceCategory = generalRegressionModel.getTargetReferenceCategory();
 
-		GeneralRegressionModel.ModelType modelType = generalRegressionModel.getModelType();
+		GeneralRegressionModel.ModelType modelType = generalRegressionModel.requireModelType();
 		switch(modelType){
 			case GENERALIZED_LINEAR:
 			case MULTINOMIAL_LOGISTIC:
@@ -899,12 +834,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			return (BaselineStratum)mapHolder.get(value.getDataType(), value.getValue());
 		}
 
-		List<BaselineStratum> baselineStrata = baseCumHazardTables.getBaselineStrata();
+		List<BaselineStratum> baselineStrata = baseCumHazardTables.requireBaselineStrata();
 		for(BaselineStratum baselineStratum : baselineStrata){
-			Object category = baselineStratum.getValue();
-			if(category == null){
-				throw new MissingAttributeException(baselineStratum, PMMLAttributes.BASELINESTRATUM_VALUE);
-			} // End if
+			Object category = baselineStratum.requireValue();
 
 			if(value.equalsValue(category)){
 				return baselineStratum;
@@ -924,7 +856,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		List<Parameter> parameters = parameterList.getParameters();
 		for(Parameter parameter : parameters){
-			result.put(parameter.getName(), parameter);
+			result.put(parameter.requireName(), parameter);
 		}
 
 		return result;
@@ -936,10 +868,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		List<Predictor> predictors = predictorList.getPredictors();
 		for(Predictor predictor : predictors){
-			String fieldName = predictor.getField();
-			if(fieldName == null){
-				throw new MissingAttributeException(predictor, PMMLAttributes.PREDICTOR_FIELD);
-			}
+			String fieldName = predictor.requireField();
 
 			result.put(fieldName, predictor);
 		}
@@ -957,10 +886,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 				ppCells:
 				for(PPCell ppCell : ppCells){
-					String fieldName = ppCell.getField();
-					if(fieldName == null){
-						throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_FIELD);
-					}
+					String fieldName = ppCell.requireField();
 
 					Predictor factor = factors.get(fieldName);
 					if(factor != null){
@@ -1084,20 +1010,11 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					throw new UnsupportedElementException(predictor);
 				}
 
-				Function<Category, Object> function = new Function<Category, Object>(){
+				List<Object> values = new ArrayList<>();
 
-					@Override
-					public Object apply(Category category){
-						Object value = category.getValue();
-						if(value == null){
-							throw new MissingAttributeException(category, PMMLAttributes.CATEGORY_VALUE);
-						}
-
-						return value;
-					}
-				};
-
-				List<Object> values = new ArrayList<>(Lists.transform(categories.getCategories(), function));
+				for(Category category : categories){
+					values.add(category.requireValue());
+				}
 
 				factorHandlers.add(new ContrastMatrixHandler(ppCell, matrix, values));
 			} else
@@ -1134,10 +1051,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			private PredictorHandler(PPCell ppCell){
 				setPPCell(ppCell);
 
-				String fieldName = ppCell.getField();
-				if(fieldName == null){
-					throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_FIELD);
-				}
+				String fieldName = ppCell.requireField();
 			}
 
 			abstract
@@ -1146,7 +1060,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			public String getField(){
 				PPCell ppCell = getPPCell();
 
-				return ppCell.getField();
+				return ppCell.requireField();
 			}
 
 			public PPCell getPPCell(){
@@ -1170,10 +1084,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			private FactorHandler(PPCell ppCell){
 				super(ppCell);
 
-				Object value = ppCell.getValue();
-				if(value == null){
-					throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_VALUE);
-				}
+				Object value = ppCell.requireValue();
 
 				setCategory(value);
 			}
@@ -1286,10 +1197,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			private CovariateHandler(PPCell ppCell){
 				super(ppCell);
 
-				Object value = ppCell.getValue();
-				if(value == null){
-					throw new MissingAttributeException(ppCell, PMMLAttributes.PPCELL_VALUE);
-				}
+				Object value = ppCell.requireValue();
 
 				Number exponent = (Number)TypeUtil.parseOrCast(DataType.DOUBLE, value);
 				if(exponent.doubleValue() == 1d){

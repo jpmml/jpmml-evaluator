@@ -29,7 +29,6 @@ import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.PMMLAttributes;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.EvaluationContext;
-import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
@@ -38,6 +37,7 @@ import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.annotations.Functionality;
+import org.jpmml.model.MissingAttributeException;
 
 @Functionality (
 	value = {
@@ -102,7 +102,7 @@ public class SimpleTreeModelEvaluator extends TreeModelEvaluator {
 	private Node evaluateTree(EvaluationContext context){
 		TreeModel treeModel = getModel();
 
-		Node root = treeModel.getNode();
+		Node root = treeModel.requireNode();
 
 		{
 			Boolean status = PredicateUtil.evaluatePredicateContainer(root, context);

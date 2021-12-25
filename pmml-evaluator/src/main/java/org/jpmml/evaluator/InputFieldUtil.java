@@ -36,6 +36,9 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethod;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Value;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.MisplacedAttributeException;
+import org.jpmml.model.MissingAttributeException;
 import org.jpmml.model.XPathUtil;
 
 public class InputFieldUtil {
@@ -249,7 +252,7 @@ public class InputFieldUtil {
 			case RETURN_INVALID:
 				Field<?> field = typeInfo.getField();
 
-				throw new InvalidResultException("Field " + PMMLException.formatKey(field.getName()) + " cannot accept user input value " + PMMLException.formatValue(value), miningField);
+				throw new InvalidResultException("Field " + EvaluationException.formatKey(field.getName()) + " cannot accept user input value " + EvaluationException.formatValue(value), miningField);
 			case AS_IS:
 				return createInvalidInputValue(typeInfo, value);
 			case AS_MISSING:
@@ -285,7 +288,7 @@ public class InputFieldUtil {
 					throw new MisplacedAttributeException(miningField, PMMLAttributes.MININGFIELD_MISSINGVALUEREPLACEMENT, missingValueReplacement);
 				}
 
-				throw new InvalidResultException("Field " + PMMLException.formatKey(field.getName()) + " requires user input value", miningField);
+				throw new InvalidResultException("Field " + EvaluationException.formatKey(field.getName()) + " requires user input value", miningField);
 			default:
 				throw new UnsupportedAttributeException(miningField, missingValueTreatmentMethod);
 		}
@@ -328,10 +331,7 @@ public class InputFieldUtil {
 			for(int i = 0, max = pmmlValues.size(); i < max; i++){
 				Value pmmlValue = pmmlValues.get(i);
 
-				Object simpleValue = pmmlValue.getValue();
-				if(simpleValue == null){
-					throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
-				}
+				Object simpleValue = pmmlValue.requireValue();
 
 				Value.Property property = pmmlValue.getProperty();
 				switch(property){

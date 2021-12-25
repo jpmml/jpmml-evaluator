@@ -56,16 +56,15 @@ import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasGroupFields;
 import org.jpmml.evaluator.IndexableUtil;
 import org.jpmml.evaluator.InputField;
-import org.jpmml.evaluator.InvalidAttributeException;
-import org.jpmml.evaluator.MisplacedElementException;
-import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluator;
-import org.jpmml.evaluator.PMMLException;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeInfos;
 import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.MisplacedElementException;
+import org.jpmml.model.MissingAttributeException;
 
 public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> implements HasGroupFields, HasEntityRegistry<AssociationRule> {
 
@@ -164,7 +163,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		List<Itemset> itemsets = associationModel.getItemsets();
 		for(Itemset itemset : itemsets){
-			flags.put(itemset.getId(), isSubset(activeItems, itemset));
+			flags.put(itemset.requireId(), isSubset(activeItems, itemset));
 		}
 
 		List<AssociationRule> associationRules = associationModel.getAssociationRules();
@@ -175,10 +174,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		for(int i = 0; i < associationRules.size(); i++){
 			AssociationRule associationRule = associationRules.get(i);
 
-			String antecedent = associationRule.getAntecedent();
-			if(antecedent == null){
-				throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_ANTECEDENT);
-			}
+			String antecedent = associationRule.requireAntecedent();
 
 			Boolean antecedentFlag = flags.get(antecedent);
 			if(antecedentFlag == null){
@@ -187,10 +183,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 			antecedentFlags.set(i, antecedentFlag);
 
-			String consequent = associationRule.getConsequent();
-			if(consequent == null){
-				throw new MissingAttributeException(associationRule, PMMLAttributes.ASSOCIATIONRULE_CONSEQUENT);
-			}
+			String consequent = associationRule.requireConsequent();
 
 			Boolean consequentFlag = flags.get(consequent);
 			if(consequentFlag == null){
@@ -273,7 +266,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 								break;
 							}
 
-							throw new EvaluationException("Expected " + PMMLException.formatValue(AssociationModelEvaluator.BOOLEAN_FALSE) + " or " + PMMLException.formatValue(AssociationModelEvaluator.BOOLEAN_TRUE) + ", got " + PMMLException.formatValue(value));
+							throw new EvaluationException("Expected " + EvaluationException.formatValue(AssociationModelEvaluator.BOOLEAN_FALSE) + " or " + EvaluationException.formatValue(AssociationModelEvaluator.BOOLEAN_TRUE) + ", got " + EvaluationException.formatValue(value));
 					}
 				} else
 
@@ -348,7 +341,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		List<ItemRef> itemRefs = itemset.getItemRefs();
 		for(ItemRef itemRef : itemRefs){
-			result &= items.contains(itemRef.getItemRef());
+			result &= items.contains(itemRef.requireItemRef());
 
 			if(!result){
 				return false;
@@ -369,15 +362,8 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 		List<Item> items = associationModel.getItems();
 		for(Item item : items){
-			String id = item.getId();
-			if(id == null){
-				throw new MissingAttributeException(item, PMMLAttributes.ITEM_ID);
-			}
-
-			String value = item.getValue();
-			if(value == null){
-				throw new MissingAttributeException(item, PMMLAttributes.ITEM_VALUE);
-			}
+			String id = item.requireId();
+			String value = item.requireValue();
 
 			String fieldName = item.getField();
 			String category = item.getCategory();

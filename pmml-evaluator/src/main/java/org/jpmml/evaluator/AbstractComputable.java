@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import org.jpmml.model.PMMLException;
 import org.jpmml.model.ToStringHelper;
 
 abstract

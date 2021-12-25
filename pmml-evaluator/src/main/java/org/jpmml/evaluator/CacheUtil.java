@@ -38,6 +38,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import org.dmg.pmml.PMMLObject;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.PMMLException;
 
 public class CacheUtil {
 

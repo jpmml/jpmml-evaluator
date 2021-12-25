@@ -37,10 +37,11 @@ import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.OutputFilters;
 import org.jpmml.evaluator.ResultField;
 import org.jpmml.evaluator.kryo.KryoUtil;
-import org.jpmml.evaluator.visitors.InvalidMarkupInspector;
 import org.jpmml.evaluator.visitors.UnsupportedMarkupInspector;
 import org.jpmml.model.SerializationUtil;
+import org.jpmml.model.visitors.InvalidMarkupInspector;
 import org.jpmml.model.visitors.LocatorTransformer;
+import org.jpmml.model.visitors.MissingMarkupInspector;
 
 abstract
 public class IntegrationTestBatch extends ArchiveBatch {
@@ -149,7 +150,7 @@ public class IntegrationTestBatch extends ArchiveBatch {
 
 	protected void validatePMML(PMML pmml) throws Exception {
 		List<Visitor> visitors = Arrays.<Visitor>asList(
-			new UnsupportedMarkupInspector(),
+			new MissingMarkupInspector(),
 			new InvalidMarkupInspector(){
 
 				@Override
@@ -172,7 +173,8 @@ public class IntegrationTestBatch extends ArchiveBatch {
 
 					return super.visit(miningSchema);
 				}
-			}
+			},
+			new UnsupportedMarkupInspector()
 		);
 
 		for(Visitor visitor : visitors){

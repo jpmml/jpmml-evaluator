@@ -32,8 +32,6 @@ import org.dmg.pmml.True;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.rule_set.CompoundRule;
-import org.dmg.pmml.rule_set.PMMLAttributes;
-import org.dmg.pmml.rule_set.PMMLElements;
 import org.dmg.pmml.rule_set.Rule;
 import org.dmg.pmml.rule_set.RuleSelectionMethod;
 import org.dmg.pmml.rule_set.RuleSet;
@@ -43,8 +41,6 @@ import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.HasEntityRegistry;
-import org.jpmml.evaluator.MissingAttributeException;
-import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.NumberUtil;
 import org.jpmml.evaluator.PMMLUtil;
@@ -74,14 +70,10 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 	public RuleSetModelEvaluator(PMML pmml, RuleSetModel ruleSetModel){
 		super(pmml, ruleSetModel);
 
-		RuleSet ruleSet = ruleSetModel.getRuleSet();
-		if(ruleSet == null){
-			throw new MissingElementException(ruleSetModel, PMMLElements.RULESETMODEL_RULESET);
-		} // End if
+		RuleSet ruleSet = ruleSetModel.requireRuleSet();
 
-		if(!ruleSet.hasRuleSelectionMethods()){
-			throw new MissingElementException(ruleSet, PMMLElements.RULESET_RULESELECTIONMETHODS);
-		} // End if
+		@SuppressWarnings("unused")
+		List<RuleSelectionMethod> ruleSelectionMethods = ruleSet.requireRuleSelectionMethods();
 
 		if(ruleSet.hasRules()){
 			List<SimpleRule> simpleRules = collectSimpleRules(ruleSetModel);
@@ -104,11 +96,11 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 	protected <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		RuleSetModel ruleSetModel = getModel();
 
-		RuleSet ruleSet = ruleSetModel.getRuleSet();
+		RuleSet ruleSet = ruleSetModel.requireRuleSet();
 
 		TargetField targetField = getTargetField();
 
-		List<RuleSelectionMethod> ruleSelectionMethods = ruleSet.getRuleSelectionMethods();
+		List<RuleSelectionMethod> ruleSelectionMethods = ruleSet.requireRuleSelectionMethods();
 
 		// "If more than one method is included, then the first method is used as the default method for scoring"
 		RuleSelectionMethod ruleSelectionMethod = ruleSelectionMethods.get(0);
@@ -116,7 +108,11 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		// Both the ordering of keys and values is significant
 		ListMultimap<Object, SimpleRule> firedRules = LinkedListMultimap.create();
 
-		evaluateRules(ruleSet.getRules(), firedRules, context);
+		if(ruleSet.hasRules()){
+			List<Rule> rules = ruleSet.getRules();
+
+			evaluateRules(rules, firedRules, context);
+		}
 
 		SimpleRuleScoreDistribution<V> result = new SimpleRuleScoreDistribution<V>(new ValueMap<Object, V>(2 * firedRules.size())){
 
@@ -128,15 +124,8 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 		// Return the default prediction when no rules in the ruleset fire
 		if(firedRules.isEmpty()){
-			Object defaultScore = ruleSet.getDefaultScore();
-			if(defaultScore == null){
-				throw new MissingAttributeException(ruleSet, PMMLAttributes.RULESET_DEFAULTSCORE);
-			}
-
-			Number defaultConfidence = ruleSet.getDefaultConfidence();
-			if(defaultConfidence == null){
-				throw new MissingAttributeException(ruleSet, PMMLAttributes.RULESET_DEFAULTCONFIDENCE);
-			}
+			Object defaultScore = ruleSet.requireDefaultScore();
+			Number defaultConfidence = ruleSet.requireDefaultConfidence();
 
 			Value<V> value = valueFactory.newValue(defaultConfidence);
 
@@ -145,10 +134,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 			return TargetUtil.evaluateClassification(targetField, result);
 		}
 
-		RuleSelectionMethod.Criterion criterion = ruleSelectionMethod.getCriterion();
-		if(criterion == null){
-			throw new MissingAttributeException(ruleSelectionMethod, PMMLAttributes.RULESELECTIONMETHOD_CRITERION);
-		}
+		RuleSelectionMethod.Criterion criterion = ruleSelectionMethod.requireCriterion();
 
 		Set<?> keys = firedRules.keySet();
 		for(Object key : keys){
@@ -238,10 +224,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		if(rule instanceof SimpleRule){
 			SimpleRule simpleRule = (SimpleRule)rule;
 
-			Object score = simpleRule.getScore();
-			if(score == null){
-				throw new MissingAttributeException(simpleRule, PMMLAttributes.SIMPLERULE_SCORE);
-			}
+			Object score = simpleRule.requireScore();
 
 			firedRules.put(score, simpleRule);
 		} else
@@ -249,7 +232,9 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 		if(rule instanceof CompoundRule){
 			CompoundRule compoundRule = (CompoundRule)rule;
 
-			evaluateRules(compoundRule.getRules(), firedRules, context);
+			List<Rule> rules = compoundRule.requireRules();
+
+			evaluateRules(rules, firedRules, context);
 		} else
 
 		{

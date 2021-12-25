@@ -113,7 +113,7 @@ public class Classification<K, V extends Number> extends AbstractComputable impl
 		ValueMap<K, V> values = getValues();
 
 		if(values.containsKey(key)){
-			throw new EvaluationException("Value for key " + PMMLException.formatKey(key) + " has already been defined");
+			throw new EvaluationException("Value for key " + EvaluationException.formatKey(key) + " has already been defined");
 		}
 
 		values.put(key, value);

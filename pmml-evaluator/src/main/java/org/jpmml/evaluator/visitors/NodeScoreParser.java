@@ -25,9 +25,7 @@ import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.tree.DecisionTree;
 import org.dmg.pmml.tree.Node;
-import org.dmg.pmml.tree.PMMLAttributes;
 import org.dmg.pmml.tree.TreeModel;
-import org.jpmml.evaluator.MissingAttributeException;
 import org.jpmml.evaluator.TypeCheckException;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.model.visitors.AbstractVisitor;
@@ -77,10 +75,7 @@ public class NodeScoreParser extends AbstractVisitor implements Resettable {
 
 	@Override
 	public VisitorAction visit(TreeModel treeModel){
-		MiningFunction miningFunction = treeModel.getMiningFunction();
-		if(miningFunction == null){
-			throw new MissingAttributeException(treeModel, PMMLAttributes.TREEMODEL_MININGFUNCTION);
-		}
+		MiningFunction miningFunction = treeModel.requireMiningFunction();
 
 		switch(miningFunction){
 			case REGRESSION:

@@ -25,6 +25,8 @@ import java.util.Map;
 
 import org.dmg.pmml.Indexable;
 import org.dmg.pmml.PMMLObject;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.MissingAttributeException;
 
 public class IndexableUtil {
 

@@ -28,7 +28,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.Array;
-import org.dmg.pmml.PMMLAttributes;
+import org.jpmml.model.InvalidElementException;
 
 public class ArrayUtil {
 
@@ -56,11 +56,7 @@ public class ArrayUtil {
 	public List<? extends Number> asNumberList(Array array){
 		List<?> content = getContent(array);
 
-		Array.Type type = array.getType();
-		if(type == null){
-			throw new MissingAttributeException(array, PMMLAttributes.ARRAY_TYPE);
-		}
-
+		Array.Type type = array.requireType();
 		switch(type){
 			case INT:
 			case REAL:
@@ -74,11 +70,6 @@ public class ArrayUtil {
 
 	static
 	public List<?> parse(Array array){
-		Array.Type type = array.getType();
-		if(type == null){
-			throw new MissingAttributeException(array, PMMLAttributes.ARRAY_TYPE);
-		}
-
 		List<String> tokens;
 
 		Object value = array.getValue();
@@ -86,6 +77,7 @@ public class ArrayUtil {
 		if(value instanceof String){
 			String string = (String)value;
 
+			Array.Type type = array.requireType();
 			switch(type){
 				case INT:
 				case REAL:
@@ -136,6 +128,7 @@ public class ArrayUtil {
 
 		Function<String, ?> function;
 
+		Array.Type type = array.requireType();
 		switch(type){
 			case INT:
 				function = new Function<String, Integer>(){

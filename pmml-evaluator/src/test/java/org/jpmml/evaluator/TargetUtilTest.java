@@ -52,30 +52,30 @@ public class TargetUtilTest {
 			.setDefaultValue(Math.PI);
 
 		Target target = new Target()
-			.setField(null)
+			.setTargetField(null)
 			.addTargetValues(targetValue);
 
 		ModelEvaluator<?> evaluator = createTreeModelEvaluator(MiningFunction.REGRESSION, MathContext.FLOAT, target);
 
-		DataField dataField = evaluator.getDataField(target.getField());
+		DataField dataField = evaluator.getDataField(target.getTargetField());
 
-		assertEquals(OpType.CONTINUOUS, dataField.getOpType());
-		assertEquals(DataType.FLOAT, dataField.getDataType());
+		assertEquals(OpType.CONTINUOUS, dataField.requireOpType());
+		assertEquals(DataType.FLOAT, dataField.requireDataType());
 
 		Map<String, ?> results = evaluator.evaluate(Collections.emptyMap());
 
-		assertEquals((float)Math.PI, results.get(dataField.getName()));
+		assertEquals((float)Math.PI, results.get(dataField.requireName()));
 
 		evaluator = createTreeModelEvaluator(MiningFunction.REGRESSION, MathContext.DOUBLE, target);
 
 		dataField = evaluator.getDefaultDataField();
 
-		assertEquals(OpType.CONTINUOUS, dataField.getOpType());
-		assertEquals(DataType.DOUBLE, dataField.getDataType());
+		assertEquals(OpType.CONTINUOUS, dataField.requireOpType());
+		assertEquals(DataType.DOUBLE, dataField.requireDataType());
 
 		results = evaluator.evaluate(Collections.emptyMap());
 
-		assertEquals(Math.PI, results.get(dataField.getName()));
+		assertEquals(Math.PI, results.get(dataField.requireName()));
 	}
 
 	@Test
@@ -89,33 +89,33 @@ public class TargetUtilTest {
 			.setPriorProbability(1d - NumberUtil.asDouble(yesValue.getPriorProbability()));
 
 		Target target = new Target()
-			.setField(null)
+			.setTargetField(null)
 			.addTargetValues(yesValue, noValue);
 
 		ModelEvaluator<?> evaluator = createTreeModelEvaluator(MiningFunction.CLASSIFICATION, MathContext.FLOAT, target);
 
-		DataField dataField = evaluator.getDataField(target.getField());
+		DataField dataField = evaluator.getDataField(target.getTargetField());
 
-		assertEquals(OpType.CATEGORICAL, dataField.getOpType());
-		assertEquals(DataType.STRING, dataField.getDataType());
+		assertEquals(OpType.CATEGORICAL, dataField.requireOpType());
+		assertEquals(DataType.STRING, dataField.requireDataType());
 
 		Map<String, ?> results = evaluator.evaluate(Collections.emptyMap());
 
-		HasProbability hasProbability = (HasProbability)results.get(dataField.getName());
+		HasProbability hasProbability = (HasProbability)results.get(dataField.requireName());
 
 		assertEquals((Double)((double)(float)(1d / 7d)), hasProbability.getProbability("yes"));
 		assertEquals((Double)((double)(float)(1d - (1d / 7d))), hasProbability.getProbability("no"));
 
 		evaluator = createTreeModelEvaluator(MiningFunction.CLASSIFICATION, MathContext.DOUBLE, target);
 
-		dataField = evaluator.getDataField(target.getField());
+		dataField = evaluator.getDataField(target.getTargetField());
 
-		assertEquals(OpType.CATEGORICAL, dataField.getOpType());
-		assertEquals(DataType.STRING, dataField.getDataType());
+		assertEquals(OpType.CATEGORICAL, dataField.requireOpType());
+		assertEquals(DataType.STRING, dataField.requireDataType());
 
 		results = evaluator.evaluate(Collections.emptyMap());
 
-		hasProbability = (HasProbability)results.get(dataField.getName());
+		hasProbability = (HasProbability)results.get(dataField.requireName());
 
 		assertEquals(yesValue.getPriorProbability(), hasProbability.getProbability("yes"));
 		assertEquals(noValue.getPriorProbability(), hasProbability.getProbability("no"));
@@ -124,7 +124,7 @@ public class TargetUtilTest {
 	@Test
 	public void processValue(){
 		Target target = new Target()
-			.setField("amount")
+			.setTargetField("amount")
 			.setRescaleFactor(3.14d)
 			.setRescaleConstant(10d);
 

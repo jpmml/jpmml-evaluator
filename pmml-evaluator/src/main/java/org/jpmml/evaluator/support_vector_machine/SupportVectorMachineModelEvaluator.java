@@ -48,7 +48,6 @@ import org.dmg.pmml.support_vector_machine.Coefficient;
 import org.dmg.pmml.support_vector_machine.Coefficients;
 import org.dmg.pmml.support_vector_machine.Kernel;
 import org.dmg.pmml.support_vector_machine.PMMLAttributes;
-import org.dmg.pmml.support_vector_machine.PMMLElements;
 import org.dmg.pmml.support_vector_machine.SupportVector;
 import org.dmg.pmml.support_vector_machine.SupportVectorMachine;
 import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
@@ -63,17 +62,9 @@ import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.InvalidAttributeException;
-import org.jpmml.evaluator.InvalidElementException;
-import org.jpmml.evaluator.InvalidElementListException;
-import org.jpmml.evaluator.MisplacedAttributeException;
-import org.jpmml.evaluator.MisplacedElementException;
-import org.jpmml.evaluator.MissingAttributeException;
-import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.Numbers;
-import org.jpmml.evaluator.PMMLException;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.SparseArrayUtil;
 import org.jpmml.evaluator.TargetUtil;
@@ -81,8 +72,13 @@ import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.InvalidElementListException;
+import org.jpmml.model.MisplacedAttributeException;
+import org.jpmml.model.MisplacedElementException;
+import org.jpmml.model.MissingAttributeException;
 import org.jpmml.model.ReflectionUtil;
-import org.jpmml.model.XPathUtil;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
 
@@ -112,19 +108,8 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				throw new UnsupportedAttributeException(supportVectorMachineModel, representation);
 		}
 
-		VectorDictionary vectorDictionary = supportVectorMachineModel.getVectorDictionary();
-		if(vectorDictionary == null){
-			throw new MissingElementException(supportVectorMachineModel, PMMLElements.SUPPORTVECTORMACHINEMODEL_VECTORDICTIONARY);
-		}
-
-		VectorFields vectorFields = vectorDictionary.getVectorFields();
-		if(vectorFields == null){
-			throw new MissingElementException(vectorDictionary, PMMLElements.VECTORDICTIONARY_VECTORFIELDS);
-		} // End if
-
-		if(!supportVectorMachineModel.hasSupportVectorMachines()){
-			throw new MissingElementException(supportVectorMachineModel, PMMLElements.SUPPORTVECTORMACHINEMODEL_SUPPORTVECTORMACHINES);
-		}
+		@SuppressWarnings("unused")
+		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.requireSupportVectorMachines();
 
 		this.vectorMap = ImmutableMap.copyOf(parseVectorDictionary(supportVectorMachineModel));
 	}
@@ -138,7 +123,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
-		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
+		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.requireSupportVectorMachines();
 		if(supportVectorMachines.size() != 1){
 			throw new InvalidElementListException(supportVectorMachines);
 		}
@@ -156,7 +141,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 	protected <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
-		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
+		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.requireSupportVectorMachines();
 
 		Object alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
 
@@ -183,10 +168,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		Object input = createInput(context);
 
 		for(SupportVectorMachine supportVectorMachine : supportVectorMachines){
-			Object targetCategory = supportVectorMachine.getTargetCategory();
-			if(targetCategory == null){
-				throw new MissingAttributeException(supportVectorMachine, PMMLAttributes.SUPPORTVECTORMACHINE_TARGETCATEGORY);
-			}
+			Object targetCategory = supportVectorMachine.requireTargetCategory();
 
 			Object alternateTargetCategory = supportVectorMachine.getAlternateTargetCategory();
 
@@ -226,7 +208,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 							// "The numeric prediction must be between 0 and 1"
 							{
-								throw new EvaluationException("Expected " + PMMLException.formatValue(Numbers.DOUBLE_ZERO) + " or " + PMMLException.formatValue(Numbers.DOUBLE_ONE) + ", got " + PMMLException.formatValue(value.getValue()));
+								throw new EvaluationException("Expected " + EvaluationException.formatValue(Numbers.DOUBLE_ZERO) + " or " + EvaluationException.formatValue(Numbers.DOUBLE_ONE) + ", got " + EvaluationException.formatValue(value.getValue()));
 							}
 						} else
 
@@ -281,10 +263,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		Value<V> result = valueFactory.newValue();
 
-		Kernel kernel = supportVectorMachineModel.getKernel();
-		if(kernel == null){
-			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(supportVectorMachineModel.getClass()) + "/<Kernel>"), supportVectorMachine);
-		}
+		Kernel kernel = supportVectorMachineModel.requireKernel();
 
 		Coefficients coefficients = supportVectorMachine.getCoefficients();
 		Iterator<Coefficient> coefficientIt = coefficients.iterator();
@@ -298,10 +277,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			Coefficient coefficient = coefficientIt.next();
 			SupportVector supportVector = supportVectorIt.next();
 
-			String vectorId = supportVector.getVectorId();
-			if(vectorId == null){
-				throw new MissingAttributeException(supportVector, PMMLAttributes.SUPPORTVECTOR_VECTORID);
-			}
+			String vectorId = supportVector.requireVectorId();
 
 			Object vector = vectorMap.get(vectorId);
 			if(vector == null){
@@ -333,7 +309,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			return classificationMethod;
 		}
 
-		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.getSupportVectorMachines();
+		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.requireSupportVectorMachines();
 
 		Object alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
 		if(alternateBinaryTargetCategory != null){
@@ -374,9 +350,9 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 	private Object createInput(EvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
-		VectorDictionary vectorDictionary = supportVectorMachineModel.getVectorDictionary();
+		VectorDictionary vectorDictionary = supportVectorMachineModel.requireVectorDictionary();
 
-		VectorFields vectorFields = vectorDictionary.getVectorFields();
+		VectorFields vectorFields = vectorDictionary.requireVectorFields();
 
 		List<PMMLObject> content = vectorFields.getContent();
 
@@ -388,7 +364,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			if(object instanceof FieldRef){
 				FieldRef fieldRef = (FieldRef)object;
 
-				String fieldName = fieldRef.getField();
+				String fieldName = fieldRef.requireField();
 
 				FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
 				if(FieldValueUtil.isMissing(value)){
@@ -401,10 +377,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			if(object instanceof CategoricalPredictor){
 				CategoricalPredictor categoricalPredictor = (CategoricalPredictor)object;
 
-				String fieldName = categoricalPredictor.getField();
-				if(fieldName == null){
-					throw new MissingAttributeException(categoricalPredictor, org.dmg.pmml.regression.PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
-				}
+				String fieldName = categoricalPredictor.requireField();
 
 				FieldValue value = context.evaluate(fieldName);
 				if(FieldValueUtil.isMissing(value)){
@@ -435,9 +408,9 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 	static
 	private Map<String, Object> parseVectorDictionary(SupportVectorMachineModel supportVectorMachineModel){
-		VectorDictionary vectorDictionary = supportVectorMachineModel.getVectorDictionary();
+		VectorDictionary vectorDictionary = supportVectorMachineModel.requireVectorDictionary();
 
-		VectorFields vectorFields = vectorDictionary.getVectorFields();
+		VectorFields vectorFields = vectorDictionary.requireVectorFields();
 
 		List<PMMLObject> content = vectorFields.getContent();
 
@@ -445,10 +418,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		List<VectorInstance> vectorInstances = vectorDictionary.getVectorInstances();
 		for(VectorInstance vectorInstance : vectorInstances){
-			String id = vectorInstance.getId();
-			if(id == null){
-				throw new MissingAttributeException(vectorInstance, PMMLAttributes.VECTORINSTANCE_ID);
-			}
+			String id = vectorInstance.requireId();
 
 			Array array = vectorInstance.getArray();
 			RealSparseArray sparseArray = vectorInstance.getRealSparseArray();

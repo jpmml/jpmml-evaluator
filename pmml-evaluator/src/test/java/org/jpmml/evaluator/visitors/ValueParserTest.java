@@ -84,10 +84,10 @@ public class ValueParserTest {
 			.addRows(new Row(Arrays.asList(inputCell, outputCell)));
 
 		FieldColumnPair fieldColumnPair = new FieldColumnPair()
-			.setField(dataField.getName())
+			.setField(dataField)
 			.setColumn(InlineTableUtil.parseColumn(inputCell.getName()));
 
-		MapValues mapValues = new MapValues(InlineTableUtil.parseColumn(outputCell.getName()), null, inlineTable)
+		MapValues mapValues = new MapValues(InlineTableUtil.parseColumn(outputCell.getName()), inlineTable)
 			.setDefaultValue("0")
 			.addFieldColumnPairs(fieldColumnPair);
 
@@ -96,13 +96,13 @@ public class ValueParserTest {
 		TransformationDictionary transformationDictionary = new TransformationDictionary()
 			.addDerivedFields(derivedField);
 
-		CategoricalPredictor falseTerm = new CategoricalPredictor(dataField.getName(), "false", -1d);
-		CategoricalPredictor trueTerm = new CategoricalPredictor(dataField.getName(), "true", 1d);
+		CategoricalPredictor falseTerm = new CategoricalPredictor(dataField, "false", -1d);
+		CategoricalPredictor trueTerm = new CategoricalPredictor(dataField, "true", 1d);
 
 		RegressionTable regressionTable = new RegressionTable()
 			.addCategoricalPredictors(falseTerm, trueTerm);
 
-		MiningField miningField = new MiningField(dataField.getName())
+		MiningField miningField = new MiningField(dataField)
 			.setMissingValueReplacement("false")
 			.setInvalidValueReplacement("N/A");
 
@@ -123,17 +123,17 @@ public class ValueParserTest {
 
 		dataField = dataFields.get(0);
 
-		assertEquals("false", falseValue.getValue());
-		assertEquals("true", trueValue.getValue());
-		assertEquals("N/A", invalidValue.getValue());
+		assertEquals("false", falseValue.requireValue());
+		assertEquals("true", trueValue.requireValue());
+		assertEquals("N/A", invalidValue.requireValue());
 
 		assertEquals("true", inputCell.getValue());
 		assertEquals("1", outputCell.getValue());
 
 		assertEquals("0", mapValues.getDefaultValue());
 
-		assertEquals("false", falseTerm.getValue());
-		assertEquals("true", trueTerm.getValue());
+		assertEquals("false", falseTerm.requireValue());
+		assertEquals("true", trueTerm.requireValue());
 
 		assertEquals("false", miningField.getMissingValueReplacement());
 		assertEquals("N/A", miningField.getInvalidValueReplacement());
@@ -144,17 +144,17 @@ public class ValueParserTest {
 
 		parser.applyTo(pmml);
 
-		assertEquals(Boolean.FALSE, falseValue.getValue());
-		assertEquals(Boolean.TRUE, trueValue.getValue());
-		assertEquals("N/A", invalidValue.getValue());
+		assertEquals(Boolean.FALSE, falseValue.requireValue());
+		assertEquals(Boolean.TRUE, trueValue.requireValue());
+		assertEquals("N/A", invalidValue.requireValue());
 
 		assertEquals(Boolean.TRUE, inputCell.getValue());
 		assertEquals(1f, outputCell.getValue());
 
 		assertEquals(0f, mapValues.getDefaultValue());
 
-		assertEquals(Boolean.FALSE, falseTerm.getValue());
-		assertEquals(Boolean.TRUE, trueTerm.getValue());
+		assertEquals(Boolean.FALSE, falseTerm.requireValue());
+		assertEquals(Boolean.TRUE, trueTerm.requireValue());
 
 		assertEquals(Boolean.FALSE, miningField.getMissingValueReplacement());
 		assertEquals("N/A", miningField.getInvalidValueReplacement());
@@ -167,23 +167,23 @@ public class ValueParserTest {
 		DataDictionary dataDictionary = new DataDictionary()
 			.addDataFields(dataField);
 
-		NormDiscrete normDiscrete = new NormDiscrete(dataField.getName(), "1");
+		NormDiscrete normDiscrete = new NormDiscrete(dataField, "1");
 
-		DerivedField derivedField = new DerivedField("global(" + dataField.getName() + ")", OpType.CATEGORICAL, DataType.STRING, normDiscrete);
+		DerivedField derivedField = new DerivedField("global(" + dataField.requireName() + ")", OpType.CATEGORICAL, DataType.STRING, normDiscrete);
 
 		TransformationDictionary transformationDictionary = new TransformationDictionary()
 			.addDerivedFields(derivedField);
 
-		SimplePredicate simplePredicate = new SimplePredicate(derivedField.getName(), SimplePredicate.Operator.EQUAL, "1");
+		SimplePredicate simplePredicate = new SimplePredicate(derivedField, SimplePredicate.Operator.EQUAL, "1");
 
 		Node child = new LeafNode("1", simplePredicate);
 
-		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(dataField.getName(), SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "0 1"));
+		SimpleSetPredicate simpleSetPredicate = new SimpleSetPredicate(dataField, SimpleSetPredicate.BooleanOperator.IS_IN, new Array(Array.Type.STRING, "0 1"));
 
 		Node root = new BranchNode("0", simpleSetPredicate)
 			.addNodes(child);
 
-		MiningField miningField = new MiningField(dataField.getName());
+		MiningField miningField = new MiningField(dataField);
 
 		MiningSchema miningSchema = new MiningSchema()
 			.addMiningFields(miningField);
@@ -202,10 +202,10 @@ public class ValueParserTest {
 
 		dataField = dataFields.get(0);
 
-		assertEquals("1", normDiscrete.getValue());
-		assertEquals("1", simplePredicate.getValue());
+		assertEquals("1", normDiscrete.requireValue());
+		assertEquals("1", simplePredicate.requireValue());
 
-		Array array = simpleSetPredicate.getArray();
+		Array array = simpleSetPredicate.requireArray();
 
 		assertEquals(ImmutableSet.of("0", "1"), array.getValue());
 
@@ -215,10 +215,10 @@ public class ValueParserTest {
 
 		dataField = dataFields.get(0);
 
-		assertEquals(1, normDiscrete.getValue());
-		assertEquals("1", simplePredicate.getValue());
+		assertEquals(1, normDiscrete.requireValue());
+		assertEquals("1", simplePredicate.requireValue());
 
-		array = simpleSetPredicate.getArray();
+		array = simpleSetPredicate.requireArray();
 
 		assertTrue(array instanceof RichComplexArray);
 		assertEquals(ImmutableSet.of(0, 1), array.getValue());
@@ -230,10 +230,10 @@ public class ValueParserTest {
 
 		dataField = dataFields.get(0);
 
-		assertEquals(1.0d, normDiscrete.getValue());
-		assertEquals(1, simplePredicate.getValue());
+		assertEquals(1.0d, normDiscrete.requireValue());
+		assertEquals(1, simplePredicate.requireValue());
 
-		array = simpleSetPredicate.getArray();
+		array = simpleSetPredicate.requireArray();
 
 		assertEquals(ImmutableSet.of(0.0d, 1.0d), array.getValue());
 
@@ -244,10 +244,10 @@ public class ValueParserTest {
 
 		dataField = dataFields.get(0);
 
-		assertEquals(true, normDiscrete.getValue());
-		assertEquals(1.0d, simplePredicate.getValue());
+		assertEquals(true, normDiscrete.requireValue());
+		assertEquals(1.0d, simplePredicate.requireValue());
 
-		array = simpleSetPredicate.getArray();
+		array = simpleSetPredicate.requireArray();
 
 		assertEquals(ImmutableSet.of(false, true), array.getValue());
 
@@ -257,7 +257,7 @@ public class ValueParserTest {
 
 		dataField = dataFields.get(0);
 
-		assertEquals(true, normDiscrete.getValue());
-		assertEquals(true, simplePredicate.getValue());
+		assertEquals(true, normDiscrete.requireValue());
+		assertEquals(true, simplePredicate.requireValue());
 	}
 }

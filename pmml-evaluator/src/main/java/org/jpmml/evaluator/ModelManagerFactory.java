@@ -32,6 +32,8 @@ import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.ResultFeature;
 import org.jpmml.evaluator.annotations.Functionality;
+import org.jpmml.model.InvalidMarkupException;
+import org.jpmml.model.PMMLException;
 
 abstract
 public class ModelManagerFactory<S extends ModelManager<?>> extends ServiceFactory<Model, S> {

@@ -26,6 +26,7 @@ import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.ParameterField;
+import org.jpmml.model.MissingAttributeException;
 
 public class DefineFunctionEvaluationContext extends EvaluationContext {
 
@@ -74,7 +75,7 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 
 			for(ParameterField parameterField : parameterFields){
 
-				if(Objects.equals(parameterField.getName(), name)){
+				if(Objects.equals(parameterField.requireName(), name)){
 					return parameterField;
 				}
 			}

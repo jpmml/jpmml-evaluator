@@ -37,7 +37,7 @@ public class ScoreDistributionInterner extends AbstractVisitor {
 
 		@Override
 		public ElementKey createKey(ScoreDistribution scoreDistribution){
-			Object[] content = {scoreDistribution.getValue(), scoreDistribution.getRecordCount(), scoreDistribution.getProbability(), scoreDistribution.getConfidence()};
+			Object[] content = {scoreDistribution.requireValue(), scoreDistribution.requireRecordCount(), scoreDistribution.getProbability(), scoreDistribution.getConfidence()};
 
 			return new ElementKey(content);
 		}

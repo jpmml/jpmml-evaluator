@@ -23,8 +23,7 @@ import java.util.List;
 import org.dmg.pmml.LinearNorm;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.OutlierTreatmentMethod;
-import org.dmg.pmml.PMMLAttributes;
-import org.dmg.pmml.PMMLElements;
+import org.jpmml.model.InvalidElementListException;
 
 public class NormalizationUtil {
 
@@ -57,15 +56,8 @@ public class NormalizationUtil {
 		LinearNorm start = linearNorms.get(0);
 		LinearNorm end = linearNorms.get(linearNorms.size() - 1);
 
-		Number startOrig = start.getOrig();
-		if(startOrig == null){
-			throw new MissingAttributeException(start, PMMLAttributes.LINEARNORM_ORIG);
-		}
-
-		Number endOrig = end.getOrig();
-		if(endOrig == null){
-			throw new MissingAttributeException(end, PMMLAttributes.LINEARNORM_ORIG);
-		} // End if
+		Number startOrig = start.requireOrig();
+		Number endOrig = end.requireOrig();
 
 		if(value.compareTo(startOrig) < 0 || value.compareTo(endOrig) > 0){
 			OutlierTreatmentMethod outlierTreatmentMethod = normContinuous.getOutliers();
@@ -76,20 +68,14 @@ public class NormalizationUtil {
 					if(value.compareTo(startOrig) < 0){
 						end = linearNorms.get(1);
 
-						endOrig = end.getOrig();
-						if(endOrig == null){
-							throw new MissingAttributeException(end, PMMLAttributes.LINEARNORM_ORIG);
-						}
+						endOrig = end.requireOrig();
 					} else
 
 					// "Extrapolate from the last interval"
 					{
 						start = linearNorms.get(linearNorms.size() - 2);
 
-						startOrig = start.getOrig();
-						if(startOrig == null){
-							throw new MissingAttributeException(start, PMMLAttributes.LINEARNORM_ORIG);
-						}
+						startOrig = start.requireOrig();
 					}
 					break;
 				case AS_MISSING_VALUES:
@@ -98,20 +84,14 @@ public class NormalizationUtil {
 				case AS_EXTREME_VALUES:
 					// "Map to the value of the first interval"
 					if(value.compareTo(startOrig) < 0){
-						Number startNorm = start.getNorm();
-						if(startNorm == null){
-							throw new MissingAttributeException(start, PMMLAttributes.LINEARNORM_NORM);
-						}
+						Number startNorm = start.requireNorm();
 
 						return value.restrict(startNorm, Double.POSITIVE_INFINITY);
 					} else
 
 					// "Map to the value of the last interval"
 					{
-						Number endNorm = end.getNorm();
-						if(endNorm == null){
-							throw new MissingAttributeException(end, PMMLAttributes.LINEARNORM_NORM);
-						}
+						Number endNorm = end.requireNorm();
 
 						return value.restrict(Double.NEGATIVE_INFINITY, endNorm);
 					}
@@ -124,10 +104,7 @@ public class NormalizationUtil {
 			for(int i = 1, max = (linearNorms.size() - 1); i < max; i++){
 				LinearNorm linearNorm = linearNorms.get(i);
 
-				Number orig = linearNorm.getOrig();
-				if(orig == null){
-					throw new MissingAttributeException(linearNorm, PMMLAttributes.LINEARNORM_ORIG);
-				} // End if
+				Number orig = linearNorm.requireOrig();
 
 				if(value.compareTo(orig) >= 0){
 					start = linearNorm;
@@ -145,15 +122,8 @@ public class NormalizationUtil {
 			}
 		}
 
-		Number startNorm = start.getNorm();
-		if(startNorm == null){
-			throw new MissingAttributeException(start, PMMLAttributes.LINEARNORM_NORM);
-		}
-
-		Number endNorm = end.getNorm();
-		if(endNorm == null){
-			throw new MissingAttributeException(end, PMMLAttributes.LINEARNORM_NORM);
-		}
+		Number startNorm = start.requireNorm();
+		Number endNorm = end.requireNorm();
 
 		return value.normalize(startOrig, startNorm, endOrig, endNorm);
 	}
@@ -174,23 +144,13 @@ public class NormalizationUtil {
 		LinearNorm start = linearNorms.get(0);
 		LinearNorm end = linearNorms.get(linearNorms.size() - 1);
 
-		Number startNorm = start.getNorm();
-		if(startNorm == null){
-			throw new MissingAttributeException(start, PMMLAttributes.LINEARNORM_NORM);
-		}
-
-		Number endNorm = end.getNorm();
-		if(endNorm == null){
-			throw new MissingAttributeException(end, PMMLAttributes.LINEARNORM_NORM);
-		}
+		Number startNorm = start.requireNorm();
+		Number endNorm = end.requireNorm();
 
 		for(int i = 1, max = (linearNorms.size() - 1); i < max; i++){
 			LinearNorm linearNorm = linearNorms.get(i);
 
-			Number norm = linearNorm.getNorm();
-			if(norm == null){
-				throw new MissingAttributeException(linearNorm, PMMLAttributes.LINEARNORM_NORM);
-			} // End if
+			Number norm = linearNorm.requireNorm();
 
 			if(value.compareTo(norm) >= 0){
 				start = linearNorm;
@@ -207,27 +167,16 @@ public class NormalizationUtil {
 			}
 		}
 
-		Number startOrig = start.getOrig();
-		if(startOrig == null){
-			throw new MissingAttributeException(start, PMMLAttributes.LINEARNORM_ORIG);
-		}
-
-		Number endOrig = end.getOrig();
-		if(endOrig == null){
-			throw new MissingAttributeException(end, PMMLAttributes.LINEARNORM_ORIG);
-		}
+		Number startOrig = start.requireOrig();
+		Number endOrig = end.requireOrig();
 
 		return value.denormalize(startOrig, startNorm, endOrig, endNorm);
 	}
 
 	static
 	private List<LinearNorm> ensureLinearNorms(NormContinuous normContinuous){
+		List<LinearNorm> linearNorms = normContinuous.requireLinearNorms();
 
-		if(!normContinuous.hasLinearNorms()){
-			throw new MissingElementException(normContinuous, PMMLElements.NORMCONTINUOUS_LINEARNORMS);
-		}
-
-		List<LinearNorm> linearNorms = normContinuous.getLinearNorms();
 		if(linearNorms.size() < 2){
 			throw new InvalidElementListException(linearNorms);
 		}

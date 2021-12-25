@@ -46,7 +46,8 @@ import org.dmg.pmml.Interval;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLAttributes;
-import org.dmg.pmml.PMMLElements;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.MissingAttributeException;
 
 public class DiscretizationUtil {
 
@@ -74,11 +75,7 @@ public class DiscretizationUtil {
 
 	static
 	public FieldValue mapValue(MapValues mapValues, Map<String, FieldValue> values){
-		String outputColumn = mapValues.getOutputColumn();
-		if(outputColumn == null){
-			throw new MissingAttributeException(mapValues, PMMLAttributes.MAPVALUES_OUTPUTCOLUMN);
-		}
-
+		String outputColumn = mapValues.requireOutputColumn();
 		DataType dataType = mapValues.getDataType(DataType.STRING);
 
 		InlineTable inlineTable = InlineTableUtil.getInlineTable(mapValues);
@@ -113,11 +110,7 @@ public class DiscretizationUtil {
 			throw new InvalidElementException(interval);
 		}
 
-		Interval.Closure closure = interval.getClosure();
-		if(closure == null){
-			throw new MissingAttributeException(interval, PMMLAttributes.INTERVAL_CLOSURE);
-		}
-
+		Interval.Closure closure = interval.requireClosure();
 		switch(closure){
 			case OPEN_OPEN:
 				{
@@ -234,17 +227,10 @@ public class DiscretizationUtil {
 
 		List<DiscretizeBin> discretizeBins = discretize.getDiscretizeBins();
 		for(DiscretizeBin discretizeBin : discretizeBins){
-			Interval interval = discretizeBin.getInterval();
-			if(interval == null){
-				throw new MissingElementException(discretizeBin, PMMLElements.DISCRETIZEBIN_INTERVAL);
-			}
+			Interval interval = discretizeBin.requireInterval();
 
 			Range<Double> range = toRange(interval);
-
-			Object binValue = discretizeBin.getBinValue();
-			if(binValue == null){
-				throw new MissingAttributeException(discretizeBin, PMMLAttributes.DISCRETIZEBIN_BINVALUE);
-			}
+			Object binValue = discretizeBin.requireBinValue();
 
 			result.put(range, binValue);
 		}

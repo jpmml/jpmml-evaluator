@@ -34,6 +34,11 @@ import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Row;
 import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.TextIndexNormalization;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.MisplacedAttributeException;
+import org.jpmml.model.MissingAttributeException;
+import org.jpmml.model.PMMLException;
 
 public class TextUtil {
 
@@ -134,12 +139,12 @@ public class TextUtil {
 
 			String inValue = (String)table.get(rowKey, inColumn);
 			if(inValue == null){
-				throw new InvalidElementException("Cell " + PMMLException.formatKey(inColumn) + " is not defined", row);
+				throw new InvalidElementException("Cell " + EvaluationException.formatKey(inColumn) + " is not defined", row);
 			}
 
 			String outValue = (String)table.get(rowKey, outColumn);
 			if(outValue == null){
-				throw new InvalidElementException("Cell " + PMMLException.formatKey(outColumn) + " is not defined", row);
+				throw new InvalidElementException("Cell " + EvaluationException.formatKey(outColumn) + " is not defined", row);
 			}
 
 			String regexValue = (String)table.get(rowKey, regexColumn);

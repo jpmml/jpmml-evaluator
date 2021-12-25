@@ -53,7 +53,6 @@ import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
-import org.jpmml.model.XPathUtil;
 import org.jpmml.model.visitors.FieldResolver;
 
 abstract
@@ -92,16 +91,10 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 		setModel(Objects.requireNonNull(model));
 
-		MiningFunction miningFunction = model.getMiningFunction();
-		if(miningFunction == null){
-			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@functionName"), model);
-		}
+		@SuppressWarnings("unused")
+		MiningFunction miningFunction = model.requireMiningFunction();
 
-		MiningSchema miningSchema = model.getMiningSchema();
-		if(miningSchema == null){
-			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(model.getClass()) + "/" + XPathUtil.formatElement(MiningSchema.class)), model);
-		} // End if
-
+		MiningSchema miningSchema = model.requireMiningSchema();
 		if(miningSchema.hasMiningFields()){
 			this.miningFields = ImmutableMap.copyOf(IndexableUtil.buildMap(miningSchema.getMiningFields(), PMMLAttributes.MININGFIELD_NAME));
 		}
@@ -128,7 +121,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	public MiningFunction getMiningFunction(){
 		M model = getModel();
 
-		return model.getMiningFunction();
+		return model.requireMiningFunction();
 	}
 
 	public MathContext getMathContext(){
@@ -175,7 +168,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		}
 	}
 
-	public void setDefaultDataField(DataField defaultDataField){
+	public void setDefaultDataField(DefaultDataField defaultDataField){
 		this.defaultDataField = defaultDataField;
 	}
 
@@ -349,7 +342,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	protected EvaluationException createMiningSchemaException(String message){
 		M model = getModel();
 
-		MiningSchema miningSchema = model.getMiningSchema();
+		MiningSchema miningSchema = model.requireMiningSchema();
 
 		return new EvaluationException(message, miningSchema);
 	}
@@ -408,15 +401,14 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	protected List<InputField> createInputFields(MiningField.UsageType usageType){
 		M model = getModel();
 
-		MiningSchema miningSchema = model.getMiningSchema();
-
 		List<InputField> inputFields = new ArrayList<>();
 
+		MiningSchema miningSchema = model.requireMiningSchema();
 		if(miningSchema.hasMiningFields()){
 			List<MiningField> miningFields = miningSchema.getMiningFields();
 
 			for(MiningField miningField : miningFields){
-				String fieldName = miningField.getName();
+				String fieldName = miningField.requireName();
 
 				if(miningField.getUsageType() != usageType){
 					continue;
@@ -443,15 +435,14 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	protected List<TargetField> createTargetFields(){
 		M model = getModel();
 
-		MiningSchema miningSchema = model.getMiningSchema();
-
 		List<TargetField> targetFields = new ArrayList<>();
 
+		MiningSchema miningSchema = model.requireMiningSchema();
 		if(miningSchema.hasMiningFields()){
 			List<MiningField> miningFields = miningSchema.getMiningFields();
 
 			for(MiningField miningField : miningFields){
-				String fieldName = miningField.getName();
+				String fieldName = miningField.requireName();
 
 				MiningField.UsageType usageType = miningField.getUsageType();
 				switch(usageType){
@@ -483,7 +474,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 				break synthesis;
 			}
 
-			Target target = getTarget(dataField.getName());
+			Target target = getTarget(dataField.requireName());
 
 			TargetField targetField = new DefaultTargetField(dataField, target);
 
@@ -538,7 +529,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 					Collection<Field<?>> fields = getFields(model);
 					for(Field<?> field : fields){
-						visibleFields.put(field.getName(), field);
+						visibleFields.put(field.requireName(), field);
 					}
 				}
 
@@ -606,7 +597,35 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		return result;
 	}
 
-	private static final DataField DEFAULT_TARGET_CONTINUOUS_FLOAT = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.FLOAT);
-	private static final DataField DEFAULT_TARGET_CONTINUOUS_DOUBLE = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CONTINUOUS, DataType.DOUBLE);
-	private static final DataField DEFAULT_TARGET_CATEGORICAL_STRING = new DataField(Evaluator.DEFAULT_TARGET_NAME, OpType.CATEGORICAL, DataType.STRING);
+	private static final DataField DEFAULT_TARGET_CONTINUOUS_FLOAT = new DefaultDataField(OpType.CONTINUOUS, DataType.FLOAT);
+	private static final DataField DEFAULT_TARGET_CONTINUOUS_DOUBLE = new DefaultDataField(OpType.CONTINUOUS, DataType.DOUBLE);
+	private static final DataField DEFAULT_TARGET_CATEGORICAL_STRING = new DefaultDataField(OpType.CATEGORICAL, DataType.STRING);
+
+	static
+	protected class DefaultDataField extends DataField {
+
+		public DefaultDataField(OpType opType, DataType dataType){
+			super(Evaluator.DEFAULT_TARGET_NAME, opType, dataType);
+		}
+
+		@Override
+		public String requireName(){
+			return getName();
+		}
+
+		@Override
+		public String getName(){
+			return super.getName();
+		}
+
+		@Override
+		public DefaultDataField setName(String name){
+
+			if(!Objects.equals(name, Evaluator.DEFAULT_TARGET_NAME)){
+				throw new IllegalArgumentException();
+			}
+
+			return (DefaultDataField)super.setName(name);
+		}
+	}
 }

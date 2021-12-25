@@ -28,6 +28,7 @@
 package org.jpmml.evaluator;
 
 import org.dmg.pmml.PMMLObject;
+import org.jpmml.model.PMMLException;
 
 /**
  * <p>
@@ -42,5 +43,34 @@ public class EvaluationException extends PMMLException {
 
 	public EvaluationException(String message, PMMLObject context){
 		super(message, context);
+	}
+
+	static
+	public String formatKey(Object object){
+		return format(object);
+	}
+
+	static
+	public String formatValue(Object object){
+
+		if(object instanceof FieldValue){
+			FieldValue fieldValue = (FieldValue)object;
+
+			object = fieldValue.getValue();
+		}
+
+		return format(object);
+	}
+
+	static
+	public String format(Object object){
+
+		if(object instanceof String){
+			String string = (String)object;
+
+			return "\"" + string + "\"";
+		}
+
+		return (object != null ? String.valueOf(object) : null);
 	}
 }

@@ -26,8 +26,8 @@ import com.google.common.collect.ImmutableMap;
 import jakarta.xml.bind.annotation.XmlTransient;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OutputField;
-import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Value;
+import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.ReflectionUtil;
 
 public class RichOutputField extends OutputField implements ValueStatusHolder {
@@ -41,16 +41,6 @@ public class RichOutputField extends OutputField implements ValueStatusHolder {
 
 	public RichOutputField(OutputField outputField){
 		ReflectionUtil.copyState(outputField, this);
-	}
-
-	@Override
-	public DataType getDataType(){
-		DataType dataType = super.getDataType();
-		if(dataType == null){
-			throw new MissingAttributeException(this, PMMLAttributes.OUTPUTFIELD_DATATYPE);
-		}
-
-		return dataType;
 	}
 
 	@Override
@@ -69,7 +59,7 @@ public class RichOutputField extends OutputField implements ValueStatusHolder {
 	}
 
 	private Map<Object, Integer> parseValues(){
-		DataType dataType = getDataType();
+		DataType dataType = requireDataType();
 
 		Map<Object, Integer> result = new LinkedHashMap<>();
 
@@ -77,10 +67,7 @@ public class RichOutputField extends OutputField implements ValueStatusHolder {
 
 		List<Value> pmmlValues = getValues();
 		for(Value pmmlValue : pmmlValues){
-			Object objectValue = pmmlValue.getValue();
-			if(objectValue == null){
-				throw new MissingAttributeException(pmmlValue, PMMLAttributes.VALUE_VALUE);
-			}
+			Object objectValue = pmmlValue.requireValue();
 
 			Value.Property property = pmmlValue.getProperty();
 			switch(property){

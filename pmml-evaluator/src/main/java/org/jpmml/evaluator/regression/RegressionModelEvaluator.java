@@ -29,7 +29,6 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.regression.CategoricalPredictor;
 import org.dmg.pmml.regression.NumericPredictor;
 import org.dmg.pmml.regression.PMMLAttributes;
-import org.dmg.pmml.regression.PMMLElements;
 import org.dmg.pmml.regression.PredictorTerm;
 import org.dmg.pmml.regression.RegressionModel;
 import org.dmg.pmml.regression.RegressionTable;
@@ -38,11 +37,6 @@ import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.InvalidAttributeException;
-import org.jpmml.evaluator.InvalidElementException;
-import org.jpmml.evaluator.InvalidElementListException;
-import org.jpmml.evaluator.MissingAttributeException;
-import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
@@ -51,6 +45,9 @@ import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.InvalidElementListException;
 
 public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
@@ -64,9 +61,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	public RegressionModelEvaluator(PMML pmml, RegressionModel regressionModel){
 		super(pmml, regressionModel);
 
-		if(!regressionModel.hasRegressionTables()){
-			throw new MissingElementException(regressionModel, PMMLElements.REGRESSIONMODEL_REGRESSIONTABLES);
-		}
+		@SuppressWarnings("unused")
+		List<RegressionTable> regressionTables = regressionModel.requireRegressionTables();
 	}
 
 	@Override
@@ -85,7 +81,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELD, targetFieldName);
 		}
 
-		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
+		List<RegressionTable> regressionTables = regressionModel.requireRegressionTables();
 		if(regressionTables.size() != 1){
 			throw new InvalidElementListException(regressionTables);
 		}
@@ -138,7 +134,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new InvalidElementException(regressionModel);
 		}
 
-		List<RegressionTable> regressionTables = regressionModel.getRegressionTables();
+		List<RegressionTable> regressionTables = regressionModel.requireRegressionTables();
 		if(regressionTables.size() < 2){
 			throw new InvalidElementListException(regressionTables);
 		}
@@ -151,10 +147,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		ValueMap<Object, V> values = new ValueMap<>(2 * regressionTables.size());
 
 		for(RegressionTable regressionTable : regressionTables){
-			Object targetCategory = regressionTable.getTargetCategory();
-			if(targetCategory == null){
-				throw new MissingAttributeException(regressionTable, PMMLAttributes.REGRESSIONTABLE_TARGETCATEGORY);
-			} // End if
+			Object targetCategory = regressionTable.requireTargetCategory();
 
 			if(targetCategories != null && targetCategories.indexOf(targetCategory) < 0){
 				throw new InvalidAttributeException(regressionTable, PMMLAttributes.REGRESSIONTABLE_TARGETCATEGORY, targetCategory);
@@ -262,15 +255,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		if(regressionTable.hasNumericPredictors()){
 			List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
 			for(NumericPredictor numericPredictor : numericPredictors){
-				String fieldName = numericPredictor.getField();
-				if(fieldName == null){
-					throw new MissingAttributeException(numericPredictor, PMMLAttributes.NUMERICPREDICTOR_FIELD);
-				}
-
-				Number coefficient = numericPredictor.getCoefficient();
-				if(coefficient == null){
-					throw new MissingAttributeException(numericPredictor, PMMLAttributes.NUMERICPREDICTOR_COEFFICIENT);
-				}
+				String fieldName = numericPredictor.requireField();
+				Number coefficient = numericPredictor.requireCoefficient();
 
 				FieldValue value = context.evaluate(fieldName);
 
@@ -297,15 +283,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 			List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
 			for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
-				String fieldName = categoricalPredictor.getField();
-				if(fieldName == null){
-					throw new MissingAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_FIELD);
-				}
-
-				Number coefficient = categoricalPredictor.getCoefficient();
-				if(coefficient == null){
-					throw new MissingAttributeException(categoricalPredictor, PMMLAttributes.CATEGORICALPREDICTOR_COEFFICIENT);
-				}
+				String fieldName = categoricalPredictor.requireField();
+				Number coefficient = categoricalPredictor.requireCoefficient();
 
 				if(matchedFieldName != null){
 
@@ -341,12 +320,9 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			for(PredictorTerm predictorTerm : predictorTerms){
 				factors.clear();
 
-				Number coefficient = predictorTerm.getCoefficient();
-				if(coefficient == null){
-					throw new MissingAttributeException(predictorTerm, PMMLAttributes.PREDICTORTERM_COEFFICIENT);
-				}
+				Number coefficient = predictorTerm.requireCoefficient();
 
-				List<FieldRef> fieldRefs = predictorTerm.getFieldRefs();
+				List<FieldRef> fieldRefs = predictorTerm.requireFieldRefs();
 				for(FieldRef fieldRef : fieldRefs){
 					FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
 
@@ -372,8 +348,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			}
 		}
 
-		Number intercept = regressionTable.getIntercept();
-		if(intercept != null){
+		Number intercept = regressionTable.requireIntercept();
+		if(intercept.doubleValue() != 0d){
 			result.add(intercept);
 		}
 
@@ -387,11 +363,8 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			return false;
 		}
 
-		Number intercept = regressionTable.getIntercept();
-		if(intercept != null && intercept.doubleValue() != 0d){
-			return false;
-		}
+		Number intercept = regressionTable.requireIntercept();
 
-		return true;
+		return (intercept.doubleValue() == 0d);
 	}
 }

@@ -82,7 +82,7 @@ public class ModelField implements Serializable {
 	public String getFieldName(){
 		Field<?> field = getField();
 
-		return field.getName();
+		return field.requireName();
 	}
 
 	public String getDisplayName(){

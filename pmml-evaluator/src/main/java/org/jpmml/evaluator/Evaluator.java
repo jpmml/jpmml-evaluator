@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.Model;
+import org.jpmml.model.InvalidMarkupException;
 
 /**
  * <p>

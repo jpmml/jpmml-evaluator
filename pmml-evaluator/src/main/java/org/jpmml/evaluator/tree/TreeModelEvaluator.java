@@ -23,13 +23,11 @@ import java.util.List;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.PMMLAttributes;
-import org.dmg.pmml.tree.PMMLElements;
 import org.dmg.pmml.tree.TreeModel;
-import org.jpmml.evaluator.InvalidAttributeException;
-import org.jpmml.evaluator.MissingAttributeException;
-import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.PMMLUtil;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.MissingAttributeException;
 
 abstract
 public class TreeModelEvaluator extends ModelEvaluator<TreeModel> {
@@ -44,10 +42,8 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> {
 	public TreeModelEvaluator(PMML pmml, TreeModel treeModel){
 		super(pmml, treeModel);
 
-		Node root = treeModel.getNode();
-		if(root == null){
-			throw new MissingElementException(treeModel, PMMLElements.TREEMODEL_NODE);
-		}
+		@SuppressWarnings("unused")
+		Node root = treeModel.requireNode();
 	}
 
 	@Override

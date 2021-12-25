@@ -37,6 +37,6 @@ public class MissingValueException extends EvaluationException {
 
 	static
 	private String formatMessage(String name){
-		return "The value for field " + formatKey(name) + " is not defined";
+		return "The value for field " + EvaluationException.formatKey(name) + " is not defined";
 	}
 }

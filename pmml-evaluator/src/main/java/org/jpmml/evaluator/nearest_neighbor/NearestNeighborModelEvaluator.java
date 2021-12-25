@@ -68,7 +68,6 @@ import org.dmg.pmml.nearest_neighbor.KNNInput;
 import org.dmg.pmml.nearest_neighbor.KNNInputs;
 import org.dmg.pmml.nearest_neighbor.NearestNeighborModel;
 import org.dmg.pmml.nearest_neighbor.PMMLAttributes;
-import org.dmg.pmml.nearest_neighbor.PMMLElements;
 import org.dmg.pmml.nearest_neighbor.TrainingInstances;
 import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.Classification;
@@ -79,12 +78,8 @@ import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.InlineTableUtil;
 import org.jpmml.evaluator.InputFieldUtil;
-import org.jpmml.evaluator.InvalidAttributeException;
-import org.jpmml.evaluator.InvalidElementException;
 import org.jpmml.evaluator.InvisibleFieldException;
 import org.jpmml.evaluator.MeasureUtil;
-import org.jpmml.evaluator.MissingAttributeException;
-import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.evaluator.MissingValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
@@ -101,6 +96,9 @@ import org.jpmml.evaluator.ValueAggregator;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.VoteAggregator;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.MissingAttributeException;
 import org.jpmml.model.visitors.ActiveFieldFinder;
 
 public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighborModel> {
@@ -120,33 +118,16 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	public NearestNeighborModelEvaluator(PMML pmml, NearestNeighborModel nearestNeighborModel){
 		super(pmml, nearestNeighborModel);
 
-		ComparisonMeasure comparisoonMeasure = nearestNeighborModel.getComparisonMeasure();
-		if(comparisoonMeasure == null){
-			throw new MissingElementException(nearestNeighborModel, PMMLElements.NEARESTNEIGHBORMODEL_COMPARISONMEASURE);
-		}
+		@SuppressWarnings("unused")
+		ComparisonMeasure comparisonMeasure = nearestNeighborModel.requireComparisonMeasure();
 
-		TrainingInstances trainingInstances = nearestNeighborModel.getTrainingInstances();
-		if(trainingInstances == null){
-			throw new MissingElementException(nearestNeighborModel, PMMLElements.NEARESTNEIGHBORMODEL_TRAININGINSTANCES);
-		}
+		TrainingInstances trainingInstances = nearestNeighborModel.requireTrainingInstances();
 
-		InstanceFields instanceFields = trainingInstances.getInstanceFields();
-		if(instanceFields == null){
-			throw new MissingElementException(trainingInstances, PMMLElements.TRAININGINSTANCES_INSTANCEFIELDS);
-		} // End if
+		@SuppressWarnings("unused")
+		List<InstanceField> instanceFields = (trainingInstances.requireInstanceFields()).requireInstanceFields();
 
-		if(!instanceFields.hasInstanceFields()){
-			throw new MissingElementException(instanceFields, PMMLElements.INSTANCEFIELDS_INSTANCEFIELDS);
-		}
-
-		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
-		if(knnInputs == null){
-			throw new MissingElementException(nearestNeighborModel, PMMLElements.NEARESTNEIGHBORMODEL_KNNINPUTS);
-		} // End if
-
-		if(!knnInputs.hasKNNInputs()){
-			throw new MissingElementException(knnInputs, PMMLElements.KNNINPUTS_KNNINPUTS);
-		}
+		@SuppressWarnings("unused")
+		List<KNNInput> knnInputs = (nearestNeighborModel.requireKNNInputs()).requireKNNInputs();
 	}
 
 	@Override
@@ -190,10 +171,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		List<InstanceResult<V>> nearestInstanceResults = ordering.sortedCopy(instanceResults);
 
-		Integer numberOfNeighbors = nearestNeighborModel.getNumberOfNeighbors();
-		if(numberOfNeighbors == null){
-			throw new MissingAttributeException(nearestNeighborModel, PMMLAttributes.NEARESTNEIGHBORMODEL_NUMBEROFNEIGHBORS);
-		}
+		Integer numberOfNeighbors = nearestNeighborModel.requireNumberOfNeighbors();
 
 		nearestInstanceResults = nearestInstanceResults.subList(0, numberOfNeighbors);
 
@@ -263,23 +241,20 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private <V extends Number> List<InstanceResult<V>> evaluateInstanceRows(ValueFactory<V> valueFactory, EvaluationContext context){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		ComparisonMeasure comparisonMeasure = nearestNeighborModel.getComparisonMeasure();
+		ComparisonMeasure comparisonMeasure = nearestNeighborModel.requireComparisonMeasure();
 
 		List<FieldValue> values = new ArrayList<>();
 
-		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
+		KNNInputs knnInputs = nearestNeighborModel.requireKNNInputs();
 		for(KNNInput knnInput : knnInputs){
-			String fieldName = knnInput.getField();
-			if(fieldName == null){
-				throw new MissingAttributeException(knnInput, PMMLAttributes.KNNINPUT_FIELD);
-			}
+			String fieldName = knnInput.requireField();
 
 			FieldValue value = context.evaluate(fieldName);
 
 			values.add(value);
 		}
 
-		Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
+		Measure measure = comparisonMeasure.requireMeasure();
 
 		if(measure instanceof Similarity){
 			return evaluateSimilarity(valueFactory, comparisonMeasure, knnInputs.getKNNInputs(), values);
@@ -477,7 +452,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	private <V extends Number> AffinityDistribution<V> createAffinityDistribution(List<InstanceResult<V>> instanceResults, Function<Integer, String> function, Object result){
 		NearestNeighborModel nearestNeighborModel = getModel();
 
-		ComparisonMeasure comparisonMeasure = nearestNeighborModel.getComparisonMeasure();
+		ComparisonMeasure comparisonMeasure = nearestNeighborModel.requireComparisonMeasure();
 
 		ValueMap<String, V> values = new ValueMap<>(2 * instanceResults.size());
 
@@ -485,7 +460,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			values.put(function.apply(instanceResult.getId()), instanceResult.getValue());
 		}
 
-		Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
+		Measure measure = comparisonMeasure.requireMeasure();
 
 		if(measure instanceof Similarity){
 			return new AffinityDistribution<>(Classification.Type.SIMILARITY, values, result);
@@ -514,11 +489,11 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 		if(this.trainingInstanceCentroids == null){
 			NearestNeighborModel nearestNeightborModel = getModel();
 
-			ComparisonMeasure comparisonMeasure = nearestNeightborModel.getComparisonMeasure();
+			ComparisonMeasure comparisonMeasure = nearestNeightborModel.requireComparisonMeasure();
 
 			Map<Integer, List<FieldValue>> trainingInstanceValues = parseTrainingInstanceValues(this);
 
-			Measure measure = MeasureUtil.ensureMeasure(comparisonMeasure);
+			Measure measure = comparisonMeasure.requireMeasure();
 
 			if(measure instanceof Distance){
 				this.trainingInstanceCentroids = ImmutableMap.copyOf(toImmutableListMap(trainingInstanceValues));
@@ -554,16 +529,13 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			names.add(targetField.getFieldName());
 		}
 
-		TrainingInstances trainingInstances = nearestNeighborModel.getTrainingInstances();
+		TrainingInstances trainingInstances = nearestNeighborModel.requireTrainingInstances();
 
 		List<FieldLoader> fieldLoaders = new ArrayList<>();
 
 		InstanceFields instanceFields = trainingInstances.getInstanceFields();
 		for(InstanceField instanceField : instanceFields){
-			String fieldName = instanceField.getField();
-			if(fieldName == null){
-				throw new MissingAttributeException(instanceField, PMMLAttributes.INSTANCEFIELD_FIELD);
-			}
+			String fieldName = instanceField.requireField();
 
 			String column = instanceField.getColumn();
 
@@ -627,9 +599,9 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			}
 		}
 
-		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
+		KNNInputs knnInputs = nearestNeighborModel.requireKNNInputs();
 		for(KNNInput knnInput : knnInputs){
-			String fieldName = knnInput.getField();
+			String fieldName = knnInput.requireField();
 
 			Field<?> field = modelEvaluator.resolveField(fieldName);
 			if(!(field instanceof DerivedField)){
@@ -655,11 +627,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			}
 		}
 
-		Integer numberOfNeighbors = nearestNeighborModel.getNumberOfNeighbors();
-		if(numberOfNeighbors == null){
-			throw new MissingAttributeException(nearestNeighborModel, PMMLAttributes.NEARESTNEIGHBORMODEL_NUMBEROFNEIGHBORS);
-		} else
-
+		Integer numberOfNeighbors = nearestNeighborModel.requireNumberOfNeighbors();
 		if(numberOfNeighbors < 0 || result.size() < numberOfNeighbors){
 			throw new InvalidAttributeException(nearestNeighborModel, PMMLAttributes.NEARESTNEIGHBORMODEL_NUMBEROFNEIGHBORS, numberOfNeighbors);
 		}
@@ -675,7 +643,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		Table<Integer, String, FieldValue> table = modelEvaluator.getTrainingInstances();
 
-		KNNInputs knnInputs = nearestNeighborModel.getKNNInputs();
+		KNNInputs knnInputs = nearestNeighborModel.requireKNNInputs();
 
 		Set<Integer> rowKeys = ImmutableSortedSet.copyOf(table.rowKeySet());
 		for(Integer rowKey : rowKeys){
@@ -684,7 +652,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			Map<String, FieldValue> rowValues = table.row(rowKey);
 
 			for(KNNInput knnInput : knnInputs){
-				FieldValue value = rowValues.get(knnInput.getField());
+				FieldValue value = rowValues.get(knnInput.requireField());
 
 				values.add(value);
 			}
@@ -813,22 +781,13 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 				@Override
 				public OpType getOpType(){
-					OpType opType = derivedField.getOpType();
-					if(opType == null){
-						throw new MissingAttributeException(derivedField, org.dmg.pmml.PMMLAttributes.DERIVEDFIELD_OPTYPE);
-					}
+					return derivedField.requireOpType();
 
-					return opType;
 				}
 
 				@Override
 				public DataType getDataType(){
-					DataType dataType = derivedField.getDataType();
-					if(dataType == null){
-						throw new MissingAttributeException(derivedField, org.dmg.pmml.PMMLAttributes.DERIVEDFIELD_DATATYPE);
-					}
-
-					return dataType;
+					return derivedField.requireDataType();
 				}
 
 				@Override

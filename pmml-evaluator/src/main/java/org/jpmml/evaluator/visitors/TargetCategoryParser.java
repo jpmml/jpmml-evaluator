@@ -35,7 +35,6 @@ import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.OutputField;
-import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.ScoreDistribution;
@@ -58,10 +57,7 @@ import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.Evaluator;
-import org.jpmml.evaluator.MissingAttributeException;
-import org.jpmml.evaluator.MissingElementException;
 import org.jpmml.evaluator.TypeUtil;
-import org.jpmml.model.XPathUtil;
 
 public class TargetCategoryParser extends AbstractParser {
 
@@ -123,7 +119,7 @@ public class TargetCategoryParser extends AbstractParser {
 		if(parent instanceof TreeModel){
 			TreeModel treeModel = (TreeModel)parent;
 
-			MiningFunction miningFunction = treeModel.getMiningFunction();
+			MiningFunction miningFunction = treeModel.requireMiningFunction();
 			switch(miningFunction){
 				case CLASSIFICATION:
 					break;
@@ -193,10 +189,7 @@ public class TargetCategoryParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(ScoreDistribution scoreDistribution){
-		Object value = scoreDistribution.getValue();
-		if(value == null){
-			throw new MissingAttributeException(scoreDistribution, PMMLAttributes.SCOREDISTRIBUTION_VALUE);
-		}
+		Object value = scoreDistribution.requireValue();
 
 		scoreDistribution.setValue(parseTargetValue(value));
 
@@ -205,10 +198,7 @@ public class TargetCategoryParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(SimpleRule simpleRule){
-		Object score = simpleRule.getScore();
-		if(score == null){
-			throw new MissingAttributeException(simpleRule, org.dmg.pmml.rule_set.PMMLAttributes.SIMPLERULE_SCORE);
-		}
+		Object score = simpleRule.requireScore();
 
 		simpleRule.setScore(parseTargetValue(simpleRule.getScore()));
 
@@ -234,17 +224,14 @@ public class TargetCategoryParser extends AbstractParser {
 	public VisitorAction visit(TargetValue targetValue){
 		Target target = (Target)getParent();
 
-		targetValue.setValue(parseTargetValue(target.getField(), targetValue.getValue()));
+		targetValue.setValue(parseTargetValue(target.getTargetField(), targetValue.getValue()));
 
 		return super.visit(targetValue);
 	}
 
 	@Override
 	public VisitorAction visit(TargetValueCount targetValueCount){
-		Object value = targetValueCount.getValue();
-		if(value == null){
-			throw new MissingAttributeException(targetValueCount, org.dmg.pmml.naive_bayes.PMMLAttributes.TARGETVALUECOUNT_VALUE);
-		}
+		Object value = targetValueCount.requireValue();
 
 		targetValueCount.setValue(parseTargetValue(value));
 
@@ -253,10 +240,7 @@ public class TargetCategoryParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(TargetValueStat targetValueStat){
-		Object value = targetValueStat.getValue();
-		if(value == null){
-			throw new MissingAttributeException(targetValueStat, org.dmg.pmml.naive_bayes.PMMLAttributes.TARGETVALUESTAT_VALUE);
-		}
+		Object value = targetValueStat.requireValue();
 
 		targetValueStat.setValue(parseTargetValue(value));
 
@@ -264,10 +248,10 @@ public class TargetCategoryParser extends AbstractParser {
 	}
 
 	private void processMiningModel(MiningModel miningModel){
-		Segmentation segmentation = miningModel.getSegmentation();
+		Segmentation segmentation = miningModel.requireSegmentation();
 
 		if(segmentation != null){
-			Segmentation.MultipleModelMethod multipleModelMethod = segmentation.getMultipleModelMethod();
+			Segmentation.MultipleModelMethod multipleModelMethod = segmentation.requireMultipleModelMethod();
 
 			switch(multipleModelMethod){
 				case SELECT_FIRST:
@@ -289,21 +273,14 @@ public class TargetCategoryParser extends AbstractParser {
 	}
 
 	private void processModel(Model model){
-		MiningSchema miningSchema = model.getMiningSchema();
-		if(miningSchema == null){
-			throw new MissingElementException(MissingElementException.formatMessage(XPathUtil.formatElement(model.getClass()) + "/" + XPathUtil.formatElement(MiningSchema.class)), model);
-		}
-
 		Map<String, DataType> targetDataTypes = new LinkedHashMap<>();
 
+		MiningSchema miningSchema = model.requireMiningSchema();
 		if(miningSchema.hasMiningFields()){
 			List<MiningField> miningFields = miningSchema.getMiningFields();
 
 			for(MiningField miningField : miningFields){
-				String fieldName = miningField.getName();
-				if(fieldName == null){
-					throw new MissingAttributeException(miningField, PMMLAttributes.MININGFIELD_NAME);
-				}
+				String fieldName = miningField.requireName();
 
 				MiningField.UsageType usageType = miningField.getUsageType();
 				switch(usageType){

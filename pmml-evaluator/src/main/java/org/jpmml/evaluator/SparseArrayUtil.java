@@ -36,6 +36,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSortedMap;
 import org.dmg.pmml.SparseArray;
+import org.jpmml.model.InvalidElementException;
 
 public class SparseArrayUtil {
 
