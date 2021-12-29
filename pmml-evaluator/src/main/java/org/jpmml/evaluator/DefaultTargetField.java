@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import org.dmg.pmml.DataField;
 import org.dmg.pmml.Target;
 
 public class DefaultTargetField extends TargetField {
@@ -26,7 +25,12 @@ public class DefaultTargetField extends TargetField {
 	private DefaultTargetField(){
 	}
 
-	public DefaultTargetField(DataField dataField, Target target){
+	public DefaultTargetField(DefaultDataField dataField, Target target){
 		super(dataField, null, target);
+	}
+
+	@Override
+	public DefaultDataField getField(){
+		return (DefaultDataField)super.getField();
 	}
 }

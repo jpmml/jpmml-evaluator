@@ -36,7 +36,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.DataField;
-import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.LocalTransformations;
@@ -45,7 +44,6 @@ import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
-import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLAttributes;
@@ -60,7 +58,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 	private M model = null;
 
-	private DataField defaultDataField = null;
+	private DefaultDataField defaultDataField = null;
 
 	private Map<String, MiningField> miningFields = Collections.emptyMap();
 
@@ -143,7 +141,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	/**
 	 * @return A synthetic {@link DataField} element describing the default target field.
 	 */
-	public DataField getDefaultDataField(){
+	public DefaultDataField getDefaultDataField(){
 
 		if(this.defaultDataField != null){
 			return this.defaultDataField;
@@ -156,13 +154,13 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 				switch(mathContext){
 					case FLOAT:
-						return ModelManager.DEFAULT_TARGET_CONTINUOUS_FLOAT;
+						return DefaultDataField.CONTINUOUS_FLOAT;
 					default:
-						return ModelManager.DEFAULT_TARGET_CONTINUOUS_DOUBLE;
+						return DefaultDataField.CONTINUOUS_DOUBLE;
 				}
 			case CLASSIFICATION:
 			case CLUSTERING:
-				return ModelManager.DEFAULT_TARGET_CATEGORICAL_STRING;
+				return DefaultDataField.CATEGORICAL_STRING;
 			default:
 				return null;
 		}
@@ -468,15 +466,15 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 		synthesis:
 		if(targetFields.isEmpty()){
-			DataField dataField = getDefaultDataField();
+			DefaultDataField defaultDataField = getDefaultDataField();
 
-			if(dataField == null){
+			if(defaultDataField == null){
 				break synthesis;
 			}
 
-			Target target = getTarget(dataField.requireName());
+			Target target = getTarget(defaultDataField.requireName());
 
-			TargetField targetField = new DefaultTargetField(dataField, target);
+			TargetField targetField = new DefaultTargetField(defaultDataField, target);
 
 			targetFields.add(targetField);
 		}
@@ -595,37 +593,5 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		}
 
 		return result;
-	}
-
-	private static final DataField DEFAULT_TARGET_CONTINUOUS_FLOAT = new DefaultDataField(OpType.CONTINUOUS, DataType.FLOAT);
-	private static final DataField DEFAULT_TARGET_CONTINUOUS_DOUBLE = new DefaultDataField(OpType.CONTINUOUS, DataType.DOUBLE);
-	private static final DataField DEFAULT_TARGET_CATEGORICAL_STRING = new DefaultDataField(OpType.CATEGORICAL, DataType.STRING);
-
-	static
-	protected class DefaultDataField extends DataField {
-
-		public DefaultDataField(OpType opType, DataType dataType){
-			super(Evaluator.DEFAULT_TARGET_NAME, opType, dataType);
-		}
-
-		@Override
-		public String requireName(){
-			return getName();
-		}
-
-		@Override
-		public String getName(){
-			return super.getName();
-		}
-
-		@Override
-		public DefaultDataField setName(String name){
-
-			if(!Objects.equals(name, Evaluator.DEFAULT_TARGET_NAME)){
-				throw new IllegalArgumentException();
-			}
-
-			return (DefaultDataField)super.setName(name);
-		}
 	}
 }

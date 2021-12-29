@@ -38,7 +38,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimaps;
-import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.LocalTransformations;
@@ -55,6 +54,7 @@ import org.dmg.pmml.mining.PMMLAttributes;
 import org.dmg.pmml.mining.Segment;
 import org.dmg.pmml.mining.Segmentation;
 import org.dmg.pmml.mining.VariableWeight;
+import org.jpmml.evaluator.DefaultDataField;
 import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.DefaultTargetField;
 import org.jpmml.evaluator.EntityUtil;
@@ -157,7 +157,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public DataField getDefaultDataField(){
+	public DefaultDataField getDefaultDataField(){
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.requireSegmentation();
