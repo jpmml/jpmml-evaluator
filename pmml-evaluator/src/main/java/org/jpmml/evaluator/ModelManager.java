@@ -474,7 +474,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 			Target target = getTarget(defaultDataField.requireName());
 
-			TargetField targetField = new DefaultTargetField(defaultDataField, target);
+			TargetField targetField = new SyntheticTargetField(defaultDataField, target);
 
 			targetFields.add(targetField);
 		}

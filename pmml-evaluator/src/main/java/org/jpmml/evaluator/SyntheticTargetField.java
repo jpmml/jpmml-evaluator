@@ -20,17 +20,22 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.Target;
 
-public class DefaultTargetField extends TargetField {
+public class SyntheticTargetField extends TargetField {
 
-	private DefaultTargetField(){
+	private SyntheticTargetField(){
 	}
 
-	public DefaultTargetField(DefaultDataField dataField, Target target){
+	public SyntheticTargetField(DefaultDataField dataField, Target target){
 		super(dataField, null, target);
 	}
 
 	@Override
 	public DefaultDataField getField(){
 		return (DefaultDataField)super.getField();
+	}
+
+	@Override
+	public boolean isSynthetic(){
+		return true;
 	}
 }

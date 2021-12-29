@@ -56,7 +56,7 @@ import org.dmg.pmml.mining.Segmentation;
 import org.dmg.pmml.mining.VariableWeight;
 import org.jpmml.evaluator.DefaultDataField;
 import org.jpmml.evaluator.Configuration;
-import org.jpmml.evaluator.DefaultTargetField;
+import org.jpmml.evaluator.SyntheticTargetField;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
@@ -808,8 +808,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				TargetField targetField = targetFields.get(0);
 				TargetField segmentTargetField = segmentTargetFields.get(0);
 
-				if(segmentTargetField instanceof DefaultTargetField){
-					DefaultTargetField defaultTargetField = (DefaultTargetField)segmentTargetField;
+				if(segmentTargetField instanceof SyntheticTargetField){
+					SyntheticTargetField syntheticTargetField = (SyntheticTargetField)segmentTargetField;
 
 					modelEvaluator.setDefaultDataField(new DefaultDataField(OpType.CATEGORICAL, targetField.getDataType()));
 				}
