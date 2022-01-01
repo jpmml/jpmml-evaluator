@@ -37,12 +37,13 @@ import org.jpmml.evaluator.TypeUtil;
  * </p>
  *
  * Pseudo-declaration of function:
- * <pre>
- *   &lt;DefineFunction name="..." dataType="double"&gt;
- *     &lt;ParameterField name="values" dataType="collection of numbers"/&gt;
- *     &lt;ParameterField name="percentile" dataType="integer"/&gt; &lt;-- 0 &lt; percentile &lt;= 100 --&gt;
- *   &lt;/DefineFunction&gt;
- * </pre>
+ * <pre>{@code
+ * <DefineFunction name="..." dataType="double">
+ *   <ParameterField name="values" dataType="collection of numbers"/>
+ *   <-- 0 < percentile <= 100 -->
+ *   <ParameterField name="percentile" dataType="integer"/>
+ * </DefineFunction>
+ * }</pre>
  *
  * @see Percentile
  */

@@ -33,12 +33,12 @@ import org.jpmml.evaluator.TypeInfos;
  * </p>
  *
  * Pseudo-declaration of function:
- * <pre>
- *   &lt;DefineFunction name="..." dataType="collection of strings"&gt;
- *     &lt;ParameterField name="input" dataType="string"/&gt;
- *     &lt;ParameterField name="pattern" dataType="string"/&gt;
- *   &lt;/DefineFunction&gt;
- * </pre>
+ * <pre>{@code
+ * <DefineFunction name="..." dataType="collection of strings">
+ *   <ParameterField name="input" dataType="string"/>
+ *   <ParameterField name="pattern" dataType="string"/>
+ * </DefineFunction>
+ * }</pre>
  *
  * @see Pattern#split(CharSequence, int)
  */

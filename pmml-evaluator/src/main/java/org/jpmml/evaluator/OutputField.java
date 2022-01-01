@@ -74,8 +74,8 @@ public class OutputField extends ResultField {
 	 * </p>
 	 *
 	 * Filtering output fields based on their "finality":
-	 * <pre>
-	 * List&lt;OutputField&gt; outputFields = evaluator.getOutputFields();
+	 * <pre>{@code
+	 * List<OutputField> outputFields = evaluator.getOutputFields();
 	 * for(OutputField outputField : outputFields){
 	 *   boolean finalResult = outputField.isFinalResult();
 	 *
@@ -83,7 +83,7 @@ public class OutputField extends ResultField {
 	 *     continue;
 	 *   }
 	 * }
-	 * </pre>
+	 * }</pre>
 	 */
 	public boolean isFinalResult(){
 		org.dmg.pmml.OutputField outputField = getField();
@@ -114,8 +114,8 @@ public class OutputField extends ResultField {
 	 * </p>
 	 *
 	 * Filtering output fields based on their origin:
-	 * <pre>
-	 * List&lt;OutputField&gt; outputFields = evaluator.getOutputFields();
+	 * <pre>{@code
+	 * List<OutputField> outputFields = evaluator.getOutputFields();
 	 * for(OutputField outputField : outputFields){
 	 *   int depth = outputField.getDepth();
 	 *
@@ -123,11 +123,11 @@ public class OutputField extends ResultField {
 	 *     // Defined by the top-level model
 	 *   } else
 	 *
-	 *   if(depth &gt; 0){
+	 *   if(depth > 0){
 	 *     // Defined by one of the nested models
 	 *   }
 	 * }
-	 * </pre>
+	 * }</pre>
 	 *
 	 * @return The nesting depth.
 	 */

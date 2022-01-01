@@ -35,12 +35,13 @@ import org.jpmml.evaluator.TypeUtil;
  * </p>
  *
  * Pseudo-declaration of function:
- * <pre>
- *   &lt;DefineFunction name="..." dataType="double"&gt;
- *     &lt;ParameterField name="values" dataType="collection of numbers"/&gt;
- *     &lt;ParameterField name="biasCorrected" dataType="boolean"/&gt; &lt;!-- Optional; defaults to false --&gt;
- *   &lt;/DefineFunction&gt;
- * </pre>
+ * <pre>{@code
+ * <DefineFunction name="..." dataType="double">
+ *   <ParameterField name="values" dataType="collection of numbers"/>
+ *   <!-- Optional; defaults to false -->
+ *   <ParameterField name="biasCorrected" dataType="boolean"/>
+ * </DefineFunction>
+ * }</pre>
  *
  * @see StandardDeviation
  */

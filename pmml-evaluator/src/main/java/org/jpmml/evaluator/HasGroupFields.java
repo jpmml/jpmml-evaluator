@@ -32,14 +32,14 @@ import org.dmg.pmml.Model;
  * </p>
  *
  * Aggregating data records:
- * <pre>
+ * <pre>{@code
  * Evaluator evaluator = ...;
- * List&lt;? extends Map&lt;FieldName, ?&gt;&gt; preparedRecords = ...;
+ * List<? extends Map<String, ?>> preparedRecords = ...;
  * if(evaluator instanceof HasGroupFields){
  *   HasGroupFields hasGroupFields = (HasGroupFields)evaluator;
  *   preparedRecords = EvaluatorUtil.groupRows(hasGroupFields, preparedRecords);
  * }
- * </pre>
+ * }</pre>
  *
  * @see EvaluatorUtil#groupRows(HasGroupFields, List)
  */

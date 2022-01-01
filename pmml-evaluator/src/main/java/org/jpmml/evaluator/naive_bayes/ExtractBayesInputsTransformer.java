@@ -39,8 +39,7 @@ import org.jpmml.model.visitors.AbstractVisitor;
  * The support for continuous fields using the {@link TargetValueStats} element was officially introduced in PMML schema version 4.2.
  * However, it is possible to encounter this markup in older PMML schema version documents (most notably, produced by R's legacy "pmml" package),
  * where the "incompatible" BayesInput element is wrapped into an Extension element:
- * <pre>
- * {@code
+ * <pre>{@code
  * <BayesInputs>
  *   <BayesInput>
  *     <PairCounts/>
@@ -51,8 +50,7 @@ import org.jpmml.model.visitors.AbstractVisitor;
  *     </BayesInput>
  *   </Extension>
  * </BayesInputs>
- * }
- * </pre>
+ * }</pre>
  */
 public class ExtractBayesInputsTransformer implements PMMLTransformer<Exception> {
 

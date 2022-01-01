@@ -40,33 +40,33 @@ import org.jpmml.model.InvalidMarkupException;
  * <strong>Preparing arguments</strong>
  * <br>
  * Transforming an user-supplied map of arguments to a known-good PMML map of arguments:
- * <pre>
- * Map&lt;String, ?&gt; userArguments = ...;
- * Map&lt;String, FieldValue&gt; arguments = new LinkedHashMap&lt;&gt;();
- * List&lt;InputField&gt; inputFields = evaluator.getInputFields();
+ * <pre>{@code
+ * Map<String, ?> userArguments = ...;
+ * Map<String, FieldValue> arguments = new LinkedHashMap<>();
+ * List<InputField> inputFields = evaluator.getInputFields();
  * for(InputField inputField : inputFields){
  *   String inputName = inputField.getName();
  *   Object rawValue = userArguments.get(inputName);
  *   FieldValue inputValue = inputField.prepare(rawValue);
  *   arguments.put(inputName, inputValue);
  * }
- * </pre>
+ * }</pre>
  *
  * <strong>Performing the evaluation</strong>
- * <pre>
- * Map&lt;String, ?&gt; results = evaluator.evaluate(arguments);
- * </pre>
+ * <pre>{@code
+ * Map<String, ?> results = evaluator.evaluate(arguments);
+ * }</pre>
  *
  * <strong>Processing results</strong>
  * <br>
  * Retrieving the values of {@link #getTargetFields() target fields} (ie. primary results):
- * <pre>
- * List&lt;TargetField&gt; targetFields = evaluator.getTargetFields();
+ * <pre>{@code
+ * List<TargetField> targetFields = evaluator.getTargetFields();
  * for(TargetField targetField : targetFields){
  *   String targetName = targetField.getName();
  *   Object targetValue = results.get(targetName);
  * }
- * </pre>
+ * }</pre>
  *
  * Decoding a {@link Computable complex value} to a Java primitive value:
  * <pre>
@@ -77,23 +77,23 @@ import org.jpmml.model.InvalidMarkupException;
  * </pre>
  *
  * Retrieving the values of {@link #getOutputFields() output fields} (ie. secondary results):
- * <pre>
- * List&lt;OutputField&gt; outputFields = evaluator.getOutputFields();
+ * <pre>{@code
+ * List<OutputField> outputFields = evaluator.getOutputFields();
  * for(OutputField outputField : outputFields){
  *   String outputName = outputField.getName();
  *   Object outputValue = results.get(outputName);
  * }
- * </pre>
+ * }</pre>
  *
  * <strong>Handling exceptions</strong>
  * <br>
  * A code block that does exception-prone work should be surrounded with two levels of try-catch statements.
  * The inner try statement should catch {@link EvaluationException} instances that indicate "local" problems, which are related to individual data records.
  * The outer try statement should catch {@link InvalidMarkupException} and {@link UnsupportedMarkupException} instances that indicate "global" problems, which are related to the class model object.
- * <pre>
+ * <pre>{@code
  * try {
- *   List&lt;Map&lt;String, ?&gt;&gt; records = ...;
- *   for(Map&lt;String, ?&gt; record : records){
+ *   Lis<Map<String, ?>> records = ...;
+ *   for(Map<String, ?> record : records){
  *     try {
  *       // Do exception-prone work
  *     } catch(EvaluationException ee){
@@ -101,12 +101,12 @@ import org.jpmml.model.InvalidMarkupException;
  *       // Skip this data record and proceed as usual with the next one
  *     }
  *   }
- * } catch(InvalidMarkupException | UnsupportedMarkupException me){
+ * } catch(InvalidMarkupException | MissingMarkupException | UnsupportedMarkupException me){
  *   // The work failed because of the class model object.
  *   // This is a persistent problem that is very likely to affect all data records
  *   // Decommission the Evaluator instance
  * }
- * </pre>
+ * }</pre>
  *
  * @see EvaluatorUtil
  *
