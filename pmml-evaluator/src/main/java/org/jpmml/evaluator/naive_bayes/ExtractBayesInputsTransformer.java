@@ -52,7 +52,7 @@ import org.jpmml.model.visitors.AbstractVisitor;
  * </BayesInputs>
  * }</pre>
  */
-public class ExtractBayesInputsTransformer implements PMMLTransformer<Exception> {
+public class ExtractBayesInputsTransformer implements PMMLTransformer<RuntimeException> {
 
 	@Override
 	public PMML apply(PMML pmml){

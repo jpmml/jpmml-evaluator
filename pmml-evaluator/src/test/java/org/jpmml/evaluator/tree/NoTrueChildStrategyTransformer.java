@@ -25,7 +25,7 @@ import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.PMMLTransformer;
 import org.jpmml.model.visitors.AbstractVisitor;
 
-public class NoTrueChildStrategyTransformer implements PMMLTransformer<Exception> {
+public class NoTrueChildStrategyTransformer implements PMMLTransformer<RuntimeException> {
 
 	private TreeModel.NoTrueChildStrategy noTrueChildStrategy;
 

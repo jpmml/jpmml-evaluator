@@ -25,7 +25,7 @@ import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.PMMLTransformer;
 import org.jpmml.model.visitors.AbstractVisitor;
 
-public class MissingThresholdTransformer implements PMMLTransformer<Exception> {
+public class MissingThresholdTransformer implements PMMLTransformer<RuntimeException> {
 
 	private double missingThreshold;
 

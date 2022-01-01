@@ -28,7 +28,7 @@ import org.dmg.pmml.VisitorAction;
 import org.jpmml.evaluator.PMMLTransformer;
 import org.jpmml.model.visitors.AbstractVisitor;
 
-public class RemoveTargetValuesTransformer implements PMMLTransformer<Exception> {
+public class RemoveTargetValuesTransformer implements PMMLTransformer<RuntimeException> {
 
 	@Override
 	public PMML apply(PMML pmml){

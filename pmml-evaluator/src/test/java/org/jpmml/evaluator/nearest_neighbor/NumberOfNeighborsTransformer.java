@@ -25,7 +25,7 @@ import org.dmg.pmml.nearest_neighbor.NearestNeighborModel;
 import org.jpmml.evaluator.PMMLTransformer;
 import org.jpmml.model.visitors.AbstractVisitor;
 
-public class NumberOfNeighborsTransformer implements PMMLTransformer<Exception> {
+public class NumberOfNeighborsTransformer implements PMMLTransformer<RuntimeException> {
 
 	private int numberOfNeighbors;
 

@@ -28,7 +28,7 @@ import org.dmg.pmml.rule_set.RuleSet;
 import org.jpmml.evaluator.PMMLTransformer;
 import org.jpmml.model.visitors.AbstractVisitor;
 
-public class RuleSelectionMethodTransformer implements PMMLTransformer<Exception> {
+public class RuleSelectionMethodTransformer implements PMMLTransformer<RuntimeException> {
 
 	private RuleSelectionMethod ruleSelectionMethod;
 

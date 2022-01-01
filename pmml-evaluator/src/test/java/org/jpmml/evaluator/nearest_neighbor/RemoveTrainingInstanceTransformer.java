@@ -31,7 +31,7 @@ import org.jpmml.model.visitors.AbstractVisitor;
 
 import static org.junit.Assert.assertEquals;
 
-public class RemoveTrainingInstanceTransformer implements PMMLTransformer<Exception> {
+public class RemoveTrainingInstanceTransformer implements PMMLTransformer<RuntimeException> {
 
 	private int index;
 
