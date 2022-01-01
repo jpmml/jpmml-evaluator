@@ -21,6 +21,7 @@ package org.jpmml.evaluator.naive_bayes;
 import java.util.List;
 
 import org.dmg.pmml.naive_bayes.BayesInput;
+import org.dmg.pmml.naive_bayes.NaiveBayesModel;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
@@ -29,11 +30,22 @@ import static org.junit.Assert.assertEquals;
 public class BayesInputTest extends ModelEvaluatorTest {
 
 	@Test
-	public void evaluate() throws Exception {
+	public void getBayesInputs() throws Exception {
 		NaiveBayesModelEvaluator evaluator = (NaiveBayesModelEvaluator)createModelEvaluator();
 
-		List<BayesInput> bayesInputs = evaluator.getBayesInputs();
+		checkBayesInputs(1, evaluator);
 
-		assertEquals(2, bayesInputs.size());
+		evaluator = (NaiveBayesModelEvaluator)createModelEvaluator(new ExtractBayesInputsTransformer());
+
+		checkBayesInputs(2, evaluator);
+	}
+
+	static
+	private void checkBayesInputs(int expectedSize, NaiveBayesModelEvaluator evaluator){
+		NaiveBayesModel naiveBayesModel = evaluator.getModel();
+
+		List<BayesInput> bayesInputs = (naiveBayesModel.requireBayesInputs()).requireBayesInputs();
+
+		assertEquals(expectedSize, bayesInputs.size());
 	}
 }

@@ -28,21 +28,18 @@
  */
 package org.jpmml.evaluator.naive_bayes;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.math3.util.Precision;
 import org.dmg.pmml.ContinuousDistribution;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Discretize;
 import org.dmg.pmml.Expression;
-import org.dmg.pmml.Extension;
 import org.dmg.pmml.GaussianDistribution;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PoissonDistribution;
@@ -51,7 +48,6 @@ import org.dmg.pmml.naive_bayes.BayesInputs;
 import org.dmg.pmml.naive_bayes.BayesOutput;
 import org.dmg.pmml.naive_bayes.NaiveBayesModel;
 import org.dmg.pmml.naive_bayes.PMMLAttributes;
-import org.dmg.pmml.naive_bayes.PMMLElements;
 import org.dmg.pmml.naive_bayes.PairCounts;
 import org.dmg.pmml.naive_bayes.TargetValueCount;
 import org.dmg.pmml.naive_bayes.TargetValueCounts;
@@ -78,11 +74,8 @@ import org.jpmml.evaluator.ValueUtil;
 import org.jpmml.evaluator.VerificationUtil;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.MisplacedElementException;
-import org.jpmml.model.MissingElementException;
 
 public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
-
-	private List<BayesInput> bayesInputs = Collections.emptyList();
 
 	private Map<String, Map<Object, Number>> fieldCountSums = Collections.emptyMap();
 
@@ -97,16 +90,9 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	public NaiveBayesModelEvaluator(PMML pmml, NaiveBayesModel naiveBayesModel){
 		super(pmml, naiveBayesModel);
 
-		BayesInputs bayesInputs = naiveBayesModel.requireBayesInputs();
-		if(!bayesInputs.hasBayesInputs() && !bayesInputs.hasExtensions()){
-			throw new MissingElementException(bayesInputs, PMMLElements.BAYESINPUTS_BAYESINPUTS);
-		} else
+		List<BayesInput> bayesInputs = (naiveBayesModel.requireBayesInputs()).requireBayesInputs();
 
-		{
-			this.bayesInputs = ImmutableList.copyOf(parseBayesInputs(bayesInputs));
-
-			this.fieldCountSums = ImmutableMap.copyOf(toImmutableMapMap(calculateFieldCountSums(this.bayesInputs)));
-		}
+		this.fieldCountSums = ImmutableMap.copyOf(toImmutableMapMap(calculateFieldCountSums(bayesInputs)));
 
 		BayesOutput bayesOutput = naiveBayesModel.requireBayesOutput();
 
@@ -123,6 +109,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 	protected <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		NaiveBayesModel naiveBayesModel = getModel();
 
+		BayesInputs bayesInputs = naiveBayesModel.requireBayesInputs();
 		BayesOutput bayesOutput = naiveBayesModel.requireBayesOutput();
 
 		TargetField targetField = getTargetField();
@@ -163,7 +150,6 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		Map<String, ? extends Map<?, Number>> fieldCountSums = getFieldCountSums();
 
-		List<BayesInput> bayesInputs = getBayesInputs();
 		for(BayesInput bayesInput : bayesInputs){
 			String fieldName = bayesInput.requireField();
 
@@ -288,12 +274,36 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 	}
 
-	protected List<BayesInput> getBayesInputs(){
-		return this.bayesInputs;
-	}
-
 	protected Map<String, Map<Object, Number>> getFieldCountSums(){
 		return this.fieldCountSums;
+	}
+
+	static
+	private TargetValueStats getTargetValueStats(BayesInput bayesInput){
+		return bayesInput.getTargetValueStats();
+	}
+
+	static
+	private TargetValueCounts getTargetValueCounts(BayesInput bayesInput, FieldValue value){
+
+		if(bayesInput instanceof MapHolder){
+			MapHolder<?> mapHolder = (MapHolder<?>)bayesInput;
+
+			return (TargetValueCounts)mapHolder.get(value.getDataType(), value.getValue());
+		}
+
+		List<PairCounts> pairCounts = bayesInput.getPairCounts();
+		for(PairCounts pairCount : pairCounts){
+			Object category = pairCount.requireValue();
+
+			if(value.equalsValue(category)){
+				TargetValueCounts targetValueCounts = pairCount.requireTargetValueCounts();
+
+				return targetValueCounts;
+			}
+		}
+
+		return null;
 	}
 
 	static
@@ -330,72 +340,5 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 
 		return result;
-	}
-
-	static
-	private List<BayesInput> parseBayesInputs(BayesInputs bayesInputs){
-
-		if(!bayesInputs.hasExtensions()){
-			return bayesInputs.requireBayesInputs();
-		}
-
-		List<BayesInput> result = new ArrayList<>(bayesInputs.getBayesInputs());
-
-		// The support for continuous fields using the TargetValueStats element was officially introduced in PMML schema version 4.2.
-		// However, it is possible to encounter this feature in older PMML schema version documents (most notably, produced by R's "pmml" package),
-		// where the offending BayesInput element is surrounded by an Extension element:
-		// <BayesInputs>
-		//   <BayesInput>
-		//     <PairCounts/>
-		//   </BayesInput>
-		//   <Extension>
-		//     <BayesInput>
-		//       <TargetValueStats/>
-		//     </BayesInput>
-		//   </Extension>
-		// </BayesInputs>
-		List<Extension> extensions = bayesInputs.getExtensions();
-		for(Extension extension : extensions){
-			List<?> objects = extension.getContent();
-
-			for(Object object : objects){
-
-				if(object instanceof BayesInput){
-					BayesInput bayesInput = (BayesInput)object;
-
-					result.add(bayesInput);
-				}
-			}
-		}
-
-		return result;
-	}
-
-	static
-	private TargetValueStats getTargetValueStats(BayesInput bayesInput){
-		return bayesInput.getTargetValueStats();
-	}
-
-	static
-	private TargetValueCounts getTargetValueCounts(BayesInput bayesInput, FieldValue value){
-
-		if(bayesInput instanceof MapHolder){
-			MapHolder<?> mapHolder = (MapHolder<?>)bayesInput;
-
-			return (TargetValueCounts)mapHolder.get(value.getDataType(), value.getValue());
-		}
-
-		List<PairCounts> pairCounts = bayesInput.getPairCounts();
-		for(PairCounts pairCount : pairCounts){
-			Object category = pairCount.requireValue();
-
-			if(value.equalsValue(category)){
-				TargetValueCounts targetValueCounts = pairCount.requireTargetValueCounts();
-
-				return targetValueCounts;
-			}
-		}
-
-		return null;
 	}
 }
