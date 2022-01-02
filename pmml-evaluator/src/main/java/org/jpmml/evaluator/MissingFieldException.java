@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import org.dmg.pmml.HasFieldReference;
 import org.dmg.pmml.PMMLObject;
 
 /**
@@ -33,6 +34,10 @@ public class MissingFieldException extends EvaluationException {
 
 	public MissingFieldException(String name, PMMLObject context){
 		super(formatMessage(name), context);
+	}
+
+	public <E extends PMMLObject & HasFieldReference<E>> MissingFieldException(E object){
+		this(object.getField(), object);
 	}
 
 	static

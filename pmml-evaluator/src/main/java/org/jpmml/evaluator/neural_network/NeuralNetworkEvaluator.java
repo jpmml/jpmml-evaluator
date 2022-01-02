@@ -298,7 +298,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 			Field<?> field = resolveField(fieldName);
 			if(field == null){
-				throw new MissingFieldException(fieldName, fieldRef);
+				throw new MissingFieldException(fieldRef);
 			} // End if
 
 			if(field instanceof DataField){

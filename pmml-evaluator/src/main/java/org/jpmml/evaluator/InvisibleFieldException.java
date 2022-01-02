@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import org.dmg.pmml.HasFieldReference;
 import org.dmg.pmml.PMMLObject;
 
 /**
@@ -33,6 +34,10 @@ public class InvisibleFieldException extends EvaluationException {
 
 	public InvisibleFieldException(String name, PMMLObject context){
 		super(formatMessage(name), context);
+	}
+
+	public <E extends PMMLObject & HasFieldReference<E>> InvisibleFieldException(E object){
+		this(object.getField(), object);
 	}
 
 	static

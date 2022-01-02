@@ -453,7 +453,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 				DataField dataField = getDataField(fieldName);
 				if(dataField == null){
-					throw new MissingFieldException(fieldName, miningField);
+					throw new MissingFieldException(miningField);
 				}
 
 				Target target = getTarget(fieldName);

@@ -365,11 +365,9 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			if(object instanceof FieldRef){
 				FieldRef fieldRef = (FieldRef)object;
 
-				String fieldName = fieldRef.requireField();
-
 				FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
 				if(FieldValueUtil.isMissing(value)){
-					throw new MissingValueException(fieldName, vectorFields);
+					throw new MissingValueException(fieldRef);
 				}
 
 				result.add(value.asNumber());
@@ -382,7 +380,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 				FieldValue value = context.evaluate(fieldName);
 				if(FieldValueUtil.isMissing(value)){
-					throw new MissingValueException(fieldName, categoricalPredictor);
+					throw new MissingValueException(categoricalPredictor);
 				}
 
 				Number coefficient = categoricalPredictor.getCoefficient();

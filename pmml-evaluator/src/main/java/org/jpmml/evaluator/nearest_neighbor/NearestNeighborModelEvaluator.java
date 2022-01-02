@@ -71,8 +71,8 @@ import org.dmg.pmml.nearest_neighbor.NearestNeighborModel;
 import org.dmg.pmml.nearest_neighbor.PMMLAttributes;
 import org.dmg.pmml.nearest_neighbor.TrainingInstances;
 import org.jpmml.evaluator.AffinityDistribution;
-import org.jpmml.evaluator.DefaultDataField;
 import org.jpmml.evaluator.Classification;
+import org.jpmml.evaluator.DefaultDataField;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldUtil;
@@ -553,7 +553,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			Field<?> field = modelEvaluator.resolveField(fieldName);
 			if(field == null){
-				throw new MissingFieldException(fieldName, instanceField);
+				throw new MissingFieldException(instanceField);
 			} // End if
 
 			if(field instanceof DataField){
@@ -561,7 +561,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 				MiningField miningField = modelEvaluator.getMiningField(fieldName);
 				if(miningField == null){
-					throw new InvisibleFieldException(fieldName, instanceField);
+					throw new InvisibleFieldException(instanceField);
 				}
 
 				fieldLoaders.add(new DataFieldLoader(fieldName, column, dataField, miningField));
@@ -574,7 +574,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 				MiningField miningField = modelEvaluator.getMiningField(fieldName);
 				if(miningField == null && inherited){
-					throw new InvisibleFieldException(fieldName, instanceField);
+					throw new InvisibleFieldException(instanceField);
 				}
 
 				fieldLoaders.add(new DerivedFieldLoader(fieldName, column, derivedField, miningField));
