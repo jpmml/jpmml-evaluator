@@ -326,7 +326,9 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			ProbabilityAggregator<V> aggregator = new ProbabilityAggregator.Average<>(valueFactory);
 			aggregator.init(keySet());
 
-			for(HasProbability hasProbability : hasProbabilities){
+			for(int i = 0, max = hasProbabilities.size(); i < max; i++){
+				HasProbability hasProbability = hasProbabilities.get(i);
+
 				aggregator.add(hasProbability);
 			}
 

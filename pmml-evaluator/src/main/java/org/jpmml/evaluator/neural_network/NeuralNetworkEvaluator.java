@@ -390,7 +390,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			}
 
 			List<Neuron> neurons = neuralLayer.getNeurons();
-			for(int i = 0; i < neurons.size(); i++){
+			for(int i = 0, max = neurons.size(); i < max; i++){
 				Neuron neuron = neurons.get(i);
 
 				Value<V> output = valueFactory.newValue();

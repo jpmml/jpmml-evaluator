@@ -137,7 +137,8 @@ public class MatrixUtil {
 	static
 	private Number getMatCellValue(List<MatCell> matCells, int row, int column){
 
-		for(MatCell matCell : matCells){
+		for(int i = 0, max = matCells.size(); i < max; i++){
+			MatCell matCell = matCells.get(i);
 
 			if((matCell.getRow() == row) && (matCell.getCol() == column)){
 				return (Number)TypeUtil.parseOrCast(DataType.DOUBLE, matCell.getValue());

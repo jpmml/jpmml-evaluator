@@ -73,7 +73,8 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 		if(defineFunction.hasParameterFields()){
 			List<ParameterField> parameterFields = defineFunction.getParameterFields();
 
-			for(ParameterField parameterField : parameterFields){
+			for(int i = 0, max = parameterFields.size(); i < max; i++){
+				ParameterField parameterField = parameterFields.get(i);
 
 				if(Objects.equals(parameterField.requireName(), name)){
 					return parameterField;

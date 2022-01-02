@@ -154,7 +154,8 @@ public class FieldValue implements TypeInfo, Serializable {
 
 		List<?> values = ArrayUtil.getContent(array);
 
-		for(Object value : values){
+		for(int i = 0, max = values.size(); i < max; i++){
+			Object value = values.get(i);
 
 			if(equalsValue(value)){
 				return true;

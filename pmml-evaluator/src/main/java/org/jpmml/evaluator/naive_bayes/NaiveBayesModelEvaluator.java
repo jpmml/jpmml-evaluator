@@ -293,7 +293,9 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 
 		List<PairCounts> pairCounts = bayesInput.getPairCounts();
-		for(PairCounts pairCount : pairCounts){
+		for(int i = 0, max = pairCounts.size(); i < max; i++){
+			PairCounts pairCount = pairCounts.get(i);
+
 			Object category = pairCount.requireValue();
 
 			if(value.equalsValue(category)){

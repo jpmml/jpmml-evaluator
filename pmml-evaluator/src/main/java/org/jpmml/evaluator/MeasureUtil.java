@@ -53,7 +53,7 @@ public class MeasureUtil {
 		int a01 = 0;
 		int a00 = 0;
 
-		for(int i = 0; i < comparisonFields.size(); i++){
+		for(int i = 0, max = comparisonFields.size(); i < max; i++){
 
 			if(flags.get(i)){
 
@@ -139,7 +139,7 @@ public class MeasureUtil {
 	public BitSet toBitSet(List<FieldValue> values){
 		BitSet result = new BitSet(values.size());
 
-		for(int i = 0; i < values.size(); i++){
+		for(int i = 0, max = values.size(); i < max; i++){
 			FieldValue value = values.get(i);
 
 			if(value.equalsValue(Boolean.FALSE)){
@@ -313,7 +313,7 @@ public class MeasureUtil {
 		Value<V> sum = valueFactory.newValue();
 		Value<V> nonmissingSum = valueFactory.newValue();
 
-		for(int i = 0; i < values.size(); i++){
+		for(int i = 0, max = values.size(); i < max; i++){
 			FieldValue value = values.get(i);
 			Number adjustmentValue = (adjustmentValues != null ? adjustmentValues.get(i) : Numbers.DOUBLE_ONE);
 

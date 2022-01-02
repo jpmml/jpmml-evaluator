@@ -162,7 +162,9 @@ public class TargetUtil {
 		DataType dataType = TypeUtil.getDataType(value);
 
 		List<TargetValue> targetValues = target.getTargetValues();
-		for(TargetValue targetValue : targetValues){
+		for(int i = 0, max = targetValues.size(); i < max; i++){
+			TargetValue targetValue = targetValues.get(i);
+
 			Object objectValue = targetValue.requireValue();
 
 			if((value).equals(TypeUtil.parseOrCast(dataType, objectValue))){
@@ -213,7 +215,9 @@ public class TargetUtil {
 		Value<V> sum = valueFactory.newValue();
 
 		List<TargetValue> targetValues = target.getTargetValues();
-		for(TargetValue targetValue : targetValues){
+		for(int i = 0, max = targetValues.size(); i < max; i++){
+			TargetValue targetValue = targetValues.get(i);
+
 			Number probability = targetValue.getPriorProbability();
 			if(probability == null){
 				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_PRIORPROBABILITY);

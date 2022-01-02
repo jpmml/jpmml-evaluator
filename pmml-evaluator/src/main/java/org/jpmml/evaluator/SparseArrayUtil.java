@@ -109,7 +109,7 @@ public class SparseArrayUtil {
 
 		Integer n = sparseArray.getN();
 
-		for(int i = 0; i < indices.size(); i++){
+		for(int i = 0, max = indices.size(); i < max; i++){
 			Integer index = indices.get(i);
 			E entry = entries.get(i);
 

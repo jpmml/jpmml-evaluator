@@ -312,13 +312,13 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		Value<V> previousLinkValue = null;
 		Value<V> previousCumulativeLinkValue = null;
 
-		for(int i = 0; i < targetCategories.size(); i++){
+		for(int i = 0, max = targetCategories.size(); i < max; i++){
 			Object targetCategory = targetCategories.get(i);
 
 			Value<V> value;
 
 			// Categories from the first category to the second-to-last category
-			if(i < (targetCategories.size() - 1)){
+			if(i < (max - 1)){
 				Map<String, Row> parameterPredictorRows;
 
 				if(ppMatrixMap.isEmpty()){
@@ -338,7 +338,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					}
 				}
 
-				Iterable<PCell> parameterCells;
+				List<PCell> parameterCells;
 
 				switch(modelType){
 					case GENERALIZED_LINEAR:
@@ -372,7 +372,8 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 							throw new InvalidElementException(paramMatrix);
 						}
 
-						parameterCells = Iterables.concat(interceptCells, parameterCells);
+						// XXX
+						parameterCells = ImmutableList.copyOf(Iterables.concat(parameterCells, interceptCells));
 						break;
 					case REGRESSION:
 					case GENERAL_LINEAR:
@@ -510,10 +511,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		return computeDotProduct(valueFactory, parameterCells, parameterPredictorRows, context);
 	}
 
-	private <V extends Number> Value<V> computeDotProduct(ValueFactory<V> valueFactory, Iterable<PCell> parameterCells, Map<String, Row> parameterPredictorRows, EvaluationContext context){
+	private <V extends Number> Value<V> computeDotProduct(ValueFactory<V> valueFactory, List<PCell> parameterCells, Map<String, Row> parameterPredictorRows, EvaluationContext context){
 		Value<V> result = null;
 
-		for(PCell parameterCell : parameterCells){
+		for(int i = 0, max = parameterCells.size(); i < max; i++){
+			PCell parameterCell = parameterCells.get(i);
+
 			String parameterName = parameterCell.requireParameterName();
 			Number beta = parameterCell.requireBeta();
 
@@ -547,7 +550,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		Map<?, List<PCell>> paramMatrixMap = getParamMatrixMap();
 
-		Iterable<PCell> parameterCells = paramMatrixMap.get(null);
+		List<PCell> parameterCells = paramMatrixMap.get(null);
 
 		if(paramMatrixMap.size() != 1 || parameterCells == null){
 			ParamMatrix paramMatrix = generalRegressionModel.getParamMatrix();
@@ -557,7 +560,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		Value<V> result = null;
 
-		for(PCell parameterCell : parameterCells){
+		for(int i = 0, max = parameterCells.size(); i < max; i++){
+			PCell parameterCell = parameterCells.get(i);
+
 			String parameterName = parameterCell.requireParameterName();
 			Number beta = parameterCell.requireBeta();
 
@@ -835,7 +840,9 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		}
 
 		List<BaselineStratum> baselineStrata = baseCumHazardTables.requireBaselineStrata();
-		for(BaselineStratum baselineStratum : baselineStrata){
+		for(int i = 0, max = baselineStrata.size(); i < max; i++){
+			BaselineStratum baselineStratum = baselineStrata.get(i);
+
 			Object category = baselineStratum.requireValue();
 
 			if(value.equalsValue(category)){

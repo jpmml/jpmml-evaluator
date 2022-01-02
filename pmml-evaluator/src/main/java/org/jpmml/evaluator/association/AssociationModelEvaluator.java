@@ -162,7 +162,9 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		Map<String, Boolean> flags = new HashMap<>();
 
 		List<Itemset> itemsets = associationModel.getItemsets();
-		for(Itemset itemset : itemsets){
+		for(int i = 0, max = itemsets.size(); i < max; i++){
+			Itemset itemset = itemsets.get(i);
+
 			flags.put(itemset.requireId(), isSubset(activeItems, itemset));
 		}
 
@@ -171,7 +173,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		BitSet antecedentFlags = new BitSet(associationRules.size());
 		BitSet consequentFlags = new BitSet(associationRules.size());
 
-		for(int i = 0; i < associationRules.size(); i++){
+		for(int i = 0, max = associationRules.size(); i < max; i++){
 			AssociationRule associationRule = associationRules.get(i);
 
 			String antecedent = associationRule.requireAntecedent();
@@ -226,7 +228,9 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		Map<String, Set<FieldValue>> explodedValues = null;
 
 		List<ItemValue> itemValues = getItemValues();
-		for(ItemValue itemValue : itemValues){
+		for(int i = 0, max = itemValues.size(); i < max; i++){
+			ItemValue itemValue = itemValues.get(i);
+
 			String id = itemValue.getId();
 			String name = itemValue.getField();
 			String category = itemValue.getCategory();
@@ -340,9 +344,10 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		boolean result = true;
 
 		List<ItemRef> itemRefs = itemset.getItemRefs();
-		for(ItemRef itemRef : itemRefs){
-			result &= items.contains(itemRef.requireItemRef());
+		for(int i = 0, max = itemRefs.size(); i < max; i++){
+			ItemRef itemRef = itemRefs.get(i);
 
+			result &= items.contains(itemRef.requireItemRef());
 			if(!result){
 				return false;
 			}

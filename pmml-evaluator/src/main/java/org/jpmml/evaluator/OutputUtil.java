@@ -85,7 +85,9 @@ public class OutputUtil {
 		List<OutputField> outputFields = output.getOutputFields();
 
 		outputFields:
-		for(OutputField outputField : outputFields){
+		for(int i = 0, max = outputFields.size(); i < max; i++){
+			OutputField outputField = outputFields.get(i);
+
 			String targetFieldName = outputField.getTargetField();
 
 			Object targetValue = null;

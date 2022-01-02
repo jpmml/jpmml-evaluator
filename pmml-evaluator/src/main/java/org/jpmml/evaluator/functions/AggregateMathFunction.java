@@ -44,7 +44,7 @@ public class AggregateMathFunction extends AggregateFunction {
 
 		DataType dataType = null;
 
-		for(int i = 0; i < arguments.size(); i++){
+		for(int i = 0, max = arguments.size(); i < max; i++){
 			FieldValue value = getOptionalArgument(arguments, i);
 
 			// "Missing values in the input to an aggregate function are simply ignored"

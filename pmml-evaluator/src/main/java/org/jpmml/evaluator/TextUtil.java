@@ -51,7 +51,9 @@ public class TextUtil {
 		if(textIndex.hasTextIndexNormalizations()){
 			List<TextIndexNormalization> textIndexNormalizations = textIndex.getTextIndexNormalizations();
 
-			for(TextIndexNormalization textIndexNormalization : textIndexNormalizations){
+			for(int i = 0, max = textIndexNormalizations.size(); i < max; i++){
+				TextIndexNormalization textIndexNormalization = textIndexNormalizations.get(i);
+
 				string = TextUtil.normalize(textIndex, textIndexNormalization, string);
 			}
 		}
@@ -132,7 +134,7 @@ public class TextUtil {
 		int regexFlags = (caseSensitive ? 0 : (Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE));
 
 		List<Row> rows = inlineTable.getRows();
-		for(int i = 0; i < rows.size(); i++){
+		for(int i = 0, max = rows.size(); i < max; i++){
 			Row row = rows.get(i);
 
 			Integer rowKey = (i + 1);

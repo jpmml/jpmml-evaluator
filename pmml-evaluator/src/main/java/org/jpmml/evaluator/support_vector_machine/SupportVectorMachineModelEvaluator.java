@@ -359,7 +359,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		List<Number> result = new ArrayList<>(content.size());
 
-		for(int i = 0; i < content.size(); i++){
+		for(int i = 0, max = content.size(); i < max; i++){
 			PMMLObject object = content.get(i);
 
 			if(object instanceof FieldRef){

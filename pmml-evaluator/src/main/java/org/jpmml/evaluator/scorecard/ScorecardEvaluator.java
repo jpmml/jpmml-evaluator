@@ -149,7 +149,9 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 	private PartialScore evaluateCharacteristic(Characteristic characteristic, EvaluationContext context){
 		List<Attribute> attributes = characteristic.requireAttributes();
 
-		for(Attribute attribute : attributes){
+		for(int i = 0, max = attributes.size(); i < max; i++){
+			Attribute attribute = attributes.get(i);
+
 			Boolean status = PredicateUtil.evaluatePredicateContainer(attribute, context);
 			if(status == null || !status.booleanValue()){
 				continue;

@@ -552,7 +552,7 @@ public interface Functions {
 
 			StringBuilder sb = new StringBuilder();
 
-			for(int i = 0; i < arguments.size(); i++){
+			for(int i = 0, max = arguments.size(); i < max; i++){
 				FieldValue value = getOptionalArgument(arguments, i);
 
 				if(FieldValueUtil.isMissing(value)){

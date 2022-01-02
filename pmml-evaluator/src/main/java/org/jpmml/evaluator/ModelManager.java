@@ -279,10 +279,20 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	TargetField findTargetField(String name){
 		List<TargetField> targetFields = getTargetFields();
 
-		for(TargetField targetField : targetFields){
+		if(targetFields.size() == 1){
+			TargetField targetField = targetFields.get(0);
 
 			if(Objects.equals(targetField.getFieldName(), name)){
 				return targetField;
+			}
+		} else
+
+		{
+			for(TargetField targetField : targetFields){
+
+				if(Objects.equals(targetField.getFieldName(), name)){
+					return targetField;
+				}
 			}
 		}
 

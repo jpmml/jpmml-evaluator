@@ -101,7 +101,7 @@ public class ExpressionUtil {
 
 		DefineFunctionEvaluationContext functionContext = new DefineFunctionEvaluationContext(defineFunction, context);
 
-		for(int i = 0; i < parameterFields.size(); i++){
+		for(int i = 0, max = parameterFields.size(); i < max; i++){
 			ParameterField parameterField = parameterFields.get(i);
 			FieldValue value = values.get(i);
 
@@ -279,7 +279,9 @@ public class ExpressionUtil {
 		Map<String, FieldValue> values = new LinkedHashMap<>();
 
 		List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
-		for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
+		for(int i = 0, max = fieldColumnPairs.size(); i < max; i++){
+			FieldColumnPair fieldColumnPair = fieldColumnPairs.get(i);
+
 			FieldValue value = context.evaluate(fieldColumnPair.requireField());
 
 			if(FieldValueUtil.isMissing(value)){

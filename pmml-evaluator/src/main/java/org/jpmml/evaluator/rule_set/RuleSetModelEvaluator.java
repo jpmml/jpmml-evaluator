@@ -208,7 +208,9 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 	static
 	private void evaluateRules(List<Rule> rules, ListMultimap<Object, SimpleRule> firedRules, EvaluationContext context){
 
-		for(Rule rule : rules){
+		for(int i = 0, max = rules.size(); i < max; i++){
+			Rule rule = rules.get(i);
+
 			evaluateRule(rule, firedRules, context);
 		}
 	}

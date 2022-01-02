@@ -146,7 +146,9 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		ValueMap<Object, V> values = new ValueMap<>(2 * regressionTables.size());
 
-		for(RegressionTable regressionTable : regressionTables){
+		for(int i = 0, max = regressionTables.size(); i < max; i++){
+			RegressionTable regressionTable = regressionTables.get(i);
+
 			Object targetCategory = regressionTable.requireTargetCategory();
 
 			if(targetCategories != null && targetCategories.indexOf(targetCategory) < 0){
@@ -254,7 +256,10 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 		if(regressionTable.hasNumericPredictors()){
 			List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
-			for(NumericPredictor numericPredictor : numericPredictors){
+
+			for(int i = 0, max = numericPredictors.size(); i < max; i++){
+				NumericPredictor numericPredictor = numericPredictors.get(i);
+
 				FieldValue value = context.evaluate(numericPredictor.requireField());
 
 				// "If the input value is missing, then the result evaluates to a missing value"
@@ -274,12 +279,15 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		} // End if
 
 		if(regressionTable.hasCategoricalPredictors()){
+			List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
+
 			// A categorical field is represented by a list of CategoricalPredictor elements.
 			// The iteration over this list can be terminated right after finding the first and only match
 			String matchedFieldName = null;
 
-			List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
-			for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
+			for(int i = 0, max = categoricalPredictors.size(); i < max; i++){
+				CategoricalPredictor categoricalPredictor = categoricalPredictors.get(i);
+
 				String fieldName = categoricalPredictor.requireField();
 
 				if(matchedFieldName != null){
@@ -310,10 +318,13 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		} // End if
 
 		if(regressionTable.hasPredictorTerms()){
+			List<PredictorTerm> predictorTerms = regressionTable.getPredictorTerms();
+
 			List<Number> factors = new ArrayList<>();
 
-			List<PredictorTerm> predictorTerms = regressionTable.getPredictorTerms();
-			for(PredictorTerm predictorTerm : predictorTerms){
+			for(int i = 0, max = predictorTerms.size(); i < max; i++){
+				PredictorTerm predictorTerm = predictorTerms.get(i);
+
 				factors.clear();
 
 				Number coefficient = predictorTerm.requireCoefficient();

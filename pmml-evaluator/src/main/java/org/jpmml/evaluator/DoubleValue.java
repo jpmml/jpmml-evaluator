@@ -103,7 +103,7 @@ public class DoubleValue extends Value<Double> {
 	public DoubleValue add(Number coefficient, Number... factors){
 		double value = coefficient.doubleValue();
 
-		for(int i = 0; i < factors.length; i++){
+		for(int i = 0, max = factors.length; i < max; i++){
 			Number factor = factors[i];
 
 			value *= factor.doubleValue();

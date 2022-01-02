@@ -101,7 +101,7 @@ public class FloatValue extends Value<Float> {
 	public FloatValue add(Number coefficient, Number... factors){
 		float value = coefficient.floatValue();
 
-		for(int i = 0; i < factors.length; i++){
+		for(int i = 0, max = factors.length; i < max; i++){
 			Number factor = factors[i];
 
 			value *= factor.floatValue();
