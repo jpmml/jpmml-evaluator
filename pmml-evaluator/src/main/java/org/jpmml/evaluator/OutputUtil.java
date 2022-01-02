@@ -625,9 +625,7 @@ public class OutputUtil {
 
 		Object value = getCategoryValue(object, outputField);
 
-		value = TypeUtil.format(value);
-
-		return hasAffinity.getAffinity((String)value);
+		return hasAffinity.getAffinity(TypeUtil.format(value));
 	}
 
 	static
@@ -755,9 +753,7 @@ public class OutputUtil {
 
 					Object value = getCategoryValue(object, outputField);
 
-					value = TypeUtil.format(value);
-
-					report = hasAffinity.getAffinityReport((String)value);
+					report = hasAffinity.getAffinityReport(TypeUtil.format(value));
 				}
 				break;
 			default:

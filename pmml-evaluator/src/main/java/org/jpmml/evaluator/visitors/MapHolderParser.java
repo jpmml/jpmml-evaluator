@@ -52,8 +52,6 @@ public class MapHolderParser extends AbstractParser {
 			for(ListIterator<BayesInput> it = content.listIterator(); it.hasNext(); ){
 				BayesInput bayesInput = it.next();
 
-				String fieldName = bayesInput.requireField();
-
 				DataType dataType;
 
 				DerivedField derivedField = bayesInput.getDerivedField();
@@ -62,7 +60,7 @@ public class MapHolderParser extends AbstractParser {
 				} else
 
 				{
-					dataType = resolveDataType(fieldName);
+					dataType = resolveDataType(bayesInput.requireField());
 				} // End if
 
 				if(dataType != null){

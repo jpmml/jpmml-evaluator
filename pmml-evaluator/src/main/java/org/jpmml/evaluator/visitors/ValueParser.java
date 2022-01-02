@@ -167,12 +167,9 @@ public class ValueParser extends AbstractParser {
 			List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
 
 			for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
-				String fieldName = fieldColumnPair.requireField();
-				String column = fieldColumnPair.requireColumn();
+				DataType dataType = resolveDataType(fieldColumnPair.requireField());
 
-				DataType dataType = resolveDataType(fieldName);
-
-				dataTypes.put(column, dataType);
+				dataTypes.put(fieldColumnPair.requireColumn(), dataType);
 			}
 		}
 
@@ -183,9 +180,8 @@ public class ValueParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(MiningField miningField){
-		String fieldName = miningField.requireName();
+		DataType dataType = resolveDataType(miningField.requireName());
 
-		DataType dataType = resolveDataType(fieldName);
 		if(dataType != null){
 			Object missingValueReplacement = miningField.getMissingValueReplacement();
 			if(missingValueReplacement != null){
@@ -236,12 +232,11 @@ public class ValueParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(SimpleSetPredicate simpleSetPredicate){
-		String fieldName = simpleSetPredicate.requireField();
+		DataType dataType = resolveDataType(simpleSetPredicate.requireField());
 
-		Array array = simpleSetPredicate.requireArray();
-
-		DataType dataType = resolveDataType(fieldName);
 		if(dataType != null){
+			Array array = simpleSetPredicate.requireArray();
+
 			Set<?> values;
 
 			Object value = array.getValue();
@@ -282,13 +277,13 @@ public class ValueParser extends AbstractParser {
 	public VisitorAction visit(Value value){
 		PMMLObject parent = getParent();
 
-		Object simpleValue = value.requireValue();
-
 		if(parent instanceof Field){
 			Field<?> field = (Field<?>)parent;
 
 			DataType dataType = field.getDataType();
 			if(dataType != null){
+				Object simpleValue = value.requireValue();
+
 				simpleValue = safeParseOrCast(dataType, simpleValue);
 
 				value.setValue(simpleValue);
@@ -299,11 +294,11 @@ public class ValueParser extends AbstractParser {
 	}
 
 	private <E extends PMMLObject & HasFieldReference<E> & HasValue<E>> void parseValue(E hasValue){
-		String fieldName = hasValue.requireField();
-		Object value = hasValue.requireValue();
+		DataType dataType = resolveDataType(hasValue.requireField());
 
-		DataType dataType = resolveDataType(fieldName);
 		if(dataType != null){
+			Object value = hasValue.requireValue();
+
 			value = parseOrCast(dataType, value);
 
 			hasValue.setValue(value);
@@ -312,6 +307,7 @@ public class ValueParser extends AbstractParser {
 
 	private <E extends Expression & HasDataType<E> & HasDefaultValue<E, Object> & HasMapMissingTo<E, Object>> void parseExpressionValues(E expression){
 		DataType dataType = expression.getDataType();
+
 		if(dataType != null){
 			Object defaultValue = expression.getDefaultValue();
 			if(defaultValue != null){

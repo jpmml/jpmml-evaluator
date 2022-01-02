@@ -868,9 +868,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 		List<Predictor> predictors = predictorList.getPredictors();
 		for(Predictor predictor : predictors){
-			String fieldName = predictor.requireField();
-
-			result.put(fieldName, predictor);
+			result.put(predictor.requireField(), predictor);
 		}
 
 		return result;
@@ -1051,6 +1049,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			private PredictorHandler(PPCell ppCell){
 				setPPCell(ppCell);
 
+				@SuppressWarnings("unused")
 				String fieldName = ppCell.requireField();
 			}
 

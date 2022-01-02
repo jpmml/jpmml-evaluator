@@ -249,9 +249,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		KNNInputs knnInputs = nearestNeighborModel.requireKNNInputs();
 		for(KNNInput knnInput : knnInputs){
-			String fieldName = knnInput.requireField();
-
-			FieldValue value = context.evaluate(fieldName);
+			FieldValue value = context.evaluate(knnInput.requireField());
 
 			values.add(value);
 		}

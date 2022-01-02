@@ -308,9 +308,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			if(field instanceof DerivedField){
 				DerivedField targetDerivedField = (DerivedField)field;
 
-				Expression targetExpression = targetDerivedField.requireExpression();
-
-				return targetExpression;
+				return targetDerivedField.requireExpression();
 			} else
 
 			{
@@ -535,21 +533,17 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 		NeuralOutputs neuralOutputs = neuralNetwork.requireNeuralOutputs();
 		for(NeuralOutput neuralOutput : neuralOutputs){
-			String fieldName;
-
 			Expression expression = getOutputExpression(neuralOutput);
 
 			if(expression instanceof HasFieldReference){
 				HasFieldReference<?> hasFieldReference = (HasFieldReference<?>)expression;
 
-				fieldName = hasFieldReference.requireField();
+				result.put(hasFieldReference.requireField(), neuralOutput);
 			} else
 
 			{
 				throw new MisplacedElementException(expression);
 			}
-
-			result.put(fieldName, neuralOutput);
 		}
 
 		return new LinkedHashMap<>(Multimaps.asMap(result));

@@ -376,9 +376,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 			if(object instanceof CategoricalPredictor){
 				CategoricalPredictor categoricalPredictor = (CategoricalPredictor)object;
 
-				String fieldName = categoricalPredictor.requireField();
-
-				FieldValue value = context.evaluate(fieldName);
+				FieldValue value = context.evaluate(categoricalPredictor.requireField());
 				if(FieldValueUtil.isMissing(value)){
 					throw new MissingFieldValueException(categoricalPredictor);
 				}

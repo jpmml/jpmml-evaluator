@@ -165,8 +165,6 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 		for(int i = 0, max = clusteringFields.size(); i < max; i++){
 			ClusteringField clusteringField = clusteringFields.get(i);
 
-			String fieldName = clusteringField.requireField();
-
 			ClusteringField.CenterField centerField = clusteringField.getCenterField();
 			switch(centerField){
 				case TRUE:
@@ -177,7 +175,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 					throw new UnsupportedAttributeException(clusteringField, centerField);
 			}
 
-			FieldValue value = context.evaluate(fieldName);
+			FieldValue value = context.evaluate(clusteringField.requireField());
 
 			values.add(value);
 		}

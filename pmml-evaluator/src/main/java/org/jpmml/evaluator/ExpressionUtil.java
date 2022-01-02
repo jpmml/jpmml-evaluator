@@ -280,15 +280,13 @@ public class ExpressionUtil {
 
 		List<FieldColumnPair> fieldColumnPairs = mapValues.getFieldColumnPairs();
 		for(FieldColumnPair fieldColumnPair : fieldColumnPairs){
-			String fieldName = fieldColumnPair.requireField();
-			String column = fieldColumnPair.requireColumn();
+			FieldValue value = context.evaluate(fieldColumnPair.requireField());
 
-			FieldValue value = context.evaluate(fieldName);
 			if(FieldValueUtil.isMissing(value)){
 				return FieldValueUtil.create(OpType.CATEGORICAL, mapValues.getDataType(DataType.STRING), mapValues.getMapMissingTo());
 			}
 
-			values.put(column, value);
+			values.put(fieldColumnPair.requireColumn(), value);
 		}
 
 		return DiscretizationUtil.mapValue(mapValues, values);
@@ -296,8 +294,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateTextIndex(TextIndex textIndex, EvaluationContext context){
-		String textName = textIndex.requireTextField();
-		FieldValue textValue = context.evaluate(textName);
+		FieldValue textValue = context.evaluate(textIndex.requireTextField());
 
 		FieldValue termValue = ExpressionUtil.evaluateExpressionContainer(textIndex, context);
 
@@ -500,7 +497,8 @@ public class ExpressionUtil {
 			FieldValue groupValue = context.evaluate(groupName);
 
 			// Ensure that the group value is a simple type, not a collection type
-			TypeUtil.getDataType(FieldValueUtil.getValue(groupValue));
+			@SuppressWarnings("unused")
+			DataType dataType = TypeUtil.getDataType(FieldValueUtil.getValue(groupValue));
 		}
 
 		List<FieldValue> values = new ArrayList<>(objects.size());

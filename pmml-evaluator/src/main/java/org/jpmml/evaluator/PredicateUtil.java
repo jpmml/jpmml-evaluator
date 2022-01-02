@@ -99,9 +99,8 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, EvaluationContext context){
-		String fieldName = simplePredicate.requireField();
-
 		SimplePredicate.Operator operator = simplePredicate.requireOperator();
+
 		switch(operator){
 			case IS_MISSING:
 			case IS_NOT_MISSING:
@@ -118,7 +117,7 @@ public class PredicateUtil {
 				break;
 		}
 
-		FieldValue value = context.evaluate(fieldName);
+		FieldValue value = context.evaluate(simplePredicate.requireField());
 
 		switch(operator){
 			case IS_MISSING:
@@ -161,9 +160,7 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimpleSetPredicate(SimpleSetPredicate simpleSetPredicate, EvaluationContext context){
-		String fieldName = simpleSetPredicate.requireField();
-
-		FieldValue value = context.evaluate(fieldName);
+		FieldValue value = context.evaluate(simpleSetPredicate.requireField());
 
 		if(FieldValueUtil.isMissing(value)){
 			return null;

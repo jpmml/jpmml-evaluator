@@ -255,10 +255,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 		if(regressionTable.hasNumericPredictors()){
 			List<NumericPredictor> numericPredictors = regressionTable.getNumericPredictors();
 			for(NumericPredictor numericPredictor : numericPredictors){
-				String fieldName = numericPredictor.requireField();
-				Number coefficient = numericPredictor.requireCoefficient();
-
-				FieldValue value = context.evaluate(fieldName);
+				FieldValue value = context.evaluate(numericPredictor.requireField());
 
 				// "If the input value is missing, then the result evaluates to a missing value"
 				if(FieldValueUtil.isMissing(value)){
@@ -267,11 +264,11 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 				int exponent = numericPredictor.getExponent();
 				if(exponent != 1){
-					result.add(coefficient, value.asNumber(), exponent);
+					result.add(numericPredictor.requireCoefficient(), value.asNumber(), exponent);
 				} else
 
 				{
-					result.add(coefficient, value.asNumber());
+					result.add(numericPredictor.requireCoefficient(), value.asNumber());
 				}
 			}
 		} // End if
@@ -284,7 +281,6 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			List<CategoricalPredictor> categoricalPredictors = regressionTable.getCategoricalPredictors();
 			for(CategoricalPredictor categoricalPredictor : categoricalPredictors){
 				String fieldName = categoricalPredictor.requireField();
-				Number coefficient = categoricalPredictor.requireCoefficient();
 
 				if(matchedFieldName != null){
 
@@ -308,7 +304,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				if(equals){
 					matchedFieldName = fieldName;
 
-					result.add(coefficient);
+					result.add(categoricalPredictor.requireCoefficient());
 				}
 			}
 		} // End if

@@ -214,8 +214,6 @@ public class TargetUtil {
 
 		List<TargetValue> targetValues = target.getTargetValues();
 		for(TargetValue targetValue : targetValues){
-			Object targetCategory = targetValue.requireValue();
-
 			Number probability = targetValue.getPriorProbability();
 			if(probability == null){
 				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_PRIORPROBABILITY);
@@ -228,7 +226,7 @@ public class TargetUtil {
 
 			Value<V> value = valueFactory.newValue(probability);
 
-			values.put(targetCategory, value);
+			values.put(targetValue.requireValue(), value);
 
 			sum.add(value);
 		}

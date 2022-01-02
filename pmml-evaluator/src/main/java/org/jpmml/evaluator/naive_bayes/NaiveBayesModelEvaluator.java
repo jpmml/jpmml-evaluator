@@ -311,8 +311,6 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		Map<String, Map<Object, Number>> result = new LinkedHashMap<>();
 
 		for(BayesInput bayesInput : bayesInputs){
-			String fieldName = bayesInput.requireField();
-
 			Map<Object, Number> countSums = new LinkedHashMap<>();
 
 			List<PairCounts> pairCounts = bayesInput.getPairCounts();
@@ -336,7 +334,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 				}
 			}
 
-			result.put(fieldName, countSums);
+			result.put(bayesInput.requireField(), countSums);
 		}
 
 		return result;
