@@ -35,7 +35,7 @@ class VariableField extends Field<VariableField> {
 	}
 
 	VariableField(String name){
-		setName(Objects.requireNonNull(name));
+		setName(name);
 	}
 
 	@Override
@@ -50,7 +50,7 @@ class VariableField extends Field<VariableField> {
 
 	@Override
 	public VariableField setName(String name){
-		this.name = name;
+		this.name = Objects.requireNonNull(name);
 
 		return this;
 	}

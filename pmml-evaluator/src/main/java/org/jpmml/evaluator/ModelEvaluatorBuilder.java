@@ -76,13 +76,13 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	public ModelEvaluatorBuilder(PMML pmml, String modelName){
 		Model model = (pmml != null ? PMMLUtil.findModel(pmml, modelName) : null);
 
-		setPMML(Objects.requireNonNull(pmml));
-		setModel(Objects.requireNonNull(model));
+		setPMML(pmml);
+		setModel(model);
 	}
 
 	public ModelEvaluatorBuilder(PMML pmml, Model model){
-		setPMML(Objects.requireNonNull(pmml));
-		setModel(Objects.requireNonNull(model));
+		setPMML(pmml);
+		setModel(model);
 	}
 
 	@Override
@@ -166,7 +166,7 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	}
 
 	protected ModelEvaluatorBuilder setPMML(PMML pmml){
-		this.pmml = pmml;
+		this.pmml = Objects.requireNonNull(pmml);
 
 		return this;
 	}
@@ -176,7 +176,7 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	}
 
 	protected ModelEvaluatorBuilder setModel(Model model){
-		this.model = model;
+		this.model = Objects.requireNonNull(model);
 
 		return this;
 	}

@@ -51,10 +51,10 @@ public class ArchiveBatch implements Batch {
 
 
 	public ArchiveBatch(String name, String dataset, Predicate<ResultField> predicate, Equivalence<Object> equivalence){
-		setName(Objects.requireNonNull(name));
-		setDataset(Objects.requireNonNull(dataset));
-		setPredicate(Objects.requireNonNull(predicate));
-		setEquivalence(Objects.requireNonNull(equivalence));
+		setName(name);
+		setDataset(dataset);
+		setPredicate(predicate);
+		setEquivalence(equivalence);
 	}
 
 	abstract
@@ -137,7 +137,7 @@ public class ArchiveBatch implements Batch {
 	}
 
 	private void setName(String name){
-		this.name = name;
+		this.name = Objects.requireNonNull(name);
 	}
 
 	public String getDataset(){
@@ -145,7 +145,7 @@ public class ArchiveBatch implements Batch {
 	}
 
 	private void setDataset(String dataset){
-		this.dataset = dataset;
+		this.dataset = Objects.requireNonNull(dataset);
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public class ArchiveBatch implements Batch {
 	}
 
 	private void setPredicate(Predicate<ResultField> predicate){
-		this.predicate = predicate;
+		this.predicate = Objects.requireNonNull(predicate);
 	}
 
 	@Override
@@ -163,6 +163,6 @@ public class ArchiveBatch implements Batch {
 	}
 
 	private void setEquivalence(Equivalence<Object> equivalence){
-		this.equivalence = equivalence;
+		this.equivalence = Objects.requireNonNull(equivalence);
 	}
 }

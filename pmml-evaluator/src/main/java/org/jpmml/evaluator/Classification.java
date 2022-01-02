@@ -46,8 +46,8 @@ public class Classification<K, V extends Number> extends AbstractComputable impl
 
 
 	protected Classification(Type type, ValueMap<K, V> values){
-		setType(Objects.requireNonNull(type));
-		setValues(Objects.requireNonNull(values));
+		setType(type);
+		setValues(values);
 	}
 
 	@Override
@@ -169,7 +169,7 @@ public class Classification<K, V extends Number> extends AbstractComputable impl
 	}
 
 	private void setType(Type type){
-		this.type = type;
+		this.type = Objects.requireNonNull(type);
 	}
 
 	public ValueMap<K, V> getValues(){
@@ -177,7 +177,7 @@ public class Classification<K, V extends Number> extends AbstractComputable impl
 	}
 
 	private void setValues(ValueMap<K, V> values){
-		this.values = values;
+		this.values = Objects.requireNonNull(values);
 	}
 
 	static

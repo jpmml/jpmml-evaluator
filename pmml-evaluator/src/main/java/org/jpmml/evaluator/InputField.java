@@ -41,7 +41,7 @@ public class InputField extends ModelField {
 	public InputField(Field<?> field, MiningField miningField){
 		super(field);
 
-		setMiningField(Objects.requireNonNull(miningField));
+		setMiningField(miningField);
 
 		if(!Objects.equals(field.requireName(), miningField.requireName())){
 			throw new IllegalArgumentException();
@@ -142,6 +142,6 @@ public class InputField extends ModelField {
 	}
 
 	private void setMiningField(MiningField miningField){
-		this.miningField = miningField;
+		this.miningField = Objects.requireNonNull(miningField);
 	}
 }

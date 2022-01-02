@@ -56,7 +56,7 @@ public class PMMLManager implements HasPMML, Serializable {
 	}
 
 	protected PMMLManager(PMML pmml){
-		setPMML(Objects.requireNonNull(pmml));
+		setPMML(pmml);
 
 		DataDictionary dataDictionary = pmml.requireDataDictionary();
 		if(dataDictionary.hasDataFields()){
@@ -91,7 +91,7 @@ public class PMMLManager implements HasPMML, Serializable {
 	}
 
 	private void setPMML(PMML pmml){
-		this.pmml = pmml;
+		this.pmml = Objects.requireNonNull(pmml);
 	}
 
 	static

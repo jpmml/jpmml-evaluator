@@ -38,8 +38,8 @@ public class SimpleTypeInfo implements TypeInfo {
 	}
 
 	public SimpleTypeInfo(OpType opType, DataType dataType, List<?> ordering){
-		setOpType(Objects.requireNonNull(opType));
-		setDataType(Objects.requireNonNull(dataType));
+		setOpType(opType);
+		setDataType(dataType);
 		setOrdering(ordering);
 	}
 
@@ -49,7 +49,7 @@ public class SimpleTypeInfo implements TypeInfo {
 	}
 
 	private void setOpType(OpType opType){
-		this.opType = opType;
+		this.opType = Objects.requireNonNull(opType);
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class SimpleTypeInfo implements TypeInfo {
 	}
 
 	private void setDataType(DataType dataType){
-		this.dataType = dataType;
+		this.dataType = Objects.requireNonNull(dataType);
 	}
 
 	@Override

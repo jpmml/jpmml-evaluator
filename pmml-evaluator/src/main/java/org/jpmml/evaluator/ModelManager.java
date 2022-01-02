@@ -87,7 +87,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	protected ModelManager(PMML pmml, M model){
 		super(pmml);
 
-		setModel(Objects.requireNonNull(model));
+		setModel(model);
 
 		@SuppressWarnings("unused")
 		MiningFunction miningFunction = model.requireMiningFunction();
@@ -546,7 +546,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	}
 
 	private void setModel(M model){
-		this.model = model;
+		this.model = Objects.requireNonNull(model);
 	}
 
 	static

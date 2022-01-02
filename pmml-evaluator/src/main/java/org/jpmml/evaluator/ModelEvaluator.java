@@ -104,7 +104,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	 * </p>
 	 */
 	public void configure(Configuration configuration){
-		setConfiguration(Objects.requireNonNull(configuration));
+		setConfiguration(configuration);
 
 		setValueFactory(null);
 
@@ -609,7 +609,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	private void setConfiguration(Configuration configuration){
-		this.configuration = configuration;
+		this.configuration = Objects.requireNonNull(configuration);
 	}
 
 	public InputMapper getInputMapper(){

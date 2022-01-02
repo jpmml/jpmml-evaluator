@@ -36,7 +36,7 @@ public class NodeScore<V extends Number> extends Regression<V> implements HasEnt
 	NodeScore(Value<V> value, Node node){
 		super(value);
 
-		setNode(Objects.requireNonNull(node));
+		setNode(node);
 	}
 
 	@Override
@@ -60,6 +60,6 @@ public class NodeScore<V extends Number> extends Regression<V> implements HasEnt
 	}
 
 	private void setNode(Node node){
-		this.node = node;
+		this.node = Objects.requireNonNull(node);
 	}
 }

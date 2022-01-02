@@ -36,8 +36,8 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 
 
 	public DefineFunctionEvaluationContext(DefineFunction defineFunction, EvaluationContext parent){
-		setDefineFunction(Objects.requireNonNull(defineFunction));
-		setParent(Objects.requireNonNull(parent));
+		setDefineFunction(defineFunction);
+		setParent(parent);
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 	}
 
 	private void setDefineFunction(DefineFunction defineFunction){
-		this.defineFunction = defineFunction;
+		this.defineFunction = Objects.requireNonNull(defineFunction);
 	}
 
 	public EvaluationContext getParent(){
@@ -97,6 +97,6 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 	}
 
 	private void setParent(EvaluationContext parent){
-		this.parent = parent;
+		this.parent = Objects.requireNonNull(parent);
 	}
 }

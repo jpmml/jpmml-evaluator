@@ -34,7 +34,7 @@ public class Regression<V extends Number> extends AbstractComputable implements 
 
 
 	protected Regression(Value<V> value){
-		setValue(Objects.requireNonNull(value));
+		setValue(value);
 	}
 
 	@Override
@@ -76,6 +76,6 @@ public class Regression<V extends Number> extends AbstractComputable implements 
 	}
 
 	private void setValue(Value<V> value){
-		this.value = value;
+		this.value = Objects.requireNonNull(value);
 	}
 }

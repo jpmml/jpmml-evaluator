@@ -46,10 +46,10 @@ public class Association extends AbstractComputable implements HasEntityRegistry
 
 
 	protected Association(List<AssociationRule> associationRules, BitSet antecedentFlags, BitSet consequentFlags){
-		setAssociationRules(Objects.requireNonNull(associationRules));
+		setAssociationRules(associationRules);
 
-		setAntecedentFlags(Objects.requireNonNull(antecedentFlags));
-		setConsequentFlags(Objects.requireNonNull(consequentFlags));
+		setAntecedentFlags(antecedentFlags);
+		setConsequentFlags(consequentFlags);
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class Association extends AbstractComputable implements HasEntityRegistry
 	}
 
 	private void setAssociationRules(List<AssociationRule> associationRules){
-		this.associationRules = associationRules;
+		this.associationRules = Objects.requireNonNull(associationRules);
 	}
 
 	public BitSet getAntecedentFlags(){
@@ -123,7 +123,7 @@ public class Association extends AbstractComputable implements HasEntityRegistry
 	}
 
 	private void setAntecedentFlags(BitSet antecedentFlags){
-		this.antecedentFlags = antecedentFlags;
+		this.antecedentFlags = Objects.requireNonNull(antecedentFlags);
 	}
 
 	public BitSet getConsequentFlags(){
@@ -131,6 +131,6 @@ public class Association extends AbstractComputable implements HasEntityRegistry
 	}
 
 	private void setConsequentFlags(BitSet consequentFlags){
-		this.consequentFlags = consequentFlags;
+		this.consequentFlags = Objects.requireNonNull(consequentFlags);
 	}
 }

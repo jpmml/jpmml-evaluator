@@ -40,7 +40,7 @@ public class AbstractFunction implements Function {
 	}
 
 	public AbstractFunction(String name, List<String> aliases){
-		setName(Objects.requireNonNull(name));
+		setName(name);
 		setAliases(aliases);
 	}
 
@@ -109,7 +109,7 @@ public class AbstractFunction implements Function {
 	}
 
 	private void setName(String name){
-		this.name = name;
+		this.name = Objects.requireNonNull(name);
 	}
 
 	public List<String> getAliases(){

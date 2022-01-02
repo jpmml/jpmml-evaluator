@@ -33,10 +33,10 @@ public class PartialScore {
 
 
 	PartialScore(Characteristic characteristic, Attribute attribute, Number value){
-		setCharacteristic(Objects.requireNonNull(characteristic));
-		setAttribute(Objects.requireNonNull(attribute));
+		setCharacteristic(characteristic);
+		setAttribute(attribute);
 
-		setValue(Objects.requireNonNull(value));
+		setValue(value);
 	}
 
 	public String getReasonCode(){
@@ -51,7 +51,7 @@ public class PartialScore {
 	}
 
 	private void setCharacteristic(Characteristic characteristic){
-		this.characteristic = characteristic;
+		this.characteristic = Objects.requireNonNull(characteristic);
 	}
 
 	public Attribute getAttribute(){
@@ -59,7 +59,7 @@ public class PartialScore {
 	}
 
 	private void setAttribute(Attribute attribute){
-		this.attribute = attribute;
+		this.attribute = Objects.requireNonNull(attribute);
 	}
 
 	public Number getValue(){
@@ -67,6 +67,6 @@ public class PartialScore {
 	}
 
 	private void setValue(Number value){
-		this.value = value;
+		this.value = Objects.requireNonNull(value);
 	}
 }

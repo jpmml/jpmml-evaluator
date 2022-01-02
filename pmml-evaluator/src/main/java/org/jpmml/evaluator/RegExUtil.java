@@ -66,7 +66,7 @@ public class RegExUtil {
 
 
 		private CompilationTask(String regex, int flags){
-			setRegEx(Objects.requireNonNull(regex));
+			setRegEx(regex);
 			setFlags(flags);
 		}
 
@@ -99,7 +99,7 @@ public class RegExUtil {
 		}
 
 		private void setRegEx(String regex){
-			this.regex = regex;
+			this.regex = Objects.requireNonNull(regex);
 		}
 
 		public int getFlags(){

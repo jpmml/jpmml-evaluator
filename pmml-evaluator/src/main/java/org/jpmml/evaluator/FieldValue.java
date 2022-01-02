@@ -67,8 +67,8 @@ public class FieldValue implements TypeInfo, Serializable {
 	}
 
 	FieldValue(DataType dataType, Object value){
-		setDataType(Objects.requireNonNull(dataType));
-		setValue(Objects.requireNonNull(value));
+		setDataType(dataType);
+		setValue(value);
 	}
 
 	abstract
@@ -336,7 +336,7 @@ public class FieldValue implements TypeInfo, Serializable {
 	}
 
 	private void setDataType(DataType dataType){
-		this.dataType = dataType;
+		this.dataType = Objects.requireNonNull(dataType);
 	}
 
 	public Object getValue(){
@@ -344,7 +344,7 @@ public class FieldValue implements TypeInfo, Serializable {
 	}
 
 	private void setValue(Object value){
-		this.value = value;
+		this.value = Objects.requireNonNull(value);
 	}
 
 	static

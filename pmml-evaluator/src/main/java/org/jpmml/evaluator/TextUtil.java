@@ -502,9 +502,9 @@ public class TextUtil {
 
 
 		public StringProcessor(TextIndex textIndex, String value){
-			setTextIndex(Objects.requireNonNull(textIndex));
+			setTextIndex(textIndex);
 			// The value should generate a cache hit both in identity comparison and object equality comparison modes
-			setValue(Strings.INTERNER.intern(Objects.requireNonNull(value)));
+			setValue(value != null ? Strings.INTERNER.intern(value) : null);
 		}
 
 		abstract
@@ -515,7 +515,7 @@ public class TextUtil {
 		}
 
 		private void setTextIndex(TextIndex textIndex){
-			this.textIndex = textIndex;
+			this.textIndex = Objects.requireNonNull(textIndex);
 		}
 
 		public String getValue(){
@@ -523,7 +523,7 @@ public class TextUtil {
 		}
 
 		private void setValue(String value){
-			this.value = value;
+			this.value = Objects.requireNonNull(value);
 		}
 	}
 

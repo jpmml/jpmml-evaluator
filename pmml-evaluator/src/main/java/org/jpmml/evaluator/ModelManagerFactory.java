@@ -50,8 +50,8 @@ public class ModelManagerFactory<S extends ModelManager<?>> extends ServiceFacto
 	}
 
 	public S newModelManager(PMML pmml, Model model, Set<ResultFeature> extraResultFeatures){
-		Objects.requireNonNull(pmml);
-		Objects.requireNonNull(model);
+		pmml = Objects.requireNonNull(pmml);
+		model = Objects.requireNonNull(model);
 
 		Output output = model.getOutput();
 

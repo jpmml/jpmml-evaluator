@@ -110,7 +110,10 @@ public class FunctionRegistry {
 	 */
 	static
 	public void putFunction(String name, Function function){
-		FunctionRegistry.userDefinedFunctions.put(Objects.requireNonNull(name), function);
+		name = Objects.requireNonNull(name);
+		function = Objects.requireNonNull(function);
+
+		FunctionRegistry.userDefinedFunctions.put(name, function);
 	}
 
 	/**
@@ -120,7 +123,10 @@ public class FunctionRegistry {
 	 */
 	static
 	public void putFunction(String name, Class<? extends Function> functionClazz){
-		FunctionRegistry.userDefinedFunctionClazzes.put(Objects.requireNonNull(name), checkClass(functionClazz));
+		name = Objects.requireNonNull(name);
+		functionClazz = checkClass(Objects.requireNonNull(functionClazz));
+
+		FunctionRegistry.userDefinedFunctionClazzes.put(name, functionClazz);
 	}
 
 	static
@@ -150,7 +156,7 @@ public class FunctionRegistry {
 	}
 
 	static
-	private Class<?> checkClass(Class<?> clazz){
+	private <E> Class<E> checkClass(Class<E> clazz){
 
 		if(!(Function.class).isAssignableFrom(clazz)){
 			throw new TypeCheckException(Function.class, clazz);

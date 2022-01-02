@@ -43,7 +43,7 @@ public class CollectionValue extends FieldValue {
 	CollectionValue(OpType opType, DataType dataType, List<?> ordering, Collection<?> value){
 		super(dataType, value);
 
-		setOpType(Objects.requireNonNull(opType));
+		setOpType(opType);
 
 		switch(opType){
 			case CONTINUOUS:
@@ -111,7 +111,7 @@ public class CollectionValue extends FieldValue {
 	}
 
 	private void setOpType(OpType opType){
-		this.opType = opType;
+		this.opType = Objects.requireNonNull(opType);
 	}
 
 	@Override

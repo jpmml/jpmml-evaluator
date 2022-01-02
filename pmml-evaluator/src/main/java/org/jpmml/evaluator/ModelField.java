@@ -43,7 +43,7 @@ public class ModelField implements Serializable {
 	}
 
 	public ModelField(Field<?> field){
-		setField(Objects.requireNonNull(field));
+		setField(field);
 	}
 
 	/**
@@ -129,6 +129,6 @@ public class ModelField implements Serializable {
 	}
 
 	private void setField(Field<?> field){
-		this.field = field;
+		this.field = Objects.requireNonNull(field);
 	}
 }

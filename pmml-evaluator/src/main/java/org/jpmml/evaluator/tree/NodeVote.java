@@ -35,7 +35,7 @@ public class NodeVote extends Vote implements HasEntityRegistry<Node>, HasDecisi
 
 
 	NodeVote(Node node){
-		setNode(Objects.requireNonNull(node));
+		setNode(node);
 	}
 
 	@Override
@@ -68,6 +68,6 @@ public class NodeVote extends Vote implements HasEntityRegistry<Node>, HasDecisi
 	}
 
 	private void setNode(Node node){
-		this.node = node;
+		this.node = Objects.requireNonNull(node);
 	}
 }

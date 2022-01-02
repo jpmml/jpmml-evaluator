@@ -46,8 +46,13 @@ public class EntityClassification<E extends Entity<String>, K, V extends Number>
 	public void put(E entity, K key, Value<V> value){
 		Type type = getType();
 
+		entity = Objects.requireNonNull(entity);
+
+		key = Objects.requireNonNull(key);
+		value = Objects.requireNonNull(value);
+
 		if(this.entityValue == null || type.compareValues(value, this.entityValue) > 0){
-			setEntity(Objects.requireNonNull(entity));
+			setEntity(entity);
 
 			this.entityValue = value;
 		}

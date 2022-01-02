@@ -47,7 +47,7 @@ public class NodeScoreDistribution<V extends Number> extends Classification<Obje
 	NodeScoreDistribution(ValueMap<Object, V> probabilities,  Node node){
 		super(Type.PROBABILITY, probabilities);
 
-		setNode(Objects.requireNonNull(node));
+		setNode(node);
 	}
 
 	@Override
@@ -128,7 +128,7 @@ public class NodeScoreDistribution<V extends Number> extends Classification<Obje
 	}
 
 	private void setNode(Node node){
-		this.node = node;
+		this.node = Objects.requireNonNull(node);
 	}
 
 	private ValueMap<Object, V> getConfidences(){

@@ -29,7 +29,7 @@ public class TextTokenizer {
 
 
 	public TextTokenizer(Pattern pattern){
-		setPattern(Objects.requireNonNull(pattern));
+		setPattern(pattern);
 	}
 
 	abstract
@@ -40,6 +40,6 @@ public class TextTokenizer {
 	}
 
 	private void setPattern(Pattern pattern){
-		this.pattern = pattern;
+		this.pattern = Objects.requireNonNull(pattern);
 	}
 }

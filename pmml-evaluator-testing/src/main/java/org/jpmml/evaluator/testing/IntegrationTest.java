@@ -34,7 +34,7 @@ public class IntegrationTest extends BatchTest {
 
 
 	public IntegrationTest(Equivalence<Object> equivalence){
-		setEquivalence(Objects.requireNonNull(equivalence));
+		setEquivalence(equivalence);
 	}
 
 	public void evaluate(String name, String dataset) throws Exception {
@@ -81,7 +81,7 @@ public class IntegrationTest extends BatchTest {
 	}
 
 	private void setEquivalence(Equivalence<Object> equivalence){
-		this.equivalence = equivalence;
+		this.equivalence = Objects.requireNonNull(equivalence);
 	}
 
 	static

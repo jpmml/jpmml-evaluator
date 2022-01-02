@@ -36,7 +36,7 @@ public class ComplexScorecardScore<V extends Number> extends ScorecardScore<V> i
 	ComplexScorecardScore(Value<V> value, List<PartialScore> partialScores, ValueMap<String, V> reasonCodePoints){
 		super(value, partialScores);
 
-		setReasonCodePoints(Objects.requireNonNull(reasonCodePoints));
+		setReasonCodePoints(reasonCodePoints);
 	}
 
 	@Override
@@ -62,6 +62,6 @@ public class ComplexScorecardScore<V extends Number> extends ScorecardScore<V> i
 	}
 
 	private void setReasonCodePoints(ValueMap<String, V> reasonCodePoints){
-		this.reasonCodePoints = reasonCodePoints;
+		this.reasonCodePoints = Objects.requireNonNull(reasonCodePoints);
 	}
 }

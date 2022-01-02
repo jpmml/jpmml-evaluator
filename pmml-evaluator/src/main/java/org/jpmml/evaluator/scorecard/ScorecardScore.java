@@ -33,7 +33,7 @@ public class ScorecardScore<V extends Number> extends Regression<V> implements H
 	protected ScorecardScore(Value<V> value, List<PartialScore> partialScores){
 		super(value);
 
-		setPartialScores(Objects.requireNonNull(partialScores));
+		setPartialScores(partialScores);
 	}
 
 	@Override
@@ -42,6 +42,6 @@ public class ScorecardScore<V extends Number> extends Regression<V> implements H
 	}
 
 	private void setPartialScores(List<PartialScore> partialScores){
-		this.partialScores = partialScores;
+		this.partialScores = Objects.requireNonNull(partialScores);
 	}
 }
