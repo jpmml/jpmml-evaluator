@@ -23,20 +23,20 @@ import org.dmg.pmml.PMMLObject;
 
 /**
  * <p>
- * Thrown to indicate a missing field value.
+ * Thrown to indicate that a field value is not declared.
  * </p>
  */
-public class MissingValueException extends EvaluationException {
+public class MissingFieldValueException extends EvaluationException {
 
-	public MissingValueException(String name){
+	public MissingFieldValueException(String name){
 		super(formatMessage(name));
 	}
 
-	public MissingValueException(String name, PMMLObject context){
+	public MissingFieldValueException(String name, PMMLObject context){
 		super(formatMessage(name), context);
 	}
 
-	public <E extends PMMLObject & HasFieldReference<E>> MissingValueException(E object){
+	public <E extends PMMLObject & HasFieldReference<E>> MissingFieldValueException(E object){
 		this(object.getField(), object);
 	}
 

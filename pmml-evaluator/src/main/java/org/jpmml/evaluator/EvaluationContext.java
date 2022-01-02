@@ -64,7 +64,7 @@ public class EvaluationContext {
 	 * If the field value has not been declared, then fails fast with an exception.
 	 * </p>
 	 *
-	 * @throws MissingValueException If the field value has not been declared.
+	 * @throws MissingFieldValueException If the field value has not been declared.
 	 */
 	public FieldValue lookup(String name){
 		FieldValueMap values = getValues();
@@ -74,7 +74,7 @@ public class EvaluationContext {
 			return value;
 		}
 
-		throw new MissingValueException(name);
+		throw new MissingFieldValueException(name);
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class EvaluationContext {
 		// XXX: Fails to detect a situation where the name was already associated with a missing value (null)
 		FieldValue prevValue = values.putIfAbsent(name, value);
 		if(prevValue != null){
-			throw new DuplicateValueException(name);
+			throw new DuplicateFieldValueException(name);
 		}
 
 		return value;

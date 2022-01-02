@@ -83,7 +83,7 @@ import org.jpmml.evaluator.InputFieldUtil;
 import org.jpmml.evaluator.InvisibleFieldException;
 import org.jpmml.evaluator.MeasureUtil;
 import org.jpmml.evaluator.MissingFieldException;
-import org.jpmml.evaluator.MissingValueException;
+import org.jpmml.evaluator.MissingFieldValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.PMMLUtil;
@@ -335,7 +335,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			FieldValue value = table.get(instanceResult.getId(), name);
 
 			if(FieldValueUtil.isMissing(value)){
-				throw new MissingValueException(name);
+				throw new MissingFieldValueException(name);
 			}
 
 			Number targetValue = value.asNumber();
@@ -385,7 +385,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			FieldValue value = table.get(instanceResult.getId(), name);
 
 			if(FieldValueUtil.isMissing(value)){
-				throw new MissingValueException(name);
+				throw new MissingFieldValueException(name);
 			}
 
 			Object targetValue = value.getValue();
@@ -441,7 +441,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				FieldValue value = table.get(row, name);
 
 				if(FieldValueUtil.isMissing(value)){
-					throw new MissingValueException(name);
+					throw new MissingFieldValueException(name);
 				}
 
 				return value.asString();

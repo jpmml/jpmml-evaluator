@@ -56,7 +56,7 @@ import org.jpmml.evaluator.HasEntityRegistry;
 import org.jpmml.evaluator.HasGroupFields;
 import org.jpmml.evaluator.IndexableUtil;
 import org.jpmml.evaluator.InputField;
-import org.jpmml.evaluator.MissingValueException;
+import org.jpmml.evaluator.MissingFieldValueException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
@@ -280,7 +280,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			if(groupFields.size() == 1){
 
 				if(FieldValueUtil.isMissing(value)){
-					throw new MissingValueException(name);
+					throw new MissingFieldValueException(name);
 				} // End if
 
 				if(explodedValues == null){

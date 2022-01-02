@@ -63,7 +63,7 @@ import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.MissingValueException;
+import org.jpmml.evaluator.MissingFieldValueException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.PMMLUtil;
@@ -367,7 +367,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 				FieldValue value = ExpressionUtil.evaluate(fieldRef, context);
 				if(FieldValueUtil.isMissing(value)){
-					throw new MissingValueException(fieldRef);
+					throw new MissingFieldValueException(fieldRef);
 				}
 
 				result.add(value.asNumber());
@@ -380,7 +380,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 				FieldValue value = context.evaluate(fieldName);
 				if(FieldValueUtil.isMissing(value)){
-					throw new MissingValueException(categoricalPredictor);
+					throw new MissingFieldValueException(categoricalPredictor);
 				}
 
 				Number coefficient = categoricalPredictor.getCoefficient();

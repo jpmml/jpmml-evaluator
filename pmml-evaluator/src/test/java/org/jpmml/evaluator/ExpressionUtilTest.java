@@ -420,7 +420,7 @@ public class ExpressionUtilTest {
 			context.declare("x", FieldValues.CATEGORICAL_BOOLEAN_FALSE);
 
 			fail();
-		} catch(DuplicateValueException dve){
+		} catch(DuplicateFieldValueException dfve){
 			// Ignored
 		}
 	}

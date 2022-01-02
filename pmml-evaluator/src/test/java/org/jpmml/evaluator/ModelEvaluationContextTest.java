@@ -45,7 +45,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 			context.lookup("x");
 
 			fail();
-		} catch(MissingValueException mve){
+		} catch(MissingFieldValueException mfve){
 			// Ignored
 		}
 
@@ -69,7 +69,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 			context.lookup("x");
 
 			fail();
-		} catch(MissingValueException mve){
+		} catch(MissingFieldValueException mfve){
 			// Ignored
 		}
 
@@ -87,7 +87,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 			context.lookup("x");
 
 			fail();
-		} catch(MissingValueException mve){
+		} catch(MissingFieldValueException mfve){
 			// Ignored
 		}
 

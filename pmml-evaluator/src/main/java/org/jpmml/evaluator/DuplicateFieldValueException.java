@@ -22,16 +22,16 @@ import org.dmg.pmml.PMMLObject;
 
 /**
  * <p>
- * Thrown to indicate a duplicate field value.
+ * Thrown to indicate that a field value is declared by two or more fields.
  * </p>
  */
-public class DuplicateValueException extends EvaluationException {
+public class DuplicateFieldValueException extends EvaluationException {
 
-	public DuplicateValueException(String name){
+	public DuplicateFieldValueException(String name){
 		super(formatMessage(name));
 	}
 
-	public DuplicateValueException(String name, PMMLObject context){
+	public DuplicateFieldValueException(String name, PMMLObject context){
 		super(formatMessage(name), context);
 	}
 

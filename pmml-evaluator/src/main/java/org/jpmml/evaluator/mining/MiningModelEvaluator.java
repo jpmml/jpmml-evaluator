@@ -54,16 +54,15 @@ import org.dmg.pmml.mining.PMMLAttributes;
 import org.dmg.pmml.mining.Segment;
 import org.dmg.pmml.mining.Segmentation;
 import org.dmg.pmml.mining.VariableWeight;
-import org.jpmml.evaluator.DefaultDataField;
 import org.jpmml.evaluator.Configuration;
-import org.jpmml.evaluator.SyntheticTargetField;
+import org.jpmml.evaluator.DefaultDataField;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.HasEntityRegistry;
-import org.jpmml.evaluator.MissingValueException;
+import org.jpmml.evaluator.MissingFieldValueException;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
@@ -72,6 +71,7 @@ import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.Regression;
+import org.jpmml.evaluator.SyntheticTargetField;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UnsupportedAttributeException;
@@ -596,8 +596,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 								try {
 									value = segmentContext.lookup(name);
-								} catch(MissingValueException mve){
-									throw mve.ensureContext(segment);
+								} catch(MissingFieldValueException mfve){
+									throw mfve.ensureContext(segment);
 								}
 
 								context.declare(name, value);

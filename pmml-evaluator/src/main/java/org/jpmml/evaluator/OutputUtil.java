@@ -137,7 +137,7 @@ public class OutputUtil {
 					if(targetFieldName != null){
 
 						if(!segmentPredictions.containsKey(targetFieldName)){
-							throw new MissingValueException(targetFieldName, outputField);
+							throw new MissingFieldValueException(targetFieldName, outputField);
 						}
 
 						targetValue = segmentPredictions.get(targetFieldName);
@@ -195,7 +195,7 @@ public class OutputUtil {
 					} // End if
 
 					if(!predictions.containsKey(targetFieldName)){
-						throw new MissingValueException(targetFieldName, outputField);
+						throw new MissingFieldValueException(targetFieldName, outputField);
 					}
 
 					targetValue = predictions.get(targetFieldName);
@@ -275,7 +275,7 @@ public class OutputUtil {
 
 						FieldValue expectedTargetValue = context.evaluate(targetFieldName);
 						if(FieldValueUtil.isMissing(expectedTargetValue)){
-							throw new MissingValueException(targetFieldName, outputField);
+							throw new MissingFieldValueException(targetFieldName, outputField);
 						}
 
 						TargetField targetField = modelEvaluator.findTargetField(targetFieldName);

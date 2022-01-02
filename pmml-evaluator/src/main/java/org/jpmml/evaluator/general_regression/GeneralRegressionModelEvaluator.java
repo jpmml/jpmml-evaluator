@@ -66,7 +66,7 @@ import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.MapHolder;
 import org.jpmml.evaluator.MatrixUtil;
-import org.jpmml.evaluator.MissingValueException;
+import org.jpmml.evaluator.MissingFieldValueException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.NumberUtil;
 import org.jpmml.evaluator.Numbers;
@@ -819,7 +819,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		FieldValue value = context.evaluate(name);
 
 		if(FieldValueUtil.isMissing(value)){
-			throw new MissingValueException(name);
+			throw new MissingFieldValueException(name);
 		}
 
 		return value;
