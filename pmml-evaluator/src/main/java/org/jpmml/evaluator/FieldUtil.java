@@ -102,12 +102,12 @@ public class FieldUtil {
 			List<Value> pmmlValues = dataField.getValues();
 
 			for(Value pmmlValue : pmmlValues){
-				Object simpleValue = pmmlValue.requireValue();
+				Object objectValue = pmmlValue.requireValue();
 
 				Value.Property property = pmmlValue.getProperty();
 				switch(property){
 					case VALID:
-						result.add(simpleValue);
+						result.add(objectValue);
 						break;
 					default:
 						break;
@@ -131,12 +131,12 @@ public class FieldUtil {
 			List<Value> pmmlValues = field.getValues();
 
 			for(Value pmmlValue : pmmlValues){
-				Object simpleValue = pmmlValue.requireValue();
+				Object objectValue = pmmlValue.requireValue();
 
 				Value.Property property = pmmlValue.getProperty();
 				switch(property){
 					case VALID:
-						result.add(TypeUtil.parseOrCast(dataType, simpleValue));
+						result.add(TypeUtil.parseOrCast(dataType, objectValue));
 						break;
 					default:
 						break;

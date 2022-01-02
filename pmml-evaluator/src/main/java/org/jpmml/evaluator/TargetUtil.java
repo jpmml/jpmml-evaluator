@@ -163,9 +163,9 @@ public class TargetUtil {
 
 		List<TargetValue> targetValues = target.getTargetValues();
 		for(TargetValue targetValue : targetValues){
-			Object simpleValue = targetValue.requireValue();
+			Object objectValue = targetValue.requireValue();
 
-			if((value).equals(TypeUtil.parseOrCast(dataType, simpleValue))){
+			if((value).equals(TypeUtil.parseOrCast(dataType, objectValue))){
 				return targetValue;
 			}
 		}

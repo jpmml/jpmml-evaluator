@@ -45,13 +45,13 @@ public class TargetFieldUtil {
 			for(int i = 0, max = pmmlValues.size(); i < max; i++){
 				Value pmmlValue = pmmlValues.get(i);
 
-				Object simpleValue = pmmlValue.requireValue();
+				Object objectValue = pmmlValue.requireValue();
 
 				Value.Property property = pmmlValue.getProperty();
 				switch(property){
 					case VALID:
 						{
-							boolean equals = TypeUtil.equals(dataType, value, simpleValue);
+							boolean equals = TypeUtil.equals(dataType, value, objectValue);
 
 							if(equals){
 								return pmmlValue;

@@ -282,11 +282,11 @@ public class ValueParser extends AbstractParser {
 
 			DataType dataType = field.getDataType();
 			if(dataType != null){
-				Object simpleValue = value.requireValue();
+				Object objectValue = value.requireValue();
 
-				simpleValue = safeParseOrCast(dataType, simpleValue);
+				objectValue = safeParseOrCast(dataType, objectValue);
 
-				value.setValue(simpleValue);
+				value.setValue(objectValue);
 			}
 		}
 

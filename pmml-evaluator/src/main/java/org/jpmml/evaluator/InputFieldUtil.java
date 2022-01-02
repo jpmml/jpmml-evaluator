@@ -331,7 +331,7 @@ public class InputFieldUtil {
 			for(int i = 0, max = pmmlValues.size(); i < max; i++){
 				Value pmmlValue = pmmlValues.get(i);
 
-				Object simpleValue = pmmlValue.requireValue();
+				Object objectValue = pmmlValue.requireValue();
 
 				Value.Property property = pmmlValue.getProperty();
 				switch(property){
@@ -348,11 +348,11 @@ public class InputFieldUtil {
 							if(value instanceof FieldValue){
 								FieldValue fieldValue = (FieldValue)value;
 
-								equals = fieldValue.equalsValue(simpleValue);
+								equals = fieldValue.equalsValue(objectValue);
 							} else
 
 							{
-								equals = TypeUtil.equals(dataType, value, simpleValue);
+								equals = TypeUtil.equals(dataType, value, objectValue);
 							} // End if
 
 							if(equals){
@@ -368,11 +368,11 @@ public class InputFieldUtil {
 							if(value instanceof FieldValue){
 								FieldValue fieldValue = (FieldValue)value;
 
-								equals = TypeUtil.equals(dataType, fieldValue.getValue(), simpleValue);
+								equals = TypeUtil.equals(dataType, fieldValue.getValue(), objectValue);
 							} else
 
 							{
-								equals = TypeUtil.equals(dataType, value, simpleValue);
+								equals = TypeUtil.equals(dataType, value, objectValue);
 							} // End if
 
 							if(equals){
