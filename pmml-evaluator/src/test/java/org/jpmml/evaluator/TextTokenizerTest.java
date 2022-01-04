@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
@@ -34,23 +32,27 @@ public class TextTokenizerTest {
 
 		TextTokenizer tokenizer = new TextSplitter(pattern);
 
-		assertEquals(Collections.emptyList(), tokenizer.tokenize(""));
+		assertEquals(TokenizedString.EMPTY, tokenizer.tokenize(""));
 
-		assertEquals(Collections.emptyList(), tokenizer.tokenize(" "));
-		assertEquals(Collections.emptyList(), tokenizer.tokenize("\t\t\t"));
+		assertEquals(TokenizedString.EMPTY, tokenizer.tokenize(" "));
+		assertEquals(TokenizedString.EMPTY, tokenizer.tokenize("\t\t\t"));
 
-		assertEquals(Collections.emptyList(), tokenizer.tokenize(","));
-		assertEquals(Collections.emptyList(), tokenizer.tokenize(",,"));
-		assertEquals(Collections.emptyList(), tokenizer.tokenize(", ,"));
-		assertEquals(Collections.emptyList(), tokenizer.tokenize(" , , "));
+		assertEquals(TokenizedString.EMPTY, tokenizer.tokenize(","));
+		assertEquals(TokenizedString.EMPTY, tokenizer.tokenize(",,"));
+		assertEquals(TokenizedString.EMPTY, tokenizer.tokenize(", ,"));
+		assertEquals(TokenizedString.EMPTY, tokenizer.tokenize(" , , "));
 
-		assertEquals(Arrays.asList("one"), tokenizer.tokenize("one"));
-		assertEquals(Arrays.asList("one"), tokenizer.tokenize(" one"));
-		assertEquals(Arrays.asList("one"), tokenizer.tokenize("one "));
-		assertEquals(Arrays.asList("one"), tokenizer.tokenize("\u00BFone?"));
+		TokenizedString expected = new TokenizedString("one");
 
-		assertEquals(Arrays.asList("one", "two", "three"), tokenizer.tokenize("one two three"));
-		assertEquals(Arrays.asList("one", "two", "three"), tokenizer.tokenize("one!,\t\u00BFtwo?,\tthree."));
+		assertEquals(expected, tokenizer.tokenize("one"));
+		assertEquals(expected, tokenizer.tokenize(" one"));
+		assertEquals(expected, tokenizer.tokenize("one "));
+		assertEquals(expected, tokenizer.tokenize("\u00BFone?"));
+
+		expected = new TokenizedString("one", "two", "three");
+
+		assertEquals(expected, tokenizer.tokenize("one two three"));
+		assertEquals(expected, tokenizer.tokenize("one!,\t\u00BFtwo?,\tthree."));
 	}
 
 	@Test
@@ -59,24 +61,24 @@ public class TextTokenizerTest {
 
 		TextTokenizer tokenizer = new TextMatcher(pattern);
 
-		assertEquals(Collections.emptyList(), tokenizer.tokenize(""));
+		assertEquals(TokenizedString.EMPTY, tokenizer.tokenize(""));
 
-		assertEquals(Collections.emptyList(), tokenizer.tokenize(" "));
-		assertEquals(Collections.emptyList(), tokenizer.tokenize("\t\t\t"));
+		assertEquals(TokenizedString.EMPTY, tokenizer.tokenize(" "));
+		assertEquals(TokenizedString.EMPTY, tokenizer.tokenize("\t\t\t"));
 
-		assertEquals(Arrays.asList(","), tokenizer.tokenize(","));
-		assertEquals(Arrays.asList(",,"), tokenizer.tokenize(",,"));
-		assertEquals(Arrays.asList(",", ","), tokenizer.tokenize(", ,"));
-		assertEquals(Arrays.asList(",", ","), tokenizer.tokenize(" , , "));
+		assertEquals(new TokenizedString(","), tokenizer.tokenize(","));
+		assertEquals(new TokenizedString(",,"), tokenizer.tokenize(",,"));
+		assertEquals(new TokenizedString(",", ","), tokenizer.tokenize(", ,"));
+		assertEquals(new TokenizedString(",", ","), tokenizer.tokenize(" , , "));
 
-		assertEquals(Arrays.asList("one", "two", "three"), tokenizer.tokenize("one two three"));
-		assertEquals(Arrays.asList("one!,", "\u00BFtwo?,", "three."), tokenizer.tokenize("one!,\t\u00BFtwo?,\tthree."));
+		assertEquals(new TokenizedString("one", "two", "three"), tokenizer.tokenize("one two three"));
+		assertEquals(new TokenizedString("one!,", "\u00BFtwo?,", "three."), tokenizer.tokenize("one!,\t\u00BFtwo?,\tthree."));
 
 		pattern = Pattern.compile("\\w{4,}");
 
 		tokenizer = new TextMatcher(pattern);
 
-		assertEquals(Arrays.asList("three", "four", "five", "seven"), tokenizer.tokenize("one two three four five six seven"));
-		assertEquals(Arrays.asList("three"), tokenizer.tokenize("one!,\t\u00BFtwo?,\tthree."));
+		assertEquals(new TokenizedString("three", "four", "five", "seven"), tokenizer.tokenize("one two three four five six seven"));
+		assertEquals(new TokenizedString("three"), tokenizer.tokenize("one!,\t\u00BFtwo?,\tthree."));
 	}
 }

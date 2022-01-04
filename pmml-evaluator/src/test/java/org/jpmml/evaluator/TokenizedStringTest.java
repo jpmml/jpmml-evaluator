@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Villu Ruusmann
+ * Copyright (c) 2022 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,27 +18,26 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Objects;
-import java.util.regex.Pattern;
+import org.junit.Test;
 
-abstract
-public class TextTokenizer {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
-	private Pattern pattern = null;
+public class TokenizedStringTest {
 
+	@Test
+	public void slice(){
+		TokenizedString tokens = new TokenizedString("one", "two", "three", "four", "five");
 
-	public TextTokenizer(Pattern pattern){
-		setPattern(pattern);
-	}
+		assertSame(tokens, tokens.slice(0, 5));
 
-	abstract
-	public TokenizedString tokenize(String string);
+		assertEquals(new TokenizedString("one"), tokens.slice(0, 1));
+		assertEquals(new TokenizedString("one", "two"), tokens.slice(0, 2));
 
-	public Pattern getPattern(){
-		return this.pattern;
-	}
+		assertEquals(new TokenizedString("two"), tokens.slice(1, 2));
+		assertEquals(new TokenizedString("two", "three"), tokens.slice(1, 3));
 
-	private void setPattern(Pattern pattern){
-		this.pattern = Objects.requireNonNull(pattern);
+		assertEquals(new TokenizedString("four"), tokens.slice(3, 4));
+		assertEquals(new TokenizedString("four", "five"), tokens.slice(3, 5));
 	}
 }

@@ -89,7 +89,7 @@ public class ResourceUtilTest {
 
 		String[] clonedValues = ResourceUtil.readStrings(dataInput, 3);
 		String[][] clonedValueArrays = ResourceUtil.readStringArrays(dataInput, 3, 2);
-		List<String>[] clonedValueLists = ResourceUtil.readStringLists(dataInput);
+		List<String>[] clonedValueLists = ResourceUtil.readStringLists(dataInput, 3);
 
 		assertTrue(Arrays.equals(values, clonedValues));
 		assertTrue(Arrays.deepEquals(valueArrays, clonedValueArrays));

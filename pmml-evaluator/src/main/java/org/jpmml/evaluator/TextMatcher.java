@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,17 +40,17 @@ public class TextMatcher extends TextTokenizer {
 	}
 
 	@Override
-	public List<String> tokenize(String string){
+	public TokenizedString tokenize(String string){
 		Pattern pattern = getPattern();
 
 		if(("").equals(string)){
-			return Collections.emptyList();
+			return TokenizedString.EMPTY;
 		}
 
 		Matcher matcher = pattern.matcher(string);
 
 		if(!matcher.find()){
-			return Collections.emptyList();
+			return TokenizedString.EMPTY;
 		}
 
 		List<String> tokens = new ArrayList<>(Math.max(string.length() / 4, 16));
@@ -60,6 +59,6 @@ public class TextMatcher extends TextTokenizer {
 			tokens.add(matcher.group());
 		} while(matcher.find());
 
-		return tokens;
+		return new TokenizedString(tokens);
 	}
 }

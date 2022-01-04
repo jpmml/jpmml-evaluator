@@ -175,7 +175,7 @@ public class TextUtil {
 
 
 	static
-	public List<String> tokenize(TextIndex textIndex, String text){
+	public TokenizedString tokenize(TextIndex textIndex, String text){
 		boolean tokenize = textIndex.isTokenize();
 
 		if(tokenize){
@@ -190,9 +190,9 @@ public class TextUtil {
 	}
 
 	static
-	public int termFrequency(TextIndex textIndex, List<String> textTokens, List<String> termTokens){
+	public int termFrequency(TextIndex textIndex, TokenizedString textTokens, TokenizedString termTokens){
 
-		if(textTokens.isEmpty() || termTokens.isEmpty()){
+		if((textTokens.size() == 0) || (termTokens.size() == 0)){
 			return 0;
 		}
 
@@ -240,7 +240,7 @@ public class TextUtil {
 	}
 
 	static
-	public Map<List<String>, Integer> termFrequencyTable(TextIndex textIndex, List<String> textTokens, Set<List<String>> termTokenSet, int maxLength){
+	public Map<TokenizedString, Integer> termFrequencyTable(TextIndex textIndex, TokenizedString textTokens, Set<TokenizedString> termTokenSet, int maxLength){
 		boolean caseSensitive = textIndex.isCaseSensitive();
 
 		int maxLevenshteinDistance = textIndex.getMaxLevenshteinDistance();
@@ -252,7 +252,7 @@ public class TextUtil {
 	}
 
 	static
-	public boolean matches(TextIndex textIndex, List<String> leftTokens, List<String> rightTokens){
+	public boolean matches(TextIndex textIndex, TokenizedString leftTokens, TokenizedString rightTokens){
 		boolean caseSensitive = textIndex.isCaseSensitive();
 
 		int maxLevenshteinDistance = textIndex.getMaxLevenshteinDistance();
@@ -264,7 +264,7 @@ public class TextUtil {
 	}
 
 	static
-	int termFrequency(List<String> textTokens, List<String> termTokens, boolean caseSensitive, int maxLevenshteinDistance, boolean bestHits, int maxFrequency){
+	int termFrequency(TokenizedString textTokens, TokenizedString termTokens, boolean caseSensitive, int maxLevenshteinDistance, boolean bestHits, int maxFrequency){
 		int frequency = 0;
 
 		int bestLevenshteinDistance = Integer.MAX_VALUE;
@@ -344,8 +344,8 @@ public class TextUtil {
 	}
 
 	static
-	Map<List<String>, Integer> termFrequencyTable(List<String> textTokens, Set<List<String>> termTokenSet, boolean caseSensitive, int maxLevenshteinDistance, int maxLength){
-		Map<List<String>, Integer> result = new LinkedHashMap<>();
+	Map<TokenizedString, Integer> termFrequencyTable(TokenizedString textTokens, Set<TokenizedString> termTokenSet, boolean caseSensitive, int maxLevenshteinDistance, int maxLength){
+		Map<TokenizedString, Integer> result = new LinkedHashMap<>();
 
 		for(int i = 0, max = textTokens.size(); i < max; i++){
 
@@ -355,7 +355,7 @@ public class TextUtil {
 					break;
 				}
 
-				List<String> tokens = textTokens.subList(i, i + length);
+				TokenizedString tokens = textTokens.slice(i, i + length);
 
 				if(caseSensitive && maxLevenshteinDistance == 0){
 					boolean matches = termTokenSet.contains(tokens);
@@ -368,7 +368,7 @@ public class TextUtil {
 				} else
 
 				{
-					for(List<String> termTokens : termTokenSet){
+					for(TokenizedString termTokens : termTokenSet){
 
 						if(matches(tokens, termTokens, caseSensitive, maxLevenshteinDistance)){
 							Integer count = result.get(termTokens);
@@ -384,7 +384,7 @@ public class TextUtil {
 	}
 
 	static
-	boolean matches(List<String> leftTokens, List<String> rightTokens, boolean caseSensitive, int maxLevenshteinDistance){
+	boolean matches(TokenizedString leftTokens, TokenizedString rightTokens, boolean caseSensitive, int maxLevenshteinDistance){
 
 		if(leftTokens.size() != rightTokens.size()){
 			return false;
@@ -510,7 +510,7 @@ public class TextUtil {
 		}
 
 		abstract
-		public List<String> process();
+		public TokenizedString process();
 
 		public TextIndex getTextIndex(){
 			return this.textIndex;
@@ -537,22 +537,22 @@ public class TextUtil {
 		}
 
 		@Override
-		public List<String> process(){
+		public TokenizedString process(){
 			TextIndex textIndex = getTextIndex();
 			String value = getValue();
 
-			Cache<String, List<String>> textTokenCache = CacheUtil.getValue(textIndex, TextUtil.textTokenCaches, TextUtil.textTokenCacheLoader);
+			Cache<String, TokenizedString> textTokenCache = CacheUtil.getValue(textIndex, TextUtil.textTokenCaches, TextUtil.textTokenCacheLoader);
 
-			List<String> tokens = textTokenCache.getIfPresent(value);
-			if(tokens == null){
+			TokenizedString textTokens = textTokenCache.getIfPresent(value);
+			if(textTokens == null){
 				String string = TextUtil.normalize(textIndex, value);
 
-				tokens = TextUtil.tokenize(textIndex, string);
+				textTokens = TextUtil.tokenize(textIndex, string);
 
-				textTokenCache.put(value, tokens);
+				textTokenCache.put(value, textTokens);
 			}
 
-			return tokens;
+			return textTokens;
 		}
 	}
 
@@ -564,39 +564,39 @@ public class TextUtil {
 		}
 
 		@Override
-		public List<String> process(){
+		public TokenizedString process(){
 			TextIndex textIndex = getTextIndex();
 			String value = getValue();
 
-			Cache<String, List<String>> termTokenCache = CacheUtil.getValue(textIndex, TextUtil.termTokenCaches, TextUtil.termTokenCacheLoader);
+			Cache<String, TokenizedString> termTokenCache = CacheUtil.getValue(textIndex, TextUtil.termTokenCaches, TextUtil.termTokenCacheLoader);
 
-			List<String> tokens = termTokenCache.getIfPresent(value);
-			if(tokens == null){
-				tokens = TextUtil.tokenize(textIndex, value);
+			TokenizedString termTokens = termTokenCache.getIfPresent(value);
+			if(termTokens == null){
+				termTokens = TextUtil.tokenize(textIndex, value);
 
-				termTokenCache.put(value, tokens);
+				termTokenCache.put(value, termTokens);
 			}
 
-			return tokens;
+			return termTokens;
 		}
 	}
 
-	private static final Cache<TextIndex, Cache<String, List<String>>> textTokenCaches = CacheUtil.buildCache();
+	private static final Cache<TextIndex, Cache<String, TokenizedString>> textTokenCaches = CacheUtil.buildCache();
 
-	private static final Callable<Cache<String, List<String>>> textTokenCacheLoader = new Callable<Cache<String, List<String>>>(){
+	private static final Callable<Cache<String, TokenizedString>> textTokenCacheLoader = new Callable<Cache<String, TokenizedString>>(){
 
 		@Override
-		public Cache<String, List<String>> call(){
+		public Cache<String, TokenizedString> call(){
 			return CacheUtil.buildCache();
 		}
 	};
 
-	private static final Cache<TextIndex, Cache<String, List<String>>> termTokenCaches = CacheUtil.buildCache();
+	private static final Cache<TextIndex, Cache<String, TokenizedString>> termTokenCaches = CacheUtil.buildCache();
 
-	private static final Callable<Cache<String, List<String>>> termTokenCacheLoader = new Callable<Cache<String, List<String>>>(){
+	private static final Callable<Cache<String, TokenizedString>> termTokenCacheLoader = new Callable<Cache<String, TokenizedString>>(){
 
 		@Override
-		public Cache<String, List<String>> call(){
+		public Cache<String, TokenizedString> call(){
 			return CacheUtil.buildCache();
 		}
 	};

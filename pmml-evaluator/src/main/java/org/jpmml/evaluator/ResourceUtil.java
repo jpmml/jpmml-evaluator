@@ -61,6 +61,34 @@ public class ResourceUtil {
 	}
 
 	static
+	public TokenizedString[] readTokenizedStrings(DataInput dataInput, int count) throws IOException {
+		List<String>[] stringLists = readStringLists(dataInput, count);
+
+		TokenizedString[] result = new TokenizedString[stringLists.length];
+
+		for(int i = 0; i < stringLists.length; i++){
+			List<String> stringList = stringLists[i];
+
+			result[i] = new TokenizedString(stringList);
+		}
+
+		return result;
+	}
+
+	static
+	public void writeTokenizedStrings(DataOutput dataOutput, TokenizedString[] tokenizedStrings) throws IOException {
+		List<String>[] stringLists = new List[tokenizedStrings.length];
+
+		for(int i = 0; i < tokenizedStrings.length; i++){
+			TokenizedString tokenizedString = tokenizedStrings[i];
+
+			stringLists[i] = Arrays.asList(tokenizedString.getTokens());
+		}
+
+		writeStringLists(dataOutput, stringLists);
+	}
+
+	static
 	public String[] readStrings(DataInput dataInput, int count) throws IOException {
 		String[] result = new String[count];
 
@@ -83,9 +111,7 @@ public class ResourceUtil {
 	}
 
 	static
-	public List<String>[] readStringLists(DataInput dataInput) throws IOException {
-		int count = dataInput.readInt();
-
+	public List<String>[] readStringLists(DataInput dataInput, int count) throws IOException {
 		List<List<String>> result = new ArrayList<>(count);
 
 		for(int i = 0; i < count; i++){
@@ -117,9 +143,6 @@ public class ResourceUtil {
 
 	static
 	public void writeStringLists(DataOutput dataOutput, List<String>[] stringLists) throws IOException {
-		int count = stringLists.length;
-
-		dataOutput.writeInt(count);
 
 		for(List<String> stringList : stringLists){
 			int length = stringList.size();

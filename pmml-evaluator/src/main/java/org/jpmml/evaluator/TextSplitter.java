@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,11 +41,11 @@ public class TextSplitter extends TextTokenizer {
 	}
 
 	@Override
-	public List<String> tokenize(String string){
+	public TokenizedString tokenize(String string){
 		Pattern pattern = getPattern();
 
 		if(("").equals(string)){
-			return Collections.emptyList();
+			return TokenizedString.EMPTY;
 		}
 
 		Matcher matcher = pattern.matcher(string);
@@ -55,10 +54,10 @@ public class TextSplitter extends TextTokenizer {
 			String token = TermUtil.trimPunctuation(string);
 
 			if(!token.isEmpty()){
-				return Collections.singletonList(token);
+				return new TokenizedString(token);
 			}
 
-			return Collections.emptyList();
+			return TokenizedString.EMPTY;
 		}
 
 		List<String> tokens = new ArrayList<>(Math.max(string.length() / 4, 16));
@@ -82,6 +81,6 @@ public class TextSplitter extends TextTokenizer {
 			tokens.add(token);
 		}
 
-		return tokens;
+		return new TokenizedString(tokens);
 	}
 }

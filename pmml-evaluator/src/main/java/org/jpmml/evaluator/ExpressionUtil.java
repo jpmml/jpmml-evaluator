@@ -307,11 +307,11 @@ public class ExpressionUtil {
 
 		TextUtil.TextProcessor textProcessor = new TextUtil.TextProcessor(textIndex, textValue.asString());
 
-		List<String> textTokens = textProcessor.process();
+		TokenizedString textTokens = textProcessor.process();
 
 		TextUtil.TermProcessor termProcessor = new TextUtil.TermProcessor(textIndex, termValue.asString());
 
-		List<String> termTokens = termProcessor.process();
+		TokenizedString termTokens = termProcessor.process();
 
 		int termFrequency = TextUtil.termFrequency(textIndex, textTokens, termTokens);
 

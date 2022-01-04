@@ -44,13 +44,13 @@ public class TextUtilTest {
 
 		TextUtil.TermProcessor termProcessor = new TextUtil.TermProcessor(textIndex, new String("brown fox"));
 
-		List<String> firstTokens = termProcessor.process();
+		TokenizedString firstTokens = termProcessor.process();
 
-		assertEquals(Arrays.asList("brown", "fox"), firstTokens);
+		assertEquals(new TokenizedString("brown", "fox"), firstTokens);
 
 		termProcessor = new TextUtil.TermProcessor(textIndex, new String("brown fox"));
 
-		List<String> secondTokens = termProcessor.process();
+		TokenizedString secondTokens = termProcessor.process();
 
 		assertSame(firstTokens, secondTokens);
 
@@ -58,7 +58,7 @@ public class TextUtilTest {
 
 		termProcessor = new TextUtil.TermProcessor(textIndex, new String("brown fox"));
 
-		List<String> thirdTokens = termProcessor.process();
+		TokenizedString thirdTokens = termProcessor.process();
 
 		assertEquals(firstTokens, thirdTokens);
 		assertNotSame(firstTokens, thirdTokens);
@@ -74,13 +74,13 @@ public class TextUtilTest {
 
 		TextUtil.TextProcessor textProcessor = new TextUtil.TextProcessor(textIndex, new String("The quick brown fox jumps over the lazy dog"));
 
-		List<String> firstTokens = textProcessor.process();
+		TokenizedString firstTokens = textProcessor.process();
 
-		assertEquals(Arrays.asList("The", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"), firstTokens);
+		assertEquals(new TokenizedString("The", "quick", "brown", "fox", "jumps", "over", "the", "lazy", "dog"), firstTokens);
 
 		textProcessor = new TextUtil.TextProcessor(textIndex, new String("The quick brown fox jumps over the lazy dog"));
 
-		List<String> secondTokens = textProcessor.process();
+		TokenizedString secondTokens = textProcessor.process();
 
 		assertSame(firstTokens, secondTokens);
 	}
@@ -123,77 +123,77 @@ public class TextUtilTest {
 
 	@Test
 	public void termFrequency(){
-		List<String> textTokens = Arrays.asList("x", "x", "x", "x");
-		List<String> termTokens;
+		TokenizedString textTokens = new TokenizedString("x", "x", "x", "x");
+		TokenizedString termTokens;
 
-		assertEquals(0, termFrequency(textTokens, Arrays.asList("x", "x", "x", "x", "x"), true, 0, false, Integer.MAX_VALUE));
-		assertEquals(1, termFrequency(textTokens, Arrays.asList("x", "x", "x", "x"), true, 0, false, Integer.MAX_VALUE));
-		assertEquals(2, termFrequency(textTokens, Arrays.asList("x", "x", "x"), true, 0, false, Integer.MAX_VALUE));
-		assertEquals(3, termFrequency(textTokens, Arrays.asList("x", "x"), true, 0, false, Integer.MAX_VALUE));
-		assertEquals(4, termFrequency(textTokens, Arrays.asList("x"), true, 0, false, Integer.MAX_VALUE));
+		assertEquals(0, termFrequency(textTokens, new TokenizedString("x", "x", "x", "x", "x"), true, 0, false, Integer.MAX_VALUE));
+		assertEquals(1, termFrequency(textTokens, new TokenizedString("x", "x", "x", "x"), true, 0, false, Integer.MAX_VALUE));
+		assertEquals(2, termFrequency(textTokens, new TokenizedString("x", "x", "x"), true, 0, false, Integer.MAX_VALUE));
+		assertEquals(3, termFrequency(textTokens, new TokenizedString("x", "x"), true, 0, false, Integer.MAX_VALUE));
+		assertEquals(4, termFrequency(textTokens, new TokenizedString("x"), true, 0, false, Integer.MAX_VALUE));
 
-		termTokens = Arrays.asList("x", "X", "x", "x");
+		termTokens = new TokenizedString("x", "X", "x", "x");
 
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(1, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
 		assertEquals(1, termFrequency(textTokens, termTokens, true, 1, false, 1));
 		assertEquals(1, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
 
-		termTokens = Arrays.asList("x", "Y", "x", "x");
+		termTokens = new TokenizedString("x", "Y", "x", "x");
 
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(0, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
 		assertEquals(1, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
 
-		termTokens = Arrays.asList("x", "X", "x");
+		termTokens = new TokenizedString("x", "X", "x");
 
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(2, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
 		assertEquals(1, termFrequency(textTokens, termTokens, true, 1, false, 1));
 		assertEquals(2, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
 
-		termTokens = Arrays.asList("x", "X");
+		termTokens = new TokenizedString("x", "X");
 
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(3, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
 		assertEquals(1, termFrequency(textTokens, termTokens, true, 1, false, 1));
 		assertEquals(3, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
 
-		termTokens = Arrays.asList("X");
+		termTokens = new TokenizedString("X");
 
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(4, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
 		assertEquals(1, termFrequency(textTokens, termTokens, true, 1, false, 1));
 		assertEquals(4, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
 
-		termTokens = Arrays.asList("x", "X", "X", "x");
+		termTokens = new TokenizedString("x", "X", "X", "x");
 
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(1, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
 		assertEquals(1, termFrequency(textTokens, termTokens, true, 2, false, Integer.MAX_VALUE));
 
-		termTokens = Arrays.asList("x", "Y", "Y", "x");
+		termTokens = new TokenizedString("x", "Y", "Y", "x");
 
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(0, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
 		assertEquals(1, termFrequency(textTokens, termTokens, true, 2, false, Integer.MAX_VALUE));
 
-		termTokens = Arrays.asList("x", "X", "X");
+		termTokens = new TokenizedString("x", "X", "X");
 
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(2, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
 		assertEquals(2, termFrequency(textTokens, termTokens, true, 2, false, Integer.MAX_VALUE));
 
-		termTokens = Arrays.asList("X", "X");
+		termTokens = new TokenizedString("X", "X");
 
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(3, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 1, false, Integer.MAX_VALUE));
 		assertEquals(3, termFrequency(textTokens, termTokens, true, 2, false, Integer.MAX_VALUE));
 
-		termTokens = Arrays.asList("x", "X", "X", "X");
+		termTokens = new TokenizedString("x", "X", "X", "X");
 
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(1, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
@@ -201,13 +201,13 @@ public class TextUtilTest {
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 2, false, Integer.MAX_VALUE));
 		assertEquals(1, termFrequency(textTokens, termTokens, true, 3, false, Integer.MAX_VALUE));
 
-		termTokens = Arrays.asList("x", "Y", "Y", "Y");
+		termTokens = new TokenizedString("x", "Y", "Y", "Y");
 
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(0, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
 		assertEquals(1, termFrequency(textTokens, termTokens, true, 3, false, Integer.MAX_VALUE));
 
-		termTokens = Arrays.asList("X", "X", "X");
+		termTokens = new TokenizedString("X", "X", "X");
 
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(2, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
@@ -215,12 +215,12 @@ public class TextUtilTest {
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 2, false, Integer.MAX_VALUE));
 		assertEquals(2, termFrequency(textTokens, termTokens, true, 3, false, Integer.MAX_VALUE));
 
-		termTokens = Arrays.asList("X", "X", "X", "X");
+		termTokens = new TokenizedString("X", "X", "X", "X");
 
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(1, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
 
-		termTokens = Arrays.asList("Y", "Y", "Y", "Y");
+		termTokens = new TokenizedString("Y", "Y", "Y", "Y");
 
 		assertEquals(0, termFrequency(textTokens, termTokens, true, 0, false, Integer.MAX_VALUE));
 		assertEquals(0, termFrequency(textTokens, termTokens, false, 0, false, Integer.MAX_VALUE));
@@ -229,31 +229,31 @@ public class TextUtilTest {
 
 	@Test
 	public void termFrequencyTable(){
-		List<String> textTokens = Arrays.asList("a", "b", "A", "c");
-		Set<List<String>> termTokenSet = new HashSet<List<String>>(){
+		TokenizedString textTokens = new TokenizedString("a", "b", "A", "c");
+		Set<TokenizedString> termTokenSet = new HashSet<TokenizedString>(){
 
 			{
-				add(Arrays.asList("a"));
-				add(Arrays.asList("a", "b"));
-				add(Arrays.asList("a", "b", "c"));
+				add(new TokenizedString("a"));
+				add(new TokenizedString("a", "b"));
+				add(new TokenizedString("a", "b", "c"));
 			}
 		};
 
-		Map<List<String>, Integer> expectedTermFrequencyTable = new HashMap<>();
-		expectedTermFrequencyTable.put(Arrays.asList("a"), 2);
+		Map<TokenizedString, Integer> expectedTermFrequencyTable = new HashMap<>();
+		expectedTermFrequencyTable.put(new TokenizedString("a"), 2);
 
-		Map<List<String>, Integer> termFrequencyTable = TextUtil.termFrequencyTable(textTokens, termTokenSet, false, 0, 1);
+		Map<TokenizedString, Integer> termFrequencyTable = TextUtil.termFrequencyTable(textTokens, termTokenSet, false, 0, 1);
 
 		assertEquals(expectedTermFrequencyTable, termFrequencyTable);
 
-		expectedTermFrequencyTable.put(Arrays.asList("a", "b"), 1);
+		expectedTermFrequencyTable.put(new TokenizedString("a", "b"), 1);
 
 		termFrequencyTable = TextUtil.termFrequencyTable(textTokens, termTokenSet, false, 0, 2);
 
 		assertEquals(expectedTermFrequencyTable, termFrequencyTable);
 
 		expectedTermFrequencyTable = new HashMap<>();
-		expectedTermFrequencyTable.put(Arrays.asList("a"), 4);
+		expectedTermFrequencyTable.put(new TokenizedString("a"), 4);
 
 		termFrequencyTable = TextUtil.termFrequencyTable(textTokens, termTokenSet, false, 1, 1);
 
@@ -263,13 +263,13 @@ public class TextUtilTest {
 
 		assertEquals(expectedTermFrequencyTable, termFrequencyTable);
 
-		expectedTermFrequencyTable.put(Arrays.asList("a", "b"), 2);
+		expectedTermFrequencyTable.put(new TokenizedString("a", "b"), 2);
 
 		termFrequencyTable = TextUtil.termFrequencyTable(textTokens, termTokenSet, false, 1, 2);
 
 		assertEquals(expectedTermFrequencyTable, termFrequencyTable);
 
-		expectedTermFrequencyTable.put(Arrays.asList("a", "b"), 1);
+		expectedTermFrequencyTable.put(new TokenizedString("a", "b"), 1);
 
 		termFrequencyTable = TextUtil.termFrequencyTable(textTokens, termTokenSet, true, 1, 2);
 
@@ -278,24 +278,24 @@ public class TextUtilTest {
 
 	@Test
 	public void matches(){
-		List<String> leftTokens = Arrays.asList("A", "B", "C");
-		List<String> rightTokens = Arrays.asList("a", "b", "c");
+		TokenizedString leftTokens = new TokenizedString("A", "B", "C");
+		TokenizedString rightTokens = new TokenizedString("a", "b", "c");
 
 		assertFalse(TextUtil.matches(leftTokens, rightTokens, true, 0));
 
 		assertTrue(TextUtil.matches(leftTokens, rightTokens, false, 0));
 
-		rightTokens = Arrays.asList("A", "X", "C");
+		rightTokens = new TokenizedString("A", "X", "C");
 
 		assertFalse(TextUtil.matches(leftTokens, rightTokens, true, 0));
 		assertTrue(TextUtil.matches(leftTokens, rightTokens, true, 1));
 
-		rightTokens = Arrays.asList("A", "XX", "C");
+		rightTokens = new TokenizedString("A", "XX", "C");
 
 		assertFalse(TextUtil.matches(leftTokens, rightTokens, true, 1));
 		assertTrue(TextUtil.matches(leftTokens, rightTokens, true, 2));
 
-		rightTokens = Arrays.asList("a", "x", "c");
+		rightTokens = new TokenizedString("a", "x", "c");
 
 		assertFalse(TextUtil.matches(leftTokens, rightTokens, true, 0));
 		assertFalse(TextUtil.matches(leftTokens, rightTokens, true, 2));
@@ -304,7 +304,7 @@ public class TextUtilTest {
 		assertFalse(TextUtil.matches(leftTokens, rightTokens, false, 0));
 		assertTrue(TextUtil.matches(leftTokens, rightTokens, false, 1));
 
-		rightTokens = Arrays.asList("a", "xx", "c");
+		rightTokens = new TokenizedString("a", "xx", "c");
 
 		assertFalse(TextUtil.matches(leftTokens, rightTokens, true, 3));
 		assertTrue(TextUtil.matches(leftTokens, rightTokens, true, 4));
@@ -323,7 +323,7 @@ public class TextUtilTest {
 	}
 
 	static
-	private int termFrequency(List<String> textTokens, List<String> termTokens, boolean caseSensitive, int maxLevenshteinDistance, boolean bestHits, int maxFrequency){
+	private int termFrequency(TokenizedString textTokens, TokenizedString termTokens, boolean caseSensitive, int maxLevenshteinDistance, boolean bestHits, int maxFrequency){
 		return TextUtil.termFrequency(textTokens, termTokens, caseSensitive, maxLevenshteinDistance, bestHits, maxFrequency);
 	}
 }
