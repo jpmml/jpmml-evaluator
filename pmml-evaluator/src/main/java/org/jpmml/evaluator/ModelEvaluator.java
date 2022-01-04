@@ -400,8 +400,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		if(!outputFields.isEmpty()){
 			OutputFilter outputFilter = ensureOutputFilter();
 
-			Iterator<OutputField> it = outputFields.iterator();
-			while(it.hasNext()){
+			for(Iterator<OutputField> it = outputFields.iterator(); it.hasNext(); ){
 				OutputField outputField = it.next();
 
 				org.dmg.pmml.OutputField pmmlOutputField = outputField.getField();

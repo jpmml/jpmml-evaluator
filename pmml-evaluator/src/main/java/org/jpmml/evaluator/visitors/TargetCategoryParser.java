@@ -302,10 +302,10 @@ public class TargetCategoryParser extends AbstractParser {
 	}
 
 	private DataType getDataType(){
-		Iterator<Map<String, DataType>> it = this.targetDataTypes.iterator();
+		Iterator<Map<String, DataType>> mapIt = this.targetDataTypes.iterator();
 
-		while(it.hasNext()){
-			Map<String, DataType> targetDataTypes = it.next();
+		while(mapIt.hasNext()){
+			Map<String, DataType> targetDataTypes = mapIt.next();
 
 			if(!targetDataTypes.isEmpty()){
 				// Cannot use EnumSet, because it is null-hostile

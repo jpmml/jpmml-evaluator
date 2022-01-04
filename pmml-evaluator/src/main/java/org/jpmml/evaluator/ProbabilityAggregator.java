@@ -89,9 +89,9 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			throw new IllegalArgumentException();
 		}
 
-		Iterator<Vector<V>> it = mapValues.iterator();
-		for(int i = 0; it.hasNext(); i++){
-			Vector<V> values = it.next();
+		Iterator<Vector<V>> valueIt = mapValues.iterator();
+		for(int i = 0; valueIt.hasNext(); i++){
+			Vector<V> values = valueIt.next();
 
 			values.add(probabilities[i]);
 		}
@@ -145,9 +145,9 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			throw new IllegalArgumentException();
 		}
 
-		Iterator<Vector<V>> it = mapValues.iterator();
-		for(int i = 0; it.hasNext(); i++){
-			Vector<V> values = it.next();
+		Iterator<Vector<V>> valueIt = mapValues.iterator();
+		for(int i = 0; valueIt.hasNext(); i++){
+			Vector<V> values = valueIt.next();
 
 			if(weight.doubleValue() != 1d){
 				values.add(weight, probabilities[i]);

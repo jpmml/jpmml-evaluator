@@ -194,9 +194,10 @@ public class RecordCountingExample extends Example {
 
 				int depth = 0;
 
-				Iterator<PMMLObject> it = parents.iterator();
+				Iterator<PMMLObject> parentIt = parents.iterator();
+
 				while(true){
-					PMMLObject parent = it.next();
+					PMMLObject parent = parentIt.next();
 
 					if(parent instanceof Node){
 						depth++;
@@ -205,7 +206,7 @@ public class RecordCountingExample extends Example {
 					}
 
 					TreeModel treeModel = (TreeModel)parent;
-					Segment segment = (Segment)it.next();
+					Segment segment = (Segment)parentIt.next();
 
 					Number recordCount = node.getRecordCount();
 					if(recordCount == null){

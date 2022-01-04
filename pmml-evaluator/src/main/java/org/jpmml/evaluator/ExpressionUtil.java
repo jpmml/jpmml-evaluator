@@ -336,13 +336,13 @@ public class ExpressionUtil {
 
 		List<FieldValue> values = new ArrayList<>(expressions.size());
 
-		Iterator<Expression> arguments = expressions.iterator();
+		Iterator<Expression> expressionIt = expressions.iterator();
 
 		condition:
 		if((PMMLFunctions.IF).equals(function)){
 
-			if(arguments.hasNext()){
-				FieldValue flag = evaluate(arguments.next(), context);
+			if(expressionIt.hasNext()){
+				FieldValue flag = evaluate(expressionIt.next(), context);
 
 				if(flag == null && mapMissingTo != null){
 					return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
@@ -353,13 +353,13 @@ public class ExpressionUtil {
 				// Skip both THEN and ELSE parts
 				if(flag == null){
 
-					if(arguments.hasNext()){
-						arguments.next();
+					if(expressionIt.hasNext()){
+						expressionIt.next();
 
 						values.add(FieldValues.MISSING_VALUE);
 
-						if(arguments.hasNext()){
-							arguments.next();
+						if(expressionIt.hasNext()){
+							expressionIt.next();
 
 							values.add(FieldValues.MISSING_VALUE);
 						}
@@ -371,8 +371,8 @@ public class ExpressionUtil {
 				// Evaluate THEN part, skip ELSE part
 				if(flag.asBoolean()){
 
-					if(arguments.hasNext()){
-						FieldValue trueValue = evaluate(arguments.next(), context);
+					if(expressionIt.hasNext()){
+						FieldValue trueValue = evaluate(expressionIt.next(), context);
 
 						if(FieldValueUtil.isMissing(trueValue) && mapMissingTo != null){
 							return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
@@ -380,8 +380,8 @@ public class ExpressionUtil {
 
 						values.add(trueValue);
 
-						if(arguments.hasNext()){
-							arguments.next();
+						if(expressionIt.hasNext()){
+							expressionIt.next();
 
 							values.add(FieldValues.MISSING_VALUE);
 						}
@@ -390,13 +390,13 @@ public class ExpressionUtil {
 
 				// Skip THEN part, evaluate ELSE part
 				{
-					if(arguments.hasNext()){
-						arguments.next();
+					if(expressionIt.hasNext()){
+						expressionIt.next();
 
 						values.add(FieldValues.MISSING_VALUE);
 
-						if(arguments.hasNext()){
-							FieldValue falseValue = evaluate(arguments.next(), context);
+						if(expressionIt.hasNext()){
+							FieldValue falseValue = evaluate(expressionIt.next(), context);
 
 							if(FieldValueUtil.isMissing(falseValue) && mapMissingTo != null){
 								return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
@@ -409,8 +409,8 @@ public class ExpressionUtil {
 			}
 		}
 
-		while(arguments.hasNext()){
-			FieldValue value = evaluate(arguments.next(), context);
+		while(expressionIt.hasNext()){
+			FieldValue value = evaluate(expressionIt.next(), context);
 
 			// "If a mapMissingTo value is specified and any of the input values of the function are missing, then the function is not applied at all and the mapMissingTo value is returned instead"
 			if(FieldValueUtil.isMissing(value) && mapMissingTo != null){

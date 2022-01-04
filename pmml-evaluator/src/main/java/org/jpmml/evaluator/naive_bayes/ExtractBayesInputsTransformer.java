@@ -64,8 +64,8 @@ public class ExtractBayesInputsTransformer implements PMMLTransformer<RuntimeExc
 				if(bayesInputs.hasExtensions()){
 					List<Extension> extensions = bayesInputs.getExtensions();
 
-					for(Iterator<Extension> extensionIt = extensions.iterator(); extensionIt.hasNext(); ){
-						Extension extension = extensionIt.next();
+					for(Iterator<Extension> it = extensions.iterator(); it.hasNext(); ){
+						Extension extension = it.next();
 
 						List<?> objects = extension.getContent();
 
@@ -74,7 +74,7 @@ public class ExtractBayesInputsTransformer implements PMMLTransformer<RuntimeExc
 							bayesInputs.addBayesInputs(bayesInput);
 
 							if(objects.isEmpty()){
-								extensionIt.remove();
+								it.remove();
 							}
 						}
 					}
