@@ -18,7 +18,8 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -345,32 +346,45 @@ public class TextUtil {
 
 	static
 	Map<TokenizedString, Integer> termFrequencyTable(TokenizedString textTokens, Set<TokenizedString> termTokenSet, boolean caseSensitive, int maxLevenshteinDistance, int maxLength){
-		Map<TokenizedString, Integer> result = new LinkedHashMap<>();
+		Map<TokenizedString, Integer> result = new HashMap<>();
 
-		for(int i = 0, max = textTokens.size(); i < max; i++){
+		List<TokenizedString> termTokenList;
+
+		if(caseSensitive && maxLevenshteinDistance == 0){
+			termTokenList = null;
+		} else
+
+		{
+			termTokenList = new ArrayList<>(termTokenSet);
+		}
+
+		for(int i = 0, textMax = textTokens.size(); i < textMax; i++){
 
 			for(int length = 1; length <= maxLength; length++){
 
-				if((i + length) > max){
+				if((i + length) > textMax){
 					break;
 				}
 
-				TokenizedString tokens = textTokens.slice(i, i + length);
+				TokenizedString sliceOfTextTokens = textTokens.slice(i, i + length);
 
 				if(caseSensitive && maxLevenshteinDistance == 0){
-					boolean matches = termTokenSet.contains(tokens);
+					boolean matches = termTokenSet.contains(sliceOfTextTokens);
 
 					if(matches){
-						Integer count = result.get(tokens);
+						Integer count = result.get(sliceOfTextTokens);
 
-						result.put(tokens, count != null ? count + 1 : 1);
+						result.put(sliceOfTextTokens, count != null ? count + 1 : 1);
 					}
 				} else
 
 				{
-					for(TokenizedString termTokens : termTokenSet){
+					for(int j = 0, termMax = termTokenList.size(); j < termMax; j++){
+						TokenizedString termTokens = termTokenList.get(j);
 
-						if(matches(tokens, termTokens, caseSensitive, maxLevenshteinDistance)){
+						boolean matches = matches(sliceOfTextTokens, termTokens, caseSensitive, maxLevenshteinDistance);
+
+						if(matches){
 							Integer count = result.get(termTokens);
 
 							result.put(termTokens, count != null ? count + 1 : 1);
