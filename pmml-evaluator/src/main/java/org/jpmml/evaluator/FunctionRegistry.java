@@ -83,7 +83,7 @@ public class FunctionRegistry {
 			try {
 				function = (Function)functionClazz.newInstance();
 			} catch(IllegalAccessException | InstantiationException | ExceptionInInitializerError e){
-				throw new EvaluationException("Function class " + EvaluationException.formatKey(functionClazz.getName()) + " could not be instantiated")
+				throw new EvaluationException("Function class " + EvaluationException.formatName(functionClazz.getName()) + " could not be instantiated")
 					.initCause(e);
 			}
 

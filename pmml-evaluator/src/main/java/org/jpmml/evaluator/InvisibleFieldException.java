@@ -42,6 +42,6 @@ public class InvisibleFieldException extends EvaluationException {
 
 	static
 	private String formatMessage(String name){
-		return "Field " + EvaluationException.formatKey(name) + " is not visible";
+		return "Field " + EvaluationException.formatName(name) + " is not visible";
 	}
 }

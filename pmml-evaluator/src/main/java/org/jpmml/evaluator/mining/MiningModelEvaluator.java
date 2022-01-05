@@ -825,29 +825,29 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private Map<String, ?> selectAll(List<SegmentResult> segmentResults){
 		ListMultimap<String, Object> result = ArrayListMultimap.create();
 
-		Set<String> keys = null;
+		Set<String> names = null;
 
 		for(SegmentResult segmentResult : segmentResults){
 
-			if(keys == null){
-				keys = new LinkedHashSet<>(segmentResult.keySet());
+			if(names == null){
+				names = new LinkedHashSet<>(segmentResult.keySet());
 			} // End if
 
 			// Ensure that all List values in the ListMultimap contain the same number of elements
-			if(!(keys).equals(segmentResult.keySet())){
-				Function<Object, String> function = new Function<Object, String>(){
+			if(!(names).equals(segmentResult.keySet())){
+				Function<String, String> function = new Function<String, String>(){
 
 					@Override
-					public String apply(Object object){
-						return EvaluationException.formatKey(object);
+					public String apply(String name){
+						return EvaluationException.formatName(name);
 					}
 				};
 
-				throw new EvaluationException("Field sets " + Iterables.transform(keys, function) + " and " + Iterables.transform(segmentResult.keySet(), function) + " do not match");
+				throw new EvaluationException("Field sets " + Iterables.transform(names, function) + " and " + Iterables.transform(segmentResult.keySet(), function) + " do not match");
 			}
 
-			for(String key : keys){
-				result.put(key, segmentResult.get(key));
+			for(String name : names){
+				result.put(name, segmentResult.get(name));
 			}
 		}
 

@@ -219,7 +219,7 @@ public class InputFieldUtil {
 			case RETURN_INVALID:
 				Field<?> field = typeInfo.getField();
 
-				throw new InvalidResultException("Field " + EvaluationException.formatKey(field.getName()) + " cannot accept user input value " + EvaluationException.formatValue(value), miningField);
+				throw new InvalidResultException("Field " + EvaluationException.formatName(field.getName()) + " cannot accept user input value " + EvaluationException.formatValue(value), miningField);
 			case AS_IS:
 				return createInvalidInputValue(typeInfo, value);
 			case AS_MISSING:
@@ -250,7 +250,7 @@ public class InputFieldUtil {
 			case RETURN_INVALID:
 				Field<?> field = typeInfo.getField();
 
-				throw new InvalidResultException("Field " + EvaluationException.formatKey(field.getName()) + " requires user input value", miningField);
+				throw new InvalidResultException("Field " + EvaluationException.formatName(field.getName()) + " requires user input value", miningField);
 			default:
 				throw new UnsupportedAttributeException(miningField, missingValueTreatmentMethod);
 		}

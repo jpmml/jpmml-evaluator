@@ -97,7 +97,7 @@ public class ExpressionUtil {
 		List<ParameterField> parameterFields = defineFunction.getParameterFields();
 
 		if(parameterFields.size() != values.size()){
-			throw new EvaluationException("Function " + EvaluationException.formatKey(defineFunction.getName()) + " expects " + parameterFields.size() + " arguments, got " + values.size() + " arguments");
+			throw new EvaluationException("Function " + EvaluationException.formatName(defineFunction.getName()) + " expects " + parameterFields.size() + " arguments, got " + values.size() + " arguments");
 		}
 
 		DefineFunctionEvaluationContext functionContext = new DefineFunctionEvaluationContext(defineFunction, context);
@@ -492,7 +492,7 @@ public class ExpressionUtil {
 			return evaluate(defineFunction, values, context);
 		}
 
-		throw new EvaluationException("Function " + EvaluationException.formatKey(name) + " is not defined");
+		throw new EvaluationException("Function " + EvaluationException.formatName(name) + " is not defined");
 	}
 
 	@SuppressWarnings (

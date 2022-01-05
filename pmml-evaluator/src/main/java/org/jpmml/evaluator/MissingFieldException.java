@@ -42,6 +42,6 @@ public class MissingFieldException extends EvaluationException {
 
 	static
 	private String formatMessage(String name){
-		return "Field " + EvaluationException.formatKey(name) + " is not defined";
+		return "Field " + EvaluationException.formatName(name) + " is not defined";
 	}
 }

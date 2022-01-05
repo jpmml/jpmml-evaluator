@@ -37,6 +37,11 @@ public class EvaluationException extends PMMLException {
 	}
 
 	static
+	public String formatName(String name){
+		return format(name);
+	}
+
+	static
 	public String formatKey(Object object){
 		return format(object);
 	}
