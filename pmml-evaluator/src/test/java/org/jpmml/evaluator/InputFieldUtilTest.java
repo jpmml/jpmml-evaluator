@@ -68,7 +68,7 @@ public class InputFieldUtilTest {
 			prepare(dataField, miningField, Double.NaN);
 
 			fail();
-		} catch(InvalidResultException ire){
+		} catch(ValueCheckException vce){
 			// Ignored
 		}
 
@@ -76,7 +76,7 @@ public class InputFieldUtilTest {
 			prepare(dataField, miningField, "one");
 
 			fail();
-		} catch(InvalidResultException ire){
+		} catch(ValueCheckException vce){
 			// Ignored
 		}
 
@@ -161,7 +161,7 @@ public class InputFieldUtilTest {
 			prepare(dataField, miningField, -1d);
 
 			fail();
-		} catch(InvalidResultException ire){
+		} catch(ValueCheckException vce){
 			// Ignored
 		}
 
@@ -171,7 +171,7 @@ public class InputFieldUtilTest {
 			prepare(dataField, miningField, 5d);
 
 			fail();
-		} catch(InvalidResultException ire){
+		} catch(ValueCheckException vce){
 			// Ignored
 		}
 
@@ -235,7 +235,7 @@ public class InputFieldUtilTest {
 			prepare(dataField, miningField, "one");
 
 			fail();
-		} catch(InvalidResultException ire){
+		} catch(ValueCheckException vce){
 			// Ignored
 		}
 
@@ -243,7 +243,7 @@ public class InputFieldUtilTest {
 			prepare(dataField, miningField, 1.5d);
 
 			fail();
-		} catch(InvalidResultException ire){
+		} catch(ValueCheckException vce){
 			// Ignored
 		}
 
@@ -308,7 +308,7 @@ public class InputFieldUtilTest {
 			prepare(dataField, miningField, null);
 
 			fail();
-		} catch(InvalidResultException ire){
+		} catch(ValueCheckException vce){
 			// Ignored
 		}
 
@@ -318,7 +318,7 @@ public class InputFieldUtilTest {
 			prepare(dataField, miningField, null);
 
 			fail();
-		} catch(InvalidResultException ire){
+		} catch(ValueCheckException vce){
 			// Ignored
 		}
 	}

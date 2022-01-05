@@ -23,7 +23,7 @@ import org.jpmml.model.PMMLException;
 
 /**
  * <p>
- * Thrown to indicate an abrupt termination of the evaluation process.
+ * Thrown to indicate an abrupt termination of the evaluation operation.
  * </p>
  */
 public class EvaluationException extends PMMLException {

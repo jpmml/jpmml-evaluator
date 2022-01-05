@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Villu Ruusmann
+ * Copyright (c) 2022 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -20,18 +20,13 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.PMMLObject;
 
-/**
- * <p>
- * Thrown to indicate an invalid end state of an evaluation operation.
- * </p>
- */
-public class InvalidResultException extends EvaluationException {
+public class ValueCheckException extends EvaluationException {
 
-	public InvalidResultException(String message){
+	public ValueCheckException(String message){
 		super(message);
 	}
 
-	public InvalidResultException(String message, PMMLObject context){
+	public ValueCheckException(String message, PMMLObject context){
 		super(message, context);
 	}
 }
