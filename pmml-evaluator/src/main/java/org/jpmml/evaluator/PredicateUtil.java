@@ -33,15 +33,12 @@ import java.util.List;
 import org.dmg.pmml.CompoundPredicate;
 import org.dmg.pmml.False;
 import org.dmg.pmml.HasPredicate;
-import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.Predicate;
 import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.True;
 import org.jpmml.model.InvalidElementListException;
-import org.jpmml.model.MisplacedAttributeException;
-import org.jpmml.model.MissingAttributeException;
 import org.jpmml.model.PMMLException;
 
 public class PredicateUtil {
@@ -99,26 +96,9 @@ public class PredicateUtil {
 
 	static
 	public Boolean evaluateSimplePredicate(SimplePredicate simplePredicate, EvaluationContext context){
-		SimplePredicate.Operator operator = simplePredicate.requireOperator();
-
-		switch(operator){
-			case IS_MISSING:
-			case IS_NOT_MISSING:
-				// "If the operator is isMissing or isNotMissing, then the value attribute must not appear"
-				if(simplePredicate.hasValue()){
-					throw new MisplacedAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_VALUE, simplePredicate.getValue());
-				}
-				break;
-			default:
-				// "With all other operators, however, the value attribute is required"
-				if(!simplePredicate.hasValue()){
-					throw new MissingAttributeException(simplePredicate, PMMLAttributes.SIMPLEPREDICATE_VALUE);
-				}
-				break;
-		}
-
 		FieldValue value = context.evaluate(simplePredicate.requireField());
 
+		SimplePredicate.Operator operator = simplePredicate.requireOperator();
 		switch(operator){
 			case IS_MISSING:
 				return Boolean.valueOf(FieldValueUtil.isMissing(value));

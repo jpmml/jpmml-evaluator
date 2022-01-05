@@ -26,7 +26,6 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
-import org.jpmml.model.InvalidElementException;
 import org.jpmml.model.InvalidElementListException;
 import org.jpmml.model.MissingAttributeException;
 
@@ -190,12 +189,6 @@ public class TargetUtil {
 		TargetValue targetValue = targetValues.get(0);
 
 		Number defaultValue = targetValue.getDefaultValue();
-
-		// "The value and priorProbability attributes are used only if the optype of the field is categorical or ordinal"
-		if(targetValue.getValue() != null || targetValue.getPriorProbability() != null){
-			throw new InvalidElementException(targetValue);
-		} // End if
-
 		if(defaultValue == null){
 			return null;
 		}
@@ -221,11 +214,6 @@ public class TargetUtil {
 			Number probability = targetValue.getPriorProbability();
 			if(probability == null){
 				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_PRIORPROBABILITY);
-			}
-
-			// "The defaultValue attribute is used only if the optype of the field is continuous"
-			if(targetValue.getDefaultValue() != null){
-				throw new InvalidElementException(targetValue);
 			}
 
 			Value<V> value = valueFactory.newValue(probability);

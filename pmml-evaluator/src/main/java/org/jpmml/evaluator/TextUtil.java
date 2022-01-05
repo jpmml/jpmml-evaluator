@@ -37,7 +37,6 @@ import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.TextIndexNormalization;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.InvalidElementException;
-import org.jpmml.model.MisplacedAttributeException;
 import org.jpmml.model.MissingAttributeException;
 import org.jpmml.model.PMMLException;
 
@@ -450,11 +449,6 @@ public class TextUtil {
 			String wordSeparatorCharacterRE = textIndexNormalization.getWordSeparatorCharacterRE();
 
 			if(wordRE != null){
-
-				if(wordSeparatorCharacterRE != null){
-					throw new MisplacedAttributeException(textIndexNormalization, PMMLAttributes.TEXTINDEXNORMALIZATION_WORDSEPARATORCHARACTERRE, wordSeparatorCharacterRE);
-				}
-
 				return createTextMatcher(textIndex, textIndexNormalization);
 			} else
 

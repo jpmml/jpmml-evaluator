@@ -103,7 +103,7 @@ public class FunctionTest implements Deltas {
 			evaluate(Functions.DIVIDE, 1, 0);
 
 			fail();
-		} catch(InvalidResultException ire){
+		} catch(UndefinedResultException ure){
 			// Ignored
 		}
 
@@ -117,7 +117,7 @@ public class FunctionTest implements Deltas {
 			evaluate(Functions.MODULO, 1, 0);
 
 			fail();
-		} catch(InvalidResultException ire){
+		} catch(UndefinedResultException ure){
 			// Ignored
 		}
 
@@ -403,7 +403,7 @@ public class FunctionTest implements Deltas {
 			evaluate(Functions.ASIN, 2d);
 
 			fail();
-		} catch(InvalidResultException ire){
+		} catch(NaNResultException nre){
 			// Ignored
 		}
 	}

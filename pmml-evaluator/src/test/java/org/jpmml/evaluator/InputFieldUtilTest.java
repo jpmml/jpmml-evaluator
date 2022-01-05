@@ -31,7 +31,6 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethod;
 import org.dmg.pmml.Value;
 import org.dmg.pmml.Value.Property;
-import org.jpmml.model.InvalidMarkupException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -104,25 +103,9 @@ public class InputFieldUtilTest {
 		assertEquals(0d, prepare(dataField, miningField, Double.NaN));
 		assertEquals(0d, prepare(dataField, miningField, "one"));
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
-
-		try {
-			prepare(dataField, miningField, Double.NaN);
-
-			fail();
-		} catch(InvalidMarkupException ime){
-			// Ignored
-		}
-
-		try {
-			prepare(dataField, miningField, "one");
-
-			fail();
-		} catch(InvalidMarkupException ime){
-			// Ignored
-		}
-
-		miningField.setInvalidValueReplacement(null);
+		miningField
+			.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING)
+			.setInvalidValueReplacement(null);
 
 		Value missingValue = createValue("N/A", Property.MISSING);
 
@@ -293,17 +276,9 @@ public class InputFieldUtilTest {
 		assertEquals(0, prepare(dataField, miningField, "one"));
 		assertEquals(0, prepare(dataField, miningField, 1.5d));
 
-		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
-
-		try {
-			prepare(dataField, miningField, "one");
-
-			fail();
-		} catch(InvalidMarkupException ime){
-			// Ignored
-		}
-
-		miningField.setInvalidValueReplacement(null);
+		miningField
+			.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING)
+			.setInvalidValueReplacement(null);
 
 		Value missingValue = createValue("-999", Property.MISSING);
 
@@ -333,7 +308,7 @@ public class InputFieldUtilTest {
 			prepare(dataField, miningField, null);
 
 			fail();
-		} catch(InvalidMarkupException ime){
+		} catch(InvalidResultException ire){
 			// Ignored
 		}
 

@@ -323,7 +323,7 @@ public class ExpressionUtilTest {
 			evaluate(apply, "x", 1);
 
 			fail();
-		} catch(InvalidResultException ire){
+		} catch(UndefinedResultException ure){
 			// Ignored
 		}
 

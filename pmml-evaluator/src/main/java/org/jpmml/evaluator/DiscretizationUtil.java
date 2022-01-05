@@ -45,9 +45,7 @@ import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.Interval;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.PMMLAttributes;
 import org.jpmml.model.InvalidElementException;
-import org.jpmml.model.MissingAttributeException;
 
 public class DiscretizationUtil {
 
@@ -103,7 +101,7 @@ public class DiscretizationUtil {
 
 		// "The leftMargin and rightMargin attributes are optional, but at least one value must be defined"
 		if(leftMargin == null && rightMargin == null){
-			throw new MissingAttributeException(interval, PMMLAttributes.INTERVAL_LEFTMARGIN);
+			throw new InvalidElementException(interval);
 		} // End if
 
 		if(leftMargin != null && rightMargin != null && NumberUtil.compare(leftMargin, rightMargin) > 0){

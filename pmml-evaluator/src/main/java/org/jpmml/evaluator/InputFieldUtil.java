@@ -34,10 +34,8 @@ import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MissingValueTreatmentMethod;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethod;
-import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Value;
 import org.jpmml.model.InvalidElementException;
-import org.jpmml.model.MisplacedAttributeException;
 import org.jpmml.model.MissingAttributeException;
 import org.jpmml.model.XPathUtil;
 
@@ -179,7 +177,7 @@ public class InputFieldUtil {
 
 		// "At least one of bounds is required"
 		if(lowValue == null && highValue == null){
-			throw new MissingAttributeException(miningField, PMMLAttributes.MININGFIELD_LOWVALUE);
+			throw new InvalidElementException(miningField);
 		} // End if
 
 		if((lowValue != null && highValue != null) && NumberUtil.compare(lowValue, highValue) > 0){
@@ -216,38 +214,7 @@ public class InputFieldUtil {
 	private ScalarValue performInvalidValueTreatment(InputTypeInfo typeInfo, Object value){
 		MiningField miningField = typeInfo.getMiningField();
 
-		Object invalidValueReplacement = miningField.getInvalidValueReplacement();
-
 		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
-		switch(invalidValueTreatmentMethod){
-			case AS_IS:
-				// XXX: Non-standard behaviour
-				if(invalidValueReplacement != null){
-					// The JPMML family of libraries introduced invalid value replacement as a vendor extension in PMML schema version 4.3;
-					// the implementation was based on the MiningField@(x-)invalidValueReplacement attribute alone:
-					// <MiningField name="x" invalidValueTreatment="asIs" x-invalidValueReplacement="0"/>
-					// DMG.org introduced invalid value replacement in PMML schema version 4.4;
-					// the implementation uses an invalid value treatment method enum constant "asValue" to signal the availability of the MiningField@invalidValueReplacement attribute:
-					// <MiningField name="x" invalidValueTreatment="asValue" invalidValueReplacement="0"/>
-					// According to the PMML specification, the MiningField@invalidValueReplacement attribute should not be used with the IVTM enum constant "asIs".
-					break;
-				}
-				break;
-			case AS_MISSING:
-			case RETURN_INVALID:
-				if(invalidValueReplacement != null){
-					throw new MisplacedAttributeException(miningField, PMMLAttributes.MININGFIELD_INVALIDVALUEREPLACEMENT, invalidValueReplacement);
-				}
-				break;
-			case AS_VALUE:
-				if(invalidValueReplacement == null){
-					throw new MissingAttributeException(miningField, PMMLAttributes.MININGFIELD_INVALIDVALUEREPLACEMENT);
-				}
-				break;
-			default:
-				throw new UnsupportedAttributeException(miningField, invalidValueTreatmentMethod);
-		} // End switch
-
 		switch(invalidValueTreatmentMethod){
 			case RETURN_INVALID:
 				Field<?> field = typeInfo.getField();
@@ -282,11 +249,6 @@ public class InputFieldUtil {
 				return createMissingInputValue(typeInfo);
 			case RETURN_INVALID:
 				Field<?> field = typeInfo.getField();
-
-				Object missingValueReplacement = miningField.getMissingValueReplacement();
-				if(missingValueReplacement != null){
-					throw new MisplacedAttributeException(miningField, PMMLAttributes.MININGFIELD_MISSINGVALUEREPLACEMENT, missingValueReplacement);
-				}
 
 				throw new InvalidResultException("Field " + EvaluationException.formatKey(field.getName()) + " requires user input value", miningField);
 			default:

@@ -28,7 +28,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Ordering;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.Expression;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Output;
@@ -50,7 +49,6 @@ import org.jpmml.evaluator.mining.SegmentResult;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.InvalidElementException;
 import org.jpmml.model.MisplacedAttributeException;
-import org.jpmml.model.MisplacedElementException;
 import org.jpmml.model.MissingAttributeException;
 
 public class OutputUtil {
@@ -99,18 +97,10 @@ public class OutputUtil {
 				case TRANSFORMED_VALUE:
 				case DECISION:
 				case WARNING:
-					{
-						if(targetFieldName != null){
-							throw new MisplacedAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_TARGETFIELD, targetFieldName);
-						}
-
-						requireTargetValue = false;
-					}
+					requireTargetValue = false;
 					break;
 				default:
-					{
-						requireTargetValue = true;
-					}
+					requireTargetValue = true;
 					break;
 			}
 
@@ -238,14 +228,7 @@ public class OutputUtil {
 						if(segmentId != null){
 							Object name = outputField.requireValue();
 
-							name = TypeUtil.format(name);
-
-							Expression expression = outputField.getExpression();
-							if(expression != null){
-								throw new MisplacedElementException(expression);
-							}
-
-							value = segmentPredictions.get((String)name);
+							value = segmentPredictions.get(TypeUtil.format(name));
 
 							break;
 						}
