@@ -26,7 +26,6 @@ import java.util.function.Predicate;
 import com.esotericsoftware.kryo.Kryo;
 import com.google.common.base.Equivalence;
 import org.dmg.pmml.Application;
-import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
@@ -150,8 +149,7 @@ public class IntegrationTestBatch extends ArchiveBatch {
 
 	protected void validatePMML(PMML pmml) throws Exception {
 		List<Visitor> visitors = Arrays.<Visitor>asList(
-			new MissingMarkupInspector(),
-			new InvalidMarkupInspector(){
+			new MissingMarkupInspector(){
 
 				@Override
 				public VisitorAction visit(Application application){
@@ -163,17 +161,8 @@ public class IntegrationTestBatch extends ArchiveBatch {
 
 					return super.visit(application);
 				}
-
-				@Override
-				public VisitorAction visit(MiningSchema miningSchema){
-
-					if(!miningSchema.hasMiningFields()){
-						return VisitorAction.SKIP;
-					}
-
-					return super.visit(miningSchema);
-				}
 			},
+			new InvalidMarkupInspector(),
 			new UnsupportedMarkupInspector()
 		);
 
