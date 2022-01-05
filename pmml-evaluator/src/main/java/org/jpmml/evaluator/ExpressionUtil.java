@@ -18,11 +18,9 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -335,105 +333,81 @@ public class ExpressionUtil {
 		String function = apply.requireFunction();
 		List<Expression> expressions = apply.getExpressions();
 
-		List<FieldValue> values;
+		List<FieldValue> values = new ArrayList<>(expressions.size());
 
-		// "If a mapMissingTo value is specified and any of the input values of the function are missing, then the function is not applied at all and the mapMissingTo value is returned instead"
-		if(mapMissingTo != null){
-			values = new ArrayList<>(expressions.size());
+		int max = expressions.size();
 
-			if((PMMLFunctions.IF).equals(function)){
-				Iterator<Expression> expressionIt = expressions.iterator();
+		if((PMMLFunctions.IF).equals(function)){
 
-				if(expressionIt.hasNext()){
-					FieldValue flag = evaluate(expressionIt.next(), context);
+			if(max > 0){
+				FieldValue flag = evaluate(expressions.get(0), context);
 
-					if(flag == null){
-						return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
+				if(flag == null && mapMissingTo != null){
+					return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
+				}
+
+				values.add(flag);
+
+				// Skip both THEN and ELSE parts
+				if(flag == null){
+
+					if(max > 1){
+						values.add(FieldValues.MISSING_VALUE);
+
+						if(max > 2){
+							values.add(FieldValues.MISSING_VALUE);
+						}
 					}
+				} else
 
-					values.add(flag);
+				// Evaluate THEN part, skip ELSE part
+				if(flag.asBoolean()){
 
-					// Evaluate THEN part, skip ELSE part
-					if(flag.asBoolean()){
+					if(max > 1){
+						FieldValue trueValue = evaluate(expressions.get(1), context);
 
-						if(expressionIt.hasNext()){
-							FieldValue trueValue = evaluate(expressionIt.next(), context);
+						if(FieldValueUtil.isMissing(trueValue) && mapMissingTo != null){
+							return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
+						}
 
-							if(FieldValueUtil.isMissing(trueValue)){
+						values.add(trueValue);
+
+						if(max > 2){
+							values.add(FieldValues.MISSING_VALUE);
+						}
+					}
+				} else
+
+				// Skip THEN part, evaluate ELSE part
+				{
+					if(max > 1){
+						values.add(FieldValues.MISSING_VALUE);
+
+						if(max > 2){
+							FieldValue falseValue = evaluate(expressions.get(2), context);
+
+							if(FieldValueUtil.isMissing(falseValue) && mapMissingTo != null){
 								return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
 							}
 
-							values.add(trueValue);
-
-							if(expressionIt.hasNext()){
-								expressionIt.next();
-
-								values.add(FieldValues.MISSING_VALUE);
-							}
-						}
-					} else
-
-					// Skip THEN part, evaluate ELSE part
-					{
-						if(expressionIt.hasNext()){
-							expressionIt.next();
-
-							values.add(FieldValues.MISSING_VALUE);
-
-							if(expressionIt.hasNext()){
-								FieldValue falseValue = evaluate(expressionIt.next(), context);
-
-								if(FieldValueUtil.isMissing(falseValue)){
-									return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
-								}
-
-								values.add(falseValue);
-							}
+							values.add(falseValue);
 						}
 					}
-				}
-
-				while(expressionIt.hasNext()){
-					FieldValue value = evaluate(expressionIt.next(), context);
-
-					if(FieldValueUtil.isMissing(value)){
-						return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
-					}
-
-					values.add(value);
-				}
-			} else
-
-			{
-				for(int i = 0, max = expressions.size(); i < max; i++){
-					Expression expression = expressions.get(i);
-
-					FieldValue value = evaluate(expression, context);
-
-					if(FieldValueUtil.isMissing(value)){
-						return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
-					}
-
-					values.add(value);
 				}
 			}
-		} else
+		}
 
-		{
-			values = new AbstractList<FieldValue>(){
+		for(int i = values.size(); i < max; i++){
+			Expression expression = expressions.get(i);
 
-				@Override
-				public int size(){
-					return expressions.size();
-				}
+			FieldValue value = evaluate(expression, context);
 
-				@Override
-				public FieldValue get(int i){
-					Expression expression = expressions.get(i);
+			// "If a mapMissingTo value is specified and any of the input values of the function are missing, then the function is not applied at all and the mapMissingTo value is returned instead"
+			if(FieldValueUtil.isMissing(value) && mapMissingTo != null){
+				return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
+			}
 
-					return evaluate(expression, context);
-				}
-			};
+			values.add(value);
 		}
 
 		String defaultValue = apply.getDefaultValue();
