@@ -52,7 +52,7 @@ public class RegExUtil {
 		} catch(ExecutionException | UncheckedExecutionException e){
 			String message = "Regex pattern could not be compiled";
 
-			throw (context != null ? new EvaluationException(message, context) : new EvaluationException(message))
+			throw new EvaluationException(message, context)
 				.initCause(e.getCause());
 		}
 	}

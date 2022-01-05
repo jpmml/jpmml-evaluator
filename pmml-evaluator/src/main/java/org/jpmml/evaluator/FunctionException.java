@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Objects;
 
 /**
  * <p>
@@ -42,6 +43,6 @@ public class FunctionException extends EvaluationException {
 	}
 
 	private void setFunction(Function function){
-		this.function = function;
+		this.function = Objects.requireNonNull(function);
 	}
 }

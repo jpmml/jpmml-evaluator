@@ -453,7 +453,7 @@ public class ExpressionUtil {
 
 			switch(invalidValueTreatmentMethod){
 				case RETURN_INVALID:
-					throw new InvalidResultException("Function application yielded an invalid result", apply)
+					throw new EvaluationException("Function " + EvaluationException.formatName(function) + " returned invalid value", apply)
 						.initCause(ire);
 				case AS_IS:
 					// Re-throw the given InvalidResultException instance

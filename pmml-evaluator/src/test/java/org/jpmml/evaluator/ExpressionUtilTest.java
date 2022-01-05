@@ -314,8 +314,8 @@ public class ExpressionUtilTest {
 			evaluate(apply, "x", 1);
 
 			fail();
-		} catch(InvalidResultException ire){
-			Throwable cause = ire.getCause();
+		} catch(EvaluationException ee){
+			Throwable cause = ee.getCause();
 
 			assertTrue(cause instanceof UndefinedResultException);
 		}

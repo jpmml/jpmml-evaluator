@@ -25,6 +25,7 @@ import org.dmg.pmml.PMMLObject;
  * Thrown to indicate an invalid end state of an evaluation operation.
  * </p>
  */
+abstract
 public class InvalidResultException extends EvaluationException {
 
 	public InvalidResultException(String message){
