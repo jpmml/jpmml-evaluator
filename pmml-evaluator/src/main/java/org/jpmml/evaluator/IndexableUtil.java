@@ -18,15 +18,13 @@
  */
 package org.jpmml.evaluator;
 
-import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.Indexable;
 import org.dmg.pmml.PMMLObject;
-import org.jpmml.model.InvalidAttributeException;
-import org.jpmml.model.MissingAttributeException;
+import org.jpmml.model.InvalidElementException;
 
 public class IndexableUtil {
 
@@ -34,23 +32,14 @@ public class IndexableUtil {
 	}
 
 	static
-	public <K, E extends PMMLObject & Indexable<K>> Map<K, E> buildMap(List<E> elements, Field keyField){
-		return buildMap(elements, keyField, false);
-	}
-
-	static
-	public <K, E extends PMMLObject & Indexable<K>> Map<K, E> buildMap(List<E> elements, Field keyField, boolean nullable){
+	public <K, E extends PMMLObject & Indexable<K>> Map<K, E> buildMap(List<E> elements){
 		Map<K, E> result = new LinkedHashMap<>();
 
 		for(E element : elements){
 			K key = element.getKey();
 
-			if(key == null && !nullable){
-				throw new MissingAttributeException(element, keyField);
-			} // End if
-
 			if(result.containsKey(key)){
-				throw new InvalidAttributeException(element, keyField, key);
+				throw new InvalidElementException(element);
 			}
 
 			result.put(key, element);

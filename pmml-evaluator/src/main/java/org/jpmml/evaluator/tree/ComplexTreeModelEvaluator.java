@@ -33,7 +33,6 @@ import org.dmg.pmml.ScoreDistribution;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.tree.Node;
-import org.dmg.pmml.tree.PMMLAttributes;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
@@ -49,8 +48,6 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.model.InvalidAttributeException;
-import org.jpmml.model.MisplacedAttributeException;
-import org.jpmml.model.MissingAttributeException;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements HasNodeRegistry {
@@ -149,14 +146,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 		if(status != null && status.booleanValue()){
 			trail = handleTrue(trail, root, context);
 
-			Node node = trail.getResult();
-
-			// "It is not possible that the scoring process ends in a Node which does not have a score attribute"
-			if(node != null && !node.hasScore()){
-				throw new MissingAttributeException(node, PMMLAttributes.COMPLEXNODE_SCORE);
-			}
-
-			return node;
+			return trail.getResult();
 		}
 
 		return null;
@@ -271,7 +261,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 	}
 
 	private <V extends Number> NodeScore<V> createNodeScore(ValueFactory<V> valueFactory, TargetField targetField, Node node){
-		Object score = node.getScore();
+		Object score = node.requireScore();
 
 		Value<V> value;
 
@@ -342,19 +332,16 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 		for(int i = 0, max = scoreDistributions.size(); i < max; i++){
 			ScoreDistribution scoreDistribution = scoreDistributions.get(i);
 
-			Number probability = scoreDistribution.getProbability();
-
 			if(i == 0){
+				Number probability = scoreDistribution.getProbability();
+
 				hasProbabilities = (probability != null);
 			}
 
 			Value<V> value;
 
 			if(hasProbabilities){
-
-				if(probability == null){
-					throw new MissingAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY);
-				} // End if
+				Number probability = scoreDistribution.requireProbability();
 
 				if(probability.doubleValue() < 0d || probability.doubleValue() > 1d){
 					throw new InvalidAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY, probability);
@@ -366,10 +353,6 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 			} else
 
 			{
-				if(probability != null){
-					throw new MisplacedAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY, probability);
-				}
-
 				Number recordCount = scoreDistribution.requireRecordCount();
 
 				sum.add(recordCount);

@@ -86,7 +86,7 @@ public class TargetUtilTest {
 
 		TargetValue noValue = new TargetValue()
 			.setValue("no")
-			.setPriorProbability(1d - NumberUtil.asDouble(yesValue.getPriorProbability()));
+			.setPriorProbability(1d - NumberUtil.asDouble(yesValue.requirePriorProbability()));
 
 		Target target = new Target()
 			.setTargetField(null)
@@ -117,8 +117,8 @@ public class TargetUtilTest {
 
 		hasProbability = (HasProbability)results.get(dataField.requireName());
 
-		assertEquals(yesValue.getPriorProbability(), hasProbability.getProbability("yes"));
-		assertEquals(noValue.getPriorProbability(), hasProbability.getProbability("no"));
+		assertEquals(yesValue.requirePriorProbability(), hasProbability.getProbability("yes"));
+		assertEquals(noValue.requirePriorProbability(), hasProbability.getProbability("no"));
 	}
 
 	@Test

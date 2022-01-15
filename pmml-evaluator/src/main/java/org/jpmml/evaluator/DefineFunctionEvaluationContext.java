@@ -24,9 +24,7 @@ import java.util.Objects;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.OpType;
-import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.ParameterField;
-import org.jpmml.model.MissingAttributeException;
 
 public class DefineFunctionEvaluationContext extends EvaluationContext {
 
@@ -47,15 +45,8 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 			throw new MissingFieldException(name);
 		}
 
-		DataType dataType = parameterField.getDataType();
-		if(dataType == null){
-			throw new MissingAttributeException(parameterField, PMMLAttributes.PARAMETERFIELD_DATATYPE);
-		}
-
-		OpType opType = parameterField.getOpType();
-		if(opType == null){
-			throw new MissingAttributeException(parameterField, PMMLAttributes.PARAMETERFIELD_OPTYPE);
-		}
+		DataType dataType = parameterField.requireDataType();
+		OpType opType = parameterField.requireOpType();
 
 		return FieldValueUtil.create(opType, dataType, value);
 	}

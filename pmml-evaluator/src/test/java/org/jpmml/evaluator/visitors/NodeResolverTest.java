@@ -58,12 +58,12 @@ public class NodeResolverTest {
 		NodeResolver resolver = new NodeResolver();
 		resolver.applyTo(pmml);
 
-		assertEquals(rightChild.getId(), root.getDefaultChild());
+		assertEquals(rightChild.getId(), root.requireDefaultChild());
 
 		treeModel.setMissingValueStrategy(TreeModel.MissingValueStrategy.DEFAULT_CHILD);
 
 		resolver.applyTo(pmml);
 
-		assertSame(rightChild, root.getDefaultChild());
+		assertSame(rightChild, root.requireDefaultChild());
 	}
 }

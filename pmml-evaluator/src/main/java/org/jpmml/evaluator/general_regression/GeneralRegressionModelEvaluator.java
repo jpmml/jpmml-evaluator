@@ -83,7 +83,6 @@ import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.ValueUtil;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.InvalidElementException;
-import org.jpmml.model.MisplacedAttributeException;
 import org.jpmml.model.MissingAttributeException;
 
 public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegressionModel> {
@@ -586,11 +585,10 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private <V extends Number> Value<V> computeLink(Value<V> value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
+		Number distParameter = null;
+		Number linkParameter = null;
+
 		GeneralRegressionModel.LinkFunction linkFunction = generalRegressionModel.requireLinkFunction();
-
-		Number distParameter = generalRegressionModel.getDistParameter();
-		Number linkParameter = generalRegressionModel.getLinkParameter();
-
 		switch(linkFunction){
 			case CLOGLOG:
 			case IDENTITY:
@@ -598,33 +596,15 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			case LOGC:
 			case LOGIT:
 			case LOGLOG:
-			case PROBIT:
-				if(distParameter != null){
-					throw new MisplacedAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_DISTPARAMETER, distParameter);
-				} // End if
-
-				if(linkParameter != null){
-					throw new MisplacedAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_LINKPARAMETER, linkParameter);
-				}
 				break;
 			case NEGBIN:
-				if(distParameter == null){
-					throw new MissingAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_DISTPARAMETER);
-				} // End if
-
-				if(linkParameter != null){
-					throw new MisplacedAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_LINKPARAMETER, linkParameter);
-				}
+				distParameter = generalRegressionModel.requireDistParameter();
 				break;
 			case ODDSPOWER:
 			case POWER:
-				if(distParameter != null){
-					throw new MisplacedAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_DISTPARAMETER, distParameter);
-				} // End if
-
-				if(linkParameter == null){
-					throw new MissingAttributeException(generalRegressionModel, PMMLAttributes.GENERALREGRESSIONMODEL_LINKPARAMETER);
-				}
+				linkParameter = generalRegressionModel.requireLinkParameter();
+				break;
+			case PROBIT:
 				break;
 			default:
 				throw new UnsupportedAttributeException(generalRegressionModel, linkFunction);
@@ -635,22 +615,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			value.add(offset);
 		}
 
-		switch(linkFunction){
-			case CLOGLOG:
-			case IDENTITY:
-			case LOG:
-			case LOGC:
-			case LOGIT:
-			case LOGLOG:
-			case NEGBIN:
-			case ODDSPOWER:
-			case POWER:
-			case PROBIT:
-				GeneralRegressionModelUtil.computeLink(linkFunction, distParameter, linkParameter, value);
-				break;
-			default:
-				throw new UnsupportedAttributeException(generalRegressionModel, linkFunction);
-		}
+		GeneralRegressionModelUtil.computeLink(linkFunction, distParameter, linkParameter, value);
 
 		Integer trials = getTrials(generalRegressionModel, context);
 		if(trials != null){
@@ -663,13 +628,12 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private <V extends Number> Value<V> computeCumulativeLink(Value<V> value, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		GeneralRegressionModel.CumulativeLinkFunction cumulativeLinkFunction = generalRegressionModel.requireCumulativeLinkFunction();
-
 		Number offset = getOffset(generalRegressionModel, context);
 		if(offset != null){
 			value.add(offset);
 		}
 
+		GeneralRegressionModel.CumulativeLinkFunction cumulativeLinkFunction = generalRegressionModel.requireCumulativeLinkFunction();
 		switch(cumulativeLinkFunction){
 			case LOGIT:
 			case PROBIT:

@@ -36,8 +36,6 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethod;
 import org.dmg.pmml.Value;
 import org.jpmml.model.InvalidElementException;
-import org.jpmml.model.MissingAttributeException;
-import org.jpmml.model.XPathUtil;
 
 public class InputFieldUtil {
 
@@ -477,22 +475,12 @@ public class InputFieldUtil {
 
 			@Override
 			public OpType getOpType(){
-				OpType opType = FieldUtil.getOpType(field, miningField);
-				if(opType == null){
-					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@optype"), field);
-				}
-
-				return opType;
+				return FieldUtil.getOpType(field, miningField);
 			}
 
 			@Override
 			public DataType getDataType(){
-				DataType dataType = FieldUtil.getDataType(field);
-				if(dataType == null){
-					throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@dataType"), field);
-				}
-
-				return dataType;
+				return FieldUtil.getDataType(field);
 			}
 
 			@Override

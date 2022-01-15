@@ -337,7 +337,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 			Value<V> output = valueFactory.newValue(value.asNumber());
 
-			result.put(neuralInput.getId(), output);
+			result.put(neuralInput.requireId(), output);
 		}
 
 		List<Value<V>> outputs = new ArrayList<>();
@@ -352,24 +352,18 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			if(activationFunction == null){
 				locatable = neuralNetwork;
 
-				activationFunction = neuralLayer.getActivationFunction(neuralNetwork.getActivationFunction());
-			} // End if
-
-			if(activationFunction == null){
-				throw new MissingAttributeException(neuralNetwork, PMMLAttributes.NEURALNETWORK_ACTIVATIONFUNCTION);
+				activationFunction = neuralNetwork.requireActivationFunction();
 			}
 
-			Number threshold = neuralLayer.getThreshold(neuralNetwork.getThreshold());
-			Number leakage = neuralLayer.getLeakage(neuralNetwork.getLeakage());
-			Number altitude = neuralLayer.getAltitude(neuralNetwork.getAltitude());
-			Number width = neuralLayer.getWidth(neuralNetwork.getWidth());
+			Number threshold = null;
+			Number leakage = null;
+
+			Number altitude = null;
+			Number width = null;
 
 			switch(activationFunction){
+				// Group 1 activation functions
 				case THRESHOLD:
-					if(threshold == null){
-						throw new MissingAttributeException(neuralNetwork, PMMLAttributes.NEURALNETWORK_THRESHOLD);
-					}
-					break;
 				case LOGISTIC:
 				case TANH:
 				case IDENTITY:
@@ -382,8 +376,27 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				case ELLIOTT:
 				case ARCTAN:
 				case RECTIFIER:
+					threshold = neuralLayer.getThreshold();
+					if(threshold == null){
+						threshold = neuralNetwork.getThreshold();
+					}
+
+					leakage = neuralLayer.getLeakage();
+					if(leakage == null){
+						leakage = neuralNetwork.getLeakage();
+					}
 					break;
+				// Group 2 activation functions
 				case RADIAL_BASIS:
+					altitude = neuralLayer.getAltitude();
+					if(altitude == null){
+						altitude = neuralNetwork.getAltitude();
+					}
+
+					width = neuralLayer.getWidth();
+					if(width == null){
+						width = neuralNetwork.getWidth();
+					}
 					break;
 				default:
 					throw new UnsupportedAttributeException(locatable, activationFunction);
@@ -395,7 +408,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 
 				Value<V> output = valueFactory.newValue();
 
-				List<Connection> connections = neuron.getConnections();
+				List<Connection> connections = neuron.requireConnections();
 				for(int j = 0; j < connections.size(); j++){
 					Connection connection = connections.get(j);
 
@@ -489,7 +502,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 						throw new UnsupportedAttributeException(locatable, activationFunction);
 				}
 
-				result.put(neuron.getId(), output);
+				result.put(neuron.requireId(), output);
 
 				outputs.add(output);
 			}
@@ -500,7 +513,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			if(normalizationMethod == null){
 				locatable = neuralNetwork;
 
-				normalizationMethod = neuralLayer.getNormalizationMethod(neuralNetwork.getNormalizationMethod());
+				normalizationMethod = neuralNetwork.getNormalizationMethod();
 			}
 
 			switch(normalizationMethod){

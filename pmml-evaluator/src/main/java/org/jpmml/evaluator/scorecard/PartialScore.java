@@ -22,6 +22,8 @@ import java.util.Objects;
 
 import org.dmg.pmml.scorecard.Attribute;
 import org.dmg.pmml.scorecard.Characteristic;
+import org.dmg.pmml.scorecard.PMMLAttributes;
+import org.jpmml.model.MissingAttributeException;
 
 public class PartialScore {
 
@@ -39,11 +41,35 @@ public class PartialScore {
 		setValue(value);
 	}
 
+	public Number getBaselineScore(Number defaultBaselineScore){
+		Characteristic characteristic = getCharacteristic();
+
+		Number baselineScore = characteristic.getBaselineScore();
+		if(baselineScore == null){
+			baselineScore = defaultBaselineScore;
+		} // End if
+
+		if(baselineScore == null){
+			throw new MissingAttributeException(characteristic, PMMLAttributes.CHARACTERISTIC_BASELINESCORE);
+		}
+
+		return baselineScore;
+	}
+
 	public String getReasonCode(){
 		Characteristic characteristic = getCharacteristic();
 		Attribute attribute = getAttribute();
 
-		return attribute.getReasonCode(characteristic.getReasonCode());
+		String reasonCode = attribute.getReasonCode();
+		if(reasonCode == null){
+			reasonCode = characteristic.getReasonCode();
+		} // End if
+
+		if(reasonCode == null){
+			throw new MissingAttributeException(attribute, PMMLAttributes.ATTRIBUTE_REASONCODE);
+		}
+
+		return reasonCode;
 	}
 
 	public Characteristic getCharacteristic(){

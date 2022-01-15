@@ -59,27 +59,27 @@ public class NodeScoreParserTest {
 
 		visitorBattery.applyTo(treeModel);
 
-		assertEquals("1", node1a.getScore());
+		assertEquals("1", node1a.requireScore());
 
-		assertEquals("2", node2a.getScore());
-		assertEquals("2.0", node2b.getScore());
-		assertEquals(2.0f, node2c.getScore());
+		assertEquals("2", node2a.requireScore());
+		assertEquals("2.0", node2b.requireScore());
+		assertEquals(2.0f, node2c.requireScore());
 
-		assertEquals("error", node3a.getScore());
+		assertEquals("error", node3a.requireScore());
 
 		treeModel.setMiningFunction(MiningFunction.REGRESSION);
 
 		visitorBattery.applyTo(treeModel);
 
-		assertEquals(1.0f, node1a.getScore());
+		assertEquals(1.0f, node1a.requireScore());
 
-		assertEquals(2.0f, node2a.getScore());
-		assertEquals(2.0f, node2b.getScore());
-		assertEquals(2.0f, node2c.getScore());
+		assertEquals(2.0f, node2a.requireScore());
+		assertEquals(2.0f, node2b.requireScore());
+		assertEquals(2.0f, node2c.requireScore());
 
-		assertSame(node2a.getScore(), node2b.getScore());
-		assertSame(node2a.getScore(), node2c.getScore());
+		assertSame(node2a.requireScore(), node2b.requireScore());
+		assertSame(node2a.requireScore(), node2c.requireScore());
 
-		assertEquals("error", node3a.getScore());
+		assertEquals("error", node3a.requireScore());
 	}
 }

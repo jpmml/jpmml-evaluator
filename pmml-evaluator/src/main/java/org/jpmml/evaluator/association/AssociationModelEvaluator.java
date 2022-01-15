@@ -99,11 +99,11 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 		} // End if
 
 		if(associationModel.hasItems()){
-			this.items = ImmutableMap.copyOf(IndexableUtil.buildMap(associationModel.getItems(), PMMLAttributes.ITEM_ID));
+			this.items = ImmutableMap.copyOf(IndexableUtil.buildMap(associationModel.getItems()));
 		} // End if
 
 		if(associationModel.hasItemsets()){
-			this.itemsets = ImmutableMap.copyOf(IndexableUtil.buildMap(associationModel.getItemsets(), PMMLAttributes.ITEMSET_ID));
+			this.itemsets = ImmutableMap.copyOf(IndexableUtil.buildMap(associationModel.getItemsets()));
 		}
 	}
 

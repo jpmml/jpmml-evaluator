@@ -38,8 +38,6 @@ import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Value;
-import org.jpmml.model.MissingAttributeException;
-import org.jpmml.model.XPathUtil;
 
 public class FieldUtil {
 
@@ -63,35 +61,41 @@ public class FieldUtil {
 
 	static
 	public OpType getOpType(Field<?> field, MiningField miningField){
-		OpType opType = field.getOpType();
 
 		// "A MiningField overrides a (Data)Field"
 		if(miningField != null){
-			opType = miningField.getOpType(opType);
+			OpType opType = miningField.getOpType();
+
+			if(opType != null){
+				return opType;
+			}
 		}
 
-		return opType;
+		return field.requireOpType();
 	}
 
 	static
 	public OpType getOpType(Field<?> field, MiningField miningField, Target target){
-		OpType opType = field.getOpType();
 
 		// "A MiningField overrides a (Data)Field, and a Target overrides a MiningField"
 		if(miningField != null){
-			opType = miningField.getOpType(opType);
+			OpType opType = miningField.getOpType();
 
 			if(target != null){
 				opType = target.getOpType(opType);
+			} // End if
+
+			if(opType != null){
+				return opType;
 			}
 		}
 
-		return opType;
+		return field.requireOpType();
 	}
 
 	static
 	public DataType getDataType(Field<?> field){
-		return field.getDataType();
+		return field.requireDataType();
 	}
 
 	static
@@ -122,10 +126,7 @@ public class FieldUtil {
 	private <F extends Field<F> & HasDiscreteDomain<F>> List<Object> parseValidValues(F field){
 		List<Object> result = new ArrayList<>();
 
-		DataType dataType = field.getDataType();
-		if(dataType == null){
-			throw new MissingAttributeException(MissingAttributeException.formatMessage(XPathUtil.formatElement(field.getClass()) + "@dataType"), field);
-		} // End if
+		DataType dataType = field.requireDataType();
 
 		if(field.hasValues()){
 			List<Value> pmmlValues = field.getValues();

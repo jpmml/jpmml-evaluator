@@ -29,7 +29,6 @@ import org.dmg.pmml.scorecard.Attribute;
 import org.dmg.pmml.scorecard.Characteristic;
 import org.dmg.pmml.scorecard.Characteristics;
 import org.dmg.pmml.scorecard.ComplexPartialScore;
-import org.dmg.pmml.scorecard.PMMLAttributes;
 import org.dmg.pmml.scorecard.Scorecard;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
@@ -49,7 +48,6 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.VoteAggregator;
-import org.jpmml.model.MissingAttributeException;
 
 public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
@@ -104,17 +102,8 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 			partialScores.add(partialScore);
 
 			if(useReasonCodes){
-				Number baselineScore = characteristic.getBaselineScore(scorecard.getBaselineScore());
-				if(baselineScore == null){
-					throw new MissingAttributeException(characteristic, PMMLAttributes.CHARACTERISTIC_BASELINESCORE);
-				}
-
+				Number baselineScore = partialScore.getBaselineScore(scorecard.getBaselineScore());
 				String reasonCode = partialScore.getReasonCode();
-				if(reasonCode == null){
-					Attribute attribute = partialScore.getAttribute();
-
-					throw new MissingAttributeException(attribute, PMMLAttributes.ATTRIBUTE_REASONCODE);
-				}
 
 				Number difference;
 

@@ -18,6 +18,9 @@
  */
 package org.jpmml.evaluator.visitors;
 
+import org.jpmml.model.visitors.MiningFieldInterner;
+import org.jpmml.model.visitors.PredicateInterner;
+import org.jpmml.model.visitors.ScoreDistributionInterner;
 import org.jpmml.model.visitors.VisitorBattery;
 
 public class ElementInternerBattery extends VisitorBattery {

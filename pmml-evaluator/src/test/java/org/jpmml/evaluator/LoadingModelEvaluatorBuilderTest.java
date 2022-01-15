@@ -102,7 +102,7 @@ public class LoadingModelEvaluatorBuilderTest {
 						throw new IllegalArgumentException();
 					}
 
-					score = (Number)root.getScore();
+					score = (Number)root.requireScore();
 				} catch(Exception e){
 					throw new TranslationException(e);
 				}

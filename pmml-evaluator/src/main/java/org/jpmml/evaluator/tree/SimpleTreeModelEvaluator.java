@@ -26,7 +26,6 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.tree.Node;
-import org.dmg.pmml.tree.PMMLAttributes;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.PMMLUtil;
@@ -37,7 +36,6 @@ import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.annotations.Functionality;
-import org.jpmml.model.MissingAttributeException;
 
 @Functionality (
 	value = {
@@ -91,7 +89,7 @@ public class SimpleTreeModelEvaluator extends TreeModelEvaluator {
 
 		Node node = evaluateTree(context);
 		if(node != null){
-			Object score = node.getScore();
+			Object score = node.requireScore();
 
 			result = TypeUtil.parseOrCast(targetField.getDataType(), score);
 		}
@@ -167,11 +165,6 @@ public class SimpleTreeModelEvaluator extends TreeModelEvaluator {
 				default:
 					throw new UnsupportedAttributeException(treeModel, noTrueChildStrategy);
 			}
-		}
-
-		// "It is not possible that the scoring process ends in a Node which does not have a score attribute"
-		if(!node.hasScore()){
-			throw new MissingAttributeException(node, PMMLAttributes.COMPLEXNODE_SCORE);
 		}
 
 		return node;

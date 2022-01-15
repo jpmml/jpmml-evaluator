@@ -66,6 +66,11 @@ class VariableField extends Field<VariableField> {
 	}
 
 	@Override
+	public OpType requireOpType(){
+		return getOpType();
+	}
+
+	@Override
 	public OpType getOpType(){
 		String name = getName();
 
@@ -75,6 +80,11 @@ class VariableField extends Field<VariableField> {
 	@Override
 	public VariableField setOpType(OpType opType){
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public DataType requireDataType(){
+		return getDataType();
 	}
 
 	@Override

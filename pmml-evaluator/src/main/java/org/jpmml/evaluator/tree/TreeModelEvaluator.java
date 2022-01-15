@@ -27,7 +27,6 @@ import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.model.InvalidAttributeException;
-import org.jpmml.model.MissingAttributeException;
 
 abstract
 public class TreeModelEvaluator extends ModelEvaluator<TreeModel> {
@@ -53,12 +52,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> {
 
 	static
 	protected Node findDefaultChild(Node node){
-		Object defaultChild = node.getDefaultChild();
-
-		// "The defaultChild missing value strategy requires the presence of the defaultChild attribute in every non-leaf Node"
-		if(defaultChild == null){
-			throw new MissingAttributeException(node, PMMLAttributes.COMPLEXNODE_DEFAULTCHILD);
-		} // End if
+		Object defaultChild = node.requireDefaultChild();
 
 		if(defaultChild instanceof Node){
 			return (Node)defaultChild;

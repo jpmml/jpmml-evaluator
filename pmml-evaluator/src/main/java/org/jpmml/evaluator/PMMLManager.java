@@ -37,7 +37,6 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.TransformationDictionary;
 
 abstract
@@ -60,16 +59,16 @@ public class PMMLManager implements HasPMML, Serializable {
 
 		DataDictionary dataDictionary = pmml.requireDataDictionary();
 		if(dataDictionary.hasDataFields()){
-			this.dataFields = ImmutableMap.copyOf(IndexableUtil.buildMap(dataDictionary.getDataFields(), PMMLAttributes.DATAFIELD_NAME));
+			this.dataFields = ImmutableMap.copyOf(IndexableUtil.buildMap(dataDictionary.getDataFields()));
 		}
 
 		TransformationDictionary transformationDictionary = pmml.getTransformationDictionary();
 		if(transformationDictionary != null && transformationDictionary.hasDerivedFields()){
-			this.derivedFields = ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDerivedFields(), PMMLAttributes.DERIVEDFIELD_NAME));
+			this.derivedFields = ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDerivedFields()));
 		} // End if
 
 		if(transformationDictionary != null && transformationDictionary.hasDefineFunctions()){
-			this.defineFunctions = ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDefineFunctions(), PMMLAttributes.DEFINEFUNCTION_NAME));
+			this.defineFunctions = ImmutableMap.copyOf(IndexableUtil.buildMap(transformationDictionary.getDefineFunctions()));
 		}
 	}
 

@@ -46,7 +46,6 @@ import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Target;
@@ -94,23 +93,23 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 		MiningSchema miningSchema = model.requireMiningSchema();
 		if(miningSchema.hasMiningFields()){
-			this.miningFields = ImmutableMap.copyOf(IndexableUtil.buildMap(miningSchema.getMiningFields(), PMMLAttributes.MININGFIELD_NAME));
+			this.miningFields = ImmutableMap.copyOf(IndexableUtil.buildMap(miningSchema.getMiningFields()));
 		}
 
 		LocalTransformations localTransformations = model.getLocalTransformations();
 		if(localTransformations != null && localTransformations.hasDerivedFields()){
-			this.localDerivedFields = ImmutableMap.copyOf(IndexableUtil.buildMap(localTransformations.getDerivedFields(), PMMLAttributes.DERIVEDFIELD_NAME));
+			this.localDerivedFields = ImmutableMap.copyOf(IndexableUtil.buildMap(localTransformations.getDerivedFields()));
 		}
 
 		Targets targets = model.getTargets();
 		if(targets != null && targets.hasTargets()){
 			// Cannot use Guava's ImmutableMap, because it is null-hostile
-			this.targets = Collections.unmodifiableMap(IndexableUtil.buildMap(targets.getTargets(), PMMLAttributes.TARGET_FIELD, true));
+			this.targets = Collections.unmodifiableMap(IndexableUtil.buildMap(targets.getTargets()));
 		}
 
 		Output output = model.getOutput();
 		if(output != null && output.hasOutputFields()){
-			this.outputFields = ImmutableMap.copyOf(IndexableUtil.buildMap(output.getOutputFields(), PMMLAttributes.OUTPUTFIELD_NAME));
+			this.outputFields = ImmutableMap.copyOf(IndexableUtil.buildMap(output.getOutputFields()));
 
 			this.resultFeatures = Sets.immutableEnumSet(collectResultFeatures(output));
 		}

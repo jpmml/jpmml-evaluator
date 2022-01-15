@@ -42,7 +42,7 @@ public class NodeVote extends Vote implements HasEntityRegistry<Node>, HasDecisi
 	protected void computeResult(DataType dataType){
 		Node node = getNode();
 
-		Object result = TypeUtil.parseOrCast(dataType, node.getScore());
+		Object result = TypeUtil.parseOrCast(dataType, node.requireScore());
 
 		setResult(result);
 	}

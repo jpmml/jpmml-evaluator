@@ -23,11 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 import org.jpmml.model.InvalidElementListException;
-import org.jpmml.model.MissingAttributeException;
 
 public class TargetUtil {
 
@@ -188,10 +186,7 @@ public class TargetUtil {
 
 		TargetValue targetValue = targetValues.get(0);
 
-		Number defaultValue = targetValue.getDefaultValue();
-		if(defaultValue == null){
-			return null;
-		}
+		Number defaultValue = targetValue.requireDefaultValue();
 
 		return valueFactory.newValue(defaultValue);
 	}
@@ -211,12 +206,9 @@ public class TargetUtil {
 		for(int i = 0, max = targetValues.size(); i < max; i++){
 			TargetValue targetValue = targetValues.get(i);
 
-			Number probability = targetValue.getPriorProbability();
-			if(probability == null){
-				throw new MissingAttributeException(targetValue, PMMLAttributes.TARGETVALUE_PRIORPROBABILITY);
-			}
+			Number priorProbability = targetValue.requirePriorProbability();
 
-			Value<V> value = valueFactory.newValue(probability);
+			Value<V> value = valueFactory.newValue(priorProbability);
 
 			values.put(targetValue.requireValue(), value);
 

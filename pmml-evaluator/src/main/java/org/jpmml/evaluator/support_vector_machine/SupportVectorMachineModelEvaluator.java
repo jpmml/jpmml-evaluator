@@ -76,9 +76,7 @@ import org.jpmml.evaluator.ValueMap;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.InvalidElementException;
 import org.jpmml.model.InvalidElementListException;
-import org.jpmml.model.MisplacedAttributeException;
 import org.jpmml.model.MisplacedElementException;
-import org.jpmml.model.MissingAttributeException;
 import org.jpmml.model.ReflectionUtil;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
@@ -169,42 +167,31 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		Object input = createInput(context);
 
 		for(SupportVectorMachine supportVectorMachine : supportVectorMachines){
-			Object targetCategory = supportVectorMachine.requireTargetCategory();
-
-			Object alternateTargetCategory = supportVectorMachine.getAlternateTargetCategory();
-
 			Value<V> value = evaluateSupportVectorMachine(valueFactory, supportVectorMachine, input);
 
 			switch(classificationMethod){
 				case ONE_AGAINST_ALL:
 					{
-						if(alternateTargetCategory != null){
-							throw new MisplacedAttributeException(supportVectorMachine, PMMLAttributes.SUPPORTVECTORMACHINE_ALTERNATETARGETCATEGORY, alternateTargetCategory);
-						}
+						Object targetCategory = supportVectorMachine.requireTargetCategory();
 
 						values.put(targetCategory, value);
 					}
 					break;
 				case ONE_AGAINST_ONE:
 					{
-						Object label;
+						Object targetCategory;
 
 						if(alternateBinaryTargetCategory != null){
-
-							if(alternateTargetCategory != null){
-								throw new MisplacedAttributeException(supportVectorMachine, PMMLAttributes.SUPPORTVECTORMACHINE_ALTERNATETARGETCATEGORY, alternateTargetCategory);
-							}
-
 							value.round();
 
 							// "A rounded value of 0 corresponds to the alternateBinaryTargetCategory attribute of the SupportVectorMachineModel element"
 							if(value.isZero()){
-								label = alternateBinaryTargetCategory;
+								targetCategory = alternateBinaryTargetCategory;
 							} else
 
 							// "A rounded value of 1 corresponds to the targetCategory attribute of the SupportVectorMachine element"
 							if(value.isOne()){
-								label = targetCategory;
+								targetCategory = supportVectorMachine.requireTargetCategory();
 							} else
 
 							// "The numeric prediction must be between 0 and 1"
@@ -214,10 +201,6 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 						} else
 
 						{
-							if(alternateTargetCategory == null){
-								throw new MissingAttributeException(supportVectorMachine, PMMLAttributes.SUPPORTVECTORMACHINE_ALTERNATETARGETCATEGORY);
-							}
-
 							Number threshold = supportVectorMachine.getThreshold();
 							if(threshold == null){
 								threshold = supportVectorMachineModel.getThreshold();
@@ -225,17 +208,17 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 							// "If the numeric prediction is smaller than the threshold, then it corresponds to the targetCategory attribute"
 							if(value.compareTo(threshold) < 0){
-								label = targetCategory;
+								targetCategory = supportVectorMachine.requireTargetCategory();
 							} else
 
 							{
-								label = alternateTargetCategory;
+								targetCategory = supportVectorMachine.requireAlternateTargetCategory();
 							}
 						}
 
 						VoteMap<Object, V> votes = (VoteMap<Object, V>)values;
 
-						votes.increment(label);
+						votes.increment(targetCategory);
 					}
 					break;
 				default:
