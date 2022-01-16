@@ -54,9 +54,7 @@ public class TargetUtil {
 		if(target != null && target.hasTargetValues()){
 			Value<V> value = getDefaultValue(valueFactory, target);
 
-			if(value != null){
-				return evaluateRegression(targetField, value);
-			}
+			return evaluateRegression(targetField, value);
 		}
 
 		return Collections.singletonMap(targetField.getFieldName(), null);
@@ -109,9 +107,7 @@ public class TargetUtil {
 		if(target != null && target.hasTargetValues()){
 			ProbabilityDistribution<V> result = getPriorProbabilities(valueFactory, target);
 
-			if(result != null){
-				return evaluateClassification(targetField, result);
-			}
+			return evaluateClassification(targetField, result);
 		}
 
 		return Collections.singletonMap(targetField.getFieldName(), null);
@@ -174,11 +170,6 @@ public class TargetUtil {
 
 	static
 	private <V extends Number> Value<V> getDefaultValue(ValueFactory<V> valueFactory, Target target){
-
-		if(!target.hasTargetValues()){
-			return null;
-		}
-
 		List<TargetValue> targetValues = target.getTargetValues();
 		if(targetValues.size() != 1){
 			throw new InvalidElementListException(targetValues);
@@ -193,11 +184,6 @@ public class TargetUtil {
 
 	static
 	private <V extends Number> ProbabilityDistribution<V> getPriorProbabilities(ValueFactory<V> valueFactory, Target target){
-
-		if(!target.hasTargetValues()){
-			return null;
-		}
-
 		ValueMap<Object, V> values = new ValueMap<>();
 
 		Value<V> sum = valueFactory.newValue();
