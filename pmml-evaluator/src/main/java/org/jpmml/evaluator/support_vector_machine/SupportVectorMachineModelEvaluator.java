@@ -77,7 +77,6 @@ import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.InvalidElementException;
 import org.jpmml.model.InvalidElementListException;
 import org.jpmml.model.MisplacedElementException;
-import org.jpmml.model.ReflectionUtil;
 
 public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVectorMachineModel> {
 
@@ -140,13 +139,13 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 	protected <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		SupportVectorMachineModel supportVectorMachineModel = getModel();
 
-		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.requireSupportVectorMachines();
-
 		Object alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
+
+		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.requireSupportVectorMachines();
 
 		ValueMap<Object, V> values;
 
-		SupportVectorMachineModel.ClassificationMethod classificationMethod = getClassificationMethod();
+		SupportVectorMachineModel.ClassificationMethod classificationMethod = supportVectorMachineModel.getClassificationMethod();
 		switch(classificationMethod){
 			case ONE_AGAINST_ALL:
 				values = new ValueMap<>(2 * supportVectorMachines.size());
@@ -280,55 +279,6 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 		result.add(coefficients.getAbsoluteValue());
 
 		return result;
-	}
-
-	private SupportVectorMachineModel.ClassificationMethod getClassificationMethod(){
-		SupportVectorMachineModel supportVectorMachineModel = getModel();
-
-		// Older versions of several popular PMML producer software are known to omit the classificationMethod attribute.
-		// The method SupportVectorMachineModel#getRepresentation() replaces a missing value with the default value "OneAgainstAll", which may lead to incorrect behaviour.
-		// The workaround is to bypass this method using Java Reflection API, and infer the correct classification method type based on evidence.
-		SupportVectorMachineModel.ClassificationMethod classificationMethod = ReflectionUtil.getFieldValue(PMMLAttributes.SUPPORTVECTORMACHINEMODEL_CLASSIFICATIONMETHOD, supportVectorMachineModel);
-		if(classificationMethod != null){
-			return classificationMethod;
-		}
-
-		List<SupportVectorMachine> supportVectorMachines = supportVectorMachineModel.requireSupportVectorMachines();
-
-		Object alternateBinaryTargetCategory = supportVectorMachineModel.getAlternateBinaryTargetCategory();
-		if(alternateBinaryTargetCategory != null){
-
-			if(supportVectorMachines.size() == 1){
-				SupportVectorMachine supportVectorMachine = supportVectorMachines.get(0);
-
-				Object targetCategory = supportVectorMachine.getTargetCategory();
-				if(targetCategory != null){
-					return SupportVectorMachineModel.ClassificationMethod.ONE_AGAINST_ONE;
-				}
-
-				throw new InvalidElementException(supportVectorMachine);
-			}
-
-			throw new InvalidElementException(supportVectorMachineModel);
-		}
-
-		for(SupportVectorMachine supportVectorMachine : supportVectorMachines){
-			Object targetCategory = supportVectorMachine.getTargetCategory();
-			Object alternateTargetCategory = supportVectorMachine.getAlternateTargetCategory();
-
-			if(targetCategory != null){
-
-				if(alternateTargetCategory != null){
-					return SupportVectorMachineModel.ClassificationMethod.ONE_AGAINST_ONE;
-				}
-
-				return SupportVectorMachineModel.ClassificationMethod.ONE_AGAINST_ALL;
-			}
-
-			throw new InvalidElementException(supportVectorMachine);
-		}
-
-		throw new InvalidElementException(supportVectorMachineModel);
 	}
 
 	private Object createInput(EvaluationContext context){

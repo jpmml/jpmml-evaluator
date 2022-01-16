@@ -38,7 +38,7 @@ public class AlternateBinaryTargetCategoryTest extends ModelEvaluatorTest {
 	}
 
 	private String evaluate(double x1, double x2) throws Exception {
-		ModelEvaluator<?> evaluator = createModelEvaluator();
+		ModelEvaluator<?> evaluator = createModelEvaluator(new EnsureClassificationMethodTransformer());
 
 		Map<String, ?> arguments = createArguments("x1", x1, "x2", x2);
 
