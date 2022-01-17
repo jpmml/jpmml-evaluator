@@ -29,10 +29,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-evaluator</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jpmml</groupId>
 			<artifactId>pmml-evaluator-jackson</artifactId>
 		</dependency>
 		<dependency>

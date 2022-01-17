@@ -41,7 +41,7 @@
 
 		<dependency>
 			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-model-metro</artifactId>
+			<artifactId>pmml-evaluator-metro</artifactId>
 			<scope>test</scope>
 		</dependency>
 
