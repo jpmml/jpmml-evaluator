@@ -52,8 +52,8 @@ public class IntegrationTestBatch extends ArchiveBatch {
 	private Evaluator evaluator = null;
 
 
-	public IntegrationTestBatch(String name, String dataset, Predicate<ResultField> predicate, Equivalence<Object> equivalence){
-		super(name, dataset, predicate, equivalence);
+	public IntegrationTestBatch(String name, String dataset, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence){
+		super(name, dataset, columnFilter, equivalence);
 	}
 
 	abstract

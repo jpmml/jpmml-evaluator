@@ -57,10 +57,10 @@ public class FilterBatch implements Batch {
 	}
 
 	@Override
-	public Predicate<ResultField> getPredicate(){
+	public Predicate<ResultField> getColumnFilter(){
 		Batch batch = getBatch();
 
-		return batch.getPredicate();
+		return batch.getColumnFilter();
 	}
 
 	@Override

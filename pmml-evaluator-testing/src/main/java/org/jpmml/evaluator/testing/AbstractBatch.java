@@ -31,15 +31,15 @@ public class AbstractBatch implements Batch {
 
 	private String dataset = null;
 
-	private Predicate<ResultField> predicate = null;
+	private Predicate<ResultField> columnFilter = null;
 
 	private Equivalence<Object> equivalence = null;
 
 
-	public AbstractBatch(String name, String dataset, Predicate<ResultField> predicate, Equivalence<Object> equivalence){
+	public AbstractBatch(String name, String dataset, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence){
 		setName(name);
 		setDataset(dataset);
-		setPredicate(predicate);
+		setColumnFilter(columnFilter);
 		setEquivalence(equivalence);
 	}
 
@@ -60,12 +60,12 @@ public class AbstractBatch implements Batch {
 	}
 
 	@Override
-	public Predicate<ResultField> getPredicate(){
-		return this.predicate;
+	public Predicate<ResultField> getColumnFilter(){
+		return this.columnFilter;
 	}
 
-	private void setPredicate(Predicate<ResultField> predicate){
-		this.predicate = Objects.requireNonNull(predicate);
+	private void setColumnFilter(Predicate<ResultField> columnFilter){
+		this.columnFilter = Objects.requireNonNull(columnFilter);
 	}
 
 	@Override

@@ -60,7 +60,7 @@ public class BatchUtil {
 			throw new IllegalArgumentException("Expected the same number of data rows, got " + input.size() + " input data rows and " + output.size() + " expected output data rows");
 		}
 
-		Predicate<ResultField> predicate = batch.getPredicate();
+		Predicate<ResultField> columnFilter = batch.getColumnFilter();
 
 		Set<String> names = new LinkedHashSet<>();
 
@@ -71,7 +71,7 @@ public class BatchUtil {
 				continue;
 			} // End if
 
-			if(predicate.test(targetField)){
+			if(columnFilter.test(targetField)){
 				names.add(targetField.getName());
 			}
 		}
@@ -79,7 +79,7 @@ public class BatchUtil {
 		List<OutputField> outputFields = evaluator.getOutputFields();
 		for(OutputField outputField : outputFields){
 
-			if(predicate.test(outputField)){
+			if(columnFilter.test(outputField)){
 				names.add(outputField.getName());
 			}
 		}

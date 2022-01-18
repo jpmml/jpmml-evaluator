@@ -41,31 +41,31 @@ public class IntegrationTest extends BatchTest {
 		evaluate(name, dataset, null, null);
 	}
 
-	public void evaluate(String name, String dataset, Predicate<ResultField> predicate) throws Exception {
-		evaluate(name, dataset, predicate, null);
+	public void evaluate(String name, String dataset, Predicate<ResultField> columnFilter) throws Exception {
+		evaluate(name, dataset, columnFilter, null);
 	}
 
 	public void evaluate(String name, String dataset, Equivalence<Object> equivalence) throws Exception {
 		evaluate(name, dataset, null, equivalence);
 	}
 
-	public void evaluate(String name, String dataset, Predicate<ResultField> predicate, Equivalence<Object> equivalence) throws Exception {
+	public void evaluate(String name, String dataset, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence) throws Exception {
 
-		if(predicate == null){
-			predicate = (resultField -> true);
+		if(columnFilter == null){
+			columnFilter = (resultField -> true);
 		} // End if
 
 		if(equivalence == null){
 			equivalence = getEquivalence();
 		}
 
-		try(Batch batch = createBatch(name, dataset, predicate, equivalence)){
+		try(Batch batch = createBatch(name, dataset, columnFilter, equivalence)){
 			evaluate(batch);
 		}
 	}
 
-	protected Batch createBatch(String name, String dataset, Predicate<ResultField> predicate, Equivalence<Object> equivalence){
-		Batch result = new IntegrationTestBatch(name, dataset, predicate, equivalence){
+	protected Batch createBatch(String name, String dataset, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence){
+		Batch result = new IntegrationTestBatch(name, dataset, columnFilter, equivalence){
 
 			@Override
 			public IntegrationTest getIntegrationTest(){
@@ -91,7 +91,7 @@ public class IntegrationTest extends BatchTest {
 
 	static
 	public Predicate<ResultField> excludeFields(Collection<String> names){
-		Predicate<ResultField> predicate = new Predicate<ResultField>(){
+		Predicate<ResultField> columnFilter = new Predicate<ResultField>(){
 
 			@Override
 			public boolean test(ResultField resultField){
@@ -99,6 +99,6 @@ public class IntegrationTest extends BatchTest {
 			}
 		};
 
-		return predicate;
+		return columnFilter;
 	}
 }

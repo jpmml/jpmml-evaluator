@@ -40,8 +40,8 @@ import org.jpmml.model.visitors.VisitorBattery;
 abstract
 public class ArchiveBatch extends AbstractBatch {
 
-	public ArchiveBatch(String name, String dataset, Predicate<ResultField> predicate, Equivalence<Object> equivalence){
-		super(name, dataset, predicate, equivalence);
+	public ArchiveBatch(String name, String dataset, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence){
+		super(name, dataset, columnFilter, equivalence);
 	}
 
 	abstract

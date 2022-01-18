@@ -153,21 +153,21 @@ public class TestingExample extends Example {
 
 		List<? extends Map<String, ?>> outputRecords = BatchUtil.parseRecords(outputTable, cellParser);
 
-		Predicate<ResultField> predicate;
+		Predicate<ResultField> columnFilter;
 
 		if(this.ignoredFields != null && !this.ignoredFields.isEmpty()){
-			predicate = (ResultField resultField) -> !this.ignoredFields.contains(resultField.getName());
+			columnFilter = (ResultField resultField) -> !this.ignoredFields.contains(resultField.getName());
 		} else
 
 		{
-			predicate = (ResultField resultField) -> true;
+			columnFilter = (ResultField resultField) -> true;
 		}
 
 		Equivalence<Object> equivalence = new PMMLEquivalence(this.precision, this.zeroThreshold);
 
 		List<Conflict> conflicts;
 
-		try(Batch batch = createBatch(evaluator, inputRecords, outputRecords, predicate, equivalence)){
+		try(Batch batch = createBatch(evaluator, inputRecords, outputRecords, columnFilter, equivalence)){
 			conflicts = BatchUtil.evaluate(batch);
 		}
 
@@ -177,7 +177,7 @@ public class TestingExample extends Example {
 	}
 
 	static
-	private Batch createBatch(Evaluator evaluator, List<? extends Map<String, ?>> input, List<? extends Map<String, ?>> output, Predicate<ResultField> predicate, Equivalence<Object> equivalence){
+	private Batch createBatch(Evaluator evaluator, List<? extends Map<String, ?>> input, List<? extends Map<String, ?>> output, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence){
 		Batch batch = new Batch(){
 
 			@Override
@@ -196,8 +196,8 @@ public class TestingExample extends Example {
 			}
 
 			@Override
-			public Predicate<ResultField> getPredicate(){
-				return predicate;
+			public Predicate<ResultField> getColumnFilter(){
+				return columnFilter;
 			}
 
 			@Override

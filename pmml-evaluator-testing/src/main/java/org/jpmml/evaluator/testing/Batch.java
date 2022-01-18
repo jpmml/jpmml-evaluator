@@ -55,7 +55,7 @@ public interface Batch extends AutoCloseable {
 	 * (between expected and actual output data records).
 	 * </p>
 	 */
-	Predicate<ResultField> getPredicate();
+	Predicate<ResultField> getColumnFilter();
 
 	/**
 	 * <p>
