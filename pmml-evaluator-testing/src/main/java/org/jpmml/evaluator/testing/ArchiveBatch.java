@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -39,22 +38,10 @@ import org.jpmml.model.PMMLUtil;
 import org.jpmml.model.visitors.VisitorBattery;
 
 abstract
-public class ArchiveBatch implements Batch {
-
-	private String name = null;
-
-	private String dataset = null;
-
-	private Predicate<ResultField> predicate = null;
-
-	private Equivalence<Object> equivalence = null;
-
+public class ArchiveBatch extends AbstractBatch {
 
 	public ArchiveBatch(String name, String dataset, Predicate<ResultField> predicate, Equivalence<Object> equivalence){
-		setName(name);
-		setDataset(dataset);
-		setPredicate(predicate);
-		setEquivalence(equivalence);
+		super(name, dataset, predicate, equivalence);
 	}
 
 	abstract
@@ -130,39 +117,5 @@ public class ArchiveBatch implements Batch {
 		};
 
 		return BatchUtil.parseRecords(table, function);
-	}
-
-	public String getName(){
-		return this.name;
-	}
-
-	private void setName(String name){
-		this.name = Objects.requireNonNull(name);
-	}
-
-	public String getDataset(){
-		return this.dataset;
-	}
-
-	private void setDataset(String dataset){
-		this.dataset = Objects.requireNonNull(dataset);
-	}
-
-	@Override
-	public Predicate<ResultField> getPredicate(){
-		return this.predicate;
-	}
-
-	private void setPredicate(Predicate<ResultField> predicate){
-		this.predicate = Objects.requireNonNull(predicate);
-	}
-
-	@Override
-	public Equivalence<Object> getEquivalence(){
-		return this.equivalence;
-	}
-
-	private void setEquivalence(Equivalence<Object> equivalence){
-		this.equivalence = Objects.requireNonNull(equivalence);
 	}
 }
