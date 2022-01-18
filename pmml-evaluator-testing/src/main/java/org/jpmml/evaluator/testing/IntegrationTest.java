@@ -37,19 +37,19 @@ public class IntegrationTest extends BatchTest {
 		setEquivalence(equivalence);
 	}
 
-	public void evaluate(String name, String dataset) throws Exception {
-		evaluate(name, dataset, null, null);
+	public void evaluate(String algorithm, String dataset) throws Exception {
+		evaluate(algorithm, dataset, null, null);
 	}
 
-	public void evaluate(String name, String dataset, Predicate<ResultField> columnFilter) throws Exception {
-		evaluate(name, dataset, columnFilter, null);
+	public void evaluate(String algorithm, String dataset, Predicate<ResultField> columnFilter) throws Exception {
+		evaluate(algorithm, dataset, columnFilter, null);
 	}
 
-	public void evaluate(String name, String dataset, Equivalence<Object> equivalence) throws Exception {
-		evaluate(name, dataset, null, equivalence);
+	public void evaluate(String algorithm, String dataset, Equivalence<Object> equivalence) throws Exception {
+		evaluate(algorithm, dataset, null, equivalence);
 	}
 
-	public void evaluate(String name, String dataset, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence) throws Exception {
+	public void evaluate(String algorithm, String dataset, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence) throws Exception {
 
 		if(columnFilter == null){
 			columnFilter = (resultField -> true);
@@ -59,13 +59,13 @@ public class IntegrationTest extends BatchTest {
 			equivalence = getEquivalence();
 		}
 
-		try(Batch batch = createBatch(name, dataset, columnFilter, equivalence)){
+		try(Batch batch = createBatch(algorithm, dataset, columnFilter, equivalence)){
 			evaluate(batch);
 		}
 	}
 
-	protected Batch createBatch(String name, String dataset, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence){
-		Batch result = new IntegrationTestBatch(name, dataset, columnFilter, equivalence){
+	protected Batch createBatch(String algorithm, String dataset, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence){
+		Batch result = new IntegrationTestBatch(algorithm, dataset, columnFilter, equivalence){
 
 			@Override
 			public IntegrationTest getIntegrationTest(){

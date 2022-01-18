@@ -41,7 +41,7 @@ import org.jpmml.model.visitors.VisitorBattery;
 abstract
 public class ArchiveBatch implements Batch {
 
-	private String name = null;
+	private String algorithm = null;
 
 	private String dataset = null;
 
@@ -50,8 +50,8 @@ public class ArchiveBatch implements Batch {
 	private Equivalence<Object> equivalence = null;
 
 
-	public ArchiveBatch(String name, String dataset, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence){
-		setName(name);
+	public ArchiveBatch(String algorithm, String dataset, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence){
+		setAlgorithm(algorithm);
 		setDataset(dataset);
 		setColumnFilter(columnFilter);
 		setEquivalence(equivalence);
@@ -85,7 +85,7 @@ public class ArchiveBatch implements Batch {
 	}
 
 	public PMML getPMML() throws Exception {
-		return loadPMML("/pmml/" + (getName() + getDataset()) + ".pmml");
+		return loadPMML("/pmml/" + (getAlgorithm() + getDataset()) + ".pmml");
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public class ArchiveBatch implements Batch {
 
 	@Override
 	public List<? extends Map<String, ?>> getOutput() throws IOException {
-		return loadRecords("/csv/" + (getName() + getDataset()) + ".csv");
+		return loadRecords("/csv/" + (getAlgorithm() + getDataset()) + ".csv");
 	}
 
 	@Override
@@ -132,12 +132,12 @@ public class ArchiveBatch implements Batch {
 		return BatchUtil.parseRecords(table, function);
 	}
 
-	public String getName(){
-		return this.name;
+	public String getAlgorithm(){
+		return this.algorithm;
 	}
 
-	private void setName(String name){
-		this.name = Objects.requireNonNull(name);
+	private void setAlgorithm(String algorithm){
+		this.algorithm = Objects.requireNonNull(algorithm);
 	}
 
 	public String getDataset(){
