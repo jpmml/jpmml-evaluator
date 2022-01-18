@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -38,10 +39,22 @@ import org.jpmml.model.PMMLUtil;
 import org.jpmml.model.visitors.VisitorBattery;
 
 abstract
-public class ArchiveBatch extends AbstractBatch {
+public class ArchiveBatch implements Batch {
+
+	private String name = null;
+
+	private String dataset = null;
+
+	private Predicate<ResultField> columnFilter = null;
+
+	private Equivalence<Object> equivalence = null;
+
 
 	public ArchiveBatch(String name, String dataset, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence){
-		super(name, dataset, columnFilter, equivalence);
+		setName(name);
+		setDataset(dataset);
+		setColumnFilter(columnFilter);
+		setEquivalence(equivalence);
 	}
 
 	abstract
@@ -117,5 +130,39 @@ public class ArchiveBatch extends AbstractBatch {
 		};
 
 		return BatchUtil.parseRecords(table, function);
+	}
+
+	public String getName(){
+		return this.name;
+	}
+
+	private void setName(String name){
+		this.name = Objects.requireNonNull(name);
+	}
+
+	public String getDataset(){
+		return this.dataset;
+	}
+
+	private void setDataset(String dataset){
+		this.dataset = Objects.requireNonNull(dataset);
+	}
+
+	@Override
+	public Predicate<ResultField> getColumnFilter(){
+		return this.columnFilter;
+	}
+
+	private void setColumnFilter(Predicate<ResultField> columnFilter){
+		this.columnFilter = Objects.requireNonNull(columnFilter);
+	}
+
+	@Override
+	public Equivalence<Object> getEquivalence(){
+		return this.equivalence;
+	}
+
+	private void setEquivalence(Equivalence<Object> equivalence){
+		this.equivalence = Objects.requireNonNull(equivalence);
 	}
 }
