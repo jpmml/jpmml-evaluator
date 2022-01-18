@@ -84,18 +84,30 @@ public class ArchiveBatch implements Batch {
 		return evaluator;
 	}
 
+	public String getPmmlPath(){
+		return "/pmml/" + (getAlgorithm() + getDataset()) + ".pmml";
+	}
+
 	public PMML getPMML() throws Exception {
-		return loadPMML("/pmml/" + (getAlgorithm() + getDataset()) + ".pmml");
+		return loadPMML(getPmmlPath());
+	}
+
+	public String getInputCsvPath(){
+		return "/csv/" + getDataset() + ".csv";
 	}
 
 	@Override
 	public List<? extends Map<String, ?>> getInput() throws IOException {
-		return loadRecords("/csv/" + getDataset() + ".csv");
+		return loadRecords(getInputCsvPath());
+	}
+
+	public String getOutputCsvPath(){
+		return "/csv/" + (getAlgorithm() + getDataset()) + ".csv";
 	}
 
 	@Override
 	public List<? extends Map<String, ?>> getOutput() throws IOException {
-		return loadRecords("/csv/" + (getAlgorithm() + getDataset()) + ".csv");
+		return loadRecords(getOutputCsvPath());
 	}
 
 	@Override

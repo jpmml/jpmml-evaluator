@@ -171,6 +171,20 @@ public class IntegrationTestBatch extends ArchiveBatch {
 		}
 	}
 
+	static
+	protected String truncate(String string){
+
+		for(int i = 0; i < string.length(); i++){
+			char c = string.charAt(i);
+
+			if(!Character.isLetterOrDigit(c)){
+				return string.substring(0, i);
+			}
+		}
+
+		return string;
+	}
+
 	private static final boolean KRYO_MODULE_PROVIDED;
 
 	static {
