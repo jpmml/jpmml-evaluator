@@ -27,16 +27,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
-import org.dmg.pmml.PMML;
-import org.jpmml.evaluator.Evaluator;
-import org.jpmml.evaluator.EvaluatorBuilder;
-import org.jpmml.evaluator.FieldNameSet;
-import org.jpmml.evaluator.FunctionNameStack;
-import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.ResultField;
-import org.jpmml.evaluator.visitors.DefaultModelEvaluatorBattery;
-import org.jpmml.model.PMMLUtil;
-import org.jpmml.model.visitors.VisitorBattery;
 
 abstract
 public class ArchiveBatch implements Batch {
@@ -58,39 +49,7 @@ public class ArchiveBatch implements Batch {
 	}
 
 	abstract
-	public InputStream open(String path);
-
-	public EvaluatorBuilder getEvaluatorBuilder() throws Exception {
-		PMML pmml = getPMML();
-
-		VisitorBattery visitorBattery = new DefaultModelEvaluatorBattery();
-		visitorBattery.applyTo(pmml);
-
-		EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml)
-			.setDerivedFieldGuard(new FieldNameSet(8))
-			.setFunctionGuard(new FunctionNameStack(4));
-
-		return evaluatorBuilder;
-	}
-
-	@Override
-	public Evaluator getEvaluator() throws Exception {
-		EvaluatorBuilder evaluatorBuilder = getEvaluatorBuilder();
-
-		Evaluator evaluator = evaluatorBuilder.build();
-
-		evaluator.verify();
-
-		return evaluator;
-	}
-
-	public String getPmmlPath(){
-		return "/pmml/" + (getAlgorithm() + getDataset()) + ".pmml";
-	}
-
-	public PMML getPMML() throws Exception {
-		return loadPMML(getPmmlPath());
-	}
+	public InputStream open(String path) throws IOException;
 
 	public String getInputCsvPath(){
 		return "/csv/" + getDataset() + ".csv";
@@ -112,13 +71,6 @@ public class ArchiveBatch implements Batch {
 
 	@Override
 	public void close() throws Exception {
-	}
-
-	protected PMML loadPMML(String path) throws Exception {
-
-		try(InputStream is = open(path)){
-			return PMMLUtil.unmarshal(is);
-		}
 	}
 
 	protected List<Map<String, String>> loadRecords(String path) throws IOException {
