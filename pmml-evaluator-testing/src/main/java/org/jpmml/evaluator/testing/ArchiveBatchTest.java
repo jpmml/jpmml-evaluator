@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Villu Ruusmann
+ * Copyright (c) 2022 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,9 +18,6 @@
  */
 package org.jpmml.evaluator.testing;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -28,14 +25,17 @@ import com.google.common.base.Equivalence;
 import org.jpmml.evaluator.ResultField;
 
 abstract
-public class IntegrationTest extends BatchTest {
+public class ArchiveBatchTest extends BatchTest {
 
 	private Equivalence<Object> equivalence = null;
 
 
-	public IntegrationTest(Equivalence<Object> equivalence){
+	public ArchiveBatchTest(Equivalence<Object> equivalence){
 		setEquivalence(equivalence);
 	}
+
+	abstract
+	public ArchiveBatch createBatch(String algorithm, String dataset, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence);
 
 	public void evaluate(String algorithm, String dataset) throws Exception {
 		evaluate(algorithm, dataset, null, null);
@@ -64,41 +64,11 @@ public class IntegrationTest extends BatchTest {
 		}
 	}
 
-	protected Batch createBatch(String algorithm, String dataset, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence){
-		Batch result = new IntegrationTestBatch(algorithm, dataset, columnFilter, equivalence){
-
-			@Override
-			public IntegrationTest getIntegrationTest(){
-				return IntegrationTest.this;
-			}
-		};
-
-		return result;
-	}
-
 	public Equivalence<Object> getEquivalence(){
 		return this.equivalence;
 	}
 
 	private void setEquivalence(Equivalence<Object> equivalence){
 		this.equivalence = Objects.requireNonNull(equivalence);
-	}
-
-	static
-	public Predicate<ResultField> excludeFields(String... names){
-		return excludeFields(new LinkedHashSet<>(Arrays.asList(names)));
-	}
-
-	static
-	public Predicate<ResultField> excludeFields(Collection<String> names){
-		Predicate<ResultField> columnFilter = new Predicate<ResultField>(){
-
-			@Override
-			public boolean test(ResultField resultField){
-				return !names.contains(resultField.getName());
-			}
-		};
-
-		return columnFilter;
 	}
 }

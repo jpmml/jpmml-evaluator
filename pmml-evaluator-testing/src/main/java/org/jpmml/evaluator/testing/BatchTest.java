@@ -18,7 +18,13 @@
  */
 package org.jpmml.evaluator.testing;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.function.Predicate;
+
+import org.jpmml.evaluator.ResultField;
 
 import static org.junit.Assert.fail;
 
@@ -40,5 +46,23 @@ public class BatchTest {
 
 	public void log(Conflict conflict){
 		System.err.println(conflict);
+	}
+
+	static
+	public Predicate<ResultField> excludeFields(String... names){
+		return excludeFields(new LinkedHashSet<>(Arrays.asList(names)));
+	}
+
+	static
+	public Predicate<ResultField> excludeFields(Collection<String> names){
+		Predicate<ResultField> columnFilter = new Predicate<ResultField>(){
+
+			@Override
+			public boolean test(ResultField resultField){
+				return !names.contains(resultField.getName());
+			}
+		};
+
+		return columnFilter;
 	}
 }

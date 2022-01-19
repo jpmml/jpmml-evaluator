@@ -33,12 +33,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-evaluator-kryo</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>provided</scope>
