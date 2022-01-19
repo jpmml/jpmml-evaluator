@@ -28,7 +28,7 @@ import org.dmg.pmml.HasContinuousDomain;
 import org.dmg.pmml.HasDiscreteDomain;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OpType;
-import org.jpmml.model.InvalidMarkupException;
+import org.jpmml.model.MarkupException;
 
 public class InputField extends ModelField {
 
@@ -67,8 +67,7 @@ public class InputField extends ModelField {
 	 * Use <code>null</code> to represent a missing input value.
 	 *
 	 * @throws EvaluationException If the input value preparation fails.
-	 * @throws InvalidMarkupException
-	 * @throws UnsupportedMarkupException
+	 * @throws MarkupException
 	 */
 	public FieldValue prepare(Object value){
 		return InputFieldUtil.prepareInputValue(getField(), getMiningField(), value);

@@ -23,6 +23,7 @@ import java.util.Map;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.Model;
 import org.jpmml.model.InvalidMarkupException;
+import org.jpmml.model.MarkupException;
 
 /**
  * <p>
@@ -101,7 +102,7 @@ import org.jpmml.model.InvalidMarkupException;
  *       // Skip this data record and proceed as usual with the next one
  *     }
  *   }
- * } catch(InvalidMarkupException | MissingMarkupException | UnsupportedMarkupException me){
+ * } catch(MarkupException me){
  *   // The work failed because of the class model object.
  *   // This is a persistent problem that is very likely to affect all data records
  *   // Decommission the Evaluator instance
@@ -138,8 +139,7 @@ public interface Evaluator extends HasInputFields, HasResultFields {
 	 * </p>
 	 *
 	 * @throws EvaluationException If the verification fails.
-	 * @throws InvalidMarkupException
-	 * @throws UnsupportedMarkupException
+	 * @throws MarkupException
 	 */
 	Evaluator verify();
 
@@ -158,8 +158,7 @@ public interface Evaluator extends HasInputFields, HasResultFields {
 	 * A missing value is represented by <code>null</code>.
 	 *
 	 * @throws EvaluationException If the evaluation fails.
-	 * @throws InvalidMarkupException
-	 * @throws UnsupportedMarkupException
+	 * @throws MarkupException
 	 *
 	 * @see Computable
 	 */
