@@ -149,9 +149,9 @@ public class TestingExample extends Example {
 
 		java.util.function.Function<String, String> cellParser = createCellParser(new HashSet<>(this.missingValues));
 
-		List<? extends Map<String, ?>> inputRecords = BatchUtil.parseRecords(inputTable, cellParser);
+		List<? extends Map<String, ?>> inputRecords = CsvUtil.toRecords(inputTable, cellParser);
 
-		List<? extends Map<String, ?>> outputRecords = BatchUtil.parseRecords(outputTable, cellParser);
+		List<? extends Map<String, ?>> outputRecords = CsvUtil.toRecords(outputTable, cellParser);
 
 		Predicate<ResultField> columnFilter;
 

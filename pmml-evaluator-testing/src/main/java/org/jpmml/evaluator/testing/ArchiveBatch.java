@@ -74,7 +74,7 @@ public class ArchiveBatch implements Batch {
 	}
 
 	protected List<Map<String, String>> loadRecords(String path) throws IOException {
-		List<List<String>> table;
+		CsvUtil.Table table;
 
 		try(InputStream is = open(path)){
 			table = CsvUtil.readTable(is, ",");
@@ -93,7 +93,7 @@ public class ArchiveBatch implements Batch {
 			}
 		};
 
-		return BatchUtil.parseRecords(table, function);
+		return CsvUtil.toRecords(table, function);
 	}
 
 	public String getAlgorithm(){

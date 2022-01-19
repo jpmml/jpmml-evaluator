@@ -47,7 +47,6 @@ import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.mining.HasSegmentResults;
 import org.jpmml.evaluator.mining.SegmentResult;
-import org.jpmml.evaluator.testing.BatchUtil;
 import org.jpmml.evaluator.testing.CsvUtil;
 import org.jpmml.evaluator.tree.HasDecisionPath;
 import org.jpmml.model.visitors.AbstractVisitor;
@@ -128,7 +127,7 @@ public class RecordCountingExample extends Example {
 		// Perform self-testing
 		evaluator.verify();
 
-		List<? extends Map<String, ?>> records = BatchUtil.parseRecords(table, createCellParser(new HashSet<>(this.missingValues)));
+		List<? extends Map<String, ?>> records = CsvUtil.toRecords(table, createCellParser(new HashSet<>(this.missingValues)));
 
 		List<InputField> inputFields = evaluator.getInputFields();
 		List<TargetField> targetFields = evaluator.getTargetFields();

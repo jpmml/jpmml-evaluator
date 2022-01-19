@@ -26,7 +26,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -94,6 +100,79 @@ public class CsvUtil {
 	}
 
 	static
+	public <V> List<Map<String, V>> toRecords(Table table, Function<String, V> parseFunction){
+		List<Map<String, V>> records = new ArrayList<>(table.size() - 1);
+
+		List<String> headerRow = table.get(0);
+
+		Set<String> uniqueHeaderRow = new LinkedHashSet<>(headerRow);
+		if(uniqueHeaderRow.size() < headerRow.size()){
+			Set<String> duplicateHeaderCells = new LinkedHashSet<>();
+
+			for(int column = 0; column < headerRow.size(); column++){
+				String headerCell = headerRow.get(column);
+
+				if(Collections.frequency(headerRow, headerCell) != 1){
+					duplicateHeaderCells.add(headerCell);
+				}
+			}
+
+			if(!duplicateHeaderCells.isEmpty()){
+				throw new IllegalArgumentException("Expected unique cell names, got non-unique cell name(s) " + duplicateHeaderCells);
+			}
+		}
+
+		for(int row = 1; row < table.size(); row++){
+			List<String> bodyRow = table.get(row);
+
+			if(headerRow.size() != bodyRow.size()){
+				throw new IllegalArgumentException("Expected " + headerRow.size() + " cells, got " + bodyRow.size() + " cells (data record " + (row - 1) + ")");
+			}
+
+			Map<String, V> record = new LinkedHashMap<>();
+
+			for(int column = 0; column < headerRow.size(); column++){
+				String fieldName = headerRow.get(column);
+				V value = parseFunction.apply(bodyRow.get(column));
+
+				record.put(fieldName, value);
+			}
+
+			records.add(record);
+		}
+
+		return records;
+	}
+
+	static
+	public Table fromRecords(String separator, List<String> fieldNames, List<? extends Map<String, ?>> records, Function<Object, String> formatFunction){
+		Table table = new Table(1 + records.size());
+		table.setSeparator(separator);
+
+		List<String> headerRow = new ArrayList<>(fieldNames.size());
+
+		for(String fieldName : fieldNames){
+			headerRow.add(fieldName != null ? fieldName : "(null)");
+		}
+
+		table.add(headerRow);
+
+		for(Map<String, ?> record : records){
+			List<String> bodyRow = new ArrayList<>(fieldNames.size());
+
+			for(String fieldName : fieldNames){
+				Object value = record.get(fieldName);
+
+				bodyRow.add(formatFunction.apply(value));
+			}
+
+			table.add(bodyRow);
+		}
+
+		return table;
+	}
+
+	static
 	private String getSeparator(String line){
 		String[] separators = {"\t", ";", ","};
 
@@ -115,7 +194,11 @@ public class CsvUtil {
 
 
 		public Table(){
-			super(1024);
+			this(1024);
+		}
+
+		public Table(int initialCapacity){
+			super(initialCapacity);
 		}
 
 		public String getSeparator(){

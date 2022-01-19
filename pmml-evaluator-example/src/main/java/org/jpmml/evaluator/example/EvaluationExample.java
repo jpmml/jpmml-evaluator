@@ -60,7 +60,6 @@ import org.jpmml.evaluator.OutputFilters;
 import org.jpmml.evaluator.ResultField;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.ValueFactoryFactory;
-import org.jpmml.evaluator.testing.BatchUtil;
 import org.jpmml.evaluator.testing.CsvUtil;
 import org.jpmml.evaluator.visitors.AttributeFinalizerBattery;
 import org.jpmml.evaluator.visitors.AttributeInternerBattery;
@@ -272,7 +271,7 @@ public class EvaluationExample extends Example {
 
 		CsvUtil.Table inputTable = readTable(this.input, this.separator);
 
-		List<? extends Map<String, ?>> inputRecords = BatchUtil.parseRecords(inputTable, createCellParser(!this.missingValues.isEmpty() ? new HashSet<>(this.missingValues) : null));
+		List<? extends Map<String, ?>> inputRecords = CsvUtil.toRecords(inputTable, createCellParser(!this.missingValues.isEmpty() ? new HashSet<>(this.missingValues) : null));
 
 		if(this.waitBeforeInit){
 			waitForUserInput();
@@ -444,16 +443,15 @@ public class EvaluationExample extends Example {
 
 		List<? extends ResultField> resultFields = Lists.newArrayList(Iterables.concat(targetFields, outputFields));
 
-		CsvUtil.Table outputTable = new CsvUtil.Table();
-		outputTable.setSeparator(inputTable.getSeparator());
-
 		List<String> columns = new ArrayList<>(Lists.transform(resultFields, ResultField::getName));
 
 		if(errorColumn != null){
 			columns.add(errorColumn);
 		}
 
-		outputTable.addAll(BatchUtil.formatRecords(outputRecords, columns, createCellFormatter(outputTable.getSeparator(), !this.missingValues.isEmpty() ? this.missingValues.get(0) : null)));
+		String separator = inputTable.getSeparator();
+
+		CsvUtil.Table outputTable = CsvUtil.fromRecords(separator, columns, outputRecords, createCellFormatter(separator, !this.missingValues.isEmpty() ? this.missingValues.get(0) : null));
 
 		if((inputTable.size() == outputTable.size()) && this.copyColumns){
 

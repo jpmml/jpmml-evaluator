@@ -19,13 +19,10 @@
 package org.jpmml.evaluator.testing;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
@@ -112,75 +109,5 @@ public class BatchUtil {
 		}
 
 		return conflicts;
-	}
-
-	static
-	public List<Map<String, String>> parseRecords(List<List<String>> table, Function<String, String> function){
-		List<Map<String, String>> records = new ArrayList<>(table.size() - 1);
-
-		List<String> headerRow = table.get(0);
-
-		Set<String> uniqueHeaderRow = new LinkedHashSet<>(headerRow);
-		if(uniqueHeaderRow.size() < headerRow.size()){
-			Set<String> duplicateHeaderCells = new LinkedHashSet<>();
-
-			for(int column = 0; column < headerRow.size(); column++){
-				String headerCell = headerRow.get(column);
-
-				if(Collections.frequency(headerRow, headerCell) != 1){
-					duplicateHeaderCells.add(headerCell);
-				}
-			}
-
-			if(!duplicateHeaderCells.isEmpty()){
-				throw new IllegalArgumentException("Expected unique cell names, got non-unique cell name(s) " + duplicateHeaderCells);
-			}
-		}
-
-		for(int row = 1; row < table.size(); row++){
-			List<String> bodyRow = table.get(row);
-
-			if(headerRow.size() != bodyRow.size()){
-				throw new IllegalArgumentException("Expected " + headerRow.size() + " cells, got " + bodyRow.size() + " cells (data record " + (row - 1) + ")");
-			}
-
-			Map<String, String> record = new LinkedHashMap<>();
-
-			for(int column = 0; column < headerRow.size(); column++){
-				String name = headerRow.get(column);
-				String value = function.apply(bodyRow.get(column));
-
-				record.put(name, value);
-			}
-
-			records.add(record);
-		}
-
-		return records;
-	}
-
-	static
-	public List<List<String>> formatRecords(List<Map<String, ?>> records, List<String> names, Function<Object, String> function){
-		List<List<String>> table = new ArrayList<>(1 + records.size());
-
-		List<String> headerRow = new ArrayList<>(names.size());
-
-		for(String name : names){
-			headerRow.add(name != null ? name : "(null)");
-		}
-
-		table.add(headerRow);
-
-		for(Map<String, ?> record : records){
-			List<String> bodyRow = new ArrayList<>(names.size());
-
-			for(String name : names){
-				bodyRow.add(function.apply(record.get(name)));
-			}
-
-			table.add(bodyRow);
-		}
-
-		return table;
 	}
 }
