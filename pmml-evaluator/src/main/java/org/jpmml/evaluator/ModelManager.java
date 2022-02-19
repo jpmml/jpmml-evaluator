@@ -50,6 +50,7 @@ import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
+import org.jpmml.model.UnsupportedElementException;
 import org.jpmml.model.visitors.FieldResolver;
 
 abstract

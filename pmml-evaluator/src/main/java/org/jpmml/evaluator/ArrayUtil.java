@@ -29,6 +29,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import org.dmg.pmml.Array;
 import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.UnsupportedAttributeException;
 
 public class ArrayUtil {
 

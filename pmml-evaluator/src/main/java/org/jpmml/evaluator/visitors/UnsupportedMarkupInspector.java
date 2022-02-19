@@ -18,8 +18,11 @@
  */
 package org.jpmml.evaluator.visitors;
 
+import java.util.List;
+
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
+import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.Lag;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Matrix;
@@ -39,6 +42,7 @@ import org.dmg.pmml.clustering.ClusteringModel;
 import org.dmg.pmml.gaussian_process.GaussianProcessModel;
 import org.dmg.pmml.general_regression.Categories;
 import org.dmg.pmml.general_regression.Predictor;
+import org.dmg.pmml.mining.MiningModel;
 import org.dmg.pmml.mining.Segmentation;
 import org.dmg.pmml.regression.Regression;
 import org.dmg.pmml.sequence.SequenceModel;
@@ -46,10 +50,12 @@ import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
 import org.dmg.pmml.text.TextModel;
 import org.dmg.pmml.time_series.TimeSeriesModel;
 import org.dmg.pmml.tree.DecisionTree;
+import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
-import org.jpmml.evaluator.UnsupportedAttributeException;
-import org.jpmml.evaluator.UnsupportedElementException;
-import org.jpmml.evaluator.UnsupportedMarkupException;
+import org.jpmml.model.UnsupportedAttributeException;
+import org.jpmml.model.UnsupportedElementException;
+import org.jpmml.model.UnsupportedElementListException;
+import org.jpmml.model.UnsupportedMarkupException;
 import org.jpmml.model.visitors.MarkupInspector;
 
 /**
@@ -153,6 +159,29 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 		report(new UnsupportedElementException(lag));
 
 		return VisitorAction.SKIP;
+	}
+
+	@Override
+	public VisitorAction visit(MiningModel miningModel){
+
+		if(miningModel.hasEmbeddedModels()){
+			List<EmbeddedModel> embeddedModels = miningModel.getEmbeddedModels();
+
+			report(new UnsupportedElementListException(embeddedModels));
+		}
+
+		return super.visit(miningModel);
+	}
+
+	@Override
+	public VisitorAction visit(Node node){
+		EmbeddedModel embeddedModel = node.getEmbeddedModel();
+
+		if(embeddedModel != null){
+			report(new UnsupportedElementException(embeddedModel));
+		}
+
+		return super.visit(node);
 	}
 
 	@Override

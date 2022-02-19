@@ -39,6 +39,7 @@ import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.InvalidElementException;
 import org.jpmml.model.MissingAttributeException;
 import org.jpmml.model.PMMLException;
+import org.jpmml.model.UnsupportedAttributeException;
 
 public class TextUtil {
 

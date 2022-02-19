@@ -41,13 +41,13 @@ import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.InvalidElementException;
 import org.jpmml.model.InvalidElementListException;
+import org.jpmml.model.UnsupportedAttributeException;
 
 public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 

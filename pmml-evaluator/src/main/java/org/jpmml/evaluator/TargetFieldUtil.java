@@ -23,6 +23,7 @@ import java.util.List;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Value;
+import org.jpmml.model.UnsupportedAttributeException;
 
 public class TargetFieldUtil {
 

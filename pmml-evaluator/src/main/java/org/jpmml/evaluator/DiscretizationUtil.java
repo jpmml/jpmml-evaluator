@@ -46,6 +46,7 @@ import org.dmg.pmml.Interval;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.OpType;
 import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.UnsupportedAttributeException;
 
 public class DiscretizationUtil {
 

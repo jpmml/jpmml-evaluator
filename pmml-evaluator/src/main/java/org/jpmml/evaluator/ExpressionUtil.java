@@ -48,6 +48,8 @@ import org.dmg.pmml.ParameterField;
 import org.dmg.pmml.TextIndex;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.PMMLException;
+import org.jpmml.model.UnsupportedAttributeException;
+import org.jpmml.model.UnsupportedElementException;
 
 public class ExpressionUtil {
 

@@ -42,12 +42,12 @@ import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UndefinedResultException;
-import org.jpmml.evaluator.UnsupportedAttributeException;
-import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.UnsupportedAttributeException;
+import org.jpmml.model.UnsupportedElementException;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements HasNodeRegistry {

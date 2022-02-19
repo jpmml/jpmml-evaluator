@@ -32,10 +32,10 @@ import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
-import org.jpmml.evaluator.UnsupportedAttributeException;
-import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.annotations.Functionality;
+import org.jpmml.model.UnsupportedAttributeException;
+import org.jpmml.model.UnsupportedElementException;
 
 @Functionality (
 	value = {

@@ -43,11 +43,11 @@ import org.jpmml.evaluator.Regression;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.UndefinedResultException;
-import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.VoteAggregator;
+import org.jpmml.model.UnsupportedAttributeException;
 
 public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 

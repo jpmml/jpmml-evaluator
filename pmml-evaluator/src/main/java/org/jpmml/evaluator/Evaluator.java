@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.Model;
-import org.jpmml.model.InvalidMarkupException;
 import org.jpmml.model.MarkupException;
 
 /**
@@ -90,7 +89,7 @@ import org.jpmml.model.MarkupException;
  * <br>
  * A code block that does exception-prone work should be surrounded with two levels of try-catch statements.
  * The inner try statement should catch {@link EvaluationException} instances that indicate "local" problems, which are related to individual data records.
- * The outer try statement should catch {@link InvalidMarkupException} and {@link UnsupportedMarkupException} instances that indicate "global" problems, which are related to the class model object.
+ * The outer try statement should catch {@link MarkupException} instances that indicate "global" problems, which are related to the class model object.
  * <pre>{@code
  * try {
  *   Lis<Map<String, ?>> records = ...;

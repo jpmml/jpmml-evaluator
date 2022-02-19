@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.validation.Schema;
 
@@ -65,25 +66,25 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 	public LoadingModelEvaluatorBuilder(){
 	}
 
-	public LoadingModelEvaluatorBuilder load(File file) throws IOException, SAXException, JAXBException {
+	public LoadingModelEvaluatorBuilder load(File file) throws IOException, ParserConfigurationException, SAXException, JAXBException {
 
 		try(InputStream is = new FileInputStream(file)){
 			return load(is);
 		}
 	}
 
-	public LoadingModelEvaluatorBuilder load(File file, String modelName) throws IOException, SAXException, JAXBException {
+	public LoadingModelEvaluatorBuilder load(File file, String modelName) throws IOException, ParserConfigurationException, SAXException, JAXBException {
 
 		try(InputStream is = new FileInputStream(file)){
 			return load(is, modelName);
 		}
 	}
 
-	public LoadingModelEvaluatorBuilder load(InputStream is) throws SAXException, JAXBException {
+	public LoadingModelEvaluatorBuilder load(InputStream is) throws ParserConfigurationException, SAXException, JAXBException {
 		return load(is, (String)null);
 	}
 
-	public LoadingModelEvaluatorBuilder load(InputStream is, String modelName) throws SAXException, JAXBException {
+	public LoadingModelEvaluatorBuilder load(InputStream is, String modelName) throws ParserConfigurationException, SAXException, JAXBException {
 		Schema schema = getSchema();
 		ValidationEventHandler validationEventHandler = getValidationEventHandler();
 		List<? extends XMLFilter> filters = getFilters();

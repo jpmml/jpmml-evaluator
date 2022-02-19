@@ -213,7 +213,7 @@ Exception types:
   * Abstract class `org.jpmml.model.MarkupException`
     * Abstract class `org.jpmml.model.InvalidMarkupException`
     * Abstract class `org.jpmml.model.MissingMarkupException`
-    * Abstract class `org.jpmml.evaluator.UnsupportedMarkupException`
+    * Abstract class `org.jpmml.model.UnsupportedMarkupException`
   * Abstract class `org.jpmml.evaluator.EvaluationException`
 
 # Basic usage #

@@ -40,6 +40,8 @@ import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.True;
 import org.jpmml.model.InvalidElementListException;
 import org.jpmml.model.PMMLException;
+import org.jpmml.model.UnsupportedAttributeException;
+import org.jpmml.model.UnsupportedElementException;
 
 public class PredicateUtil {
 

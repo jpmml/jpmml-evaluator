@@ -36,6 +36,7 @@ import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutlierTreatmentMethod;
 import org.dmg.pmml.Value;
 import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.UnsupportedAttributeException;
 
 public class InputFieldUtil {
 

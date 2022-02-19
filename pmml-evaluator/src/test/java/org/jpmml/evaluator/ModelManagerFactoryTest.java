@@ -29,6 +29,7 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.model.MissingMarkupException;
+import org.jpmml.model.UnsupportedAttributeException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

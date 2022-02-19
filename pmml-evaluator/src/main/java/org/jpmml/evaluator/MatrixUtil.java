@@ -27,6 +27,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.MatCell;
 import org.dmg.pmml.Matrix;
 import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.UnsupportedAttributeException;
 
 public class MatrixUtil {
 

@@ -29,6 +29,7 @@ import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Value;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.ReflectionUtil;
+import org.jpmml.model.UnsupportedAttributeException;
 
 public class RichDerivedField extends DerivedField implements ValueStatusHolder {
 

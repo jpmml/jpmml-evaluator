@@ -28,6 +28,7 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Value;
 import org.jpmml.model.ReflectionUtil;
+import org.jpmml.model.UnsupportedAttributeException;
 
 public class RichDataField extends DataField implements ValueStatusHolder {
 

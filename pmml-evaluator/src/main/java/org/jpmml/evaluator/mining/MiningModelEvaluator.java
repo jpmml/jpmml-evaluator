@@ -74,8 +74,6 @@ import org.jpmml.evaluator.Regression;
 import org.jpmml.evaluator.SyntheticTargetField;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.UnsupportedAttributeException;
-import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
@@ -83,6 +81,9 @@ import org.jpmml.evaluator.ValueUtil;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.InvalidElementException;
 import org.jpmml.model.PMMLException;
+import org.jpmml.model.UnsupportedAttributeException;
+import org.jpmml.model.UnsupportedElementException;
+import org.jpmml.model.UnsupportedElementListException;
 import org.jpmml.model.XPathUtil;
 
 public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements HasEntityRegistry<Segment> {
@@ -107,9 +108,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		if(miningModel.hasEmbeddedModels()){
 			List<EmbeddedModel> embeddedModels = miningModel.getEmbeddedModels();
 
-			EmbeddedModel embeddedModel = Iterables.getFirst(embeddedModels, null);
-
-			throw new UnsupportedElementException(embeddedModel);
+			throw new UnsupportedElementListException(embeddedModels);
 		}
 
 		Segmentation segmentation = miningModel.requireSegmentation();

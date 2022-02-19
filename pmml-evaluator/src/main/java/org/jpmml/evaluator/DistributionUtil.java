@@ -25,6 +25,7 @@ import org.dmg.pmml.GaussianDistribution;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PoissonDistribution;
 import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.UnsupportedElementException;
 
 public class DistributionUtil {
 

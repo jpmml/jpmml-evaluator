@@ -38,6 +38,8 @@ import org.dmg.pmml.SquaredEuclidean;
 import org.dmg.pmml.Tanimoto;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.UnsupportedAttributeException;
+import org.jpmml.model.UnsupportedElementException;
 
 public class MeasureUtil {
 

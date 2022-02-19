@@ -52,6 +52,7 @@ import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.UnsupportedAttributeException;
 
 /**
  * @see ModelEvaluatorBuilder

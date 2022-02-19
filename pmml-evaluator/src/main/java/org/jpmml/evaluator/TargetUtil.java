@@ -26,6 +26,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.TargetValue;
 import org.jpmml.model.InvalidElementListException;
+import org.jpmml.model.UnsupportedAttributeException;
 
 public class TargetUtil {
 

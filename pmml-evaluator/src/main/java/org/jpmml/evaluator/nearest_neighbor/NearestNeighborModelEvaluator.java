@@ -91,8 +91,6 @@ import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeInfo;
 import org.jpmml.evaluator.TypeInfos;
 import org.jpmml.evaluator.TypeUtil;
-import org.jpmml.evaluator.UnsupportedAttributeException;
-import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueAggregator;
 import org.jpmml.evaluator.ValueFactory;
@@ -101,6 +99,8 @@ import org.jpmml.evaluator.VoteAggregator;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.InvalidElementException;
 import org.jpmml.model.MissingAttributeException;
+import org.jpmml.model.UnsupportedAttributeException;
+import org.jpmml.model.UnsupportedElementException;
 import org.jpmml.model.visitors.ActiveFieldFinder;
 
 public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighborModel> {

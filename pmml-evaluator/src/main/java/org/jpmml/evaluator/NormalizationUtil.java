@@ -24,6 +24,7 @@ import org.dmg.pmml.LinearNorm;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.OutlierTreatmentMethod;
 import org.jpmml.model.InvalidElementListException;
+import org.jpmml.model.UnsupportedAttributeException;
 
 public class NormalizationUtil {
 

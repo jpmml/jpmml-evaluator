@@ -447,6 +447,36 @@ public class ExpressionUtilTest {
 	}
 
 	@Test
+	public void evaluateToMissingValue(){
+		Constant falseConstant = new Constant(false)
+			.setDataType(DataType.BOOLEAN);
+
+		Apply apply = new Apply(PMMLFunctions.IF)
+			.addExpressions(falseConstant, falseConstant);
+
+		assertEquals(null, evaluate(apply));
+
+		Constant integerOne = new Constant("1");
+		Constant integerZero = new Constant("0");
+
+		apply = new Apply(PMMLFunctions.DIVIDE)
+			.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING)
+			.addExpressions(integerOne, integerZero);
+
+		assertEquals(null, evaluate(apply));
+
+		integerOne
+			.setValue(1)
+			.setDataType(DataType.INTEGER);
+
+		integerZero
+			.setValue(0)
+			.setDataType(DataType.INTEGER);
+
+		assertEquals(null, evaluate(apply));
+	}
+
+	@Test
 	public void evaluateAggregateArithmetic(){
 		List<Integer> values = Arrays.asList(1, 2, 3);
 

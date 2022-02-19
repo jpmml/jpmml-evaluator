@@ -23,9 +23,9 @@ import org.dmg.pmml.support_vector_machine.LinearKernel;
 import org.dmg.pmml.support_vector_machine.PolynomialKernel;
 import org.dmg.pmml.support_vector_machine.RadialBasisKernel;
 import org.dmg.pmml.support_vector_machine.SigmoidKernel;
-import org.jpmml.evaluator.UnsupportedElementException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.model.UnsupportedElementException;
 
 public class KernelUtil {
 

@@ -29,18 +29,6 @@
 			<artifactId>pmml-model</artifactId>
 		</dependency>
 
-		<!-- Jakarta XML Binding and Jackson annotations for the Javadoc tool -->
-		<dependency>
-			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-model-metro</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jpmml</groupId>
-			<artifactId>pmml-model-jackson</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
@@ -55,6 +43,12 @@
 			<groupId>org.codehaus.mojo</groupId>
 			<artifactId>animal-sniffer-annotations</artifactId>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jpmml</groupId>
+			<artifactId>pmml-model-metro</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>

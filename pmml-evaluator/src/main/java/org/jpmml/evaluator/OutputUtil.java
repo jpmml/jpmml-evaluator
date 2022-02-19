@@ -50,6 +50,8 @@ import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.InvalidElementException;
 import org.jpmml.model.MisplacedAttributeException;
 import org.jpmml.model.MissingAttributeException;
+import org.jpmml.model.UnsupportedAttributeException;
+import org.jpmml.model.UnsupportedElementException;
 
 public class OutputUtil {
 

@@ -29,6 +29,7 @@ import org.dmg.pmml.Field;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.OutputField;
 import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
+import org.jpmml.model.UnsupportedAttributeException;
 
 public class ModelEvaluationContext extends EvaluationContext {
 

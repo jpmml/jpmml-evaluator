@@ -33,6 +33,8 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.ResultFeature;
 import org.jpmml.evaluator.annotations.Functionality;
 import org.jpmml.model.PMMLException;
+import org.jpmml.model.UnsupportedElementException;
+import org.jpmml.model.UnsupportedMarkupException;
 
 abstract
 public class ModelManagerFactory<S extends ModelManager<?>> extends ServiceFactory<Model, S> {

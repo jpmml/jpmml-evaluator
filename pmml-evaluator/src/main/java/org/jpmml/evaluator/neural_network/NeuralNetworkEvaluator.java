@@ -65,7 +65,6 @@ import org.jpmml.evaluator.Numbers;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
-import org.jpmml.evaluator.UnsupportedAttributeException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
@@ -74,6 +73,7 @@ import org.jpmml.model.InvalidElementException;
 import org.jpmml.model.InvalidElementListException;
 import org.jpmml.model.MisplacedElementException;
 import org.jpmml.model.MissingAttributeException;
+import org.jpmml.model.UnsupportedAttributeException;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implements HasEntityRegistry<NeuralEntity> {

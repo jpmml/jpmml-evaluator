@@ -24,7 +24,7 @@ import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.tree.DecisionTree;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
-import org.jpmml.evaluator.UnsupportedElementException;
+import org.jpmml.model.UnsupportedElementException;
 import org.jpmml.model.visitors.AbstractVisitor;
 
 public class NodeResolver extends AbstractVisitor {
