@@ -27,7 +27,7 @@ import org.jpmml.evaluator.ComplexDoubleVector;
 import org.jpmml.evaluator.DoubleVector;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.FunctionException;
+import org.jpmml.evaluator.InvalidArgumentException;
 import org.jpmml.evaluator.TypeInfos;
 import org.jpmml.evaluator.TypeUtil;
 
@@ -60,7 +60,7 @@ public class PercentileFunction extends BinaryFunction {
 	public Double evaluate(Collection<?> values, int percentile){
 
 		if(percentile < 1 || percentile > 100){
-			throw new FunctionException(this, "Invalid \"percentile\" value " + percentile + ". Must be greater than 0 and equal or less than 100");
+			throw new InvalidArgumentException(this, InvalidArgumentException.formatMessage(this, "percentile", percentile) + ". Must be greater than 0, and less than or equal to 100");
 		}
 
 		DoubleVector doubleValues = new ComplexDoubleVector(values.size());

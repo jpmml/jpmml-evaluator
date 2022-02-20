@@ -512,11 +512,11 @@ public interface Functions {
 		public String evaluate(String string, int position, int length){
 
 			if(position < 1){
-				throw new FunctionException(this, "Invalid \"startPos\" value " + position + ". Must be equal or greater than 1");
+				throw new InvalidArgumentException(this, InvalidArgumentException.formatMessage(this, "startPos", position) + ". Must be equal to or greater than 1");
 			} // End if
 
 			if(length < 0){
-				throw new FunctionException(this, "Invalid \"length\" value " + length);
+				throw new InvalidArgumentException(this, InvalidArgumentException.formatMessage(this, "length", length));
 			}
 
 			// "The first character of a string is located at position 1 (not position 0)"
@@ -614,7 +614,7 @@ public interface Functions {
 			try {
 				return String.format(pattern, input);
 			} catch(IllegalFormatException ife){
-				throw new FunctionException(this, "Invalid \"pattern\" value")
+				throw new InvalidArgumentException(this, InvalidArgumentException.formatMessage(this, "pattern", pattern))
 					.initCause(ife);
 			}
 		}
@@ -635,7 +635,7 @@ public interface Functions {
 			try {
 				return input.format(pattern);
 			} catch(IllegalFormatException ife){
-				throw new FunctionException(this, "Invalid \"pattern\" value")
+				throw new InvalidArgumentException(this, InvalidArgumentException.formatMessage(this, "pattern", pattern))
 					.initCause(ife);
 			}
 		}

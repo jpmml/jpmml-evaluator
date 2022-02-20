@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2022 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,32 +18,9 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Objects;
+public class InvalidArgumentListException extends FunctionException {
 
-/**
- * <p>
- * Thrown to indicate an incorrect function invocation.
- * </p>
- *
- * @see Function
- */
-abstract
-public class FunctionException extends EvaluationException {
-
-	private Function function = null;
-
-
-	public FunctionException(Function function, String message){
-		super(message);
-
-		setFunction(function);
-	}
-
-	public Function getFunction(){
-		return this.function;
-	}
-
-	private void setFunction(Function function){
-		this.function = Objects.requireNonNull(function);
+	public InvalidArgumentListException(Function function, String message){
+		super(function, message);
 	}
 }

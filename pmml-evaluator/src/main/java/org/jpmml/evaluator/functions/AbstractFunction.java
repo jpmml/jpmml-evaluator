@@ -26,6 +26,8 @@ import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.Function;
 import org.jpmml.evaluator.FunctionException;
+import org.jpmml.evaluator.InvalidArgumentListException;
+import org.jpmml.evaluator.MissingArgumentException;
 
 abstract
 public class AbstractFunction implements Function {
@@ -47,21 +49,21 @@ public class AbstractFunction implements Function {
 	protected void checkFixedArityArguments(List<FieldValue> arguments, int arity){
 
 		if(arguments.size() != arity){
-			throw new FunctionException(this, "Expected " + arity + " values, got " + arguments.size() + " values");
+			throw new InvalidArgumentListException(this, "Function " + EvaluationException.formatName(getName()) + " expects " + arity + " values, got " + arguments.size() + " values");
 		}
 	}
 
 	protected void checkVariableArityArguments(List<FieldValue> arguments, int minArity){
 
 		if(arguments.size() < minArity){
-			throw new FunctionException(this, "Expected " + minArity + " or more values, got " + arguments.size() + " values");
+			throw new InvalidArgumentListException(this, "Function " + EvaluationException.formatName(getName()) + " expects " + minArity + " or more values, got " + arguments.size() + " values");
 		}
 	}
 
 	protected void checkVariableArityArguments(List<FieldValue> arguments, int minArity, int maxArity){
 
 		if(arguments.size() < minArity || arguments.size() > maxArity){
-			throw new FunctionException(this, "Expected " + minArity + " to " + maxArity + " values, got " + arguments.size() + " values");
+			throw new InvalidArgumentListException(this, "Function " + EvaluationException.formatName(getName()) + " expects " + minArity + " to " + maxArity + " values, got " + arguments.size() + " values");
  		}
  	}
 
@@ -92,11 +94,11 @@ public class AbstractFunction implements Function {
 			} // End if
 
 			if(alias != null){
-				throw new FunctionException(this, "Missing " + EvaluationException.formatKey(alias) + " value at position " + index);
+				throw new MissingArgumentException(this, MissingArgumentException.formatMessage(this, "missing " + FunctionException.formatKey(alias) + " value at position " + index));
 			} else
 
 			{
-				throw new FunctionException(this, "Missing value at position " + index);
+				throw new MissingArgumentException(this, MissingArgumentException.formatMessage(this, "missing value at position " + index));
 			}
 		}
 
