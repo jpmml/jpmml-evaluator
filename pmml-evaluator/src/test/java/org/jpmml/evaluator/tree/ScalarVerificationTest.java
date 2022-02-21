@@ -53,6 +53,7 @@ public class ScalarVerificationTest extends ModelEvaluatorTest {
 	}
 
 	@Test
+	@SuppressWarnings("deprecation")
 	public void verifyMapped() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 

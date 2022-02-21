@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -81,8 +82,10 @@ public class FunctionRegistry {
 			Function function;
 
 			try {
-				function = (Function)functionClazz.newInstance();
-			} catch(IllegalAccessException | InstantiationException | ExceptionInInitializerError e){
+				Constructor<?> constructor = functionClazz.getDeclaredConstructor();
+
+				function = (Function)constructor.newInstance();
+			} catch(ReflectiveOperationException | ExceptionInInitializerError e){
 				throw new EvaluationException("Function class " + EvaluationException.formatName(functionClazz.getName()) + " could not be instantiated")
 					.initCause(e);
 			}

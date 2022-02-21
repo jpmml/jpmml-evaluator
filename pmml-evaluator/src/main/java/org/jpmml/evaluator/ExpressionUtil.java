@@ -471,9 +471,7 @@ public class ExpressionUtil {
 		throw new EvaluationException("Function " + EvaluationException.formatName(name) + " is not defined");
 	}
 
-	@SuppressWarnings (
-		value = {"unchecked"}
-	)
+	@SuppressWarnings("unchecked")
 	static
 	public FieldValue evaluateAggregate(Aggregate aggregate, EvaluationContext context){
 		FieldValue value = context.evaluate(aggregate.requireField());

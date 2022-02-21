@@ -38,27 +38,21 @@ class ParameterOrderComparator implements Comparator<ParameterDescription> {
 		return (left.getLongestName()).compareToIgnoreCase(right.getLongestName());
 	}
 
+	@SuppressWarnings("deprecation")
 	private int getParameterOrder(ParameterDescription parameterDescription){
-		Field field;
-
-		try {
-			field = Parameterized.class.getDeclaredField("field");
-		} catch(NoSuchFieldException nsfe){
-			throw new RuntimeException(nsfe);
-		}
-
 		Field parameterField;
 
 		try {
 			Parameterized parameterized = parameterDescription.getParameterized();
 
-			if(!field.isAccessible()){
-				field.setAccessible(true);
+			Field fieldField = Parameterized.class.getDeclaredField("field");
+			if(!fieldField.isAccessible()){
+				fieldField.setAccessible(true);
 			}
 
-			parameterField = (Field)field.get(parameterized);
-		} catch(IllegalAccessException iae){
-			throw new RuntimeException(iae);
+			parameterField = (Field)fieldField.get(parameterized);
+		} catch(ReflectiveOperationException roe){
+			throw new RuntimeException(roe);
 		}
 
 		if(parameterField != null){

@@ -57,9 +57,6 @@ import org.jpmml.model.UnsupportedAttributeException;
 /**
  * @see ModelEvaluatorBuilder
  */
-@SuppressWarnings (
-	value = {"unused"}
-)
 abstract
 public class ModelEvaluator<M extends Model> extends ModelManager<M> implements Evaluator {
 

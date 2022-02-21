@@ -44,9 +44,7 @@ public class SparseArrayUtil {
 	private SparseArrayUtil(){
 	}
 
-	@SuppressWarnings (
-		value = {"unchecked"}
-	)
+	@SuppressWarnings("unchecked")
 	static
 	public <E extends Number> SortedMap<Integer, E> getContent(SparseArray<E> sparseArray){
 		return (SortedMap<Integer, E>)CacheUtil.getValue(sparseArray, SparseArrayUtil.contentCache);

@@ -47,9 +47,7 @@ public class SegmentResult extends ForwardingMap<String, Object> implements HasE
 	protected ModelEvaluator<?> getModelEvaluator();
 
 	@Override
-	@SuppressWarnings (
-		value = {"rawtypes", "unchecked"}
-	)
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	public Map<String, Object> delegate(){
 		Map<String, ?> results = getResults();
 

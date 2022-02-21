@@ -820,9 +820,7 @@ public class OutputUtil {
 		return ordering.sortedCopy(associationRules);
 	}
 
-	@SuppressWarnings (
-		value = {"unchecked"}
-	)
+	@SuppressWarnings("unchecked")
 	static
 	private Object getRuleFeature(HasRuleValues hasRuleValues, AssociationRule associationRule, OutputField outputField, OutputField.RuleFeature ruleFeature){
 
