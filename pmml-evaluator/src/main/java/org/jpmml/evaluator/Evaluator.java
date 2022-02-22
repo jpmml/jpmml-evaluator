@@ -30,12 +30,12 @@ import org.jpmml.model.MarkupException;
  * </p>
  *
  * <strong>Building and verifying an Evaluator instance</strong>
- * <pre>
- * PMML pmml = ...;
- * EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml);
+ * <pre>{@code
+ * EvaluatorBuilder evaluatorBuilder = new LoadingModelEvaluatorBuilder()
+ *   .load(new File("model.pmml"));
  * Evaluator evaluator = evaluatorBuilder.build();
  * evaluator.verify();
- * </pre>
+ * }</pre>
  *
  * <strong>Preparing arguments</strong>
  * <br>
@@ -69,12 +69,12 @@ import org.jpmml.model.MarkupException;
  * }</pre>
  *
  * Decoding a {@link Computable complex value} to a Java primitive value:
- * <pre>
+ * <pre>{@code
  * if(targetValue instanceof Computable){
  *   Computable computable = (Computable)targetValue;
  *   targetValue = computable.getResult();
  * }
- * </pre>
+ * }</pre>
  *
  * Retrieving the values of {@link #getOutputFields() output fields} (ie. secondary results):
  * <pre>{@code

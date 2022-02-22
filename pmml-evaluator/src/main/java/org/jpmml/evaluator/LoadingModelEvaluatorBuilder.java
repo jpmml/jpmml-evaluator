@@ -50,6 +50,52 @@ import org.jpmml.model.visitors.VisitorBattery;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLFilter;
 
+/**
+ * <p>
+ * Builds a {@link ModelEvaluator} based on a PMML XML input stream.
+ * </p>
+ *
+ * <strong>Init sequence</strong>
+ * <ol>
+ *   <li>Create a new, or clone an existing object.</li>
+ *   <li>Perform {@link ModelEvaluatorBuilder}-level (ie. parent level) configuration work.
+ *   For example, specify the mapping between model and application schemas.</li>
+ *   <li>Perform {@link LoadingModelEvaluatorBuilder}-level configuration work.
+ *   For example, specify if XML meta-information should be collected and exposed.</li>
+ *   <li>Load the PMML XML input stream into an in-memory class model object.</li>
+ *   <li>Transform the in-memory class model object.
+ *   For example, customize model business logic.</li>
+ *   <li>Build.</li>
+ * </ol>
+ *
+ * <p>
+ * Configuration changes typically have no effect after the class model object has been loaded.
+ * </p>
+ *
+ * <strong>Simple example</strong>
+ * <pre>{@code
+ * Evaluator evaluator = new LoadingModelEvaluatorBuilder()
+ *   .load(new File("model.pmml"))
+ *   .build();
+ * }</pre>
+ *
+ * <strong>Complex example</strong>
+ * <pre>{@code
+ * LoadingModelEvaluatorBuilder evaluatorBuilder = new LoadingModelEvaluatorBuilder()
+ *   .setOutputFilter(OutputFilters.KEEP_FINAL_RESULTS)
+ *   .setLocatable(false);
+ *
+ * Evaluator firstEvaluator = evaluatorBuilder
+ *   .load(new File("model-001.pmml"))
+ *   .build();
+ *
+ * Evaluator secondEvaluator = evaluatorBuilder
+ *   .setMutable(true)
+ *   .load(new File("model-002.pmml"))
+ *   .transform(pmml -> transpile(pmml))
+ *   .build();
+ * }</pre>
+ */
 public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 
 	private Schema schema = null;
