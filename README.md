@@ -93,25 +93,10 @@ JPMML-Evaluator library JAR files (together with accompanying Java source and Ja
 
 The current version is **1.6.2** (19 January, 2022).
 
-### Java SE 8 ###
+The main component of JPMML-Evaluator is `org.jpmml:pmml-evaluator`.
+However, in most application scenarios, this component is not included directly, but via a data format-specific runtime component(s) `org.jpmml:pmml-evaluator-${runtime}` that handle the loading and storage of PMML class model objects.
 
-Java SE 8 provides a JAXB runtime.
-
-```xml
-<dependency>
-	<groupId>org.jpmml</groupId>
-	<artifactId>pmml-evaluator</artifactId>
-	<version>1.6.2</version>
-</dependency>
-```
-
-### Java SE 9 and newer ###
-
-Java SE 9 and newer do not provide a JAXB runtime.
-
-A standalone application needs to be packaged with full JAXB API and implementation classes. An embedded application should consult with the intended application container regarding the availability of JAXB classes, and fill the gaps, if any.
-
-Using JPMML-Evaluator with [GlassFish Metro](https://metro.java.net) JAXB runtime (XML only):
+The recommended data format for PMML documents is XML, and the recommended implementation is [Jakarta XML Binding](https://eclipse-ee4j.github.io/jaxb-ri/) via the [Glassfish Metro](https://metro.java.net) JAXB runtime:
 
 ```xml
 <dependency>
@@ -121,15 +106,15 @@ Using JPMML-Evaluator with [GlassFish Metro](https://metro.java.net) JAXB runtim
 </dependency>
 ```
 
-Alternatively, using JPMML-Evaluator with [EclipseLink MOXy](https://www.eclipse.org/eclipselink) JAXB runtime (XML and JSON):
+Available components:
 
-```xml
-<dependency>
-	<groupId>org.jpmml</groupId>
-	<artifactId>pmml-evaluator-moxy</artifactId>
-	<version>1.6.2</version>
-</dependency>
-```
+| Component | Data format(s) |
+| --- | --- |
+| `org.jpmml:pmml-evaluator` | [Java serialization](https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html) |
+| `org.jpmml:pmml-evaluator-jackson`| JSON, YAML, TOML etc. via the [FasterXML Jackson](https://github.com/FasterXML/jackson) suite |
+| `org.jpmml:pmml-evaluator-kryo` | [Kryo serialization](https://github.com/EsotericSoftware/kryo) |
+| `org.jpmml:pmml-evaluator-metro` | XML via the [GlassFish Metro](https://metro.java.net) JAXB runtime |
+| `org.jpmml:pmml-evaluator-moxy` | JSON and XML via the [EclipseLink MOXy](https://www.eclipse.org/eclipselink) JAXB runtime |
 
 # API #
 
