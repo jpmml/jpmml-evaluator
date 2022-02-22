@@ -28,9 +28,9 @@ import org.jpmml.model.visitors.VisitorBattery;
  *
  * @see LoadingModelEvaluatorBuilder#setVisitors(VisitorBattery)
  */
-public class DefaultModelEvaluatorBattery extends VisitorBattery {
+public class ModelEvaluatorVisitorBattery extends VisitorBattery {
 
-	public DefaultModelEvaluatorBattery(){
+	public ModelEvaluatorVisitorBattery(){
 		// Convert PMML attributes and elements from their original representation to optimized representation.
 		// The optimization pass should improve performance
 		addAll(new AttributeOptimizerBattery());

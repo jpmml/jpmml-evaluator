@@ -24,7 +24,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
+import org.jpmml.evaluator.visitors.ModelEvaluatorVisitorBattery;
 import org.jpmml.model.SerializationUtil;
+import org.jpmml.model.visitors.ArrayListTransformer;
+import org.jpmml.model.visitors.VisitorBattery;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -74,8 +77,16 @@ public class ModelEvaluatorTest {
 
 	static
 	private LoadingModelEvaluatorBuilder createLoadingModelEvaluatorBuilder(Configuration configuration){
+		VisitorBattery visitorBattery = new ModelEvaluatorVisitorBattery(){
+
+			{
+				// Keep element lists mutable
+				remove(ArrayListTransformer.class);
+			}
+		};
+
 		ModelEvaluatorBuilder modelEvaluatorBuilder = new LoadingModelEvaluatorBuilder()
-			.setVisitors(new TestModelEvaluatorBattery())
+			.setVisitors(visitorBattery)
 			.setModelEvaluatorFactory(configuration.getModelEvaluatorFactory())
 			.setValueFactoryFactory(configuration.getValueFactoryFactory())
 			.setOutputFilter(configuration.getOutputFilter())

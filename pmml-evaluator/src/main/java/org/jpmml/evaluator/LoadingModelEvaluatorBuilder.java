@@ -38,7 +38,7 @@ import org.dmg.pmml.Visitor;
 import org.dmg.pmml.adapters.NodeAdapter;
 import org.dmg.pmml.tree.NodeTransformer;
 import org.dmg.pmml.tree.SimplifyingNodeTransformer;
-import org.jpmml.evaluator.visitors.DefaultModelEvaluatorBattery;
+import org.jpmml.evaluator.visitors.ModelEvaluatorVisitorBattery;
 import org.jpmml.model.JAXBUtil;
 import org.jpmml.model.SAXUtil;
 import org.jpmml.model.filters.ImportFilter;
@@ -60,7 +60,7 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 
 	private boolean mutable = false;
 
-	private VisitorBattery visitors = new DefaultModelEvaluatorBattery();
+	private VisitorBattery visitors = new ModelEvaluatorVisitorBattery();
 
 
 	public LoadingModelEvaluatorBuilder(){
