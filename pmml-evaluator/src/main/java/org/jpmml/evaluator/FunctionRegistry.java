@@ -143,12 +143,7 @@ public class FunctionRegistry {
 		Class<?> clazz;
 
 		try {
-			Thread thread = Thread.currentThread();
-
-			ClassLoader classLoader = thread.getContextClassLoader();
-			if(classLoader == null){
-				classLoader = (FunctionRegistry.class).getClassLoader();
-			}
+			ClassLoader classLoader = (FunctionRegistry.class).getClassLoader();
 
 			clazz = classLoader.loadClass(name);
 		} catch(ClassNotFoundException cnfe){

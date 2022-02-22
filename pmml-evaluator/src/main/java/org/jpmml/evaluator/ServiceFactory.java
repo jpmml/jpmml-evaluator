@@ -82,15 +82,23 @@ public class ServiceFactory<K extends PMMLObject, S> implements Serializable {
 	public ListMultimap<Class<? extends K>, Class<? extends S>> getServiceProviderClasses() throws ClassNotFoundException, IOException {
 
 		if(this.serviceProviderClazzes == null){
+			ClassLoader clazzLoader = getClassLoader();
+
 			Class<K> keyClazz = getKeyClass();
 			Class<S> serviceClazz = getServiceClass();
 
-			List<Class<? extends S>> serviceProviderClazzes = loadServiceProviderClasses(serviceClazz);
+			List<Class<? extends S>> serviceProviderClazzes = loadServiceProviderClasses(clazzLoader, serviceClazz);
 
 			this.serviceProviderClazzes = Multimaps.index(serviceProviderClazzes, serviceProviderClazz -> getKey(keyClazz, serviceClazz, serviceProviderClazz));
 		}
 
 		return this.serviceProviderClazzes;
+	}
+
+	public ClassLoader getClassLoader(){
+		Class<?> clazz = getClass();
+
+		return clazz.getClassLoader();
 	}
 
 	public Class<K> getKeyClass(){
@@ -110,14 +118,7 @@ public class ServiceFactory<K extends PMMLObject, S> implements Serializable {
 	}
 
 	static
-	protected <S> List<Class<? extends S>> loadServiceProviderClasses(Class<S> serviceClazz) throws ClassNotFoundException, IOException {
-		Thread thread = Thread.currentThread();
-
-		ClassLoader clazzLoader = thread.getContextClassLoader();
-		if(clazzLoader == null){
-			clazzLoader = ClassLoader.getSystemClassLoader();
-		}
-
+	protected <S> List<Class<? extends S>> loadServiceProviderClasses(ClassLoader clazzLoader, Class<S> serviceClazz) throws ClassNotFoundException, IOException {
 		List<Class<? extends S>> result = new ArrayList<>();
 
 		Enumeration<URL> urls = clazzLoader.getResources("META-INF/services/" + serviceClazz.getName());
