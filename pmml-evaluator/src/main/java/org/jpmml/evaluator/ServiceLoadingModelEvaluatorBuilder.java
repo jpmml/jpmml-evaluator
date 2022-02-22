@@ -25,9 +25,11 @@ import java.net.URLClassLoader;
 import java.util.Iterator;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.ResultFeature;
 
 public class ServiceLoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 
@@ -100,5 +102,65 @@ public class ServiceLoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 		setModel(model);
 
 		return this;
+	}
+
+	@Override
+	public ServiceLoadingModelEvaluatorBuilder clone(){
+		return (ServiceLoadingModelEvaluatorBuilder)super.clone();
+	}
+
+	@Override
+	protected ServiceLoadingModelEvaluatorBuilder setPMML(PMML pmml){
+		return (ServiceLoadingModelEvaluatorBuilder)super.setPMML(pmml);
+	}
+
+	@Override
+	protected ServiceLoadingModelEvaluatorBuilder setModel(Model model){
+		return (ServiceLoadingModelEvaluatorBuilder)super.setModel(model);
+	}
+
+	@Override
+	public ServiceLoadingModelEvaluatorBuilder setModelEvaluatorFactory(ModelEvaluatorFactory modelEvaluatorFactory){
+		return (ServiceLoadingModelEvaluatorBuilder)super.setModelEvaluatorFactory(modelEvaluatorFactory);
+	}
+
+	@Override
+	public ServiceLoadingModelEvaluatorBuilder setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
+		return (ServiceLoadingModelEvaluatorBuilder)super.setValueFactoryFactory(valueFactoryFactory);
+	}
+
+	@Override
+	public ServiceLoadingModelEvaluatorBuilder setOutputFilter(OutputFilter outputFilter){
+		return (ServiceLoadingModelEvaluatorBuilder)super.setOutputFilter(outputFilter);
+	}
+
+	@Override
+	public ServiceLoadingModelEvaluatorBuilder setDerivedFieldGuard(SymbolTable<String> derivedFieldGuard){
+		return (ServiceLoadingModelEvaluatorBuilder)super.setDerivedFieldGuard(derivedFieldGuard);
+	}
+
+	@Override
+	public ServiceLoadingModelEvaluatorBuilder setFunctionGuard(SymbolTable<String> functionGuard){
+		return (ServiceLoadingModelEvaluatorBuilder)super.setFunctionGuard(functionGuard);
+	}
+
+	@Override
+	public ServiceLoadingModelEvaluatorBuilder setExtraResultFeatures(Set<ResultFeature> extraResultFeatures){
+		return (ServiceLoadingModelEvaluatorBuilder)super.setExtraResultFeatures(extraResultFeatures);
+	}
+
+	@Override
+	public ServiceLoadingModelEvaluatorBuilder setInputMapper(InputMapper inputMapper){
+		return (ServiceLoadingModelEvaluatorBuilder)super.setInputMapper(inputMapper);
+	}
+
+	@Override
+	public ServiceLoadingModelEvaluatorBuilder setResultMapper(ResultMapper resultMapper){
+		return (ServiceLoadingModelEvaluatorBuilder)super.setResultMapper(resultMapper);
+	}
+
+	@Override
+	public ServiceLoadingModelEvaluatorBuilder setCheckSchema(boolean checkSchema){
+		return (ServiceLoadingModelEvaluatorBuilder)super.setCheckSchema(checkSchema);
 	}
 }

@@ -85,14 +85,14 @@ public class ModelEvaluatorTest {
 			}
 		};
 
-		ModelEvaluatorBuilder modelEvaluatorBuilder = new LoadingModelEvaluatorBuilder()
-			.setVisitors(visitorBattery)
+		LoadingModelEvaluatorBuilder modelEvaluatorBuilder = new LoadingModelEvaluatorBuilder()
 			.setModelEvaluatorFactory(configuration.getModelEvaluatorFactory())
 			.setValueFactoryFactory(configuration.getValueFactoryFactory())
 			.setOutputFilter(configuration.getOutputFilter())
-			.setCheckSchema(false);
+			.setCheckSchema(false)
+			.setVisitors(visitorBattery);
 
-		return (LoadingModelEvaluatorBuilder)modelEvaluatorBuilder;
+		return modelEvaluatorBuilder;
 	}
 
 	static

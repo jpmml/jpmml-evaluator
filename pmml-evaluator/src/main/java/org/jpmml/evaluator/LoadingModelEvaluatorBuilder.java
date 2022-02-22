@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
@@ -34,6 +35,7 @@ import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.ValidationEventHandler;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.adapters.NodeAdapter;
 import org.dmg.pmml.tree.NodeTransformer;
@@ -156,6 +158,61 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 	@Override
 	public LoadingModelEvaluatorBuilder clone(){
 		return (LoadingModelEvaluatorBuilder)super.clone();
+	}
+
+	@Override
+	protected LoadingModelEvaluatorBuilder setPMML(PMML pmml){
+		return (LoadingModelEvaluatorBuilder)super.setPMML(pmml);
+	}
+
+	@Override
+	protected LoadingModelEvaluatorBuilder setModel(Model model){
+		return (LoadingModelEvaluatorBuilder)super.setModel(model);
+	}
+
+	@Override
+	public LoadingModelEvaluatorBuilder setModelEvaluatorFactory(ModelEvaluatorFactory modelEvaluatorFactory){
+		return (LoadingModelEvaluatorBuilder)super.setModelEvaluatorFactory(modelEvaluatorFactory);
+	}
+
+	@Override
+	public LoadingModelEvaluatorBuilder setValueFactoryFactory(ValueFactoryFactory valueFactoryFactory){
+		return (LoadingModelEvaluatorBuilder)super.setValueFactoryFactory(valueFactoryFactory);
+	}
+
+	@Override
+	public LoadingModelEvaluatorBuilder setOutputFilter(OutputFilter outputFilter){
+		return (LoadingModelEvaluatorBuilder)super.setOutputFilter(outputFilter);
+	}
+
+	@Override
+	public LoadingModelEvaluatorBuilder setDerivedFieldGuard(SymbolTable<String> derivedFieldGuard){
+		return (LoadingModelEvaluatorBuilder)super.setDerivedFieldGuard(derivedFieldGuard);
+	}
+
+	@Override
+	public LoadingModelEvaluatorBuilder setFunctionGuard(SymbolTable<String> functionGuard){
+		return (LoadingModelEvaluatorBuilder)super.setFunctionGuard(functionGuard);
+	}
+
+	@Override
+	public LoadingModelEvaluatorBuilder setExtraResultFeatures(Set<ResultFeature> extraResultFeatures){
+		return (LoadingModelEvaluatorBuilder)super.setExtraResultFeatures(extraResultFeatures);
+	}
+
+	@Override
+	public LoadingModelEvaluatorBuilder setInputMapper(InputMapper inputMapper){
+		return (LoadingModelEvaluatorBuilder)super.setInputMapper(inputMapper);
+	}
+
+	@Override
+	public LoadingModelEvaluatorBuilder setResultMapper(ResultMapper resultMapper){
+		return (LoadingModelEvaluatorBuilder)super.setResultMapper(resultMapper);
+	}
+
+	@Override
+	public LoadingModelEvaluatorBuilder setCheckSchema(boolean checkSchema){
+		return (LoadingModelEvaluatorBuilder)super.setCheckSchema(checkSchema);
 	}
 
 	public Schema getSchema(){

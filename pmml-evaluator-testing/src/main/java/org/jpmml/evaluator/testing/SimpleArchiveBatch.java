@@ -69,8 +69,9 @@ public class SimpleArchiveBatch extends ArchiveBatch {
 		LoadingModelEvaluatorBuilder evaluatorBuilder = new LoadingModelEvaluatorBuilder();
 
 		// XXX
-		evaluatorBuilder.setDerivedFieldGuard(new FieldNameSet(8));
-		evaluatorBuilder.setFunctionGuard(new FunctionNameStack(4));
+		evaluatorBuilder
+			.setDerivedFieldGuard(new FieldNameSet(8))
+			.setFunctionGuard(new FunctionNameStack(4));
 
 		try(InputStream is = open(getPmmlPath())){
 			evaluatorBuilder.load(is);
