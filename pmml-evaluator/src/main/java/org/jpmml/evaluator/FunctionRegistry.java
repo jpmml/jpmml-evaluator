@@ -143,9 +143,9 @@ public class FunctionRegistry {
 		Class<?> clazz;
 
 		try {
-			ClassLoader classLoader = (FunctionRegistry.class).getClassLoader();
+			ClassLoader clazzLoader = (FunctionRegistry.class).getClassLoader();
 
-			clazz = classLoader.loadClass(name);
+			clazz = clazzLoader.loadClass(name);
 		} catch(ClassNotFoundException cnfe){
 			return null;
 		}
