@@ -330,7 +330,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateApply(Apply apply, EvaluationContext context){
-		String mapMissingTo = apply.getMapMissingTo();
+		Object mapMissingTo = apply.getMapMissingTo();
 
 		String function = apply.requireFunction();
 		List<Expression> expressions = apply.getExpressions();
@@ -345,7 +345,7 @@ public class ExpressionUtil {
 				FieldValue flag = evaluate(expressions.get(0), context);
 
 				if(flag == null && mapMissingTo != null){
-					return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
+					return FieldValueUtil.create(mapMissingTo);
 				}
 
 				values.add(flag);
@@ -369,7 +369,7 @@ public class ExpressionUtil {
 						FieldValue trueValue = evaluate(expressions.get(1), context);
 
 						if(FieldValueUtil.isMissing(trueValue) && mapMissingTo != null){
-							return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
+							return FieldValueUtil.create(mapMissingTo);
 						}
 
 						values.add(trueValue);
@@ -389,7 +389,7 @@ public class ExpressionUtil {
 							FieldValue falseValue = evaluate(expressions.get(2), context);
 
 							if(FieldValueUtil.isMissing(falseValue) && mapMissingTo != null){
-								return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
+								return FieldValueUtil.create(mapMissingTo);
 							}
 
 							values.add(falseValue);
@@ -406,13 +406,13 @@ public class ExpressionUtil {
 
 			// "If a mapMissingTo value is specified and any of the input values of the function are missing, then the function is not applied at all and the mapMissingTo value is returned instead"
 			if(FieldValueUtil.isMissing(value) && mapMissingTo != null){
-				return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, mapMissingTo);
+				return FieldValueUtil.create(mapMissingTo);
 			}
 
 			values.add(value);
 		}
 
-		String defaultValue = apply.getDefaultValue();
+		Object defaultValue = apply.getDefaultValue();
 
 		FieldValue result;
 
@@ -435,7 +435,7 @@ public class ExpressionUtil {
 					// Re-throw the given InvalidResultException instance
 					throw ire;
 				case AS_MISSING:
-					return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, defaultValue);
+					return FieldValueUtil.create(defaultValue);
 				case AS_VALUE:
 					throw new InvalidAttributeException(apply, invalidValueTreatmentMethod);
 				default:
@@ -450,7 +450,7 @@ public class ExpressionUtil {
 
 		// "If a defaultValue value is specified and the function produced a missing value, then the defaultValue is returned"
 		if(FieldValueUtil.isMissing(result) && defaultValue != null){
-			return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, defaultValue);
+			return FieldValueUtil.create(defaultValue);
 		}
 
 		return result;

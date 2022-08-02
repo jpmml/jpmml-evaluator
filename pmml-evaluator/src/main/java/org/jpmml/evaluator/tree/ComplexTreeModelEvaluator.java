@@ -344,7 +344,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 				Number probability = scoreDistribution.requireProbability();
 
 				if(probability.doubleValue() < 0d || probability.doubleValue() > 1d){
-					throw new InvalidAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.SCOREDISTRIBUTION_PROBABILITY, probability);
+					throw new InvalidAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.COMPLEXSCOREDISTRIBUTION_PROBABILITY, probability);
 				}
 
 				sum.add(probability);

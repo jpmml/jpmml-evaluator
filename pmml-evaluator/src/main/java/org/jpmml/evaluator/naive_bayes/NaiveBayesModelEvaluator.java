@@ -116,7 +116,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 
 		String targetFieldName = bayesOutput.getTargetField();
 		if(targetFieldName != null && !Objects.equals(targetField.getFieldName(), targetFieldName)){
-			throw new InvalidAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_FIELD, targetFieldName);
+			throw new InvalidAttributeException(bayesOutput, PMMLAttributes.BAYESOUTPUT_TARGETFIELD, targetFieldName);
 		}
 
 		// Probability calculations use logarithmic scale for greater numerical stability

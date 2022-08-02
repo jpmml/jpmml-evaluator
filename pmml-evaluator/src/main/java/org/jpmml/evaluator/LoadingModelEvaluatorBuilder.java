@@ -36,8 +36,11 @@ import jakarta.xml.bind.ValidationEventHandler;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.ResultFeature;
+import org.dmg.pmml.ScoreDistributionTransformer;
+import org.dmg.pmml.SimplifyingScoreDistributionTransformer;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.adapters.NodeAdapter;
+import org.dmg.pmml.adapters.ScoreDistributionAdapter;
 import org.dmg.pmml.tree.NodeTransformer;
 import org.dmg.pmml.tree.SimplifyingNodeTransformer;
 import org.jpmml.evaluator.visitors.ModelEvaluatorVisitorBattery;
@@ -153,13 +156,16 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 		PMML pmml;
 
 		NodeTransformer defaultNodeTransformer = NodeAdapter.NODE_TRANSFORMER_PROVIDER.get();
+		ScoreDistributionTransformer defaultScoreDistributionTransformer = ScoreDistributionAdapter.SCOREDISTRIBUTION_TRANSFORMER_PROVIDER.get();
 
 		try {
 			NodeAdapter.NODE_TRANSFORMER_PROVIDER.set(mutable ? null : SimplifyingNodeTransformer.INSTANCE);
+			ScoreDistributionAdapter.SCOREDISTRIBUTION_TRANSFORMER_PROVIDER.set(mutable ? null : SimplifyingScoreDistributionTransformer.INSTANCE);
 
 			pmml = (PMML)unmarshaller.unmarshal(source);
 		} finally {
 			NodeAdapter.NODE_TRANSFORMER_PROVIDER.set(defaultNodeTransformer);
+			ScoreDistributionAdapter.SCOREDISTRIBUTION_TRANSFORMER_PROVIDER.set(defaultScoreDistributionTransformer);
 		}
 
 		Visitor locatorHandler = (locatable ? new LocatorTransformer() : new LocatorNullifier());
