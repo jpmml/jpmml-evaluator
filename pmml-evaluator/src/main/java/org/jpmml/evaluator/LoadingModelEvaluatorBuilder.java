@@ -30,6 +30,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.validation.Schema;
 
+import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.ValidationEventHandler;
@@ -101,6 +102,8 @@ import org.xml.sax.XMLFilter;
  */
 public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 
+	private JAXBContext jaxbContext = null;
+
 	private Schema schema = null;
 
 	private ValidationEventHandler validationEventHandler = null;
@@ -136,6 +139,7 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 	}
 
 	public LoadingModelEvaluatorBuilder load(InputStream is, String modelName) throws ParserConfigurationException, SAXException, JAXBException {
+		JAXBContext jaxbContext = getJAXBContext();
 		Schema schema = getSchema();
 		ValidationEventHandler validationEventHandler = getValidationEventHandler();
 		List<? extends XMLFilter> filters = getFilters();
@@ -143,7 +147,11 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 		boolean mutable = getMutable();
 		VisitorBattery visitors = getVisitors();
 
-		Unmarshaller unmarshaller = JAXBUtil.createUnmarshaller();
+		if(jaxbContext == null){
+			jaxbContext = JAXBUtil.getContext();
+		}
+
+		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 		unmarshaller.setSchema(schema);
 		unmarshaller.setEventHandler(validationEventHandler);
 
@@ -265,6 +273,19 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 	@Override
 	public LoadingModelEvaluatorBuilder setCheckSchema(boolean checkSchema){
 		return (LoadingModelEvaluatorBuilder)super.setCheckSchema(checkSchema);
+	}
+
+	public JAXBContext getJAXBContext(){
+		return this.jaxbContext;
+	}
+
+	/**
+	 * @see JAXBUtil#getObjectFactoryClasses()
+	 */
+	public LoadingModelEvaluatorBuilder setJAXBContext(JAXBContext jaxbContext){
+		this.jaxbContext = jaxbContext;
+
+		return this;
 	}
 
 	public Schema getSchema(){
