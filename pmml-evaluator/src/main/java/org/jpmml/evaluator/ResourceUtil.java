@@ -154,6 +154,44 @@ public class ResourceUtil {
 	}
 
 	static
+	public Integer[] readIntegers(DataInput dataInput, int count) throws IOException {
+		Integer[] result = new Integer[count];
+
+		for(int i = 0; i < count; i++){
+			result[i] = dataInput.readInt();
+		}
+
+		return result;
+	}
+
+	static
+	public Integer[][] readIntegerArrays(DataInput dataInput, int count, int length) throws IOException {
+		Integer[][] result = new Integer[count][length];
+
+		for(int i = 0; i < count; i++){
+			result[i] = readIntegers(dataInput, length);
+		}
+
+		return result;
+	}
+
+	static
+	public void writeIntegers(DataOutput dataOutput, Number[] numbers) throws IOException {
+
+		for(Number number : numbers){
+			dataOutput.writeInt(number.intValue());
+		}
+	}
+
+	static
+	public void writeIntegerArrays(DataOutput dataOutput, Number[][] numberArrays) throws IOException {
+
+		for(Number[] numberArray : numberArrays){
+			writeIntegers(dataOutput, numberArray);
+		}
+	}
+
+	static
 	public Double[] readDoubles(DataInput dataInput, int count) throws IOException {
 		Double[] result = new Double[count];
 

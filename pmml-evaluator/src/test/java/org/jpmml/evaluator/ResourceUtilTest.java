@@ -65,13 +65,15 @@ public class ResourceUtilTest {
 		} catch(EOFException eofe){
 			// Ignored
 		}
+
+		is.close();
 	}
 
 	@Test
 	public void readWriteStrings() throws IOException {
 		String[] values = {"a", "b", "c"};
-		String[][] valueArrays = {{"a", "a"}, {"b", "b"}, {"c", "c"}};
-		List<String>[] valueLists = new List[]{Arrays.asList("a"), Arrays.asList("b", "b"), Arrays.asList("c", "c", "c")};
+		String[][] valueArrays = {{"a", "aa"}, {"b", "bb"}, {"c", "cc"}};
+		List<String>[] valueLists = new List[]{Arrays.asList("a"), Arrays.asList("b", "bb"), Arrays.asList("c", "cc", "ccc")};
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 
@@ -87,9 +89,9 @@ public class ResourceUtilTest {
 
 		DataInput dataInput = new DataInputStream(is);
 
-		String[] clonedValues = ResourceUtil.readStrings(dataInput, 3);
-		String[][] clonedValueArrays = ResourceUtil.readStringArrays(dataInput, 3, 2);
-		List<String>[] clonedValueLists = ResourceUtil.readStringLists(dataInput, 3);
+		String[] clonedValues = ResourceUtil.readStrings(dataInput, values.length);
+		String[][] clonedValueArrays = ResourceUtil.readStringArrays(dataInput, valueArrays.length, 2);
+		List<String>[] clonedValueLists = ResourceUtil.readStringLists(dataInput, valueLists.length);
 
 		assertTrue(Arrays.equals(values, clonedValues));
 		assertTrue(Arrays.deepEquals(valueArrays, clonedValueArrays));
@@ -102,12 +104,49 @@ public class ResourceUtilTest {
 		} catch(EOFException eofe){
 			// Ignored
 		}
+
+		is.close();
+	}
+
+	@Test
+	public void readWriteIntegers() throws IOException {
+		Integer[] values = {0, 1, 2};
+		Integer[][] valueArrays = {{0, -0}, {1, -1}, {2, -2}};
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+		DataOutput dataOutput = new DataOutputStream(os);
+
+		ResourceUtil.writeIntegers(dataOutput, values);
+		ResourceUtil.writeIntegerArrays(dataOutput, valueArrays);
+
+		os.close();
+
+		ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+
+		DataInput dataInput = new DataInputStream(is);
+
+		Integer[] clonedValues = ResourceUtil.readIntegers(dataInput, values.length);
+		Integer[][] clonedValueArrays = ResourceUtil.readIntegerArrays(dataInput, valueArrays.length, 2);
+
+		assertTrue(Arrays.equals(values, clonedValues));
+		assertTrue(Arrays.deepEquals(valueArrays, clonedValueArrays));
+
+		try {
+			dataInput.readByte();
+
+			fail();
+		} catch(EOFException eofe){
+			// Ignored
+		}
+
+		is.close();
 	}
 
 	@Test
 	public void readWriteDoubles() throws IOException {
 		Double[] values = {0d, 1d, 2d};
-		Double[][] valueArrays = {{0d, 0d}, {1d, 1d}, {2d, 2d}};
+		Double[][] valueArrays = {{0.5d, -0.5d}, {1.5d, -1.5d}, {2.5d, -2.5d}};
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 
@@ -122,8 +161,8 @@ public class ResourceUtilTest {
 
 		DataInput dataInput = new DataInputStream(is);
 
-		Double[] clonedValues = ResourceUtil.readDoubles(dataInput, 3);
-		Double[][] clonedValueArrays = ResourceUtil.readDoubleArrays(dataInput, 3, 2);
+		Double[] clonedValues = ResourceUtil.readDoubles(dataInput, values.length);
+		Double[][] clonedValueArrays = ResourceUtil.readDoubleArrays(dataInput, valueArrays.length, 2);
 
 		assertTrue(Arrays.equals(values, clonedValues));
 		assertTrue(Arrays.deepEquals(valueArrays, clonedValueArrays));
@@ -135,5 +174,7 @@ public class ResourceUtilTest {
 		} catch(EOFException eofe){
 			// Ignored
 		}
+
+		is.close();
 	}
 }
