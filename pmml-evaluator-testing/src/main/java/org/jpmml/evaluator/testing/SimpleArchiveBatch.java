@@ -20,6 +20,8 @@ package org.jpmml.evaluator.testing;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
@@ -28,6 +30,7 @@ import org.jpmml.evaluator.EvaluatorBuilder;
 import org.jpmml.evaluator.FieldNameSet;
 import org.jpmml.evaluator.FunctionNameStack;
 import org.jpmml.evaluator.LoadingModelEvaluatorBuilder;
+import org.jpmml.evaluator.PMMLTransformer;
 import org.jpmml.evaluator.ResultField;
 
 abstract
@@ -66,15 +69,15 @@ public class SimpleArchiveBatch extends ArchiveBatch {
 	}
 
 	public EvaluatorBuilder getEvaluatorBuilder() throws Exception {
-		LoadingModelEvaluatorBuilder evaluatorBuilder = new LoadingModelEvaluatorBuilder();
-
-		// XXX
-		evaluatorBuilder
-			.setDerivedFieldGuard(new FieldNameSet(8))
-			.setFunctionGuard(new FunctionNameStack(4));
+		LoadingModelEvaluatorBuilder evaluatorBuilder = createLoadingModelEvaluatorBuilder();
 
 		try(InputStream is = open(getPmmlPath())){
 			evaluatorBuilder.load(is);
+		}
+
+		List<PMMLTransformer<?>> transformers = getTransformers();
+		for(PMMLTransformer<?> transformer : transformers){
+			evaluatorBuilder.transform(transformer);
 		}
 
 		return evaluatorBuilder;
@@ -82,5 +85,20 @@ public class SimpleArchiveBatch extends ArchiveBatch {
 
 	public String getPmmlPath(){
 		return "/pmml/" + (getAlgorithm() + getDataset()) + ".pmml";
+	}
+
+	protected LoadingModelEvaluatorBuilder createLoadingModelEvaluatorBuilder(){
+		LoadingModelEvaluatorBuilder evaluatorBuilder = new LoadingModelEvaluatorBuilder();
+
+		// XXX
+		evaluatorBuilder
+			.setDerivedFieldGuard(new FieldNameSet(8))
+			.setFunctionGuard(new FunctionNameStack(4));
+
+		return evaluatorBuilder;
+	}
+
+	protected List<PMMLTransformer<?>> getTransformers(){
+		return Collections.emptyList();
 	}
 }
