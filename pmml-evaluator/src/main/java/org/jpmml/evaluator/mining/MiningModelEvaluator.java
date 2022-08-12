@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,7 @@ import org.dmg.pmml.mining.Segmentation;
 import org.dmg.pmml.mining.VariableWeight;
 import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.DefaultDataField;
+import org.jpmml.evaluator.DuplicateFieldValueException;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.EvaluationException;
@@ -166,6 +168,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case SELECT_FIRST:
 			case SELECT_ALL:
 			case MODEL_CHAIN:
+			case MULTI_MODEL_CHAIN:
 				return null;
 			default:
 				return super.getDefaultDataField();
@@ -263,6 +266,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case SELECT_FIRST:
 			case SELECT_ALL:
 			case MODEL_CHAIN:
+			case MULTI_MODEL_CHAIN:
 				throw new InvalidAttributeException(segmentation, multipleModelMethod);
 			default:
 				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
@@ -356,6 +360,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case SELECT_FIRST:
 			case SELECT_ALL:
 			case MODEL_CHAIN:
+			case MULTI_MODEL_CHAIN:
 				throw new InvalidAttributeException(segmentation, multipleModelMethod);
 			default:
 				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
@@ -414,6 +419,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case SELECT_FIRST:
 			case SELECT_ALL:
 			case MODEL_CHAIN:
+			case MULTI_MODEL_CHAIN:
 				throw new InvalidAttributeException(segmentation, multipleModelMethod);
 			default:
 				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
@@ -452,6 +458,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.requireMultipleModelMethod();
 		Segmentation.MissingPredictionTreatment missingPredictionTreatment = segmentation.getMissingPredictionTreatment();
 
+		Set<String> resultNames = null;
+
 		Model lastModel = null;
 
 		MiningModelEvaluationContext miningModelContext = null;
@@ -476,6 +484,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			switch(multipleModelMethod){
 				case MODEL_CHAIN:
 					break;
+				case MULTI_MODEL_CHAIN:
+					// Falls through
 				default:
 					checkMiningFunction(model, miningFunction);
 					break;
@@ -549,6 +559,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				case SELECT_FIRST:
 				case SELECT_ALL:
 				case MODEL_CHAIN:
+				case MULTI_MODEL_CHAIN:
 					boolean hasAllTargetValues = true;
 
 					List<TargetField> targetFields = segmentResult.getTargetFields();
@@ -578,7 +589,33 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			} // End switch
 
 			switch(multipleModelMethod){
+				case MULTI_MODEL_CHAIN:
+					{
+						Set<String> names = segmentResult.keySet();
+
+						if(resultNames == null){
+							resultNames = new LinkedHashSet<>(segments.size() * names.size());
+							resultNames.addAll(names);
+						} else
+
+						{
+							for(String name : names){
+								boolean unique = resultNames.add(name);
+
+								if(!unique){
+									throw new DuplicateFieldValueException(name);
+								}
+							}
+						}
+					}
+					break;
+				default:
+					break;
+			}
+
+			switch(multipleModelMethod){
 				case MODEL_CHAIN:
+				case MULTI_MODEL_CHAIN:
 					{
 						Model segmentModel = segmentModelEvaluator.getModel();
 
@@ -648,6 +685,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case SELECT_FIRST:
 			case SELECT_ALL:
 			case MODEL_CHAIN:
+			case MULTI_MODEL_CHAIN:
 				break;
 			default:
 				if(!(multipleModelMethods).contains(multipleModelMethod)){
@@ -663,11 +701,13 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		switch(multipleModelMethod){
 			case SELECT_FIRST:
-				return segmentResults.get(0);
+				return selectFirst(segmentResults);
 			case SELECT_ALL:
 				return selectAll(segmentResults);
 			case MODEL_CHAIN:
-				return segmentResults.get(segmentResults.size() - 1);
+				return modelChain(segmentResults);
+			case MULTI_MODEL_CHAIN:
+				return multiModelChain(segmentResults);
 			default:
 				return null;
 		}
@@ -708,6 +748,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				break;
 			case MODEL_CHAIN:
 				return createNestedOutputFields(getActiveTail(segments));
+			case MULTI_MODEL_CHAIN:
+				return createNestedOutputFields(segments);
 			default:
 				break;
 		}
@@ -821,6 +863,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	static
+	private Map<String, ?> selectFirst(List<SegmentResult> segmentResults){
+		return segmentResults.get(0);
+	}
+
+	static
 	private Map<String, ?> selectAll(List<SegmentResult> segmentResults){
 		ListMultimap<String, Object> result = ArrayListMultimap.create();
 
@@ -854,11 +901,33 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	static
+	private Map<String, ?> modelChain(List<SegmentResult> segmentResults){
+		return segmentResults.get(segmentResults.size() - 1);
+	}
+
+	static
+	private Map<String, ?> multiModelChain(List<SegmentResult> segmentResults){
+		Map<String, Object> result = new LinkedHashMap<>();
+
+		for(SegmentResult segmentResult : segmentResults){
+			result.putAll(segmentResult);
+		}
+
+		return result;
+	}
+
+	static
 	private void checkMiningFunction(Model model, MiningFunction parentMiningFunction){
 		MiningFunction miningFunction = model.requireMiningFunction();
 
-		if(miningFunction != parentMiningFunction){
-			throw new InvalidAttributeException(InvalidAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@functionName=" + miningFunction.value()), model);
+		switch(parentMiningFunction){
+			case MIXED:
+				break;
+			default:
+				if(miningFunction != parentMiningFunction){
+					throw new InvalidAttributeException(InvalidAttributeException.formatMessage(XPathUtil.formatElement(model.getClass()) + "@functionName=" + miningFunction.value()), model);
+				}
+				break;
 		}
 	}
 

@@ -257,6 +257,7 @@ public class TargetCategoryParser extends AbstractParser {
 				case SELECT_FIRST:
 				case SELECT_ALL:
 				case MODEL_CHAIN:
+				case MULTI_MODEL_CHAIN:
 					{
 						this.targetDataTypes.push(Collections.singletonMap(Evaluator.DEFAULT_TARGET_NAME, null));
 

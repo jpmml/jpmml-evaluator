@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+<PMML xmlns="http://www.dmg.org/PMML-4_4" version="4.4">
+	<DataDictionary>
+		<DataField name="x" optype="continuous" dataType="double"/>
+		<DataField name="y1" optype="categorical" dataType="integer">
+			<Value value="0"/>
+			<Value value="1"/>
+		</DataField>
+		<DataField name="y2" optype="continuous" dataType="double"/>
+		<DataField name="y3" optype="continuous" dataType="double"/>
+	</DataDictionary>
+	<MiningModel functionName="mixed">
+		<MiningSchema>
+			<MiningField name="x"/>
+			<MiningField name="y1" usageType="target"/>
+			<MiningField name="y2" usageType="target"/>
+			<MiningField name="y3" usageType="target"/>
+		</MiningSchema>
+		<Segmentation multipleModelMethod="x-multiModelChain">
+			<Segment>
+				<SimplePredicate field="x" operator="isNotMissing"/>
+				<TreeModel functionName="classification">
+					<MiningSchema>
+						<MiningField name="x"/>
+						<MiningField name="y1" usageType="target"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="probability(0)" optype="continuous" dataType="double" feature="probability" value="0"/>
+						<OutputField name="probability(1)" optype="continuous" dataType="double" feature="probability" value="1"/>
+					</Output>
+					<Node score="0">
+						<True/>
+						<Node score="1">
+							<SimplePredicate field="x" operator="greaterThan" value="0.5"/>
+							<ScoreDistribution value="0" recordCount="10"/>
+							<ScoreDistribution value="1" recordCount="100"/>
+						</Node>
+						<Node score="0">
+							<True/>
+							<ScoreDistribution value="0" recordCount="100"/>
+							<ScoreDistribution value="1" recordCount="10"/>
+						</Node>
+					</Node>
+				</TreeModel>
+			</Segment>
+			<Segment>
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="x"/>
+						<MiningField name="y2" usageType="target"/>
+					</MiningSchema>
+					<RegressionTable intercept="0.0">
+						<NumericPredictor name="x" coefficient="0.5"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+			<Segment>
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="y3" usageType="target"/>
+					</MiningSchema>
+					<RegressionTable intercept="0.5"/>
+				</RegressionModel>
+			</Segment>
+		</Segmentation>
+	</MiningModel>
+</PMML>
+ 

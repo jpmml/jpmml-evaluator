@@ -48,6 +48,7 @@ public class MiningModelUtil {
 			case SELECT_FIRST:
 			case SELECT_ALL:
 			case MODEL_CHAIN:
+			case MULTI_MODEL_CHAIN:
 				{
 					if(predictions instanceof SegmentResult){
 						SegmentResult segmentResult = (SegmentResult)predictions;
