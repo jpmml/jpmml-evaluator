@@ -589,6 +589,29 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			} // End switch
 
 			switch(multipleModelMethod){
+				case SELECT_ALL:
+					{
+						Set<String> names = segmentResult.keySet();
+
+						if(resultNames == null){
+							resultNames = new LinkedHashSet<>(names);
+						} else
+
+						{
+							if(!(names).equals(resultNames)){
+								Function<String, String> function = new Function<String, String>(){
+
+									@Override
+									public String apply(String name){
+										return EvaluationException.formatName(name);
+									}
+								};
+
+								throw new EvaluationException("Field sets " + Iterables.transform(names, function) + " and " + Iterables.transform(segmentResult.keySet(), function) + " do not match");
+							}
+						}
+					}
+					break;
 				case MULTI_MODEL_CHAIN:
 					{
 						Set<String> names = segmentResult.keySet();
@@ -871,26 +894,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	private Map<String, ?> selectAll(List<SegmentResult> segmentResults){
 		ListMultimap<String, Object> result = ArrayListMultimap.create();
 
-		Set<String> names = null;
-
 		for(SegmentResult segmentResult : segmentResults){
-
-			if(names == null){
-				names = new LinkedHashSet<>(segmentResult.keySet());
-			} // End if
-
-			// Ensure that all List values in the ListMultimap contain the same number of elements
-			if(!(names).equals(segmentResult.keySet())){
-				Function<String, String> function = new Function<String, String>(){
-
-					@Override
-					public String apply(String name){
-						return EvaluationException.formatName(name);
-					}
-				};
-
-				throw new EvaluationException("Field sets " + Iterables.transform(names, function) + " and " + Iterables.transform(segmentResult.keySet(), function) + " do not match");
-			}
+			Set<String> names = segmentResult.keySet();
 
 			for(String name : names){
 				result.put(name, segmentResult.get(name));
