@@ -76,6 +76,20 @@ public class SegmentResult extends ForwardingMap<String, Object> implements HasE
 		return get(targetName);
 	}
 
+	boolean hasMissingTargetValues(){
+		List<TargetField> targetFields = getTargetFields();
+
+		for(TargetField targetField : targetFields){
+			String name = targetField.getFieldName();
+
+			if(get(name) == null){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public Number getWeight(){
 		Segment segment = getSegment();
 

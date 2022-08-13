@@ -230,12 +230,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
-		Map<String, ?> predictions = getSegmentationResult(REGRESSION_METHODS, segmentResults);
-		if(predictions != null){
-			return predictions;
+		// "If no segments have predicates that evaluate to true, then the result is a missing value"
+		if(isEmpty(segmentResults)){
+			return TargetUtil.evaluateRegressionDefault(valueFactory, getTargetFields());
 		}
-
-		TargetField targetField = getTargetField();
 
 		Segmentation segmentation = miningModel.requireSegmentation();
 
@@ -246,7 +244,22 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
 		}
 
-		Value<V> value;
+		switch(multipleModelMethod){
+			case SELECT_FIRST:
+				return selectFirst(segmentResults);
+			case SELECT_ALL:
+				return selectAll(segmentResults);
+			case MODEL_CHAIN:
+				return modelChain(segmentResults);
+			case MULTI_MODEL_CHAIN:
+				return multiModelChain(segmentResults);
+			default:
+				break;
+		}
+
+		TargetField targetField = getTargetField();
+
+		Regression<V> result;
 
 		switch(multipleModelMethod){
 			case AVERAGE:
@@ -255,32 +268,30 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case WEIGHTED_MEDIAN:
 			case SUM:
 			case WEIGHTED_SUM:
-				value = MiningModelUtil.aggregateValues(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
-				if(value == null){
-					return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
+				{
+					Value<V> value = MiningModelUtil.aggregateValues(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
+					if(value == null){
+						return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
+					}
+
+					value = TargetUtil.evaluateRegressionInternal(targetField, value);
+
+					result = new AggregateScore<V>(value){
+
+						@Override
+						public Collection<? extends SegmentResult> getSegmentResults(){
+							return segmentResults;
+						}
+					};
 				}
 				break;
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 			case MAX:
-			case SELECT_FIRST:
-			case SELECT_ALL:
-			case MODEL_CHAIN:
-			case MULTI_MODEL_CHAIN:
 				throw new InvalidAttributeException(segmentation, multipleModelMethod);
 			default:
 				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
 		}
-
-		value = TargetUtil.evaluateRegressionInternal(targetField, value);
-
-		Regression<V> result = new AggregateScore<V>(value){
-
-			@Override
-			public Collection<? extends SegmentResult> getSegmentResults(){
-				return segmentResults;
-			}
-		};
 
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
@@ -291,12 +302,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
-		Map<String, ?> predictions = getSegmentationResult(CLASSIFICATION_METHODS, segmentResults);
-		if(predictions != null){
-			return predictions;
+		// "If no segments have predicates that evaluate to true, then the result is a missing value"
+		if(isEmpty(segmentResults)){
+			return TargetUtil.evaluateClassificationDefault(valueFactory, getTargetFields());
 		}
-
-		TargetField targetField = getTargetField();
 
 		Segmentation segmentation = miningModel.requireSegmentation();
 
@@ -306,6 +315,21 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		if(missingThreshold.doubleValue() < 0d || missingThreshold.doubleValue() > 1d){
 			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
 		}
+
+		switch(multipleModelMethod){
+			case SELECT_FIRST:
+				return selectFirst(segmentResults);
+			case SELECT_ALL:
+				return selectAll(segmentResults);
+			case MODEL_CHAIN:
+				return modelChain(segmentResults);
+			case MULTI_MODEL_CHAIN:
+				return multiModelChain(segmentResults);
+			default:
+				break;
+		}
+
+		TargetField targetField = getTargetField();
 
 		ProbabilityDistribution<V> result;
 
@@ -357,10 +381,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case WEIGHTED_MEDIAN:
 			case SUM:
 			case WEIGHTED_SUM:
-			case SELECT_FIRST:
-			case SELECT_ALL:
-			case MODEL_CHAIN:
-			case MULTI_MODEL_CHAIN:
 				throw new InvalidAttributeException(segmentation, multipleModelMethod);
 			default:
 				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
@@ -375,9 +395,8 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
-		Map<String, ?> predictions = getSegmentationResult(CLUSTERING_METHODS, segmentResults);
-		if(predictions != null){
-			return predictions;
+		if(isEmpty(segmentResults)){
+			return TargetUtil.evaluateDefault(getTargetFields());
 		}
 
 		Segmentation segmentation = miningModel.requireSegmentation();
@@ -387,6 +406,19 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		Number missingThreshold = segmentation.getMissingThreshold();
 		if(missingThreshold.doubleValue() < 0d || missingThreshold.doubleValue() > 1d){
 			throw new InvalidAttributeException(segmentation, PMMLAttributes.SEGMENTATION_MISSINGTHRESHOLD, missingThreshold);
+		}
+
+		switch(multipleModelMethod){
+			case SELECT_FIRST:
+				return selectFirst(segmentResults);
+			case SELECT_ALL:
+				return selectAll(segmentResults);
+			case MODEL_CHAIN:
+				return modelChain(segmentResults);
+			case MULTI_MODEL_CHAIN:
+				return multiModelChain(segmentResults);
+			default:
+				break;
 		}
 
 		AggregateVoteDistribution<V> result;
@@ -416,6 +448,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MAX:
 			case SUM:
 			case WEIGHTED_SUM:
+				throw new InvalidAttributeException(segmentation, multipleModelMethod);
 			case SELECT_FIRST:
 			case SELECT_ALL:
 			case MODEL_CHAIN:
@@ -441,9 +474,41 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	private <V extends Number> Map<String, ?> evaluateAny(ValueFactory<V> valueFactory, EvaluationContext context){
+		MiningModel miningModel = getModel();
+
 		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
-		return getSegmentationResult(Collections.emptySet(), segmentResults);
+		if(isEmpty(segmentResults)){
+			return TargetUtil.evaluateDefault(getTargetFields());
+		}
+
+		Segmentation segmentation = miningModel.requireSegmentation();
+
+		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.requireMultipleModelMethod();
+		Segmentation.MissingPredictionTreatment missingPredictionTreatment = segmentation.getMissingPredictionTreatment();
+
+		switch(multipleModelMethod){
+			case SELECT_FIRST:
+				return selectFirst(segmentResults);
+			case SELECT_ALL:
+				return selectAll(segmentResults);
+			case MODEL_CHAIN:
+				return modelChain(segmentResults);
+			case MULTI_MODEL_CHAIN:
+				return multiModelChain(segmentResults);
+			case MAJORITY_VOTE:
+			case WEIGHTED_MAJORITY_VOTE:
+			case AVERAGE:
+			case WEIGHTED_AVERAGE:
+			case MEDIAN:
+			case WEIGHTED_MEDIAN:
+			case MAX:
+			case SUM:
+			case WEIGHTED_SUM:
+				throw new InvalidAttributeException(segmentation, multipleModelMethod);
+			default:
+				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
+		}
 	}
 
 	private List<SegmentResult> evaluateSegmentation(MiningModelEvaluationContext context){
@@ -555,117 +620,127 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				}
 			}
 
-			switch(multipleModelMethod){
-				case SELECT_FIRST:
-				case SELECT_ALL:
-				case MODEL_CHAIN:
-				case MULTI_MODEL_CHAIN:
-					boolean hasAllTargetValues = true;
+			boolean skipSegment = false;
 
-					List<TargetField> targetFields = segmentResult.getTargetFields();
-					for(TargetField targetField : targetFields){
-						Object targetValue = segmentResult.get(targetField.getFieldName());
+			switch(missingPredictionTreatment){
+				case RETURN_MISSING:
+					{
+						boolean hasMissingTargetValues = segmentResult.hasMissingTargetValues();
 
-						hasAllTargetValues &= (targetValue != null);
+						if(hasMissingTargetValues){
+							return null;
+						}
 					}
-
-					if(!hasAllTargetValues){
-
-						switch(missingPredictionTreatment){
-							case RETURN_MISSING:
-								return Collections.emptyList();
-							case SKIP_SEGMENT:
-								// XXX
-								throw new UnsupportedAttributeException(segmentation, missingPredictionTreatment);
-							case CONTINUE:
+					break;
+				case SKIP_SEGMENT:
+					{
+						switch(multipleModelMethod){
+							case SELECT_FIRST:
+								skipSegment = segmentResult.hasMissingTargetValues();
 								break;
-							default:
+							case SELECT_ALL:
 								throw new UnsupportedAttributeException(segmentation, missingPredictionTreatment);
+							// "skipSegment should not be used with modelChain combination method"
+							case MODEL_CHAIN:
+							case MULTI_MODEL_CHAIN:
+								throw new InvalidAttributeException(segmentation, missingPredictionTreatment);
+							default:
+								skipSegment = true;
+								break;
 						}
 					}
+					break;
+				case CONTINUE:
 					break;
 				default:
-					break;
-			} // End switch
-
-			switch(multipleModelMethod){
-				case SELECT_ALL:
-					{
-						Set<String> names = segmentResult.keySet();
-
-						if(resultNames == null){
-							resultNames = new LinkedHashSet<>(names);
-						} else
-
-						{
-							if(!(names).equals(resultNames)){
-								Function<String, String> function = new Function<String, String>(){
-
-									@Override
-									public String apply(String name){
-										return EvaluationException.formatName(name);
-									}
-								};
-
-								throw new EvaluationException("Field sets " + Iterables.transform(names, function) + " and " + Iterables.transform(segmentResult.keySet(), function) + " do not match");
-							}
-						}
-					}
-					break;
-				case MULTI_MODEL_CHAIN:
-					{
-						Set<String> names = segmentResult.keySet();
-
-						if(resultNames == null){
-							resultNames = new LinkedHashSet<>(segments.size() * names.size());
-							resultNames.addAll(names);
-						} else
-
-						{
-							for(String name : names){
-								boolean unique = resultNames.add(name);
-
-								if(!unique){
-									throw new DuplicateFieldValueException(name);
-								}
-							}
-						}
-					}
-					break;
-				default:
-					break;
+					throw new UnsupportedAttributeException(segmentation, missingPredictionTreatment);
 			}
 
-			switch(multipleModelMethod){
-				case MODEL_CHAIN:
-				case MULTI_MODEL_CHAIN:
-					{
-						Model segmentModel = segmentModelEvaluator.getModel();
+			if(!skipSegment){
 
-						Output segmentOutput = segmentModel.getOutput();
-						if(segmentOutput != null && segmentOutput.hasOutputFields()){
-							List<org.dmg.pmml.OutputField> pmmlSegmentOutputFields = segmentOutput.getOutputFields();
+				switch(multipleModelMethod){
+					case SELECT_FIRST:
+						return Collections.singletonList(segmentResult);
+					case SELECT_ALL:
+						{
+							Set<String> names = segmentResult.keySet();
 
-							for(org.dmg.pmml.OutputField pmmlSegmentOutputField : pmmlSegmentOutputFields){
-								String name = pmmlSegmentOutputField.requireName();
+							if(resultNames == null){
+								resultNames = new LinkedHashSet<>(names);
+							} else
 
-								context.putOutputField(name, pmmlSegmentOutputField);
+							{
+								if(!(names).equals(resultNames)){
+									Function<String, String> function = new Function<String, String>(){
 
-								FieldValue value;
+										@Override
+										public String apply(String name){
+											return EvaluationException.formatName(name);
+										}
+									};
 
-								try {
-									value = segmentContext.lookup(name);
-								} catch(MissingFieldValueException mfve){
-									throw mfve.ensureContext(segment);
+									throw new EvaluationException("Field sets " + Iterables.transform(names, function) + " and " + Iterables.transform(segmentResult.keySet(), function) + " do not match");
 								}
-
-								context.declare(name, value);
 							}
 						}
-					}
-					break;
-				default:
-					break;
+						break;
+					case MODEL_CHAIN:
+						break;
+					case MULTI_MODEL_CHAIN:
+						{
+							Set<String> names = segmentResult.keySet();
+
+							if(resultNames == null){
+								resultNames = new LinkedHashSet<>(segments.size() * names.size());
+								resultNames.addAll(names);
+							} else
+
+							{
+								for(String name : names){
+									boolean unique = resultNames.add(name);
+
+									if(!unique){
+										throw new DuplicateFieldValueException(name);
+									}
+								}
+							}
+						}
+						break;
+					default:
+						break;
+				} // End switch
+
+				switch(multipleModelMethod){
+					case MODEL_CHAIN:
+					case MULTI_MODEL_CHAIN:
+						{
+							Model segmentModel = segmentModelEvaluator.getModel();
+
+							Output segmentOutput = segmentModel.getOutput();
+							if(segmentOutput != null && segmentOutput.hasOutputFields()){
+								List<org.dmg.pmml.OutputField> pmmlSegmentOutputFields = segmentOutput.getOutputFields();
+
+								for(org.dmg.pmml.OutputField pmmlSegmentOutputField : pmmlSegmentOutputFields){
+									String name = pmmlSegmentOutputField.requireName();
+
+									context.putOutputField(name, pmmlSegmentOutputField);
+
+									FieldValue value;
+
+									try {
+										value = segmentContext.lookup(name);
+									} catch(MissingFieldValueException mfve){
+										throw mfve.ensureContext(segment);
+									}
+
+									context.declare(name, value);
+								}
+							}
+						}
+						break;
+					default:
+						break;
+				}
 			}
 
 			boolean clearValues = !segmentModelEvaluator.isPure();
@@ -673,15 +748,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			segmentContext.reset(clearValues);
 
 			switch(multipleModelMethod){
-				case SELECT_FIRST:
-					return Collections.singletonList(segmentResult);
 				case MODEL_CHAIN:
 					lastModel = model;
-					// Falls through
+					break;
 				default:
-					segmentResults.add(segmentResult);
 					break;
 			}
+
+			segmentResults.add(segmentResult);
 		}
 
 		// "The model element used inside the last Segment element executed must have the same MINING-FUNCTION"
@@ -696,44 +770,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 
 		return segmentResults;
-	}
-
-	private Map<String, ?> getSegmentationResult(Set<Segmentation.MultipleModelMethod> multipleModelMethods, List<SegmentResult> segmentResults){
-		MiningModel miningModel = getModel();
-
-		Segmentation segmentation = miningModel.requireSegmentation();
-
-		Segmentation.MultipleModelMethod multipleModelMethod = segmentation.requireMultipleModelMethod();
-		switch(multipleModelMethod){
-			case SELECT_FIRST:
-			case SELECT_ALL:
-			case MODEL_CHAIN:
-			case MULTI_MODEL_CHAIN:
-				break;
-			default:
-				if(!(multipleModelMethods).contains(multipleModelMethod)){
-					throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
-				}
-				break;
-		}
-
-		// "If no segments have predicates that evaluate to true, then the result is a missing value"
-		if(segmentResults.isEmpty()){
-			return Collections.singletonMap(getTargetName(), null);
-		}
-
-		switch(multipleModelMethod){
-			case SELECT_FIRST:
-				return selectFirst(segmentResults);
-			case SELECT_ALL:
-				return selectAll(segmentResults);
-			case MODEL_CHAIN:
-				return modelChain(segmentResults);
-			case MULTI_MODEL_CHAIN:
-				return multiModelChain(segmentResults);
-			default:
-				return null;
-		}
 	}
 
 	private List<Segment> getActiveHead(List<Segment> segments){
@@ -885,12 +921,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return modelEvaluator;
 	}
 
-	static
 	private Map<String, ?> selectFirst(List<SegmentResult> segmentResults){
 		return segmentResults.get(0);
 	}
 
-	static
 	private Map<String, ?> selectAll(List<SegmentResult> segmentResults){
 		ListMultimap<String, Object> result = ArrayListMultimap.create();
 
@@ -905,12 +939,10 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		return Multimaps.asMap(result);
 	}
 
-	static
 	private Map<String, ?> modelChain(List<SegmentResult> segmentResults){
 		return segmentResults.get(segmentResults.size() - 1);
 	}
 
-	static
 	private Map<String, ?> multiModelChain(List<SegmentResult> segmentResults){
 		Map<String, Object> result = new LinkedHashMap<>();
 
@@ -919,6 +951,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 
 		return result;
+	}
+
+	static
+	private boolean isEmpty(List<SegmentResult> segmentResults){
+		return (segmentResults == null) || segmentResults.isEmpty();
 	}
 
 	static
@@ -935,8 +972,4 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				break;
 		}
 	}
-
-	private static final Set<Segmentation.MultipleModelMethod> REGRESSION_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.AVERAGE, Segmentation.MultipleModelMethod.WEIGHTED_AVERAGE, Segmentation.MultipleModelMethod.MEDIAN, Segmentation.MultipleModelMethod.WEIGHTED_MEDIAN, Segmentation.MultipleModelMethod.SUM, Segmentation.MultipleModelMethod.WEIGHTED_SUM);
-	private static final Set<Segmentation.MultipleModelMethod> CLASSIFICATION_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.MAJORITY_VOTE, Segmentation.MultipleModelMethod.WEIGHTED_MAJORITY_VOTE, Segmentation.MultipleModelMethod.AVERAGE, Segmentation.MultipleModelMethod.WEIGHTED_AVERAGE, Segmentation.MultipleModelMethod.MEDIAN, Segmentation.MultipleModelMethod.MAX);
-	private static final Set<Segmentation.MultipleModelMethod> CLUSTERING_METHODS = EnumSet.of(Segmentation.MultipleModelMethod.MAJORITY_VOTE, Segmentation.MultipleModelMethod.WEIGHTED_MAJORITY_VOTE);
 }

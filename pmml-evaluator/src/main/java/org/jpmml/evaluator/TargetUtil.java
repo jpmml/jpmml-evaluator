@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,22 @@ public class TargetUtil {
 		}
 
 		return Collections.singletonMap(targetField.getFieldName(), null);
+	}
+
+	static
+	public <V extends Number> Map<String, ?> evaluateRegressionDefault(ValueFactory<V> valueFactory, List<TargetField> targetFields){
+
+		if(targetFields.size() == 1){
+			return evaluateRegressionDefault(valueFactory, targetFields.get(0));
+		}
+
+		Map<String, Object> result = new LinkedHashMap<>();
+
+		for(TargetField targetField : targetFields){
+			result.putAll(evaluateRegressionDefault(valueFactory, targetField));
+		}
+
+		return result;
 	}
 
 	static
@@ -115,10 +132,47 @@ public class TargetUtil {
 	}
 
 	static
+	public <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassificationDefault(ValueFactory<V> valueFactory, List<TargetField> targetFields){
+
+		if(targetFields.size() == 1){
+			return evaluateClassificationDefault(valueFactory, targetFields.get(0));
+		}
+
+		Map<String, Classification<?, V>> result = new LinkedHashMap<>();
+
+		for(TargetField targetField : targetFields){
+			result.putAll(evaluateClassificationDefault(valueFactory, targetField));
+		}
+
+		return result;
+	}
+
+	static
 	public <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassification(TargetField targetField, Classification<?, V> classification){
 		classification.computeResult(targetField.getDataType());
 
 		return Collections.singletonMap(targetField.getFieldName(), classification);
+	}
+
+	static
+	public Map<String, ?> evaluateDefault(TargetField targetField){
+		return Collections.singletonMap(targetField.getFieldName(), null);
+	}
+
+	static
+	public <V extends Number> Map<String, ?> evaluateDefault(List<TargetField> targetFields){
+
+		if(targetFields.size() == 1){
+			return evaluateDefault(targetFields.get(0));
+		}
+
+		Map<String, Object> result = new LinkedHashMap<>();
+
+		for(TargetField targetField : targetFields){
+			result.put(targetField.getFieldName(), null);
+		}
+
+		return result;
 	}
 
 	static
