@@ -23,52 +23,40 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.dmg.pmml.mining.Segmentation;
+import org.jpmml.evaluator.MissingFieldValueException;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-public class MultiModelChainTest extends ModelEvaluatorTest {
+public class GradientBoosterTest extends ModelEvaluatorTest {
 
 	@Test
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		checkResultFields(Arrays.asList("y1", "y2", "y3"), Arrays.asList("probability(0)", "probability(1)"), evaluator);
+		checkResultFields(Arrays.asList("y"), Arrays.asList("probability(event)", "probability(no event)"), evaluator);
 
 		Map<String, ?> arguments = Collections.emptyMap();
 
-		Map<String, ?> results = evaluator.evaluate(arguments);
+		Map<String, ?> results;
 
-		assertFalse(results.containsKey("y1"));
-		assertNull(results.get("y1"));
-		assertTrue(results.containsKey("y2"));
-		assertNull(results.get("y2"));
-		assertNotNull(results.get("y3"));
+		try {
+			results = evaluator.evaluate(arguments);
 
-		arguments = Collections.singletonMap("x", 0.75d);
-
-		results = evaluator.evaluate(arguments);
-
-		assertNotNull(results.get("y1"));
-		assertNotNull(results.get("y2"));
-		assertNotNull(results.get("y3"));
+			fail();
+		} catch(MissingFieldValueException mfve){
+			// Ignored
+		}
 
 		evaluator = createModelEvaluator(new MissingPredictionTreatmentTransformer(Segmentation.MissingPredictionTreatment.RETURN_MISSING));
 
-		arguments = Collections.emptyMap();
-
 		results = evaluator.evaluate(arguments);
 
-		assertTrue(results.containsKey("y1"));
-		assertNull(results.get("y1"));
-		assertTrue(results.containsKey("y2"));
-		assertNull(results.get("y2"));
-		assertTrue(results.containsKey("y3"));
-		assertNull(results.get("y3"));
+		assertTrue(results.containsKey("y"));
+		assertNull(results.get("y"));
 	}
 }

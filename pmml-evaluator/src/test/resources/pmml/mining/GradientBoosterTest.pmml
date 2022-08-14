@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<PMML xmlns="http://www.dmg.org/PMML-4_4" version="4.4">
+	<DataDictionary>
+		<DataField name="x" optype="continuous" dataType="double"/>
+		<DataField name="y" optype="categorical" dataType="string">
+			<Value value="event"/>
+			<Value value="no event"/>
+		</DataField>
+	</DataDictionary>
+	<MiningModel functionName="classification">
+		<MiningSchema>
+			<MiningField name="x"/>
+			<MiningField name="y" usageType="target"/>
+		</MiningSchema>
+		<Segmentation multipleModelMethod="modelChain">
+			<Segment>
+				<True/>
+				<MiningModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="x"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="decisionFunction(event)" feature="predictedValue"/>
+					</Output>
+					<Segmentation multipleModelMethod="sum">
+						<Segment>
+							<True/>
+							<RegressionModel functionName="regression">
+								<MiningSchema>
+									<MiningField name="x"/>
+								</MiningSchema>
+								<RegressionTable intercept="0.0">
+									<NumericPredictor name="x" coefficient="2"/>
+								</RegressionTable>
+							</RegressionModel>
+						</Segment>
+						<Segment>
+							<True/>
+							<RegressionModel functionName="regression">
+								<MiningSchema>
+									<MiningField name="x"/>
+								</MiningSchema>
+								<RegressionTable intercept="0.0">
+									<NumericPredictor name="x" coefficient="1"/>
+								</RegressionTable>
+							</RegressionModel>
+						</Segment>
+						<Segment>
+							<True/>
+							<RegressionModel functionName="regression">
+								<MiningSchema>
+									<MiningField name="x"/>
+								</MiningSchema>
+								<RegressionTable intercept="0.0">
+									<NumericPredictor name="x" coefficient="0.5"/>
+								</RegressionTable>
+							</RegressionModel>
+						</Segment>
+					</Segmentation>
+				</MiningModel>
+			</Segment>
+			<Segment>
+				<True/>
+				<RegressionModel functionName="classification">
+					<MiningSchema>
+						<MiningField name="decisionFunction(event)"/>
+						<MiningField name="y" usageType="target"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="probability(event)" optype="continuous" dataType="double" feature="probability" value="event"/>
+						<OutputField name="probability(no event)" optype="continuous" dataType="double" feature="probability" value="no event"/>
+					</Output>
+					<RegressionTable targetCategory="event" intercept="0.0">
+						<NumericPredictor field="decisionFunction(event)" coefficient="1"/>
+					</RegressionTable>
+					<RegressionTable targetCategory="no event" intercept="0.0"/>
+				</RegressionModel>
+			</Segment>
+		</Segmentation>
+	</MiningModel>
+</PMML>
+ 
+ 
