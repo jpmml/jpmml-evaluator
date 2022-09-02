@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+<PMML xmlns="https://www.dmg.org/PMML-4_1" version="4.1">
 	<Header copyright="DMG.org"/>
 	<DataDictionary numberOfFields="3">
 		<DataField name="x1" optype="continuous" dataType="double"/>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<PMML xmlns="http://www.dmg.org/PMML-4_3" version="4.3">
+<PMML xmlns="https://www.dmg.org/PMML-4_3" version="4.3">
 	<DataDictionary numberOfFields="6">
 		<DataField name="Water" optype="categorical" dataType="boolean"/>
 		<DataField name="Cracker" optype="categorical" dataType="string"/>

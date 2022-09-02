@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<PMML xmlns="http://www.dmg.org/PMML-4_0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="http://www.dmg.org/PMML-4_0 pmml-4-0.xsd">
+<PMML xmlns="https://www.dmg.org/PMML-4_0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.0" xsi:schemaLocation="https://www.dmg.org/PMML-4_0 pmml-4-0.xsd">
 	<Header copyright="(C) Copyright IBM Corp. 1989, 2012.">
 		<Application name="IBM SPSS Statistics 21.0" version="21.0.0.1"/>
 	</Header>

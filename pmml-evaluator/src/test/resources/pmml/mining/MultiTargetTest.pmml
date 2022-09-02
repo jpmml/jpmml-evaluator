@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<PMML xmlns="http://www.dmg.org/PMML-4_3" version="4.3">
+<PMML xmlns="https://www.dmg.org/PMML-4_3" version="4.3">
 	<DataDictionary>
 		<DataField name="x" optype="continuous" dataType="double"/>
 		<DataField name="y1" optype="categorical" dataType="integer">

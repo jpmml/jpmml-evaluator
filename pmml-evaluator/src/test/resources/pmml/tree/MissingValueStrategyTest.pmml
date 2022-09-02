@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+<PMML xmlns="https://www.dmg.org/PMML-4_1" version="4.1">
 	<Header copyright="www.dmg.org" description="A very small tree model to demonstrate missing value handling and confidence calculation."/>
 	<DataDictionary numberOfFields="4">
 		<DataField name="temperature" optype="continuous" dataType="double"/>

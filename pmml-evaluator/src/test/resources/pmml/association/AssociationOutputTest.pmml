@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<PMML xmlns="http://www.dmg.org/PMML-4_2" version="4.2">
+<PMML xmlns="https://www.dmg.org/PMML-4_2" version="4.2">
 	<Header copyright="www.dmg.org" description="example model for association rules"/>
 	<DataDictionary numberOfFields="2">
 		<DataField name="transaction" optype="categorical" dataType="string"/>

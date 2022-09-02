@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<PMML xmlns="http://www.dmg.org/PMML-4_1" version="4.1">
+<PMML xmlns="https://www.dmg.org/PMML-4_1" version="4.1">
 	<Header copyright="www.dmg.org" description="Sample scorecard">
 		<Timestamp>2010-11-10T08:17:10.8</Timestamp>
 	</Header>
