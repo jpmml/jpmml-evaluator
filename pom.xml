@@ -206,7 +206,7 @@
 			<dependency>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>animal-sniffer-annotations</artifactId>
-				<version>1.21</version>
+				<version>1.24</version>
 			</dependency>
 
 			<dependency>
@@ -303,7 +303,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>animal-sniffer-maven-plugin</artifactId>
-				<version>1.23</version>
+				<version>1.24</version>
 				<executions>
 					<execution>
 						<id>android-21</id>
