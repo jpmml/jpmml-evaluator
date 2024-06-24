@@ -24,6 +24,7 @@ import com.google.common.math.DoubleMath;
 import org.dmg.pmml.ComplexValue;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMMLConstants;
 import org.jpmml.model.temporals.ComplexPeriod;
 import org.jpmml.model.temporals.Date;
 import org.jpmml.model.temporals.DateTime;
@@ -189,15 +190,15 @@ public class TypeUtil {
 					break;
 			}
 
-			if(("NaN").equalsIgnoreCase(value)){
+			if((PMMLConstants.NOT_A_NUMBER).equalsIgnoreCase(value)){
 				return Float.NaN;
 			} else
 
-			if(("-INF").equalsIgnoreCase(value)){
+			if((PMMLConstants.NEGATIVE_INFINITY).equalsIgnoreCase(value)){
 				return Float.NEGATIVE_INFINITY;
 			} else
 
-			if(("INF").equalsIgnoreCase(value)){
+			if((PMMLConstants.POSITIVE_INFINITY).equalsIgnoreCase(value)){
 				return Float.POSITIVE_INFINITY;
 			}
 		}
@@ -241,15 +242,15 @@ public class TypeUtil {
 					break;
 			}
 
-			if(("NaN").equalsIgnoreCase(value)){
+			if((PMMLConstants.NOT_A_NUMBER).equalsIgnoreCase(value)){
 				return Double.NaN;
 			} else
 
-			if(("-INF").equalsIgnoreCase(value)){
+			if((PMMLConstants.NEGATIVE_INFINITY).equalsIgnoreCase(value)){
 				return Double.NEGATIVE_INFINITY;
 			} else
 
-			if(("INF").equalsIgnoreCase(value)){
+			if((PMMLConstants.POSITIVE_INFINITY).equalsIgnoreCase(value)){
 				return Double.POSITIVE_INFINITY;
 			}
 		}
@@ -875,7 +876,7 @@ public class TypeUtil {
 			return DataType.STRING;
 		} else
 
-		if(("NaN").equalsIgnoreCase(value) || ("INF").equalsIgnoreCase(value) || ("-INF").equalsIgnoreCase(value)){
+		if((PMMLConstants.NOT_A_NUMBER).equalsIgnoreCase(value) || (PMMLConstants.POSITIVE_INFINITY).equalsIgnoreCase(value) || (PMMLConstants.NEGATIVE_INFINITY).equalsIgnoreCase(value)){
 			return DataType.DOUBLE;
 		}
 

@@ -43,6 +43,7 @@ import org.dmg.pmml.NamespacePrefixes;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMMLConstants;
 import org.dmg.pmml.PMMLFunctions;
 import org.dmg.pmml.ParameterField;
 import org.dmg.pmml.TextIndex;
@@ -115,7 +116,7 @@ public class ExpressionUtilTest {
 
 	@Test
 	public void evaluateConstantNaN(){
-		Constant constant = new Constant("NaN");
+		Constant constant = new Constant(PMMLConstants.NOT_A_NUMBER);
 
 		assertEquals(Double.NaN, evaluate(constant));
 

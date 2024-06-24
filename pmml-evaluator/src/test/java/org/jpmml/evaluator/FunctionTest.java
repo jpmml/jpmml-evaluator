@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import org.dmg.pmml.PMMLConstants;
 import org.jpmml.model.temporals.Date;
 import org.jpmml.model.temporals.DateTime;
 import org.jpmml.model.temporals.Time;
@@ -208,12 +209,12 @@ public class FunctionTest implements Deltas {
 		assertEquals(false, evaluate(Functions.IS_VALID, value));
 		assertEquals(true, evaluate(Functions.IS_NOT_VALID, value));
 
-		value = (ScalarValue)FieldValue.create(TypeInfos.CONTINUOUS_FLOAT, "NaN");
+		value = (ScalarValue)FieldValue.create(TypeInfos.CONTINUOUS_FLOAT, PMMLConstants.NOT_A_NUMBER);
 
 		assertEquals(false, evaluate(Functions.IS_VALID, value));
 		assertEquals(true, evaluate(Functions.IS_NOT_VALID, value));
 
-		value = (ScalarValue)FieldValue.create(TypeInfos.CONTINUOUS_DOUBLE, "NaN");
+		value = (ScalarValue)FieldValue.create(TypeInfos.CONTINUOUS_DOUBLE, PMMLConstants.NOT_A_NUMBER);
 
 		assertEquals(false, evaluate(Functions.IS_VALID, value));
 		assertEquals(true, evaluate(Functions.IS_NOT_VALID, value));
