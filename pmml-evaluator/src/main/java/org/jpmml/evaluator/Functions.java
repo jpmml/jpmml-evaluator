@@ -247,15 +247,25 @@ public interface Functions {
 
 	BinaryFunction POW = new BinaryFunction(PMMLFunctions.POW){
 
-		public Double evaluate(Number x, Number y){
-			return Math.pow(x.doubleValue(), y.doubleValue());
+		public Number evaluate(Number base, Number exponent){
+
+			if(base instanceof Integer && exponent instanceof Integer){
+
+				if(exponent.intValue() < 0){
+					throw new InvalidArgumentException(this, InvalidArgumentException.formatMessage(this, "exponent", exponent) + ". Must be equal to or greater than 0");
+				}
+
+				return IntMath.checkedPow(base.intValue(), exponent.intValue());
+			}
+
+			return Math.pow(base.doubleValue(), exponent.doubleValue());
 		}
 
 		@Override
 		public FieldValue evaluate(FieldValue first, FieldValue second){
 			DataType dataType = TypeUtil.getCommonDataType(first.getDataType(), second.getDataType());
 
-			Double result = evaluate(first.asNumber(), second.asNumber());
+			Number result = evaluate(first.asNumber(), second.asNumber());
 
 			return FieldValueUtil.create(OpType.CONTINUOUS, dataType, result);
 		}

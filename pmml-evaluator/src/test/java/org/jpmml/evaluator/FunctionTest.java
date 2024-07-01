@@ -163,8 +163,40 @@ public class FunctionTest implements Deltas {
 		assertEquals(1f, evaluate(Functions.ABS, -1f));
 		assertEquals(1d, evaluate(Functions.ABS, -1d));
 
-		assertEquals(1, evaluate(Functions.POW, 1, 1));
-		assertEquals(1f, evaluate(Functions.POW, 1f, 1f));
+		try {
+			evaluate(Functions.POW, -2, -2);
+
+			fail();
+		} catch(InvalidArgumentException iae){
+			// Ignored
+		}
+
+		assertEquals(1, evaluate(Functions.POW, -2, 0));
+		assertEquals(4, evaluate(Functions.POW, -2, 2));
+		assertEquals(-8, evaluate(Functions.POW, -2, 3));
+
+		assertEquals(1, evaluate(Functions.POW, 0, 0));
+
+		try {
+			evaluate(Functions.POW, 2, -2);
+
+			fail();
+		} catch(InvalidArgumentException iae){
+			// Ignored
+		}
+
+		assertEquals(1 / 4d, evaluate(Functions.POW, 2, -2d));
+		assertEquals(1, evaluate(Functions.POW, 2, 0));
+		assertEquals(1d, evaluate(Functions.POW, 2, 0d));
+		assertEquals(4, evaluate(Functions.POW, 2, 2));
+		assertEquals(4d, evaluate(Functions.POW, 2, 2d));
+
+		assertEquals(1 / 4f, evaluate(Functions.POW, 2f, -2));
+		assertEquals(1 / 4d, evaluate(Functions.POW, 2f, -2d));
+		assertEquals(1f, evaluate(Functions.POW, 2f, 0));
+		assertEquals(1d, evaluate(Functions.POW, 2f, 0d));
+		assertEquals(4f, evaluate(Functions.POW, 2f, 2));
+		assertEquals(4d, evaluate(Functions.POW, 2f, 2d));
 
 		assertEquals(0, evaluate(Functions.THRESHOLD, 2, 3));
 		assertEquals(0, evaluate(Functions.THRESHOLD, 3, 3));
