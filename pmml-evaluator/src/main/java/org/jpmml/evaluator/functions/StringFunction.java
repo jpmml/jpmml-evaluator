@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Villu Ruusmann
+ * Copyright (c) 2014 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,27 +18,24 @@
  */
 package org.jpmml.evaluator.functions;
 
-import org.dmg.pmml.DataType;
-import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class UnaryMathFunction extends UnaryFunction {
+public class StringFunction extends UnaryFunction {
 
-	public UnaryMathFunction(String name){
+	public StringFunction(String name){
 		super(name);
 	}
 
 	abstract
-	public Number evaluate(Number value);
+	public String evaluate(String value);
 
 	@Override
 	public FieldValue evaluate(FieldValue value){
-		DataType dataType = value.getDataType();
+		String result = evaluate(value.asString());
 
-		Number result = evaluate(value.asNumber());
-
-		return FieldValueUtil.create(OpType.CONTINUOUS, dataType, result);
+		return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
 	}
 }

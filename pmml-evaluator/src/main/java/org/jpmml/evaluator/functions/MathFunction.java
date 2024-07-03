@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Villu Ruusmann
+ * Copyright (c) 2019 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,24 +18,27 @@
  */
 package org.jpmml.evaluator.functions;
 
+import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class UnaryBooleanFunction extends UnaryFunction {
+public class MathFunction extends UnaryFunction {
 
-	public UnaryBooleanFunction(String name){
+	public MathFunction(String name){
 		super(name);
 	}
 
 	abstract
-	public Boolean evaluate(Boolean value);
+	public Number evaluate(Number value);
 
 	@Override
 	public FieldValue evaluate(FieldValue value){
-		Boolean result = evaluate(value.asBoolean());
+		DataType dataType = value.getDataType();
 
-		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
+		Number result = evaluate(value.asNumber());
+
+		return FieldValueUtil.create(OpType.CONTINUOUS, dataType, result);
 	}
 }

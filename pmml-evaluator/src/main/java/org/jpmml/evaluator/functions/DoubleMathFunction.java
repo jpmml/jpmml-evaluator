@@ -18,41 +18,25 @@
  */
 package org.jpmml.evaluator.functions;
 
-import java.util.List;
-
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class ValueSpaceFunction extends MultiaryFunction implements MissingValueTolerant {
+public class DoubleMathFunction extends MathFunction {
 
-	public ValueSpaceFunction(String name){
+	public DoubleMathFunction(String name){
 		super(name);
 	}
 
+	@Override
 	abstract
-	public Boolean evaluate(boolean isIn);
+	public Double evaluate(Number value);
 
 	@Override
-	public FieldValue evaluate(List<FieldValue> arguments){
-		checkVariableArityArguments(arguments, 2);
+	public FieldValue evaluate(FieldValue value){
+		Number result = evaluate(value.asNumber());
 
-		return evaluate(getOptionalArgument(arguments, 0), arguments.subList(1, arguments.size()));
-	}
-
-	private FieldValue evaluate(FieldValue value, List<FieldValue> values){
-		Boolean result;
-
-		if(FieldValueUtil.isMissing(value)){
-			result = evaluate(values.contains(FieldValues.MISSING_VALUE));
-		} else
-
-		{
-			result = evaluate(value.isIn(values));
-		}
-
-		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
+		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 	}
 }

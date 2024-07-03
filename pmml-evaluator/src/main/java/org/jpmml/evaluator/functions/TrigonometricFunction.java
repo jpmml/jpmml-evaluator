@@ -24,7 +24,7 @@ import org.jpmml.evaluator.NaNResultException;
 import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class TrigonometricFunction extends UnaryMathFunction {
+public class TrigonometricFunction extends MathFunction {
 
 	public TrigonometricFunction(String name){
 		super(name);

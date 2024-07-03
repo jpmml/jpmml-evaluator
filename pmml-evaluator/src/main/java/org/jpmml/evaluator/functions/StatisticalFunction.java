@@ -29,9 +29,9 @@ import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.TypeUtil;
 
 abstract
-public class AggregateMathFunction extends AggregateFunction {
+public class StatisticalFunction extends AggregateFunction {
 
-	public AggregateMathFunction(String name){
+	public StatisticalFunction(String name){
 		super(name);
 	}
 

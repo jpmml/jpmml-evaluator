@@ -18,24 +18,41 @@
  */
 package org.jpmml.evaluator.functions;
 
+import java.util.List;
+
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.FieldValues;
 import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class UnaryStringFunction extends UnaryFunction {
+public class ValueSetFunction extends MultiaryFunction implements MissingValueTolerant {
 
-	public UnaryStringFunction(String name){
+	public ValueSetFunction(String name){
 		super(name);
 	}
 
 	abstract
-	public String evaluate(String value);
+	public Boolean evaluate(boolean isIn);
 
 	@Override
-	public FieldValue evaluate(FieldValue value){
-		String result = evaluate(value.asString());
+	public FieldValue evaluate(List<FieldValue> arguments){
+		checkVariableArityArguments(arguments, 2);
 
-		return FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, result);
+		return evaluate(getOptionalArgument(arguments, 0), arguments.subList(1, arguments.size()));
+	}
+
+	private FieldValue evaluate(FieldValue value, List<FieldValue> values){
+		Boolean result;
+
+		if(FieldValueUtil.isMissing(value)){
+			result = evaluate(values.contains(FieldValues.MISSING_VALUE));
+		} else
+
+		{
+			result = evaluate(value.isIn(values));
+		}
+
+		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 	}
 }

@@ -33,24 +33,24 @@ import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMMLFunctions;
-import org.jpmml.evaluator.functions.AggregateMathFunction;
-import org.jpmml.evaluator.functions.AggregateStringFunction;
+import org.jpmml.evaluator.functions.AggregateFunction;
 import org.jpmml.evaluator.functions.ArithmeticFunction;
 import org.jpmml.evaluator.functions.BinaryFunction;
+import org.jpmml.evaluator.functions.BooleanFunction;
 import org.jpmml.evaluator.functions.ComparisonFunction;
-import org.jpmml.evaluator.functions.DoubleUnaryMathFunction;
+import org.jpmml.evaluator.functions.DoubleMathFunction;
 import org.jpmml.evaluator.functions.EqualityFunction;
 import org.jpmml.evaluator.functions.LogicalFunction;
+import org.jpmml.evaluator.functions.MathFunction;
 import org.jpmml.evaluator.functions.MultiaryFunction;
 import org.jpmml.evaluator.functions.RoundingFunction;
+import org.jpmml.evaluator.functions.StatisticalFunction;
+import org.jpmml.evaluator.functions.StringFunction;
 import org.jpmml.evaluator.functions.TernaryFunction;
 import org.jpmml.evaluator.functions.TrigonometricFunction;
-import org.jpmml.evaluator.functions.UnaryBooleanFunction;
 import org.jpmml.evaluator.functions.UnaryFunction;
-import org.jpmml.evaluator.functions.UnaryMathFunction;
-import org.jpmml.evaluator.functions.UnaryStringFunction;
 import org.jpmml.evaluator.functions.ValueFunction;
-import org.jpmml.evaluator.functions.ValueSpaceFunction;
+import org.jpmml.evaluator.functions.ValueSetFunction;
 import org.jpmml.model.temporals.DaysSinceDate;
 import org.jpmml.model.temporals.Instant;
 import org.jpmml.model.temporals.SecondsSinceDate;
@@ -134,7 +134,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateMathFunction MIN = new AggregateMathFunction(PMMLFunctions.MIN){
+	StatisticalFunction MIN = new StatisticalFunction(PMMLFunctions.MIN){
 
 		@Override
 		public Min createStatistic(){
@@ -142,7 +142,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateMathFunction MAX = new AggregateMathFunction(PMMLFunctions.MAX){
+	StatisticalFunction MAX = new StatisticalFunction(PMMLFunctions.MAX){
 
 		@Override
 		public Max createStatistic(){
@@ -150,7 +150,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateMathFunction AVG = new AggregateMathFunction(PMMLFunctions.AVG){
+	StatisticalFunction AVG = new StatisticalFunction(PMMLFunctions.AVG){
 
 		@Override
 		public Mean createStatistic(){
@@ -168,7 +168,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateMathFunction SUM = new AggregateMathFunction(PMMLFunctions.SUM){
+	StatisticalFunction SUM = new StatisticalFunction(PMMLFunctions.SUM){
 
 		@Override
 		public Sum createStatistic(){
@@ -176,7 +176,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateMathFunction PRODUCT = new AggregateMathFunction(PMMLFunctions.PRODUCT){
+	StatisticalFunction PRODUCT = new StatisticalFunction(PMMLFunctions.PRODUCT){
 
 		@Override
 		public Product createStatistic(){
@@ -184,7 +184,7 @@ public interface Functions {
 		}
 	};
 
-	DoubleUnaryMathFunction LOG10 = new DoubleUnaryMathFunction(PMMLFunctions.LOG10){
+	DoubleMathFunction LOG10 = new DoubleMathFunction(PMMLFunctions.LOG10){
 
 		@Override
 		public Double evaluate(Number value){
@@ -192,7 +192,7 @@ public interface Functions {
 		}
 	};
 
-	DoubleUnaryMathFunction LN = new DoubleUnaryMathFunction(PMMLFunctions.LN){
+	DoubleMathFunction LN = new DoubleMathFunction(PMMLFunctions.LN){
 
 		@Override
 		public Double evaluate(Number value){
@@ -200,7 +200,7 @@ public interface Functions {
 		}
 	};
 
-	DoubleUnaryMathFunction LN1P = new DoubleUnaryMathFunction(PMMLFunctions.LN1P){
+	DoubleMathFunction LN1P = new DoubleMathFunction(PMMLFunctions.LN1P){
 
 		@Override
 		public Double evaluate(Number value){
@@ -208,7 +208,7 @@ public interface Functions {
 		}
 	};
 
-	DoubleUnaryMathFunction EXP = new DoubleUnaryMathFunction(PMMLFunctions.EXP){
+	DoubleMathFunction EXP = new DoubleMathFunction(PMMLFunctions.EXP){
 
 		@Override
 		public Double evaluate(Number value){
@@ -216,7 +216,7 @@ public interface Functions {
 		}
 	};
 
-	DoubleUnaryMathFunction EXPM1 = new DoubleUnaryMathFunction(PMMLFunctions.EXPM1){
+	DoubleMathFunction EXPM1 = new DoubleMathFunction(PMMLFunctions.EXPM1){
 
 		@Override
 		public Double evaluate(Number value){
@@ -224,7 +224,7 @@ public interface Functions {
 		}
 	};
 
-	DoubleUnaryMathFunction SQRT = new DoubleUnaryMathFunction(PMMLFunctions.SQRT){
+	DoubleMathFunction SQRT = new DoubleMathFunction(PMMLFunctions.SQRT){
 
 		@Override
 		public Double evaluate(Number value){
@@ -232,7 +232,7 @@ public interface Functions {
 		}
 	};
 
-	UnaryMathFunction ABS = new UnaryMathFunction(PMMLFunctions.ABS){
+	MathFunction ABS = new MathFunction(PMMLFunctions.ABS){
 
 		@Override
 		public Number evaluate(Number value){
@@ -327,7 +327,7 @@ public interface Functions {
 		}
 	};
 
-	UnaryMathFunction RINT = new UnaryMathFunction(PMMLFunctions.RINT){
+	MathFunction RINT = new MathFunction(PMMLFunctions.RINT){
 
 		@Override
 		public Number evaluate(Number number){
@@ -444,7 +444,7 @@ public interface Functions {
 		}
 	};
 
-	UnaryBooleanFunction NOT = new UnaryBooleanFunction(PMMLFunctions.NOT){
+	BooleanFunction NOT = new BooleanFunction(PMMLFunctions.NOT){
 
 		@Override
 		public Boolean evaluate(Boolean value){
@@ -452,7 +452,7 @@ public interface Functions {
 		}
 	};
 
-	ValueSpaceFunction IS_IN = new ValueSpaceFunction(PMMLFunctions.ISIN){
+	ValueSetFunction IS_IN = new ValueSetFunction(PMMLFunctions.ISIN){
 
 		@Override
 		public Boolean evaluate(boolean isIn){
@@ -460,7 +460,7 @@ public interface Functions {
 		}
 	};
 
-	ValueSpaceFunction IS_NOT_IN = new ValueSpaceFunction(PMMLFunctions.ISNOTIN){
+	ValueSetFunction IS_NOT_IN = new ValueSetFunction(PMMLFunctions.ISNOTIN){
 
 		@Override
 		public Boolean evaluate(boolean isIn){
@@ -491,7 +491,7 @@ public interface Functions {
 		}
 	};
 
-	UnaryStringFunction UPPERCASE = new UnaryStringFunction(PMMLFunctions.UPPERCASE){
+	StringFunction UPPERCASE = new StringFunction(PMMLFunctions.UPPERCASE){
 
 		@Override
 		public String evaluate(String value){
@@ -499,7 +499,7 @@ public interface Functions {
 		}
 	};
 
-	UnaryStringFunction LOWERCASE = new UnaryStringFunction(PMMLFunctions.LOWERCASE){
+	StringFunction LOWERCASE = new StringFunction(PMMLFunctions.LOWERCASE){
 
 		@Override
 		public String evaluate(String value){
@@ -546,7 +546,7 @@ public interface Functions {
 		}
 	};
 
-	UnaryStringFunction TRIM_BLANKS = new UnaryStringFunction(PMMLFunctions.TRIMBLANKS){
+	StringFunction TRIM_BLANKS = new StringFunction(PMMLFunctions.TRIMBLANKS){
 
 		@Override
 		public String evaluate(String value){
@@ -554,7 +554,7 @@ public interface Functions {
 		}
 	};
 
-	AggregateStringFunction CONCAT = new AggregateStringFunction(PMMLFunctions.CONCAT){
+	AggregateFunction CONCAT = new AggregateFunction(PMMLFunctions.CONCAT){
 
 		@Override
 		public FieldValue evaluate(List<FieldValue> arguments){

@@ -23,7 +23,7 @@ import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class RoundingFunction extends UnaryMathFunction {
+public class RoundingFunction extends MathFunction {
 
 	public RoundingFunction(String name){
 		super(name);

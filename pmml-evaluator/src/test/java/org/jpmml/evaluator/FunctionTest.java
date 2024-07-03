@@ -128,7 +128,7 @@ public class FunctionTest implements Deltas {
 	}
 
 	@Test
-	public void evaluateAggregateFunctions(){
+	public void evaluateStatisticalFunctions(){
 		List<Integer> values = Arrays.asList(null, 1, 2, 3);
 
 		assertEquals(1, evaluate(Functions.MIN, values));
@@ -143,7 +143,7 @@ public class FunctionTest implements Deltas {
 	}
 
 	@Test
-	public void evaluateFpMathFunctions(){
+	public void evaluateDoubleMathFunctions(){
 		assertEquals(0d, evaluate(Functions.LOG10, 1));
 		assertEquals(0d, evaluate(Functions.LOG10, 1f));
 
@@ -312,7 +312,7 @@ public class FunctionTest implements Deltas {
 	}
 
 	@Test
-	public void evaluateValueListFunctions(){
+	public void evaluateValueSetFunctions(){
 		assertEquals(true, evaluate(Functions.IS_IN, "3", "1", "2", "3"));
 		assertEquals(true, evaluate(Functions.IS_NOT_IN, "0", "1", "2", "3"));
 

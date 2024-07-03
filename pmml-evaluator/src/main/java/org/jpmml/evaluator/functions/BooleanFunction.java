@@ -23,20 +23,19 @@ import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.TypeInfos;
 
 abstract
-public class DoubleUnaryMathFunction extends UnaryMathFunction {
+public class BooleanFunction extends UnaryFunction {
 
-	public DoubleUnaryMathFunction(String name){
+	public BooleanFunction(String name){
 		super(name);
 	}
 
-	@Override
 	abstract
-	public Double evaluate(Number value);
+	public Boolean evaluate(Boolean value);
 
 	@Override
 	public FieldValue evaluate(FieldValue value){
-		Number result = evaluate(value.asNumber());
+		Boolean result = evaluate(value.asBoolean());
 
-		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
+		return FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 	}
 }
