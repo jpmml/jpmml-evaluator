@@ -424,16 +424,16 @@ public class ExpressionUtil {
 
 		try {
 			result = evaluateFunction(function, values, context);
-		} catch(InvalidResultException ire){
+		} catch(UndefinedResultException ure){
 			InvalidValueTreatmentMethod invalidValueTreatmentMethod = apply.getInvalidValueTreatment();
 
 			switch(invalidValueTreatmentMethod){
 				case RETURN_INVALID:
-					throw new EvaluationException("Function " + EvaluationException.formatName(function) + " returned invalid value", apply)
-						.initCause(ire);
+					throw new EvaluationException("Function " + EvaluationException.formatName(function) + " failed", apply)
+						.initCause(ure);
 				case AS_IS:
-					// Re-throw the given InvalidResultException instance
-					throw ire;
+					// Re-throw the given UndefinedResultException instance
+					throw ure;
 				case AS_MISSING:
 					return FieldValueUtil.create(defaultValue);
 				case AS_VALUE:
@@ -448,9 +448,29 @@ public class ExpressionUtil {
 			}
 		}
 
-		// "If a defaultValue value is specified and the function produced a missing value, then the defaultValue is returned"
-		if(FieldValueUtil.isMissing(result) && defaultValue != null){
-			return FieldValueUtil.create(defaultValue);
+		if(FieldValueUtil.isMissing(result)){
+
+			// "If a defaultValue value is specified and the function produced a missing value, then the defaultValue is returned"
+			if(defaultValue != null){
+				return FieldValueUtil.create(defaultValue);
+			}
+		} else
+
+		if((result instanceof ScalarValue) ? !result.isValid() : false){
+			InvalidValueTreatmentMethod invalidValueTreatmentMethod = apply.getInvalidValueTreatment();
+
+			switch(invalidValueTreatmentMethod){
+				case RETURN_INVALID:
+					throw new EvaluationException("Function " + EvaluationException.formatName(function) + " returned invalid value", apply);
+				case AS_IS:
+					return result;
+				case AS_MISSING:
+					return FieldValueUtil.create(defaultValue);
+				case AS_VALUE:
+					throw new InvalidAttributeException(apply, invalidValueTreatmentMethod);
+				default:
+					throw new UnsupportedAttributeException(apply, invalidValueTreatmentMethod);
+			}
 		}
 
 		return result;

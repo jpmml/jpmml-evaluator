@@ -20,7 +20,6 @@ package org.jpmml.evaluator.functions;
 
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
-import org.jpmml.evaluator.NaNResultException;
 import org.jpmml.evaluator.TypeInfos;
 
 abstract
@@ -40,9 +39,6 @@ public class TrigonometricFunction extends MathFunction {
 	@Override
 	public FieldValue evaluate(FieldValue value){
 		Double result = evaluate(value.asNumber());
-		if(result.isNaN()){
-			throw new NaNResultException();
-		}
 
 		return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 	}

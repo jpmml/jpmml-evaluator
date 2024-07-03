@@ -18,7 +18,12 @@
  */
 package org.jpmml.evaluator;
 
-public class UndefinedResultException extends InvalidResultException {
+/**
+ * <p>
+ * Thrown to indicate an undefined end state of an evaluation operation.
+ * </p>
+ */
+public class UndefinedResultException extends EvaluationException {
 
 	public UndefinedResultException(){
 		super("Undefined result");

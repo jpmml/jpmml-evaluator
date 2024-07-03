@@ -114,6 +114,12 @@ public class FunctionTest implements Deltas {
 		assertEquals(Double.NEGATIVE_INFINITY, evaluate(Functions.DIVIDE, -1d, 0));
 		assertEquals(Double.POSITIVE_INFINITY, evaluate(Functions.DIVIDE, 1d, 0));
 
+		assertEquals(Float.POSITIVE_INFINITY, evaluate(Functions.DIVIDE, 1, -0f));
+		assertEquals(Float.POSITIVE_INFINITY, evaluate(Functions.DIVIDE, 1, 0f));
+
+		assertEquals(Double.POSITIVE_INFINITY, evaluate(Functions.DIVIDE, 1, -0d));
+		assertEquals(Double.POSITIVE_INFINITY, evaluate(Functions.DIVIDE, 1, 0d));
+
 		try {
 			evaluate(Functions.MODULO, 1, 0);
 
@@ -144,15 +150,34 @@ public class FunctionTest implements Deltas {
 
 	@Test
 	public void evaluateDoubleMathFunctions(){
+		assertEquals(Double.NaN, evaluate(Functions.LOG10, -1));
+		assertEquals(Double.NEGATIVE_INFINITY, evaluate(Functions.LOG10, 0));
 		assertEquals(0d, evaluate(Functions.LOG10, 1));
 		assertEquals(0d, evaluate(Functions.LOG10, 1f));
+		assertEquals(Double.POSITIVE_INFINITY, evaluate(Functions.LOG10, Double.POSITIVE_INFINITY));
 
+		assertEquals(Double.NaN, evaluate(Functions.LN, -1));
+		assertEquals(Double.NEGATIVE_INFINITY, evaluate(Functions.LN, 0));
 		assertEquals(0d, evaluate(Functions.LN, 1));
 		assertEquals(0d, evaluate(Functions.LN, 1f));
+		assertEquals(Double.POSITIVE_INFINITY, evaluate(Functions.LN, Double.POSITIVE_INFINITY));
 
+		assertEquals(Double.NaN, evaluate(Functions.LN1P, -2));
+		assertEquals(Double.NEGATIVE_INFINITY, evaluate(Functions.LN1P, -1));
+		assertEquals(0d, evaluate(Functions.LN1P, 0));
+		assertEquals(0d, evaluate(Functions.LN1P, 0f));
+		assertEquals(Double.POSITIVE_INFINITY, evaluate(Functions.LN1P, Double.POSITIVE_INFINITY));
+
+		assertEquals(0d, evaluate(Functions.EXP, Double.NEGATIVE_INFINITY));
 		assertEquals(1d, evaluate(Functions.EXP, 0));
 		assertEquals(1d, evaluate(Functions.EXP, 0f));
+		assertEquals(Double.POSITIVE_INFINITY, evaluate(Functions.EXP, Double.POSITIVE_INFINITY));
 
+		assertEquals(0d, evaluate(Functions.EXPM1, 0));
+		assertEquals(0d, evaluate(Functions.EXPM1, 0f));
+
+		assertEquals(Double.NaN, evaluate(Functions.SQRT, -1));
+		assertEquals(0d, evaluate(Functions.SQRT, 0));
 		assertEquals(1d, evaluate(Functions.SQRT, 1));
 		assertEquals(1d, evaluate(Functions.SQRT, 1f));
 	}
@@ -207,13 +232,17 @@ public class FunctionTest implements Deltas {
 		assertEquals(1f, evaluate(Functions.THRESHOLD, 3f, 2f));
 
 		assertEquals(1, evaluate(Functions.FLOOR, 1));
-		assertEquals(1, evaluate(Functions.CEIL, 1));
-
 		assertEquals(1, evaluate(Functions.FLOOR, 1.99f));
-		assertEquals(2, evaluate(Functions.ROUND, 1.99f));
 
+		assertEquals(1, evaluate(Functions.CEIL, 1));
 		assertEquals(1, evaluate(Functions.CEIL, 0.01f));
+
+		assertEquals(2, evaluate(Functions.ROUND, 1.99f));
 		assertEquals(0, evaluate(Functions.ROUND, 0.01f));
+
+		assertEquals(Double.NaN, evaluate(Functions.RINT, Double.NaN));
+		assertEquals(0d, evaluate(Functions.RINT, 0.01d));
+		assertEquals(2d, evaluate(Functions.RINT, 1.99d));
 	}
 
 	@Test
@@ -422,23 +451,17 @@ public class FunctionTest implements Deltas {
 
 		assertEquals(0.5d, (Double)evaluate(Functions.SIN, angle), DOUBLE_INEXACT);
 		assertEquals(angle, (Double)evaluate(Functions.ASIN, 0.5d), DOUBLE_INEXACT);
+		assertEquals(Double.NaN, evaluate(Functions.ASIN, 2d));
 		assertEquals(0.54785347d, (Double)evaluate(Functions.SINH, angle), DOUBLE_INEXACT);
 
 		assertEquals(0.8660254d, (Double)evaluate(Functions.COS, angle), DOUBLE_INEXACT);
 		assertEquals(angle, (Double)evaluate(Functions.ACOS, 0.8660254d), DOUBLE_INEXACT);
+		assertEquals(Double.NaN, evaluate(Functions.ACOS, 2d));
 		assertEquals(1.14023832d, (Double)evaluate(Functions.COSH, angle), DOUBLE_INEXACT);
 
 		assertEquals(0.57735027d, (Double)evaluate(Functions.TAN, angle), DOUBLE_INEXACT);
 		assertEquals(angle, (Double)evaluate(Functions.ATAN, 0.57735027d), DOUBLE_INEXACT);
 		assertEquals(0.48047278d, (Double)evaluate(Functions.TANH, angle), DOUBLE_INEXACT);
-
-		try {
-			evaluate(Functions.ASIN, 2d);
-
-			fail();
-		} catch(NaNResultException nre){
-			// Ignored
-		}
 	}
 
 	static

@@ -295,7 +295,7 @@ public class ExpressionUtilTest {
 	}
 
 	@Test
-	public void evaluateApply(){
+	public void evaluateApplyArithmetic(){
 		Apply apply = new Apply(PMMLFunctions.DIVIDE)
 			.addExpressions(new FieldRef("x"), new Constant("0"));
 
@@ -334,6 +334,30 @@ public class ExpressionUtilTest {
 		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
 
 		assertEquals("-1", evaluate(apply, "x", 1));
+	}
+
+	@Test
+	public void evaluateApplyMath(){
+		Apply apply = new Apply(PMMLFunctions.SQRT)
+			.addExpressions(new FieldRef("x"));
+
+		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.RETURN_INVALID);
+
+		try {
+			evaluate(apply, "x", -1d);
+
+			fail();
+		} catch(EvaluationException ee){
+			// Ignored
+		}
+
+		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_IS);
+
+		assertEquals(Double.NaN, evaluate(apply, "x", -1d));
+
+		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
+
+		assertEquals(null, evaluate(apply, "x", -1d));
 	}
 
 	@Test

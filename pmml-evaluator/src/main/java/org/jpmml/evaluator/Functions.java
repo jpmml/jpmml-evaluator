@@ -780,9 +780,6 @@ public interface Functions {
 		@Override
 		public FieldValue evaluate(FieldValue first, FieldValue second){
 			Double result = evaluate(first.asNumber(), second.asNumber());
-			if(result.isNaN()){
-				throw new NaNResultException();
-			}
 
 			return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 		}
