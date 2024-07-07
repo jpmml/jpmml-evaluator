@@ -404,7 +404,7 @@ public class InputFieldUtil {
 		if(value instanceof FieldValue){
 			FieldValue fieldValue = (FieldValue)value;
 
-			if(!fieldValue.isValid()){
+			if(FieldValueUtil.isInvalid(fieldValue)){
 				return FieldValue.STATUS_UNKNOWN_INVALID;
 			}
 
@@ -426,12 +426,12 @@ public class InputFieldUtil {
 			return (ScalarValue)createInputValue(typeInfo, invalidValueReplacement);
 		}
 
-		ScalarValue fieldValue = (ScalarValue)createInputValue(typeInfo, value);
-		if(fieldValue.isValid()){
-			fieldValue.setValid(false);
+		ScalarValue scalarValue = (ScalarValue)createInputValue(typeInfo, value);
+		if(scalarValue.isValid()){
+			scalarValue.setValid(false);
 		}
 
-		return fieldValue;
+		return scalarValue;
 	}
 
 	static

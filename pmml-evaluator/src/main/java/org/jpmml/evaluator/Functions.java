@@ -364,7 +364,7 @@ public interface Functions {
 
 		@Override
 		public FieldValue evaluate(FieldValue value){
-			Boolean result = !FieldValueUtil.isMissing(value) && value.isValid();
+			Boolean result = !FieldValueUtil.isMissing(value) && !FieldValueUtil.isInvalid(value);
 
 			return FieldValue.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 		}
@@ -374,7 +374,7 @@ public interface Functions {
 
 		@Override
 		public FieldValue evaluate(FieldValue value){
-			Boolean result = !FieldValueUtil.isMissing(value) && !value.isValid();
+			Boolean result = !FieldValueUtil.isMissing(value) && FieldValueUtil.isInvalid(value);
 
 			return FieldValue.create(TypeInfos.CATEGORICAL_BOOLEAN, result);
 		}

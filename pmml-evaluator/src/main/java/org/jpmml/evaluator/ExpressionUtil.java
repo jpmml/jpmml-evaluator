@@ -456,7 +456,7 @@ public class ExpressionUtil {
 			}
 		} else
 
-		if((result instanceof ScalarValue) ? !result.isValid() : false){
+		if(FieldValueUtil.isInvalid(result)){
 			InvalidValueTreatmentMethod invalidValueTreatmentMethod = apply.getInvalidValueTreatment();
 
 			switch(invalidValueTreatmentMethod){

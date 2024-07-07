@@ -83,6 +83,18 @@ public class FieldValueUtil {
 	}
 
 	static
+	public boolean isInvalid(FieldValue value){
+
+		if(value instanceof ScalarValue){
+			ScalarValue scalarValue = (ScalarValue)value;
+
+			return !scalarValue.isValid();
+		}
+
+		return false;
+	}
+
+	static
 	public Object getValue(FieldValue value){
 		return (value != null ? value.getValue() : null);
 	}
