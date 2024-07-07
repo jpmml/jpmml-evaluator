@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import org.dmg.pmml.DataType;
+import org.jpmml.model.ToStringHelper;
 
 abstract
 public class ScalarValue extends FieldValue implements Comparable<ScalarValue> {
@@ -85,6 +86,14 @@ public class ScalarValue extends FieldValue implements Comparable<ScalarValue> {
 		}
 
 		return compareToValue(that);
+	}
+
+	@Override
+	protected ToStringHelper toStringHelper(){
+		ToStringHelper helper = super.toStringHelper()
+			.add("valid", isValid());
+
+		return helper;
 	}
 
 	static
