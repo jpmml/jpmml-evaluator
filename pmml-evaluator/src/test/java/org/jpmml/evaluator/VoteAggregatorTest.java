@@ -20,8 +20,8 @@ package org.jpmml.evaluator;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 
+import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -38,8 +38,8 @@ public class VoteAggregatorTest {
 		aggregator.add("B");
 		aggregator.add("C");
 
-		assertEquals(new LinkedHashSet<>(Arrays.asList("A", "B", "C")), aggregator.getWinners());
-		assertEquals(new LinkedHashSet<>(Arrays.asList("A", "B", "C")), (aggregator.sumMap()).keySet());
+		assertEquals(ImmutableSet.of("A", "B", "C"), aggregator.getWinners());
+		assertEquals(ImmutableSet.of("A", "B", "C"), (aggregator.sumMap()).keySet());
 
 		aggregator.add("C");
 
@@ -51,8 +51,8 @@ public class VoteAggregatorTest {
 		aggregator.add("B");
 		aggregator.add("C");
 
-		assertEquals(new LinkedHashSet<>(Arrays.asList("B", "A", "C")), aggregator.getWinners());
-		assertEquals(new LinkedHashSet<>(Arrays.asList("B", "A", "C")), (aggregator.sumMap()).keySet());
+		assertEquals(ImmutableSet.of("B", "A", "C"), aggregator.getWinners());
+		assertEquals(ImmutableSet.of("B", "A", "C"), (aggregator.sumMap()).keySet());
 
 		aggregator.add("A", 0.5d);
 
@@ -64,7 +64,7 @@ public class VoteAggregatorTest {
 
 		checkValues(1d + 0.5d, 1d + 0.5d, 1d, aggregator.sumMap());
 
-		assertEquals(new LinkedHashSet<>(Arrays.asList("B", "A")), aggregator.getWinners());
+		assertEquals(ImmutableSet.of("B", "A"), aggregator.getWinners());
 	}
 
 	static

@@ -247,35 +247,35 @@ public class FunctionTest implements Deltas {
 
 	@Test
 	public void evaluateValueFunctions(){
-		ScalarValue value = (ScalarValue)FieldValues.MISSING_VALUE;
+		FieldValue value = FieldValues.MISSING_VALUE;
 
 		assertEquals(true, evaluate(Functions.IS_MISSING, value));
 		assertEquals(false, evaluate(Functions.IS_NOT_MISSING, value));
 		assertEquals(false, evaluate(Functions.IS_VALID, value));
 		assertEquals(false, evaluate(Functions.IS_NOT_VALID, value));
 
-		value = (ScalarValue)FieldValue.create(TypeInfos.CATEGORICAL_STRING, "value");
+		value = FieldValue.create(TypeInfos.CATEGORICAL_STRING, "value");
 
-		value.setValid(true);
+		((ScalarValue)value).setValid(true);
 
 		assertEquals(false, evaluate(Functions.IS_MISSING, value));
 		assertEquals(true, evaluate(Functions.IS_NOT_MISSING, value));
 		assertEquals(true, evaluate(Functions.IS_VALID, value));
 		assertEquals(false, evaluate(Functions.IS_NOT_VALID, value));
 
-		value.setValid(false);
+		((ScalarValue)value).setValid(false);
 
 		assertEquals(false, evaluate(Functions.IS_MISSING, value));
 		assertEquals(true, evaluate(Functions.IS_NOT_MISSING, value));
 		assertEquals(false, evaluate(Functions.IS_VALID, value));
 		assertEquals(true, evaluate(Functions.IS_NOT_VALID, value));
 
-		value = (ScalarValue)FieldValue.create(TypeInfos.CONTINUOUS_FLOAT, PMMLConstants.NOT_A_NUMBER);
+		value = FieldValue.create(TypeInfos.CONTINUOUS_FLOAT, PMMLConstants.NOT_A_NUMBER);
 
 		assertEquals(false, evaluate(Functions.IS_VALID, value));
 		assertEquals(true, evaluate(Functions.IS_NOT_VALID, value));
 
-		value = (ScalarValue)FieldValue.create(TypeInfos.CONTINUOUS_DOUBLE, PMMLConstants.NOT_A_NUMBER);
+		value = FieldValue.create(TypeInfos.CONTINUOUS_DOUBLE, PMMLConstants.NOT_A_NUMBER);
 
 		assertEquals(false, evaluate(Functions.IS_VALID, value));
 		assertEquals(true, evaluate(Functions.IS_NOT_VALID, value));
@@ -477,7 +477,7 @@ public class FunctionTest implements Deltas {
 	}
 
 	static
-	private Object evaluate(Function function, ScalarValue... arguments){
+	private Object evaluate(Function function, FieldValue... arguments){
 		FieldValue value = function.evaluate(Arrays.asList(arguments));
 
 		return FieldValueUtil.getValue(value);

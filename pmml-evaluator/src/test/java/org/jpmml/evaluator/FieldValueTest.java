@@ -37,8 +37,8 @@ public class FieldValueTest {
 	public void emptyList(){
 		FieldValue list = FieldValueUtil.create(TypeInfos.CATEGORICAL_STRING, Arrays.asList());
 
-		assertEquals(list.getDataType(), DataType.STRING);
-		assertEquals(list.getOpType(), OpType.CATEGORICAL);
+		assertEquals(DataType.STRING, list.getDataType());
+		assertEquals(OpType.CATEGORICAL, list.getOpType());
 	}
 
 	@Test
