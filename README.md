@@ -526,6 +526,6 @@ If you would like to use JPMML-Evaluator in a proprietary software project, then
 
 # Additional information #
 
-JPMML-Evaluator is developed and maintained by Openscoring Ltd, Estonia.
+JPMML-Evaluator is developed and maintained by Openscoring OÜ, Estonia.
 
 Interested in using [Java PMML API](https://github.com/jpmml) software in your company? Please contact [info@openscoring.io](mailto:info@openscoring.io)
