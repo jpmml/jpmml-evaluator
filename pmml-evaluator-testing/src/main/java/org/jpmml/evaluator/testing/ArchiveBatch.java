@@ -74,10 +74,12 @@ public class ArchiveBatch implements Batch {
 	}
 
 	protected List<Map<String, String>> loadRecords(String path) throws IOException {
+		String separator = getSeparator();
+
 		CsvUtil.Table table;
 
 		try(InputStream is = open(path)){
-			table = CsvUtil.readTable(is, ",");
+			table = CsvUtil.readTable(is, separator);
 		}
 
 		Function<String, String> function = new Function<String, String>(){
@@ -94,6 +96,10 @@ public class ArchiveBatch implements Batch {
 		};
 
 		return CsvUtil.toRecords(table, function);
+	}
+
+	protected String getSeparator(){
+		return ",";
 	}
 
 	public String getAlgorithm(){
