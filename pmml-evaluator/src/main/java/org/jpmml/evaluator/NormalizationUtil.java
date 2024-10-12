@@ -87,14 +87,14 @@ public class NormalizationUtil {
 					if(value.compareTo(startOrig) < 0){
 						Number startNorm = start.requireNorm();
 
-						return value.restrict(startNorm, Double.POSITIVE_INFINITY);
+						return value.reset(startNorm);
 					} else
 
 					// "Map to the value of the last interval"
 					{
 						Number endNorm = end.requireNorm();
 
-						return value.restrict(Double.NEGATIVE_INFINITY, endNorm);
+						return value.reset(endNorm);
 					}
 				default:
 					throw new UnsupportedAttributeException(normContinuous, outlierTreatmentMethod);
