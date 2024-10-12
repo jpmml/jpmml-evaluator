@@ -72,6 +72,13 @@ public class DoubleValue extends Value<Double> {
 	}
 
 	@Override
+	public DoubleValue reset(Number value){
+		this.value = value.doubleValue();
+
+		return this;
+	}
+
+	@Override
 	public DoubleValue add(Number value){
 		this.value += value.doubleValue();
 

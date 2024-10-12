@@ -25,6 +25,12 @@ public class Value<V extends Number> implements Comparable<Value<V>> {
 	public Value<V> copy();
 
 	@Operation (
+		value = "${0}"
+	)
+	abstract
+	public Value<V> reset(Number value);
+
+	@Operation (
 		value = "<apply><plus/>${this}${0}</apply>",
 		initialValue = "${0}"
 	)

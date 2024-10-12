@@ -75,6 +75,17 @@ public class ReportingValueFactoryTest {
 
 		assertEquals("<cn>" + 1f + "</cn>", entry.getExpression());
 		assertEquals((Float)1f, entry.getValue());
+
+		value.reset(Numbers.FLOAT_ZERO);
+
+		assertEquals((Float)0f, value.getValue());
+
+		assertTrue(report.hasEntries());
+
+		entry = report.tailEntry();
+
+		assertEquals("<cn>" + 0f + "</cn>", entry.getExpression());
+		assertEquals((Float)0f, entry.getValue());
 	}
 
 	@Test

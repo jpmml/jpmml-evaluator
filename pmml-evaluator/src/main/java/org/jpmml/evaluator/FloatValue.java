@@ -70,6 +70,13 @@ public class FloatValue extends Value<Float> {
 	}
 
 	@Override
+	public FloatValue reset(Number value){
+		this.value = value.floatValue();
+
+		return this;
+	}
+
+	@Override
 	public FloatValue add(Number value){
 		this.value += value.floatValue();
 
