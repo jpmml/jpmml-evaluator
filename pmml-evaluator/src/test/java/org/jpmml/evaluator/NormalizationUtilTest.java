@@ -18,9 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.dmg.pmml.LinearNorm;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.OutlierTreatmentMethod;
@@ -109,33 +106,6 @@ public class NormalizationUtilTest implements Deltas {
 		assertEquals(1d, denormalize(normContinuous, zScore(1d, mu, stdev)), DOUBLE_EXACT);
 	}
 
-	@Test
-	public void search(){
-		List<LinearNorm> linearNorms = new ArrayList<>();
-
-		linearNorms.add(new LinearNorm(0d, null));
-		linearNorms.add(new LinearNorm(1d, null));
-
-		assertEquals(-1, search(linearNorms, -1d));
-		assertEquals(0, search(linearNorms, 0d));
-		assertEquals(0, search(linearNorms, 1d));
-		assertEquals(1, search(linearNorms, 2d));
-
-		linearNorms.add(new LinearNorm(2d, null));
-
-		assertEquals(-1, search(linearNorms, -1d));
-		assertEquals(0, search(linearNorms, 1d));
-		assertEquals(1, search(linearNorms, 2d));
-		assertEquals(2, search(linearNorms, 3d));
-
-		linearNorms.add(new LinearNorm(3d, null));
-
-		assertEquals(-1, search(linearNorms,-1d));
-		assertEquals(1, search(linearNorms, 2d));
-		assertEquals(2, search(linearNorms, 3d));
-		assertEquals(3, search(linearNorms, 4d));
-	}
-
 	static
 	private Double normalize(NormContinuous normContinuous, double value){
 		return (Double)NormalizationUtil.normalize(normContinuous, value);
@@ -144,11 +114,6 @@ public class NormalizationUtilTest implements Deltas {
 	static
 	private Double denormalize(NormContinuous normContinuous, double value){
 		return (Double)NormalizationUtil.denormalize(normContinuous, value);
-	}
-
-	static
-	private int search(List<LinearNorm> linearNorms, double value){
-		return NormalizationUtil.search(linearNorms, LinearNorm::requireOrig, new DoubleValue(value));
 	}
 
 	static

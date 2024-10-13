@@ -58,7 +58,7 @@ public class NormalizationUtil {
 		LinearNorm start;
 		LinearNorm end;
 
-		int index = search(linearNorms, LinearNorm::requireOrig, value);
+		int index = binarySearch(linearNorms, LinearNorm::requireOrig, value);
 		if(index < 0 || index == (linearNorms.size() - 1)){
 			OutlierTreatmentMethod outlierTreatmentMethod = normContinuous.getOutliers();
 
@@ -122,7 +122,7 @@ public class NormalizationUtil {
 		LinearNorm start;
 		LinearNorm end;
 
-		int index = search(linearNorms, LinearNorm::requireNorm, value);
+		int index = binarySearch(linearNorms, LinearNorm::requireNorm, value);
 		if(index < 0 || index == (linearNorms.size() - 1)){
 			throw new NotImplementedException();
 		} else
@@ -136,17 +136,21 @@ public class NormalizationUtil {
 	}
 
 	static
-	<V extends Number> int search(List<LinearNorm> linearNorms, Function<LinearNorm, Number> thresholdFunction, Value<V> value){
+	private <V extends Number> int binarySearch(List<LinearNorm> linearNorms, Function<LinearNorm, Number> thresholdFunction, Value<V> value){
+		int low = 0;
+		int high = linearNorms.size() - 1;
 
-		for(int i = 0, max = linearNorms.size(); i < max; i++){
-			LinearNorm linearNorm = linearNorms.get(i);
+		while(low <= high){
+			int mid = low + (high - low) / 2;
+
+			LinearNorm linearNorm = linearNorms.get(mid);
 
 			Number threshold = thresholdFunction.apply(linearNorm);
 
 			if(value.compareTo(threshold) >= 0){
 
-				if(i < (max - 1)){
-					LinearNorm nextLinearNorm = linearNorms.get(i + 1);
+				if(mid < (linearNorms.size() - 1)){
+					LinearNorm nextLinearNorm = linearNorms.get(mid + 1);
 
 					Number nextThreshold = thresholdFunction.apply(nextLinearNorm);
 
@@ -154,24 +158,24 @@ public class NormalizationUtil {
 					// If the value matches some threshold value exactly,
 					// then it does not matter which bin (ie. this or the next) is used for interpolation.
 					if(value.compareTo(nextThreshold) <= 0){
-						return i;
+						return mid;
 					}
-
-					continue;
 				} else
 
 				// The last element
 				{
-					return i;
+					return mid;
 				}
+
+				low = (mid + 1);
 			} else
 
 			{
-				return -1;
+				high = (mid - 1);
 			}
 		}
 
-		throw new IllegalArgumentException();
+		return -1;
 	}
 
 	static
