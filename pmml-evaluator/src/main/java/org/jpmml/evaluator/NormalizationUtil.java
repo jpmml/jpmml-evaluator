@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
+import com.google.common.base.Function;
 import org.dmg.pmml.LinearNorm;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.OutlierTreatmentMethod;
@@ -54,29 +55,25 @@ public class NormalizationUtil {
 	public <V extends Number> Value<V> normalize(NormContinuous normContinuous, Value<V> value){
 		List<LinearNorm> linearNorms = ensureLinearNorms(normContinuous);
 
-		LinearNorm start = linearNorms.get(0);
-		LinearNorm end = linearNorms.get(linearNorms.size() - 1);
+		LinearNorm start;
+		LinearNorm end;
 
-		Number startOrig = start.requireOrig();
-		Number endOrig = end.requireOrig();
-
-		if(value.compareTo(startOrig) < 0 || value.compareTo(endOrig) > 0){
+		int index = search(linearNorms, LinearNorm::requireOrig, value);
+		if(index < 0 || index == (linearNorms.size() - 1)){
 			OutlierTreatmentMethod outlierTreatmentMethod = normContinuous.getOutliers();
 
 			switch(outlierTreatmentMethod){
 				case AS_IS:
 					// "Extrapolate from the first interval"
-					if(value.compareTo(startOrig) < 0){
+					if(index < 0){
+						start = linearNorms.get(0);
 						end = linearNorms.get(1);
-
-						endOrig = end.requireOrig();
 					} else
 
 					// "Extrapolate from the last interval"
 					{
 						start = linearNorms.get(linearNorms.size() - 2);
-
-						startOrig = start.requireOrig();
+						end = linearNorms.get(linearNorms.size() - 1);
 					}
 					break;
 				case AS_MISSING_VALUES:
@@ -84,17 +81,17 @@ public class NormalizationUtil {
 					return null;
 				case AS_EXTREME_VALUES:
 					// "Map to the value of the first interval"
-					if(value.compareTo(startOrig) < 0){
-						Number startNorm = start.requireNorm();
+					if(index < 0){
+						start = linearNorms.get(0);
 
-						return value.reset(startNorm);
+						return value.reset(start.requireNorm());
 					} else
 
 					// "Map to the value of the last interval"
 					{
-						Number endNorm = end.requireNorm();
+						end = linearNorms.get(linearNorms.size() - 1);
 
-						return value.reset(endNorm);
+						return value.reset(end.requireNorm());
 					}
 				default:
 					throw new UnsupportedAttributeException(normContinuous, outlierTreatmentMethod);
@@ -102,31 +99,11 @@ public class NormalizationUtil {
 		} else
 
 		{
-			for(int i = 1, max = (linearNorms.size() - 1); i < max; i++){
-				LinearNorm linearNorm = linearNorms.get(i);
-
-				Number orig = linearNorm.requireOrig();
-
-				if(value.compareTo(orig) >= 0){
-					start = linearNorm;
-
-					startOrig = orig;
-				} else
-
-				if(value.compareTo(orig) <= 0){
-					end = linearNorm;
-
-					endOrig = orig;
-
-					break;
-				}
-			}
+			start = linearNorms.get(index);
+			end = linearNorms.get(index + 1);
 		}
 
-		Number startNorm = start.requireNorm();
-		Number endNorm = end.requireNorm();
-
-		return value.normalize(startOrig, startNorm, endOrig, endNorm);
+		return value.normalize(start.requireOrig(), start.requireNorm(), end.requireOrig(), end.requireNorm());
 	}
 
 	static
@@ -142,36 +119,59 @@ public class NormalizationUtil {
 	public <V extends Number> Value<V> denormalize(NormContinuous normContinuous, Value<V> value){
 		List<LinearNorm> linearNorms = ensureLinearNorms(normContinuous);
 
-		LinearNorm start = linearNorms.get(0);
-		LinearNorm end = linearNorms.get(linearNorms.size() - 1);
+		LinearNorm start;
+		LinearNorm end;
 
-		Number startNorm = start.requireNorm();
-		Number endNorm = end.requireNorm();
+		int index = search(linearNorms, LinearNorm::requireNorm, value);
+		if(index < 0 || index == (linearNorms.size() - 1)){
+			throw new NotImplementedException();
+		} else
 
-		for(int i = 1, max = (linearNorms.size() - 1); i < max; i++){
+		{
+			start = linearNorms.get(index);
+			end = linearNorms.get(index + 1);
+		}
+
+		return value.denormalize(start.requireOrig(), start.requireNorm(), end.requireOrig(), end.requireNorm());
+	}
+
+	static
+	<V extends Number> int search(List<LinearNorm> linearNorms, Function<LinearNorm, Number> thresholdFunction, Value<V> value){
+
+		for(int i = 0, max = linearNorms.size(); i < max; i++){
 			LinearNorm linearNorm = linearNorms.get(i);
 
-			Number norm = linearNorm.requireNorm();
+			Number threshold = thresholdFunction.apply(linearNorm);
 
-			if(value.compareTo(norm) >= 0){
-				start = linearNorm;
+			if(value.compareTo(threshold) >= 0){
 
-				startNorm = norm;
+				if(i < (max - 1)){
+					LinearNorm nextLinearNorm = linearNorms.get(i + 1);
+
+					Number nextThreshold = thresholdFunction.apply(nextLinearNorm);
+
+					// Assume a closed-closed range, rather than a closed-open range.
+					// If the value matches some threshold value exactly,
+					// then it does not matter which bin (ie. this or the next) is used for interpolation.
+					if(value.compareTo(nextThreshold) <= 0){
+						return i;
+					}
+
+					continue;
+				} else
+
+				// The last element
+				{
+					return i;
+				}
 			} else
 
-			if(value.compareTo(norm) <= 0){
-				end = linearNorm;
-
-				endNorm = norm;
-
-				break;
+			{
+				return -1;
 			}
 		}
 
-		Number startOrig = start.requireOrig();
-		Number endOrig = end.requireOrig();
-
-		return value.denormalize(startOrig, startNorm, endOrig, endNorm);
+		throw new IllegalArgumentException();
 	}
 
 	static

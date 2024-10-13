@@ -18,6 +18,9 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.dmg.pmml.LinearNorm;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.OutlierTreatmentMethod;
@@ -25,6 +28,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 public class NormalizationUtilTest implements Deltas {
 
@@ -32,45 +36,129 @@ public class NormalizationUtilTest implements Deltas {
 	public void normalize(){
 		NormContinuous normContinuous = createNormContinuous();
 
-		assertEquals(BEGIN[1], (double)NormalizationUtil.normalize(normContinuous, BEGIN[0]), DOUBLE_EXACT);
-		assertEquals(interpolate(1.212d, BEGIN, MIDPOINT), (double)NormalizationUtil.normalize(normContinuous, 1.212d), DOUBLE_EXACT);
-		assertEquals(MIDPOINT[1], (double)NormalizationUtil.normalize(normContinuous, MIDPOINT[0]), DOUBLE_EXACT);
-		assertEquals(interpolate(6.5d, MIDPOINT, END), (double)NormalizationUtil.normalize(normContinuous, 6.5d), DOUBLE_EXACT);
-		assertEquals(END[1], (double)NormalizationUtil.normalize(normContinuous, END[0]), DOUBLE_EXACT);
+		assertEquals(BEGIN[1], normalize(normContinuous, BEGIN[0]), DOUBLE_EXACT);
+		assertEquals(interpolate(1.212d, BEGIN, MIDPOINT), normalize(normContinuous, 1.212d), DOUBLE_EXACT);
+		assertEquals(MIDPOINT[1], normalize(normContinuous, MIDPOINT[0]), DOUBLE_EXACT);
+		assertEquals(interpolate(6.5d, MIDPOINT, END), normalize(normContinuous, 6.5d), DOUBLE_EXACT);
+		assertEquals(END[1], normalize(normContinuous, END[0]), DOUBLE_EXACT);
 	}
 
 	@Test
 	public void normalizeOutliers(){
 		NormContinuous normContinuous = createNormContinuous();
 
-		assertEquals(interpolate(-1d, BEGIN, MIDPOINT), (double)NormalizationUtil.normalize(normContinuous, -1d), DOUBLE_EXACT);
-		assertEquals(interpolate(12.2d, MIDPOINT, END), (double)NormalizationUtil.normalize(normContinuous, 12.2d), DOUBLE_EXACT);
+		assertEquals(interpolate(-1d, BEGIN, MIDPOINT), normalize(normContinuous, -1d), DOUBLE_EXACT);
+		assertEquals(interpolate(12.2d, MIDPOINT, END), normalize(normContinuous, 12.2d), DOUBLE_EXACT);
 
 		normContinuous.setOutliers(OutlierTreatmentMethod.AS_MISSING_VALUES);
 
-		assertNull(NormalizationUtil.normalize(normContinuous, -1d));
-		assertNull(NormalizationUtil.normalize(normContinuous, 12.2d));
+		assertNull(normalize(normContinuous, -1d));
+		assertNull(normalize(normContinuous, 12.2d));
 
 		normContinuous.setOutliers(OutlierTreatmentMethod.AS_EXTREME_VALUES);
 
-		assertEquals(BEGIN[1], (double)NormalizationUtil.normalize(normContinuous, -1d), DOUBLE_EXACT);
-		assertEquals(END[1], (double)NormalizationUtil.normalize(normContinuous, 12.2d), DOUBLE_EXACT);
+		assertEquals(BEGIN[1], normalize(normContinuous, -1d), DOUBLE_EXACT);
+		assertEquals(END[1], normalize(normContinuous, 12.2d), DOUBLE_EXACT);
 	}
 
 	@Test
 	public void denormalize(){
 		NormContinuous normContinuous = createNormContinuous();
 
-		assertEquals(BEGIN[0], (double)NormalizationUtil.denormalize(normContinuous, BEGIN[1]), DOUBLE_EXACT);
-		assertEquals(0.3d, (double)NormalizationUtil.denormalize(normContinuous, interpolate(0.3d, BEGIN, MIDPOINT)), DOUBLE_EXACT);
-		assertEquals(MIDPOINT[0], (double)NormalizationUtil.denormalize(normContinuous, MIDPOINT[1]), DOUBLE_EXACT);
-		assertEquals(7.123d, (double)NormalizationUtil.denormalize(normContinuous, interpolate(7.123d, MIDPOINT, END)), DOUBLE_EXACT);
-		assertEquals(END[0], (double)NormalizationUtil.denormalize(normContinuous, END[1]), DOUBLE_EXACT);
+		try {
+			denormalize(normContinuous, -0.5d);
+
+			fail();
+		} catch(NotImplementedException nie){
+			// Ignored
+		}
+
+		assertEquals(BEGIN[0], denormalize(normContinuous, BEGIN[1]), DOUBLE_EXACT);
+		assertEquals(0.3d, denormalize(normContinuous, interpolate(0.3d, BEGIN, MIDPOINT)), DOUBLE_EXACT);
+		assertEquals(MIDPOINT[0], denormalize(normContinuous, MIDPOINT[1]), DOUBLE_EXACT);
+		assertEquals(7.123d, denormalize(normContinuous, interpolate(7.123d, MIDPOINT, END)), DOUBLE_EXACT);
+		assertEquals(END[0], denormalize(normContinuous, END[1]), DOUBLE_EXACT);
+
+		try {
+			denormalize(normContinuous, 1.5d);
+
+			fail();
+		} catch(NotImplementedException nie){
+			// Ignored
+		}
+	}
+
+	@Test
+	public void standardize(){
+		double mu = 1.5;
+		double stdev = Math.sqrt(2d);
+
+		NormContinuous normContinuous = new NormContinuous("x", null)
+			.setOutliers(OutlierTreatmentMethod.AS_IS)
+			.addLinearNorms(
+				new LinearNorm(0d, -(mu / stdev)),
+				new LinearNorm(mu, 0d)
+			);
+
+		assertEquals(zScore(-2d, mu, stdev), normalize(normContinuous, -2d), DOUBLE_EXACT);
+		assertEquals(zScore(-1d, mu, stdev), normalize(normContinuous, -1d), DOUBLE_EXACT);
+		assertEquals(zScore(0d, mu, stdev), normalize(normContinuous, 0d), DOUBLE_EXACT);
+		assertEquals(zScore(1d, mu, stdev), normalize(normContinuous, 1d), DOUBLE_EXACT);
+		assertEquals(zScore(2d, mu, stdev), normalize(normContinuous, 2d), DOUBLE_EXACT);
+
+		assertEquals(1d, denormalize(normContinuous, zScore(1d, mu, stdev)), DOUBLE_EXACT);
+	}
+
+	@Test
+	public void search(){
+		List<LinearNorm> linearNorms = new ArrayList<>();
+
+		linearNorms.add(new LinearNorm(0d, null));
+		linearNorms.add(new LinearNorm(1d, null));
+
+		assertEquals(-1, search(linearNorms, -1d));
+		assertEquals(0, search(linearNorms, 0d));
+		assertEquals(0, search(linearNorms, 1d));
+		assertEquals(1, search(linearNorms, 2d));
+
+		linearNorms.add(new LinearNorm(2d, null));
+
+		assertEquals(-1, search(linearNorms, -1d));
+		assertEquals(0, search(linearNorms, 1d));
+		assertEquals(1, search(linearNorms, 2d));
+		assertEquals(2, search(linearNorms, 3d));
+
+		linearNorms.add(new LinearNorm(3d, null));
+
+		assertEquals(-1, search(linearNorms,-1d));
+		assertEquals(1, search(linearNorms, 2d));
+		assertEquals(2, search(linearNorms, 3d));
+		assertEquals(3, search(linearNorms, 4d));
+	}
+
+	static
+	private Double normalize(NormContinuous normContinuous, double value){
+		return (Double)NormalizationUtil.normalize(normContinuous, value);
+	}
+
+	static
+	private Double denormalize(NormContinuous normContinuous, double value){
+		return (Double)NormalizationUtil.denormalize(normContinuous, value);
+	}
+
+	static
+	private int search(List<LinearNorm> linearNorms, double value){
+		return NormalizationUtil.search(linearNorms, LinearNorm::requireOrig, new DoubleValue(value));
 	}
 
 	static
 	private double interpolate(double x, double[] begin, double[] end){
 		return begin[1] + (x - begin[0]) / (end[0] - begin[0]) * (end[1] - begin[1]);
+	}
+
+	static
+	private double zScore(double x, double mu, double stdev){
+		return (x - mu) / stdev;
 	}
 
 	static
