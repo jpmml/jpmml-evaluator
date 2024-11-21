@@ -585,6 +585,9 @@ public interface Functions {
 
 			Matcher matcher = pattern.matcher(input);
 
+			// Replace PCRE-style dollar literal with Java-style dollar literal
+			replacement = replacement.replace("$$", "\\$");
+
 			return matcher.replaceAll(replacement);
 		}
 

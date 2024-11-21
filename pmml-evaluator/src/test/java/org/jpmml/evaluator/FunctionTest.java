@@ -407,6 +407,26 @@ public class FunctionTest implements Deltas {
 		assertEquals("c", evaluate(Functions.REPLACE, "BBBB", "B+", "c"));
 		assertEquals("cccc", evaluate(Functions.REPLACE, "BBBB", "B+?", "c"));
 
+		try {
+			evaluate(Functions.REPLACE, "BBBB", "B", "$");
+
+			fail();
+		} catch(IllegalArgumentException iae){
+			// Ignored
+		}
+
+		assertEquals("$$$$", evaluate(Functions.REPLACE, "BBBB", "B", "$$"));
+
+		try {
+			evaluate(Functions.REPLACE, "BBBB", "B", "\\");
+
+			fail();
+		} catch(IllegalArgumentException iae){
+			// Ignored
+		}
+
+		assertEquals("\\\\\\\\", evaluate(Functions.REPLACE, "BBBB", "B", "\\\\"));
+
 		// See http://www.w3.org/TR/xquery-operators/#func-replace
 		assertEquals("a*cada*", evaluate(Functions.REPLACE, "abracadabra", "bra", "*"));
 		assertEquals("*", evaluate(Functions.REPLACE, "abracadabra", "a.*a", "*"));
