@@ -427,6 +427,15 @@ public class FunctionTest implements Deltas {
 
 		assertEquals("\\\\\\\\", evaluate(Functions.REPLACE, "BBBB", "B", "\\\\"));
 
+		assertEquals("10 USD", evaluate(Functions.REPLACE, "$10", "\\$(\\d+)", "$1 USD"));
+
+		String word_repeated_pattern = "(\\w+)\\s+\\1";
+		String word_repeated_replacement = "$1 (repeated)";
+
+		assertEquals("Hello World", evaluate(Functions.REPLACE, "Hello World", word_repeated_pattern, word_repeated_replacement));
+		assertEquals("Hello (repeated)", evaluate(Functions.REPLACE, "Hello Hello", word_repeated_pattern, word_repeated_replacement));
+		assertEquals("Hello (repeated) World (repeated)", evaluate(Functions.REPLACE, "Hello Hello World World", word_repeated_pattern, word_repeated_replacement));
+
 		// See http://www.w3.org/TR/xquery-operators/#func-replace
 		assertEquals("a*cada*", evaluate(Functions.REPLACE, "abracadabra", "bra", "*"));
 		assertEquals("*", evaluate(Functions.REPLACE, "abracadabra", "a.*a", "*"));
@@ -445,6 +454,9 @@ public class FunctionTest implements Deltas {
 		assertEquals(true, evaluate(Functions.MATCHES, "abracadabra", "bra"));
 		assertEquals(true, evaluate(Functions.MATCHES, "abracadabra", "^a.*a$"));
 		assertEquals(false, evaluate(Functions.MATCHES, "abracadabra", "^bra"));
+
+		assertEquals(true, evaluate(Functions.MATCHES, "Hello Hello", word_repeated_pattern));
+		assertEquals(false, evaluate(Functions.MATCHES, "Hello World", word_repeated_pattern));
 	}
 
 	@Test
