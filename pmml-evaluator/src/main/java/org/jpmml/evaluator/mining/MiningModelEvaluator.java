@@ -69,6 +69,7 @@ import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.OutputField;
+import org.jpmml.evaluator.OutputUtil;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
@@ -220,15 +221,27 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public Map<String, ?> evaluateInternal(ModelEvaluationContext context){
-		return super.evaluateInternal((MiningModelEvaluationContext)context);
+	public SegmentationResult evaluateInternal(ModelEvaluationContext context){
+		return (SegmentationResult)super.evaluateInternal((MiningModelEvaluationContext)context);
 	}
 
 	@Override
-	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
-		MiningModel miningModel = getModel();
-
+	protected <V extends Number> SegmentationResult evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
+
+		SegmentationResult segmentationResult = new SegmentationResult(evaluateRegressionInternal(valueFactory, segmentResults, context)){
+
+			@Override
+			public List<SegmentResult> getSegmentResults(){
+				return segmentResults;
+			}
+		};
+
+		return segmentationResult;
+	}
+
+	private <V extends Number> Map<String, ?> evaluateRegressionInternal(ValueFactory<V> valueFactory, List<SegmentResult> segmentResults, EvaluationContext context){
+		MiningModel miningModel = getModel();
 
 		// "If no segments have predicates that evaluate to true, then the result is a missing value"
 		if(isEmpty(segmentResults)){
@@ -297,10 +310,22 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	protected <V extends Number> Map<String, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
-		MiningModel miningModel = getModel();
-
+	protected <V extends Number> SegmentationResult evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
+
+		SegmentationResult segmentationResult = new SegmentationResult(evaluateClassificationInternal(valueFactory, segmentResults, context)){
+
+			@Override
+			public List<SegmentResult> getSegmentResults(){
+				return segmentResults;
+			}
+		};
+
+		return segmentationResult;
+	}
+
+	private <V extends Number> Map<String, ?> evaluateClassificationInternal(ValueFactory<V> valueFactory, List<SegmentResult> segmentResults, EvaluationContext context){
+		MiningModel miningModel = getModel();
 
 		// "If no segments have predicates that evaluate to true, then the result is a missing value"
 		if(isEmpty(segmentResults)){
@@ -390,10 +415,22 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	protected <V extends Number> Map<String, ?> evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
-		MiningModel miningModel = getModel();
-
+	protected <V extends Number> SegmentationResult evaluateClustering(ValueFactory<V> valueFactory, EvaluationContext context){
 		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
+
+		SegmentationResult segmentationResult = new SegmentationResult(evaluateClusteringInternal(valueFactory, segmentResults, context)){
+
+			@Override
+			public List<SegmentResult> getSegmentResults(){
+				return segmentResults;
+			}
+		};
+
+		return segmentationResult;
+	}
+
+	private <V extends Number> Map<String, ?> evaluateClusteringInternal(ValueFactory<V> valueFactory, List<SegmentResult> segmentResults, EvaluationContext context){
+		MiningModel miningModel = getModel();
 
 		if(isEmpty(segmentResults)){
 			return TargetUtil.evaluateDefault(getTargetFields());
@@ -464,19 +501,31 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	protected <V extends Number> Map<String, ?> evaluateAssociationRules(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> SegmentationResult evaluateAssociationRules(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateAny(valueFactory, context);
 	}
 
 	@Override
-	protected <V extends Number> Map<String, ?> evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
+	protected <V extends Number> SegmentationResult evaluateMixed(ValueFactory<V> valueFactory, EvaluationContext context){
 		return evaluateAny(valueFactory, context);
 	}
 
-	private <V extends Number> Map<String, ?> evaluateAny(ValueFactory<V> valueFactory, EvaluationContext context){
-		MiningModel miningModel = getModel();
-
+	private <V extends Number> SegmentationResult evaluateAny(ValueFactory<V> valueFactory, EvaluationContext context){
 		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
+
+		SegmentationResult segmentationResult = new SegmentationResult(evaluateAnyInternal(valueFactory, segmentResults, context)){
+
+			@Override
+			public List<SegmentResult> getSegmentResults(){
+				return segmentResults;
+			}
+		};
+
+		return segmentationResult;
+	}
+
+	private <V extends Number> Map<String, ?> evaluateAnyInternal(ValueFactory<V> valueFactory, List<SegmentResult> segmentResults, EvaluationContext context){
+		MiningModel miningModel = getModel();
 
 		if(isEmpty(segmentResults)){
 			return TargetUtil.evaluateDefault(getTargetFields());
@@ -509,6 +558,24 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			default:
 				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
 		}
+	}
+
+	@Override
+	protected SegmentationResult evaluateOutput(Map<String, ?> predictions, ModelEvaluationContext context){
+		SegmentationResult segmentationResult = (SegmentationResult)predictions;
+
+		segmentationResult.setResults(OutputUtil.evaluate(segmentationResult.getResults(), context));
+
+		return segmentationResult;
+	}
+
+	@Override
+	protected SegmentationResult processResults(Map<String, ?> results){
+		SegmentationResult segmentationResult = (SegmentationResult)results;
+
+		segmentationResult.setResults(super.processResults(segmentationResult.getResults()));
+
+		return segmentationResult;
 	}
 
 	private List<SegmentResult> evaluateSegmentation(MiningModelEvaluationContext context){
