@@ -464,7 +464,9 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 				throw new UnsupportedAttributeException(model, miningFunction);
 		}
 
-		return OutputUtil.evaluate(predictions, context);
+		predictions = evaluateOutput(predictions, context);
+
+		return predictions;
 	}
 
 	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
@@ -501,6 +503,10 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		MiningFunction miningFunction = model.requireMiningFunction();
 
 		throw new InvalidAttributeException(model, miningFunction);
+	}
+
+	protected Map<String, ?> evaluateOutput(Map<String, ?> predictions, ModelEvaluationContext context){
+		return OutputUtil.evaluate(predictions, context);
 	}
 
 	protected <V extends Number> Classification<Object, V> createClassification(ValueMap<Object, V> values){
