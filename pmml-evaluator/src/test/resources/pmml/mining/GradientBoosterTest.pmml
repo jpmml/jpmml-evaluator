@@ -71,7 +71,7 @@
 						<OutputField name="probability(no event)" optype="continuous" dataType="double" feature="probability" value="no event"/>
 					</Output>
 					<RegressionTable targetCategory="event" intercept="0.0">
-						<NumericPredictor field="decisionFunction(event)" coefficient="1"/>
+						<NumericPredictor name="decisionFunction(event)" coefficient="1"/>
 					</RegressionTable>
 					<RegressionTable targetCategory="no event" intercept="0.0"/>
 				</RegressionModel>

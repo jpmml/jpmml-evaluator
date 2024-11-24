@@ -232,6 +232,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		SegmentationResult segmentationResult = new SegmentationResult(evaluateRegressionInternal(valueFactory, segmentResults, context)){
 
 			@Override
+			public BiMap<String, Segment> getEntityRegistry(){
+				return MiningModelEvaluator.this.getEntityRegistry();
+			}
+
+			@Override
 			public List<SegmentResult> getSegmentResults(){
 				return segmentResults;
 			}
@@ -314,6 +319,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
 		SegmentationResult segmentationResult = new SegmentationResult(evaluateClassificationInternal(valueFactory, segmentResults, context)){
+
+			@Override
+			public BiMap<String, Segment> getEntityRegistry(){
+				return MiningModelEvaluator.this.getEntityRegistry();
+			}
 
 			@Override
 			public List<SegmentResult> getSegmentResults(){
@@ -421,6 +431,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		SegmentationResult segmentationResult = new SegmentationResult(evaluateClusteringInternal(valueFactory, segmentResults, context)){
 
 			@Override
+			public BiMap<String, Segment> getEntityRegistry(){
+				return MiningModelEvaluator.this.getEntityRegistry();
+			}
+
+			@Override
 			public List<SegmentResult> getSegmentResults(){
 				return segmentResults;
 			}
@@ -514,6 +529,11 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		List<SegmentResult> segmentResults = evaluateSegmentation((MiningModelEvaluationContext)context);
 
 		SegmentationResult segmentationResult = new SegmentationResult(evaluateAnyInternal(valueFactory, segmentResults, context)){
+
+			@Override
+			public BiMap<String, Segment> getEntityRegistry(){
+				return MiningModelEvaluator.this.getEntityRegistry();
+			}
 
 			@Override
 			public List<SegmentResult> getSegmentResults(){

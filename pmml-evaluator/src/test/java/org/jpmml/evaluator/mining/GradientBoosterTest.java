@@ -28,7 +28,11 @@ import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -42,10 +46,10 @@ public class GradientBoosterTest extends ModelEvaluatorTest {
 
 		Map<String, ?> arguments = Collections.emptyMap();
 
-		Map<String, ?> results;
+		SegmentationResult results;
 
 		try {
-			results = evaluator.evaluate(arguments);
+			results = (SegmentationResult)evaluator.evaluate(arguments);
 
 			fail();
 		} catch(MissingFieldValueException mfve){
@@ -54,9 +58,36 @@ public class GradientBoosterTest extends ModelEvaluatorTest {
 
 		evaluator = createModelEvaluator(new MissingPredictionTreatmentTransformer(Segmentation.MissingPredictionTreatment.RETURN_MISSING));
 
-		results = evaluator.evaluate(arguments);
+		results = (SegmentationResult)evaluator.evaluate(arguments);
 
 		assertTrue(results.containsKey("y"));
 		assertNull(results.get("y"));
+
+		assertNull(results.getSegmentResults());
+
+		arguments = createArguments("x", 1d);
+
+		results = (SegmentationResult)evaluator.evaluate(arguments);
+
+		assertNotNull(results.get("y"));
+
+		try {
+			results.getResults(Arrays.asList("0"));
+
+			fail();
+		} catch(IllegalArgumentException iae){
+			// Ignored
+		}
+
+		SegmentationResult regressorResults = (SegmentationResult)results.getResults(Arrays.asList("1"));
+
+		assertSame(results.getResults(Arrays.asList("1", "1")), regressorResults.getResults(Arrays.asList("1")));
+		assertSame(results.getResults(Arrays.asList("1", "2")), regressorResults.getResults(Arrays.asList("2")));
+		assertSame(results.getResults(Arrays.asList("1", "3")), regressorResults.getResults(Arrays.asList("3")));
+
+		Map<String, ?> classifierResults = results.getResults(Arrays.asList("2"));
+
+		assertEquals(results.getResults(), classifierResults);
+		assertNotSame(results.getResults(), classifierResults);
 	}
 }

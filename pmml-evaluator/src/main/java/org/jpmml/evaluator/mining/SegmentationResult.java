@@ -18,13 +18,19 @@
  */
 package org.jpmml.evaluator.mining;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.common.collect.BiMap;
 import com.google.common.collect.ForwardingMap;
+import org.dmg.pmml.mining.Segment;
+import org.jpmml.evaluator.HasEntityRegistry;
+import org.jpmml.evaluator.TypeUtil;
 
 abstract
-public class SegmentationResult extends ForwardingMap<String, Object> implements HasSegmentResults {
+public class SegmentationResult extends ForwardingMap<String, Object> implements HasEntityRegistry<Segment>, HasSegmentResults {
 
 	private Map<String, ?> results = null;
 
@@ -39,6 +45,51 @@ public class SegmentationResult extends ForwardingMap<String, Object> implements
 		Map<String, ?> results = getResults();
 
 		return (Map)results;
+	}
+
+	public Map<String, ?> getResults(Iterable<String> segmentIds){
+		Iterator<String> it = segmentIds.iterator();
+
+		String segmentId = it.next();
+
+		SegmentResult segmentResult = getSegmentResult(segmentId);
+		if(segmentResult == null){
+			return null;
+		}
+
+		while(it.hasNext()){
+			SegmentationResult segmentationResult = TypeUtil.cast(SegmentationResult.class, segmentResult.getResults());
+
+			segmentId = it.next();
+
+			segmentResult = segmentationResult.getSegmentResult(segmentId);
+			if(segmentResult == null){
+				return null;
+			}
+		}
+
+		return segmentResult.getResults();
+	}
+
+	SegmentResult getSegmentResult(String id){
+		BiMap<String, Segment> entityRegistry = getEntityRegistry();
+
+		if(!entityRegistry.containsKey(id)){
+			throw new IllegalArgumentException(id);
+		}
+
+		Collection<? extends SegmentResult> segmentResults = getSegmentResults();
+		if(segmentResults != null && !segmentResults.isEmpty()){
+
+			for(SegmentResult segmentResult : segmentResults){
+
+				if(Objects.equals(segmentResult.getEntityId(), id)){
+					return segmentResult;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	public Map<String, ?> getResults(){
