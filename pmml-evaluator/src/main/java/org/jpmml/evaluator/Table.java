@@ -31,6 +31,8 @@ public class Table {
 
 	private Map<String, List<?>> values = new HashMap<>();
 
+	private Map<String, TypeInfo> types = new HashMap<>();
+
 
 	public Table(){
 		this(new ArrayList<>());
@@ -97,8 +99,10 @@ public class Table {
 		boolean result = columns.remove(column);
 		if(result){
 			Map<String, List<?>> columnValues = getValues();
+			Map<String, TypeInfo> columnTypes = getTypes();
 
 			columnValues.remove(column);
+			columnTypes.remove(column);
 		}
 
 		return result;
@@ -116,6 +120,18 @@ public class Table {
 		columnValues.put(column, values);
 	}
 
+	public TypeInfo getType(String column){
+		Map<String, TypeInfo> columnTypes = getTypes();
+
+		return columnTypes.get(column);
+	}
+
+	public void setType(String column, TypeInfo typeInfo){
+		Map<String, TypeInfo> columnTypes = getTypes();
+
+		columnTypes.put(column, typeInfo);
+	}
+
 	public List<String> getColumns(){
 		return this.columns;
 	}
@@ -126,5 +142,9 @@ public class Table {
 
 	public Map<String, List<?>> getValues(){
 		return this.values;
+	}
+
+	public Map<String, TypeInfo> getTypes(){
+		return this.types;
 	}
 }
