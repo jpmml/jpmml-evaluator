@@ -29,6 +29,8 @@ public class Table {
 
 	private List<String> columns = null;
 
+	private List<Exception> exceptions = new ArrayList<>();
+
 	private Map<String, List<?>> values = new HashMap<>();
 
 	private Map<String, TypeInfo> types = new HashMap<>();
@@ -43,9 +45,11 @@ public class Table {
 	}
 
 	public int getNumberOfRows(){
-		Map<String, List<?>> columnValues = getValues();
+		List<Exception> exceptions = getExceptions();
 
-		int result = 0;
+		int result = exceptions.size();
+
+		Map<String, List<?>> columnValues = getValues();
 
 		Collection<Map.Entry<String, List<?>>> entries = columnValues.entrySet();
 		for(Map.Entry<String, List<?>> entry : entries){
@@ -67,6 +71,10 @@ public class Table {
 		List<String> columns = getColumns();
 
 		int numberOfRows = getNumberOfRows();
+
+		List<Exception> exceptions = getExceptions();
+
+		TableUtil.ensureSize(exceptions, numberOfRows);
 
 		for(String column : columns){
 			List<?> values = getValues(column);
@@ -108,6 +116,18 @@ public class Table {
 		return result;
 	}
 
+	public Exception getException(int index){
+		List<Exception> exceptions = getExceptions();
+
+		return TableUtil.get(exceptions, index);
+	}
+
+	public void setException(int index, Exception exception){
+		List<Exception> exceptions = getExceptions();
+
+		TableUtil.set(exceptions, index, exception);
+	}
+
 	public List<?> getValues(String column){
 		Map<String, List<?>> columnValues = getValues();
 
@@ -138,6 +158,10 @@ public class Table {
 
 	void setColumns(List<String> columns){
 		this.columns = Objects.requireNonNull(columns);
+	}
+
+	public List<Exception> getExceptions(){
+		return this.exceptions;
 	}
 
 	public Map<String, List<?>> getValues(){

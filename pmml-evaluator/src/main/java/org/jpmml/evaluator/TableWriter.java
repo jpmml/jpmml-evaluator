@@ -52,6 +52,13 @@ public class TableWriter extends AbstractMap<String, Object> {
 		throw new UnsupportedOperationException();
 	}
 
+	public void put(Exception exception){
+		Table table = getTable();
+		int position = ensurePosition();
+
+		table.setException(position, exception);
+	}
+
 	@Override
 	public Object put(String key, Object value){
 		Table table = getTable();
@@ -65,19 +72,9 @@ public class TableWriter extends AbstractMap<String, Object> {
 			values = new ArrayList<>();
 
 			table.setValues(key, values);
-		} // End if
-
-		if(position < values.size()){
-			return values.set(position, value);
-		} else
-
-		{
-			TableUtil.ensureSize(values, position);
-
-			values.add(value);
-
-			return null;
 		}
+
+		return TableUtil.set(values, position, value);
 	}
 
 	protected int ensurePosition(){

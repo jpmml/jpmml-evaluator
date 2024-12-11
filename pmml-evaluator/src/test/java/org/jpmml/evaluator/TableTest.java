@@ -27,6 +27,8 @@ import java.util.NoSuchElementException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 public class TableTest {
@@ -97,9 +99,13 @@ public class TableTest {
 		assertEquals(Arrays.asList(1.0, 2.0, 3.0), resultsTable.getValues("B"));
 		assertEquals(Arrays.asList("1", "2", "3"), resultsTable.getValues("C"));
 
+		assertNull(resultsTable.getException(0));
+		assertNull(resultsTable.getException(1));
+		assertNull(resultsTable.getException(2));
+
 		tableWriter.next();
 
-		tableWriter.put("A", 4);
+		tableWriter.put(new Exception());
 
 		tableWriter.next();
 
@@ -110,8 +116,11 @@ public class TableTest {
 		assertEquals(3, resultsTable.getNumberOfColumns());
 		assertEquals(5, resultsTable.getNumberOfRows());
 
-		assertEquals(Arrays.asList(1, 2, 3, 4, null), resultsTable.getValues("A"));
+		assertEquals(Arrays.asList(1, 2, 3, null, null), resultsTable.getValues("A"));
 		assertEquals(Arrays.asList(1.0, 2.0, 3.0, null, null), resultsTable.getValues("B"));
 		assertEquals(Arrays.asList("1", "2", "3", null, "5"), resultsTable.getValues("C"));
+
+		assertNotNull(resultsTable.getException(3));
+		assertNull(resultsTable.getException(4));
 	}
 }
