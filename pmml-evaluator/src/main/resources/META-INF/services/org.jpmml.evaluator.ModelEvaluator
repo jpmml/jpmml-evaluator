@@ -10,5 +10,6 @@ org.jpmml.evaluator.regression.RegressionModelEvaluator
 org.jpmml.evaluator.rule_set.RuleSetModelEvaluator
 org.jpmml.evaluator.scorecard.ScorecardEvaluator
 org.jpmml.evaluator.support_vector_machine.SupportVectorMachineModelEvaluator
+org.jpmml.evaluator.time_series.TimeSeriesModelEvaluator
 org.jpmml.evaluator.tree.SimpleTreeModelEvaluator 
 org.jpmml.evaluator.tree.ComplexTreeModelEvaluator 
