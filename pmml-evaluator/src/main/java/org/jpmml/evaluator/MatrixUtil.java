@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.MatCell;
@@ -32,6 +34,209 @@ import org.jpmml.model.UnsupportedAttributeException;
 public class MatrixUtil {
 
 	private MatrixUtil(){
+	}
+
+	static
+	public RealMatrix asRealMatrix(Matrix matrix){
+		Integer nbRows = matrix.getNbRows();
+		Integer nbCols = matrix.getNbCols();
+
+		List<Array> arrays = matrix.getArrays();
+		List<MatCell> matCells = matrix.getMatCells();
+
+		Integer nbMax = null;
+
+		Matrix.Kind kind = matrix.getKind();
+		switch(kind){
+			case DIAGONAL:
+			case SYMMETRIC:
+				{
+					if(nbCols != null){
+
+						if(nbMax == null){
+							nbMax = nbCols;
+						} else
+
+						{
+							if(nbCols.intValue() != nbMax.intValue()){
+								throw new InvalidElementException(matrix);
+							}
+						}
+					}
+				}
+				break;
+			default:
+				break;
+		} // End switch
+
+		switch(kind){
+			case DIAGONAL:
+				{
+					if(arrays.size() == 1){
+						Array array = arrays.get(0);
+
+						List<? extends Number> elements = ArrayUtil.asNumberList(array);
+
+						int max = elements.size();
+
+						if(nbMax != null && max != nbMax.intValue()){
+							throw new InvalidElementException(matrix);
+						}
+
+						RealMatrix result = MatrixUtils.createRealMatrix(max, max);
+
+						Number offDiagDefault = matrix.getOffDiagDefault();
+						if(offDiagDefault != null && offDiagDefault.doubleValue() == 0d){
+							offDiagDefault = null;
+						}
+
+						for(int i = 0; i < max; i++){
+							Number element = elements.get(i);
+
+							result.setEntry(i, i, element.doubleValue());
+
+							if(offDiagDefault != null){
+
+								for(int j = 0; j < max; j++){
+
+									if(i != j){
+										result.setEntry(i, j, offDiagDefault.doubleValue());
+									}
+								}
+							}
+						}
+
+						return result;
+					}
+				}
+				break;
+			case SYMMETRIC:
+				{
+					if(!arrays.isEmpty()){
+						int max = arrays.size();
+
+						if(nbMax != null && max != nbMax.intValue()){
+							throw new InvalidElementException(matrix);
+						}
+
+						RealMatrix result = MatrixUtils.createRealMatrix(max, max);
+
+						for(int i = 0; i < max; i++){
+							Array array = arrays.get(i);
+
+							List<? extends Number> elements = ArrayUtil.asNumberList(array);
+
+							for(int j = 0; j <= i; j++){
+								Number element = elements.get(j);
+
+								result.setEntry(i, j, element.doubleValue());
+
+								if(i != j){
+									result.setEntry(j, i, element.doubleValue());
+								}
+							}
+						}
+
+						return result;
+					}
+				}
+				break;
+			case ANY:
+				{
+					if(!arrays.isEmpty()){
+
+						if(nbRows != null && arrays.size() != nbRows.intValue()){
+							throw new InvalidElementException(matrix);
+						}
+
+						RealMatrix result = null;
+
+						for(int i = 0; i < arrays.size(); i++){
+							Array array = arrays.get(i);
+
+							List<? extends Number> elements = ArrayUtil.asNumberList(array);
+
+							if(nbCols != null && elements.size() != nbCols.intValue()){
+								throw new InvalidElementException(matrix);
+							} // End if
+
+							if(result == null){
+								result = MatrixUtils.createRealMatrix(arrays.size(), elements.size());
+							}
+
+							for(int j = 0; j < elements.size(); j++){
+								Number element = elements.get(j);
+
+								result.setEntry(i, j, element.doubleValue());
+							}
+						}
+
+						return result;
+					} // End if
+
+					if(!matCells.isEmpty()){
+
+						if(nbRows == null){
+							MatCell matCell = Collections.max(matCells, MatrixUtil.rowComparator);
+
+							nbRows = matCell.requireRow();
+						} // End if
+
+						if(nbCols == null){
+							MatCell matCell = Collections.max(matCells, MatrixUtil.columnComparator);
+
+							nbCols = matCell.requireCol();
+						}
+
+						Number diagDefault = matrix.getDiagDefault();
+						if(diagDefault != null && diagDefault.doubleValue() == 0d){
+							diagDefault = null;
+						}
+
+						Number offDiagDefault = matrix.getOffDiagDefault();
+						if(offDiagDefault != null && offDiagDefault.doubleValue() == 0d){
+							offDiagDefault = null;
+						}
+
+						RealMatrix result = MatrixUtils.createRealMatrix(nbRows, nbCols);
+
+						if(diagDefault != null || offDiagDefault != null){
+
+							for(int i = 0; i < nbRows; i++){
+
+								for(int j = 0; j < nbCols; j++){
+
+									if(i == j){
+
+										if(diagDefault != null){
+											result.setEntry(i, j, diagDefault.doubleValue());
+										}
+									} else
+
+									{
+										if(offDiagDefault != null){
+											result.setEntry(i, j, offDiagDefault.doubleValue());
+										}
+									}
+								}
+							}
+						}
+
+						for(MatCell matCell : matCells){
+							Number value = (Number)TypeUtil.parseOrCast(DataType.DOUBLE, matCell.getValue());
+
+							result.setEntry(matCell.requireRow() - 1, matCell.requireCol() - 1, value.doubleValue());
+						}
+
+						return result;
+					}
+				}
+				break;
+			default:
+				throw new UnsupportedAttributeException(matrix, kind);
+		}
+
+		throw new InvalidElementException(matrix);
 	}
 
 	/**
@@ -141,7 +346,7 @@ public class MatrixUtil {
 		for(int i = 0, max = matCells.size(); i < max; i++){
 			MatCell matCell = matCells.get(i);
 
-			if((matCell.getRow() == row) && (matCell.getCol() == column)){
+			if((matCell.requireRow() == row) && (matCell.requireCol() == column)){
 				return (Number)TypeUtil.parseOrCast(DataType.DOUBLE, matCell.getValue());
 			}
 		}
@@ -189,7 +394,7 @@ public class MatrixUtil {
 					if(!matCells.isEmpty()){
 						MatCell matCell = Collections.max(matCells, MatrixUtil.rowComparator);
 
-						return matCell.getRow();
+						return matCell.requireRow();
 					}
 				}
 				break;
@@ -242,7 +447,7 @@ public class MatrixUtil {
 					if(!matCells.isEmpty()){
 						MatCell matCell = Collections.max(matCells, MatrixUtil.columnComparator);
 
-						return matCell.getCol();
+						return matCell.requireCol();
 					}
 				}
 				break;
@@ -257,7 +462,7 @@ public class MatrixUtil {
 
 		@Override
 		public int compare(MatCell left, MatCell right){
-			return (left.getRow() - right.getRow());
+			return (left.requireRow() - right.requireRow());
 		}
 	};
 
@@ -265,7 +470,7 @@ public class MatrixUtil {
 
 		@Override
 		public int compare(MatCell left, MatCell right){
-			return (left.getCol() - right.getCol());
+			return (left.requireCol() - right.requireCol());
 		}
 	};
 }

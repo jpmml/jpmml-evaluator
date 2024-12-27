@@ -18,12 +18,16 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Arrays;
+
+import org.apache.commons.math3.linear.RealMatrix;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.MatCell;
 import org.dmg.pmml.Matrix;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class MatrixUtilTest {
@@ -41,10 +45,10 @@ public class MatrixUtilTest {
 		assertEquals(null, MatrixUtil.getElementAt(matrix, 1, 3));
 		assertEquals(null, MatrixUtil.getElementAt(matrix, 3, 1));
 
-		matrix.setOffDiagDefault(0d);
+		matrix.setOffDiagDefault(-1d);
 
-		assertEquals(0d, MatrixUtil.getElementAt(matrix, 1, 3));
-		assertEquals(0d, MatrixUtil.getElementAt(matrix, 3, 1));
+		assertEquals(-1d, MatrixUtil.getElementAt(matrix, 1, 3));
+		assertEquals(-1d, MatrixUtil.getElementAt(matrix, 3, 1));
 
 		assertEquals(3, MatrixUtil.getRows(matrix));
 		assertEquals(3, MatrixUtil.getColumns(matrix));
@@ -64,6 +68,14 @@ public class MatrixUtilTest {
 		} catch(IndexOutOfBoundsException ioobe){
 			// Ignored
 		}
+
+		double[][] data = {
+			{1, -1, -1},
+			{-1, 2, -1},
+			{-1, -1, 3},
+		};
+
+		checkData(data, matrix);
 	}
 
 	@Test
@@ -105,6 +117,14 @@ public class MatrixUtilTest {
 		} catch(IndexOutOfBoundsException ioobe){
 			// Ignored
 		}
+
+		double[][] data = {
+			{1, 4, 6},
+			{4, 2, 5},
+			{6, 5, 3}
+		};
+
+		checkData(data, matrix);
 	}
 
 	@Test
@@ -118,7 +138,7 @@ public class MatrixUtilTest {
 				new Array(Array.Type.REAL, "0 0 9 0 0")
 			);
 
-		anyMatrix(matrix);
+		checkAnyMatrix(matrix);
 	}
 
 	@Test
@@ -134,11 +154,11 @@ public class MatrixUtilTest {
 				new MatCell(5, 3, "9")
 			);
 
-		anyMatrix(matrix);
+		checkAnyMatrix(matrix);
 	}
 
 	static
-	private void anyMatrix(Matrix matrix){
+	private void checkAnyMatrix(Matrix matrix){
 		assertEquals(42d, MatrixUtil.getElementAt(matrix, 1, 4));
 		assertEquals(1d, MatrixUtil.getElementAt(matrix, 2, 2));
 		assertEquals(5d, MatrixUtil.getElementAt(matrix, 3, 1));
@@ -160,5 +180,24 @@ public class MatrixUtilTest {
 		} catch(IndexOutOfBoundsException ioobe){
 			// Ignored
 		}
+
+		double[][] data = {
+			{0, 0, 0, 42, 0},
+			{0, 1, 0, 0, 0},
+			{5, 0, 0, 0, 0},
+			{0, 0, 0, 0, 7},
+			{0, 0, 9, 0, 0}
+		};
+
+		checkData(data, matrix);
+	}
+
+	static
+	private void checkData(double[][] expectedData, Matrix matrix){
+		RealMatrix realMatrix = MatrixUtil.asRealMatrix(matrix);
+
+		double[][] actualData = realMatrix.getData();
+
+		assertTrue(Arrays.deepEquals(expectedData, actualData));
 	}
 }
