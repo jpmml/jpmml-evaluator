@@ -23,13 +23,22 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.time_series.Algorithm;
+import org.dmg.pmml.time_series.InterceptVector;
+import org.dmg.pmml.time_series.MeasurementMatrix;
+import org.dmg.pmml.time_series.StateSpaceModel;
+import org.dmg.pmml.time_series.StateVector;
 import org.dmg.pmml.time_series.TimeSeriesModel;
+import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.HasOrderFields;
 import org.jpmml.evaluator.InputField;
+import org.jpmml.evaluator.MatrixUtil;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.TargetField;
@@ -88,7 +97,40 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 	}
 
 	private Object evaluateAlgorithm(Algorithm algorithm, EvaluationContext context){
+
+		if(algorithm instanceof StateSpaceModel){
+			return evaluateStateSpaceModel((StateSpaceModel)algorithm, context);
+		}
+
 		throw new UnsupportedElementException(algorithm);
+	}
+
+	private Double evaluateStateSpaceModel(StateSpaceModel stateSpaceModel, EvaluationContext context){
+		StateVector stateVector = stateSpaceModel.requireStateVector();
+		MeasurementMatrix measurementMatrix = stateSpaceModel.requireMeasurementMatrix();
+		Number intercept = stateSpaceModel.getIntercept();
+		InterceptVector interceptVector = stateSpaceModel.getInterceptVector();
+
+		RealVector realStateVector = ArrayUtil.asRealVector(stateVector.requireArray());
+		RealMatrix realMeasurementMatrix = MatrixUtil.asRealMatrix(measurementMatrix.requireMatrix());
+		RealVector realInterceptVector;
+
+		if(interceptVector != null){
+
+			if(intercept != null && intercept.doubleValue() != 0d){
+				throw new InvalidElementException(stateSpaceModel);
+			}
+
+			realInterceptVector = ArrayUtil.asRealVector(interceptVector.requireArray());
+		} else
+
+		{
+			realInterceptVector = new ArrayRealVector(new double[]{intercept.doubleValue()}, false);
+		}
+
+		RealVector realObservableVector = (realMeasurementMatrix.operate(realStateVector)).add(realInterceptVector);
+
+		return realObservableVector.getEntry(0);
 	}
 
 	static

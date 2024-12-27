@@ -49,11 +49,11 @@ import org.dmg.pmml.sequence.SequenceModel;
 import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
 import org.dmg.pmml.text.TextModel;
 import org.dmg.pmml.time_series.ARIMA;
+import org.dmg.pmml.time_series.DynamicRegressor;
 import org.dmg.pmml.time_series.ExponentialSmoothing;
 import org.dmg.pmml.time_series.GARCH;
 import org.dmg.pmml.time_series.SeasonalTrendDecomposition;
 import org.dmg.pmml.time_series.SpectralAnalysis;
-import org.dmg.pmml.time_series.StateSpaceModel;
 import org.dmg.pmml.tree.DecisionTree;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
@@ -155,6 +155,13 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 	@Override
 	public VisitorAction visit(DecisionTree decisionTree){
 		report(new UnsupportedElementException(decisionTree));
+
+		return VisitorAction.SKIP;
+	}
+
+	@Override
+	public VisitorAction visit(DynamicRegressor dynamicRegressor){
+		report(new UnsupportedElementException(dynamicRegressor));
 
 		return VisitorAction.SKIP;
 	}
@@ -290,13 +297,6 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 	@Override
 	public VisitorAction visit(SpectralAnalysis spectralAnalysis){
 		report(new UnsupportedElementException(spectralAnalysis));
-
-		return VisitorAction.SKIP;
-	}
-
-	@Override
-	public VisitorAction visit(StateSpaceModel stateSpaceModel){
-		report(new UnsupportedElementException(stateSpaceModel));
 
 		return VisitorAction.SKIP;
 	}
