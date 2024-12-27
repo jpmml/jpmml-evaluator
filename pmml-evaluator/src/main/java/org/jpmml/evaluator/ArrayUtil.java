@@ -27,6 +27,9 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Doubles;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.RealVector;
 import org.dmg.pmml.Array;
 import org.jpmml.model.InvalidElementException;
 import org.jpmml.model.UnsupportedAttributeException;
@@ -51,6 +54,15 @@ public class ArrayUtil {
 	static
 	public List<?> getContent(Array array){
 		return CacheUtil.getValue(array, ArrayUtil.contentCache);
+	}
+
+	static
+	public RealVector asRealVector(Array array){
+		List<? extends Number> elements = asNumberList(array);
+
+		double[] data = Doubles.toArray(elements);
+
+		return new ArrayRealVector(data, false);
 	}
 
 	static
