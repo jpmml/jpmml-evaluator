@@ -112,6 +112,20 @@ public class Table {
 		return result;
 	}
 
+	public boolean hasExceptions(){
+		List<Exception> exceptions = getExceptions();
+
+		for(int i = 0; i < exceptions.size(); i++){
+			Exception exception = exceptions.get(i);
+
+			if(exception != null){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public Exception getException(int index){
 		List<Exception> exceptions = getExceptions();
 

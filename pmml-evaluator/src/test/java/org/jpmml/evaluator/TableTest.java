@@ -27,8 +27,10 @@ import java.util.NoSuchElementException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class TableTest {
@@ -47,6 +49,8 @@ public class TableTest {
 		assertEquals(2, argumentsTable.getNumberOfColumns());
 		assertEquals(3, argumentsTable.getNumberOfRows());
 
+		assertFalse(argumentsTable.hasExceptions());
+
 		TableReader tableReader = new TableReader(argumentsTable);
 
 		try {
@@ -61,6 +65,8 @@ public class TableTest {
 
 		assertEquals(0, resultsTable.getNumberOfColumns());
 		assertEquals(0, resultsTable.getNumberOfRows());
+
+		assertFalse(resultsTable.hasExceptions());
 
 		TableWriter tableWriter = new TableWriter(resultsTable);
 
@@ -93,6 +99,8 @@ public class TableTest {
 		assertEquals(3, resultsTable.getNumberOfColumns());
 		assertEquals(3, resultsTable.getNumberOfRows());
 
+		assertFalse(resultsTable.hasExceptions());
+
 		assertEquals(Arrays.asList("A", "B", "C"), resultsTable.getColumns());
 
 		assertEquals(Arrays.asList(1, 2, 3), resultsTable.getValues("A"));
@@ -115,6 +123,8 @@ public class TableTest {
 
 		assertEquals(3, resultsTable.getNumberOfColumns());
 		assertEquals(5, resultsTable.getNumberOfRows());
+
+		assertTrue(resultsTable.hasExceptions());
 
 		assertEquals(Arrays.asList(1, 2, 3, null, null), resultsTable.getValues("A"));
 		assertEquals(Arrays.asList(1.0, 2.0, 3.0, null, null), resultsTable.getValues("B"));
