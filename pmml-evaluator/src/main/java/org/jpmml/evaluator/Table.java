@@ -87,7 +87,7 @@ public class Table {
 		}
 	}
 
-	public boolean addColumn(String column){
+	protected boolean ensureColumn(String column){
 		List<String> columns = getColumns();
 
 		if(!columns.contains(column)){
@@ -97,6 +97,10 @@ public class Table {
 		}
 
 		return false;
+	}
+
+	public boolean addColumn(String column){
+		return ensureColumn(column);
 	}
 
 	public boolean removeColumn(String column){
@@ -138,6 +142,21 @@ public class Table {
 		TableUtil.set(exceptions, index, exception);
 	}
 
+	protected List<?> ensureValues(String column){
+		Map<String, List<?>> columnValues = getValues();
+
+		List<?> values = columnValues.get(column);
+		if(values == null){
+			ensureColumn(column);
+
+			values = new ArrayList<>();
+
+			columnValues.put(column, values);
+		}
+
+		return values;
+	}
+
 	public List<?> getValues(String column){
 		Map<String, List<?>> columnValues = getValues();
 
@@ -146,6 +165,8 @@ public class Table {
 
 	public void setValues(String column, List<?> values){
 		Map<String, List<?>> columnValues = getValues();
+
+		ensureColumn(column);
 
 		columnValues.put(column, values);
 	}

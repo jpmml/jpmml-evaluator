@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -36,20 +37,57 @@ import static org.junit.Assert.fail;
 public class TableTest {
 
 	@Test
-	public void copy(){
+	public void construct(){
 		List<String> columns = new ArrayList<>();
 		columns.add("A");
-		columns.add("B");
 
-		Table argumentsTable = new Table(columns);
+		Table table = new Table();
+
+		assertEquals(Arrays.asList(), table.getColumns());
+
+		table.setValues("A", null);
+
+		assertEquals(Arrays.asList("A"), table.getColumns());
+
+		table = new Table(Collections.unmodifiableList(table.getColumns()));
+
+		table.setValues("A", Collections.singletonList(1));
+
+		try {
+			table.setValues("B", Collections.singletonList(1d));
+
+			fail();
+		} catch(UnsupportedOperationException uoe){
+			// Ignored
+		}
+
+		assertEquals(Arrays.asList("A"), table.getColumns());
+
+		table = new Table(new ArrayList<>(table.getColumns()));
+
+		table.setValues("C", Collections.singletonList("1"));
+
+		assertEquals(Arrays.asList("A", "C"), table.getColumns());
+	}
+
+	@Test
+	public void copy(){
+		Table argumentsTable = new Table(new ArrayList<>(Collections.singletonList("A")));
+
+		assertEquals(Arrays.asList("A"), argumentsTable.getColumns());
+
+		assertEquals(1, argumentsTable.getNumberOfColumns());
+		assertEquals(0, argumentsTable.getNumberOfRows());
+
+		assertFalse(argumentsTable.hasExceptions());
 
 		argumentsTable.setValues("A", Arrays.asList(1, 2, 3));
 		argumentsTable.setValues("B", Arrays.asList(1.0, 2.0, 3.0));
 
+		assertEquals(Arrays.asList("A", "B"), argumentsTable.getColumns());
+
 		assertEquals(2, argumentsTable.getNumberOfColumns());
 		assertEquals(3, argumentsTable.getNumberOfRows());
-
-		assertFalse(argumentsTable.hasExceptions());
 
 		TableReader tableReader = new TableReader(argumentsTable);
 
@@ -62,6 +100,8 @@ public class TableTest {
 		}
 
 		Table resultsTable = new Table();
+
+		assertEquals(Collections.emptyList(), resultsTable.getColumns());
 
 		assertEquals(0, resultsTable.getNumberOfColumns());
 		assertEquals(0, resultsTable.getNumberOfRows());
@@ -96,20 +136,20 @@ public class TableTest {
 			// Ignored
 		}
 
+		assertEquals(Arrays.asList("A", "B", "C"), resultsTable.getColumns());
+
 		assertEquals(3, resultsTable.getNumberOfColumns());
 		assertEquals(3, resultsTable.getNumberOfRows());
 
 		assertFalse(resultsTable.hasExceptions());
 
-		assertEquals(Arrays.asList("A", "B", "C"), resultsTable.getColumns());
+		assertNull(resultsTable.getException(0));
+		assertNull(resultsTable.getException(1));
+		assertNull(resultsTable.getException(2));
 
 		assertEquals(Arrays.asList(1, 2, 3), resultsTable.getValues("A"));
 		assertEquals(Arrays.asList(1.0, 2.0, 3.0), resultsTable.getValues("B"));
 		assertEquals(Arrays.asList("1", "2", "3"), resultsTable.getValues("C"));
-
-		assertNull(resultsTable.getException(0));
-		assertNull(resultsTable.getException(1));
-		assertNull(resultsTable.getException(2));
 
 		tableWriter.next();
 
@@ -126,11 +166,11 @@ public class TableTest {
 
 		assertTrue(resultsTable.hasExceptions());
 
+		assertNotNull(resultsTable.getException(3));
+		assertNull(resultsTable.getException(4));
+
 		assertEquals(Arrays.asList(1, 2, 3, null, null), resultsTable.getValues("A"));
 		assertEquals(Arrays.asList(1.0, 2.0, 3.0, null, null), resultsTable.getValues("B"));
 		assertEquals(Arrays.asList("1", "2", "3", null, "5"), resultsTable.getValues("C"));
-
-		assertNotNull(resultsTable.getException(3));
-		assertNull(resultsTable.getException(4));
 	}
 }

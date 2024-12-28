@@ -19,7 +19,6 @@
 package org.jpmml.evaluator;
 
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -65,14 +64,7 @@ public class TableWriter extends AbstractMap<String, Object> {
 		int position = ensurePosition();
 
 		@SuppressWarnings("unchecked")
-		List<Object> values = (List<Object>)table.getValues(key);
-		if(values == null){
-			table.addColumn(key);
-
-			values = new ArrayList<>();
-
-			table.setValues(key, values);
-		}
+		List<Object> values = (List<Object>)table.ensureValues(key);
 
 		return TableUtil.set(values, position, value);
 	}
