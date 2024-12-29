@@ -18,14 +18,17 @@
  */
 package org.jpmml.evaluator.time_series;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.time_series.Algorithm;
@@ -34,8 +37,11 @@ import org.dmg.pmml.time_series.MeasurementMatrix;
 import org.dmg.pmml.time_series.StateSpaceModel;
 import org.dmg.pmml.time_series.StateVector;
 import org.dmg.pmml.time_series.TimeSeriesModel;
+import org.dmg.pmml.time_series.TransitionMatrix;
 import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.evaluator.EvaluationContext;
+import org.jpmml.evaluator.FieldValue;
+import org.jpmml.evaluator.FieldValueUtil;
 import org.jpmml.evaluator.HasOrderFields;
 import org.jpmml.evaluator.HasSupplementaryFields;
 import org.jpmml.evaluator.InputField;
@@ -95,6 +101,33 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 		return this.orderInputFields;
 	}
 
+	public int getForecastHorizon(EvaluationContext context){
+		List<InputField> supplementaryFields = getSupplementaryFields();
+
+		if(supplementaryFields.isEmpty()){
+			return 1;
+		} else
+
+		if(supplementaryFields.size() == 1){
+			InputField supplementaryField = Iterables.getOnlyElement(supplementaryFields);
+
+			if(supplementaryField.getDataType() != DataType.INTEGER){
+				// XXX
+			}
+
+			FieldValue value = context.evaluate(supplementaryField.getName());
+			if(FieldValueUtil.isMissing(value)){
+				return 1;
+			}
+
+			return value.asInteger();
+		} else
+
+		{
+			throw createMiningSchemaException("Expected 0 or 1 supplementary fields, got " + supplementaryFields.size() + " supplementary fields");
+		}
+	}
+
 	@Override
 	protected <V extends Number> Map<String, ?> evaluateTimeSeries(ValueFactory<V> valueFactory, EvaluationContext context){
 		TimeSeriesModel timeSeriesModel = getModel();
@@ -106,21 +139,23 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 			throw new InvalidElementException(timeSeriesModel);
 		}
 
-		Object forecast = evaluateAlgorithm(algorithm, context);
+		int forecastHorizon = getForecastHorizon(context);
+
+		Object forecast = evaluateAlgorithm(algorithm, forecastHorizon, context);
 
 		return Collections.singletonMap(targetField.getFieldName(), forecast);
 	}
 
-	private Object evaluateAlgorithm(Algorithm algorithm, EvaluationContext context){
+	private Object evaluateAlgorithm(Algorithm algorithm, int forecastHorizon, EvaluationContext context){
 
 		if(algorithm instanceof StateSpaceModel){
-			return evaluateStateSpaceModel((StateSpaceModel)algorithm, context);
+			return evaluateStateSpaceModel((StateSpaceModel)algorithm, forecastHorizon, context);
 		}
 
 		throw new UnsupportedElementException(algorithm);
 	}
 
-	private Double evaluateStateSpaceModel(StateSpaceModel stateSpaceModel, EvaluationContext context){
+	private Object evaluateStateSpaceModel(StateSpaceModel stateSpaceModel, int forecastHorizon, EvaluationContext context){
 		StateVector stateVector = stateSpaceModel.requireStateVector();
 		MeasurementMatrix measurementMatrix = stateSpaceModel.requireMeasurementMatrix();
 		Number intercept = stateSpaceModel.getIntercept();
@@ -141,11 +176,33 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 
 		{
 			realInterceptVector = new ArrayRealVector(new double[]{intercept.doubleValue()}, false);
+		} // End if
+
+		if(forecastHorizon == 1){
+			RealVector realObservableVector = (realMeasurementMatrix.operate(realStateVector)).add(realInterceptVector);
+
+			return realObservableVector.getEntry(0);
+		} else
+
+		{
+			TransitionMatrix transitionMatrix = stateSpaceModel.requireTransitionMatrix();
+
+			RealMatrix realTransitionMatrix = MatrixUtil.asRealMatrix(transitionMatrix.requireMatrix());
+
+			List<Double> result = new ArrayList<>();
+
+			for(int i = 0; i < forecastHorizon; i++){
+				RealVector realObservableVector = (realMeasurementMatrix.operate(realStateVector)).add(realInterceptVector);
+
+				result.add(realObservableVector.getEntry(0));
+
+				if(i < (forecastHorizon - 1)){
+					realStateVector = realTransitionMatrix.operate(realStateVector);
+				}
+			}
+
+			return result;
 		}
-
-		RealVector realObservableVector = (realMeasurementMatrix.operate(realStateVector)).add(realInterceptVector);
-
-		return realObservableVector.getEntry(0);
 	}
 
 	static
