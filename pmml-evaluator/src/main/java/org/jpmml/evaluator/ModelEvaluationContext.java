@@ -70,6 +70,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 		MiningField.UsageType usageType = miningField.getUsageType();
 		switch(usageType){
 			case ACTIVE:
+			case SUPPLEMENTARY:
 			case GROUP:
 			case ORDER:
 				{

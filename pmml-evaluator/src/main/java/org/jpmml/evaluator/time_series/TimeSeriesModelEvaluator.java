@@ -37,6 +37,7 @@ import org.dmg.pmml.time_series.TimeSeriesModel;
 import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.HasOrderFields;
+import org.jpmml.evaluator.HasSupplementaryFields;
 import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.MatrixUtil;
 import org.jpmml.evaluator.ModelEvaluator;
@@ -47,7 +48,9 @@ import org.jpmml.model.InvalidElementException;
 import org.jpmml.model.UnsupportedAttributeException;
 import org.jpmml.model.UnsupportedElementException;
 
-public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> implements HasOrderFields {
+public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> implements HasSupplementaryFields, HasOrderFields {
+
+	private List<InputField> supplementaryInputFields = null;
 
 	private List<InputField> orderInputFields = null;
 
@@ -66,6 +69,18 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 	@Override
 	public String getSummary(){
 		return "Timeseries model";
+	}
+
+	@Override
+	public List<InputField> getSupplementaryFields(){
+
+		if(this.supplementaryInputFields == null){
+			List<InputField> supplementaryInputFields = filterInputFields(createInputFields(MiningField.UsageType.SUPPLEMENTARY));
+
+			this.supplementaryInputFields = ImmutableList.copyOf(supplementaryInputFields);
+		}
+
+		return this.supplementaryInputFields;
 	}
 
 	@Override
