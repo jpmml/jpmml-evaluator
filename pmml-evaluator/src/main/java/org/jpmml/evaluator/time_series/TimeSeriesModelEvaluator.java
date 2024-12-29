@@ -189,19 +189,19 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 
 			RealMatrix realTransitionMatrix = MatrixUtil.asRealMatrix(transitionMatrix.requireMatrix());
 
-			List<Double> result = new ArrayList<>();
+			List<Double> values = new ArrayList<>();
 
 			for(int i = 0; i < forecastHorizon; i++){
 				RealVector realObservableVector = (realMeasurementMatrix.operate(realStateVector)).add(realInterceptVector);
 
-				result.add(realObservableVector.getEntry(0));
+				values.add(realObservableVector.getEntry(0));
 
 				if(i < (forecastHorizon - 1)){
 					realStateVector = realTransitionMatrix.operate(realStateVector);
 				}
 			}
 
-			return result;
+			return new SeriesForecast(values);
 		}
 	}
 
