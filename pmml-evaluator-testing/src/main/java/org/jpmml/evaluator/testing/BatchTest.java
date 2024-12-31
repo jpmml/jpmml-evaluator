@@ -34,6 +34,11 @@ public class BatchTest {
 	public void evaluate(Batch batch) throws Exception {
 		List<Conflict> conflicts = BatchUtil.evaluate(batch);
 
+		checkConflicts(conflicts);
+	}
+
+	protected void checkConflicts(List<Conflict> conflicts){
+
 		if(!conflicts.isEmpty()){
 
 			for(Conflict conflict : conflicts){
@@ -44,7 +49,7 @@ public class BatchTest {
 		}
 	}
 
-	public void log(Conflict conflict){
+	protected void log(Conflict conflict){
 		System.err.println(conflict);
 	}
 

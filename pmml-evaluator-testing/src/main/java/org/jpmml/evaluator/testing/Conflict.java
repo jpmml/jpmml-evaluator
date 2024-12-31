@@ -25,7 +25,7 @@ import org.jpmml.model.ToStringHelper;
 
 public class Conflict {
 
-	private Integer id = null;
+	private Object id = null;
 
 	private Map<String, ?> arguments = null;
 
@@ -34,13 +34,13 @@ public class Conflict {
 	private Exception exception = null;
 
 
-	public Conflict(Integer id, Map<String, ?> arguments, MapDifference<String, ?> difference){
+	public Conflict(Object id, Map<String, ?> arguments, MapDifference<String, ?> difference){
 		setId(id);
 		setArguments(arguments);
 		setDifference(difference);
 	}
 
-	public Conflict(Integer id, Map<String, ?> arguments, Exception exception){
+	public Conflict(Object id, Map<String, ?> arguments, Exception exception){
 		setId(id);
 		setArguments(arguments);
 		setException(exception);
@@ -78,11 +78,11 @@ public class Conflict {
 		return helper.toString();
 	}
 
-	public Integer getId(){
+	public Object getId(){
 		return this.id;
 	}
 
-	private void setId(Integer id){
+	private void setId(Object id){
 		this.id = id;
 	}
 

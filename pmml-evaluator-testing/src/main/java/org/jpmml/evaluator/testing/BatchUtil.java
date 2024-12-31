@@ -19,10 +19,12 @@
 package org.jpmml.evaluator.testing;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
@@ -57,29 +59,7 @@ public class BatchUtil {
 			throw new IllegalArgumentException("Expected the same number of data rows, got " + input.size() + " input data rows and " + output.size() + " expected output data rows");
 		}
 
-		Predicate<ResultField> columnFilter = batch.getColumnFilter();
-
-		Set<String> names = new LinkedHashSet<>();
-
-		List<TargetField> targetFields = evaluator.getTargetFields();
-		for(TargetField targetField : targetFields){
-
-			if(targetField.isSynthetic()){
-				continue;
-			} // End if
-
-			if(columnFilter.test(targetField)){
-				names.add(targetField.getName());
-			}
-		}
-
-		List<OutputField> outputFields = evaluator.getOutputFields();
-		for(OutputField outputField : outputFields){
-
-			if(columnFilter.test(outputField)){
-				names.add(outputField.getName());
-			}
-		}
+		Set<String> columns = collectResultColumns(evaluator, batch.getColumnFilter());
 
 		Equivalence<Object> equivalence = batch.getEquivalence();
 
@@ -89,11 +69,11 @@ public class BatchUtil {
 			Map<String, ?> arguments = input.get(i);
 
 			Map<String, ?> expectedResults = output.get(i);
-			expectedResults = Maps.filterKeys(expectedResults, names::contains);
+			expectedResults = Maps.filterKeys(expectedResults, columns::contains);
 
 			try {
 				Map<String, ?> actualResults = evaluator.evaluate(arguments);
-				actualResults = Maps.filterKeys(actualResults, names::contains);
+				actualResults = Maps.filterKeys(actualResults, columns::contains);
 
 				MapDifference<String, ?> difference = Maps.<String, Object>difference(expectedResults, actualResults, equivalence);
 				if(!difference.areEqual()){
@@ -109,5 +89,93 @@ public class BatchUtil {
 		}
 
 		return conflicts;
+	}
+
+	static
+	public List<Conflict> evaluateSingleton(Batch batch, Function<Map<String, ?>, List<Map<String, ?>>> resultsExpander) throws Exception {
+		Evaluator evaluator = batch.getEvaluator();
+
+		List<? extends Map<String, ?>> input = batch.getInput();
+		List<? extends Map<String, ?>> output = batch.getOutput();
+
+		if(evaluator instanceof HasGroupFields){
+			HasGroupFields hasGroupFields = (HasGroupFields)evaluator;
+
+			input = EvaluatorUtil.groupRows(hasGroupFields, input);
+		} // End if
+
+		if(input.size() != 1){
+			throw new IllegalArgumentException("Expected exactly one input data row, got " + input.size() + " input data rows");
+		}
+
+		Set<String> columns = collectResultColumns(evaluator, batch.getColumnFilter());
+
+		Equivalence<Object> equivalence = batch.getEquivalence();
+
+		int i = 0;
+
+		Map<String, ?> arguments = input.get(i);
+
+		List<Map<String, ?>> expandedResults;
+
+		try {
+			Map<String, ?> results = evaluator.evaluate(arguments);
+
+			expandedResults = resultsExpander.apply(results);
+		} catch(Exception e){
+			Conflict conflict = new Conflict(i, arguments, e);
+
+			return Collections.singletonList(conflict);
+		}
+
+		if(expandedResults.size() != output.size()){
+			throw new IllegalArgumentException("Expected the same number of data rows, got " + expandedResults.size() + " expanded evaluation result data rows and " + output.size() + " expected output data rows");
+		}
+
+		List<Conflict> conflicts = new ArrayList<>();
+
+		for(int j = 0; j < expandedResults.size(); j++){
+			Map<String, ?> expectedResults = output.get(j);
+			expectedResults = Maps.filterKeys(expectedResults, columns::contains);
+
+			Map<String, ?> actualResults = expandedResults.get(j);
+			actualResults = Maps.filterKeys(actualResults, columns::contains);
+
+			MapDifference<String, ?> difference = Maps.<String, Object>difference(expectedResults, actualResults, equivalence);
+			if(!difference.areEqual()){
+				Conflict conflict = new Conflict(i + "/" + j, arguments, difference);
+
+				conflicts.add(conflict);
+			}
+		}
+
+		return conflicts;
+	}
+
+	static
+	private Set<String> collectResultColumns(Evaluator evaluator, Predicate<ResultField> columnFilter){
+		Set<String> result = new LinkedHashSet<>();
+
+		List<TargetField> targetFields = evaluator.getTargetFields();
+		for(TargetField targetField : targetFields){
+
+			if(targetField.isSynthetic()){
+				continue;
+			} // End if
+
+			if(columnFilter.test(targetField)){
+				result.add(targetField.getName());
+			}
+		}
+
+		List<OutputField> outputFields = evaluator.getOutputFields();
+		for(OutputField outputField : outputFields){
+
+			if(columnFilter.test(outputField)){
+				result.add(outputField.getName());
+			}
+		}
+
+		return result;
 	}
 }
