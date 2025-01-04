@@ -91,7 +91,7 @@ public class TableWriter extends AbstractMap<String, Object> {
 		return this.position;
 	}
 
-	void setPosition(int position){
+	private void setPosition(int position){
 		this.position = position;
 	}
 }

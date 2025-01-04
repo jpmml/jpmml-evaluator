@@ -38,6 +38,9 @@ public class TableReader extends AbstractMap<String, Object> implements Iterator
 
 	public TableReader(Table table){
 		setTable(table);
+
+		setPosition(-1);
+		setMaxPosition(table.getNumberOfRows() - 1);
 	}
 
 	@Override
@@ -142,18 +145,15 @@ public class TableReader extends AbstractMap<String, Object> implements Iterator
 		return this.table;
 	}
 
-	void setTable(Table table){
+	private void setTable(Table table){
 		this.table = Objects.requireNonNull(table);
-
-		setPosition(-1);
-		setMaxPosition(table.getNumberOfRows() - 1);
 	}
 
 	int getPosition(){
 		return this.position;
 	}
 
-	void setPosition(int position){
+	private void setPosition(int position){
 		this.position = position;
 	}
 
@@ -161,7 +161,7 @@ public class TableReader extends AbstractMap<String, Object> implements Iterator
 		return this.maxPosition;
 	}
 
-	void setMaxPosition(int maxPosition){
+	private void setMaxPosition(int maxPosition){
 		this.maxPosition = maxPosition;
 	}
 }

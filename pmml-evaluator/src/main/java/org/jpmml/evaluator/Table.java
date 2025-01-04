@@ -29,7 +29,7 @@ public class Table {
 
 	private List<String> columns = null;
 
-	private List<Exception> exceptions = new ArrayList<>();
+	private List<Exception> exceptions = null;
 
 	private Map<String, List<?>> values = new HashMap<>();
 
@@ -40,6 +40,7 @@ public class Table {
 
 	public Table(List<String> columns){
 		setColumns(columns);
+		setExceptions(new ArrayList<>());
 	}
 
 	public int getNumberOfRows(){
@@ -175,12 +176,16 @@ public class Table {
 		return this.columns;
 	}
 
-	void setColumns(List<String> columns){
+	private void setColumns(List<String> columns){
 		this.columns = Objects.requireNonNull(columns);
 	}
 
 	public List<Exception> getExceptions(){
 		return this.exceptions;
+	}
+
+	private void setExceptions(List<Exception> exceptions){
+		this.exceptions = Objects.requireNonNull(exceptions);
 	}
 
 	public Map<String, List<?>> getValues(){
