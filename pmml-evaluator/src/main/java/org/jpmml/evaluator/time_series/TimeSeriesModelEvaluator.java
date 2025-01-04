@@ -28,7 +28,11 @@ import com.google.common.collect.Iterables;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
+import org.dmg.pmml.Array;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.HasRequiredArray;
+import org.dmg.pmml.HasRequiredMatrix;
+import org.dmg.pmml.Matrix;
 import org.dmg.pmml.MiningField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.time_series.Algorithm;
@@ -135,9 +139,6 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 		TargetField targetField = getTargetField();
 
 		Algorithm algorithm = getAlgorithm(timeSeriesModel);
-		if(algorithm == null){
-			throw new InvalidElementException(timeSeriesModel);
-		}
 
 		int forecastHorizon = getForecastHorizon(context);
 
@@ -161,8 +162,8 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 		Number intercept = stateSpaceModel.getIntercept();
 		InterceptVector interceptVector = stateSpaceModel.getInterceptVector();
 
-		RealVector realStateVector = ArrayUtil.asRealVector(stateVector.requireArray());
-		RealMatrix realMeasurementMatrix = MatrixUtil.asRealMatrix(measurementMatrix.requireMatrix());
+		RealVector realStateVector = parseArray(stateVector);
+		RealMatrix realMeasurementMatrix = parseMatrix(measurementMatrix);
 		RealVector realInterceptVector;
 
 		if(interceptVector != null){
@@ -171,7 +172,7 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 				throw new InvalidElementException(stateSpaceModel);
 			}
 
-			realInterceptVector = ArrayUtil.asRealVector(interceptVector.requireArray());
+			realInterceptVector = parseArray(interceptVector);
 		} else
 
 		{
@@ -187,7 +188,7 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 		{
 			TransitionMatrix transitionMatrix = stateSpaceModel.requireTransitionMatrix();
 
-			RealMatrix realTransitionMatrix = MatrixUtil.asRealMatrix(transitionMatrix.requireMatrix());
+			RealMatrix realTransitionMatrix = parseMatrix(transitionMatrix);
 
 			List<Double> values = new ArrayList<>();
 
@@ -211,19 +212,33 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 
 		switch(bestFit){
 			case ARIMA:
-				return timeSeriesModel.getARIMA();
+				return timeSeriesModel.requireARIMA();
 			case EXPONENTIAL_SMOOTHING:
-				return timeSeriesModel.getExponentialSmoothing();
+				return timeSeriesModel.requireExponentialSmoothing();
 			case SEASONAL_TREND_DECOMPOSITION:
-				return timeSeriesModel.getSeasonalTrendDecomposition();
+				return timeSeriesModel.requireSeasonalTrendDecomposition();
 			case SPECTRAL_ANALYSIS:
-				return timeSeriesModel.getSpectralAnalysis();
+				return timeSeriesModel.requireSpectralAnalysis();
 			case STATE_SPACE_MODEL:
-				return timeSeriesModel.getStateSpaceModel();
+				return timeSeriesModel.requireStateSpaceModel();
 			case GARCH:
-				return timeSeriesModel.getGARCH();
+				return timeSeriesModel.requireGARCH();
 			default:
 				throw new UnsupportedAttributeException(timeSeriesModel, bestFit);
 		}
+	}
+
+	static
+	private RealVector parseArray(HasRequiredArray<?> hasRequiredArray){
+		Array array = hasRequiredArray.requireArray();
+
+		return ArrayUtil.asRealVector(array);
+	}
+
+	static
+	private RealMatrix parseMatrix(HasRequiredMatrix<?> hasRequiredMatrix){
+		Matrix matrix = hasRequiredMatrix.requireMatrix();
+
+		return MatrixUtil.asRealMatrix(matrix);
 	}
 }
