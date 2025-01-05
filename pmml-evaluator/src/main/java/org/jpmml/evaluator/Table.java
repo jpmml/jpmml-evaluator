@@ -24,6 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 public class Table {
 
@@ -115,6 +119,21 @@ public class Table {
 		}
 
 		return result;
+	}
+
+	@IgnoreJRERequirement
+	public TableSpliterator spliterator(){
+		return new TableSpliterator(this);
+	}
+
+	@IgnoreJRERequirement
+	public Stream<Map<String, Object>> stream(){
+		return StreamSupport.stream(spliterator(), false);
+	}
+
+	@IgnoreJRERequirement
+	public Stream<Map<String, Object>> parallelStream(){
+		return StreamSupport.stream(spliterator(), true);
 	}
 
 	public boolean hasExceptions(){
