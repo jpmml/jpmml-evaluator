@@ -67,7 +67,7 @@ public class TableSpliteratorTest {
 			doubleValues.add((double)i);
 		}
 
-		Table table = new Table(Arrays.asList("A", "B"));
+		Table table = new Table(Arrays.asList("A", "B"), size);
 		table.setValues("A", intValues);
 		table.setValues("B", doubleValues);
 

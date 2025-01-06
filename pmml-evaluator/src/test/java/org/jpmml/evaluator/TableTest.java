@@ -41,7 +41,7 @@ public class TableTest {
 		List<String> columns = new ArrayList<>();
 		columns.add("A");
 
-		Table table = new Table();
+		Table table = new Table(1);
 
 		assertEquals(Arrays.asList(), table.getColumns());
 
@@ -49,7 +49,7 @@ public class TableTest {
 
 		assertEquals(Arrays.asList("A"), table.getColumns());
 
-		table = new Table(Collections.unmodifiableList(table.getColumns()));
+		table = new Table(Collections.unmodifiableList(table.getColumns()), 1);
 
 		table.setValues("A", Collections.singletonList(1));
 
@@ -63,7 +63,7 @@ public class TableTest {
 
 		assertEquals(Arrays.asList("A"), table.getColumns());
 
-		table = new Table(new ArrayList<>(table.getColumns()));
+		table = new Table(new ArrayList<>(table.getColumns()), 1);
 
 		table.setValues("C", Collections.singletonList("1"));
 
@@ -72,7 +72,7 @@ public class TableTest {
 
 	@Test
 	public void copy(){
-		Table argumentsTable = new Table(new ArrayList<>(Collections.singletonList("A")));
+		Table argumentsTable = new Table(new ArrayList<>(Collections.singletonList("A")), 3);
 
 		assertEquals(Arrays.asList("A"), argumentsTable.getColumns());
 
@@ -99,7 +99,7 @@ public class TableTest {
 			// Ignored
 		}
 
-		Table resultsTable = new Table();
+		Table resultsTable = new Table(5);
 
 		assertEquals(Collections.emptyList(), resultsTable.getColumns());
 

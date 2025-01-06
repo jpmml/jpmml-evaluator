@@ -33,18 +33,21 @@ public class Table {
 
 	private List<String> columns = null;
 
+	private int initialCapacity = 0;
+
 	private List<Exception> exceptions = null;
 
 	private Map<String, List<?>> values = new HashMap<>();
 
 
-	public Table(){
-		this(new ArrayList<>());
+	public Table(int initialCapacity){
+		this(new ArrayList<>(), initialCapacity);
 	}
 
-	public Table(List<String> columns){
+	public Table(List<String> columns, int initialCapacity){
 		setColumns(columns);
-		setExceptions(new ArrayList<>());
+		setInitialCapacity(initialCapacity);
+		setExceptions(createList());
 	}
 
 	public int getNumberOfRows(){
@@ -83,7 +86,7 @@ public class Table {
 			List<?> values = getValues(column);
 
 			if(values == null){
-				values = new ArrayList<>(numberOfRows);
+				values = createList(numberOfRows);
 
 				setValues(column, values);
 			}
@@ -169,7 +172,7 @@ public class Table {
 		if(values == null){
 			ensureColumn(column);
 
-			values = new ArrayList<>();
+			values = createList();
 
 			columnValues.put(column, values);
 		}
@@ -191,12 +194,28 @@ public class Table {
 		columnValues.put(column, values);
 	}
 
+	private <E> List<E> createList(){
+		return createList(getInitialCapacity());
+	}
+
+	private <E> List<E> createList(int initialCapacity){
+		return new ArrayList<>(initialCapacity);
+	}
+
 	public List<String> getColumns(){
 		return this.columns;
 	}
 
 	private void setColumns(List<String> columns){
 		this.columns = Objects.requireNonNull(columns);
+	}
+
+	public int getInitialCapacity(){
+		return this.initialCapacity;
+	}
+
+	private void setInitialCapacity(int initialCapacity){
+		this.initialCapacity = initialCapacity;
 	}
 
 	public List<Exception> getExceptions(){
