@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.junit.Test;
 
@@ -89,15 +87,7 @@ public class TableTest {
 		assertEquals(2, argumentsTable.getNumberOfColumns());
 		assertEquals(3, argumentsTable.getNumberOfRows());
 
-		TableReader tableReader = new TableReader(argumentsTable);
-
-		try {
-			tableReader.ensurePosition();
-
-			fail();
-		} catch(IllegalStateException ise){
-			// Ignored
-		}
+		Table.Row argumentRow = argumentsTable.new Row(0, argumentsTable.getNumberOfRows());
 
 		Table resultsTable = new Table(5);
 
@@ -108,32 +98,15 @@ public class TableTest {
 
 		assertFalse(resultsTable.hasExceptions());
 
-		TableWriter tableWriter = new TableWriter(resultsTable);
+		Table.Row resultRow = resultsTable.new Row(0);
 
-		try {
-			tableWriter.ensurePosition();
+		for(int i = 0; argumentRow.canAdvance(); i++){
+			resultRow.putAll(argumentRow);
 
-			fail();
-		} catch(IllegalStateException ise){
-			// Ignored
-		}
+			resultRow.put("C", String.valueOf(i + 1));
 
-		for(int i = 0; tableReader.hasNext(); i++){
-			Map<String, ?> row = tableReader.next();
-
-			tableWriter.next();
-
-			tableWriter.putAll(row);
-
-			tableWriter.put("C", String.valueOf(i + 1));
-		}
-
-		try {
-			tableReader.next();
-
-			fail();
-		} catch(NoSuchElementException nsee){
-			// Ignored
+			argumentRow.advance();
+			resultRow.advance();
 		}
 
 		assertEquals(Arrays.asList("A", "B", "C"), resultsTable.getColumns());
@@ -151,13 +124,11 @@ public class TableTest {
 		assertEquals(Arrays.asList(1.0, 2.0, 3.0), resultsTable.getValues("B"));
 		assertEquals(Arrays.asList("1", "2", "3"), resultsTable.getValues("C"));
 
-		tableWriter.next();
+		resultRow.setException(new Exception());
 
-		tableWriter.put(new Exception());
+		resultRow.advance();
 
-		tableWriter.next();
-
-		tableWriter.put("C", "5");
+		resultRow.put("C", "5");
 
 		resultsTable.canonicalize();
 

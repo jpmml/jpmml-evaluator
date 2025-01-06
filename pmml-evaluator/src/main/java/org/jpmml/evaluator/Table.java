@@ -18,12 +18,16 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.AbstractMap;
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -126,7 +130,8 @@ public class Table {
 
 	@IgnoreJRERequirement
 	public TableSpliterator spliterator(){
-		return new TableSpliterator(this);
+		return new TableSpliterator(this)
+			.init();
 	}
 
 	@IgnoreJRERequirement
@@ -228,5 +233,154 @@ public class Table {
 
 	public Map<String, List<?>> getValues(){
 		return this.values;
+	}
+
+	public class Row extends AbstractMap<String, Object> {
+
+		private int origin;
+
+		private int fence;
+
+
+		protected Row(int origin){
+			this(origin, -1);
+		}
+
+		protected Row(int origin, int fence){
+			setOrigin(origin);
+			setFence(fence);
+		}
+
+		public int estimateAdvances(){
+			int origin = getOrigin();
+			int fence = getFence();
+
+			if(fence < 0){
+				throw new IllegalStateException();
+			}
+
+			return (fence - origin);
+		}
+
+		public boolean canAdvance(){
+			int origin = getOrigin();
+			int fence = getFence();
+
+			if(fence < 0){
+				return true;
+			}
+
+			return (origin < fence);
+		}
+
+		public void advance(){
+			int origin = getOrigin();
+
+			setOrigin(origin + 1);
+		}
+
+		public Exception getException(){
+			int origin = getOrigin();
+
+			return Table.this.getException(origin);
+		}
+
+		public void setException(Exception exception){
+			int origin = getOrigin();
+
+			Table.this.setException(origin, exception);
+		}
+
+		@Override
+		public Object get(Object key){
+			int origin = getOrigin();
+
+			List<?> values = getValues((String)key);
+			if(values != null){
+				return values.get(origin);
+			}
+
+			return null;
+		}
+
+		@Override
+		public Object put(String key, Object value){
+			int origin = getOrigin();
+
+			@SuppressWarnings("unchecked")
+			List<Object> values = (List<Object>)ensureValues(key);
+
+			return TableUtil.set(values, origin, value);
+		}
+
+		@Override
+		public Set<Map.Entry<String, Object>> entrySet(){
+			int origin = getOrigin();
+
+			Set<Map.Entry<String, Object>> result = new AbstractSet<Map.Entry<String, Object>>(){
+
+
+				@Override
+				public int size(){
+					List<String> columns = getColumns();
+
+					return columns.size();
+				}
+
+				@Override
+				public Iterator<Map.Entry<String, Object>> iterator(){
+					List<String> columns = getColumns();
+
+					Iterator<Map.Entry<String, Object>> result = new Iterator<Map.Entry<String, Object>>(){
+
+						private Iterator<String> it = columns.iterator();
+
+
+						@Override
+						public boolean hasNext(){
+							return this.it.hasNext();
+						}
+
+						@Override
+						public Map.Entry<String, Object> next(){
+							String column = this.it.next();
+
+							List<?> values = getValues(column);
+							if(values != null){
+								Object value = TableUtil.get(values, origin);
+
+								return new SimpleEntry<>(column, value);
+							}
+
+							return new SimpleEntry<>(column, null);
+						}
+					};
+
+					return result;
+				}
+			};
+
+			return result;
+		}
+
+		public Table getTable(){
+			return Table.this;
+		}
+
+		int getOrigin(){
+			return this.origin;
+		}
+
+		void setOrigin(int origin){
+			this.origin = origin;
+		}
+
+		int getFence(){
+			return this.fence;
+		}
+
+		void setFence(int fence){
+			this.fence = fence;
+		}
 	}
 }

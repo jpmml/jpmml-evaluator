@@ -83,26 +83,31 @@ public class TableCollector implements Collector<Object, List<Object>, Table> {
 		return (elements) -> {
 			Table table = new Table(elements.size());
 
-			TableWriter tableWriter = createTableWriter(table);
+			Table.Row row = null;
 
 			for(Object element : elements){
-				tableWriter.next();
+
+				if(row == null){
+					row = createFinisherRow(table);
+				} // End if
 
 				if(element instanceof Map<?, ?>){
 					Map<?, ?> map = (Map<?, ?>)element;
 
-					tableWriter.putAll((Map)map);
+					row.putAll((Map)map);
 				} else
 
 				if(element instanceof Exception){
 					Exception exception = (Exception)element;
 
-					tableWriter.put(exception);
+					row.setException(exception);
 				} else
 
 				{
 					throw new IllegalArgumentException();
 				}
+
+				row.advance();
 			}
 
 			table.canonicalize();
@@ -111,7 +116,7 @@ public class TableCollector implements Collector<Object, List<Object>, Table> {
 		};
 	}
 
-	protected TableWriter createTableWriter(Table table){
-		return new TableWriter(table);
+	protected Table.Row createFinisherRow(Table table){
+		return table.new Row(0);
 	}
 }

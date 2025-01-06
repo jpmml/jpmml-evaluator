@@ -18,11 +18,8 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.AbstractMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
@@ -33,23 +30,29 @@ public class TableSpliterator implements Spliterator<Map<String, Object>> {
 
 	private Table table = null;
 
-	private int origin;
-
-	private int fence;
+	private Table.Row row = null;
 
 
 	public TableSpliterator(Table table){
 		setTable(table);
-
-		setOrigin(0);
-		setFence(table.getNumberOfRows());
 	}
 
-	public TableSpliterator(Table table, int origin, int fence){
-		setTable(table);
+	public TableSpliterator init(){
+		Table table = getTable();
 
-		setOrigin(origin);
-		setFence(fence);
+		Table.Row row = table.new Row(0, table.getNumberOfRows());
+		setRow(row);
+
+		return this;
+	}
+
+	public TableSpliterator init(int origin, int fence){
+		Table table = getTable();
+
+		Table.Row row = table.new Row(origin, fence);
+		setRow(row);
+
+		return this;
 	}
 
 	@Override
@@ -59,23 +62,19 @@ public class TableSpliterator implements Spliterator<Map<String, Object>> {
 
 	@Override
 	public long estimateSize(){
-		int origin = getOrigin();
-		int fence = getFence();
+		Table.Row row = ensureRow();
 
-		return (fence - origin);
+		return row.estimateAdvances();
 	}
 
 	@Override
 	public boolean tryAdvance(Consumer<? super Map<String, Object>> action){
-		int origin = getOrigin();
-		int fence = getFence();
+		Table.Row row = ensureRow();
 
-		if(origin < fence){
-			Row row = new Row(origin);
-
+		if(row.canAdvance()){
 			action.accept(row);
 
-			setOrigin(origin + 1);
+			row.advance();
 
 			return true;
 		}
@@ -85,36 +84,43 @@ public class TableSpliterator implements Spliterator<Map<String, Object>> {
 
 	@Override
 	public void forEachRemaining(Consumer<? super Map<String, Object>> action){
-		int origin = getOrigin();
-		int fence = getFence();
+		Table.Row row = ensureRow();
 
-		Row row = new Row();
-
-		while(origin < fence){
-			row.setIndex(origin);
-
+		while(row.canAdvance()){
 			action.accept(row);
 
-			origin += 1;
+			row.advance();
 		}
-
-		setOrigin(origin);
 	}
 
 	@Override
 	public TableSpliterator trySplit(){
-		Table table = getTable();
-		int origin = getOrigin();
-		int fence = getFence();
+		Table.Row row = ensureRow();
+
+		int origin = row.getOrigin();
+		int fence = row.getFence();
 
 		int mid = (origin + fence) >>> 1;
 		if(origin < mid){
-			setOrigin(mid);
+			Table table = getTable();
 
-			return new TableSpliterator(table, origin, mid);
+			row.setOrigin(mid);
+
+			return new TableSpliterator(table)
+				.init(origin, mid);
 		}
 
 		return null;
+	}
+
+	private Table.Row ensureRow(){
+		Table.Row row = getRow();
+
+		if(row == null){
+			throw new IllegalStateException();
+		}
+
+		return row;
 	}
 
 	public Table getTable(){
@@ -125,63 +131,11 @@ public class TableSpliterator implements Spliterator<Map<String, Object>> {
 		this.table = Objects.requireNonNull(table);
 	}
 
-	int getOrigin(){
-		return this.origin;
+	private Table.Row getRow(){
+		return this.row;
 	}
 
-	private void setOrigin(int origin){
-		this.origin = origin;
-	}
-
-	int getFence(){
-		return this.fence;
-	}
-
-	private void setFence(int fence){
-		this.fence = fence;
-	}
-
-	class Row extends AbstractMap<String, Object> {
-
-		private int index;
-
-
-		Row(){
-			this(-1);
-		}
-
-		Row(int index){
-			setIndex(index);
-		}
-
-		@Override
-		public Object get(Object key){
-			Table table = getTable();
-			int index = getIndex();
-
-			List<?> values = table.getValues((String)key);
-			if(values != null){
-				return values.get(index);
-			}
-
-			return null;
-		}
-
-		@Override
-		public Set<Map.Entry<String, Object>> entrySet(){
-			throw new UnsupportedOperationException();
-		}
-
-		Table getTable(){
-			return TableSpliterator.this.getTable();
-		}
-
-		int getIndex(){
-			return this.index;
-		}
-
-		void setIndex(int index){
-			this.index = index;
-		}
+	private void setRow(Table.Row row){
+		this.row = Objects.requireNonNull(row);
 	}
 }

@@ -113,28 +113,30 @@ public class TableCollectorTest {
 
 		assertTrue(table.hasExceptions());
 
-		TableReader tableReader = new TableReader(table);
+		Table.Row row = table.new Row(0, table.getNumberOfRows());
 
 		for(int i = begin; i < end; i++){
-			tableReader.next();
+			assertEquals(3, row.size());
 
 			int value = i;
 
 			if(value % 100 == 0){
 				assertNotNull(table.getException(i));
 
-				assertNull(tableReader.get("A"));
-				assertNull(tableReader.get("B"));
-				assertNull(tableReader.get("C"));
+				assertNull(row.get("A"));
+				assertNull(row.get("B"));
+				assertNull(row.get("C"));
 			} else
 
 			{
 				assertNull(table.getException(i));
 
-				assertEquals((int)value, tableReader.get("A"));
-				assertEquals((double)value, tableReader.get("B"));
-				assertEquals(String.valueOf(value), tableReader.get("C"));
+				assertEquals((int)value, row.get("A"));
+				assertEquals((double)value, row.get("B"));
+				assertEquals(String.valueOf(value), row.get("C"));
 			}
+
+			row.advance();
 		}
 	}
 

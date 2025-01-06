@@ -84,6 +84,8 @@ public class TableSpliteratorTest {
 
 				@Override
 				public void accept(Map<String, Object> row){
+					assertEquals(2, row.size());
+
 					assertEquals((int)index, row.get("A"));
 					assertEquals((double)index, row.get("B"));
 				}
