@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
@@ -29,6 +28,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -38,11 +38,11 @@ public class TableSpliteratorTest {
 	public void spliterator(){
 		Table table = createTable(100);
 
-		Spliterator<Map<String, Object>> spliterator = table.spliterator();
+		Spliterator<Table.Row> spliterator = table.spliterator();
 
 		assertEquals(100, spliterator.estimateSize());
 
-		Spliterator<Map<String, Object>> splitSpliterator = spliterator.trySplit();
+		Spliterator<Table.Row> splitSpliterator = spliterator.trySplit();
 
 		assertEquals(50, spliterator.estimateSize());
 		assertEquals(50, splitSpliterator.estimateSize());
@@ -75,16 +75,18 @@ public class TableSpliteratorTest {
 	}
 
 	static
-	private void checkValues(Spliterator<Map<String, Object>> spliterator, int start, int end){
+	private void checkValues(Spliterator<Table.Row> spliterator, int start, int end){
 
 		for(int i = start; i <= end; i++){
 			int index = i;
 
-			Consumer<Map<String, Object>> action = new Consumer<Map<String, Object>>(){
+			Consumer<Table.Row> action = new Consumer<Table.Row>(){
 
 				@Override
-				public void accept(Map<String, Object> row){
+				public void accept(Table.Row row){
 					assertEquals(2, row.size());
+
+					assertNull(row.getException());
 
 					assertEquals((int)index, row.get("A"));
 					assertEquals((double)index, row.get("B"));
@@ -98,14 +100,16 @@ public class TableSpliteratorTest {
 	}
 
 	static
-	private void checkRemainingValues(Spliterator<Map<String, Object>> spliterator, int start){
-		Consumer<Map<String, Object>> action = new Consumer<Map<String, Object>>(){
+	private void checkRemainingValues(Spliterator<Table.Row> spliterator, int start){
+		Consumer<Table.Row> action = new Consumer<Table.Row>(){
 
 			private int index = start;
 
 
 			@Override
-			public void accept(Map<String, Object> row){
+			public void accept(Table.Row row){
+				assertNull(row.getException());
+
 				assertEquals((int)this.index, row.get("A"));
 				assertEquals((double)this.index, row.get("B"));
 

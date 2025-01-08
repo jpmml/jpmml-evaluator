@@ -135,12 +135,12 @@ public class Table {
 	}
 
 	@IgnoreJRERequirement
-	public Stream<Map<String, Object>> stream(){
+	public Stream<Row> stream(){
 		return StreamSupport.stream(spliterator(), false);
 	}
 
 	@IgnoreJRERequirement
-	public Stream<Map<String, Object>> parallelStream(){
+	public Stream<Row> parallelStream(){
 		return StreamSupport.stream(spliterator(), true);
 	}
 

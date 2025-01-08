@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -26,7 +25,7 @@ import java.util.function.Consumer;
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 @IgnoreJRERequirement
-public class TableSpliterator implements Spliterator<Map<String, Object>> {
+public class TableSpliterator implements Spliterator<Table.Row> {
 
 	private Table table = null;
 
@@ -68,7 +67,7 @@ public class TableSpliterator implements Spliterator<Map<String, Object>> {
 	}
 
 	@Override
-	public boolean tryAdvance(Consumer<? super Map<String, Object>> action){
+	public boolean tryAdvance(Consumer<? super Table.Row> action){
 		Table.Row row = ensureRow();
 
 		if(row.canAdvance()){
@@ -83,7 +82,7 @@ public class TableSpliterator implements Spliterator<Map<String, Object>> {
 	}
 
 	@Override
-	public void forEachRemaining(Consumer<? super Map<String, Object>> action){
+	public void forEachRemaining(Consumer<? super Table.Row> action){
 		Table.Row row = ensureRow();
 
 		while(row.canAdvance()){
