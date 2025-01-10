@@ -10,7 +10,7 @@
 
 	<groupId>org.jpmml</groupId>
 	<artifactId>jpmml-evaluator</artifactId>
-	<version>1.6.11</version>
+	<version>1.7-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>JPMML-Evaluator</name>
@@ -57,7 +57,7 @@
 		<connection>scm:git:git@github.com:jpmml/jpmml-evaluator.git</connection>
 		<developerConnection>scm:git:git@github.com:jpmml/jpmml-evaluator.git</developerConnection>
 		<url>git://github.com/jpmml/jpmml-evaluator.git</url>
-		<tag>1.6.11</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<issueManagement>
 		<system>GitHub</system>
@@ -65,7 +65,7 @@
 	</issueManagement>
 
 	<properties>
-		<project.build.outputTimestamp>2025-01-10T12:49:00Z</project.build.outputTimestamp>
+		<project.build.outputTimestamp>2025-01-10T12:51:09Z</project.build.outputTimestamp>
 	</properties>
 
 	<dependencyManagement>
@@ -73,47 +73,47 @@
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator</artifactId>
-				<version>1.6.11</version>
+				<version>1.7-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-example</artifactId>
-				<version>1.6.11</version>
+				<version>1.7-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-jackson</artifactId>
-				<version>1.6.11</version>
+				<version>1.7-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-kryo</artifactId>
-				<version>1.6.11</version>
+				<version>1.7-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-metro</artifactId>
-				<version>1.6.11</version>
+				<version>1.7-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-moxy</artifactId>
-				<version>1.6.11</version>
+				<version>1.7-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-reporting</artifactId>
-				<version>1.6.11</version>
+				<version>1.7-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-reporting-processor</artifactId>
-				<version>1.6.11</version>
+				<version>1.7-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-evaluator-testing</artifactId>
-				<version>1.6.11</version>
+				<version>1.7-SNAPSHOT</version>
 			</dependency>
 
 			<dependency>
