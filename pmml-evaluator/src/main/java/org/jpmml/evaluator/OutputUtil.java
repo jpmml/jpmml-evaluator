@@ -645,55 +645,55 @@ public class OutputUtil {
 
 		List<AssociationRule> associationRules = getRuleValues(hasRuleValues, outputField);
 
-		String isMultiValued = outputField.getIsMultiValued();
+		OutputField.MultiValued multiValued = outputField.getMultiValued();
+		switch(multiValued){
+			// Return a single result
+			case ZERO:
+				{
+					int rank = outputField.getRank();
+					if(rank <= 0){
+						throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_RANK, rank);
+					}
 
-		// Return a single result
-		if(("0").equals(isMultiValued)){
-			int rank = outputField.getRank();
-			if(rank <= 0){
-				throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_RANK, rank);
-			}
+					AssociationRule associationRule = getElement(associationRules, rank);
+					if(associationRule != null){
+						return getRuleFeature(hasRuleValues, associationRule, outputField, ruleFeature);
+					}
 
-			AssociationRule associationRule = getElement(associationRules, rank);
-			if(associationRule != null){
-				return getRuleFeature(hasRuleValues, associationRule, outputField, ruleFeature);
-			}
+					return null;
+				}
+			// Return multiple results
+			case ONE:
+				{
+					int size;
 
-			return null;
-		} else
+					int rank = outputField.getRank();
+					if(rank < 0){
+						throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_RANK, rank);
+					} else
 
-		// Return multiple results
-		if(("1").equals(isMultiValued)){
-			int size;
+					// "A zero value indicates that all output values are to be returned"
+					if(rank == 0){
+						size = associationRules.size();
+					} else
 
-			int rank = outputField.getRank();
-			if(rank < 0){
-				throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_RANK, rank);
-			} else
+					// "A positive value indicates the number of output values to be returned"
+					{
+						size = Math.min(rank, associationRules.size());
+					}
 
-			// "A zero value indicates that all output values are to be returned"
-			if(rank == 0){
-				size = associationRules.size();
-			} else
+					associationRules = associationRules.subList(0, size);
 
-			// "A positive value indicates the number of output values to be returned"
-			{
-				size = Math.min(rank, associationRules.size());
-			}
+					List<Object> result = new ArrayList<>(associationRules.size());
 
-			associationRules = associationRules.subList(0, size);
+					for(AssociationRule associationRule : associationRules){
+						result.add(getRuleFeature(hasRuleValues, associationRule, outputField, ruleFeature));
+					}
 
-			List<Object> result = new ArrayList<>(associationRules.size());
-
-			for(AssociationRule associationRule : associationRules){
-				result.add(getRuleFeature(hasRuleValues, associationRule, outputField, ruleFeature));
-			}
-
-			return result;
-		} else
-
-		{
-			throw new InvalidAttributeException(outputField, PMMLAttributes.OUTPUTFIELD_ISMULTIVALUED, isMultiValued);
+					return result;
+				}
+			default:
+				throw new UnsupportedAttributeException(outputField, multiValued);
 		}
 	}
 
