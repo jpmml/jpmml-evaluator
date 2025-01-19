@@ -85,7 +85,7 @@ JPMML-Evaluator is fast and memory efficient. It can deliver one million scoring
 
 # Prerequisites #
 
-* Java Platform, Standard Edition 8 or newer.
+* Java 11 or newer.
 
 # Installation #
 
