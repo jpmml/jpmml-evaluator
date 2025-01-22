@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.transform.stream.StreamResult;
-
 import com.google.common.collect.Iterables;
 import jakarta.xml.bind.JAXBException;
 import org.dmg.pmml.DataDictionary;
@@ -41,7 +39,7 @@ import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.java.JavaModel;
 import org.jpmml.model.DirectByteArrayOutputStream;
-import org.jpmml.model.JAXBUtil;
+import org.jpmml.model.PMMLUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -159,7 +157,7 @@ public class LoadingModelEvaluatorBuilderTest {
 
 		DirectByteArrayOutputStream buffer = new DirectByteArrayOutputStream(1024);
 
-		JAXBUtil.marshalPMML(pmml, new StreamResult(buffer));
+		PMMLUtil.marshal(pmml, buffer);
 
 		return buffer.getInputStream();
 	}

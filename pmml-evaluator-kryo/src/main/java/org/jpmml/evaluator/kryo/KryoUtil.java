@@ -33,6 +33,16 @@ public class KryoUtil {
 	}
 
 	static
+	public Kryo createKryo(){
+		Kryo kryo = new Kryo();
+
+		init(kryo);
+		register(kryo);
+
+		return kryo;
+	}
+
+	static
 	public void init(Kryo kryo){
 		org.jpmml.model.kryo.KryoUtil.init(kryo);
 	}
@@ -53,10 +63,5 @@ public class KryoUtil {
 		ImmutableTableSerializer.registerSerializers(kryo);
 
 		kryo.addDefaultSerializer(ModelEvaluator.class, ModelEvaluatorSerializer.class);
-	}
-
-	static
-	public <E> E clone(Kryo kryo, E object){
-		return org.jpmml.model.kryo.KryoUtil.clone(kryo, object);
 	}
 }

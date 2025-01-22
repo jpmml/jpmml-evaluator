@@ -25,7 +25,6 @@ import org.dmg.pmml.PMML;
 import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
-import org.jpmml.model.SerializationUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotSame;

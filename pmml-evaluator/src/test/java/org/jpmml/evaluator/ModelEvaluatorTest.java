@@ -25,7 +25,6 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import org.jpmml.evaluator.visitors.ModelEvaluatorVisitorBattery;
-import org.jpmml.model.SerializationUtil;
 import org.jpmml.model.visitors.ArrayListTransformer;
 import org.jpmml.model.visitors.VisitorBattery;
 
