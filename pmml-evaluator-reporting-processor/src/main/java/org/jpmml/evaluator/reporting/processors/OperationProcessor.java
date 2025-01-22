@@ -673,13 +673,7 @@ public class OperationProcessor extends AbstractProcessor {
 
 		JClass numberClazz = codeModel.ref(Number.class);
 
-		JType valueClazz;
-
-		try {
-			valueClazz = codeModel.parseType("org.jpmml.evaluator.Value<? extends java.lang.Number>");
-		} catch(ClassNotFoundException cnfe){
-			throw new RuntimeException(cnfe);
-		}
+		JType valueClazz = codeModel.parseType("org.jpmml.evaluator.Value<? extends java.lang.Number>");
 
 		Matcher matcher = OperationProcessor.PATTERN.matcher(operation);
 
@@ -793,11 +787,7 @@ public class OperationProcessor extends AbstractProcessor {
 			name = name.substring(0, name.length() - "Value<?>".length()) + "Value<? extends java.lang.Number>";
 		}
 
-		try {
-			return codeModel.parseType(name);
-		} catch(ClassNotFoundException cnfe){
-			throw new RuntimeException(cnfe);
-		}
+		return codeModel.parseType(name);
 	}
 
 	static
