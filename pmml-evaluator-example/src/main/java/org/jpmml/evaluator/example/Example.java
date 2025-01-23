@@ -32,6 +32,8 @@ import java.util.function.Function;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import com.beust.jcommander.DefaultUsageFormatter;
+import com.beust.jcommander.IUsageFormatter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
@@ -67,6 +69,8 @@ public class Example {
 		commander.setProgramName(clazz.getName());
 		commander.setParameterDescriptionComparator(new ParameterOrderComparator());
 
+		IUsageFormatter usageFormatter = new DefaultUsageFormatter(commander);
+
 		try {
 			commander.parse(args);
 		} catch(ParameterException pe){
@@ -75,7 +79,7 @@ public class Example {
 			sb.append(pe.toString());
 			sb.append("\n");
 
-			commander.usage(sb);
+			usageFormatter.usage(sb);
 
 			System.err.println(sb.toString());
 
@@ -85,7 +89,7 @@ public class Example {
 		if(example.help){
 			StringBuilder sb = new StringBuilder();
 
-			commander.usage(sb);
+			usageFormatter.usage(sb);
 
 			System.out.println(sb.toString());
 
