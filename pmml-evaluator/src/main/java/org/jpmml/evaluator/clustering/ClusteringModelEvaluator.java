@@ -267,7 +267,7 @@ public class ClusteringModelEvaluator extends ModelEvaluator<ClusteringModel> im
 	}
 
 	private <V extends Number> ClusterAffinityDistribution<V> createClusterAffinityDistribution(Classification.Type type, List<Cluster> clusters){
-		ClusterAffinityDistribution<V> result = new ClusterAffinityDistribution<V>(type, new ValueMap<String, V>(2 * clusters.size())){
+		ClusterAffinityDistribution<V> result = new ClusterAffinityDistribution<V>(type, new ValueMap<>(2 * clusters.size())){
 
 			@Override
 			public BiMap<String, Cluster> getEntityRegistry(){

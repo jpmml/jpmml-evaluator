@@ -39,7 +39,7 @@ public class NodeScoreDistributionTest {
 
 		BiMap<String, Node> entityRegistry = ImmutableBiMap.of("1", node);
 
-		NodeScoreDistribution<Double> classification = new NodeScoreDistribution<Double>(new ValueMap<Object, Double>(), node){
+		NodeScoreDistribution<Double> classification = new NodeScoreDistribution<Double>(new ValueMap<>(), node){
 
 			@Override
 			public BiMap<String, Node> getEntityRegistry(){

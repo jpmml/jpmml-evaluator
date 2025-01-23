@@ -114,7 +114,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 			evaluateRules(rules, firedRules, context);
 		}
 
-		SimpleRuleScoreDistribution<V> result = new SimpleRuleScoreDistribution<V>(new ValueMap<Object, V>(2 * firedRules.size())){
+		SimpleRuleScoreDistribution<V> result = new SimpleRuleScoreDistribution<V>(new ValueMap<>(2 * firedRules.size())){
 
 			@Override
 			public BiMap<String, SimpleRule> getEntityRegistry(){
