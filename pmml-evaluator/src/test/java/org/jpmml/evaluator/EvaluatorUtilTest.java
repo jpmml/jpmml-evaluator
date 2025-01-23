@@ -29,7 +29,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class EvaluatorUtilTest {
 
@@ -58,13 +58,7 @@ public class EvaluatorUtilTest {
 			}
 		};
 
-		try {
-			EvaluatorUtil.decode(invalidValue);
-
-			fail();
-		} catch(UnsupportedOperationException uoe){
-			// Ignored
-		}
+		assertThrows(UnsupportedOperationException.class, () -> EvaluatorUtil.decode(invalidValue));
 	}
 
 	@Test

@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
 
@@ -55,13 +55,7 @@ public class ClusteringNeighborhoodTest extends ModelEvaluatorTest {
 
 		AffinityDistribution<?> targetValue = (AffinityDistribution<?>)results.get(evaluator.getTargetName());
 
-		try {
-			targetValue.getResult();
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
+		assertThrows(EvaluationException.class, () -> targetValue.getResult());
 
 		assertNull(targetValue.getPredictionReport());
 

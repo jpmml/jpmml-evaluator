@@ -35,8 +35,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class InputFieldUtilTest {
 
@@ -64,33 +64,14 @@ public class InputFieldUtilTest {
 		assertEquals(1d, prepare(dataField, miningField, 1f));
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 
-		try {
-			prepare(dataField, miningField, Double.NaN);
-
-			fail();
-		} catch(ValueCheckException vce){
-			// Ignored
-		}
-
-		try {
-			prepare(dataField, miningField, "one");
-
-			fail();
-		} catch(ValueCheckException vce){
-			// Ignored
-		}
+		assertThrows(ValueCheckException.class, () -> prepare(dataField, miningField, Double.NaN));
+		assertThrows(ValueCheckException.class, () -> prepare(dataField, miningField, "one"));
 
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_IS);
 
 		assertEquals(Double.NaN, prepare(dataField, miningField, Double.NaN));
 
-		try {
-			prepare(dataField, miningField, "one");
-
-			fail();
-		} catch(NumberFormatException nfe){
-			// Ignored
-		}
+		assertThrows(NumberFormatException.class, () -> prepare(dataField, miningField, "one"));
 
 		miningField.setInvalidValueReplacement("0");
 
@@ -157,23 +138,11 @@ public class InputFieldUtilTest {
 
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.RETURN_INVALID);
 
-		try {
-			prepare(dataField, miningField, -1d);
-
-			fail();
-		} catch(ValueCheckException vce){
-			// Ignored
-		}
+		assertThrows(ValueCheckException.class, () -> prepare(dataField, miningField, -1d));
 
 		assertEquals(1d, prepare(dataField, miningField, 1d));
 
-		try {
-			prepare(dataField, miningField, 5d);
-
-			fail();
-		} catch(ValueCheckException vce){
-			// Ignored
-		}
+		assertThrows(ValueCheckException.class, () -> prepare(dataField, miningField, 5d));
 
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
 
@@ -231,39 +200,13 @@ public class InputFieldUtilTest {
 		assertEquals(1, prepare(dataField, miningField, "1"));
 		assertEquals(1, prepare(dataField, miningField, 1));
 
-		try {
-			prepare(dataField, miningField, "one");
-
-			fail();
-		} catch(ValueCheckException vce){
-			// Ignored
-		}
-
-		try {
-			prepare(dataField, miningField, 1.5d);
-
-			fail();
-		} catch(ValueCheckException vce){
-			// Ignored
-		}
+		assertThrows(ValueCheckException.class, () -> prepare(dataField, miningField, "one"));
+		assertThrows(ValueCheckException.class, () -> prepare(dataField, miningField, 1.5d));
 
 		miningField.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_IS);
 
-		try {
-			prepare(dataField, miningField, "one");
-
-			fail();
-		} catch(NumberFormatException nfe){
-			// Ignored
-		}
-
-		try {
-			prepare(dataField, miningField, 1.5d);
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
+		assertThrows(NumberFormatException.class, () -> prepare(dataField, miningField, "one"));
+		assertThrows(TypeCheckException.class, () -> prepare(dataField, miningField, 1.5d));
 
 		miningField.setInvalidValueReplacement("0");
 
@@ -304,23 +247,11 @@ public class InputFieldUtilTest {
 
 		miningField.setMissingValueTreatment(MissingValueTreatmentMethod.RETURN_INVALID);
 
-		try {
-			prepare(dataField, miningField, null);
-
-			fail();
-		} catch(ValueCheckException vce){
-			// Ignored
-		}
+		assertThrows(ValueCheckException.class, () -> prepare(dataField, miningField, null));
 
 		miningField.setMissingValueReplacement(null);
 
-		try {
-			prepare(dataField, miningField, null);
-
-			fail();
-		} catch(ValueCheckException vce){
-			// Ignored
-		}
+		assertThrows(ValueCheckException.class, () -> prepare(dataField, miningField, null));
 	}
 
 	static

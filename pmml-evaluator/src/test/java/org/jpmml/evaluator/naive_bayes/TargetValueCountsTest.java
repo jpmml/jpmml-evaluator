@@ -50,11 +50,11 @@ public class TargetValueCountsTest extends ModelEvaluatorTest implements Deltas 
 
 		Map<?, Number> countSums = fieldCountSums.get("gender");
 
-		assertEquals((Double)8598d, countSums.get(100));
-		assertEquals((Double)2533d, countSums.get(500));
-		assertEquals((Double)1522d, countSums.get(1000));
-		assertEquals((Double)697d, countSums.get(5000));
-		assertEquals((Double)90d, countSums.get(10000));
+		assertEquals(8598d, countSums.get(100));
+		assertEquals(2533d, countSums.get(500));
+		assertEquals(1522d, countSums.get(1000));
+		assertEquals(697d, countSums.get(5000));
+		assertEquals(90d, countSums.get(10000));
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 

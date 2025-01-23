@@ -28,8 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FieldValueTest {
 
@@ -62,26 +62,13 @@ public class FieldValueTest {
 		assertFalse(one.equalsValue(zero));
 		assertTrue(one.equalsValue(one));
 
-		try {
-			zero.compareToValue("0");
+		assertThrows(EvaluationException.class, () -> zero.compareToValue("0"));
+		assertThrows(EvaluationException.class, () -> zero.compareToValue(zero));
 
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
-
-		try {
-			zero.compareToValue(zero);
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
-
-		assertEquals((Integer)0, zero.asInteger());
+		assertEquals(0, zero.asInteger());
 		assertEquals(Boolean.FALSE, zero.asBoolean());
 
-		assertEquals((Integer)1, one.asInteger());
+		assertEquals(1, one.asInteger());
 		assertEquals(Boolean.TRUE, one.asBoolean());
 	}
 
@@ -141,21 +128,8 @@ public class FieldValueTest {
 		FieldValue zero = FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, 0);
 		FieldValue one = FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, 1);
 
-		try {
-			zero.equalsValue(0.5f);
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
-
-		try {
-			zero.equalsValue(0.5d);
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
+		assertThrows(TypeCheckException.class, () -> zero.equalsValue(0.5f));
+		assertThrows(TypeCheckException.class, () -> zero.equalsValue(0.5d));
 
 		checkContinuousZero(zero);
 		checkContinuousOne(one);
@@ -169,29 +143,21 @@ public class FieldValueTest {
 		assertTrue(zero.compareToValue(zero) == 0);
 		assertTrue(zero.compareToValue(one) < 0);
 
-		try {
+		assertThrows(ClassCastException.class, () -> {
 			TypeInfo typeInfo = new SimpleTypeInfo(OpType.CATEGORICAL, zero.getDataType());
 
 			FieldValue categoricalZero = zero.cast(typeInfo);
 
 			((ScalarValue)zero).compareTo((ScalarValue)categoricalZero);
+		});
 
-			fail();
-		} catch(ClassCastException cce){
-			// Ignored
-		}
-
-		try {
+		assertThrows(ClassCastException.class, () -> {
 			TypeInfo typeInfo = new SimpleTypeInfo(zero.getOpType(), DataType.DOUBLE);
 
 			FieldValue doubleZero = zero.cast(typeInfo);
 
 			((ScalarValue)zero).compareTo((ScalarValue)doubleZero);
-
-			fail();
-		} catch(ClassCastException cce){
-			// Ignored
-		}
+		});
 
 		assertTrue(one.compareToValue(zero) > 0);
 		assertTrue(one.compareToValue(one) == 0);
@@ -216,21 +182,8 @@ public class FieldValueTest {
 		assertTrue(zero.equalsValue("false"));
 		assertFalse(zero.equalsValue("true"));
 
-		try {
-			zero.compareToValue("0");
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
-
-		try {
-			zero.compareToValue(zero);
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
+		assertThrows(EvaluationException.class, () -> zero.compareToValue("0"));
+		assertThrows(EvaluationException.class, () -> zero.compareToValue(zero));
 	}
 
 	@Test
@@ -337,24 +290,12 @@ public class FieldValueTest {
 		assertTrue(zero.equalsValue(0f));
 		assertFalse(zero.equalsValue(1f));
 
-		try {
-			zero.equalsValue(0.5f);
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
+		assertThrows(TypeCheckException.class, () -> zero.equalsValue(0.5f));
 
 		assertTrue(zero.equalsValue(0d));
 		assertFalse(zero.equalsValue(1d));
 
-		try {
-			zero.equalsValue(0.5d);
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
+		assertThrows(TypeCheckException.class, () -> zero.equalsValue(0.5d));
 
 		assertTrue(zero.equalsValue(false));
 		assertFalse(zero.equalsValue(true));
@@ -395,27 +336,21 @@ public class FieldValueTest {
 		assertTrue(one.compareToValue(zero) > 0);
 		assertTrue(one.compareToValue(one) == 0);
 
-		try {
-			zero.compareToValue("1960-01-03");
-
-			fail();
-		} catch(IllegalArgumentException iae){
-			// Ignored
-		}
+		assertThrows(IllegalArgumentException.class, () -> zero.compareToValue("1960-01-03"));
 	}
 
 	@Test
 	public void categoricalDaysSinceDate(){
 		FieldValue period = FieldValueUtil.create(OpType.CATEGORICAL, DataType.DATE_DAYS_SINCE_1960, "1960-01-03");
 
-		assertEquals((Integer)2, period.asInteger());
+		assertEquals(2, period.asInteger());
 	}
 
 	@Test
 	public void categoricalSecondsSinceDate(){
 		FieldValue period = FieldValueUtil.create(OpType.CATEGORICAL, DataType.DATE_TIME_SECONDS_SINCE_1960, "1960-01-03T03:30:03");
 
-		assertEquals((Integer)185403, period.asInteger());
+		assertEquals(185403, period.asInteger());
 	}
 
 	static
@@ -450,13 +385,7 @@ public class FieldValueTest {
 		assertTrue(zero.compareToValue("false") == 0);
 		assertTrue(zero.compareToValue("true") < 0);
 
-		try {
-			zero.compareToValue("1960-01-03");
-
-			fail();
-		} catch(IllegalArgumentException iae){
-			// Ignored
-		}
+		assertThrows(IllegalArgumentException.class, () -> zero.compareToValue("1960-01-03"));
 
 		assertTrue(zero.compareToValue(0) == 0);
 		assertTrue(zero.compareToValue(1) < 0);

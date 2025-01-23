@@ -28,7 +28,7 @@ import org.jpmml.evaluator.mining.MissingPredictionTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 
@@ -41,13 +41,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 
 		FieldValue value = FieldValueUtil.create(OpType.CONTINUOUS, DataType.DOUBLE, 1d);
 
-		try {
-			context.lookup("x");
-
-			fail();
-		} catch(MissingFieldValueException mfve){
-			// Ignored
-		}
+		assertThrows(MissingFieldValueException.class, () -> context.lookup("x"));
 
 		assertEquals(value, context.evaluate("x"));
 		assertEquals(Arrays.asList(value), context.evaluateAll(Arrays.asList("x")));
@@ -65,13 +59,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 
 		context.reset(true);
 
-		try {
-			context.lookup("x");
-
-			fail();
-		} catch(MissingFieldValueException mfve){
-			// Ignored
-		}
+		assertThrows(MissingFieldValueException.class, () -> context.lookup("x"));
 
 		assertEquals(FieldValues.MISSING_VALUE, context.evaluate("x"));
 	}
@@ -83,13 +71,7 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 		ModelEvaluationContext context = evaluator.createEvaluationContext();
 		context.setArguments(Collections.emptyMap());
 
-		try {
-			context.lookup("x");
-
-			fail();
-		} catch(MissingFieldValueException mfve){
-			// Ignored
-		}
+		assertThrows(MissingFieldValueException.class, () -> context.lookup("x"));
 
 		assertEquals(FieldValues.MISSING_VALUE, context.evaluate("x"));
 		assertEquals(Arrays.asList(FieldValues.MISSING_VALUE), context.evaluateAll(Arrays.asList("x")));

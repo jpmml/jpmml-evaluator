@@ -48,9 +48,9 @@ public class RichDataFieldTest {
 		assertEquals(5, valueMap.size());
 
 		assertEquals(FieldValue.STATUS_UNKNOWN_INVALID, valueMap.get("0"));
-		assertEquals((Integer)1, valueMap.get("1"));
-		assertEquals((Integer)2, valueMap.get("2"));
-		assertEquals((Integer)3, valueMap.get("3"));
+		assertEquals(1, valueMap.get("1"));
+		assertEquals(2, valueMap.get("2"));
+		assertEquals(3, valueMap.get("3"));
 		assertEquals(FieldValue.STATUS_MISSING, valueMap.get("N/A"));
 
 		dataField.setDataType(DataType.INTEGER);
@@ -62,9 +62,9 @@ public class RichDataFieldTest {
 		assertEquals(4, valueMap.size());
 
 		assertEquals(FieldValue.STATUS_UNKNOWN_INVALID, valueMap.get(0));
-		assertEquals((Integer)1, valueMap.get(1));
-		assertEquals((Integer)2, valueMap.get(2));
-		assertEquals((Integer)3, valueMap.get(3));
+		assertEquals(1, valueMap.get(1));
+		assertEquals(2, valueMap.get(2));
+		assertEquals(3, valueMap.get(3));
 	}
 
 	static

@@ -36,6 +36,6 @@ public class EmptyPPMatrixTest extends ModelEvaluatorTest {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		assertEquals((Double)0d, decode(results.get("high_time")));
+		assertEquals(0d, decode(results.get("high_time")));
 	}
 }

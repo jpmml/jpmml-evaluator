@@ -23,7 +23,7 @@ import org.dmg.pmml.OpType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TypeUtilTest {
 
@@ -56,39 +56,13 @@ public class TypeUtilTest {
 
 		assertEquals(Integer.MIN_VALUE, TypeUtil.parse(DataType.INTEGER, Integer.toString(Integer.MIN_VALUE)));
 
-		try {
-			TypeUtil.parse(DataType.INTEGER, Long.toString(Integer.MIN_VALUE - 1l));
-
-			fail();
-		} catch(IllegalArgumentException iae){
-			// Ignored
-		}
-
-		try {
-			TypeUtil.parse(DataType.INTEGER, Double.toString(Integer.MIN_VALUE - 1d));
-
-			fail();
-		} catch(IllegalArgumentException iae){
-			// Ignored
-		}
+		assertThrows(IllegalArgumentException.class, () -> TypeUtil.parse(DataType.INTEGER, Long.toString(Integer.MIN_VALUE - 1l)));
+		assertThrows(IllegalArgumentException.class, () -> TypeUtil.parse(DataType.INTEGER, Double.toString(Integer.MIN_VALUE - 1d)));
 
 		assertEquals(Integer.MAX_VALUE, TypeUtil.parse(DataType.INTEGER, Integer.toString(Integer.MAX_VALUE)));
 
-		try {
-			TypeUtil.parse(DataType.INTEGER, Long.toString(Integer.MAX_VALUE + 1l));
-
-			fail();
-		} catch(IllegalArgumentException iae){
-			// Ignored
-		}
-
-		try {
-			TypeUtil.parse(DataType.INTEGER, Double.toString(Integer.MAX_VALUE + 1d));
-
-			fail();
-		} catch(IllegalArgumentException iae){
-			// Ignored
-		}
+		assertThrows(IllegalArgumentException.class, () -> TypeUtil.parse(DataType.INTEGER, Long.toString(Integer.MAX_VALUE + 1l)));
+		assertThrows(IllegalArgumentException.class, () -> TypeUtil.parse(DataType.INTEGER, Double.toString(Integer.MAX_VALUE + 1d)));
 	}
 
 	@Test
@@ -99,24 +73,12 @@ public class TypeUtilTest {
 		assertEquals(Boolean.FALSE, TypeUtil.parse(DataType.BOOLEAN, "false"));
 		assertEquals(Boolean.FALSE, TypeUtil.parse(DataType.BOOLEAN, "FALSE"));
 
-		try {
-			TypeUtil.parse(DataType.BOOLEAN, "yes");
-
-			fail();
-		} catch(IllegalArgumentException iae){
-			// Ignored
-		}
+		assertThrows(IllegalArgumentException.class, () -> TypeUtil.parse(DataType.BOOLEAN, "yes"));
 
 		assertEquals(Boolean.TRUE, TypeUtil.parse(DataType.BOOLEAN, "1"));
 		assertEquals(Boolean.TRUE, TypeUtil.parse(DataType.BOOLEAN, "1.0"));
 
-		try {
-			TypeUtil.parse(DataType.BOOLEAN, "0.5");
-
-			fail();
-		} catch(IllegalArgumentException iae){
-			// Ignored
-		}
+		assertThrows(IllegalArgumentException.class, () -> TypeUtil.parse(DataType.BOOLEAN, "0.5"));
 
 		assertEquals(Boolean.FALSE, TypeUtil.parse(DataType.BOOLEAN, "-0"));
 		assertEquals(Boolean.FALSE, TypeUtil.parse(DataType.BOOLEAN, "-0.0"));
@@ -150,60 +112,20 @@ public class TypeUtilTest {
 
 	@Test
 	public void castInteger(){
-
-		try {
-			TypeUtil.cast(DataType.INTEGER, Long.valueOf(Integer.MIN_VALUE - 1l));
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
-
-		try {
-			TypeUtil.cast(DataType.INTEGER, Long.valueOf(Integer.MAX_VALUE + 1l));
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
+		assertThrows(TypeCheckException.class, () -> TypeUtil.cast(DataType.INTEGER, Long.valueOf(Integer.MIN_VALUE - 1l)));
+		assertThrows(TypeCheckException.class, () -> TypeUtil.cast(DataType.INTEGER, Long.valueOf(Integer.MAX_VALUE + 1l)));
 
 		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1f));
 		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1.0f));
 
-		try {
-			TypeUtil.cast(DataType.INTEGER, Math.nextUp(1f));
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
+		assertThrows(TypeCheckException.class, () -> TypeUtil.cast(DataType.INTEGER, Math.nextUp(1f)));
 
 		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1d));
 		assertEquals(1, TypeUtil.cast(DataType.INTEGER, 1.0d));
 
-		try {
-			TypeUtil.cast(DataType.INTEGER, Math.nextUp(1d));
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
-
-		try {
-			TypeUtil.cast(DataType.INTEGER, Double.valueOf(Integer.MIN_VALUE - 1d));
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
-
-		try {
-			TypeUtil.cast(DataType.INTEGER, Double.valueOf(Integer.MAX_VALUE + 1d));
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
+		assertThrows(TypeCheckException.class, () -> TypeUtil.cast(DataType.INTEGER, Math.nextUp(1d)));
+		assertThrows(TypeCheckException.class, () -> TypeUtil.cast(DataType.INTEGER, Double.valueOf(Integer.MIN_VALUE - 1d)));
+		assertThrows(TypeCheckException.class, () -> TypeUtil.cast(DataType.INTEGER, Double.valueOf(Integer.MAX_VALUE + 1d)));
 	}
 
 	@Test
@@ -217,21 +139,8 @@ public class TypeUtilTest {
 		assertEquals(Boolean.TRUE, TypeUtil.cast(DataType.BOOLEAN, 1d));
 		assertEquals(Boolean.TRUE, TypeUtil.cast(DataType.BOOLEAN, 1.0d));
 
-		try {
-			TypeUtil.cast(DataType.BOOLEAN, Math.nextUp(1f));
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
-
-		try {
-			TypeUtil.cast(DataType.BOOLEAN, Math.nextUp(1d));
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
+		assertThrows(TypeCheckException.class, () -> TypeUtil.cast(DataType.BOOLEAN, Math.nextUp(1f)));
+		assertThrows(TypeCheckException.class, () -> TypeUtil.cast(DataType.BOOLEAN, Math.nextUp(1d)));
 	}
 
 	@Test
@@ -240,13 +149,7 @@ public class TypeUtilTest {
 		assertEquals(DataType.DOUBLE, TypeUtil.getCommonDataType(DataType.DOUBLE, DataType.FLOAT));
 		assertEquals(DataType.DOUBLE, TypeUtil.getCommonDataType(DataType.DOUBLE, DataType.INTEGER));
 
-		try {
-			TypeUtil.getCommonDataType(DataType.DOUBLE, DataType.BOOLEAN);
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
+		assertThrows(EvaluationException.class, () -> TypeUtil.getCommonDataType(DataType.DOUBLE, DataType.BOOLEAN));
 
 		assertEquals(DataType.DOUBLE, TypeUtil.getCommonDataType(DataType.FLOAT, DataType.DOUBLE));
 		assertEquals(DataType.FLOAT, TypeUtil.getCommonDataType(DataType.FLOAT, DataType.FLOAT));

@@ -42,6 +42,7 @@ import org.jpmml.model.DirectByteArrayOutputStream;
 import org.jpmml.model.PMMLUtil;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -51,11 +52,7 @@ public class LoadingModelEvaluatorBuilderTest {
 	public void build(){
 		LoadingModelEvaluatorBuilder modelEvaluatorBuilder = new LoadingModelEvaluatorBuilder();
 
-		try {
-			modelEvaluatorBuilder.load(createResource(null));
-		} catch(Exception e){
-			throw new AssertionError(e);
-		}
+		assertDoesNotThrow(() -> modelEvaluatorBuilder.load(createResource(null)));
 
 		// Identity transformation
 		PMMLTransformer<RuntimeException> transformer = new PMMLTransformer<RuntimeException>(){
@@ -127,11 +124,7 @@ public class LoadingModelEvaluatorBuilderTest {
 			}
 		};
 
-		try {
-			modelEvaluatorBuilder.transform(javaTransformer);
-		} catch(TranslationException te){
-			throw new AssertionError(te);
-		}
+		assertDoesNotThrow(() -> modelEvaluatorBuilder.transform(javaTransformer));
 
 		ModelEvaluator<?> javaModelEvaluator = modelEvaluatorBuilder.build();
 

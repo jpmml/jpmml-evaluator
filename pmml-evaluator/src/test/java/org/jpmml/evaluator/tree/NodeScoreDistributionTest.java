@@ -57,7 +57,7 @@ public class NodeScoreDistributionTest {
 
 		assertEquals(ImmutableSet.of("ham", "spam"), classification.getCategories());
 
-		assertEquals((Double)0.75d, classification.getProbability("ham"));
-		assertEquals((Double)0.25d, classification.getProbability("spam"));
+		assertEquals(0.75d, classification.getProbability("ham"));
+		assertEquals(0.25d, classification.getProbability("spam"));
 	}
 }

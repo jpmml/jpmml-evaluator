@@ -38,14 +38,14 @@ public class ValueTest {
 		floatValue.restrict(2d, Double.POSITIVE_INFINITY);
 		doubleValue.restrict(2d, Double.POSITIVE_INFINITY);
 
-		assertEquals((Float)2f, floatValue.getValue());
-		assertEquals((Double)2d, doubleValue.getValue());
+		assertEquals(2f, floatValue.getValue());
+		assertEquals(2d, doubleValue.getValue());
 
 		floatValue.restrict(Double.NEGATIVE_INFINITY, -2d);
 		doubleValue.restrict(Double.NEGATIVE_INFINITY, -2d);
 
-		assertEquals((Float)(-2f), floatValue.getValue());
-		assertEquals((Double)(-2d), doubleValue.getValue());
+		assertEquals(-2f, floatValue.getValue());
+		assertEquals(-2d, doubleValue.getValue());
 	}
 
 	@Test
@@ -88,10 +88,10 @@ public class ValueTest {
 
 	@Test
 	public void classConstants(){
-		assertEquals((Number)(float)FloatValue.E, (Number)(float)DoubleValue.E);
-		assertNotEquals((Number)(double)FloatValue.E, (Number)(double)DoubleValue.E);
+		assertEquals((float)FloatValue.E, (float)DoubleValue.E);
+		assertNotEquals((double)FloatValue.E, (double)DoubleValue.E);
 
-		assertEquals((Number)(float)FloatValue.PI, (Number)(float)DoubleValue.PI);
-		assertNotEquals((Number)(double)FloatValue.PI, (Number)(double)DoubleValue.PI);
+		assertEquals((float)FloatValue.PI, (float)DoubleValue.PI);
+		assertNotEquals((double)FloatValue.PI, (double)DoubleValue.PI);
 	}
 }

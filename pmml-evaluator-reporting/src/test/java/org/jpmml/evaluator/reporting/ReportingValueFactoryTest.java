@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ReportingValueFactoryTest {
 
@@ -43,7 +43,7 @@ public class ReportingValueFactoryTest {
 
 		Value<Float> value = valueFactory.newValue();
 
-		assertEquals((Float)0f, value.getValue());
+		assertEquals(0f, value.getValue());
 
 		HasReport hasReport = (HasReport)value;
 
@@ -51,41 +51,35 @@ public class ReportingValueFactoryTest {
 
 		assertFalse(report.hasEntries());
 
-		try {
-			report.tailEntry();
-
-			fail();
-		} catch(IllegalStateException ise){
-			// Ignored
-		}
+		assertThrows(IllegalStateException.class, () -> report.tailEntry());
 
 		value.add(Numbers.FLOAT_ZERO);
 
-		assertEquals((Float)0f, value.getValue());
+		assertEquals(0f, value.getValue());
 
 		assertFalse(report.hasEntries());
 
 		value.add(Numbers.FLOAT_ONE);
 
-		assertEquals((Float)1f, value.getValue());
+		assertEquals(1f, value.getValue());
 
 		assertTrue(report.hasEntries());
 
 		Report.Entry entry = report.tailEntry();
 
 		assertEquals("<cn>" + 1f + "</cn>", entry.getExpression());
-		assertEquals((Float)1f, entry.getValue());
+		assertEquals(1f, entry.getValue());
 
 		value.reset(Numbers.FLOAT_ZERO);
 
-		assertEquals((Float)0f, value.getValue());
+		assertEquals(0f, value.getValue());
 
 		assertTrue(report.hasEntries());
 
 		entry = report.tailEntry();
 
 		assertEquals("<cn>" + 0f + "</cn>", entry.getExpression());
-		assertEquals((Float)0f, entry.getValue());
+		assertEquals(0f, entry.getValue());
 	}
 
 	@Test
@@ -94,7 +88,7 @@ public class ReportingValueFactoryTest {
 
 		Value<Float> value = valueFactory.newValue(0d);
 
-		assertEquals((Float)0f, value.getValue());
+		assertEquals(0f, value.getValue());
 
 		HasReport hasReport = (HasReport)value;
 
@@ -105,6 +99,6 @@ public class ReportingValueFactoryTest {
 		Report.Entry entry = report.tailEntry();
 
 		assertEquals("<cn>" + 0f + "</cn>", entry.getExpression());
-		assertEquals((Float)0f, entry.getValue());
+		assertEquals(0f, entry.getValue());
 	}
 }

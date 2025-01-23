@@ -68,9 +68,9 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest implements Deltas 
 
 		List<Double> speciesAffinityRanking = species.getAffinityRanking();
 
-		assertEquals((Double)0.01d, speciesAffinityRanking.get(0), DOUBLE_EXACT);
-		assertEquals((Double)0.02d, speciesAffinityRanking.get(1), DOUBLE_EXACT);
-		assertEquals((Double)0.02d, speciesAffinityRanking.get(2), DOUBLE_EXACT);
+		assertEquals(0.01d, speciesAffinityRanking.get(0), DOUBLE_EXACT);
+		assertEquals(0.02d, speciesAffinityRanking.get(1), DOUBLE_EXACT);
+		assertEquals(0.02d, speciesAffinityRanking.get(2), DOUBLE_EXACT);
 
 		AffinityDistribution<?> speciesClass = (AffinityDistribution<?>)results.get("species_class");
 
@@ -95,9 +95,9 @@ public class MixedNeighborhoodTest extends ModelEvaluatorTest implements Deltas 
 
 		List<Double> speciesAffinityRanking = species.getAffinityRanking();
 
-		assertEquals((Double)0.08d, speciesAffinityRanking.get(0), DOUBLE_EXACT);
-		assertEquals((Double)0.10d, speciesAffinityRanking.get(1), DOUBLE_EXACT);
-		assertEquals((Double)0.11d, speciesAffinityRanking.get(2), DOUBLE_EXACT);
+		assertEquals(0.08d, speciesAffinityRanking.get(0), DOUBLE_EXACT);
+		assertEquals(0.10d, speciesAffinityRanking.get(1), DOUBLE_EXACT);
+		assertEquals(0.11d, speciesAffinityRanking.get(2), DOUBLE_EXACT);
 
 		AffinityDistribution<?> speciesClass = (AffinityDistribution<?>)results.get("species_class");
 

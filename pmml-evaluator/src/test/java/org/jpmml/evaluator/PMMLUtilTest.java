@@ -24,7 +24,7 @@ import org.jpmml.model.MissingElementException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PMMLUtilTest {
 
@@ -32,13 +32,7 @@ public class PMMLUtilTest {
 	public void findModel(){
 		PMML pmml = new PMML();
 
-		try {
-			PMMLUtil.findModel(pmml, (String)null);
-
-			fail();
-		} catch(MissingElementException mee){
-			// Ignored
-		}
+		assertThrows(MissingElementException.class, () -> PMMLUtil.findModel(pmml, (String)null));
 
 		TreeModel firstTreeModel = new TreeModel()
 			.setModelName("first");
@@ -60,20 +54,7 @@ public class PMMLUtilTest {
 
 		secondTreeModel.setScorable(false);
 
-		try {
-			PMMLUtil.findModel(pmml, (String)null);
-
-			fail();
-		} catch(MissingElementException mee){
-			// Ignored
-		} // End try
-
-		try {
-			PMMLUtil.findModel(pmml, TreeModel.class);
-
-			fail();
-		} catch(MissingElementException mee){
-			// Ignored
-		}
+		assertThrows(MissingElementException.class, () -> PMMLUtil.findModel(pmml, (String)null));
+		assertThrows(MissingElementException.class, () -> PMMLUtil.findModel(pmml, TreeModel.class));
 	}
 }

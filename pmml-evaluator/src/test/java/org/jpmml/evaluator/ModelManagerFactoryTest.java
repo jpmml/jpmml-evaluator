@@ -32,8 +32,8 @@ import org.jpmml.model.MissingMarkupException;
 import org.jpmml.model.UnsupportedAttributeException;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ModelManagerFactoryTest {
 
@@ -58,13 +58,7 @@ public class ModelManagerFactoryTest {
 
 		ModelManager<?> modelManager;
 
-		try {
-			modelManager = modelManagerFactory.newModelManager(pmml, treeModel);
-
-			fail();
-		} catch(MissingMarkupException ime){
-			// Ignored
-		}
+		assertThrows(MissingMarkupException.class, () -> modelManagerFactory.newModelManager(pmml, treeModel));
 
 		treeModel.setMiningFunction(MiningFunction.REGRESSION);
 

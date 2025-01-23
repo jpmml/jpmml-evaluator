@@ -33,8 +33,8 @@ import javax.xml.namespace.QName;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ResourceUtilTest {
 
@@ -58,13 +58,7 @@ public class ResourceUtilTest {
 
 		assertTrue(Arrays.equals(names, clonedNames));
 
-		try {
-			dataInput.readByte();
-
-			fail();
-		} catch(EOFException eofe){
-			// Ignored
-		}
+		assertThrows(EOFException.class, () -> dataInput.readByte());
 
 		is.close();
 	}
@@ -97,13 +91,7 @@ public class ResourceUtilTest {
 		assertTrue(Arrays.deepEquals(valueArrays, clonedValueArrays));
 		assertTrue(Arrays.deepEquals(valueLists, clonedValueLists));
 
-		try {
-			dataInput.readByte();
-
-			fail();
-		} catch(EOFException eofe){
-			// Ignored
-		}
+		assertThrows(EOFException.class, () -> dataInput.readByte());
 
 		is.close();
 	}
@@ -132,13 +120,7 @@ public class ResourceUtilTest {
 		assertTrue(Arrays.equals(values, clonedValues));
 		assertTrue(Arrays.deepEquals(valueArrays, clonedValueArrays));
 
-		try {
-			dataInput.readByte();
-
-			fail();
-		} catch(EOFException eofe){
-			// Ignored
-		}
+		assertThrows(EOFException.class, () -> dataInput.readByte());
 
 		is.close();
 	}
@@ -167,13 +149,7 @@ public class ResourceUtilTest {
 		assertTrue(Arrays.equals(values, clonedValues));
 		assertTrue(Arrays.deepEquals(valueArrays, clonedValueArrays));
 
-		try {
-			dataInput.readByte();
-
-			fail();
-		} catch(EOFException eofe){
-			// Ignored
-		}
+		assertThrows(EOFException.class, () -> dataInput.readByte());
 
 		is.close();
 	}

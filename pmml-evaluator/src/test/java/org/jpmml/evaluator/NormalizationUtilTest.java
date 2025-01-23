@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class NormalizationUtilTest implements Deltas {
 
@@ -62,13 +62,7 @@ public class NormalizationUtilTest implements Deltas {
 	public void denormalize(){
 		NormContinuous normContinuous = createNormContinuous();
 
-		try {
-			denormalize(normContinuous, -0.5d);
-
-			fail();
-		} catch(NotImplementedException nie){
-			// Ignored
-		}
+		assertThrows(NotImplementedException.class, () -> denormalize(normContinuous, -0.5d));
 
 		assertEquals(BEGIN[0], denormalize(normContinuous, BEGIN[1]), DOUBLE_EXACT);
 		assertEquals(0.3d, denormalize(normContinuous, interpolate(0.3d, BEGIN, MIDPOINT)), DOUBLE_EXACT);
@@ -76,13 +70,7 @@ public class NormalizationUtilTest implements Deltas {
 		assertEquals(7.123d, denormalize(normContinuous, interpolate(7.123d, MIDPOINT, END)), DOUBLE_EXACT);
 		assertEquals(END[0], denormalize(normContinuous, END[1]), DOUBLE_EXACT);
 
-		try {
-			denormalize(normContinuous, 1.5d);
-
-			fail();
-		} catch(NotImplementedException nie){
-			// Ignored
-		}
+		assertThrows(NotImplementedException.class, () -> denormalize(normContinuous, 1.5d));
 	}
 
 	@Test

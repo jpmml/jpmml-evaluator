@@ -41,30 +41,30 @@ public class MissingPredictionTest extends ModelEvaluatorTest {
 		assertEquals(null, evaluate(evaluator, 0d));
 		assertEquals(null, evaluate(evaluator, 1d));
 		assertEquals(null, evaluate(evaluator, 2d));
-		assertEquals((Integer)1, evaluate(evaluator, 3d));
-		assertEquals((Integer)1, evaluate(evaluator, 4d));
+		assertEquals(1, evaluate(evaluator, 3d));
+		assertEquals(1, evaluate(evaluator, 4d));
 
 		evaluator = createModelEvaluator(new MissingThresholdTransformer(0.5d));
 
 		assertEquals(null, evaluate(evaluator, 1d));
-		assertEquals((Integer)1, evaluate(evaluator, 2d));
-		assertEquals((Integer)1, evaluate(evaluator, 3d));
+		assertEquals(1, evaluate(evaluator, 2d));
+		assertEquals(1, evaluate(evaluator, 3d));
 
 		evaluator = createModelEvaluator(new MissingThresholdTransformer(0.75d));
 
 		// Two votes for the missing pseudo-category vs. one vote for the "1" category
 		assertEquals(null, evaluate(evaluator, 1d));
 
-		assertEquals((Integer)1, evaluate(evaluator, 2d));
-		assertEquals((Integer)1, evaluate(evaluator, 3d));
+		assertEquals(1, evaluate(evaluator, 2d));
+		assertEquals(1, evaluate(evaluator, 3d));
 
 		evaluator = createModelEvaluator(new MissingThresholdTransformer(0.75d), new NoTrueChildStrategyTransformer(TreeModel.NoTrueChildStrategy.RETURN_LAST_PREDICTION));
 
 		assertEquals(null, evaluate(evaluator, null));
 
-		assertEquals((Integer)0, evaluate(evaluator, 1d));
-		assertEquals((Integer)1, evaluate(evaluator, 2d));
-		assertEquals((Integer)1, evaluate(evaluator, 3d));
+		assertEquals(0, evaluate(evaluator, 1d));
+		assertEquals(1, evaluate(evaluator, 2d));
+		assertEquals(1, evaluate(evaluator, 3d));
 	}
 
 	static

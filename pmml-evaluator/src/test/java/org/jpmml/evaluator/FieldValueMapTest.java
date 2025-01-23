@@ -23,8 +23,8 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FieldValueMapTest {
 
@@ -35,30 +35,11 @@ public class FieldValueMapTest {
 
 		assertNotNull(Map.class.getMethod("getOrDefault", Object.class, Object.class));
 
-		try {
-			Map.class.getMethod("getOrDefault", Object.class, FieldValue.class);
-
-			fail();
-		} catch(ReflectiveOperationException roe){
-			// Ignored
-		} // End try
-
-		try {
-			Map.class.getMethod("getOrDefault", String.class, FieldValue.class);
-
-			fail();
-		} catch(ReflectiveOperationException roe){
-			// Ignored
-		}
+		assertThrows(ReflectiveOperationException.class, () -> Map.class.getMethod("getOrDefault", Object.class, FieldValue.class));
+		assertThrows(ReflectiveOperationException.class, () -> Map.class.getMethod("getOrDefault", String.class, FieldValue.class));
 
 		assertNotNull(Map.class.getMethod("putIfAbsent", Object.class, Object.class));
 
-		try {
-			Map.class.getMethod("putIfAbsent", String.class, FieldValue.class);
-
-			fail();
-		} catch(ReflectiveOperationException roe){
-			// Ignored
-		}
+		assertThrows(ReflectiveOperationException.class, () -> Map.class.getMethod("putIfAbsent", String.class, FieldValue.class));
 	}
 }

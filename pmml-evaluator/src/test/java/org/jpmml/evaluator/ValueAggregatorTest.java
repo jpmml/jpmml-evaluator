@@ -21,7 +21,7 @@ package org.jpmml.evaluator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ValueAggregatorTest {
 
@@ -32,13 +32,7 @@ public class ValueAggregatorTest {
 	public void sumAndAverage(){
 		ValueAggregator<Double> aggregator = new ValueAggregator.UnivariateStatistic<>(this.valueFactory);
 
-		try {
-			aggregator.average();
-
-			fail();
-		} catch(UndefinedResultException ure){
-			// Ignored
-		}
+		assertThrows(UndefinedResultException.class, () -> aggregator.average());
 
 		aggregator.add(2d);
 		aggregator.add(3d);
@@ -53,13 +47,7 @@ public class ValueAggregatorTest {
 	public void weightedSumAndAverage(){
 		ValueAggregator<Double> aggregator = new ValueAggregator.WeightedUnivariateStatistic<>(this.valueFactory);
 
-		try {
-			aggregator.weightedAverage();
-
-			fail();
-		} catch(UndefinedResultException ure){
-			// Ignored
-		}
+		assertThrows(UndefinedResultException.class, () -> aggregator.weightedAverage());
 
 		aggregator.add(2d, 1d / 3d);
 		aggregator.add(3d, 2d / 3d);
@@ -74,13 +62,7 @@ public class ValueAggregatorTest {
 	public void median(){
 		ValueAggregator<Double> aggregator = new ValueAggregator.Median<>(this.valueFactory, 3);
 
-		try {
-			aggregator.median();
-
-			fail();
-		} catch(UndefinedResultException ure){
-			// Ignored
-		}
+		assertThrows(UndefinedResultException.class, () -> aggregator.median());
 
 		aggregator.add(4d);
 		aggregator.add(5d);
@@ -96,13 +78,7 @@ public class ValueAggregatorTest {
 	public void weightedMedian(){
 		ValueAggregator<Double> aggregator = new ValueAggregator.WeightedMedian<>(this.valueFactory, 3);
 
-		try {
-			aggregator.weightedMedian();
-
-			fail();
-		} catch(UndefinedResultException ure){
-			// Ignored
-		}
+		assertThrows(UndefinedResultException.class, () -> aggregator.weightedMedian());
 
 		aggregator.add(1d, 3d);
 		aggregator.add(5d, 7d);

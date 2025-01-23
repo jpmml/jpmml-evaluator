@@ -53,8 +53,8 @@ import org.jpmml.evaluator.functions.EchoFunction;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ExpressionUtilTest {
 
@@ -311,25 +311,13 @@ public class ExpressionUtilTest {
 
 		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.RETURN_INVALID);
 
-		try {
-			evaluate(apply, "x", 1);
+		EvaluationException exception = assertThrows(EvaluationException.class, () -> evaluate(apply, "x", 1));
 
-			fail();
-		} catch(EvaluationException ee){
-			Throwable cause = ee.getCause();
-
-			assertTrue(cause instanceof UndefinedResultException);
-		}
+		assertTrue(exception.getCause() instanceof UndefinedResultException);
 
 		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_IS);
 
-		try {
-			evaluate(apply, "x", 1);
-
-			fail();
-		} catch(UndefinedResultException ure){
-			// Ignored
-		}
+		assertThrows(UndefinedResultException.class, () -> evaluate(apply, "x", 1));
 
 		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_MISSING);
 
@@ -343,13 +331,7 @@ public class ExpressionUtilTest {
 
 		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.RETURN_INVALID);
 
-		try {
-			evaluate(apply, "x", -1d);
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
+		assertThrows(EvaluationException.class, () -> evaluate(apply, "x", -1d));
 
 		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_IS);
 
@@ -368,13 +350,7 @@ public class ExpressionUtilTest {
 		Apply apply = new Apply(PMMLFunctions.IF)
 			.addExpressions(condition);
 
-		try {
-			evaluate(apply, "x", null);
-
-			fail();
-		} catch(FunctionException fe){
-			// Ignored
-		}
+		assertThrows(FunctionException.class, () -> evaluate(apply, "x", null));
 
 		Expression thenPart = new Apply(PMMLFunctions.ABS)
 			.addExpressions(new FieldRef("x"));
@@ -395,13 +371,7 @@ public class ExpressionUtilTest {
 
 		apply.addExpressions(new FieldRef("x"));
 
-		try {
-			evaluate(apply, "x", null);
-
-			fail();
-		} catch(FunctionException fe){
-			// Ignored
-		}
+		assertThrows(FunctionException.class, () -> evaluate(apply, "x", null));
 	}
 
 	@Test
@@ -444,13 +414,7 @@ public class ExpressionUtilTest {
 
 		assertEquals("not missing", evaluate(apply, context));
 
-		try {
-			context.declare("x", FieldValues.CATEGORICAL_BOOLEAN_FALSE);
-
-			fail();
-		} catch(DuplicateFieldValueException dfve){
-			// Ignored
-		}
+		assertThrows(DuplicateFieldValueException.class, () -> context.declare("x", FieldValues.CATEGORICAL_BOOLEAN_FALSE));
 	}
 
 	@Test
@@ -460,13 +424,9 @@ public class ExpressionUtilTest {
 		Apply apply = new Apply(EchoFunction.class.getName())
 			.addExpressions(fieldRef);
 
-		try {
-			evaluate(apply);
+		EvaluationException exception = assertThrows(EvaluationException.class, () -> evaluate(apply));
 
-			fail();
-		} catch(EvaluationException ee){
-			assertEquals(fieldRef, ee.getContext());
-		}
+		assertEquals(fieldRef, exception.getContext());
 
 		assertEquals("Hello World!", evaluate(apply, "x", "Hello World!"));
 	}

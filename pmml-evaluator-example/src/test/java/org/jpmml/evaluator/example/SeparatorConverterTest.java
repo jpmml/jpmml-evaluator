@@ -21,20 +21,13 @@ package org.jpmml.evaluator.example;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SeparatorConverterTest {
 
 	@Test
 	public void unescape(){
-
-		try {
-			SeparatorConverter.unescape("");
-
-			fail();
-		} catch(IllegalArgumentException iae){
-			// Ignored
-		}
+		assertThrows(IllegalArgumentException.class, () -> SeparatorConverter.unescape(""));
 
 		assertEquals(" ", SeparatorConverter.unescape(" "));
 		assertEquals(",", SeparatorConverter.unescape(","));
@@ -43,23 +36,11 @@ public class SeparatorConverterTest {
 		assertEquals("\t", SeparatorConverter.unescape("\t"));
 		assertEquals("\t", SeparatorConverter.unescape("\\t"));
 
-		try {
-			SeparatorConverter.unescape("\\");
-
-			fail();
-		} catch(IllegalArgumentException iae){
-			// Ignored
-		}
+		assertThrows(IllegalArgumentException.class, () -> SeparatorConverter.unescape("\\"));
 
 		assertEquals("\\", SeparatorConverter.unescape("\\\\"));
 
-		try {
-			SeparatorConverter.unescape("\\x");
-
-			fail();
-		} catch(IllegalArgumentException iae){
-			//Ignored
-		}
+		assertThrows(IllegalArgumentException.class, () -> SeparatorConverter.unescape("\\x"));
 
 		assertEquals("\\x", SeparatorConverter.unescape("\\\\x"));
 	}

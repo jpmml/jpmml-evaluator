@@ -27,8 +27,8 @@ import org.dmg.pmml.Matrix;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MatrixUtilTest {
 
@@ -53,21 +53,8 @@ public class MatrixUtilTest {
 		assertEquals(3, MatrixUtil.getRows(matrix));
 		assertEquals(3, MatrixUtil.getColumns(matrix));
 
-		try {
-			MatrixUtil.getElementAt(matrix, 0, 0);
-
-			fail();
-		} catch(IndexOutOfBoundsException ioobe){
-			// Ignored
-		}
-
-		try {
-			MatrixUtil.getElementAt(matrix, 4, 4);
-
-			fail();
-		} catch(IndexOutOfBoundsException ioobe){
-			// Ignored
-		}
+		assertThrows(IndexOutOfBoundsException.class, () -> MatrixUtil.getElementAt(matrix, 0, 0));
+		assertThrows(IndexOutOfBoundsException.class, () -> MatrixUtil.getElementAt(matrix, 4, 4));
 
 		double[][] data = {
 			{1, -1, -1},
@@ -102,21 +89,8 @@ public class MatrixUtilTest {
 		assertEquals(3, MatrixUtil.getRows(matrix));
 		assertEquals(3, MatrixUtil.getColumns(matrix));
 
-		try {
-			MatrixUtil.getElementAt(matrix, 0, 0);
-
-			fail();
-		} catch(IndexOutOfBoundsException ioobe){
-			// Ignored
-		}
-
-		try {
-			MatrixUtil.getElementAt(matrix, 4, 4);
-
-			fail();
-		} catch(IndexOutOfBoundsException ioobe){
-			// Ignored
-		}
+		assertThrows(IndexOutOfBoundsException.class, () -> MatrixUtil.getElementAt(matrix, 0, 0));
+		assertThrows(IndexOutOfBoundsException.class, () -> MatrixUtil.getElementAt(matrix, 4, 4));
 
 		double[][] data = {
 			{1, 4, 6},
@@ -173,13 +147,7 @@ public class MatrixUtilTest {
 		assertEquals(5, MatrixUtil.getRows(matrix));
 		assertEquals(5, MatrixUtil.getColumns(matrix));
 
-		try {
-			MatrixUtil.getElementAt(matrix, 0, 0);
-
-			fail();
-		} catch(IndexOutOfBoundsException ioobe){
-			// Ignored
-		}
+		assertThrows(IndexOutOfBoundsException.class, () -> MatrixUtil.getElementAt(matrix, 0, 0));
 
 		double[][] data = {
 			{0, 0, 0, 42, 0},

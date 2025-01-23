@@ -103,8 +103,8 @@ public class TargetUtilTest {
 
 		HasProbability hasProbability = (HasProbability)results.get(dataField.requireName());
 
-		assertEquals((Double)((double)(float)(1d / 7d)), hasProbability.getProbability("yes"));
-		assertEquals((Double)((double)(float)(1d - (1d / 7d))), hasProbability.getProbability("no"));
+		assertEquals(((double)(float)(1d / 7d)), hasProbability.getProbability("yes"));
+		assertEquals(((double)(float)(1d - (1d / 7d))), hasProbability.getProbability("no"));
 
 		evaluator = createTreeModelEvaluator(MiningFunction.CLASSIFICATION, MathContext.DOUBLE, target);
 

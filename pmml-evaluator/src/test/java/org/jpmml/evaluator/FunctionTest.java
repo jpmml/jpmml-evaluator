@@ -29,7 +29,7 @@ import org.jpmml.model.temporals.Time;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class FunctionTest implements Deltas {
 
@@ -51,13 +51,7 @@ public class FunctionTest implements Deltas {
 		assertEquals(null, evaluate(Functions.ADD, 1d, null));
 		assertEquals(null, evaluate(Functions.ADD, null, 1d));
 
-		try {
-			evaluate(Functions.ADD, true, true);
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
+		assertThrows(EvaluationException.class, () -> evaluate(Functions.ADD, true, true));
 
 		assertEquals(1, evaluate(Functions.MULTIPLY, 1, 1));
 		assertEquals(1f, evaluate(Functions.MULTIPLY, 1f, 1f));
@@ -99,14 +93,7 @@ public class FunctionTest implements Deltas {
 
 	@Test
 	public void evaluateDivisionByZero(){
-
-		try {
-			evaluate(Functions.DIVIDE, 1, 0);
-
-			fail();
-		} catch(UndefinedResultException ure){
-			// Ignored
-		}
+		assertThrows(UndefinedResultException.class, () -> evaluate(Functions.DIVIDE, 1, 0));
 
 		assertEquals(Float.NEGATIVE_INFINITY, evaluate(Functions.DIVIDE, -1f, 0));
 		assertEquals(Float.POSITIVE_INFINITY, evaluate(Functions.DIVIDE, 1f, 0));
@@ -120,13 +107,7 @@ public class FunctionTest implements Deltas {
 		assertEquals(Double.POSITIVE_INFINITY, evaluate(Functions.DIVIDE, 1, -0d));
 		assertEquals(Double.POSITIVE_INFINITY, evaluate(Functions.DIVIDE, 1, 0d));
 
-		try {
-			evaluate(Functions.MODULO, 1, 0);
-
-			fail();
-		} catch(UndefinedResultException ure){
-			// Ignored
-		}
+		assertThrows(UndefinedResultException.class, () -> evaluate(Functions.MODULO, 1, 0));
 
 		assertEquals(Float.NaN, evaluate(Functions.MODULO, 1f, 0));
 
@@ -188,13 +169,7 @@ public class FunctionTest implements Deltas {
 		assertEquals(1f, evaluate(Functions.ABS, -1f));
 		assertEquals(1d, evaluate(Functions.ABS, -1d));
 
-		try {
-			evaluate(Functions.POW, -2, -2);
-
-			fail();
-		} catch(InvalidArgumentException iae){
-			// Ignored
-		}
+		assertThrows(InvalidArgumentException.class, () -> evaluate(Functions.POW, -2, -2));
 
 		assertEquals(1, evaluate(Functions.POW, -2, 0));
 		assertEquals(4, evaluate(Functions.POW, -2, 2));
@@ -202,13 +177,7 @@ public class FunctionTest implements Deltas {
 
 		assertEquals(1, evaluate(Functions.POW, 0, 0));
 
-		try {
-			evaluate(Functions.POW, 2, -2);
-
-			fail();
-		} catch(InvalidArgumentException iae){
-			// Ignored
-		}
+		assertThrows(InvalidArgumentException.class, () -> evaluate(Functions.POW, 2, -2));
 
 		assertEquals(1 / 4d, evaluate(Functions.POW, 2, -2d));
 		assertEquals(1, evaluate(Functions.POW, 2, 0));
@@ -407,23 +376,11 @@ public class FunctionTest implements Deltas {
 		assertEquals("c", evaluate(Functions.REPLACE, "BBBB", "B+", "c"));
 		assertEquals("cccc", evaluate(Functions.REPLACE, "BBBB", "B+?", "c"));
 
-		try {
-			evaluate(Functions.REPLACE, "BBBB", "B", "$");
-
-			fail();
-		} catch(IllegalArgumentException iae){
-			// Ignored
-		}
+		assertThrows(IllegalArgumentException.class, () -> evaluate(Functions.REPLACE, "BBBB", "B", "$"));
 
 		assertEquals("$$$$", evaluate(Functions.REPLACE, "BBBB", "B", "$$"));
 
-		try {
-			evaluate(Functions.REPLACE, "BBBB", "B", "\\");
-
-			fail();
-		} catch(IllegalArgumentException iae){
-			// Ignored
-		}
+		assertThrows(IllegalArgumentException.class, () -> evaluate(Functions.REPLACE, "BBBB", "B", "\\"));
 
 		assertEquals("\\\\\\\\", evaluate(Functions.REPLACE, "BBBB", "B", "\\\\"));
 

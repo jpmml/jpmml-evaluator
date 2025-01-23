@@ -25,8 +25,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FunctionRegistryTest {
 
@@ -37,35 +37,16 @@ public class FunctionRegistryTest {
 		assertNull(FunctionRegistry.getFunction("x-sin"));
 		assertNotNull(FunctionRegistry.getFunction("sin"));
 
-		try {
-			FunctionRegistry.getFunction(Thread.class.getName());
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
-
-		try {
-			FunctionRegistry.getFunction(MaliciousThread.class.getName());
-
-			fail();
-		} catch(TypeCheckException tce){
-			// Ignored
-		}
+		assertThrows(TypeCheckException.class, () -> FunctionRegistry.getFunction(Thread.class.getName()));
+		assertThrows(TypeCheckException.class, () -> FunctionRegistry.getFunction(MaliciousThread.class.getName()));
 
 		Function firstEcho = FunctionRegistry.getFunction(EchoFunction.class.getName());
 		Function secondEcho = FunctionRegistry.getFunction(EchoFunction.class.getName());
 
 		assertNotSame(firstEcho, secondEcho);
 
-		try {
-			FunctionRegistry.getFunction(MaliciousEchoFunction.class.getName());
+		EvaluationException exception = assertThrows(EvaluationException.class, () -> FunctionRegistry.getFunction(MaliciousEchoFunction.class.getName()));
 
-			fail();
-		} catch(EvaluationException ee){
-			Throwable cause = ee.getCause();
-
-			assertTrue(cause instanceof ExceptionInInitializerError);
-		}
+		assertTrue(exception.getCause() instanceof ExceptionInInitializerError);
 	}
 }

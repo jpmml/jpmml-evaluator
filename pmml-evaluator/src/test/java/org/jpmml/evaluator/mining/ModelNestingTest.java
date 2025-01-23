@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ModelNestingTest extends ModelEvaluatorTest implements Deltas {
 
@@ -50,13 +50,7 @@ public class ModelNestingTest extends ModelEvaluatorTest implements Deltas {
 		assertEquals(0, targetFields.size());
 		assertEquals(2, outputFields.size());
 
-		try {
-			evaluator.getTargetField();
-
-			fail();
-		} catch(EvaluationException ee){
-			// Ignored
-		}
+		assertThrows(EvaluationException.class, () -> evaluator.getTargetField());
 
 		assertEquals(Evaluator.DEFAULT_TARGET_NAME, evaluator.getTargetName());
 

@@ -26,43 +26,31 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class RegExUtilTest {
 
 	@Test
 	public void compile(){
-		String regex = "[";
+		String invalidRegex = "[";
 
-		try {
-			RegExUtil.compile(regex, null);
+		EvaluationException exception = assertThrows(EvaluationException.class, () -> RegExUtil.compile(invalidRegex, null));
 
-			fail();
-		} catch(EvaluationException ee){
-			Throwable cause = ee.getCause();
-
-			assertEquals(null, ee.getContext());
-			assertTrue(cause instanceof PatternSyntaxException);
-		}
+		assertEquals(null, exception.getContext());
+		assertTrue(exception.getCause() instanceof PatternSyntaxException);
 
 		TextIndex textIndex = new TextIndex();
 
-		try {
-			RegExUtil.compile(regex, textIndex);
+		exception = assertThrows(EvaluationException.class, () -> RegExUtil.compile(invalidRegex, textIndex));
 
-			fail();
-		} catch(EvaluationException ee){
-			Throwable cause = ee.getCause();
+		assertEquals(textIndex, exception.getContext());
+		assertTrue(exception.getCause() instanceof PatternSyntaxException);
 
-			assertEquals(textIndex, ee.getContext());
-			assertTrue(cause instanceof PatternSyntaxException);
-		}
+		String validRegex = "\\s+";
 
-		regex = "\\s+";
-
-		Pattern firstPattern = RegExUtil.compile(new String(regex), null);
-		Pattern secondPattern = RegExUtil.compile(new String(regex), null);
+		Pattern firstPattern = RegExUtil.compile(new String(validRegex), null);
+		Pattern secondPattern = RegExUtil.compile(new String(validRegex), null);
 
 		assertSame(firstPattern, secondPattern);
 	}

@@ -55,9 +55,9 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 		assertEquals("2", targetValue.getEntityId());
 
-		assertEquals((Double)0.8d, targetValue.getProbability("will play"));
-		assertEquals((Double)0.04d, targetValue.getProbability("may play"));
-		assertEquals((Double)0.16d, targetValue.getProbability("no play"));
+		assertEquals(0.8d, targetValue.getProbability("will play"));
+		assertEquals(0.04d, targetValue.getProbability("may play"));
+		assertEquals(0.16d, targetValue.getProbability("no play"));
 	}
 
 	@Test
@@ -66,9 +66,9 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 		assertEquals("1", targetValue.getEntityId());
 
-		assertEquals((Double)(60d / 100d), targetValue.getProbability("will play"));
-		assertEquals((Double)(30d / 100d), targetValue.getProbability("may play"));
-		assertEquals((Double)(10d / 100d), targetValue.getProbability("no play"));
+		assertEquals((60d / 100d), targetValue.getProbability("will play"));
+		assertEquals((30d / 100d), targetValue.getProbability("may play"));
+		assertEquals((10d / 100d), targetValue.getProbability("no play"));
 	}
 
 	@Test
@@ -79,15 +79,15 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 		assertEquals("4", targetValue.getEntityId());
 
-		assertEquals((Double)0.4d, targetValue.getProbability("will play"));
-		assertEquals((Double)0d, targetValue.getProbability("may play"));
-		assertEquals((Double)0.6d, targetValue.getProbability("no play"));
+		assertEquals(0.4d, targetValue.getProbability("will play"));
+		assertEquals(0d, targetValue.getProbability("may play"));
+		assertEquals(0.6d, targetValue.getProbability("no play"));
 
 		double missingValuePenatly = 0.8d;
 
-		assertEquals((Double)(0.4d * missingValuePenatly), targetValue.getConfidence("will play"));
-		assertEquals((Double)(0d * missingValuePenatly), targetValue.getConfidence("may play"));
-		assertEquals((Double)(0.6d * missingValuePenatly), targetValue.getConfidence("no play"));
+		assertEquals((0.4d * missingValuePenatly), targetValue.getConfidence("will play"));
+		assertEquals((0d * missingValuePenatly), targetValue.getConfidence("may play"));
+		assertEquals((0.6d * missingValuePenatly), targetValue.getConfidence("no play"));
 	}
 
 	@Test
@@ -98,15 +98,15 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 		assertEquals("3", targetValue.getEntityId());
 
-		assertEquals((Double)0.9d, targetValue.getProbability("will play"));
-		assertEquals((Double)0.05d, targetValue.getProbability("may play"));
-		assertEquals((Double)0.05d, targetValue.getProbability("no play"));
+		assertEquals(0.9d, targetValue.getProbability("will play"));
+		assertEquals(0.05d, targetValue.getProbability("may play"));
+		assertEquals(0.05d, targetValue.getProbability("no play"));
 
 		double missingValuePenalty = (0.8d * 0.8d);
 
-		assertEquals((Double)(0.9d * missingValuePenalty), targetValue.getConfidence("will play"));
-		assertEquals((Double)(0.05d * missingValuePenalty), targetValue.getConfidence("may play"));
-		assertEquals((Double)(0.05d * missingValuePenalty), targetValue.getConfidence("no play"));
+		assertEquals((0.9d * missingValuePenalty), targetValue.getConfidence("will play"));
+		assertEquals((0.05d * missingValuePenalty), targetValue.getConfidence("may play"));
+		assertEquals((0.05d * missingValuePenalty), targetValue.getConfidence("no play"));
 	}
 
 	private NodeScoreDistribution<?> evaluate(TreeModel.MissingValueStrategy missingValueStrategy, Map<String, ?> arguments) throws Exception {
