@@ -23,9 +23,9 @@ import java.util.List;
 import org.dmg.pmml.naive_bayes.BayesInput;
 import org.dmg.pmml.naive_bayes.NaiveBayesModel;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BayesInputTest extends ModelEvaluatorTest {
 

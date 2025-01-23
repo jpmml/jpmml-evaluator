@@ -21,9 +21,9 @@ package org.jpmml.evaluator.regression;
 import org.dmg.pmml.regression.RegressionModel;
 import org.jpmml.evaluator.FloatValue;
 import org.jpmml.evaluator.ValueMap;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RegressionModelUtilTest {
 

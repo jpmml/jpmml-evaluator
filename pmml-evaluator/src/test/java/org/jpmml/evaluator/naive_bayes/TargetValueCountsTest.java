@@ -34,9 +34,9 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 import org.jpmml.evaluator.Classification;
 import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TargetValueCountsTest extends ModelEvaluatorTest implements Deltas {
 

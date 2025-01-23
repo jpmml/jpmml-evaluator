@@ -40,10 +40,10 @@ import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.java.JavaModel;
 import org.jpmml.model.DirectByteArrayOutputStream;
 import org.jpmml.model.PMMLUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class LoadingModelEvaluatorBuilderTest {
 

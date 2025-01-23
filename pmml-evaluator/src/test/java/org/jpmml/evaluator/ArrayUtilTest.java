@@ -22,10 +22,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.dmg.pmml.Array;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class ArrayUtilTest {
 

@@ -25,9 +25,9 @@ import org.jpmml.evaluator.Configuration;
 import org.jpmml.evaluator.ConfigurationBuilder;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.OutputFilters;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ModelChainSimpleTest extends ModelChainTest {
 

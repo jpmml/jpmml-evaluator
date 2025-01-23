@@ -20,7 +20,7 @@ package org.jpmml.evaluator.association;
 
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CollectionVerificationTest extends ModelEvaluatorTest {
 

@@ -26,10 +26,10 @@ import org.dmg.pmml.PMMLConstants;
 import org.jpmml.model.temporals.Date;
 import org.jpmml.model.temporals.DateTime;
 import org.jpmml.model.temporals.Time;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FunctionTest implements Deltas {
 

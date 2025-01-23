@@ -24,11 +24,11 @@ import java.io.InputStream;
 import com.esotericsoftware.kryo.Kryo;
 import org.jpmml.model.DirectByteArrayOutputStream;
 import org.jpmml.model.kryo.KryoSerializer;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 abstract
 public class KryoSerializerTest {
@@ -36,12 +36,12 @@ public class KryoSerializerTest {
 	protected Kryo kryo = null;
 
 
-	@Before
+	@BeforeEach
 	public void setUp(){
 		this.kryo = KryoUtil.createKryo();
 	}
 
-	@After
+	@AfterEach
 	public void tearDown(){
 		this.kryo = null;
 	}

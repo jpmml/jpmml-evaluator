@@ -28,8 +28,8 @@ import org.jpmml.evaluator.visitors.ModelEvaluatorVisitorBattery;
 import org.jpmml.model.visitors.ArrayListTransformer;
 import org.jpmml.model.visitors.VisitorBattery;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 abstract
 public class ModelEvaluatorTest {

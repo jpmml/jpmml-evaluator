@@ -22,9 +22,9 @@ import org.dmg.pmml.neural_network.NeuralNetwork;
 import org.jpmml.evaluator.DoubleValue;
 import org.jpmml.evaluator.FloatValue;
 import org.jpmml.evaluator.Value;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NeuralNetworkUtilTest {
 

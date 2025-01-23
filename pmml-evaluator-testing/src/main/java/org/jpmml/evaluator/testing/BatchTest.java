@@ -26,7 +26,7 @@ import java.util.function.Predicate;
 
 import org.jpmml.evaluator.ResultField;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;;
 
 abstract
 public class BatchTest {

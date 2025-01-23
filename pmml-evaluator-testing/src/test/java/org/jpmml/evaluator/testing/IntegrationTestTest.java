@@ -18,7 +18,7 @@
  */
 package org.jpmml.evaluator.testing;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class IntegrationTestTest extends IntegrationTest {
 

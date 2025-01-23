@@ -26,9 +26,9 @@ import java.util.Map;
 import com.google.common.collect.Iterables;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 abstract
 public class AssociationSchemaTest extends ModelEvaluatorTest {

@@ -18,11 +18,10 @@
  */
 package org.jpmml.evaluator.example;
 
-import org.jpmml.evaluator.example.SeparatorConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class SeparatorConverterTest {
 

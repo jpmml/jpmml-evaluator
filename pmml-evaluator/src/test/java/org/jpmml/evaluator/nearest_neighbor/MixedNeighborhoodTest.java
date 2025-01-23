@@ -26,9 +26,9 @@ import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MixedNeighborhoodTest extends ModelEvaluatorTest implements Deltas {
 

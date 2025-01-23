@@ -29,7 +29,7 @@ import org.dmg.pmml.nearest_neighbor.TrainingInstances;
 import org.jpmml.evaluator.PMMLTransformer;
 import org.jpmml.model.visitors.AbstractVisitor;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RemoveTrainingInstanceTransformer implements PMMLTransformer<RuntimeException> {
 

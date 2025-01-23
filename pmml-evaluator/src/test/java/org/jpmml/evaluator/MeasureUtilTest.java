@@ -41,9 +41,9 @@ import org.dmg.pmml.MathContext;
 import org.dmg.pmml.SimpleMatching;
 import org.dmg.pmml.Tanimoto;
 import org.dmg.pmml.clustering.ClusteringField;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MeasureUtilTest {
 

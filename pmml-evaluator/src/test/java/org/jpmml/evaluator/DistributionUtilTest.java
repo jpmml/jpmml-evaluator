@@ -21,9 +21,9 @@ package org.jpmml.evaluator;
 import org.dmg.pmml.ContinuousDistribution;
 import org.dmg.pmml.GaussianDistribution;
 import org.dmg.pmml.PoissonDistribution;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DistributionUtilTest implements Deltas {
 

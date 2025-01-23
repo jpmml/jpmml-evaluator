@@ -22,10 +22,10 @@ import java.util.Map;
 
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasReasonCodeRanking;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class AttributeReasonCodeTest extends ReasonCodeTest {
 

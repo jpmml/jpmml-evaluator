@@ -24,10 +24,10 @@ import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.jpmml.evaluator.ProbabilityDistribution;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class EmptyTargetCategoryTest extends ModelEvaluatorTest implements Deltas {
 
