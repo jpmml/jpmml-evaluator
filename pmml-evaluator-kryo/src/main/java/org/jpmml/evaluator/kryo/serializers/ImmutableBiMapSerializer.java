@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with JPMML-Evaluator.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.jpmml.evaluator.kryo;
+package org.jpmml.evaluator.kryo.serializers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +27,7 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Maps;
+import org.jpmml.evaluator.kryo.PreHashedValue;
 
 public class ImmutableBiMapSerializer extends Serializer<ImmutableBiMap<Object, ?>> {
 

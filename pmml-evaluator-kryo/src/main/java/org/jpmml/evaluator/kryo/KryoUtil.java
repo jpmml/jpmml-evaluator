@@ -26,6 +26,8 @@ import de.javakaffee.kryoserializers.guava.ImmutableMultimapSerializer;
 import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
 import de.javakaffee.kryoserializers.guava.ImmutableTableSerializer;
 import org.jpmml.evaluator.ModelEvaluator;
+import org.jpmml.evaluator.kryo.serializers.ImmutableBiMapSerializer;
+import org.jpmml.evaluator.kryo.serializers.ModelEvaluatorSerializer;
 
 public class KryoUtil {
 

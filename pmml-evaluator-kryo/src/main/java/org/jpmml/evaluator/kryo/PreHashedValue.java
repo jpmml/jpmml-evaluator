@@ -20,7 +20,7 @@ package org.jpmml.evaluator.kryo;
 
 import java.util.Objects;
 
-class PreHashedValue {
+public class PreHashedValue {
 
 	private int hashCode;
 
@@ -30,7 +30,7 @@ class PreHashedValue {
 	private PreHashedValue(){
 	}
 
-	PreHashedValue(int hashCode, Object value){
+	public PreHashedValue(int hashCode, Object value){
 		this.hashCode = hashCode;
 		this.value = Objects.requireNonNull(value);
 	}
@@ -50,6 +50,5 @@ class PreHashedValue {
 		}
 
 		return false;
-
 	}
 }
