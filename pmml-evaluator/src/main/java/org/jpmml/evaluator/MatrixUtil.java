@@ -44,7 +44,7 @@ public class MatrixUtil {
 		List<Array> arrays = matrix.getArrays();
 		List<MatCell> matCells = matrix.getMatCells();
 
-		Integer nbMax = null;
+		Integer nbMax = nbRows;
 
 		Matrix.Kind kind = matrix.getKind();
 		switch(kind){
