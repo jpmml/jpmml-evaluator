@@ -82,7 +82,7 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 	public List<InputField> getOrderFields(){
 
 		if(this.orderInputFields == null){
-			List<InputField> orderInputFields = filterInputFields(createInputFields(MiningField.UsageType.ORDER));
+			List<InputField> orderInputFields = createInputFields(MiningField.UsageType.ORDER);
 
 			this.orderInputFields = ImmutableList.copyOf(orderInputFields);
 		}

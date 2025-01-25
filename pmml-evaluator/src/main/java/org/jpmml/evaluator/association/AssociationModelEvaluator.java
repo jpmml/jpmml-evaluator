@@ -116,7 +116,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	public List<InputField> getGroupFields(){
 
 		if(this.groupInputFields == null){
-			List<InputField> groupInputFields = filterInputFields(createInputFields(MiningField.UsageType.GROUP));
+			List<InputField> groupInputFields = createInputFields(MiningField.UsageType.GROUP);
 
 			this.groupInputFields = ImmutableList.copyOf(groupInputFields);
 		}
