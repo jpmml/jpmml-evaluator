@@ -84,7 +84,7 @@ public class Table {
 
 		List<Exception> exceptions = getExceptions();
 
-		TableUtil.ensureSize(exceptions, numberOfRows);
+		ensureSize(exceptions, numberOfRows);
 
 		for(String column : columns){
 			List<?> values = getValues(column);
@@ -95,7 +95,7 @@ public class Table {
 				setValues(column, values);
 			}
 
-			TableUtil.ensureSize(values, numberOfRows);
+			ensureSize(values, numberOfRows);
 		}
 	}
 
@@ -161,13 +161,13 @@ public class Table {
 	public Exception getException(int index){
 		List<Exception> exceptions = getExceptions();
 
-		return TableUtil.get(exceptions, index);
+		return get(exceptions, index);
 	}
 
 	public void setException(int index, Exception exception){
 		List<Exception> exceptions = getExceptions();
 
-		TableUtil.set(exceptions, index, exception);
+		set(exceptions, index, exception);
 	}
 
 	protected List<?> ensureValues(String column){
@@ -235,6 +235,42 @@ public class Table {
 		return this.values;
 	}
 
+	static
+	private <E> E get(List<E> values, int index){
+
+		if(index < values.size()){
+			return values.get(index);
+		}
+
+		return null;
+	}
+
+	static
+	private <E> E set(List<E> values, int index, E value){
+
+		if(index < values.size()){
+			return values.set(index, value);
+		} else
+
+		{
+			ensureSize(values, index);
+
+			values.add(value);
+
+			return null;
+		}
+	}
+
+	static
+	private <E> List<E> ensureSize(List<E> values, int size){
+
+		while(values.size() < size){
+			values.add(null);
+		}
+
+		return values;
+	}
+
 	public class Row extends AbstractMap<String, Object> {
 
 		private int origin;
@@ -297,7 +333,7 @@ public class Table {
 
 			List<?> values = getValues((String)key);
 			if(values != null){
-				return values.get(origin);
+				return Table.get(values, origin);
 			}
 
 			return null;
@@ -310,7 +346,7 @@ public class Table {
 			@SuppressWarnings("unchecked")
 			List<Object> values = (List<Object>)ensureValues(key);
 
-			return TableUtil.set(values, origin, value);
+			return Table.set(values, origin, value);
 		}
 
 		@Override
@@ -347,7 +383,7 @@ public class Table {
 
 							List<?> values = getValues(column);
 							if(values != null){
-								Object value = TableUtil.get(values, origin);
+								Object value = Table.get(values, origin);
 
 								return new SimpleEntry<>(column, value);
 							}
