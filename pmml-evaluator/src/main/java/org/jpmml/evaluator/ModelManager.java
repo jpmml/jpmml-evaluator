@@ -276,7 +276,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	public List<TargetField> getTargetFields(){
 
 		if(this.targetResultFields == null){
-			List<TargetField> targetResultFields = filterTargetFields(createTargetFields());
+			List<TargetField> targetResultFields = createTargetFields();
 
 			this.targetResultFields = ImmutableList.copyOf(targetResultFields);
 		}
@@ -515,10 +515,6 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 			targetFields.add(targetField);
 		}
 
-		return targetFields;
-	}
-
-	protected List<TargetField> filterTargetFields(List<TargetField> targetFields){
 		return targetFields;
 	}
 
