@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
+import org.dmg.pmml.Output;
 
 public interface HasInputFields {
 
@@ -40,4 +41,11 @@ public interface HasInputFields {
 	 * </p>
 	 */
 	List<InputField> getSupplementaryFields();
+
+	/**
+	 * <p>
+	 * Gets the residual fields of a {@link Model} from its {@link Output};
+	 * </p>
+	 */
+	List<ResidualInputField> getResidualFields();
 }

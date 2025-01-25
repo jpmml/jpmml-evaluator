@@ -76,6 +76,8 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 	private List<InputField> supplementaryInputFields = null;
 
+	private List<ResidualInputField> residualInputFields = null;
+
 	private List<TargetField> targetResultFields = null;
 
 	private List<OutputField> outputResultFields = null;
@@ -260,6 +262,17 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		return this.supplementaryInputFields;
 	}
 
+	public List<ResidualInputField> getResidualFields(){
+
+		if(this.residualInputFields == null){
+			List<ResidualInputField> residualInputFields = createResidualInputFields();
+
+			this.residualInputFields = ImmutableList.copyOf(residualInputFields);
+		}
+
+		return this.residualInputFields;
+	}
+
 	public List<TargetField> getTargetFields(){
 
 		if(this.targetResultFields == null){
@@ -327,6 +340,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		this.inputFields = null;
 		this.activeInputFields = null;
 		this.supplementaryInputFields = null;
+		this.residualInputFields = null;
 	}
 
 	protected void resetResultFields(){
@@ -373,51 +387,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		List<InputField> inputFields = new ArrayList<>();
 		inputFields.addAll(getActiveFields());
 		inputFields.addAll(getSupplementaryFields());
-
-		List<OutputField> outputFields = getOutputFields();
-		if(!outputFields.isEmpty()){
-			List<InputField> expandedInputFields = null;
-
-			for(OutputField outputField : outputFields){
-				org.dmg.pmml.OutputField pmmlOutputField = outputField.getField();
-
-				if(pmmlOutputField.getResultFeature() != ResultFeature.RESIDUAL){
-					continue;
-				}
-
-				int depth = outputField.getDepth();
-				if(depth > 0){
-					throw new UnsupportedElementException(pmmlOutputField);
-				}
-
-				String targetFieldName = pmmlOutputField.getTargetField();
-				if(targetFieldName == null){
-					targetFieldName = getTargetName();
-				}
-
-				DataField dataField = getDataField(targetFieldName);
-				if(dataField == null){
-					throw new MissingFieldException(targetFieldName, pmmlOutputField);
-				}
-
-				MiningField miningField = getMiningField(targetFieldName);
-				if(miningField == null){
-					throw new InvisibleFieldException(targetFieldName, pmmlOutputField);
-				}
-
-				ResidualInputField residualInputField = new ResidualInputField(dataField, miningField);
-
-				if(expandedInputFields == null){
-					expandedInputFields = new ArrayList<>(inputFields);
-				}
-
-				expandedInputFields.add(residualInputField);
-			}
-
-			if(expandedInputFields != null){
-				return expandedInputFields;
-			}
-		}
+		inputFields.addAll(getResidualFields());
 
 		return inputFields;
 	}
@@ -450,6 +420,50 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		}
 
 		return inputFields;
+	}
+
+	protected List<ResidualInputField> createResidualInputFields(){
+		List<OutputField> outputFields = getOutputFields();
+
+		if(outputFields.isEmpty()){
+			return Collections.emptyList();
+		}
+
+		List<ResidualInputField> residualInputFields = new ArrayList<>();
+
+		for(OutputField outputField : outputFields){
+			org.dmg.pmml.OutputField pmmlOutputField = outputField.getField();
+
+			if(pmmlOutputField.getResultFeature() != ResultFeature.RESIDUAL){
+				continue;
+			}
+
+			int depth = outputField.getDepth();
+			if(depth > 0){
+				throw new UnsupportedElementException(pmmlOutputField);
+			}
+
+			String targetFieldName = pmmlOutputField.getTargetField();
+			if(targetFieldName == null){
+				targetFieldName = getTargetName();
+			}
+
+			DataField dataField = getDataField(targetFieldName);
+			if(dataField == null){
+				throw new MissingFieldException(targetFieldName, pmmlOutputField);
+			}
+
+			MiningField miningField = getMiningField(targetFieldName);
+			if(miningField == null){
+				throw new InvisibleFieldException(targetFieldName, pmmlOutputField);
+			}
+
+			ResidualInputField residualInputField = new ResidualInputField(dataField, miningField);
+
+			residualInputFields.add(residualInputField);
+		}
+
+		return residualInputFields;
 	}
 
 	protected List<InputField> filterInputFields(List<InputField> inputFields){
