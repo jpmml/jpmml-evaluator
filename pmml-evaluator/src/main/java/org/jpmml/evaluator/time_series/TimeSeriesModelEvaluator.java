@@ -20,6 +20,7 @@ package org.jpmml.evaluator.time_series;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
@@ -82,7 +83,7 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 	public List<InputField> getOrderFields(){
 
 		if(this.orderInputFields == null){
-			List<InputField> orderInputFields = createInputFields(MiningField.UsageType.ORDER);
+			List<InputField> orderInputFields = createInputFields(EnumSet.of(MiningField.UsageType.ORDER));
 
 			this.orderInputFields = ImmutableList.copyOf(orderInputFields);
 		}

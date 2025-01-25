@@ -243,7 +243,16 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	public List<InputField> getActiveFields(){
 
 		if(this.activeInputFields == null){
-			List<InputField> activeInputFields = createInputFields(MiningField.UsageType.ACTIVE);
+			List<InputField> activeInputFields = new ArrayList<>();
+
+			List<InputField> inputFields = getInputFields();
+			for(InputField inputField : inputFields){
+				MiningField miningField = inputField.getMiningField();
+
+				if(miningField.getUsageType() == MiningField.UsageType.ACTIVE){
+					activeInputFields.add(inputField);
+				}
+			}
 
 			this.activeInputFields = ImmutableList.copyOf(activeInputFields);
 		}
@@ -254,7 +263,16 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	public List<InputField> getSupplementaryFields(){
 
 		if(this.supplementaryInputFields == null){
-			List<InputField> supplementaryInputFields = createInputFields(MiningField.UsageType.SUPPLEMENTARY);
+			List<InputField> supplementaryInputFields = new ArrayList<>();
+
+			List<InputField> inputFields = getInputFields();
+			for(InputField inputField : inputFields){
+				MiningField miningField = inputField.getMiningField();
+
+				if(miningField.getUsageType() == MiningField.UsageType.SUPPLEMENTARY){
+					supplementaryInputFields.add(inputField);
+				}
+			}
 
 			this.supplementaryInputFields = ImmutableList.copyOf(supplementaryInputFields);
 		}
@@ -265,7 +283,17 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	public List<ResidualField> getResidualFields(){
 
 		if(this.residualInputFields == null){
-			List<ResidualField> residualFields = createResidualFields();
+			List<ResidualField> residualFields = new ArrayList<>();
+
+			List<InputField> inputFields = getInputFields();
+			for(InputField inputField : inputFields){
+
+				if(inputField instanceof ResidualField){
+					ResidualField residualField = (ResidualField)inputField;
+
+					residualFields.add(residualField);
+				}
+			}
 
 			this.residualInputFields = ImmutableList.copyOf(residualFields);
 		}
@@ -384,15 +412,17 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	}
 
 	protected List<InputField> createInputFields(){
-		List<InputField> inputFields = new ArrayList<>();
-		inputFields.addAll(getActiveFields());
-		inputFields.addAll(getSupplementaryFields());
-		inputFields.addAll(getResidualFields());
+		List<InputField> inputFields = createInputFields(EnumSet.of(MiningField.UsageType.ACTIVE, MiningField.UsageType.SUPPLEMENTARY));
+
+		List<ResidualField> residualFields = createResidualFields();
+		if(!residualFields.isEmpty()){
+			inputFields.addAll(residualFields);
+		}
 
 		return inputFields;
 	}
 
-	protected List<InputField> createInputFields(MiningField.UsageType usageType){
+	protected List<InputField> createInputFields(Set<MiningField.UsageType> usageTypes){
 		M model = getModel();
 
 		List<InputField> inputFields = new ArrayList<>();
@@ -404,7 +434,8 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 			for(MiningField miningField : miningFields){
 				String fieldName = miningField.requireName();
 
-				if(miningField.getUsageType() != usageType){
+				MiningField.UsageType usageType = miningField.getUsageType();
+				if(!usageTypes.contains(usageType)){
 					continue;
 				}
 

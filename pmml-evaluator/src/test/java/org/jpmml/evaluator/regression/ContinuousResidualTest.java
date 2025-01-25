@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Iterables;
 import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.ModelEvaluator;
@@ -31,7 +30,6 @@ import org.jpmml.evaluator.ResidualField;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContinuousResidualTest extends ModelEvaluatorTest implements Deltas {
 
@@ -39,21 +37,25 @@ public class ContinuousResidualTest extends ModelEvaluatorTest implements Deltas
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		List<InputField> activeFields = evaluator.getActiveFields();
-
-		assertEquals(1, activeFields.size());
-
-		List<InputField> inputFields = new ArrayList<>(evaluator.getInputFields());
+		List<InputField> inputFields = evaluator.getInputFields();
 
 		assertEquals(2, inputFields.size());
 
+		List<InputField> activeFields = evaluator.getActiveFields();
+		List<InputField> supplementaryFields = evaluator.getSupplementaryFields();
+
+		assertEquals(1, activeFields.size());
+		assertEquals(0, supplementaryFields.size());
+
+		List<ResidualField> residualFields = evaluator.getResidualFields();
+
+		assertEquals(1, residualFields.size());
+
+		inputFields = new ArrayList<>(inputFields);
+
 		inputFields.removeAll(activeFields);
 
-		assertEquals(1, inputFields.size());
-
-		InputField inputField = Iterables.getOnlyElement(inputFields);
-
-		assertTrue(inputField instanceof ResidualField);
+		assertEquals(inputFields, residualFields);
 
 		Map<String, ?> arguments = createArguments("input", 0.8d, "target", 3d);
 

@@ -26,18 +26,23 @@ import org.dmg.pmml.Output;
 
 public interface HasInputFields {
 
+	/**
+	 * <p>
+	 * Gets the feature fields plus the residual fields of a {@link Model}.
+	 * </p>
+	 */
 	List<InputField> getInputFields();
 
 	/**
 	 * <p>
-	 * Gets the active fields of a {@link Model} from its {@link MiningSchema}.
+	 * Gets the "active" subset of feature fields of a {@link Model} from its {@link MiningSchema}.
 	 * </p>
 	 */
 	List<InputField> getActiveFields();
 
 	/**
 	 * <p>
-	 * Gets the supplementary fields of a {@link Model} from its {@link MiningSchema}.
+	 * Gets the "supplementary" subset of feature fields of a {@link Model} from its {@link MiningSchema}.
 	 * </p>
 	 */
 	List<InputField> getSupplementaryFields();
