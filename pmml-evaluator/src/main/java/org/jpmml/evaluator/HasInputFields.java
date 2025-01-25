@@ -47,5 +47,5 @@ public interface HasInputFields {
 	 * Gets the residual fields of a {@link Model} from its {@link Output};
 	 * </p>
 	 */
-	List<ResidualInputField> getResidualFields();
+	List<ResidualField> getResidualFields();
 }

@@ -76,7 +76,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 	private List<InputField> supplementaryInputFields = null;
 
-	private List<ResidualInputField> residualInputFields = null;
+	private List<ResidualField> residualInputFields = null;
 
 	private List<TargetField> targetResultFields = null;
 
@@ -262,12 +262,12 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		return this.supplementaryInputFields;
 	}
 
-	public List<ResidualInputField> getResidualFields(){
+	public List<ResidualField> getResidualFields(){
 
 		if(this.residualInputFields == null){
-			List<ResidualInputField> residualInputFields = createResidualInputFields();
+			List<ResidualField> residualFields = createResidualFields();
 
-			this.residualInputFields = ImmutableList.copyOf(residualInputFields);
+			this.residualInputFields = ImmutableList.copyOf(residualFields);
 		}
 
 		return this.residualInputFields;
@@ -422,14 +422,14 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		return inputFields;
 	}
 
-	protected List<ResidualInputField> createResidualInputFields(){
+	protected List<ResidualField> createResidualFields(){
 		List<OutputField> outputFields = getOutputFields();
 
 		if(outputFields.isEmpty()){
 			return Collections.emptyList();
 		}
 
-		List<ResidualInputField> residualInputFields = new ArrayList<>();
+		List<ResidualField> residualFields = new ArrayList<>();
 
 		for(OutputField outputField : outputFields){
 			org.dmg.pmml.OutputField pmmlOutputField = outputField.getField();
@@ -458,12 +458,12 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 				throw new InvisibleFieldException(targetFieldName, pmmlOutputField);
 			}
 
-			ResidualInputField residualInputField = new ResidualInputField(dataField, miningField);
+			ResidualField residualField = new ResidualField(dataField, miningField);
 
-			residualInputFields.add(residualInputField);
+			residualFields.add(residualField);
 		}
 
-		return residualInputFields;
+		return residualFields;
 	}
 
 	protected List<InputField> filterInputFields(List<InputField> inputFields){

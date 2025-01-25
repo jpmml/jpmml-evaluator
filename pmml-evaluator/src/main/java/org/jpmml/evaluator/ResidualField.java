@@ -21,12 +21,12 @@ package org.jpmml.evaluator;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.MiningField;
 
-public class ResidualInputField extends InputField {
+public class ResidualField extends InputField {
 
-	private ResidualInputField(){
+	private ResidualField(){
 	}
 
-	public ResidualInputField(DataField dataField, MiningField miningField){
+	public ResidualField(DataField dataField, MiningField miningField){
 		super(dataField, miningField);
 	}
 

@@ -27,7 +27,7 @@ import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.jpmml.evaluator.ResidualInputField;
+import org.jpmml.evaluator.ResidualField;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,7 +53,7 @@ public class ContinuousResidualTest extends ModelEvaluatorTest implements Deltas
 
 		InputField inputField = Iterables.getOnlyElement(inputFields);
 
-		assertTrue(inputField instanceof ResidualInputField);
+		assertTrue(inputField instanceof ResidualField);
 
 		Map<String, ?> arguments = createArguments("input", 0.8d, "target", 3d);
 
