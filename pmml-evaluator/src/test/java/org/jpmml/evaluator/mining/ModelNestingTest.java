@@ -62,7 +62,7 @@ public class ModelNestingTest extends ModelEvaluatorTest implements Deltas {
 
 		assertEquals(2d * 2d, (Double)results.get(Evaluator.DEFAULT_TARGET_NAME), DOUBLE_EXACT);
 
-		assertNotNull((Double)results.get("output"));
+		assertNotNull(results.get("output"));
 		assertNull(results.get("report(output)"));
 	}
 }

@@ -277,7 +277,6 @@ public class TextUtil {
 		for(int i = 0, max = (textSize - termSize); i <= max; i++){
 			int levenshteinDistance = 0;
 
-			term:
 			for(int j = 0; j < termSize; j++){
 				int threshold = (maxLevenshteinDistance - levenshteinDistance);
 
