@@ -31,7 +31,7 @@ import org.dmg.pmml.Model;
  * The grouping and ordering are applied to {@link #getActiveFields() active field} values.
  * </p>
  */
-public interface HasOrderFields extends HasActiveFields {
+public interface HasOrderFields extends HasInputFields {
 
 	/**
 	 * <p>

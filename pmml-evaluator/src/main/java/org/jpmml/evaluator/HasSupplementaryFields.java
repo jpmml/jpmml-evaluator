@@ -20,7 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
-public interface HasSupplementaryFields extends HasActiveFields {
+public interface HasSupplementaryFields extends HasInputFields {
 
 	List<InputField> getSupplementaryFields();
 }

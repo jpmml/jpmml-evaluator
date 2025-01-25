@@ -46,11 +46,11 @@ public class TransactionalSchemaTest extends AssociationSchemaTest {
 	public void prepare() throws Exception {
 		Evaluator evaluator = createModelEvaluator();
 
-		InputField inputField = Iterables.getOnlyElement(evaluator.getInputFields());
+		InputField activeField = Iterables.getOnlyElement(evaluator.getActiveFields());
 
-		assertEquals("item", inputField.getName());
+		assertEquals("item", activeField.getName());
 
-		FieldValue value = inputField.prepare("Cracker");
+		FieldValue value = activeField.prepare("Cracker");
 
 		assertTrue(value instanceof ScalarValue);
 
@@ -58,7 +58,7 @@ public class TransactionalSchemaTest extends AssociationSchemaTest {
 		assertEquals(OpType.CATEGORICAL, value.getOpType());
 		assertEquals("Cracker", value.getValue());
 
-		value = inputField.prepare(Arrays.asList("Cracker", "Water", "Coke"));
+		value = activeField.prepare(Arrays.asList("Cracker", "Water", "Coke"));
 
 		assertTrue(value instanceof CollectionValue);
 

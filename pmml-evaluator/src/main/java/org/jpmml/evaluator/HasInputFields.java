@@ -20,7 +20,17 @@ package org.jpmml.evaluator;
 
 import java.util.List;
 
-public interface HasInputFields extends HasActiveFields {
+import org.dmg.pmml.MiningSchema;
+import org.dmg.pmml.Model;
+
+public interface HasInputFields {
 
 	List<InputField> getInputFields();
+
+	/**
+	 * <p>
+	 * Gets the active fields of a {@link Model} from its {@link MiningSchema}.
+	 * </p>
+	 */
+	List<InputField> getActiveFields();
 }

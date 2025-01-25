@@ -43,7 +43,7 @@ import org.dmg.pmml.Model;
  *
  * @see EvaluatorUtil#groupRows(HasGroupFields, List)
  */
-public interface HasGroupFields extends HasActiveFields {
+public interface HasGroupFields extends HasInputFields {
 
 	/**
 	 * <p>
