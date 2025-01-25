@@ -48,8 +48,8 @@ public class TargetField extends ResultField {
 	 * @see #isSynthetic()
 	 */
 	@Override
-	public String getFieldName(){
-		return super.getFieldName();
+	public String getName(){
+		return super.getName();
 	}
 
 	@Override

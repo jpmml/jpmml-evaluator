@@ -146,7 +146,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		Map<String, Object> results = null;
 
 		for(TargetField targetField : targetFields){
-			String name = targetField.getFieldName();
+			String name = targetField.getName();
 
 			List<NeuralOutput> neuralOutputs = neuralOutputMap.get(name);
 			if(neuralOutputs == null){
@@ -229,7 +229,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 		Map<String, Classification<?, V>> results = null;
 
 		for(TargetField targetField : targetFields){
-			String name = targetField.getFieldName();
+			String name = targetField.getName();
 
 			List<NeuralOutput> neuralOutputs = neuralOutputMap.get(name);
 			if(neuralOutputs == null){

@@ -261,16 +261,6 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 	}
 
 	@Override
-	public LoadingModelEvaluatorBuilder setInputMapper(InputMapper inputMapper){
-		return (LoadingModelEvaluatorBuilder)super.setInputMapper(inputMapper);
-	}
-
-	@Override
-	public LoadingModelEvaluatorBuilder setResultMapper(ResultMapper resultMapper){
-		return (LoadingModelEvaluatorBuilder)super.setResultMapper(resultMapper);
-	}
-
-	@Override
 	public LoadingModelEvaluatorBuilder setCheckSchema(boolean checkSchema){
 		return (LoadingModelEvaluatorBuilder)super.setCheckSchema(checkSchema);
 	}

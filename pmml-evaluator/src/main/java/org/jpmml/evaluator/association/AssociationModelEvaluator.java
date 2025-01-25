@@ -414,7 +414,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 
 					InputField activeField = activeFields.get(0);
 
-					fieldName = activeField.getFieldName();
+					fieldName = activeField.getName();
 					category = value;
 				} else
 

@@ -18,13 +18,17 @@
  */
 package org.jpmml.evaluator.tree;
 
-import java.lang.reflect.Method;
+import java.util.AbstractMap;
 import java.util.Map;
+import java.util.Set;
 
-import org.jpmml.evaluator.InputMapper;
+import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.jpmml.evaluator.ResultMapper;
+import org.jpmml.evaluator.PMMLTransformer;
+import org.jpmml.model.MarkupException;
+import org.jpmml.model.visitors.ActiveFieldFinder;
+import org.jpmml.model.visitors.FieldRenamer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,44 +58,15 @@ public class ScalarVerificationTest extends ModelEvaluatorTest {
 
 	@Test
 	public void verifyMapped() throws Exception {
-		ModelEvaluator<?> evaluator = createModelEvaluator();
-
-		InputMapper inputMapper = new InputMapper(){
+		PMMLTransformer<?> fieldTransformer = new PMMLTransformer<MarkupException>(){
 
 			@Override
-			public String apply(String name){
-				return (name.toUpperCase()).replace(' ', '.');
+			public PMML apply(PMML pmml){
+				return updateFields(pmml);
 			}
 		};
 
-		Method inputMapperSetter = ModelEvaluator.class.getDeclaredMethod("setInputMapper", InputMapper.class);
-		if(!inputMapperSetter.isAccessible()){
-			inputMapperSetter.setAccessible(true);
-		}
-
-		inputMapperSetter.invoke(evaluator, inputMapper);
-
-		ResultMapper resultMapper = new ResultMapper(){
-
-			@Override
-			public String apply(String name){
-				String result = name.toUpperCase();
-
-				int index = result.indexOf(' ');
-				if(index > -1){
-					result = result.substring(0, index) + "(" + result.substring(index + 1) +  ")";
-				}
-
-				return result;
-			}
-		};
-
-		Method resultMapperSetter = ModelEvaluator.class.getDeclaredMethod("setResultMapper", ResultMapper.class);
-		if(!resultMapperSetter.isAccessible()){
-			resultMapperSetter.setAccessible(true);
-		}
-
-		resultMapperSetter.invoke(evaluator, resultMapper);
+		ModelEvaluator<?> evaluator = createModelEvaluator(fieldTransformer);
 
 		evaluator.verify();
 
@@ -108,5 +83,55 @@ public class ScalarVerificationTest extends ModelEvaluatorTest {
 		assertEquals(1.0, results.get("PROBABILITY(SETOSA)"));
 		assertEquals(0.0, results.get("PROBABILITY(VERSICOLOR)"));
 		assertEquals(0.0, results.get("PROBABILITY(VIRGINICA)"));
+	}
+
+	static
+	private PMML updateFields(PMML pmml){
+		Set<String> activeFieldNames = ActiveFieldFinder.getFieldNames(pmml);
+
+		Map<String, String> mappings = new AbstractMap<String, String>(){
+
+			@Override
+			public String get(Object key){
+				String name = (String)key;
+
+				if(activeFieldNames.contains(name)){
+					return updateInputName(name);
+				} else
+
+				{
+					return updateTargetName(name);
+				}
+			}
+
+			@Override
+			public Set<Map.Entry<String, String>> entrySet(){
+				throw new UnsupportedOperationException();
+			}
+		};
+
+		FieldRenamer fieldRenamer = new FieldRenamer(mappings);
+		fieldRenamer.applyTo(pmml);
+
+		return pmml;
+	}
+
+	static
+	private String updateInputName(String name){
+		String result = name.toUpperCase();
+
+		return result.replace(' ', '.');
+	}
+
+	static
+	private String updateTargetName(String name){
+		String result = name.toUpperCase();
+
+		int index = result.indexOf(' ');
+		if(index > -1){
+			result = result.substring(0, index) + "(" + result.substring(index + 1) +  ")";
+		}
+
+		return result;
 	}
 }

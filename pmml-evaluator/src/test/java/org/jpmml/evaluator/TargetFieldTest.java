@@ -26,7 +26,6 @@ import org.dmg.pmml.Target;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class TargetFieldTest {
 
@@ -35,14 +34,6 @@ public class TargetFieldTest {
 		DataField dataField = new DataField("y", OpType.CONTINUOUS, DataType.DOUBLE);
 
 		TargetField targetField = new TargetField(dataField, null, null);
-
-		assertEquals("y", targetField.getName());
-
-		targetField.setName("label");
-
-		assertNotEquals("y", targetField.getName());
-
-		targetField.setName(null);
 
 		assertEquals("y", targetField.getName());
 	}

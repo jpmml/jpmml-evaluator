@@ -43,10 +43,6 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 
 	private Set<ResultFeature> extraResultFeatures = EnumSet.noneOf(ResultFeature.class);
 
-	private InputMapper inputMapper = null;
-
-	private ResultMapper resultMapper = null;
-
 	private boolean checkSchema = true;
 
 
@@ -120,12 +116,6 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml, model, extraResultFeatures);
 		modelEvaluator.configure(configuration);
-
-		InputMapper inputMapper = getInputMapper();
-		ResultMapper resultMapper = getResultMapper();
-
-		modelEvaluator.setInputMapper(inputMapper);
-		modelEvaluator.setResultMapper(resultMapper);
 
 		boolean checkSchema = getCheckSchema();
 		if(checkSchema){
@@ -292,41 +282,6 @@ public class ModelEvaluatorBuilder implements EvaluatorBuilder, Serializable {
 	 */
 	public ModelEvaluatorBuilder setExtraResultFeatures(Set<ResultFeature> extraResultFeatures){
 		this.extraResultFeatures = extraResultFeatures;
-
-		return this;
-	}
-
-	public InputMapper getInputMapper(){
-		return this.inputMapper;
-	}
-
-	/**
-	 * <p>
-	 * Sets a mapper for translating input field names from user namespace to model namespace.
-	 * </p>
-	 *
-	 * @see Evaluator#getInputFields()
-	 */
-	public ModelEvaluatorBuilder setInputMapper(InputMapper inputMapper){
-		this.inputMapper = inputMapper;
-
-		return this;
-	}
-
-	public ResultMapper getResultMapper(){
-		return this.resultMapper;
-	}
-
-	/**
-	 * <p>
-	 * Sets a mapper for translating result field names from model namespace to user namespace.
-	 * </p>
-	 *
-	 * @see Evaluator#getTargetFields()
-	 * @see Evaluator#getOutputFields()
-	 */
-	public ModelEvaluatorBuilder setResultMapper(ResultMapper resultMapper){
-		this.resultMapper = resultMapper;
 
 		return this;
 	}

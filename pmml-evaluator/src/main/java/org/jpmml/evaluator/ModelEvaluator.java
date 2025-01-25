@@ -18,10 +18,8 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -30,7 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -61,10 +58,6 @@ abstract
 public class ModelEvaluator<M extends Model> extends ModelManager<M> implements Evaluator {
 
 	private Configuration configuration = null;
-
-	private InputMapper inputMapper = null;
-
-	private ResultMapper resultMapper = null;
 
 	private ValueFactory<?> valueFactory = null;
 
@@ -182,7 +175,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		List<TargetField> targetFields = getTargetFields();
 		List<OutputField> outputFields = getOutputFields();
 
-		SetView<String> intersection = Sets.intersection(batch.keySet(), new LinkedHashSet<>(Lists.transform(outputFields, OutputField::getFieldName)));
+		SetView<String> intersection = Sets.intersection(batch.keySet(), new LinkedHashSet<>(Lists.transform(outputFields, OutputField::getName)));
 
 		boolean disjoint = intersection.isEmpty();
 
@@ -190,7 +183,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			Map<String, Object> arguments = new LinkedHashMap<>();
 
 			for(InputField inputField : inputFields){
-				String name = inputField.getFieldName();
+				String name = inputField.getName();
 
 				FieldValue value = inputField.prepare(record.get(name));
 
@@ -208,7 +201,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			if(!disjoint){
 
 				for(OutputField outputField : outputFields){
-					String name = outputField.getFieldName();
+					String name = outputField.getName();
 
 					VerificationField verificationField = batch.get(name);
 					if(verificationField == null){
@@ -223,7 +216,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 			// then any VerificationField element that refers to a MiningField element whose "usageType=target" should be considered to represent an expected output"
 			{
 				for(TargetField targetField : targetFields){
-					String name = targetField.getFieldName();
+					String name = targetField.getName();
 
 					VerificationField verificationField = batch.get(name);
 					if(verificationField == null){
@@ -315,85 +308,22 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	protected Map<String, ?> processArguments(Map<String, ?> arguments){
-		InputMapper inputMapper = getInputMapper();
-
-		if(inputMapper != null){
-			Map<String, Object> remappedArguments = new AbstractMap<String, Object>(){
-
-				@Override
-				public Object get(Object key){
-					return arguments.get(inputMapper.apply((String)key));
-				}
-
-				@Override
-				public Set<Map.Entry<String, Object>> entrySet(){
-					throw new UnsupportedOperationException();
-				}
-			};
-
-			return remappedArguments;
-		}
-
 		return arguments;
 	}
 
 	protected Map<String, ?> processResults(Map<String, ?> results){
-		ResultMapper resultMapper = getResultMapper();
 
 		if(results instanceof OutputMap){
 			OutputMap outputMap = (OutputMap)results;
 
 			outputMap.clearPrivate();
-		} // End if
-
-		if(resultMapper != null){
-
-			if(results.isEmpty()){
-				return results;
-			} else
-
-			if(results.size() == 1){
-				Map.Entry<String, ?> entry = Iterables.getOnlyElement(results.entrySet());
-
-				return Collections.singletonMap(resultMapper.apply(entry.getKey()), entry.getValue());
-			}
-
-			Map<String, Object> remappedResults = new LinkedHashMap<>(2 * results.size());
-
-			Collection<? extends Map.Entry<String, ?>> entries = results.entrySet();
-			for(Map.Entry<String, ?> entry : entries){
-				remappedResults.put(resultMapper.apply(entry.getKey()), entry.getValue());
-			}
-
-			return remappedResults;
 		}
 
 		return results;
 	}
 
 	@Override
-	protected List<InputField> filterInputFields(List<InputField> inputFields){
-		InputMapper inputMapper = getInputMapper();
-		if(inputMapper != null){
-			inputFields = updateNames(inputFields, inputMapper);
-		}
-
-		return inputFields;
-	}
-
-	@Override
-	protected List<TargetField> filterTargetFields(List<TargetField> targetFields){
-		ResultMapper resultMapper = getResultMapper();
-		if(resultMapper != null){
-			targetFields = updateNames(targetFields, resultMapper);
-		}
-
-		return targetFields;
-	}
-
-	@Override
 	protected List<OutputField> filterOutputFields(List<OutputField> outputFields){
-		ResultMapper resultMapper = getResultMapper();
 
 		if(!outputFields.isEmpty()){
 			OutputFilter outputFilter = ensureOutputFilter();
@@ -407,10 +337,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 					it.remove();
 				}
 			}
-		} // End if
-
-		if(resultMapper != null){
-			outputFields = updateNames(outputFields, resultMapper);
 		}
 
 		return outputFields;
@@ -615,47 +541,12 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 		this.configuration = Objects.requireNonNull(configuration);
 	}
 
-	public InputMapper getInputMapper(){
-		return this.inputMapper;
-	}
-
-	void setInputMapper(InputMapper inputMapper){
-		this.inputMapper = inputMapper;
-
-		resetInputFields();
-	}
-
-	public ResultMapper getResultMapper(){
-		return this.resultMapper;
-	}
-
-	void setResultMapper(ResultMapper resultMapper){
-		this.resultMapper = resultMapper;
-
-		resetResultFields();
-	}
-
 	private ValueFactory<?> getValueFactory(){
 		return this.valueFactory;
 	}
 
 	private void setValueFactory(ValueFactory<?> valueFactory){
 		this.valueFactory = valueFactory;
-	}
-
-	static
-	private <F extends ModelField> List<F> updateNames(List<F> fields, com.google.common.base.Function<String, String> mapper){
-
-		for(F field : fields){
-			String name = field.getFieldName();
-
-			String mappedName = mapper.apply(name);
-			if(mappedName != null && !Objects.equals(mappedName, name)){
-				field.setName(mappedName);
-			}
-		}
-
-		return fields;
 	}
 
 	static

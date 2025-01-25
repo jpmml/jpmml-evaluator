@@ -94,7 +94,7 @@ public class SimpleTreeModelEvaluator extends TreeModelEvaluator {
 			result = TypeUtil.parseOrCast(targetField.getDataType(), score);
 		}
 
-		return Collections.singletonMap(targetField.getFieldName(), result);
+		return Collections.singletonMap(targetField.getName(), result);
 	}
 
 	private Node evaluateTree(EvaluationContext context){

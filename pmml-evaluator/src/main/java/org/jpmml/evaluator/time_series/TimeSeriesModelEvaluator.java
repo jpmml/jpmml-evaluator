@@ -144,7 +144,7 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 
 		Object forecast = evaluateAlgorithm(algorithm, forecastHorizon, context);
 
-		return Collections.singletonMap(targetField.getFieldName(), forecast);
+		return Collections.singletonMap(targetField.getName(), forecast);
 	}
 
 	private Object evaluateAlgorithm(Algorithm algorithm, int forecastHorizon, EvaluationContext context){

@@ -150,16 +150,6 @@ public class ServiceLoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 	}
 
 	@Override
-	public ServiceLoadingModelEvaluatorBuilder setInputMapper(InputMapper inputMapper){
-		return (ServiceLoadingModelEvaluatorBuilder)super.setInputMapper(inputMapper);
-	}
-
-	@Override
-	public ServiceLoadingModelEvaluatorBuilder setResultMapper(ResultMapper resultMapper){
-		return (ServiceLoadingModelEvaluatorBuilder)super.setResultMapper(resultMapper);
-	}
-
-	@Override
 	public ServiceLoadingModelEvaluatorBuilder setCheckSchema(boolean checkSchema){
 		return (ServiceLoadingModelEvaluatorBuilder)super.setCheckSchema(checkSchema);
 	}

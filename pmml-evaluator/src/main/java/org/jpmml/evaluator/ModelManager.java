@@ -273,7 +273,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	public String getTargetName(){
 		TargetField targetField = getTargetField();
 
-		return targetField.getFieldName();
+		return targetField.getName();
 	}
 
 	TargetField findTargetField(String name){
@@ -282,7 +282,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		if(targetFields.size() == 1){
 			TargetField targetField = targetFields.get(0);
 
-			if(Objects.equals(targetField.getFieldName(), name)){
+			if(Objects.equals(targetField.getName(), name)){
 				return targetField;
 			}
 		} else
@@ -290,7 +290,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		{
 			for(TargetField targetField : targetFields){
 
-				if(Objects.equals(targetField.getFieldName(), name)){
+				if(Objects.equals(targetField.getName(), name)){
 					return targetField;
 				}
 			}

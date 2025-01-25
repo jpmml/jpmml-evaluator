@@ -59,7 +59,7 @@ public class TargetUtil {
 			return evaluateRegression(targetField, value);
 		}
 
-		return Collections.singletonMap(targetField.getFieldName(), null);
+		return Collections.singletonMap(targetField.getName(), null);
 	}
 
 	static
@@ -90,14 +90,14 @@ public class TargetUtil {
 
 		Object result = TypeUtil.cast(targetField.getDataType(), value.getValue());
 
-		return Collections.singletonMap(targetField.getFieldName(), result);
+		return Collections.singletonMap(targetField.getName(), result);
 	}
 
 	static
 	public <V extends Number> Map<String, ? extends Regression<V>> evaluateRegression(TargetField targetField, Regression<V> regression){
 		regression.computeResult(targetField.getDataType());
 
-		return Collections.singletonMap(targetField.getFieldName(), regression);
+		return Collections.singletonMap(targetField.getName(), regression);
 	}
 
 	static
@@ -115,7 +115,7 @@ public class TargetUtil {
 	public Map<String, ? extends Vote> evaluateVote(TargetField targetField, Vote vote){
 		vote.computeResult(targetField.getDataType());
 
-		return Collections.singletonMap(targetField.getFieldName(), vote);
+		return Collections.singletonMap(targetField.getName(), vote);
 	}
 
 	static
@@ -128,7 +128,7 @@ public class TargetUtil {
 			return evaluateClassification(targetField, result);
 		}
 
-		return Collections.singletonMap(targetField.getFieldName(), null);
+		return Collections.singletonMap(targetField.getName(), null);
 	}
 
 	static
@@ -151,12 +151,12 @@ public class TargetUtil {
 	public <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassification(TargetField targetField, Classification<?, V> classification){
 		classification.computeResult(targetField.getDataType());
 
-		return Collections.singletonMap(targetField.getFieldName(), classification);
+		return Collections.singletonMap(targetField.getName(), classification);
 	}
 
 	static
 	public Map<String, ?> evaluateDefault(TargetField targetField){
-		return Collections.singletonMap(targetField.getFieldName(), null);
+		return Collections.singletonMap(targetField.getName(), null);
 	}
 
 	static
@@ -169,7 +169,7 @@ public class TargetUtil {
 		Map<String, Object> result = new LinkedHashMap<>();
 
 		for(TargetField targetField : targetFields){
-			result.put(targetField.getFieldName(), null);
+			result.put(targetField.getName(), null);
 		}
 
 		return result;
