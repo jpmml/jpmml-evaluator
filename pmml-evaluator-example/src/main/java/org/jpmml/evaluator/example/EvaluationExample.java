@@ -52,7 +52,6 @@ import org.jpmml.evaluator.FieldNameSet;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FunctionNameStack;
 import org.jpmml.evaluator.HasGroupFields;
-import org.jpmml.evaluator.HasSupplementaryFields;
 import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
@@ -352,14 +351,7 @@ public class EvaluationExample extends Example {
 		evaluator.verify();
 
 		List<InputField> inputFields = evaluator.getInputFields();
-		List<InputField> supplementaryFields = Collections.emptyList();
 		List<InputField> groupFields = Collections.emptyList();
-
-		if(evaluator instanceof HasSupplementaryFields){
-			HasSupplementaryFields hasSupplementaryFields = (HasSupplementaryFields)evaluator;
-
-			supplementaryFields = hasSupplementaryFields.getSupplementaryFields();
-		} // End if
 
 		if(evaluator instanceof HasGroupFields){
 			HasGroupFields hasGroupfields = (HasGroupFields)evaluator;
@@ -373,11 +365,6 @@ public class EvaluationExample extends Example {
 			Sets.SetView<String> missingInputFields = Sets.difference(new LinkedHashSet<>(Lists.transform(inputFields, InputField::getName)), inputRecord.keySet());
 			if(!missingInputFields.isEmpty() && !this.sparse){
 				throw new IllegalArgumentException("Missing input field(s): " + missingInputFields);
-			}
-
-			Sets.SetView<String> missingSupplementaryFields = Sets.difference(new LinkedHashSet<>(Lists.transform(supplementaryFields, InputField::getName)), inputRecord.keySet());
-			if(!missingSupplementaryFields.isEmpty() && !this.sparse){
-				throw new IllegalArgumentException("Missing input field(s): " + missingSupplementaryFields);
 			}
 
 			Sets.SetView<String> missingGroupFields = Sets.difference(new LinkedHashSet<>(Lists.transform(groupFields, InputField::getName)), inputRecord.keySet());
@@ -422,14 +409,6 @@ public class EvaluationExample extends Example {
 							String name = inputField.getName();
 
 							FieldValue value = inputField.prepare(inputRecord.get(name));
-
-							arguments.put(name, value);
-						}
-
-						for(InputField supplementaryField : supplementaryFields){
-							String name = supplementaryField.getName();
-
-							FieldValue value = supplementaryField.prepare(inputRecord.get(name));
 
 							arguments.put(name, value);
 						}

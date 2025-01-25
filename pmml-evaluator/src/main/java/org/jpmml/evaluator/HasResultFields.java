@@ -28,7 +28,7 @@ public interface HasResultFields {
 
 	/**
 	 * <p>
-	 * Gets the dependent (ie. target in supervised training) fields of a {@link Model} from its {@link MiningSchema}.
+	 * Gets the target fields of a {@link Model} from its {@link MiningSchema}.
 	 * </p>
 	 */
 	List<TargetField> getTargetFields();

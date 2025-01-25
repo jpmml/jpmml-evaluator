@@ -33,4 +33,11 @@ public interface HasInputFields {
 	 * </p>
 	 */
 	List<InputField> getActiveFields();
+
+	/**
+	 * <p>
+	 * Gets the supplementary fields of a {@link Model} from its {@link MiningSchema}.
+	 * </p>
+	 */
+	List<InputField> getSupplementaryFields();
 }

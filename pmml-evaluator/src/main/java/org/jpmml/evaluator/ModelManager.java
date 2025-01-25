@@ -74,6 +74,8 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 	private List<InputField> activeInputFields = null;
 
+	private List<InputField> supplementaryInputFields = null;
+
 	private List<TargetField> targetResultFields = null;
 
 	private List<OutputField> outputResultFields = null;
@@ -247,6 +249,17 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		return this.activeInputFields;
 	}
 
+	public List<InputField> getSupplementaryFields(){
+
+		if(this.supplementaryInputFields == null){
+			List<InputField> supplementaryInputFields = filterInputFields(createInputFields(MiningField.UsageType.SUPPLEMENTARY));
+
+			this.supplementaryInputFields = ImmutableList.copyOf(supplementaryInputFields);
+		}
+
+		return this.supplementaryInputFields;
+	}
+
 	public List<TargetField> getTargetFields(){
 
 		if(this.targetResultFields == null){
@@ -313,6 +326,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	protected void resetInputFields(){
 		this.inputFields = null;
 		this.activeInputFields = null;
+		this.supplementaryInputFields = null;
 	}
 
 	protected void resetResultFields(){
@@ -356,7 +370,9 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	}
 
 	protected List<InputField> createInputFields(){
-		List<InputField> inputFields = getActiveFields();
+		List<InputField> inputFields = new ArrayList<>();
+		inputFields.addAll(getActiveFields());
+		inputFields.addAll(getSupplementaryFields());
 
 		List<OutputField> outputFields = getOutputFields();
 		if(!outputFields.isEmpty()){
