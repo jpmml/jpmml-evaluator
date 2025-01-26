@@ -98,6 +98,11 @@ public class EvaluatorUtil {
 	}
 
 	static
+	public Table groupRows(HasGroupFields hasGroupFields, Table table){
+		throw new UnsupportedOperationException();
+	}
+
+	static
 	public List<? extends Map<String, ?>> groupRows(HasGroupFields hasGroupFields, List<? extends Map<String, ?>> table){
 		List<InputField> groupFields = hasGroupFields.getGroupFields();
 

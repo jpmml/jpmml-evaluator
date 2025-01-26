@@ -35,6 +35,8 @@ import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasGroupFields;
 import org.jpmml.evaluator.OutputField;
 import org.jpmml.evaluator.ResultField;
+import org.jpmml.evaluator.Table;
+import org.jpmml.evaluator.TableCollector;
 import org.jpmml.evaluator.TargetField;
 
 public class BatchUtil {
@@ -46,57 +48,88 @@ public class BatchUtil {
 	public List<Conflict> evaluate(Batch batch) throws Exception {
 		Evaluator evaluator = batch.getEvaluator();
 
-		List<? extends Map<String, ?>> input = batch.getInput();
-		List<? extends Map<String, ?>> output = batch.getOutput();
+		Table input = batch.getInput();
+
+		if(input.getNumberOfRows() == 0){
+			return Collections.emptyList();
+		} // End if
 
 		if(evaluator instanceof HasGroupFields){
 			HasGroupFields hasGroupFields = (HasGroupFields)evaluator;
 
 			input = EvaluatorUtil.groupRows(hasGroupFields, input);
-		} // End if
+		}
 
-		if(input.size() != output.size()){
-			throw new IllegalArgumentException("Expected the same number of data rows, got " + input.size() + " input data rows and " + output.size() + " expected output data rows");
+		Table expectedOutput = batch.getOutput();
+
+		if(input.getNumberOfRows() != expectedOutput.getNumberOfRows()){
+			throw new IllegalArgumentException("Expected the same number of data rows, got " + input.getNumberOfRows() + " input data rows and " + expectedOutput.getNumberOfRows() + " expected output data rows");
 		}
 
 		Set<String> columns = collectResultColumns(evaluator, batch.getColumnFilter());
 
 		Equivalence<Object> equivalence = batch.getEquivalence();
 
+		Function<Table.Row, Object> function = new Function<Table.Row, Object>(){
+
+			@Override
+			public Object apply(Table.Row arguments){
+
+				try {
+					Map<String, ?> results = evaluator.evaluate(arguments);
+
+					return results;
+				} catch(Exception e){
+					return e;
+				}
+			}
+		};
+
+		Table actualOutput = input.stream()
+			.map(function)
+			.collect(new TableCollector());
+
+		if(expectedOutput.getNumberOfRows() != actualOutput.getNumberOfRows()){
+			throw new IllegalArgumentException("Expected the same number of output data rows, got " + expectedOutput.getNumberOfRows() + " expected output data rows and " + actualOutput.getNumberOfRows() + " actual output data rows");
+		}
+
 		List<Conflict> conflicts = new ArrayList<>();
 
-		for(int i = 0; i < input.size(); i++){
-			Map<String, ?> arguments = input.get(i);
+		Table.Row arguments = input.new Row(0);
+		Table.Row expectedResults = expectedOutput.new Row(0);
+		Table.Row actualResults = actualOutput.new Row(0);
 
-			Map<String, ?> expectedResults = output.get(i);
-			expectedResults = Maps.filterKeys(expectedResults, columns::contains);
+		for(int i = 0, max = expectedOutput.getNumberOfRows(); i < max; i++){
+			Exception exception = actualResults.getException();
 
-			try {
-				Map<String, ?> actualResults = evaluator.evaluate(arguments);
-				actualResults = Maps.filterKeys(actualResults, columns::contains);
+			if(exception != null){
+				Conflict conflict = new Conflict(i, arguments, exception);
 
-				MapDifference<String, ?> difference = Maps.<String, Object>difference(expectedResults, actualResults, equivalence);
+				conflicts.add(conflict);
+			} else
+
+			{
+				MapDifference<String, ?> difference = filteredDifference(expectedResults, actualResults, columns, equivalence);
 				if(!difference.areEqual()){
 					Conflict conflict = new Conflict(i, arguments, difference);
 
 					conflicts.add(conflict);
 				}
-			} catch(Exception e){
-				Conflict conflict = new Conflict(i, arguments, e);
-
-				conflicts.add(conflict);
 			}
+
+			arguments.advance();
+			expectedResults.advance();
+			actualResults.advance();
 		}
 
 		return conflicts;
 	}
 
 	static
-	public List<Conflict> evaluateSingleton(Batch batch, Function<Map<String, ?>, List<Map<String, ?>>> resultsExpander) throws Exception {
+	public List<Conflict> evaluateSingleton(Batch batch, Function<Map<String, ?>, Table> resultsExpander) throws Exception {
 		Evaluator evaluator = batch.getEvaluator();
 
-		List<? extends Map<String, ?>> input = batch.getInput();
-		List<? extends Map<String, ?>> output = batch.getOutput();
+		Table input = batch.getInput();
 
 		if(evaluator instanceof HasGroupFields){
 			HasGroupFields hasGroupFields = (HasGroupFields)evaluator;
@@ -104,9 +137,11 @@ public class BatchUtil {
 			input = EvaluatorUtil.groupRows(hasGroupFields, input);
 		} // End if
 
-		if(input.size() != 1){
-			throw new IllegalArgumentException("Expected exactly one input data row, got " + input.size() + " input data rows");
+		if(input.getNumberOfRows() != 1){
+			throw new IllegalArgumentException("Expected exactly one input data row, got " + input.getNumberOfRows() + " input data rows");
 		}
+
+		Table expectedOutput = batch.getOutput();
 
 		Set<String> columns = collectResultColumns(evaluator, batch.getColumnFilter());
 
@@ -114,42 +149,50 @@ public class BatchUtil {
 
 		int i = 0;
 
-		Map<String, ?> arguments = input.get(i);
-
-		List<Map<String, ?>> expandedResults;
+		Map<String, ?> arguments = input.new Row(i);
+		Map<String, ?> results;
 
 		try {
-			Map<String, ?> results = evaluator.evaluate(arguments);
-
-			expandedResults = resultsExpander.apply(results);
+			results = evaluator.evaluate(arguments);
 		} catch(Exception e){
 			Conflict conflict = new Conflict(i, arguments, e);
 
 			return Collections.singletonList(conflict);
 		}
 
-		if(expandedResults.size() != output.size()){
-			throw new IllegalArgumentException("Expected the same number of data rows, got " + expandedResults.size() + " expanded evaluation result data rows and " + output.size() + " expected output data rows");
+		Table actualOutput = resultsExpander.apply(results);
+
+		if(expectedOutput.getNumberOfRows() != actualOutput.getNumberOfRows()){
+			throw new IllegalArgumentException("Expected the same number of output data rows, got " + expectedOutput.getNumberOfRows() + " expected output data rows and " + actualOutput.getNumberOfRows() + " actual output data rows");
 		}
 
 		List<Conflict> conflicts = new ArrayList<>();
 
-		for(int j = 0; j < expandedResults.size(); j++){
-			Map<String, ?> expectedResults = output.get(j);
-			expectedResults = Maps.filterKeys(expectedResults, columns::contains);
+		Table.Row expectedResults = expectedOutput.new Row(i);
+		Table.Row actualResults = actualOutput.new Row(i);
 
-			Map<String, ?> actualResults = expandedResults.get(j);
-			actualResults = Maps.filterKeys(actualResults, columns::contains);
+		for(int j = 0, max = expectedOutput.getNumberOfRows(); j < max; j++){
+			MapDifference<String, Object> difference = filteredDifference(expectedResults, actualResults, columns, equivalence);
 
-			MapDifference<String, ?> difference = Maps.<String, Object>difference(expectedResults, actualResults, equivalence);
 			if(!difference.areEqual()){
 				Conflict conflict = new Conflict(i + "/" + j, arguments, difference);
 
 				conflicts.add(conflict);
 			}
+
+			expectedResults.advance();
+			actualResults.advance();
 		}
 
 		return conflicts;
+	}
+
+	static
+	private <K> MapDifference<K, Object> filteredDifference(Map<K, ?> expectedResults, Map<K, ?> actualResults, Set<K> columns, Equivalence<Object> equivalence){
+		Map<K, ?> filteredExpectedResults = Maps.filterKeys(expectedResults, columns::contains);
+		Map<K, ?> filteredActualResults = Maps.filterKeys(actualResults, columns::contains);
+
+		return Maps.difference(filteredExpectedResults, filteredActualResults, equivalence);
 	}
 
 	static

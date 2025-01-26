@@ -34,6 +34,8 @@ import org.jpmml.evaluator.EvaluatorBuilder;
 import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.ResultField;
+import org.jpmml.evaluator.Table;
+import org.jpmml.evaluator.TableCollector;
 import org.jpmml.evaluator.testing.Batch;
 import org.jpmml.evaluator.testing.BatchUtil;
 import org.jpmml.evaluator.testing.Conflict;
@@ -186,13 +188,15 @@ public class TestingExample extends Example {
 			}
 
 			@Override
-			public List<? extends Map<String, ?>> getInput(){
-				return input;
+			public Table getInput(){
+				return input.stream()
+					.collect(new TableCollector());
 			}
 
 			@Override
-			public List<? extends Map<String, ?>> getOutput(){
-				return output;
+			public Table getOutput(){
+				return output.stream()
+					.collect(new TableCollector());
 			}
 
 			@Override

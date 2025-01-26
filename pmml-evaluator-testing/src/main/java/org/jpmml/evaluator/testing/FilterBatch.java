@@ -18,13 +18,12 @@
  */
 package org.jpmml.evaluator.testing;
 
-import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ResultField;
+import org.jpmml.evaluator.Table;
 
 public class FilterBatch implements Batch {
 
@@ -43,14 +42,14 @@ public class FilterBatch implements Batch {
 	}
 
 	@Override
-	public List<? extends Map<String, ?>> getInput() throws Exception {
+	public Table getInput() throws Exception {
 		Batch batch = getBatch();
 
 		return batch.getInput();
 	}
 
 	@Override
-	public List<? extends Map<String, ?>> getOutput() throws Exception {
+	public Table getOutput() throws Exception {
 		Batch batch = getBatch();
 
 		return batch.getOutput();

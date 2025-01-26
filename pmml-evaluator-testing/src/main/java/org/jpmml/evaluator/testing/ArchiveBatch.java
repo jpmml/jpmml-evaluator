@@ -20,14 +20,15 @@ package org.jpmml.evaluator.testing;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
+import de.siegmar.fastcsv.reader.CsvReader;
 import org.jpmml.evaluator.ResultField;
+import org.jpmml.evaluator.Table;
+import org.jpmml.evaluator.TableReader;
 
 abstract
 public class ArchiveBatch implements Batch {
@@ -56,7 +57,7 @@ public class ArchiveBatch implements Batch {
 	}
 
 	@Override
-	public List<? extends Map<String, ?>> getInput() throws IOException {
+	public Table getInput() throws IOException {
 		return loadRecords(getInputCsvPath());
 	}
 
@@ -65,7 +66,7 @@ public class ArchiveBatch implements Batch {
 	}
 
 	@Override
-	public List<? extends Map<String, ?>> getOutput() throws IOException {
+	public Table getOutput() throws IOException {
 		return loadRecords(getOutputCsvPath());
 	}
 
@@ -73,13 +74,13 @@ public class ArchiveBatch implements Batch {
 	public void close() throws Exception {
 	}
 
-	protected List<Map<String, String>> loadRecords(String path) throws IOException {
-		String separator = getSeparator();
+	protected Table loadRecords(String path) throws IOException {
+		TableReader tableReader = createTableReader();
 
-		CsvUtil.Table table;
+		Table table;
 
 		try(InputStream is = open(path)){
-			table = CsvUtil.readTable(is, separator);
+			table = tableReader.read(is);
 		}
 
 		Function<String, String> function = new Function<String, String>(){
@@ -95,11 +96,31 @@ public class ArchiveBatch implements Batch {
 			}
 		};
 
-		return CsvUtil.toRecords(table, function);
+		table.apply(function);
+
+		return table;
 	}
 
 	protected String getSeparator(){
 		return ",";
+	}
+
+	protected TableReader createTableReader(){
+		CsvReader.CsvReaderBuilder csvReaderBuilder = createCsvReaderBuilder();
+
+		TableReader tableReader = new TableReader(csvReaderBuilder);
+
+		return tableReader;
+	}
+
+	protected CsvReader.CsvReaderBuilder createCsvReaderBuilder(){
+		String separator = getSeparator();
+
+		CsvReader.CsvReaderBuilder csvReaderBuilder = CsvReader.builder()
+			.ignoreDifferentFieldCount(false)
+			.fieldSeparator(separator.charAt(0));
+
+		return csvReaderBuilder;
 	}
 
 	public String getAlgorithm(){

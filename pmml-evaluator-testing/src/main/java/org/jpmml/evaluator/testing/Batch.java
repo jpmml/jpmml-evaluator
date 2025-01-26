@@ -18,13 +18,12 @@
  */
 package org.jpmml.evaluator.testing;
 
-import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ResultField;
+import org.jpmml.evaluator.Table;
 
 public interface Batch extends AutoCloseable {
 
@@ -37,7 +36,7 @@ public interface Batch extends AutoCloseable {
 	 *
 	 * @see Evaluator#getInputFields()
 	 */
-	List<? extends Map<String, ?>> getInput() throws Exception;
+	Table getInput() throws Exception;
 
 	/**
 	 * <p>
@@ -47,7 +46,7 @@ public interface Batch extends AutoCloseable {
 	 * @see Evaluator#getTargetFields()
 	 * @see Evaluator#getOutputFields()
 	 */
-	List<? extends Map<String, ?>> getOutput() throws Exception;
+	Table getOutput() throws Exception;
 
 	/**
 	 * <p>

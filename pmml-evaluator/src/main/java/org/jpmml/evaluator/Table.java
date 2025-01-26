@@ -317,7 +317,7 @@ public class Table {
 		private int fence;
 
 
-		protected Row(int origin){
+		public Row(int origin){
 			this(origin, -1);
 		}
 
