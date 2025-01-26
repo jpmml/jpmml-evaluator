@@ -193,6 +193,12 @@
 			</dependency>
 
 			<dependency>
+				<groupId>de.siegmar</groupId>
+				<artifactId>fastcsv</artifactId>
+				<version>3.4.0</version>
+			</dependency>
+
+			<dependency>
 				<groupId>io.dropwizard.metrics</groupId>
 				<artifactId>metrics-core</artifactId>
 				<version>4.2.30</version>

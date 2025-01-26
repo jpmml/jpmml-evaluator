@@ -211,6 +211,7 @@ JPMML-Evaluator includes third-party dependencies that are released under the Ap
 
 Additionally, JPMML-Evaluator includes third-party dependencies that are released under the MIT License:
   * Simple Logging Facade for Java (SLF4J) - https://www.slf4j.org/
+  * FastCSV - https://fastcsv.org/
 
 Copyright (c) 2004-2017 QOS.ch
 All rights reserved.

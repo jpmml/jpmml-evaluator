@@ -18,29 +18,27 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.BufferedReader;
+import java.io.FilterReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
+import de.siegmar.fastcsv.reader.CsvReader;
+import de.siegmar.fastcsv.reader.NamedCsvRecord;
 
 public class TableReader {
 
-	private String separator = null;
+	private CsvReader.CsvReaderBuilder csvReaderBuilder = null;
 
 
-	public TableReader(){
-		this(null);
-	}
-
-	public TableReader(String separator){
-		setSeparator(separator);
+	public TableReader(CsvReader.CsvReaderBuilder csvReaderBuilder){
+		setCsvReaderBuilder(csvReaderBuilder);
 	}
 
 	public Table read(InputStream is) throws IOException {
@@ -48,67 +46,32 @@ public class TableReader {
 	}
 
 	public Table read(Reader reader) throws IOException {
-		String separator = getSeparator();
+		CsvReader.CsvReaderBuilder csvReaderBuilder = getCsvReaderBuilder();
+
+		FilterReader safeReader = new FilterReader(reader){
+
+			@Override
+			public void close(){
+			}
+		};
 
 		Table table = new Table(1024);
 
-		try(BufferedReader bufferedReader = new BufferedReader(reader)){
-			Splitter splitter = null;
-
+		try(CsvReader<NamedCsvRecord> csvReader = csvReaderBuilder.ofNamedCsvRecord(safeReader)){
 			List<String> columns = null;
 
-			Table.Row row = null;
+			Table.Row row = table.new Row(0);
 
-			while(true){
-				String line = bufferedReader.readLine();
-
-				if((line == null) || (line.trim()).equals("")){
-					break;
-				} // End if
-
-				if(splitter == null){
-
-					if(separator == null){
-						separator = detectSeparator(line);
-
-						setSeparator(separator);
-					}
-
-					splitter = Splitter.on(separator);
-				}
-
-				List<String> cells = Lists.newArrayList(splitter.split(line));
+			for(Iterator<NamedCsvRecord> it = csvReader.iterator(); it.hasNext(); ){
+				NamedCsvRecord csvRecord = it.next();
 
 				if(columns == null){
-					Set<String> uniqueCells = new LinkedHashSet<>(cells);
-
-					if(uniqueCells.size() < cells.size()){
-						throw new IllegalArgumentException("Expected unique column names, got non-unique column names");
-					}
-
-					columns = cells;
-
-					continue;
-				} // End if
-
-				if(cells.size() != columns.size()){
-					throw new IllegalArgumentException("Expected " + columns.size() + " cells, got " + cells.size() + " cells");
-				} // End if
-
-				if(row == null){
-					row = table.new Row(0);
-				} else
-
-				{
-					row.advance();
+					columns = initColumns(table, csvRecord);
 				}
 
-				for(int i = 0; i < columns.size(); i++){
-					String column = columns.get(i);
-					Object cell = cells.get(i);
+				row.putAll(csvRecord.getFieldsAsMap());
 
-					row.put(column, cell);
-				}
+				row.advance();
 			}
 		}
 
@@ -117,26 +80,32 @@ public class TableReader {
 		return table;
 	}
 
-	public String getSeparator(){
-		return this.separator;
+	public CsvReader.CsvReaderBuilder getCsvReaderBuilder(){
+		return this.csvReaderBuilder;
 	}
 
-	private void setSeparator(String separator){
-		this.separator = separator;
+	private void setCsvReaderBuilder(CsvReader.CsvReaderBuilder csvReaderBuilder){
+		this.csvReaderBuilder = Objects.requireNonNull(csvReaderBuilder);
 	}
 
 	static
-	private String detectSeparator(String line){
-		String[] separators = {"\t", ";", ","};
+	private List<String> initColumns(Table table, NamedCsvRecord csvRecord){
+		List<String> columns = csvRecord.getHeader();
 
-		for(String separator : separators){
-			String[] cells = line.split(separator);
+		Set<String> duplicateColumns = new LinkedHashSet<>();
 
-			if(cells.length > 1){
-				return separator;
+		for(String column : columns){
+			boolean duplicate = !table.addColumn(column);
+
+			if(duplicate){
+				duplicateColumns.add(column);
 			}
 		}
 
-		throw new IllegalArgumentException("Missing CSV separator");
+		if(!duplicateColumns.isEmpty()){
+			throw new IllegalArgumentException("Expected unique column names, got non-unique column name(s) " + duplicateColumns);
+		}
+
+		return columns;
 	}
 }

@@ -18,23 +18,23 @@
  */
 package org.jpmml.evaluator;
 
-import java.io.BufferedWriter;
+import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
-import com.google.common.base.Joiner;
+import de.siegmar.fastcsv.writer.CsvWriter;
 
 public class TableWriter {
 
-	private String separator = null;
+	private CsvWriter.CsvWriterBuilder csvWriterBuilder = null;
 
 
-	public TableWriter(String separator){
-		setSeparator(separator);
+	public TableWriter(CsvWriter.CsvWriterBuilder csvWriterBuilder){
+		setCsvWriterBuilder(csvWriterBuilder);
 	}
 
 	public void write(Table table, OutputStream os) throws IOException {
@@ -42,25 +42,29 @@ public class TableWriter {
 	}
 
 	public void write(Table table, Writer writer) throws IOException {
-		String separator = getSeparator();
+		CsvWriter.CsvWriterBuilder csvWriterBuilder = getCsvWriterBuilder();
 
-		try(BufferedWriter bufferedWriter = new BufferedWriter(writer)){
-			Joiner joiner = Joiner.on(separator);
+		FilterWriter safeWriter = new FilterWriter(writer){
 
-			Collection<?> columns = table.getColumns();
+			@Override
+			public void close() throws IOException {
+				super.flush();
+			}
+		};
 
-			writer.write(joiner.join(columns));
+		try(CsvWriter csvWriter = csvWriterBuilder.build(safeWriter)){
+			List<String> columns = table.getColumns();
+
+			csvWriter.writeRecord(columns);
 
 			int numberOfRows = table.getNumberOfRows();
 			if(numberOfRows > 0){
 				Table.Row row = table.new Row(0);
 
 				for(int i = 0; i < numberOfRows; i++){
-					writer.write('\n');
+					Iterable<String> cells = (Iterable)row.values();
 
-					Collection<Object> cells = row.values();
-
-					writer.write(joiner.join(cells));
+					csvWriter.writeRecord(cells);
 
 					row.advance();
 				}
@@ -68,11 +72,11 @@ public class TableWriter {
 		}
 	}
 
-	public String getSeparator(){
-		return this.separator;
+	public CsvWriter.CsvWriterBuilder getCsvWriterBuilder(){
+		return this.csvWriterBuilder;
 	}
 
-	private void setSeparator(String separator){
-		this.separator = Objects.requireNonNull(separator);
+	private void setCsvWriterBuilder(CsvWriter.CsvWriterBuilder csvWriterBuilder){
+		this.csvWriterBuilder = Objects.requireNonNull(csvWriterBuilder);
 	}
 }

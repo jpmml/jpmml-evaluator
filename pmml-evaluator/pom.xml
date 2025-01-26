@@ -35,6 +35,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>de.siegmar</groupId>
+			<artifactId>fastcsv</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
 		</dependency>
