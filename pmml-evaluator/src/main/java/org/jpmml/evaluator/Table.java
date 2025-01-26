@@ -25,9 +25,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -170,6 +172,29 @@ public class Table {
 		set(exceptions, index, exception);
 	}
 
+	@IgnoreJRERequirement
+	@SuppressWarnings("unchecked")
+	public void apply(Function<?, ?> function){
+		Map<String, List<?>> columnValues = getValues();
+
+		Collection<Map.Entry<String, List<?>>> entries = columnValues.entrySet();
+		for(Map.Entry<String, List<?>> entry : entries){
+			List<?> values = entry.getValue();
+
+			transform((List<Object>)values, (Function<Object, Object>)function);
+		}
+	}
+
+	@IgnoreJRERequirement
+	@SuppressWarnings("unchecked")
+	public void apply(String column, Function<?, ?> function){
+		List<?> values = getValues(column);
+
+		if(values != null){
+			transform((List<Object>)values, (Function<Object, Object>)function);
+		}
+	}
+
 	protected List<?> ensureValues(String column){
 		Map<String, List<?>> columnValues = getValues();
 
@@ -271,6 +296,20 @@ public class Table {
 		return values;
 	}
 
+	@IgnoreJRERequirement
+	static
+	private <E> void transform(List<E> values, Function<E, E> function){
+		ListIterator<E> it = values.listIterator();
+
+		while(it.hasNext()){
+			E value = it.next();
+
+			value = function.apply(value);
+
+			it.set(value);
+		}
+	}
+
 	public class Row extends AbstractMap<String, Object> {
 
 		private int origin;
@@ -340,10 +379,10 @@ public class Table {
 		}
 
 		@Override
+		@SuppressWarnings("unchecked")
 		public Object put(String key, Object value){
 			int origin = getOrigin();
 
-			@SuppressWarnings("unchecked")
 			List<Object> values = (List<Object>)ensureValues(key);
 
 			return Table.set(values, origin, value);
