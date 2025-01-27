@@ -27,11 +27,16 @@ import java.util.List;
 import java.util.Objects;
 
 import de.siegmar.fastcsv.writer.CsvWriter;
+import de.siegmar.fastcsv.writer.LineDelimiter;
 
 public class TableWriter {
 
 	private CsvWriter.CsvWriterBuilder csvWriterBuilder = null;
 
+
+	public TableWriter(char separator){
+		this(createCsvWriterBuilder(separator));
+	}
 
 	public TableWriter(CsvWriter.CsvWriterBuilder csvWriterBuilder){
 		setCsvWriterBuilder(csvWriterBuilder);
@@ -78,5 +83,14 @@ public class TableWriter {
 
 	private void setCsvWriterBuilder(CsvWriter.CsvWriterBuilder csvWriterBuilder){
 		this.csvWriterBuilder = Objects.requireNonNull(csvWriterBuilder);
+	}
+
+	static
+	public CsvWriter.CsvWriterBuilder createCsvWriterBuilder(char separator){
+		CsvWriter.CsvWriterBuilder csvWriterBuilder = CsvWriter.builder()
+			.lineDelimiter(LineDelimiter.PLATFORM)
+			.fieldSeparator(separator);
+
+		return csvWriterBuilder;
 	}
 }

@@ -37,9 +37,6 @@ import com.beust.jcommander.IUsageFormatter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
-import de.siegmar.fastcsv.reader.CsvReader;
-import de.siegmar.fastcsv.writer.CsvWriter;
-import de.siegmar.fastcsv.writer.LineDelimiter;
 import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.Table;
@@ -136,11 +133,7 @@ public class Example {
 
 	static
 	public Table readTable(File file, char separator) throws IOException {
-		CsvReader.CsvReaderBuilder csvReaderBuilder = CsvReader.builder()
-			.ignoreDifferentFieldCount(false)
-			.fieldSeparator(separator);
-
-		TableReader tableReader = new TableReader(csvReaderBuilder);
+		TableReader tableReader = new TableReader(separator);
 
 		try(InputStream is = new FileInputStream(file)){
 			return tableReader.read(is);
@@ -149,11 +142,7 @@ public class Example {
 
 	static
 	public void writeTable(Table table, File file, char separator) throws IOException {
-		CsvWriter.CsvWriterBuilder csvWriterBuilder = CsvWriter.builder()
-			.lineDelimiter(LineDelimiter.PLATFORM)
-			.fieldSeparator(separator);
-
-		TableWriter tableWriter = new TableWriter(csvWriterBuilder);
+		TableWriter tableWriter = new TableWriter(separator);
 
 		try(OutputStream os = new FileOutputStream(file)){
 			tableWriter.write(table, os);

@@ -25,7 +25,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.google.common.base.Equivalence;
-import de.siegmar.fastcsv.reader.CsvReader;
 import org.jpmml.evaluator.ResultField;
 import org.jpmml.evaluator.Table;
 import org.jpmml.evaluator.TableReader;
@@ -101,26 +100,14 @@ public class ArchiveBatch implements Batch {
 		return table;
 	}
 
-	protected String getSeparator(){
-		return ",";
+	protected char getSeparator(){
+		return ',';
 	}
 
 	protected TableReader createTableReader(){
-		CsvReader.CsvReaderBuilder csvReaderBuilder = createCsvReaderBuilder();
-
-		TableReader tableReader = new TableReader(csvReaderBuilder);
+		TableReader tableReader = new TableReader(getSeparator());
 
 		return tableReader;
-	}
-
-	protected CsvReader.CsvReaderBuilder createCsvReaderBuilder(){
-		String separator = getSeparator();
-
-		CsvReader.CsvReaderBuilder csvReaderBuilder = CsvReader.builder()
-			.ignoreDifferentFieldCount(false)
-			.fieldSeparator(separator.charAt(0));
-
-		return csvReaderBuilder;
 	}
 
 	public String getAlgorithm(){

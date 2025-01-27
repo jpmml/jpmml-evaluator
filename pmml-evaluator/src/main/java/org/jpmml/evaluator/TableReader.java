@@ -37,6 +37,10 @@ public class TableReader {
 	private CsvReader.CsvReaderBuilder csvReaderBuilder = null;
 
 
+	public TableReader(char separator){
+		this(createCsvReaderBuilder(separator));
+	}
+
 	public TableReader(CsvReader.CsvReaderBuilder csvReaderBuilder){
 		setCsvReaderBuilder(csvReaderBuilder);
 	}
@@ -86,6 +90,19 @@ public class TableReader {
 
 	private void setCsvReaderBuilder(CsvReader.CsvReaderBuilder csvReaderBuilder){
 		this.csvReaderBuilder = Objects.requireNonNull(csvReaderBuilder);
+	}
+
+	static
+	public CsvReader.CsvReaderBuilder createCsvReaderBuilder(char separator){
+		CsvReader.CsvReaderBuilder csvReaderBuilder = CsvReader.builder()
+			.fieldSeparator(separator);
+
+		// Activate strict(er) parsing mode
+		csvReaderBuilder = csvReaderBuilder
+			.acceptCharsAfterQuotes(false)
+			.ignoreDifferentFieldCount(false);
+
+		return csvReaderBuilder;
 	}
 
 	static

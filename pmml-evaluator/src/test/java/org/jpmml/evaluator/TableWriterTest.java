@@ -22,8 +22,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
 
-import de.siegmar.fastcsv.writer.CsvWriter;
-import de.siegmar.fastcsv.writer.LineDelimiter;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,14 +30,10 @@ public class TableWriterTest {
 
 	@Test
 	public void write() throws IOException {
-		CsvWriter.CsvWriterBuilder csvWriterBuilder = CsvWriter.builder()
-			.lineDelimiter(LineDelimiter.PLATFORM)
-			.fieldSeparator(',');
-
 		String string;
 
 		try(StringWriter writer = new StringWriter()){
-			TableWriter tableWriter = new TableWriter(csvWriterBuilder);
+			TableWriter tableWriter = new TableWriter(',');
 
 			tableWriter.write(TableWriterTest.table, writer);
 

@@ -26,7 +26,6 @@ import java.util.Map;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import de.siegmar.fastcsv.reader.CsvReader;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,13 +35,10 @@ public class TableReaderTest {
 
 	@Test
 	public void read() throws IOException {
-		CsvReader.CsvReaderBuilder csvReaderBuilder = CsvReader.builder()
-			.fieldSeparator(',');
-
 		Table table;
 
 		try(StringReader reader = new StringReader(TableReaderTest.string)){
-			TableReader tableReader = new TableReader(csvReaderBuilder);
+			TableReader tableReader = new TableReader(',');
 
 			table = tableReader.read(reader);
 
