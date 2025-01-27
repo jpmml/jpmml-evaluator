@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.beust.jcommander.Parameter;
@@ -35,11 +35,9 @@ import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
 import org.jpmml.evaluator.ResultField;
 import org.jpmml.evaluator.Table;
-import org.jpmml.evaluator.TableCollector;
 import org.jpmml.evaluator.testing.Batch;
 import org.jpmml.evaluator.testing.BatchUtil;
 import org.jpmml.evaluator.testing.Conflict;
-import org.jpmml.evaluator.testing.CsvUtil;
 import org.jpmml.evaluator.testing.PMMLEquivalence;
 
 public class TestingExample extends Example {
@@ -137,10 +135,6 @@ public class TestingExample extends Example {
 	public void execute() throws Exception {
 		PMML pmml = readPMML(this.model, true);
 
-		CsvUtil.Table inputTable = readTable(this.input, this.separator);
-
-		CsvUtil.Table outputTable = readTable(this.output, this.separator);
-
 		EvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml)
 			.setModelEvaluatorFactory((ModelEvaluatorFactory)newInstance(this.modelEvaluatorFactoryClazz));
 
@@ -149,11 +143,13 @@ public class TestingExample extends Example {
 		// Perform self-testing
 		evaluator.verify();
 
-		java.util.function.Function<String, String> cellParser = createCellParser(new HashSet<>(this.missingValues));
+		Function<String, String> cellParser = createCellParser(new HashSet<>(this.missingValues));
 
-		List<? extends Map<String, ?>> inputRecords = CsvUtil.toRecords(inputTable, cellParser);
+		Table inputTable = readTable(this.input, this.separator);
+		inputTable.apply(cellParser);
 
-		List<? extends Map<String, ?>> outputRecords = CsvUtil.toRecords(outputTable, cellParser);
+		Table outputTable = readTable(this.output, this.separator);
+		outputTable.apply(cellParser);
 
 		Predicate<ResultField> columnFilter;
 
@@ -169,7 +165,7 @@ public class TestingExample extends Example {
 
 		List<Conflict> conflicts;
 
-		try(Batch batch = createBatch(evaluator, inputRecords, outputRecords, columnFilter, equivalence)){
+		try(Batch batch = createBatch(evaluator, inputTable, outputTable, columnFilter, equivalence)){
 			conflicts = BatchUtil.evaluate(batch);
 		}
 
@@ -179,7 +175,7 @@ public class TestingExample extends Example {
 	}
 
 	static
-	private Batch createBatch(Evaluator evaluator, List<? extends Map<String, ?>> input, List<? extends Map<String, ?>> output, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence){
+	private Batch createBatch(Evaluator evaluator, Table input, Table output, Predicate<ResultField> columnFilter, Equivalence<Object> equivalence){
 		Batch batch = new Batch(){
 
 			@Override
@@ -189,14 +185,12 @@ public class TestingExample extends Example {
 
 			@Override
 			public Table getInput(){
-				return input.stream()
-					.collect(new TableCollector());
+				return input;
 			}
 
 			@Override
 			public Table getOutput(){
-				return output.stream()
-					.collect(new TableCollector());
+				return output;
 			}
 
 			@Override

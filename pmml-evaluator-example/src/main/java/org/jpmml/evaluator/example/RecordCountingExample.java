@@ -24,9 +24,9 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.beust.jcommander.Parameter;
 import com.google.common.base.Joiner;
@@ -40,14 +40,13 @@ import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.NodeTransformer;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.Evaluator;
-import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.ModelEvaluatorBuilder;
+import org.jpmml.evaluator.Table;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.mining.HasSegmentResults;
 import org.jpmml.evaluator.mining.SegmentResult;
-import org.jpmml.evaluator.testing.CsvUtil;
 import org.jpmml.evaluator.tree.HasDecisionPath;
 import org.jpmml.model.visitors.AbstractVisitor;
 
@@ -112,13 +111,10 @@ public class RecordCountingExample extends Example {
 			NodeAdapter.NODE_TRANSFORMER_PROVIDER.set(defaultNodeTransformer);
 		}
 
-		String separator = this.separator;
+		Function<String, String> cellParser = createCellParser(new HashSet<>(this.missingValues));
 
-		CsvUtil.Table table = readTable(this.input, separator);
-
-		if(separator == null){
-			separator = table.getSeparator();
-		}
+		Table table = readTable(this.input, this.separator);
+		table.apply(cellParser);
 
 		ModelEvaluatorBuilder evaluatorBuilder = new ModelEvaluatorBuilder(pmml);
 
@@ -127,22 +123,12 @@ public class RecordCountingExample extends Example {
 		// Perform self-testing
 		evaluator.verify();
 
-		List<? extends Map<String, ?>> records = CsvUtil.toRecords(table, createCellParser(new HashSet<>(this.missingValues)));
-
 		List<InputField> inputFields = evaluator.getInputFields();
 		List<TargetField> targetFields = evaluator.getTargetFields();
 
-		for(Map<String, ?> record : records){
-			Map<String, FieldValue> arguments = new LinkedHashMap<>();
+		Table.Row arguments = table.new Row(0);
 
-			for(InputField inputField : inputFields){
-				String name = inputField.getName();
-
-				FieldValue value = inputField.prepare(record.get(name));
-
-				arguments.put(name, value);
-			}
-
+		for(int i = 0, max = table.getNumberOfRows(); i < max; i++){
 			Map<String, ?> results = evaluator.evaluate(arguments);
 
 			for(TargetField targetField : targetFields){
@@ -174,6 +160,8 @@ public class RecordCountingExample extends Example {
 					}
 				}
 			}
+
+			arguments.advance();
 		}
 
 		Joiner joiner = Joiner.on(separator);

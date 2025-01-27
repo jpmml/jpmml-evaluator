@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Function;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -41,7 +42,7 @@ import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorBuilder;
-import org.jpmml.evaluator.testing.CsvUtil;
+import org.jpmml.evaluator.Table;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -96,8 +97,6 @@ public class EnhancementExample extends Example {
 	public void execute() throws Exception {
 		PMML pmml = readPMML(this.model);
 
-		CsvUtil.Table table = readTable(this.verification, this.separator);
-
 		ModelEvaluatorBuilder modelEvaluatorBuilder = new ModelEvaluatorBuilder(pmml);
 
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorBuilder.build();
@@ -109,7 +108,12 @@ public class EnhancementExample extends Example {
 			throw new IllegalArgumentException("Model verification data is already defined");
 		}
 
-		java.util.function.Function<String, String> cellParser = createCellParser(new HashSet<>(this.missingValues));
+		Function<String, String> cellParser = createCellParser(new HashSet<>(this.missingValues));
+
+		Table table = readTable(this.verification, this.separator);
+		table.apply(cellParser);
+
+		List<String> columns = table.getColumns();
 
 		modelVerification = new ModelVerification();
 
@@ -119,10 +123,8 @@ public class EnhancementExample extends Example {
 
 		header:
 		{
-			List<String> headerRow = table.get(0);
-
-			for(int column = 0; column < headerRow.size(); column++){
-				String fieldName = headerRow.get(column);
+			for(int j = 0; j < columns.size(); j++){
+				String fieldName = columns.get(j);
 
 				MiningField miningField = modelEvaluator.getMiningField(fieldName);
 				if(miningField == null){
@@ -162,20 +164,21 @@ public class EnhancementExample extends Example {
 
 		InlineTable inlineTable = new InlineTable();
 
-		body:
-		for(int i = 1; i < table.size(); i++){
-			List<String> bodyRow = table.get(i);
+		Table.Row results = table.new Row(0);
 
+		body:
+		for(int i = 0, max = table.getNumberOfRows(); i < max; i++){
 			Row row = new Row();
 
-			for(int column = 0; column < bodyRow.size(); column++){
-				String tagName = tagNames.get(column);
+			for(int j = 0; j < columns.size(); j++){
+				String fieldName = columns.get(j);
+				String tagName = tagNames.get(j);
 
 				if(tagName == null){
 					continue;
 				}
 
-				String value = bodyRow.get(column);
+				String value = (String)results.get(fieldName);
 				if(value != null){
 					value = cellParser.apply(value);
 				} // End if
@@ -191,6 +194,8 @@ public class EnhancementExample extends Example {
 			}
 
 			inlineTable.addRows(row);
+
+			results.advance();
 		}
 
 		modelVerification.setInlineTable(inlineTable);

@@ -21,17 +21,17 @@ package org.jpmml.evaluator.example;
 import java.io.Console;
 import java.io.File;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.validators.PositiveInteger;
@@ -40,7 +40,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SlidingWindowReservoir;
 import com.codahale.metrics.Timer;
 import com.google.common.cache.CacheBuilderSpec;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.dmg.pmml.PMML;
@@ -49,18 +48,15 @@ import org.jpmml.evaluator.CacheUtil;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.FieldNameSet;
-import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FunctionNameStack;
 import org.jpmml.evaluator.HasGroupFields;
 import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.ModelEvaluatorBuilder;
 import org.jpmml.evaluator.ModelEvaluatorFactory;
-import org.jpmml.evaluator.OutputField;
 import org.jpmml.evaluator.OutputFilters;
-import org.jpmml.evaluator.ResultField;
-import org.jpmml.evaluator.TargetField;
+import org.jpmml.evaluator.Table;
+import org.jpmml.evaluator.TableCollector;
 import org.jpmml.evaluator.ValueFactoryFactory;
-import org.jpmml.evaluator.testing.CsvUtil;
 import org.jpmml.evaluator.visitors.AttributeFinalizerBattery;
 import org.jpmml.evaluator.visitors.AttributeInternerBattery;
 import org.jpmml.evaluator.visitors.AttributeOptimizerBattery;
@@ -269,9 +265,12 @@ public class EvaluationExample extends Example {
 			.convertDurationsTo(TimeUnit.MILLISECONDS)
 			.build();
 
-		CsvUtil.Table inputTable = readTable(this.input, this.separator);
+		Function<String, String> cellParser = createCellParser(!this.missingValues.isEmpty() ? new HashSet<>(this.missingValues) : null);
 
-		List<? extends Map<String, ?>> inputRecords = CsvUtil.toRecords(inputTable, createCellParser(!this.missingValues.isEmpty() ? new HashSet<>(this.missingValues) : null));
+		Table inputTable = readTable(this.input, this.separator);
+		inputTable.apply(cellParser);
+
+		List<String> inputColumns = inputTable.getColumns();
 
 		if(this.waitBeforeInit){
 			waitForUserInput();
@@ -359,15 +358,13 @@ public class EvaluationExample extends Example {
 			groupFields = hasGroupfields.getGroupFields();
 		} // End if
 
-		if(!inputRecords.isEmpty()){
-			Map<String, ?> inputRecord = inputRecords.get(0);
-
-			Sets.SetView<String> missingInputFields = Sets.difference(new LinkedHashSet<>(Lists.transform(inputFields, InputField::getName)), inputRecord.keySet());
+		if(!inputColumns.isEmpty()){
+			Sets.SetView<String> missingInputFields = Sets.difference(new LinkedHashSet<>(Lists.transform(inputFields, InputField::getName)), new LinkedHashSet<>(inputColumns));
 			if(!missingInputFields.isEmpty() && !this.sparse){
 				throw new IllegalArgumentException("Missing input field(s): " + missingInputFields);
 			}
 
-			Sets.SetView<String> missingGroupFields = Sets.difference(new LinkedHashSet<>(Lists.transform(groupFields, InputField::getName)), inputRecord.keySet());
+			Sets.SetView<String> missingGroupFields = Sets.difference(new LinkedHashSet<>(Lists.transform(groupFields, InputField::getName)), new LinkedHashSet<>(inputColumns));
 			if(!missingGroupFields.isEmpty()){
 				throw new IllegalArgumentException("Missing group field(s): " + missingGroupFields);
 			}
@@ -376,12 +373,8 @@ public class EvaluationExample extends Example {
 		if(evaluator instanceof HasGroupFields){
 			HasGroupFields hasGroupFields = (HasGroupFields)evaluator;
 
-			inputRecords = EvaluatorUtil.groupRows(hasGroupFields, inputRecords);
+			inputTable = EvaluatorUtil.groupRows(hasGroupFields, inputTable);
 		}
-
-		List<Map<String, ?>> outputRecords = new ArrayList<>(inputRecords.size());
-
-		String errorColumn = null;
 
 		Timer timer = new Timer(new SlidingWindowReservoir(this.loop));
 
@@ -391,44 +384,35 @@ public class EvaluationExample extends Example {
 			waitForUserInput();
 		}
 
+		Table outputTable = new Table(0);
+
+		Function<Table.Row, Object> function = new Function<Table.Row, Object>(){
+
+			@Override
+			public Object apply(Table.Row arguments){
+
+				try {
+					Map<String, ?> results = evaluator.evaluate(arguments);
+
+					return results;
+				} catch(Exception e){
+
+					if(!EvaluationExample.this.catchErrors){
+						throw e;
+					}
+
+					return e;
+				}
+			}
+		};
+
 		for(int i = 0; i < this.loop; i++){
 			Timer.Context context = timer.time();
 
 			try {
-				outputRecords.clear();
-
-				Map<String, FieldValue> arguments = new LinkedHashMap<>();
-
-				for(Map<String, ?> inputRecord : inputRecords){
-					arguments.clear();
-
-					Map<String, ?> results;
-
-					try {
-						for(InputField inputField : inputFields){
-							String name = inputField.getName();
-
-							FieldValue value = inputField.prepare(inputRecord.get(name));
-
-							arguments.put(name, value);
-						}
-
-						results = evaluator.evaluate(arguments);
-					} catch(Exception e){
-
-						if(!this.catchErrors){
-							throw e;
-						}
-
-						if(errorColumn == null){
-							errorColumn = this.errorColumn;
-						}
-
-						results = Collections.singletonMap(errorColumn, e.toString());
-					}
-
-					outputRecords.add(results);
-				}
+				outputTable = inputTable.stream()
+					.map(function)
+					.collect(new TableCollector());
 			} finally {
 				context.close();
 			}
@@ -436,34 +420,31 @@ public class EvaluationExample extends Example {
 
 		if(this.waitAfterLoop){
 			waitForUserInput();
-		}
+		} // End if
 
-		List<TargetField> targetFields = evaluator.getTargetFields();
-		List<OutputField> outputFields = evaluator.getOutputFields();
+		if(outputTable.hasExceptions()){
 
-		List<? extends ResultField> resultFields = Lists.newArrayList(Iterables.concat(targetFields, outputFields));
-
-		List<String> columns = new ArrayList<>(Lists.transform(resultFields, ResultField::getName));
-
-		if(errorColumn != null){
-			columns.add(errorColumn);
-		}
-
-		String separator = inputTable.getSeparator();
-
-		CsvUtil.Table outputTable = CsvUtil.fromRecords(separator, columns, outputRecords, createCellFormatter(separator, !this.missingValues.isEmpty() ? this.missingValues.get(0) : null));
-
-		if((inputTable.size() == outputTable.size()) && this.copyColumns){
-
-			for(int i = 0; i < inputTable.size(); i++){
-				List<String> inputRow = inputTable.get(i);
-				List<String> outputRow = outputTable.get(i);
-
-				outputRow.addAll(0, inputRow);
+			if(this.errorColumn != null){
+				outputTable.setValues(this.errorColumn, outputTable.getExceptions());
 			}
+		} // End if
+
+		if((inputTable.getNumberOfRows() == outputTable.getNumberOfRows()) && this.copyColumns){
+			Map<String, List<?>> outputColumnValues = outputTable.getValues();
+
+			Collection<? extends Map.Entry<String, List<?>>> entries = outputColumnValues.entrySet();
+			for(Map.Entry<String, List<?>> entry : entries){
+				inputTable.setValues(entry.getKey(), entry.getValue());
+			}
+
+			outputTable = inputTable;
 		}
 
-		writeTable(outputTable, this.output);
+		Function<Object, String> cellFormatter = createCellFormatter(!this.missingValues.isEmpty() ? this.missingValues.get(0) : null);
+
+		outputTable.apply(cellFormatter);
+
+		writeTable(outputTable, this.output, this.separator);
 
 		if(this.loop > 1){
 			reporter.report();

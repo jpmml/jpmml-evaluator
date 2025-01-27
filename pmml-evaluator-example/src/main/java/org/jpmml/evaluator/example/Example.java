@@ -37,9 +37,14 @@ import com.beust.jcommander.IUsageFormatter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
+import de.siegmar.fastcsv.reader.CsvReader;
+import de.siegmar.fastcsv.writer.CsvWriter;
+import de.siegmar.fastcsv.writer.LineDelimiter;
 import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.EvaluatorUtil;
-import org.jpmml.evaluator.testing.CsvUtil;
+import org.jpmml.evaluator.Table;
+import org.jpmml.evaluator.TableReader;
+import org.jpmml.evaluator.TableWriter;
 import org.jpmml.model.PMMLUtil;
 
 abstract
@@ -130,18 +135,28 @@ public class Example {
 	}
 
 	static
-	public CsvUtil.Table readTable(File file, String separator) throws IOException {
+	public Table readTable(File file, String separator) throws IOException {
+		CsvReader.CsvReaderBuilder csvReaderBuilder = CsvReader.builder()
+			.ignoreDifferentFieldCount(false)
+			.fieldSeparator(separator.charAt(0));
+
+		TableReader tableReader = new TableReader(csvReaderBuilder);
 
 		try(InputStream is = new FileInputStream(file)){
-			return CsvUtil.readTable(is, separator);
+			return tableReader.read(is);
 		}
 	}
 
 	static
-	public void writeTable(CsvUtil.Table table, File file) throws IOException {
+	public void writeTable(Table table, File file, String separator) throws IOException {
+		CsvWriter.CsvWriterBuilder csvWriterBuilder = CsvWriter.builder()
+			.lineDelimiter(LineDelimiter.PLATFORM)
+			.fieldSeparator(separator.charAt(0));
+
+		TableWriter tableWriter = new TableWriter(csvWriterBuilder);
 
 		try(OutputStream os = new FileOutputStream(file)){
-			CsvUtil.writeTable(table, os);
+			tableWriter.write(table, os);
 		}
 	}
 
@@ -165,10 +180,6 @@ public class Example {
 					return null;
 				}
 
-				// Remove leading and trailing quotation marks
-				string = stripQuotes(string, '\"');
-				string = stripQuotes(string, '\"');
-
 				// Standardize European-style decimal marks (',') to US-style decimal marks ('.')
 				if(string.indexOf(',') > -1){
 					String usString = string.replace(',', '.');
@@ -184,22 +195,13 @@ public class Example {
 
 				return string;
 			}
-
-			private String stripQuotes(String string, char quoteChar){
-
-				if(string.length() > 1 && ((string.charAt(0) == quoteChar) && (string.charAt(string.length() - 1) == quoteChar))){
-					return string.substring(1, string.length() - 1);
-				}
-
-				return string;
-			}
 		};
 
 		return function;
 	}
 
 	static
-	public Function<Object, String> createCellFormatter(String separator, String missingValue){
+	public Function<Object, String> createCellFormatter(String missingValue){
 		Function<Object, String> function = new Function<Object, String>(){
 
 			@Override
@@ -210,21 +212,11 @@ public class Example {
 					return missingValue;
 				}
 
-				String string = object.toString();
-
-				if(string.indexOf('\"') > -1){
-					string = string.replaceAll("\"", "\"\"");
-				} // End if
-
-				if(string.contains(separator)){
-					string = ("\"" + string + "\"");
-				}
-
-				return string;
+				return object.toString();
 			}
-		};
+ 		};
 
-		return function;
+ 		return function;
 	}
 
 	static
