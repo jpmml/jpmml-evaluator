@@ -76,7 +76,7 @@ public class EnhancementExample extends Example {
 	@ParameterOrder (
 		value = 3
 	)
-	private String separator = null;
+	private char separator = ',';
 
 	@Parameter (
 		names = {"--missing-values"},

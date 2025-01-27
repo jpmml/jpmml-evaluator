@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator.example;
 
+import com.beust.jcommander.IStringConverter;
+import com.beust.jcommander.ParameterException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,21 +29,21 @@ public class SeparatorConverterTest {
 
 	@Test
 	public void unescape(){
-		assertThrows(IllegalArgumentException.class, () -> SeparatorConverter.unescape(""));
+		IStringConverter<Character> converter = new SeparatorConverter(null);
 
-		assertEquals(" ", SeparatorConverter.unescape(" "));
-		assertEquals(",", SeparatorConverter.unescape(","));
-		assertEquals(";", SeparatorConverter.unescape(";"));
+		assertThrows(ParameterException.class, () -> converter.convert(""));
 
-		assertEquals("\t", SeparatorConverter.unescape("\t"));
-		assertEquals("\t", SeparatorConverter.unescape("\\t"));
+		assertEquals(' ', converter.convert(" "));
+		assertEquals(',', converter.convert(","));
+		assertEquals(';', converter.convert(";"));
 
-		assertThrows(IllegalArgumentException.class, () -> SeparatorConverter.unescape("\\"));
+		assertEquals('\t', converter.convert("\t"));
+		assertEquals('\t', converter.convert("\\t"));
 
-		assertEquals("\\", SeparatorConverter.unescape("\\\\"));
+		assertThrows(ParameterException.class, () -> converter.convert("\\"));
 
-		assertThrows(IllegalArgumentException.class, () -> SeparatorConverter.unescape("\\x"));
+		assertEquals('\\', converter.convert("\\\\"));
 
-		assertEquals("\\x", SeparatorConverter.unescape("\\\\x"));
+		assertThrows(ParameterException.class, () -> converter.convert("\\x"));
 	}
 }

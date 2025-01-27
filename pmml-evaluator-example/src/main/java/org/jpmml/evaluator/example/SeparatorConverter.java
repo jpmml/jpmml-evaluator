@@ -21,24 +21,29 @@ package org.jpmml.evaluator.example;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.converters.BaseConverter;
 
-public class SeparatorConverter extends BaseConverter<String> {
+public class SeparatorConverter extends BaseConverter<Character> {
 
 	public SeparatorConverter(String optionName){
 		super(optionName);
 	}
 
 	@Override
-	public String convert(String value){
+	public Character convert(String value){
 
 		try {
-			return unescape(value);
+			String unescapedValue = unescape(value);
+			if(unescapedValue.length() != 1){
+				throw new IllegalArgumentException();
+			}
+
+			return unescapedValue.charAt(0);
 		} catch(IllegalArgumentException iae){
 			throw new ParameterException(getErrorString(value, "a Java-style escaped string"));
 		}
 	}
 
 	static
-	public String unescape(String string){
+	private String unescape(String string){
 		StringBuilder sb = new StringBuilder();
 
 		boolean escaped = false;
@@ -73,10 +78,6 @@ public class SeparatorConverter extends BaseConverter<String> {
 		}
 
 		if(escaped){
-			throw new IllegalArgumentException();
-		} // End if
-
-		if(sb.length() == 0){
 			throw new IllegalArgumentException();
 		}
 

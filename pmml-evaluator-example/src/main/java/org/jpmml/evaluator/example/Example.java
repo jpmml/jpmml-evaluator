@@ -135,10 +135,10 @@ public class Example {
 	}
 
 	static
-	public Table readTable(File file, String separator) throws IOException {
+	public Table readTable(File file, char separator) throws IOException {
 		CsvReader.CsvReaderBuilder csvReaderBuilder = CsvReader.builder()
 			.ignoreDifferentFieldCount(false)
-			.fieldSeparator(separator.charAt(0));
+			.fieldSeparator(separator);
 
 		TableReader tableReader = new TableReader(csvReaderBuilder);
 
@@ -148,10 +148,10 @@ public class Example {
 	}
 
 	static
-	public void writeTable(Table table, File file, String separator) throws IOException {
+	public void writeTable(Table table, File file, char separator) throws IOException {
 		CsvWriter.CsvWriterBuilder csvWriterBuilder = CsvWriter.builder()
 			.lineDelimiter(LineDelimiter.PLATFORM)
-			.fieldSeparator(separator.charAt(0));
+			.fieldSeparator(separator);
 
 		TableWriter tableWriter = new TableWriter(csvWriterBuilder);
 

@@ -80,7 +80,7 @@ public class TestingExample extends Example {
 	@ParameterOrder (
 		value = 4
 	)
-	private String separator = null;
+	private char separator = ',';
 
 	@Parameter (
 		names = {"--missing-values"},

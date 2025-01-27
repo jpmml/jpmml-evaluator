@@ -116,7 +116,7 @@ public class EvaluationExample extends Example {
 	@ParameterOrder (
 		value = 5
 	)
-	private String separator = null;
+	private char separator = ',';
 
 	@Parameter (
 		names = {"--missing-values"},
