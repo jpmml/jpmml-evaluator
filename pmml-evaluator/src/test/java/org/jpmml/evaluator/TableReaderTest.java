@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
@@ -26,10 +27,12 @@ import java.util.Map;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import de.siegmar.fastcsv.reader.CsvReader;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class TableReaderTest {
 
@@ -75,6 +78,33 @@ public class TableReaderTest {
 
 		assertNotEquals(expectedTable.getValues(), table.getValues());
 		assertEquals(expectedTable.getValues(), Maps.transformValues((Map)table.getValues(), function));
+	}
+
+	@Test
+	public void detectCsvReaderBuilder() throws IOException {
+		Reader reader = new StringReader("");
+
+		CsvReader.CsvReaderBuilder csvReaderBuilder = TableReader.detectCsvReaderBuilder(reader, 10);
+
+		assertNull(csvReaderBuilder);
+
+		reader = new StringReader(TableReaderTest.string);
+
+		csvReaderBuilder = TableReader.detectCsvReaderBuilder(reader, 10);
+
+		assertEquals(',', TableReader.getSeparator(csvReaderBuilder));
+
+		reader = new StringReader(TableReaderTest.string.replace(',', '\t'));
+
+		csvReaderBuilder = TableReader.detectCsvReaderBuilder(reader, 10);
+
+		assertEquals('\t', TableReader.getSeparator(csvReaderBuilder));
+
+		reader = new StringReader(TableReaderTest.string.replace(',', 'x'));
+
+		csvReaderBuilder = TableReader.detectCsvReaderBuilder(reader, 10);
+
+		assertNull(csvReaderBuilder);
 	}
 
 	protected static String string = "A,B,C" + System.lineSeparator()
