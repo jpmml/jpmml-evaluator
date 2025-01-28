@@ -87,7 +87,7 @@ import org.jpmml.evaluator.Vector;
 	value = {"org.jpmml.evaluator.Operation"}
 )
 @SupportedSourceVersion (
-	value = SourceVersion.RELEASE_8
+	value = SourceVersion.RELEASE_11
 )
 public class OperationProcessor extends AbstractProcessor {
 
