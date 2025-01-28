@@ -67,7 +67,7 @@ public class TableReader {
 		try(CsvReader<NamedCsvRecord> csvReader = csvReaderBuilder.ofNamedCsvRecord(safeReader)){
 			List<String> columns = null;
 
-			Table.Row row = table.new Row(0);
+			Table.Row row = table.createWriterRow(0);
 
 			for(Iterator<NamedCsvRecord> it = csvReader.iterator(); it.hasNext(); ){
 				NamedCsvRecord csvRecord = it.next();

@@ -130,6 +130,42 @@ public class Table {
 		return result;
 	}
 
+	/**
+	 * <p>
+	 * Creates a row that can advance till the end of the table, but not beyond it.
+	 * <p>
+	 *
+	 * @see Row#canAdvance()
+	 */
+	public Row createReaderRow(int origin){
+		return new Row(origin, getNumberOfRows());
+	}
+
+	/**
+	 * <p>
+	 * Creates a row that can advance within the specified range.
+	 * </p>
+	 *
+	 * @param origin The start line number.
+	 * @param fence The end line number, exclusive.
+	 *
+	 * @see Row#canAdvance()
+	 */
+	public Row createReaderRow(int origin, int fence){
+		return new Row(origin, fence);
+	}
+
+	/**
+	 * <p>
+	 * Creates a row that can advance indefinitely.
+	 * </p>
+	 *
+	 * @see Row#canAdvance()
+	 */
+	public Row createWriterRow(int origin){
+		return new Row(origin, -1);
+	}
+
 	@IgnoreJRERequirement
 	public TableSpliterator spliterator(){
 		return new TableSpliterator(this)
@@ -317,11 +353,7 @@ public class Table {
 		private int fence;
 
 
-		public Row(int origin){
-			this(origin, -1);
-		}
-
-		protected Row(int origin, int fence){
+		public Row(int origin, int fence){
 			setOrigin(origin);
 			setFence(fence);
 		}

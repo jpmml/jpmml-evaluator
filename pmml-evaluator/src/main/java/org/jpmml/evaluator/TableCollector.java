@@ -117,6 +117,6 @@ public class TableCollector implements Collector<Object, List<Object>, Table> {
 	}
 
 	protected Table.Row createFinisherRow(Table table){
-		return table.new Row(0);
+		return table.createWriterRow(0);
 	}
 }

@@ -39,8 +39,7 @@ public class TableSpliterator implements Spliterator<Table.Row> {
 	public TableSpliterator init(){
 		Table table = getTable();
 
-		Table.Row row = table.new Row(0, table.getNumberOfRows());
-		setRow(row);
+		setRow(table.createReaderRow(0));
 
 		return this;
 	}
@@ -48,8 +47,7 @@ public class TableSpliterator implements Spliterator<Table.Row> {
 	public TableSpliterator init(int origin, int fence){
 		Table table = getTable();
 
-		Table.Row row = table.new Row(origin, fence);
-		setRow(row);
+		setRow(table.createReaderRow(origin, fence));
 
 		return this;
 	}

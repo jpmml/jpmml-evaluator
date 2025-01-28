@@ -93,7 +93,7 @@ public class TableTest {
 		assertEquals(2, argumentsTable.getNumberOfColumns());
 		assertEquals(3, argumentsTable.getNumberOfRows());
 
-		Table.Row argumentRow = argumentsTable.new Row(0, argumentsTable.getNumberOfRows());
+		Table.Row argumentRow = argumentsTable.createReaderRow(0);
 
 		Table resultsTable = new Table(5);
 
@@ -104,7 +104,7 @@ public class TableTest {
 
 		assertFalse(resultsTable.hasExceptions());
 
-		Table.Row resultRow = resultsTable.new Row(0);
+		Table.Row resultRow = resultsTable.createWriterRow(0);
 
 		for(int i = 0; argumentRow.canAdvance(); i++){
 			resultRow.putAll(argumentRow);

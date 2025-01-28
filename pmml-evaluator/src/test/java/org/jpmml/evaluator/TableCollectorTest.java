@@ -113,7 +113,7 @@ public class TableCollectorTest {
 
 		assertTrue(table.hasExceptions());
 
-		Table.Row row = table.new Row(0, table.getNumberOfRows());
+		Table.Row row = table.createReaderRow(0);
 
 		for(int i = begin; i < end; i++){
 			assertEquals(3, row.size());

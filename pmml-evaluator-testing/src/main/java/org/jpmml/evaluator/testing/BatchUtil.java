@@ -95,9 +95,9 @@ public class BatchUtil {
 
 		List<Conflict> conflicts = new ArrayList<>();
 
-		Table.Row arguments = input.new Row(0);
-		Table.Row expectedResults = expectedOutput.new Row(0);
-		Table.Row actualResults = actualOutput.new Row(0);
+		Table.Row arguments = input.createReaderRow(0);
+		Table.Row expectedResults = expectedOutput.createReaderRow(0);
+		Table.Row actualResults = actualOutput.createReaderRow(0);
 
 		for(int i = 0, max = expectedOutput.getNumberOfRows(); i < max; i++){
 			Exception exception = actualResults.getException();
@@ -149,7 +149,7 @@ public class BatchUtil {
 
 		int i = 0;
 
-		Map<String, ?> arguments = input.new Row(i);
+		Map<String, ?> arguments = input.createReaderRow(i);
 		Map<String, ?> results;
 
 		try {
@@ -168,8 +168,8 @@ public class BatchUtil {
 
 		List<Conflict> conflicts = new ArrayList<>();
 
-		Table.Row expectedResults = expectedOutput.new Row(i);
-		Table.Row actualResults = actualOutput.new Row(i);
+		Table.Row expectedResults = expectedOutput.createReaderRow(i);
+		Table.Row actualResults = actualOutput.createReaderRow(i);
 
 		for(int j = 0, max = expectedOutput.getNumberOfRows(); j < max; j++){
 			MapDifference<String, Object> difference = filteredDifference(expectedResults, actualResults, columns, equivalence);

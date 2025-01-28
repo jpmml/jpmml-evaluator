@@ -64,7 +64,7 @@ public class TableWriter {
 
 			int numberOfRows = table.getNumberOfRows();
 			if(numberOfRows > 0){
-				Table.Row row = table.new Row(0);
+				Table.Row row = table.createWriterRow(0);
 
 				for(int i = 0; i < numberOfRows; i++){
 					Iterable<String> cells = (Iterable)row.values();
