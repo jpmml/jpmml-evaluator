@@ -490,11 +490,6 @@ Evaluating model `model.pmml` with data records from `input.csv`. The prediction
 java -cp target/pmml-evaluator-example-executable-1.7-SNAPSHOT.jar org.jpmml.evaluator.example.TestingExample --model model.pmml --input input.csv --expected-output expected-output.csv
 ```
 
-Enhancing model `model.pmml` with verification data records from `input_expected-output.csv`:
-```
-java -cp target/pmml-evaluator-example-executable-1.7-SNAPSHOT.jar org.jpmml.evaluator.example.EnhancementExample --model model.pmml --verification input_expected_output.csv
-```
-
 Getting help:
 ```
 java -cp target/pmml-evaluator-example-executable-1.7-SNAPSHOT.jar <application class name> --help
