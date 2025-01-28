@@ -245,17 +245,62 @@ public class EvaluationExample extends Example {
 			.convertDurationsTo(TimeUnit.MILLISECONDS)
 			.build();
 
-		Function<String, String> cellParser = createCellParser(!this.missingValues.isEmpty() ? new HashSet<>(this.missingValues) : null);
-
-		Table inputTable = readTable(this.input, this.separator);
-		inputTable.apply(cellParser);
-
-		List<String> inputColumns = inputTable.getColumns();
-
 		if(this.waitBeforeInit){
 			waitForUserInput();
 		}
 
+		Evaluator evaluator = loadModel();
+
+		// Perform self-testing
+		evaluator.verify();
+
+		Table inputTable = loadInput(evaluator);
+
+		if(this.waitBeforeLoop){
+			waitForUserInput();
+		}
+
+		Timer timer = new Timer(new SlidingWindowReservoir(this.loop));
+
+		metricRegistry.register("main", timer);
+
+		Table outputTable = new Table(0);
+
+		for(int i = 0; i < this.loop; i++){
+			Timer.Context context = timer.time();
+
+			try {
+				outputTable = evaluate(evaluator, inputTable);
+			} finally {
+				context.close();
+			}
+		}
+
+		if(this.waitAfterLoop){
+			waitForUserInput();
+		}
+
+		if(this.copyColumns && (inputTable.getNumberOfRows() == outputTable.getNumberOfRows())){
+			Map<String, List<?>> outputColumnValues = outputTable.getValues();
+
+			Collection<? extends Map.Entry<String, List<?>>> entries = outputColumnValues.entrySet();
+			for(Map.Entry<String, List<?>> entry : entries){
+				inputTable.setValues(entry.getKey(), entry.getValue());
+			}
+
+			outputTable = inputTable;
+		}
+
+		saveOutput(evaluator, outputTable);
+
+		if(this.loop > 1){
+			reporter.report();
+		}
+
+		reporter.close();
+	}
+
+	private Evaluator loadModel() throws Exception {
 		PMML pmml = readPMML(this.model, true);
 
 		if(this.cacheBuilderSpec != null){
@@ -326,8 +371,16 @@ public class EvaluationExample extends Example {
 
 		Evaluator evaluator = evaluatorBuilder.build();
 
-		// Perform self-testing
-		evaluator.verify();
+		return evaluator;
+	}
+
+	private Table loadInput(Evaluator evaluator) throws Exception {
+		Function<String, String> cellParser = createCellParser(!this.missingValues.isEmpty() ? new HashSet<>(this.missingValues) : null);
+
+		Table table = readTable(this.input, this.separator);
+		table.apply(cellParser);
+
+		List<String> inputColumns = table.getColumns();
 
 		List<InputField> inputFields = evaluator.getInputFields();
 		List<InputField> groupFields = Collections.emptyList();
@@ -353,19 +406,13 @@ public class EvaluationExample extends Example {
 		if(evaluator instanceof HasGroupFields){
 			HasGroupFields hasGroupFields = (HasGroupFields)evaluator;
 
-			inputTable = EvaluatorUtil.groupRows(hasGroupFields, inputTable);
+			table = EvaluatorUtil.groupRows(hasGroupFields, table);
 		}
 
-		Timer timer = new Timer(new SlidingWindowReservoir(this.loop));
+		return table;
+	}
 
-		metricRegistry.register("main", timer);
-
-		if(this.waitBeforeLoop){
-			waitForUserInput();
-		}
-
-		Table outputTable = new Table(0);
-
+	private Table evaluate(Evaluator evaluator, Table table){
 		Function<Table.Row, Object> function = new Function<Table.Row, Object>(){
 
 			@Override
@@ -386,51 +433,24 @@ public class EvaluationExample extends Example {
 			}
 		};
 
-		for(int i = 0; i < this.loop; i++){
-			Timer.Context context = timer.time();
+		return table.stream()
+			.map(function)
+			.collect(new TableCollector());
+	}
 
-			try {
-				outputTable = inputTable.stream()
-					.map(function)
-					.collect(new TableCollector());
-			} finally {
-				context.close();
-			}
-		}
-
-		if(this.waitAfterLoop){
-			waitForUserInput();
-		} // End if
-
-		if(outputTable.hasExceptions()){
-
-			if(this.errorColumn != null){
-				outputTable.setValues(this.errorColumn, outputTable.getExceptions());
-			}
-		} // End if
-
-		if((inputTable.getNumberOfRows() == outputTable.getNumberOfRows()) && this.copyColumns){
-			Map<String, List<?>> outputColumnValues = outputTable.getValues();
-
-			Collection<? extends Map.Entry<String, List<?>>> entries = outputColumnValues.entrySet();
-			for(Map.Entry<String, List<?>> entry : entries){
-				inputTable.setValues(entry.getKey(), entry.getValue());
-			}
-
-			outputTable = inputTable;
-		}
-
+	private void saveOutput(Evaluator evaluator, Table table) throws Exception {
 		Function<Object, String> cellFormatter = createCellFormatter(!this.missingValues.isEmpty() ? this.missingValues.get(0) : null);
 
-		outputTable.apply(cellFormatter);
+		if(table.hasExceptions()){
 
-		writeTable(outputTable, this.output, this.separator);
-
-		if(this.loop > 1){
-			reporter.report();
+			if(this.errorColumn != null){
+				table.setValues(this.errorColumn, table.getExceptions());
+			}
 		}
 
-		reporter.close();
+		table.apply(cellFormatter);
+
+		writeTable(table, this.output, this.separator);
 	}
 
 	static
