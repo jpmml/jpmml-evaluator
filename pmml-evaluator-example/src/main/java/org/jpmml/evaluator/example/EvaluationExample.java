@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -123,17 +125,24 @@ public class EvaluationExample extends Example {
 	private boolean sparse = false;
 
 	@Parameter (
+		names = {"--parallelism"},
+		description = "The parallelism level of the main evaluation loop",
+		order = 8
+	)
+	private int parallelism = -1;
+
+	@Parameter (
 		names = {"--catch-errors"},
 		description = "Catch and process evaluation errors. If true, the main evaluation loop will run till completion",
 		arity = 1,
-		order = 8
+		order = 9
 	)
 	private boolean catchErrors = false;
 
 	@Parameter (
 		names = {"--error-column"},
 		description = "The name of error column. This column is appended to output CSV file only in case of evaluation errors",
-		order = 9
+		order = 10
 	)
 	private String errorColumn = "_error";
 
@@ -141,7 +150,7 @@ public class EvaluationExample extends Example {
 		names = {"--copy-columns"},
 		description = "Copy all columns from input CSV file to output CSV file",
 		arity = 1,
-		order = 10
+		order = 11
 	)
 	private boolean copyColumns = false;
 
@@ -264,17 +273,35 @@ public class EvaluationExample extends Example {
 
 		metricRegistry.register("main", timer);
 
+		ForkJoinPool forkJoinPool;
+
+		if(this.parallelism == -1){
+			forkJoinPool = ForkJoinPool.commonPool();
+		} else
+
+		if(this.parallelism == 1){
+			forkJoinPool = null;
+		} else
+
+		{
+			forkJoinPool = new ForkJoinPool(this.parallelism);
+		}
+
 		Table outputTable = new Table(0);
 
 		for(int i = 0; i < this.loop; i++){
 			Timer.Context context = timer.time();
 
 			try {
-				outputTable = evaluate(evaluator, inputTable);
+				outputTable = evaluate(evaluator, forkJoinPool, inputTable);
 			} finally {
 				context.close();
 			}
 		}
+
+		if(forkJoinPool != null && forkJoinPool != ForkJoinPool.commonPool()){
+			forkJoinPool.shutdown();
+		} // End if
 
 		if(this.waitAfterLoop){
 			waitForUserInput();
@@ -412,7 +439,7 @@ public class EvaluationExample extends Example {
 		return table;
 	}
 
-	private Table evaluate(Evaluator evaluator, Table table){
+	private Table evaluate(Evaluator evaluator, ForkJoinPool forkJoinPool, Table table){
 		Function<Table.Row, Object> function = new Function<Table.Row, Object>(){
 
 			@Override
@@ -433,9 +460,23 @@ public class EvaluationExample extends Example {
 			}
 		};
 
-		return table.stream()
-			.map(function)
-			.collect(new TableCollector());
+		// Parallel evaluation
+		if(forkJoinPool != null){
+			ForkJoinTask<Table> forkJoinTask = ForkJoinTask.adapt(() -> {
+				return table.parallelStream()
+					.map(function)
+					.collect(new TableCollector());
+			});
+
+			return forkJoinPool.invoke(forkJoinTask);
+		} else
+
+		// Serial evaluation
+		{
+			return table.stream()
+				.map(function)
+				.collect(new TableCollector());
+		}
 	}
 
 	private void saveOutput(Evaluator evaluator, Table table) throws Exception {
