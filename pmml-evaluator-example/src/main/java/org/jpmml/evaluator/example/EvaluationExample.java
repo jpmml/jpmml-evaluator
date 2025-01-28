@@ -72,98 +72,78 @@ public class EvaluationExample extends Example {
 	@Parameter (
 		names = {"--model"},
 		description = "Model PMML file",
-		required = true
-	)
-	@ParameterOrder (
-		value = 1
+		required = true,
+		order = 1
 	)
 	private File model = null;
 
 	@Parameter (
 		names = {"--input"},
 		description = "Input CSV file",
-		required = true
-	)
-	@ParameterOrder (
-		value = 2
+		required = true,
+		order = 2
 	)
 	private File input = null;
 
 	@Parameter (
 		names = {"--output"},
 		description = "Output CSV file",
-		required = true
-	)
-	@ParameterOrder (
-		value = 3
+		required = true,
+		order = 3
 	)
 	private File output = null;
 
 	@Parameter (
 		names = {"--name"},
-		description = "The name of the target model in a multi-model PMML file. If missing, the first model is targeted"
-	)
-	@ParameterOrder (
-		value = 4
+		description = "The name of the target model in a multi-model PMML file. If missing, the first model is targeted",
+		order = 4
 	)
 	private String modelName = null;
 
 	@Parameter (
 		names = {"--separator"},
 		description = "CSV cell separator character",
-		converter = SeparatorConverter.class
-	)
-	@ParameterOrder (
-		value = 5
+		converter = SeparatorConverter.class,
+		order = 5
 	)
 	private char separator = ',';
 
 	@Parameter (
 		names = {"--missing-values"},
-		description = "CSV missing value strings"
-	)
-	@ParameterOrder (
-		value = 6
+		description = "CSV missing value strings",
+		order = 6
 	)
 	private List<String> missingValues = Arrays.asList("N/A", "NA");
 
 	@Parameter (
 		names = {"--sparse"},
-		description = "Permit missing input field columns"
-	)
-	@ParameterOrder (
-		value = 7
+		description = "Permit missing input field columns",
+		order = 7
 	)
 	private boolean sparse = false;
 
 	@Parameter (
 		names = {"--catch-errors"},
 		description = "Catch and process evaluation errors. If true, the main evaluation loop will run till completion",
-		arity = 1
-	)
-	@ParameterOrder (
-		value = 8
+		arity = 1,
+		order = 8
 	)
 	private boolean catchErrors = false;
 
 	@Parameter (
-		names = {"--copy-columns"},
-		description = "Copy all columns from input CSV file to output CSV file",
-		arity = 1
-	)
-	@ParameterOrder (
-		value = 9
-	)
-	private boolean copyColumns = true;
-
-	@Parameter (
 		names = {"--error-column"},
-		description = "The name of error column. This column is appended to output CSV file only in case of evaluation errors"
-	)
-	@ParameterOrder (
-		value = 10
+		description = "The name of error column. This column is appended to output CSV file only in case of evaluation errors",
+		order = 9
 	)
 	private String errorColumn = "_error";
+
+	@Parameter (
+		names = {"--copy-columns"},
+		description = "Copy all columns from input CSV file to output CSV file",
+		arity = 1,
+		order = 10
+	)
+	private boolean copyColumns = false;
 
 	@Parameter (
 		names = {"--wait-before-init"},

@@ -45,76 +45,60 @@ public class TestingExample extends Example {
 	@Parameter (
 		names = {"--model"},
 		description = "Model PMML file",
-		required = true
-	)
-	@ParameterOrder (
-		value = 1
+		required = true,
+		order = 1
 	)
 	private File model = null;
 
 	@Parameter (
 		names = {"--input"},
 		description = "Input CSV file",
-		required = true
-	)
-	@ParameterOrder (
-		value = 2
+		required = true,
+		order = 2
 	)
 	private File input = null;
 
 	@Parameter (
 		names = {"--expected-output"},
 		description = "Expected output CSV file",
-		required = true
-	)
-	@ParameterOrder (
-		value = 3
+		required = true,
+		order = 3
 	)
 	private File output = null;
 
 	@Parameter (
 		names = {"--separator"},
 		description = "CSV cell separator character",
-		converter = SeparatorConverter.class
-	)
-	@ParameterOrder (
-		value = 4
+		converter = SeparatorConverter.class,
+		order = 4
 	)
 	private char separator = ',';
 
 	@Parameter (
 		names = {"--missing-values"},
-		description = "CSV missing value strings"
-	)
-	@ParameterOrder (
-		value = 5
+		description = "CSV missing value strings",
+		order = 5
 	)
 	private List<String> missingValues = Arrays.asList("N/A", "NA");
 
 	@Parameter (
 		names = {"--ignored-fields"},
-		description = "Ignored Model fields"
-	)
-	@ParameterOrder (
-		value = 6
+		description = "Ignored Model fields",
+		order = 6
 	)
 	private List<String> ignoredFields = new ArrayList<>();
 
 	@Parameter (
 		names = {"--precision"},
-		description = "Relative error"
-	)
-	@ParameterOrder (
-		value = 7
+		description = "Relative error",
+		order = 7
 	)
 	private double precision = 1e-9;
 
 	@Parameter (
 		names = {"--zero-threshold"},
-		description = "Absolute error near zero"
-	)
-	@ParameterOrder (
-		value = 8
+		description = "Absolute error near zero",
+		order = 8
 	)
 	private double zeroThreshold = 1e-9;
 

@@ -50,10 +50,8 @@ public class Example {
 	@Parameter (
 		names = {"--help"},
 		description = "Show the list of configuration options and exit",
-		help = true
-	)
-	@ParameterOrder (
-		value = Integer.MAX_VALUE
+		help = true,
+		order = Integer.MAX_VALUE
 	)
 	private boolean help = false;
 
@@ -69,7 +67,6 @@ public class Example {
 
 		JCommander commander = new JCommander(example);
 		commander.setProgramName(clazz.getName());
-		commander.setParameterDescriptionComparator(new ParameterOrderComparator());
 
 		IUsageFormatter usageFormatter = new DefaultUsageFormatter(commander);
 
