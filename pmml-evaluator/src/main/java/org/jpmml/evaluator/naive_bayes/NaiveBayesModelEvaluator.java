@@ -120,7 +120,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		}
 
 		// Probability calculations use logarithmic scale for greater numerical stability
-		ProbabilityMap<Object, V> probabilities = new ProbabilityMap<Object, V>(){
+		ProbabilityMap<Object, V> probabilities = new ProbabilityMap<>(){
 
 			@Override
 			public ValueFactory<V> getValueFactory(){

@@ -82,7 +82,7 @@ public class ArchiveBatch implements Batch {
 			table = tableReader.read(is);
 		}
 
-		Function<String, String> function = new Function<String, String>(){
+		Function<String, String> function = new Function<>(){
 
 			@Override
 			public String apply(String string){

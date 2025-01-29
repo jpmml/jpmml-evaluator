@@ -157,7 +157,7 @@ public class Example {
 
 	static
 	public Function<String, String> createCellParser(Collection<String> missingValues){
-		Function<String, String> function = new Function<String, String>(){
+		Function<String, String> function = new Function<>(){
 
 			@Override
 			public String apply(String string){
@@ -188,7 +188,7 @@ public class Example {
 
 	static
 	public Function<Object, String> createCellFormatter(String missingValue){
-		Function<Object, String> function = new Function<Object, String>(){
+		Function<Object, String> function = new Function<>(){
 
 			@Override
 			public String apply(Object object){

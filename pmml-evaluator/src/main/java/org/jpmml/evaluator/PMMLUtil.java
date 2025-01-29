@@ -37,7 +37,7 @@ public class PMMLUtil {
 		Model model;
 
 		if(modelName != null){
-			Predicate<Model> predicate = new Predicate<Model>(){
+			Predicate<Model> predicate = new Predicate<>(){
 
 				@Override
 				public boolean apply(Model model){
@@ -49,7 +49,7 @@ public class PMMLUtil {
 		} else
 
 		{
-			Predicate<Model> predicate = new Predicate<Model>(){
+			Predicate<Model> predicate = new Predicate<>(){
 
 				@Override
 				public boolean apply(Model model){
@@ -65,7 +65,7 @@ public class PMMLUtil {
 
 	static
 	public <M extends Model> M findModel(PMML pmml, Class<? extends M> clazz){
-		Predicate<Model> predicate = new Predicate<Model>(){
+		Predicate<Model> predicate = new Predicate<>(){
 
 			@Override
 			public boolean apply(Model model){

@@ -236,7 +236,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 				throw new InvalidElementException(neuralNetwork);
 			}
 
-			NeuronProbabilityDistribution<V> result = new NeuronProbabilityDistribution<V>(new ValueMap<>(2 * neuralOutputs.size())){
+			NeuronProbabilityDistribution<V> result = new NeuronProbabilityDistribution<>(new ValueMap<>(2 * neuralOutputs.size())){
 
 				@Override
 				public BiMap<String, NeuralEntity> getEntityRegistry(){

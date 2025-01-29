@@ -55,7 +55,7 @@ public class LoadingModelEvaluatorBuilderTest {
 		assertDoesNotThrow(() -> modelEvaluatorBuilder.load(createResource(null)));
 
 		// Identity transformation
-		PMMLTransformer<RuntimeException> transformer = new PMMLTransformer<RuntimeException>(){
+		PMMLTransformer<RuntimeException> transformer = new PMMLTransformer<>(){
 
 			@Override
 			public PMML apply(PMML pmml){
@@ -68,7 +68,7 @@ public class LoadingModelEvaluatorBuilderTest {
 		ModelEvaluator<?> modelEvaluator = modelEvaluatorBuilder.build();
 
 		// Custom transformation, with the possibility of a checked exception to be thrown
-		PMMLTransformer<TranslationException> javaTransformer = new PMMLTransformer<TranslationException>(){
+		PMMLTransformer<TranslationException> javaTransformer = new PMMLTransformer<>(){
 
 			@Override
 			public PMML apply(PMML pmml) throws TranslationException {

@@ -95,7 +95,7 @@ public class PMMLManager implements HasPMML, Serializable {
 
 	static
 	protected <K, V> Map<K, ? extends List<V>> toImmutableListMap(Map<K, List<V>> map){
-		Function<List<V>, ImmutableList<V>> function = new Function<List<V>, ImmutableList<V>>(){
+		Function<List<V>, ImmutableList<V>> function = new Function<>(){
 
 			@Override
 			public ImmutableList<V> apply(List<V> list){
@@ -108,7 +108,7 @@ public class PMMLManager implements HasPMML, Serializable {
 
 	static
 	protected <K, V> Map<K, ? extends Set<V>> toImmutableSetMap(Map<K, Set<V>> map){
-		Function<Set<V>, ImmutableSet<V>> function = new Function<Set<V>, ImmutableSet<V>>(){
+		Function<Set<V>, ImmutableSet<V>> function = new Function<>(){
 
 			@Override
 			public ImmutableSet<V> apply(Set<V> set){
@@ -128,7 +128,7 @@ public class PMMLManager implements HasPMML, Serializable {
 
 	static
 	protected <K1, K2, V2> Map<K1, ? extends Map<K2, V2>> toImmutableMapMap(Map<K1, Map<K2, V2>> map){
-		Function<Map<K2, V2>, ImmutableMap<K2, V2>> function = new Function<Map<K2, V2>, ImmutableMap<K2, V2>>(){
+		Function<Map<K2, V2>, ImmutableMap<K2, V2>> function = new Function<>(){
 
 			@Override
 			public ImmutableMap<K2, V2> apply(Map<K2, V2> map){

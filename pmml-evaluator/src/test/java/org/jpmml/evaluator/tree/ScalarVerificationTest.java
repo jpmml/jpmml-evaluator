@@ -89,7 +89,7 @@ public class ScalarVerificationTest extends ModelEvaluatorTest {
 	private PMML updateFields(PMML pmml){
 		Set<String> activeFieldNames = ActiveFieldFinder.getFieldNames(pmml);
 
-		Map<String, String> mappings = new AbstractMap<String, String>(){
+		Map<String, String> mappings = new AbstractMap<>(){
 
 			@Override
 			public String get(Object key){

@@ -177,7 +177,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 		nearestInstanceResults = nearestInstanceResults.subList(0, numberOfNeighbors);
 
-		Function<Integer, String> function = new Function<Integer, String>(){
+		Function<Integer, String> function = new Function<>(){
 
 			@Override
 			public String apply(Integer row){
@@ -430,7 +430,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	private Function<Integer, String> createIdentifierResolver(String name, Table<Integer, String, FieldValue> table){
-		Function<Integer, String> function = new Function<Integer, String>(){
+		Function<Integer, String> function = new Function<>(){
 
 			@Override
 			public String apply(Integer row){
@@ -498,7 +498,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 			} else
 
 			if(measure instanceof Similarity){
-				Function<List<FieldValue>, BitSet> function = new Function<List<FieldValue>, BitSet>(){
+				Function<List<FieldValue>, BitSet> function = new Function<>(){
 
 					@Override
 					public BitSet apply(List<FieldValue> values){

@@ -151,7 +151,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				values = new ValueMap<>(2 * supportVectorMachines.size());
 				break;
 			case ONE_AGAINST_ONE:
-				values = new VoteMap<Object, V>(2 * supportVectorMachines.size()){
+				values = new VoteMap<>(2 * supportVectorMachines.size()){
 
 					@Override
 					public ValueFactory<V> getValueFactory(){

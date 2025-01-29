@@ -440,7 +440,7 @@ public class EvaluationExample extends Example {
 	}
 
 	private Table evaluate(Evaluator evaluator, ForkJoinPool forkJoinPool, Table table){
-		Function<Table.Row, Object> function = new Function<Table.Row, Object>(){
+		Function<Table.Row, Object> function = new Function<>(){
 
 			@Override
 			public Object apply(Table.Row arguments){

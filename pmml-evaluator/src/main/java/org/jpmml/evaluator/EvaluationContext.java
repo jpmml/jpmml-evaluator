@@ -179,7 +179,7 @@ public class EvaluationContext {
 		}
 	};
 
-	public static final ThreadLocal<SymbolTable<String>> DERIVEDFIELD_GUARD_PROVIDER = new ThreadLocal<SymbolTable<String>>(){
+	public static final ThreadLocal<SymbolTable<String>> DERIVEDFIELD_GUARD_PROVIDER = new ThreadLocal<>(){
 
 		@Override
 		public SymbolTable<String> initialValue(){
@@ -187,7 +187,7 @@ public class EvaluationContext {
 		}
 	};
 
-	public static final ThreadLocal<SymbolTable<String>> FUNCTION_GUARD_PROVIDER = new ThreadLocal<SymbolTable<String>>(){
+	public static final ThreadLocal<SymbolTable<String>> FUNCTION_GUARD_PROVIDER = new ThreadLocal<>(){
 
 		@Override
 		public SymbolTable<String> initialValue(){

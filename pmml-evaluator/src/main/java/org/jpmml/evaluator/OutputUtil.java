@@ -765,7 +765,7 @@ public class OutputUtil {
 				throw new UnsupportedAttributeException(outputField, algorithm);
 		}
 
-		Comparator<AssociationRule> comparator = new Comparator<AssociationRule>(){
+		Comparator<AssociationRule> comparator = new Comparator<>(){
 
 			private OutputField.RankBasis rankBasis = outputField.getRankBasis();
 

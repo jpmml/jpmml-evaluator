@@ -591,7 +591,7 @@ public class TextUtil {
 
 	private static final Cache<TextIndex, Cache<String, TokenizedString>> textTokenCaches = CacheUtil.buildCache();
 
-	private static final Callable<Cache<String, TokenizedString>> textTokenCacheLoader = new Callable<Cache<String, TokenizedString>>(){
+	private static final Callable<Cache<String, TokenizedString>> textTokenCacheLoader = new Callable<>(){
 
 		@Override
 		public Cache<String, TokenizedString> call(){
@@ -601,7 +601,7 @@ public class TextUtil {
 
 	private static final Cache<TextIndex, Cache<String, TokenizedString>> termTokenCaches = CacheUtil.buildCache();
 
-	private static final Callable<Cache<String, TokenizedString>> termTokenCacheLoader = new Callable<Cache<String, TokenizedString>>(){
+	private static final Callable<Cache<String, TokenizedString>> termTokenCacheLoader = new Callable<>(){
 
 		@Override
 		public Cache<String, TokenizedString> call(){

@@ -26,7 +26,7 @@ import java.util.function.Predicate;
 
 import org.jpmml.evaluator.ResultField;
 
-import static org.junit.jupiter.api.Assertions.fail;;
+import static org.junit.jupiter.api.Assertions.fail;
 
 abstract
 public class BatchTest {
@@ -60,7 +60,7 @@ public class BatchTest {
 
 	static
 	public Predicate<ResultField> excludeFields(Collection<String> names){
-		Predicate<ResultField> columnFilter = new Predicate<ResultField>(){
+		Predicate<ResultField> columnFilter = new Predicate<>(){
 
 			@Override
 			public boolean test(ResultField resultField){

@@ -70,7 +70,7 @@ public class BatchUtil {
 
 		Equivalence<Object> equivalence = batch.getEquivalence();
 
-		Function<Table.Row, Object> function = new Function<Table.Row, Object>(){
+		Function<Table.Row, Object> function = new Function<>(){
 
 			@Override
 			public Object apply(Table.Row arguments){

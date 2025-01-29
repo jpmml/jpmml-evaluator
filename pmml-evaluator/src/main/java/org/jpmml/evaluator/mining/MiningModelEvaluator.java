@@ -294,7 +294,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 					value = TargetUtil.evaluateRegressionInternal(targetField, value);
 
-					result = new AggregateScore<V>(value){
+					result = new AggregateScore<>(value){
 
 						@Override
 						public Collection<? extends SegmentResult> getSegmentResults(){
@@ -380,7 +380,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 					// Convert from votes to probabilities
 					ValueUtil.normalizeSimpleMax(values);
 
-					result = new AggregateProbabilityDistribution<V>(values){
+					result = new AggregateProbabilityDistribution<>(values){
 
 						@Override
 						public Collection<? extends SegmentResult> getSegmentResults(){
@@ -404,7 +404,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 						return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 					}
 
-					result = new AggregateProbabilityDistribution<V>(values){
+					result = new AggregateProbabilityDistribution<>(values){
 
 						@Override
 						public Collection<? extends SegmentResult> getSegmentResults(){
@@ -484,7 +484,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 						return Collections.singletonMap(getTargetName(), null);
 					}
 
-					result = new AggregateVoteDistribution<V>(values){
+					result = new AggregateVoteDistribution<>(values){
 
 						@Override
 						public Collection<? extends SegmentResult> getSegmentResults(){
@@ -758,7 +758,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 							{
 								if(!(names).equals(resultNames)){
-									Function<String, String> function = new Function<String, String>(){
+									Function<String, String> function = new Function<>(){
 
 										@Override
 										public String apply(String name){

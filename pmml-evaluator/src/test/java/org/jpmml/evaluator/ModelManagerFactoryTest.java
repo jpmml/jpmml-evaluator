@@ -39,7 +39,7 @@ public class ModelManagerFactoryTest {
 
 	@Test
 	public void newModelManager(){
-		ModelManagerFactory<TreeModelManager> modelManagerFactory = new ModelManagerFactory<TreeModelManager>(TreeModelManager.class){
+		ModelManagerFactory<TreeModelManager> modelManagerFactory = new ModelManagerFactory<>(TreeModelManager.class){
 
 			@Override
 			public List<Class<? extends TreeModelManager>> getServiceProviderClasses(Class<? extends Model> modelClazz){

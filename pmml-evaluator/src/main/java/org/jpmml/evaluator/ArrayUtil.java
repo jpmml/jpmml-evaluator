@@ -105,7 +105,7 @@ public class ArrayUtil {
 		if(value instanceof List){
 			List<?> list = (List<?>)value;
 
-			Function<Object, String> function = new Function<Object, String>(){
+			Function<Object, String> function = new Function<>(){
 
 				@Override
 				public String apply(Object value){
@@ -119,7 +119,7 @@ public class ArrayUtil {
 		if(value instanceof Set){
 			Set<?> set = (Set<?>)value;
 
-			Function<Object, String> function = new Function<Object, String>(){
+			Function<Object, String> function = new Function<>(){
 
 				@Override
 				public String apply(Object value){

@@ -458,7 +458,7 @@ public class MatrixUtil {
 		throw new InvalidElementException(matrix);
 	}
 
-	private static final Comparator<MatCell> rowComparator = new Comparator<MatCell>(){
+	private static final Comparator<MatCell> rowComparator = new Comparator<>(){
 
 		@Override
 		public int compare(MatCell left, MatCell right){
@@ -466,7 +466,7 @@ public class MatrixUtil {
 		}
 	};
 
-	private static final Comparator<MatCell> columnComparator = new Comparator<MatCell>(){
+	private static final Comparator<MatCell> columnComparator = new Comparator<>(){
 
 		@Override
 		public int compare(MatCell left, MatCell right){

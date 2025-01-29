@@ -57,7 +57,7 @@ public class RichComplexArray extends ComplexArray implements SetHolder {
 	public RichComplexArray setValue(Set<?> values){
 		DataType dataType = getDataType();
 
-		Function<Object, Object> function = new Function<Object, Object>(){
+		Function<Object, Object> function = new Function<>(){
 
 			@Override
 			public Object apply(Object value){

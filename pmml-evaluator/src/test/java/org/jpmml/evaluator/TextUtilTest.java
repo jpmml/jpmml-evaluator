@@ -230,7 +230,7 @@ public class TextUtilTest {
 	@Test
 	public void termFrequencyTable(){
 		TokenizedString textTokens = new TokenizedString("a", "b", "A", "c");
-		Set<TokenizedString> termTokenSet = new HashSet<TokenizedString>(){
+		Set<TokenizedString> termTokenSet = new HashSet<>(){
 
 			{
 				add(new TokenizedString("a"));

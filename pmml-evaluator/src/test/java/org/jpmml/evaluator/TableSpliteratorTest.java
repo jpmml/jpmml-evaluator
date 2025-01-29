@@ -80,7 +80,7 @@ public class TableSpliteratorTest {
 		for(int i = start; i <= end; i++){
 			int index = i;
 
-			Consumer<Table.Row> action = new Consumer<Table.Row>(){
+			Consumer<Table.Row> action = new Consumer<>(){
 
 				@Override
 				public void accept(Table.Row row){
@@ -101,7 +101,7 @@ public class TableSpliteratorTest {
 
 	static
 	private void checkRemainingValues(Spliterator<Table.Row> spliterator, int start){
-		Consumer<Table.Row> action = new Consumer<Table.Row>(){
+		Consumer<Table.Row> action = new Consumer<>(){
 
 			private int index = start;
 

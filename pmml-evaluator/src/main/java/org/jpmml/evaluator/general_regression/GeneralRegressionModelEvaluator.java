@@ -201,7 +201,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 			maxTime = baseCumHazardTables.requireMaxTime();
 		}
 
-		Comparator<BaselineCell> comparator = new Comparator<BaselineCell>(){
+		Comparator<BaselineCell> comparator = new Comparator<>(){
 
 			@Override
 			public int compare(BaselineCell left, BaselineCell right){
@@ -233,7 +233,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 		Number time = value.asNumber();
 
 		// "Select the BaselineCell element that has the largest time attribute value that is not greater than the value"
-		Predicate<BaselineCell> predicate = new Predicate<BaselineCell>(){
+		Predicate<BaselineCell> predicate = new Predicate<>(){
 
 			@Override
 			public boolean apply(BaselineCell baselineCell){
@@ -716,7 +716,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 					Map<?, List<PCell>> paramMatrixMap = getParamMatrixMap();
 
 					// "The reference category is the one from DataDictionary that does not appear in the ParamMatrix"
-					Predicate<Object> predicate = new Predicate<Object>(){
+					Predicate<Object> predicate = new Predicate<>(){
 
 						@Override
 						public boolean apply(Object targetCategory){
@@ -847,7 +847,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 
 	static
 	private Map<Object, Map<String, Row>> parsePPMatrix(PPMatrix ppMatrix, BiMap<String, Predictor> factors, BiMap<String, Predictor> covariates){
-		Function<List<PPCell>, Row> function = new Function<List<PPCell>, Row>(){
+		Function<List<PPCell>, Row> function = new Function<>(){
 
 			@Override
 			public Row apply(List<PPCell> ppCells){

@@ -169,7 +169,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			throw new IllegalStateException();
 		}
 
-		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
+		Function<Vector<V>, Value<V>> function = new Function<>(){
 
 			private int size = ProbabilityAggregator.this.size;
 
@@ -194,7 +194,7 @@ public class ProbabilityAggregator<V extends Number> extends KeyValueAggregator<
 			throw new IllegalStateException();
 		}
 
-		Function<Vector<V>, Value<V>> function = new Function<Vector<V>, Value<V>>(){
+		Function<Vector<V>, Value<V>> function = new Function<>(){
 
 			private Value<V> weightSum = ProbabilityAggregator.this.weights.sum();
 

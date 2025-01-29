@@ -67,7 +67,7 @@ public class SparseArrayUtil {
 
 		E defaultValue = sparseArray.getDefaultValue();
 
-		List<E> result = new AbstractList<E>(){
+		List<E> result = new AbstractList<>(){
 
 			@Override
 			public int size(){

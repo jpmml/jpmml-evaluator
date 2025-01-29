@@ -275,7 +275,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 
 		value = TargetUtil.evaluateRegressionInternal(targetField, value);
 
-		NodeScore<V> result = new NodeScore<V>(value, node){
+		NodeScore<V> result = new NodeScore<>(value, node){
 
 			@Override
 			public BiMap<String, Node> getEntityRegistry(){
@@ -311,7 +311,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 	private <V extends Number> NodeScoreDistribution<V> createNodeScoreDistribution(ValueFactory<V> valueFactory, Node node, double missingValuePenalty){
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
 
-		NodeScoreDistribution<V> result = new NodeScoreDistribution<V>(new ValueMap<>(2 * scoreDistributions.size()), node){
+		NodeScoreDistribution<V> result = new NodeScoreDistribution<>(new ValueMap<>(2 * scoreDistributions.size()), node){
 
 			@Override
 			public BiMap<String, Node> getEntityRegistry(){

@@ -424,7 +424,7 @@ public class Table {
 		public Set<Map.Entry<String, Object>> entrySet(){
 			int origin = getOrigin();
 
-			Set<Map.Entry<String, Object>> result = new AbstractSet<Map.Entry<String, Object>>(){
+			Set<Map.Entry<String, Object>> result = new AbstractSet<>(){
 
 
 				@Override
@@ -438,7 +438,7 @@ public class Table {
 				public Iterator<Map.Entry<String, Object>> iterator(){
 					List<String> columns = getColumns();
 
-					Iterator<Map.Entry<String, Object>> result = new Iterator<Map.Entry<String, Object>>(){
+					Iterator<Map.Entry<String, Object>> result = new Iterator<>(){
 
 						private Iterator<String> it = columns.iterator();
 

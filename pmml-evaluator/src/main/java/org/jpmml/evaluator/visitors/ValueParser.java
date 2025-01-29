@@ -392,7 +392,7 @@ public class ValueParser extends AbstractParser {
 		STRICT,
 	}
 
-	public static final ThreadLocal<Mode> MODE_PROVIDER = new ThreadLocal<Mode>(){
+	public static final ThreadLocal<Mode> MODE_PROVIDER = new ThreadLocal<>(){
 
 		@Override
 		public Mode initialValue(){
