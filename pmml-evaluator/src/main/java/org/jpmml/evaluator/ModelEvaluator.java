@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -32,7 +31,6 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
-import com.google.common.collect.Table;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
@@ -162,14 +160,14 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		VerificationBatch batch = parseModelVerification(modelVerification);
 
-		List<? extends Map<String, ?>> records = batch.getRecords();
+		Table table = batch.getTable();
 
 		List<InputField> inputFields = getInputFields();
 
 		if(this instanceof HasGroupFields){
 			HasGroupFields hasGroupFields = (HasGroupFields)this;
 
-			records = EvaluatorUtil.groupRows(hasGroupFields, records);
+			table = EvaluatorUtil.groupRows(hasGroupFields, table);
 		}
 
 		List<TargetField> targetFields = getTargetFields();
@@ -179,7 +177,9 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		boolean disjoint = intersection.isEmpty();
 
-		for(Map<String, ?> record : records){
+		Table.Row record = table.createReaderRow(0);
+
+		for(int i = 0, max = table.getNumberOfRows(); i < max; i++){
 			Map<String, Object> arguments = new LinkedHashMap<>();
 
 			for(InputField inputField : inputFields){
@@ -229,6 +229,8 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 					verify(record.get(name), EvaluatorUtil.decode(results.get(name)), precision, zeroThreshold);
 				}
 			}
+
+			record.advance();
 		}
 
 		return this;
@@ -560,15 +562,14 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 		InlineTable inlineTable = modelVerification.requireInlineTable();
 
-		Table<Integer, String, Object> table = InlineTableUtil.getContent(inlineTable);
+		com.google.common.collect.Table<Integer, String, Object> content = InlineTableUtil.getContent(inlineTable);
 
-		List<Map<String, Object>> records = new ArrayList<>();
+		Table table = new Table(content.size());
 
-		Set<Integer> rowKeys = table.rowKeySet();
+		Table.Row row = table.createWriterRow(0);
+
+		Set<Integer> rowKeys = content.rowKeySet();
 		for(Integer rowKey : rowKeys){
-			Map<String, Object> row = table.row(rowKey);
-
-			Map<String, Object> record = new LinkedHashMap<>();
 
 			for(VerificationField verificationField : verificationFields){
 				String fieldName = verificationField.requireField();
@@ -578,22 +579,24 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 					column = fieldName;
 				} // End if
 
-				if(!row.containsKey(column)){
+				if(!content.contains(rowKey, column)){
 					continue;
 				}
 
-				record.put(fieldName, row.get(column));
+				Object value = content.get(rowKey, column);
+
+				row.put(fieldName, value);
 			}
 
-			records.add(record);
+			row.advance();
 		}
 
 		Integer recordCount = modelVerification.getRecordCount();
-		if(recordCount != null && recordCount != records.size()){
+		if(recordCount != null && recordCount != table.getNumberOfRows()){
 			throw new InvalidElementException(modelVerification);
 		}
 
-		result.setRecords(records);
+		result.setTable(table);
 
 		return result;
 	}
@@ -601,15 +604,15 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	static
 	private class VerificationBatch extends LinkedHashMap<String, VerificationField> {
 
-		private List<Map<String, Object>> records = null;
+		private Table table = null;
 
 
-		public List<Map<String, Object>> getRecords(){
-			return this.records;
+		public Table getTable(){
+			return this.table;
 		}
 
-		private void setRecords(List<Map<String, Object>> records){
-			this.records = records;
+		private void setTable(Table table){
+			this.table = table;
 		}
 	}
 }

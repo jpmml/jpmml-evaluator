@@ -34,14 +34,14 @@ import org.dmg.pmml.Model;
  * Aggregating data records:
  * <pre>{@code
  * Evaluator evaluator = ...;
- * List<? extends Map<String, ?>> preparedRecords = ...;
+ * Table table = ...;
  * if(evaluator instanceof HasGroupFields){
  *   HasGroupFields hasGroupFields = (HasGroupFields)evaluator;
- *   preparedRecords = EvaluatorUtil.groupRows(hasGroupFields, preparedRecords);
+ *   table = EvaluatorUtil.groupRows(hasGroupFields, table);
  * }
  * }</pre>
  *
- * @see EvaluatorUtil#groupRows(HasGroupFields, List)
+ * @see EvaluatorUtil#groupRows(HasGroupFields, Table)
  */
 public interface HasGroupFields extends HasInputFields {
 

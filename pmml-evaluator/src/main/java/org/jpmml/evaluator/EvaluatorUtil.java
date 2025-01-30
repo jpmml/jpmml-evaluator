@@ -99,11 +99,6 @@ public class EvaluatorUtil {
 
 	static
 	public Table groupRows(HasGroupFields hasGroupFields, Table table){
-		throw new UnsupportedOperationException();
-	}
-
-	static
-	public List<? extends Map<String, ?>> groupRows(HasGroupFields hasGroupFields, List<? extends Map<String, ?>> table){
 		List<InputField> groupFields = hasGroupFields.getGroupFields();
 
 		if(groupFields.size() == 1){
@@ -122,43 +117,52 @@ public class EvaluatorUtil {
 	}
 
 	static
-	public <K> List<Map<K, Object>> groupRows(K groupKey, List<? extends Map<K, ?>> table){
-		Map<Object, ListMultimap<K, Object>> groupedRows = new LinkedHashMap<>();
+	public Table groupRows(String groupColumn, Table table){
+		Map<Object, ListMultimap<String, Object>> groupedRows = new LinkedHashMap<>();
 
-		for(int i = 0; i < table.size(); i++){
-			Map<K, ?> row = table.get(i);
+		Table.Row row = table.createReaderRow(0);
 
-			Object groupValue = row.get(groupKey);
+		for(int i = 0, max = table.getNumberOfRows(); i < max; i++){
+			Object groupValue = row.get(groupColumn);
 
-			ListMultimap<K, Object> groupedRow = groupedRows.get(groupValue);
+			ListMultimap<String, Object> groupedRow = groupedRows.get(groupValue);
 			if(groupedRow == null){
 				groupedRow = ArrayListMultimap.create();
 
 				groupedRows.put(groupValue, groupedRow);
 			}
 
-			Collection<? extends Map.Entry<K, ?>> entries = row.entrySet();
-			for(Map.Entry<K, ?> entry : entries){
-				K key = entry.getKey();
+			Collection<? extends Map.Entry<String, ?>> entries = row.entrySet();
+			for(Map.Entry<String, ?> entry : entries){
+				String column = entry.getKey();
 				Object value = entry.getValue();
 
-				groupedRow.put(key, value);
+				if(value != null){
+					groupedRow.put(column, value);
+				}
 			}
+
+			row.advance();
 		}
 
-		List<Map<K, Object>> resultTable = new ArrayList<>(groupedRows.size());
+		Table groupedTable = new Table(groupedRows.size());
 
-		Collection<Map.Entry<Object, ListMultimap<K, Object>>> entries = groupedRows.entrySet();
-		for(Map.Entry<Object, ListMultimap<K, Object>> entry : entries){
-			Map<K, Object> resultRow = new LinkedHashMap<>();
-			resultRow.putAll(Multimaps.asMap(entry.getValue()));
+		row = groupedTable.createWriterRow(0);
 
-			// The value of the "group by" column is a single Object, not a Collection (ie. java.util.List) of Objects
-			resultRow.put(groupKey, entry.getKey());
+		Collection<Map.Entry<Object, ListMultimap<String, Object>>> entries = groupedRows.entrySet();
+		for(Map.Entry<Object, ListMultimap<String, Object>> entry : entries){
+			Object groupValue = entry.getKey();
+			ListMultimap<String, Object> groupedRow = entry.getValue();
 
-			resultTable.add(resultRow);
+			// Inserts all values as Lists
+			row.putAll(Multimaps.asMap(groupedRow));
+
+			// Re-insert the value of the "group by" column as a scalar (instead of a singleton List of a scalar)
+			row.put(groupColumn, groupValue);
+
+			row.advance();
 		}
 
-		return resultTable;
+		return groupedTable;
 	}
 }

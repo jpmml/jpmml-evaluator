@@ -18,12 +18,9 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
@@ -94,36 +91,31 @@ public class EvaluatorUtilTest {
 
 	@Test
 	public void groupRows(){
-		List<Map<String, Object>> table = new ArrayList<>();
-		table.add(createRow("1", "Cracker"));
-		table.add(createRow("2", "Cracker"));
-		table.add(createRow("1", "Coke"));
-		table.add(createRow("3", "Cracker"));
-		table.add(createRow("3", "Water"));
-		table.add(createRow("3", "Coke"));
-		table.add(createRow("2", "Water"));
+		Table table = new Table(5);
+		table.setValues("transaction", Arrays.asList("1", "2", "1", "3", "3", "3", "2"));
+		table.setValues("item", Arrays.asList("Cracker", "Cracker", "Coke", "Cracker", "Water", "Coke", "Water"));
 
-		table = EvaluatorUtil.groupRows("transaction", table);
+		assertEquals(7, table.getNumberOfRows());
+		assertEquals(2, table.getNumberOfColumns());
 
-		checkGroupedRow(table.get(0), "1", Arrays.asList("Cracker", "Coke"));
-		checkGroupedRow(table.get(1), "2", Arrays.asList("Cracker", "Water"));
-		checkGroupedRow(table.get(2), "3", Arrays.asList("Cracker", "Water", "Coke"));
-	}
+		Table groupedTable = EvaluatorUtil.groupRows("transaction", table);
 
-	static
-	private Map<String, Object> createRow(String transaction, String item){
-		Map<String, Object> result = new HashMap<>();
-		result.put("transaction", transaction);
-		result.put("item", item);
+		assertEquals(3, groupedTable.getNumberOfRows());
+		assertEquals(2, groupedTable.getNumberOfColumns());
 
-		return result;
-	}
+		Table.Row groupedRow = groupedTable.createReaderRow(0);
 
-	static
-	private void checkGroupedRow(Map<String, Object> row, String transaction, List<String> items){
-		assertEquals(2, row.size());
+		assertEquals("1", groupedRow.get("transaction"));
+		assertEquals(Arrays.asList("Cracker", "Coke"), groupedRow.get("item"));
 
-		assertEquals(transaction, row.get("transaction"));
-		assertEquals(items, row.get("item"));
+		groupedRow.advance();
+
+		assertEquals("2", groupedRow.get("transaction"));
+		assertEquals(Arrays.asList("Cracker", "Water"), groupedRow.get("item"));
+
+		groupedRow.advance();
+
+		assertEquals("3", groupedRow.get("transaction"));
+		assertEquals(Arrays.asList("Cracker", "Water", "Coke"), groupedRow.get("item"));
 	}
 }
