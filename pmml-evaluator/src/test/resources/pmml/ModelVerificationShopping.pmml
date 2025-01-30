@@ -1,0 +1,40 @@
+<ModelVerification xmlns="http://www.dmg.org/PMML-4_4" fieldCount="3" recordCount="5">
+	<VerificationFields>
+		<VerificationField column="MVField1" field="OrderID"/>
+		<VerificationField column="MVField2" field="Product"/>
+		<VerificationField column="MVField3" field="Rule Id"/>
+		<VerificationField column="MVField4" field="Consequent"/>
+	</VerificationFields>
+	<InlineTable>
+		<row>
+			<MVField1>1</MVField1>
+			<MVField2>Cracker</MVField2>
+			<MVField3>1</MVField3>
+			<MVField4>Nachos</MVField4>
+		</row>
+		<row>
+			<MVField1>1</MVField1>
+			<MVField2>Coke</MVField2>
+			<MVField3/>
+			<MVField4>Banana</MVField4>
+		</row>
+		<row>
+			<MVField1>1</MVField1>
+			<MVField2>Water</MVField2>
+			<MVField3/>
+			<MVField4/>
+		</row>
+		<row>
+			<MVField1>2</MVField1>
+			<MVField2>Cracker</MVField2>
+			<MVField3>3</MVField3>
+			<MVField4/>
+		</row>
+		<row>
+			<MVField1>2</MVField1>
+			<MVField2>Banana</MVField2>
+			<MVField3/>
+			<MVField4>Pear</MVField4>
+		</row>
+	</InlineTable>
+</ModelVerification>

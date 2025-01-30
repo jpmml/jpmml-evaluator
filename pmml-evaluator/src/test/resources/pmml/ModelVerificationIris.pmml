@@ -1,0 +1,67 @@
+<ModelVerification xmlns="http://www.dmg.org/PMML-4_4" recordCount="4" fieldCount="9">
+	<VerificationFields>
+		<!-- the following five fields are listed in the MiningSchema element -->
+		<VerificationField field="petal length" column="petal_x0020_length" precision="0.01"/>
+		<VerificationField field="petal width" column="petal_x0020_width" precision="0.01"/>
+		<VerificationField field="sepal length" column="sepal_x0020_length" precision="0.01"/>
+		<VerificationField field="sepal width" column="sepal_x0020_width" precision="0.01"/>
+		<VerificationField field="continent"/>
+		<VerificationField field="species"/>
+		<!-- the following four fields are listed in the Output element -->
+		<VerificationField field="PredictClass"/>
+		<VerificationField field="Iris-setosa Prob" column="Iris-setosa_x0020_Prob" precision="0.005"/>
+		<VerificationField field="Iris-versicolor Prob" column="Iris-versicolor_x0020_Prob"/>
+		<VerificationField field="Iris-virginica Prob" column="Iris-virginica_x0020_Prob" zeroThreshold="0.002"/>
+	</VerificationFields>
+	<InlineTable>
+		<row>
+			<petal_x0020_length>1.4</petal_x0020_length>
+			<petal_x0020_width>0.2</petal_x0020_width>
+			<sepal_x0020_length>1.4</sepal_x0020_length>
+			<sepal_x0020_width>0.2</sepal_x0020_width>
+			<continent>africa</continent>
+			<species>Iris-setosa</species>
+			<PredictClass>Iris-setosa</PredictClass>
+			<Iris-setosa_x0020_Prob>0.62</Iris-setosa_x0020_Prob>
+			<Iris-versicolor_x0020_Prob>0.30</Iris-versicolor_x0020_Prob>
+			<Iris-virginica_x0020_Prob>0.08</Iris-virginica_x0020_Prob>
+		</row>
+		<row>
+			<petal_x0020_length>4.7</petal_x0020_length>
+			<petal_x0020_width>1.4</petal_x0020_width>
+			<sepal_x0020_length>7.0</sepal_x0020_length>
+			<!-- The sepal width value is missing -->
+			<!-- The continent value is a zero-length string -->
+			<continent/>
+			<species>Iris-versicolor</species>
+			<PredictClass>Iris-setosa</PredictClass>
+			<Iris-setosa_x0020_Prob>0.43</Iris-setosa_x0020_Prob>
+			<Iris-versicolor_x0020_Prob>0.39</Iris-versicolor_x0020_Prob>
+			<Iris-virginica_x0020_Prob>0.18</Iris-virginica_x0020_Prob>
+		</row>
+		<row>
+			<petal_x0020_length>4.7</petal_x0020_length>
+			<petal_x0020_width>1.4</petal_x0020_width>
+			<!-- The sepal length value is missing -->
+			<sepal_x0020_width>0.2</sepal_x0020_width>
+			<!-- The continent value is missing -->
+			<species>Iris-versicolor</species>
+			<PredictClass>Iris-setosa</PredictClass>
+			<Iris-setosa_x0020_Prob>0.43</Iris-setosa_x0020_Prob>
+			<Iris-versicolor_x0020_Prob>0.39</Iris-versicolor_x0020_Prob>
+			<Iris-virginica_x0020_Prob>0.18</Iris-virginica_x0020_Prob>
+		</row>
+		<row>
+			<petal_x0020_length>4.7</petal_x0020_length>
+			<petal_x0020_width>1.4</petal_x0020_width>
+			<sepal_x0020_length>7.0</sepal_x0020_length>
+			<sepal_x0020_width>0.2</sepal_x0020_width>
+			<continent>asia</continent>
+			<species>Iris-versicolor</species>
+			<!-- The PredictClass result is missing -->
+			<Iris-setosa_x0020_Prob>0.609</Iris-setosa_x0020_Prob>
+			<Iris-versicolor_x0020_Prob>0.39</Iris-versicolor_x0020_Prob>
+			<Iris-virginica_x0020_Prob>0.001</Iris-virginica_x0020_Prob>
+		</row>
+	</InlineTable>
+</ModelVerification> 

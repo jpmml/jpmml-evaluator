@@ -552,7 +552,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	static
-	private VerificationBatch parseModelVerification(ModelVerification modelVerification){
+	VerificationBatch parseModelVerification(ModelVerification modelVerification){
 		VerificationBatch result = new VerificationBatch();
 
 		VerificationFields verificationFields = modelVerification.requireVerificationFields();
@@ -602,7 +602,7 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	static
-	private class VerificationBatch extends LinkedHashMap<String, VerificationField> {
+	class VerificationBatch extends LinkedHashMap<String, VerificationField> {
 
 		private Table table = null;
 
