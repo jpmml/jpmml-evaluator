@@ -15,26 +15,21 @@
 		<row>
 			<MVField1>1</MVField1>
 			<MVField2>Coke</MVField2>
-			<MVField3/>
 			<MVField4>Banana</MVField4>
 		</row>
 		<row>
 			<MVField1>1</MVField1>
 			<MVField2>Water</MVField2>
-			<MVField3/>
-			<MVField4/>
 		</row>
 		<row>
 			<MVField1>2</MVField1>
 			<MVField2>Cracker</MVField2>
 			<MVField3>3</MVField3>
-			<MVField4/>
+			<MVField4>Pear</MVField4>
 		</row>
 		<row>
 			<MVField1>2</MVField1>
 			<MVField2>Banana</MVField2>
-			<MVField3/>
-			<MVField4>Pear</MVField4>
 		</row>
 	</InlineTable>
 </ModelVerification>

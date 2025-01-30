@@ -89,15 +89,15 @@ public class ModelVerificationTest {
 
 		assertEquals("1", row.get("OrderID"));
 		assertEquals(Arrays.asList("Cracker", "Coke", "Water"), row.get("Product"));
-		assertEquals(Arrays.asList("1", "", ""), row.get("Rule Id"));
-		assertEquals(Arrays.asList("Nachos", "Banana", ""), row.get("Consequent"));
+		assertEquals(Arrays.asList("1"), row.get("Rule Id"));
+		assertEquals(Arrays.asList("Nachos", "Banana"), row.get("Consequent"));
 
 		row.advance();
 
 		assertEquals("2", row.get("OrderID"));
 		assertEquals(Arrays.asList("Cracker", "Banana"), row.get("Product"));
-		assertEquals(Arrays.asList("3", ""), row.get("Rule Id"));
-		assertEquals(Arrays.asList("", "Pear"), row.get("Consequent"));
+		assertEquals(Arrays.asList("3"), row.get("Rule Id"));
+		assertEquals(Arrays.asList("Pear"), row.get("Consequent"));
 	}
 
 	static
