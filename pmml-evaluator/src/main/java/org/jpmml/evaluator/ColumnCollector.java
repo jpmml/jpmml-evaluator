@@ -21,7 +21,7 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
@@ -32,9 +32,16 @@ import java.util.stream.Collector;
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 @IgnoreJRERequirement
-public class TableCollector implements Collector<Object, List<Object>, Table> {
+public class ColumnCollector implements Collector<Object, List<Object>, Table> {
 
-	public TableCollector(){
+	private Table table = null;
+
+	private String column = null;
+
+
+	public ColumnCollector(Table table, String column){
+		setTable(table);
+		setColumn(column);
 	}
 
 	@Override
@@ -52,19 +59,6 @@ public class TableCollector implements Collector<Object, List<Object>, Table> {
 	@Override
 	public BiConsumer<List<Object>, Object> accumulator(){
 		return (elements, element) -> {
-
-			if(element instanceof Map<?, ?>){
-				Map<?, ?> map = (Map<?, ?>)element;
-			} else
-
-			if(element instanceof Exception){
-				Exception exception = (Exception)element;
-			} else
-
-			{
-				throw new IllegalArgumentException();
-			}
-
 			elements.add(element);
 		};
 	}
@@ -81,7 +75,14 @@ public class TableCollector implements Collector<Object, List<Object>, Table> {
 	@Override
 	public Function<List<Object>, Table> finisher(){
 		return (elements) -> {
-			Table table = new Table(elements.size());
+			Table table = getTable();
+			String column = getColumn();
+
+			if((table.getNumberOfColumns() > 0) && (elements.size() != table.getNumberOfRows())){
+				throw new IllegalArgumentException();
+			}
+
+			List<?> prevValues = table.getValues(column);
 
 			Table.Row row = null;
 
@@ -95,16 +96,14 @@ public class TableCollector implements Collector<Object, List<Object>, Table> {
 					Exception exception = (Exception)element;
 
 					row.setException(exception);
-				} else
 
-				if(element instanceof Map<?, ?>){
-					Map<?, ?> map = (Map<?, ?>)element;
-
-					row.putAll((Map)map);
+					if(prevValues != null){
+						row.put(column, null);
+					}
 				} else
 
 				{
-					throw new IllegalArgumentException();
+					row.put(column, element);
 				}
 
 				row.advance();
@@ -118,5 +117,21 @@ public class TableCollector implements Collector<Object, List<Object>, Table> {
 
 	protected Table.Row createFinisherRow(Table table){
 		return table.createWriterRow(0);
+	}
+
+	public Table getTable(){
+		return this.table;
+	}
+
+	private void setTable(Table table){
+		this.table = Objects.requireNonNull(table);
+	}
+
+	public String getColumn(){
+		return this.column;
+	}
+
+	private void setColumn(String column){
+		this.column = column;
 	}
 }
