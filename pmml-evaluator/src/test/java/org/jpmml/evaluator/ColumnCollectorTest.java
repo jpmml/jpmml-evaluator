@@ -140,5 +140,9 @@ public class ColumnCollectorTest {
 
 			row.advance();
 		}
+
+		table.clearExceptions();
+
+		assertFalse(table.hasExceptions());
 	}
 }

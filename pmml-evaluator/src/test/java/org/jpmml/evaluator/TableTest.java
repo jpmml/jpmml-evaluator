@@ -150,6 +150,8 @@ public class TableTest {
 		assertEquals(Arrays.asList(1.0, 2.0, 3.0, null, null), resultsTable.getValues("B"));
 		assertEquals(Arrays.asList("1", "2", "3", null, "5"), resultsTable.getValues("C"));
 
+		resultsTable.clearExceptions();
+
 		Function<Object, String> function = (value) -> {
 
 			if(value == null){
@@ -160,6 +162,8 @@ public class TableTest {
 		};
 
 		resultsTable.apply(function);
+
+		assertFalse(resultsTable.hasExceptions());
 
 		assertEquals(Arrays.asList("1", "2", "3", "N/A", "N/A"), resultsTable.getValues("A"));
 		assertEquals(Arrays.asList("1.0", "2.0", "3.0", "N/A", "N/A"), resultsTable.getValues("B"));

@@ -208,6 +208,12 @@ public class Table {
 		set(exceptions, index, exception);
 	}
 
+	public void clearExceptions(){
+		List<Exception> exceptions = getExceptions();
+
+		clear(exceptions);
+	}
+
 	@IgnoreJRERequirement
 	@SuppressWarnings("unchecked")
 	public void apply(Function<?, ?> function){
@@ -332,6 +338,19 @@ public class Table {
 		return values;
 	}
 
+	static
+	private <E> void clear(List<E> values){
+		ListIterator<E> it = values.listIterator();
+
+		while(it.hasNext()){
+			E value = it.next();
+
+			if(value != null){
+				it.set(null);
+			}
+		}
+	}
+
 	@IgnoreJRERequirement
 	static
 	private <E> void transform(List<E> values, Function<E, E> function){
@@ -418,6 +437,18 @@ public class Table {
 			List<Object> values = (List<Object>)ensureValues(key);
 
 			return Table.set(values, origin, value);
+		}
+
+		@Override
+		public Object remove(Object key){
+			int origin = getOrigin();
+
+			List<?> values = getValues((String)key);
+			if(values != null){
+				return Table.set(values, origin, null);
+			}
+
+			return null;
 		}
 
 		@Override

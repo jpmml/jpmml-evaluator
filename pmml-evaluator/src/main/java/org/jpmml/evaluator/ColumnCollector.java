@@ -98,7 +98,7 @@ public class ColumnCollector implements Collector<Object, List<Object>, Table> {
 					row.setException(exception);
 
 					if(prevValues != null){
-						row.put(column, null);
+						row.remove(column);
 					}
 				} else
 
