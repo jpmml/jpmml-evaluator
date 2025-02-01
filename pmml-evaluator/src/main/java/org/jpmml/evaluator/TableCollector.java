@@ -81,7 +81,7 @@ public class TableCollector implements Collector<Object, List<Object>, Table> {
 	@Override
 	public Function<List<Object>, Table> finisher(){
 		return (elements) -> {
-			Table table = new Table(elements.size());
+			Table table = createFinisherTable(elements.size());
 
 			Table.Row row = null;
 
@@ -114,6 +114,10 @@ public class TableCollector implements Collector<Object, List<Object>, Table> {
 
 			return table;
 		};
+	}
+
+	protected Table createFinisherTable(int initialCapacity){
+		return new Table(initialCapacity);
 	}
 
 	protected Table.Row createFinisherRow(Table table){
