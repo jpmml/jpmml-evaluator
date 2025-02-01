@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.google.common.collect.RangeSet;
+import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
 import org.dmg.pmml.HasContinuousDomain;
@@ -55,7 +56,7 @@ public class InputField extends ModelField {
 
 	/**
 	 * <p>
-	 * Prepares the input value for a field.
+	 * Prepares an input value for a field.
 	 * </p>
 	 *
 	 * <p>
@@ -64,13 +65,41 @@ public class InputField extends ModelField {
 	 * </p>
 	 *
 	 * @param value The input value in user-supplied representation.
-	 * Use <code>null</code> to represent a missing input value.
+	 * Use {@code null} to represent a missing input value.
 	 *
 	 * @throws EvaluationException If the input value preparation fails.
 	 * @throws MarkupException
 	 */
 	public FieldValue prepare(Object value){
 		return InputFieldUtil.prepareInputValue(getField(), getMiningField(), value);
+	}
+
+	/**
+	 * <p>
+	 * Prepares a column of input values for a field.
+	 * </p>
+	 *
+	 * <p>
+	 * The column is replaced with a new column holding preparation results as {@link FieldValue} objects.
+	 * If the preparation of some input value fails, then the corresponding element is set to {@code null},
+	 * and the exception is stored in table's {@link Table#getExceptions() exceptions pseudo-column}.
+	 * </p>
+	 *
+	 * @see Table#hasExceptions()
+	 * @see Table#clearExceptions()
+	 */
+	@IgnoreJRERequirement
+	public Table prepare(Table table){
+		String name = getName();
+
+		List<?> values = table.getValues(name);
+		if(values != null){
+			table = values.stream()
+				.map(this::prepare)
+				.collect(new ColumnCollector(table, name));
+		}
+
+		return table;
 	}
 
 	/**
