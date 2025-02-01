@@ -21,6 +21,7 @@ package org.jpmml.evaluator.example;
 import java.io.Console;
 import java.io.File;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -119,15 +120,23 @@ public class EvaluationExample extends Example {
 
 	@Parameter (
 		names = {"--sparse"},
-		description = "Permit missing input field columns",
+		description = "Permit missing input columns",
 		order = 7
 	)
 	private boolean sparse = false;
 
 	@Parameter (
+		names = {"--prepare"},
+		description = "Prepare input columns outside of the main evaluation loop",
+		arity = 1,
+		order = 8
+	)
+	private boolean prepare = false;
+
+	@Parameter (
 		names = {"--parallelism"},
 		description = "The parallelism level of the main evaluation loop",
-		order = 8
+		order = 9
 	)
 	private int parallelism = -1;
 
@@ -135,14 +144,14 @@ public class EvaluationExample extends Example {
 		names = {"--catch-errors"},
 		description = "Catch and process evaluation errors. If true, the main evaluation loop will run till completion",
 		arity = 1,
-		order = 9
+		order = 10
 	)
 	private boolean catchErrors = false;
 
 	@Parameter (
 		names = {"--error-column"},
 		description = "The name of error column. This column is appended to output CSV file only in case of evaluation errors",
-		order = 10
+		order = 11
 	)
 	private String errorColumn = "_error";
 
@@ -150,7 +159,7 @@ public class EvaluationExample extends Example {
 		names = {"--copy-columns"},
 		description = "Copy all columns from input CSV file to output CSV file",
 		arity = 1,
-		order = 11
+		order = 12
 	)
 	private boolean copyColumns = false;
 
@@ -434,6 +443,24 @@ public class EvaluationExample extends Example {
 			HasGroupFields hasGroupFields = (HasGroupFields)evaluator;
 
 			table = EvaluatorUtil.groupRows(hasGroupFields, table);
+		}
+
+		if(this.prepare){
+			List<String> faultyInputFields = new ArrayList<>();
+
+			for(InputField inputField : inputFields){
+				table = inputField.prepare(table);
+
+				if(table.hasExceptions()){
+					faultyInputFields.add(inputField.getName());
+
+					table.clearExceptions();
+				}
+			}
+
+			if(!faultyInputFields.isEmpty()){
+				throw new IllegalArgumentException("Faulty input field(s): " + faultyInputFields);
+			}
 		}
 
 		return table;
