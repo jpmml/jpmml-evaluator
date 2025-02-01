@@ -31,6 +31,7 @@ import com.google.common.base.Equivalence;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
 import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.EvaluatorFunction;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasGroupFields;
 import org.jpmml.evaluator.OutputField;
@@ -70,23 +71,8 @@ public class BatchUtil {
 
 		Equivalence<Object> equivalence = batch.getEquivalence();
 
-		Function<Table.Row, Object> function = new Function<>(){
-
-			@Override
-			public Object apply(Table.Row arguments){
-
-				try {
-					Map<String, ?> results = evaluator.evaluate(arguments);
-
-					return results;
-				} catch(Exception e){
-					return e;
-				}
-			}
-		};
-
 		Table actualOutput = input.stream()
-			.map(function)
+			.map(new EvaluatorFunction(evaluator))
 			.collect(new TableCollector());
 
 		if(expectedOutput.getNumberOfRows() != actualOutput.getNumberOfRows()){
