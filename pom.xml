@@ -65,6 +65,7 @@
 	</issueManagement>
 
 	<properties>
+		<jpmml-model.version>1.7.2</jpmml-model.version>
 		<project.build.outputTimestamp>2025-02-01T14:14:03Z</project.build.outputTimestamp>
 	</properties>
 
@@ -119,32 +120,32 @@
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-agent</artifactId>
-				<version>1.7.1</version>
+				<version>${jpmml-model.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model</artifactId>
-				<version>1.7.1</version>
+				<version>${jpmml-model.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model-jackson</artifactId>
-				<version>1.7.1</version>
+				<version>${jpmml-model.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model-kryo</artifactId>
-				<version>1.7.1</version>
+				<version>${jpmml-model.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model-metro</artifactId>
-				<version>1.7.1</version>
+				<version>${jpmml-model.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jpmml</groupId>
 				<artifactId>pmml-model-moxy</artifactId>
-				<version>1.7.1</version>
+				<version>${jpmml-model.version}</version>
 			</dependency>
 
 			<dependency>
