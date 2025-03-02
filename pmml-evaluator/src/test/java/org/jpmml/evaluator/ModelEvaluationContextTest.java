@@ -18,7 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -44,7 +43,6 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 		assertThrows(MissingFieldValueException.class, () -> context.lookup("x"));
 
 		assertEquals(value, context.evaluate("x"));
-		assertEquals(Arrays.asList(value), context.evaluateAll(Arrays.asList("x")));
 
 		context.reset(false);
 
@@ -55,7 +53,6 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 		assertEquals(value, context.lookup("x"));
 
 		assertEquals(value, context.evaluate("x"));
-		assertEquals(Arrays.asList(value), context.evaluateAll(Arrays.asList("x")));
 
 		context.reset(true);
 
@@ -74,6 +71,5 @@ public class ModelEvaluationContextTest extends ModelEvaluatorTest {
 		assertThrows(MissingFieldValueException.class, () -> context.lookup("x"));
 
 		assertEquals(FieldValues.MISSING_VALUE, context.evaluate("x"));
-		assertEquals(Arrays.asList(FieldValues.MISSING_VALUE), context.evaluateAll(Arrays.asList("x")));
  	}
 }

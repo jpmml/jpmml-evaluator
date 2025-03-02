@@ -94,18 +94,6 @@ public class EvaluationContext {
 		return resolve(name);
 	}
 
-	public List<FieldValue> evaluateAll(List<String> names){
-		List<FieldValue> values = new ArrayList<>(names.size());
-
-		for(String name : names){
-			FieldValue value = evaluate(name);
-
-			values.add(value);
-		}
-
-		return values;
-	}
-
 	protected FieldValue resolve(String name){
 		throw new MissingFieldException(name);
 	}
