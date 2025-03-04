@@ -33,21 +33,21 @@ class AndroidFieldValueMap extends FieldValueMap {
 	}
 
 	@Override
-	public FieldValue getOrDefault(Object name, FieldValue defaultValue){
+	public FieldValue getOrDefault(Object key, FieldValue defaultValue){
 
-		if(containsKey(name)){
-			return get(name);
+		if(containsKey(key)){
+			return get(key);
 		}
 
 		return defaultValue;
 	}
 
 	@Override
-	public FieldValue putIfAbsent(String name, FieldValue value){
-		FieldValue prevValue = get(name);
+	public FieldValue putIfAbsent(Object key, FieldValue value){
+		FieldValue prevValue = get(key);
 
 		if(prevValue == null){
-			return put(name, value);
+			return put(key, value);
 		}
 
 		return prevValue;

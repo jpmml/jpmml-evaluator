@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
-class FieldValueMap extends HashMap<String, FieldValue> {
+class FieldValueMap extends HashMap<Object, FieldValue> {
 
 	FieldValueMap(){
 	}
@@ -34,14 +34,14 @@ class FieldValueMap extends HashMap<String, FieldValue> {
 
 	@Override
 	@IgnoreJRERequirement
-	public FieldValue getOrDefault(Object name, FieldValue defaultValue){
-		return super.getOrDefault(name, defaultValue);
+	public FieldValue getOrDefault(Object key, FieldValue defaultValue){
+		return super.getOrDefault(key, defaultValue);
 	}
 
 	@Override
 	@IgnoreJRERequirement
-	public FieldValue putIfAbsent(String name, FieldValue value){
-		return super.putIfAbsent(name, value);
+	public FieldValue putIfAbsent(Object key, FieldValue value){
+		return super.putIfAbsent(key, value);
 	}
 
 	static
