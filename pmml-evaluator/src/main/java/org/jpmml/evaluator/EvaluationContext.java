@@ -19,10 +19,8 @@
 package org.jpmml.evaluator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
@@ -119,14 +117,6 @@ public class EvaluationContext {
 		}
 
 		return value;
-	}
-
-	public void declareAll(Map<String, ?> values){
-		Collection<? extends Map.Entry<String, ?>> entries = values.entrySet();
-
-		for(Map.Entry<String, ?> entry : entries){
-			declare(entry.getKey(), entry.getValue());
-		}
 	}
 
 	protected DefineFunction getDefineFunction(String name){

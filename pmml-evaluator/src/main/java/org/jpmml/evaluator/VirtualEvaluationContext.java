@@ -18,6 +18,9 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Collection;
+import java.util.Map;
+
 public class VirtualEvaluationContext extends EvaluationContext {
 
 	public VirtualEvaluationContext(){
@@ -26,5 +29,13 @@ public class VirtualEvaluationContext extends EvaluationContext {
 	@Override
 	protected FieldValue prepare(String name, Object value){
 		return FieldValueUtil.create(value);
+	}
+
+	public void declareAll(Map<String, ?> values){
+		Collection<? extends Map.Entry<String, ?>> entries = values.entrySet();
+
+		for(Map.Entry<String, ?> entry : entries){
+			declare(entry.getKey(), entry.getValue());
+		}
 	}
 }

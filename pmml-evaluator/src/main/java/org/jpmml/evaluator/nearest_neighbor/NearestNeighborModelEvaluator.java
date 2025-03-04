@@ -617,7 +617,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 				}
 
 				ModelEvaluationContext context = modelEvaluator.createEvaluationContext();
-				context.declareAll(rowValues);
+				context.setArguments(rowValues);
 
 				FieldValue value = ExpressionUtil.evaluate(derivedField, context);
 

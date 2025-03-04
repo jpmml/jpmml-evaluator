@@ -553,7 +553,7 @@ public class ExpressionUtilTest {
 
 	static
 	private Object evaluate(Expression expression, Map<String, ?> arguments){
-		EvaluationContext context = new VirtualEvaluationContext();
+		VirtualEvaluationContext context = new VirtualEvaluationContext();
 		context.declareAll(arguments);
 
 		return evaluate(expression, context);
