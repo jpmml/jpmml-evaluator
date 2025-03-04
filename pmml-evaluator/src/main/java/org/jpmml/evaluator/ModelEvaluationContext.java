@@ -100,7 +100,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 			if(localDerivedField != null){
 				FieldValue value = ExpressionUtil.evaluate(localDerivedField, this);
 
-				return declare(name, value);
+				return declareInternal(name, value);
 			}
 
 			DerivedField derivedField = modelEvaluator.getDerivedField(name);
@@ -116,7 +116,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 					value = ExpressionUtil.evaluate(derivedField, this);
 				}
 
-				return declare(name, value);
+				return declareInternal(name, value);
 			}
 		} else
 
@@ -129,7 +129,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 				if(parent != null){
 					FieldValue value = parent.evaluate(name);
 
-					return declare(name, inheritOrPrepareInputValue(dataField, miningField, value));
+					return declareInternal(name, inheritOrPrepareInputValue(dataField, miningField, value));
 				}
 
 				Object value = arguments.get(name);
@@ -142,7 +142,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 				if(field != null){
 					FieldValue value = parent.evaluate(name);
 
-					return declare(name, inheritOrPrepareInputValue(field, miningField, value));
+					return declareInternal(name, inheritOrPrepareInputValue(field, miningField, value));
 				}
 			}
 		}

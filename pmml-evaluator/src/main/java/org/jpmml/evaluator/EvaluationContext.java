@@ -99,20 +99,22 @@ public class EvaluationContext {
 	public FieldValue declare(String name, Object value){
 
 		if(value instanceof FieldValue){
-			return declare(name, (FieldValue)value);
+			return declareInternal(name, (FieldValue)value);
 		}
 
 		value = prepare(name, value);
 
-		return declare(name, (FieldValue)value);
+		return declareInternal(name, (FieldValue)value);
 	}
 
-	public FieldValue declare(String name, FieldValue value){
+	public FieldValue declareInternal(Object key, FieldValue value){
 		FieldValueMap values = getValues();
 
 		// XXX: Fails to detect a situation where the name was already associated with a missing value (null)
-		FieldValue prevValue = values.putIfAbsent(name, value);
+		FieldValue prevValue = values.putIfAbsent(key, value);
 		if(prevValue != null){
+			String name = (String)key;
+
 			throw new DuplicateFieldValueException(name);
 		}
 

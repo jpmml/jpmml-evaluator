@@ -435,7 +435,7 @@ public class OutputUtil {
 			FieldValue outputValue = FieldValueUtil.create(typeInfo, value);
 
 			// The result of one output field becomes available to other output fields
-			context.declare(name, outputValue);
+			context.declareInternal(name, outputValue);
 
 			if(outputFilter.test(outputField)){
 				result.putPublic(name, FieldValueUtil.getValue(outputValue));

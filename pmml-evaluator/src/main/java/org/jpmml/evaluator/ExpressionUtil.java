@@ -116,7 +116,7 @@ public class ExpressionUtil {
 
 			String name = parameterField.requireName();
 
-			functionContext.declare(name, value);
+			functionContext.declareInternal(name, value);
 		}
 
 		return ExpressionUtil.evaluateTypedExpressionContainer(defineFunction, functionContext);

@@ -820,7 +820,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 										throw mfve.ensureContext(segment);
 									}
 
-									context.declare(name, value);
+									context.declareInternal(name, value);
 								}
 							}
 						}

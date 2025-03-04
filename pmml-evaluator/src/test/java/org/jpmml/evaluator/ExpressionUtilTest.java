@@ -404,17 +404,17 @@ public class ExpressionUtilTest {
 			}
 		};
 
-		context.declare("x", FieldValues.MISSING_VALUE);
+		context.declareInternal("x", FieldValues.MISSING_VALUE);
 
 		assertEquals("missing", evaluate(apply, context));
 
 		context.reset(true);
 
-		context.declare("x", FieldValues.CATEGORICAL_BOOLEAN_TRUE);
+		context.declareInternal("x", FieldValues.CATEGORICAL_BOOLEAN_TRUE);
 
 		assertEquals("not missing", evaluate(apply, context));
 
-		assertThrows(DuplicateFieldValueException.class, () -> context.declare("x", FieldValues.CATEGORICAL_BOOLEAN_FALSE));
+		assertThrows(DuplicateFieldValueException.class, () -> context.declareInternal("x", FieldValues.CATEGORICAL_BOOLEAN_FALSE));
 	}
 
 	@Test
