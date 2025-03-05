@@ -18,11 +18,13 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Lists;
@@ -30,6 +32,8 @@ import com.google.common.collect.Table;
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.Constant;
+import org.dmg.pmml.DataDictionary;
+import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.Discretize;
@@ -38,11 +42,16 @@ import org.dmg.pmml.FieldColumnPair;
 import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
+import org.dmg.pmml.Lag;
 import org.dmg.pmml.MapValues;
+import org.dmg.pmml.MiningField;
+import org.dmg.pmml.MiningFunction;
+import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.NamespacePrefixes;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLConstants;
 import org.dmg.pmml.PMMLFunctions;
 import org.dmg.pmml.ParameterField;
@@ -50,6 +59,8 @@ import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.TextIndex.CountHits;
 import org.dmg.pmml.TextIndexNormalization;
 import org.jpmml.evaluator.functions.EchoFunction;
+import org.jpmml.evaluator.java.JavaModel;
+import org.jpmml.evaluator.java.JavaModelEvaluator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -511,6 +522,55 @@ public class ExpressionUtilTest {
 		assertEquals(values.get(0), evaluate(aggregate, arguments));
 	}
 
+	@Test
+	public void evaluateLag(){
+		DataField dataField = new DataField("x", OpType.CATEGORICAL, DataType.INTEGER);
+
+		DataDictionary dataDictionary = new DataDictionary()
+			.addDataFields(dataField);
+
+		MiningField miningField = new MiningField("x");
+
+		MiningSchema miningSchema = new MiningSchema()
+			.addMiningFields(miningField);
+
+		JavaModel javaModel = new JavaModel(MiningFunction.REGRESSION, miningSchema){
+		};
+
+		PMML pmml = new PMML()
+			.setDataDictionary(dataDictionary)
+			.addModels(javaModel);
+
+		ModelEvaluator<?> modelEvaluator = new JavaModelEvaluator(pmml);
+
+		Map<String, Object> arguments = Collections.singletonMap("x", 1);
+
+		ModelEvaluationContext context = modelEvaluator.createEvaluationContext();
+		context.setArguments(arguments);
+
+		Lag lag = new Lag("x");
+
+		EvaluationException exception = assertThrows(EvaluationException.class, () -> evaluate(lag, context));
+
+		context.reset(true);
+
+		arguments = new AbstractLaggableMap<>(){
+
+			@Override
+			public Object getLagged(Object key, int n){
+				return -n;
+			}
+		};
+
+		context.setArguments(arguments);
+
+		assertEquals(-1, evaluate(lag, context));
+
+		lag.setN(3);
+
+		assertEquals(-3, evaluate(lag, context));
+	}
+
 	static
 	InlineTable createInlineTable(List<List<String>> rows, TextIndexNormalization textIndexNormalization){
 		return createInlineTable(rows, Arrays.asList(textIndexNormalization.getInField(), textIndexNormalization.getOutField(), textIndexNormalization.getRegexField()));
@@ -564,5 +624,20 @@ public class ExpressionUtilTest {
 		FieldValue result = ExpressionUtil.evaluate(expression, context);
 
 		return FieldValueUtil.getValue(result);
+	}
+
+	static
+	abstract
+	class AbstractLaggableMap<K, V> extends AbstractMap<K, V> implements LaggableMap<K, V> {
+
+		@Override
+		public V get(Object key){
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Set<Map.Entry<K, V>> entrySet(){
+			throw new UnsupportedOperationException();
+		}
 	}
 }

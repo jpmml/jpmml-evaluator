@@ -151,6 +151,61 @@ public class ModelEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
+	protected FieldValue resolveLagged(LagKey lagKey){
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
+
+		MiningModelEvaluationContext parent = getParent();
+
+		String name = lagKey.getName();
+		int n = lagKey.getN();
+
+		MiningField miningField = modelEvaluator.getMiningField(name);
+		if(miningField == null){
+			DerivedField localDerivedField = modelEvaluator.getLocalDerivedField(name);
+			if(localDerivedField != null){
+				throw new UnlaggableFieldException(localDerivedField.requireName());
+			}
+
+			DerivedField derivedField = modelEvaluator.getDerivedField(name);
+			if(derivedField != null){
+				throw new UnlaggableFieldException(derivedField.requireName());
+			}
+		} else
+
+		{
+			DataField dataField = modelEvaluator.getDataField(name);
+			if(dataField != null){
+				Map<String, ?> arguments = getArguments();
+
+				if(parent != null){
+					FieldValue value = parent.evaluateLagged(lagKey);
+
+					return declareInternal(name, inheritOrPrepareInputValue(dataField, miningField, value));
+				} // End if
+
+				if(!(arguments instanceof LaggableMap)){
+					throw new EvaluationException("The user-supplied arguments object class does not implement " + LaggableMap.class.getName());
+				}
+
+				LaggableMap<String, ?> laggableArguments = (LaggableMap<String, ?>)arguments;
+
+				Object value = laggableArguments.getLagged(name, n);
+
+				return declareLagged(lagKey, value);
+			} // End if
+
+			if(parent != null){
+				Field<?> field = resolveField(name, parent);
+				if(field != null){
+					throw new UnlaggableFieldException(field.requireName());
+				}
+			}
+		}
+
+		throw new MissingFieldException(name);
+	}
+
+	@Override
 	protected DefineFunction getDefineFunction(String name){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 

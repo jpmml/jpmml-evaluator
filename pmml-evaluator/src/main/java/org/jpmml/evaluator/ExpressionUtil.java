@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
+import org.dmg.pmml.BlockIndicator;
 import org.dmg.pmml.Constant;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
@@ -38,10 +39,12 @@ import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.HasExpression;
 import org.dmg.pmml.HasType;
 import org.dmg.pmml.InvalidValueTreatmentMethod;
+import org.dmg.pmml.Lag;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PMMLFunctions;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.ParameterField;
@@ -50,6 +53,7 @@ import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.PMMLException;
 import org.jpmml.model.UnsupportedAttributeException;
 import org.jpmml.model.UnsupportedElementException;
+import org.jpmml.model.UnsupportedElementListException;
 
 public class ExpressionUtil {
 
@@ -169,6 +173,10 @@ public class ExpressionUtil {
 
 		if(expression instanceof Aggregate){
 			return evaluateAggregate((Aggregate)expression, context);
+		} else
+
+		if(expression instanceof Lag){
+			return evaluateLag((Lag)expression, context);
 		} // End if
 
 		if(expression instanceof JavaExpression){
@@ -539,6 +547,29 @@ public class ExpressionUtil {
 				return Collections.<ScalarValue>max((List)values);
 			default:
 				throw new UnsupportedAttributeException(aggregate, function);
+		}
+	}
+
+	static
+	public FieldValue evaluateLag(Lag lag, EvaluationContext context){
+
+		if(lag.hasBlockIndicators()){
+			List<BlockIndicator> blockIndicators = lag.getBlockIndicators();
+
+			throw new UnsupportedElementListException(blockIndicators);
+		}
+
+		Integer n = lag.getN();
+		if(n < 1){
+			throw new InvalidAttributeException(lag, PMMLAttributes.LAG_N, n);
+		}
+
+		Lag.Aggregate aggregate = lag.getAggregate();
+		switch(aggregate){
+			case NONE:
+				return context.evaluateLagged(new LagKey(lag.requireField(), n));
+			default:
+				throw new UnsupportedAttributeException(lag, aggregate);
 		}
 	}
 

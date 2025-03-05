@@ -107,6 +107,32 @@ public class EvaluationContext {
 		return declareInternal(name, (FieldValue)value);
 	}
 
+	public FieldValue evaluateLagged(LagKey lagKey){
+		FieldValueMap values = getValues();
+
+		FieldValue value = values.getOrDefault(lagKey, EvaluationContext.UNDECLARED_VALUE);
+		if(value != EvaluationContext.UNDECLARED_VALUE){
+			return value;
+		}
+
+		return resolveLagged(lagKey);
+	}
+
+	protected FieldValue resolveLagged(LagKey lagKey){
+		throw new MissingFieldException(lagKey.getName());
+	}
+
+	public FieldValue declareLagged(LagKey lagKey, Object value){
+
+		if(value instanceof FieldValue){
+			return declareInternal(lagKey, (FieldValue)value);
+		}
+
+		value = prepare(lagKey.getName(), value);
+
+		return declareInternal(lagKey, (FieldValue)value);
+	}
+
 	public FieldValue declareInternal(Object key, FieldValue value){
 		FieldValueMap values = getValues();
 
