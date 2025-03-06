@@ -568,6 +568,14 @@ public class ExpressionUtil {
 		switch(aggregate){
 			case NONE:
 				return context.evaluateLagged(new LagKey(lag.requireField(), n));
+			case AVG:
+			case MAX:
+			case MEDIAN:
+			case MIN:
+			case PRODUCT:
+			case SUM:
+			case STDDEV:
+				return context.evaluateAggregated(new AggregateKey(lag.requireField(), aggregate.value(), n));
 			default:
 				throw new UnsupportedAttributeException(lag, aggregate);
 		}

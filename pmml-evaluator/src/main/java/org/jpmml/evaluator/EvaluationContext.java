@@ -133,6 +133,32 @@ public class EvaluationContext {
 		return declareInternal(lagKey, (FieldValue)value);
 	}
 
+	public FieldValue evaluateAggregated(AggregateKey aggregateKey){
+		FieldValueMap values = getValues();
+
+		FieldValue value = values.getOrDefault(aggregateKey, EvaluationContext.UNDECLARED_VALUE);
+		if(value != EvaluationContext.UNDECLARED_VALUE){
+			return value;
+		}
+
+		return resolveAggregated(aggregateKey);
+	}
+
+	protected FieldValue resolveAggregated(AggregateKey aggregateKey){
+		throw new MissingFieldException(aggregateKey.getName());
+	}
+
+	public FieldValue declareAggregated(AggregateKey aggregateKey, Object value){
+
+		if(value instanceof FieldValue){
+			return declareInternal(aggregateKey, (FieldValue)value);
+		}
+
+		value = prepare(aggregateKey.getName(), value);
+
+		return declareInternal(aggregateKey, (FieldValue)value);
+	}
+
 	public FieldValue declareInternal(Object key, FieldValue value){
 		FieldValueMap values = getValues();
 

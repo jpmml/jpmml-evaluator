@@ -184,7 +184,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 				} // End if
 
 				if(!(arguments instanceof LaggableMap)){
-					throw new EvaluationException("The user-supplied arguments object class does not implement " + LaggableMap.class.getName());
+					throw new EvaluationException("The user-supplied arguments object class does not implement " + LaggableMap.class.getName() + " interface");
 				}
 
 				LaggableMap<String, ?> laggableArguments = (LaggableMap<String, ?>)arguments;
@@ -198,6 +198,62 @@ public class ModelEvaluationContext extends EvaluationContext {
 				Field<?> field = resolveField(name, parent);
 				if(field != null){
 					throw new UnlaggableFieldException(field.requireName());
+				}
+			}
+		}
+
+		throw new MissingFieldException(name);
+	}
+
+	@Override
+	protected FieldValue resolveAggregated(AggregateKey aggregateKey){
+		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
+
+		MiningModelEvaluationContext parent = getParent();
+
+		String name = aggregateKey.getName();
+		String function = aggregateKey.getFunction();
+		int n = aggregateKey.getN();
+
+		MiningField miningField = modelEvaluator.getMiningField(name);
+		if(miningField == null){
+			DerivedField localDerivedField = modelEvaluator.getLocalDerivedField(name);
+			if(localDerivedField != null){
+				throw new UnaggregableFieldException(localDerivedField.requireName());
+			}
+
+			DerivedField derivedField = modelEvaluator.getDerivedField(name);
+			if(derivedField != null){
+				throw new UnaggregableFieldException(derivedField.requireName());
+			}
+		} else
+
+		{
+			DataField dataField = modelEvaluator.getDataField(name);
+			if(dataField != null){
+				Map<String, ?> arguments = getArguments();
+
+				if(parent != null){
+					FieldValue value = parent.evaluateAggregated(aggregateKey);
+
+					return declareInternal(name, inheritOrPrepareInputValue(dataField, miningField, value));
+				} // End if
+
+				if(!(arguments instanceof AggregableMap)){
+					throw new EvaluationException("The user-supplied arguments object class does not implement " + AggregableMap.class.getName() + " interface");
+				}
+
+				AggregableMap<String, ?> aggregableArguments = (AggregableMap<String, ?>)arguments;
+
+				Object value = aggregableArguments.getAggregated(name, function, n);
+
+				return declareAggregated(aggregateKey, value);
+			} // End if
+
+			if(parent != null){
+				Field<?> field = resolveField(name, parent);
+				if(field != null){
+					throw new UnaggregableFieldException(field.requireName());
 				}
 			}
 		}

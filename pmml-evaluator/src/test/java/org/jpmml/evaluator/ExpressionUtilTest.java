@@ -568,7 +568,7 @@ public class ExpressionUtilTest {
 		ModelEvaluator modelEvaluator = new ModelEvaluatorBuilder(pmml)
 			.build();
 
-		Map<String, Object> arguments = Collections.singletonMap("x", 1);
+		Map<String, Object> arguments = Collections.emptyMap();
 
 		ModelEvaluationContext context = modelEvaluator.createEvaluationContext();
 		context.setArguments(arguments);
@@ -576,6 +576,7 @@ public class ExpressionUtilTest {
 		Lag lag = new Lag("x");
 
 		EvaluationException exception = assertThrows(EvaluationException.class, () -> evaluate(lag, context));
+		assertTrue((exception.getMessage()).contains(LaggableMap.class.getName()));
 
 		context.reset(true);
 
@@ -604,6 +605,45 @@ public class ExpressionUtilTest {
 
 		assertEquals(Arrays.asList(null, -1, 0, 1, 2), resultsTable.getValues("prev"));
 		assertEquals(Arrays.asList(null, null, -1, 0, 1), resultsTable.getValues("prevPrev"));
+
+		lag.setAggregate(Lag.Aggregate.SUM);
+
+		context.reset(true);
+
+		arguments = Collections.emptyMap();
+
+		context.setArguments(arguments);
+
+		exception = assertThrows(EvaluationException.class, () -> evaluate(lag, context));
+		assertTrue((exception.getMessage()).contains(AggregableMap.class.getName()));
+
+		context.reset(true);
+
+		arguments = new AbstractAggregableMap<>(){
+
+			private List<Integer> values = Arrays.asList(1, 2, 3, 4, 5);
+
+
+			@Override
+			public Object getAggregated(Object key, String function, int n){
+				List<Integer> windowValues = this.values.subList(this.values.size() - n, this.values.size());
+
+				switch(function){
+					case "sum":
+						return windowValues.stream()
+							.mapToInt(Integer::intValue)
+							.sum();
+					default:
+						throw new IllegalArgumentException(function);
+				}
+			}
+		};
+
+		context.setArguments(arguments);
+
+		lag.setN(3);
+
+		assertEquals((3 + 4 + 5), evaluate(lag, context));
 	}
 
 	static
@@ -664,6 +704,21 @@ public class ExpressionUtilTest {
 	static
 	abstract
 	class AbstractLaggableMap<K, V> extends AbstractMap<K, V> implements LaggableMap<K, V> {
+
+		@Override
+		public V get(Object key){
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Set<Map.Entry<K, V>> entrySet(){
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	static
+	abstract
+	class AbstractAggregableMap<K, V> extends AbstractMap<K, V> implements AggregableMap<K, V> {
 
 		@Override
 		public V get(Object key){
