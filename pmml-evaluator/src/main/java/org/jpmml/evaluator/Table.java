@@ -22,6 +22,7 @@ import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,9 +31,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.math3.stat.descriptive.UnivariateStatistic;
+import org.apache.commons.math3.stat.descriptive.moment.Mean;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+import org.apache.commons.math3.stat.descriptive.rank.Median;
+import org.apache.commons.math3.stat.descriptive.summary.Product;
+import org.apache.commons.math3.stat.descriptive.summary.Sum;
 import org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement;
 
 public class Table {
@@ -365,7 +373,26 @@ public class Table {
 		}
 	}
 
-	public class Row extends AbstractMap<String, Object> implements LaggableMap<String, Object> {
+	static
+	private UnivariateStatistic getStatistic(String function){
+
+		switch(function){
+			case "avg":
+				return new Mean();
+			case "median":
+				return new Median();
+			case "product":
+				return new Product();
+			case "sum":
+				return new Sum();
+			case "stddev":
+				return new StandardDeviation();
+			default:
+				throw new IllegalArgumentException(function);
+		}
+	}
+
+	public class Row extends AbstractMap<String, Object> implements LaggableMap<String, Object>, AggregableMap<String, Object> {
 
 		private int origin;
 
@@ -444,6 +471,50 @@ public class Table {
 				}
 
 				return Table.get(values, index);
+			}
+
+			return null;
+		}
+
+		@IgnoreJRERequirement
+		@Override
+		public Object getAggregated(Object key, String function, int n){
+			int origin = getOrigin();
+
+			List<?> values = getValues((String)key);
+			if(values != null){
+				int fromIndex = Math.max((origin - n), 0);
+				int toIndex = origin;
+
+				List<Number> windowValues = (values.subList(fromIndex, toIndex)).stream()
+					.filter(value -> value != null)
+					.map(value -> TypeUtil.cast(Number.class, value))
+					.collect(Collectors.toList());
+
+				if(windowValues.isEmpty()){
+					return null;
+				}
+
+				switch(function){
+					case "max":
+						{
+							return Collections.max((List)windowValues);
+						}
+					case "min":
+						{
+							return Collections.min((List)windowValues);
+						}
+					default:
+						{
+							UnivariateStatistic statistic = getStatistic(function);
+
+							double[] doubleWindowValues = windowValues.stream()
+								.mapToDouble(value -> value.doubleValue())
+								.toArray();
+
+							return statistic.evaluate(doubleWindowValues);
+						}
+				}
 			}
 
 			return null;

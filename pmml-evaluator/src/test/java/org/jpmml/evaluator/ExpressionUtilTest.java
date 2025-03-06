@@ -535,22 +535,14 @@ public class ExpressionUtilTest {
 		MiningSchema miningSchema = new MiningSchema()
 			.addMiningFields(miningField);
 
-		Lag prevLag = new Lag("x")
-			.setN(null);
+		Lag lag = new Lag("x");
 
-		OutputField prevOutputField = new OutputField("prev", OpType.CATEGORICAL, DataType.INTEGER)
+		OutputField outputField = new OutputField("lag", OpType.CATEGORICAL, DataType.INTEGER)
 			.setResultFeature(ResultFeature.TRANSFORMED_VALUE)
-			.setExpression(prevLag);
-
-		Lag prevPrevLag = new Lag("x")
-			.setN(2);
-
-		OutputField prevPrevOutputField = new OutputField("prevPrev", OpType.CATEGORICAL, DataType.INTEGER)
-			.setResultFeature(ResultFeature.TRANSFORMED_VALUE)
-			.setExpression(prevPrevLag);
+			.setExpression(lag);
 
 		Output output = new Output()
-			.addOutputFields(prevOutputField, prevPrevOutputField);
+			.addOutputFields(outputField);
 
 		JavaModel javaModel = new JavaModel(MiningFunction.REGRESSION, miningSchema){
 
@@ -565,15 +557,13 @@ public class ExpressionUtilTest {
 			.setDataDictionary(dataDictionary)
 			.addModels(javaModel);
 
-		ModelEvaluator modelEvaluator = new ModelEvaluatorBuilder(pmml)
+		ModelEvaluator<?> modelEvaluator = new ModelEvaluatorBuilder(pmml)
 			.build();
 
 		Map<String, Object> arguments = Collections.emptyMap();
 
 		ModelEvaluationContext context = modelEvaluator.createEvaluationContext();
 		context.setArguments(arguments);
-
-		Lag lag = new Lag("x");
 
 		EvaluationException exception = assertThrows(EvaluationException.class, () -> evaluate(lag, context));
 		assertTrue((exception.getMessage()).contains(LaggableMap.class.getName()));
@@ -597,14 +587,13 @@ public class ExpressionUtilTest {
 		assertEquals(-3, evaluate(lag, context));
 
 		Table argumentsTable = new Table(Collections.singletonList("x"), 5);
-		argumentsTable.setValues("x", Arrays.asList(-1, 0, 1, 2, 3));
+		argumentsTable.setValues("x", Arrays.asList(1, 2, 3, 4, 5));
 
 		Table resultsTable = argumentsTable.stream()
 			.map(new EvaluatorFunction(modelEvaluator))
 			.collect(new TableCollector());
 
-		assertEquals(Arrays.asList(null, -1, 0, 1, 2), resultsTable.getValues("prev"));
-		assertEquals(Arrays.asList(null, null, -1, 0, 1), resultsTable.getValues("prevPrev"));
+		assertEquals(Arrays.asList(null, null, null, 1, 2), resultsTable.getValues("lag"));
 
 		lag.setAggregate(Lag.Aggregate.SUM);
 
@@ -641,9 +630,13 @@ public class ExpressionUtilTest {
 
 		context.setArguments(arguments);
 
-		lag.setN(3);
-
 		assertEquals((3 + 4 + 5), evaluate(lag, context));
+
+		resultsTable = argumentsTable.stream()
+			.map(new EvaluatorFunction(modelEvaluator))
+			.collect(new TableCollector());
+
+		assertEquals(Arrays.asList(null, 1, 3, 6, 9), resultsTable.getValues("lag"));
 	}
 
 	static
