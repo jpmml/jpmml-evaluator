@@ -28,7 +28,6 @@ import java.util.Set;
 
 import com.google.common.collect.ArrayTable;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Table;
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
 import org.dmg.pmml.Constant;
@@ -51,16 +50,18 @@ import org.dmg.pmml.NamespacePrefixes;
 import org.dmg.pmml.NormContinuous;
 import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.Output;
+import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.PMMLConstants;
 import org.dmg.pmml.PMMLFunctions;
 import org.dmg.pmml.ParameterField;
+import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.TextIndex.CountHits;
 import org.dmg.pmml.TextIndexNormalization;
 import org.jpmml.evaluator.functions.EchoFunction;
 import org.jpmml.evaluator.java.JavaModel;
-import org.jpmml.evaluator.java.JavaModelEvaluator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -534,14 +535,38 @@ public class ExpressionUtilTest {
 		MiningSchema miningSchema = new MiningSchema()
 			.addMiningFields(miningField);
 
+		Lag prevLag = new Lag("x")
+			.setN(null);
+
+		OutputField prevOutputField = new OutputField("prev", OpType.CATEGORICAL, DataType.INTEGER)
+			.setResultFeature(ResultFeature.TRANSFORMED_VALUE)
+			.setExpression(prevLag);
+
+		Lag prevPrevLag = new Lag("x")
+			.setN(2);
+
+		OutputField prevPrevOutputField = new OutputField("prevPrev", OpType.CATEGORICAL, DataType.INTEGER)
+			.setResultFeature(ResultFeature.TRANSFORMED_VALUE)
+			.setExpression(prevPrevLag);
+
+		Output output = new Output()
+			.addOutputFields(prevOutputField, prevPrevOutputField);
+
 		JavaModel javaModel = new JavaModel(MiningFunction.REGRESSION, miningSchema){
-		};
+
+			@Override
+			protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
+				return Collections.singletonMap(null, null);
+			}
+		}
+			.setOutput(output);
 
 		PMML pmml = new PMML()
 			.setDataDictionary(dataDictionary)
 			.addModels(javaModel);
 
-		ModelEvaluator<?> modelEvaluator = new JavaModelEvaluator(pmml);
+		ModelEvaluator modelEvaluator = new ModelEvaluatorBuilder(pmml)
+			.build();
 
 		Map<String, Object> arguments = Collections.singletonMap("x", 1);
 
@@ -569,6 +594,16 @@ public class ExpressionUtilTest {
 		lag.setN(3);
 
 		assertEquals(-3, evaluate(lag, context));
+
+		Table argumentsTable = new Table(Collections.singletonList("x"), 5);
+		argumentsTable.setValues("x", Arrays.asList(-1, 0, 1, 2, 3));
+
+		Table resultsTable = argumentsTable.stream()
+			.map(new EvaluatorFunction(modelEvaluator))
+			.collect(new TableCollector());
+
+		assertEquals(Arrays.asList(null, -1, 0, 1, 2), resultsTable.getValues("prev"));
+		assertEquals(Arrays.asList(null, null, -1, 0, 1), resultsTable.getValues("prevPrev"));
 	}
 
 	static
@@ -584,7 +619,7 @@ public class ExpressionUtilTest {
 			rowKeys.add(i + 1);
 		}
 
-		Table<Integer, String, String> table = ArrayTable.create(rowKeys, columns);
+		com.google.common.collect.Table<Integer, String, String> table = ArrayTable.create(rowKeys, columns);
 
 		for(int i = 0; i < rows.size(); i++){
 			List<String> row = rows.get(i);

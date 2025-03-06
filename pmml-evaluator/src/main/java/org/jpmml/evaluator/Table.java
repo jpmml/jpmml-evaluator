@@ -365,7 +365,7 @@ public class Table {
 		}
 	}
 
-	public class Row extends AbstractMap<String, Object> {
+	public class Row extends AbstractMap<String, Object> implements LaggableMap<String, Object> {
 
 		private int origin;
 
@@ -423,7 +423,27 @@ public class Table {
 
 			List<?> values = getValues((String)key);
 			if(values != null){
-				return Table.get(values, origin);
+				int index = origin;
+
+				return Table.get(values, index);
+			}
+
+			return null;
+		}
+
+		@Override
+		public Object getLagged(Object key, int n){
+			int origin = getOrigin();
+
+			List<?> values = getValues((String)key);
+			if(values != null){
+				int index = (origin - n);
+
+				if(index < 0){
+					return null;
+				}
+
+				return Table.get(values, index);
 			}
 
 			return null;
