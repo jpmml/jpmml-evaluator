@@ -155,6 +155,14 @@ Core methods:
 * `InputField`
   * `#prepare(Object)`
 
+Data input/output:
+* Interface `java.util.Map` - Singular data record.
+  * Interface `org.jpmml.evaluator.AggregableMap`
+  * Interface `org.jpmml.evaluator.LaggableMap`
+* Class `org.jpmml.evaluator.Table` - Collection (pseudo-batch) of data records.
+* Class `org.jpmml.evaluator.TableReader`
+* Class `org.jpmml.evaluator.TableWriter`
+
 Target value types:
 
 * Interface `org.jpmml.evaluator.Computable`
