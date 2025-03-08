@@ -314,13 +314,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 	}
 
 	protected Map<String, ?> processResults(Map<String, ?> results){
-
-		if(results instanceof OutputMap){
-			OutputMap outputMap = (OutputMap)results;
-
-			outputMap.clearPrivate();
-		}
-
 		return results;
 	}
 

@@ -54,7 +54,7 @@ public class ModelChainSimpleTest extends ModelChainTest {
 	public void evaluateSetosa() throws Exception {
 		Map<String, ?> results = evaluateExample(1.4, 0.2);
 
-		assertEquals(1 + 1, results.size());
+		assertEquals(1, results.size());
 
 		assertEquals(0.8d + 0.3d, results.get("PollenIndex"));
 	}

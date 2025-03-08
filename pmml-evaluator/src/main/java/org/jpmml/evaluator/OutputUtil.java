@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,7 +79,7 @@ public class OutputUtil {
 			return predictions;
 		}
 
-		OutputMap result = new OutputMap(predictions);
+		Map<String, Object> result = new LinkedHashMap<>(predictions);
 
 		OutputFilter outputFilter = modelEvaluator.ensureOutputFilter();
 
@@ -438,11 +439,7 @@ public class OutputUtil {
 			context.declareInternal(name, outputValue);
 
 			if(outputFilter.test(outputField)){
-				result.putPublic(name, FieldValueUtil.getValue(outputValue));
-			} else
-
-			{
-				result.putPrivate(name, FieldValueUtil.getValue(outputValue));
+				result.put(name, FieldValueUtil.getValue(outputValue));
 			}
 		}
 

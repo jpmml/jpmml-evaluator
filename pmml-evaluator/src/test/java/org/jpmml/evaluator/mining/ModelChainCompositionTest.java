@@ -45,6 +45,8 @@ public class ModelChainCompositionTest extends ModelChainTest {
 	public void evaluateSetosa() throws Exception {
 		Map<String, ?> results = evaluateExample(1.4, 0.2);
 
+		assertEquals(1 + (1 + 2 + 3), results.size());
+
 		assertEquals(0.3, results.get("Setosa Pollen Index"));
 		assertEquals("2.1", results.get("Segment Id"));
 		assertEquals("2", results.get("Class Node"));
@@ -56,6 +58,8 @@ public class ModelChainCompositionTest extends ModelChainTest {
 	public void evaluateVersicolor() throws Exception {
 		Map<String, ?> results = evaluateExample(4.7, 1.4);
 
+		assertEquals(1 + (1 + 2 + 3), results.size());
+
 		assertEquals(0.2, results.get("Versicolor Pollen Index"));
 		assertEquals("2.2", results.get("Segment Id"));
 		assertEquals("4", results.get("Class Node"));
@@ -66,6 +70,8 @@ public class ModelChainCompositionTest extends ModelChainTest {
 	@Test
 	public void evaluateVirginica() throws Exception {
 		Map<String, ?> results = evaluateExample(6, 2.5);
+
+		assertEquals(1 + (1 + 2 + 3), results.size());
 
 		assertEquals(0.1, results.get("Virginica Pollen Index"));
 		assertEquals("2.3", results.get("Segment Id"));

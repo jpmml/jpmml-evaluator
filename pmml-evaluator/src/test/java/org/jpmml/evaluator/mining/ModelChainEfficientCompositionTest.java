@@ -39,6 +39,8 @@ public class ModelChainEfficientCompositionTest extends ModelChainTest {
 	public void evaluateSetosa() throws Exception {
 		Map<String, ?> results = evaluateExample(1.4, 0.2);
 
+		assertEquals(1 + 1, results.size());
+
 		assertEquals(0.3, results.get("Setosa Pollen Index"));
 	}
 
@@ -46,12 +48,16 @@ public class ModelChainEfficientCompositionTest extends ModelChainTest {
 	public void evaluateVersicolor() throws Exception {
 		Map<String, ?> results = evaluateExample(4.7, 1.4);
 
+		assertEquals(1 + 1, results.size());
+
 		assertEquals(0.2, results.get("Versicolor Pollen Index"));
 	}
 
 	@Test
 	public void evaluateVirginica() throws Exception {
 		Map<String, ?> results = evaluateExample(6, 2.5);
+
+		assertEquals(1 + 1, results.size());
 
 		assertEquals(0.1, results.get("Virginica Pollen Index"));
 	}
