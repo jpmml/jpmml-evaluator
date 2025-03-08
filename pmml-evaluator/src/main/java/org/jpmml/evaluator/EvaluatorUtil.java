@@ -20,6 +20,8 @@ package org.jpmml.evaluator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -27,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
 
@@ -78,23 +81,54 @@ public class EvaluatorUtil {
 	 */
 	static
 	public Map<String, ?> decodeAll(Map<String, ?> map){
-		Map<String, Object> result = new LinkedHashMap<>(2 * map.size());
 
-		Collection<? extends Map.Entry<String, ?>> entries = map.entrySet();
-		for(Map.Entry<String, ?> entry : entries){
+		if(map.size() == 1){
+			Collection<? extends Map.Entry<String, ?>> entries = map.entrySet();
+
+			Map.Entry<String, ?> entry = Iterables.getOnlyElement(entries);
+
 			String name = entry.getKey();
 			Object value = entry.getValue();
 
+			Object decodedValue;
+
 			try {
-				value = decode(value);
+				decodedValue = decode(value);
 			} catch(UnsupportedOperationException uoe){
-				continue;
+				return Collections.emptyMap();
 			}
 
-			result.put(name, value);
-		}
+			return Collections.singletonMap(name, decodedValue);
+		} else
 
-		return result;
+		{
+			Map<String, Object> result = new LinkedHashMap<>(map);
+
+			Collection<? extends Map.Entry<String, Object>> entries = result.entrySet();
+
+			for(Iterator<? extends Map.Entry<String, Object>> it = entries.iterator(); it.hasNext(); ){
+				Map.Entry<String, Object> entry = it.next();
+
+				String name = entry.getKey();
+				Object value = entry.getValue();
+
+				Object decodedValue;
+
+				try {
+					decodedValue = decode(value);
+				} catch(UnsupportedOperationException uoe){
+					it.remove();
+
+					continue;
+				}
+
+				if(decodedValue != value){
+					entry.setValue(decodedValue);
+				}
+			}
+
+			return result;
+		}
 	}
 
 	static
