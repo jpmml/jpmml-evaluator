@@ -21,7 +21,6 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -79,7 +78,8 @@ public class OutputUtil {
 			return predictions;
 		}
 
-		Map<String, Object> result = new LinkedHashMap<>(predictions);
+		@SuppressWarnings({"rawtypes", "unchecked"})
+		Map<String, Object> result = (Map)MapUtil.ensureLinkedHashMap(predictions);
 
 		OutputFilter outputFilter = modelEvaluator.ensureOutputFilter();
 

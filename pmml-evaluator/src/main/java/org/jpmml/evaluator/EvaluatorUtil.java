@@ -102,7 +102,8 @@ public class EvaluatorUtil {
 		} else
 
 		{
-			Map<String, Object> result = new LinkedHashMap<>(map);
+			@SuppressWarnings({"rawtypes", "unchecked"})
+			Map<String, Object> result = (Map)MapUtil.ensureLinkedHashMap(map);
 
 			Collection<? extends Map.Entry<String, Object>> entries = result.entrySet();
 
