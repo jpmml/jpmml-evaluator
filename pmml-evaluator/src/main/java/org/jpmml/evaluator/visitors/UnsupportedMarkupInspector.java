@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
+import org.dmg.pmml.BlockIndicator;
 import org.dmg.pmml.EmbeddedModel;
-import org.dmg.pmml.Lag;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Matrix;
 import org.dmg.pmml.NormDiscrete;
@@ -131,6 +131,13 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 	}
 
 	@Override
+	public VisitorAction visit(BlockIndicator blockIndicator){
+		report(new UnsupportedElementException(blockIndicator));
+
+		return VisitorAction.SKIP;
+	}
+
+	@Override
 	public VisitorAction visit(CenterFields centerFields){
 		report(new UnsupportedElementException(centerFields));
 
@@ -183,13 +190,6 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 	@Override
 	public VisitorAction visit(GaussianProcessModel gaussianProcessModel){
 		report(new UnsupportedElementException(gaussianProcessModel));
-
-		return VisitorAction.SKIP;
-	}
-
-	@Override
-	public VisitorAction visit(Lag lag){
-		report(new UnsupportedElementException(lag));
 
 		return VisitorAction.SKIP;
 	}
