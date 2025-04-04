@@ -47,12 +47,12 @@ public class NormalizationUtilTest implements Deltas {
 		assertEquals(interpolate(-1d, BEGIN, MIDPOINT), normalize(normContinuous, -1d), DOUBLE_EXACT);
 		assertEquals(interpolate(12.2d, MIDPOINT, END), normalize(normContinuous, 12.2d), DOUBLE_EXACT);
 
-		normContinuous.setOutliers(OutlierTreatmentMethod.AS_MISSING_VALUES);
+		normContinuous.setOutlierTreatment(OutlierTreatmentMethod.AS_MISSING_VALUES);
 
 		assertNull(normalize(normContinuous, -1d));
 		assertNull(normalize(normContinuous, 12.2d));
 
-		normContinuous.setOutliers(OutlierTreatmentMethod.AS_EXTREME_VALUES);
+		normContinuous.setOutlierTreatment(OutlierTreatmentMethod.AS_EXTREME_VALUES);
 
 		assertEquals(BEGIN[1], normalize(normContinuous, -1d), DOUBLE_EXACT);
 		assertEquals(END[1], normalize(normContinuous, 12.2d), DOUBLE_EXACT);
@@ -79,7 +79,7 @@ public class NormalizationUtilTest implements Deltas {
 		double stdev = Math.sqrt(2d);
 
 		NormContinuous normContinuous = new NormContinuous("x", null)
-			.setOutliers(OutlierTreatmentMethod.AS_IS)
+			.setOutlierTreatment(OutlierTreatmentMethod.AS_IS)
 			.addLinearNorms(
 				new LinearNorm(0d, -(mu / stdev)),
 				new LinearNorm(mu, 0d)

@@ -60,7 +60,7 @@ public class NormalizationUtil {
 
 		int index = binarySearch(linearNorms, LinearNorm::requireOrig, value);
 		if(index < 0 || index == (linearNorms.size() - 1)){
-			OutlierTreatmentMethod outlierTreatmentMethod = normContinuous.getOutliers();
+			OutlierTreatmentMethod outlierTreatmentMethod = normContinuous.getOutlierTreatment();
 
 			switch(outlierTreatmentMethod){
 				case AS_IS:
