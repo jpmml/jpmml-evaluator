@@ -21,6 +21,7 @@ package org.jpmml.evaluator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
@@ -168,5 +169,75 @@ public class TableTest {
 		assertEquals(Arrays.asList("1", "2", "3", "N/A", "N/A"), resultsTable.getValues("A"));
 		assertEquals(Arrays.asList("1.0", "2.0", "3.0", "N/A", "N/A"), resultsTable.getValues("B"));
 		assertEquals(Arrays.asList("1", "2", "3", "N/A", "5"), resultsTable.getValues("C"));
+	}
+
+	@Test
+	public void blockIndicators(){
+		Table table = new Table(Arrays.asList("A", "B", "C"), 100);
+
+		Table.Row row = table.createWriterRow(0);
+
+		for(int i = 1; i <= 100; i++){
+			row.put("A", i);
+			row.put("B", Boolean.valueOf(i % 2 == 0));
+			row.put("C", Integer.valueOf(i <= 50 ? 1 : 0));
+
+			row.advance();
+		}
+
+		assertEquals(3, table.getNumberOfColumns());
+		assertEquals(100, table.getNumberOfRows());
+
+		row.setOrigin(0);
+
+		assertEquals(Map.of("A", 1, "B", false, "C", 1), row);
+
+		assertNull(row.getLagged("A", 1, Collections.emptyList()));
+		assertNull(row.getAggregated("A", "sum", 100, Collections.emptyList()));
+
+		row.setOrigin(49);
+
+		assertEquals(Map.of("A", 50, "B", true, "C", 1), row);
+
+		assertEquals(49, row.getLagged("A", 1, Collections.emptyList()));
+
+		assertEquals(48, row.getLagged("A", 1, Collections.singletonList("B")));
+		assertEquals(49, row.getLagged("A", 1, Collections.singletonList("C")));
+
+		assertEquals(1225d, row.getAggregated("A", "sum", 100, Collections.emptyList()));
+
+		assertEquals(600d, row.getAggregated("A", "sum", 100, Collections.singletonList("B")));
+		assertEquals(1225d, row.getAggregated("A", "sum", 100, Collections.singletonList("C")));
+
+		assertEquals(600d, row.getAggregated("A", "sum", 100, Arrays.asList("B", "C")));
+
+		row.setOrigin(50);
+
+		assertEquals(Map.of("A", 51, "B", false, "C", 0), row);
+
+		assertEquals(50, row.getLagged("A", 1, Collections.emptyList()));
+
+		assertEquals(49, row.getLagged("A", 1, Collections.singletonList("B")));
+		assertNull(row.getLagged("A", 1, Collections.singletonList("C")));
+
+		assertEquals(1275d, row.getAggregated("A", "sum", 100, Collections.emptyList()));
+
+		assertEquals(null, row.getAggregated("A", "sum", 100, Arrays.asList("B", "C")));
+
+		row.setOrigin(99);
+
+		assertEquals(Map.of("A", 100, "B", true, "C", 0), row);
+
+		assertEquals(99, row.getLagged("A", 1, Collections.emptyList()));
+
+		assertEquals(98, row.getLagged("A", 1, Collections.singletonList("B")));
+		assertEquals(99, row.getLagged("A", 1, Collections.singletonList("C")));
+
+		assertEquals(4950d, row.getAggregated("A", "sum", 100, Collections.emptyList()));
+
+		assertEquals(2450d, row.getAggregated("A", "sum", 100, Collections.singletonList("B")));
+		assertEquals(3675d, row.getAggregated("A", "sum", 100, Collections.singletonList("C")));
+
+		assertEquals(1800d, row.getAggregated("A", "sum", 100, Arrays.asList("B", "C")));
 	}
 }

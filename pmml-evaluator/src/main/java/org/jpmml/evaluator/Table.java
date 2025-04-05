@@ -462,19 +462,37 @@ public class Table {
 		public Object getLagged(String key, int n, List<String> blockIndicatorKeys){
 			int origin = getOrigin();
 
-			if(!blockIndicatorKeys.isEmpty()){
-				throw new UnsupportedOperationException();
-			}
-
 			List<?> values = getValues(key);
 			if(values != null){
-				int index = (origin - n);
 
-				if(index < 0){
+				if(blockIndicatorKeys.isEmpty()){
+					int index = (origin - n);
+
+					if(index < 0){
+						return null;
+					}
+
+					return Table.get(values, index);
+				} else
+
+				{
+					Map<String, ?> blockIndicatorMap = createBlockIndicator(origin, blockIndicatorKeys);
+
+					int matches = 0;
+
+					for(int index = (origin - 1); index > -1; index--){
+
+						if(matchesBlockIndicator(index, blockIndicatorMap)){
+							matches++;
+
+							if(matches == n){
+								return Table.get(values, index);
+							}
+						}
+					}
+
 					return null;
 				}
-
-				return Table.get(values, index);
 			}
 
 			return null;
@@ -485,19 +503,45 @@ public class Table {
 		public Object getAggregated(String key, String function, int n, List<String> blockIndicatorKeys){
 			int origin = getOrigin();
 
-			if(!blockIndicatorKeys.isEmpty()){
-				throw new UnsupportedOperationException();
-			}
-
 			List<?> values = getValues(key);
 			if(values != null){
-				int fromIndex = Math.max((origin - n), 0);
-				int toIndex = origin;
+				List<Number> windowValues;
 
-				List<Number> windowValues = (values.subList(fromIndex, toIndex)).stream()
-					.filter(value -> value != null)
-					.map(value -> TypeUtil.cast(Number.class, value))
-					.collect(Collectors.toList());
+				if(blockIndicatorKeys.isEmpty()){
+					int fromIndex = Math.max((origin - n), 0);
+					int toIndex = origin;
+
+					windowValues = (values.subList(fromIndex, toIndex)).stream()
+						.filter(value -> value != null)
+						.map(value -> TypeUtil.cast(Number.class, value))
+						.collect(Collectors.toList());
+				} else
+
+				{
+					Map<String, ?> blockIndicatorMap = createBlockIndicator(origin, blockIndicatorKeys);
+
+					windowValues = new ArrayList<>();
+
+					int matches = 0;
+
+					for(int index = (origin - 1); index > -1; index--){
+
+						if(matchesBlockIndicator(index, blockIndicatorMap)){
+							matches++;
+
+							Object value = Table.get(values, index);
+							if(value != null){
+								value = TypeUtil.cast(Number.class, value);
+
+								windowValues.add((Number)value);
+							} // End if
+
+							if(matches == n){
+								break;
+							}
+						}
+					}
+				} // End if
 
 				if(windowValues.isEmpty()){
 					return null;
@@ -598,6 +642,56 @@ public class Table {
 			};
 
 			return result;
+		}
+
+		private Map<String, Object> createBlockIndicator(int index, List<String> keys){
+			Map<String, Object> result = new HashMap<>();
+
+			for(int i = 0; i < keys.size(); i++){
+				String key = keys.get(i);
+				Object value;
+
+				List<?> values = getValues(key);
+				if(values != null){
+					value = Table.get(values, index);
+				} else
+
+				{
+					throw new IllegalArgumentException(key);
+				}
+
+				result.put(key, value);
+			}
+
+			return result;
+		}
+
+		private boolean matchesBlockIndicator(int index, Map<String, ?> map){
+
+			if(map.isEmpty()){
+				return true;
+			}
+
+			Collection<? extends Map.Entry<String, ?>> entries = map.entrySet();
+			for(Map.Entry<String, ?> entry : entries){
+				String key = entry.getKey();
+				Object expectedValue = entry.getValue();
+
+				List<?> values = getValues(key);
+				if(values != null){
+					Object actualValue = Table.get(values, index);
+
+					if(!Objects.equals(expectedValue, actualValue)){
+						return false;
+					}
+				} else
+
+				{
+					throw new IllegalArgumentException(key);
+				}
+			}
+
+			return true;
 		}
 
 		public Table getTable(){
