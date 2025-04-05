@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.List;
 import java.util.Objects;
 
 class AggregateKey {
@@ -28,20 +29,24 @@ class AggregateKey {
 
 	private int n = -1;
 
+	private List<String> blockIndicatorFields = null;
 
-	AggregateKey(String name, String function, int n){
+
+	AggregateKey(String name, String function, int n, List<String> blockIndicatorFields){
 		setName(name);
 		setFunction(function);
 		setN(n);
+		setBlockIndicatorFields(blockIndicatorFields);
 	}
 
 	@Override
 	public int hashCode(){
-		int result = 0;
+		int result = 1;
 
 		result += (31 * result) + getName().hashCode();
 		result += (31 * result) + getFunction().hashCode();
 		result += (31 * result) + getN();
+		result += (31 * result) + getBlockIndicatorFields().hashCode();
 
 		return result;
 	}
@@ -52,7 +57,7 @@ class AggregateKey {
 		if(object instanceof AggregateKey){
 			AggregateKey that = (AggregateKey)object;
 
-			return (this.getName()).equals(that.getName()) && (this.getFunction()).equals(that.getFunction()) && (this.getN() == that.getN());
+			return Objects.equals(this.getName(), that.getName()) && Objects.equals(this.getFunction(), that.getFunction()) && (this.getN() == that.getN()) && Objects.equals(this.getBlockIndicatorFields(), that.getBlockIndicatorFields());
 		}
 
 		return false;
@@ -71,7 +76,7 @@ class AggregateKey {
 	}
 
 	private void setFunction(String function){
-		this.function = function;
+		this.function = Objects.requireNonNull(function);
 	}
 
 	public int getN(){
@@ -85,5 +90,13 @@ class AggregateKey {
 		}
 
 		this.n = n;
+	}
+
+	public List<String> getBlockIndicatorFields(){
+		return this.blockIndicatorFields;
+	}
+
+	private void setBlockIndicatorFields(List<String> blockIndicatorFields){
+		this.blockIndicatorFields = Objects.requireNonNull(blockIndicatorFields);
 	}
 }

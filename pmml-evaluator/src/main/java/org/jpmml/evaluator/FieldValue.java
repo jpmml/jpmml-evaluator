@@ -308,7 +308,7 @@ public class FieldValue implements TypeInfo, Serializable {
 		if(object instanceof FieldValue){
 			FieldValue that = (FieldValue)object;
 
-			return (this.getOpType() == that.getOpType()) && (this.getDataType() == that.getDataType()) && (this.getValue()).equals(that.getValue());
+			return (this.getOpType() == that.getOpType()) && (this.getDataType() == that.getDataType()) && Objects.equals(this.getValue(), that.getValue());
 		}
 
 		return false;

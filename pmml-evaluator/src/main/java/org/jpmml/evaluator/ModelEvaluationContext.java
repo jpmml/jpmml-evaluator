@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -158,6 +159,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 		String name = lagKey.getName();
 		int n = lagKey.getN();
+		List<String> blockIndicatorFields = lagKey.getBlockIndicatorFields();
 
 		MiningField miningField = modelEvaluator.getMiningField(name);
 		if(miningField == null){
@@ -189,7 +191,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 				LaggableMap<String, ?> laggableArguments = (LaggableMap<String, ?>)arguments;
 
-				Object value = laggableArguments.getLagged(name, n);
+				Object value = laggableArguments.getLagged(name, n, blockIndicatorFields);
 
 				return declareLagged(lagKey, value);
 			} // End if
@@ -214,6 +216,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 		String name = aggregateKey.getName();
 		String function = aggregateKey.getFunction();
 		int n = aggregateKey.getN();
+		List<String> blockIndicatorFields = aggregateKey.getBlockIndicatorFields();
 
 		MiningField miningField = modelEvaluator.getMiningField(name);
 		if(miningField == null){
@@ -245,7 +248,7 @@ public class ModelEvaluationContext extends EvaluationContext {
 
 				AggregableMap<String, ?> aggregableArguments = (AggregableMap<String, ?>)arguments;
 
-				Object value = aggregableArguments.getAggregated(name, function, n);
+				Object value = aggregableArguments.getAggregated(name, function, n, blockIndicatorFields);
 
 				return declareAggregated(aggregateKey, value);
 			} // End if

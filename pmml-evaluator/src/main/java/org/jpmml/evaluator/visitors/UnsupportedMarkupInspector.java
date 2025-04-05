@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
-import org.dmg.pmml.BlockIndicator;
 import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Matrix;
@@ -126,13 +125,6 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 	@Override
 	public VisitorAction visit(BayesianNetworkModel bayesianNetworkModel){
 		report(new UnsupportedElementException(bayesianNetworkModel));
-
-		return VisitorAction.SKIP;
-	}
-
-	@Override
-	public VisitorAction visit(BlockIndicator blockIndicator){
-		report(new UnsupportedElementException(blockIndicator));
 
 		return VisitorAction.SKIP;
 	}

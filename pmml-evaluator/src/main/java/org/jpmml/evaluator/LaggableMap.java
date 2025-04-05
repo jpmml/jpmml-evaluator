@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.List;
 import java.util.Map;
 
 public interface LaggableMap<K, V> extends Map<K, V> {
@@ -42,8 +43,9 @@ public interface LaggableMap<K, V> extends Map<K, V> {
 	 * @param key The field name.
 	 * @param n The number of steps to move backwards from the current position.
 	 * The previous position is {@code 1} step backwards.
+	 * @param blockIndicatorKeys Block indicator field names.
 	 *
 	 * @return The field value or {@code null}.
 	 */
-	V getLagged(Object key, int n);
+	V getLagged(Object key, int n, List<K> blockIndicatorKeys);
 }

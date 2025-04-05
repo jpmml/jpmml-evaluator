@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.List;
 import java.util.Objects;
 
 class LagKey {
@@ -26,15 +27,24 @@ class LagKey {
 
 	private int n = -1;
 
+	private List<String> blockIndicatorFields = null;
 
-	LagKey(String name, int n){
+
+	LagKey(String name, int n, List<String> blockIndicatorFields){
 		setName(name);
 		setN(n);
+		setBlockIndicatorFields(blockIndicatorFields);
 	}
 
 	@Override
 	public int hashCode(){
-		return (31 * getName().hashCode()) + getN();
+		int result = 1;
+
+		result += (31 * result) + getName().hashCode();
+		result += (31 * result) + getN();
+		result += (31 * result) + getBlockIndicatorFields().hashCode();
+
+		return result;
 	}
 
 	@Override
@@ -43,7 +53,7 @@ class LagKey {
 		if(object instanceof LagKey){
 			LagKey that = (LagKey)object;
 
-			return (this.getName()).equals(that.getName()) && (this.getN() == that.getN());
+			return Objects.equals(this.getName(), that.getName()) && (this.getN() == that.getN()) && Objects.equals(this.getBlockIndicatorFields(), that.getBlockIndicatorFields());
 		}
 
 		return false;
@@ -68,5 +78,13 @@ class LagKey {
 		}
 
 		this.n = n;
+	}
+
+	public List<String> getBlockIndicatorFields(){
+		return this.blockIndicatorFields;
+	}
+
+	private void setBlockIndicatorFields(List<String> blockIndicatorFields){
+		this.blockIndicatorFields = Objects.requireNonNull(blockIndicatorFields);
 	}
 }

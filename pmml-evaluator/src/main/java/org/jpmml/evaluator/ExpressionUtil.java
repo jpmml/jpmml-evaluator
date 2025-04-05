@@ -53,7 +53,6 @@ import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.PMMLException;
 import org.jpmml.model.UnsupportedAttributeException;
 import org.jpmml.model.UnsupportedElementException;
-import org.jpmml.model.UnsupportedElementListException;
 
 public class ExpressionUtil {
 
@@ -552,11 +551,18 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateLag(Lag lag, EvaluationContext context){
+		List<String> blockIndicatorFields = Collections.emptyList();
 
 		if(lag.hasBlockIndicators()){
 			List<BlockIndicator> blockIndicators = lag.getBlockIndicators();
 
-			throw new UnsupportedElementListException(blockIndicators);
+			blockIndicatorFields = new ArrayList<>(blockIndicators.size());
+
+			for(int i = 0; i < blockIndicators.size(); i++){
+				BlockIndicator blockIndicator = blockIndicators.get(i);
+
+				blockIndicatorFields.add(blockIndicator.requireField());
+			}
 		}
 
 		Integer n = lag.getN();
@@ -567,7 +573,7 @@ public class ExpressionUtil {
 		Lag.Aggregate aggregate = lag.getAggregate();
 		switch(aggregate){
 			case NONE:
-				return context.evaluateLagged(new LagKey(lag.requireField(), n));
+				return context.evaluateLagged(new LagKey(lag.requireField(), n, blockIndicatorFields));
 			case AVG:
 			case MAX:
 			case MEDIAN:
@@ -575,7 +581,7 @@ public class ExpressionUtil {
 			case PRODUCT:
 			case SUM:
 			case STDDEV:
-				return context.evaluateAggregated(new AggregateKey(lag.requireField(), aggregate.value(), n));
+				return context.evaluateAggregated(new AggregateKey(lag.requireField(), aggregate.value(), n, blockIndicatorFields));
 			default:
 				throw new UnsupportedAttributeException(lag, aggregate);
 		}

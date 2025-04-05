@@ -459,8 +459,12 @@ public class Table {
 		}
 
 		@Override
-		public Object getLagged(Object key, int n){
+		public Object getLagged(Object key, int n, List<String> blockIndicatorKeys){
 			int origin = getOrigin();
+
+			if(!blockIndicatorKeys.isEmpty()){
+				throw new UnsupportedOperationException();
+			}
 
 			List<?> values = getValues((String)key);
 			if(values != null){
@@ -478,8 +482,12 @@ public class Table {
 
 		@IgnoreJRERequirement
 		@Override
-		public Object getAggregated(Object key, String function, int n){
+		public Object getAggregated(Object key, String function, int n, List<String> blockIndicatorKeys){
 			int origin = getOrigin();
+
+			if(!blockIndicatorKeys.isEmpty()){
+				throw new UnsupportedOperationException();
+			}
 
 			List<?> values = getValues((String)key);
 			if(values != null){

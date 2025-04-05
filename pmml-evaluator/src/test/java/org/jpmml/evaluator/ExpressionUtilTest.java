@@ -573,7 +573,7 @@ public class ExpressionUtilTest {
 		arguments = new AbstractLaggableMap<>(){
 
 			@Override
-			public Object getLagged(Object key, int n){
+			public Object getLagged(Object key, int n, List<String> blockIndicatorKeys){
 				return -n;
 			}
 		};
@@ -614,7 +614,7 @@ public class ExpressionUtilTest {
 
 
 			@Override
-			public Object getAggregated(Object key, String function, int n){
+			public Object getAggregated(Object key, String function, int n, List<String> blockIndicatorKeys){
 				List<Integer> windowValues = this.values.subList(this.values.size() - n, this.values.size());
 
 				switch(function){

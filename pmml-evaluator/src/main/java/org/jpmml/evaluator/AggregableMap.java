@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.List;
 import java.util.Map;
 
 import org.dmg.pmml.Lag;
@@ -33,8 +34,9 @@ public interface AggregableMap<K, V> extends Map<K, V> {
 	 * @param function The aggregation function name.
 	 * The implementation should recognize and support all {@link Lag.Aggregate} enum constant values (except for the `none` value).
 	 * @param n The window size.
+	 * @param blockIndicatorKeys Block indicator field names.
 	 *
 	 * @return The aggregate field value.
 	 */
-	V getAggregated(Object key, String function, int n);
+	V getAggregated(Object key, String function, int n, List<K> blockIndicatorKeys);
 }
