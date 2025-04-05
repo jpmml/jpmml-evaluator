@@ -433,9 +433,9 @@ public class ExpressionUtil {
 		try {
 			result = evaluateFunction(function, values, context);
 		} catch(UndefinedResultException ure){
-			InvalidValueTreatmentMethod invalidValueTreatmentMethod = apply.getInvalidValueTreatment();
+			InvalidValueTreatmentMethod invalidValueTreatment = apply.getInvalidValueTreatment();
 
-			switch(invalidValueTreatmentMethod){
+			switch(invalidValueTreatment){
 				case RETURN_INVALID:
 					throw new EvaluationException("Function " + EvaluationException.formatName(function) + " failed", apply)
 						.initCause(ure);
@@ -445,9 +445,9 @@ public class ExpressionUtil {
 				case AS_MISSING:
 					return FieldValueUtil.create(defaultValue);
 				case AS_VALUE:
-					throw new InvalidAttributeException(apply, invalidValueTreatmentMethod);
+					throw new InvalidAttributeException(apply, invalidValueTreatment);
 				default:
-					throw new UnsupportedAttributeException(apply, invalidValueTreatmentMethod);
+					throw new UnsupportedAttributeException(apply, invalidValueTreatment);
 			}
 		} finally {
 
@@ -465,9 +465,9 @@ public class ExpressionUtil {
 		} else
 
 		if(FieldValueUtil.isInvalid(result)){
-			InvalidValueTreatmentMethod invalidValueTreatmentMethod = apply.getInvalidValueTreatment();
+			InvalidValueTreatmentMethod invalidValueTreatment = apply.getInvalidValueTreatment();
 
-			switch(invalidValueTreatmentMethod){
+			switch(invalidValueTreatment){
 				case RETURN_INVALID:
 					throw new EvaluationException("Function " + EvaluationException.formatName(function) + " returned invalid value", apply);
 				case AS_IS:
@@ -475,9 +475,9 @@ public class ExpressionUtil {
 				case AS_MISSING:
 					return FieldValueUtil.create(defaultValue);
 				case AS_VALUE:
-					throw new InvalidAttributeException(apply, invalidValueTreatmentMethod);
+					throw new InvalidAttributeException(apply, invalidValueTreatment);
 				default:
-					throw new UnsupportedAttributeException(apply, invalidValueTreatmentMethod);
+					throw new UnsupportedAttributeException(apply, invalidValueTreatment);
 			}
 		}
 

@@ -64,8 +64,8 @@ public class InputFieldUtil {
 			return false;
 		}
 
-		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
-		switch(invalidValueTreatmentMethod){
+		InvalidValueTreatmentMethod invalidValueTreatment = miningField.getInvalidValueTreatment();
+		switch(invalidValueTreatment){
 			case RETURN_INVALID:
 			case AS_IS: // XXX
 				break;
@@ -78,8 +78,8 @@ public class InputFieldUtil {
 			return false;
 		}
 
-		OutlierTreatmentMethod outlierTreatmentMethod = miningField.getOutlierTreatment();
-		switch(outlierTreatmentMethod){
+		OutlierTreatmentMethod outlierTreatment = miningField.getOutlierTreatment();
+		switch(outlierTreatment){
 			case AS_IS:
 				break;
 			default:
@@ -160,15 +160,15 @@ public class InputFieldUtil {
 	private ScalarValue performValidValueTreatment(InputTypeInfo typeInfo, ScalarValue value){
 		MiningField miningField = typeInfo.getMiningField();
 
-		OutlierTreatmentMethod outlierTreatmentMethod = miningField.getOutlierTreatment();
-		switch(outlierTreatmentMethod){
+		OutlierTreatmentMethod outlierTreatment = miningField.getOutlierTreatment();
+		switch(outlierTreatment){
 			case AS_IS:
 				return value;
 			case AS_MISSING_VALUES:
 			case AS_EXTREME_VALUES:
 				break;
 			default:
-				throw new UnsupportedAttributeException(miningField, outlierTreatmentMethod);
+				throw new UnsupportedAttributeException(miningField, outlierTreatment);
 		}
 
 		Number lowValue = miningField.getLowValue();
@@ -183,7 +183,7 @@ public class InputFieldUtil {
 			throw new InvalidElementException(miningField);
 		}
 
-		switch(outlierTreatmentMethod){
+		switch(outlierTreatment){
 			case AS_MISSING_VALUES:
 				if(lowValue != null && value.compareToValue(lowValue) < 0){
 					return createMissingInputValue(typeInfo);
@@ -203,7 +203,7 @@ public class InputFieldUtil {
 				}
 				break;
 			default:
-				throw new UnsupportedAttributeException(miningField, outlierTreatmentMethod);
+				throw new UnsupportedAttributeException(miningField, outlierTreatment);
 		}
 
 		return value;
@@ -213,8 +213,8 @@ public class InputFieldUtil {
 	private ScalarValue performInvalidValueTreatment(InputTypeInfo typeInfo, Object value){
 		MiningField miningField = typeInfo.getMiningField();
 
-		InvalidValueTreatmentMethod invalidValueTreatmentMethod = miningField.getInvalidValueTreatment();
-		switch(invalidValueTreatmentMethod){
+		InvalidValueTreatmentMethod invalidValueTreatment = miningField.getInvalidValueTreatment();
+		switch(invalidValueTreatment){
 			case RETURN_INVALID:
 				Field<?> field = typeInfo.getField();
 
@@ -226,7 +226,7 @@ public class InputFieldUtil {
 			case AS_VALUE:
 				return createInvalidInputValue(typeInfo, value);
 			default:
-				throw new UnsupportedAttributeException(miningField, invalidValueTreatmentMethod);
+				throw new UnsupportedAttributeException(miningField, invalidValueTreatment);
 		}
 	}
 
@@ -234,12 +234,12 @@ public class InputFieldUtil {
 	private ScalarValue performMissingValueTreatment(InputTypeInfo typeInfo){
 		MiningField miningField = typeInfo.getMiningField();
 
-		MissingValueTreatmentMethod missingValueTreatmentMethod = miningField.getMissingValueTreatment();
-		if(missingValueTreatmentMethod == null){
-			missingValueTreatmentMethod = MissingValueTreatmentMethod.AS_IS;
+		MissingValueTreatmentMethod missingValueTreatment = miningField.getMissingValueTreatment();
+		if(missingValueTreatment == null){
+			missingValueTreatment = MissingValueTreatmentMethod.AS_IS;
 		}
 
-		switch(missingValueTreatmentMethod){
+		switch(missingValueTreatment){
 			case AS_IS:
 			case AS_MEAN:
 			case AS_MODE:
@@ -251,7 +251,7 @@ public class InputFieldUtil {
 
 				throw new ValueCheckException("Field " + EvaluationException.formatName(field.getName()) + " cannot accept missing value", miningField);
 			default:
-				throw new UnsupportedAttributeException(miningField, missingValueTreatmentMethod);
+				throw new UnsupportedAttributeException(miningField, missingValueTreatment);
 		}
 	}
 

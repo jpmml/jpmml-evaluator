@@ -60,9 +60,9 @@ public class NormalizationUtil {
 
 		int index = binarySearch(linearNorms, LinearNorm::requireOrig, value);
 		if(index < 0 || index == (linearNorms.size() - 1)){
-			OutlierTreatmentMethod outlierTreatmentMethod = normContinuous.getOutlierTreatment();
+			OutlierTreatmentMethod outlierTreatment = normContinuous.getOutlierTreatment();
 
-			switch(outlierTreatmentMethod){
+			switch(outlierTreatment){
 				case AS_IS:
 					// "Extrapolate from the first interval"
 					if(index < 0){
@@ -94,7 +94,7 @@ public class NormalizationUtil {
 						return value.reset(end.requireNorm());
 					}
 				default:
-					throw new UnsupportedAttributeException(normContinuous, outlierTreatmentMethod);
+					throw new UnsupportedAttributeException(normContinuous, outlierTreatment);
 			}
 		} else
 
