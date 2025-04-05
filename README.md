@@ -91,7 +91,7 @@ JPMML-Evaluator is fast and memory efficient. It can deliver one million scoring
 
 JPMML-Evaluator library JAR files (together with accompanying Java source and Javadocs JAR files) are released via [Maven Central Repository](https://repo1.maven.org/maven2/org/jpmml/).
 
-The current version is **1.7.2** (8 March, 2025).
+The current version is **1.7.3** (5 April, 2025).
 
 The main component of JPMML-Evaluator is `org.jpmml:pmml-evaluator`.
 However, in most application scenarios, this component is not included directly, but via a data format-specific runtime component(s) `org.jpmml:pmml-evaluator-${runtime}` that handle the loading and storage of PMML class model objects.
@@ -102,7 +102,7 @@ The recommended data format for PMML documents is XML, and the recommended imple
 <dependency>
 	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator-metro</artifactId>
-	<version>1.7.2</version>
+	<version>1.7.3</version>
 </dependency>
 ```
 
