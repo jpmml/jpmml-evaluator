@@ -47,5 +47,5 @@ public interface LaggableMap<K, V> extends Map<K, V> {
 	 *
 	 * @return The field value or {@code null}.
 	 */
-	V getLagged(Object key, int n, List<K> blockIndicatorKeys);
+	V getLagged(K key, int n, List<K> blockIndicatorKeys);
 }

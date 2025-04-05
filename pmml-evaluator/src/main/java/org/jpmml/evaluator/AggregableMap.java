@@ -38,5 +38,5 @@ public interface AggregableMap<K, V> extends Map<K, V> {
 	 *
 	 * @return The aggregate field value.
 	 */
-	V getAggregated(Object key, String function, int n, List<K> blockIndicatorKeys);
+	V getAggregated(K key, String function, int n, List<K> blockIndicatorKeys);
 }
