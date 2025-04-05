@@ -53,11 +53,14 @@
 		<DefineFunction name="POW" dataType="double">
 			<ParameterField name="x" dataType="double"/>
 			<ParameterField name="n" dataType="integer"/>
-			<Apply function="if">
+			<DerivedField name="recurse" optype="categorical" dataType="boolean">
 				<Apply function="greaterThan">
 					<FieldRef field="n"/>
 					<Constant dataType="integer">1</Constant>
 				</Apply>
+			</DerivedField>
+			<Apply function="if">
+				<FieldRef field="recurse"/>
 				<Apply function="*">
 					<Apply function="POW">
 						<FieldRef field="x"/>

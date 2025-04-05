@@ -23,6 +23,8 @@ import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
+import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.Field;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.ParameterField;
 
@@ -52,6 +54,18 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 	}
 
 	@Override
+	protected FieldValue resolve(String name){
+		DerivedField derivedField = findDerivedField(name);
+		if(derivedField == null){
+			throw new MissingFieldException(name);
+		}
+
+		FieldValue value = ExpressionUtil.evaluate(derivedField, this);
+
+		return declareInternal(name, value);
+	}
+
+	@Override
 	protected DefineFunction getDefineFunction(String name){
 		EvaluationContext parent = getParent();
 
@@ -62,15 +76,17 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 		DefineFunction defineFunction = getDefineFunction();
 
 		if(defineFunction.hasParameterFields()){
-			List<ParameterField> parameterFields = defineFunction.getParameterFields();
+			return findField(name, defineFunction.getParameterFields());
+		}
 
-			for(int i = 0, max = parameterFields.size(); i < max; i++){
-				ParameterField parameterField = parameterFields.get(i);
+		return null;
+	}
 
-				if(Objects.equals(parameterField.requireName(), name)){
-					return parameterField;
-				}
-			}
+	private DerivedField findDerivedField(String name){
+		DefineFunction defineFunction = getDefineFunction();
+
+		if(defineFunction.hasDerivedFields()){
+			return findField(name, defineFunction.getDerivedFields());
 		}
 
 		return null;
@@ -90,5 +106,19 @@ public class DefineFunctionEvaluationContext extends EvaluationContext {
 
 	private void setParent(EvaluationContext parent){
 		this.parent = Objects.requireNonNull(parent);
+	}
+
+	static
+	private <F extends Field<?>> F findField(String name, List<F> fields){
+
+		for(int i = 0, max = fields.size(); i < max; i++){
+			F field = fields.get(i);
+
+			if(Objects.equals(field.requireName(), name)){
+				return field;
+			}
+		}
+
+		return null;
 	}
 }
