@@ -65,7 +65,7 @@
 	</issueManagement>
 
 	<properties>
-		<jpmml-model.version>1.7.3</jpmml-model.version>
+		<jpmml-model.version>1.7.4</jpmml-model.version>
 		<project.build.outputTimestamp>2025-04-05T18:42:21Z</project.build.outputTimestamp>
 	</properties>
 
