@@ -26,7 +26,6 @@ import java.util.regex.PatternSyntaxException;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Interner;
-import com.google.common.collect.Interners;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import org.dmg.pmml.PMMLObject;
 
@@ -111,7 +110,7 @@ public class RegExUtil {
 		}
 	}
 
-	private static final Interner<CompilationTask> INTERNER = Interners.newWeakInterner();
+	private static final Interner<CompilationTask> INTERNER = InternerUtil.buildInterner();
 
 	private static final LoadingCache<CompilationTask, Pattern> patternCache = CacheUtil.buildLoadingCache(new CacheLoader<CompilationTask, Pattern>(){
 
