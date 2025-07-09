@@ -18,9 +18,5 @@
  */
 package org.jpmml.evaluator;
 
-import com.google.common.collect.Interner;
-
 public interface Strings {
-
-	Interner<String> INTERNER = InternerUtil.buildInterner();
 }

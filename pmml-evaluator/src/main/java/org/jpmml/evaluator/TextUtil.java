@@ -29,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.cache.Cache;
+import com.google.common.collect.Interner;
 import com.google.common.collect.Table;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.PMMLAttributes;
@@ -514,7 +515,7 @@ public class TextUtil {
 		public StringProcessor(TextIndex textIndex, String value){
 			setTextIndex(textIndex);
 			// The value should generate a cache hit both in identity comparison and object equality comparison modes
-			setValue(value != null ? Strings.INTERNER.intern(value) : null);
+			setValue(value != null ? TextUtil.STRING_INTERNER.intern(value) : null);
 		}
 
 		abstract
@@ -588,6 +589,8 @@ public class TextUtil {
 			return termTokens;
 		}
 	}
+
+	private static final Interner<String> STRING_INTERNER = InternerUtil.buildInterner();
 
 	private static final Cache<TextIndex, Cache<String, TokenizedString>> textTokenCaches = CacheUtil.buildCache();
 

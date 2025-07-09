@@ -25,6 +25,7 @@ import com.google.common.base.Function;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Interner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Doubles;
@@ -148,7 +149,7 @@ public class ArrayUtil {
 
 					@Override
 					public Integer apply(String string){
-						return Numbers.INTEGER_INTERNER.intern(Integer.parseInt(string));
+						return ArrayUtil.INTEGER_INTERNER.intern(Integer.parseInt(string));
 					}
 				};
 				break;
@@ -157,7 +158,7 @@ public class ArrayUtil {
 
 					@Override
 					public Double apply(String string){
-						return Numbers.DOUBLE_INTERNER.intern(Double.parseDouble(string));
+						return ArrayUtil.DOUBLE_INTERNER.intern(Double.parseDouble(string));
 					}
 				};
 				break;
@@ -166,7 +167,7 @@ public class ArrayUtil {
 
 					@Override
 					public String apply(String string){
-						return Strings.INTERNER.intern(string);
+						return ArrayUtil.STRING_INTERNER.intern(string);
 					}
 				};
 				break;
@@ -176,6 +177,10 @@ public class ArrayUtil {
 
 		return Lists.transform(tokens, function);
 	}
+
+	private static final Interner<Integer> INTEGER_INTERNER = InternerUtil.buildInterner();
+	private static final Interner<Double> DOUBLE_INTERNER = InternerUtil.buildInterner();
+	private static final Interner<String> STRING_INTERNER = InternerUtil.buildInterner();
 
 	private static final LoadingCache<Array, List<?>> contentCache = CacheUtil.buildLoadingCache(new CacheLoader<Array, List<?>>(){
 

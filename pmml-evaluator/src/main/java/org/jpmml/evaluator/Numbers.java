@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import com.google.common.collect.Interner;
-
 public interface Numbers {
 
 	Integer INTEGER_ZERO = Integer.valueOf(0);
@@ -35,8 +33,4 @@ public interface Numbers {
 	Double DOUBLE_ONE_HALF = Double.valueOf(0.5d);
 	Double DOUBLE_ONE = Double.valueOf(1d);
 	Double DOUBLE_TWO = Double.valueOf(2d);
-
-	Interner<Integer> INTEGER_INTERNER = InternerUtil.buildInterner();
-	Interner<Float> FLOAT_INTERNER = InternerUtil.buildInterner();
-	Interner<Double> DOUBLE_INTERNER = InternerUtil.buildInterner();
 }
