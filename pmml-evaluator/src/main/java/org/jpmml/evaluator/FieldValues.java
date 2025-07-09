@@ -18,8 +18,6 @@
  */
 package org.jpmml.evaluator;
 
-import com.google.common.collect.Interner;
-
 public interface FieldValues {
 
 	FieldValue MISSING_VALUE = null;
@@ -32,6 +30,4 @@ public interface FieldValues {
 
 	FieldValue CATEGORICAL_BOOLEAN_TRUE = FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, true);
 	FieldValue CATEGORICAL_BOOLEAN_FALSE = FieldValueUtil.create(TypeInfos.CATEGORICAL_BOOLEAN, false);
-
-	Interner<FieldValue> INTERNER = InternerUtil.buildInterner();
 }
