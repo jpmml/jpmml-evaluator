@@ -20,8 +20,11 @@ package org.jpmml.evaluator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import com.google.common.cache.AbstractCache;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 
 public class SimpleCache<K, V> extends AbstractCache<K, V> {
 
@@ -29,6 +32,26 @@ public class SimpleCache<K, V> extends AbstractCache<K, V> {
 
 
 	private SimpleCache(){
+	}
+
+	@Override
+	public V get(K key, Callable<? extends V> callable) throws ExecutionException {
+		V value = this.cache.get(key);
+
+		if(value == null){
+
+			try {
+				value = callable.call();
+			} catch(RuntimeException re){
+				throw new UncheckedExecutionException(re);
+			} catch(Exception e){
+				throw new ExecutionException(e);
+			}
+
+			this.cache.put(key, value);
+		}
+
+		return value;
 	}
 
 	@Override
