@@ -130,9 +130,7 @@ public class InputFieldUtilTest {
 			.setLowValue(null)
 			.setHighValue(null);
 
-		Interval validInterval = new Interval(Closure.CLOSED_CLOSED)
-			.setLeftMargin(1d)
-			.setRightMargin(3d);
+		Interval validInterval = new Interval(Closure.CLOSED_CLOSED, 1d, 3d);
 
 		dataField.addIntervals(validInterval);
 

@@ -83,15 +83,6 @@ public class DiscretizationUtilTest {
 
 	static
 	private Range<Double> toRange(Interval.Closure closure, Double leftMargin, Double rightMargin){
-		return DiscretizationUtil.toRange(createInterval(closure, leftMargin, rightMargin));
-	}
-
-	static
-	private Interval createInterval(Interval.Closure closure, Double leftMargin, Double rightMargin){
-		Interval result = new Interval(closure)
-			.setLeftMargin(leftMargin)
-			.setRightMargin(rightMargin);
-
-		return result;
+		return DiscretizationUtil.toRange(new Interval(closure, leftMargin, rightMargin));
 	}
 }
