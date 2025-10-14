@@ -20,6 +20,7 @@ package org.jpmml.evaluator.testing;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -89,7 +90,7 @@ public class BatchUtil {
 			Exception exception = actualResults.getException();
 
 			if(exception != null){
-				Conflict conflict = new Conflict(i, arguments, exception);
+				Conflict conflict = new Conflict(i, new LinkedHashMap<>(arguments), exception);
 
 				conflicts.add(conflict);
 			} else
@@ -97,7 +98,7 @@ public class BatchUtil {
 			{
 				MapDifference<String, ?> difference = filteredDifference(expectedResults, actualResults, columns, equivalence);
 				if(!difference.areEqual()){
-					Conflict conflict = new Conflict(i, arguments, difference);
+					Conflict conflict = new Conflict(i, new LinkedHashMap<>(arguments), difference);
 
 					conflicts.add(conflict);
 				}
@@ -141,7 +142,7 @@ public class BatchUtil {
 		try {
 			results = evaluator.evaluate(arguments);
 		} catch(Exception e){
-			Conflict conflict = new Conflict(i, arguments, e);
+			Conflict conflict = new Conflict(i, new LinkedHashMap<>(arguments), e);
 
 			return Collections.singletonList(conflict);
 		}
@@ -161,7 +162,7 @@ public class BatchUtil {
 			MapDifference<String, Object> difference = filteredDifference(expectedResults, actualResults, columns, equivalence);
 
 			if(!difference.areEqual()){
-				Conflict conflict = new Conflict(i + "/" + j, arguments, difference);
+				Conflict conflict = new Conflict(i + "/" + j, new LinkedHashMap<>(arguments), difference);
 
 				conflicts.add(conflict);
 			}
