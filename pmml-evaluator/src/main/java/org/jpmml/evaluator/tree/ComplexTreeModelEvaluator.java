@@ -96,7 +96,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 			return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 		}
 
-		NodeScore<V> result = createNodeScore(valueFactory, targetField, node);
+		NodeScore<V> result = createNodeScore(valueFactory, targetField, node, context);
 
 		return TargetUtil.evaluateRegression(targetField, result);
 	}
@@ -153,11 +153,6 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 	}
 
 	private Boolean evaluateNode(Trail trail, Node node, EvaluationContext context){
-		EmbeddedModel embeddedModel = node.getEmbeddedModel();
-		if(embeddedModel != null){
-			throw new UnsupportedElementException(embeddedModel);
-		}
-
 		Predicate predicate = node.requirePredicate();
 
 		// A compound predicate whose boolean operator is "surrogate" represents a special case
@@ -260,17 +255,24 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 		}
 	}
 
-	private <V extends Number> NodeScore<V> createNodeScore(ValueFactory<V> valueFactory, TargetField targetField, Node node){
-		Object score = node.requireScore();
+	private <V extends Number> NodeScore<V> createNodeScore(ValueFactory<V> valueFactory, TargetField targetField, Node node, EvaluationContext context){
+		Value<V> value = null;
 
-		Value<V> value;
+		EmbeddedModel embeddedModel = node.getEmbeddedModel();
+		if(embeddedModel != null){
+			value = evaluateEmbeddedRegression(valueFactory, embeddedModel, context);
+		} // End if
 
-		if(score instanceof Number){
-			value = valueFactory.newValue((Number)score);
-		} else
+		if(value == null){
+			Object score = node.requireScore();
 
-		{
-			value = valueFactory.newValue((String)score);
+			if(score instanceof Number){
+				value = valueFactory.newValue((Number)score);
+			} else
+
+			{
+				value = valueFactory.newValue((String)score);
+			}
 		}
 
 		value = TargetUtil.evaluateRegressionInternal(targetField, value);
@@ -292,6 +294,12 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 	}
 
 	private NodeVote createNodeVote(Node node){
+		EmbeddedModel embeddedModel = node.getEmbeddedModel();
+
+		if(embeddedModel != null){
+			throw new UnsupportedElementException(embeddedModel);
+		}
+
 		NodeVote result = new NodeVote(node){
 
 			@Override
@@ -309,6 +317,12 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 	}
 
 	private <V extends Number> NodeScoreDistribution<V> createNodeScoreDistribution(ValueFactory<V> valueFactory, Node node, double missingValuePenalty){
+		EmbeddedModel embeddedModel = node.getEmbeddedModel();
+
+		if(embeddedModel != null){
+			throw new UnsupportedElementException(embeddedModel);
+		}
+
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
 
 		NodeScoreDistribution<V> result = new NodeScoreDistribution<>(new ValueMap<>(2 * scoreDistributions.size()), node){

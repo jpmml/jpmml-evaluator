@@ -132,7 +132,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		}
 
 		LocalTransformations localTransformations = segmentation.getLocalTransformations();
-		if(localTransformations != null){
+		if(localTransformations != null && localTransformations.hasDerivedFields()){
 			throw new UnsupportedElementException(localTransformations);
 		}
 

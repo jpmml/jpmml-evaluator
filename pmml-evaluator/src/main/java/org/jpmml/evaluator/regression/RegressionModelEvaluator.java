@@ -26,7 +26,9 @@ import java.util.Objects;
 import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.regression.CategoricalPredictor;
+import org.dmg.pmml.regression.HasRegressionTables;
 import org.dmg.pmml.regression.NumericPredictor;
 import org.dmg.pmml.regression.PMMLAttributes;
 import org.dmg.pmml.regression.PredictorTerm;
@@ -81,37 +83,12 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 			throw new InvalidAttributeException(regressionModel, PMMLAttributes.REGRESSIONMODEL_TARGETFIELD, targetFieldName);
 		}
 
-		List<RegressionTable> regressionTables = regressionModel.requireRegressionTables();
-		if(regressionTables.size() != 1){
-			throw new InvalidElementListException(regressionTables);
-		}
-
-		RegressionTable regressionTable = regressionTables.get(0);
-
-		Value<V> result = evaluateRegressionTable(valueFactory, regressionTable, context);
-		if(result == null){
+		Value<V> value = evaluateRegression(valueFactory, regressionModel, context);
+		if(value == null){
 			return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 		}
 
-		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
-		switch(normalizationMethod){
-			case NONE:
-			case SOFTMAX:
-			case LOGIT:
-			case EXP:
-			case PROBIT:
-			case CLOGLOG:
-			case LOGLOG:
-			case CAUCHIT:
-				RegressionModelUtil.normalizeRegressionResult(normalizationMethod, result);
-				break;
-			case SIMPLEMAX:
-				throw new InvalidAttributeException(regressionModel, normalizationMethod);
-			default:
-				throw new UnsupportedAttributeException(regressionModel, normalizationMethod);
-		}
-
-		return TargetUtil.evaluateRegression(targetField, result);
+		return TargetUtil.evaluateRegression(targetField, value);
 	}
 
 	@Override
@@ -134,17 +111,65 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				throw new InvalidElementException(regressionModel);
 		}
 
-		List<RegressionTable> regressionTables = regressionModel.requireRegressionTables();
-		if(regressionTables.size() < 2){
+		List<?> targetCategories = targetField.getCategories();
+
+		ValueMap<Object, V> values = evaluateClassification(valueFactory, regressionModel, opType, targetCategories, context);
+		if(values == null){
+			return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
+		}
+
+		Classification<?, V> result = createClassification(values);
+
+		return TargetUtil.evaluateClassification(targetField, result);
+	}
+
+	static
+	public <V extends Number, E extends PMMLObject & HasRegressionTables<E>> Value<V> evaluateRegression(ValueFactory<V> valueFactory, E object, EvaluationContext context){
+		List<RegressionTable> regressionTables = object.requireRegressionTables();
+		if(regressionTables.size() != 1){
 			throw new InvalidElementListException(regressionTables);
 		}
 
-		List<?> targetCategories = targetField.getCategories();
+		RegressionTable regressionTable = regressionTables.get(0);
+
+		Value<V> result = evaluateRegressionTable(valueFactory, regressionTable, context);
+		if(result == null){
+			return null;
+		}
+
+		RegressionModel.NormalizationMethod normalizationMethod = object.getNormalizationMethod();
+		switch(normalizationMethod){
+			case NONE:
+			case SOFTMAX:
+			case LOGIT:
+			case EXP:
+			case PROBIT:
+			case CLOGLOG:
+			case LOGLOG:
+			case CAUCHIT:
+				RegressionModelUtil.normalizeRegressionResult(normalizationMethod, result);
+				break;
+			case SIMPLEMAX:
+				throw new InvalidAttributeException(object, normalizationMethod);
+			default:
+				throw new UnsupportedAttributeException(object, normalizationMethod);
+		}
+
+		return result;
+	}
+
+	static
+	public <V extends Number, E extends PMMLObject & HasRegressionTables<E>> ValueMap<Object, V> evaluateClassification(ValueFactory<V> valueFactory, E object, OpType opType, List<?> targetCategories, EvaluationContext context){
+		List<RegressionTable> regressionTables = object.requireRegressionTables();
+		if(regressionTables.size() < 2){
+			throw new InvalidElementListException(regressionTables);
+		} // End if
+
 		if(targetCategories != null && targetCategories.size() != regressionTables.size()){
 			throw new InvalidElementListException(regressionTables);
 		}
 
-		ValueMap<Object, V> values = new ValueMap<>(2 * regressionTables.size());
+		ValueMap<Object, V> result = new ValueMap<>(2 * regressionTables.size());
 
 		for(int i = 0, max = regressionTables.size(); i < max; i++){
 			RegressionTable regressionTable = regressionTables.get(i);
@@ -159,18 +184,18 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 
 			// "If one or more RegressionTable elements cannot be evaluated, then the predictions are defined by the priorProbability values of the Target element"
 			if(value == null){
-				return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
+				return null;
 			}
 
-			values.put(targetCategory, value);
+			result.put(targetCategory, value);
 		}
 
-		RegressionModel.NormalizationMethod normalizationMethod = regressionModel.getNormalizationMethod();
+		RegressionModel.NormalizationMethod normalizationMethod = object.getNormalizationMethod();
 
 		switch(opType){
 			case CATEGORICAL:
 
-				if(values.size() == 2){
+				if(result.size() == 2){
 
 					switch(normalizationMethod){
 						case NONE:
@@ -179,23 +204,23 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 						case CLOGLOG:
 						case LOGLOG:
 						case CAUCHIT:
-							RegressionModelUtil.computeBinomialProbabilities(normalizationMethod, values);
+							RegressionModelUtil.computeBinomialProbabilities(normalizationMethod, result);
 							break;
 						case SIMPLEMAX:
 						case SOFTMAX:
 							// XXX: Non-standard behaviour
 							if(isDefault(regressionTables.get(1)) && (normalizationMethod == RegressionModel.NormalizationMethod.SOFTMAX)){
-								RegressionModelUtil.computeBinomialProbabilities(RegressionModel.NormalizationMethod.LOGIT, values);
+								RegressionModelUtil.computeBinomialProbabilities(RegressionModel.NormalizationMethod.LOGIT, result);
 							} else
 
 							{
-								RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, values);
+								RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, result);
 							}
 							break;
 						case EXP:
-							throw new InvalidAttributeException(regressionModel, normalizationMethod);
+							throw new InvalidAttributeException(object, normalizationMethod);
 						default:
-							throw new UnsupportedAttributeException(regressionModel, normalizationMethod);
+							throw new UnsupportedAttributeException(object, normalizationMethod);
 					}
 				} else
 
@@ -204,7 +229,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 						case NONE:
 						case SIMPLEMAX:
 						case SOFTMAX:
-							RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, values);
+							RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, result);
 							break;
 						case LOGIT:
 						case PROBIT:
@@ -214,13 +239,13 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 						case CAUCHIT:
 							// XXX: Non-standard behaviour
 							if((RegressionModel.NormalizationMethod.LOGIT).equals(normalizationMethod)){
-								RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, values);
+								RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, result);
 
 								break;
 							}
-							throw new InvalidAttributeException(regressionModel, normalizationMethod);
+							throw new InvalidAttributeException(object, normalizationMethod);
 						default:
-							throw new UnsupportedAttributeException(regressionModel, normalizationMethod);
+							throw new UnsupportedAttributeException(object, normalizationMethod);
 					}
 				}
 				break;
@@ -232,25 +257,24 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 					case CLOGLOG:
 					case LOGLOG:
 					case CAUCHIT:
-						RegressionModelUtil.computeOrdinalProbabilities(normalizationMethod, values);
+						RegressionModelUtil.computeOrdinalProbabilities(normalizationMethod, result);
 						break;
 					case SIMPLEMAX:
 					case SOFTMAX:
 					case EXP:
-						throw new InvalidAttributeException(regressionModel, normalizationMethod);
+						throw new InvalidAttributeException(object, normalizationMethod);
 					default:
-						throw new UnsupportedAttributeException(regressionModel, normalizationMethod);
+						throw new UnsupportedAttributeException(object, normalizationMethod);
 				}
 				break;
 			default:
-				throw new InvalidElementException(regressionModel);
+				throw new InvalidElementException(object);
 		}
 
-		Classification<?, V> result = createClassification(values);
-
-		return TargetUtil.evaluateClassification(targetField, result);
+		return result;
 	}
 
+	static
 	private <V extends Number> Value<V> evaluateRegressionTable(ValueFactory<V> valueFactory, RegressionTable regressionTable, EvaluationContext context){
 		Value<V> result = valueFactory.newValue();
 

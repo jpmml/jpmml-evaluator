@@ -26,11 +26,14 @@ import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Matrix;
 import org.dmg.pmml.NormDiscrete;
+import org.dmg.pmml.Output;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PMMLFunctions;
 import org.dmg.pmml.ResultFeature;
+import org.dmg.pmml.ResultField;
 import org.dmg.pmml.TableLocator;
+import org.dmg.pmml.Targets;
 import org.dmg.pmml.TextIndex;
 import org.dmg.pmml.Visitable;
 import org.dmg.pmml.VisitorAction;
@@ -43,7 +46,6 @@ import org.dmg.pmml.general_regression.Categories;
 import org.dmg.pmml.general_regression.Predictor;
 import org.dmg.pmml.mining.MiningModel;
 import org.dmg.pmml.mining.Segmentation;
-import org.dmg.pmml.regression.Regression;
 import org.dmg.pmml.sequence.SequenceModel;
 import org.dmg.pmml.support_vector_machine.SupportVectorMachineModel;
 import org.dmg.pmml.text.TextModel;
@@ -54,7 +56,6 @@ import org.dmg.pmml.time_series.GARCH;
 import org.dmg.pmml.time_series.SeasonalTrendDecomposition;
 import org.dmg.pmml.time_series.SpectralAnalysis;
 import org.dmg.pmml.tree.DecisionTree;
-import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.model.UnsupportedAttributeException;
 import org.jpmml.model.UnsupportedElementException;
@@ -166,6 +167,27 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 	}
 
 	@Override
+	public VisitorAction visit(EmbeddedModel embeddedModel){
+		LocalTransformations localTransformations = embeddedModel.getLocalTransformations();
+		Targets targets = embeddedModel.getTargets();
+		Output output = embeddedModel.getOutput();
+
+		if(localTransformations != null && localTransformations.hasDerivedFields()){
+			report(new UnsupportedElementException(localTransformations));
+		} // End if
+
+		if(targets != null && targets.hasTargets()){
+			report(new UnsupportedElementException(targets));
+		} // End if
+
+		if(output != null && output.hasOutputFields()){
+			report(new UnsupportedElementException(output));
+		}
+
+		return VisitorAction.SKIP;
+	}
+
+	@Override
 	public VisitorAction visit(ExponentialSmoothing exponentialSmooting){
 		report(new UnsupportedElementException(exponentialSmooting));
 
@@ -196,17 +218,6 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 		}
 
 		return super.visit(miningModel);
-	}
-
-	@Override
-	public VisitorAction visit(Node node){
-		EmbeddedModel embeddedModel = node.getEmbeddedModel();
-
-		if(embeddedModel != null){
-			report(new UnsupportedElementException(embeddedModel));
-		}
-
-		return super.visit(node);
 	}
 
 	@Override
@@ -255,8 +266,8 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 	}
 
 	@Override
-	public VisitorAction visit(Regression regression){
-		report(new UnsupportedElementException(regression));
+	public VisitorAction visit(ResultField resultField){
+		report(new UnsupportedElementException(resultField));
 
 		return VisitorAction.SKIP;
 	}
@@ -272,7 +283,7 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 	public VisitorAction visit(Segmentation segmentation){
 		LocalTransformations localTransformations = segmentation.getLocalTransformations();
 
-		if(localTransformations != null){
+		if(localTransformations != null && localTransformations.hasDerivedFields()){
 			report(new UnsupportedElementException(localTransformations));
 		}
 

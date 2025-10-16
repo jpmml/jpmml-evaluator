@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Targets;
@@ -32,6 +33,7 @@ import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeUtil;
+import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.annotations.Functionality;
 import org.jpmml.model.UnsupportedAttributeException;
@@ -67,32 +69,61 @@ public class SimpleTreeModelEvaluator extends TreeModelEvaluator {
 		}
 
 		Targets targets = treeModel.getTargets();
-		if(targets != null){
+		if(targets != null && targets.hasTargets()){
 			throw new UnsupportedElementException(targets);
 		}
 	}
 
 	@Override
 	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
-		return evaluateAny(context);
-	}
-
-	@Override
-	protected <V extends Number> Map<String, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
-		return evaluateAny(context);
-	}
-
-	private Map<String, ?> evaluateAny(EvaluationContext context){
 		TargetField targetField = getTargetField();
 
 		Object result = null;
 
 		Node node = evaluateTree(context);
-		if(node != null){
-			Object score = node.requireScore();
-
-			result = TypeUtil.parseOrCast(targetField.getDataType(), score);
+		if(node == null){
+			return Collections.singletonMap(targetField.getName(), result);
 		}
+
+		EmbeddedModel embeddedModel = node.getEmbeddedModel();
+		if(embeddedModel != null){
+			Value<?> value = evaluateEmbeddedRegression(valueFactory, embeddedModel, context);
+
+			if(value != null){
+				result = value.getValue();
+			}
+		} // End if
+
+		if(result == null){
+			result = node.requireScore();
+		}
+
+		result = TypeUtil.parseOrCast(targetField.getDataType(), result);
+
+		return Collections.singletonMap(targetField.getName(), result);
+	}
+
+	@Override
+	protected <V extends Number> Map<String, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
+		TargetField targetField = getTargetField();
+
+		Object result = null;
+
+		Node node = evaluateTree(context);
+		if(node == null){
+			return Collections.singletonMap(targetField.getName(), result);
+		}
+
+		EmbeddedModel embeddedModel = node.getEmbeddedModel();
+		if(embeddedModel != null){
+			throw new UnsupportedElementException(embeddedModel);
+		} // End if
+
+		if(result == null){
+			result = node.requireScore();
+		}
+
+		result = TypeUtil.parseOrCast(targetField.getDataType(), result);
 
 		return Collections.singletonMap(targetField.getName(), result);
 	}

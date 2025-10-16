@@ -20,13 +20,22 @@ package org.jpmml.evaluator.tree;
 
 import java.util.List;
 
+import org.dmg.pmml.EmbeddedModel;
+import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.Targets;
+import org.dmg.pmml.regression.Regression;
 import org.dmg.pmml.tree.Node;
 import org.dmg.pmml.tree.PMMLAttributes;
 import org.dmg.pmml.tree.TreeModel;
+import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.PMMLUtil;
+import org.jpmml.evaluator.Value;
+import org.jpmml.evaluator.ValueFactory;
+import org.jpmml.evaluator.regression.RegressionModelEvaluator;
 import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.UnsupportedElementException;
 
 abstract
 public class TreeModelEvaluator extends ModelEvaluator<TreeModel> {
@@ -70,5 +79,27 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> {
 
 		// "Only Nodes which are immediate children of the respective Node can be referenced"
 		throw new InvalidAttributeException(node, PMMLAttributes.COMPLEXNODE_DEFAULTCHILD, defaultChild);
+	}
+
+	static
+	protected <V extends Number> Value<V> evaluateEmbeddedRegression(ValueFactory<V> valueFactory, EmbeddedModel embeddedModel, EvaluationContext context){
+
+		if(embeddedModel instanceof Regression){
+			Regression regression = (Regression)embeddedModel;
+
+			Targets targets = regression.getTargets();
+			if(targets != null && targets.hasTargets()){
+				throw new UnsupportedElementException(targets);
+			}
+
+			Output output = regression.getOutput();
+			if(output != null && output.hasOutputFields()){
+				throw new UnsupportedElementException(output);
+			}
+
+			return RegressionModelEvaluator.evaluateRegression(valueFactory, regression, context);
+		}
+
+		throw new UnsupportedElementException(embeddedModel);
 	}
 }
