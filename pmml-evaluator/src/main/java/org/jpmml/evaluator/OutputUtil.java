@@ -44,7 +44,7 @@ import org.dmg.pmml.association.Itemset;
 import org.dmg.pmml.mining.MiningModel;
 import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
-import org.jpmml.evaluator.mining.MiningModelUtil;
+import org.jpmml.evaluator.mining.SegmentationlUtil;
 import org.jpmml.evaluator.mining.SegmentResult;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.InvalidElementException;
@@ -174,7 +174,7 @@ public class OutputUtil {
 
 									Segmentation segmentation = miningModel.requireSegmentation();
 
-									SegmentResult segmentResult = MiningModelUtil.asSegmentResult(segmentation.requireMultipleModelMethod(), predictions);
+									SegmentResult segmentResult = SegmentationlUtil.asSegmentResult(segmentation.requireMultipleModelMethod(), predictions);
 									if(segmentResult != null){
 										targetValue = segmentResult.getTargetValue();
 

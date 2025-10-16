@@ -287,7 +287,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case SUM:
 			case WEIGHTED_SUM:
 				{
-					Value<V> value = MiningModelUtil.aggregateValues(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
+					Value<V> value = SegmentationlUtil.aggregateValues(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
 					if(value == null){
 						return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
 					}
@@ -372,7 +372,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 				{
-					ValueMap<Object, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
+					ValueMap<Object, V> values = SegmentationlUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
 					if(values == null){
 						return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 					}
@@ -399,7 +399,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 						throw new InvalidElementException(miningModel);
 					}
 
-					ValueMap<Object, V> values = MiningModelUtil.aggregateProbabilities(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, targetCategories, segmentResults);
+					ValueMap<Object, V> values = SegmentationlUtil.aggregateProbabilities(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, targetCategories, segmentResults);
 					if(values == null){
 						return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 					}
@@ -479,7 +479,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 				{
-					ValueMap<Object, V> values = MiningModelUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
+					ValueMap<Object, V> values = SegmentationlUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
 					if(values == null){
 						return Collections.singletonMap(getTargetName(), null);
 					}

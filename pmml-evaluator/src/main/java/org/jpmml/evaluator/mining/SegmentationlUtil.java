@@ -36,9 +36,9 @@ import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
 import org.jpmml.evaluator.VoteAggregator;
 
-public class MiningModelUtil {
+public class SegmentationlUtil {
 
-	private MiningModelUtil(){
+	private SegmentationlUtil(){
 	}
 
 	static
