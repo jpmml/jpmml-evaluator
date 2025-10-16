@@ -267,7 +267,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				throw new InvalidAttributeException(supportVector, PMMLAttributes.SUPPORTVECTOR_VECTORID, vectorId);
 			}
 
-			Value<V> value = KernelUtil.evaluate(kernel, valueFactory, input, vector);
+			Value<V> value = KernelUtil.evaluate(valueFactory, kernel, input, vector);
 
 			result.add(coefficient.getValue(), value.getValue());
 		}

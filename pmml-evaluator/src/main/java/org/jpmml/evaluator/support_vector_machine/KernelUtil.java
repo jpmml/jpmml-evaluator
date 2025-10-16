@@ -33,36 +33,36 @@ public class KernelUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> evaluate(Kernel kernel, ValueFactory<V> valueFactory, Object input, Object vector){
+	public <V extends Number> Value<V> evaluate(ValueFactory<V> valueFactory, Kernel kernel, Object input, Object vector){
 
 		if(kernel instanceof LinearKernel){
-			return evaluateLinearKernel((LinearKernel)kernel, valueFactory, input, vector);
+			return evaluateLinearKernel(valueFactory, (LinearKernel)kernel, input, vector);
 		} else
 
 		if(kernel instanceof PolynomialKernel){
-			return evaluatePolynomialKernel((PolynomialKernel)kernel, valueFactory, input, vector);
+			return evaluatePolynomialKernel(valueFactory, (PolynomialKernel)kernel, input, vector);
 		} else
 
 		if(kernel instanceof RadialBasisKernel){
-			return evaluateRadialBasisKernel((RadialBasisKernel)kernel, valueFactory, input, vector);
+			return evaluateRadialBasisKernel(valueFactory, (RadialBasisKernel)kernel, input, vector);
 		} else
 
 		if(kernel instanceof SigmoidKernel){
-			return evaluateSigmoidKernel((SigmoidKernel)kernel, valueFactory, input, vector);
+			return evaluateSigmoidKernel(valueFactory, (SigmoidKernel)kernel, input, vector);
 		}
 
 		throw new UnsupportedElementException(kernel);
 	}
 
 	static
-	public <V extends Number> Value<V> evaluateLinearKernel(LinearKernel linearKernel, ValueFactory<V> valueFactory, Object input, Object vector){
+	public <V extends Number> Value<V> evaluateLinearKernel(ValueFactory<V> valueFactory, LinearKernel linearKernel, Object input, Object vector){
 		Value<V> result = valueFactory.newValue(dotProduct(input, vector));
 
 		return result;
 	}
 
 	static
-	public <V extends Number> Value<V> evaluatePolynomialKernel(PolynomialKernel polynomialKernel, ValueFactory<V> valueFactory, Object input, Object vector){
+	public <V extends Number> Value<V> evaluatePolynomialKernel(ValueFactory<V> valueFactory, PolynomialKernel polynomialKernel, Object input, Object vector){
 		Value<V> result = valueFactory.newValue(dotProduct(input, vector))
 			.multiply(polynomialKernel.getGamma())
 			.add(polynomialKernel.getCoef0())
@@ -72,7 +72,7 @@ public class KernelUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> evaluateRadialBasisKernel(RadialBasisKernel radialBasisKernel, ValueFactory<V> valueFactory, Object input, Object vector){
+	public <V extends Number> Value<V> evaluateRadialBasisKernel(ValueFactory<V> valueFactory, RadialBasisKernel radialBasisKernel, Object input, Object vector){
 		Value<V> result = valueFactory.newValue(negativeSquaredDistance(input, vector))
 			.multiply(radialBasisKernel.getGamma())
 			.exp();
@@ -81,7 +81,7 @@ public class KernelUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> evaluateSigmoidKernel(SigmoidKernel sigmoidKernel, ValueFactory<V> valueFactory, Object input, Object vector){
+	public <V extends Number> Value<V> evaluateSigmoidKernel(ValueFactory<V> valueFactory, SigmoidKernel sigmoidKernel, Object input, Object vector){
 		Value<V> result = valueFactory.newValue(dotProduct(input, vector))
 			.multiply(sigmoidKernel.getGamma())
 			.add(sigmoidKernel.getCoef0())
