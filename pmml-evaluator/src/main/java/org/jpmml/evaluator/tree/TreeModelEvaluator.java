@@ -33,7 +33,7 @@ import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
-import org.jpmml.evaluator.regression.RegressionModelEvaluator;
+import org.jpmml.evaluator.regression.RegressionTableUtil;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.UnsupportedElementException;
 
@@ -97,7 +97,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> {
 				throw new UnsupportedElementException(output);
 			}
 
-			return RegressionModelEvaluator.evaluateRegression(valueFactory, regression, context);
+			return RegressionTableUtil.evaluateRegression(valueFactory, regression, context);
 		}
 
 		throw new UnsupportedElementException(embeddedModel);
