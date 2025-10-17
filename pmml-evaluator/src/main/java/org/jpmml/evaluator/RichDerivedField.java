@@ -30,6 +30,7 @@ import org.dmg.pmml.Value;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.ReflectionUtil;
 import org.jpmml.model.UnsupportedAttributeException;
+import org.jpmml.model.annotations.CopyConstructor;
 
 public class RichDerivedField extends DerivedField implements ValueStatusHolder {
 
@@ -40,6 +41,7 @@ public class RichDerivedField extends DerivedField implements ValueStatusHolder 
 	public RichDerivedField(){
 	}
 
+	@CopyConstructor
 	public RichDerivedField(DerivedField derivedField){
 		ReflectionUtil.copyState(derivedField, this);
 	}

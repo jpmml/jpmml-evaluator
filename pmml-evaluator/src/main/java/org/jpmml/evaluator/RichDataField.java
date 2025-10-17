@@ -29,6 +29,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.Value;
 import org.jpmml.model.ReflectionUtil;
 import org.jpmml.model.UnsupportedAttributeException;
+import org.jpmml.model.annotations.CopyConstructor;
 
 public class RichDataField extends DataField implements ValueStatusHolder {
 
@@ -42,6 +43,7 @@ public class RichDataField extends DataField implements ValueStatusHolder {
 	public RichDataField(){
 	}
 
+	@CopyConstructor
 	public RichDataField(DataField dataField){
 		ReflectionUtil.copyState(dataField, this);
 	}
