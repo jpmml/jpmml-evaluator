@@ -81,12 +81,6 @@ public class JavaModel extends Model {
 	public JavaModel(){
 	}
 
-	@ValueConstructor
-	public JavaModel(@Property("miningFunction") MiningFunction miningFunction, @Property("miningSchema") MiningSchema miningSchema){
-		setMiningFunction(miningFunction);
-		setMiningSchema(miningSchema);
-	}
-
 	@CopyConstructor
 	public JavaModel(Model model){
 		setModelName(model.getModelName());
@@ -101,6 +95,12 @@ public class JavaModel extends Model {
 		setTargets(model.getTargets());
 		setLocalTransformations(model.getLocalTransformations());
 		setModelVerification(model.getModelVerification());
+	}
+
+	@ValueConstructor
+	public JavaModel(@Property("miningFunction") MiningFunction miningFunction, @Property("miningSchema") MiningSchema miningSchema){
+		setMiningFunction(miningFunction);
+		setMiningSchema(miningSchema);
 	}
 
 	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
