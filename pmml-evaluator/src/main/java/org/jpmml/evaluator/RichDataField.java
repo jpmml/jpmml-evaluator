@@ -26,10 +26,13 @@ import com.google.common.collect.ImmutableMap;
 import jakarta.xml.bind.annotation.XmlTransient;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.Value;
 import org.jpmml.model.ReflectionUtil;
 import org.jpmml.model.UnsupportedAttributeException;
 import org.jpmml.model.annotations.CopyConstructor;
+import org.jpmml.model.annotations.Property;
+import org.jpmml.model.annotations.ValueConstructor;
 
 public class RichDataField extends DataField implements ValueStatusHolder {
 
@@ -46,6 +49,11 @@ public class RichDataField extends DataField implements ValueStatusHolder {
 	@CopyConstructor
 	public RichDataField(DataField dataField){
 		ReflectionUtil.copyState(dataField, this);
+	}
+
+	@ValueConstructor
+	public RichDataField(@Property("name") String name, @Property("opType") OpType opType, @Property("dataType") DataType dataType){
+		super(name, opType, dataType);
 	}
 
 	@Override

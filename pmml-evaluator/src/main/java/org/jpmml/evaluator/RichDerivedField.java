@@ -26,11 +26,15 @@ import com.google.common.collect.ImmutableMap;
 import jakarta.xml.bind.annotation.XmlTransient;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
+import org.dmg.pmml.Expression;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.Value;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.ReflectionUtil;
 import org.jpmml.model.UnsupportedAttributeException;
 import org.jpmml.model.annotations.CopyConstructor;
+import org.jpmml.model.annotations.Property;
+import org.jpmml.model.annotations.ValueConstructor;
 
 public class RichDerivedField extends DerivedField implements ValueStatusHolder {
 
@@ -44,6 +48,11 @@ public class RichDerivedField extends DerivedField implements ValueStatusHolder 
 	@CopyConstructor
 	public RichDerivedField(DerivedField derivedField){
 		ReflectionUtil.copyState(derivedField, this);
+	}
+
+	@ValueConstructor
+	public RichDerivedField(@Property("name") String name, @Property("opType") OpType opType, @Property("dataType") DataType dataType, @Property("expression") Expression expression){
+		super(name, opType, dataType, expression);
 	}
 
 	@Override

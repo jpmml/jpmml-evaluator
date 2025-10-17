@@ -25,12 +25,15 @@ import java.util.Map;
 import com.google.common.collect.ImmutableMap;
 import jakarta.xml.bind.annotation.XmlTransient;
 import org.dmg.pmml.DataType;
+import org.dmg.pmml.OpType;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.Value;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.ReflectionUtil;
 import org.jpmml.model.UnsupportedAttributeException;
 import org.jpmml.model.annotations.CopyConstructor;
+import org.jpmml.model.annotations.Property;
+import org.jpmml.model.annotations.ValueConstructor;
 
 public class RichOutputField extends OutputField implements ValueStatusHolder {
 
@@ -44,6 +47,11 @@ public class RichOutputField extends OutputField implements ValueStatusHolder {
 	@CopyConstructor
 	public RichOutputField(OutputField outputField){
 		ReflectionUtil.copyState(outputField, this);
+	}
+
+	@ValueConstructor
+	public RichOutputField(@Property("name") String name, @Property("opType") OpType opType, @Property("dataType") DataType dataType){
+		super(name, opType, dataType);
 	}
 
 	@Override
