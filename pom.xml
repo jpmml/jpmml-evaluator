@@ -70,7 +70,7 @@
 		<fastcsv.version>3.6.0</fastcsv.version>
 		<guava.version>[19.0, 33.5.0-jre]</guava.version>
 		<jcommander.version>1.82</jcommander.version>
-		<metrics.version>4.2.33</metrics.version>
+		<metrics.version>4.2.37</metrics.version>
 		<slf4j.version>2.0.17</slf4j.version>
 		<project.build.outputTimestamp>2025-07-13T09:01:01Z</project.build.outputTimestamp>
 	</properties>
