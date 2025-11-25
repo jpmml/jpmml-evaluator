@@ -393,7 +393,7 @@ public class FunctionTest implements Deltas {
 		assertEquals("Hello (repeated)", evaluate(Functions.REPLACE, "Hello Hello", word_repeated_pattern, word_repeated_replacement));
 		assertEquals("Hello (repeated) World (repeated)", evaluate(Functions.REPLACE, "Hello Hello World World", word_repeated_pattern, word_repeated_replacement));
 
-		// See http://www.w3.org/TR/xquery-operators/#func-replace
+		// See https://www.w3.org/TR/xquery-operators/#func-replace
 		assertEquals("a*cada*", evaluate(Functions.REPLACE, "abracadabra", "bra", "*"));
 		assertEquals("*", evaluate(Functions.REPLACE, "abracadabra", "a.*a", "*"));
 		assertEquals("*c*bra", evaluate(Functions.REPLACE, "abracadabra", "a.*?a", "*"));
@@ -407,7 +407,7 @@ public class FunctionTest implements Deltas {
 			assertEquals(matches, evaluate(Functions.MATCHES, monthNames[i], "ar?y"));
 		}
 
-		// See http://www.w3.org/TR/xquery-operators/#func-matches
+		// See https://www.w3.org/TR/xquery-operators/#func-matches
 		assertEquals(true, evaluate(Functions.MATCHES, "abracadabra", "bra"));
 		assertEquals(true, evaluate(Functions.MATCHES, "abracadabra", "^a.*a$"));
 		assertEquals(false, evaluate(Functions.MATCHES, "abracadabra", "^bra"));
