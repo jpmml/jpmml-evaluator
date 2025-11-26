@@ -653,7 +653,7 @@ public class ExpressionUtilTest {
 			.addExpressions(condition)
 			.addExpressions(new FieldRef("x"), error);
 
-		EvaluationException exception = assertThrows(EvaluationException.class, () -> evaluate(apply, "x", null));
+		ErrorException exception = assertThrows(ErrorException.class, () -> evaluate(apply, "x", null));
 		assertNull(exception.getMessage());
 		assertSame(error, exception.getContext());
 

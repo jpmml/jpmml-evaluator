@@ -594,9 +594,7 @@ public class ExpressionUtil {
 
 	static
 	public FieldValue evaluateError(Error error, EvaluationContext context){
-		String message = error.getMessage();
-
-		throw new EvaluationException(message, error);
+		throw new ErrorException(error);
 	}
 
 	static
