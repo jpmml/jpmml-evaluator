@@ -94,11 +94,11 @@ public class AbstractFunction implements Function {
 			} // End if
 
 			if(alias != null){
-				throw new MissingArgumentException(this, MissingArgumentException.formatMessage(this, "missing " + FunctionException.formatKey(alias) + " value at position " + index));
+				throw new MissingArgumentException(this, index, MissingArgumentException.formatMessage(this, "missing " + FunctionException.formatKey(alias) + " value at position " + index));
 			} else
 
 			{
-				throw new MissingArgumentException(this, MissingArgumentException.formatMessage(this, "missing value at position " + index));
+				throw new MissingArgumentException(this, index, MissingArgumentException.formatMessage(this, "missing value at position " + index));
 			}
 		}
 

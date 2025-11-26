@@ -252,7 +252,7 @@ public interface Functions {
 			if(base instanceof Integer && exponent instanceof Integer){
 
 				if(exponent.intValue() < 0){
-					throw new InvalidArgumentException(this, InvalidArgumentException.formatMessage(this, "exponent", exponent) + ". Must be equal to or greater than 0");
+					throw new InvalidArgumentException(this, 1, InvalidArgumentException.formatMessage(this, "exponent", exponent) + ". Must be equal to or greater than 0");
 				}
 
 				return IntMath.checkedPow(base.intValue(), exponent.intValue());
@@ -522,11 +522,11 @@ public interface Functions {
 		public String evaluate(String string, int position, int length){
 
 			if(position < 1){
-				throw new InvalidArgumentException(this, InvalidArgumentException.formatMessage(this, "startPos", position) + ". Must be equal to or greater than 1");
+				throw new InvalidArgumentException(this, 1, InvalidArgumentException.formatMessage(this, "startPos", position) + ". Must be equal to or greater than 1");
 			} // End if
 
 			if(length < 0){
-				throw new InvalidArgumentException(this, InvalidArgumentException.formatMessage(this, "length", length));
+				throw new InvalidArgumentException(this, 2, InvalidArgumentException.formatMessage(this, "length", length));
 			}
 
 			// "The first character of a string is located at position 1 (not position 0)"
@@ -627,7 +627,7 @@ public interface Functions {
 			try {
 				return String.format(pattern, input);
 			} catch(IllegalFormatException ife){
-				throw new InvalidArgumentException(this, InvalidArgumentException.formatMessage(this, "pattern", pattern))
+				throw new InvalidArgumentException(this, 1, InvalidArgumentException.formatMessage(this, "pattern", pattern))
 					.initCause(ife);
 			}
 		}
@@ -648,7 +648,7 @@ public interface Functions {
 			try {
 				return input.format(pattern);
 			} catch(IllegalFormatException ife){
-				throw new InvalidArgumentException(this, InvalidArgumentException.formatMessage(this, "pattern", pattern))
+				throw new InvalidArgumentException(this, 1, InvalidArgumentException.formatMessage(this, "pattern", pattern))
 					.initCause(ife);
 			}
 		}

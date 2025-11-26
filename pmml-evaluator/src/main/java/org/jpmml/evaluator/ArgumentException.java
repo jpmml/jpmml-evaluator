@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Villu Ruusmann
+ * Copyright (c) 2025 Villu Ruusmann
  *
  * This file is part of JPMML-Evaluator
  *
@@ -18,14 +18,23 @@
  */
 package org.jpmml.evaluator;
 
-public class MissingArgumentException extends ArgumentException {
+abstract
+public class ArgumentException extends FunctionException {
 
-	public MissingArgumentException(Function function, int index, String message){
-		super(function, index, message);
+	private int index = -1;
+
+
+	public ArgumentException(Function function, int index, String message){
+		super(function, message);
+
+		setIndex(index);
 	}
 
-	static
-	public String formatMessage(Function function, String argument){
-		return "Function " + formatName(function.getName()) + " cannot accept " + argument;
+	public int getIndex(){
+		return this.index;
+	}
+
+	private void setIndex(int index){
+		this.index = index;
 	}
 }

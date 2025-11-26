@@ -18,10 +18,10 @@
  */
 package org.jpmml.evaluator;
 
-public class InvalidArgumentException extends FunctionException {
+public class InvalidArgumentException extends ArgumentException {
 
-	public InvalidArgumentException(Function function, String message){
-		super(function, message);
+	public InvalidArgumentException(Function function, int index, String message){
+		super(function, index, message);
 	}
 
 	static
