@@ -18,9 +18,26 @@
  */
 package org.jpmml.evaluator;
 
-public class InvalidArgumentListException extends FunctionException {
+import java.util.List;
 
-	public InvalidArgumentListException(Function function, String message){
+public class InvalidArgumentListException extends ApplyException {
+
+	public InvalidArgumentListException(String function, String message){
 		super(function, message);
+	}
+
+	static
+	public String formatFixedArityMessage(String function, int arity, List<FieldValue> arguments){
+		return "Function " + EvaluationException.formatName(function) + " expects " + arity + " values, got " + arguments.size() + " values";
+	}
+
+	static
+	public String formatVariableArityMessage(String function, int minArity, List<FieldValue> arguments){
+		return "Function " + EvaluationException.formatName(function) + " expects " + minArity + " or more values, got " + arguments.size() + " values";
+	}
+
+	static
+	public String formatVariableArityMessage(String function, int minArity, int maxArity, List<FieldValue> arguments){
+		return "Function " + EvaluationException.formatName(function) + " expects " + minArity + " to " + maxArity + " values, got " + arguments.size() + " values";
 	}
 }

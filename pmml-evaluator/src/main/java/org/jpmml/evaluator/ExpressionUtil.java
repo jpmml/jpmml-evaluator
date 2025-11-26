@@ -347,9 +347,9 @@ public class ExpressionUtil {
 		String function = apply.requireFunction();
 		List<Expression> expressions = apply.getExpressions();
 
-		List<FieldValue> values = new ArrayList<>(expressions.size());
-
 		int max = expressions.size();
+
+		List<FieldValue> values = new ArrayList<>(max);
 
 		if((PMMLFunctions.IF).equals(function)){
 

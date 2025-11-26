@@ -20,12 +20,12 @@ package org.jpmml.evaluator;
 
 public class MissingArgumentException extends ArgumentException {
 
-	public MissingArgumentException(Function function, int index, String message){
+	public MissingArgumentException(String function, int index, String message){
 		super(function, index, message);
 	}
 
 	static
-	public String formatMessage(Function function, String argument){
-		return "Function " + formatName(function.getName()) + " cannot accept " + argument;
+	public String formatMessage(String function, String argument){
+		return "Function " + EvaluationException.formatName(function) + " cannot accept " + argument;
 	}
 }

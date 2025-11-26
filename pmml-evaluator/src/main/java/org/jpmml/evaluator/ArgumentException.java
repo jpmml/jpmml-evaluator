@@ -19,12 +19,12 @@
 package org.jpmml.evaluator;
 
 abstract
-public class ArgumentException extends FunctionException {
+public class ArgumentException extends ApplyException {
 
 	private int index = -1;
 
 
-	public ArgumentException(Function function, int index, String message){
+	public ArgumentException(String function, int index, String message){
 		super(function, message);
 
 		setIndex(index);

@@ -20,12 +20,12 @@ package org.jpmml.evaluator;
 
 public class InvalidArgumentException extends ArgumentException {
 
-	public InvalidArgumentException(Function function, int index, String message){
+	public InvalidArgumentException(String function, int index, String message){
 		super(function, index, message);
 	}
 
 	static
-	public String formatMessage(Function function, String alias, Object value){
-		return "Function " + formatName(function.getName()) + " cannot accept " + (formatKey(alias) + " value of " + formatValue(value));
+	public String formatMessage(String function, String alias, Object value){
+		return "Function " + EvaluationException.formatName(function) + " cannot accept " + (EvaluationException.formatKey(alias) + " value of " + EvaluationException.formatValue(value));
 	}
 }

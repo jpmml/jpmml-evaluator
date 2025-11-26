@@ -46,7 +46,7 @@ public interface Function {
 	 * Evaluates this function with the specified arguments.
 	 * </p>
 	 *
-	 * @throws FunctionException If the arguments do not match the formal parameters of this function.
+	 * @throws ApplyException If the arguments do not match the formal parameters of this function.
 	 */
 	FieldValue evaluate(List<FieldValue> arguments);
 }

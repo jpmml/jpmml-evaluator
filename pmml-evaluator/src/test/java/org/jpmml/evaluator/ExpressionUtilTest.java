@@ -365,7 +365,7 @@ public class ExpressionUtilTest {
 		Apply apply = new Apply(PMMLFunctions.IF)
 			.addExpressions(condition);
 
-		assertThrows(FunctionException.class, () -> evaluate(apply, "x", null));
+		assertThrows(ApplyException.class, () -> evaluate(apply, "x", null));
 
 		Expression thenPart = new Apply(PMMLFunctions.ABS)
 			.addExpressions(new FieldRef("x"));
@@ -386,7 +386,7 @@ public class ExpressionUtilTest {
 
 		apply.addExpressions(new FieldRef("x"));
 
-		assertThrows(FunctionException.class, () -> evaluate(apply, "x", null));
+		assertThrows(ApplyException.class, () -> evaluate(apply, "x", null));
 	}
 
 	@Test

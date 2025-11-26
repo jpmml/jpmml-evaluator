@@ -20,30 +20,47 @@ package org.jpmml.evaluator;
 
 import java.util.Objects;
 
+import org.dmg.pmml.Apply;
+import org.dmg.pmml.PMMLObject;
+
 /**
  * <p>
- * Thrown to indicate an incorrect function invocation.
+ * Thrown to indicate an incorrect function call.
  * </p>
  *
- * @see Function
+ * @see Apply
  */
-abstract
-public class FunctionException extends EvaluationException {
+public class ApplyException extends EvaluationException {
 
-	private Function function = null;
+	private String function = null;
 
 
-	public FunctionException(Function function, String message){
+	public ApplyException(String function, String message){
 		super(message);
 
 		setFunction(function);
 	}
 
-	public Function getFunction(){
+	@Override
+	public Apply getContext(){
+		return (Apply)super.getContext();
+	}
+
+	@Override
+	public ApplyException ensureContext(PMMLObject parentContext){
+
+		if(!(parentContext instanceof Apply)){
+			throw new IllegalArgumentException();
+		}
+
+		return (ApplyException)super.ensureContext(parentContext);
+	}
+
+	public String getFunction(){
 		return this.function;
 	}
 
-	private void setFunction(Function function){
+	private void setFunction(String function){
 		this.function = Objects.requireNonNull(function);
 	}
 }
