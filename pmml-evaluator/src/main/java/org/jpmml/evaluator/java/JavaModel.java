@@ -36,6 +36,7 @@ import org.dmg.pmml.Version;
 import org.dmg.pmml.Visitor;
 import org.dmg.pmml.VisitorAction;
 import org.jpmml.evaluator.EvaluationContext;
+import org.jpmml.evaluator.NamespaceURIs;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.MissingAttributeException;
@@ -47,7 +48,7 @@ import org.jpmml.model.annotations.ValueConstructor;
 
 @XmlRootElement (
 	name = "X-JavaModel",
-	namespace = "http://jpmml.org/jpmml-evaluator/"
+	namespace = NamespaceURIs.JPMML_EVALUATOR
 )
 @Added(Version.XPMML)
 abstract

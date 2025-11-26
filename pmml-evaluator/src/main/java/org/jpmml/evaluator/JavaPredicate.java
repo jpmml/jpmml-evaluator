@@ -27,7 +27,7 @@ import org.jpmml.model.annotations.Added;
 
 @XmlRootElement (
 	name = "X-JavaPredicate",
-	namespace = "http://jpmml.org/jpmml-evaluator/"
+	namespace = NamespaceURIs.JPMML_EVALUATOR
 )
 @Added(Version.XPMML)
 abstract
