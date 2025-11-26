@@ -33,6 +33,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Discretize;
+import org.dmg.pmml.Error;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
 import org.dmg.pmml.FieldRef;
@@ -176,6 +177,10 @@ public class ExpressionUtil {
 
 		if(expression instanceof Lag){
 			return evaluateLag((Lag)expression, context);
+		} else
+
+		if(expression instanceof Error){
+			return evaluateError((Error)expression, context);
 		} // End if
 
 		if(expression instanceof JavaExpression){
@@ -585,6 +590,13 @@ public class ExpressionUtil {
 			default:
 				throw new UnsupportedAttributeException(lag, aggregate);
 		}
+	}
+
+	static
+	public FieldValue evaluateError(Error error, EvaluationContext context){
+		String message = error.getMessage();
+
+		throw new EvaluationException(message, error);
 	}
 
 	static

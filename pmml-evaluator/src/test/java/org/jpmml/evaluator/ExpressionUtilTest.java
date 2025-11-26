@@ -36,6 +36,7 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.Discretize;
+import org.dmg.pmml.Error;
 import org.dmg.pmml.Expression;
 import org.dmg.pmml.FieldColumnPair;
 import org.dmg.pmml.FieldRef;
@@ -65,6 +66,8 @@ import org.jpmml.evaluator.java.JavaModel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -637,6 +640,24 @@ public class ExpressionUtilTest {
 			.collect(new TableCollector());
 
 		assertEquals(Arrays.asList(null, 1, 3, 6, 9), resultsTable.getValues("lag"));
+	}
+
+	@Test
+	public void evaluateError(){
+		Error error = new Error();
+
+		Apply condition = new Apply(PMMLFunctions.ISNOTMISSING)
+			.addExpressions(new FieldRef("x"));
+
+		Apply apply = new Apply(PMMLFunctions.IF)
+			.addExpressions(condition)
+			.addExpressions(new FieldRef("x"), error);
+
+		EvaluationException exception = assertThrows(EvaluationException.class, () -> evaluate(apply, "x", null));
+		assertNull(exception.getMessage());
+		assertSame(error, exception.getContext());
+
+		assertEquals(1, evaluate(apply, "x", 1));
 	}
 
 	static
