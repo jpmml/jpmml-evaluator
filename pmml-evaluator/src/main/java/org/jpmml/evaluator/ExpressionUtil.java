@@ -101,7 +101,9 @@ public class ExpressionUtil {
 		List<ParameterField> parameterFields = defineFunction.getParameterFields();
 
 		if(parameterFields.size() != values.size()){
-			throw new EvaluationException("Function " + EvaluationException.formatName(defineFunction.getName()) + " expects " + parameterFields.size() + " arguments, got " + values.size() + " arguments");
+			String name = defineFunction.requireName();
+
+			throw new InvalidArgumentListException(name, InvalidArgumentListException.formatFixedArityMessage(name, parameterFields.size(), values));
 		}
 
 		DefineFunctionEvaluationContext functionContext = new DefineFunctionEvaluationContext(defineFunction, context);
@@ -441,7 +443,7 @@ public class ExpressionUtil {
 
 			switch(invalidValueTreatment){
 				case RETURN_INVALID:
-					throw new EvaluationException("Function " + EvaluationException.formatName(function) + " failed", apply)
+					throw new ApplyException(function, "Function " + EvaluationException.formatName(function) + " failed", apply)
 						.initCause(ure);
 				case AS_IS:
 					// Re-throw the given UndefinedResultException instance
@@ -500,7 +502,7 @@ public class ExpressionUtil {
 			return evaluate(defineFunction, values, context);
 		}
 
-		throw new EvaluationException("Function " + EvaluationException.formatName(name) + " is not defined");
+		throw new ApplyException(name, "Function " + EvaluationException.formatName(name) + " is not defined");
 	}
 
 	@SuppressWarnings("unchecked")

@@ -41,6 +41,12 @@ public class ApplyException extends EvaluationException {
 		setFunction(function);
 	}
 
+	public ApplyException(String function, String message, Apply apply){
+		super(message, apply);
+
+		setFunction(function);
+	}
+
 	@Override
 	public Apply getContext(){
 		return (Apply)super.getContext();

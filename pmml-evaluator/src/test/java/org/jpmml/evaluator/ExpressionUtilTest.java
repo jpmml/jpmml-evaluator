@@ -66,6 +66,7 @@ import org.jpmml.evaluator.java.JavaModel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -310,6 +311,17 @@ public class ExpressionUtilTest {
 	}
 
 	@Test
+	public void evaluateApplyValue(){
+		Apply apply = new Apply(PMMLFunctions.EQUAL)
+			.addExpressions(new FieldRef("x"), new Constant(1));
+
+		MissingArgumentException exception = assertThrows(MissingArgumentException.class, () -> evaluate(apply, "x", null));
+
+		assertSame(apply, exception.getContext());
+		assertEquals(0, exception.getIndex());
+	}
+
+	@Test
 	public void evaluateApplyArithmetic(){
 		Apply apply = new Apply(PMMLFunctions.DIVIDE)
 			.addExpressions(new FieldRef("x"), new Constant("0"));
@@ -326,9 +338,9 @@ public class ExpressionUtilTest {
 
 		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.RETURN_INVALID);
 
-		EvaluationException exception = assertThrows(EvaluationException.class, () -> evaluate(apply, "x", 1));
-
-		assertTrue(exception.getCause() instanceof UndefinedResultException);
+		ApplyException exception = assertThrows(ApplyException.class, () -> evaluate(apply, "x", 1));
+		assertSame(apply, exception.getContext());
+		assertInstanceOf(UndefinedResultException.class, exception.getCause());
 
 		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.AS_IS);
 
@@ -358,6 +370,17 @@ public class ExpressionUtilTest {
 	}
 
 	@Test
+	public void evaluateApplyString(){
+		Apply apply = new Apply(PMMLFunctions.SUBSTRING)
+			.addExpressions(new FieldRef("x"), new Constant(1), new Constant(-1));
+
+		InvalidArgumentException exception = assertThrows(InvalidArgumentException.class, () -> evaluate(apply, "x", "Hello World"));
+
+		assertSame(apply, exception.getContext());
+		assertEquals(2, exception.getIndex());
+	}
+
+	@Test
 	public void evaluateApplyCondition(){
 		Apply condition = new Apply(PMMLFunctions.ISNOTMISSING)
 			.addExpressions(new FieldRef("x"));
@@ -365,7 +388,9 @@ public class ExpressionUtilTest {
 		Apply apply = new Apply(PMMLFunctions.IF)
 			.addExpressions(condition);
 
-		assertThrows(ApplyException.class, () -> evaluate(apply, "x", null));
+		InvalidArgumentListException exception = assertThrows(InvalidArgumentListException.class, () -> evaluate(apply, "x", null));
+
+		assertSame(apply, exception.getContext());
 
 		Expression thenPart = new Apply(PMMLFunctions.ABS)
 			.addExpressions(new FieldRef("x"));
@@ -386,7 +411,9 @@ public class ExpressionUtilTest {
 
 		apply.addExpressions(new FieldRef("x"));
 
-		assertThrows(ApplyException.class, () -> evaluate(apply, "x", null));
+		exception = assertThrows(InvalidArgumentListException.class, () -> evaluate(apply, "x", null));
+
+		assertSame(apply, exception.getContext());
 	}
 
 	@Test
@@ -430,6 +457,11 @@ public class ExpressionUtilTest {
 		assertEquals("not missing", evaluate(apply, context));
 
 		assertThrows(DuplicateFieldValueException.class, () -> context.declareInternal("x", FieldValues.CATEGORICAL_BOOLEAN_FALSE));
+
+		apply
+			.addExpressions(fieldRef);
+
+		assertThrows(InvalidArgumentListException.class, () -> evaluate(apply, context));
 	}
 
 	@Test
