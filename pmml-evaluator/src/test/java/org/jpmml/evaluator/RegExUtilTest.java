@@ -25,9 +25,9 @@ import org.dmg.pmml.TextIndex;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RegExUtilTest {
 
@@ -38,14 +38,14 @@ public class RegExUtilTest {
 		EvaluationException exception = assertThrows(EvaluationException.class, () -> RegExUtil.compile(invalidRegex, null));
 
 		assertEquals(null, exception.getContext());
-		assertTrue(exception.getCause() instanceof PatternSyntaxException);
+		assertInstanceOf(PatternSyntaxException.class, exception.getCause());
 
 		TextIndex textIndex = new TextIndex();
 
 		exception = assertThrows(EvaluationException.class, () -> RegExUtil.compile(invalidRegex, textIndex));
 
 		assertEquals(textIndex, exception.getContext());
-		assertTrue(exception.getCause() instanceof PatternSyntaxException);
+		assertInstanceOf(PatternSyntaxException.class, exception.getCause());
 
 		String validRegex = "\\s+";
 

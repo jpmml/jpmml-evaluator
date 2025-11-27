@@ -22,11 +22,11 @@ import org.jpmml.evaluator.functions.EchoFunction;
 import org.jpmml.evaluator.functions.MaliciousEchoFunction;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FunctionRegistryTest {
 
@@ -47,6 +47,6 @@ public class FunctionRegistryTest {
 
 		EvaluationException exception = assertThrows(EvaluationException.class, () -> FunctionRegistry.getFunction(MaliciousEchoFunction.class.getName()));
 
-		assertTrue(exception.getCause() instanceof ExceptionInInitializerError);
+		assertInstanceOf(ExceptionInInitializerError.class, exception.getCause());
 	}
 }

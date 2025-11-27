@@ -339,6 +339,7 @@ public class ExpressionUtilTest {
 		apply.setInvalidValueTreatment(InvalidValueTreatmentMethod.RETURN_INVALID);
 
 		ApplyException exception = assertThrows(ApplyException.class, () -> evaluate(apply, "x", 1));
+
 		assertSame(apply, exception.getContext());
 		assertInstanceOf(UndefinedResultException.class, exception.getCause());
 
@@ -473,7 +474,7 @@ public class ExpressionUtilTest {
 
 		EvaluationException exception = assertThrows(EvaluationException.class, () -> evaluate(apply));
 
-		assertEquals(fieldRef, exception.getContext());
+		assertSame(fieldRef, exception.getContext());
 
 		assertEquals("Hello World!", evaluate(apply, "x", "Hello World!"));
 	}
@@ -601,6 +602,7 @@ public class ExpressionUtilTest {
 		context.setArguments(arguments);
 
 		EvaluationException exception = assertThrows(EvaluationException.class, () -> evaluate(lag, context));
+
 		assertTrue((exception.getMessage()).contains(LaggableMap.class.getName()));
 
 		context.reset(true);
@@ -639,6 +641,7 @@ public class ExpressionUtilTest {
 		context.setArguments(arguments);
 
 		exception = assertThrows(EvaluationException.class, () -> evaluate(lag, context));
+
 		assertTrue((exception.getMessage()).contains(AggregableMap.class.getName()));
 
 		context.reset(true);
@@ -686,6 +689,7 @@ public class ExpressionUtilTest {
 			.addExpressions(new FieldRef("x"), error);
 
 		ErrorException exception = assertThrows(ErrorException.class, () -> evaluate(apply, "x", null));
+
 		assertNull(exception.getMessage());
 		assertSame(error, exception.getContext());
 
