@@ -559,7 +559,7 @@ public class NeuralNetworkEvaluator extends ModelEvaluator<NeuralNetwork> implem
 			}
 		}
 
-		return new LinkedHashMap<>(Multimaps.asMap(result));
+		return Multimaps.asMap(result);
 	}
 
 	static

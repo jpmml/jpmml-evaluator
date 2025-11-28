@@ -161,7 +161,7 @@ public class RegressionTableUtil {
 						case LOGLOG:
 						case CAUCHIT:
 							// XXX: Non-standard behaviour
-							if((RegressionModel.NormalizationMethod.LOGIT).equals(normalizationMethod)){
+							if(normalizationMethod == RegressionModel.NormalizationMethod.LOGIT){
 								RegressionModelUtil.computeMultinomialProbabilities(normalizationMethod, result);
 
 								break;

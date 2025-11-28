@@ -903,7 +903,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private Map<Object, List<PCell>> parseParamMatrix(ParamMatrix paramMatrix){
 		ListMultimap<Object, PCell> targetCategoryCells = groupByTargetCategory(paramMatrix.getPCells());
 
-		return new LinkedHashMap<>(Multimaps.asMap(targetCategoryCells));
+		return Multimaps.asMap(targetCategoryCells);
 	}
 
 	static

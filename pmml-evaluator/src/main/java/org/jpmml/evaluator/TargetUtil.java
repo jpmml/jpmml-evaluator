@@ -66,7 +66,9 @@ public class TargetUtil {
 	public <V extends Number> Map<String, ?> evaluateRegressionDefault(ValueFactory<V> valueFactory, List<TargetField> targetFields){
 
 		if(targetFields.size() == 1){
-			return evaluateRegressionDefault(valueFactory, targetFields.get(0));
+			TargetField targetField = targetFields.get(0);
+
+			return evaluateRegressionDefault(valueFactory, targetField);
 		}
 
 		Map<String, Object> result = new LinkedHashMap<>();
@@ -135,7 +137,9 @@ public class TargetUtil {
 	public <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassificationDefault(ValueFactory<V> valueFactory, List<TargetField> targetFields){
 
 		if(targetFields.size() == 1){
-			return evaluateClassificationDefault(valueFactory, targetFields.get(0));
+			TargetField targetField = targetFields.get(0);
+
+			return evaluateClassificationDefault(valueFactory, targetField);
 		}
 
 		Map<String, Classification<?, V>> result = new LinkedHashMap<>();
@@ -163,7 +167,9 @@ public class TargetUtil {
 	public <V extends Number> Map<String, ?> evaluateDefault(List<TargetField> targetFields){
 
 		if(targetFields.size() == 1){
-			return evaluateDefault(targetFields.get(0));
+			TargetField targetField = targetFields.get(0);
+
+			return evaluateDefault(targetField);
 		}
 
 		Map<String, Object> result = new LinkedHashMap<>();

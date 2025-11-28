@@ -372,7 +372,7 @@ public class OperationProcessor extends AbstractProcessor {
 
 			JVar param;
 
-			if((TypeKind.ARRAY).equals(paramType.getKind())){
+			if(paramType.getKind() == TypeKind.ARRAY){
 				ArrayType arrayType = (ArrayType)paramType;
 
 				param = method.varParam(toType(codeModel, arrayType.getComponentType()), String.valueOf(paramName));
