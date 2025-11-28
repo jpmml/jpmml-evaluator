@@ -747,6 +747,22 @@ public interface Functions {
 		}
 	};
 
+	TernaryFunction NORMAL_IDF = new NormalDistributionFunction(PMMLFunctions.NORMALIDF){
+
+		@Override
+		public Double evaluate(Number x, NormalDistribution distribution){
+			return distribution.inverseCumulativeProbability(x.doubleValue());
+		}
+	};
+
+	UnaryFunction STD_NORMAL_IDF = new StdNormalDistributionFunction(PMMLFunctions.STDNORMALIDF){
+
+		@Override
+		public Double evaluate(Number x, NormalDistribution distribution){
+			return distribution.inverseCumulativeProbability(x.doubleValue());
+		}
+	};
+
 	BinaryFunction HYPOT = new BinaryFunction(PMMLFunctions.HYPOT){
 
 		public Double evaluate(Number x, Number y){

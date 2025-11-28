@@ -441,6 +441,9 @@ public class FunctionTest implements Deltas {
 
 		assertEquals(0.17603266d, (Double)evaluate(Functions.NORMAL_PDF, 0d, 1d, 2d), DOUBLE_INEXACT);
 		assertEquals(0.39894228d, (Double)evaluate(Functions.STD_NORMAL_PDF, 0d), DOUBLE_INEXACT);
+
+		assertEquals(0d, (Double)evaluate(Functions.NORMAL_IDF, 0.30853754d, 1d, 2d), DOUBLE_INEXACT);
+		assertEquals(0d, (Double)evaluate(Functions.STD_NORMAL_IDF, 0.5d), DOUBLE_INEXACT);
 	}
 
 	@Test
