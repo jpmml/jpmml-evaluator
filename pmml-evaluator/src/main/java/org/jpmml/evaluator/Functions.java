@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.math.IntMath;
+import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.rank.Max;
 import org.apache.commons.math3.stat.descriptive.rank.Min;
@@ -709,6 +710,38 @@ public interface Functions {
 			SecondsSinceDate result = (first.asDateTime()).toSecondsSinceYear(second.asInteger());
 
 			return FieldValueUtil.create(TypeInfos.CONTINUOUS_INTEGER, result);
+		}
+	};
+
+	TernaryFunction NORMAL_CDF = new TernaryFunction(PMMLFunctions.NORMALCDF, Arrays.asList("x", "mu", "sigma")){
+
+		@Override
+		public FieldValue evaluate(FieldValue first, FieldValue second, FieldValue third){
+			Number x = first.asNumber();
+			Number mu = second.asNumber();
+			Number sigma = third.asNumber();
+
+			if(sigma.doubleValue() <= 0d){
+				throw new InvalidArgumentException(getName(), 1, InvalidArgumentException.formatMessage(getName(), "sigma", sigma) + ". Must be greater than 0");
+			}
+
+			NormalDistribution distribution = new NormalDistribution(mu.doubleValue(), sigma.doubleValue());
+			double result = distribution.cumulativeProbability(x.doubleValue());
+
+			return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
+		}
+	};
+
+	UnaryFunction STD_NORMAL_CDF = new UnaryFunction(PMMLFunctions.STDNORMALCDF, Arrays.asList("x")){
+
+		@Override
+		public FieldValue evaluate(FieldValue first){
+			Number x = first.asNumber();
+
+			NormalDistribution distribution = new NormalDistribution();
+			double result = distribution.cumulativeProbability(x.doubleValue());
+
+			return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 		}
 	};
 

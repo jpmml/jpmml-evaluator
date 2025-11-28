@@ -435,6 +435,12 @@ public class FunctionTest implements Deltas {
 	}
 
 	@Test
+	public void evaluateNormalDistributionFunctions(){
+		assertEquals(0.30853754d, (Double)evaluate(Functions.NORMAL_CDF, 0d, 1d, 2d), DOUBLE_INEXACT);
+		assertEquals(0.5, (Double)evaluate(Functions.STD_NORMAL_CDF, 0d), DOUBLE_INEXACT);
+	}
+
+	@Test
 	public void evaluateTrigonometricFunctions(){
 		Double angle = Math.toRadians(30);
 
