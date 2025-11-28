@@ -44,8 +44,10 @@ import org.jpmml.evaluator.functions.EqualityFunction;
 import org.jpmml.evaluator.functions.LogicalFunction;
 import org.jpmml.evaluator.functions.MathFunction;
 import org.jpmml.evaluator.functions.MultiaryFunction;
+import org.jpmml.evaluator.functions.NormalDistributionFunction;
 import org.jpmml.evaluator.functions.RoundingFunction;
 import org.jpmml.evaluator.functions.StatisticalFunction;
+import org.jpmml.evaluator.functions.StdNormalDistributionFunction;
 import org.jpmml.evaluator.functions.StringFunction;
 import org.jpmml.evaluator.functions.TernaryFunction;
 import org.jpmml.evaluator.functions.TrigonometricFunction;
@@ -713,35 +715,35 @@ public interface Functions {
 		}
 	};
 
-	TernaryFunction NORMAL_CDF = new TernaryFunction(PMMLFunctions.NORMALCDF, Arrays.asList("x", "mu", "sigma")){
+	TernaryFunction NORMAL_CDF = new NormalDistributionFunction(PMMLFunctions.NORMALCDF){
 
 		@Override
-		public FieldValue evaluate(FieldValue first, FieldValue second, FieldValue third){
-			Number x = first.asNumber();
-			Number mu = second.asNumber();
-			Number sigma = third.asNumber();
-
-			if(sigma.doubleValue() <= 0d){
-				throw new InvalidArgumentException(getName(), 1, InvalidArgumentException.formatMessage(getName(), "sigma", sigma) + ". Must be greater than 0");
-			}
-
-			NormalDistribution distribution = new NormalDistribution(mu.doubleValue(), sigma.doubleValue());
-			double result = distribution.cumulativeProbability(x.doubleValue());
-
-			return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
+		public Double evaluate(Number x, NormalDistribution distribution){
+			return distribution.cumulativeProbability(x.doubleValue());
 		}
 	};
 
-	UnaryFunction STD_NORMAL_CDF = new UnaryFunction(PMMLFunctions.STDNORMALCDF, Arrays.asList("x")){
+	UnaryFunction STD_NORMAL_CDF = new StdNormalDistributionFunction(PMMLFunctions.STDNORMALCDF){
 
 		@Override
-		public FieldValue evaluate(FieldValue first){
-			Number x = first.asNumber();
+		public Double evaluate(Number x, NormalDistribution distribution){
+			return distribution.cumulativeProbability(x.doubleValue());
+		}
+	};
 
-			NormalDistribution distribution = new NormalDistribution();
-			double result = distribution.cumulativeProbability(x.doubleValue());
+	TernaryFunction NORMAL_PDF = new NormalDistributionFunction(PMMLFunctions.NORMALPDF){
 
-			return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
+		@Override
+		public Double evaluate(Number x, NormalDistribution distribution){
+			return distribution.density(x.doubleValue());
+		}
+	};
+
+	UnaryFunction STD_NORMAL_PDF = new StdNormalDistributionFunction(PMMLFunctions.STDNORMALPDF){
+
+		@Override
+		public Double evaluate(Number x, NormalDistribution distribution){
+			return distribution.density(x.doubleValue());
 		}
 	};
 

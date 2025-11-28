@@ -31,7 +31,7 @@ The JPMML-Evaluator library is hardwired to perform thorough "sanity" checking. 
 
 * [Transformations](https://dmg.org/pmml/v4-4-1/Transformations.html):
 * [PMML built-in functions](https://dmg.org/pmml/v4-4-1/BuiltinFunctions.html):
-  * Except for `erf`, `normalIDF`, `normalPDF`, `stdNormalIDF` and `stdNormalPDF` functions.
+  * Except for `erf`, `normalIDF` and `stdNormalIDF` functions.
 * [PMML user-defined functions](https://dmg.org/pmml/v4-4-1/Functions.html).
 * Java user-defined functions.
 
