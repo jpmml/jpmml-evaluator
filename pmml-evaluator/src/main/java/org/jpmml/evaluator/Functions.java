@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import com.google.common.math.IntMath;
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.special.Erf;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.rank.Max;
 import org.apache.commons.math3.stat.descriptive.rank.Min;
@@ -760,6 +761,18 @@ public interface Functions {
 		@Override
 		public Double evaluate(Number x, NormalDistribution distribution){
 			return distribution.inverseCumulativeProbability(x.doubleValue());
+		}
+	};
+
+	UnaryFunction ERF = new UnaryFunction(PMMLFunctions.ERF){
+
+		@Override
+		public FieldValue evaluate(FieldValue first){
+			Number x = first.asNumber();
+
+			Double result = Erf.erf(x.doubleValue());
+
+			return FieldValueUtil.create(TypeInfos.CONTINUOUS_DOUBLE, result);
 		}
 	};
 

@@ -184,7 +184,7 @@ public class FunctionRegistry {
 			Functions.REPLACE, Functions.MATCHES,
 			Functions.FORMAT_NUMBER, Functions.FORMAT_DATETIME,
 			Functions.DATE_DAYS_SINCE_YEAR, Functions.DATE_SECONDS_SINCE_MIDNIGHT, Functions.DATE_SECONDS_SINCE_YEAR,
-			Functions.NORMAL_CDF, Functions.NORMAL_PDF, Functions.NORMAL_IDF, Functions.STD_NORMAL_CDF, Functions.STD_NORMAL_PDF, Functions.STD_NORMAL_IDF,
+			Functions.NORMAL_CDF, Functions.NORMAL_PDF, Functions.NORMAL_IDF, Functions.STD_NORMAL_CDF, Functions.STD_NORMAL_PDF, Functions.STD_NORMAL_IDF, Functions.ERF,
 			Functions.EXPM1, Functions.HYPOT, Functions.LN1P, Functions.RINT,
 			Functions.SIN, Functions.ASIN, Functions.SINH, Functions.COS, Functions.ACOS, Functions.COSH, Functions.TAN, Functions.ATAN, Functions.TANH
 		);
