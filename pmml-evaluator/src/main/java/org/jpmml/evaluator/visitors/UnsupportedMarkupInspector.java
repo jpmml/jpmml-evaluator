@@ -21,7 +21,6 @@ package org.jpmml.evaluator.visitors;
 import java.util.List;
 
 import org.dmg.pmml.Aggregate;
-import org.dmg.pmml.Apply;
 import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.LocalTransformations;
 import org.dmg.pmml.Matrix;
@@ -29,7 +28,6 @@ import org.dmg.pmml.NormDiscrete;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMMLAttributes;
-import org.dmg.pmml.PMMLFunctions;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.ResultField;
 import org.dmg.pmml.TableLocator;
@@ -86,27 +84,6 @@ public class UnsupportedMarkupInspector extends MarkupInspector<UnsupportedMarku
 		}
 
 		return super.visit(aggregate);
-	}
-
-	@Override
-	public VisitorAction visit(Apply apply){
-		String function = apply.requireFunction();
-
-		switch(function){
-			case PMMLFunctions.ERF:
-			case PMMLFunctions.NORMALCDF:
-			case PMMLFunctions.NORMALIDF:
-			case PMMLFunctions.NORMALPDF:
-			case PMMLFunctions.STDNORMALCDF:
-			case PMMLFunctions.STDNORMALIDF:
-			case PMMLFunctions.STDNORMALPDF:
-				report(new UnsupportedAttributeException(apply, PMMLAttributes.APPLY_FUNCTION, function));
-				break;
-			default:
-				break;
-		}
-
-		return super.visit(apply);
 	}
 
 	@Override
