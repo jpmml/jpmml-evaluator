@@ -8,9 +8,7 @@
 		<version>1.7-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator</artifactId>
-	<packaging>jar</packaging>
 
 	<name>JPMML evaluator</name>
 	<description>JPMML class model evaluator</description>

@@ -8,7 +8,6 @@
 		<version>1.7-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator-moxy</artifactId>
 
 	<name>JPMML evaluator EclipseLink MOXy runtime</name>

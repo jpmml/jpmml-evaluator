@@ -8,7 +8,6 @@
 		<version>1.7-SNAPSHOT</version>
 	</parent>
 
-	<groupId>org.jpmml</groupId>
 	<artifactId>pmml-evaluator-testing</artifactId>
 
 	<name>JPMML evaluator batch testing harness</name>
