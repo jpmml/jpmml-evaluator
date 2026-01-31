@@ -53,13 +53,13 @@ public class ApplyException extends EvaluationException {
 	}
 
 	@Override
-	public ApplyException ensureContext(PMMLObject parentContext){
+	public ApplyException ensureContext(PMMLObject context){
 
-		if(!(parentContext instanceof Apply)){
-			throw new IllegalArgumentException();
+		if(!(context instanceof Apply)){
+			return this;
 		}
 
-		return (ApplyException)super.ensureContext(parentContext);
+		return (ApplyException)super.ensureContext(context);
 	}
 
 	public String getFunction(){
