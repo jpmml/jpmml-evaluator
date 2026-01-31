@@ -38,6 +38,7 @@ import org.dmg.pmml.DefineFunction;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.TransformationDictionary;
+import org.jpmml.model.IndexableUtil;
 
 abstract
 public class PMMLManager implements HasPMML, Serializable {
