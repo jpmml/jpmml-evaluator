@@ -27,38 +27,46 @@ public class RealNumberEquivalenceTest {
 
 	@Test
 	public void doEquivalenceFloat(){
-		float expectedValue = (float)Math.PI;
-		float actualValue = expectedValue;
+		checkEquivalence(true, -0f, 0f, 0);
+		checkEquivalence(true, Float.NaN, Float.NaN, 0);
+		checkEquivalence(true, Float.NEGATIVE_INFINITY, Float.NEGATIVE_INFINITY, 0);
+		checkEquivalence(true, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, 0);
 
-		checkEquivalence(true, expectedValue, actualValue, 0);
+		float expectedValue = Float.MIN_VALUE;
+		float actualValue = -Float.MIN_VALUE;
 
-		for(int i = 1; i <= 3; i++){
-			actualValue = expectedValue - i * Math.ulp(expectedValue);
+		checkEquivalence(false, expectedValue, actualValue, 1);
+		checkEquivalence(true, expectedValue, actualValue, 2);
 
-			checkEquivalence(i <= 2, expectedValue, actualValue, 2);
+		expectedValue = (float)Math.PI;
+		actualValue = Float.intBitsToFloat(Float.floatToIntBits(expectedValue) + 2);
 
-			actualValue = expectedValue + i * Math.ulp(expectedValue);
-
-			checkEquivalence(i <= 2, expectedValue, actualValue, 2);
-		}
+		checkEquivalence(false, expectedValue, actualValue, 0);
+		checkEquivalence(false, expectedValue, actualValue, 1);
+		checkEquivalence(true, expectedValue, actualValue, 2);
+		checkEquivalence(true, expectedValue, actualValue, 3);
 	}
 
 	@Test
 	public void doEquivalenceDouble(){
-		double expectedValue = Math.PI;
-		double actualValue = expectedValue;
+		checkEquivalence(true, -0d, 0d, 0);
+		checkEquivalence(true, Double.NaN, Double.NaN, 0);
+		checkEquivalence(true, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 0);
+		checkEquivalence(true, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
 
-		checkEquivalence(true, expectedValue, actualValue, 0);
+		double expectedValue = Double.MIN_VALUE;
+		double actualValue = -Double.MIN_VALUE;
 
-		for(int i = 1; i <= 3; i++){
-			actualValue = expectedValue - i * Math.ulp(expectedValue);
+		checkEquivalence(false, expectedValue, actualValue, 1);
+		checkEquivalence(true, expectedValue, actualValue, 2);
 
-			checkEquivalence(i <= 2, expectedValue, actualValue, 2);
+		expectedValue = Math.PI;
+		actualValue = Double.longBitsToDouble(Double.doubleToLongBits(expectedValue) + 2);
 
-			actualValue = expectedValue + i * Math.ulp(expectedValue);
-
-			checkEquivalence(i <= 2, expectedValue, actualValue, 2);
-		}
+		checkEquivalence(false, expectedValue, actualValue, 0);
+		checkEquivalence(false, expectedValue, actualValue, 1);
+		checkEquivalence(true, expectedValue, actualValue, 2);
+		checkEquivalence(true, expectedValue, actualValue, 3);
 	}
 
 	static

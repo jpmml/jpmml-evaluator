@@ -25,6 +25,14 @@ import org.jpmml.evaluator.Computable;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.TypeUtil;
 
+/**
+ * <p>
+ * A strategy for determining the equivalence of floating-point numbers based on the Unit in the Last Place (ULP) distance.
+ * </p>
+ *
+ * Two values are considered equivalent when the ULP distance is within the specified tolerance.
+ * If the two values have different signs, then the ULP distance is calculated by summing their ULP distances to the zero value.
+ */
 public class RealNumberEquivalence extends Equivalence<Object> {
 
 	private int tolerance = 0;
@@ -48,36 +56,46 @@ public class RealNumberEquivalence extends Equivalence<Object> {
 			float expectedValue = (Float)expected;
 			float actualValue = (Float)actual;
 
-			if(expectedValue == actualValue){
-				return true;
+			// Float#floatToIntBits normalizes zero and NaN values
+			int expectedBits = Float.floatToIntBits(expectedValue);
+			int actualBits = Float.floatToIntBits(actualValue);
+
+			int ulpDifference;
+
+			// On different sides of zero
+			if((expectedBits ^ actualBits) < 0){
+				ulpDifference = distanceFromZero(expectedBits) + distanceFromZero(actualBits);
+			} else
+
+			// On the same side
+			{
+				ulpDifference = Math.abs(expectedBits - actualBits);
 			}
 
-			float leftMargin = expectedValue - (tolerance * Math.ulp(expectedValue));
-			float rightMargin = expectedValue + (tolerance * Math.ulp(expectedValue));
-
-			if(actualValue >= leftMargin && actualValue <= rightMargin){
-				return true;
-			}
-
-			return false;
+			return ulpDifference <= tolerance;
 		} else
 
 		if(expected instanceof Double && actual instanceof Double){
 			double expectedValue = (Double)expected;
 			double actualValue = (Double)actual;
 
-			if(expectedValue == actualValue){
-				return true;
+			// Double#doubleToLongBits normalizes zero and NaN values
+			long expectedBits = Double.doubleToLongBits(expectedValue);
+			long actualBits = Double.doubleToLongBits(actualValue);
+
+			long ulpDifference;
+
+			// On different sides of zero
+			if((expectedBits ^ actualBits) < 0){
+				ulpDifference = distanceFromZero(expectedBits) + distanceFromZero(actualBits);
+			} else
+
+			// On the same side
+			{
+				ulpDifference = Math.abs(expectedBits - actualBits);
 			}
 
-			double leftMargin = expectedValue - (tolerance * Math.ulp(expectedValue));
-			double rightMargin = expectedValue + (tolerance * Math.ulp(expectedValue));
-
-			if(actualValue >= leftMargin && actualValue <= rightMargin){
-				return true;
-			}
-
-			return false;
+			return ulpDifference <= tolerance;
 		}
 
 		return Objects.equals(expected, actual);
@@ -99,5 +117,29 @@ public class RealNumberEquivalence extends Equivalence<Object> {
 		}
 
 		this.tolerance = tolerance;
+	}
+
+	static
+	private int distanceFromZero(int floatBits){
+
+		if(floatBits < 0){
+			return (floatBits - Integer.MIN_VALUE);
+		} else
+
+		{
+			return floatBits;
+		}
+	}
+
+	static
+	private long distanceFromZero(long doubleBits){
+
+		if(doubleBits < 0){
+			return (doubleBits - Long.MIN_VALUE);
+		} else
+
+		{
+			return doubleBits;
+		}
 	}
 }
