@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
@@ -103,7 +104,7 @@ public class ContinuousValue extends ScalarValue {
 		public boolean equalsValue(Object value){
 
 			if(value instanceof Integer){
-				return (asInteger()).equals(value);
+				return Objects.equals(asInteger(), value);
 			}
 
 			return super.equalsValue(value);
@@ -149,7 +150,7 @@ public class ContinuousValue extends ScalarValue {
 		public boolean equalsValue(Object value){
 
 			if(value instanceof Float){
-				return (asFloat()).equals(value);
+				return Objects.equals(asFloat(), value);
 			}
 
 			return super.equalsValue(value);
@@ -195,7 +196,7 @@ public class ContinuousValue extends ScalarValue {
 		public boolean equalsValue(Object value){
 
 			if(value instanceof Double){
-				return (asDouble()).equals(value);
+				return Objects.equals(asDouble(), value);
 			}
 
 			return super.equalsValue(value);

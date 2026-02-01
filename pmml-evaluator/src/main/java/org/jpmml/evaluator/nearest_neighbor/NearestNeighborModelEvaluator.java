@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.base.Function;
@@ -537,7 +538,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 
 			String column = instanceField.getColumn();
 
-			if(instanceIdVariable != null && (instanceIdVariable).equals(fieldName)){
+			if(instanceIdVariable != null && Objects.equals(instanceIdVariable, fieldName)){
 				fieldLoaders.add(new IdentifierLoader(fieldName, column));
 
 				continue;

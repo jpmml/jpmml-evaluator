@@ -87,7 +87,7 @@ public class ArchiveBatch implements Batch {
 			@Override
 			public String apply(String string){
 
-				if(("N/A").equals(string) || ("NA").equals(string)){
+				if(Objects.equals("N/A", string) || Objects.equals("NA", string)){
 					return null;
 				}
 

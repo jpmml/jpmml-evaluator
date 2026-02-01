@@ -19,6 +19,7 @@
 package org.jpmml.evaluator.visitors;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.tree.DecisionTree;
@@ -45,7 +46,7 @@ public class NodeResolver extends AbstractVisitor {
 				Node child = children.get(i);
 
 				Object id = child.getId();
-				if(id != null && (id).equals(defaultChild)){
+				if(id != null && Objects.equals(id, defaultChild)){
 					node.setDefaultChild(child);
 
 					break;

@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
@@ -78,7 +79,7 @@ public class CategoricalValue extends DiscreteValue {
 		public boolean equalsValue(Object value){
 
 			if(value instanceof String){
-				return (asString()).equals(value);
+				return Objects.equals(asString(), value);
 			}
 
 			return super.equalsValue(value);
@@ -138,7 +139,7 @@ public class CategoricalValue extends DiscreteValue {
 		public boolean equalsValue(Object value){
 
 			if(value instanceof Boolean){
-				return (asBoolean()).equals(value);
+				return Objects.equals(asBoolean(), value);
 			}
 
 			return super.equalsValue(value);

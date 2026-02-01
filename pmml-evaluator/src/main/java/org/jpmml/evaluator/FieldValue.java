@@ -184,7 +184,7 @@ public class FieldValue implements TypeInfo, Serializable {
 	public boolean equalsValue(Object value){
 		value = TypeUtil.parseOrCast(getDataType(), value);
 
-		return (getValue()).equals(value);
+		return Objects.equals(getValue(), value);
 	}
 
 	public boolean equalsValue(FieldValue value){

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -267,7 +268,7 @@ public class OperationProcessor extends AbstractProcessor {
 
 		for(Element enclosedElement : enclosedElements){
 
-			if((name).equals(String.valueOf(enclosedElement.getSimpleName()))){
+			if(Objects.equals(name, String.valueOf(enclosedElement.getSimpleName()))){
 				return (ExecutableElement)enclosedElement;
 			}
 		}
@@ -387,11 +388,11 @@ public class OperationProcessor extends AbstractProcessor {
 
 		String valueMethod;
 
-		if((codeModel.DOUBLE).equals(type)){
+		if(Objects.equals(codeModel.DOUBLE, type)){
 			valueMethod = "doubleValue";
 		} else
 
-		if((codeModel.FLOAT).equals(type)){
+		if(Objects.equals(codeModel.FLOAT, type)){
 			valueMethod = "floatValue";
 		} else
 
@@ -563,7 +564,7 @@ public class OperationProcessor extends AbstractProcessor {
 	private void createValueMethods(JDefinedClass clazz, JPrimitiveType type){
 		JCodeModel codeModel = clazz.owner();
 
-		if((codeModel.DOUBLE).equals(type)){
+		if(Objects.equals(codeModel.DOUBLE, type)){
 			JClass valueClazz = codeModel.ref(asReportingClass(DoubleValue.class));
 
 			createGetMethod(clazz, valueClazz, JExpr.direct("doubleValue(index)"));
@@ -573,7 +574,7 @@ public class OperationProcessor extends AbstractProcessor {
 			createAggregationMethod(clazz, valueClazz, "sum", JExpr.invoke("doubleSum"), "<apply><plus/>${this}</apply>", type);
 		} else
 
-		if((codeModel.FLOAT).equals(type)){
+		if(Objects.equals(codeModel.FLOAT, type)){
 			JClass valueClazz = codeModel.ref(asReportingClass(FloatValue.class));
 
 			createGetMethod(clazz, valueClazz, JExpr.direct("floatValue(index)"));
@@ -689,7 +690,7 @@ public class OperationProcessor extends AbstractProcessor {
 				invocation = appendContent(invocation, JExpr.lit(string));
 			} // End if
 
-			if(("this").equals(id)){
+			if(Objects.equals("this", id)){
 				invocation = appendContent(invocation, JExpr.invoke("getExpression"));
 			} else
 
@@ -702,7 +703,7 @@ public class OperationProcessor extends AbstractProcessor {
 				if(parameterType.isPrimitive()){
 					JExpression value;
 
-					if(parameterType.equals(type)){
+					if(Objects.equals(parameterType, type)){
 						value = parameter;
 					} else
 
@@ -713,14 +714,14 @@ public class OperationProcessor extends AbstractProcessor {
 					invocation = appendContent(invocation, JExpr.lit("<cn>"), value, JExpr.lit("</cn>"));
 				} else
 
-				if((parameterType.fullName()).equals(numberClazz.fullName()) || (parameterType.fullName()).equals(valueClazz.fullName())){
+				if(Objects.equals(parameterType.fullName(), numberClazz.fullName()) || Objects.equals(parameterType.fullName(), valueClazz.fullName())){
 					JExpression value;
 
-					if((codeModel.DOUBLE).equals(type)){
+					if(Objects.equals(codeModel.DOUBLE, type)){
 						value = parameter.invoke("doubleValue");
 					} else
 
-					if((codeModel.FLOAT).equals(type)){
+					if(Objects.equals(codeModel.FLOAT, type)){
 						value = parameter.invoke("floatValue");
 					} else
 

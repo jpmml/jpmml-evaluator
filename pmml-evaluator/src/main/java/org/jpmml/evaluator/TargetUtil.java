@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Target;
@@ -221,7 +222,7 @@ public class TargetUtil {
 
 			Object objectValue = targetValue.requireValue();
 
-			if((value).equals(TypeUtil.parseOrCast(dataType, objectValue))){
+			if(Objects.equals(value, TypeUtil.parseOrCast(dataType, objectValue))){
 				return targetValue;
 			}
 		}

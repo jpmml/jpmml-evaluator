@@ -181,7 +181,7 @@ public class ServiceFactory<K extends PMMLObject, S> implements Serializable {
 		while(clazz != null){
 			Class<?> superClazz = clazz.getSuperclass();
 
-			if((serviceClazz).equals(superClazz)){
+			if(Objects.equals(serviceClazz, superClazz)){
 				ParameterizedType parameterizedType = (ParameterizedType)clazz.getGenericSuperclass();
 
 				Type[] arguments = parameterizedType.getActualTypeArguments();

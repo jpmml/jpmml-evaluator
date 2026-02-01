@@ -21,6 +21,7 @@ package org.jpmml.evaluator.visitors;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.Field;
@@ -72,7 +73,7 @@ class AbstractParser extends FieldResolver {
 
 			for(Field<?> field : fields){
 
-				if((name).equals(field.requireName())){
+				if(Objects.equals(name, field.requireName())){
 
 					if((dataType == null) || (dataType == field.getDataType())){
 						dataType = field.getDataType();
@@ -101,7 +102,7 @@ class AbstractParser extends FieldResolver {
 
 			for(Field<?> field : fields){
 
-				if((name).equals(field.requireName())){
+				if(Objects.equals(name, field.requireName())){
 
 					if(dataType != null){
 						throw new DuplicateFieldException(name);

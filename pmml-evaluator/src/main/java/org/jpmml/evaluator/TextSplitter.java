@@ -20,6 +20,7 @@ package org.jpmml.evaluator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,7 +45,7 @@ public class TextSplitter extends TextTokenizer {
 	public TokenizedString tokenize(String string){
 		Pattern pattern = getPattern();
 
-		if(("").equals(string)){
+		if(Objects.equals("", string)){
 			return TokenizedString.EMPTY;
 		}
 

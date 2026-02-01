@@ -18,6 +18,8 @@
  */
 package org.jpmml.evaluator;
 
+import java.util.Objects;
+
 import org.dmg.pmml.DataType;
 import org.jpmml.model.ToStringHelper;
 
@@ -71,7 +73,7 @@ public class ScalarValue extends FieldValue implements Comparable<ScalarValue> {
 			ScalarValue that = (ScalarValue)value;
 
 			if(this.getDataType() == that.getDataType()){
-				return (this.getValue()).equals(that.getValue());
+				return Objects.equals(this.getValue(), that.getValue());
 			}
 		}
 

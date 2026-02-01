@@ -115,7 +115,7 @@ public class TextUtil {
 				// "If the recursive flag is set to true, then the normalization table is reapplied until none of its rows causes a change to the input text."
 				if(textIndexNormalization.isRecursive()){
 
-					if(!(normalizedString).equals(string)){
+					if(!Objects.equals(normalizedString, string)){
 						string = normalizedString;
 
 						continue normalization;
@@ -288,7 +288,7 @@ public class TextUtil {
 					boolean equals;
 
 					if(caseSensitive){
-						equals = (textToken).equals(termToken);
+						equals = Objects.equals(textToken, termToken);
 					} else
 
 					{
@@ -416,7 +416,7 @@ public class TextUtil {
 				boolean equals;
 
 				if(caseSensitive){
-					equals = (leftToken).equals(rightToken);
+					equals = Objects.equals(leftToken, rightToken);
 				} else
 
 				{

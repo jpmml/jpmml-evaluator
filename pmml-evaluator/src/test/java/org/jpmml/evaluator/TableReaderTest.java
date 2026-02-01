@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -64,7 +65,7 @@ public class TableReaderTest {
 					@Override
 					public Object apply(Object value){
 
-						if(("").equals(value)){
+						if(Objects.equals("", value)){
 							return null;
 						}
 

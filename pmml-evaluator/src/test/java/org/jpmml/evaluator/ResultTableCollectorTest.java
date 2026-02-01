@@ -38,7 +38,7 @@ public class ResultTableCollectorTest {
 	@Test
 	public void collect(){
 		DataField dataField = new DataField("Species", OpType.CATEGORICAL, DataType.STRING);
-		MiningField miningField = new MiningField(dataField.getName());
+		MiningField miningField = new MiningField(dataField);
 
 		List<ResultField> resultFields = Arrays.asList(
 			new TargetField(dataField, miningField, null),

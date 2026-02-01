@@ -20,6 +20,7 @@ package org.jpmml.evaluator.regression;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.dmg.pmml.FieldRef;
 import org.dmg.pmml.OpType;
@@ -239,7 +240,7 @@ public class RegressionTableUtil {
 
 				if(matchedFieldName != null){
 
-					if((matchedFieldName).equals(fieldName)){
+					if(Objects.equals(matchedFieldName, fieldName)){
 						continue;
 					}
 

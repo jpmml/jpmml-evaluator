@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.dmg.pmml.Aggregate;
 import org.dmg.pmml.Apply;
@@ -353,7 +354,7 @@ public class ExpressionUtil {
 
 		List<FieldValue> values = new ArrayList<>(max);
 
-		if((PMMLFunctions.IF).equals(function)){
+		if(Objects.equals(PMMLFunctions.IF, function)){
 
 			if(max > 0){
 				FieldValue flag = evaluate(expressions.get(0), context);
@@ -608,6 +609,6 @@ public class ExpressionUtil {
 
 	static
 	public boolean isEmptyContent(Object value){
-		return (value == null) || ("").equals(value);
+		return (value == null) || Objects.equals("", value);
 	}
 }

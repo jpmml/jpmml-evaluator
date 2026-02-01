@@ -19,6 +19,7 @@
 package org.jpmml.evaluator.tree;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.Output;
@@ -72,7 +73,7 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> {
 			Node child = children.get(i);
 
 			Object id = child.getId();
-			if(id != null && (id).equals(defaultChild)){
+			if(id != null && Objects.equals(id, defaultChild)){
 				return child;
 			}
 		}

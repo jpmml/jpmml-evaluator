@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
@@ -224,8 +225,8 @@ public class FieldValueTest {
 
 		assertTrue(negativeZeroValue.floatValue() == positiveZeroValue.floatValue());
 
-		assertFalse((negativeZeroValue).equals(positiveZeroValue));
 		assertTrue((negativeZeroValue).compareTo(positiveZeroValue) < 0);
+		assertFalse(Objects.equals(negativeZeroValue, positiveZeroValue));
 
 		FieldValue negativeZero = FieldValueUtil.create(TypeInfos.CONTINUOUS_FLOAT, negativeZeroValue);
 		FieldValue positiveZero = FieldValueUtil.create(TypeInfos.CONTINUOUS_FLOAT, positiveZeroValue);

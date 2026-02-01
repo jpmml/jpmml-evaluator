@@ -149,7 +149,7 @@ public class OrdinalValue extends DiscreteValue {
 		public boolean equalsValue(Object value){
 
 			if(value instanceof String){
-				return (asString()).equals(value);
+				return Objects.equals(asString(), value);
 			}
 
 			return super.equalsValue(value);

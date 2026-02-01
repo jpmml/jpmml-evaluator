@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.ArrayTable;
@@ -439,7 +440,7 @@ public class ExpressionUtilTest {
 			@Override
 			public DefineFunction getDefineFunction(String name){
 
-				if((name).equals(defineFunction.requireName())){
+				if(Objects.equals(name, defineFunction.requireName())){
 					return defineFunction;
 				}
 

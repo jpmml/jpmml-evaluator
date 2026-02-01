@@ -19,6 +19,7 @@
 package org.jpmml.evaluator;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import com.google.common.math.DoubleMath;
 import org.dmg.pmml.ComplexValue;
@@ -307,12 +308,12 @@ public class TypeUtil {
 	public boolean equals(DataType dataType, Object value, Object referenceValue){
 
 		try {
-			return (parseOrCast(dataType, value)).equals(parseOrCast(dataType, referenceValue));
+			return Objects.equals(parseOrCast(dataType, value), parseOrCast(dataType, referenceValue));
 		} catch(IllegalArgumentException | TypeCheckException e){
 
 			// The String representation of invalid or missing values (eg. "N/A") may not be parseable to the requested representation
 			try {
-				return (format(value)).equals(format(referenceValue));
+				return Objects.equals(format(value), format(referenceValue));
 			} catch(TypeCheckException tce){
 				// Ignored
 			}
@@ -872,7 +873,7 @@ public class TypeUtil {
 	static
 	public DataType getConstantDataType(String value){
 
-		if(("").equals(value)){
+		if(Objects.equals("", value)){
 			return DataType.STRING;
 		} else
 

@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.xml.namespace.QName;
 
@@ -115,7 +116,7 @@ public class InlineTableUtil {
 				if(cell instanceof String){
 					String string = (String)cell;
 
-					if(("").equals(string.trim())){
+					if(Objects.equals("", string.trim())){
 						continue;
 					}
 
@@ -140,7 +141,7 @@ public class InlineTableUtil {
 		String prefix = xmlName.getPrefix();
 		String localPart = xmlName.getLocalPart();
 
-		if(prefix != null && !("").equals(prefix)){
+		if(prefix != null && !Objects.equals("", prefix)){
 			return prefix + ":" + localPart;
 		} else
 
