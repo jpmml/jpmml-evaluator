@@ -35,22 +35,22 @@ import org.jpmml.model.annotations.CopyConstructor;
 import org.jpmml.model.annotations.Property;
 import org.jpmml.model.annotations.ValueConstructor;
 
-public class RichOutputField extends OutputField implements ValueStatusHolder {
+public class ParsedOutputField extends OutputField implements ValueStatusHolder {
 
 	@XmlTransient
 	private Map<?, Integer> valueMap = null;
 
 
-	public RichOutputField(){
+	public ParsedOutputField(){
 	}
 
 	@CopyConstructor
-	public RichOutputField(OutputField outputField){
+	public ParsedOutputField(OutputField outputField){
 		ReflectionUtil.copyState(outputField, this);
 	}
 
 	@ValueConstructor
-	public RichOutputField(@Property("name") String name, @Property("opType") OpType opType, @Property("dataType") DataType dataType){
+	public ParsedOutputField(@Property("name") String name, @Property("opType") OpType opType, @Property("dataType") DataType dataType){
 		super(name, opType, dataType);
 	}
 

@@ -37,7 +37,7 @@ import org.dmg.pmml.naive_bayes.BayesInput;
 import org.dmg.pmml.naive_bayes.BayesInputs;
 import org.jpmml.evaluator.ParsedDataField;
 import org.jpmml.evaluator.ParsedDerivedField;
-import org.jpmml.evaluator.RichOutputField;
+import org.jpmml.evaluator.ParsedOutputField;
 import org.jpmml.evaluator.general_regression.RichBaseCumHazardTables;
 import org.jpmml.evaluator.naive_bayes.RichBayesInput;
 
@@ -126,7 +126,7 @@ public class MapHolderParser extends AbstractParser {
 				OutputField outputField = it.next();
 
 				if(outputField.hasValues()){
-					it.set(new RichOutputField(outputField));
+					it.set(new ParsedOutputField(outputField));
 				}
 			}
 		}
