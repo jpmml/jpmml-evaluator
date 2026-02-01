@@ -20,7 +20,6 @@ package org.jpmml.evaluator;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,7 +30,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DefineFunction;
@@ -113,13 +111,6 @@ public class PMMLManager implements HasPMML, Serializable {
 
 			@Override
 			public ImmutableSet<V> apply(Set<V> set){
-
-				if(set instanceof EnumSet){
-					EnumSet<?> enumSet = (EnumSet<?>)set;
-
-					return (ImmutableSet)Sets.immutableEnumSet(enumSet);
-				}
-
 				return ImmutableSet.copyOf(set);
 			}
 		};
