@@ -72,7 +72,7 @@ class VariableField extends Field<VariableField> {
 
 	@Override
 	public OpType getOpType(){
-		String name = getName();
+		String name = requireName();
 
 		throw new MissingFieldException(name);
 	}
@@ -89,7 +89,7 @@ class VariableField extends Field<VariableField> {
 
 	@Override
 	public DataType getDataType(){
-		String name = getName();
+		String name = requireName();
 
 		throw new MissingFieldException(name);
 	}
