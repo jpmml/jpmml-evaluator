@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RichDataFieldTest {
+public class ParsedDataFieldTest {
 
 	@Test
 	public void getValueMapping(){
@@ -41,9 +41,9 @@ public class RichDataFieldTest {
 		DataField dataField = new DataField("x", OpType.CATEGORICAL, DataType.STRING)
 			.addValues(invalidValue, validValueOne, validValueTwo, validValueThree, missingValue);
 
-		RichDataField richDataField = new RichDataField(dataField);
+		ParsedDataField parsedDataField = new ParsedDataField(dataField);
 
-		Map<?, Integer> valueMap = richDataField.getMap();
+		Map<?, Integer> valueMap = parsedDataField.getMap();
 
 		assertEquals(5, valueMap.size());
 
@@ -55,9 +55,9 @@ public class RichDataFieldTest {
 
 		dataField.setDataType(DataType.INTEGER);
 
-		richDataField = new RichDataField(dataField);
+		parsedDataField = new ParsedDataField(dataField);
 
-		valueMap = richDataField.getMap();
+		valueMap = parsedDataField.getMap();
 
 		assertEquals(4, valueMap.size());
 

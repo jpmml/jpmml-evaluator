@@ -35,7 +35,7 @@ import org.dmg.pmml.general_regression.BaseCumHazardTables;
 import org.dmg.pmml.general_regression.GeneralRegressionModel;
 import org.dmg.pmml.naive_bayes.BayesInput;
 import org.dmg.pmml.naive_bayes.BayesInputs;
-import org.jpmml.evaluator.RichDataField;
+import org.jpmml.evaluator.ParsedDataField;
 import org.jpmml.evaluator.RichDerivedField;
 import org.jpmml.evaluator.RichOutputField;
 import org.jpmml.evaluator.general_regression.RichBaseCumHazardTables;
@@ -82,7 +82,7 @@ public class MapHolderParser extends AbstractParser {
 				DataField dataField = it.next();
 
 				if(dataField.hasValues()){
-					it.set(new RichDataField(dataField));
+					it.set(new ParsedDataField(dataField));
 				}
 			}
 		}

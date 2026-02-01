@@ -34,7 +34,7 @@ import org.jpmml.model.annotations.CopyConstructor;
 import org.jpmml.model.annotations.Property;
 import org.jpmml.model.annotations.ValueConstructor;
 
-public class RichDataField extends DataField implements ValueStatusHolder {
+public class ParsedDataField extends DataField implements ValueStatusHolder {
 
 	@XmlTransient
 	private Map<?, Integer> valueMap = null;
@@ -43,16 +43,16 @@ public class RichDataField extends DataField implements ValueStatusHolder {
 	private boolean hasValidValues = false;
 
 
-	public RichDataField(){
+	public ParsedDataField(){
 	}
 
 	@CopyConstructor
-	public RichDataField(DataField dataField){
+	public ParsedDataField(DataField dataField){
 		ReflectionUtil.copyState(dataField, this);
 	}
 
 	@ValueConstructor
-	public RichDataField(@Property("name") String name, @Property("opType") OpType opType, @Property("dataType") DataType dataType){
+	public ParsedDataField(@Property("name") String name, @Property("opType") OpType opType, @Property("dataType") DataType dataType){
 		super(name, opType, dataType);
 	}
 
