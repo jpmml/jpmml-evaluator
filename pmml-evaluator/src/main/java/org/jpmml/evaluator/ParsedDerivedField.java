@@ -36,22 +36,22 @@ import org.jpmml.model.annotations.CopyConstructor;
 import org.jpmml.model.annotations.Property;
 import org.jpmml.model.annotations.ValueConstructor;
 
-public class RichDerivedField extends DerivedField implements ValueStatusHolder {
+public class ParsedDerivedField extends DerivedField implements ValueStatusHolder {
 
 	@XmlTransient
 	private Map<?, Integer> valueMap = null;
 
 
-	public RichDerivedField(){
+	public ParsedDerivedField(){
 	}
 
 	@CopyConstructor
-	public RichDerivedField(DerivedField derivedField){
+	public ParsedDerivedField(DerivedField derivedField){
 		ReflectionUtil.copyState(derivedField, this);
 	}
 
 	@ValueConstructor
-	public RichDerivedField(@Property("name") String name, @Property("opType") OpType opType, @Property("dataType") DataType dataType, @Property("expression") Expression expression){
+	public ParsedDerivedField(@Property("name") String name, @Property("opType") OpType opType, @Property("dataType") DataType dataType, @Property("expression") Expression expression){
 		super(name, opType, dataType, expression);
 	}
 
