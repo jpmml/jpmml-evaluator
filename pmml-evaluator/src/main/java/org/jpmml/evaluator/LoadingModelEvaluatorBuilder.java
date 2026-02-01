@@ -114,7 +114,7 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 
 	private boolean mutable = false;
 
-	private VisitorBattery visitors = new ModelEvaluatorVisitorBattery();
+	private VisitorBattery visitors = LoadingModelEvaluatorBuilder.DEFAULT_VISITORS;
 
 
 	public LoadingModelEvaluatorBuilder(){
@@ -180,7 +180,12 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 
 		locatorHandler.applyTo(pmml);
 
-		if(visitors != null && !visitors.isEmpty()){
+		if(visitors != null){
+
+			if(visitors == LoadingModelEvaluatorBuilder.DEFAULT_VISITORS){
+				visitors = new ModelEvaluatorVisitorBattery(mutable);
+			}
+
 			visitors.applyTo(pmml);
 		}
 
@@ -353,4 +358,6 @@ public class LoadingModelEvaluatorBuilder extends ModelEvaluatorBuilder {
 
 		return this;
 	}
+
+	private static final VisitorBattery DEFAULT_VISITORS = new VisitorBattery();
 }

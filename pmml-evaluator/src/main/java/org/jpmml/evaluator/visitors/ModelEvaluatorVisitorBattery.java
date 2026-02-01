@@ -19,6 +19,7 @@
 package org.jpmml.evaluator.visitors;
 
 import org.jpmml.evaluator.LoadingModelEvaluatorBuilder;
+import org.jpmml.model.visitors.ArrayListTransformer;
 import org.jpmml.model.visitors.VisitorBattery;
 
 /**
@@ -30,7 +31,7 @@ import org.jpmml.model.visitors.VisitorBattery;
  */
 public class ModelEvaluatorVisitorBattery extends VisitorBattery {
 
-	public ModelEvaluatorVisitorBattery(){
+	public ModelEvaluatorVisitorBattery(boolean mutable){
 		// Convert PMML attributes and elements from their original representation to optimized representation.
 		// The optimization pass should improve performance
 		addAll(new AttributeOptimizerBattery());
@@ -45,5 +46,9 @@ public class ModelEvaluatorVisitorBattery extends VisitorBattery {
 		// Finalize PMML attributes and elements in their current representation
 		addAll(new AttributeFinalizerBattery());
 		addAll(new ElementFinalizerBattery());
+
+		if(mutable){
+			remove(ArrayListTransformer.class);
+		}
 	}
 }
