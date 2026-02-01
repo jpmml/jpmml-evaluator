@@ -60,7 +60,7 @@ import org.dmg.pmml.regression.CategoricalPredictor;
 import org.jpmml.evaluator.ArrayUtil;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.InlineTableUtil;
-import org.jpmml.evaluator.RichComplexArray;
+import org.jpmml.evaluator.ParsedComplexArray;
 import org.jpmml.evaluator.TypeCheckException;
 import org.jpmml.evaluator.TypeUtil;
 
@@ -254,7 +254,7 @@ public class ValueParser extends AbstractParser {
 			}
 
 			try {
-				array = new RichComplexArray(dataType)
+				array = new ParsedComplexArray(dataType)
 					.setType(array.requireType())
 					.setValue(values);
 			} catch(IllegalArgumentException | TypeCheckException e){

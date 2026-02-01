@@ -30,16 +30,16 @@ import org.dmg.pmml.ComplexArray;
 import org.dmg.pmml.DataType;
 import org.jpmml.model.annotations.Property;
 
-public class RichComplexArray extends ComplexArray implements SetHolder {
+public class ParsedComplexArray extends ComplexArray implements SetHolder {
 
 	@XmlTransient
 	private DataType dataType = null;
 
 
-	private RichComplexArray(){
+	private ParsedComplexArray(){
 	}
 
-	public RichComplexArray(DataType dataType){
+	public ParsedComplexArray(DataType dataType){
 		setDataType(dataType);
 	}
 
@@ -49,12 +49,12 @@ public class RichComplexArray extends ComplexArray implements SetHolder {
 	}
 
 	@Override
-	public RichComplexArray setValue(List<?> values){
+	public ParsedComplexArray setValue(List<?> values){
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public RichComplexArray setValue(Set<?> values){
+	public ParsedComplexArray setValue(Set<?> values){
 		DataType dataType = getDataType();
 
 		Function<Object, Object> function = new Function<>(){
@@ -67,11 +67,11 @@ public class RichComplexArray extends ComplexArray implements SetHolder {
 
 		values = Sets.newHashSet(Iterables.transform(values, function));
 
-		return (RichComplexArray)super.setValue(values);
+		return (ParsedComplexArray)super.setValue(values);
 	}
 
 	@Override
-	public RichComplexArray setValue(@Property("value") Object value){
+	public ParsedComplexArray setValue(@Property("value") Object value){
 		throw new UnsupportedOperationException();
 	}
 
