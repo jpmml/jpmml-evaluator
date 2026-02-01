@@ -21,7 +21,6 @@ package org.jpmml.evaluator.association;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
 import org.jpmml.evaluator.ModelEvaluationContext;
 import org.jpmml.evaluator.ModelEvaluatorTest;
 import org.junit.jupiter.api.Test;
@@ -36,15 +35,15 @@ public class CategoricalValueTest extends ModelEvaluatorTest {
 
 		Map<String, ?> arguments = createArguments("Water", true, "Cracker", "false", "Bread", "true");
 
-		checkActiveItems(ImmutableSet.of("1", "3"), evaluator, arguments);
+		checkActiveItems(Set.of("1", "3"), evaluator, arguments);
 
 		arguments = createArguments("Area", "suburban", "Day", "Friday");
 
-		checkActiveItems(ImmutableSet.of("5", "11"), evaluator, arguments);
+		checkActiveItems(Set.of("5", "11"), evaluator, arguments);
 
 		arguments = createArguments("Day=Weekday", true);
 
-		checkActiveItems(ImmutableSet.of("14"), evaluator, arguments);
+		checkActiveItems(Set.of("14"), evaluator, arguments);
 	}
 
 	static

@@ -19,10 +19,10 @@
 package org.jpmml.evaluator.tree;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableSet;
 import org.dmg.pmml.tree.LeafNode;
 import org.dmg.pmml.tree.Node;
 import org.jpmml.evaluator.DoubleValue;
@@ -55,7 +55,7 @@ public class NodeScoreDistributionTest {
 		classification.put("ham", new DoubleValue(0.75d));
 		classification.put("spam", new DoubleValue(0.25d));
 
-		assertEquals(ImmutableSet.of("ham", "spam"), classification.getCategories());
+		assertEquals(Set.of("ham", "spam"), classification.getCategories());
 
 		assertEquals(0.75d, classification.getProbability("ham"));
 		assertEquals(0.25d, classification.getProbability("spam"));

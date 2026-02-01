@@ -20,8 +20,8 @@ package org.jpmml.evaluator.visitors;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
 import org.dmg.pmml.Array;
 import org.dmg.pmml.Cell;
 import org.dmg.pmml.DataDictionary;
@@ -207,7 +207,7 @@ public class ValueParserTest {
 
 		Array array = simpleSetPredicate.requireArray();
 
-		assertEquals(ImmutableSet.of("0", "1"), array.getValue());
+		assertEquals(Set.of("0", "1"), array.getValue());
 
 		dataField.setDataType(DataType.INTEGER);
 
@@ -221,7 +221,7 @@ public class ValueParserTest {
 		array = simpleSetPredicate.requireArray();
 
 		assertTrue(array instanceof RichComplexArray);
-		assertEquals(ImmutableSet.of(0, 1), array.getValue());
+		assertEquals(Set.of(0, 1), array.getValue());
 
 		dataField.setDataType(DataType.DOUBLE);
 		derivedField.setDataType(DataType.INTEGER);
@@ -235,7 +235,7 @@ public class ValueParserTest {
 
 		array = simpleSetPredicate.requireArray();
 
-		assertEquals(ImmutableSet.of(0.0d, 1.0d), array.getValue());
+		assertEquals(Set.of(0.0d, 1.0d), array.getValue());
 
 		dataField.setDataType(DataType.BOOLEAN);
 		derivedField.setDataType(DataType.DOUBLE);
@@ -249,7 +249,7 @@ public class ValueParserTest {
 
 		array = simpleSetPredicate.requireArray();
 
-		assertEquals(ImmutableSet.of(false, true), array.getValue());
+		assertEquals(Set.of(false, true), array.getValue());
 
 		derivedField.setDataType(DataType.BOOLEAN);
 

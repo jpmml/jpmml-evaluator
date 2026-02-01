@@ -20,8 +20,8 @@ package org.jpmml.evaluator;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Set;
 
-import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,8 +38,8 @@ public class VoteAggregatorTest {
 		aggregator.add("B");
 		aggregator.add("C");
 
-		assertEquals(ImmutableSet.of("A", "B", "C"), aggregator.getWinners());
-		assertEquals(ImmutableSet.of("A", "B", "C"), (aggregator.sumMap()).keySet());
+		assertEquals(Set.of("A", "B", "C"), aggregator.getWinners());
+		assertEquals(Set.of("A", "B", "C"), (aggregator.sumMap()).keySet());
 
 		aggregator.add("C");
 
@@ -51,8 +51,8 @@ public class VoteAggregatorTest {
 		aggregator.add("B");
 		aggregator.add("C");
 
-		assertEquals(ImmutableSet.of("B", "A", "C"), aggregator.getWinners());
-		assertEquals(ImmutableSet.of("B", "A", "C"), (aggregator.sumMap()).keySet());
+		assertEquals(Set.of("B", "A", "C"), aggregator.getWinners());
+		assertEquals(Set.of("B", "A", "C"), (aggregator.sumMap()).keySet());
 
 		aggregator.add("A", 0.5d);
 
@@ -64,7 +64,7 @@ public class VoteAggregatorTest {
 
 		checkValues(1d + 0.5d, 1d + 0.5d, 1d, aggregator.sumMap());
 
-		assertEquals(ImmutableSet.of("B", "A"), aggregator.getWinners());
+		assertEquals(Set.of("B", "A"), aggregator.getWinners());
 	}
 
 	static
