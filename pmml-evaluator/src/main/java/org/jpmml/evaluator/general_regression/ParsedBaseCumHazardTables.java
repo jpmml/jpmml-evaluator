@@ -32,7 +32,7 @@ import org.jpmml.evaluator.MapHolder;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.model.ReflectionUtil;
 
-public class RichBaseCumHazardTables extends BaseCumHazardTables implements MapHolder<BaselineStratum> {
+public class ParsedBaseCumHazardTables extends BaseCumHazardTables implements MapHolder<BaselineStratum> {
 
 	@XmlTransient
 	private DataType dataType = null;
@@ -41,14 +41,14 @@ public class RichBaseCumHazardTables extends BaseCumHazardTables implements MapH
 	private Map<?, BaselineStratum> baselineStratumMap = null;
 
 
-	private RichBaseCumHazardTables(){
+	private ParsedBaseCumHazardTables(){
 	}
 
-	public RichBaseCumHazardTables(DataType dataType){
+	public ParsedBaseCumHazardTables(DataType dataType){
 		setDataType(dataType);
 	}
 
-	public RichBaseCumHazardTables(DataType dataType, BaseCumHazardTables baseCumHazardTables){
+	public ParsedBaseCumHazardTables(DataType dataType, BaseCumHazardTables baseCumHazardTables){
 		setDataType(dataType);
 
 		ReflectionUtil.copyState(baseCumHazardTables, this);

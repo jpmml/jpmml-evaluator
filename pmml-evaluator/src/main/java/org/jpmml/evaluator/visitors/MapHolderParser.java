@@ -38,7 +38,7 @@ import org.dmg.pmml.naive_bayes.BayesInputs;
 import org.jpmml.evaluator.ParsedDataField;
 import org.jpmml.evaluator.ParsedDerivedField;
 import org.jpmml.evaluator.ParsedOutputField;
-import org.jpmml.evaluator.general_regression.RichBaseCumHazardTables;
+import org.jpmml.evaluator.general_regression.ParsedBaseCumHazardTables;
 import org.jpmml.evaluator.naive_bayes.RichBayesInput;
 
 public class MapHolderParser extends AbstractParser {
@@ -101,7 +101,7 @@ public class MapHolderParser extends AbstractParser {
 				DataType dataType = resolveDataType(baselineStrataVariable);
 
 				if(dataType != null){
-					generalRegressionModel.setBaseCumHazardTables(new RichBaseCumHazardTables(dataType, baseCumHazardTables));
+					generalRegressionModel.setBaseCumHazardTables(new ParsedBaseCumHazardTables(dataType, baseCumHazardTables));
 				}
 			}
 		}
