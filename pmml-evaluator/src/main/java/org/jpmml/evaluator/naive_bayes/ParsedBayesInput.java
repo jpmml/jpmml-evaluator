@@ -33,7 +33,7 @@ import org.jpmml.evaluator.MapHolder;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.model.ReflectionUtil;
 
-public class RichBayesInput extends BayesInput implements MapHolder<TargetValueCounts> {
+public class ParsedBayesInput extends BayesInput implements MapHolder<TargetValueCounts> {
 
 	@XmlTransient
 	private DataType dataType = null;
@@ -42,14 +42,14 @@ public class RichBayesInput extends BayesInput implements MapHolder<TargetValueC
 	private Map<?, TargetValueCounts> targetValueCountMap = null;
 
 
-	private RichBayesInput(){
+	private ParsedBayesInput(){
 	}
 
-	public RichBayesInput(DataType dataType){
+	public ParsedBayesInput(DataType dataType){
 		setDataType(dataType);
 	}
 
-	public RichBayesInput(DataType dataType, BayesInput bayesInput){
+	public ParsedBayesInput(DataType dataType, BayesInput bayesInput){
 		setDataType(dataType);
 
 		ReflectionUtil.copyState(bayesInput, this);

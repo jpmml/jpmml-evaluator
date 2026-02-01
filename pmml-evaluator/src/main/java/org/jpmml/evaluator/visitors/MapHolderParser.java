@@ -39,7 +39,7 @@ import org.jpmml.evaluator.ParsedDataField;
 import org.jpmml.evaluator.ParsedDerivedField;
 import org.jpmml.evaluator.ParsedOutputField;
 import org.jpmml.evaluator.general_regression.ParsedBaseCumHazardTables;
-import org.jpmml.evaluator.naive_bayes.RichBayesInput;
+import org.jpmml.evaluator.naive_bayes.ParsedBayesInput;
 
 public class MapHolderParser extends AbstractParser {
 
@@ -64,7 +64,7 @@ public class MapHolderParser extends AbstractParser {
 				} // End if
 
 				if(dataType != null){
-					it.set(new RichBayesInput(dataType, bayesInput));
+					it.set(new ParsedBayesInput(dataType, bayesInput));
 				}
 			}
 		}
