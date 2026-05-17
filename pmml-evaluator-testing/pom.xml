@@ -13,14 +13,6 @@
 	<name>JPMML evaluator batch testing harness</name>
 	<description>JPMML class model evaluator batch testing harness</description>
 
-	<licenses>
-		<license>
-			<name>GNU Affero General Public License (AGPL) version 3.0</name>
-			<url>http://www.gnu.org/licenses/agpl-3.0.html</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.jpmml</groupId>

@@ -12,14 +12,6 @@
 
 	<name>JPMML evaluator reporting code generators</name>
 	<description>JPMML class model evaluator reporting Java APT code generators</description>
-	
-	<licenses>
-		<license>
-			<name>GNU Affero General Public License (AGPL) version 3.0</name>
-			<url>http://www.gnu.org/licenses/agpl-3.0.html</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
 
 	<dependencies>
 		<dependency>
