@@ -13,10 +13,10 @@ jobs:
         java: [ 11, 17, 21 ]
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-java@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-java@v5
       with:
-        distribution: 'zulu'
+        distribution: 'temurin'
         java-version: ${{ matrix.java }}
         cache: 'maven'
     - run: mvn -B package --file pom.xml
