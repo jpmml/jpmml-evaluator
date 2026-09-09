@@ -132,7 +132,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 
 		Value<V> result = evaluateSupportVectorMachine(valueFactory, supportVectorMachine, input);
 
-		return TargetUtil.evaluateRegression(getTargetField(), result);
+		return TargetUtil.evaluateRegression(getSoleTargetField(), result);
 	}
 
 	@Override
@@ -238,7 +238,7 @@ public class SupportVectorMachineModelEvaluator extends ModelEvaluator<SupportVe
 				throw new UnsupportedAttributeException(supportVectorMachineModel, classificationMethod);
 		}
 
-		return TargetUtil.evaluateClassification(getTargetField(), result);
+		return TargetUtil.evaluateClassification(getSoleTargetField(), result);
 	}
 
 	private <V extends Number> Value<V> evaluateSupportVectorMachine(ValueFactory<V> valueFactory, SupportVectorMachine supportVectorMachine, Object input){

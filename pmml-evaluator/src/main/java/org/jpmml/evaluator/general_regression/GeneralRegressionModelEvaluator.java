@@ -166,7 +166,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private <V extends Number> Map<String, ?> evaluateCoxRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		String startTimeVariable = generalRegressionModel.getStartTimeVariable();
 		String endTimeVariable = generalRegressionModel.getEndTimeVariable();
@@ -266,7 +266,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private <V extends Number> Map<String, ?> evaluateGeneralRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		Value<V> result = computeDotProduct(valueFactory, context);
 		if(result == null){
@@ -296,7 +296,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	protected <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		List<?> targetCategories = getTargetCategories();
 
@@ -690,7 +690,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 	private List<Object> parseTargetCategories(){
 		GeneralRegressionModel generalRegressionModel = getModel();
 
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		OpType opType = targetField.getOpType();
 		switch(opType){

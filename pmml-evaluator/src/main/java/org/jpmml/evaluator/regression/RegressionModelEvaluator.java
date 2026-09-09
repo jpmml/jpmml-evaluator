@@ -64,7 +64,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		String targetFieldName = regressionModel.getTargetField();
 		if(targetFieldName != null && !Objects.equals(targetField.getName(), targetFieldName)){
@@ -83,7 +83,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 	protected <V extends Number> Map<String, ? extends Classification<?, V>> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		RegressionModel regressionModel = getModel();
 
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		String targetFieldName = regressionModel.getTargetField();
 		if(targetFieldName != null && !Objects.equals(targetField.getName(), targetFieldName)){

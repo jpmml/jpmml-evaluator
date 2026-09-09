@@ -276,7 +276,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				break;
 		}
 
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		Regression<V> result;
 
@@ -365,7 +365,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				break;
 		}
 
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		ProbabilityDistribution<V> result;
 

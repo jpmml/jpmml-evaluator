@@ -87,7 +87,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 
 	@Override
 	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		Trail trail = new Trail();
 
@@ -105,7 +105,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 	protected <V extends Number> Map<String, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
 		TreeModel treeModel = getModel();
 
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		Trail trail = new Trail();
 

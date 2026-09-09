@@ -76,7 +76,7 @@ public class SimpleTreeModelEvaluator extends TreeModelEvaluator {
 
 	@Override
 	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		Object result = null;
 
@@ -105,7 +105,7 @@ public class SimpleTreeModelEvaluator extends TreeModelEvaluator {
 
 	@Override
 	protected <V extends Number> Map<String, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		Object result = null;
 

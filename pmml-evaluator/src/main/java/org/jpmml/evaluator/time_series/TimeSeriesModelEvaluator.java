@@ -122,7 +122,7 @@ public class TimeSeriesModelEvaluator extends ModelEvaluator<TimeSeriesModel> im
 	protected <V extends Number> Map<String, ?> evaluateTimeSeries(ValueFactory<V> valueFactory, EvaluationContext context){
 		TimeSeriesModel timeSeriesModel = getModel();
 
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		Algorithm algorithm = getAlgorithm(timeSeriesModel);
 

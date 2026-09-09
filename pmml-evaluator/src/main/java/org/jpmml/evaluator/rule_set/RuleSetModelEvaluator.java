@@ -98,7 +98,7 @@ public class RuleSetModelEvaluator extends ModelEvaluator<RuleSetModel> implemen
 
 		RuleSet ruleSet = ruleSetModel.requireRuleSet();
 
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		List<RuleSelectionMethod> ruleSelectionMethods = ruleSet.requireRuleSelectionMethods();
 

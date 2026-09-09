@@ -50,7 +50,7 @@ public class ModelNestingTest extends ModelEvaluatorTest implements Deltas {
 		assertEquals(0, targetFields.size());
 		assertEquals(2, outputFields.size());
 
-		assertThrows(EvaluationException.class, () -> evaluator.getTargetField());
+		assertThrows(EvaluationException.class, () -> evaluator.getSoleTargetField());
 
 		assertEquals(Evaluator.DEFAULT_TARGET_NAME, evaluator.getTargetName());
 

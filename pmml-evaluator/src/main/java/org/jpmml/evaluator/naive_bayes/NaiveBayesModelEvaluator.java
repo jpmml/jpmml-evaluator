@@ -112,7 +112,7 @@ public class NaiveBayesModelEvaluator extends ModelEvaluator<NaiveBayesModel> {
 		BayesInputs bayesInputs = naiveBayesModel.requireBayesInputs();
 		BayesOutput bayesOutput = naiveBayesModel.requireBayesOutput();
 
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		String targetFieldName = bayesOutput.getTargetField();
 		if(targetFieldName != null && !Objects.equals(targetField.getName(), targetFieldName)){

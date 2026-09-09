@@ -79,7 +79,7 @@ public class ScorecardEvaluator extends ModelEvaluator<Scorecard> {
 
 		boolean useReasonCodes = scorecard.isUseReasonCodes();
 
-		TargetField targetField = getTargetField();
+		TargetField targetField = getSoleTargetField();
 
 		Value<V> value = valueFactory.newValue(scorecard.getInitialScore());
 
