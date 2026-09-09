@@ -49,4 +49,23 @@ public class ValueFactory<V extends Number> implements Serializable {
 
 	abstract
 	public Vector<V> newVector(int capacity);
+
+	public Value<V> newValue(Object value){
+
+		if(value instanceof Number){
+			Number number = (Number)value;
+
+			return newValue(number);
+		} else
+
+		if(value instanceof String){
+			String string = (String)value;
+
+			return newValue(string);
+		} else
+
+		{
+			throw new IllegalArgumentException();
+		}
+	}
 }

@@ -266,13 +266,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 		if(value == null){
 			Object score = node.requireScore();
 
-			if(score instanceof Number){
-				value = valueFactory.newValue((Number)score);
-			} else
-
-			{
-				value = valueFactory.newValue((String)score);
-			}
+			value = valueFactory.newValue(score);
 		}
 
 		value = TargetUtil.evaluateRegressionInternal(targetField, value);
