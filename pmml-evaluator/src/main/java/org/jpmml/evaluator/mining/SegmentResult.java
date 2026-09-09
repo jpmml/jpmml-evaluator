@@ -71,7 +71,7 @@ public class SegmentResult extends ForwardingMap<String, Object> implements HasE
 	public Object getTargetValue(){
 		ModelEvaluator<?> modelEvaluator = getModelEvaluator();
 
-		String targetName = modelEvaluator.getTargetName();
+		String targetName = modelEvaluator.getSoleTargetName();
 
 		return get(targetName);
 	}

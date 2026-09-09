@@ -313,6 +313,12 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		return this.targetResultFields;
 	}
 
+	public String getSoleTargetName(){
+		TargetField targetField = getSoleTargetField();
+
+		return targetField.getName();
+	}
+
 	public TargetField getSoleTargetField(){
 		List<TargetField> targetFields = getTargetFields();
 
@@ -323,12 +329,6 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		TargetField targetField = targetFields.get(0);
 
 		return targetField;
-	}
-
-	public String getTargetName(){
-		TargetField targetField = getSoleTargetField();
-
-		return targetField.getName();
 	}
 
 	TargetField findTargetField(String name){
@@ -477,7 +477,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 			String targetFieldName = pmmlOutputField.getTargetField();
 			if(targetFieldName == null){
-				targetFieldName = getTargetName();
+				targetFieldName = getSoleTargetName();
 			}
 
 			DataField dataField = getDataField(targetFieldName);

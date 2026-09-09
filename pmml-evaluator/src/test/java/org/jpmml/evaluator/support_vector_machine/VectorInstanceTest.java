@@ -54,6 +54,6 @@ public class VectorInstanceTest extends ModelEvaluatorTest implements Deltas {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		return (Double)results.get(evaluator.getTargetName());
+		return (Double)results.get(evaluator.getSoleTargetName());
 	}
 }

@@ -118,6 +118,6 @@ public class MissingValueStrategyTest extends ModelEvaluatorTest {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		return (NodeScoreDistribution<?>)results.get(evaluator.getTargetName());
+		return (NodeScoreDistribution<?>)results.get(evaluator.getSoleTargetName());
 	}
 }

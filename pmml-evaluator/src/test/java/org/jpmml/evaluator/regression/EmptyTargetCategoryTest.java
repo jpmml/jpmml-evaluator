@@ -39,7 +39,7 @@ public class EmptyTargetCategoryTest extends ModelEvaluatorTest implements Delta
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		ProbabilityDistribution<?> targetValue = (ProbabilityDistribution<?>)results.get(evaluator.getTargetName());
+		ProbabilityDistribution<?> targetValue = (ProbabilityDistribution<?>)results.get(evaluator.getSoleTargetName());
 
 		assertEquals("yes", targetValue.getResult());
 

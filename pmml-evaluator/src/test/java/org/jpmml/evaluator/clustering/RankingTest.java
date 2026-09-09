@@ -39,7 +39,7 @@ public class RankingTest extends ModelEvaluatorTest {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		ClusterAffinityDistribution<?> affinityDistribution = (ClusterAffinityDistribution<?>)results.get(evaluator.getTargetName());
+		ClusterAffinityDistribution<?> affinityDistribution = (ClusterAffinityDistribution<?>)results.get(evaluator.getSoleTargetName());
 
 		assertEquals("2", affinityDistribution.getResult());
 

@@ -183,14 +183,14 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public String getTargetName(){
+	public String getSoleTargetName(){
 		List<TargetField> targetFields = super.getTargetFields();
 
 		if(targetFields.isEmpty()){
 			return Evaluator.DEFAULT_TARGET_NAME;
 		}
 
-		return super.getTargetName();
+		return super.getSoleTargetName();
 	}
 
 	@Override
@@ -482,7 +482,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				{
 					ValueMap<Object, V> values = SegmentationlUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
 					if(values == null){
-						return Collections.singletonMap(getTargetName(), null);
+						return Collections.singletonMap(getSoleTargetName(), null);
 					}
 
 					result = new AggregateVoteDistribution<>(values){
@@ -513,7 +513,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 
 		result.computeResult(DataType.STRING);
 
-		return Collections.singletonMap(getTargetName(), result);
+		return Collections.singletonMap(getSoleTargetName(), result);
 	}
 
 	@Override

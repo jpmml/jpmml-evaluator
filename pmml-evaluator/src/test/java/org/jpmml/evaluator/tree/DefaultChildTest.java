@@ -37,7 +37,7 @@ public class DefaultChildTest extends ModelEvaluatorTest implements Deltas {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		NodeScoreDistribution<?> targetValue = (NodeScoreDistribution<?>)results.get(evaluator.getTargetName());
+		NodeScoreDistribution<?> targetValue = (NodeScoreDistribution<?>)results.get(evaluator.getSoleTargetName());
 
 		assertEquals("Result1", targetValue.getResult());
 		assertEquals("10", targetValue.getEntityId());

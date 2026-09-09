@@ -186,7 +186,7 @@ public class OutputUtil {
 					} // End if
 
 					if(targetFieldName == null){
-						targetFieldName = modelEvaluator.getTargetName();
+						targetFieldName = modelEvaluator.getSoleTargetName();
 					} // End if
 
 					if(!predictions.containsKey(targetFieldName)){

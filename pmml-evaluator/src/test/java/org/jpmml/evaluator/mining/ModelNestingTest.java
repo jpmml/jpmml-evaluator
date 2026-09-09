@@ -52,7 +52,7 @@ public class ModelNestingTest extends ModelEvaluatorTest implements Deltas {
 
 		assertThrows(EvaluationException.class, () -> evaluator.getSoleTargetField());
 
-		assertEquals(Evaluator.DEFAULT_TARGET_NAME, evaluator.getTargetName());
+		assertEquals(Evaluator.DEFAULT_TARGET_NAME, evaluator.getSoleTargetName());
 
 		Map<String, ?> arguments = createArguments("input", 2d);
 

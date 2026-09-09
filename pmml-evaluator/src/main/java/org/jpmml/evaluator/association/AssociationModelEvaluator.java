@@ -134,7 +134,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 	}
 
 	@Override
-	public String getTargetName(){
+	public String getSoleTargetName(){
 		return Evaluator.DEFAULT_TARGET_NAME;
 	}
 
@@ -214,7 +214,7 @@ public class AssociationModelEvaluator extends ModelEvaluator<AssociationModel> 
 			}
 		};
 
-		return Collections.singletonMap(getTargetName(), association);
+		return Collections.singletonMap(getSoleTargetName(), association);
 	}
 
 	/**

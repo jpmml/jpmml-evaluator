@@ -78,6 +78,6 @@ public class NoTrueChildStrategyTest extends ModelEvaluatorTest {
 
 		Map<String, ?> results = evaluator.evaluate(arguments);
 
-		return (NodeVote)results.get(evaluator.getTargetName());
+		return (NodeVote)results.get(evaluator.getSoleTargetName());
 	}
 }
