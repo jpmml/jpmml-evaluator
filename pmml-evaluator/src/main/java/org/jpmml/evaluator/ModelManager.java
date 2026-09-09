@@ -313,6 +313,12 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		return this.targetResultFields;
 	}
 
+	public boolean hasSoleTargetField(){
+		List<TargetField> targetFields = getTargetFields();
+
+		return (targetFields.size() == 1);
+	}
+
 	public String getSoleTargetName(){
 		TargetField targetField = getSoleTargetField();
 

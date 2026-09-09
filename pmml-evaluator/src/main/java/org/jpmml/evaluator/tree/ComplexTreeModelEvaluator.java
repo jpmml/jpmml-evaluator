@@ -19,6 +19,7 @@
 package org.jpmml.evaluator.tree;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -87,18 +88,36 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 
 	@Override
 	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
-		TargetField targetField = getSoleTargetField();
-
 		Trail trail = new Trail();
 
 		Node node = evaluateTree(trail, context);
-		if(node == null){
-			return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
+
+		if(hasSoleTargetField()){
+			TargetField targetField = getSoleTargetField();
+
+			if(node == null){
+				return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
+			}
+
+			NodeScore<V> result = createNodeScore(valueFactory, targetField, node, context);
+
+			return TargetUtil.evaluateRegression(targetField, result);
+		} else
+
+		{
+			List<TargetField> targetFields = getMultipleTargetFields();
+
+			if(node == null){
+				return TargetUtil.evaluateRegressionDefault(valueFactory, targetFields);
+			}
+
+			EmbeddedModel embeddedModel = node.getEmbeddedModel();
+			if(embeddedModel != null){
+				throw new UnsupportedElementException(embeddedModel);
+			}
+
+			return createNodeScores(valueFactory, targetFields, node);
 		}
-
-		NodeScore<V> result = createNodeScore(valueFactory, targetField, node, context);
-
-		return TargetUtil.evaluateRegression(targetField, result);
 	}
 
 	@Override
@@ -224,7 +243,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 				Node lastPrediction = trail.getLastPrediction();
 
 				// "Return the parent Node only if it specifies a score attribute"
-				if(lastPrediction.hasScore()){
+				if(hasScore(lastPrediction)){
 					return trail.selectLastPrediction();
 				}
 				return trail.selectNull();
@@ -269,6 +288,10 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 			value = valueFactory.newValue(score);
 		}
 
+		return createNodeScore(targetField, node, value);
+	}
+
+	private <V extends Number> NodeScore<V> createNodeScore(TargetField targetField, Node node, Value<V> value){
 		value = TargetUtil.evaluateRegressionInternal(targetField, value);
 
 		NodeScore<V> result = new NodeScore<>(value, node){
@@ -285,6 +308,26 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 		};
 
 		return result;
+	}
+
+	private <V extends Number> Map<String, ?> createNodeScores(ValueFactory<V> valueFactory, List<TargetField> targetFields, Node node){
+		Map<String, Object> results = resolveScores(targetFields, node);
+
+		for(int i = 0, max = targetFields.size(); i < max; i++){
+			TargetField targetField = targetFields.get(i);
+
+			String name = targetField.getName();
+
+			Object value = results.get(name);
+
+			Value<V> scoreValue = valueFactory.newValue(value);
+
+			NodeScore<V> result = createNodeScore(targetField, node, scoreValue);
+
+			results.putAll(TargetUtil.evaluateRegression(targetField, result));
+		}
+
+		return results;
 	}
 
 	private NodeVote createNodeVote(Node node){

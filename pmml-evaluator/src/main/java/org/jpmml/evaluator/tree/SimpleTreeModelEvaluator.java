@@ -19,6 +19,7 @@
 package org.jpmml.evaluator.tree;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -76,31 +77,49 @@ public class SimpleTreeModelEvaluator extends TreeModelEvaluator {
 
 	@Override
 	protected <V extends Number> Map<String, ?> evaluateRegression(ValueFactory<V> valueFactory, EvaluationContext context){
-		TargetField targetField = getSoleTargetField();
-
-		Object result = null;
-
 		Node node = evaluateTree(context);
-		if(node == null){
-			return Collections.singletonMap(targetField.getName(), result);
-		}
 
-		EmbeddedModel embeddedModel = node.getEmbeddedModel();
-		if(embeddedModel != null){
-			Value<?> value = evaluateEmbeddedRegression(valueFactory, embeddedModel, context);
+		if(hasSoleTargetField()){
+			TargetField targetField = getSoleTargetField();
 
-			if(value != null){
-				result = value.getValue();
+			Object result = null;
+
+			if(node == null){
+				return Collections.singletonMap(targetField.getName(), result);
 			}
-		} // End if
 
-		if(result == null){
-			result = node.requireScore();
+			EmbeddedModel embeddedModel = node.getEmbeddedModel();
+			if(embeddedModel != null){
+				Value<?> value = evaluateEmbeddedRegression(valueFactory, embeddedModel, context);
+
+				if(value != null){
+					result = value.getValue();
+				}
+			} // End if
+
+			if(result == null){
+				result = node.requireScore();
+			}
+
+			result = TypeUtil.parseOrCast(targetField.getDataType(), result);
+
+			return Collections.singletonMap(targetField.getName(), result);
+		} else
+
+		{
+			List<TargetField> targetFields = getMultipleTargetFields();
+
+			if(node == null){
+				return createDefaultScores(targetFields);
+			}
+
+			EmbeddedModel embeddedModel = node.getEmbeddedModel();
+			if(embeddedModel != null){
+				throw new UnsupportedElementException(embeddedModel);
+			}
+
+			return createScores(targetFields, node);
 		}
-
-		result = TypeUtil.parseOrCast(targetField.getDataType(), result);
-
-		return Collections.singletonMap(targetField.getName(), result);
 	}
 
 	@Override
@@ -188,7 +207,7 @@ public class SimpleTreeModelEvaluator extends TreeModelEvaluator {
 				case RETURN_LAST_PREDICTION:
 
 					// "Return the parent Node only if it specifies a score attribute"
-					if(node.hasScore()){
+					if(hasScore(node)){
 						break children;
 					}
 
@@ -199,5 +218,35 @@ public class SimpleTreeModelEvaluator extends TreeModelEvaluator {
 		}
 
 		return node;
+	}
+
+	private Map<String, ?> createDefaultScores(List<TargetField> targetFields){
+		Map<String, Object> results = new LinkedHashMap<>();
+
+		for(int i = 0, max = targetFields.size(); i < max; i++){
+			TargetField targetField = targetFields.get(i);
+
+			results.put(targetField.getName(), null);
+		}
+
+		return results;
+	}
+
+	private Map<String, ?> createScores(List<TargetField> targetFields, Node node){
+		Map<String, Object> results = resolveScores(targetFields, node);
+
+		for(int i = 0, max = targetFields.size(); i < max; i++){
+			TargetField targetField = targetFields.get(i);
+
+			String name = targetField.getName();
+
+			Object value = results.get(name);
+
+			value = TypeUtil.parseOrCast(targetField.getDataType(), value);
+
+			results.put(name, value);
+		}
+
+		return results;
 	}
 }

@@ -18,12 +18,15 @@
  */
 package org.jpmml.evaluator.tree;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.Score;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.regression.Regression;
 import org.dmg.pmml.tree.Node;
@@ -32,10 +35,12 @@ import org.dmg.pmml.tree.TreeModel;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.PMMLUtil;
+import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.regression.RegressionTableUtil;
 import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.InvalidElementListException;
 import org.jpmml.model.UnsupportedElementException;
 
 abstract
@@ -80,6 +85,46 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> {
 
 		// "Only Nodes which are immediate children of the respective Node can be referenced"
 		throw new InvalidAttributeException(node, PMMLAttributes.COMPLEXNODE_DEFAULTCHILD, defaultChild);
+	}
+
+	static
+	protected boolean hasScore(Node node){
+		return node.hasScore() || node.hasScores();
+	}
+
+	static
+	protected Map<String, Object> resolveScores(List<TargetField> targetFields, Node node){
+		List<Score> scores = node.requireScores();
+
+		if(scores.size() != targetFields.size()){
+			throw new InvalidElementListException(scores);
+		}
+
+		Map<String, Object> results = new LinkedHashMap<>(2 * targetFields.size());
+
+		for(int i = 0, max = targetFields.size(); i < max; i++){
+			TargetField targetField = targetFields.get(i);
+
+			results.put(targetField.getName(), targetField);
+		} // End for
+
+		for(int i = 0, max = scores.size(); i < max; i++){
+			Score score = scores.get(i);
+
+			String name = score.requireTargetField();
+			Object value = score.requireValue();
+
+			Object placeholderValue = results.get(name);
+			if(placeholderValue instanceof TargetField){
+				results.put(name, value);
+			} else
+
+			{
+				throw new InvalidAttributeException(score, org.dmg.pmml.PMMLAttributes.SCORE_TARGETFIELD, name);
+			}
+		}
+
+		return results;
 	}
 
 	static
