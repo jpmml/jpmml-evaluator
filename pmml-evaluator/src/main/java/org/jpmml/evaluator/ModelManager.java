@@ -331,6 +331,16 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		return targetField;
 	}
 
+	public List<TargetField> getMultipleTargetFields(){
+		List<TargetField> targetFields = getTargetFields();
+
+		if(targetFields.size() < 2){
+			throw createMiningSchemaException("Expected 2 or more target fields, got " + targetFields.size() + " target fields");
+		}
+
+		return targetFields;
+	}
+
 	TargetField findTargetField(String name){
 		List<TargetField> targetFields = getTargetFields();
 
