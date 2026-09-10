@@ -274,11 +274,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				return multiModelChain(segmentResults);
 			default:
 				break;
-		}
-
-		TargetField targetField = getSoleTargetField();
-
-		Regression<V> result;
+		} // End switch
 
 		switch(multipleModelMethod){
 			case AVERAGE:
@@ -287,22 +283,6 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case WEIGHTED_MEDIAN:
 			case SUM:
 			case WEIGHTED_SUM:
-				{
-					Value<V> value = SegmentationlUtil.aggregateValues(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
-					if(value == null){
-						return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
-					}
-
-					value = TargetUtil.evaluateRegressionInternal(targetField, value);
-
-					result = new AggregateScore<>(value){
-
-						@Override
-						public Collection<? extends SegmentResult> getSegmentResults(){
-							return segmentResults;
-						}
-					};
-				}
 				break;
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
@@ -312,7 +292,57 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
 		}
 
-		return TargetUtil.evaluateRegression(targetField, result);
+		if(hasSoleTargetField()){
+			TargetField targetField = getSoleTargetField();
+
+			Value<V> value = SegmentationlUtil.aggregateValues(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, null, segmentResults);
+			if(value == null){
+				return TargetUtil.evaluateRegressionDefault(valueFactory, targetField);
+			}
+
+			value = TargetUtil.evaluateRegressionInternal(targetField, value);
+
+			Regression<V> result = new AggregateScore<>(value){
+
+				@Override
+				public Collection<? extends SegmentResult> getSegmentResults(){
+					return segmentResults;
+				}
+			};
+
+			return TargetUtil.evaluateRegression(targetField, result);
+		} else
+
+		{
+			List<TargetField> targetFields = getMultipleTargetFields();
+
+			Map<String, Object> results = new LinkedHashMap<>(2 * targetFields.size());
+
+			for(int i = 0, max = targetFields.size(); i < max; i++){
+				TargetField targetField = targetFields.get(i);
+
+				Value<V> value = SegmentationlUtil.aggregateValues(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, targetField, segmentResults);
+				if(value == null){
+					results.putAll(TargetUtil.evaluateRegressionDefault(valueFactory, targetField));
+
+					continue;
+				}
+
+				value = TargetUtil.evaluateRegressionInternal(targetField, value);
+
+				Regression<V> result = new AggregateScore<>(value){
+
+					@Override
+					public Collection<? extends SegmentResult> getSegmentResults(){
+						return segmentResults;
+					}
+				};
+
+				results.putAll(TargetUtil.evaluateRegression(targetField, result));
+			}
+
+			return results;
+		}
 	}
 
 	@Override

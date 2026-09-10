@@ -28,6 +28,7 @@ import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.EvaluatorUtil;
 import org.jpmml.evaluator.HasProbability;
 import org.jpmml.evaluator.ProbabilityAggregator;
+import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TypeCheckException;
 import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.Value;
@@ -65,7 +66,7 @@ public class SegmentationlUtil {
 	}
 
 	static
-	public <V extends Number> Value<V> aggregateValues(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, List<SegmentResult> segmentResults){
+	public <V extends Number> Value<V> aggregateValues(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, TargetField targetField, List<SegmentResult> segmentResults){
 		ValueAggregator<V> aggregator;
 
 		switch(multipleModelMethod){
@@ -91,7 +92,19 @@ public class SegmentationlUtil {
 
 		segmentResults:
 		for(SegmentResult segmentResult : segmentResults){
-			Object targetValue = EvaluatorUtil.decode(segmentResult.getSoleTargetValue());
+			Object targetValue;
+
+			if(targetField != null){
+				String name = targetField.getName();
+
+				targetValue = segmentResult.get(name);
+			} else
+
+			{
+				targetValue = segmentResult.getSoleTargetValue();
+			}
+
+			targetValue = EvaluatorUtil.decode(targetValue);
 
 			if(targetValue == null){
 
