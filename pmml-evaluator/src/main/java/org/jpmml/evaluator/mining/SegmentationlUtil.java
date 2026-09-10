@@ -91,7 +91,7 @@ public class SegmentationlUtil {
 
 		segmentResults:
 		for(SegmentResult segmentResult : segmentResults){
-			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
+			Object targetValue = EvaluatorUtil.decode(segmentResult.getSoleTargetValue());
 
 			if(targetValue == null){
 
@@ -173,7 +173,7 @@ public class SegmentationlUtil {
 
 		segmentResults:
 		for(SegmentResult segmentResult : segmentResults){
-			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue());
+			Object targetValue = EvaluatorUtil.decode(segmentResult.getSoleTargetValue());
 
 			if(targetValue == null){
 
@@ -266,7 +266,7 @@ public class SegmentationlUtil {
 
 		segmentResults:
 		for(SegmentResult segmentResult : segmentResults){
-			Object targetValue = segmentResult.getTargetValue();
+			Object targetValue = segmentResult.getSoleTargetValue();
 
 			if(targetValue == null){
 

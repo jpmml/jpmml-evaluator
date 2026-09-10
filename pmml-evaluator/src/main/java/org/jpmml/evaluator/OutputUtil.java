@@ -139,7 +139,7 @@ public class OutputUtil {
 					} else
 
 					{
-						targetValue = segmentPredictions.getTargetValue();
+						targetValue = segmentPredictions.getSoleTargetValue();
 					}
 				}
 			} else
@@ -176,7 +176,7 @@ public class OutputUtil {
 
 									SegmentResult segmentResult = SegmentationlUtil.asSegmentResult(segmentation.requireMultipleModelMethod(), predictions);
 									if(segmentResult != null){
-										targetValue = segmentResult.getTargetValue();
+										targetValue = segmentResult.getSoleTargetValue();
 
 										break targetValue;
 									}
