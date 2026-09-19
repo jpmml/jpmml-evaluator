@@ -124,27 +124,45 @@ public class SimpleTreeModelEvaluator extends TreeModelEvaluator {
 
 	@Override
 	protected <V extends Number> Map<String, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
-		TargetField targetField = getSoleTargetField();
-
-		Object result = null;
-
 		Node node = evaluateTree(context);
-		if(node == null){
+
+		if(hasSoleTargetField()){
+			TargetField targetField = getSoleTargetField();
+
+			Object result = null;
+
+			if(node == null){
+				return Collections.singletonMap(targetField.getName(), result);
+			}
+
+			EmbeddedModel embeddedModel = node.getEmbeddedModel();
+			if(embeddedModel != null){
+				throw new UnsupportedElementException(embeddedModel);
+			} // End if
+
+			if(result == null){
+				result = node.requireScore();
+			}
+
+			result = TypeUtil.parseOrCast(targetField.getDataType(), result);
+
 			return Collections.singletonMap(targetField.getName(), result);
+		} else
+
+		{
+			List<TargetField> targetFields = getMultipleTargetFields();
+
+			if(node == null){
+				return createDefaultScores(targetFields);
+			}
+
+			EmbeddedModel embeddedModel = node.getEmbeddedModel();
+			if(embeddedModel != null){
+				throw new UnsupportedElementException(embeddedModel);
+			}
+
+			return createScores(targetFields, node);
 		}
-
-		EmbeddedModel embeddedModel = node.getEmbeddedModel();
-		if(embeddedModel != null){
-			throw new UnsupportedElementException(embeddedModel);
-		} // End if
-
-		if(result == null){
-			result = node.requireScore();
-		}
-
-		result = TypeUtil.parseOrCast(targetField.getDataType(), result);
-
-		return Collections.singletonMap(targetField.getName(), result);
 	}
 
 	private Node evaluateTree(EvaluationContext context){

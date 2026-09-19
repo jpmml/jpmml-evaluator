@@ -27,6 +27,7 @@ import java.util.Objects;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import org.dmg.pmml.CompoundPredicate;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Predicate;
@@ -42,6 +43,7 @@ import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
+import org.jpmml.evaluator.TypeUtil;
 import org.jpmml.evaluator.UndefinedResultException;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
@@ -122,37 +124,50 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 
 	@Override
 	protected <V extends Number> Map<String, ?> evaluateClassification(ValueFactory<V> valueFactory, EvaluationContext context){
-		TreeModel treeModel = getModel();
-
-		TargetField targetField = getSoleTargetField();
-
 		Trail trail = new Trail();
 
 		Node node = evaluateTree(trail, context);
-		if(node == null){
-			return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
-		} // End if
 
-		if(!node.hasScoreDistributions()){
-			NodeVote result = createNodeVote(node);
+		if(hasSoleTargetField()){
+			TargetField targetField = getSoleTargetField();
 
-			return TargetUtil.evaluateVote(targetField, result);
-		}
+			if(node == null){
+				return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
+			} // End if
 
-		double missingValuePenalty = 1d;
+			if(!node.hasScoreDistributions()){
+				NodeVote result = createNodeVote(node);
 
-		int missingLevels = trail.getMissingLevels();
-		if(missingLevels > 0){
-			missingValuePenalty = (treeModel.getMissingValuePenalty()).doubleValue();
-
-			if(missingLevels > 1){
-				missingValuePenalty = Math.pow(missingValuePenalty, missingLevels);
+				return TargetUtil.evaluateVote(targetField, result);
 			}
+
+			double missingValuePenalty = computeMissingValuePenalty(trail);
+
+			NodeScoreDistribution<V> result = createNodeScoreDistribution(valueFactory, node, missingValuePenalty);
+
+			return TargetUtil.evaluateClassification(targetField, result);
+		} else
+
+		{
+			List<TargetField> targetFields = getMultipleTargetFields();
+
+			if(node == null){
+				return TargetUtil.evaluateClassificationDefault(valueFactory, targetFields);
+			}
+
+			EmbeddedModel embeddedModel = node.getEmbeddedModel();
+			if(embeddedModel != null){
+				throw new UnsupportedElementException(embeddedModel);
+			} // End if
+
+			if(!node.hasScoreDistributions()){
+				return createNodeVotes(targetFields, node);
+			}
+
+			double missingValuePenalty = computeMissingValuePenalty(trail);
+
+			return createNodeScoreDistributions(valueFactory, targetFields, node, missingValuePenalty);
 		}
-
-		NodeScoreDistribution<V> result = createNodeScoreDistribution(valueFactory, node, missingValuePenalty);
-
-		return TargetUtil.evaluateClassification(targetField, result);
 	}
 
 	private Node evaluateTree(Trail trail, EvaluationContext context){
@@ -243,7 +258,7 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 				Node lastPrediction = trail.getLastPrediction();
 
 				// "Return the parent Node only if it specifies a score attribute"
-				if(hasScore(lastPrediction)){
+				if(hasScore(lastPrediction) || hasScoreDistributions(lastPrediction)){
 					return trail.selectLastPrediction();
 				}
 				return trail.selectNull();
@@ -272,6 +287,25 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 			default:
 				throw new UnsupportedAttributeException(treeModel, missingValueStrategy);
 		}
+	}
+
+	private double computeMissingValuePenalty(Trail trail){
+		TreeModel treeModel = getModel();
+
+		int missingLevels = trail.getMissingLevels();
+		if(missingLevels == 0){
+			return 1d;
+		}
+
+		Number missingValuePenalty = treeModel.getMissingValuePenalty();
+
+		double result = missingValuePenalty.doubleValue();
+
+		if(missingLevels > 1){
+			result = Math.pow(result, missingLevels);
+		}
+
+		return result;
 	}
 
 	private <V extends Number> NodeScore<V> createNodeScore(ValueFactory<V> valueFactory, TargetField targetField, Node node, EvaluationContext context){
@@ -353,6 +387,48 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 		return result;
 	}
 
+	private NodeVote createNodeVote(Node node, Object value){
+		NodeVote result = new NodeVote(node){
+
+			@Override
+			protected void computeResult(DataType dataType){
+				Object result = TypeUtil.parseOrCast(dataType, value);
+
+				setResult(result);
+			}
+
+			@Override
+			public BiMap<String, Node> getEntityRegistry(){
+				return ComplexTreeModelEvaluator.this.getEntityRegistry();
+			}
+
+			@Override
+			public List<Node> getDecisionPath(){
+				return ComplexTreeModelEvaluator.this.getPath(getNode());
+			}
+		};
+
+		return result;
+	}
+
+	private Map<String, ?> createNodeVotes(List<TargetField> targetFields, Node node){
+		Map<String, Object> results = resolveScores(targetFields, node);
+
+		for(int i = 0, max = targetFields.size(); i < max; i++){
+			TargetField targetField = targetFields.get(i);
+
+			String name = targetField.getName();
+
+			Object value = results.get(name);
+
+			NodeVote result = createNodeVote(node, value);
+
+			results.putAll(TargetUtil.evaluateVote(targetField, result));
+		}
+
+		return results;
+	}
+
 	private <V extends Number> NodeScoreDistribution<V> createNodeScoreDistribution(ValueFactory<V> valueFactory, Node node, double missingValuePenalty){
 		EmbeddedModel embeddedModel = node.getEmbeddedModel();
 
@@ -362,6 +438,10 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 
 		List<ScoreDistribution> scoreDistributions = node.getScoreDistributions();
 
+		return createNodeScoreDistribution(valueFactory, node, scoreDistributions, missingValuePenalty);
+	}
+
+	private <V extends Number> NodeScoreDistribution<V> createNodeScoreDistribution(ValueFactory<V> valueFactory, Node node, List<ScoreDistribution> scoreDistributions, double missingValuePenalty){
 		NodeScoreDistribution<V> result = new NodeScoreDistribution<>(new ValueMap<>(2 * scoreDistributions.size()), node){
 
 			@Override
@@ -438,6 +518,24 @@ public class ComplexTreeModelEvaluator extends TreeModelEvaluator implements Has
 		}
 
 		return result;
+	}
+
+	private <V extends Number> Map<String, ?> createNodeScoreDistributions(ValueFactory<V> valueFactory, List<TargetField> targetFields, Node node, double missingValuePenalty){
+		Map<String, List<ScoreDistribution>> groupedScoreDistributions = resolveScoreDistributions(targetFields, node);
+
+		Map<String, Object> results = new LinkedHashMap<>(2 * targetFields.size());
+
+		for(int i = 0, max = targetFields.size(); i < max; i++){
+			TargetField targetField = targetFields.get(i);
+
+			List<ScoreDistribution> scoreDistributions = groupedScoreDistributions.get(targetField.getName());
+
+			NodeScoreDistribution<V> result = createNodeScoreDistribution(valueFactory, node, scoreDistributions, missingValuePenalty);
+
+			results.putAll(TargetUtil.evaluateClassification(targetField, result));
+		}
+
+		return results;
 	}
 
 	private List<Node> getPath(Node node){

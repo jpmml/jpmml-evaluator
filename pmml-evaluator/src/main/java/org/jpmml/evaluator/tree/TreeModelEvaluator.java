@@ -18,6 +18,7 @@
  */
 package org.jpmml.evaluator.tree;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.dmg.pmml.EmbeddedModel;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.Score;
+import org.dmg.pmml.ScoreDistribution;
 import org.dmg.pmml.Targets;
 import org.dmg.pmml.regression.Regression;
 import org.dmg.pmml.tree.Node;
@@ -40,6 +42,7 @@ import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.regression.RegressionTableUtil;
 import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.InvalidElementException;
 import org.jpmml.model.InvalidElementListException;
 import org.jpmml.model.UnsupportedElementException;
 
@@ -93,6 +96,11 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> {
 	}
 
 	static
+	protected boolean hasScoreDistributions(Node node){
+		return node.hasScoreDistributions();
+	}
+
+	static
 	protected Map<String, Object> resolveScores(List<TargetField> targetFields, Node node){
 		List<Score> scores = node.requireScores();
 
@@ -121,6 +129,53 @@ public class TreeModelEvaluator extends ModelEvaluator<TreeModel> {
 
 			{
 				throw new InvalidAttributeException(score, org.dmg.pmml.PMMLAttributes.SCORE_TARGETFIELD, name);
+			}
+		}
+
+		return results;
+	}
+
+	static
+	protected Map<String, List<ScoreDistribution>> resolveScoreDistributions(List<TargetField> targetFields, Node node){
+		List<ScoreDistribution> scoreDistributions = node.requireScoreDistributions();
+
+		if(targetFields.size() > 1 && hasScore(node)){
+			throw new InvalidElementException(node);
+		}
+
+		Map<String, List<ScoreDistribution>> results = new LinkedHashMap<>(2 * targetFields.size());
+
+		for(int i = 0, max = targetFields.size(); i < max; i++){
+			TargetField targetField = targetFields.get(i);
+
+			String name = targetField.getName();
+
+			List<ScoreDistribution> targetScoreDistributions = new ArrayList<>();
+
+			results.put(name, targetScoreDistributions);
+		} // End for
+
+		for(int i = 0, max = scoreDistributions.size(); i < max; i++){
+			ScoreDistribution scoreDistribution = scoreDistributions.get(i);
+
+			String name = scoreDistribution.requireTargetField();
+
+			List<ScoreDistribution> targetScoreDistributions = results.get(name);
+			if(targetScoreDistributions == null){
+				throw new InvalidAttributeException(scoreDistribution, org.dmg.pmml.PMMLAttributes.COMPLEXSCOREDISTRIBUTION_TARGETFIELD, name);
+			}
+
+			targetScoreDistributions.add(scoreDistribution);
+		} // End for
+
+		for(int i = 0, max = targetFields.size(); i < max; i++){
+			TargetField targetField = targetFields.get(i);
+
+			String name = targetField.getName();
+
+			List<ScoreDistribution> targetScoreDistributions = results.get(name);
+			if(targetScoreDistributions.isEmpty()){
+				throw new InvalidElementListException(scoreDistributions);
 			}
 		}
 

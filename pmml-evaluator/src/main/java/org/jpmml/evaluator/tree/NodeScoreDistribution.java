@@ -54,9 +54,15 @@ public class NodeScoreDistribution<V extends Number> extends Classification<Obje
 	protected void computeResult(DataType dataType){
 		Node node = getNode();
 
-		Object result = TypeUtil.parseOrCast(dataType, node.requireScore());
+		if(node.hasScore()){
+			Object result = TypeUtil.parseOrCast(dataType, node.requireScore());
 
-		setResult(result);
+			setResult(result);
+		} else
+
+		{
+			super.computeResult(dataType);
+		}
 	}
 
 	@Override
