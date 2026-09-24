@@ -92,19 +92,7 @@ public class SegmentationlUtil {
 
 		segmentResults:
 		for(SegmentResult segmentResult : segmentResults){
-			Object targetValue;
-
-			if(targetField != null){
-				String name = targetField.getName();
-
-				targetValue = segmentResult.get(name);
-			} else
-
-			{
-				targetValue = segmentResult.getSoleTargetValue();
-			}
-
-			targetValue = EvaluatorUtil.decode(targetValue);
+			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue(targetField));
 
 			if(targetValue == null){
 
