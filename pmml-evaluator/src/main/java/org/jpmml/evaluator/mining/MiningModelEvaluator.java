@@ -393,56 +393,15 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				return multiModelChain(segmentResults);
 			default:
 				break;
-		}
-
-		TargetField targetField = getSoleTargetField();
-
-		ProbabilityDistribution<V> result;
+		} // End switch
 
 		switch(multipleModelMethod){
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
-				{
-					ValueMap<Object, V> values = SegmentationlUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
-					if(values == null){
-						return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
-					}
-
-					// Convert from votes to probabilities
-					ValueUtil.normalizeSimpleMax(values);
-
-					result = new AggregateProbabilityDistribution<>(values){
-
-						@Override
-						public Collection<? extends SegmentResult> getSegmentResults(){
-							return segmentResults;
-						}
-					};
-				}
-				break;
 			case AVERAGE:
 			case WEIGHTED_AVERAGE:
 			case MEDIAN:
 			case MAX:
-				{
-					List<?> targetCategories = targetField.getCategories();
-					if(targetCategories != null && targetCategories.size() < 2){
-						throw new InvalidElementException(miningModel);
-					}
-
-					ValueMap<Object, V> values = SegmentationlUtil.aggregateProbabilities(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, targetCategories, segmentResults);
-					if(values == null){
-						return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
-					}
-
-					result = new AggregateProbabilityDistribution<>(values){
-
-						@Override
-						public Collection<? extends SegmentResult> getSegmentResults(){
-							return segmentResults;
-						}
-					};
-				}
 				break;
 			case WEIGHTED_MEDIAN:
 			case SUM:
@@ -452,7 +411,41 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				throw new UnsupportedAttributeException(segmentation, multipleModelMethod);
 		}
 
-		return TargetUtil.evaluateClassification(targetField, result);
+		if(hasSoleTargetField()){
+			TargetField targetField = getSoleTargetField();
+
+			List<?> targetCategories = targetField.getCategories();
+
+			ProbabilityDistribution<V> result = createProbabilityDistribution(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, targetCategories, null, segmentResults);
+			if(result == null){
+				return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
+			}
+
+			return TargetUtil.evaluateClassification(targetField, result);
+		} else
+
+		{
+			List<TargetField> targetFields = getMultipleTargetFields();
+
+			Map<String, Object> results = new LinkedHashMap<>(2 * targetFields.size());
+
+			for(int i = 0, max = targetFields.size(); i < max; i++){
+				TargetField targetField = targetFields.get(i);
+
+				List<?> targetCategories = targetField.getCategories();
+
+				ProbabilityDistribution<V> result = createProbabilityDistribution(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, targetCategories, targetField, segmentResults);
+				if(result == null){
+					results.putAll(TargetUtil.evaluateClassificationDefault(valueFactory, targetField));
+
+					continue;
+				}
+
+				results.putAll(TargetUtil.evaluateClassification(targetField, result));
+			}
+
+			return results;
+		}
 	}
 
 	@Override
@@ -510,7 +503,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MAJORITY_VOTE:
 			case WEIGHTED_MAJORITY_VOTE:
 				{
-					ValueMap<Object, V> values = SegmentationlUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, segmentResults);
+					ValueMap<Object, V> values = SegmentationlUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, null, segmentResults);
 					if(values == null){
 						return Collections.singletonMap(getSoleTargetName(), null);
 					}
@@ -1067,6 +1060,54 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 		for(SegmentResult segmentResult : segmentResults){
 			result.putAll(segmentResult);
 		}
+
+		return result;
+	}
+
+	private <V extends Number> ProbabilityDistribution<V> createProbabilityDistribution(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, List<?> targetCategories, TargetField targetField, List<SegmentResult> segmentResults){
+		MiningModel miningModel = getModel();
+
+		ValueMap<Object, V> values;
+
+		switch(multipleModelMethod){
+			case MAJORITY_VOTE:
+			case WEIGHTED_MAJORITY_VOTE:
+				{
+					values = SegmentationlUtil.aggregateVotes(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, targetField, segmentResults);
+					if(values == null){
+						return null;
+					}
+
+					// Convert from votes to probabilities
+					ValueUtil.normalizeSimpleMax(values);
+				}
+				break;
+			case AVERAGE:
+			case WEIGHTED_AVERAGE:
+			case MEDIAN:
+			case MAX:
+				{
+					if(targetCategories != null && targetCategories.size() < 2){
+						throw new InvalidElementException(miningModel);
+					}
+
+					values = SegmentationlUtil.aggregateProbabilities(valueFactory, multipleModelMethod, missingPredictionTreatment, missingThreshold, targetCategories, targetField, segmentResults);
+					if(values == null){
+						return null;
+					}
+				}
+				break;
+			default:
+				throw new IllegalArgumentException();
+		}
+
+		ProbabilityDistribution<V> result = new AggregateProbabilityDistribution<>(values){
+
+			@Override
+			public Collection<? extends SegmentResult> getSegmentResults(){
+				return segmentResults;
+			}
+		};
 
 		return result;
 	}

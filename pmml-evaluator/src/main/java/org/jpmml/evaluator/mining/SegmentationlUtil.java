@@ -167,14 +167,14 @@ public class SegmentationlUtil {
 	}
 
 	static
-	public <V extends Number> ValueMap<Object, V> aggregateVotes(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, List<SegmentResult> segmentResults){
+	public <V extends Number> ValueMap<Object, V> aggregateVotes(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, TargetField targetField, List<SegmentResult> segmentResults){
 		VoteAggregator<Object, V> aggregator = new VoteAggregator<>(valueFactory);
 
 		Fraction<V> missingFraction = null;
 
 		segmentResults:
 		for(SegmentResult segmentResult : segmentResults){
-			Object targetValue = EvaluatorUtil.decode(segmentResult.getSoleTargetValue());
+			Object targetValue = EvaluatorUtil.decode(segmentResult.getTargetValue(targetField));
 
 			if(targetValue == null){
 
@@ -243,7 +243,7 @@ public class SegmentationlUtil {
 	}
 
 	static
-	public <V extends Number> ValueMap<Object, V> aggregateProbabilities(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, List<?> categories, List<SegmentResult> segmentResults){
+	public <V extends Number> ValueMap<Object, V> aggregateProbabilities(ValueFactory<V> valueFactory, Segmentation.MultipleModelMethod multipleModelMethod, Segmentation.MissingPredictionTreatment missingPredictionTreatment, Number missingThreshold, List<?> categories, TargetField targetField, List<SegmentResult> segmentResults){
 		ProbabilityAggregator<V> aggregator;
 
 		switch(multipleModelMethod){
@@ -267,7 +267,7 @@ public class SegmentationlUtil {
 
 		segmentResults:
 		for(SegmentResult segmentResult : segmentResults){
-			Object targetValue = segmentResult.getSoleTargetValue();
+			Object targetValue = segmentResult.getTargetValue(targetField);
 
 			if(targetValue == null){
 
