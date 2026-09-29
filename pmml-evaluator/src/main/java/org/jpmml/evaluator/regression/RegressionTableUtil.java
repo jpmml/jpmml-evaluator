@@ -36,6 +36,7 @@ import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
+import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
@@ -58,6 +59,11 @@ public class RegressionTableUtil {
 
 		RegressionTable regressionTable = regressionTables.get(0);
 
+		return evaluateRegression(valueFactory, object, regressionTable, context);
+	}
+
+	static
+	public <V extends Number, E extends PMMLObject & HasRegressionTables<E>> Value<V> evaluateRegression(ValueFactory<V> valueFactory, E object, RegressionTable regressionTable, EvaluationContext context){
 		Value<V> result = evaluate(valueFactory, regressionTable, context);
 		if(result == null){
 			return null;
@@ -85,17 +91,32 @@ public class RegressionTableUtil {
 	}
 
 	static
-	public <V extends Number, E extends PMMLObject & HasRegressionTables<E>> ValueMap<Object, V> evaluateClassification(ValueFactory<V> valueFactory, E object, OpType opType, List<?> targetCategories, EvaluationContext context){
+	public <V extends Number, E extends PMMLObject & HasRegressionTables<E>> ValueMap<Object, V> evaluateClassification(ValueFactory<V> valueFactory, E object, TargetField targetField, EvaluationContext context){
 		List<RegressionTable> regressionTables = object.requireRegressionTables();
 		if(regressionTables.size() < 2){
 			throw new InvalidElementListException(regressionTables);
-		} // End if
+		}
 
+		return evaluateClassification(valueFactory, object, targetField, regressionTables, context);
+	}
+
+	static
+	public <V extends Number, E extends PMMLObject & HasRegressionTables<E>> ValueMap<Object, V> evaluateClassification(ValueFactory<V> valueFactory, E object, TargetField targetField, List<RegressionTable> regressionTables, EvaluationContext context){
+		ValueMap<Object, V> result = new ValueMap<>(2 * regressionTables.size());
+
+		OpType opType = targetField.getOpType();
+		switch(opType){
+			case CATEGORICAL:
+			case ORDINAL:
+				break;
+			default:
+				throw new InvalidElementException(object);
+		}
+
+		List<?> targetCategories = targetField.getCategories();
 		if(targetCategories != null && targetCategories.size() != regressionTables.size()){
 			throw new InvalidElementListException(regressionTables);
 		}
-
-		ValueMap<Object, V> result = new ValueMap<>(2 * regressionTables.size());
 
 		for(int i = 0, max = regressionTables.size(); i < max; i++){
 			RegressionTable regressionTable = regressionTables.get(i);
