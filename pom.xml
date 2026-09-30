@@ -4,8 +4,8 @@
 
 	<parent>
 		<groupId>org.jpmml</groupId>
-		<artifactId>jpmml-parent</artifactId>
-		<version>1.0.22</version>
+		<artifactId>jpmml-evaluator-parent</artifactId>
+		<version>1.0.1</version>
 	</parent>
 
 	<artifactId>jpmml-evaluator</artifactId>
@@ -15,13 +15,6 @@
 	<name>JPMML-Evaluator</name>
 	<description>Java evaluator API for Predictive Model Markup Language (PMML)</description>
 	<url>https://github.com/jpmml/jpmml-evaluator</url>
-
-	<licenses>
-		<license>
-			<name>GNU Affero General Public License (AGPL) version 3.0</name>
-			<url>http://www.gnu.org/licenses/agpl-3.0.html</url>
-		</license>
-	</licenses>
 
 	<contributors>
 		<contributor>
@@ -64,10 +57,7 @@
 		<jpmml-model.version>1.7.8</jpmml-model.version>
 		<commons-math3.version>[3.1, 3.6.1]</commons-math3.version>
 		<fastcsv.version>3.6.0</fastcsv.version>
-		<guava.version>[19.0, 33.7.2-jre]</guava.version>
-		<jcommander.version>1.82</jcommander.version>
 		<metrics.version>4.2.40</metrics.version>
-		<slf4j.version>2.0.17</slf4j.version>
 		<project.build.outputTimestamp>2026-02-01T12:00:20Z</project.build.outputTimestamp>
 	</properties>
 
@@ -151,54 +141,6 @@
 			</dependency>
 
 			<dependency>
-				<groupId>com.beust</groupId>
-				<artifactId>jcommander</artifactId>
-				<version>${jcommander.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.google.guava</groupId>
-				<artifactId>guava</artifactId>
-				<version>${guava.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>com.google.code.findbugs</groupId>
-						<artifactId>jsr305</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.google.errorprone</groupId>
-						<artifactId>error_prone_annotations</artifactId>
-					</exclusion>
-					<!--
-					<exclusion>
-						<groupId>com.google.guava</groupId>
-						<artifactId>failureaccess</artifactId>
-					</exclusion>
-					-->
-					<exclusion>
-						<groupId>com.google.guava</groupId>
-						<artifactId>listenablefuture</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.google.j2objc</groupId>
-						<artifactId>j2objc-annotations</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.checkerframework</groupId>
-						<artifactId>*</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>animal-sniffer-annotations</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.jspecify</groupId>
-						<artifactId>jspecify</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-
-			<dependency>
 				<groupId>de.siegmar</groupId>
 				<artifactId>fastcsv</artifactId>
 				<version>${fastcsv.version}</version>
@@ -220,17 +162,6 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>animal-sniffer-annotations</artifactId>
 				<version>1.28</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>${slf4j.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-jdk14</artifactId>
-				<version>${slf4j.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -290,19 +221,6 @@
 			<plugin>
 				<groupId>de.jutzig</groupId>
 				<artifactId>github-release-plugin</artifactId>
-				<version>1.2.0</version>
-				<executions>
-					<execution>
-						<id>default-cli</id>
-						<configuration>
-							<artifact>${project.build.directory}/${project.artifactId}-executable-${project.version}.${project.packaging}</artifact>
-							<description>https://github.com/jpmml/jpmml-evaluator</description>
-							<releaseName>${project.version}</releaseName>
-							<repositoryId>jpmml/jpmml-evaluator</repositoryId>
-							<tag>${project.version}</tag>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
