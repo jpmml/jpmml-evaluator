@@ -57,7 +57,7 @@ import org.dmg.pmml.mining.Segment;
 import org.dmg.pmml.mining.Segmentation;
 import org.dmg.pmml.mining.VariableWeight;
 import org.jpmml.evaluator.Configuration;
-import org.jpmml.evaluator.DefaultDataField;
+import org.jpmml.evaluator.DefaultLocalDataField;
 import org.jpmml.evaluator.DuplicateFieldValueException;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
@@ -159,7 +159,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public DefaultDataField getDefaultDataField(){
+	public DefaultLocalDataField getDefaultDataField(){
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.requireSegmentation();
@@ -1019,7 +1019,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				TargetField segmentTargetField = segmentTargetFields.get(0);
 
 				if(segmentTargetField.isSynthetic()){
-					modelEvaluator.setDefaultDataField(new DefaultDataField(OpType.CATEGORICAL, targetField.getDataType()));
+					modelEvaluator.setDefaultDataField(new DefaultLocalDataField(OpType.CATEGORICAL, targetField.getDataType()));
 				}
 			}
 		}

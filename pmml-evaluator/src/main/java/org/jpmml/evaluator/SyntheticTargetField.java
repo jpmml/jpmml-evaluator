@@ -20,18 +20,25 @@ package org.jpmml.evaluator;
 
 import org.dmg.pmml.Target;
 
+/**
+ * <p>
+ * A target field backed by a local data field.
+ * </p>
+ *
+ * @see LocalDataField
+ */
 public class SyntheticTargetField extends TargetField {
 
 	private SyntheticTargetField(){
 	}
 
-	public SyntheticTargetField(DefaultDataField dataField, Target target){
+	public SyntheticTargetField(DefaultLocalDataField dataField, Target target){
 		super(dataField, null, target);
 	}
 
 	@Override
-	public DefaultDataField getField(){
-		return (DefaultDataField)super.getField();
+	public LocalDataField getField(){
+		return (LocalDataField)super.getField();
 	}
 
 	@Override

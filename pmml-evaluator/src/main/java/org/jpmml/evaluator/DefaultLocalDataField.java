@@ -20,13 +20,17 @@ package org.jpmml.evaluator;
 
 import java.util.Objects;
 
-import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.OpType;
 
-public class DefaultDataField extends DataField {
+/**
+ * <p>
+ * An unnamed local data field.
+ * </p>
+ */
+public class DefaultLocalDataField extends LocalDataField {
 
-	public DefaultDataField(OpType opType, DataType dataType){
+	public DefaultLocalDataField(OpType opType, DataType dataType){
 		super(Evaluator.DEFAULT_TARGET_NAME, opType, dataType);
 	}
 
@@ -41,16 +45,16 @@ public class DefaultDataField extends DataField {
 	}
 
 	@Override
-	public DefaultDataField setName(String name){
+	public DefaultLocalDataField setName(String name){
 
 		if(!Objects.equals(name, Evaluator.DEFAULT_TARGET_NAME)){
 			throw new IllegalArgumentException();
 		}
 
-		return (DefaultDataField)super.setName(name);
+		return (DefaultLocalDataField)super.setName(name);
 	}
 
-	public static final DefaultDataField CONTINUOUS_FLOAT = new DefaultDataField(OpType.CONTINUOUS, DataType.FLOAT);
-	public static final DefaultDataField CONTINUOUS_DOUBLE = new DefaultDataField(OpType.CONTINUOUS, DataType.DOUBLE);
-	public static final DefaultDataField CATEGORICAL_STRING = new DefaultDataField(OpType.CATEGORICAL, DataType.STRING);
+	public static final DefaultLocalDataField CONTINUOUS_FLOAT = new DefaultLocalDataField(OpType.CONTINUOUS, DataType.FLOAT);
+	public static final DefaultLocalDataField CONTINUOUS_DOUBLE = new DefaultLocalDataField(OpType.CONTINUOUS, DataType.DOUBLE);
+	public static final DefaultLocalDataField CATEGORICAL_STRING = new DefaultLocalDataField(OpType.CATEGORICAL, DataType.STRING);
 }

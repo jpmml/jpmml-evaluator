@@ -35,6 +35,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Sets;
+import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.Field;
@@ -59,7 +60,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 	private M model = null;
 
-	private DefaultDataField defaultDataField = null;
+	private DefaultLocalDataField defaultDataField = null;
 
 	private Map<String, MiningField> miningFields = Collections.emptyMap();
 
@@ -133,6 +134,18 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		return model.getMathContext();
 	}
 
+	/**
+	 * <p>
+	 * Gets a data field by name.
+	 * </p>
+	 *
+	 * <p>
+	 * Data fields split into global and local data fields.
+	 * Global data fields are statically defined by the {@link DataDictionary} element, whereas local data fields are dynamically defined and managed by {@link Model} elements.
+	 * </p>
+	 *
+	 * @see LocalDataField
+	 */
 	@Override
 	public DataField getDataField(String name){
 
@@ -146,7 +159,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	/**
 	 * @return A synthetic {@link DataField} element describing the default target field.
 	 */
-	public DefaultDataField getDefaultDataField(){
+	public DefaultLocalDataField getDefaultDataField(){
 
 		if(this.defaultDataField != null){
 			return this.defaultDataField;
@@ -159,19 +172,19 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 				switch(mathContext){
 					case FLOAT:
-						return DefaultDataField.CONTINUOUS_FLOAT;
+						return DefaultLocalDataField.CONTINUOUS_FLOAT;
 					default:
-						return DefaultDataField.CONTINUOUS_DOUBLE;
+						return DefaultLocalDataField.CONTINUOUS_DOUBLE;
 				}
 			case CLASSIFICATION:
 			case CLUSTERING:
-				return DefaultDataField.CATEGORICAL_STRING;
+				return DefaultLocalDataField.CATEGORICAL_STRING;
 			default:
 				return null;
 		}
 	}
 
-	public void setDefaultDataField(DefaultDataField defaultDataField){
+	public void setDefaultDataField(DefaultLocalDataField defaultDataField){
 		this.defaultDataField = defaultDataField;
 	}
 
@@ -550,7 +563,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 		synthesis:
 		if(targetFields.isEmpty()){
-			DefaultDataField defaultDataField = getDefaultDataField();
+			DefaultLocalDataField defaultDataField = getDefaultDataField();
 
 			if(defaultDataField == null){
 				break synthesis;

@@ -73,7 +73,7 @@ import org.dmg.pmml.nearest_neighbor.PMMLAttributes;
 import org.dmg.pmml.nearest_neighbor.TrainingInstances;
 import org.jpmml.evaluator.AffinityDistribution;
 import org.jpmml.evaluator.Classification;
-import org.jpmml.evaluator.DefaultDataField;
+import org.jpmml.evaluator.DefaultLocalDataField;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.ExpressionUtil;
 import org.jpmml.evaluator.FieldUtil;
@@ -139,7 +139,7 @@ public class NearestNeighborModelEvaluator extends ModelEvaluator<NearestNeighbo
 	}
 
 	@Override
-	public DefaultDataField getDefaultDataField(){
+	public DefaultLocalDataField getDefaultDataField(){
 		MiningFunction miningFunction = getMiningFunction();
 
 		switch(miningFunction){
