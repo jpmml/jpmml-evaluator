@@ -22,6 +22,7 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.PMMLObject;
+import org.dmg.pmml.Score;
 import org.dmg.pmml.VisitorAction;
 import org.dmg.pmml.tree.DecisionTree;
 import org.dmg.pmml.tree.Node;
@@ -101,6 +102,19 @@ public class NodeScoreParser extends AbstractVisitor implements Resettable {
 		}
 
 		return super.visit(node);
+	}
+
+	@Override
+	public VisitorAction visit(Score score){
+		Object value = score.requireValue();
+
+		if(value instanceof String){
+			value = parseScore(value);
+
+			score.setValue(value);
+		}
+
+		return super.visit(score);
 	}
 
 	private Object parseScore(Object score){

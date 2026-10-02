@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class NodeScoreParserTest {
 
 	@Test
-	public void parseAndIntern(){
+	public void parseTreeModel(){
 		Node node1a = new BranchNode("1", True.INSTANCE);
 
 		Node node2a = new LeafNode("2", False.INSTANCE);
