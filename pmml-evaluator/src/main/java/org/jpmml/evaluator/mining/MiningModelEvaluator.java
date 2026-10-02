@@ -75,7 +75,6 @@ import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.Regression;
-import org.jpmml.evaluator.SyntheticTargetField;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
 import org.jpmml.evaluator.Value;
@@ -1019,9 +1018,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				TargetField targetField = targetFields.get(0);
 				TargetField segmentTargetField = segmentTargetFields.get(0);
 
-				if(segmentTargetField instanceof SyntheticTargetField){
-					SyntheticTargetField syntheticTargetField = (SyntheticTargetField)segmentTargetField;
-
+				if(segmentTargetField.isSynthetic()){
 					modelEvaluator.setDefaultDataField(new DefaultDataField(OpType.CATEGORICAL, targetField.getDataType()));
 				}
 			}
