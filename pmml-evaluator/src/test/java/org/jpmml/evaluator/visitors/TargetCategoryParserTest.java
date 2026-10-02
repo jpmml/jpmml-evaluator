@@ -18,19 +18,19 @@
  */
 package org.jpmml.evaluator.visitors;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.dmg.pmml.ComplexScoreDistribution;
 import org.dmg.pmml.DataDictionary;
 import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
-import org.dmg.pmml.Header;
-import org.dmg.pmml.MiningField;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.OpType;
 import org.dmg.pmml.PMML;
 import org.dmg.pmml.ScoreDistribution;
 import org.dmg.pmml.True;
-import org.dmg.pmml.Version;
 import org.dmg.pmml.regression.RegressionModel;
 import org.dmg.pmml.regression.RegressionTable;
 import org.dmg.pmml.tree.ComplexNode;
@@ -40,15 +40,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TargetCategoryParserTest {
+public class TargetCategoryParserTest extends ParserTest {
 
 	@Test
 	public void parseRegressionModel(){
 		DataField firstDataField = new DataField("y1", OpType.CATEGORICAL, DataType.INTEGER);
 		DataField secondDataField = new DataField("y2", OpType.CATEGORICAL, DataType.STRING);
 
-		DataDictionary dataDictionary = new DataDictionary()
-			.addDataFields(firstDataField, secondDataField);
+		DataDictionary dataDictionary = createDataDictionary(firstDataField, secondDataField);
 
 		RegressionTable firstRegressionTable = new RegressionTable(0d)
 			.setTargetField(firstDataField.requireName())
@@ -58,14 +57,12 @@ public class TargetCategoryParserTest {
 			.setTargetField(secondDataField.requireName())
 			.setTargetCategory("1");
 
-		MiningSchema miningSchema = new MiningSchema()
-			.addMiningFields(new MiningField(firstDataField).setUsageType(MiningField.UsageType.TARGET), new MiningField(secondDataField).setUsageType(MiningField.UsageType.TARGET));
+		MiningSchema miningSchema = createMiningSchema(Collections.emptyList(), Arrays.asList(firstDataField, secondDataField));
 
 		RegressionModel regressionModel = new RegressionModel(MiningFunction.CLASSIFICATION, miningSchema, null)
 			.addRegressionTables(firstRegressionTable, secondRegressionTable);
 
-		PMML pmml = new PMML(Version.PMML_4_4.getVersion(), new Header(), dataDictionary)
-			.addModels(regressionModel);
+		PMML pmml = createPMML(dataDictionary, regressionModel);
 
 		TargetCategoryParser parser = new TargetCategoryParser();
 		parser.applyTo(pmml);
@@ -79,8 +76,7 @@ public class TargetCategoryParserTest {
 		DataField firstDataField = new DataField("y1", OpType.CATEGORICAL, DataType.INTEGER);
 		DataField secondDataField = new DataField("y2", OpType.CATEGORICAL, DataType.STRING);
 
-		DataDictionary dataDictionary = new DataDictionary()
-			.addDataFields(firstDataField, secondDataField);
+		DataDictionary dataDictionary = createDataDictionary(firstDataField, secondDataField);
 
 		ScoreDistribution firstScoreDistribution = new ComplexScoreDistribution("0", 1)
 			.setTargetField(firstDataField.requireName());
@@ -91,13 +87,11 @@ public class TargetCategoryParserTest {
 		Node root = new ComplexNode(null, True.INSTANCE)
 			.addScoreDistributions(firstScoreDistribution, secondScoreDistribution);
 
-		MiningSchema miningSchema = new MiningSchema()
-			.addMiningFields(new MiningField(firstDataField).setUsageType(MiningField.UsageType.TARGET), new MiningField(secondDataField).setUsageType(MiningField.UsageType.TARGET));
+		MiningSchema miningSchema = createMiningSchema(Collections.emptyList(), Arrays.asList(firstDataField, secondDataField));
 
 		TreeModel treeModel = new TreeModel(MiningFunction.CLASSIFICATION, miningSchema, root);
 
-		PMML pmml = new PMML(Version.PMML_4_4.getVersion(), new Header(), dataDictionary)
-			.addModels(treeModel);
+		PMML pmml = createPMML(dataDictionary, treeModel);
 
 		TargetCategoryParser parser = new TargetCategoryParser();
 		parser.applyTo(pmml);

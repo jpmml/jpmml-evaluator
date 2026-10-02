@@ -18,10 +18,18 @@
  */
 package org.jpmml.evaluator.visitors;
 
+import java.util.Arrays;
+import java.util.Collections;
+
+import org.dmg.pmml.DataDictionary;
+import org.dmg.pmml.DataField;
+import org.dmg.pmml.DataType;
 import org.dmg.pmml.False;
 import org.dmg.pmml.MathContext;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
+import org.dmg.pmml.OpType;
+import org.dmg.pmml.PMML;
 import org.dmg.pmml.True;
 import org.dmg.pmml.tree.BranchNode;
 import org.dmg.pmml.tree.LeafNode;
@@ -34,10 +42,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class NodeScoreParserTest {
+public class NodeScoreParserTest extends ParserTest {
 
 	@Test
 	public void parseTreeModel(){
+		DataField dataField = new DataField("y", OpType.CATEGORICAL, DataType.STRING);
+
+		DataDictionary dataDictionary = createDataDictionary(dataField);
+
 		Node node1a = new BranchNode("1", True.INSTANCE);
 
 		Node node2a = new LeafNode("2", False.INSTANCE);
@@ -50,14 +62,18 @@ public class NodeScoreParserTest {
 
 		node2b.addNodes(node3a);
 
-		TreeModel treeModel = new TreeModel(MiningFunction.CLASSIFICATION, new MiningSchema(), node1a)
+		MiningSchema miningSchema = createMiningSchema(Collections.emptyList(), Arrays.asList(dataField));
+
+		TreeModel treeModel = new TreeModel(MiningFunction.CLASSIFICATION, miningSchema, node1a)
 			.setMathContext(MathContext.FLOAT);
+
+		PMML pmml = createPMML(dataDictionary, treeModel);
 
 		VisitorBattery visitorBattery = new VisitorBattery();
 		visitorBattery.add(NodeScoreParser.class);
 		visitorBattery.add(FloatInterner.class);
 
-		visitorBattery.applyTo(treeModel);
+		visitorBattery.applyTo(pmml);
 
 		assertEquals("1", node1a.requireScore());
 
@@ -67,9 +83,13 @@ public class NodeScoreParserTest {
 
 		assertEquals("error", node3a.requireScore());
 
+		dataField
+			.setOpType(OpType.CONTINUOUS)
+			.setDataType(DataType.FLOAT);
+
 		treeModel.setMiningFunction(MiningFunction.REGRESSION);
 
-		visitorBattery.applyTo(treeModel);
+		visitorBattery.applyTo(pmml);
 
 		assertEquals(1.0f, node1a.requireScore());
 

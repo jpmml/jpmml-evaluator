@@ -19,6 +19,7 @@
 package org.jpmml.evaluator.visitors;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +30,6 @@ import org.dmg.pmml.DataField;
 import org.dmg.pmml.DataType;
 import org.dmg.pmml.DerivedField;
 import org.dmg.pmml.FieldColumnPair;
-import org.dmg.pmml.Header;
 import org.dmg.pmml.InlineTable;
 import org.dmg.pmml.MapValues;
 import org.dmg.pmml.MiningField;
@@ -43,7 +43,6 @@ import org.dmg.pmml.SimplePredicate;
 import org.dmg.pmml.SimpleSetPredicate;
 import org.dmg.pmml.TransformationDictionary;
 import org.dmg.pmml.Value;
-import org.dmg.pmml.Version;
 import org.dmg.pmml.regression.CategoricalPredictor;
 import org.dmg.pmml.regression.RegressionModel;
 import org.dmg.pmml.regression.RegressionTable;
@@ -60,7 +59,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ValueParserTest {
+public class ValueParserTest extends ParserTest {
 
 	@Test
 	public void parseRegressionModel(){
@@ -71,8 +70,7 @@ public class ValueParserTest {
 		DataField dataField = new DataField("x1", OpType.CATEGORICAL, DataType.STRING)
 			.addValues(falseValue, trueValue, invalidValue);
 
-		DataDictionary dataDictionary = new DataDictionary()
-			.addDataFields(dataField);
+		DataDictionary dataDictionary = createDataDictionary(dataField);
 
 		Cell inputCell = new InputCell()
 			.setValue("true");
@@ -112,9 +110,8 @@ public class ValueParserTest {
 		RegressionModel regressionModel = new RegressionModel(MiningFunction.REGRESSION, miningSchema, null)
 			.addRegressionTables(regressionTable);
 
-		PMML pmml = new PMML(Version.PMML_4_4.getVersion(), new Header(), dataDictionary)
-			.setTransformationDictionary(transformationDictionary)
-			.addModels(regressionModel);
+		PMML pmml = createPMML(dataDictionary, regressionModel)
+			.setTransformationDictionary(transformationDictionary);
 
 		List<DataField> dataFields = dataDictionary.getDataFields();
 
@@ -164,8 +161,7 @@ public class ValueParserTest {
 	public void parseTreeModel(){
 		DataField dataField = new DataField("x1", OpType.CATEGORICAL, DataType.STRING);
 
-		DataDictionary dataDictionary = new DataDictionary()
-			.addDataFields(dataField);
+		DataDictionary dataDictionary = createDataDictionary(dataField);
 
 		NormDiscrete normDiscrete = new NormDiscrete(dataField, "1");
 
@@ -183,17 +179,13 @@ public class ValueParserTest {
 		Node root = new BranchNode("0", simpleSetPredicate)
 			.addNodes(child);
 
-		MiningField miningField = new MiningField(dataField);
-
-		MiningSchema miningSchema = new MiningSchema()
-			.addMiningFields(miningField);
+		MiningSchema miningSchema = createMiningSchema(Arrays.asList(dataField), Collections.emptyList());
 
 		TreeModel treeModel = new TreeModel(MiningFunction.REGRESSION, miningSchema, null)
 			.setNode(root);
 
-		PMML pmml = new PMML(Version.PMML_4_4.getVersion(), new Header(), dataDictionary)
-			.setTransformationDictionary(transformationDictionary)
-			.addModels(treeModel);
+		PMML pmml = createPMML(dataDictionary, treeModel)
+			.setTransformationDictionary(transformationDictionary);
 
 		List<DataField> dataFields = dataDictionary.getDataFields();
 
