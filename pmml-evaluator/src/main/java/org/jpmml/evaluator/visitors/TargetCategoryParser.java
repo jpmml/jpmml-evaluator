@@ -175,7 +175,7 @@ public class TargetCategoryParser extends AbstractParser {
 
 	@Override
 	public VisitorAction visit(RegressionTable regressionTable){
-		regressionTable.setTargetCategory(parseTargetValue(regressionTable.getTargetCategory()));
+		regressionTable.setTargetCategory(parseTargetValue(regressionTable.getTargetField(), regressionTable.getTargetCategory()));
 
 		return super.visit(regressionTable);
 	}
@@ -191,7 +191,7 @@ public class TargetCategoryParser extends AbstractParser {
 	public VisitorAction visit(ScoreDistribution scoreDistribution){
 		Object value = scoreDistribution.requireValue();
 
-		scoreDistribution.setValue(parseTargetValue(value));
+		scoreDistribution.setValue(parseTargetValue(scoreDistribution.getTargetField(), value));
 
 		return super.visit(scoreDistribution);
 	}
