@@ -44,8 +44,8 @@ import org.dmg.pmml.association.Itemset;
 import org.dmg.pmml.mining.MiningModel;
 import org.dmg.pmml.mining.Segmentation;
 import org.jpmml.evaluator.mining.MiningModelEvaluationContext;
-import org.jpmml.evaluator.mining.SegmentationlUtil;
 import org.jpmml.evaluator.mining.SegmentResult;
+import org.jpmml.evaluator.mining.SegmentationlUtil;
 import org.jpmml.model.InvalidAttributeException;
 import org.jpmml.model.InvalidElementException;
 import org.jpmml.model.MisplacedAttributeException;
@@ -88,6 +88,15 @@ public class OutputUtil {
 		outputFields:
 		for(int i = 0, max = outputFields.size(); i < max; i++){
 			OutputField outputField = outputFields.get(i);
+
+			String name = outputField.requireName();
+
+			// "The names of OutputFields must be unique from any other names in their scope"
+			// XXX: Detects naming conflicts between output fields and model result fields (target data fields, preceding output fields),
+			// but not with model input fields (input data fields, derived fields)
+			if(result.containsKey(name)){
+				throw new DuplicateFieldValueException(name);
+			}
 
 			String targetFieldName = outputField.getTargetField();
 
@@ -229,9 +238,9 @@ public class OutputUtil {
 				case DECISION:
 					{
 						if(segmentId != null){
-							Object name = outputField.requireValue();
+							String fieldName = TypeUtil.format(outputField.requireValue());
 
-							value = segmentPredictions.get(TypeUtil.format(name));
+							value = segmentPredictions.get(fieldName);
 
 							break;
 						}
@@ -389,8 +398,6 @@ public class OutputUtil {
 				default:
 					throw new UnsupportedAttributeException(outputField, resultFeature);
 			}
-
-			String name = outputField.requireName();
 
 			TypeInfo typeInfo = new TypeInfo(){
 
