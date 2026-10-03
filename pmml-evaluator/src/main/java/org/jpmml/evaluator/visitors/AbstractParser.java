@@ -30,7 +30,6 @@ import org.dmg.pmml.Model;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.TransformationDictionary;
 import org.jpmml.evaluator.DuplicateFieldException;
-import org.jpmml.evaluator.MissingFieldException;
 import org.jpmml.model.visitors.FieldResolver;
 
 abstract
@@ -110,10 +109,6 @@ class AbstractParser extends FieldResolver {
 
 					dataType = field.getDataType();
 				}
-			}
-
-			if(dataType == null){
-				throw new MissingFieldException(name);
 			}
 
 			this.dataTypes.put(name, dataType);

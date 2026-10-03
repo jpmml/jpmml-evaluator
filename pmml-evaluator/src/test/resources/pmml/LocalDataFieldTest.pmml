@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+<PMML xmlns="http://www.dmg.org/PMML-4_4" version="4.4">
+	<DataDictionary>
+		<DataField name="y" optype="continuous" dataType="double"/>
+	</DataDictionary>
+	<MiningModel functionName="regression">
+		<MiningSchema>
+			<MiningField name="y" usageType="target"/>
+		</MiningSchema>
+		<Segmentation multipleModelMethod="modelChain">
+			<Segment>
+				<True/>
+				<MiningModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="y1" usageType="target"/>
+						<MiningField name="y2" usageType="target"/>
+					</MiningSchema>
+					<Output>
+						<OutputField name="margin(y1)" optype="continuous" dataType="double" targetField="y1" feature="predictedValue"/>
+						<OutputField name="margin(y2)" optype="continuous" dataType="double" targetField="y2" feature="predictedValue"/>
+					</Output>
+					<Segmentation multipleModelMethod="sum">
+						<Segment>
+							<True/>
+							<TreeModel functionName="regression">
+								<MiningSchema>
+									<MiningField name="y1" usageType="target"/>
+									<MiningField name="y2" usageType="target"/>
+								</MiningSchema>
+								<Node>
+									<True/>
+									<X-Score targetField="y1" value="1"/>
+									<X-Score targetField="y2" value="2"/>
+								</Node>
+							</TreeModel>
+						</Segment>
+						<Segment>
+							<True/>
+							<TreeModel functionName="regression">
+								<MiningSchema>
+									<MiningField name="y1" usageType="target"/>
+									<MiningField name="y2" usageType="target"/>
+								</MiningSchema>
+								<Node>
+									<True/>
+									<X-Score targetField="y1" value="10"/>
+									<X-Score targetField="y2" value="20"/>
+								</Node>
+							</TreeModel>
+						</Segment>
+					</Segmentation>
+				</MiningModel>
+			</Segment>
+			<Segment>
+				<True/>
+				<RegressionModel functionName="regression">
+					<MiningSchema>
+						<MiningField name="y" usageType="target"/>
+						<MiningField name="margin(y1)"/>
+						<MiningField name="margin(y2)"/>
+					</MiningSchema>
+					<RegressionTable intercept="0.0">
+						<NumericPredictor name="margin(y1)" coefficient="1.0"/>
+						<NumericPredictor name="margin(y2)" coefficient="10.0"/>
+					</RegressionTable>
+				</RegressionModel>
+			</Segment>
+		</Segmentation>
+	</MiningModel>
+</PMML>

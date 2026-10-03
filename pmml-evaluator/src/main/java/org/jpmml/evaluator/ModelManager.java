@@ -47,11 +47,15 @@ import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.Output;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.PMMLAttributes;
 import org.dmg.pmml.PMMLObject;
 import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.Target;
 import org.dmg.pmml.Targets;
 import org.jpmml.model.IndexableUtil;
+import org.jpmml.model.InvalidAttributeException;
+import org.jpmml.model.InvalidElementException;
+import org.jpmml.model.MissingAttributeException;
 import org.jpmml.model.UnsupportedElementException;
 import org.jpmml.model.visitors.FieldResolver;
 
@@ -61,6 +65,8 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	private M model = null;
 
 	private DefaultLocalDataField defaultDataField = null;
+
+	private Map<String, LocalDataField> localDataFields = null;
 
 	private Map<String, MiningField> miningFields = Collections.emptyMap();
 
@@ -186,6 +192,78 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 	public void setDefaultDataField(DefaultLocalDataField defaultDataField){
 		this.defaultDataField = defaultDataField;
+	}
+
+	protected LocalDataField getLocalDataField(String name){
+		Map<String, LocalDataField> localDataFields = getLocalDataFields();
+
+		return localDataFields.get(name);
+	}
+
+	protected Map<String, LocalDataField> getLocalDataFields(){
+
+		if(this.localDataFields == null){
+			this.localDataFields = createLocalDataFields();
+		}
+
+		return this.localDataFields;
+	}
+
+	protected Map<String, LocalDataField> createLocalDataFields(){
+		M model = getModel();
+
+		Map<String, LocalDataField> result = new LinkedHashMap<>();
+
+		MiningSchema miningSchema = model.requireMiningSchema();
+		if(miningSchema.hasMiningFields()){
+			List<MiningField> miningFields = miningSchema.getMiningFields();
+
+			boolean hasGlobal = false;
+
+			for(MiningField miningField : miningFields){
+				String fieldName = miningField.requireName();
+
+				MiningField.UsageType usageType = miningField.getUsageType();
+				switch(usageType){
+					case PREDICTED:
+					case TARGET:
+						break;
+					default:
+						continue;
+				}
+
+				DataField dataField = getDataField(fieldName);
+				if(dataField != null){
+					hasGlobal = true;
+
+					continue;
+				}
+
+				DefaultLocalDataField defaultDataField = getDefaultDataField();
+				if(defaultDataField == null){
+					throw new MissingFieldException(miningField);
+				}
+
+				LocalDataField localDataField = new LocalDataField(fieldName, defaultDataField.requireOpType(), defaultDataField.requireDataType());
+
+				result.put(fieldName, localDataField);
+			}
+
+			if(!result.isEmpty()){
+
+				// Can't mix global and local data fields
+				if(hasGlobal){
+					throw new InvalidElementException(miningSchema);
+				} // End if
+
+				// Can't have a single named local data field (should be unnamed)
+				if(result.size() == 1){
+					throw new InvalidElementException(miningSchema);
+				}
+			}
+		}
+
+		return ImmutableMap.copyOf(result);
 	}
 
 	public MiningField getMiningField(String name){
@@ -511,6 +589,19 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 			DataField dataField = getDataField(targetFieldName);
 			if(dataField == null){
+				dataField = getLocalDataField(targetFieldName);
+			} // End if
+
+			if(dataField instanceof LocalDataField){
+
+				if(pmmlOutputField.getTargetField() != null){
+					throw new InvalidAttributeException(pmmlOutputField, PMMLAttributes.OUTPUTFIELD_TARGETFIELD, targetFieldName);
+				}
+
+				throw new MissingAttributeException(pmmlOutputField, PMMLAttributes.OUTPUTFIELD_TARGETFIELD);
+			} // End if
+
+			if(dataField == null){
 				throw new MissingFieldException(targetFieldName, pmmlOutputField);
 			}
 
@@ -549,6 +640,10 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 				}
 
 				DataField dataField = getDataField(fieldName);
+				if(dataField == null){
+					dataField = getLocalDataField(fieldName);
+				} // End if
+
 				if(dataField == null){
 					throw new MissingFieldException(miningField);
 				}
