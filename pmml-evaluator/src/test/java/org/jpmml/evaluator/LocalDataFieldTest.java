@@ -72,10 +72,7 @@ public class LocalDataFieldTest extends ModelEvaluatorTest {
 
 		ModelEvaluator<?> evaluator = createModelEvaluator(modelTransformer);
 
-		List<InputField> inputFields = evaluator.getInputFields();
-
-		assertTrue(inputFields.isEmpty());
-
+		checkActiveFields(Collections.emptyList(), evaluator);
 		checkResultFields(Arrays.asList("y1", "y2"), Arrays.asList("margin(y1)", "margin(y2)"), evaluator);
 
 		List<TargetField> targetFields = evaluator.getTargetFields();
@@ -164,10 +161,7 @@ public class LocalDataFieldTest extends ModelEvaluatorTest {
 	public void evaluateNested() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		List<InputField> inputFields = evaluator.getInputFields();
-
-		assertTrue(inputFields.isEmpty());
-
+		checkActiveFields(Collections.emptyList(), evaluator);
 		checkResultFields(Arrays.asList("y"), Collections.emptyList(), evaluator);
 
 		Map<String, ?> results = evaluator.evaluate(Collections.emptyMap());

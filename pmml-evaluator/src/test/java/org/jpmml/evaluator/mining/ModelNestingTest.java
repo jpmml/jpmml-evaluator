@@ -18,17 +18,15 @@
  */
 package org.jpmml.evaluator.mining;
 
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 import org.jpmml.evaluator.Deltas;
 import org.jpmml.evaluator.EvaluationException;
 import org.jpmml.evaluator.Evaluator;
-import org.jpmml.evaluator.InputField;
 import org.jpmml.evaluator.ModelEvaluator;
 import org.jpmml.evaluator.ModelEvaluatorTest;
-import org.jpmml.evaluator.OutputField;
-import org.jpmml.evaluator.TargetField;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,13 +40,8 @@ public class ModelNestingTest extends ModelEvaluatorTest implements Deltas {
 	public void evaluate() throws Exception {
 		ModelEvaluator<?> evaluator = createModelEvaluator();
 
-		List<InputField> inputFields = evaluator.getInputFields();
-		List<TargetField> targetFields = evaluator.getTargetFields();
-		List<OutputField> outputFields = evaluator.getOutputFields();
-
-		assertEquals(1, inputFields.size());
-		assertEquals(0, targetFields.size());
-		assertEquals(2, outputFields.size());
+		checkActiveFields(Arrays.asList("input"), evaluator);
+		checkResultFields(Collections.emptyList(), Arrays.asList("output", "report(output)"), evaluator);
 
 		assertThrows(EvaluationException.class, () -> evaluator.getSoleTargetField());
 

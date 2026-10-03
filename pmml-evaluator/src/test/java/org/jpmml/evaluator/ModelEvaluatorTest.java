@@ -123,6 +123,13 @@ public class ModelEvaluatorTest {
 	}
 
 	static
+	public void checkActiveFields(List<String> activeNames, Evaluator evaluator){
+		List<InputField> activeFields = evaluator.getActiveFields();
+
+		assertEquals(activeNames, Lists.transform(activeFields, InputField::getName));
+	}
+
+	static
 	public void checkTargetFields(List<String> targetNames, Evaluator evaluator){
 		List<TargetField> targetFields = evaluator.getTargetFields();
 
