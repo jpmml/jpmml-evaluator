@@ -1019,7 +1019,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				TargetField targetField = targetFields.get(0);
 				TargetField segmentTargetField = segmentTargetFields.get(0);
 
-				if(segmentTargetField.isSynthetic()){
+				if(segmentTargetField.isDefault()){
 					modelEvaluator.setDefaultTargetType(new SimpleTypeInfo(OpType.CATEGORICAL, targetField.getDataType()));
 				}
 			}

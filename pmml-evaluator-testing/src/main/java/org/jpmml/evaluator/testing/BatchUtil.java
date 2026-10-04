@@ -189,7 +189,7 @@ public class BatchUtil {
 		List<TargetField> targetFields = evaluator.getTargetFields();
 		for(TargetField targetField : targetFields){
 
-			if(targetField.isSynthetic()){
+			if(targetField.isDefault()){
 				continue;
 			} // End if
 

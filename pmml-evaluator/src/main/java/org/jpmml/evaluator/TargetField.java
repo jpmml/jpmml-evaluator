@@ -43,9 +43,9 @@ public class TargetField extends ResultField {
 	}
 
 	/**
-	 * @return The name, or <code>null</code> (in the form of the constant {@link Evaluator#DEFAULT_TARGET_NAME}) if this is a synthetic target field.
+	 * @return The name, or <code>null</code> (in the form of the constant {@link Evaluator#DEFAULT_TARGET_NAME}) if this is the default target field.
 	 *
-	 * @see #isSynthetic()
+	 * @see #isDefault()
 	 */
 	@Override
 	public String getName(){
@@ -79,7 +79,16 @@ public class TargetField extends ResultField {
 		return null;
 	}
 
-	public boolean isSynthetic(){
+	/**
+	 * <p>
+	 * Indicates if this is a default target field.
+	 * </p>
+	 *
+	 * <p>
+	 * A default target field is created automatically in a situation where a model does not define a named target field in its mining schema, but one is still needed for mapping its prediction to the {@link Evaluator#evaluate(java.util.Map) results map}.
+	 * </p>
+	 */
+	public boolean isDefault(){
 		MiningField miningField = getMiningField();
 
 		return (miningField == null);
@@ -94,9 +103,9 @@ public class TargetField extends ResultField {
 	}
 
 	/**
-	 * @return The backing {@link MiningField} element, or <code>null</code> if this a synthetic target field.
+	 * @return The backing {@link MiningField} element, or <code>null</code> if this is the default target field.
 	 *
-	 * @see #isSynthetic()
+	 * @see #isDefault()
 	 */
 	public MiningField getMiningField(){
 		return this.miningField;

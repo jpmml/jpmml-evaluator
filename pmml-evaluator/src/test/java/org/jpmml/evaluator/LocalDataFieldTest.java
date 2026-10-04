@@ -81,7 +81,7 @@ public class LocalDataFieldTest extends ModelEvaluatorTest {
 			DataField dataField = targetField.getField();
 
 			assertTrue(dataField instanceof LocalDataField);
-			assertFalse(targetField.isSynthetic());
+			assertFalse(targetField.isDefault());
 
 			assertEquals(OpType.CONTINUOUS, targetField.getOpType());
 			assertEquals(DataType.DOUBLE, targetField.getDataType());

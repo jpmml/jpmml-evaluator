@@ -57,6 +57,10 @@ public class TargetUtilTest {
 
 		ModelEvaluator<?> evaluator = createTreeModelEvaluator(MiningFunction.REGRESSION, MathContext.FLOAT, target);
 
+		TargetField targetField = evaluator.getSoleTargetField();
+
+		assertTrue(targetField.isDefault());
+
 		DataField dataField = evaluator.getDataField(target.getTargetField());
 
 		assertEquals(OpType.CONTINUOUS, dataField.requireOpType());
@@ -93,6 +97,10 @@ public class TargetUtilTest {
 			.addTargetValues(yesValue, noValue);
 
 		ModelEvaluator<?> evaluator = createTreeModelEvaluator(MiningFunction.CLASSIFICATION, MathContext.FLOAT, target);
+
+		TargetField targetField = evaluator.getSoleTargetField();
+
+		assertTrue(targetField.isDefault());
 
 		DataField dataField = evaluator.getDataField(target.getTargetField());
 
