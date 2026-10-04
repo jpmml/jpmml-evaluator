@@ -32,7 +32,7 @@ public class SyntheticTargetField extends TargetField {
 	private SyntheticTargetField(){
 	}
 
-	public SyntheticTargetField(DefaultLocalDataField dataField, Target target){
+	public SyntheticTargetField(LocalDataField dataField, Target target){
 		super(dataField, null, target);
 	}
 

@@ -194,14 +194,10 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 	public DataField getDataField(String name){
 
 		if(Objects.equals(Evaluator.DEFAULT_TARGET_NAME, name)){
-			return getDefaultDataField();
+			return getLocalDataField(name);
 		}
 
 		return super.getDataField(name);
-	}
-
-	public DefaultLocalDataField getDefaultDataField(){
-		return (DefaultLocalDataField)getLocalDataField(Evaluator.DEFAULT_TARGET_NAME);
 	}
 
 	protected LocalDataField getLocalDataField(String name){
@@ -275,9 +271,9 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 		{
 			if(!hasGlobal && defaultTargetType != null){
-				DefaultLocalDataField defaultDataField = new DefaultLocalDataField(defaultTargetType.getOpType(), defaultTargetType.getDataType());
+				LocalDataField defaultLocalDataField = createDefaultLocalDataField(defaultTargetType);
 
-				result.put(Evaluator.DEFAULT_TARGET_NAME, defaultDataField);
+				result.put(Evaluator.DEFAULT_TARGET_NAME, defaultLocalDataField);
 			}
 		}
 
@@ -681,15 +677,15 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 		synthesis:
 		if(targetFields.isEmpty()){
-			DefaultLocalDataField defaultDataField = getDefaultDataField();
+			LocalDataField defaultLocalDataField = getLocalDataField(Evaluator.DEFAULT_TARGET_NAME);
 
-			if(defaultDataField == null){
+			if(defaultLocalDataField == null){
 				break synthesis;
 			}
 
-			Target target = getTarget(defaultDataField.requireName());
+			Target target = getTarget(defaultLocalDataField.requireName());
 
-			TargetField targetField = new SyntheticTargetField(defaultDataField, target);
+			TargetField targetField = new SyntheticTargetField(defaultLocalDataField, target);
 
 			targetFields.add(targetField);
 		}
@@ -804,5 +800,31 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		}
 
 		return result;
+	}
+
+	static
+	private LocalDataField createDefaultLocalDataField(TypeInfo typeInfo){
+		return new LocalDataField(Evaluator.DEFAULT_TARGET_NAME, typeInfo.getOpType(), typeInfo.getDataType()){
+
+			@Override
+			public String requireName(){
+				return getName();
+			}
+
+			@Override
+			public String getName(){
+				return super.getName();
+			}
+
+			@Override
+			public LocalDataField setName(String name){
+
+				if(!Objects.equals(name, Evaluator.DEFAULT_TARGET_NAME)){
+					throw new IllegalArgumentException();
+				}
+
+				return (LocalDataField)super.setName(name);
+			}
+		};
 	}
 }
