@@ -53,8 +53,4 @@ public class DefaultLocalDataField extends LocalDataField {
 
 		return (DefaultLocalDataField)super.setName(name);
 	}
-
-	public static final DefaultLocalDataField CONTINUOUS_FLOAT = new DefaultLocalDataField(OpType.CONTINUOUS, DataType.FLOAT);
-	public static final DefaultLocalDataField CONTINUOUS_DOUBLE = new DefaultLocalDataField(OpType.CONTINUOUS, DataType.DOUBLE);
-	public static final DefaultLocalDataField CATEGORICAL_STRING = new DefaultLocalDataField(OpType.CATEGORICAL, DataType.STRING);
 }

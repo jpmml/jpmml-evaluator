@@ -64,7 +64,7 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 	private M model = null;
 
-	private DefaultLocalDataField defaultDataField = null;
+	private TypeInfo defaultTargetType = null;
 
 	private Map<String, LocalDataField> localDataFields = null;
 
@@ -142,6 +142,44 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 	/**
 	 * <p>
+	 * Gets the type for local data fields.
+	 * </p>
+	 *
+	 * @return A type, or <code>null</code> if this model does not support local data fields.
+	 */
+	protected TypeInfo getDefaultTargetType(){
+
+		if(this.defaultTargetType != null){
+			return this.defaultTargetType;
+		}
+
+		MiningFunction miningFunction = getMiningFunction();
+		switch(miningFunction){
+			case REGRESSION:
+				MathContext mathContext = getMathContext();
+
+				switch(mathContext){
+					case FLOAT:
+						return TypeInfos.CONTINUOUS_FLOAT;
+					default:
+						return TypeInfos.CONTINUOUS_DOUBLE;
+				}
+			case CLASSIFICATION:
+			case CLUSTERING:
+				return TypeInfos.CATEGORICAL_STRING;
+			default:
+				return null;
+		}
+	}
+
+	public void setDefaultTargetType(TypeInfo defaultTargetType){
+		this.defaultTargetType = defaultTargetType;
+
+		resetLocalDataFields();
+	}
+
+	/**
+	 * <p>
 	 * Gets a data field by name.
 	 * </p>
 	 *
@@ -162,36 +200,8 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		return super.getDataField(name);
 	}
 
-	/**
-	 * @return A synthetic {@link DataField} element describing the default target field.
-	 */
 	public DefaultLocalDataField getDefaultDataField(){
-
-		if(this.defaultDataField != null){
-			return this.defaultDataField;
-		}
-
-		MiningFunction miningFunction = getMiningFunction();
-		switch(miningFunction){
-			case REGRESSION:
-				MathContext mathContext = getMathContext();
-
-				switch(mathContext){
-					case FLOAT:
-						return DefaultLocalDataField.CONTINUOUS_FLOAT;
-					default:
-						return DefaultLocalDataField.CONTINUOUS_DOUBLE;
-				}
-			case CLASSIFICATION:
-			case CLUSTERING:
-				return DefaultLocalDataField.CATEGORICAL_STRING;
-			default:
-				return null;
-		}
-	}
-
-	public void setDefaultDataField(DefaultLocalDataField defaultDataField){
-		this.defaultDataField = defaultDataField;
+		return (DefaultLocalDataField)getLocalDataField(Evaluator.DEFAULT_TARGET_NAME);
 	}
 
 	protected LocalDataField getLocalDataField(String name){
@@ -211,14 +221,15 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 
 	protected Map<String, LocalDataField> createLocalDataFields(){
 		M model = getModel();
+		TypeInfo defaultTargetType = getDefaultTargetType();
 
 		Map<String, LocalDataField> result = new LinkedHashMap<>();
+
+		boolean hasGlobal = false;
 
 		MiningSchema miningSchema = model.requireMiningSchema();
 		if(miningSchema.hasMiningFields()){
 			List<MiningField> miningFields = miningSchema.getMiningFields();
-
-			boolean hasGlobal = false;
 
 			for(MiningField miningField : miningFields){
 				String fieldName = miningField.requireName();
@@ -239,31 +250,39 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 					continue;
 				}
 
-				DefaultLocalDataField defaultDataField = getDefaultDataField();
-				if(defaultDataField == null){
+				if(defaultTargetType == null){
 					throw new MissingFieldException(miningField);
 				}
 
-				LocalDataField localDataField = new LocalDataField(fieldName, defaultDataField.requireOpType(), defaultDataField.requireDataType());
+				LocalDataField localDataField = new LocalDataField(fieldName, defaultTargetType.getOpType(), defaultTargetType.getDataType());
 
 				result.put(fieldName, localDataField);
 			}
+		}
 
-			if(!result.isEmpty()){
+		if(!result.isEmpty()){
 
-				// Can't mix global and local data fields
-				if(hasGlobal){
-					throw new InvalidElementException(miningSchema);
-				} // End if
+			// Can't mix global and local data fields
+			if(hasGlobal){
+				throw new InvalidElementException(miningSchema);
+			} // End if
 
-				// Can't have a single named local data field (should be unnamed)
-				if(result.size() == 1){
-					throw new InvalidElementException(miningSchema);
-				}
+			// Can't have a single named local data field (should be unnamed)
+			if(result.size() == 1){
+				throw new InvalidElementException(miningSchema);
+			}
+		} else
+
+		{
+			if(!hasGlobal && defaultTargetType != null){
+				DefaultLocalDataField defaultDataField = new DefaultLocalDataField(defaultTargetType.getOpType(), defaultTargetType.getDataType());
+
+				result.put(Evaluator.DEFAULT_TARGET_NAME, defaultDataField);
 			}
 		}
 
-		return ImmutableMap.copyOf(result);
+		// Cannot use Guava's ImmutableMap, because it is null-hostile
+		return Collections.unmodifiableMap(result);
 	}
 
 	public MiningField getMiningField(String name){
@@ -470,6 +489,10 @@ public class ModelManager<M extends Model> extends PMMLManager implements HasMod
 		}
 
 		return this.outputResultFields;
+	}
+
+	protected void resetLocalDataFields(){
+		this.localDataFields = null;
 	}
 
 	protected void resetInputFields(){

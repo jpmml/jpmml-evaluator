@@ -57,7 +57,6 @@ import org.dmg.pmml.mining.Segment;
 import org.dmg.pmml.mining.Segmentation;
 import org.dmg.pmml.mining.VariableWeight;
 import org.jpmml.evaluator.Configuration;
-import org.jpmml.evaluator.DefaultLocalDataField;
 import org.jpmml.evaluator.DuplicateFieldValueException;
 import org.jpmml.evaluator.EntityUtil;
 import org.jpmml.evaluator.EvaluationContext;
@@ -75,8 +74,10 @@ import org.jpmml.evaluator.PMMLUtil;
 import org.jpmml.evaluator.PredicateUtil;
 import org.jpmml.evaluator.ProbabilityDistribution;
 import org.jpmml.evaluator.Regression;
+import org.jpmml.evaluator.SimpleTypeInfo;
 import org.jpmml.evaluator.TargetField;
 import org.jpmml.evaluator.TargetUtil;
+import org.jpmml.evaluator.TypeInfo;
 import org.jpmml.evaluator.Value;
 import org.jpmml.evaluator.ValueFactory;
 import org.jpmml.evaluator.ValueMap;
@@ -159,7 +160,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 	}
 
 	@Override
-	public DefaultLocalDataField getDefaultDataField(){
+	protected TypeInfo getDefaultTargetType(){
 		MiningModel miningModel = getModel();
 
 		Segmentation segmentation = miningModel.requireSegmentation();
@@ -172,7 +173,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 			case MULTI_MODEL_CHAIN:
 				return null;
 			default:
-				return super.getDefaultDataField();
+				return super.getDefaultTargetType();
 		}
 	}
 
@@ -1019,7 +1020,7 @@ public class MiningModelEvaluator extends ModelEvaluator<MiningModel> implements
 				TargetField segmentTargetField = segmentTargetFields.get(0);
 
 				if(segmentTargetField.isSynthetic()){
-					modelEvaluator.setDefaultDataField(new DefaultLocalDataField(OpType.CATEGORICAL, targetField.getDataType()));
+					modelEvaluator.setDefaultTargetType(new SimpleTypeInfo(OpType.CATEGORICAL, targetField.getDataType()));
 				}
 			}
 		}
