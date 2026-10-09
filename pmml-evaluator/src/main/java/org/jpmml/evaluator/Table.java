@@ -138,6 +138,32 @@ public class Table {
 		return result;
 	}
 
+	public boolean renameColumn(String column, String newColumn){
+
+		if(Objects.equals(column, newColumn)){
+			return false;
+		}
+
+		List<String> columns = getColumns();
+
+		int index = columns.indexOf(column);
+		if(index < 0 || columns.contains(newColumn)){
+			throw new IllegalArgumentException();
+		}
+
+		columns.set(index, newColumn);
+
+		Map<String, List<?>> columnValues = getValues();
+
+		if(columnValues.containsKey(column)){
+			List<?> values = columnValues.remove(column);
+
+			columnValues.put(newColumn, values);
+		}
+
+		return true;
+	}
+
 	/**
 	 * <p>
 	 * Creates a row that can advance till the end of the table, but not beyond it.

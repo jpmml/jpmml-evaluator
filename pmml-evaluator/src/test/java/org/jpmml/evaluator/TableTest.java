@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -73,6 +74,46 @@ public class TableTest {
 		table.removeColumn(null);
 
 		assertEquals(Arrays.asList("A", "C"), table.getColumns());
+	}
+
+	@Test
+	public void renameColumn(){
+		Table table = new Table(new ArrayList<>(Arrays.asList("A", "B", "C")), 3);
+
+		table.setValues("A", Arrays.asList(1, 2, 3));
+		table.setValues("B", Arrays.asList(1.0, 2.0, 3.0));
+		table.setValues("C", Arrays.asList("1", "2", "3"));
+
+		assertEquals(Arrays.asList("A", "B", "C"), table.getColumns());
+
+		assertEquals(3, table.getNumberOfColumns());
+		assertEquals(3, table.getNumberOfRows());
+
+		assertThrows(IllegalArgumentException.class, () -> table.renameColumn("D", "X"));
+		assertThrows(IllegalArgumentException.class, () -> table.renameColumn("A", "C"));
+
+		assertEquals(Arrays.asList("A", "B", "C"), table.getColumns());
+
+		assertFalse(table.renameColumn("B", "B"));
+
+		assertTrue(table.renameColumn("B", "X"));
+
+		assertEquals(Arrays.asList("A", "X", "C"), table.getColumns());
+
+		assertEquals(3, table.getNumberOfColumns());
+		assertEquals(3, table.getNumberOfRows());
+
+		assertNull(table.getValues("B"));
+		assertEquals(Arrays.asList(1.0, 2.0, 3.0), table.getValues("X"));
+
+		Table.Row row = table.createReaderRow(0);
+
+		for(int i = 0; row.canAdvance(); i++){
+			assertEquals(Arrays.asList("A", "X", "C"), new ArrayList<>(row.keySet()));
+			assertEquals(Map.of("A", i + 1, "X", i + 1.0, "C", String.valueOf(i + 1)), row);
+
+			row.advance();
+		}
 	}
 
 	@Test
