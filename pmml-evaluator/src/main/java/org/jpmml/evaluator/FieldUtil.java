@@ -153,10 +153,11 @@ public class FieldUtil {
 		RangeSet<Double> result = TreeRangeSet.create();
 
 		if(field.hasIntervals()){
-			List<Interval> intervals = field.getIntervals();
+			DataType dataType = field.requireDataType();
 
+			List<Interval> intervals = field.getIntervals();
 			for(Interval interval : intervals){
-				Range<Double> range = DiscretizationUtil.toRange(interval);
+				Range<Double> range = DiscretizationUtil.toRange(dataType, interval);
 
 				result.add(range);
 			}

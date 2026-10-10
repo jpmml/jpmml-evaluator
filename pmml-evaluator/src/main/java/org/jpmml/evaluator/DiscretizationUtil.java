@@ -97,8 +97,13 @@ public class DiscretizationUtil {
 
 	static
 	public Range<Double> toRange(Interval interval){
-		Double leftMargin = NumberUtil.asDouble(interval.getLeftMargin());
-		Double rightMargin = NumberUtil.asDouble(interval.getRightMargin());
+		return toRange(DataType.DOUBLE, interval);
+	}
+
+	static
+	public Range<Double> toRange(DataType dataType, Interval interval){
+		Double leftMargin = toMargin(dataType, interval.getLeftMargin());
+		Double rightMargin = toMargin(dataType, interval.getRightMargin());
 
 		// "The leftMargin and rightMargin attributes are optional, but at least one value must be defined"
 		if(leftMargin == null && rightMargin == null){
@@ -161,6 +166,18 @@ public class DiscretizationUtil {
 				}
 			default:
 				throw new UnsupportedAttributeException(interval, closure);
+		}
+	}
+
+	static
+	private Double toMargin(DataType dataType, Number margin){
+
+		switch(dataType){
+			case FLOAT:
+				margin = NumberUtil.asFloat(margin);
+				// Falls through
+			default:
+				return NumberUtil.asDouble(margin);
 		}
 	}
 

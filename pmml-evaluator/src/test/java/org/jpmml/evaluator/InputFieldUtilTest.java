@@ -190,6 +190,23 @@ public class InputFieldUtilTest {
 	}
 
 	@Test
+	public void prepareContinuousFloatInputValue(){
+		DataField dataField = new DataField("x", OpType.CONTINUOUS, DataType.FLOAT)
+			.addIntervals(new Interval(Closure.CLOSED_CLOSED, 1d, 6.9d));
+
+		MiningField miningField = new MiningField(dataField)
+			.setInvalidValueTreatment(InvalidValueTreatmentMethod.RETURN_INVALID);
+
+		assertThrows(ValueCheckException.class, () -> prepare(dataField, miningField, Math.nextDown(1f)));
+		assertEquals(1f, prepare(dataField, miningField, 1f));
+
+		assertEquals(6.9f, prepare(dataField, miningField, 6.9f));
+		assertEquals(6.9f, prepare(dataField, miningField, 6.9d));
+		assertEquals(6.9f, prepare(dataField, miningField, "6.9"));
+		assertThrows(ValueCheckException.class, () -> prepare(dataField, miningField, Math.nextUp(6.9f)));
+	}
+
+	@Test
 	public void prepareCategoricalInputValue(){
 		DataField dataField = new DataField("x", OpType.CATEGORICAL, DataType.INTEGER);
 

@@ -24,6 +24,20 @@ public class NumberUtil {
 	}
 
 	static
+	public Float asFloat(Number number){
+
+		if(number == null){
+			return null;
+		} // End if
+
+		if(number instanceof Float){
+			return (Float)number;
+		}
+
+		return number.floatValue();
+	}
+
+	static
 	public Double asDouble(Number number){
 
 		if(number == null){
