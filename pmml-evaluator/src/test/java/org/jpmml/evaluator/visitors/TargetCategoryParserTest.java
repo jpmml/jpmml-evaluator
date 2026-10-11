@@ -28,9 +28,15 @@ import org.dmg.pmml.DataType;
 import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.MiningSchema;
 import org.dmg.pmml.OpType;
+import org.dmg.pmml.Output;
+import org.dmg.pmml.OutputField;
 import org.dmg.pmml.PMML;
+import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.ScoreDistribution;
 import org.dmg.pmml.True;
+import org.dmg.pmml.mining.MiningModel;
+import org.dmg.pmml.mining.Segment;
+import org.dmg.pmml.mining.Segmentation;
 import org.dmg.pmml.regression.RegressionModel;
 import org.dmg.pmml.regression.RegressionTable;
 import org.dmg.pmml.tree.ComplexNode;
@@ -98,5 +104,40 @@ public class TargetCategoryParserTest extends ParserTest {
 
 		assertEquals(0, firstScoreDistribution.requireValue());
 		assertEquals("0", secondScoreDistribution.requireValue());
+	}
+
+	@Test
+	public void parseMiningModel(){
+		DataField dataField = new DataField("y", OpType.CATEGORICAL, DataType.INTEGER);
+
+		DataDictionary dataDictionary = createDataDictionary(dataField);
+
+		Node root = new ComplexNode("0", True.INSTANCE);
+
+		TreeModel treeModel = new TreeModel(MiningFunction.CLASSIFICATION, createMiningSchema(Collections.emptyList(), Collections.emptyList()), root);
+
+		Segment segment = new Segment(True.INSTANCE, treeModel);
+
+		Segmentation segmentation = new Segmentation(Segmentation.MultipleModelMethod.MODEL_CHAIN, null)
+			.addSegments(segment);
+
+		OutputField outputField = new OutputField("probability(1)", OpType.CONTINUOUS, DataType.DOUBLE)
+			.setResultFeature(ResultFeature.PROBABILITY)
+			.setValue("1");
+
+		Output output = new Output()
+			.addOutputFields(outputField);
+
+		MiningModel miningModel = new MiningModel(MiningFunction.CLASSIFICATION, createMiningSchema(Collections.emptyList(), Collections.singletonList(dataField)))
+			.setSegmentation(segmentation)
+			.setOutput(output);
+
+		PMML pmml = createPMML(dataDictionary, miningModel);
+
+		TargetCategoryParser parser = new TargetCategoryParser();
+		parser.applyTo(pmml);
+
+		assertEquals(1, outputField.getValue());
+		assertEquals("0", root.getScore());
 	}
 }
