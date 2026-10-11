@@ -42,7 +42,6 @@ import org.dmg.pmml.MiningFunction;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.ModelVerification;
 import org.dmg.pmml.PMML;
-import org.dmg.pmml.ResultFeature;
 import org.dmg.pmml.VerificationField;
 import org.dmg.pmml.VerificationFields;
 import org.jpmml.model.InvalidAttributeException;
@@ -428,22 +427,6 @@ public class ModelEvaluator<M extends Model> extends ModelManager<M> implements 
 
 	protected Map<String, ?> evaluateOutput(Map<String, ?> predictions, ModelEvaluationContext context){
 		return OutputUtil.evaluate(predictions, context);
-	}
-
-	protected <V extends Number> Classification<Object, V> createClassification(ValueMap<Object, V> values){
-		Set<ResultFeature> resultFeatures = getResultFeatures();
-
-		if(resultFeatures.contains(ResultFeature.PROBABILITY) || resultFeatures.contains(ResultFeature.RESIDUAL)){
-			return new ProbabilityDistribution<>(values);
-		} else
-
-		if(resultFeatures.contains(ResultFeature.CONFIDENCE)){
-			return new ConfidenceDistribution<>(values);
-		} else
-
-		{
-			return new VoteDistribution<>(values);
-		}
 	}
 
 	protected boolean assessParentCompatibility(){

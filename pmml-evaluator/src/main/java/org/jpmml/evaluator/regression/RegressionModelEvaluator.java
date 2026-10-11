@@ -32,6 +32,7 @@ import org.dmg.pmml.regression.PMMLAttributes;
 import org.dmg.pmml.regression.RegressionModel;
 import org.dmg.pmml.regression.RegressionTable;
 import org.jpmml.evaluator.Classification;
+import org.jpmml.evaluator.ClassificationUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.Evaluator;
 import org.jpmml.evaluator.ModelEvaluator;
@@ -129,7 +130,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 				return TargetUtil.evaluateClassificationDefault(valueFactory, targetField);
 			}
 
-			Classification<?, V> result = createClassification(values);
+			Classification<?, V> result = ClassificationUtil.createClassification(this, values);
 
 			return TargetUtil.evaluateClassification(targetField, result);
 		} else
@@ -151,7 +152,7 @@ public class RegressionModelEvaluator extends ModelEvaluator<RegressionModel> {
 					continue;
 				}
 
-				Classification<?, V> result = createClassification(values);
+				Classification<?, V> result = ClassificationUtil.createClassification(this, values);
 
 				results.putAll(TargetUtil.evaluateClassification(targetField, result));
 			}

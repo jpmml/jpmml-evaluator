@@ -61,6 +61,7 @@ import org.dmg.pmml.general_regression.ParameterList;
 import org.dmg.pmml.general_regression.Predictor;
 import org.dmg.pmml.general_regression.PredictorList;
 import org.jpmml.evaluator.Classification;
+import org.jpmml.evaluator.ClassificationUtil;
 import org.jpmml.evaluator.EvaluationContext;
 import org.jpmml.evaluator.FieldValue;
 import org.jpmml.evaluator.FieldValueUtil;
@@ -472,7 +473,7 @@ public class GeneralRegressionModelEvaluator extends ModelEvaluator<GeneralRegre
 				throw new UnsupportedAttributeException(generalRegressionModel, modelType);
 		}
 
-		Classification<?, V> result = createClassification(values);
+		Classification<?, V> result = ClassificationUtil.createClassification(this, values);
 
 		return TargetUtil.evaluateClassification(targetField, result);
 	}
